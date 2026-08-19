@@ -46,7 +46,7 @@ The cockpit SHALL support continuous infusions with rates entered in mass per ti
 
 ### Requirement: Target-Controlled Infusion
 
-The cockpit SHALL provide a target-controlled infusion mode in which the learner sets a target plasma or effect-site concentration and the simulator computes the infusion profile that achieves it. This computation is an Open-SimLab simulation feature and SHALL be implemented in Open-SimLab's own control layer, never presented as, exported from, or attributed to the forward-only Hypnos engine.
+The cockpit SHALL provide a target-controlled infusion mode in which the learner sets a target plasma or effect-site concentration and the simulator computes the infusion profile that achieves it. This computation is an Open-SimLab simulation feature and SHALL be implemented in Open-SimLab's own control layer, and SHALL be structurally separated from the forward-only simulation kernel.
 
 #### Scenario: Effect-site targeting overshoots plasma, as real pumps do
 
@@ -61,7 +61,7 @@ The cockpit SHALL provide a target-controlled infusion mode in which the learner
 #### Scenario: The engine boundary is enforced in code
 
 - **WHEN** the codebase is inspected
-- **THEN** the target-solving code lives outside the module that wraps the Hypnos-derived kernels, that module exposes no inverse-control entry point, and an architecture test fails the build if the kernel module gains one
+- **THEN** the target-solving code lives outside the simulation kernel module, that module exposes no inverse-control entry point, and an architecture test fails the build if the kernel module gains one
 
 #### Scenario: Targeting refuses an out-of-envelope model
 

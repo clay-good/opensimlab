@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Draws and enforces the line between a teaching simulator and a clinical tool. Open-SimLab predicts what a virtual patient does; it never advises what to do to a real one. This capability specifies the disclaimers, the technical guards that make misuse structurally hard, and the boundary inherited from the forward-only Hypnos dataset.
+Draws and enforces the line between a teaching simulator and a clinical tool. Open-SimLab predicts what a virtual patient does; it never advises what to do to a real one. This capability specifies the disclaimers, the technical guards that make misuse structurally hard, and the forward-only boundary of the simulation core.
 
 ## Requirements
 
@@ -23,7 +23,7 @@ The application SHALL state that it is an educational simulator and not a clinic
 #### Scenario: Exports carry the statement
 
 - **WHEN** any transcript, log, chart image, or CSV is exported
-- **THEN** the exported artifact embeds the not-for-clinical-use statement and the engine and dataset versions in its content or metadata
+- **THEN** the exported artifact embeds the not-for-clinical-use statement and the engine and model-set versions in its content or metadata
 
 ### Requirement: No Real-Patient Data Path
 
@@ -41,11 +41,11 @@ The application SHALL provide no field, import, or integration that accepts iden
 
 ### Requirement: The Forward-Only Boundary Is Structural
 
-Code derived from or wrapping the Hypnos dataset kernels SHALL remain forward-only: dose in, prediction out. Any dose-solving or target-seeking logic SHALL live in a separate Open-SimLab module and SHALL be labeled as a simulation feature.
+The simulation kernel SHALL remain forward-only: dose in, prediction out. Any dose-solving or target-seeking logic SHALL live in a separate Open-SimLab module and SHALL be labeled as a simulation feature.
 
 #### Scenario: The kernel module exposes no inverse entry point
 
-- **WHEN** the public interface of the Hypnos-derived kernel module is enumerated
+- **WHEN** the public interface of the simulation kernel module is enumerated
 - **THEN** it contains no function that accepts a target concentration or effect and returns a dose, and an architecture test asserts this
 
 #### Scenario: Quantile targeting is refused
@@ -53,10 +53,10 @@ Code derived from or wrapping the Hypnos dataset kernels SHALL remain forward-on
 - **WHEN** any surface would let a learner request the dose that keeps a stated percentile of the prediction band below a value
 - **THEN** the feature is absent, because quantile targeting is inverse control in statistical dress
 
-#### Scenario: Upstream attribution is accurate
+#### Scenario: Attribution is accurate
 
-- **WHEN** the application credits Hypnos
-- **THEN** it states that Hypnos supplies forward simulation and curated parameters, and that target-controlled infusion is Open-SimLab's own simulation layer, not a Hypnos capability
+- **WHEN** the application credits its sources
+- **THEN** it credits the primary publications each model is transcribed from, states that Open-SimLab transcribed and implemented them itself, and does not imply endorsement or validation by any author or sibling project
 
 ### Requirement: Uncertainty Is Never Presented As Precision
 

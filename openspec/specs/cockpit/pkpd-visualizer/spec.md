@@ -50,7 +50,7 @@ The panel SHALL be able to draw a seeded 5th-to-95th-percentile prediction band 
 #### Scenario: Only band-eligible models get a band
 
 - **WHEN** bands are enabled for a propofol case
-- **THEN** the model with curated between-subject variability shows a shaded band with its own band tier, and models without it are drawn as bare lines and listed as excluded from the band math
+- **THEN** the model that publishes between-subject variability shows a shaded band drawn with its trace `-fill` token, and models without it are drawn as bare lines and named as band-ineligible with the reason
 
 #### Scenario: Bands are reproducible
 

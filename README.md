@@ -5,6 +5,10 @@ nurse anesthetists — anywhere in the world, on any device, with or without a n
 
 **opensimlab.com/anesthesia** is the first module. `/oncology` and `/cardiology` follow.
 
+The goal is not a tech demo. It is the best anesthesia education on the internet: the
+thing a student opens the night before their first day in the OR and comes out of
+understanding something they did not understand before.
+
 Physical simulation labs cost hundreds of thousands of dollars, require physical
 attendance, and are bottlenecked by scheduling. Open-SimLab is free, needs no login or
 install, runs entirely in the browser, works offline, and sends nothing anywhere.
@@ -13,23 +17,68 @@ install, runs entirely in the browser, works offline, and sends nothing anywhere
 > decision-support tool, not a dosing calculator, and not validated for any decision
 > affecting a real patient.
 
-## Where the specification lives
+## Three commitments
+
+**One theme, built well.** A single dark theme called Theater Dark, whose organizing rule
+is that *color is a clinical signal, never decoration*. The entire interface chrome is a
+neutral ramp. The only saturated color on screen is physiology, alarm severity, and the
+focus ring. Every token, type size, spacing value, and motion duration is specified
+exactly in [`design/design-system`](openspec/specs/design/design-system/spec.md) — a
+builder should never have to guess a value.
+
+**We own our pharmacology.** Model parameters are transcribed by hand from the primary
+literature into typed TypeScript in this repository, each carrying its citation and its
+applicability envelope. There is no external dataset dependency, nothing vendored, and
+nothing fetched at build or runtime. Tests assert published reference values so a mistyped
+digit fails immediately.
+
+**Nothing leaves the device.** No login, no accounts, no server, no analytics, no
+telemetry. Progress, transcripts, and debriefs live in the browser on that device. Sharing
+happens only through a file the learner exports deliberately.
+
+## The specification
 
 This project is spec-driven with [OpenSpec](https://openspec.dev/). The authoritative
-specification is the capability tree under [`openspec/specs/`](openspec/specs/):
+specification is the capability tree under [`openspec/specs/`](openspec/specs/).
+
+### Engine — the virtual patient
 
 | Capability | What it governs |
 | --- | --- |
 | [`engine/pkpd-core`](openspec/specs/engine/pkpd-core/spec.md) | Compartment solvers, effect-site kinetics, Hill and interaction surfaces, determinism |
-| [`engine/physiology`](openspec/specs/engine/physiology/spec.md) | The virtual patient: hemodynamics, gas exchange, blockade, fluids, surgical stimulus |
-| [`engine/model-provenance`](openspec/specs/engine/model-provenance/spec.md) | Hypnos dataset ingestion, confidence tiers, applicability envelopes, citations |
+| [`engine/physiology`](openspec/specs/engine/physiology/spec.md) | Hemodynamics, gas exchange, blockade, fluids, surgical stimulus, baroreflex |
+| [`engine/pharmacology`](openspec/specs/engine/pharmacology/spec.md) | Model parameters, applicability envelopes, citations, drug cards, the Model Lens |
 | [`engine/simulation-clock`](openspec/specs/engine/simulation-clock/spec.md) | Simulated time, transport controls, worker isolation, deterministic transcripts |
 | [`engine/scenario-engine`](openspec/specs/engine/scenario-engine/spec.md) | Scenario format, patient profiles, timeline events, crisis and artifact injection |
-| [`cockpit/patient-monitor`](openspec/specs/cockpit/patient-monitor/spec.md) | Sweeping waveform canvas, numeric readouts, alarms |
+
+### Design — one visual language
+
+| Capability | What it governs |
+| --- | --- |
+| [`design/design-system`](openspec/specs/design/design-system/spec.md) | Theater Dark: every color, type, spacing, radius, and motion token; component inventory |
+| [`design/layout`](openspec/specs/design/layout/spec.md) | The four-region cockpit, breakpoints, reflow, and the explicit sacrifice order |
+
+### Cockpit — the screen
+
+| Capability | What it governs |
+| --- | --- |
+| [`cockpit/patient-monitor`](openspec/specs/cockpit/patient-monitor/spec.md) | Sweeping waveform canvas, vital tiles, alarms, artifact rendering |
 | [`cockpit/pkpd-visualizer`](openspec/specs/cockpit/pkpd-visualizer/spec.md) | Plasma vs. effect-site plot, hysteresis, decrement times, prediction bands |
 | [`cockpit/action-cockpit`](openspec/specs/cockpit/action-cockpit/spec.md) | Syringes, infusions and TCI, ventilator, fluids, airway, resuscitation |
 | [`cockpit/event-log`](openspec/specs/cockpit/event-log/spec.md) | Chronological record, severity, cross-panel navigation, export |
-| [`learning/pedagogy`](openspec/specs/learning/pedagogy/spec.md) | Onboarding, guidance levels, structured debrief, formative assessment |
+
+### Learning — why it exists
+
+| Capability | What it governs |
+| --- | --- |
+| [`learning/pedagogy`](openspec/specs/learning/pedagogy/spec.md) | Onboarding, guidance levels, structured debrief with computed counterfactuals |
+| [`learning/curriculum`](openspec/specs/learning/curriculum/spec.md) | Competency map, progression, transcript-derived evidence, spaced return, instructor mode |
+| [`learning/knowledge-layer`](openspec/specs/learning/knowledge-layer/spec.md) | The Why panel, concept explainers, predict-then-observe, the sandbox |
+
+### Platform — the guarantees
+
+| Capability | What it governs |
+| --- | --- |
 | [`platform/safety-and-scope`](openspec/specs/platform/safety-and-scope/spec.md) | Not-for-clinical-use guards, the forward-only boundary, clinical review |
 | [`platform/privacy`](openspec/specs/platform/privacy/spec.md) | No telemetry, no accounts, no server state, on-device only |
 | [`platform/offline-pwa`](openspec/specs/platform/offline-pwa/spec.md) | Service worker, installability, download budgets, local storage |
@@ -44,13 +93,14 @@ Validate the tree with:
 openspec validate --specs --strict
 ```
 
-## Clinical models
+## A note on Hypnos
 
-Pharmacological parameters come from [Hypnos](https://github.com/clay-good/hypnos), a
-curated, citation-backed dataset of PK/PD model parameters annotated with confidence
-tiers and applicability envelopes. Hypnos is forward-only and marks every export
-`clinicalUse = "PROHIBITED"`; Open-SimLab preserves that boundary. Target-controlled
-infusion is Open-SimLab's own simulation layer, not a Hypnos capability.
+[Hypnos](https://github.com/clay-good/hypnos) is a sibling project: a curated,
+citation-backed dataset of PK/PD model parameters with confidence tiers and applicability
+envelopes. It is a useful cross-check when transcribing parameters, and the envelope idea
+is borrowed gratefully. It is **not** a dependency of this project — not imported, not
+vendored, not fetched. Open-SimLab owns its numbers and tests them against the primary
+literature directly.
 
 ## License
 

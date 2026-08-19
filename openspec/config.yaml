@@ -2,31 +2,41 @@ schema: spec-driven
 
 context: |
   Project: Open-SimLab (opensimlab.com) — an open-source, browser-native clinical
-  simulator for medical students, residents, and CRNAs worldwide. First domain module
-  is Anesthesiology at /anesthesia; later modules mount at /oncology, /cardiology, and so on.
+  simulator. First module is Anesthesiology at /anesthesia; later modules mount at
+  /oncology, /cardiology, and so on.
+
+  The goal is the best anesthesia education on the internet. Not a tech demo, not a
+  dataset viewer — a thing a medical student opens the night before their first OR day
+  and comes out of understanding something they did not understand before.
+
+  Audience, in priority order: medical students on an anesthesia rotation; residents in
+  their first year; nurse anesthetist students; anyone teaching them.
 
   Product principles:
     - Zero login, zero install, sub-second first interaction.
-    - 100% client-side: no patient metrics, keystrokes, or usage logs leave the device.
-    - Deterministic, citation-backed physiology built on the Hypnos PK/PD dataset.
-    - Usable by ANY human medical student: offline, low-end Android, 2G, screen reader,
+    - 100% client-side: nothing a learner does leaves their device, ever.
+    - Deterministic physiology with real published pharmacology behind it.
+    - One theme, built once, built well. No theme switcher, no light mode.
+    - Usable by ANY medical student: offline, low-end Android, 2G, screen reader,
       colorblind-safe, translated, both SI and conventional units.
 
-  Tech stack: TypeScript, Vite, React, Tailwind CSS, Zustand, HTML5 Canvas 2D,
-  Web Worker for the solver, Service Worker for offline. Static assets only,
-  deployed to Cloudflare Pages. No backend, no database, no analytics vendor.
+  Tech stack: TypeScript, Vite, React 19, CSS custom properties + Tailwind, Zustand,
+  HTML5 Canvas 2D, Web Worker for the solver, Service Worker for offline. Static assets
+  only, deployed to Cloudflare Pages. No backend, no database, no analytics vendor.
 
-  Upstream dependency: Hypnos (github.com/clay-good/hypnos) — a Python + JSON dataset of
-  citation-backed PK/PD model parameters with confidence tiers and applicability
-  envelopes. Hypnos is FORWARD-ONLY and marks every export clinicalUse = "PROHIBITED".
-  There is no published `@hypnos/core` npm package; Open-SimLab ships its own TypeScript
-  engine that consumes the Hypnos JSON dataset as the source of truth and proves numeric
-  parity against the Python reference kernels.
+  Pharmacology: model parameters are transcribed BY HAND from the primary literature
+  into typed TypeScript source in this repository, each carrying its citation and its
+  applicability envelope. The sibling project Hypnos (github.com/clay-good/hypnos) is a
+  useful cross-check during authoring and nothing more — it is NOT a dependency, is NOT
+  vendored, and is NOT imported at build or runtime. Open-SimLab owns its numbers.
+
+  Design: ONE dark theme. Its organizing rule is that COLOR IS A CLINICAL SIGNAL, NEVER
+  DECORATION. Interface chrome is a neutral ramp; the only saturated color on screen is
+  physiology (five trace hues), alarm severity, and a single focus accent.
 
   Hard safety rule: Open-SimLab is an educational simulator. It is NOT a clinical
   decision-support tool, NOT a dosing calculator, and NOT validated for any decision
-  affecting a real patient. Every surface that could be mistaken for a clinical
-  recommendation must carry that statement.
+  affecting a real patient.
 
   Conventions: conventional commits; American English; SI units internally with a
   display-layer conversion; all times in simulated seconds from scenario start.
@@ -36,6 +46,8 @@ rules:
     - Every requirement must be independently testable by an automated test or a
       documented manual procedure. Avoid unmeasurable words like "fast" or "intuitive".
     - Quantify thresholds. Give numbers, units, and tolerances.
-    - Where a requirement encodes clinical content, name the Hypnos model id or the
-      published source it derives from.
+    - Where a requirement encodes clinical content, name the published source it
+      derives from.
+    - Where a requirement encodes visual design, name the exact token, value, or
+      measurement. A builder should never have to guess a color, size, or duration.
     - Prefer failure-mode scenarios alongside happy-path scenarios.

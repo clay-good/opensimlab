@@ -37,7 +37,7 @@ The patient profile SHALL specify age, sex, height, total body weight, ASA physi
 #### Scenario: Pediatric and elderly profiles select appropriate models
 
 - **WHEN** the profile is a 6-year-old child
-- **THEN** propofol defaults to a pediatric model (`hypnotics_iv.propofol.paedfusor_2005` or `hypnotics_iv.propofol.kataria_1994`) and adult-only models are greyed by the envelope rules
+- **THEN** propofol defaults to the pediatric model and adult-only models are demoted to **Out of range** by the envelope rules
 
 ### Requirement: Scripted Timeline Events
 

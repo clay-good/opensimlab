@@ -51,7 +51,7 @@ Transcripts, preferences, progress, and debriefs SHALL be stored only in the bro
 #### Scenario: An exported transcript contains no identifiers
 
 - **WHEN** an exported transcript is inspected
-- **THEN** it contains the scenario, the engine and dataset versions, the seed, and the action list only, with no device fingerprint, no browser identifier, no locale-derived identity, and no timestamps tied to real-world clock time
+- **THEN** it contains the scenario, the engine version, the seed, and the action list only, with no device fingerprint, no browser identifier, no locale-derived identity, and no timestamps tied to real-world clock time
 
 ### Requirement: Honest, Short, Verifiable Privacy Statement
 

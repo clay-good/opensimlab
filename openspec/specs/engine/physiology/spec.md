@@ -81,7 +81,7 @@ The engine SHALL model alveolar ventilation, carbon dioxide production and clear
 
 ### Requirement: Neuromuscular Blockade
 
-The engine SHALL model neuromuscular blockade as a train-of-four ratio and count driven by the effect-site concentration of the administered blocking agent, using the Hypnos rocuronium and succinylcholine models, and SHALL model reversal by neostigmine and by sugammadex encapsulation.
+The engine SHALL model neuromuscular blockade as a train-of-four ratio and count driven by the effect-site concentration of the administered blocking agent, and SHALL model reversal by neostigmine and by sugammadex encapsulation.
 
 #### Scenario: Rocuronium produces intubating conditions then recovers
 
@@ -100,7 +100,7 @@ The engine SHALL model neuromuscular blockade as a train-of-four ratio and count
 
 ### Requirement: Volatile Agent Uptake And MAC
 
-The engine SHALL model sevoflurane uptake from the vaporizer through the breathing circuit to the alveolus and effect site, and SHALL express depth in age-adjusted minimum alveolar concentration fraction using the Hypnos `sevoflurane_mac` model.
+The engine SHALL model sevoflurane uptake from the vaporizer through the breathing circuit to the alveolus and effect site, and SHALL express depth as an age-adjusted minimum alveolar concentration fraction.
 
 #### Scenario: MAC is age-adjusted
 

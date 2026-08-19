@@ -55,7 +55,7 @@ The application SHALL meet, on a mid-range 2020 Android device over a 4G-class c
 
 ### Requirement: Test Strategy
 
-The repository SHALL maintain unit tests for the solver and physiology, golden-vector parity tests against the Hypnos Python reference, property tests for conservation and monotonicity invariants, deterministic end-to-end scenario replays, accessibility scans, offline tests, bundle-size checks, and architecture tests enforcing the forward-only and no-third-party-request boundaries. All SHALL run on every pull request.
+The repository SHALL maintain unit tests for the solver and physiology, golden state-trace regression tests, published-value assertions for every pharmacology model, property tests for conservation and monotonicity invariants, deterministic end-to-end scenario replays, accessibility scans, offline tests, bundle-size checks, and design-token lint, and architecture tests enforcing the forward-only, no-third-party-request, and no-external-pharmacology-dependency boundaries. All SHALL run on every pull request.
 
 #### Scenario: A scenario replay is the regression net
 
@@ -69,7 +69,7 @@ The repository SHALL maintain unit tests for the solver and physiology, golden-v
 
 ### Requirement: Release And Provenance
 
-Each release SHALL record the application version, the Hypnos dataset version and commit, the golden-vector hashes, the clinical review records for all bundled content, and a human-readable changelog that separates behavior changes from cosmetic ones.
+Each release SHALL record the application version, the pharmacology model set and its revision, the golden-trace hashes, the clinical review records for all bundled content, and a human-readable changelog that separates behavior changes from cosmetic ones.
 
 #### Scenario: A physiological change is announced as such
 
@@ -79,7 +79,7 @@ Each release SHALL record the application version, the Hypnos dataset version an
 #### Scenario: The running build identifies itself
 
 - **WHEN** a learner opens the about panel
-- **THEN** it shows the application version, the build commit, the Hypnos dataset version, and the build date, all readable offline
+- **THEN** it shows the application version, the build commit, the pharmacology model-set revision, and the build date, all readable offline
 
 ### Requirement: Contribution Path For Clinicians
 

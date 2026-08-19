@@ -44,9 +44,9 @@ The monitor SHALL display, at minimum: lead II electrocardiogram with heart rate
 - **WHEN** the rhythm changes to ventricular fibrillation
 - **THEN** the electrocardiogram renders a fibrillatory waveform, the heart rate readout becomes invalid rather than showing a plausible number, and the pulse oximetry plethysmograph loses pulsatility
 
-### Requirement: Clinically Conventional Encoding
+### Requirement: Encoding Follows The Design System
 
-Trace colors and numeric placement SHALL follow the conventions learners will encounter clinically: electrocardiogram green, arterial pressure red, capnography yellow, pulse oximetry cyan, depth of anesthesia a distinct fifth hue. Color SHALL never be the only channel carrying meaning.
+Trace colors SHALL come from the five physiological trace tokens defined by the design system and SHALL NOT be redefined locally. Color SHALL never be the only channel carrying meaning.
 
 #### Scenario: Every trace is labeled independent of color
 

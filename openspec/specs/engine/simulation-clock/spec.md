@@ -69,7 +69,7 @@ When the browser throttles or suspends timers, the engine SHALL cap the number o
 
 ### Requirement: Deterministic Session Transcript
 
-Every session SHALL be recordable as a transcript containing the scenario id and version, the dataset version, the engine version, the random seed, and the ordered list of learner actions with their tick timestamps. Replaying a transcript SHALL reproduce the session exactly.
+Every session SHALL be recordable as a transcript containing the scenario id and version, the pharmacology model-set revision, the engine version, the random seed, and the ordered list of learner actions with their tick timestamps. Replaying a transcript SHALL reproduce the session exactly.
 
 #### Scenario: Transcript replays bit-identically
 
@@ -83,5 +83,5 @@ Every session SHALL be recordable as a transcript containing the scenario id and
 
 #### Scenario: Version mismatch is reported, not guessed
 
-- **WHEN** a transcript recorded under an earlier engine or dataset version is replayed
+- **WHEN** a transcript recorded under an earlier engine or model-set version is replayed
 - **THEN** the application states which versions differ and offers either a faithful replay under the recorded versions if bundled or a clearly-labeled best-effort replay, never a silent replay under different numbers

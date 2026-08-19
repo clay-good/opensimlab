@@ -94,4 +94,4 @@ The application code SHALL be released under a permissive open-source license, t
 #### Scenario: Licenses are unambiguous per artifact
 
 - **WHEN** the repository is inspected
-- **THEN** the code license, the content license, and the license and attribution terms of the vendored Hypnos dataset are each stated in a dedicated file, and every scenario declares its own license
+- **THEN** the code license and the content license are each stated in a dedicated file, and the pharmacology module records the publication each model is transcribed from, and every scenario declares its own license
