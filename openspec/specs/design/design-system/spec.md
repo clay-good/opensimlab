@@ -130,6 +130,16 @@ A critical alarm banner SHALL be a solid `--alarm-critical` fill with `--text-on
 - **WHEN** the interface is inspected with no alarm active
 - **THEN** no alarm token appears anywhere on screen
 
+#### Scenario: Alarm treatment matches the clinical standard
+
+- **WHEN** alarm priorities render
+- **THEN** high priority uses `--alarm-critical` flashing at 1.4–2.8 Hz, medium priority uses `--alarm-warning` flashing at 0.4–0.8 Hz, and low priority uses a steady `--alarm-advisory` indication, following the IEC 60601-1-8 conventions so the visual language transfers to real equipment
+
+#### Scenario: Alarm flashing respects reduced motion without losing priority
+
+- **WHEN** the operating system requests reduced motion
+- **THEN** flashing is replaced by a static treatment that still distinguishes the three priorities by fill, border weight, and an explicit priority word, and the priority remains identifiable in an automated check
+
 ### Requirement: Typography
 
 The application SHALL use exactly two self-hosted variable font families, subset and preloaded: **Inter** for all interface text and numerics, and **JetBrains Mono** for the event log and any tabular code. All numerics SHALL set `font-variant-numeric: tabular-nums` so digits do not shift as values change. The type scale SHALL be exactly:

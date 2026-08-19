@@ -26,9 +26,34 @@ context: |
 
   Pharmacology: model parameters are transcribed BY HAND from the primary literature
   into typed TypeScript source in this repository, each carrying its citation and its
-  applicability envelope. The sibling project Hypnos (github.com/clay-good/hypnos) is a
-  useful cross-check during authoring and nothing more — it is NOT a dependency, is NOT
-  vendored, and is NOT imported at build or runtime. Open-SimLab owns its numbers.
+  applicability envelope, double-sourced and independently checked before being marked
+  verified. Named models include Marsh 1991, Schnider 1998, Eleveld 2018, Minto 1997,
+  Shafer 1990, Hannivoort 2015, and Nickalls & Mapleson 2003 for age-related MAC. The
+  sibling project Hypnos (github.com/clay-good/hypnos) is a cross-check during authoring
+  and nothing more — NOT a dependency, NOT vendored, NOT imported. We own our numbers.
+
+  Grounding: this only matters if clinicians trust it, so the specs bind the product to
+  the published evidence and to the standards clinicians already know —
+    - Varvel 1992 (PMID 1588504) for predictive performance: MDPE, MDAPE, wobble, divergence.
+    - Benumof 1997 (PMID 9357902) for apnea desaturation times.
+    - IEC 60601-1-8 for alarm priority, color, and flash rate.
+    - ASA Standards for Basic Anesthetic Monitoring for the monitored parameter set.
+    - MHAUS, ASRA 2020 LAST (PMID 33148630), 2022 ASA difficult airway (PMID 34762729),
+      2023 ASA neuromuscular blockade guidelines for crisis protocols.
+    - NAP5 (awareness) and NAP6 (anaphylaxis) for crisis epidemiology.
+    - PEARLS (Eppich & Cheng 2015, PMID 25710312) for debriefing structure.
+    - INACSL Healthcare Simulation Standards of Best Practice for simulation design.
+    - ACGME Anesthesiology Milestones 2.0 and COA/NBCRNA domains for curriculum mapping.
+  Every clinical assertion is signed by a named credentialed reviewer with declared
+  interests, tracked for currency, and correctable through a public log.
+
+  Depth of anesthesia is a PREDICTED index from a published PD model, never a claim to
+  reproduce a commercial monitor. BIS is a Medtronic trademark; use it only nominatively
+  to name the scale a published model was fitted to, never as our display's name.
+
+  Regulatory position: educational training software, not a medical device. The FDA lists
+  training simulation software among examples of software functions that are not devices.
+  Design so that stays true.
 
   Design: ONE dark theme. Its organizing rule is that COLOR IS A CLINICAL SIGNAL, NEVER
   DECORATION. Interface chrome is a neutral ramp; the only saturated color on screen is

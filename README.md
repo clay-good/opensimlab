@@ -17,7 +17,7 @@ install, runs entirely in the browser, works offline, and sends nothing anywhere
 > decision-support tool, not a dosing calculator, and not validated for any decision
 > affecting a real patient.
 
-## Three commitments
+## Four commitments
 
 **One theme, built well.** A single dark theme called Theater Dark, whose organizing rule
 is that *color is a clinical signal, never decoration*. The entire interface chrome is a
@@ -36,6 +36,13 @@ digit fails immediately.
 telemetry. Progress, transcripts, and debriefs live in the browser on that device. Sharing
 happens only through a file the learner exports deliberately.
 
+**Every clinical claim is signed, sourced, and correctable.** A named editorial board of
+credentialed clinicians reviews every scenario, protocol, drug card, and explainer, with
+declared competing interests and a re-review date. Crisis protocols trace to their issuing
+body — MHAUS, ASRA, ASA. Physiology is checked against published benchmarks as automated
+tests. What the simulator does *not* model is published as a limitations register, and
+mistakes go into a permanent public corrections log.
+
 ## The specification
 
 This project is spec-driven with [OpenSpec](https://openspec.dev/). The authoritative
@@ -48,6 +55,7 @@ specification is the capability tree under [`openspec/specs/`](openspec/specs/).
 | [`engine/pkpd-core`](openspec/specs/engine/pkpd-core/spec.md) | Compartment solvers, effect-site kinetics, Hill and interaction surfaces, determinism |
 | [`engine/physiology`](openspec/specs/engine/physiology/spec.md) | Hemodynamics, gas exchange, blockade, fluids, surgical stimulus, baroreflex |
 | [`engine/pharmacology`](openspec/specs/engine/pharmacology/spec.md) | Model parameters, applicability envelopes, citations, drug cards, the Model Lens |
+| [`engine/validation`](openspec/specs/engine/validation/spec.md) | Varvel performance framework, published benchmarks, face validity, the limitations register |
 | [`engine/simulation-clock`](openspec/specs/engine/simulation-clock/spec.md) | Simulated time, transport controls, worker isolation, deterministic transcripts |
 | [`engine/scenario-engine`](openspec/specs/engine/scenario-engine/spec.md) | Scenario format, patient profiles, timeline events, crisis and artifact injection |
 
@@ -79,7 +87,9 @@ specification is the capability tree under [`openspec/specs/`](openspec/specs/).
 
 | Capability | What it governs |
 | --- | --- |
-| [`platform/safety-and-scope`](openspec/specs/platform/safety-and-scope/spec.md) | Not-for-clinical-use guards, the forward-only boundary, clinical review |
+| [`platform/clinical-governance`](openspec/specs/platform/clinical-governance/spec.md) | Editorial board, signed content, guideline currency, corrections log, limitations register |
+| [`platform/adoption`](openspec/specs/platform/adoption/spec.md) | Curriculum mapping, classroom use, citability, procurement docs, instructor authoring |
+| [`platform/safety-and-scope`](openspec/specs/platform/safety-and-scope/spec.md) | Not-for-clinical-use guards, regulatory position, the forward-only boundary |
 | [`platform/privacy`](openspec/specs/platform/privacy/spec.md) | No telemetry, no accounts, no server state, on-device only |
 | [`platform/offline-pwa`](openspec/specs/platform/offline-pwa/spec.md) | Service worker, installability, download budgets, local storage |
 | [`platform/accessibility`](openspec/specs/platform/accessibility/spec.md) | WCAG 2.2 AA, keyboard operation, screen reader access to live physiology |
@@ -92,6 +102,47 @@ Validate the tree with:
 ```bash
 openspec validate --specs --strict
 ```
+
+## What this is grounded in
+
+The specs bind the product to published evidence and to the standards clinicians already
+recognize, rather than to invented conventions:
+
+| Area | Source |
+| --- | --- |
+| Predictive performance (MDPE, MDAPE, wobble, divergence) | Varvel, Donoho & Shafer, *J Pharmacokinet Biopharm* 1992 ([PMID 1588504](https://pubmed.ncbi.nlm.nih.gov/1588504/)) |
+| Propofol PK/PD | Marsh 1991; Schnider 1998; Eleveld et al., *Br J Anaesth* 2018;120:942–59 |
+| Remifentanil PK/PD | Minto et al., *Anesthesiology* 1997 ([PMID 9009935](https://pubmed.ncbi.nlm.nih.gov/9009935/), [9009936](https://pubmed.ncbi.nlm.nih.gov/9009936/)) |
+| Age-related MAC | Nickalls & Mapleson, *Br J Anaesth* 2003;91:170–4 |
+| Apnea desaturation times | Benumof, Dagg & Benumof, *Anesthesiology* 1997 ([PMID 9357902](https://pubmed.ncbi.nlm.nih.gov/9357902/)) |
+| Monitored parameter set | [ASA Standards for Basic Anesthetic Monitoring](https://www.asahq.org/standards-and-practice-parameters/standards-for-basic-anesthetic-monitoring) |
+| Alarm priority, color, flash rate | IEC 60601-1-8 |
+| Malignant hyperthermia protocol | [MHAUS acute crisis protocol](https://www.mhaus.org/healthcare-professionals/managing-a-crisis/) |
+| Local anesthetic systemic toxicity | ASRA checklist, 2020 version ([PMID 33148630](https://pubmed.ncbi.nlm.nih.gov/33148630/)) |
+| Difficult airway | 2022 ASA Practice Guidelines ([PMID 34762729](https://pubmed.ncbi.nlm.nih.gov/34762729/)) |
+| Neuromuscular blockade and reversal | 2023 ASA Practice Guidelines (quantitative monitoring, TOF ratio ≥ 0.9) |
+| Awareness epidemiology | NAP5, *Br J Anaesth* 2014 ([PMID 25204697](https://pubmed.ncbi.nlm.nih.gov/25204697/)) |
+| Perioperative anaphylaxis epidemiology | NAP6, *Br J Anaesth* 2018 |
+| Debriefing structure | PEARLS — Eppich & Cheng, *Simul Healthc* 2015 ([PMID 25710312](https://pubmed.ncbi.nlm.nih.gov/25710312/)) |
+| Simulation design | INACSL Healthcare Simulation Standards of Best Practice |
+| Curriculum mapping | ACGME Anesthesiology Milestones 2.0; COA / NBCRNA content domains |
+| Prior evidence for screen-based sim | Schwid et al. ([PMID 11302037](https://pubmed.ncbi.nlm.nih.gov/11302037/)) |
+
+**On depth of anesthesia.** The depth index is a *predicted* value from a published
+pharmacodynamic model, on the 0–100 scale those models were fitted to. It is not the
+output of any commercial monitor and does not reproduce any proprietary algorithm. BIS is
+a trademark of Medtronic, referenced here only to identify the scale a published model
+targets.
+
+**Regulatory position.** Educational training software, not a medical device. The FDA
+lists software that simulates clinical scenarios to train health professionals among
+[examples of software functions that are not medical devices](https://www.fda.gov/medical-devices/device-software-functions-including-mobile-medical-applications/examples-software-functions-are-not-medical-devices).
+No device clearance has been sought or held.
+
+**What this does not do.** It does not teach psychomotor skills, physical airway
+technique, or team communication, and it does not replace mannequin-based simulation or
+supervised clinical time. See [`engine/validation`](openspec/specs/engine/validation/spec.md)
+for the limitations register.
 
 ## A note on Hypnos
 

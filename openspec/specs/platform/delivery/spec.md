@@ -55,7 +55,7 @@ The application SHALL meet, on a mid-range 2020 Android device over a 4G-class c
 
 ### Requirement: Test Strategy
 
-The repository SHALL maintain unit tests for the solver and physiology, golden state-trace regression tests, published-value assertions for every pharmacology model, property tests for conservation and monotonicity invariants, deterministic end-to-end scenario replays, accessibility scans, offline tests, bundle-size checks, and design-token lint, and architecture tests enforcing the forward-only, no-third-party-request, and no-external-pharmacology-dependency boundaries. All SHALL run on every pull request.
+The repository SHALL maintain unit tests for the solver and physiology, golden state-trace regression tests, published-value assertions for every pharmacology model, physiological benchmark tests carrying their citations, property tests for conservation and monotonicity invariants, deterministic end-to-end scenario replays, accessibility scans, contrast assertions for every design token pair, offline tests, bundle-size checks, design-token lint, clinical-review gate checks, and architecture tests enforcing the forward-only, no-third-party-request, no-real-patient-input, and no-external-pharmacology-dependency boundaries. All SHALL run on every pull request.
 
 #### Scenario: A scenario replay is the regression net
 
@@ -80,6 +80,20 @@ Each release SHALL record the application version, the pharmacology model set an
 
 - **WHEN** a learner opens the about panel
 - **THEN** it shows the application version, the build commit, the pharmacology model-set revision, and the build date, all readable offline
+
+### Requirement: Release Gates Include Clinical And Validation Sign-Off
+
+A release SHALL NOT be publishable unless the clinical review gate, the validation report regeneration, and the face-validity review have all passed, and the release record SHALL name who signed each.
+
+#### Scenario: A green test suite is not sufficient to release
+
+- **WHEN** all automated tests pass but a scenario's clinical review is overdue or the face-validity review for the release candidate is incomplete
+- **THEN** the release job refuses to publish and names the outstanding gate
+
+#### Scenario: The release record is complete and public
+
+- **WHEN** a release is published
+- **THEN** its record names the application version, the content version, the pharmacology model-set revision, the validation report revision, and the clinicians who signed the clinical and face-validity gates
 
 ### Requirement: Contribution Path For Clinicians
 

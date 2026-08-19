@@ -69,15 +69,20 @@ The engine SHALL model alveolar ventilation, carbon dioxide production and clear
 - **WHEN** minute ventilation is halved by reducing respiratory rate from 12 to 6 at constant tidal volume
 - **THEN** end-tidal carbon dioxide rises toward a new steady state with a time constant consistent with body carbon dioxide stores, not instantaneously
 
-#### Scenario: Apnea desaturates after a realistic delay
+#### Scenario: Apnea desaturation reproduces published times
 
-- **WHEN** ventilation stops entirely after preoxygenation to an inspired oxygen fraction of 1.0
-- **THEN** arterial oxygen saturation stays above 90% for a preoxygenation-dependent apnea time and then falls along the steep part of the oxyhemoglobin dissociation curve
+- **WHEN** ventilation stops after preoxygenation in a healthy 70 kg adult, a moderately ill adult, and an obese adult
+- **THEN** the times to an arterial oxygen saturation of 90% approximate the values reported by Benumof, Dagg, and Benumof (*Anesthesiology* 1997;87:979–82, PMID 9357902) — about 8, 5, and 2.7 minutes respectively — within the tolerance declared in the validation report
 
-#### Scenario: Obesity and preoxygenation change the safe apnea time
+#### Scenario: Desaturation follows the dissociation curve, not a straight line
 
-- **WHEN** the same apnea occurs in an obese patient without preoxygenation
-- **THEN** the time to a saturation of 90% is markedly shorter than in the preoxygenated reference adult
+- **WHEN** saturation falls below 90%
+- **THEN** the subsequent fall is markedly steeper than the preceding plateau, reflecting the shape of the oxyhemoglobin dissociation curve, so a learner sees why 90% is the point of urgency
+
+#### Scenario: Failure to preoxygenate shortens the margin visibly
+
+- **WHEN** the same apnea occurs without preoxygenation
+- **THEN** the time to 90% is a small fraction of the preoxygenated time, and the debrief names preoxygenation as the modifiable factor
 
 ### Requirement: Neuromuscular Blockade
 
@@ -88,10 +93,20 @@ The engine SHALL model neuromuscular blockade as a train-of-four ratio and count
 - **WHEN** 0.6 mg/kg rocuronium is given
 - **THEN** the train-of-four count reaches zero within a model-consistent onset time and recovers spontaneously over the expected duration
 
-#### Scenario: Sugammadex reverses deep block, neostigmine does not
+#### Scenario: Reversal follows the 2023 ASA guideline dose–depth relationship
 
-- **WHEN** sugammadex is given at a train-of-four count of zero with one post-tetanic count
-- **THEN** the train-of-four ratio recovers above 0.9 within minutes; **AND WHEN** neostigmine is given at the same depth instead, recovery is minimal, demonstrating the reversal-agent distinction
+- **WHEN** sugammadex 2 mg/kg is given with at least one train-of-four twitch present, and 4 mg/kg with no twitches but a post-tetanic count of one or more
+- **THEN** the train-of-four ratio recovers to 0.9 or greater, consistent with the 2023 ASA practice guideline for monitoring and antagonism of neuromuscular blockade
+
+#### Scenario: Neostigmine fails from deep block
+
+- **WHEN** neostigmine is given at a train-of-four count of zero
+- **THEN** recovery is minimal, demonstrating why the guideline restricts neostigmine to minimal blockade and recommends sugammadex from deep and moderate blockade
+
+#### Scenario: Qualitative assessment cannot exclude residual blockade
+
+- **WHEN** the train-of-four ratio lies between 0.4 and 0.9
+- **THEN** the qualitative twitch display shows no detectable fade while the quantitative ratio readout shows the true value, reproducing the insensitivity of subjective assessment that the guideline is built on, and the debrief names extubation below a ratio of 0.9 as residual blockade
 
 #### Scenario: Succinylcholine in a patient with pseudocholinesterase deficiency
 
@@ -102,10 +117,15 @@ The engine SHALL model neuromuscular blockade as a train-of-four ratio and count
 
 The engine SHALL model sevoflurane uptake from the vaporizer through the breathing circuit to the alveolus and effect site, and SHALL express depth as an age-adjusted minimum alveolar concentration fraction.
 
-#### Scenario: MAC is age-adjusted
+#### Scenario: MAC is age-adjusted per the iso-MAC relationship
 
 - **WHEN** end-tidal sevoflurane is 2.0 vol % in a 20-year-old and in an 80-year-old
-- **THEN** the reported MAC fraction is higher in the older patient, matching the published age-adjustment equation
+- **THEN** the reported minimum alveolar concentration fraction is higher in the older patient, reproducing the age-related iso-MAC relationship of Nickalls and Mapleson (*Br J Anaesth* 2003;91:170–4)
+
+#### Scenario: Nitrous oxide contributes to total MAC
+
+- **WHEN** 60% nitrous oxide is added at a fixed end-tidal sevoflurane concentration
+- **THEN** the total minimum alveolar concentration fraction rises additively as the iso-MAC charts describe, and the interface shows the contribution of each agent separately
 
 #### Scenario: Fresh gas flow changes wash-in speed
 

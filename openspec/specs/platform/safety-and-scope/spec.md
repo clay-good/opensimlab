@@ -25,6 +25,25 @@ The application SHALL state that it is an educational simulator and not a clinic
 - **WHEN** any transcript, log, chart image, or CSV is exported
 - **THEN** the exported artifact embeds the not-for-clinical-use statement and the engine and model-set versions in its content or metadata
 
+### Requirement: Regulatory Position Is Stated And Maintained
+
+The project SHALL state its regulatory position explicitly: it is educational training software, not a medical device, and it SHALL be designed to stay inside that boundary. The United States Food and Drug Administration lists software intended for health care professionals as an educational tool for medical training — including software that simulates clinical scenarios to train professionals — among examples of software functions that are not medical devices, on the ground that it does not diagnose, treat, or facilitate assessment of a specific patient.
+
+#### Scenario: The position is written down and sourced
+
+- **WHEN** an institutional reviewer asks whether this is a regulated device
+- **THEN** the documentation states the position, cites the FDA's published examples of software functions that are not medical devices, notes that classification in other jurisdictions is the adopter's responsibility, and states plainly that the project has not sought and does not hold any device clearance
+
+#### Scenario: A proposed feature that would cross the line is refused
+
+- **WHEN** a feature would accept a specific real patient's data, produce a dose recommendation for a real patient, or otherwise facilitate assessment of a real individual
+- **THEN** it is out of scope, and the rationale records that implementing it would change the regulatory classification
+
+#### Scenario: The boundary is testable, not merely promised
+
+- **WHEN** the architecture tests run
+- **THEN** they assert that no code path accepts real-patient input and that the target-solving module is reachable only from simulation surfaces, so the regulatory position rests on structure rather than intent
+
 ### Requirement: No Real-Patient Data Path
 
 The application SHALL provide no field, import, or integration that accepts identifiable information about a real person.
@@ -72,16 +91,11 @@ Numeric outputs SHALL be displayed with a precision no greater than the underlyi
 - **WHEN** a value derives from a model auto-tiered to `D` by an envelope violation or from a pedagogical illustrative model
 - **THEN** the readout carries a persistent marker distinguishing it from curated in-envelope output
 
-### Requirement: Content Accuracy Review
+### Requirement: Clinical Content Review Is Delegated To Governance
 
-Every bundled scenario, protocol, and debrief text SHALL be reviewed by a named, credentialed clinician before release, and the review SHALL be recorded in the repository.
+Every bundled scenario, protocol, drug card, explainer, and debrief text SHALL pass the named clinical review process defined by the clinical governance capability before release. This capability defines the safety boundary; governance defines who signs the content and how currency is maintained.
 
-#### Scenario: Unreviewed clinical content cannot ship
+#### Scenario: The two capabilities do not diverge
 
-- **WHEN** a scenario file lacks a `clinical_review` block naming the reviewer, their credential, and the review date
-- **THEN** the release build excludes it and the build reports the omission
-
-#### Scenario: Protocol content names its source and vintage
-
-- **WHEN** a crisis protocol is displayed
-- **THEN** it names the guideline it derives from and the year of that guideline, so a learner can tell whether it is current
+- **WHEN** the release build runs
+- **THEN** it enforces a single review gate implemented once, and a content item without a current review record is excluded regardless of which capability's requirement is cited

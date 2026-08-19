@@ -25,14 +25,37 @@ Every pharmacokinetic and pharmacodynamic parameter SHALL be declared in a typed
 - **WHEN** the test suite runs
 - **THEN** each model asserts the published reference-individual parameter values and at least one published concentration-time point from its source paper, so a mistyped digit fails immediately
 
-### Requirement: Initial Drug Coverage
+### Requirement: Initial Model Set Is Named And Cited
 
-The anesthesia module SHALL ship with, at minimum: propofol (Marsh 1991, Schnider 1998, Eleveld 2018, and a pediatric model), remifentanil (Minto 1997, Eleveld 2017), fentanyl (Shafer 1990), dexmedetomidine (Hannivoort 2015), rocuronium, succinylcholine, sugammadex, neostigmine, sevoflurane with age-adjusted minimum alveolar concentration, and the propofol–remifentanil interaction surface.
+The anesthesia module SHALL ship at minimum the following models, each implemented from the named primary publication:
+
+| Drug | Model | Primary source |
+| --- | --- | --- |
+| Propofol | Marsh 1991 | Marsh, White, Morton, Kenny. *Br J Anaesth* 1991 |
+| Propofol | Schnider 1998 | Schnider et al. *Anesthesiology* 1998 |
+| Propofol | Eleveld 2018 (general purpose, birth to elderly) | Eleveld, Colin, Absalom, Struys. *Br J Anaesth* 2018;120:942–59 |
+| Propofol | Paedfusor / Kataria (pediatric) | Absalom & Kenny 2005; Kataria et al. 1994 |
+| Remifentanil | Minto 1997 | Minto et al. *Anesthesiology* 1997;86:10–23 (PMID 9009935) and 86:24–33 (PMID 9009936) |
+| Remifentanil | Eleveld 2017 | Eleveld et al. *Br J Anaesth* 2017 |
+| Fentanyl | Shafer 1990 | Shafer et al. *Anesthesiology* 1990 |
+| Dexmedetomidine | Hannivoort 2015 | Hannivoort et al. *Anesthesiology* 2015 |
+| Rocuronium | Wierda 1991 with train-of-four pharmacodynamics | Wierda et al. 1991 |
+| Succinylcholine | Roy 2004 | Roy et al. 2004 |
+| Sevoflurane, isoflurane, desflurane | Age-related iso-MAC | Nickalls & Mapleson. *Br J Anaesth* 2003;91:170–4 |
+| Propofol + remifentanil | Response-surface interaction | Published hypnotic–opioid response-surface model |
+| Depth of anesthesia | Eleveld two-slope sigmoid | Eleveld et al. *Br J Anaesth* 2018 |
+
+Every entry SHALL resolve to an executable kernel and a full citation with a resolvable identifier.
 
 #### Scenario: Every shipped drug has a working model and a citation
 
 - **WHEN** the drug formulary is enumerated
-- **THEN** each entry resolves to an implemented model with an executable kernel and a resolvable citation, and the build fails if any formulary entry lacks either
+- **THEN** each entry resolves to an implemented model with an executable kernel and a citation carrying a digital object identifier or PubMed identifier, and the build fails if any entry lacks either
+
+#### Scenario: Model choice per patient is defensible
+
+- **WHEN** a scenario declares an adult patient and does not name a propofol model
+- **THEN** Eleveld 2018 is selected as the default because it is the only shipped adult model derived across a broad population including obesity and old age, and the choice and its reason are recorded in the transcript
 
 #### Scenario: A drug the module needs but literature does not cover is labeled
 
@@ -108,6 +131,58 @@ The engine SHALL NOT borrow a parameter from a sibling model, impute a plausible
 
 - **WHEN** prediction bands are enabled and the active model publishes no between-subject variability
 - **THEN** a bare line is drawn, the model is named as band-ineligible with the reason, and no band is borrowed from another model
+
+### Requirement: Transcription Is Double-Sourced And Independently Checked
+
+Every parameter SHALL be transcribed from the primary publication and independently checked against a second source before it is marked verified. Acceptable second sources are the paper's own erratum or corrigendum, an independent published implementation, or an open reference implementation such as the Open TCI initiative's archived model files. The check SHALL be performed by a different person than the transcriber and recorded.
+
+#### Scenario: A parameter carries its transcription record
+
+- **WHEN** a model parameter is inspected in source
+- **THEN** it records the primary source locator (table, page, or appendix), the second source consulted, the checker, and the date, and any parameter missing that record is marked unverified in the interface
+
+#### Scenario: A known corrigendum is applied
+
+- **WHEN** a source publication has issued a corrigendum affecting parameters — as the Eleveld 2018 propofol paper did
+- **THEN** the corrected values are used, the corrigendum is cited alongside the original, and a test asserts the corrected value specifically
+
+#### Scenario: Unverified parameters are visible, not silent
+
+- **WHEN** any active model contains an unverified parameter
+- **THEN** the model detail panel names that parameter as pending independent check, so a clinician evaluating the tool knows exactly what has and has not been double-checked
+
+### Requirement: Known Failure Modes Are Encoded, Not Just Documented
+
+Where a publication or the subsequent literature documents a specific failure mode of a model, that failure mode SHALL be encoded as an executable predicate that demotes the model, not merely described in prose.
+
+#### Scenario: The James lean-body-mass inversion is caught
+
+- **WHEN** a patient's body habitus enters the range where the James 1976 lean body mass equation inverts, affecting Schnider 1998 propofol and Minto 1997 remifentanil
+- **THEN** the affected model is demoted to **Out of range**, the reason names the equation and the non-physical behavior it produces, and an in-range alternative is offered
+
+#### Scenario: The failure is demonstrable to a learner
+
+- **WHEN** a learner overrides the demotion to see what happens
+- **THEN** the resulting non-physical curve is displayed with an explanation of why it is wrong, turning the failure mode into the lesson
+
+### Requirement: The Depth Index Is A Model Prediction, Not A Monitor Reading
+
+The depth-of-anesthesia value SHALL be presented as a **predicted** index derived from a published pharmacodynamic model, on the 0–100 scale those models are calibrated to, and SHALL NOT be presented as the output of any commercial monitor. Trademarked monitor names SHALL be used only nominatively, to identify the scale a published model was fitted to, and never as the name of the application's own display.
+
+#### Scenario: The index is labeled as predicted
+
+- **WHEN** the depth index is displayed
+- **THEN** it is labeled as a predicted index with its source model named, and its detail panel states that it is computed from effect-site concentration rather than measured from an electroencephalogram
+
+#### Scenario: No commercial monitor is imitated or implied
+
+- **WHEN** the interface and marketing text are reviewed
+- **THEN** no trademarked monitor name is used as a product name, a display label, or a logo, and any reference appears only as a citation of the scale a published model targets
+
+#### Scenario: The limitations of depth monitoring are taught
+
+- **WHEN** a learner opens the depth index explainer
+- **THEN** it states that processed-electroencephalogram indices behave differently with ketamine, nitrous oxide, and in the elderly, are susceptible to electromyographic artifact, and that large trials have not shown a single index to be uniformly superior to end-tidal agent guidance for preventing awareness
 
 ### Requirement: Drug Cards Teach The Drug, Not Just The Math
 

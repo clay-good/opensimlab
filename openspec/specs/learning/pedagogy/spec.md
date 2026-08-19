@@ -48,9 +48,24 @@ The application SHALL offer three guidance levels — Guided, Coached, and Unass
 - **WHEN** the same transcript is replayed under each guidance level
 - **THEN** the state traces are identical, proving guidance is presentational only
 
-### Requirement: Structured Debrief
+### Requirement: Debrief Follows The PEARLS Framework
 
-Every session SHALL end with a debrief containing: a timeline of key events, the objectives with an outcome for each, the physiological attribution for the major state changes, the specific decision points with what happened and what the alternatives would have produced, and links to the underlying models and citations.
+Every session SHALL end with a debrief structured on PEARLS (Promoting Excellence and Reflective Learning in Simulation; Eppich and Cheng, *Simul Healthc* 2015;10:106–15, PMID 25710312), the established blended debriefing framework, proceeding through its phases: **reactions**, **description**, **analysis**, and **summary and application**. Within each phase the debrief SHALL contain a timeline of key events, the objectives with an outcome for each, the physiological attribution for major state changes, the decision points with what happened and what the alternatives would have produced, and links to the underlying models and citations.
+
+#### Scenario: The learner speaks before the system explains
+
+- **WHEN** the debrief opens
+- **THEN** the reactions phase invites the learner's own account first, and the system's analysis is not shown until the learner has moved past it, because self-assessment before directive feedback is the framework's core sequence
+
+#### Scenario: The debrief adapts its depth like a facilitator would
+
+- **WHEN** the learner's own account already identifies the key issue accurately
+- **THEN** the analysis phase confirms and extends it rather than re-teaching it; **AND WHEN** the account misses the issue, the analysis provides focused directive feedback naming the specific observation
+
+#### Scenario: The framework is named and cited
+
+- **WHEN** an educator asks what debriefing model the tool uses
+- **THEN** the documentation names PEARLS with its citation, and describes which elements are automated and which a human facilitator should still provide
 
 #### Scenario: Debrief explains a hypotensive episode causally
 
@@ -99,6 +114,44 @@ The bundled curriculum SHALL contain at least one scenario and one debrief treat
 
 - **WHEN** a crisis scenario is completed
 - **THEN** the debrief compares the learner's action sequence against the scenario's published protocol steps, reporting each step as performed on time, performed late with the delay, or omitted
+
+### Requirement: Alignment With Healthcare Simulation Standards
+
+The design of the simulated experience SHALL follow the INACSL Healthcare Simulation Standards of Best Practice, and the documentation SHALL state how each relevant standard is met, including prebriefing, simulation design, outcomes and objectives, facilitation, professional integrity, and debriefing.
+
+#### Scenario: Every scenario has a prebrief
+
+- **WHEN** a scenario starts
+- **THEN** a prebriefing screen orients the learner to the environment, the controls, the patient, the objectives, and the fiction contract — that this is a simulation and errors here are safe — before the clock runs
+
+#### Scenario: Objectives are measurable and stated up front
+
+- **WHEN** a scenario's objectives are inspected
+- **THEN** each is specific and observable, is presented before the session, and is addressed in the debrief, satisfying the outcomes-and-objectives standard
+
+#### Scenario: Professional integrity is designed in
+
+- **WHEN** a learner performs poorly
+- **THEN** no score, ranking, or shareable judgment is produced, the debrief addresses behavior rather than the person, and nothing about the session leaves the device — the technical expression of the confidentiality the standard requires
+
+#### Scenario: Conformance is documented for an educator
+
+- **WHEN** an educator evaluates the tool against the standards
+- **THEN** the documentation maps each relevant standard to the feature that satisfies it and states plainly which standards require a human facilitator that software cannot replace
+
+### Requirement: Psychological Safety In A Solo Tool
+
+The application SHALL preserve the safe-container principle of simulation debriefing in a context with no facilitator present.
+
+#### Scenario: Failure is framed as information
+
+- **WHEN** a learner's patient comes to harm in the simulation
+- **THEN** the debrief opens by naming what the learner was trying to achieve and what made the situation difficult, before addressing what would have worked, and never uses language that evaluates the learner as a person
+
+#### Scenario: A distressing outcome is handled with care
+
+- **WHEN** a scenario ends in simulated patient death
+- **THEN** the application acknowledges that this is affecting even in simulation, states that the outcome reflects the scenario's design and not the learner's worth, and offers to move to the debrief when the learner is ready rather than immediately
 
 ### Requirement: Practice Is Repeatable And Comparable To Oneself
 

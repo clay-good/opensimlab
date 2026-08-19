@@ -25,6 +25,16 @@ The anesthesia module SHALL declare a competency map: a named, versioned set of 
 - **WHEN** the shipped map is enumerated
 - **THEN** it covers at minimum: preoperative assessment and risk, induction and airway management, maintenance and depth titration, hemodynamic management, fluid and blood management, neuromuscular blockade and reversal, emergence and extubation, and crisis management
 
+#### Scenario: Each competency carries its external framework mapping
+
+- **WHEN** a competency is inspected
+- **THEN** it declares the external training-framework mappings defined by the adoption capability, so a program can trace it to their own accreditation requirements rather than to a vocabulary invented here
+
+#### Scenario: The map is honest about what it cannot assess
+
+- **WHEN** a competency requires psychomotor skill, physical examination, or team communication
+- **THEN** it is marked as out of scope for this tool with a statement of what would assess it, rather than being assessed by proxy
+
 ### Requirement: Progressive Unlocking With An Escape Hatch
 
 Scenarios SHALL be ordered into a suggested path where later scenarios assume earlier competencies, and the application SHALL recommend the next scenario. Any scenario SHALL nonetheless be openable directly at any time.
