@@ -1,0 +1,155 @@
+# engine/physiology Specification
+
+## Purpose
+
+Defines the virtual patient: the hemodynamic, respiratory, neuromuscular, and metabolic state variables, the homeostatic reflexes that regulate them, and the way drug effect, ventilator settings, fluid status, and surgical stimulus combine to move them. This is the layer that turns a concentration into a monitor number.
+
+## Requirements
+
+### Requirement: Canonical Patient State Vector
+
+The engine SHALL maintain a single explicit patient state vector, updated every 100 ms, containing at minimum: heart rate (bpm), systolic / diastolic / mean arterial pressure (mmHg), cardiac output (L/min), stroke volume (mL), systemic vascular resistance (dyn·s·cm⁻⁵), circulating blood volume (mL), hemoglobin (g/dL), arterial oxygen saturation (%), end-tidal carbon dioxide (mmHg), respiratory rate (breaths/min), tidal volume (mL), core temperature (°C), bispectral index (0–100), train-of-four ratio (0–1), and end-tidal sevoflurane (vol %) with its age-adjusted MAC fraction.
+
+#### Scenario: Every state variable is typed and bounded
+
+- **WHEN** the state vector is emitted
+- **THEN** each field carries an explicit SI or clinical unit in its type, and any value outside its physiological hard bound is clamped and logged as an engine warning rather than rendered
+
+#### Scenario: Baseline reflects the patient profile
+
+- **WHEN** a scenario loads a 72 y, 60 kg female with ASA III and treated hypertension
+- **THEN** the initial state vector reflects the profile's baseline blood pressure and heart rate from the scenario definition, not a fixed 120/80 and 70 bpm default
+
+### Requirement: Hemodynamic Response Model
+
+Mean arterial pressure SHALL be derived from cardiac output and systemic vascular resistance rather than set directly:
+
+```
+MAP  = CO * SVR / 80 + CVP
+CO   = HR * SV
+```
+
+Anesthetic agents SHALL act on the physiologic terms — vasodilation reduces `SVR`, myocardial depression reduces `SV` — so that the same MAP arrived at by different mechanisms responds differently to treatment.
+
+#### Scenario: Propofol induction produces vasodilatory hypotension
+
+- **WHEN** a 2 mg/kg propofol bolus reaches peak effect site in the reference adult
+- **THEN** systemic vascular resistance falls, mean arterial pressure falls by a scenario-defined magnitude, and the cause recorded in the state trace is vasodilation rather than an unattributed pressure drop
+
+#### Scenario: Vasopressor treats the right mechanism
+
+- **WHEN** hypotension is vasodilatory and phenylephrine is given
+- **THEN** systemic vascular resistance rises, mean arterial pressure recovers, and heart rate falls through the baroreflex
+
+#### Scenario: Vasopressor is insufficient for hypovolemia
+
+- **WHEN** mean arterial pressure is low because circulating volume has fallen 25% from hemorrhage and phenylephrine alone is given
+- **THEN** mean arterial pressure rises only transiently and returns toward the hypotensive value, while cardiac output remains depressed, until volume is replaced
+
+### Requirement: Baroreflex And Autonomic Regulation
+
+The engine SHALL implement a baroreflex that adjusts heart rate and systemic vascular resistance toward a set-point mean arterial pressure with a first-order time constant, and SHALL attenuate reflex gain in proportion to anesthetic depth and to opioid effect-site concentration.
+
+#### Scenario: Awake patient compensates for blood loss
+
+- **WHEN** 500 mL of blood is lost from an awake, unanesthetized virtual patient
+- **THEN** heart rate rises and systemic vascular resistance rises, holding mean arterial pressure within 10% of baseline
+
+#### Scenario: Anesthetized patient does not compensate
+
+- **WHEN** the same 500 mL loss occurs at a bispectral index of 45 with remifentanil running
+- **THEN** the reflex tachycardia is markedly blunted and mean arterial pressure falls substantially, teaching that anesthesia removes the compensation that masks hypovolemia
+
+### Requirement: Respiratory And Gas Exchange Model
+
+The engine SHALL model alveolar ventilation, carbon dioxide production and clearance, and oxygen uptake, so that end-tidal carbon dioxide and arterial oxygen saturation follow from ventilator settings, apnea, airway obstruction, and metabolic rate.
+
+#### Scenario: Hypoventilation raises end-tidal carbon dioxide
+
+- **WHEN** minute ventilation is halved by reducing respiratory rate from 12 to 6 at constant tidal volume
+- **THEN** end-tidal carbon dioxide rises toward a new steady state with a time constant consistent with body carbon dioxide stores, not instantaneously
+
+#### Scenario: Apnea desaturates after a realistic delay
+
+- **WHEN** ventilation stops entirely after preoxygenation to an inspired oxygen fraction of 1.0
+- **THEN** arterial oxygen saturation stays above 90% for a preoxygenation-dependent apnea time and then falls along the steep part of the oxyhemoglobin dissociation curve
+
+#### Scenario: Obesity and preoxygenation change the safe apnea time
+
+- **WHEN** the same apnea occurs in an obese patient without preoxygenation
+- **THEN** the time to a saturation of 90% is markedly shorter than in the preoxygenated reference adult
+
+### Requirement: Neuromuscular Blockade
+
+The engine SHALL model neuromuscular blockade as a train-of-four ratio and count driven by the effect-site concentration of the administered blocking agent, using the Hypnos rocuronium and succinylcholine models, and SHALL model reversal by neostigmine and by sugammadex encapsulation.
+
+#### Scenario: Rocuronium produces intubating conditions then recovers
+
+- **WHEN** 0.6 mg/kg rocuronium is given
+- **THEN** the train-of-four count reaches zero within a model-consistent onset time and recovers spontaneously over the expected duration
+
+#### Scenario: Sugammadex reverses deep block, neostigmine does not
+
+- **WHEN** sugammadex is given at a train-of-four count of zero with one post-tetanic count
+- **THEN** the train-of-four ratio recovers above 0.9 within minutes; **AND WHEN** neostigmine is given at the same depth instead, recovery is minimal, demonstrating the reversal-agent distinction
+
+#### Scenario: Succinylcholine in a patient with pseudocholinesterase deficiency
+
+- **WHEN** the scenario sets the plasma cholinesterase phenotype to deficient and succinylcholine is given
+- **THEN** the block persists far beyond the normal duration and the debrief names prolonged block as the finding
+
+### Requirement: Volatile Agent Uptake And MAC
+
+The engine SHALL model sevoflurane uptake from the vaporizer through the breathing circuit to the alveolus and effect site, and SHALL express depth in age-adjusted minimum alveolar concentration fraction using the Hypnos `sevoflurane_mac` model.
+
+#### Scenario: MAC is age-adjusted
+
+- **WHEN** end-tidal sevoflurane is 2.0 vol % in a 20-year-old and in an 80-year-old
+- **THEN** the reported MAC fraction is higher in the older patient, matching the published age-adjustment equation
+
+#### Scenario: Fresh gas flow changes wash-in speed
+
+- **WHEN** the vaporizer is set to 4 vol % at a fresh gas flow of 1 L/min and again at 8 L/min
+- **THEN** the end-tidal concentration approaches the dial setting substantially faster at the higher flow
+
+### Requirement: Fluids, Blood Loss, And Transfusion
+
+The engine SHALL track circulating volume and hemoglobin, apply the differing volume-expanding efficiency of crystalloid and blood products, and reduce oxygen delivery as hemoglobin falls.
+
+#### Scenario: Crystalloid dilutes hemoglobin
+
+- **WHEN** 1000 mL of crystalloid is given after a 1000 mL hemorrhage
+- **THEN** circulating volume partially recovers, hemoglobin falls further by dilution, and oxygen delivery improves less than volume alone would suggest
+
+#### Scenario: Packed red cells restore oxygen delivery
+
+- **WHEN** two units of packed red cells are given in the same state
+- **THEN** hemoglobin and calculated oxygen delivery both rise, and the event log records the volume and the hemoglobin change
+
+### Requirement: Surgical Stimulus
+
+The engine SHALL model surgical stimulus as a time-varying scalar that raises heart rate, blood pressure, and bispectral index, and that is opposed by hypnotic and opioid effect.
+
+#### Scenario: Incision without opioid provokes a response
+
+- **WHEN** surgical incision occurs at a bispectral index of 55 with no opioid on board
+- **THEN** heart rate and mean arterial pressure rise and the bispectral index transiently increases
+
+#### Scenario: Adequate opioid blunts the response
+
+- **WHEN** the same incision occurs with an effect-site remifentanil concentration in the analgesic range
+- **THEN** the hemodynamic response is markedly attenuated, demonstrating the hypnotic–opioid balance
+
+### Requirement: Physiology Is Reproducible And Attributable
+
+Every change to a state variable SHALL be attributable to a named contributing term, and the engine SHALL be able to emit that attribution for debriefing and for testing.
+
+#### Scenario: Debrief explains a pressure drop
+
+- **WHEN** a learner asks why mean arterial pressure fell at a given simulated time
+- **THEN** the engine reports the ranked contributions — for example propofol vasodilation, hemorrhage, and positive-pressure ventilation — with each term's share
+
+#### Scenario: Noise is seeded
+
+- **WHEN** physiological variability or sensor noise is applied
+- **THEN** it is drawn from a seeded pseudorandom generator recorded in the session, so the same seed reproduces the same trace exactly

@@ -1,0 +1,41 @@
+schema: spec-driven
+
+context: |
+  Project: Open-SimLab (opensimlab.com) — an open-source, browser-native clinical
+  simulator for medical students, residents, and CRNAs worldwide. First domain module
+  is Anesthesiology at /anesthesia; later modules mount at /oncology, /cardiology, and so on.
+
+  Product principles:
+    - Zero login, zero install, sub-second first interaction.
+    - 100% client-side: no patient metrics, keystrokes, or usage logs leave the device.
+    - Deterministic, citation-backed physiology built on the Hypnos PK/PD dataset.
+    - Usable by ANY human medical student: offline, low-end Android, 2G, screen reader,
+      colorblind-safe, translated, both SI and conventional units.
+
+  Tech stack: TypeScript, Vite, React, Tailwind CSS, Zustand, HTML5 Canvas 2D,
+  Web Worker for the solver, Service Worker for offline. Static assets only,
+  deployed to Cloudflare Pages. No backend, no database, no analytics vendor.
+
+  Upstream dependency: Hypnos (github.com/clay-good/hypnos) — a Python + JSON dataset of
+  citation-backed PK/PD model parameters with confidence tiers and applicability
+  envelopes. Hypnos is FORWARD-ONLY and marks every export clinicalUse = "PROHIBITED".
+  There is no published `@hypnos/core` npm package; Open-SimLab ships its own TypeScript
+  engine that consumes the Hypnos JSON dataset as the source of truth and proves numeric
+  parity against the Python reference kernels.
+
+  Hard safety rule: Open-SimLab is an educational simulator. It is NOT a clinical
+  decision-support tool, NOT a dosing calculator, and NOT validated for any decision
+  affecting a real patient. Every surface that could be mistaken for a clinical
+  recommendation must carry that statement.
+
+  Conventions: conventional commits; American English; SI units internally with a
+  display-layer conversion; all times in simulated seconds from scenario start.
+
+rules:
+  specs:
+    - Every requirement must be independently testable by an automated test or a
+      documented manual procedure. Avoid unmeasurable words like "fast" or "intuitive".
+    - Quantify thresholds. Give numbers, units, and tolerances.
+    - Where a requirement encodes clinical content, name the Hypnos model id or the
+      published source it derives from.
+    - Prefer failure-mode scenarios alongside happy-path scenarios.
