@@ -15,6 +15,16 @@ The application SHALL state that it is an educational simulator and not a clinic
 - **WHEN** a visitor loads the application for the first time on a device
 - **THEN** the not-for-clinical-use statement is displayed and must be acknowledged once before the cockpit becomes interactive, and the acknowledgement is stored locally
 
+#### Scenario: The acknowledgement gates the cockpit, not the document
+
+- **WHEN** a crawler or a scripting-disabled browser fetches a simulator route
+- **THEN** the prerendered content and metadata are present in the response, because the acknowledgement gates interaction with the cockpit rather than the delivery of the page
+
+#### Scenario: The landing page does not repeat the gate
+
+- **WHEN** a visitor is on the landing page
+- **THEN** the statement appears in the footer as required, and no acknowledgement is demanded, because nothing on that page can be mistaken for clinical guidance
+
 #### Scenario: The statement persists after acknowledgement
 
 - **WHEN** the learner is mid-session

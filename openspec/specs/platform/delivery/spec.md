@@ -27,7 +27,7 @@ The production artifact SHALL be a set of static files — HTML, JavaScript, CSS
 
 ### Requirement: Route Scheme
 
-The application SHALL serve the anesthesiology module at `/anesthesia`, reserve `/oncology` and `/cardiology` for later modules, and serve a landing page at `/` that explains the project and routes the visitor to a module. Deep links into a scenario SHALL be shareable and SHALL carry no learner data.
+The application SHALL serve the anesthesiology module at `/anesthesia`, reserve `/cardiology`, `/oncology`, and further module segments for later modules, and serve a landing page at `/` whose content is defined by the landing capability. Indexable routes SHALL be prerendered as defined by the discoverability capability. Deep links into a scenario SHALL be shareable and SHALL carry no learner data.
 
 #### Scenario: A module deep link works cold
 
@@ -36,8 +36,8 @@ The application SHALL serve the anesthesiology module at `/anesthesia`, reserve 
 
 #### Scenario: An unbuilt module route is honest
 
-- **WHEN** a visitor opens `/oncology` before that module exists
-- **THEN** a page states that the module is planned, describes what it will cover, and links to the anesthesiology module, rather than returning a generic error
+- **WHEN** a visitor opens `/cardiology` before that module exists
+- **THEN** a page states that the module is planned, describes what it will cover, and links to the anesthesiology module, rather than returning a generic error; the page is prerendered and indexable but promises no date
 
 #### Scenario: Links carry no state about the learner
 

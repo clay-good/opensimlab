@@ -96,19 +96,36 @@
 - [ ] 10.5 Implement the not-for-clinical-use acknowledgement, the persistent simulator marker, and the statement embedded in every export
 - [ ] 10.6 Write the architecture tests: no inverse control in the kernel, no real-patient input path, no foreign origin, no external pharmacology dependency
 
-## 11. Ship It Offline And Measure It
+## 11. The Front Door
 
-- [ ] 11.1 Implement the cache-first service worker with explicit update acceptance and the double-failure unregister escape
-- [ ] 11.2 Web app manifest and installability across Android, iOS, and desktop
-- [ ] 11.3 Assert zero network requests during a complete session after first load
-- [ ] 11.4 Enforce the 1.5 MB interactive and 8 MB full-bundle budgets in CI
-- [ ] 11.5 Deploy to `opensimlab.com/anesthesia` behind an honest alpha status notice
-- [ ] 11.6 Publish the first validation report, including everything not yet validated
+- [ ] 11.1 Build the landing page front matter: name, one-line description, live ECG hero reusing the waveform generator only, single primary action to `/anesthesia`
+- [ ] 11.2 Add the reduced-motion and no-JavaScript static hero fallback with no layout shift on takeover
+- [ ] 11.3 Add the three supporting facts and the module directory rendering from module declarations, with cardiology and others marked Planned and no dates
+- [ ] 11.4 Write the below-the-fold prose: what it teaches, who it is for, what is in the anesthesia module, where the pharmacology comes from, what it does not do, how to use it in a course
+- [ ] 11.5 Write the questions section, answering the module timing question honestly as no date promised
+- [ ] 11.6 Build the footer trust block linking the validation report, governance, limitations register, license, repository, and citation
+- [ ] 11.7 Enforce the landing route's own 150 KB and 1.2 s budgets in CI, separate from the simulator budget
+- [ ] 11.8 Add the low-priority prefetch of the anesthesia entry bundle, skipped on save-data or slow connections
+- [ ] 11.9 Prerender every indexable route to static HTML; assert content is present with scripting disabled
+- [ ] 11.10 Per-route title, description, and canonical, with uniqueness and length assertions in CI; keep `/anesthesia` metadata minimal and copy-free
+- [ ] 11.11 JSON-LD: `WebSite` and `Organization` at the root, `SoftwareApplication` for the simulator, `LearningResource` for the scenario briefing; validate in CI and source reviewer names from the governance records
+- [ ] 11.12 Build-time Open Graph image generation from design tokens; sitemap and robots generated and asserted against the prerendered route set
+- [ ] 11.13 Verify the service worker is not registered for crawlers and never serves stale metadata
+- [ ] 11.14 Audit link text for descriptiveness; confirm no tracking parameters anywhere
 
-## 12. The Gate
+## 12. Ship It Offline And Measure It
 
-- [ ] 12.1 Recruit at least three credentialed clinician reviewers — started in parallel from task 1, not here
-- [ ] 12.2 Write the face-validity rubric covering waveform realism and physiological plausibility, not feature coverage
-- [ ] 12.3 Run the review; record every rating and every objection verbatim
-- [ ] 12.4 Triage: correct the model, or record the limitation and label it in the interface
-- [ ] 12.5 Decide explicitly — extend this change, or open the next one. Do not start breadth work on an unconvincing patient
+- [ ] 12.1 Implement the cache-first service worker with explicit update acceptance and the double-failure unregister escape
+- [ ] 12.2 Web app manifest and installability across Android, iOS, and desktop
+- [ ] 12.3 Assert zero network requests during a complete session after first load
+- [ ] 12.4 Enforce the 1.5 MB interactive and 8 MB full-bundle budgets in CI
+- [ ] 12.5 Deploy to `opensimlab.com/anesthesia` behind an honest alpha status notice
+- [ ] 12.6 Publish the first validation report, including everything not yet validated
+
+## 13. The Gate
+
+- [ ] 13.1 Recruit at least three credentialed clinician reviewers — started in parallel from task 1, not here
+- [ ] 13.2 Write the face-validity rubric covering waveform realism and physiological plausibility, not feature coverage
+- [ ] 13.3 Run the review; record every rating and every objection verbatim
+- [ ] 13.4 Triage: correct the model, or record the limitation and label it in the interface
+- [ ] 13.5 Decide explicitly — extend this change, or open the next one. Do not start breadth work on an unconvincing patient

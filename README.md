@@ -91,6 +91,8 @@ specification is the capability tree under [`openspec/specs/`](openspec/specs/).
 | --- | --- |
 | [`platform/clinical-governance`](openspec/specs/platform/clinical-governance/spec.md) | Editorial board, signed content, guideline currency, corrections log, limitations register |
 | [`platform/adoption`](openspec/specs/platform/adoption/spec.md) | Curriculum mapping, classroom use, citability, procurement docs, instructor authoring |
+| [`platform/landing`](openspec/specs/platform/landing/spec.md) | The front door at `opensimlab.com`: one screen, one action, live ECG hero, honest module directory |
+| [`platform/discoverability`](openspec/specs/platform/discoverability/spec.md) | Prerendering, per-route metadata, structured data, social previews, search without surveillance |
 | [`platform/practice-region`](openspec/specs/platform/practice-region/spec.md) | Technique availability, formulary, protocol variant, and terminology by country |
 | [`platform/sustainability`](openspec/specs/platform/sustainability/spec.md) | Bus factor, succession, dependency ceiling, supply chain, funding disclosure, honest status |
 | [`platform/safety-and-scope`](openspec/specs/platform/safety-and-scope/spec.md) | Not-for-clinical-use guards, regulatory position, the forward-only boundary |
@@ -106,6 +108,22 @@ Validate the tree with:
 ```bash
 openspec validate --specs --strict
 ```
+
+### The front door
+
+`opensimlab.com` is one short page: the name, a one-line description, a live electrocardiogram
+drawn by the project's own waveform engine as the only color on the screen, and a single button
+into `/anesthesia`. Below it sits the substantive prose — what the simulator teaches, who it is
+for, where the pharmacology comes from, what it deliberately does not do. The module directory
+lists **Anesthesia** as available and **Cardiology** and others as *Planned*, with no dates
+promised, because the project does not commit to schedules it cannot keep.
+
+Search weight is concentrated at the root domain on purpose. The simulator itself carries only a
+title, a description, a canonical URL, and social tags — no marketing copy in the cockpit. Every
+indexable route is prerendered to static HTML so a crawler, a scripting-disabled browser, and a
+link preview all get real content without executing the app. Search performance is measured only
+through a webmaster console, which needs no script on the page, so the no-telemetry guarantee
+holds.
 
 ### What gets built first
 

@@ -18,7 +18,9 @@ Build a vertical slice: one scenario, one patient, one drug pair, the real monit
 
 It is chosen because it exercises the compartment solver, the interaction surface, the hemodynamic response, the airway sequence, apnea and desaturation, all five traces, the alarm system, the concentration plot, and the debrief — while requiring only two pharmacology models and one scenario file to reach clinical review.
 
-**Explicitly out of scope for this change:** every crisis scenario, the Model Lens, prediction bands, target-controlled infusion, the curriculum and competency map, spaced practice, instructor mode, the sandbox, scenario authoring, translation beyond English, additional practice regions beyond the two required, and the oncology and cardiology module stubs.
+**The landing page ships with it.** `opensimlab.com` is the only route most visitors will ever see first, and a simulator with no front door cannot be shared, cited, or found. It is small enough to build alongside the slice and carries all of the project's descriptive prose and search metadata, which keeps that weight out of the simulator itself.
+
+**Explicitly out of scope for this change:** every crisis scenario, the Model Lens, prediction bands, target-controlled infusion, the curriculum and competency map, spaced practice, instructor mode, the sandbox, scenario authoring, translation beyond English, and additional practice regions beyond the two required. The cardiology and oncology routes ship only as honest prerendered "planned" pages.
 
 **Ends with a gate, not a launch.** The slice is reviewed by at least three clinicians against the face-validity rubric. If waveform realism or physiological plausibility fails, this change is extended rather than the next one started.
 

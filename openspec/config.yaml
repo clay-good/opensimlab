@@ -64,6 +64,12 @@ context: |
   ISO 80601-2-61) is how anesthetists actually track saturation, and it doubles as the
   strongest accessibility affordance we have. Audio is opt-in and never the only channel.
 
+  The front door at opensimlab.com is one short, tasteful page: live ECG hero, one button into
+  /anesthesia, honest module directory (Cardiology and others marked Planned, no dates). ALL the
+  descriptive prose and search metadata lives on the root domain; /anesthesia carries only
+  essential metadata and never marketing copy. Every indexable route is prerendered static HTML.
+  Search is measured only via a webmaster console — never a script on the page.
+
   Sustainability is an adoption question, not an afterthought. A program adopting this is
   making a multi-year bet; state the bus factor, the succession path, the dependency
   ceiling, and the funding disclosure honestly.

@@ -66,6 +66,11 @@ The landing page SHALL let a visitor find the module relevant to their study, an
 - **WHEN** a first-time visitor loads `/`
 - **THEN** the available modules are listed with a one-sentence description of what each teaches and who it is for, and selecting one navigates directly into it
 
+#### Scenario: A module supplies its own directory entry
+
+- **WHEN** a module package is registered
+- **THEN** it declares its route segment, display name, one-line description, audience, and status, and the landing page's module directory renders from those declarations rather than from a hand-maintained list
+
 #### Scenario: Unavailable modules do not mislead
 
 - **WHEN** a module is planned but not yet built
