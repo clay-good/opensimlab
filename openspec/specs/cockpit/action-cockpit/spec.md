@@ -58,6 +58,11 @@ The cockpit SHALL provide a target-controlled infusion mode in which the learner
 - **WHEN** target-controlled infusion mode is active
 - **THEN** the panel carries a persistent notice that the computed rates are a teaching simulation and are not a dosing recommendation for any real patient
 
+#### Scenario: Availability follows the learner's practice region
+
+- **WHEN** the practice region does not use target-controlled infusion in routine practice — as in the United States, where TCI pumps are not FDA-approved for routine use
+- **THEN** manual weight-based infusion is the default control, target-controlled infusion is presented as a clearly-labeled out-of-region learning module, and the reason is stated
+
 #### Scenario: The engine boundary is enforced in code
 
 - **WHEN** the codebase is inspected
@@ -105,10 +110,20 @@ The cockpit SHALL provide crystalloid and colloid boluses, packed red blood cell
 
 The cockpit SHALL support airway maneuvers (bag-mask ventilation, oral airway, supraglottic airway, laryngoscopy and intubation with a success model, and surgical airway), chest compressions, and defibrillation with energy selection.
 
-#### Scenario: Intubation success depends on the airway assessment
+#### Scenario: Laryngoscopy reports a Cormack-Lehane grade
 
-- **WHEN** the profile declares a difficult airway and the learner attempts direct laryngoscopy
-- **THEN** the attempt may fail according to the scenario's success model, each attempt consumes simulated time, saturation falls during apnea, and repeated attempts worsen airway trauma
+- **WHEN** the learner performs direct laryngoscopy
+- **THEN** the result is a Cormack-Lehane grade from I to IV determined by the patient's declared airway anatomy and the technique used, each attempt consumes simulated time, saturation falls during apnea, and repeated attempts worsen the grade through airway trauma
+
+#### Scenario: Failure rates are anchored to reported incidence
+
+- **WHEN** the airway model's outcome distribution across the bundled scenario library is measured
+- **THEN** difficult laryngoscopy and failed intubation occur at rates consistent with the published elective-surgery ranges cited in the validation report, so a learner's experience is not distorted by a simulator that makes every airway dramatic
+
+#### Scenario: Videolaryngoscopy changes the odds, as the guideline expects
+
+- **WHEN** the learner selects videolaryngoscopy rather than direct laryngoscopy in a predicted difficult airway
+- **THEN** the probability of an adequate view improves, consistent with the 2022 ASA guideline's emphasis on videolaryngoscopy, and the debrief names the choice
 
 #### Scenario: Defibrillation matches the rhythm
 

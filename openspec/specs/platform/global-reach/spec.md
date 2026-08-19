@@ -63,6 +63,11 @@ Drugs SHALL be identified by International Nonproprietary Name with regional syn
 - **WHEN** a syringe is presented
 - **THEN** its concentration is stated explicitly in mass per volume, rather than assuming a single country's standard presentation
 
+#### Scenario: Language and clinical practice vary independently
+
+- **WHEN** a learner selects a language
+- **THEN** it does not change which techniques, formulary, or protocols are taught, because clinical variance is governed by the practice region setting and a language is spoken across many regions
+
 ### Requirement: Low-End Device And Low-Bandwidth Support
 
 The application SHALL be usable on a four-year-old mid-range Android phone over a 2G-class connection, and SHALL degrade rendering rather than function when resources are scarce.

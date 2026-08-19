@@ -13,7 +13,7 @@ A specialty module SHALL be a package declaring its route segment, display name,
 #### Scenario: The core has no anesthesiology knowledge
 
 - **WHEN** the anesthesiology module is removed from the build
-- **THEN** the platform still compiles, the landing page still renders, and no core file references an anesthetic drug, the bispectral index, or a ventilator
+- **THEN** the platform still compiles, the landing page still renders, and no core file references an anesthetic drug, a depth-of-anesthesia index, or a ventilator
 
 #### Scenario: A new module mounts by registration alone
 

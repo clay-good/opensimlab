@@ -53,6 +53,11 @@ Continuously changing vital signs SHALL be available to assistive technology wit
 - **WHEN** a screen reader user reaches a waveform
 - **THEN** a text description of the current morphology is available, naming the rhythm, the capnogram shape, and any artifact, rather than an empty canvas
 
+#### Scenario: Sound carries continuous state where text cannot
+
+- **WHEN** a learner cannot see the traces
+- **THEN** the extended sonification mode defined by the sonification capability lets them track saturation and rate continuously, and a documented manual audit confirms a full scenario is completable using sound and screen reader alone
+
 ### Requirement: Vision Accommodations
 
 The interface SHALL meet a 4.5:1 contrast ratio for normal text and 3:1 for large text and meaningful graphics, SHALL reflow without horizontal scrolling at 320 CSS pixels width and at 400% zoom, and SHALL provide a high-contrast theme and a colorblind-safe palette.
@@ -79,7 +84,7 @@ The application SHALL respect the operating system reduced-motion preference, SH
 #### Scenario: Audio is optional in every case
 
 - **WHEN** the device has no audio output or the learner is deaf or hard of hearing
-- **THEN** every alarm, prompt, and cue is fully conveyed visually and textually
+- **THEN** every alarm, prompt, and cue is fully conveyed visually and textually, verified by the automated audit that pairs every audio event with a visual event
 
 ### Requirement: Cognitive And Language Load
 

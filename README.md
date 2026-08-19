@@ -56,6 +56,7 @@ specification is the capability tree under [`openspec/specs/`](openspec/specs/).
 | [`engine/physiology`](openspec/specs/engine/physiology/spec.md) | Hemodynamics, gas exchange, blockade, fluids, surgical stimulus, baroreflex |
 | [`engine/pharmacology`](openspec/specs/engine/pharmacology/spec.md) | Model parameters, applicability envelopes, citations, drug cards, the Model Lens |
 | [`engine/validation`](openspec/specs/engine/validation/spec.md) | Varvel performance framework, published benchmarks, face validity, the limitations register |
+| [`engine/waveform-synthesis`](openspec/specs/engine/waveform-synthesis/spec.md) | How the traces are actually generated: ECG ODE model, arterial, capnogram, plethysmogram, rhythm library |
 | [`engine/simulation-clock`](openspec/specs/engine/simulation-clock/spec.md) | Simulated time, transport controls, worker isolation, deterministic transcripts |
 | [`engine/scenario-engine`](openspec/specs/engine/scenario-engine/spec.md) | Scenario format, patient profiles, timeline events, crisis and artifact injection |
 
@@ -74,6 +75,7 @@ specification is the capability tree under [`openspec/specs/`](openspec/specs/).
 | [`cockpit/pkpd-visualizer`](openspec/specs/cockpit/pkpd-visualizer/spec.md) | Plasma vs. effect-site plot, hysteresis, decrement times, prediction bands |
 | [`cockpit/action-cockpit`](openspec/specs/cockpit/action-cockpit/spec.md) | Syringes, infusions and TCI, ventilator, fluids, airway, resuscitation |
 | [`cockpit/event-log`](openspec/specs/cockpit/event-log/spec.md) | Chronological record, severity, cross-panel navigation, export |
+| [`cockpit/sonification`](openspec/specs/cockpit/sonification/spec.md) | Variable-pitch pulse tone, standard alarm tones, extended sonification for non-visual use |
 
 ### Learning — why it exists
 
@@ -89,6 +91,8 @@ specification is the capability tree under [`openspec/specs/`](openspec/specs/).
 | --- | --- |
 | [`platform/clinical-governance`](openspec/specs/platform/clinical-governance/spec.md) | Editorial board, signed content, guideline currency, corrections log, limitations register |
 | [`platform/adoption`](openspec/specs/platform/adoption/spec.md) | Curriculum mapping, classroom use, citability, procurement docs, instructor authoring |
+| [`platform/practice-region`](openspec/specs/platform/practice-region/spec.md) | Technique availability, formulary, protocol variant, and terminology by country |
+| [`platform/sustainability`](openspec/specs/platform/sustainability/spec.md) | Bus factor, succession, dependency ceiling, supply chain, funding disclosure, honest status |
 | [`platform/safety-and-scope`](openspec/specs/platform/safety-and-scope/spec.md) | Not-for-clinical-use guards, regulatory position, the forward-only boundary |
 | [`platform/privacy`](openspec/specs/platform/privacy/spec.md) | No telemetry, no accounts, no server state, on-device only |
 | [`platform/offline-pwa`](openspec/specs/platform/offline-pwa/spec.md) | Service worker, installability, download budgets, local storage |
@@ -102,6 +106,15 @@ Validate the tree with:
 ```bash
 openspec validate --specs --strict
 ```
+
+### What gets built first
+
+[`openspec/changes/mvp-anesthesia-alpha`](openspec/changes/mvp-anesthesia-alpha/) sequences the
+first build. It is a vertical slice — one routine induction, propofol and remifentanil, the real
+monitor and the real debrief — ordered so the three riskiest things come first: waveform realism,
+the frame budget on a real phone, and whether an anesthetist finds the patient convincing. It ends
+at a clinical face-validity gate rather than a launch, on the principle that crisis scenarios are
+worthless on an unconvincing patient.
 
 ## What this is grounded in
 
@@ -127,6 +140,19 @@ recognize, rather than to invented conventions:
 | Simulation design | INACSL Healthcare Simulation Standards of Best Practice |
 | Curriculum mapping | ACGME Anesthesiology Milestones 2.0; COA / NBCRNA content domains |
 | Prior evidence for screen-based sim | Schwid et al. ([PMID 11302037](https://pubmed.ncbi.nlm.nih.gov/11302037/)) |
+| ECG waveform generation | McSharry, Clifford, Tarassenko & Smith, *IEEE Trans Biomed Eng* 2003 ([PMID 12669985](https://pubmed.ncbi.nlm.nih.gov/12669985/)) |
+| Pulse tone pitch behavior | ISO 80601-2-61 (pitch falls as saturation falls) |
+| Difficult laryngoscopy incidence | Cormack-Lehane grading; published elective-surgery incidence ranges |
+
+**On practice variation.** Target-controlled infusion is routine practice across the UK,
+Europe, Australia, and much of Asia, and TCI pumps are **not FDA-approved for routine use
+in the United States**. Teaching a learner a technique they cannot use where they train is
+a defect, so practice region is a first-class setting governing technique availability,
+formulary, protocol variant, units, and terminology.
+
+**On the ECG model.** The McSharry equations are implemented from the published paper. No
+code is taken from the GPL-licensed PhysioNet ECGSYN reference implementation, so this
+project's permissive license stays clean.
 
 **On depth of anesthesia.** The depth index is a *predicted* value from a published
 pharmacodynamic model, on the 0–100 scale those models were fitted to. It is not the

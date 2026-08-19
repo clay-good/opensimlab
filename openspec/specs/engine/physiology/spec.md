@@ -8,7 +8,7 @@ Defines the virtual patient: the hemodynamic, respiratory, neuromuscular, and me
 
 ### Requirement: Canonical Patient State Vector
 
-The engine SHALL maintain a single explicit patient state vector, updated every 100 ms, containing at minimum: heart rate (bpm), systolic / diastolic / mean arterial pressure (mmHg), cardiac output (L/min), stroke volume (mL), systemic vascular resistance (dyn·s·cm⁻⁵), circulating blood volume (mL), hemoglobin (g/dL), arterial oxygen saturation (%), end-tidal carbon dioxide (mmHg), respiratory rate (breaths/min), tidal volume (mL), core temperature (°C), bispectral index (0–100), train-of-four ratio (0–1), and end-tidal sevoflurane (vol %) with its age-adjusted MAC fraction.
+The engine SHALL maintain a single explicit patient state vector, updated every 100 ms, containing at minimum: heart rate (bpm), systolic / diastolic / mean arterial pressure (mmHg), cardiac output (L/min), stroke volume (mL), systemic vascular resistance (dyn·s·cm⁻⁵), circulating blood volume (mL), hemoglobin (g/dL), arterial oxygen saturation (%), end-tidal carbon dioxide (mmHg), respiratory rate (breaths/min), tidal volume (mL), core temperature (°C), predicted depth-of-anesthesia index (0–100), train-of-four ratio (0–1), and end-tidal sevoflurane (vol %) with its age-adjusted MAC fraction.
 
 #### Scenario: Every state variable is typed and bounded
 
@@ -57,7 +57,7 @@ The engine SHALL implement a baroreflex that adjusts heart rate and systemic vas
 
 #### Scenario: Anesthetized patient does not compensate
 
-- **WHEN** the same 500 mL loss occurs at a bispectral index of 45 with remifentanil running
+- **WHEN** the same 500 mL loss occurs at a predicted depth index of 45 with remifentanil running
 - **THEN** the reflex tachycardia is markedly blunted and mean arterial pressure falls substantially, teaching that anesthesia removes the compensation that masks hypovolemia
 
 ### Requirement: Respiratory And Gas Exchange Model
@@ -148,12 +148,12 @@ The engine SHALL track circulating volume and hemoglobin, apply the differing vo
 
 ### Requirement: Surgical Stimulus
 
-The engine SHALL model surgical stimulus as a time-varying scalar that raises heart rate, blood pressure, and bispectral index, and that is opposed by hypnotic and opioid effect.
+The engine SHALL model surgical stimulus as a time-varying scalar that raises heart rate, blood pressure, and the predicted depth-of-anesthesia index, and that is opposed by hypnotic and opioid effect.
 
 #### Scenario: Incision without opioid provokes a response
 
-- **WHEN** surgical incision occurs at a bispectral index of 55 with no opioid on board
-- **THEN** heart rate and mean arterial pressure rise and the bispectral index transiently increases
+- **WHEN** surgical incision occurs at a predicted depth index of 55 with no opioid on board
+- **THEN** heart rate and mean arterial pressure rise and the predicted depth index transiently increases
 
 #### Scenario: Adequate opioid blunts the response
 

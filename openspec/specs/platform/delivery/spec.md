@@ -15,6 +15,11 @@ The production artifact SHALL be a set of static files — HTML, JavaScript, CSS
 - **WHEN** the documented build command runs on a clean checkout with a pinned toolchain
 - **THEN** it produces the static output directory, and the same commit produces a byte-identical bundle on a second machine
 
+#### Scenario: Build provenance is owned by the sustainability capability
+
+- **WHEN** release artifacts are produced
+- **THEN** the provenance attestation, dependency ceiling, and lockfile discipline defined by the sustainability capability apply, implemented once rather than restated here
+
 #### Scenario: Deployment is a file copy
 
 - **WHEN** the output directory is served by any static file server

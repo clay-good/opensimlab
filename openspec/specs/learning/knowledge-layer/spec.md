@@ -34,6 +34,11 @@ The module SHALL ship a set of short concept explainers, each under 250 words, c
 - **WHEN** the explainer set is enumerated
 - **THEN** it covers at minimum: hysteresis and effect-site lag, context-sensitive decrement time, minimum alveolar concentration and age, hypnotic–opioid synergy, preoxygenation and safe apnea time, the difference between vasodilation and hypovolemia, train-of-four and reversal, capnogram morphology, alarm artifact versus true change, and depth of anesthesia monitoring and its limits
 
+#### Scenario: Explainers teach where the evidence is weak
+
+- **WHEN** an explainer covers a bedside test whose published predictive value is poor — airway assessment scores such as the Mallampati classification being the clearest example
+- **THEN** it states what the test is used for, states honestly that no single bedside test reliably predicts difficult laryngoscopy, and teaches the resulting behavior: prepare for difficulty you did not predict
+
 #### Scenario: An explainer earns its place by being demonstrable
 
 - **WHEN** an explainer is opened

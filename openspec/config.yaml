@@ -51,6 +51,23 @@ context: |
   reproduce a commercial monitor. BIS is a Medtronic trademark; use it only nominatively
   to name the scale a published model was fitted to, never as our display's name.
 
+  Waveforms are generated from published methods, not hand-drawn: the ECG uses the
+  McSharry et al. 2003 ODE model (PMID 12669985), implemented FROM THE PAPER — never
+  copied from the GPL PhysioNet ECGSYN code, which would contaminate our license.
+
+  Practice varies by country and teaching a technique a learner cannot legally use is a
+  defect. Target-controlled infusion is routine in the UK/EU/Australia and is NOT
+  FDA-approved for routine use in the US. Practice region is a first-class setting that
+  governs technique availability, formulary, protocol variant, units, and terminology.
+
+  Sound is not decoration. The variable-pitch pulse tone (pitch falls as SpO2 falls, per
+  ISO 80601-2-61) is how anesthetists actually track saturation, and it doubles as the
+  strongest accessibility affordance we have. Audio is opt-in and never the only channel.
+
+  Sustainability is an adoption question, not an afterthought. A program adopting this is
+  making a multi-year bet; state the bus factor, the succession path, the dependency
+  ceiling, and the funding disclosure honestly.
+
   Regulatory position: educational training software, not a medical device. The FDA lists
   training simulation software among examples of software functions that are not devices.
   Design so that stays true.

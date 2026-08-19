@@ -8,7 +8,7 @@ Defines the real-time patient monitor: the sweeping waveform canvas, the numeric
 
 ### Requirement: Sweeping Waveform Canvas
 
-The monitor SHALL render waveforms on an HTML5 Canvas 2D context using a left-to-right sweep with an erase bar, at a nominal 60 frames per second, degrading gracefully on slower devices without altering the simulation.
+The monitor SHALL render waveforms on an HTML5 Canvas 2D context using a left-to-right sweep with an erase bar, at a nominal 60 frames per second, degrading gracefully on slower devices without altering the simulation. The canvas SHALL draw only from the sample buffer produced by the waveform synthesis capability and SHALL NOT generate or interpolate physiological signal itself.
 
 #### Scenario: Frame budget is met on target hardware
 
@@ -39,20 +39,15 @@ The monitor SHALL display, at minimum: lead II electrocardiogram with heart rate
 - **WHEN** a learner asks why these parameters are shown
 - **THEN** the explainer maps each to the ASA standard's four categories and names the standard and its current revision year
 
-#### Scenario: Waveform morphology reflects state
+#### Scenario: Morphology is legible at the rendered scale
 
-- **WHEN** the patient is hypovolemic and mechanically ventilated
-- **THEN** the arterial waveform shows increased systolic pressure variation synchronized with the ventilator cycle, rather than a fixed repeating template
+- **WHEN** traces render at the default sweep speed equivalent to 25 mm/s
+- **THEN** the features a learner must read — the dicrotic notch, the capnogram alpha angle, the QRS complex — are each resolved by at least 2 device pixels at the smallest supported region height
 
-#### Scenario: Capnogram shape is diagnostic
-
-- **WHEN** bronchospasm is active
-- **THEN** the capnogram expiratory upstroke becomes sloped rather than square, and the shape change is visible before the end-tidal number changes materially
-
-#### Scenario: Arrhythmias render as real morphology
+#### Scenario: An invalid numeric is invalidated, not smoothed
 
 - **WHEN** the rhythm changes to ventricular fibrillation
-- **THEN** the electrocardiogram renders a fibrillatory waveform, the heart rate readout becomes invalid rather than showing a plausible number, and the pulse oximetry plethysmograph loses pulsatility
+- **THEN** the heart rate readout becomes invalid rather than reporting a plausible number derived from fibrillatory noise, and the plethysmogram loses pulsatility within one beat
 
 ### Requirement: Encoding Follows The Design System
 
@@ -97,10 +92,10 @@ The monitor SHALL raise alarms at three priorities modeled on IEC 60601-1-8, the
 - **WHEN** more than five alarms are active simultaneously for over 60 simulated seconds
 - **THEN** the session records an alarm-burden marker that the debrief can surface, without suppressing any alarm
 
-#### Scenario: Audio is off by default and never required
+#### Scenario: Audible alarm behavior is owned by the sonification capability
 
-- **WHEN** the application first loads
-- **THEN** audible alarms are off, all alarm information is fully available visually, and enabling audio requires a deliberate learner action satisfying browser autoplay rules
+- **WHEN** an alarm's audible signal is specified or implemented
+- **THEN** it follows the sonification capability, which owns tone design, opt-in, and volume, and the monitor implements only the visual treatment, so the two cannot diverge
 
 ### Requirement: Monitor Reflects Displayed Signal, Not Truth
 
