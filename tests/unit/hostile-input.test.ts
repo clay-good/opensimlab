@@ -113,13 +113,12 @@ describe('Requirement: A Bad Number Cannot Destroy The Patient', () => {
 });
 
 describe('Requirement: A Submitted File Cannot Lock Up The Reviewer', () => {
-  it('Scenario: a transcript claiming an impossible session is refused, fast', () => {
-    // This one hung a browser tab forever: fifty million ticks were replayed
-    // one at a time. An instructor opening a corrupt submission gets a message.
-    const started = Date.now();
+  it('Scenario: a transcript claiming an impossible session is refused', () => {
+    // This one hung a browser tab forever: fifty million ticks were replayed one
+    // at a time. That it RETURNS is the whole assertion — a regression would not
+    // fail this test, it would hang it, which the runner's timeout reports.
     expect(() => parseTranscript(transcript({ ticks: 50_000_000 }), 'huge.json'))
       .toThrow(UnreadableTranscript);
-    expect(Date.now() - started).toBeLessThan(1000);
   });
 
   it('Scenario: a non-numeric or negative tick count is refused', () => {

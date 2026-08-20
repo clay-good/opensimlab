@@ -43,11 +43,17 @@ export type Scenario = ScenarioDocument;
  * position that does not exist.
  */
 export const VENTILATOR_BOUNDS = {
-  fio2: { min: 0.21, max: 1 },
-  tidalVolumeMl: { min: 0, max: 1500 },
-  respiratoryRateBpm: { min: 0, max: 60 },
-  peep: { min: 0, max: 30 },
-  sevofluranePercent: { min: 0, max: 8 },
+  /**
+   * The low side of the inspired fraction is NOT clamped here. It has its own
+   * guard, which refuses the setting outright and explains that a real machine
+   * carries the same interlock — a better answer than silently moving the dial,
+   * and the thing the learner is meant to take away.
+   */
+  fio2: { min: 0.21, max: 1, guardedBelow: true },
+  tidalVolumeMl: { min: 0, max: 1500, guardedBelow: false },
+  respiratoryRateBpm: { min: 0, max: 60, guardedBelow: false },
+  peep: { min: 0, max: 30, guardedBelow: false },
+  sevofluranePercent: { min: 0, max: 8, guardedBelow: false },
 } as const;
 
 /**
@@ -255,7 +261,8 @@ export class AnesthesiaEngine {
           // Clamped to what the machine can actually deliver rather than merely
           // to a finite number: a respiratory rate of a million is arithmetic,
           // not ventilation, and no anaesthesia machine would accept it.
-          const clamped = clamp(value, bound.min, bound.max);
+          const floor = bound.guardedBelow ? 0 : bound.min;
+          const clamped = clamp(value, floor, bound.max);
           if (clamped !== value) {
             this.log('warning', 'ventilator', `clamped-${field}-${this.currentTick}`,
               `${field} of ${value} is outside what the machine delivers `
