@@ -58,6 +58,25 @@ file, so the content security policy, the trailing-slash behaviour and the 404
 document all behave as they will in production. A plain static file server does
 not test any of those.
 
+## Indexing is off until the domain is live
+
+Every canonical URL in the build names `opensimlab.com`. While the site is served
+from a preview host, inviting a crawler in means pointing it at a domain that
+does not serve this yet — worse for the eventual ranking than not being found at
+all. So the build emits `Disallow: /`, an `X-Robots-Tag: noindex, nofollow`
+header, and a `noindex` meta on every page.
+
+When the custom domain is actually serving:
+
+```
+SITE_INDEXABLE=true npm run deploy:alpha
+```
+
+The robots file, the sitemap reference and the header all come back on together.
+The per-route `indexable` flags are untouched by any of this — the gate is about
+this deployment, not about the routes — so turning it on restores exactly the
+set that was always intended.
+
 ## The custom domain
 
 `opensimlab.com` is attached to the Worker in the Cloudflare dashboard, under

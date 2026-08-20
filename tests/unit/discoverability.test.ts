@@ -330,3 +330,38 @@ describe('Requirement: One Screen, One Action', () => {
     expect(landing).toContain('href="/about"');
   });
 });
+
+describe('Requirement: A Preview Build Does Not Invite Indexing', () => {
+  // Canonicals name the production domain. While the site is served from a
+  // preview host, indexing it points a crawler at a domain that does not serve
+  // it — worse than not being found at all. Indexing is therefore OFF unless
+  // someone deliberately turns it on, and this is the default path.
+  const robots = readFileSync(join(process.cwd(), 'dist/robots.txt'), 'utf8');
+  const headers = readFileSync(join(process.cwd(), 'dist/_headers'), 'utf8');
+  const home = readFileSync(join(process.cwd(), 'dist/index.html'), 'utf8');
+  const indexable = process.env.SITE_INDEXABLE === 'true';
+
+  it('Scenario: without the flag, every signal says do not index', () => {
+    if (indexable) return;
+    expect(robots).toContain('Disallow: /');
+    expect(robots).not.toContain('Allow: /');
+    expect(headers).toContain('X-Robots-Tag: noindex, nofollow');
+    expect(home).toContain('content="noindex, nofollow"');
+  });
+
+  it('Scenario: the way back on is documented in the file itself', () => {
+    if (indexable) return;
+    // A future reader has to be able to find the switch without reading the
+    // build script.
+    expect(robots).toContain('SITE_INDEXABLE=true');
+  });
+
+  it('Scenario: the route model still knows which routes are indexable', () => {
+    // The gate is about this DEPLOYMENT, not about the routes. The per-route
+    // decision has to survive it so turning indexing on restores exactly the
+    // set that was always intended.
+    expect(indexableRoutes().length).toBeGreaterThanOrEqual(10);
+    expect(routeFor('/gallery')?.indexable).toBe(false);
+    expect(routeFor('/')?.indexable).toBe(true);
+  });
+});
