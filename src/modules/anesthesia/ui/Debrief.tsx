@@ -329,14 +329,24 @@ export function objectiveFindings(
     }
 
     if (objective.id === 'manage-hypotension') {
-      const seconds = secondsBeyond(history, 'meanArterialMmHg', 55, 'below');
-      return {
-        ...base,
-        outcome: seconds === 0 ? 'met' : seconds < 120 ? 'partly-met' : 'not-met',
-        finding: seconds === 0
-          ? 'Mean arterial pressure never fell below 55 mmHg.'
-          : `Mean arterial pressure spent ${seconds.toFixed(0)} seconds below 55 mmHg.`,
-      } satisfies ObjectiveFinding;
+      // Judged against BOTH thresholds the objective names. 65 mmHg is where the
+      // intraoperative hypotension outcome literature sits; 55 is where the
+      // association with kidney and myocardial injury appears at durations as
+      // short as a minute, so any time below it fails the objective outright.
+      const belowSixtyFive = secondsBeyond(history, 'meanArterialMmHg', 65, 'below');
+      const belowFiftyFive = secondsBeyond(history, 'meanArterialMmHg', 55, 'below');
+      const outcome = belowFiftyFive > 0 || belowSixtyFive >= 120
+        ? 'not-met'
+        : belowSixtyFive > 0 ? 'partly-met' : 'met';
+      const finding = belowSixtyFive === 0
+        ? 'Mean arterial pressure never fell below 65 mmHg.'
+        : `Mean arterial pressure spent ${belowSixtyFive.toFixed(0)} seconds below 65 mmHg`
+          + (belowFiftyFive > 0
+            ? `, of which ${belowFiftyFive.toFixed(0)} seconds were below 55. Exposure below 55 is `
+              + 'associated with kidney and myocardial injury at durations as short as a minute.'
+            : '. Most of the outcome literature on intraoperative hypotension is organised around '
+              + 'this threshold rather than a lower one.');
+      return { ...base, outcome, finding } satisfies ObjectiveFinding;
     }
 
     if (objective.id === 'ventilate-before-desaturation') {

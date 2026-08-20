@@ -9,7 +9,7 @@ import { compareRuns, evaluateCounterfactual, replay } from '@anesthesia/debrief
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import type { EngineEvent, LearnerAction } from '@platform/kernel/protocol';
-import { describedEvents } from '@anesthesia/ui/Debrief';
+import { describedEvents, objectiveFindings } from '@anesthesia/ui/Debrief';
 
 const OPTIONS = {
   scenario: ROUTINE_INDUCTION, seed: 424242, practiceRegion: 'US', ticks: 4200,
@@ -250,5 +250,45 @@ describe('Requirement: The Description Phase Describes What Happened', () => {
       .toEqual(['bolus-propofol-10', 'vent-12', 'laryngoscopy-1']);
     // The alarm-clearing chatter stays out: it is not something the learner did.
     expect(described.some((entry) => entry.category === 'alarm')).toBe(false);
+  });
+});
+
+describe('Requirement: The Debrief Judges Against The Threshold It States', () => {
+  // The objective names two thresholds. An earlier version judged only 55, so a
+  // learner told the target was 65 was scored against a different number.
+  // One sample per simulated second, with a monotonically rising tick, which is
+  // the shape `secondsBeyond` measures against.
+  const objectiveFor = (segments: { map: number; seconds: number }[]) => {
+    const history: { tick: number; state: Record<string, number>; concentrations: [] }[] = [];
+    let second = 0;
+    for (const segment of segments) {
+      for (let i = 0; i < segment.seconds; i += 1, second += 1) {
+        history.push({
+          tick: second * TICKS_PER_SECOND,
+          state: { meanArterialMmHg: segment.map, spo2Percent: 99 },
+          concentrations: [],
+        });
+      }
+    }
+    return objectiveFindings(ROUTINE_INDUCTION, history as never, 0, 200)
+      .find((finding) => finding.objectiveId === 'manage-hypotension')!;
+  };
+
+  it('Scenario: a pressure held above 65 meets the objective', () => {
+    const finding = objectiveFor([{ map: 78, seconds: 300 }]);
+    expect(finding.outcome).toBe('met');
+    expect(finding.finding).toContain('65 mmHg');
+  });
+
+  it('Scenario: a brief dip below 65 is partly met, and says 65 not 55', () => {
+    const finding = objectiveFor([{ map: 78, seconds: 240 }, { map: 62, seconds: 30 }]);
+    expect(finding.outcome).toBe('partly-met');
+    expect(finding.finding).toContain('below 65 mmHg');
+  });
+
+  it('Scenario: any time below 55 fails outright, however brief', () => {
+    const finding = objectiveFor([{ map: 78, seconds: 240 }, { map: 52, seconds: 20 }]);
+    expect(finding.outcome).toBe('not-met');
+    expect(finding.finding).toContain('below 55');
   });
 });
