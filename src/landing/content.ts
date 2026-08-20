@@ -13,7 +13,10 @@ export const ONE_LINE_DESCRIPTION =
 
 /** Exactly three facts, chosen because they answer the objections a visitor has. */
 export interface SupportingFact {
+  /** The full sentence, used on the About page. */
   readonly text: string;
+  /** Two or three words, used as the front door's one quiet line. */
+  readonly short: string;
   readonly linkLabel: string;
   readonly href: string;
 }
@@ -21,16 +24,19 @@ export interface SupportingFact {
 export const THREE_FACTS: readonly SupportingFact[] = [
   {
     text: 'Free, with no account and nothing to install.',
+    short: 'No account',
     linkLabel: 'Read what is stored on your device',
     href: '/privacy',
   },
   {
     text: 'Works offline once it has loaded, including every scenario and every citation.',
+    short: 'Works offline',
     linkLabel: 'Read how offline operation works',
     href: '/privacy',
   },
   {
     text: 'The drug models come from published pharmacology, with citations you can check.',
+    short: 'Published pharmacology',
     linkLabel: 'Read the validation report',
     href: '/validation',
   },

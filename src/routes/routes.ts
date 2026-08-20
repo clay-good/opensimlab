@@ -41,6 +41,16 @@ export const ROUTES: readonly RouteMetadata[] = [
     heading: 'Open Sim Lab',
   },
   {
+    path: '/about',
+    title: formatTitle('About'),
+    description:
+      'What Open Sim Lab teaches and how, who it is for, where its pharmacology comes from, '
+      + 'what it deliberately does not do, and how to use it in a course.',
+    indexable: true,
+    structuredData: [],
+    heading: 'About Open Sim Lab',
+  },
+  {
     path: '/anesthesia',
     title: formatTitle('Anesthesia simulator'),
     description:

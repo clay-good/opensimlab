@@ -20,10 +20,10 @@ The landing page SHALL fit its essential content — the name, the one-line desc
 - **WHEN** a first-time visitor loads the page
 - **THEN** nothing overlays the content: no consent banner (because nothing is collected), no email capture, no app-install prompt, and no autoplaying sound
 
-#### Scenario: The front matter is short even though the page is not
+#### Scenario: The front door is one screen and stays one screen
 
-- **WHEN** the page is measured from the top to the end of the module directory
-- **THEN** that front matter occupies no more than two screens at 1440 px width, and an automated test fails the build if it grows beyond that; the substantive content section below it is not counted and is not length-limited
+- **WHEN** the landing page is measured from the top of the document to the bottom of the module line
+- **THEN** it occupies no more than one screen at 1440 px width, contains no prose section, no questions block and no expandable panel, and an automated test fails the build if a section is added to it
 
 ### Requirement: The Hero Is The Product Running
 
@@ -74,12 +74,17 @@ Below the primary action the page SHALL present at most three short supporting f
 
 ### Requirement: Modules Directory Is Honest About What Exists
 
-The page SHALL list the modules with an unambiguous status for each: Anesthesia as available, and the planned modules — cardiology first, then others such as oncology and critical care — clearly marked as planned, with no date promised.
+The landing page SHALL name every module with an unambiguous status — Anesthesia as available, and the planned modules such as cardiology, oncology and critical care marked as planned — with no date promised. The one-line scope of each module SHALL be carried by the About page and by that module's own route, so the front door states the status without becoming a catalogue.
 
-#### Scenario: Available and planned are visually distinct
+#### Scenario: Available and planned are distinguishable on the front door
 
-- **WHEN** the module list renders
-- **THEN** the anesthesia entry is an active link with a short description, and each planned entry is visibly non-interactive as a destination, labeled "Planned", with one line describing what it will cover
+- **WHEN** the landing page's module line renders
+- **THEN** the available module reads as the live destination and the planned ones are named as planned in the same line, with no date, no quarter and no countdown
+
+#### Scenario: The scope of each module is one click away
+
+- **WHEN** a visitor wants to know what a planned module will cover
+- **THEN** the About page lists every module with its one-line scope and its status, and each planned module's own route states the same thing
 
 #### Scenario: No date is invented
 
@@ -96,13 +101,18 @@ The page SHALL list the modules with an unambiguous status for each: Anesthesia 
 - **WHEN** a visitor wants to be told when cardiology ships
 - **THEN** they are pointed to the public repository's releases or its feed, and no email address is requested, because collecting one would breach the privacy architecture
 
-### Requirement: Substantive Content Lives Below The Fold
+### Requirement: Substantive Content Lives On The Root Domain
 
-Beneath the front matter the page SHALL carry genuine prose explaining the project, written for a human reader who scrolled because they wanted to know more. This is where the root domain's descriptive weight lives, so that the simulator itself never has to carry marketing copy.
+The root domain SHALL carry genuine prose explaining the project, written for a human reader who wanted to know more, at a dedicated `/about` route linked from the landing page and from the footer of every page. Keeping it off the landing page is what lets the front door be one screen; keeping it on the root domain is what stops the simulator ever having to carry marketing copy.
+
+#### Scenario: The About route is reachable and indexable
+
+- **WHEN** the route set is enumerated
+- **THEN** `/about` is present, indexable, prerendered to static HTML, and linked from the landing page
 
 #### Scenario: The content section covers what a stranger needs
 
-- **WHEN** the below-the-fold content is enumerated
+- **WHEN** the About page's content is enumerated
 - **THEN** it covers, in this order: what the simulator teaches and how it teaches it; who it is for, naming medical students, anesthesiology residents, nurse anesthetist students, and the faculty who teach them; what is inside the anesthesia module; where the pharmacology comes from and how it is reviewed; what the project deliberately does not do; and how to use it in a course
 
 #### Scenario: The prose is real writing, not keyword filler
@@ -117,17 +127,17 @@ Beneath the front matter the page SHALL carry genuine prose explaining the proje
 
 #### Scenario: A short answer section addresses the real questions
 
-- **WHEN** the questions section renders
+- **WHEN** the About page's questions section renders
 - **THEN** it answers, plainly and in a few sentences each: whether it is free, whether an account is needed, whether it works offline, whether it can be used on a phone, where the drug models come from, who reviews the clinical content, whether it can be used in a course, whether it replaces mannequin simulation, and when other modules are coming — with the last answered honestly as "no date is promised"
 
-#### Scenario: The content section does not delay the primary action
+#### Scenario: The content does not delay the primary action
 
-- **WHEN** the page loads
-- **THEN** the front matter and its primary action are interactive before the content section has finished rendering, and the content section's assets are not on the critical path
+- **WHEN** the landing page loads
+- **THEN** the prose is not on it at all, so the primary action is interactive without waiting for anything the About page needs
 
 ### Requirement: Footer Carries The Trust Signals
 
-The footer SHALL carry, compactly: the not-for-clinical-use statement, and links to the validation report, the clinical governance page, the limitations register, the license, the source repository, and the suggested citation.
+The footer SHALL carry, compactly: the not-for-clinical-use statement, and links to the About page, the validation report, the clinical governance page, the limitations register, the license, the source repository, and the suggested citation. The suggested citation MAY live on the About page's footer rather than the landing page's, so the front door stays one screen.
 
 #### Scenario: A skeptical clinician finds the evidence in one hop
 

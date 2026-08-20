@@ -1,21 +1,21 @@
 /**
  * The front door at opensimlab.com.
  *
- * Two jobs pulling in opposite directions: send the right person into
- * /anesthesia within seconds, and carry all the substantive prose that lets a
- * stranger — or a search engine — understand what this is. It resolves that by
- * being short at the top and substantial below the fold.
+ * One screen. The name, one line, the product running, one button, and the three
+ * facts that answer the only objections a stranger has before clicking. Everything
+ * else — what it teaches, who it is for, where the pharmacology comes from, what
+ * it deliberately does not do — lives one click away at `/about`, which keeps the
+ * root domain carrying the descriptive weight without the front door carrying it
+ * on screen (platform/landing → One Screen, One Action).
  */
 
 import { useEffect, useRef } from 'react';
 import './landing.css';
 import { Button, usePrefersReducedMotion } from '@platform/ui';
-import { MODULES, RELEASE_FEED_URL } from '@platform/modules/registry';
+import { MODULES } from '@platform/modules/registry';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { HONEST_STATUS } from '@platform/governance/status';
-import {
-  CONTENT_SECTIONS, FOOTER_LINKS, ONE_LINE_DESCRIPTION, QUESTIONS, SUGGESTED_CITATION, THREE_FACTS,
-} from './content';
+import { FOOTER_LINKS, ONE_LINE_DESCRIPTION, THREE_FACTS } from './content';
 import { heroStaticSvg, startLiveHero } from './hero';
 
 /**
@@ -53,13 +53,12 @@ export function Landing() {
     return startLiveHero(canvasRef.current);
   }, [reducedMotion]);
 
+  const available = MODULES.filter((module) => module.status === 'available');
+  const planned = MODULES.filter((module) => module.status !== 'available');
+
   return (
     <div className="landing">
-      <a className="skip-link" href="#content">Skip to the description</a>
-
-      {/* Front matter: the name, one line, the hero, one action, three facts,
-          and the module directory. No more than two screens at 1440 px. */}
-      <header className="landing__front">
+      <main className="landing__front" id="content">
         <h1 className="landing__name">Open Sim Lab</h1>
         <p className="landing__tagline">{ONE_LINE_DESCRIPTION}</p>
 
@@ -76,7 +75,7 @@ export function Landing() {
           <canvas ref={canvasRef} aria-hidden="true" />
         </div>
 
-        <div>
+        <div className="landing__action">
           <Button
             variant="primary"
             onClick={() => { window.location.href = '/anesthesia'; }}
@@ -85,73 +84,41 @@ export function Landing() {
           </Button>
         </div>
 
-        <ul className="landing__facts">
-          {THREE_FACTS.map((fact) => (
-            <li key={fact.text}>
-              {fact.text}{' '}
-              <a href={fact.href}>{fact.linkLabel}</a>
-            </li>
+        {/* The three facts, as one quiet line rather than a list of claims. */}
+        <p className="landing__facts">
+          {THREE_FACTS.map((fact, index) => (
+            <span key={fact.short}>
+              {index > 0 && <span aria-hidden="true"> · </span>}
+              <a href={fact.href}>{fact.short}</a>
+            </span>
           ))}
-        </ul>
+        </p>
 
-        <section aria-labelledby="modules-heading">
-          <h2 id="modules-heading" className="field__label">Modules</h2>
-          <ul className="landing__modules">
-            {MODULES.map((module) => (
-              <li key={module.id} className="landing__module" data-status={module.status}>
-                <div>
-                  {module.status === 'available' ? (
-                    <a className="landing__module-name" href={`/${module.route}`}>{module.displayName}</a>
-                  ) : (
-                    <span className="landing__module-name">{module.displayName}</span>
-                  )}
-                  <p className="landing__module-note">
-                    {module.status === 'available' ? module.description : module.plannedScope}
-                  </p>
-                </div>
-                <span className="badge">{module.status === 'available' ? 'Available' : 'Planned'}</span>
-              </li>
-            ))}
-          </ul>
-          <p className="landing__module-note">
-            No dates are promised for planned modules.{' '}
-            <a href={RELEASE_FEED_URL} rel="noreferrer noopener">
-              Watch the repository releases to hear when one ships
+        {/* The module directory, compact and unambiguous. Each planned module's
+            scope lives on its own route, which is one click from here. */}
+        <p className="landing__modules">
+          {available.map((module) => (
+            <a key={module.id} className="landing__module-live" href={`/${module.route}`}>
+              {module.displayName}
             </a>
-            . No email address is collected.
-          </p>
-        </section>
-
-        <p className="landing__disclaimer">{HONEST_STATUS.headline} {HONEST_STATUS.detail}</p>
-      </header>
-
-      {/* Below the fold: the substantive prose. Not length-limited. */}
-      <main className="landing__content" id="content">
-        {CONTENT_SECTIONS.map((section) => (
-          <section key={section.id} aria-labelledby={`${section.id}-heading`}>
-            <h2 id={`${section.id}-heading`}>{section.heading}</h2>
-            {section.paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
-            {section.list && <ul>{section.list.map((item) => <li key={item}>{item}</li>)}</ul>}
-            {section.link && <p><a href={section.link.href}>{section.link.label}</a></p>}
-          </section>
-        ))}
-
-        <section aria-labelledby="questions-heading" className="landing__questions">
-          <h2 id="questions-heading">Questions</h2>
-          <dl>
-            {QUESTIONS.map((entry) => (
-              <div key={entry.question}>
-                <dt>{entry.question}</dt>
-                <dd>{entry.answer}</dd>
-              </div>
+          ))}
+          <span className="landing__module-planned">
+            {' · '}
+            {planned.map((module, index) => (
+              <span key={module.id}>
+                {index > 0 && ', '}
+                <a href={`/${module.route}`}>{module.displayName}</a>
+              </span>
             ))}
-          </dl>
-        </section>
+            {' planned. No dates.'}
+          </span>
+        </p>
       </main>
 
       <footer className="landing__footer">
-        <p className="landing__disclaimer">{NOT_FOR_CLINICAL_USE}</p>
+        <p className="landing__status">{HONEST_STATUS.headline}</p>
         <ul className="landing__footer-links">
+          <li><a href="/about">About</a></li>
           {FOOTER_LINKS.map((link) => (
             <li key={link.href}>
               <a href={link.href} {...(link.href.startsWith('http') ? { rel: 'noreferrer noopener' } : {})}>
@@ -160,7 +127,7 @@ export function Landing() {
             </li>
           ))}
         </ul>
-        <p className="landing__module-note">{SUGGESTED_CITATION}</p>
+        <p className="landing__disclaimer">{NOT_FOR_CLINICAL_USE}</p>
       </footer>
     </div>
   );

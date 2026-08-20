@@ -10,6 +10,7 @@
 import { MODULES } from '@platform/modules/registry';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { Landing } from '@landing/Landing';
+import { About } from '@landing/About';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { DocumentRoute } from './DocumentRoute';
 import { PlannedModuleRoute } from './PlannedModuleRoute';
@@ -19,6 +20,7 @@ export function PrerenderedBody({ path }: { path: string }) {
   // render their REAL components here, so the prerendered markup is exactly the
   // tree the client produces and hydration succeeds rather than mismatching.
   if (path === '/') return <Landing />;
+  if (path === '/about') return <About />;
   const planned = MODULES.find((module) => `/${module.route}` === path && module.status === 'planned');
   if (planned) return <PlannedModuleRoute module={planned} />;
   if (path === '/anesthesia') return <AnesthesiaMarkup />;

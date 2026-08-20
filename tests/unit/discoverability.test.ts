@@ -2,6 +2,8 @@
  * Acceptance tests for platform/discoverability, platform/landing, and
  * platform/module-contract.
  */
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { ROUTES, SITE_NAME, canonicalUrl, formatTitle, indexableRoutes, routeFor } from '@routes/routes';
 import {
@@ -12,6 +14,9 @@ import {
   SUGGESTED_CITATION, THREE_FACTS,
 } from '@landing/content';
 import { heroStaticSvg } from '@landing/hero';
+import { Landing } from '@landing/Landing';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { MODULES, RELEASE_FEED_URL, availableModules, plannedModules, speedsFor } from '@platform/modules/registry';
 import { EDITORIAL_BOARD } from '@platform/governance/records';
 import { isCrawler } from '@platform/offline/register';
@@ -67,10 +72,14 @@ describe('Requirement: The Root Domain Carries The Search Weight', () => {
     }
   });
 
-  it('Scenario: The landing page is the substantive indexable document', () => {
+  it('Scenario: The root domain carries the substantive indexable document', () => {
     const root = routeFor('/')!;
     expect(root.structuredData).toEqual(['WebSite', 'Organization']);
-    // The full below-the-fold prose lives here.
+    // The prose lives at /about, which is still the root domain. Keeping it off
+    // the landing page is what lets the front door be one screen.
+    const about = routeFor('/about');
+    expect(about, '/about must be a route').toBeDefined();
+    expect(about!.indexable).toBe(true);
     expect(CONTENT_SECTIONS.length).toBeGreaterThanOrEqual(6);
     expect(QUESTIONS.length).toBeGreaterThanOrEqual(9);
   });
@@ -276,5 +285,48 @@ describe('Scenario: The service worker never serves stale metadata to a crawler'
       expect(isCrawler(agent), `${agent} not detected as a crawler`).toBe(true);
     }
     expect(isCrawler('Mozilla/5.0 (Linux; Android 10) Chrome/120 Mobile Safari/537.36')).toBe(false);
+  });
+});
+
+describe('Requirement: One Screen, One Action', () => {
+  // The front door earns its minimalism by NOT carrying the prose. This is the
+  // test that stops a section creeping back onto it.
+  const landing = readFileSync(join(process.cwd(), 'src/landing/Landing.tsx'), 'utf8');
+  const about = readFileSync(join(process.cwd(), 'src/landing/About.tsx'), 'utf8');
+
+  it('Scenario: the landing page renders no prose section and no questions block', () => {
+    expect(landing).not.toContain('CONTENT_SECTIONS');
+    expect(landing).not.toContain('QUESTIONS');
+    expect(landing).not.toContain('SUGGESTED_CITATION');
+    // And the About page does carry all three.
+    expect(about).toContain('CONTENT_SECTIONS');
+    expect(about).toContain('QUESTIONS');
+    expect(about).toContain('SUGGESTED_CITATION');
+  });
+
+  it('Scenario: exactly one primary action, naming its destination', () => {
+    const primaries = [...landing.matchAll(/variant="primary"/g)];
+    expect(primaries).toHaveLength(1);
+    expect(landing).toContain('Open the anesthesia simulator');
+    expect(landing).toContain("'/anesthesia'");
+  });
+
+  it('Scenario: the front door names every module and promises no date', () => {
+    const markup = renderToStaticMarkup(createElement(Landing));
+    for (const module of MODULES) expect(markup).toContain(module.displayName);
+    expect(markup).toContain('planned. No dates.');
+    // No date, no quarter, no countdown anywhere in what a visitor actually sees.
+    expect(markup).not.toMatch(/\bQ[1-4]\s*20\d\d|coming soon|\b20[2-9]\d\b/i);
+  });
+
+  it('Scenario: the front door carries no prose in its rendered markup', () => {
+    const markup = renderToStaticMarkup(createElement(Landing));
+    // Strip tags and count words. A one-screen front door is a short document.
+    const words = markup.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().split(' ').length;
+    expect(words, `the landing page renders ${words} words`).toBeLessThan(120);
+  });
+
+  it('Scenario: the front door links to the substantive page', () => {
+    expect(landing).toContain('href="/about"');
   });
 });

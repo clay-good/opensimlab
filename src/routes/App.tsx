@@ -8,6 +8,7 @@
 import { Suspense, lazy, useEffect, useState } from 'react';
 import '@platform/tokens/base.css';
 import { Landing } from '@landing/Landing';
+import { About } from '@landing/About';
 import { PlannedModuleRoute } from './PlannedModuleRoute';
 import { MODULES } from '@platform/modules/registry';
 import { routeFor } from './routes';
@@ -50,6 +51,7 @@ export function App() {
   }, [path]);
 
   if (path === '/') return <Landing />;
+  if (path === '/about') return <About />;
   if (path === '/anesthesia' || path.startsWith('/anesthesia/')) {
     return <Suspense fallback={<Loading />}><AnesthesiaRoute path={path} /></Suspense>;
   }
