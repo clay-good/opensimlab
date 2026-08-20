@@ -32,10 +32,17 @@ export interface RouteMetadata {
 function scenarioDescription(scenario: (typeof SCENARIOS)[number]): string {
   const { patient, metadata } = scenario;
   const who = `${patient.ageYears}-year-old ${patient.sex === 'male' ? 'man' : 'woman'}`;
-  const first = metadata.objectives[0]?.statement.replace(/\.$/, '') ?? '';
-  const full = `A ${who} for ${patient.procedure.toLowerCase()}. ${first}.`;
-  if (full.length <= 160) return full;
-  return `${full.slice(0, 157)}...`;
+  let description = `A ${who} for ${patient.procedure.toLowerCase()}.`;
+  // Objectives are added until the description is substantial enough to be worth
+  // showing in a result, and stopped before it is truncated. A terse first
+  // objective used to leave the whole description under the minimum.
+  for (const objective of metadata.objectives) {
+    const next = `${description} ${objective.statement.replace(/\.$/, '')}.`;
+    if (next.length > 160) break;
+    description = next;
+    if (description.length >= 110) break;
+  }
+  return description.length <= 160 ? description : `${description.slice(0, 157)}...`;
 }
 
 /** The one title pattern, used by every route. */
@@ -116,6 +123,16 @@ export const ROUTES: readonly RouteMetadata[] = [
     indexable: false,
     structuredData: [],
     heading: 'Review submitted sessions',
+  },
+  {
+    path: '/content-review',
+    title: formatTitle('Review the content'),
+    description:
+      'For clinicians willing to say what is wrong here: every clinical claim in one list, '
+      + 'flag them where you read them, and export your notes as a single file.',
+    indexable: true,
+    structuredData: [],
+    heading: 'Review the clinical content',
   },
   {
     path: '/validation',

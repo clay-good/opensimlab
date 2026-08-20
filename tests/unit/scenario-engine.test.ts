@@ -8,6 +8,7 @@ import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { RAPID_DESATURATION } from '@anesthesia/scenarios/rapid-desaturation';
 import { HYPOTENSION_AFTER_INDUCTION } from '@anesthesia/scenarios/hypotension-after-induction';
 import { SCENARIOS } from '@anesthesia/scenarios';
+import { BRONCHOSPASM } from '@anesthesia/scenarios/bronchospasm';
 import { gradeProbabilities } from '@anesthesia/physiology';
 import { SCENARIO_SCHEMA, validateScenario } from '@anesthesia/scenarios/schema';
 import { EventLog, SEVERITIES, SEVERITY_GLYPH } from '@platform/log/event-log';
@@ -487,5 +488,53 @@ describe('Requirement: The New Scenarios Teach What They Claim', () => {
     // A full 2 mg/kg in this patient takes her well below the threshold the
     // outcome literature is organized around.
     expect(worst).toBeLessThan(65);
+  });
+});
+
+describe('Requirement: The Bronchospasm Scenario Teaches Shape Before Number', () => {
+  // The capnogram generator has been able to draw the four phases, the alpha
+  // angle and the shark fin since the beginning, and no scenario reached any of
+  // it. The claim this scenario makes is specific and testable: the morphology
+  // moves while the end-tidal value is still inside its alarm limits, so a
+  // learner watching only the tiles misses it.
+  function runToMinute(minute: number) {
+    const engine = new AnesthesiaEngine({
+      scenario: BRONCHOSPASM as never, seed: 5, practiceRegion: 'US',
+    });
+    engine.apply({
+      tick: 0, type: 'ventilator', payload: { fio2: 1, delivering: true, mode: 'volume-control' },
+    } as never);
+    let last = engine.step();
+    for (let tick = 0; tick < minute * 60 * TICKS_PER_SECOND; tick += 1) last = engine.step();
+    return last;
+  }
+
+  it('Scenario: the obstruction reaches the waveform engine at all', () => {
+    // Before, and well after, the declared onset.
+    const before = runToMinute(2);
+    const during = runToMinute(8);
+    expect(before.state.etco2MmHg).toBeGreaterThan(30);
+    // The number climbs as the obstruction builds, which is the physiology.
+    expect(during.state.etco2MmHg).toBeGreaterThan(before.state.etco2MmHg + 3);
+  });
+
+  it('Scenario: the number stays inside its alarm limits while the shape changes', () => {
+    // This is the trap, and it has to hold or the scenario teaches nothing.
+    // The high end-tidal alarm sits at 55; the obstruction must not trip it
+    // within the scenario's run, so that recognising it has to come from the
+    // waveform rather than from the alarm.
+    const highLimit = DEFAULT_LIMITS.find((limit) => limit.id === 'etco2-high')!.high!;
+    for (const minute of [5, 6, 7, 8]) {
+      const state = runToMinute(minute).state;
+      expect(state.etco2MmHg, `end-tidal at ${minute} min`).toBeLessThan(highLimit);
+    }
+  });
+
+  it('Scenario: it declares the capnogram explainer as what it teaches', () => {
+    const concepts = BRONCHOSPASM.debrief.rubric.map((item) => item.concept);
+    expect(concepts).toContain('capnogram-morphology');
+    // And the objective is about the shape rather than the value.
+    const objective = BRONCHOSPASM.metadata.objectives.find((o) => o.id === 'read-the-capnogram');
+    expect(objective?.measure).toContain('inside its alarm limits');
   });
 });

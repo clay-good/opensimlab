@@ -33,6 +33,7 @@ const DOCUMENTS: readonly { path: string; label: string }[] = [
   { path: '/governance', label: 'Governance' },
   { path: '/limitations', label: 'Limitations' },
   { path: '/privacy', label: 'Privacy' },
+  { path: '/content-review', label: 'Review the content' },
 ];
 
 export function DocumentRoute({ path }: { path: string }) {

@@ -12,11 +12,13 @@ import type { Scenario } from './types';
 import { ROUTINE_INDUCTION } from './routine-induction';
 import { RAPID_DESATURATION } from './rapid-desaturation';
 import { HYPOTENSION_AFTER_INDUCTION } from './hypotension-after-induction';
+import { BRONCHOSPASM } from './bronchospasm';
 
 export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_INDUCTION,
   RAPID_DESATURATION,
   HYPOTENSION_AFTER_INDUCTION,
+  BRONCHOSPASM,
 ];
 
 /** The scenario a learner meets first. */

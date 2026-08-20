@@ -63,6 +63,35 @@ Every item deriving from a published guideline SHALL record the guideline name, 
 - **WHEN** an issuing body publishes a new version of a guideline the project cites
 - **THEN** the maintainers record the supersession in the currency register, and every item citing the old version is queued for re-review
 
+### Requirement: Review Is Capturable In Place
+
+A clinician SHALL be able to record what is wrong with a specific clinical claim at the point where they meet it, without an account, an issue tracker, or any tool other than the browser they are already using, and SHALL be able to hand the resulting notes back as a single file.
+
+#### Scenario: A reviewer flags a claim where they read it
+
+- **WHEN** a reviewer reading a drug card, explainer or scenario briefing sees something wrong
+- **THEN** they can record what is wrong against that item's id, choose how serious it is, and suggest a correction, without leaving the page or losing their place
+
+#### Scenario: A reviewer can work through everything systematically
+
+- **WHEN** a reviewer wants to know what is left to look at
+- **THEN** a single surface lists every reviewable clinical item, marks which they have already flagged, and states how many remain, so the review is bounded rather than open-ended
+
+#### Scenario: Notes come back as one file
+
+- **WHEN** a reviewer has finished
+- **THEN** they export one human-readable file containing every note with the item id, the content version and the application version, which a maintainer can act on directly and which a reviewer can read before sending
+
+#### Scenario: Nothing is transmitted
+
+- **WHEN** notes are recorded
+- **THEN** they are held on that reviewer's device only, no request is made to any origin, and the reviewer sends the file themselves or does not
+
+#### Scenario: A flag is not a signature
+
+- **WHEN** a reviewer records notes
+- **THEN** nothing about that act marks the content as reviewed, signed, or covered by a review record, because flagging what is wrong and taking professional responsibility for what is right are different things
+
 ### Requirement: Public Corrections Process
 
 The project SHALL provide a clearly-signposted way to report a clinical inaccuracy, SHALL acknowledge reports within 5 working days, and SHALL maintain a public, permanent corrections log.

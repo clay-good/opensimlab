@@ -203,6 +203,14 @@ export function EducatorsRoute() {
           run.
         </p>
 
+        <h2>If you are willing to check it</h2>
+        <p>
+          There is a surface built for exactly this. It lists every clinical claim in the build,
+          lets you say what is wrong at the point where you read it, and exports your notes as one
+          file. It takes no account and nothing you write leaves your device.
+        </p>
+        <p><a href="/content-review">Open the clinical review view</a></p>
+
         <h2>The documents</h2>
         <ul>
           <li><a href="/validation">Validation report</a> — every benchmark, with what is not validated stated explicitly</li>

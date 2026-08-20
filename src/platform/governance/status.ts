@@ -6,6 +6,12 @@
  * and the landing route must not pull in a pharmacology model or a scenario to do so.
  */
 
+/**
+ * The application's own version, for anything that has to say which build it is
+ * talking about — a reviewer's notes, an exported transcript, a bug report.
+ */
+export const APP_VERSION = '0.1.0-alpha.1';
+
 export const HONEST_STATUS = {
   stage: 'alpha' as const,
   headline: 'Alpha. Not clinically reviewed.',

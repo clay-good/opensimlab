@@ -12,6 +12,9 @@ import { PERSISTENT_MARKER_TEXT } from '@platform/safety/not-for-clinical-use';
 import { LAYOUT } from '@platform/tokens/tokens';
 import { useResizableRegion } from './useResizableRegion';
 import { isUnreviewed, UNREVIEWED_NOTICE } from '@platform/governance/review-gate';
+import { FlagControl } from '@platform/governance/FlagControl';
+import { reviewModeFrom } from '@platform/governance/review-notes';
+import { APP_VERSION } from '@platform/governance/status';
 import type { StateField } from '@anesthesia/physiology';
 import type { Scenario } from '@anesthesia/engine';
 import type { RegionProfile } from '@anesthesia/region/profiles';
@@ -82,6 +85,14 @@ export function Cockpit({ scenario, region, audio, onEnd }: CockpitProps) {
   const promptsShown = useRef(new Map<string, number>());
   const [analysisOpen, setAnalysisOpen] = useState(false);
   const [actionsOpen, setActionsOpen] = useState(false);
+
+  // Review mode is a URL choice, not a stored one: a learner should never be
+  // invited to argue with the content, and a reviewer should never hunt for the
+  // way to.
+  const reviewMode = useMemo(
+    () => reviewModeFrom(typeof location === 'undefined' ? '' : location.search),
+    [],
+  );
 
   const previousState = useRef<Readonly<Record<string, number>> | null>(null);
   const lastFrame = useRef<number>(0);
@@ -434,12 +445,23 @@ export function Cockpit({ scenario, region, audio, onEnd }: CockpitProps) {
             <p className="reading__aside">{getExplainer(explainerId).diagram.caption}</p>
             <p className="reading__aside">Reflects: {getExplainer(explainerId).reflects}</p>
             <UnreviewedMarker review={getExplainer(explainerId).review} />
+            {reviewMode && (
+              <FlagControl
+                itemKey={`explainer:${explainerId}`}
+                itemLabel={getExplainer(explainerId).title}
+                contentVersion={getExplainer(explainerId).review.contentVersion}
+                appVersion={APP_VERSION}
+                now={() => new Date().toISOString()}
+              />
+            )}
           </div>
         )}
       </Drawer>
 
       <Drawer open={drugCardId !== null} title={drugCardId ? (getDrugCard(drugCardId)?.name ?? '') : ''} onClose={() => setDrugCardId(null)}>
-        {drugCardId && getDrugCard(drugCardId) && <DrugCardBody drugId={drugCardId} />}
+        {drugCardId && getDrugCard(drugCardId) && (
+          <DrugCardBody drugId={drugCardId} reviewMode={reviewMode} />
+        )}
       </Drawer>
 
       <Modal open={shortcutsOpen} title="More options" onClose={() => setShortcutsOpen(false)}
@@ -520,7 +542,7 @@ export function Cockpit({ scenario, region, audio, onEnd }: CockpitProps) {
   );
 }
 
-function DrugCardBody({ drugId }: { drugId: string }) {
+function DrugCardBody({ drugId, reviewMode }: { drugId: string; reviewMode: boolean }) {
   const card = getDrugCard(drugId);
   if (!card) return null;
   return (
@@ -540,6 +562,15 @@ function DrugCardBody({ drugId }: { drugId: string }) {
       <h3>What to watch on the monitor</h3>
       <p>{card.watchFor}</p>
       <UnreviewedMarker review={card.review} />
+      {reviewMode && (
+        <FlagControl
+          itemKey={`drug-card:${card.drugId}`}
+          itemLabel={`${card.name} drug card`}
+          contentVersion={card.review.contentVersion}
+          appVersion={APP_VERSION}
+          now={() => new Date().toISOString()}
+        />
+      )}
     </div>
   );
 }

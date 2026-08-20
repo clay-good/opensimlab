@@ -9,6 +9,9 @@
 
 import { Badge, Button, Panel } from '@platform/ui';
 import { isUnreviewed, UNREVIEWED_NOTICE } from '@platform/governance/review-gate';
+import { FlagControl } from '@platform/governance/FlagControl';
+import { reviewModeFrom } from '@platform/governance/review-notes';
+import { APP_VERSION } from '@platform/governance/status';
 import type { Scenario } from '@anesthesia/engine';
 import { HONEST_STATUS } from '@platform/governance/status';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
@@ -123,6 +126,16 @@ export function Prebrief({ scenario, region, onStart, guidance, onGuidance, assi
         <p className="reading__aside" data-unreviewed="true">
           <strong>This scenario has not been clinically reviewed.</strong> {UNREVIEWED_NOTICE}
         </p>
+      )}
+
+      {reviewModeFrom(typeof location === 'undefined' ? '' : location.search) && (
+        <FlagControl
+          itemKey={`scenario:${scenario.metadata.id}`}
+          itemLabel={scenario.metadata.title}
+          contentVersion={scenario.metadata.version}
+          appVersion={APP_VERSION}
+          now={() => new Date().toISOString()}
+        />
       )}
 
       <Button variant="primary" onClick={onStart}>Start the scenario</Button>

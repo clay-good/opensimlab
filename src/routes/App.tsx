@@ -30,6 +30,7 @@ const DocumentRoute = lazy(async () => ({ default: (await import('./DocumentRout
 const EducatorsRoute = lazy(async () => ({ default: (await import('./EducatorsRoute')).EducatorsRoute }));
 const CurriculumRoute = lazy(async () => ({ default: (await import('./CurriculumRoute')).CurriculumRoute }));
 const ReviewRoute = lazy(async () => ({ default: (await import('./ReviewRoute')).ReviewRoute }));
+const ContentReviewRoute = lazy(async () => ({ default: (await import('./ContentReviewRoute')).ContentReviewRoute }));
 
 function Loading() {
   return <div className="loading-state" role="status" aria-live="polite">Loading…</div>;
@@ -85,6 +86,7 @@ function CurrentRoute() {
   if (path === '/for-educators') return <Suspense fallback={<Loading />}><EducatorsRoute /></Suspense>;
   if (path === '/curriculum') return <Suspense fallback={<Loading />}><CurriculumRoute /></Suspense>;
   if (path === '/review') return <Suspense fallback={<Loading />}><ReviewRoute /></Suspense>;
+  if (path === '/content-review') return <Suspense fallback={<Loading />}><ContentReviewRoute /></Suspense>;
   if (path === '/gallery') return <Suspense fallback={<Loading />}><GalleryRoute /></Suspense>;
   if (path === '/frame-budget') return <Suspense fallback={<Loading />}><FrameBudgetRoute /></Suspense>;
   if (['/validation', '/governance', '/limitations', '/privacy'].includes(path)) {
