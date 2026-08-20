@@ -13,6 +13,7 @@ import { PlannedModuleRoute } from './PlannedModuleRoute';
 import { MODULES } from '@platform/modules/registry';
 import { routeFor } from './routes';
 import { UpdateNotice } from '@platform/offline/UpdateNotice';
+import { ErrorBoundary } from '@platform/ui/ErrorBoundary';
 
 /**
  * The simulator, the gallery and the harness are loaded on demand. The landing
@@ -52,7 +53,11 @@ export function App() {
   return (
     <>
       <UpdateNotice />
-      <CurrentRoute />
+      {/* Two boundaries, not one. A crash inside the simulator leaves the rest
+          of the site reachable, and a crash anywhere still leaves a page. */}
+      <ErrorBoundary surface="page">
+        <CurrentRoute />
+      </ErrorBoundary>
     </>
   );
 }
@@ -71,7 +76,11 @@ function CurrentRoute() {
   if (path === '/') return <Landing />;
   if (path === '/about') return <About />;
   if (path === '/anesthesia' || path.startsWith('/anesthesia/')) {
-    return <Suspense fallback={<Loading />}><AnesthesiaRoute path={path} /></Suspense>;
+    return (
+      <ErrorBoundary surface="simulator">
+        <Suspense fallback={<Loading />}><AnesthesiaRoute path={path} /></Suspense>
+      </ErrorBoundary>
+    );
   }
   if (path === '/for-educators') return <Suspense fallback={<Loading />}><EducatorsRoute /></Suspense>;
   if (path === '/curriculum') return <Suspense fallback={<Loading />}><CurriculumRoute /></Suspense>;

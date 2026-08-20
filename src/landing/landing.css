@@ -31,6 +31,24 @@
   letter-spacing: var(--type-vital-xl-tracking);
 }
 
+/* The front door settles in rather than appearing. One short, single-shot
+ * movement — nothing loops, nothing bounces, and the whole thing is off under
+ * reduced motion via the global rule. */
+@media (prefers-reduced-motion: no-preference) {
+  .landing__front > * {
+    animation: landing-settle var(--motion-deliberate) var(--ease) both;
+  }
+  .landing__front > *:nth-child(2) { animation-delay: 40ms; }
+  .landing__front > *:nth-child(3) { animation-delay: 80ms; }
+  .landing__front > *:nth-child(4) { animation-delay: 120ms; }
+  .landing__front > *:nth-child(5) { animation-delay: 160ms; }
+  .landing__front > *:nth-child(6) { animation-delay: 200ms; }
+}
+@keyframes landing-settle {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
 .landing__tagline {
   font: var(--type-subtitle);
   color: var(--text-secondary);
@@ -38,16 +56,37 @@
 }
 
 /* The hero: a live electrocardiogram from the project's own waveform engine.
- * It is given real height, because it is the argument the page is making. */
+ *
+ * It is the argument the page is making, so it is given the room to make it:
+ * the monitor's own black, a height that scales with the viewport, and an inner
+ * hairline that reads as a bezel rather than a card border. Nothing here is
+ * decorative colour — the trace is `--ecg` and everything else is the neutral
+ * ramp, which is the rule the design system is built on.
+ */
 .landing__hero {
   position: relative;
   inline-size: 100%;
-  block-size: 200px;
+  block-size: clamp(180px, 26dvh, 280px);
   margin-block: var(--space-3);
   background: var(--void);
   border: 1px solid var(--line);
   border-radius: var(--radius-panel);
   overflow: hidden;
+}
+/* A soft edge, so the trace emerges and retreats instead of being clipped by a
+ * hard border at both ends. */
+.landing__hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    var(--void) 0%,
+    transparent 6%,
+    transparent 94%,
+    var(--void) 100%
+  );
 }
 /* The static fallback occupies exactly the same box, so nothing shifts when the
  * live version takes over. */

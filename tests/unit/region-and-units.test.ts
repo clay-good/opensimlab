@@ -1,7 +1,7 @@
 /** Acceptance tests for platform/practice-region and platform/global-reach. */
 import { describe, expect, it } from 'vitest';
 import {
-  REGIONS, UNITED_KINGDOM, UNITED_STATES, UNREPRESENTED_NOTE, getRegion, guessRegion, term,
+  REGIONS, UNITED_KINGDOM, UNITED_STATES, UNREPRESENTED_NOTE, getRegion, guessRegion, requireRegion, term,
 } from '@anesthesia/region/profiles';
 import { CONVERTIBLE_FIELDS, forDisplay, formatQuantity, systemsDiffer } from '@anesthesia/region/units';
 import { AnesthesiaEngine } from '@anesthesia/engine';
@@ -164,6 +164,11 @@ describe('Requirement: Region Profiles Are Data, Reviewed, And Extendable', () =
 
   it('is a versioned data file that needs no code change to extend', () => {
     for (const region of REGIONS) expect(region.version).toMatch(/^\d+\.\d+\.\d+$/);
-    expect(() => getRegion('ZZ')).toThrow();
+    // An unknown id is a MISS, not a crash. This argument routinely comes from
+    // stored state or a URL, and an unknown one used to take the whole simulator
+    // down instead of falling back. The strict form stays for the internal
+    // invariant cases.
+    expect(getRegion('ZZ')).toBeUndefined();
+    expect(() => requireRegion('ZZ')).toThrow(/Unknown practice region/);
   });
 });

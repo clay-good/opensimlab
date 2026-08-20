@@ -554,11 +554,38 @@ export function usePrefersReducedMotion(): boolean {
 }
 
 /** Persist a preference on this device only. Nothing leaves it. */
-export function useLocalPreference<T>(key: string, initial: T): [T, (value: T) => void] {
+/**
+ * A preference stored on this device only.
+ *
+ * The stored value is CHECKED against the shape of the default before it is
+ * used. Local storage is writable by anything the learner runs — an extension,
+ * a console paste, a half-finished write from an older build — and a preference
+ * that came back as the wrong type used to reach the component and take the
+ * whole simulator down with it. A value that does not match is discarded and the
+ * default is used, silently, because there is nothing a learner could do about
+ * it and nothing worth interrupting them for.
+ *
+ * `validate` is for the cases a type check cannot cover, such as an identifier
+ * that has to exist in a registry.
+ */
+export function useLocalPreference<T>(
+  key: string,
+  initial: T,
+  validate?: (candidate: unknown) => candidate is T,
+): [T, (value: T) => void] {
   const [value, setValue] = useState<T>(() => {
     try {
       const stored = localStorage.getItem(`opensimlab.${key}`);
-      return stored === null ? initial : (JSON.parse(stored) as T);
+      if (stored === null) return initial;
+      const parsed: unknown = JSON.parse(stored);
+      if (validate) return validate(parsed) ? parsed : initial;
+      // With no validator, the default's own shape is the contract. A null
+      // default declares nothing, so anything is allowed through and the caller
+      // is responsible — which is why the callers that do that pass a validator.
+      if (initial === null || initial === undefined) return parsed as T;
+      if (Array.isArray(initial) !== Array.isArray(parsed)) return initial;
+      if (typeof parsed !== typeof initial) return initial;
+      return parsed as T;
     } catch {
       return initial;
     }

@@ -11,7 +11,7 @@ import { Button, useLocalPreference } from '@platform/ui';
 import { useSession, sessionInternals, type GuidanceLevel } from '@platform/session/session-store';
 import { NotForClinicalUseGate, hasAcknowledged, recordAcknowledgement } from '@platform/safety/not-for-clinical-use';
 import { SonificationEngine } from '@platform/audio/sonification';
-import { guessRegion, getRegion } from '@anesthesia/region/profiles';
+import { guessRegion, getRegion, REGIONS } from '@anesthesia/region/profiles';
 import { DEFAULT_SCENARIO_ID, getScenario, scenariosByDifficulty } from '@anesthesia/scenarios';
 import { ENGINE_VERSION } from '@anesthesia/engine';
 import { MODEL_SET_REVISION } from '@anesthesia/pharmacology/registry';
@@ -77,13 +77,21 @@ export function AnesthesiaRoute({ path }: { path: string }) {
   // learner into whichever scenario happened to be first.
   const isIndex = !path.startsWith('/anesthesia/scenario/');
   const [acknowledged, setAcknowledged] = useState(() => hasAcknowledged());
-  const [regionId, setRegionId] = useLocalPreference<string | null>('practice-region', null);
+  // Validated against the registry, not just type-checked: the default is null,
+  // so a shape check cannot tell a real region id from any other string, and an
+  // unknown one used to throw and take the whole simulator down.
+  const [regionId, setRegionId] = useLocalPreference<string | null>(
+    'practice-region',
+    null,
+    (candidate): candidate is string | null =>
+      candidate === null || (typeof candidate === 'string' && REGIONS.some((r) => r.id === candidate)),
+  );
   const audio = useMemo(() => new SonificationEngine(), []);
 
   const guess = useMemo(() => guessRegion(
     typeof navigator === 'undefined' ? ['en-GB'] : [...navigator.languages],
   ), []);
-  const region = regionId ? getRegion(regionId) : guess.profile;
+  const region = (regionId ? getRegion(regionId) : null) ?? guess.profile;
 
   // The assignment's guidance level is applied once, before the session begins.
   // After that it is the learner's own control: a link sets the starting point,

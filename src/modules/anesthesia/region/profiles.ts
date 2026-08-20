@@ -184,8 +184,20 @@ export function guessRegion(languageTags: readonly string[]): RegionGuess {
   };
 }
 
-export function getRegion(id: string): RegionProfile {
-  const region = REGIONS.find((candidate) => candidate.id === id);
+/**
+ * A region by id, or undefined.
+ *
+ * This does NOT throw. Its argument routinely comes from stored state or a URL,
+ * neither of which is under this application's control, and an unknown id used
+ * to take the whole simulator down rather than falling back to a sensible
+ * default. Use `requireRegion` where the id is genuinely an internal invariant.
+ */
+export function getRegion(id: string): RegionProfile | undefined {
+  return REGIONS.find((candidate) => candidate.id === id);
+}
+
+export function requireRegion(id: string): RegionProfile {
+  const region = getRegion(id);
   if (!region) throw new Error(`Unknown practice region: ${id}`);
   return region;
 }

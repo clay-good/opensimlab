@@ -240,3 +240,21 @@ a:hover { text-decoration-color: var(--text-secondary); }
   background: var(--surface-1);
   margin-block-start: var(--space-3);
 }
+
+/* The error boundary's own surface. It has to render without depending on
+ * anything that might be what broke. */
+.error-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.error-details {
+  inline-size: 100%;
+  max-block-size: 40vh;
+  overflow: auto;
+  padding: var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--surface-1);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

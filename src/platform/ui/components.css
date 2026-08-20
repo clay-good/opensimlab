@@ -24,10 +24,15 @@
   font: var(--type-body);
   font-weight: 500;
   cursor: pointer;
-  transition: background var(--motion-micro) var(--ease), border-color var(--motion-micro) var(--ease);
+  transition:
+    background var(--motion-micro) var(--ease),
+    border-color var(--motion-micro) var(--ease),
+    transform var(--motion-micro) var(--ease);
 }
 .button:hover:not(:disabled) { background: var(--surface-3); }
-.button:active:not(:disabled) { background: var(--surface-1); }
+/* A control that yields under the press reads as connected to what it does.
+ * Two percent, once, on press: enough to feel and too little to notice. */
+.button:active:not(:disabled) { background: var(--surface-1); transform: scale(0.98); }
 .button:disabled {
   color: var(--text-tertiary);
   opacity: 0.4;
@@ -64,7 +69,14 @@
   cursor: pointer;
   transition: background var(--motion-micro) var(--ease), color var(--motion-micro) var(--ease);
 }
+.icon-button {
+  transition:
+    background var(--motion-micro) var(--ease),
+    color var(--motion-micro) var(--ease),
+    transform var(--motion-micro) var(--ease);
+}
 .icon-button:hover:not(:disabled) { background: var(--surface-2); color: var(--text-primary); }
+.icon-button:active:not(:disabled) { transform: scale(0.94); }
 .icon-button[aria-pressed='true'] { background: var(--surface-3); color: var(--text-primary); border-color: var(--line-strong); }
 .icon-button:disabled { color: var(--text-tertiary); opacity: 0.4; cursor: not-allowed; }
 
