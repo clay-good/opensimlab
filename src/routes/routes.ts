@@ -87,6 +87,37 @@ export const ROUTES: readonly RouteMetadata[] = [
     heading: scenario.metadata.title,
   })),
   {
+    path: '/for-educators',
+    title: formatTitle('For educators'),
+    description:
+      'How a nurse anesthesia or medical program can use Open Sim Lab: assignment links, '
+      + 'curriculum mapping, reviewing submitted sessions, and self-hosting it.',
+    indexable: true,
+    structuredData: [],
+    heading: 'For educators',
+  },
+  {
+    path: '/curriculum',
+    title: formatTitle('Curriculum coverage'),
+    description:
+      'Which scenarios map to which published training framework domains, what is not yet '
+      + 'covered, and the whole mapping as a CSV for program documentation.',
+    indexable: true,
+    structuredData: [],
+    heading: 'Curriculum coverage',
+  },
+  {
+    path: '/review',
+    title: formatTitle('Review submitted sessions'),
+    description:
+      'Open the session files your learners exported. Everything is replayed and computed in '
+      + 'your browser; nothing is uploaded anywhere.',
+    // A working surface rather than a document worth finding in a search result.
+    indexable: false,
+    structuredData: [],
+    heading: 'Review submitted sessions',
+  },
+  {
     path: '/validation',
     title: formatTitle('Validation report'),
     description:

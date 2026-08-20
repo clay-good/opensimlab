@@ -25,6 +25,10 @@ const FrameBudgetRoute = lazy(async () => ({ default: (await import('./FrameBudg
 // The informational routes read the validation report and the governance records,
 // which reach the pharmacology models. They load on demand for the same reason.
 const DocumentRoute = lazy(async () => ({ default: (await import('./DocumentRoute')).DocumentRoute }));
+// The educator surfaces. Loaded on demand: most visitors are learners.
+const EducatorsRoute = lazy(async () => ({ default: (await import('./EducatorsRoute')).EducatorsRoute }));
+const CurriculumRoute = lazy(async () => ({ default: (await import('./CurriculumRoute')).CurriculumRoute }));
+const ReviewRoute = lazy(async () => ({ default: (await import('./ReviewRoute')).ReviewRoute }));
 
 function Loading() {
   return <div className="loading-state" role="status" aria-live="polite">Loading…</div>;
@@ -69,6 +73,9 @@ function CurrentRoute() {
   if (path === '/anesthesia' || path.startsWith('/anesthesia/')) {
     return <Suspense fallback={<Loading />}><AnesthesiaRoute path={path} /></Suspense>;
   }
+  if (path === '/for-educators') return <Suspense fallback={<Loading />}><EducatorsRoute /></Suspense>;
+  if (path === '/curriculum') return <Suspense fallback={<Loading />}><CurriculumRoute /></Suspense>;
+  if (path === '/review') return <Suspense fallback={<Loading />}><ReviewRoute /></Suspense>;
   if (path === '/gallery') return <Suspense fallback={<Loading />}><GalleryRoute /></Suspense>;
   if (path === '/frame-budget') return <Suspense fallback={<Loading />}><FrameBudgetRoute /></Suspense>;
   if (['/validation', '/governance', '/limitations', '/privacy'].includes(path)) {

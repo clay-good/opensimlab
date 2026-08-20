@@ -25,6 +25,39 @@ Every scenario and competency SHALL declare its mapping to published training fr
 - **WHEN** a scenario has no framework mapping
 - **THEN** it is listed as unmapped rather than omitted, so coverage claims stay honest
 
+### Requirement: Assignment Links Without Accounts
+
+An instructor SHALL be able to hand a cohort a single URL that opens a named scenario with a chosen guidance level and a fixed patient, so that every learner meets the identical case without anyone creating an account or the instructor learning who followed the link.
+
+#### Scenario: A cohort meets the same patient
+
+- **WHEN** an instructor shares an assignment link carrying a scenario, a guidance level and a seed
+- **THEN** every learner who opens it gets the same scenario at that guidance level with an identical patient and identical random draws, and the briefing states which assignment they are in
+
+#### Scenario: The link carries no identity and reports nothing
+
+- **WHEN** an assignment link is opened
+- **THEN** no request is made to any origin beyond the one serving the files, nothing about the visit is recorded anywhere, and the instructor has no way to learn who opened it
+
+#### Scenario: A malformed or unknown link degrades to a choice
+
+- **WHEN** a link names a scenario that does not exist, or carries an unreadable parameter
+- **THEN** the learner is shown the scenario directory with a plain explanation rather than an error, and no parameter from the link is trusted as valid without being checked against the scenario registry
+
+### Requirement: Simulator Time Is Not Clinical Time
+
+The application and its documentation SHALL state that time spent here is not clinical experience, does not count toward any case requirement, clinical hour, or supervised experience for any accrediting or certifying body, and SHALL NOT produce any artifact that could be mistaken for such a record.
+
+#### Scenario: An exported record says what it is not
+
+- **WHEN** a learner exports a session for an instructor
+- **THEN** the export states on its face that it records simulated practice, names no case number or procedure log, and carries the not-for-clinical-use statement
+
+#### Scenario: A program is told plainly
+
+- **WHEN** a program considers adopting this
+- **THEN** the educator documentation states that this supplements and does not substitute for clinical experience, mannequin-based simulation, or supervised practice, and that no accrediting body has recognised it for any requirement
+
 ### Requirement: Classroom And Lecture Use
 
 The application SHALL support use in front of a room: a presentation mode with enlarged type and traces legible from the back of a lecture hall, and operation with no network.

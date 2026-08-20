@@ -6,9 +6,9 @@
  * not-for-clinical-use acknowledgement, never the delivery of the page.
  */
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button, useLocalPreference } from '@platform/ui';
-import { useSession, sessionInternals } from '@platform/session/session-store';
+import { useSession, sessionInternals, type GuidanceLevel } from '@platform/session/session-store';
 import { NotForClinicalUseGate, hasAcknowledged, recordAcknowledgement } from '@platform/safety/not-for-clinical-use';
 import { SonificationEngine } from '@platform/audio/sonification';
 import { guessRegion, getRegion } from '@anesthesia/region/profiles';
@@ -30,9 +30,48 @@ function scenarioForPath(path: string) {
 /** A seed derived from the scenario rather than from a clock, so a session replays. */
 const DEFAULT_SEED = 20260819;
 
+/**
+ * An assignment carried in the URL (platform/adoption → Assignment Links Without
+ * Accounts).
+ *
+ * An instructor hands out one link and the whole cohort meets the identical
+ * patient. NOTHING is trusted from the link: the scenario is looked up in the
+ * registry, the guidance level must be one of the three, and the seed must be a
+ * finite number. A parameter that fails any of those is dropped rather than
+ * used, because a URL is input from outside.
+ *
+ * The link carries no identity and there is nowhere for it to report to. An
+ * instructor can tell a cohort to open it; they cannot learn who did.
+ */
+export interface Assignment {
+  readonly seed: number;
+  readonly guidance: GuidanceLevel | null;
+  readonly label: string | null;
+}
+
+const GUIDANCE_LEVELS: readonly GuidanceLevel[] = ['guided', 'coached', 'unassisted'];
+
+export function readAssignment(search: string): Assignment {
+  const params = new URLSearchParams(search);
+  const rawSeed = Number(params.get('seed'));
+  const rawGuidance = params.get('guidance');
+  const rawLabel = params.get('assignment');
+  return {
+    seed: Number.isFinite(rawSeed) && rawSeed !== 0 ? Math.trunc(rawSeed) : DEFAULT_SEED,
+    guidance: GUIDANCE_LEVELS.find((level) => level === rawGuidance) ?? null,
+    // Shown back to the learner, so it is trimmed and bounded rather than
+    // rendered at whatever length a URL happens to carry.
+    label: rawLabel ? rawLabel.slice(0, 80) : null,
+  };
+}
+
 export function AnesthesiaRoute({ path }: { path: string }) {
   const session = useSession();
   const scenario = useMemo(() => scenarioForPath(path), [path]);
+  const assignment = useMemo(
+    () => readAssignment(typeof location === 'undefined' ? '' : location.search),
+    [],
+  );
   const contentVersion = scenario.metadata.version;
   // The index at /anesthesia lists what there is to do rather than dropping the
   // learner into whichever scenario happened to be first.
@@ -46,6 +85,16 @@ export function AnesthesiaRoute({ path }: { path: string }) {
   ), []);
   const region = regionId ? getRegion(regionId) : guess.profile;
 
+  // The assignment's guidance level is applied once, before the session begins.
+  // After that it is the learner's own control: a link sets the starting point,
+  // it does not lock them out of the escape hatch the curriculum requires.
+  const appliedGuidance = useRef(false);
+  useEffect(() => {
+    if (appliedGuidance.current || assignment.guidance === null) return;
+    appliedGuidance.current = true;
+    session.setGuidance(assignment.guidance);
+  }, [assignment.guidance, session]);
+
   useEffect(() => {
     if (!acknowledged || session.phase !== 'idle') return;
     session.begin(
@@ -56,7 +105,7 @@ export function AnesthesiaRoute({ path }: { path: string }) {
         modelSetRevision: MODEL_SET_REVISION,
         engineVersion: ENGINE_VERSION,
         practiceRegion: region.id,
-        seed: DEFAULT_SEED,
+        seed: assignment.seed,
         scenario,
       },
       () => new Worker(new URL('../modules/anesthesia/solver.worker.ts', import.meta.url), { type: 'module' }),
@@ -111,7 +160,7 @@ export function AnesthesiaRoute({ path }: { path: string }) {
         attributionByTick={() => session.attribution}
         timeToPeakSeconds={{ propofol: 100, remifentanil: 90 }}
         replayOptions={{
-          scenario, seed: DEFAULT_SEED,
+          scenario, seed: assignment.seed,
           practiceRegion: region.id, ticks: session.tick || 1,
         }}
         preoxygenationSeconds={session.equipment?.preoxygenationSeconds ?? 0}
@@ -131,6 +180,7 @@ export function AnesthesiaRoute({ path }: { path: string }) {
           guidance={session.guidance}
           onGuidance={session.setGuidance}
           onStart={session.play}
+          {...(assignment.label ? { assignmentLabel: assignment.label } : {})}
         />
         {guess.isFallback && regionId === null && (
           <div className="reading">

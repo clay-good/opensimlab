@@ -24,14 +24,19 @@ export interface PrebriefProps {
   readonly scenario: Scenario;
   readonly region: RegionProfile;
   readonly onStart: () => void;
+  /** Set by an assignment link, so a learner knows which assignment they are in. */
+  readonly assignmentLabel?: string;
   readonly guidance: 'guided' | 'coached' | 'unassisted';
   readonly onGuidance: (level: 'guided' | 'coached' | 'unassisted') => void;
 }
 
-export function Prebrief({ scenario, region, onStart, guidance, onGuidance }: PrebriefProps) {
+export function Prebrief({ scenario, region, onStart, guidance, onGuidance, assignmentLabel }: PrebriefProps) {
   const patient = scenario.patient;
   return (
     <main className="reading" id="main">
+      {assignmentLabel && (
+        <p className="field__label">Assignment: {assignmentLabel}</p>
+      )}
       <h1>{scenario.metadata.title}</h1>
       <p>{patient.ageYears}-year-old {patient.sex === 'male' ? 'man' : 'woman'}, {patient.weightKg} kg,
         ASA {patient.asaClass}, for {patient.procedure}.</p>

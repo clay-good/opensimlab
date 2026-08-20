@@ -110,7 +110,10 @@ describe('Requirement: No Telemetry, No Analytics, No Third-Party Requests', () 
     // which are never fetched by the application.
     // Namespace URIs are identifiers, not addresses: nothing ever fetches them.
     const namespaceUris = /^https?:\/\/(www\.w3\.org|schema\.org|www\.sitemaps\.org)\//;
-    const documentationHosts = /^https:\/\/(pubmed\.ncbi\.nlm\.nih\.gov|www\.asahq\.org|www\.fda\.gov|www\.mhaus\.org|github\.com|doi\.org|opensimlab\.com)/;
+    // The framework bodies are here for the same reason as the journals: the
+    // curriculum mapping has to link a program director to the document it is a
+    // reading OF, so they can check it against the one they are accredited to.
+    const documentationHosts = /^https:\/\/(pubmed\.ncbi\.nlm\.nih\.gov|www\.asahq\.org|www\.fda\.gov|www\.mhaus\.org|github\.com|doi\.org|opensimlab\.com|www\.nbcrna\.com|www\.coacrna\.org|www\.acgme\.org)/;
     for (const file of sourceFiles) {
       if (isMetaFile(file.path)) continue;
       for (const match of file.text.matchAll(/https?:\/\/[^\s'"`)]+/g)) {

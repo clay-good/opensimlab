@@ -11,6 +11,8 @@ import { MODULES } from '@platform/modules/registry';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { Landing } from '@landing/Landing';
 import { About } from '@landing/About';
+import { EducatorsRoute } from './EducatorsRoute';
+import { CurriculumRoute } from './CurriculumRoute';
 import { DEFAULT_SCENARIO_ID, getScenario, scenariosByDifficulty } from '@anesthesia/scenarios';
 import { DocumentRoute } from './DocumentRoute';
 import { PlannedModuleRoute } from './PlannedModuleRoute';
@@ -21,6 +23,10 @@ export function PrerenderedBody({ path }: { path: string }) {
   // tree the client produces and hydration succeeds rather than mismatching.
   if (path === '/') return <Landing />;
   if (path === '/about') return <About />;
+  // The educator pages are prerendered as their real components: they are prose
+  // and tables, and a program director may well arrive with scripting blocked.
+  if (path === '/for-educators') return <EducatorsRoute />;
+  if (path === '/curriculum') return <CurriculumRoute />;
   const planned = MODULES.find((module) => `/${module.route}` === path && module.status === 'planned');
   if (planned) return <PlannedModuleRoute module={planned} />;
   if (path === '/anesthesia') return <AnesthesiaMarkup />;

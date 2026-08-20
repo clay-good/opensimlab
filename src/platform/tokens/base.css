@@ -202,3 +202,41 @@ a:hover { text-decoration-color: var(--text-secondary); }
 .reading td.numeric, .reading th.numeric { inline-size: 1%; white-space: nowrap; text-align: end; }
 /* A wide table scrolls inside itself rather than widening the page. */
 .reading > table { display: block; overflow-x: auto; }
+
+/* --- Educator surfaces ----------------------------------------------------- */
+.curriculum__scenarios { display: grid; gap: var(--space-2); list-style: none; padding-inline-start: 0; }
+.educators__builder {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+  background: var(--surface-1);
+  justify-items: start;
+}
+.educators__builder .field { inline-size: 100%; }
+.educators__link {
+  inline-size: 100%;
+  overflow-wrap: anywhere;
+  font: var(--type-micro);
+  color: var(--text-secondary);
+}
+.review__drop {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-panel);
+  background: var(--surface-1);
+  inline-size: 100%;
+  justify-items: start;
+}
+.review__session {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+  background: var(--surface-1);
+  margin-block-start: var(--space-3);
+}
