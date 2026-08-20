@@ -205,3 +205,34 @@ describe('Requirement: Everything The Offline Claim Names Is Actually Precached'
     expect(bytes).toBeLessThan(8 * 1024 * 1024);
   });
 });
+
+describe('Requirement: An Explicit Update Is Actually Offered', () => {
+  // The worker is cache-first with explicit update acceptance, so a new version
+  // never interrupts a running session. That is only defensible if something
+  // asks. The event was dispatched and nothing listened, so a returning learner
+  // stayed on the build they first cached — and would report defects that were
+  // already fixed, which for a project collecting tester reports is the worst
+  // possible failure.
+  const register = readFileSync(join(process.cwd(), 'src/platform/offline/register.ts'), 'utf8');
+  const notice = readFileSync(join(process.cwd(), 'src/platform/offline/UpdateNotice.tsx'), 'utf8');
+  const app = readFileSync(join(process.cwd(), 'src/routes/App.tsx'), 'utf8');
+
+  it('Scenario: something listens for the update and offers it', () => {
+    expect(register).toContain('UPDATE_READY_EVENT');
+    expect(notice).toContain('addEventListener(UPDATE_READY_EVENT');
+    expect(notice).toContain('acceptUpdate');
+    expect(app).toContain('<UpdateNotice />');
+  });
+
+  it('Scenario: a version that installed before this page loaded is still offered', () => {
+    // No `updatefound` fires for a worker that is already waiting, so the
+    // registration is checked directly as well.
+    expect(register).toMatch(/registration\.waiting && navigator\.serviceWorker\.controller/);
+  });
+
+  it('Scenario: the offer never takes the decision away', () => {
+    // No automatic reload and no skipWaiting outside the learner's click.
+    expect(notice).toContain('Not now');
+    expect(register).not.toMatch(/skipWaiting\(\)/);
+  });
+});

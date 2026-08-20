@@ -12,6 +12,7 @@ import { About } from '@landing/About';
 import { PlannedModuleRoute } from './PlannedModuleRoute';
 import { MODULES } from '@platform/modules/registry';
 import { routeFor } from './routes';
+import { UpdateNotice } from '@platform/offline/UpdateNotice';
 
 /**
  * The simulator, the gallery and the harness are loaded on demand. The landing
@@ -39,7 +40,20 @@ function usePath(): string {
   return path.replace(/\/+$/, '') || '/';
 }
 
+/**
+ * The shell. The update offer rides above the router rather than inside each
+ * branch, because a learner may be anywhere when a new build lands.
+ */
 export function App() {
+  return (
+    <>
+      <UpdateNotice />
+      <CurrentRoute />
+    </>
+  );
+}
+
+function CurrentRoute() {
   const path = usePath();
 
   useEffect(() => {

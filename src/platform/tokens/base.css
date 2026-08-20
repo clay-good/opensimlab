@@ -104,3 +104,22 @@ a:hover { text-decoration-color: var(--text-secondary); }
 .scenario-index__title { font: var(--type-subtitle); }
 .scenario-index__patient { font: var(--type-body); color: var(--text-secondary); }
 .scenario-index__teaches { font: var(--type-micro); color: var(--text-tertiary); }
+
+/* The offer to take a newer build. A strip, not a modal: a learner in the middle
+ * of an induction is not interrupted for this. */
+.update-notice {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 90;
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2) var(--space-4);
+  background: var(--surface-2);
+  border-block-end: 1px solid var(--line-strong);
+  font: var(--type-micro);
+  letter-spacing: var(--type-micro-tracking);
+  color: var(--text-secondary);
+}
