@@ -3,12 +3,14 @@
  * the overlays that open over them.
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import './cockpit.css';
-import { Banner, Button, Drawer, Modal, SegmentedControl, usePrefersReducedMotion, useLocalPreference } from '@platform/ui';
+import { Banner, Button, Drawer, Modal, SegmentedControl, Toggle, usePrefersReducedMotion, useLocalPreference } from '@platform/ui';
 import { useSession, sessionInternals } from '@platform/session/session-store';
 import { SPEED_MULTIPLIERS, TICKS_PER_SECOND, type SpeedMultiplier } from '@platform/clock/simulation-clock';
 import { PERSISTENT_MARKER_TEXT } from '@platform/safety/not-for-clinical-use';
+import { LAYOUT } from '@platform/tokens/tokens';
+import { useResizableRegion } from './useResizableRegion';
 import { isUnreviewed, UNREVIEWED_NOTICE } from '@platform/governance/review-gate';
 import type { StateField } from '@anesthesia/physiology';
 import type { Scenario } from '@anesthesia/engine';
@@ -65,7 +67,14 @@ export function Cockpit({ scenario, region, audio, onEnd }: CockpitProps) {
   const [explainerId, setExplainerId] = useState<string | null>(null);
   const [drugCardId, setDrugCardId] = useState<string | null>(null);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
-  const [audioPromptDismissed, setAudioPromptDismissed] = useLocalPreference('audio-prompt-dismissed', false);
+  // Sound is OFF until the learner asks for it, and nothing asks them.
+  //
+  // The pulse tone is genuinely useful — its pitch falls with saturation, which
+  // is how an anaesthetist tracks saturation while looking at the airway, and it
+  // is the strongest channel a low-vision learner has here. But an unsolicited
+  // box on arrival is an interruption, and "nothing interrupts arrival" is a
+  // rule this project holds elsewhere. It lives in the overflow menu instead.
+  const [soundOn, setSoundOn] = useLocalPreference('sound-on', false);
   const [announcement, setAnnouncement] = useState('');
   const [criticalAnnouncement, setCriticalAnnouncement] = useState('');
   const [selectedTick, setSelectedTick] = useState<number | null>(null);
@@ -76,6 +85,34 @@ export function Cockpit({ scenario, region, audio, onEnd }: CockpitProps) {
 
   const previousState = useRef<Readonly<Record<string, number>> | null>(null);
   const lastFrame = useRef<number>(0);
+  const cockpitRef = useRef<HTMLDivElement>(null);
+
+  /** Read the region's real size, so a drag starts from where the region IS. */
+  const measureRegion = useCallback((selector: string, axis: 'height' | 'width') => () => {
+    const element = cockpitRef.current?.querySelector(selector);
+    const rect = element?.getBoundingClientRect();
+    return axis === 'height' ? (rect?.height ?? LAYOUT.actionCockpitHeightPx) : (rect?.width ?? 480);
+  }, []);
+
+  const actionHeight = useResizableRegion({
+    storageKey: 'opensimlab.action-height',
+    label: 'Height of the action region',
+    axis: 'row',
+    min: LAYOUT.actionCockpitMinPx,
+    max: LAYOUT.actionCockpitMaxPx,
+    // Dragging the handle UP makes the region taller.
+    invert: true,
+    measure: measureRegion('.cockpit__actions', 'height'),
+  });
+
+  const analysisWidth = useResizableRegion({
+    storageKey: 'opensimlab.analysis-width',
+    label: 'Width of the analysis region',
+    axis: 'column',
+    min: 280,
+    max: 900,
+    measure: measureRegion('.cockpit__analysis', 'width'),
+  });
 
   // Everything below reads the engine's report of what the equipment is doing.
   // Nothing here remembers what the learner asked for: a refused setting, an
@@ -145,12 +182,12 @@ export function Cockpit({ scenario, region, audio, onEnd }: CockpitProps) {
     if (!session.state) return;
     const pulses = session.waveformBlocks.length;
     if (pulses === 0) return;
-    audio.pulse(session.state.spo2Percent ?? 100);
+    if (soundOn) audio.pulse(session.state.spo2Percent ?? 100);
   }, [session.tick, audio, session.state, session.waveformBlocks.length]);
 
   useEffect(() => {
     const highest = session.alarms[0];
-    if (highest) audio.alarm(highest.priority);
+    if (soundOn && highest) audio.alarm(highest.priority);
   }, [session.alarms, audio]);
 
   // Guidance is presentational. It reads state the engine produced anyway and
@@ -249,8 +286,16 @@ export function Cockpit({ scenario, region, audio, onEnd }: CockpitProps) {
     actionsOpen ? 'cockpit--actions-open' : '',
   ].filter(Boolean).join(' ');
 
+  // The learner's own geometry, remembered on this device. Both default to a
+  // share of the viewport rather than a pixel count, so a laptop and a lecture
+  // display each get a sensible layout without anyone touching anything.
+  const style = {
+    ...(actionHeight.size !== null ? { '--action-cockpit-height': `${actionHeight.size}px` } : {}),
+    ...(analysisWidth.size !== null ? { '--analysis-fraction': `${analysisWidth.size}px` } : {}),
+  } as CSSProperties;
+
   return (
-    <div className={classes}>
+    <div className={classes} style={style} ref={cockpitRef}>
       <a className="skip-link" href="#monitor-region">Skip to the monitor</a>
 
       <div className="cockpit__status">
@@ -283,12 +328,17 @@ export function Cockpit({ scenario, region, audio, onEnd }: CockpitProps) {
           colorblindSafe={colorblindSafe}
           showLimits
           primaryTracesOnly={false}
-          canvasHeight={320}
+          canvasHeight="fill"
           onSilence={(alarmId) => session.act({ type: 'silence-alarm', payload: { alarmId } })}
           onWhy={setWhyField}
           modelConfidence={{ label: 'Predicted', kind: 'default' }}
         />
       </div>
+
+      {/* The separators. Real ones: focusable, arrow-key operable, announcing
+          their value, and returning to the default on Home or a double-click. */}
+      <div className="divider divider--vertical" {...analysisWidth.handleProps} />
+      <div className="divider divider--horizontal" {...actionHeight.handleProps} />
 
       <div className="cockpit__analysis">
         <AnalysisRegion
@@ -410,6 +460,22 @@ export function Cockpit({ scenario, region, audio, onEnd }: CockpitProps) {
           />
           <p className="field__hint">{scenario.patient.procedure}</p>
         </div>
+        <div className="overflow-menu__sound">
+          <Toggle
+            checked={soundOn}
+            onChange={(next: boolean) => {
+              setSoundOn(next);
+              // Web Audio needs a user gesture to start, and this click is one.
+              if (next) void audio.enable();
+            }}
+            label={soundOn ? 'Sound on' : 'Sound off'}
+          />
+          <p className="field__hint">
+            The pulse tone falls in pitch as saturation falls, which is how anaesthetists track
+            saturation while looking somewhere else. Sound is never the only channel: every alarm
+            and cue is also shown.
+          </p>
+        </div>
         <h3>Keyboard shortcuts</h3>
         <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 'var(--space-2) var(--space-4)' }}>
           {SHORTCUTS.map((shortcut) => (
@@ -421,26 +487,6 @@ export function Cockpit({ scenario, region, audio, onEnd }: CockpitProps) {
         </dl>
         <Button onClick={onEnd}>End the session and open the debrief</Button>
       </Modal>
-
-      {/* The one-time, non-blocking prompt explaining what the pulse tone is for. */}
-      {!audioPromptDismissed && (
-        <div style={{ position: 'fixed', insetBlockEnd: 'var(--space-4)', insetInlineStart: 'var(--space-4)', zIndex: 58, maxInlineSize: '420px' }}>
-          <Banner
-            actions={
-              <>
-                <Button compact variant="primary" onClick={() => { void audio.enable(); setAudioPromptDismissed(true); }}>
-                  Turn sound on
-                </Button>
-                <Button compact variant="ghost" onClick={() => setAudioPromptDismissed(true)}>No thanks</Button>
-              </>
-            }
-          >
-            The pulse tone falls in pitch as saturation falls. It is how anaesthetists actually
-            track saturation while looking somewhere else. Sound is never the only channel: every
-            alarm and cue is also shown.
-          </Banner>
-        </div>
-      )}
 
       {session.phase === 'worker-lost' && (
         <Modal open title="The simulation engine stopped" dismissible={false}

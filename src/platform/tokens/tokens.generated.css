@@ -92,7 +92,9 @@
   /* Layout. */
   --status-bar-height: 56px;
   --status-bar-height-compact: 40px;
-  --action-cockpit-height: 220px;
+  --action-cockpit-height: clamp(160px, 32dvh, 560px);
+  --divider-thickness: 1px;
+  --divider-hit: 12px;
   --alarm-rail-height: 48px;
   --max-content-width: 2200px;
   --control-height: 40px;

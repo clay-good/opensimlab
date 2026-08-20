@@ -64,7 +64,11 @@ push('ease', EASE);
 lines.push('', '  /* Layout. */');
 push('status-bar-height', `${LAYOUT.statusBarHeightPx}px`);
 push('status-bar-height-compact', `${LAYOUT.statusBarCompactHeightPx}px`);
-push('action-cockpit-height', `${LAYOUT.actionCockpitHeightPx}px`);
+// Fluid by default, bounded, and overridable by the learner at runtime.
+push('action-cockpit-height', `clamp(${LAYOUT.actionCockpitMinPx}px, `
+  + `${(LAYOUT.actionCockpitViewportShare * 100).toFixed(0)}dvh, ${LAYOUT.actionCockpitMaxPx}px)`);
+push('divider-thickness', `${LAYOUT.dividerThicknessPx}px`);
+push('divider-hit', `${LAYOUT.dividerHitTargetPx}px`);
 push('alarm-rail-height', `${LAYOUT.alarmRailHeightPx}px`);
 push('max-content-width', `${LAYOUT.maxContentWidthPx}px`);
 push('control-height', `${CONTROL_HEIGHT.comfortable}px`);

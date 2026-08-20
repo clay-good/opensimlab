@@ -28,7 +28,12 @@ export interface MonitorRegionProps {
   readonly colorblindSafe: boolean;
   readonly showLimits: boolean;
   readonly primaryTracesOnly: boolean;
-  readonly canvasHeight: number;
+  /**
+   * A pixel height, or `fill` to take whatever height the region has. `fill` is
+   * what the cockpit uses: a taller window should mean taller waveforms, not a
+   * fixed 320 px band with empty space under it.
+   */
+  readonly canvasHeight: number | 'fill';
   readonly onSilence: (alarmId: string) => void;
   readonly onWhy: (field: StateField) => void;
   readonly onFrame?: (durationMs: number) => void;

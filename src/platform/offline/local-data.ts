@@ -34,10 +34,22 @@ export const LOCAL_DATA_ITEMS: readonly LocalDataItem[] = [
     purpose: 'Whether the five trace hues are replaced with the confusion-line-safe set.',
   },
   {
-    key: 'opensimlab.audio-prompt-dismissed',
-    name: 'Sound prompt dismissed',
+    key: 'opensimlab.sound-on',
+    name: 'Sound',
     kind: 'preference',
-    purpose: 'Records that you have answered the one-time prompt about the pulse tone.',
+    purpose: 'Whether the variable-pitch pulse tone and the alarm tones play. Off unless you turn it on.',
+  },
+  {
+    key: 'opensimlab.action-height',
+    name: 'Height of the action region',
+    kind: 'preference',
+    purpose: 'The height you dragged the drug and equipment tray to, so it is the same next time.',
+  },
+  {
+    key: 'opensimlab.analysis-width',
+    name: 'Width of the analysis region',
+    kind: 'preference',
+    purpose: 'The width you dragged the analysis panel to, so it is the same next time.',
   },
   {
     key: 'opensimlab.transcripts',

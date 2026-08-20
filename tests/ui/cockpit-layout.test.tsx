@@ -26,20 +26,54 @@ const componentsCss = readFileSync(join(root, 'src/platform/ui/components.css'),
 describe('Requirement: Four-Region Cockpit', () => {
   it('Scenario: Region proportions at the reference desktop width', () => {
     expect(LAYOUT.statusBarHeightPx).toBe(56);
-    expect(LAYOUT.actionCockpitHeightPx).toBe(220);
     expect(LAYOUT.analysisWidthFraction).toBe(0.42);
     expect(LAYOUT.monitorWidthFraction).toBe(0.58);
     expect(LAYOUT.analysisWidthFraction + LAYOUT.monitorWidthFraction).toBeCloseTo(1, 9);
-    // The grid really is laid out from those values, with a 1 px divider.
-    expect(cockpitCss).toContain('var(--status-bar-height) 1fr var(--action-cockpit-height)');
-    expect(cockpitCss).toContain('var(--analysis-fraction, 42%) 1fr');
-    expect(cockpitCss).toContain('border-inline-end: 1px solid var(--line)');
+    // The grid is laid out from the tokens, and the middle row is what absorbs
+    // the change when anything else moves.
+    expect(cockpitCss).toContain('var(--status-bar-height)');
+    expect(cockpitCss).toContain('var(--action-cockpit-height)');
+    expect(cockpitCss).toContain('var(--analysis-fraction, 42%)');
+  });
+
+  it('Scenario: The layout is sized in the viewport, not in fixed pixels', () => {
+    // The action region is a share of viewport height between two bounds, not a
+    // number. A fixed 220 px left the drug tray a letterbox on a laptop.
+    expect(LAYOUT.actionCockpitMinPx).toBeLessThan(LAYOUT.actionCockpitHeightPx);
+    expect(LAYOUT.actionCockpitMaxPx).toBeGreaterThan(LAYOUT.actionCockpitHeightPx);
+    expect(LAYOUT.actionCockpitViewportShare).toBeGreaterThan(0.2);
+    const generated = readFileSync(join(root, 'src/platform/tokens/tokens.generated.css'), 'utf8');
+    expect(generated).toMatch(/--action-cockpit-height: clamp\(\d+px, \d+dvh, \d+px\)/);
+    // Every fluid track is bounded so one child cannot widen the grid.
+    expect(cockpitCss).toContain('minmax(0, 1fr)');
+    // The waveform canvas takes the height its region has, not a declared number.
+    const cockpitTsx = readFileSync(join(root, 'src/modules/anesthesia/ui/Cockpit.tsx'), 'utf8');
+    expect(cockpitTsx).toContain('canvasHeight="fill"');
   });
 
   it('declares exactly four regions and no fifth', () => {
-    const areas = [...cockpitCss.matchAll(/grid-template-areas:\s*([^;]+);/g)]
-      .flatMap((match) => (match[1] ?? '').match(/[a-z]+/g) ?? []);
-    expect(new Set(areas)).toEqual(new Set(['status', 'analysis', 'monitor', 'actions']));
+    const areas = new Set([...cockpitCss.matchAll(/grid-template-areas:\s*([^;]+);/g)]
+      .flatMap((match) => (match[1] ?? '').match(/[a-z]+/g) ?? []));
+    // The two separators are chrome BETWEEN regions, not regions: they hold no
+    // content and open nothing. Everything else must be one of the four.
+    areas.delete('vdivider');
+    areas.delete('hdivider');
+    expect(areas).toEqual(new Set(['status', 'analysis', 'monitor', 'actions']));
+  });
+
+  it('Scenario: Both separators are operable without a pointer', () => {
+    const cockpitTsx = readFileSync(join(root, 'src/modules/anesthesia/ui/Cockpit.tsx'), 'utf8');
+    const hook = readFileSync(join(root, 'src/modules/anesthesia/ui/useResizableRegion.ts'), 'utf8');
+    expect(cockpitTsx).toContain('divider--vertical');
+    expect(cockpitTsx).toContain('divider--horizontal');
+    // A real separator: role, bounds, arrow keys, and Home to restore default.
+    expect(hook).toContain("role: 'separator'");
+    expect(hook).toContain("'aria-valuenow'");
+    expect(hook).toContain("'aria-valuemin'");
+    expect(hook).toContain("'aria-valuemax'");
+    expect(hook).toContain("event.key === 'Home'");
+    // And a grab target larger than the hairline it draws.
+    expect(LAYOUT.dividerHitTargetPx).toBeGreaterThanOrEqual(12);
   });
 
   it('Scenario: The monitor is never the region that shrinks', () => {
@@ -62,7 +96,7 @@ describe('Requirement: Monitor Region Composition', () => {
   it('splits the region 72% traces and 28% tiles, with the rail above both', () => {
     expect(LAYOUT.waveformWidthFraction).toBe(0.72);
     expect(LAYOUT.vitalColumnWidthFraction).toBe(0.28);
-    expect(cockpitCss).toContain('grid-template-columns: 72% 28%');
+    expect(cockpitCss).toContain('minmax(0, 72fr) minmax(0, 28fr)');
   });
 
   it('Scenario: Alarm rail expands without displacing traces', () => {
@@ -111,7 +145,7 @@ describe('Requirement: Sacrifice Order Is Explicit', () => {
 
   it('Scenario: Landscape phone prioritizes the monitor', () => {
     expect(cockpitCss).toContain('@media (max-height: 499px) and (orientation: landscape)');
-    expect(cockpitCss).toContain('var(--status-bar-height-compact) 1fr');
+    expect(cockpitCss).toContain('var(--status-bar-height-compact) minmax(0, 1fr)');
     expect(LAYOUT.statusBarCompactHeightPx).toBe(40);
   });
 });

@@ -107,7 +107,7 @@ export interface WaveformCanvasProps {
   /** Sample blocks to push, keyed by track id. Replaced each tick. */
   readonly blocks: readonly { trackId: string; samples: Float32Array }[];
   readonly reducedMotion: boolean;
-  readonly height: number;
+  readonly height: number | 'fill';
   /** Called with each measured frame time, for the budget harness. */
   readonly onFrame?: (durationMs: number) => void;
   readonly quality?: QualityLevel;
@@ -183,7 +183,10 @@ export function WaveformCanvas({
     if (!canvas || !renderer) return undefined;
     const resize = () => {
       const rect = canvas.parentElement?.getBoundingClientRect();
-      renderer.resize(rect?.width ?? 600, height, window.devicePixelRatio || 1);
+      // `fill` measures the box instead of asserting a number, so the trace grows
+      // with the window and the renderer's backing store follows it.
+      const measured = height === 'fill' ? (rect?.height ?? 320) : height;
+      renderer.resize(rect?.width ?? 600, Math.max(measured, 80), window.devicePixelRatio || 1);
       renderer.setTracks(tracksRef.current);
     };
     resize();
@@ -199,8 +202,21 @@ export function WaveformCanvas({
   }, [blocks]);
 
   return (
-    <div style={{ position: 'relative', inlineSize: '100%', blockSize: height }}>
-      <canvas ref={canvasRef} role="img" aria-label="Physiological waveforms. A text description is available below." />
+    // The canvas is absolutely positioned so its own size can NEVER feed back
+    // into the box being measured. With it in flow, the renderer set an explicit
+    // canvas height from the wrapper's height, which grew the wrapper, which the
+    // observer measured, which grew the canvas — the traces ran 170 px past the
+    // bottom of the monitor region and pushed the action tray off the screen.
+    <div
+      className="waveform-canvas"
+      style={{ position: 'relative', inlineSize: '100%', blockSize: height === 'fill' ? '100%' : height }}
+    >
+      <canvas
+        ref={canvasRef}
+        style={{ position: 'absolute', inset: 0 }}
+        role="img"
+        aria-label="Physiological waveforms. A text description is available below."
+      />
     </div>
   );
 }

@@ -11,11 +11,23 @@
 .cockpit {
   display: grid;
   grid-template-areas:
-    'status status'
-    'analysis monitor'
-    'actions actions';
-  grid-template-rows: var(--status-bar-height) 1fr var(--action-cockpit-height);
-  grid-template-columns: var(--analysis-fraction, 42%) 1fr;
+    'status status status'
+    'analysis vdivider monitor'
+    'hdivider hdivider hdivider'
+    'actions actions actions';
+  /* Every row and column is either fluid or learner-set. The action region used
+   * to be a fixed 220 px whatever the display, which on a laptop left the drug
+   * tray a letterbox and on a large screen wasted half the height. Its default
+   * now scales with the viewport and the learner can drag it. */
+  grid-template-rows:
+    var(--status-bar-height)
+    minmax(0, 1fr)
+    var(--divider-thickness)
+    var(--action-cockpit-height);
+  grid-template-columns:
+    var(--analysis-fraction, 42%)
+    var(--divider-thickness)
+    minmax(0, 1fr);
   block-size: 100dvh;
   max-inline-size: var(--max-content-width);
   margin-inline: auto;
@@ -24,9 +36,39 @@
 }
 
 .cockpit__status { grid-area: status; min-inline-size: 0; overflow: hidden; }
-.cockpit__analysis { grid-area: analysis; border-inline-end: 1px solid var(--line); min-inline-size: 0; }
-.cockpit__monitor { grid-area: monitor; min-inline-size: 0; }
-.cockpit__actions { grid-area: actions; border-block-start: 1px solid var(--line); }
+.cockpit__analysis { grid-area: analysis; min-inline-size: 0; min-block-size: 0; }
+.cockpit__monitor { grid-area: monitor; min-inline-size: 0; min-block-size: 0; }
+.cockpit__actions { grid-area: actions; min-block-size: 0; }
+
+/* The floating Analysis and Actions buttons belong to the phone layout only.
+ * Above the small breakpoint both regions are on screen and these would add an
+ * implicit fifth grid row. */
+.mobile-actions { display: none; }
+
+/* --- Resize handles -------------------------------------------------------
+ *
+ * Both are real separators: focusable, arrow-key operable, and announcing their
+ * value, because a learner who cannot drag still has to be able to give the drug
+ * tray more room. Double-click or Home returns a handle to its default.
+ */
+.divider {
+  border: 0;
+  padding: 0;
+  background: var(--line);
+  position: relative;
+  touch-action: none;
+}
+.divider:hover, .divider:focus-visible { background: var(--focus); }
+.divider--vertical { grid-area: vdivider; cursor: col-resize; inline-size: var(--divider-thickness); }
+.divider--horizontal { grid-area: hdivider; cursor: row-resize; block-size: var(--divider-thickness); }
+/* The hit target is larger than the line, which stays a hairline. */
+.divider::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline: calc(var(--divider-hit) / -2);
+}
+.divider--horizontal::after { inset-inline: 0; inset-block: calc(var(--divider-hit) / -2); }
 
 /* --- Status bar ----------------------------------------------------------- */
 .status-bar {
@@ -77,31 +119,55 @@
 /* --- Monitor region ------------------------------------------------------- */
 .monitor {
   display: grid;
-  grid-template-rows: auto 1fr;
+  /* `minmax(0, 1fr)`, never a bare `1fr`. A bare fr track takes its minimum from
+   * its child's min-content, and the waveform canvas carries an explicit pixel
+   * height — so the traces grew past the bottom of the monitor and pushed the
+   * action tray off the screen. Same failure as the horizontal one, one axis over. */
+  grid-template-rows: auto minmax(0, 1fr);
   block-size: 100%;
   min-block-size: 0;
   background: var(--void);
 }
 .monitor__body {
   display: grid;
-  grid-template-columns: 72% 28%;
+  grid-template-columns: minmax(0, 72fr) minmax(0, 28fr);
+  /* The single row is bounded by the region, not by its content. Without this the
+   * implicit row is `auto`, the seven vital tiles ask for their natural 688 px,
+   * and both columns overflow the monitor and sit on top of the action tray. */
+  grid-template-rows: minmax(0, 1fr);
   min-block-size: 0;
   min-inline-size: 0;
 }
-.monitor__traces { min-inline-size: 0; position: relative; }
+/* The traces fill whatever height the region has rather than a fixed number of
+ * pixels, so a taller window means taller waveforms instead of empty space. */
+.monitor__traces { min-inline-size: 0; min-block-size: 0; position: relative; }
+/* The tiles share the height they are given. Each keeps a legible floor, and if
+ * the region is genuinely too short for all of them the column scrolls rather
+ * than pushing the others out of the cockpit. */
 .monitor__tiles {
   display: grid;
+  grid-auto-rows: minmax(56px, 1fr);
   gap: 1px;
   border-inline-start: 1px solid var(--line-subtle);
   min-inline-size: 0;
+  min-block-size: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 
 /* --- Analysis region ------------------------------------------------------ */
-.analysis { display: grid; grid-template-rows: auto 1fr; block-size: 100%; min-block-size: 0; }
+.analysis { display: grid; grid-template-rows: auto minmax(0, 1fr); block-size: 100%; min-block-size: 0; }
 .analysis__body { overflow: auto; padding: var(--space-3); min-block-size: 0; }
 
 /* --- Action cockpit ------------------------------------------------------- */
-.actions { display: grid; grid-template-rows: auto auto minmax(0, 1fr); block-size: 100%; min-block-size: 0; min-inline-size: 0; }
+.actions {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  block-size: 100%;
+  min-block-size: 0;
+  min-inline-size: 0;
+  border-block-start: 1px solid var(--line);
+}
 .actions__pinned {
   display: flex;
   gap: var(--space-3);
@@ -115,10 +181,14 @@
   color: var(--text-secondary);
 }
 .actions__tray { overflow: auto; padding: var(--space-3) var(--space-4); min-block-size: 0; min-inline-size: 0; }
+/* The drug and equipment cards. `auto-fit` with a real minimum means the tray
+ * uses the width it has — three cards on a laptop, six on a wide display —
+ * instead of leaving a column of empty space beside a fixed grid. */
 .tray-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: var(--space-3);
+  align-content: start;
 }
 .syringe {
   display: grid;
@@ -231,7 +301,7 @@
 /* A landscape phone prioritizes the monitor: the status bar compacts and the
  * action cockpit becomes a floating button opening a sheet. */
 @media (max-height: 499px) and (orientation: landscape) {
-  .cockpit { grid-template-rows: var(--status-bar-height-compact) 1fr; }
+  .cockpit { grid-template-rows: var(--status-bar-height-compact) minmax(0, 1fr); }
   .status-bar { gap: var(--space-3); }
   .status-bar__clock { font: var(--type-subtitle); font-variant-numeric: tabular-nums; }
 }
@@ -239,7 +309,7 @@
 /* A lecture display uses the extra space for data rather than whitespace: the
  * Analysis region shows the plot and the log at once instead of tabbed. */
 @media (min-width: 1920px) {
-  .analysis--wide .analysis__body { display: grid; grid-template-rows: 1fr 1fr; gap: var(--space-3); }
+  .analysis--wide .analysis__body { display: grid; grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-3); }
 }
 
 /* --- The Why panel --------------------------------------------------------- */

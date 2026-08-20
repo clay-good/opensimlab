@@ -137,7 +137,21 @@ export const MIN_TARGET_GAP = 8;
 export const LAYOUT = {
   statusBarHeightPx: 56,
   statusBarCompactHeightPx: 40,
-  actionCockpitHeightPx: 220,
+  /**
+   * The action region's default height. It is a FLOOR and a preference, not a
+   * fixed geometry: the region's real default is `clamp(minPx, viewportShare of
+   * the viewport height, maxPx)`, and the learner can drag it anywhere between
+   * the two bounds. A fixed 220 px left the drug tray a letterbox on a laptop
+   * and wasted half a large display.
+   */
+  actionCockpitHeightPx: 260,
+  actionCockpitMinPx: 160,
+  actionCockpitMaxPx: 560,
+  /** Share of viewport height the action region takes before the learner moves it. */
+  actionCockpitViewportShare: 0.32,
+  /** The draggable separators: a hairline to look at, a real target to grab. */
+  dividerThicknessPx: 1,
+  dividerHitTargetPx: 12,
   alarmRailHeightPx: 48,
   /** Analysis region share of width at md and above. */
   analysisWidthFraction: 0.42,

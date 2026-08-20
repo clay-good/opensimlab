@@ -12,8 +12,13 @@ The `/anesthesia` cockpit SHALL be composed of exactly four regions in a fixed r
 
 #### Scenario: Region proportions at the reference desktop width
 
-- **WHEN** the cockpit renders at 1440 by 900 CSS pixels
-- **THEN** the Status Bar is 56 px tall, the Action Cockpit is 220 px tall, and the remaining vertical space is split between Analysis on the left at 42% of width and Monitor on the right at 58%, separated by a 1 px `--line` divider
+- **WHEN** the cockpit renders at 1440 by 900 CSS pixels and the learner has set no preference
+- **THEN** the Status Bar is 56 px tall, the Action Cockpit takes 32% of viewport height bounded to between 160 px and 560 px, and the remaining vertical space is split between Analysis on the left at 42% of width and Monitor on the right at 58%, separated by a 1 px `--line` divider
+
+#### Scenario: The layout is sized in the viewport, not in fixed pixels
+
+- **WHEN** the same cockpit renders on a small laptop and on a large display
+- **THEN** every region scales with the available space rather than holding a fixed pixel height, the waveform canvas takes the height its region has rather than a declared number, and no region is given a size that leaves another one unusable at either extreme
 
 #### Scenario: The monitor is never the region that shrinks
 
@@ -24,6 +29,16 @@ The `/anesthesia` cockpit SHALL be composed of exactly four regions in a fixed r
 
 - **WHEN** the learner drags the Analysis and Monitor divider
 - **THEN** the split adjusts within bounds of 30% and 60%, snaps back if released outside them, and the chosen split persists on that device
+
+#### Scenario: The action region is resizable too
+
+- **WHEN** the learner drags the separator above the Action Cockpit
+- **THEN** its height adjusts between 160 px and 560 px, the Monitor absorbs the change, and the chosen height persists on that device
+
+#### Scenario: Both separators are operable without a pointer
+
+- **WHEN** a learner reaches a separator by keyboard
+- **THEN** it exposes itself as a separator with its current value and its bounds, the arrow keys move it by 16 px a press, and Home returns it to the default — because a learner who cannot drag still has to be able to give the drug tray more room
 
 ### Requirement: Status Bar Contents
 
