@@ -367,3 +367,79 @@
   font: var(--type-micro);
 }
 .phase-nav { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+
+/* ---------------------------------------------------------------------------
+   The demonstration strip.
+
+   Fixed to the bottom of the viewport rather than given a grid row, because a
+   narration line that reflowed the cockpit every time it changed length would
+   move the traces the narration is asking you to look at.
+   --------------------------------------------------------------------------- */
+
+.demo-bar {
+  position: fixed;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: 40;
+  background: var(--surface-2);
+  /* No drop shadow: nothing else in this interface casts one, and the strong
+     rule plus the raised surface already lift it off the cockpit. */
+  border-block-start: 1px solid var(--line-strong);
+}
+
+.demo-bar__progress {
+  block-size: 3px;
+  background: var(--line);
+}
+
+.demo-bar__progress > span {
+  display: block;
+  block-size: 100%;
+  background: var(--focus);
+  transition: inline-size 240ms linear;
+}
+
+.demo-bar__body {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+}
+
+.demo-bar__label {
+  margin: 0;
+  font: var(--type-micro);
+  letter-spacing: var(--type-micro-tracking);
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.demo-bar__text {
+  margin: 0;
+  font: var(--type-body);
+  color: var(--text-primary);
+  text-wrap: pretty;
+}
+
+/* Where to look. A ring on the region the narration is talking about, which is
+   the only thing that reliably solves "there are four panels and I do not know
+   which one you mean". */
+.cockpit[data-demo-focus='monitor'] .cockpit__monitor,
+.cockpit[data-demo-focus='analysis'] .cockpit__analysis,
+.cockpit[data-demo-focus='actions'] .cockpit__actions {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+  border-radius: var(--radius-panel);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-bar__progress > span { transition: none; }
+}
+
+@media (width <= 900px) {
+  .demo-bar__body {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+  }
+}

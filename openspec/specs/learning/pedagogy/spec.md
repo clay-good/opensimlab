@@ -20,6 +20,40 @@ A first-time visitor SHALL reach a running simulation with a clear next action w
 - **WHEN** a returning learner dismisses the introductory overlay
 - **THEN** it does not reappear on subsequent visits on that device, and it remains reachable from a help control
 
+### Requirement: A Guided Demonstration Shows What The Simulator Is For
+
+The simulator SHALL offer to demonstrate itself: a scripted run of a scenario, narrated a beat at a time, that performs its actions through the same path a learner uses and names the region of the interface each beat is about. It SHALL be offered alongside starting the scenario, never in place of it, and SHALL be abandonable at any moment.
+
+#### Scenario: A visitor who does not know what to give sees the point anyway
+
+- **WHEN** a first-time visitor opens a scenario that has a demonstration and chooses to watch it
+- **THEN** the scenario runs at increased speed with a narration line that changes as the run progresses, each line describing what is happening on screen at that moment and identifying the region to look at, so the visitor sees effect-site lag, the pressure response and apnoea without knowing any of the controls
+
+#### Scenario: The demonstration is the engine, not a recording
+
+- **WHEN** a beat performs a clinical action
+- **THEN** it is applied through the same action path a learner's own click uses, against the same models and the same seed, so what is shown is a live session and no part of it is pre-rendered
+
+#### Scenario: What the narration claims is what the engine does
+
+- **WHEN** the narration asserts an observable change — a rising end-tidal oxygen, a plasma concentration falling while the effect site still climbs, a falling pressure, an absent capnogram, a returning capnogram
+- **THEN** each assertion holds when the script is replayed through the engine across every seed a viewer could be given, and the build fails if any of them stops holding
+
+#### Scenario: Watching is never imposed on someone who came to practise
+
+- **WHEN** a scenario offers a demonstration
+- **THEN** starting the scenario is offered first and remains the primary action, and no demonstration begins without being asked for
+
+#### Scenario: The controls can be taken at any moment
+
+- **WHEN** a viewer chooses to take the controls part-way through
+- **THEN** the narration stops, no further scripted action is performed, speed returns to real time, and the session continues from exactly the state the demonstration reached rather than restarting
+
+#### Scenario: A viewer who cannot see the highlight is still told where to look
+
+- **WHEN** a beat identifies a region of the interface
+- **THEN** the region is indicated visually and the same information is available to a screen reader, announced politely so it does not interrupt what is already being read
+
 ### Requirement: Stated Learning Objectives
 
 Every scenario SHALL declare its learning objectives in learner-facing language before the session and SHALL evaluate against those same objectives in the debrief.

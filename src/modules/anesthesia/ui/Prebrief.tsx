@@ -27,13 +27,18 @@ export interface PrebriefProps {
   readonly scenario: Scenario;
   readonly region: RegionProfile;
   readonly onStart: () => void;
+  /**
+   * Offered only where the demonstration was authored. A "watch this" control on
+   * a scenario the script does not describe would narrate the wrong session.
+   */
+  readonly onWatch?: (() => void) | undefined;
   /** Set by an assignment link, so a learner knows which assignment they are in. */
   readonly assignmentLabel?: string;
   readonly guidance: 'guided' | 'coached' | 'unassisted';
   readonly onGuidance: (level: 'guided' | 'coached' | 'unassisted') => void;
 }
 
-export function Prebrief({ scenario, region, onStart, guidance, onGuidance, assignmentLabel }: PrebriefProps) {
+export function Prebrief({ scenario, region, onStart, onWatch, guidance, onGuidance, assignmentLabel }: PrebriefProps) {
   const patient = scenario.patient;
   return (
     <main className="reading" id="main">
@@ -138,7 +143,20 @@ export function Prebrief({ scenario, region, onStart, guidance, onGuidance, assi
         />
       )}
 
-      <Button variant="primary" onClick={onStart}>Start the scenario</Button>
+      {/* Two ways in, and the passive one is offered second: someone who came
+          here to practise should not have to decline a video first. */}
+      <div className="prebrief__start">
+        <Button variant="primary" onClick={onStart}>Start the scenario</Button>
+        {onWatch && (
+          <Button onClick={onWatch}>Watch a 90-second demonstration</Button>
+        )}
+      </div>
+      {onWatch && (
+        <p className="field__hint">
+          The demonstration runs this scenario at five times speed and explains what to look at.
+          You can take the controls at any point and carry on from where it got to.
+        </p>
+      )}
     </main>
   );
 }

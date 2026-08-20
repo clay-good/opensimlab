@@ -49,6 +49,28 @@ export function registerServiceWorker(): RegistrationOutcome {
   if (typeof navigator === 'undefined' || !('serviceWorker' in navigator)) {
     return { registered: false, reason: 'This browser has no service worker support.' };
   }
+  // Never in development.
+  //
+  // `sw.js` is served from `public/` unprocessed, so in a dev server its
+  // CACHE_VERSION is still the literal `__CACHE_VERSION__` placeholder — one
+  // cache name that never changes, serving whatever it captured first, forever.
+  // The result is a contributor editing a file, reloading, and seeing the build
+  // from an hour ago with nothing to indicate why. Any existing registration is
+  // torn down too, because the developer who already has one is exactly the
+  // person stuck.
+  if (import.meta.env.DEV) {
+    void navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (const registration of registrations) void registration.unregister();
+    });
+    void caches.keys().then((names) => {
+      for (const name of names) if (name.startsWith('opensimlab-')) void caches.delete(name);
+    });
+    return {
+      registered: false,
+      reason: 'Not registered in development, where the cache version is an unreplaced '
+        + 'placeholder and would serve a stale build indefinitely.',
+    };
+  }
   if (isCrawler(navigator.userAgent)) {
     return {
       registered: false,

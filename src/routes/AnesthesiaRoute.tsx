@@ -16,6 +16,7 @@ import { DEFAULT_SCENARIO_ID, getScenario, scenariosByDifficulty } from '@anesth
 import { ENGINE_VERSION } from '@anesthesia/engine';
 import { MODEL_SET_REVISION } from '@anesthesia/pharmacology/registry';
 import { Prebrief } from '@anesthesia/ui/Prebrief';
+import { DEMONSTRATION_SCENARIO_ID } from '@anesthesia/demo/demonstration';
 import { Cockpit } from '@anesthesia/ui/Cockpit';
 import { Debrief } from '@anesthesia/ui/Debrief';
 import { assertTranscriptIsAnonymous, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
@@ -77,6 +78,9 @@ export function AnesthesiaRoute({ path }: { path: string }) {
   // learner into whichever scenario happened to be first.
   const isIndex = !path.startsWith('/anesthesia/scenario/');
   const [acknowledged, setAcknowledged] = useState(() => hasAcknowledged());
+  // Whether the scripted demonstration is driving this session. Deliberately not
+  // in the URL: a demonstration is something you start, not somewhere you are.
+  const [demonstrating, setDemonstrating] = useState(false);
   // Validated against the registry, not just type-checked: the default is null,
   // so a shape check cannot tell a real region id from any other string, and an
   // unknown one used to throw and take the whole simulator down.
@@ -187,7 +191,10 @@ export function AnesthesiaRoute({ path }: { path: string }) {
           region={region}
           guidance={session.guidance}
           onGuidance={session.setGuidance}
-          onStart={session.play}
+          onStart={() => { setDemonstrating(false); session.play(); }}
+          {...(scenario.metadata.id === DEMONSTRATION_SCENARIO_ID
+            ? { onWatch: () => { setDemonstrating(true); session.setSpeed(5); session.play(); } }
+            : {})}
           {...(assignment.label ? { assignmentLabel: assignment.label } : {})}
         />
         {guess.isFallback && regionId === null && (
@@ -203,7 +210,16 @@ export function AnesthesiaRoute({ path }: { path: string }) {
     );
   }
 
-  return <Cockpit scenario={scenario} region={region} audio={audio} onEnd={session.end} />;
+  return (
+    <Cockpit
+      scenario={scenario}
+      region={region}
+      audio={audio}
+      demonstrating={demonstrating}
+      onTakeControls={() => { setDemonstrating(false); session.setSpeed(1); }}
+      onEnd={session.end}
+    />
+  );
 }
 
 /**

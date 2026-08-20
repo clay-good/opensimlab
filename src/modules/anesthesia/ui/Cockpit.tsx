@@ -22,6 +22,8 @@ import { StatusBar } from './StatusBar';
 import { MonitorRegion } from './MonitorRegion';
 import { AnalysisRegion } from './AnalysisRegion';
 import { ActionCockpit } from './ActionCockpit';
+import { DemonstrationBar } from './DemonstrationBar';
+import { useDemonstration } from '@anesthesia/demo/useDemonstration';
 import { WhyPanel } from './WhyPanel';
 import { announcementsFor, stateSummary, waveformDescriptions, SHORTCUTS } from './accessibility';
 import { promptFor, type Prompt } from './guidance';
@@ -36,6 +38,10 @@ export interface CockpitProps {
   readonly scenario: Scenario;
   readonly region: RegionProfile;
   readonly audio: SonificationEngine;
+  /** True while the scripted demonstration is driving the session. */
+  readonly demonstrating?: boolean;
+  /** Hand the session back to the learner, wherever the demonstration got to. */
+  readonly onTakeControls?: (() => void) | undefined;
   readonly onEnd: () => void;
 }
 
@@ -62,9 +68,19 @@ const DEFAULT_VENTILATOR = {
 } as const;
 const DEFAULT_AIRWAY = { intubated: false, attempts: 0, lastGrade: null } as const;
 
-export function Cockpit({ scenario, region, audio, onEnd }: CockpitProps) {
+export function Cockpit({
+  scenario, region, audio, demonstrating = false, onTakeControls, onEnd,
+}: CockpitProps) {
   const session = useSession();
   const reducedMotion = usePrefersReducedMotion();
+  // The demonstration performs the same actions through the same path a learner
+  // does, so what it shows is the engine and not a recording of it.
+  const demonstration = useDemonstration({
+    active: demonstrating,
+    tick: session.tick,
+    act: session.act,
+    onFinished: () => onTakeControls?.(),
+  });
   const [colorblindSafe] = useLocalPreference('colorblind-safe', false);
   const [whyField, setWhyField] = useState<StateField | null>(null);
   const [explainerId, setExplainerId] = useState<string | null>(null);
@@ -306,8 +322,19 @@ export function Cockpit({ scenario, region, audio, onEnd }: CockpitProps) {
   } as CSSProperties;
 
   return (
-    <div className={classes} style={style} ref={cockpitRef}>
+    <div
+      className={classes}
+      style={style}
+      ref={cockpitRef}
+      {...(demonstration.beat ? { 'data-demo-focus': demonstration.beat.focus } : {})}
+    >
       <a className="skip-link" href="#monitor-region">Skip to the monitor</a>
+
+      <DemonstrationBar
+        beat={demonstration.beat}
+        progress={demonstration.progress}
+        onTakeControls={() => onTakeControls?.()}
+      />
 
       <div className="cockpit__status">
         <StatusBar
