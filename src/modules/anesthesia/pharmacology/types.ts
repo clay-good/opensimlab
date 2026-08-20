@@ -70,7 +70,13 @@ export interface FailureMode {
 }
 
 /** The three learner-facing labels. Alphabetic tier codes are never shown. */
-export type ConfidenceLabel = 'published' | 'out-of-range' | 'teaching';
+/**
+ * `published` is earned, not assumed: a transcription still awaiting its
+ * independent second check reports `pending-check` instead, which is what the
+ * transcription status field has always documented and what the label logic now
+ * actually enforces.
+ */
+export type ConfidenceLabel = 'published' | 'pending-check' | 'out-of-range' | 'teaching';
 
 /** Pharmacodynamic parameters, where the model publishes them. */
 export interface PdDeclaration {

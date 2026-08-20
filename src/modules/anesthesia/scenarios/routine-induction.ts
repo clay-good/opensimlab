@@ -27,7 +27,9 @@ export const ROUTINE_INDUCTION: Scenario = {
       {
         id: 'preoxygenate',
         statement: 'Preoxygenate before inducing, and explain what it buys you.',
-        measure: 'Inspired oxygen fraction was raised above 0.8 for at least two minutes before the first hypnotic dose.',
+        measure: 'End-tidal oxygen fraction reached 0.9 and was held there for at least three '
+          + 'minutes before the airway was secured. End-tidal, not inspired: the inspired fraction '
+          + 'says what the machine delivered, not whether the lungs filled.',
       },
       {
         id: 'hysteresis',
@@ -37,7 +39,8 @@ export const ROUTINE_INDUCTION: Scenario = {
       {
         id: 'manage-hypotension',
         statement: 'Recognise vasodilatory hypotension after induction and treat the mechanism.',
-        measure: 'Mean arterial pressure spent less than two minutes below 55 mmHg.',
+        measure: 'Mean arterial pressure spent less than two minutes below 65 mmHg, and never '
+          + 'fell below 55 mmHg.',
       },
       {
         id: 'ventilate-before-desaturation',

@@ -302,13 +302,18 @@ export function objectiveFindings(
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
 
     if (objective.id === 'preoxygenate') {
-      const met = preoxygenationSeconds >= 120;
+      // Three minutes at an END-TIDAL fraction of 0.9, which is the endpoint that
+      // means the reservoir is full, rather than two minutes of a delivered
+      // inspired fraction, which means only that the machine was turned on.
+      const met = preoxygenationSeconds >= 180;
       return {
         ...base,
-        outcome: met ? 'met' : preoxygenationSeconds > 30 ? 'partly-met' : 'not-met',
-        finding: `You spent ${preoxygenationSeconds.toFixed(0)} seconds at an inspired oxygen `
-          + `fraction above 0.8 before securing the airway. Three minutes of tidal breathing buys a `
-          + `healthy adult about eight minutes of apnoea; less than that buys proportionally less.`,
+        outcome: met ? 'met' : preoxygenationSeconds > 60 ? 'partly-met' : 'not-met',
+        finding: `You spent ${preoxygenationSeconds.toFixed(0)} seconds at an end-tidal oxygen `
+          + `fraction of 0.9 or above before securing the airway. Three minutes of tidal breathing `
+          + `to that endpoint buys a healthy adult about eight minutes of apnoea; less buys `
+          + `proportionally less, and a high inspired fraction that never reaches the alveoli `
+          + `buys nothing at all.`,
       } satisfies ObjectiveFinding;
     }
 

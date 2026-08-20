@@ -441,8 +441,18 @@ describe('Requirement: The Debrief Judges What The Engine Counted', () => {
     runFrames(1);
     expect(useSession.getState().equipment?.preoxygenationSeconds).toBe(0);
 
-    useSession.getState().act({ type: 'ventilator', payload: { fio2: 1 } });
-    runFrames(6);
-    expect(useSession.getState().equipment!.preoxygenationSeconds).toBeGreaterThan(4);
+    useSession.getState().act({ type: 'ventilator', payload: { fio2: 1, delivering: true, mode: 'volume-control' } });
+    // Turning the oxygen up does not count as preoxygenation. Washing the
+    // nitrogen out does, and that takes time.
+    runFrames(10);
+    expect(useSession.getState().equipment!.preoxygenationSeconds).toBe(0);
+    expect(useSession.getState().state!.endTidalO2Fraction).toBeGreaterThan(0.21);
+
+    runFrames(170);
+    const state = useSession.getState();
+    expect(state.state!.endTidalO2Fraction, 'end-tidal oxygen after three minutes')
+      .toBeGreaterThan(0.9);
+    expect(state.equipment!.preoxygenationSeconds, 'counted preoxygenation')
+      .toBeGreaterThan(30);
   });
 });

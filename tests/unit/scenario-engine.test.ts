@@ -269,11 +269,18 @@ describe('Requirement: Severity And Filtering', () => {
 });
 
 describe('Requirement: Alarm System Follows IEC 60601-1-8 Conventions', () => {
-  it('Scenario: Critical alarm is unmistakable when saturation falls below 90%', () => {
+  it('Scenario: Saturation alarms escalate in priority as they escalate in urgency', () => {
     const alarms = new AlarmEngine();
     const result = alarms.evaluate({ spo2Percent: 88, meanArterialMmHg: 80, heartRateBpm: 70, etco2MmHg: 38, depthIndex: 50 }, 100);
     const spo2 = result.active.find((a) => a.id === 'spo2-low');
-    expect(spo2?.priority).toBe('critical');
+    // Medium priority at 88%: prompt action. IEC 60601-1-8 grades by urgency and
+    // onset time, so grading this the same as 84% would make the escalation
+    // carry no information.
+    expect(spo2?.priority).toBe('warning');
+    const severe = new AlarmEngine().evaluate(
+      { spo2Percent: 83, meanArterialMmHg: 80, heartRateBpm: 70, etco2MmHg: 38, depthIndex: 50 }, 100,
+    );
+    expect(severe.active.find((a) => a.id === 'spo2-very-low')?.priority).toBe('critical');
     // The alarm text names the parameter and the value.
     expect(spo2?.message).toContain('SpO₂');
     expect(spo2?.message).toContain('88');

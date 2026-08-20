@@ -52,8 +52,8 @@ export interface WaveformBlock {
 export interface DrugConcentration {
   readonly drugId: string;
   readonly modelId: string;
-  /** `published`, `out-of-range` or `teaching`. */
-  readonly confidence: 'published' | 'out-of-range' | 'teaching';
+  /** `published`, `pending-check`, `out-of-range` or `teaching`. */
+  readonly confidence: 'published' | 'pending-check' | 'out-of-range' | 'teaching';
   readonly plasma: number;
   readonly effectSite: number;
   readonly unit: string;

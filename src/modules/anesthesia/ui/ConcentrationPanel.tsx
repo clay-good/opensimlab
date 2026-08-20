@@ -21,12 +21,15 @@ const DRUG_TOKENS: Record<string, string> = {
 
 const CONFIDENCE_LABEL: Record<DrugConcentration['confidence'], string> = {
   published: 'Published',
+  'pending-check': 'Pending independent check',
   'out-of-range': 'Out of range',
   teaching: 'Teaching model',
 };
 
 const CONFIDENCE_KIND: Record<DrugConcentration['confidence'], 'default' | 'out-of-range' | 'teaching'> = {
   published: 'default',
+  // Not yet checked is not a neutral state, so it does not get the neutral badge.
+  'pending-check': 'teaching',
   'out-of-range': 'out-of-range',
   teaching: 'teaching',
 };
@@ -102,7 +105,12 @@ export function ConcentrationPanel({
               <Badge kind={CONFIDENCE_KIND[band.entry.confidence]}>
                 {CONFIDENCE_LABEL[band.entry.confidence]}
               </Badge>
-              {pendingCheck && <Badge kind="teaching">Pending independent check</Badge>}
+              {/* The confidence badge already says "Pending independent check"
+                  when that is the case, so a second badge saying it again is
+                  noise. This one only fires for a model that is out of range AND
+                  unchecked, where the badge above is showing the range problem. */}
+              {pendingCheck && band.entry.confidence === 'out-of-range'
+                && <Badge kind="teaching">Also pending independent check</Badge>}
             </header>
 
             <PlotCanvas series={band.series} height={140} cursorSeconds={cursorSeconds} xMax={xMax} yMax={band.yMax} />

@@ -157,13 +157,20 @@ export class ArterialGenerator {
     const key = `${drive.strokeVolumeMl.toFixed(1)}|${drive.heartRateBpm.toFixed(1)}|${drive.svrDynSCm5.toFixed(0)}`;
     if (key !== this.cacheKey) {
       this.cacheKey = key;
-      // The minimum is taken at a slightly slower rate than nominal, because
-      // respiratory sinus arrhythmia lengthens some beats and a beat longer than
-      // nominal runs off below the nominal minimum. Without this the mapping
-      // would clamp and render a flat diastolic segment.
-      const nominal = steadyStateEnvelope(drive.strokeVolumeMl, drive.heartRateBpm, drive.svrDynSCm5);
-      const slow = steadyStateEnvelope(drive.strokeVolumeMl, drive.heartRateBpm * 0.85, drive.svrDynSCm5);
-      this.cachedEnvelope = { min: Math.min(nominal.min, slow.min), max: nominal.max };
+      // The envelope is the NOMINAL beat's, so the mapping is the identity a
+      // learner expects: the trough of a nominal beat renders at the diastolic
+      // number on the tile, and its peak at the systolic one.
+      //
+      // Widening the floor to accommodate the occasional longer beat — which is
+      // what an earlier version did, by taking `min` from a run at 0.85x rate —
+      // means the nominal beat never reaches the mapped floor. It rendered
+      // diastolic about 10 mmHg high and pulse pressure about a quarter narrow,
+      // so anyone reading pulse pressure or its respiratory variation off the
+      // trace read it wrong. A long beat is instead allowed to run slightly
+      // below diastolic, which is what a long beat really does.
+      this.cachedEnvelope = steadyStateEnvelope(
+        drive.strokeVolumeMl, drive.heartRateBpm, drive.svrDynSCm5,
+      );
     }
     return this.cachedEnvelope;
   }
@@ -190,7 +197,11 @@ export class ArterialGenerator {
       const shape = this.windkessel + notch(this.sinceUpstroke, ejection, drive.svrDynSCm5);
       this.sinceUpstroke += dt;
 
-      const normalized = clamp((shape - min) / span, 0, 1);
+      // Not clamped at the floor: a beat longer than nominal genuinely runs off
+      // below the nominal diastolic, and flattening it there would draw a
+      // diastolic plateau no arterial line shows. Bounded well below to keep a
+      // pathological drive from rendering off-scale.
+      const normalized = clamp((shape - min) / span, -0.35, 1);
 
       // Systolic pressure variation with the ventilator, scaled by the volume
       // deficit, so pulse pressure variation is computable from the rendered trace.

@@ -74,12 +74,20 @@ export const MCSHARRY_TABLE_1: readonly EcgEvent[] = Object.freeze([
 const OMEGA_REFERENCE = 2 * Math.PI;
 
 /**
- * Amplitude normalization. Integrating the z equation shows that a Gaussian term
- * of amplitude a and width b contributes a deflection of a*b^2/omega, so without
- * correction every deflection would shrink as heart rate rises, which no real
- * electrocardiogram does. The Gaussian sum is therefore scaled by omega/omega_ref,
- * which leaves the model exactly as published at 60 beats per minute and holds
- * deflection amplitude constant at every other rate.
+ * Amplitude normalization, PER EVENT.
+ *
+ * Integrating the z equation shows a Gaussian term of amplitude `a` and width `b`
+ * contributes a deflection of `a·b²/omega`. Two things vary with heart rate: omega
+ * itself, and `b`, which `scaleEventsForRate` rescales so each event keeps its
+ * duration in seconds. Correcting only for omega therefore leaves the b² factor
+ * uncorrected, and since the QRS events scale as b ∝ 1/RR, their rendered
+ * amplitude grew with the SQUARE of heart rate — an R wave of 1.1 mV at 60 bpm
+ * became 5 mV at 130 and 9.8 mV at 180. R-wave voltage is not rate-dependent, and
+ * a QRS that quadruples when a patient goes tachycardic teaches a wrong mental
+ * model of what the trace is showing.
+ *
+ * The gain is therefore `(omega/omega_ref)·(b_ref/b_scaled)²`, applied per event,
+ * which holds every deflection at its published amplitude at every rate.
  *
  * This normalization is Open Sim Lab's, not the paper's, and is recorded in
  * `docs/licensing/waveform-provenance.md`.
@@ -122,6 +130,17 @@ export function scaleEventsForRate(events: readonly EcgEvent[], rrSeconds: numbe
     const factor = Math.pow(rr / REFERENCE_RR_S, event.rateExponent - 1);
     return { ...event, theta: event.theta * factor, b: event.b * factor };
   });
+}
+
+/**
+ * The per-event gain that holds a deflection at its published amplitude.
+ *
+ * `scaled` must be the event as returned by `scaleEventsForRate`, and `reference`
+ * the same event from the unscaled table.
+ */
+export function amplitudeGain(reference: EcgEvent, scaled: EcgEvent, omega: number): number {
+  const widthRatio = reference.b / scaled.b;
+  return (omega / OMEGA_REFERENCE) * widthRatio * widthRatio;
 }
 
 /** Time in seconds from the R peak to an event, at a given RR interval. */
@@ -274,7 +293,13 @@ export class EcgGenerator {
   }
 
   private derivative(events: readonly EcgEvent[], omega: number, z0: number) {
-    const gain = NORMALIZE_AMPLITUDE_TO_RATE ? omega / OMEGA_REFERENCE : 1;
+    // The gain is per event, because each event's width scales differently with
+    // rate. Precomputed once per step rather than inside the integrator.
+    const gains = events.map((event) => (
+      NORMALIZE_AMPLITUDE_TO_RATE
+        ? amplitudeGain(this.referenceFor(event), event, omega)
+        : 1
+    ));
     return (_t: number, state: readonly number[]): number[] => {
       const x = state[0] ?? 0;
       const y = state[1] ?? 0;
@@ -282,12 +307,19 @@ export class EcgGenerator {
       const alpha = 1 - Math.sqrt(x * x + y * y);
       const theta = Math.atan2(y, x);
       let dz = -(z - z0);
-      for (const event of events) {
+      for (let i = 0; i < events.length; i += 1) {
+        const event = events[i] as EcgEvent;
         const dTheta = wrapAngle(theta - event.theta);
-        dz -= gain * event.a * dTheta * Math.exp(-(dTheta * dTheta) / (2 * event.b * event.b));
+        dz -= (gains[i] as number) * event.a * dTheta
+          * Math.exp(-(dTheta * dTheta) / (2 * event.b * event.b));
       }
       return [alpha * x - omega * y, alpha * y + omega * x, dz];
     };
+  }
+
+  /** The unscaled table entry an event came from, matched by name. */
+  private referenceFor(event: EcgEvent): EcgEvent {
+    return this.morphology.events.find((candidate) => candidate.name === event.name) ?? event;
   }
 
   /**

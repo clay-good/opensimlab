@@ -34,6 +34,12 @@ export const ENGINE_VERSION = '0.1.0-alpha.1';
 
 export type Scenario = ScenarioDocument;
 
+/**
+ * The end-tidal oxygen fraction at which the functional residual capacity counts
+ * as denitrogenated. The conventional teaching endpoint for preoxygenation.
+ */
+export const PREOXYGENATION_END_TIDAL_TARGET = 0.9;
+
 /** A drug the learner can give, with its resolved model. */
 export interface ActiveDrug {
   readonly drugId: string;
@@ -374,7 +380,16 @@ export class AnesthesiaEngine {
     // A vasopressor's effect wanes; the teaching model decays it over about five minutes.
     this.vasopressorEffect *= Math.exp(-0.1 / 5);
 
-    if (this.ventilator.fio2 >= 0.8 && !this.patient.airway.intubated) this.preoxygenationTicks += 1;
+    // Preoxygenation is judged on the END-TIDAL fraction, because that is what
+    // says the functional residual capacity has actually been denitrogenated. The
+    // inspired fraction says only what the machine is delivering to the circuit:
+    // a leaking mask reads 1.0 inspired and 0.4 end-tidal, and the safe apnoea
+    // time that follows is the one the reservoir bought, not the one the flowmeter
+    // promised. 0.9 is the conventional endpoint.
+    if (result.state.endTidalO2Fraction >= PREOXYGENATION_END_TIDAL_TARGET
+      && !this.patient.airway.intubated) {
+      this.preoxygenationTicks += 1;
+    }
 
     // --- Waveforms -------------------------------------------------------------
     const waveforms = this.waveforms.tick(restingDrive({

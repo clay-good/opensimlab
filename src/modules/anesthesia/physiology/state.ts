@@ -39,6 +39,13 @@ export const FIELDS = {
   endTidalSevofluranePercent: { unit: 'vol %', min: 0, max: 8, precision: 1, label: 'End-tidal sevoflurane' },
   macFraction: { unit: 'MAC', min: 0, max: 5, precision: 2, label: 'Age-adjusted MAC fraction' },
   fio2: { unit: '', min: 0.21, max: 1, precision: 2, label: 'Inspired oxygen fraction' },
+  /**
+   * End-tidal oxygen fraction. This, not the inspired fraction, is what says
+   * whether preoxygenation actually worked: a leaking mask delivers an inspired
+   * fraction of 1.0 to the circuit and an end-tidal fraction of 0.4 to the
+   * patient. Denitrogenation is judged at 0.9.
+   */
+  endTidalO2Fraction: { unit: '', min: 0, max: 1, precision: 2, label: 'End-tidal oxygen fraction' },
   perfusionIndex: { unit: '', min: 0, max: 1, precision: 2, label: 'Peripheral perfusion index' },
 } as const satisfies Record<string, FieldSpec>;
 

@@ -87,13 +87,19 @@ export function evaluateEnvelope(model: PharmacologyModel, covariates: Covariate
     }));
 
   const outOfRange = violations.length > 0 || failures.length > 0;
+  const pendingIndependentCheck = model.transcription.status === 'pending-independent-check';
+  // Out of range is the most specific thing to say, so it wins; after that, a
+  // transcription nobody has checked cannot call itself published.
   const label: ConfidenceLabel = model.isTeachingModel
     ? 'teaching'
-    : outOfRange ? 'out-of-range' : 'published';
+    : outOfRange ? 'out-of-range'
+      : pendingIndependentCheck ? 'pending-check'
+        : 'published';
 
-  const alternative = failures.find((f) => f.alternativeModelId)?.alternativeModelId
-    ?? model.failureModes.find((m) => m.alternativeModelId)?.alternativeModelId
-    ?? null;
+  // Only a failure mode that ACTUALLY FIRED may offer its remedy. Falling back to
+  // any declared mode's alternative steered a patient who merely sat outside a
+  // range bound toward an unrelated failure's answer.
+  const alternative = failures.find((f) => f.alternativeModelId)?.alternativeModelId ?? null;
 
   const parts: string[] = [];
   for (const violation of violations) parts.push(violation.message);
@@ -105,7 +111,7 @@ export function evaluateEnvelope(model: PharmacologyModel, covariates: Covariate
     violations,
     failures,
     alternativeModelId: outOfRange ? alternative : null,
-    pendingIndependentCheck: model.transcription.status === 'pending-independent-check',
+    pendingIndependentCheck,
     summary: parts.length > 0 ? parts.join(' ') : 'Within the model\'s derivation envelope.',
   };
 }
@@ -113,6 +119,7 @@ export function evaluateEnvelope(model: PharmacologyModel, covariates: Covariate
 /** Learner-facing text for each label. Alphabetic tier codes are never shown. */
 export const CONFIDENCE_LABEL_TEXT: Record<ConfidenceLabel, string> = {
   published: 'Published',
+  'pending-check': 'Pending independent check',
   'out-of-range': 'Out of range',
   teaching: 'Teaching model',
 };

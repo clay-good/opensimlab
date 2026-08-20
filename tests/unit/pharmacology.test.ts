@@ -313,7 +313,10 @@ describe('Requirement: Applicability Envelopes Are Enforced', () => {
     expect(result.failures.map((f) => f.id)).toContain('james-lbm-inversion');
     // And Eleveld is offered as the in-range alternative.
     expect(result.alternativeModelId).toBe('propofol-eleveld-2018');
-    expect(evaluateEnvelope(PROPOFOL_ELEVELD_2018, patient).label).toBe('published');
+    // Eleveld is in range for this patient. Its label is `pending-check` rather
+    // than `published` because its transcription has not had its independent
+    // second check: being in range is necessary for Published, not sufficient.
+    expect(evaluateEnvelope(PROPOFOL_ELEVELD_2018, patient).label).toBe('pending-check');
   });
 
   it('Scenario: The James lean-body-mass inversion is caught', () => {

@@ -114,6 +114,8 @@ export interface GasResult {
   readonly etco2MmHg: number;
   readonly pao2MmHg: number;
   readonly spo2Percent: number;
+  /** Alveolar oxygen fraction, which is what the end-tidal analyser reads. */
+  readonly endTidalO2Fraction: number;
   readonly alveolarVentilationLPerMin: number;
 }
 
@@ -175,7 +177,15 @@ export function stepGas(
     gas.alveolarOxygenLitres - alveolarCapacitance * tensionFall, 0,
   );
 
-  const targetOxygenLitres = profile.frcLitres * (alveolarPo2(input.fio2, gas.paco2MmHg) / DRY_BAROMETRIC_MMHG);
+  // Ventilation refills the reservoir toward the INSPIRED tension, not toward the
+  // alveolar gas equation's answer. The alveolar gas equation already accounts for
+  // oxygen uptake through its carbon dioxide term, so using it as the target while
+  // ALSO draining consumption above counts the uptake twice and parks a healthy
+  // ventilated patient near 93% on room air. Refilling toward inspired and letting
+  // consumption dig the gradient DERIVES the alveolar gas equation instead of
+  // asserting it: the steady state is PIO2 − PB·V̇O2/V̇A, within a few mmHg of the
+  // textbook value at every inspired fraction.
+  const targetOxygenLitres = profile.frcLitres * input.fio2;
   if (va > 0) {
     // Each litre of alveolar ventilation exchanges roughly its own volume against
     // the reservoir, so the refill rate constant is ventilation over capacity.
@@ -190,13 +200,20 @@ export function stepGas(
 
   // End-tidal carbon dioxide sits a few mmHg below arterial, and falls with
   // cardiac output because delivery to the lung falls with it.
-  const gradient = 3 + 8 * clamp(1 - input.cardiacOutputRatio, 0, 1);
-  const etco2 = va > 0 ? Math.max(gas.paco2MmHg - gradient, 0) * clamp(input.cardiacOutputRatio, 0, 1.4) : 0;
+  // The gradient is the whole mechanism: falling output means less carbon dioxide
+  // delivered to ventilated alveoli, so more of the exhaled breath is dead-space
+  // gas and the end-tidal value drops further below arterial. It is NOT then
+  // scaled by output again — doing that produced an end-tidal value ABOVE arterial
+  // in any hyperdynamic moment, which cannot happen. End-tidal is bounded by
+  // arterial by construction here.
+  const gradient = 3 + 25 * clamp(1 - input.cardiacOutputRatio, 0, 1) ** 1.5;
+  const etco2 = va > 0 ? clamp(gas.paco2MmHg - gradient, 0, gas.paco2MmHg) : 0;
 
   return {
     paco2MmHg: gas.paco2MmHg,
     etco2MmHg: etco2,
     pao2MmHg: pao2,
+    endTidalO2Fraction: clamp(alveolarTension / DRY_BAROMETRIC_MMHG, 0, 1),
     spo2Percent: clamp(spo2, 0, 100),
     alveolarVentilationLPerMin: va,
   };

@@ -402,3 +402,60 @@ describe('Requirement: Rendering Is Decoupled From Generation', () => {
     expect(a).toEqual(b);
   });
 });
+
+describe('Requirement: The Rendered Pressure Is The Displayed Pressure', () => {
+  // cockpit/patient-monitor: the trace and the tile describe the same patient.
+  // The generator maps its Windkessel shape onto the systolic and diastolic
+  // numbers the physiology layer produced, so a learner reading pulse pressure or
+  // its respiratory variation off the trace must read the same thing the tile
+  // shows. An earlier version took the mapping's floor from a run at 0.85x rate
+  // to avoid a clamped diastolic plateau, which meant the nominal beat never
+  // reached the floor: diastolic rendered about 10 mmHg high and pulse pressure
+  // about a quarter narrow.
+  /**
+   * The MEDIAN beat's peak and trough, not the window's extremes. Respiratory
+   * sinus arrhythmia makes some beats longer than nominal, and a longer beat
+   * genuinely runs a little below the nominal diastolic — that is the behaviour,
+   * not the error. The typical beat is what the tile claims to describe.
+   */
+  function rendered(drive: Partial<WaveformDrive>) {
+    const { arterial } = run(16, drive);
+    const rate = SAMPLE_RATE_HZ.arterial;
+    const steady = arterial.slice(Math.floor(arterial.length / 2));
+    const beatSamples = Math.round((60 / (drive.heartRateBpm ?? 60)) * rate);
+    const peaks: number[] = [];
+    const troughs: number[] = [];
+    for (let start = 0; start + beatSamples <= steady.length; start += beatSamples) {
+      const beat = steady.slice(start, start + beatSamples);
+      peaks.push(Math.max(...beat));
+      troughs.push(Math.min(...beat));
+    }
+    const median = (values: number[]) => [...values].sort((a, b) => a - b)[Math.floor(values.length / 2)] as number;
+    return { max: median(peaks), min: median(troughs) };
+  }
+
+  const cases: { systolicMmHg: number; diastolicMmHg: number; heartRateBpm: number; svrDynSCm5: number }[] = [
+    { systolicMmHg: 118, diastolicMmHg: 74, heartRateBpm: 60, svrDynSCm5: 1200 },
+    { systolicMmHg: 118, diastolicMmHg: 74, heartRateBpm: 72, svrDynSCm5: 1200 },
+    { systolicMmHg: 88, diastolicMmHg: 44, heartRateBpm: 100, svrDynSCm5: 700 },
+  ];
+
+  it('Scenario: rendered systolic and diastolic match the state vector', () => {
+    for (const drive of cases) {
+      const { max, min } = rendered(drive);
+      const label = `${drive.systolicMmHg}/${drive.diastolicMmHg} at ${drive.heartRateBpm} bpm`;
+      expect(Math.abs(max - drive.systolicMmHg), `systolic, ${label}`).toBeLessThan(4);
+      expect(Math.abs(min - drive.diastolicMmHg), `diastolic, ${label}`).toBeLessThan(4);
+    }
+  });
+
+  it('Scenario: rendered pulse pressure is within a tenth of the stated one', () => {
+    for (const drive of cases) {
+      const { max, min } = rendered(drive);
+      const stated = drive.systolicMmHg - drive.diastolicMmHg;
+      const error = Math.abs((max - min) - stated) / stated;
+      expect(error, `pulse pressure at ${drive.heartRateBpm} bpm is off by ${(error * 100).toFixed(0)}%`)
+        .toBeLessThan(0.1);
+    }
+  });
+});

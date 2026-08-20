@@ -70,7 +70,9 @@ export const REMIFENTANIL_MINTO_1997: PharmacologyModel = {
         + 'REDUCES the computed lean body mass, so the model predicts a smaller volume and a '
         + 'lower clearance for a larger patient, which is non-physical.',
       predicate: jamesLbmInverts,
-      alternativeModelId: 'remifentanil-minto-1997',
+      // No alternative is offered, because there is not one: this is the only
+      // remifentanil model in the build. Naming itself here would tell a learner
+      // the model had failed and then hand them the same model as the remedy.
     },
   ],
   citation: {

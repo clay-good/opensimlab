@@ -67,10 +67,8 @@ export function normalizedEffect(ce: number, ce50: number, gamma: number): numbe
  * PROVENANCE, STATED PRECISELY. The Greco interaction FORM above is the published
  * one used throughout the hypnotic-opioid response-surface literature. The two
  * numbers that are NOT transcribed from a paper are `remifentanilCe50Hypnotic`
- * and `alpha`: remifentanil has no hypnotic effect of its own at clinical
- * concentrations, so neither is a potency for producing hypnosis. They are an
- * Open Sim Lab calibration, chosen so that the surface reproduces the clinically
- * observed magnitude of the interaction:
+ * and `alpha`. They are an Open Sim Lab calibration, chosen so that the surface
+ * reproduces the clinically observed magnitude of the interaction:
  *
  *   at a remifentanil effect-site concentration of 4 ng/mL, the propofol
  *   concentration needed for the same depth falls by about a third.
@@ -78,6 +76,16 @@ export function normalizedEffect(ce: number, ce50: number, gamma: number): numbe
  * Solving the Greco form for that condition gives alpha near 0.9, which is the
  * value used. This calibration is recorded in the limitations register and every
  * number it drives carries the teaching-model marker.
+ *
+ * WHAT THIS FORM IMPLIES, SAID OUT LOUD. The Greco U₂ term necessarily gives
+ * remifentanil a hypnotic effect of its own: at 8 ng/mL alone this surface
+ * predicts a depth index around 71, a drop of about twenty points. Clinically,
+ * remifentanil alone is a poor hypnotic and does not reliably produce
+ * unconsciousness at those concentrations, so the surface OVERSTATES what the
+ * opioid does by itself. `remifentanilCe50Hypnotic` is deliberately large (18
+ * ng/mL, far above the clinical range) to keep that overstatement small where
+ * learners work, but it is not zero and this file will not pretend it is. The
+ * limitations register carries it under `opioid-alone-hypnosis`.
  */
 export interface ResponseSurfaceParameters {
   /** Propofol Ce50 for the depth endpoint, µg/mL. */
@@ -125,19 +133,28 @@ export function responseSurfaceEffect(
 }
 
 /**
- * The effect predicted by simple addition of each drug's isolated effect, used
- * only to demonstrate that the surface exceeds additivity. It is never used to
- * drive the simulation.
+ * The effect predicted by ADDITIVITY, used only to demonstrate that the surface
+ * exceeds it. It is never used to drive the simulation.
+ *
+ * Additivity here means LOEWE additivity — the zero-interaction case of the very
+ * model being tested, `alpha = 0`, where the two drugs behave as dilutions of one
+ * another. That is the comparator the Greco interaction coefficient is defined
+ * against, so it is the only one against which "alpha > 0 means synergy" is a
+ * meaningful statement.
+ *
+ * It is NOT the sum of the two isolated effects. Summing effects is Bliss-style
+ * independence, it is not what alpha measures, and on a bounded sigmoid it breaks
+ * down badly: two drugs each producing a 50-point drop would sum to a 100-point
+ * drop and predict a NEGATIVE depth index. An earlier version of this function
+ * did exactly that, and the single test point it was checked at happened to sit
+ * in the narrow region where the sign still came out right.
  */
 export function additiveEffect(
   propofolCe: number,
   remifentanilCe: number,
   parameters: ResponseSurfaceParameters = PROPOFOL_REMIFENTANIL_SURFACE,
 ): number {
-  const alone = { ...parameters, alpha: 0 };
-  const propofolOnly = parameters.e0 - responseSurfaceEffect(propofolCe, 0, alone);
-  const remifentanilOnly = parameters.e0 - responseSurfaceEffect(0, remifentanilCe, alone);
-  return parameters.e0 - (propofolOnly + remifentanilOnly);
+  return responseSurfaceEffect(propofolCe, remifentanilCe, { ...parameters, alpha: 0 });
 }
 
 /**
@@ -172,9 +189,20 @@ export function macFraction(agent: keyof typeof MAC_40, endTidalPercent: number,
 
 /**
  * Nitrous oxide contributes additively to the total MAC fraction, as the iso-MAC
- * charts describe. Its own MAC is about 104 volumes percent in adults.
+ * charts describe. Its MAC at 40 years is about 104 volumes percent.
+ *
+ * It ages like every other agent. Nickalls and Mapleson apply the SAME −0.00269
+ * exponent to nitrous oxide as to the volatiles, and treating its MAC as a fixed
+ * 104 under-reads its contribution in exactly the patients where that matters
+ * most: at 80 years its MAC is 81 volumes percent, so 50% nitrous is 0.62 MAC,
+ * not the 0.48 a fixed denominator reports.
  */
-export const NITROUS_OXIDE_MAC_PERCENT = 104;
+export const NITROUS_OXIDE_MAC_40_PERCENT = 104;
+
+/** Age-adjusted nitrous oxide MAC, by the same relationship as the volatiles. */
+export function nitrousOxideMacForAge(ageYears: number): number {
+  return NITROUS_OXIDE_MAC_40_PERCENT * Math.pow(10, MAC_AGE_EXPONENT * (ageYears - 40));
+}
 
 export function totalMacFraction(
   agent: keyof typeof MAC_40,
@@ -183,6 +211,6 @@ export function totalMacFraction(
   ageYears: number,
 ): { agent: number; nitrousOxide: number; total: number } {
   const agentFraction = macFraction(agent, endTidalPercent, ageYears);
-  const nitrousFraction = nitrousOxidePercent / NITROUS_OXIDE_MAC_PERCENT;
+  const nitrousFraction = nitrousOxidePercent / nitrousOxideMacForAge(ageYears);
   return { agent: agentFraction, nitrousOxide: nitrousFraction, total: agentFraction + nitrousFraction };
 }

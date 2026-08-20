@@ -57,7 +57,11 @@ export interface ActiveAlarm {
  */
 export const DEFAULT_LIMITS: readonly AlarmLimit[] = [
   {
-    id: 'spo2-low', parameter: 'spo2Percent', label: 'SpO₂', unit: '%', priority: 'critical',
+    // Medium priority, not high: IEC 60601-1-8 grades by urgency and onset time,
+    // and a saturation of 89% needs prompt action rather than immediate action.
+    // Grading both saturation alarms the same left the escalation to 85% carrying
+    // no information at all.
+    id: 'spo2-low', parameter: 'spo2Percent', label: 'SpO₂', unit: '%', priority: 'warning',
     low: 90, message: 'Oxygen saturation low',
     source: 'The conventional intervention threshold; below it the dissociation curve falls steeply.',
   },
@@ -68,13 +72,27 @@ export const DEFAULT_LIMITS: readonly AlarmLimit[] = [
   },
   {
     id: 'map-low', parameter: 'meanArterialMmHg', label: 'MAP', unit: 'mmHg', priority: 'warning',
-    low: 55, message: 'Mean arterial pressure low',
-    source: 'A commonly used intraoperative hypotension threshold in the outcome literature.',
+    low: 65, message: 'Mean arterial pressure low',
+    source: 'The threshold most of the intraoperative hypotension outcome literature is '
+      + 'organized around (Salmasi et al., Anesthesiology 2017; Sessler et al., Br J Anaesth 2019). '
+      + 'An earlier build alarmed at 55, which taught that a mean arterial pressure of 56 was '
+      + 'unremarkable — and Walsh et al. (Anesthesiology 2013) associate as little as one to five '
+      + 'minutes below 55 with acute kidney and myocardial injury.',
   },
   {
     id: 'map-very-low', parameter: 'meanArterialMmHg', label: 'MAP', unit: 'mmHg', priority: 'critical',
-    low: 45, message: 'Mean arterial pressure critically low',
-    source: 'Profound hypotension.',
+    low: 55, message: 'Mean arterial pressure critically low',
+    source: 'Walsh et al. (Anesthesiology 2013) associate exposure below a mean arterial pressure '
+      + 'of 55 with acute kidney injury and myocardial injury at durations as short as one to five '
+      + 'minutes, so this is where the alarm becomes high priority rather than medium.',
+  },
+  {
+    id: 'fio2-low', parameter: 'fio2', label: 'FiO₂', unit: '', priority: 'critical',
+    low: 0.21, message: 'Inspired oxygen fraction below room air',
+    source: 'The ASA Standards for Basic Anesthetic Monitoring require an oxygen analyser with a '
+      + 'low oxygen concentration limit alarm on the breathing system. The machine\'s hypoxic '
+      + 'guard should make this unreachable, which is exactly why an alarm that fires means the '
+      + 'guard has been defeated.',
   },
   {
     id: 'heart-rate-low', parameter: 'heartRateBpm', label: 'HR', unit: 'bpm', priority: 'warning',
@@ -103,8 +121,10 @@ export const DEFAULT_LIMITS: readonly AlarmLimit[] = [
   },
   {
     id: 'depth-deep', parameter: 'depthIndex', label: 'Depth', unit: '', priority: 'advisory',
-    low: 30, message: 'Predicted depth index below the usual surgical range',
-    source: 'The 40–60 range the published models are discussed against.',
+    low: 40, message: 'Predicted depth index below the usual surgical range',
+    source: 'The 40–60 range the published models are discussed against. Both depth limits are '
+      + 'that range\'s own bounds; an earlier build alarmed deep at 30, which is not what its '
+      + 'own source described.',
   },
 ];
 

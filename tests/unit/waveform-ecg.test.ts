@@ -263,3 +263,46 @@ describe('The rhythm library is complete and self-describing', () => {
     expect(Math.max(...spikeWindow)).toBeGreaterThan(0.5);
   });
 });
+
+describe('Requirement: Deflection Amplitude Does Not Depend On Heart Rate', () => {
+  // The Gaussian deflection is a·b²/omega, and `scaleEventsForRate` changes b to
+  // hold each event's duration in seconds. Correcting the gain for omega alone
+  // left b² uncorrected, so the QRS grew with the SQUARE of heart rate: 1.1 mV at
+  // 60 bpm became 5.0 mV at 130 and 9.8 mV at 180. R-wave voltage is not
+  // rate-dependent, and 5 mV in a limb lead is twice the usual voltage criterion
+  // for left ventricular hypertrophy.
+  function renderedPeakMv(heartRateBpm: number): number {
+    const generator = new EcgGenerator(
+      { sampleRateHz: 500, rng: createRng(1, 'amplitude') },
+      getRhythm('sinus').morphology,
+    );
+    const buffer = new Float32Array(500);
+    let peak = -Infinity;
+    for (let second = 0; second < 12; second += 1) {
+      generator.advance(1, {
+        heartRateBpm, rhythmId: 'sinus', respiratoryRateBpm: 13, anesthesiaDepthFraction: 0,
+      }, buffer);
+      // Skip the limit cycle's settling transient.
+      if (second < 4) continue;
+      for (const value of buffer) if (value > peak) peak = value;
+    }
+    return peak;
+  }
+
+  it('Scenario: the R wave is the same height at 40 and at 180 beats per minute', () => {
+    const slow = renderedPeakMv(40);
+    const fast = renderedPeakMv(180);
+    // Within 25% across a four-and-a-half-fold change in rate.
+    expect(Math.abs(fast - slow) / slow).toBeLessThan(0.25);
+  });
+
+  it('Scenario: the R wave stays inside a physiological voltage at every rate', () => {
+    // Lead II R is about 1.0 to 1.5 mV. 2.6 mV in a limb lead is an LVH voltage
+    // criterion, so nothing this generator draws for a normal heart may reach it.
+    for (const rate of [40, 60, 72, 100, 130, 180]) {
+      const peak = renderedPeakMv(rate);
+      expect(peak, `R wave at ${rate} bpm is ${peak.toFixed(2)} mV`).toBeGreaterThan(0.7);
+      expect(peak, `R wave at ${rate} bpm is ${peak.toFixed(2)} mV`).toBeLessThan(2.0);
+    }
+  });
+});
