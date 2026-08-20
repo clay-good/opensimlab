@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Free clinical simulator · Open Sim Lab</title>
+    <meta name="description" content="A free, browser-based clinical simulator for medical students, residents and nurse anesthetists. No account, works offline, published pharmacology with citations." />
+    <link rel="canonical" href="https://opensimlab.com/" />
+    <meta name="theme-color" content="#06080B" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icon-192.svg" type="image/svg+xml" />
+    <!-- Self-hosted fonts only; no foreign origin is referenced anywhere. The
+         preload links are added by `scripts/build-og.ts` only once the font files
+         are actually vendored: preloading a file that is not there makes the
+         browser download the single-page fallback and fail to parse it as a font. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Open Sim Lab" />
+    <meta property="og:title" content="Free clinical simulator · Open Sim Lab" />
+    <meta property="og:description" content="A free, browser-based clinical simulator for medical students, residents and nurse anesthetists." />
+    <meta property="og:image" content="https://opensimlab.com/og/index.svg" />
+    <meta property="og:url" content="https://opensimlab.com/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Free clinical simulator · Open Sim Lab" />
+    <meta name="twitter:description" content="A free, browser-based clinical simulator for medical students, residents and nurse anesthetists." />
+    <meta name="twitter:image" content="https://opensimlab.com/og/index.svg" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <p style="max-width:68ch;margin:2rem auto;padding:0 1rem;color:#A3B1C2;background:#0B0F14;font-family:system-ui,sans-serif">
+        Open Sim Lab is a simulator and needs JavaScript to run. The description of what it is,
+        who it is for, and where its pharmacology comes from is in this page's markup and does
+        not need scripting to read.
+      </p>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

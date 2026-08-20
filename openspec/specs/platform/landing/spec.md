@@ -46,7 +46,7 @@ The hero element SHALL be a live electrocardiogram trace rendered by the project
 
 ### Requirement: Say What It Is In One Line
 
-The page SHALL state what Open-SimLab is in a single sentence a medical student understands without domain jargon, positioned directly beneath the name.
+The page SHALL state what Open Sim Lab is in a single sentence a medical student understands without domain jargon, positioned directly beneath the name.
 
 #### Scenario: The description is plain and specific
 

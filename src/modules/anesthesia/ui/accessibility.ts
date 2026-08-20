@@ -1,0 +1,182 @@
+/**
+ * The non-visual channel (platform/accessibility → Screen Reader Access To Live
+ * Physiology, Waveforms have a non-visual equivalent).
+ *
+ * Continuously changing vitals reach assistive technology through a polite live
+ * region that announces on clinically meaningful change, plus an on-demand
+ * full-state summary — never by announcing every tick, which would flood it.
+ */
+
+import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiology';
+import { getRhythm } from '@anesthesia/waveforms/rhythms';
+import type { RhythmId } from '@anesthesia/waveforms/types';
+import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
+import type { EngineAlarm } from '@platform/kernel/protocol';
+import { TILES } from './tracks';
+
+/**
+ * Thresholds that count as a clinically meaningful change. A drift of one beat
+ * per minute is not announced; crossing an alarm limit is.
+ */
+export const ANNOUNCE_THRESHOLDS: Partial<Record<StateField, readonly number[]>> = {
+  spo2Percent: [95, 92, 90, 85, 80],
+  meanArterialMmHg: [65, 55, 45],
+  heartRateBpm: [45, 50, 100, 120, 140],
+  etco2MmHg: [20, 25, 45, 55],
+  depthIndex: [30, 40, 60, 70],
+};
+
+/** Which side of each threshold a value sits on, as a comparable signature. */
+export function thresholdSignature(state: Readonly<Record<string, number>>): string {
+  const parts: string[] = [];
+  for (const [field, thresholds] of Object.entries(ANNOUNCE_THRESHOLDS)) {
+    const value = state[field];
+    if (value === undefined || thresholds === undefined) continue;
+    parts.push(`${field}:${thresholds.map((t) => (value < t ? '<' : '>')).join('')}`);
+  }
+  return parts.join('|');
+}
+
+export interface Announcement {
+  readonly text: string;
+  readonly severity: 'info' | 'warning' | 'critical';
+}
+
+/**
+ * What to announce, given the previous and current state. Returns nothing when
+ * no threshold was crossed, which is most ticks.
+ */
+export function announcementsFor(
+  previous: Readonly<Record<string, number>> | null,
+  current: Readonly<Record<string, number>>,
+  alarms: readonly EngineAlarm[],
+): Announcement[] {
+  if (!previous) return [];
+  const out: Announcement[] = [];
+  for (const [field, thresholds] of Object.entries(ANNOUNCE_THRESHOLDS)) {
+    const before = previous[field];
+    const after = current[field];
+    if (before === undefined || after === undefined || thresholds === undefined) continue;
+    for (const threshold of thresholds) {
+      const wasBelow = before < threshold;
+      const isBelow = after < threshold;
+      if (wasBelow === isBelow) continue;
+      const spec = FIELDS[field as StateField];
+      const alarm = alarms.find((a) => a.parameter === field);
+      out.push({
+        text: `${spec.label} ${isBelow ? 'fell below' : 'rose above'} ${threshold} ${spec.unit}`
+          + `, now ${after.toFixed(spec.precision)} ${spec.unit}`
+          + (alarm ? `. ${alarm.priority === 'critical' ? 'High priority' : alarm.priority === 'warning' ? 'Medium priority' : 'Low priority'} alarm.` : ''),
+        severity: alarm?.priority === 'critical' ? 'critical' : alarm ? 'warning' : 'info',
+      });
+    }
+  }
+  return out;
+}
+
+/**
+ * The on-demand full-state summary: all current vitals, active infusions,
+ * ventilator settings and active alarms, as structured text.
+ */
+export function stateSummary(
+  state: PatientState,
+  options: {
+    readonly alarms: readonly EngineAlarm[];
+    readonly infusions: readonly { drugId: string; rate: number; unit: string }[];
+    readonly ventilator: { mode: string; tidalVolumeMl: number; respiratoryRateBpm: number; fio2: number; delivering: boolean };
+    readonly invalid: ReadonlySet<string>;
+  },
+): string {
+  const lines: string[] = ['Current state.'];
+  for (const tile of TILES) {
+    const spec = FIELDS[tile.field];
+    if (options.invalid.has(tile.field)) {
+      lines.push(`${spec.label}: not measurable. ${tile.invalidReason ?? ''}`.trim());
+      continue;
+    }
+    lines.push(`${spec.label}: ${state[tile.field].toFixed(spec.precision)} ${spec.unit}`.trim());
+  }
+  lines.push(options.infusions.length === 0
+    ? 'No infusions running.'
+    : `Infusions: ${options.infusions.map((i) => `${i.drugId} at ${i.rate.toFixed(1)} ${i.unit}`).join(', ')}.`);
+  lines.push(`Ventilator: ${options.ventilator.mode}, `
+    + `inspired oxygen fraction ${options.ventilator.fio2.toFixed(2)}, `
+    + (options.ventilator.delivering
+      ? `tidal volume ${options.ventilator.tidalVolumeMl} millilitres at ${options.ventilator.respiratoryRateBpm} per minute.`
+      : 'not delivering breaths.'));
+  lines.push(options.alarms.length === 0
+    ? 'No active alarms.'
+    : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+  return lines.join(' ');
+}
+
+/**
+ * A text description of the current waveform morphology, so a screen reader user
+ * reaching a trace gets its shape rather than an empty canvas.
+ */
+export function waveformDescriptions(options: {
+  readonly rhythm: RhythmId;
+  readonly bronchospasmSeverity: number;
+  readonly perfusionIndex: number;
+  readonly artifacts: ReadonlySet<string>;
+  readonly ventilating: boolean;
+  readonly mechanicalPulse: boolean;
+}): { signal: string; label: string; description: string }[] {
+  const rhythm = getRhythm(options.rhythm);
+  const alpha = alphaForObstruction(options.bronchospasmSeverity);
+  const capnoShape = !options.ventilating
+    ? 'No waveform: no gas is moving.'
+    : alpha > NORMAL_ALPHA_DEGREES + 15
+      ? `Shark-fin shape: the expiratory upstroke is sloped and the plateau rises, giving an alpha angle of about ${alpha.toFixed(0)} degrees.`
+      : `Normal rectangular shape with a flat alveolar plateau, alpha angle about ${alpha.toFixed(0)} degrees.`;
+
+  const plethShape = !options.mechanicalPulse
+    ? 'Non-pulsatile: no mechanical pulse is reaching the probe.'
+    : options.artifacts.has('probe-displacement')
+      ? 'Non-pulsatile: the probe is displaced.'
+      : options.perfusionIndex < 0.35
+        ? 'Small, low-amplitude pulses. Signal quality is poor and the saturation reading is unreliable.'
+        : 'Regular pulses with a clear upstroke and a dicrotic shoulder.';
+
+  const arterialShape = !options.mechanicalPulse
+    ? 'Flat: no pulsatile pressure.'
+    : options.artifacts.has('arterial-damping')
+      ? 'Damped: the dicrotic notch is lost and the trace is narrow. This is a monitoring problem, not a pressure change.'
+      : 'Sharp upstroke, a dicrotic notch on the downslope, and a diastolic runoff.';
+
+  return [
+    {
+      signal: 'ecg', label: 'Electrocardiogram, lead two',
+      description: options.artifacts.has('electrocautery')
+        ? `${rhythm.morphologyDescription} The trace is obscured by electrocautery interference, so the displayed heart rate is unreliable.`
+        : rhythm.morphologyDescription,
+    },
+    { signal: 'arterial', label: 'Arterial pressure', description: arterialShape },
+    { signal: 'capno', label: 'Capnography', description: capnoShape },
+    { signal: 'pleth', label: 'Plethysmogram', description: plethShape },
+  ];
+}
+
+/**
+ * The keyboard shortcuts, documented and reachable without leaving the cockpit
+ * (platform/accessibility → Complete Keyboard Operation).
+ */
+export interface Shortcut {
+  readonly keys: string;
+  readonly action: string;
+  /** True for the time-critical actions the requirement singles out. */
+  readonly timeCritical: boolean;
+}
+
+export const SHORTCUTS: readonly Shortcut[] = [
+  { keys: 'Space', action: 'Play or pause the simulation', timeCritical: true },
+  { keys: '.', action: 'Advance one simulated second', timeCritical: false },
+  { keys: 'S', action: 'Read the full state summary aloud', timeCritical: true },
+  { keys: 'W', action: 'Read the waveform descriptions', timeCritical: false },
+  { keys: 'A', action: 'Silence the highest-priority active alarm', timeCritical: true },
+  { keys: '1 – 4', action: 'Switch the Analysis tab', timeCritical: false },
+  { keys: 'G', action: 'Give the focused syringe\'s first preset dose', timeCritical: true },
+  { keys: 'V', action: 'Start or stop ventilating', timeCritical: true },
+  { keys: 'L', action: 'Perform laryngoscopy', timeCritical: true },
+  { keys: '?', action: 'Open this shortcut reference', timeCritical: false },
+];

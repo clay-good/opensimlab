@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Defines how Open-SimLab teaches rather than merely simulates: onboarding a learner who has never seen an anesthesia machine, stating learning objectives, guiding without hand-holding, and closing every session with a debrief that explains what the patient did and why.
+Defines how Open Sim Lab teaches rather than merely simulates: onboarding a learner who has never seen an anesthesia machine, stating learning objectives, guiding without hand-holding, and closing every session with a debrief that explains what the patient did and why.
 
 ## Requirements
 

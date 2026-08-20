@@ -75,7 +75,7 @@ For learners who cannot see the traces, the application SHALL provide an extende
 #### Scenario: Extended sonification is distinguishable from clinical realism
 
 - **WHEN** extended sonification adds a cue that no real monitor makes
-- **THEN** it is timbrally distinct from the clinical tones and is documented as an Open-SimLab affordance rather than something to expect on real equipment
+- **THEN** it is timbrally distinct from the clinical tones and is documented as an Open Sim Lab affordance rather than something to expect on real equipment
 
 #### Scenario: Sonification does not overwhelm
 

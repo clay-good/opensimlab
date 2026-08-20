@@ -1,0 +1,276 @@
+/* The four-region cockpit (design/layout).
+ *
+ * Exactly four regions in a fixed relationship. A fifth is never added; new
+ * surfaces open as a Drawer or a Modal over these four.
+ *
+ * Region geometry is stable once a scenario is running: values changing, alarms
+ * firing and log entries appending never move any other element, so measured
+ * cumulative layout shift after the initial render is zero.
+ */
+
+.cockpit {
+  display: grid;
+  grid-template-areas:
+    'status status'
+    'analysis monitor'
+    'actions actions';
+  grid-template-rows: var(--status-bar-height) 1fr var(--action-cockpit-height);
+  grid-template-columns: var(--analysis-fraction, 42%) 1fr;
+  block-size: 100dvh;
+  max-inline-size: var(--max-content-width);
+  margin-inline: auto;
+  background: var(--surface-0);
+  overflow: hidden;
+}
+
+.cockpit__status { grid-area: status; min-inline-size: 0; overflow: hidden; }
+.cockpit__analysis { grid-area: analysis; border-inline-end: 1px solid var(--line); min-inline-size: 0; }
+.cockpit__monitor { grid-area: monitor; min-inline-size: 0; }
+.cockpit__actions { grid-area: actions; border-block-start: 1px solid var(--line); }
+
+/* --- Status bar ----------------------------------------------------------- */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding-inline: var(--space-4);
+  block-size: 100%;
+  border-block-end: 1px solid var(--line);
+  background: var(--surface-1);
+  overflow-x: auto;
+}
+.status-bar__patient { display: flex; gap: var(--space-3); align-items: baseline; min-inline-size: 0; }
+.status-bar__patient-summary {
+  font: var(--type-label);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.status-bar__procedure {
+  font: var(--type-body);
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* The clock is the most prominent element after the vitals. */
+.status-bar__clock {
+  font: var(--type-vital-m);
+  letter-spacing: var(--type-vital-m-tracking);
+  font-variant-numeric: tabular-nums;
+  margin-inline-start: auto;
+}
+.status-bar__transport { display: flex; gap: var(--space-1); align-items: center; }
+.status-bar__marker-short { display: none; }
+.status-bar__marker {
+  font: var(--type-micro);
+  letter-spacing: var(--type-micro-tracking);
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-chip);
+  padding: 2px var(--space-2);
+  white-space: nowrap;
+}
+
+/* --- Monitor region ------------------------------------------------------- */
+.monitor {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  block-size: 100%;
+  min-block-size: 0;
+  background: var(--void);
+}
+.monitor__body {
+  display: grid;
+  grid-template-columns: 72% 28%;
+  min-block-size: 0;
+  min-inline-size: 0;
+}
+.monitor__traces { min-inline-size: 0; position: relative; }
+.monitor__tiles {
+  display: grid;
+  gap: 1px;
+  border-inline-start: 1px solid var(--line-subtle);
+  min-inline-size: 0;
+}
+
+/* --- Analysis region ------------------------------------------------------ */
+.analysis { display: grid; grid-template-rows: auto 1fr; block-size: 100%; min-block-size: 0; }
+.analysis__body { overflow: auto; padding: var(--space-3); min-block-size: 0; }
+
+/* --- Action cockpit ------------------------------------------------------- */
+.actions { display: grid; grid-template-rows: auto auto minmax(0, 1fr); block-size: 100%; min-block-size: 0; min-inline-size: 0; }
+.actions__pinned {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  flex-wrap: wrap;
+  padding: var(--space-2) var(--space-4);
+  border-block-end: 1px solid var(--line-subtle);
+  background: var(--surface-1);
+  font: var(--type-micro);
+  letter-spacing: var(--type-micro-tracking);
+  color: var(--text-secondary);
+}
+.actions__tray { overflow: auto; padding: var(--space-3) var(--space-4); min-block-size: 0; min-inline-size: 0; }
+.tray-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-3);
+}
+.syringe {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  min-inline-size: 0;
+}
+.syringe__name {
+  font: var(--type-subtitle);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.syringe__meta { font: var(--type-micro); color: var(--text-tertiary); }
+.syringe__presets { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+.syringe__remaining { font: var(--type-micro); color: var(--text-tertiary); font-variant-numeric: tabular-nums; }
+
+/* --- Reflow --------------------------------------------------------------
+ * At `sm` the Analysis region moves below the Monitor. At `xs` it becomes a
+ * Drawer and the Action Cockpit becomes a bottom sheet.
+ */
+@media (max-width: 1023px) {
+  .cockpit {
+    grid-template-areas:
+      'status'
+      'monitor'
+      'analysis'
+      'actions';
+    grid-template-rows: var(--status-bar-height) minmax(0, 1.6fr) minmax(0, 1fr) var(--action-cockpit-height);
+    /* `minmax(0, 1fr)`, never a bare `1fr`: a bare fr track takes its minimum
+     * from the widest child's min-content, so one non-wrapping row inside — the
+     * transport controls, the tile strip — widens the whole cockpit past the
+     * viewport and the page scrolls sideways. */
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .cockpit__analysis { border-inline-end: 0; border-block-start: 1px solid var(--line); }
+  .monitor__body { grid-template-columns: 62% 38%; }
+}
+
+@media (max-width: 767px) {
+  .cockpit {
+    grid-template-areas:
+      'status'
+      'monitor';
+    /* The Monitor keeps its height priority; Analysis and Actions become overlays. */
+    grid-template-rows: var(--status-bar-height) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .cockpit__analysis, .cockpit__actions { display: none; }
+  .cockpit--analysis-open .cockpit__analysis {
+    display: block;
+    position: fixed;
+    inset-block: var(--status-bar-height) 0;
+    inset-inline-end: 0;
+    inline-size: min(360px, 100%);
+    z-index: 55;
+    background: var(--surface-1);
+    border-inline-start: 1px solid var(--line-strong);
+  }
+  .cockpit--actions-open .cockpit__actions {
+    display: block;
+    position: fixed;
+    inset-inline: 0;
+    inset-block-end: 0;
+    z-index: 56;
+    max-block-size: 60dvh;
+    background: var(--surface-1);
+    border-block-start: 1px solid var(--line-strong);
+  }
+  .monitor__body { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; }
+  .monitor__tiles {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(96px, 1fr);
+    overflow-x: auto;
+    border-inline-start: 0;
+    border-block-start: 1px solid var(--line-subtle);
+  }
+  /* The sacrifice order reaches `patient-summary-detail` here. At a phone width
+   * the whole patient summary and the speed multipliers leave the bar, and the
+   * clock steps down a size, so the transport controls, the clock and the
+   * simulator marker all fit inside 360 px without the bar becoming a sideways
+   * scroll. Both removals stay reachable from the overflow menu. */
+  .status-bar { gap: var(--space-1); padding-inline: var(--space-1); overflow-x: clip; }
+  /* The marker drops its chip so it costs its text and nothing more. */
+  .status-bar__marker { border: 0; padding: 0; }
+  .status-bar__patient { display: none; }
+  .status-bar .segmented { display: none; }
+  /* The simulator marker never leaves — it is a safety requirement, not chrome —
+   * but it can shrink to its short form and give up its chip border. */
+  .status-bar__marker-long { display: none; }
+  .status-bar__marker-short { display: inline; }
+  .status-bar__clock { font: var(--type-title); letter-spacing: var(--type-title-tracking); flex: 0 0 auto; }
+
+  /* The tray clears the floating action buttons, which sit over it. */
+  .cockpit--actions-open .actions__tray { padding-block-end: var(--space-7); }
+
+  .mobile-actions {
+    position: fixed;
+    inset-block-end: var(--space-4);
+    inset-inline-end: var(--space-4);
+    z-index: 57;
+    display: flex;
+    gap: var(--space-2);
+  }
+}
+
+/* A landscape phone prioritizes the monitor: the status bar compacts and the
+ * action cockpit becomes a floating button opening a sheet. */
+@media (max-height: 499px) and (orientation: landscape) {
+  .cockpit { grid-template-rows: var(--status-bar-height-compact) 1fr; }
+  .status-bar { gap: var(--space-3); }
+  .status-bar__clock { font: var(--type-subtitle); font-variant-numeric: tabular-nums; }
+}
+
+/* A lecture display uses the extra space for data rather than whitespace: the
+ * Analysis region shows the plot and the log at once instead of tabbed. */
+@media (min-width: 1920px) {
+  .analysis--wide .analysis__body { display: grid; grid-template-rows: 1fr 1fr; gap: var(--space-3); }
+}
+
+/* --- The Why panel --------------------------------------------------------- */
+.why-panel__term {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-3);
+  align-items: baseline;
+  padding-block: var(--space-2);
+  border-block-end: 1px solid var(--line-subtle);
+}
+.why-panel__share { font-variant-numeric: tabular-nums; color: var(--text-secondary); font: var(--type-micro); }
+.why-panel__bar { block-size: 4px; background: var(--line-strong); border-radius: var(--radius-pill); }
+
+/* --- Prebrief and debrief -------------------------------------------------- */
+.reading {
+  max-inline-size: 68ch;
+  margin-inline: auto;
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-4);
+}
+.reading h1 { font: var(--type-vital-m); letter-spacing: var(--type-vital-m-tracking); }
+.reading h2 { font: var(--type-title); letter-spacing: var(--type-title-tracking); }
+.reading h3 { font: var(--type-subtitle); }
+.reading p, .reading li { color: var(--text-secondary); }
+.reading ul, .reading ol { padding-inline-start: var(--space-5); display: grid; gap: var(--space-2); }
+.reading__aside {
+  border-inline-start: 2px solid var(--line-strong);
+  padding-inline-start: var(--space-4);
+  color: var(--text-tertiary);
+  font: var(--type-micro);
+}
+.phase-nav { display: flex; gap: var(--space-2); flex-wrap: wrap; }

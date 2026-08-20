@@ -121,7 +121,7 @@ The project documentation SHALL state plainly what this tool is for and what it 
 
 #### Scenario: The comparison is fair
 
-- **WHEN** the documentation compares Open-SimLab to existing screen-based simulators
+- **WHEN** the documentation compares Open Sim Lab to existing screen-based simulators
 - **THEN** it names them accurately, states what they do well, and confines its own claims to what the validation report supports
 
 #### Scenario: The tool does not overclaim its place

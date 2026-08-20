@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Makes Open-SimLab work where medical students actually study: hospital basements, rural clinics, commuter trains, and campuses with metered or intermittent connectivity. Once loaded, the application must be complete on the device and never require the network again.
+Makes Open Sim Lab work where medical students actually study: hospital basements, rural clinics, commuter trains, and campuses with metered or intermittent connectivity. Once loaded, the application must be complete on the device and never require the network again.
 
 ## Requirements
 

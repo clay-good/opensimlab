@@ -1,7 +1,7 @@
 schema: spec-driven
 
 context: |
-  Project: Open-SimLab (opensimlab.com) — an open-source, browser-native clinical
+  Project: Open Sim Lab (opensimlab.com) — an open-source, browser-native clinical
   simulator. First module is Anesthesiology at /anesthesia; later modules mount at
   /oncology, /cardiology, and so on.
 
@@ -82,7 +82,7 @@ context: |
   DECORATION. Interface chrome is a neutral ramp; the only saturated color on screen is
   physiology (five trace hues), alarm severity, and a single focus accent.
 
-  Hard safety rule: Open-SimLab is an educational simulator. It is NOT a clinical
+  Hard safety rule: Open Sim Lab is an educational simulator. It is NOT a clinical
   decision-support tool, NOT a dosing calculator, and NOT validated for any decision
   affecting a real patient.
 

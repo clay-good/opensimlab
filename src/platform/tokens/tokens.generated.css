@@ -1,0 +1,141 @@
+/* GENERATED FILE — do not edit.
+ * Produced by `npm run tokens` from src/platform/tokens/tokens.ts,
+ * which is the single source of truth for every design value.
+ */
+
+:root {
+  /* Neutral ramp — all interface chrome. */
+  --void: #06080B;
+  --surface-0: #0B0F14;
+  --surface-1: #11161D;
+  --surface-2: #171E27;
+  --surface-3: #1F2833;
+  --surface-input: #0E141B;
+  --line-subtle: #1C242E;
+  --line: #27313D;
+  --line-strong: #384453;
+  --text-primary: #E9EEF5;
+  --text-secondary: #A3B1C2;
+  --text-tertiary: #8593A4;
+  --text-on-accent: #06080B;
+
+  /* Physiological traces — one of the three permitted uses of saturated colour. */
+  --ecg: #3DDC84;
+  --ecg-dim: #1B5C39;
+  --ecg-fill: rgba(61,220,132,0.14);
+  --arterial: #FF5C5C;
+  --arterial-dim: #6B2020;
+  --arterial-fill: rgba(255,92,92,0.14);
+  --capno: #FFD426;
+  --capno-dim: #6B5A10;
+  --capno-fill: rgba(255,212,38,0.14);
+  --spo2: #22D3EE;
+  --spo2-dim: #0E5766;
+  --spo2-fill: rgba(34,211,238,0.14);
+  --neuro: #B388FF;
+  --neuro-dim: #4A3673;
+  --neuro-fill: rgba(179,136,255,0.14);
+
+  /* Alarm severity and the single focus accent. */
+  --alarm-critical: #FF3B3B;
+  --alarm-critical-text: #FF8080;
+  --alarm-critical-bg: rgba(255,59,59,0.12);
+  --alarm-warning: #FFB020;
+  --alarm-warning-bg: rgba(255,176,32,0.12);
+  --alarm-advisory: #A3B1C2;
+  --alarm-advisory-bg: rgba(163,177,194,0.10);
+  --focus: #7FB8FF;
+  --scrim: rgba(6, 8, 11, 0.72);  /* the modal scrim: --void at 72% */
+
+  /* Alarm flash periods, derived from the IEC 60601-1-8 rate bands.
+   * These are clinical signals at a standard-mandated rate, not interface
+   * transitions, so they are not bound by the 280 ms motion ceiling. */
+  --alarm-flash-critical-period: 500ms;  /* 2 Hz */
+  --alarm-flash-warning-period: 1667ms;  /* 0.6 Hz */
+
+  /* Type scale. */
+  --type-vital-xl: 600 56px/1 var(--font-ui);
+  --type-vital-xl-tracking: -0.02em;
+  --type-vital-l: 600 40px/1 var(--font-ui);
+  --type-vital-l-tracking: -0.02em;
+  --type-vital-m: 600 28px/1.05 var(--font-ui);
+  --type-vital-m-tracking: -0.01em;
+  --type-title: 600 20px/1.3 var(--font-ui);
+  --type-title-tracking: -0.01em;
+  --type-subtitle: 500 16px/1.4 var(--font-ui);
+  --type-subtitle-tracking: 0em;
+  --type-body: 400 15px/1.55 var(--font-ui);
+  --type-body-tracking: 0em;
+  --type-label: 500 13px/1.3 var(--font-ui);
+  --type-label-tracking: 0.06em;
+  --type-micro: 500 11px/1.3 var(--font-ui);
+  --type-micro-tracking: 0.04em;
+
+  /* Spacing, radius, motion. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --radius-chip: 3px;
+  --radius-control: 6px;
+  --radius-panel: 10px;
+  --radius-pill: 999px;
+  --motion-micro: 120ms;
+  --motion-standard: 200ms;
+  --motion-deliberate: 280ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Layout. */
+  --status-bar-height: 56px;
+  --status-bar-height-compact: 40px;
+  --action-cockpit-height: 220px;
+  --alarm-rail-height: 48px;
+  --max-content-width: 2200px;
+  --control-height: 40px;
+  --font-ui: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+}
+
+/* Accessibility modifier: the colourblind-safe trace palette. It overrides
+ * only the affected tokens; the layout, type, spacing and component
+ * structure are unchanged and the theme is still Theater Dark. */
+[data-trace-palette="colorblind-safe"] {
+  --ecg: #B3EFC9;
+  --arterial: #E17070;
+  --capno: #EED263;
+  --spo2: #2ECEFA;
+  --neuro: #7C70E1;
+}
+
+/* Accessibility modifier: contrast boost. */
+[data-contrast="boost"] {
+  --text-secondary: #C6D2E0;
+  --text-tertiary: #B4C1D0;
+  --line: #4A586B;
+}
+
+/* Compact density steps control height and panel padding, using scale values only. */
+[data-density="compact"] {
+  --control-height: 32px;
+}
+
+/* Reduced motion collapses every transition duration to zero. Waveform
+ * rendering is not a transition and is handled by the renderer. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+  --motion-micro: 0ms;
+  --motion-standard: 0ms;
+  --motion-deliberate: 0ms;
+  }
+}
+
+/* Breakpoints are documented here and used through these exact values. */
+/* xs: 360px */
+/* sm: 768px */
+/* md: 1024px */
+/* lg: 1440px */
+/* xl: 1920px */

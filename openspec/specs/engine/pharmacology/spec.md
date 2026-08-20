@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Owns the drug knowledge in Open-SimLab: the model parameters transcribed from the primary literature into this repository, the applicability envelopes that keep a model from being used on a patient it was never derived for, and the citations that let a learner check the source. Open-SimLab owns these numbers outright — there is no external dataset dependency.
+Owns the drug knowledge in Open Sim Lab: the model parameters transcribed from the primary literature into this repository, the applicability envelopes that keep a model from being used on a patient it was never derived for, and the citations that let a learner check the source. Open Sim Lab owns these numbers outright — there is no external dataset dependency.
 
 ## Requirements
 
@@ -60,11 +60,11 @@ Every entry SHALL resolve to an executable kernel and a full citation with a res
 #### Scenario: A drug the module needs but literature does not cover is labeled
 
 - **WHEN** phenylephrine, ephedrine, or epinephrine is administered
-- **THEN** the response comes from an Open-SimLab teaching model, the interface labels it **Teaching model** with a one-sentence explanation, and it is visually distinct from a published model
+- **THEN** the response comes from an Open Sim Lab teaching model, the interface labels it **Teaching model** with a one-sentence explanation, and it is visually distinct from a published model
 
 ### Requirement: Three Plain-Language Confidence Labels
 
-Each model SHALL carry exactly one of three learner-facing labels: **Published** (a peer-reviewed population model used within its derivation envelope), **Out of range** (a published model applied to a patient outside its envelope), or **Teaching model** (an Open-SimLab construction with no population source). Alphabetic tier codes SHALL NOT be shown to learners.
+Each model SHALL carry exactly one of three learner-facing labels: **Published** (a peer-reviewed population model used within its derivation envelope), **Out of range** (a published model applied to a patient outside its envelope), or **Teaching model** (an Open Sim Lab construction with no population source). Alphabetic tier codes SHALL NOT be shown to learners.
 
 #### Scenario: The label is visible wherever the model drives a number
 

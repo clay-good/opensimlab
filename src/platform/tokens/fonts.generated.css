@@ -1,0 +1,29 @@
+/* GENERATED FILE — do not edit. Produced by `npm run tokens`.
+ *
+ * Self-hosted type only. Nothing is fetched from a font service: the privacy
+ * architecture forbids any request to a foreign origin, and a font CDN is
+ * exactly that. `font-display: swap` so text is never invisible while a face
+ * loads, and both families have a complete platform fallback stack.
+ */
+
+/* inter-latin.woff2 is NOT vendored, so Inter falls through to the platform
+ * system stack. See docs/fonts.md for the subsetting procedure. */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: local('Inter');
+  unicode-range: U+0000-00FF, U+0100-017F, U+0131, U+0152-0153, U+02BB-02BC, U+2000-206F, U+2070-209F, U+20A0-20BF, U+2122, U+2190-2193, U+2212, U+2215;
+}
+
+/* jetbrains-mono-latin.woff2 is NOT vendored, so JetBrains Mono falls through to the platform
+ * system stack. See docs/fonts.md for the subsetting procedure. */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: local('JetBrains Mono');
+  unicode-range: U+0000-00FF, U+2000-206F, U+2212;
+}

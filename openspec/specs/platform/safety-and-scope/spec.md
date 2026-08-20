@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Draws and enforces the line between a teaching simulator and a clinical tool. Open-SimLab predicts what a virtual patient does; it never advises what to do to a real one. This capability specifies the disclaimers, the technical guards that make misuse structurally hard, and the forward-only boundary of the simulation core.
+Draws and enforces the line between a teaching simulator and a clinical tool. Open Sim Lab predicts what a virtual patient does; it never advises what to do to a real one. This capability specifies the disclaimers, the technical guards that make misuse structurally hard, and the forward-only boundary of the simulation core.
 
 ## Requirements
 
@@ -70,7 +70,7 @@ The application SHALL provide no field, import, or integration that accepts iden
 
 ### Requirement: The Forward-Only Boundary Is Structural
 
-The simulation kernel SHALL remain forward-only: dose in, prediction out. Any dose-solving or target-seeking logic SHALL live in a separate Open-SimLab module and SHALL be labeled as a simulation feature.
+The simulation kernel SHALL remain forward-only: dose in, prediction out. Any dose-solving or target-seeking logic SHALL live in a separate Open Sim Lab module and SHALL be labeled as a simulation feature.
 
 #### Scenario: The kernel module exposes no inverse entry point
 
@@ -85,7 +85,7 @@ The simulation kernel SHALL remain forward-only: dose in, prediction out. Any do
 #### Scenario: Attribution is accurate
 
 - **WHEN** the application credits its sources
-- **THEN** it credits the primary publications each model is transcribed from, states that Open-SimLab transcribed and implemented them itself, and does not imply endorsement or validation by any author or sibling project
+- **THEN** it credits the primary publications each model is transcribed from, states that Open Sim Lab transcribed and implemented them itself, and does not imply endorsement or validation by any author or sibling project
 
 ### Requirement: Uncertainty Is Never Presented As Precision
 

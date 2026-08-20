@@ -1,0 +1,280 @@
+/**
+ * Acceptance tests for platform/discoverability, platform/landing, and
+ * platform/module-contract.
+ */
+import { describe, expect, it } from 'vitest';
+import { ROUTES, SITE_NAME, canonicalUrl, formatTitle, indexableRoutes, routeFor } from '@routes/routes';
+import {
+  learningResourceJsonLd, organizationJsonLd, softwareApplicationJsonLd, structuredDataFor, websiteJsonLd,
+} from '@platform/docs/structured-data';
+import {
+  CONTENT_SECTIONS, FOOTER_LINKS, FORBIDDEN_MARKETING_WORDS, ONE_LINE_DESCRIPTION, QUESTIONS,
+  SUGGESTED_CITATION, THREE_FACTS,
+} from '@landing/content';
+import { heroStaticSvg } from '@landing/hero';
+import { MODULES, RELEASE_FEED_URL, availableModules, plannedModules, speedsFor } from '@platform/modules/registry';
+import { EDITORIAL_BOARD } from '@platform/governance/records';
+import { isCrawler } from '@platform/offline/register';
+
+describe('Requirement: Per-Route Metadata', () => {
+  it('Scenario: Titles are specific and consistently formed', () => {
+    const titles = ROUTES.map((route) => route.title);
+    expect(new Set(titles).size, 'a title is duplicated').toBe(titles.length);
+    for (const route of ROUTES) {
+      expect(route.title.length, `${route.path} title is ${route.title.length} characters`)
+        .toBeLessThan(60);
+      expect(route.title.endsWith(SITE_NAME), `${route.path} does not follow the title pattern`).toBe(true);
+      expect(route.title).toBe(formatTitle(route.title.replace(` · ${SITE_NAME}`, '')));
+    }
+  });
+
+  it('Scenario: Descriptions describe the page, not the project', () => {
+    const descriptions = ROUTES.map((route) => route.description);
+    expect(new Set(descriptions).size).toBe(descriptions.length);
+    for (const route of ROUTES) {
+      expect(route.description.length, `${route.path} description is ${route.description.length} characters`)
+        .toBeGreaterThanOrEqual(110);
+      expect(route.description.length).toBeLessThanOrEqual(160);
+      // Not a copy of the site-wide description.
+      if (route.path !== '/') expect(route.description).not.toBe(routeFor('/')?.description);
+    }
+  });
+
+  it('Scenario: Canonicals prevent duplicate indexing', () => {
+    expect(canonicalUrl('/')).toBe('https://opensimlab.com/');
+    expect(canonicalUrl('/anesthesia')).toBe('https://opensimlab.com/anesthesia');
+    // A trailing slash resolves to the same canonical.
+    expect(canonicalUrl('/anesthesia/')).toBe(canonicalUrl('/anesthesia'));
+  });
+
+  it('Scenario: Scenario briefing pages are indexable, sessions are not', () => {
+    expect(routeFor('/anesthesia/scenario/routine-induction')?.indexable).toBe(true);
+    // Development surfaces are not indexable.
+    expect(routeFor('/gallery')?.indexable).toBe(false);
+    expect(routeFor('/frame-budget')?.indexable).toBe(false);
+  });
+});
+
+describe('Requirement: The Root Domain Carries The Search Weight', () => {
+  it('Scenario: The simulator route stays clean', () => {
+    const anesthesia = routeFor('/anesthesia')!;
+    // A title, a description, a canonical, social tags, and SoftwareApplication.
+    expect(anesthesia.structuredData).toEqual(['SoftwareApplication']);
+    // No marketing prose, no keyword section, no questions block on that route.
+    expect(anesthesia.description.length).toBeLessThanOrEqual(160);
+    for (const word of FORBIDDEN_MARKETING_WORDS) {
+      expect(anesthesia.description.toLowerCase()).not.toContain(word.toLowerCase());
+    }
+  });
+
+  it('Scenario: The landing page is the substantive indexable document', () => {
+    const root = routeFor('/')!;
+    expect(root.structuredData).toEqual(['WebSite', 'Organization']);
+    // The full below-the-fold prose lives here.
+    expect(CONTENT_SECTIONS.length).toBeGreaterThanOrEqual(6);
+    expect(QUESTIONS.length).toBeGreaterThanOrEqual(9);
+  });
+});
+
+describe('Requirement: Structured Data That Is Accurate', () => {
+  it('Scenario: The right types are used', () => {
+    expect(websiteJsonLd()['@type']).toBe('WebSite');
+    expect(organizationJsonLd()['@type']).toBe('Organization');
+    const application = softwareApplicationJsonLd();
+    expect(application['@type']).toBe('SoftwareApplication');
+    expect(application.applicationCategory).toBe('EducationalApplication');
+    expect((application.offers as { price: string }).price).toBe('0');
+    expect(application.isAccessibleForFree).toBe(true);
+
+    const resource = learningResourceJsonLd();
+    expect(resource['@type']).toBe('LearningResource');
+    expect(Array.isArray(resource.teaches)).toBe(true);
+    expect(resource.educationalLevel).toBeTruthy();
+    expect(resource.learningResourceType).toBeTruthy();
+    expect(resource.isAccessibleForFree).toBe(true);
+  });
+
+  it('Scenario: Medical credibility signals are real, not decorative', () => {
+    // The board is empty in this build, so no reviewer is named in the markup.
+    expect(EDITORIAL_BOARD).toHaveLength(0);
+    expect(organizationJsonLd().member).toBeUndefined();
+  });
+
+  it('Scenario: No structured data makes a claim the site does not', () => {
+    for (const entry of [websiteJsonLd(), organizationJsonLd(), softwareApplicationJsonLd(), learningResourceJsonLd()]) {
+      const text = JSON.stringify(entry);
+      // No ratings, no review counts, no credentials that do not exist.
+      expect(text).not.toContain('aggregateRating');
+      expect(text).not.toContain('reviewCount');
+      expect(text).not.toContain('ratingValue');
+    }
+  });
+
+  it('emits structured data only for the types a route declares', () => {
+    expect(structuredDataFor([])).toHaveLength(0);
+    expect(structuredDataFor(['WebSite', 'Organization'])).toHaveLength(2);
+  });
+});
+
+describe('Requirement: One Screen, One Action', () => {
+  it('Scenario: The description is plain and specific', () => {
+    expect(ONE_LINE_DESCRIPTION).toContain('medical students');
+    expect(ONE_LINE_DESCRIPTION).toContain('nurse anesthetists');
+    expect(ONE_LINE_DESCRIPTION).toContain('free');
+    for (const word of FORBIDDEN_MARKETING_WORDS) {
+      expect(ONE_LINE_DESCRIPTION.toLowerCase(), `contains "${word}"`).not.toContain(word.toLowerCase());
+    }
+  });
+
+  it('Scenario: The three facts are the right three', () => {
+    expect(THREE_FACTS).toHaveLength(3);
+    const text = THREE_FACTS.map((fact) => fact.text.toLowerCase()).join(' ');
+    expect(text).toContain('no account');
+    expect(text).toContain('offline');
+    expect(text).toContain('published');
+    // Each links to the relevant deeper page.
+    for (const fact of THREE_FACTS) expect(fact.href.startsWith('/')).toBe(true);
+  });
+});
+
+describe('Requirement: The Hero Is The Product Running', () => {
+  it('Scenario: The hero degrades to a still image', () => {
+    const svg = heroStaticSvg(720, 120);
+    // The static rendering is a real trace from the same generator.
+    expect(svg).toContain('<path');
+    expect(svg.length).toBeGreaterThan(2000);
+    // Drawn in the electrocardiogram trace colour and nothing else.
+    expect(svg).toContain('#3DDC84');
+    expect(svg).toContain('#06080B');
+    // Identical layout to the live version: the same viewBox dimensions.
+    expect(svg).toContain('viewBox="0 0 720 120"');
+    // And it is inline markup, so no image file is fetched.
+    expect(svg).not.toContain('<image');
+  });
+
+  it('is the only saturated colour on the page', () => {
+    const svg = heroStaticSvg();
+    const colours = [...svg.matchAll(/#[0-9A-Fa-f]{6}/g)].map((match) => match[0]);
+    // Exactly two: the trace hue, and the canvas ground it sits on.
+    expect(new Set(colours)).toEqual(new Set(['#3DDC84', '#06080B']));
+  });
+});
+
+describe('Requirement: Modules Directory Is Honest About What Exists', () => {
+  it('Scenario: Available and planned are visually distinct, with no date', () => {
+    expect(availableModules().map((module) => module.id)).toEqual(['anesthesia']);
+    expect(plannedModules().length).toBeGreaterThanOrEqual(2);
+    for (const module of plannedModules()) {
+      expect(module.plannedScope, `${module.id} needs a description of its scope`).toBeTruthy();
+      // No launch date, no quarter, no countdown.
+      const text = `${module.description} ${module.plannedScope ?? ''}`;
+      expect(text).not.toMatch(/\bQ[1-4]\b|\b20\d\d\b|\bcoming (soon|in)\b/i);
+    }
+  });
+
+  it('Scenario: Interest is expressed without collecting anything', () => {
+    expect(RELEASE_FEED_URL).toContain('releases');
+    // No email capture anywhere in the module registry or the landing content.
+    const text = JSON.stringify({ MODULES, CONTENT_SECTIONS, QUESTIONS, THREE_FACTS });
+    expect(text).not.toMatch(/subscribe|newsletter|mailing list|email address for/i);
+  });
+
+  it('Scenario: A module supplies its own directory entry', () => {
+    for (const module of MODULES) {
+      expect(module.route.length).toBeGreaterThan(2);
+      expect(module.displayName.length).toBeGreaterThan(2);
+      expect(module.audience.length).toBeGreaterThan(10);
+      expect(module.prerequisites.length).toBeGreaterThan(10);
+      expect(['available', 'planned']).toContain(module.status);
+    }
+  });
+
+  it('Requirement: Modules Declare Their Own Physiological Timescale', () => {
+    const anesthesia = MODULES.find((module) => module.id === 'anesthesia')!;
+    expect(anesthesia.timescale.unit).toBe('seconds');
+    expect([...speedsFor(anesthesia)]).toEqual([1, 2, 5, 60]);
+    expect(anesthesia.timescale.stepSeconds).toBe(0.1);
+
+    // A long-timescale module uses its own units and its own step.
+    const oncology = MODULES.find((module) => module.id === 'oncology')!;
+    expect(oncology.timescale.unit).toBe('days');
+    expect(oncology.timescale.stepSeconds).toBeGreaterThan(0.1);
+    expect(speedsFor(oncology)).not.toEqual(speedsFor(anesthesia));
+  });
+});
+
+describe('Requirement: Substantive Content Lives Below The Fold', () => {
+  it('Scenario: The content section covers what a stranger needs, in order', () => {
+    expect(CONTENT_SECTIONS.map((section) => section.id)).toEqual([
+      'what-it-teaches',
+      'who-it-is-for',
+      'inside-the-module',
+      'where-the-pharmacology-comes-from',
+      'how-it-is-reviewed',
+      'what-it-does-not-do',
+      'using-it-in-a-course',
+    ]);
+  });
+
+  it('Scenario: The prose is real writing, not keyword filler', () => {
+    for (const section of CONTENT_SECTIONS) {
+      for (const paragraph of section.paragraphs) {
+        expect(paragraph.split(/\s+/).length, `${section.id} has a stub paragraph`).toBeGreaterThan(25);
+      }
+      // No repeated keyword phrase.
+      const text = section.paragraphs.join(' ').toLowerCase();
+      const phrase = 'clinical simulator';
+      const occurrences = text.split(phrase).length - 1;
+      expect(occurrences, `${section.id} repeats "${phrase}"`).toBeLessThan(3);
+    }
+  });
+
+  it('Scenario: A short answer section addresses the real questions', () => {
+    const questions = QUESTIONS.map((entry) => entry.question.toLowerCase()).join(' ');
+    for (const required of ['free', 'account', 'offline', 'phone', 'drug models', 'reviews', 'course', 'mannequin', 'other modules']) {
+      expect(questions, `no question about ${required}`).toContain(required);
+    }
+    // The module timing question is answered honestly.
+    const timing = QUESTIONS.find((entry) => entry.question.includes('other modules'));
+    expect(timing?.answer).toContain('No date is promised');
+  });
+});
+
+describe('Requirement: Footer Carries The Trust Signals', () => {
+  it('Scenario: A skeptical clinician finds the evidence in one hop', () => {
+    const hrefs = FOOTER_LINKS.map((link) => link.href);
+    expect(hrefs).toContain('/validation');
+    expect(hrefs).toContain('/governance');
+    expect(hrefs).toContain('/limitations');
+    expect(hrefs.some((href) => href.includes('LICENSE'))).toBe(true);
+    expect(hrefs.some((href) => href.includes('github.com'))).toBe(true);
+    expect(SUGGESTED_CITATION).toContain('opensimlab.com');
+  });
+});
+
+describe('Requirement: Crawlability Basics', () => {
+  it('Scenario: The sitemap is generated and complete', () => {
+    // The sitemap is generated from this exact set at build time.
+    const indexable = indexableRoutes();
+    expect(indexable.length).toBeGreaterThan(5);
+    expect(indexable.every((route) => route.indexable)).toBe(true);
+    expect(indexable.map((route) => route.path)).toContain('/');
+    expect(indexable.map((route) => route.path)).toContain('/anesthesia');
+    expect(indexable.map((route) => route.path)).not.toContain('/gallery');
+  });
+});
+
+describe('Scenario: The service worker never serves stale metadata to a crawler', () => {
+  it('is not registered for a crawler user agent', () => {
+    for (const agent of [
+      'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+      'Mozilla/5.0 (compatible; bingbot/2.0)',
+      'Twitterbot/1.0',
+      'Slackbot-LinkExpanding 1.0',
+      'facebookexternalhit/1.1',
+    ]) {
+      expect(isCrawler(agent), `${agent} not detected as a crawler`).toBe(true);
+    }
+    expect(isCrawler('Mozilla/5.0 (Linux; Android 10) Chrome/120 Mobile Safari/537.36')).toBe(false);
+  });
+});

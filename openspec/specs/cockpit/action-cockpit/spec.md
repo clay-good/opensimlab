@@ -46,7 +46,7 @@ The cockpit SHALL support continuous infusions with rates entered in mass per ti
 
 ### Requirement: Target-Controlled Infusion
 
-The cockpit SHALL provide a target-controlled infusion mode in which the learner sets a target plasma or effect-site concentration and the simulator computes the infusion profile that achieves it. This computation is an Open-SimLab simulation feature and SHALL be implemented in Open-SimLab's own control layer, and SHALL be structurally separated from the forward-only simulation kernel.
+The cockpit SHALL provide a target-controlled infusion mode in which the learner sets a target plasma or effect-site concentration and the simulator computes the infusion profile that achieves it. This computation is an Open Sim Lab simulation feature and SHALL be implemented in Open Sim Lab's own control layer, and SHALL be structurally separated from the forward-only simulation kernel.
 
 #### Scenario: Effect-site targeting overshoots plasma, as real pumps do
 

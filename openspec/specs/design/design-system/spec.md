@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Defines the single visual language of Open-SimLab: one dark theme, one type family, one spacing system, one motion curve, and a fixed component inventory. Every value a builder needs is stated here as an exact token, so no screen is ever designed twice and no color is ever picked twice.
+Defines the single visual language of Open Sim Lab: one dark theme, one type family, one spacing system, one motion curve, and a fixed component inventory. Every value a builder needs is stated here as an exact token, so no screen is ever designed twice and no color is ever picked twice.
 
 ## Requirements
 

@@ -1,0 +1,79 @@
+# Continuous integration.
+#
+# Every check platform/delivery's test strategy names runs on every pull request:
+# unit tests for the solver and the physiology, golden state-trace regression,
+# published-value assertions per pharmacology model, physiological benchmarks
+# carrying their citations, property tests for the invariants, deterministic
+# scenario replay, the accessibility scan, contrast assertions for every token
+# pair, offline tests, bundle-size checks, the design-token lint, the clinical
+# review gate, and the architecture tests.
+
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      # `npm ci` rather than `npm install`: the lockfile is the source of truth.
+      - name: Install with the committed lockfile
+        run: npm ci
+
+      - name: Specification validates strictly
+        run: npx --yes openspec@1 validate --specs --strict
+
+      - name: Types
+        run: npx tsc -p tsconfig.json --noEmit
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Tests
+        run: npm run test
+
+      - name: Font budget
+        run: npm run fonts
+
+      - name: Build
+        run: npm run build
+
+      # Fails and names the largest contributors when a change pushes a bundle
+      # past its budget.
+      - name: Size budgets
+        run: npm run budget
+
+      - name: Tokens are regenerated, not hand-edited
+        run: |
+          npm run tokens
+          git diff --exit-code src/platform/tokens/tokens.generated.css
+
+  # The frame budget is measured on real hardware, not in this runner. This job
+  # records that it has not been measured rather than letting silence imply it has.
+  frame-budget-status:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Report the measurement status
+        run: |
+          if [ -d docs/measurements ] && [ -n "$(ls -A docs/measurements 2>/dev/null)" ]; then
+            echo "Device measurements committed:"
+            ls -1 docs/measurements
+          else
+            echo "::warning::No device frame-budget measurement has been committed."
+            echo "Open /frame-budget on a mid-range 2020 Android handset and commit the result"
+            echo "to docs/measurements/. A CI runner cannot stand in for real hardware."
+          fi

@@ -1,0 +1,492 @@
+/* The component inventory.
+ *
+ * design/design-system → Component Inventory: exactly this set, each with its
+ * default, hover, active, focus and disabled states. A screen never introduces a
+ * bespoke control outside it.
+ *
+ * Every colour here is a neutral or a token. The token lint fails the build on a
+ * saturated colour outside the trace, alarm and focus sets.
+ */
+
+/* --- Button ------------------------------------------------------------- */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-block-size: var(--control-height);
+  min-inline-size: 44px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-control);
+  background: var(--surface-2);
+  color: var(--text-primary);
+  font: var(--type-body);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--motion-micro) var(--ease), border-color var(--motion-micro) var(--ease);
+}
+.button:hover:not(:disabled) { background: var(--surface-3); }
+.button:active:not(:disabled) { background: var(--surface-1); }
+.button:disabled {
+  color: var(--text-tertiary);
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.button--primary {
+  background: var(--focus);
+  border-color: var(--focus);
+  color: var(--text-on-accent);
+  font-weight: 600;
+}
+.button--primary:hover:not(:disabled) { background: var(--focus); border-color: var(--text-primary); }
+.button--ghost { background: transparent; border-color: transparent; }
+.button--ghost:hover:not(:disabled) { background: var(--surface-2); }
+.button--danger { border-color: var(--alarm-critical); color: var(--alarm-critical-text); }
+.button--danger:hover:not(:disabled) { background: var(--alarm-critical-bg); }
+.button--compact { min-block-size: 40px; padding: 0 var(--space-3); }
+
+/* --- IconButton --------------------------------------------------------- */
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 44px;
+  block-size: 44px;
+  /* The hit target is a floor, not a preference: a crowded flex row must never
+     shrink a control below the 44 px the accessibility capability requires. */
+  flex: 0 0 auto;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background var(--motion-micro) var(--ease), color var(--motion-micro) var(--ease);
+}
+.icon-button:hover:not(:disabled) { background: var(--surface-2); color: var(--text-primary); }
+.icon-button[aria-pressed='true'] { background: var(--surface-3); color: var(--text-primary); border-color: var(--line-strong); }
+.icon-button:disabled { color: var(--text-tertiary); opacity: 0.4; cursor: not-allowed; }
+
+/* --- Toggle -------------------------------------------------------------- */
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-block-size: 44px;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: inherit;
+}
+.toggle__track {
+  inline-size: 44px;
+  block-size: 24px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line-strong);
+  background: var(--surface-input);
+  position: relative;
+  transition: background var(--motion-micro) var(--ease);
+  flex: none;
+}
+.toggle[aria-checked='true'] .toggle__track { background: var(--focus); border-color: var(--focus); }
+.toggle__thumb {
+  position: absolute;
+  inset-block-start: var(--space-1);
+  inset-inline-start: var(--space-1);
+  inline-size: 16px;
+  block-size: 16px;
+  border-radius: var(--radius-pill);
+  background: var(--text-primary);
+  transition: transform var(--motion-micro) var(--ease);
+}
+.toggle[aria-checked='true'] .toggle__thumb { transform: translateX(20px); background: var(--text-on-accent); }
+.toggle:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* --- SegmentedControl ---------------------------------------------------- */
+.segmented {
+  display: inline-flex;
+  padding: var(--space-1);
+  gap: var(--space-1);
+  background: var(--surface-input);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+}
+.segmented__option {
+  min-block-size: 40px;
+  min-inline-size: 44px;
+  padding: 0 var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-chip);
+  background: transparent;
+  color: var(--text-secondary);
+  font: var(--type-label);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background var(--motion-micro) var(--ease), color var(--motion-micro) var(--ease);
+}
+.segmented__option:hover { color: var(--text-primary); }
+.segmented__option[aria-pressed='true'] {
+  background: var(--surface-2);
+  border-color: var(--line-strong);
+  color: var(--text-primary);
+}
+
+/* --- Slider and SteppedDial ---------------------------------------------- */
+.slider { display: flex; flex-direction: column; gap: var(--space-2); min-block-size: 44px; }
+.slider__input { inline-size: 100%; block-size: 24px; accent-color: var(--focus); }
+.stepped-dial { display: inline-flex; align-items: center; gap: var(--space-2); }
+.stepped-dial__value {
+  font: var(--type-vital-m);
+  font-variant-numeric: tabular-nums;
+  min-inline-size: 64px;
+  text-align: center;
+}
+
+/* --- NumericField and Select --------------------------------------------- */
+.field { display: flex; flex-direction: column; gap: var(--space-2); }
+.field__label {
+  font: var(--type-label);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.field__input, .select {
+  min-block-size: var(--control-height);
+  padding: 0 var(--space-3);
+  background: var(--surface-input);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-control);
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.field__input:disabled, .select:disabled { color: var(--text-tertiary); opacity: 0.4; }
+.field__error { font: var(--type-micro); color: var(--alarm-critical-text); }
+.field__hint { font: var(--type-micro); color: var(--text-tertiary); }
+
+/* --- Tabs ---------------------------------------------------------------- */
+/* The tab strip scrolls sideways inside itself rather than widening its parent:
+   a grid column takes its minimum from its widest child, so a non-scrolling row
+   of five tabs would push the whole action region past a phone's viewport. */
+.tabs {
+  display: flex;
+  gap: var(--space-1);
+  border-block-end: 1px solid var(--line);
+  min-inline-size: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.tabs__tab {
+  position: relative;
+  flex: 0 0 auto;
+  min-block-size: 44px;
+  padding: 0 var(--space-4);
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  font: var(--type-label);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.tabs__tab[aria-selected='true'] { color: var(--text-primary); }
+.tabs__tab[aria-selected='true']::after {
+  content: '';
+  position: absolute;
+  inset-inline: var(--space-3);
+  inset-block-end: -1px;
+  block-size: 2px;
+  background: var(--text-primary);
+}
+.tabs__unread {
+  display: inline-block;
+  inline-size: 8px;
+  block-size: 8px;
+  margin-inline-start: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--alarm-critical);
+}
+
+/* --- Panel, PanelHeader, Card -------------------------------------------- */
+.panel {
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+  min-inline-size: 0;
+}
+.panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-block-end: 1px solid var(--line-subtle);
+}
+.panel__title { font: var(--type-title); letter-spacing: var(--type-title-tracking); }
+.panel__body { padding: var(--space-4); }
+.card {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  padding: var(--space-4);
+}
+
+/* --- Chip and Badge ------------------------------------------------------ */
+.chip, .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px var(--space-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-chip);
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  font: var(--type-micro);
+  letter-spacing: var(--type-micro-tracking);
+  white-space: nowrap;
+}
+.badge--out-of-range { border-color: var(--alarm-warning); color: var(--alarm-warning); }
+.badge--teaching { border-style: dashed; }
+
+/* --- Tooltip and Popover -------------------------------------------------- */
+.tooltip {
+  position: absolute;
+  z-index: 40;
+  max-inline-size: 280px;
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-control);
+  font: var(--type-micro);
+  color: var(--text-primary);
+}
+.popover {
+  position: absolute;
+  z-index: 50;
+  min-inline-size: 240px;
+  background: var(--surface-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-panel);
+  padding: var(--space-4);
+}
+
+/* --- Modal and Drawer ----------------------------------------------------- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  background: var(--scrim);
+  padding: var(--space-4);
+}
+.modal {
+  inline-size: min(560px, 100%);
+  max-block-size: 86vh;
+  overflow: auto;
+  background: var(--surface-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-panel);
+  padding: var(--space-6);
+}
+.drawer {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-end: 0;
+  z-index: 55;
+  inline-size: min(420px, 100%);
+  overflow: auto;
+  background: var(--surface-3);
+  border-inline-start: 1px solid var(--line-strong);
+  padding: var(--space-5);
+}
+
+/* --- Banner and AlarmRail -------------------------------------------------- */
+.banner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-control);
+  background: var(--surface-2);
+}
+/* The message takes the remaining width but keeps a sensible minimum, so it
+ * never collapses into a narrow column beside the actions; the actions wrap
+ * underneath instead. */
+.banner__message { flex: 1 1 16rem; min-inline-size: 0; }
+/* A critical banner is a SOLID fill, because a filled banner reads as more
+ * urgent than coloured text. */
+.banner--critical {
+  background: var(--alarm-critical);
+  border-color: var(--alarm-critical);
+  color: var(--text-on-accent);
+  font-weight: 600;
+}
+.banner--warning { background: var(--alarm-warning-bg); border-color: var(--alarm-warning); }
+.banner--advisory { background: var(--alarm-advisory-bg); border-color: var(--alarm-advisory); }
+
+.alarm-rail {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-2);
+  overflow: hidden;
+  block-size: 0;
+  transition: block-size var(--motion-standard) var(--ease);
+}
+.alarm-rail[data-active='true'] { block-size: var(--alarm-rail-height); }
+.alarm-rail__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-control);
+  font: var(--type-label);
+  letter-spacing: var(--type-label-tracking);
+}
+.alarm-rail__item[data-priority='critical'] {
+  border-color: var(--alarm-critical);
+  background: var(--alarm-critical-bg);
+  color: var(--alarm-critical-text);
+  animation: alarm-flash-critical var(--alarm-flash-critical-period) steps(1, end) infinite;
+}
+.alarm-rail__item[data-priority='warning'] {
+  border-color: var(--alarm-warning);
+  background: var(--alarm-warning-bg);
+  color: var(--alarm-warning);
+  animation: alarm-flash-warning var(--alarm-flash-warning-period) steps(1, end) infinite;
+}
+.alarm-rail__item[data-priority='advisory'] {
+  border-color: var(--alarm-advisory);
+  background: var(--alarm-advisory-bg);
+  color: var(--alarm-advisory);
+}
+.alarm-rail__priority-word {
+  font: var(--type-micro);
+  letter-spacing: var(--type-micro-tracking);
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+/* 2 Hz for high priority and 0.6 Hz for medium, both inside the IEC 60601-1-8
+ * bands. The animation only toggles opacity, so no layout moves. */
+@keyframes alarm-flash-critical { 0% { opacity: 1; } 50% { opacity: 0.45; } }
+@keyframes alarm-flash-warning { 0% { opacity: 1; } 50% { opacity: 0.6; } }
+
+/* Reduced motion replaces flashing with a static treatment that still
+ * distinguishes the three priorities by fill, border weight, and the priority
+ * word, which is always present in the markup. */
+@media (prefers-reduced-motion: reduce) {
+  .alarm-rail__item { animation: none !important; }
+  .alarm-rail__item[data-priority='critical'] { border-width: 3px; }
+  .alarm-rail__item[data-priority='warning'] { border-width: 2px; }
+  .alarm-rail__item[data-priority='advisory'] { border-width: 1px; }
+}
+
+/* --- VitalTile ------------------------------------------------------------ */
+.vital-tile {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  background: var(--surface-1);
+  min-inline-size: 0;
+}
+.vital-tile[data-alarm='critical'] { border-color: var(--alarm-critical); background: var(--alarm-critical-bg); }
+.vital-tile[data-alarm='warning'] { border-color: var(--alarm-warning); background: var(--alarm-warning-bg); }
+.vital-tile__label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font: var(--type-label);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.vital-tile__alarm-word { color: var(--alarm-critical-text); font: var(--type-micro); }
+.vital-tile__value-row { display: flex; align-items: baseline; gap: var(--space-2); min-inline-size: 0; }
+.vital-tile__value {
+  font: var(--type-vital-l);
+  letter-spacing: var(--type-vital-l-tracking);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+/* When the value itself is the control, the control still has to be a target.
+   A `--` reading is two characters wide, which would otherwise leave a tap
+   target narrower than anyone can hit (platform/accessibility → target size). */
+button.vital-tile__value {
+  min-inline-size: 44px;
+  min-block-size: 40px;
+  text-align: start;
+}
+.vital-tile__value[data-invalid='true'] { color: var(--text-tertiary); }
+.vital-tile__unit { font: var(--type-micro); color: var(--text-secondary); }
+.vital-tile__limits { font: var(--type-micro); color: var(--text-tertiary); font-variant-numeric: tabular-nums; }
+.vital-tile__reason { font: var(--type-micro); color: var(--text-tertiary); }
+
+/* --- LogList and LogEntry -------------------------------------------------- */
+.log-list { display: flex; flex-direction: column; font-family: var(--font-mono); }
+.log-entry {
+  display: grid;
+  grid-template-columns: 68px 24px 1fr;
+  gap: var(--space-2);
+  align-items: baseline;
+  inline-size: 100%;
+  padding: var(--space-1) var(--space-2);
+  border: 0;
+  border-block-end: 1px solid var(--line-subtle);
+  background: transparent;
+  color: var(--text-secondary);
+  font: var(--type-micro);
+  text-align: start;
+  cursor: pointer;
+}
+.log-entry:hover { background: var(--surface-2); }
+.log-entry[data-severity='critical'] { color: var(--alarm-critical-text); }
+.log-entry[data-severity='warning'] { color: var(--alarm-warning); }
+.log-entry[data-severity='artifact'] { color: var(--text-tertiary); font-style: italic; }
+.log-entry__time { font-variant-numeric: tabular-nums; color: var(--text-tertiary); }
+.log-entry__glyph { text-align: center; }
+
+/* --- EmptyState and LoadingState ------------------------------------------ */
+.empty-state, .loading-state {
+  display: grid;
+  gap: var(--space-2);
+  place-items: center;
+  padding: var(--space-6);
+  color: var(--text-tertiary);
+  text-align: center;
+}
+.empty-state__title { font: var(--type-subtitle); color: var(--text-secondary); }
+
+/* --- CitationLink ---------------------------------------------------------- */
+.citation-link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  color: var(--text-secondary);
+  font: var(--type-micro);
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+}
+.citation-link:hover { color: var(--text-primary); }
+
+/* --- Timeline --------------------------------------------------------------- */
+.timeline { position: relative; display: flex; block-size: 24px; align-items: center; }
+.timeline__track { position: absolute; inset-inline: 0; block-size: 2px; background: var(--line); }
+.timeline__mark {
+  position: absolute;
+  inline-size: 2px;
+  block-size: 12px;
+  background: var(--text-secondary);
+  transform: translateX(-1px);
+}
+.timeline__mark[data-severity='critical'] { background: var(--alarm-critical); block-size: 20px; }
+.timeline__mark[data-severity='warning'] { background: var(--alarm-warning); block-size: 16px; }

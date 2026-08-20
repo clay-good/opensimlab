@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Makes Open-SimLab genuinely usable by medical students anywhere, not only by well-resourced English-speaking ones. This capability covers translation, unit systems, drug naming across regulatory regions, device and bandwidth constraints, and the licensing that lets a school in any country adopt and adapt it.
+Makes Open Sim Lab genuinely usable by medical students anywhere, not only by well-resourced English-speaking ones. This capability covers translation, unit systems, drug naming across regulatory regions, device and bandwidth constraints, and the licensing that lets a school in any country adopt and adapt it.
 
 ## Requirements
 

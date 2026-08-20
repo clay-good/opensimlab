@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Covers how Open-SimLab is built, tested, measured, and shipped: the static build, the routing scheme at opensimlab.com, the performance budgets that keep it usable on modest hardware, and the release process that keeps clinical content and model provenance trustworthy.
+Covers how Open Sim Lab is built, tested, measured, and shipped: the static build, the routing scheme at opensimlab.com, the performance budgets that keep it usable on modest hardware, and the release process that keeps clinical content and model provenance trustworthy.
 
 ## Requirements
 

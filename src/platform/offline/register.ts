@@ -1,0 +1,84 @@
+/**
+ * Service worker registration (platform/offline-pwa, platform/discoverability →
+ * The service worker never serves stale metadata to a crawler).
+ *
+ * The worker is NOT registered for a crawler user agent, so a crawler always
+ * receives the current build's HTML from the network.
+ *
+ * If activation fails twice in a row the registration is removed and the
+ * application falls back to direct network loading with a diagnostic the learner
+ * can report, so a broken worker can always be escaped.
+ */
+
+const FAILURE_KEY = 'opensimlab.service-worker-failures';
+const MAX_FAILURES = 2;
+
+/** User agents that identify a crawler. The worker is not registered for these. */
+const CRAWLER_PATTERN =
+  /bot|crawl|spider|slurp|bingpreview|facebookexternalhit|embedly|quora link preview|pinterest|slackbot|vkshare|w3c_validator|whatsapp|telegrambot|discordbot|twitterbot|googlebot|applebot|duckduckbot|baiduspider|yandex/i;
+
+export function isCrawler(userAgent: string): boolean {
+  return CRAWLER_PATTERN.test(userAgent);
+}
+
+function failureCount(): number {
+  try { return Number(localStorage.getItem(FAILURE_KEY) ?? '0'); } catch { return 0; }
+}
+
+function setFailureCount(value: number): void {
+  try { localStorage.setItem(FAILURE_KEY, String(value)); } catch { /* nothing to do */ }
+}
+
+export interface RegistrationOutcome {
+  readonly registered: boolean;
+  readonly reason: string;
+}
+
+export function registerServiceWorker(): RegistrationOutcome {
+  if (typeof navigator === 'undefined' || !('serviceWorker' in navigator)) {
+    return { registered: false, reason: 'This browser has no service worker support.' };
+  }
+  if (isCrawler(navigator.userAgent)) {
+    return {
+      registered: false,
+      reason: 'Not registered for a crawler, so a crawler always receives the current build\'s HTML.',
+    };
+  }
+  if (failureCount() >= MAX_FAILURES) {
+    void navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (const registration of registrations) void registration.unregister();
+    });
+    return {
+      registered: false,
+      reason: `The service worker failed to activate ${MAX_FAILURES} times in a row, so it has been `
+        + 'unregistered and the application is loading directly from the network. Please report '
+        + 'this with your browser and version.',
+    };
+  }
+
+  void navigator.serviceWorker.register('/sw.js', { scope: '/' })
+    .then((registration) => {
+      setFailureCount(0);
+      // A new version found while a session is running never interrupts it.
+      registration.addEventListener('updatefound', () => {
+        const installing = registration.installing;
+        if (!installing) return;
+        installing.addEventListener('statechange', () => {
+          if (installing.state === 'installed' && navigator.serviceWorker.controller) {
+            window.dispatchEvent(new CustomEvent('opensimlab:update-ready'));
+          }
+        });
+      });
+    })
+    .catch(() => setFailureCount(failureCount() + 1));
+
+  return { registered: true, reason: 'Registered; assets will be served cache-first.' };
+}
+
+/** Accept a pending update. Called only when the learner chooses to. */
+export async function acceptUpdate(): Promise<void> {
+  if (typeof navigator === 'undefined' || !('serviceWorker' in navigator)) return;
+  const registration = await navigator.serviceWorker.getRegistration();
+  registration?.waiting?.postMessage({ type: 'skip-waiting' });
+  location.reload();
+}

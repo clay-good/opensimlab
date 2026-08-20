@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Guarantees that using Open-SimLab is unobservable. A learner practicing an intubation they are anxious about, or repeating a scenario they failed, generates no record anyone else can see. This is a design constraint, not a policy promise: the architecture must make surveillance impossible rather than merely forbidden.
+Guarantees that using Open Sim Lab is unobservable. A learner practicing an intubation they are anxious about, or repeating a scenario they failed, generates no record anyone else can see. This is a design constraint, not a policy promise: the architecture must make surveillance impossible rather than merely forbidden.
 
 ## Requirements
 
