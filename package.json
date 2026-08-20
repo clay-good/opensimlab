@@ -26,7 +26,8 @@
     "ci": "npm run lint && npm run test && npm run build && npm run budget && npm run fonts",
     "fonts": "tsx scripts/check-fonts.ts",
     "gate": "tsx scripts/check-review-gate.ts",
-    "release": "tsx scripts/check-review-gate.ts --release"
+    "release": "tsx scripts/check-review-gate.ts --release",
+    "release:alpha": "tsx scripts/check-review-gate.ts --release --alpha"
   },
   "dependencies": {
     "react": "19.2.8",

@@ -1,9 +1,12 @@
 /** Acceptance tests for platform/clinical-governance and learning/knowledge-layer. */
 import { describe, expect, it } from 'vitest';
 import {
-  OVERDUE_GRACE_DAYS, UNSIGNED_MARKER, gate, mayShip, needsCoSignature, needsPendingMarker,
-  reportCoverage, uncoveredDomains, type ReviewableItem,
+  OVERDUE_GRACE_DAYS, UNREVIEWED_NOTICE, UNSIGNED_MARKER, gate, isUnreviewed, mayShip,
+  needsCoSignature, needsPendingMarker, reportCoverage, uncoveredDomains, type ReviewableItem,
 } from '@platform/governance/review-gate';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { EDITORIAL_BOARD, HONEST_STATUS, reviewableItems } from '@platform/governance/records';
 import { EXPLAINERS, getExplainer, wordCount } from '@anesthesia/content/explainers';
 import { DRUG_CARDS, getDrugCard } from '@anesthesia/content/drug-cards';
@@ -202,5 +205,35 @@ describe('Requirement: Drug Cards Teach The Drug, Not Just The Math', () => {
 
   it('says plainly that propofol has no analgesic effect', () => {
     expect(getDrugCard('propofol')!.mechanism).toContain('no analgesic effect');
+  });
+});
+
+describe('Requirement: Unreviewed Content Is Marked Where It Is Used', () => {
+  // The alpha channel ships content no clinician has signed. That is only
+  // defensible if a reader meets the disclosure at the claim, not once on the
+  // front page. These tests are the condition the channel depends on.
+  it('Scenario: every unsigned item is detected as unsigned', () => {
+    for (const card of DRUG_CARDS) expect(isUnreviewed(card.review), card.drugId).toBe(true);
+    for (const explainer of EXPLAINERS) expect(isUnreviewed(explainer.review), explainer.id).toBe(true);
+    expect(isUnreviewed(ROUTINE_INDUCTION.metadata.clinicalReview)).toBe(true);
+  });
+
+  it('Scenario: a signed item is not marked', () => {
+    expect(isUnreviewed({ reviewer: 'A Clinician', reviewedOn: '2026-08-01' })).toBe(false);
+  });
+
+  it('Scenario: the notice says what was and was not checked, and how to report', () => {
+    expect(UNREVIEWED_NOTICE).toContain('No clinician has reviewed this');
+    // It must not overclaim the automated proofread as a review.
+    expect(UNREVIEWED_NOTICE).toContain('not wrong judgement');
+    expect(UNREVIEWED_NOTICE.toLowerCase()).toContain('wrong');
+  });
+
+  it('Scenario: the marker is rendered at the point of use', () => {
+    const cockpit = readFileSync(join(process.cwd(), 'src/modules/anesthesia/ui/Cockpit.tsx'), 'utf8');
+    const prebrief = readFileSync(join(process.cwd(), 'src/modules/anesthesia/ui/Prebrief.tsx'), 'utf8');
+    // The drug card drawer, the explainer drawer and the scenario briefing.
+    expect((cockpit.match(/<UnreviewedMarker/g) ?? []).length).toBeGreaterThanOrEqual(2);
+    expect(prebrief).toContain('has not been clinically reviewed');
   });
 });

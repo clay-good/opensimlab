@@ -9,6 +9,7 @@ import { Banner, Button, Drawer, Modal, SegmentedControl, usePrefersReducedMotio
 import { useSession, sessionInternals } from '@platform/session/session-store';
 import { SPEED_MULTIPLIERS, TICKS_PER_SECOND, type SpeedMultiplier } from '@platform/clock/simulation-clock';
 import { PERSISTENT_MARKER_TEXT } from '@platform/safety/not-for-clinical-use';
+import { isUnreviewed, UNREVIEWED_NOTICE } from '@platform/governance/review-gate';
 import type { StateField } from '@anesthesia/physiology';
 import type { Scenario } from '@anesthesia/engine';
 import type { RegionProfile } from '@anesthesia/region/profiles';
@@ -382,6 +383,7 @@ export function Cockpit({ scenario, region, audio, onEnd }: CockpitProps) {
             ))}
             <p className="reading__aside">{getExplainer(explainerId).diagram.caption}</p>
             <p className="reading__aside">Reflects: {getExplainer(explainerId).reflects}</p>
+            <UnreviewedMarker review={getExplainer(explainerId).review} />
           </div>
         )}
       </Drawer>
@@ -491,7 +493,30 @@ function DrugCardBody({ drugId }: { drugId: string }) {
       <ul>{card.contraindications.map((item) => <li key={item}>{item}</li>)}</ul>
       <h3>What to watch on the monitor</h3>
       <p>{card.watchFor}</p>
+      <UnreviewedMarker review={card.review} />
     </div>
+  );
+}
+
+/**
+ * The per-item clinical review marker.
+ *
+ * One line on the front page saying the whole build is unreviewed is easy to
+ * scroll past, and it does not tell a reader WHICH claim in front of them nobody
+ * checked. This sits at the bottom of the specific claim.
+ */
+export function UnreviewedMarker({ review }: { review: { reviewer: string; reviewedOn: string } }) {
+  if (!isUnreviewed(review)) {
+    return (
+      <p className="reading__aside">
+        Reviewed by {review.reviewer} on {review.reviewedOn}.
+      </p>
+    );
+  }
+  return (
+    <p className="reading__aside" data-unreviewed="true">
+      <strong>Not clinically reviewed.</strong> {UNREVIEWED_NOTICE}
+    </p>
   );
 }
 

@@ -156,3 +156,28 @@ export function needsCoSignature(member: BoardMember): boolean {
   const declaration = member.competingInterests.trim().toLowerCase();
   return declaration.length > 0 && declaration !== 'none declared' && declaration !== 'none';
 }
+
+/**
+ * True when a content item carries no clinical signature at all.
+ *
+ * Distinct from `needsPendingMarker`, which is about a review that has EXPIRED.
+ * This one is about a review that never happened. During the unreviewed alpha
+ * that is every item, and the interface marks each of them individually rather
+ * than relying on one line on the front page to cover the whole build.
+ */
+export function isUnreviewed(review: { reviewer: string; reviewedOn: string }): boolean {
+  return review.reviewer.trim() === ''
+    || review.reviewer.toUpperCase() === 'UNSIGNED'
+    || review.reviewedOn === '1970-01-01';
+}
+
+/**
+ * What the interface says next to a clinical claim nobody has signed.
+ *
+ * Deliberately specific about what is and is not being claimed: the reader is
+ * being asked to treat it as a draft, and told exactly how to report an error.
+ */
+export const UNREVIEWED_NOTICE =
+  'No clinician has reviewed this. It was written from the published sources named here and '
+  + 'proofread against them automatically, which catches wrong numbers and not wrong judgement. '
+  + 'If something here is wrong, saying so is the most useful thing you can do with this build.';

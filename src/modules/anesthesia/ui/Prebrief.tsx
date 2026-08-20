@@ -8,6 +8,7 @@
  */
 
 import { Badge, Button, Panel } from '@platform/ui';
+import { isUnreviewed, UNREVIEWED_NOTICE } from '@platform/governance/review-gate';
 import type { Scenario } from '@anesthesia/engine';
 import { HONEST_STATUS } from '@platform/governance/status';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
@@ -111,6 +112,13 @@ export function Prebrief({ scenario, region, onStart, guidance, onGuidance }: Pr
       <Badge kind="out-of-range">{HONEST_STATUS.headline}</Badge>
       <p className="reading__aside">{HONEST_STATUS.detail}</p>
       <p className="reading__aside">{NOT_FOR_CLINICAL_USE}</p>
+
+      {/* The scenario's own review record, before the learner starts, not after. */}
+      {isUnreviewed(scenario.metadata.clinicalReview) && (
+        <p className="reading__aside" data-unreviewed="true">
+          <strong>This scenario has not been clinically reviewed.</strong> {UNREVIEWED_NOTICE}
+        </p>
+      )}
 
       <Button variant="primary" onClick={onStart}>Start the scenario</Button>
     </main>
