@@ -16,6 +16,8 @@ export default tseslint.config(
       'dist/**',
       'node_modules/**',
       'coverage/**',
+      // Wrangler's local runtime scratch directory. Generated, not authored.
+      '.wrangler/**',
       // Generated from the token module; editing it directly is the mistake, and
       // the CI job that regenerates and diffs it is what catches that.
       'src/platform/tokens/*.generated.css',

@@ -270,3 +270,46 @@ describe('Requirement: The Depth Index Is A Model Prediction, Not A Monitor Read
     expect(FIELDS.depthIndex.unit).toBe('');
   });
 });
+
+describe('Requirement: The Deployment Has No Origin Service', () => {
+  // platform/delivery: the production artifact is a set of static files with no
+  // server-side rendering, no runtime function and no origin service. The
+  // Cloudflare configuration has to keep that true, or the claim quietly stops
+  // being one — an assets-only Worker serves files at the edge and executes
+  // nothing, and the moment a `main` entry point appears that is no longer so.
+  const wrangler = readFileSync(join(root, 'wrangler.toml'), 'utf8');
+
+  it('Scenario: the Worker is assets-only, with no script to run', () => {
+    expect(wrangler).not.toMatch(/^\s*main\s*=/m);
+    expect(wrangler).toContain('[assets]');
+    expect(wrangler).toContain('directory = "./dist"');
+  });
+
+  it('Scenario: no binding gives the deployment state or a backend', () => {
+    // Any of these would mean the site had somewhere to put a learner's data.
+    // Matched as a TOML key at the start of a line, so a binding name that also
+    // happens to be a substring of English prose in a comment does not trip it.
+    for (const binding of ['kv_namespaces', 'd1_databases', 'r2_buckets', 'durable_objects',
+      'queues', 'ai', 'vectorize', 'hyperdrive', 'analytics_engine_datasets', 'services']) {
+      const declared = new RegExp(`^\\s*(\\[+\\s*${binding}|${binding}\\s*=)`, 'm');
+      expect(wrangler, `wrangler.toml declares ${binding}`).not.toMatch(declared);
+    }
+  });
+
+  it('Scenario: the canonical address is the one that serves, without a redirect', () => {
+    // Canonicals carry no trailing slash, so the host must serve them directly.
+    expect(wrangler).toContain('html_handling = "drop-trailing-slash"');
+    expect(wrangler).toContain('not_found_handling = "404-page"');
+  });
+
+  it('Scenario: the content security policy forbids reaching a foreign origin', () => {
+    const headers = readFileSync(join(root, 'dist/_headers'), 'utf8');
+    const csp = /Content-Security-Policy: ([^\n]+)/.exec(headers)?.[1] ?? '';
+    expect(csp, 'dist/_headers has no content security policy').toBeTruthy();
+    // `connect-src 'self'` is the mechanism behind "nothing leaves the device".
+    expect(csp).toContain("default-src 'self'");
+    expect(csp).toContain("connect-src 'self'");
+    expect(csp).toContain("form-action 'none'");
+    expect(csp).toContain("frame-ancestors 'none'");
+  });
+});

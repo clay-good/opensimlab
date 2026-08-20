@@ -22,7 +22,7 @@ context: |
 
   Tech stack: TypeScript, Vite, React 19, CSS custom properties + Tailwind, Zustand,
   HTML5 Canvas 2D, Web Worker for the solver, Service Worker for offline. Static assets
-  only, deployed to Cloudflare Pages. No backend, no database, no analytics vendor.
+  only, served from the edge by an assets-only Cloudflare Worker. No backend, no database, no analytics vendor.
 
   Pharmacology: model parameters are transcribed BY HAND from the primary literature
   into typed TypeScript source in this repository, each carrying its citation and its

@@ -1,0 +1,25 @@
+# Cloudflare Workers deployment (platform/delivery → static files, no origin service).
+#
+# There is NO Worker script. This is an assets-only Worker: Cloudflare serves the
+# prerendered files from `dist/` at the edge and nothing executes server-side. It
+# is the same artifact `npm run build` produces, and it would deploy unchanged to
+# any other static host — which is the property the delivery capability requires,
+# and the reason a program can self-host this without depending on us.
+
+name = "opensimlab"
+compatibility_date = "2026-08-20"
+
+[assets]
+directory = "./dist"
+
+# Every indexable route is prerendered to its own directory with an index.html,
+# so `/about` must serve `/about/index.html`. `drop-trailing-slash` serves it at
+# the address the canonical link actually names — `/about`, no trailing slash —
+# instead of redirecting there, which `auto-trailing-slash` does. A canonical
+# that costs a redirect to reach is a canonical the crawler has to be told twice.
+html_handling = "drop-trailing-slash"
+
+# A miss serves the prerendered 404 document rather than the application shell.
+# This site is not a single-page application pretending to be many pages: every
+# route is real static HTML, and a wrong address should say so.
+not_found_handling = "404-page"
