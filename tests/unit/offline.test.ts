@@ -2,7 +2,7 @@
  * Acceptance tests for platform/offline-pwa and platform/privacy's
  * no-outbound-traffic guarantee.
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -10,6 +10,7 @@ import { BUDGETS } from '../../scripts/check-budgets';
 import { isCrawler } from '@platform/offline/register';
 import { AnesthesiaEngine } from '@anesthesia/engine';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
+import { ROUTES } from '@routes/routes';
 
 const root = fileURLToPath(new URL('../..', import.meta.url));
 const serviceWorker = readFileSync(join(root, 'public/sw.js'), 'utf8');
@@ -164,5 +165,43 @@ describe('Scenario: The service worker is not registered for a crawler', () => {
   it('detects the common crawlers', () => {
     expect(isCrawler('Googlebot/2.1')).toBe(true);
     expect(isCrawler('Chrome/120')).toBe(false);
+  });
+});
+
+describe('Requirement: Everything The Offline Claim Names Is Actually Precached', () => {
+  // The front page says it "works offline once it has loaded, including every
+  // scenario". An earlier manifest was built by scanning the shell's own script
+  // tags, which by design do not include the lazily imported route chunks or the
+  // solver worker — so the landing page worked offline and starting a simulation
+  // did not. Runtime caching covered it only for a learner who had already
+  // opened the simulator, which is the learner who did not need it.
+  const sw = readFileSync(join(process.cwd(), 'dist/sw.js'), 'utf8');
+  const precache = JSON.parse(/const PRECACHE = (\[[^\]]*\])/.exec(sw)?.[1] ?? '[]') as string[];
+
+  it('Scenario: the solver worker is precached', () => {
+    expect(precache.some((url) => url.includes('solver.worker'))).toBe(true);
+  });
+
+  it('Scenario: every built asset is precached', () => {
+    const built = readdirSync(join(process.cwd(), 'dist/assets')).map((file) => `/assets/${file}`);
+    for (const asset of built) {
+      expect(precache, `${asset} is not precached`).toContain(asset);
+    }
+  });
+
+  it('Scenario: every scenario briefing is precached', () => {
+    const briefings = ROUTES
+      .filter((route) => route.path.startsWith('/anesthesia/scenario/'))
+      .map((route) => route.path);
+    expect(briefings.length).toBeGreaterThanOrEqual(3);
+    for (const path of briefings) expect(precache, `${path} is not precached`).toContain(path);
+  });
+
+  it('Scenario: the precache stays inside the offline bundle budget', () => {
+    // Precaching everything is only reasonable while everything is small.
+    const bytes = precache
+      .filter((url) => url.startsWith('/assets/'))
+      .reduce((sum, url) => sum + statSync(join(process.cwd(), 'dist', url)).size, 0);
+    expect(bytes).toBeLessThan(8 * 1024 * 1024);
   });
 });

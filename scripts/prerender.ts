@@ -9,7 +9,7 @@
  * It also generates the sitemap and the robots file, both asserted against the
  * prerendered route set rather than hand-maintained.
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { renderToString } from 'react-dom/server';
@@ -181,8 +181,28 @@ function main(): void {
   // Stamp the service worker with a cache version and its precache manifest.
   const swPath = join(dist, 'sw.js');
   if (existsSync(swPath)) {
-    const assets = [...shell.matchAll(/(?:src|href)="(\/assets\/[^"]+)"/g)].map((match) => match[1]);
-    const precache = ['/', '/index.html', '/manifest.webmanifest', ...new Set(assets)];
+    // EVERY built asset, not just the ones the shell references.
+    //
+    // Scanning the shell alone missed the lazily imported route chunks and the
+    // solver worker, because by design they are not in the shell. The result was
+    // a service worker that could serve the landing page offline and then fail
+    // to start a simulation — while the front page said the thing works offline
+    // "including every scenario". The runtime cache filled the gap only for a
+    // learner who had already opened the simulator before losing the network,
+    // which is exactly the learner who did not need it.
+    //
+    // The whole bundle is a few hundred kilobytes against an 8 MB budget, so
+    // there is no reason to be clever about which parts of it to keep.
+    const assets = readdirSync(join(dist, 'assets')).map((file) => `/assets/${file}`);
+    const icons = readdirSync(dist).filter((file) => file.startsWith('icon-'));
+    // Every indexable route, so a briefing opens offline too.
+    const documents = ROUTES.filter((route) => route.indexable).map((route) => route.path);
+    const precache = [
+      '/', '/index.html', '/manifest.webmanifest',
+      ...icons.map((icon) => `/${icon}`),
+      ...documents.filter((path) => path !== '/'),
+      ...new Set(assets),
+    ];
     const version = simpleHash(precache.join('|'));
     const sw = readFileSync(swPath, 'utf8')
       .replace('__CACHE_VERSION__', version)
