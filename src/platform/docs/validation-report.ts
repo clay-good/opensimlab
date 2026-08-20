@@ -113,7 +113,10 @@ export const UNVALIDATED: readonly UnvalidatedItem[] = [
     item: 'Every parameter transcription',
     reason: 'Transcribed from the primary publications but not yet independently checked by a '
       + 'second person against a second source, which this project requires before a model may be '
-      + 'called published.',
+      + 'called published. An automated cross-check against the literature was run on 2026-08-20 '
+      + 'and is recorded in docs/model-cross-check.md: it corrected thirteen defects and left six '
+      + 'items it could not verify. It is a proofread, not a review, and it is not a substitute '
+      + 'for either the second-source check or the clinical one.',
   },
   {
     item: 'The arterial pressure, capnogram and plethysmogram generators',

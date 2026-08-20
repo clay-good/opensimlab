@@ -9,7 +9,7 @@ import {
   MissingCovariate, NoEffectSiteForModel, UnsupportedModelStructure,
 } from '@platform/kernel/errors';
 import {
-  bodyMassIndex, deriveBody, fatFreeMassJanmahasatian2005, jamesLbmInverts,
+  bodyMassIndex, deriveBody, fatFreeMassAlSallami2015, fatFreeMassJanmahasatian2005, jamesLbmInverts,
   jamesLbmTurningPointKg, leanBodyMassJames1976, type Covariates,
 } from '@anesthesia/pharmacology/body-composition';
 import { evaluateEnvelope, CONFIDENCE_LABEL_TEXT } from '@anesthesia/pharmacology/envelope';
@@ -496,5 +496,28 @@ describe('Requirement: the dependency graph is clean', () => {
     expect(MODELS.length).toBeGreaterThanOrEqual(4);
     expect(getModel('propofol-eleveld-2018').drugId).toBe('propofol');
     expect(ELEVELD_PD.ce50Ref).toBe(3.08);
+  });
+});
+
+describe('Requirement: Body Composition Is Continuous In Age', () => {
+  it('Scenario: nothing changes discontinuously at a birthday', () => {
+    // Al-Sallami's age scale asymptotes toward the adult prediction rather than
+    // switching to it. Branching to Janmahasatian at 18 made a female patient's
+    // fat-free mass drop 2.9% the instant she turned 18, and Eleveld's V3 and Q3
+    // moved with it.
+    for (const sex of ['male', 'female'] as const) {
+      const before = fatFreeMassAlSallami2015({ ageYears: 17.999, weightKg: 60, heightCm: 165, sex });
+      const after = fatFreeMassAlSallami2015({ ageYears: 18.001, weightKg: 60, heightCm: 165, sex });
+      expect(Math.abs(after - before) / before, `${sex} fat-free mass steps at 18`).toBeLessThan(0.001);
+    }
+  });
+
+  it('Scenario: the adult value stays close to the adult equation it asymptotes to', () => {
+    for (const sex of ['male', 'female'] as const) {
+      const covariates = { ageYears: 40, weightKg: 70, heightCm: 175, sex };
+      const alSallami = fatFreeMassAlSallami2015(covariates);
+      const janmahasatian = fatFreeMassJanmahasatian2005(covariates);
+      expect(Math.abs(alSallami - janmahasatian) / janmahasatian).toBeLessThan(0.05);
+    }
   });
 });

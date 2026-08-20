@@ -44,13 +44,21 @@ export const DRUG_CARDS: readonly DrugCard[] = [
     onset: 'Loss of consciousness within one arm–brain circulation time; peak effect-site concentration around 1.5–2 minutes after a bolus.',
     duration: 'A single bolus wears off by redistribution in 5–10 minutes. Offset after a long infusion is longer, and grows with duration.',
     adverseEffects: [
-      'Dose-dependent hypotension, mainly by vasodilation, with some myocardial depression.',
+      'Dose-dependent hypotension, by vasodilation, venodilation reducing preload, and some '
+        + 'myocardial depression.',
       'Apnoea, which is expected rather than a complication.',
       'Pain on injection.',
       'Loss of airway reflexes.',
+      'Propofol infusion syndrome: metabolic acidosis, rhabdomyolysis, arrhythmia and cardiac '
+        + 'failure, associated with prolonged high-rate infusion. Risk rises above roughly '
+        + '4 mg/kg/h continued beyond 48 hours, which is an intensive care exposure rather than '
+        + 'a theatre one, but it is the reason the rate is not simply turned up and left.',
     ],
     contraindications: [
       'Known allergy to propofol.',
+      'The formulation is an emulsion of soybean oil and egg lecithin. Anaphylaxis is usually to '
+        + 'propofol itself rather than to the lipid, and current guidance does not treat egg or '
+        + 'soy allergy as an absolute contraindication, but it is what to ask about.',
       'Caution wherever a fall in vascular resistance would be poorly tolerated, such as severe aortic stenosis or hypovolaemia.',
     ],
     watchFor:
@@ -64,7 +72,10 @@ export const DRUG_CARDS: readonly DrugCard[] = [
     name: 'Remifentanil',
     drugClass: 'Ultra-short-acting synthetic opioid',
     mechanism: 'Mu-opioid receptor agonist. Metabolized by non-specific plasma and tissue esterases, independently of liver and kidney.',
-    inductionDose: '0.5–1 µg/kg over 30–60 seconds, given slowly because a rapid bolus causes bradycardia and chest wall rigidity.',
+    inductionDose: '0.5–1 µg/kg over 30–60 seconds, given slowly because a rapid bolus causes '
+      + 'bradycardia and chest wall rigidity. NOTE: this simulator injects a bolus '
+      + 'instantaneously and does not model injection rate, so it will let you do the thing this '
+      + 'line warns against and show you no consequence. See the limitations register.',
     maintenanceDose: '0.05–0.5 µg/kg/min by infusion, titrated to the stimulus.',
     onset: 'Peak effect within about 1.5 minutes.',
     duration:
@@ -82,9 +93,11 @@ export const DRUG_CARDS: readonly DrugCard[] = [
       'Avoid as a sole agent for postoperative analgesia, because there is none once the infusion stops.',
     ],
     watchFor:
-      'The heart rate, which falls; the haemodynamic response to stimulus, which should be '
-      + 'blunted; and the depth index, which will fall further than the propofol concentration '
-      + 'alone would predict, because the two are synergistic.',
+      'The heart rate, which falls; and the haemodynamic response to stimulus, which should be '
+      + 'blunted. The synergy is strongest for tolerance of stimulation — laryngoscopy, incision '
+      + '— and much weaker for the hypnotic endpoint itself: an opioid buys you a patient who '
+      + 'does not respond, not a patient who is more deeply asleep. Watching only the depth index '
+      + 'while leaning on the opioid is a recognised route to awareness.',
     review: UNSIGNED,
   },
 ];

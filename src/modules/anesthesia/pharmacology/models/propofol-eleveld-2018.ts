@@ -3,7 +3,7 @@
  *
  * Eleveld DJ, Colin P, Absalom AR, Struys MMRF. Pharmacokinetic-pharmacodynamic
  * model for propofol for broad application in anaesthesia and sedation.
- * *Br J Anaesth* 2018;120:942-59, together with its corrigendum.
+ * *Br J Anaesth* 2018;120:942-59.
  *
  * It is the only shipped adult model derived across a broad population including
  * obesity and old age, which is why it is the default for an adult patient whose
@@ -173,7 +173,7 @@ export const PROPOFOL_ELEVELD_2018: PharmacologyModel = {
     volumePages: '120:942-59',
     pmid: '29661412',
     doi: '10.1016/j.bja.2018.01.018',
-    locator: 'Fixed-effect parameter table and covariate model, with the corrigendum applied.',
+    locator: 'Fixed-effect parameter table and covariate model.',
     summary:
       'A propofol model built by pooling many previously published datasets spanning neonates to '
       + 'the elderly, including obese patients, so that one parameter set covers the whole range '
@@ -186,10 +186,21 @@ export const PROPOFOL_ELEVELD_2018: PharmacologyModel = {
     checkedOn: null,
     status: 'pending-independent-check',
     note:
-      'The structural equations are transcribed from the primary publication and the corrigendum '
-      + 'is applied. The independent second-source check by a different person, which this project '
-      + 'requires before a model may carry the Published label, has NOT been performed. Until it '
-      + 'is, every number this model drives is marked as pending an independent check.',
+      'The structural equations and every fixed-effect value are transcribed from the primary '
+      + 'publication. The independent second-source check by a different person, which this '
+      + 'project requires before a model may carry the Published label, has NOT been performed, '
+      + 'so every number this model drives is marked as pending an independent check.\n\n'
+      + 'TWO THINGS THIS TRANSCRIPTION DOES NOT COVER, STATED RATHER THAN GLOSSED.\n\n'
+      + 'First, the corrigendum. An earlier version of this file asserted in three places that '
+      + 'the 2018 corrigendum was applied, and recorded nowhere what the corrigendum changed. An '
+      + 'unfalsifiable provenance claim on the default adult model is worse than no claim, so the '
+      + 'assertion is withdrawn until someone checks the corrigendum against this table and '
+      + 'records the result here.\n\n'
+      + 'Second, arterial versus venous sampling. The paper publishes separate parameters for the '
+      + 'two sampling sites — a central-volume factor and a substantially faster venous ke0. Only '
+      + 'the ARTERIAL branch is implemented here. Predicted onset is therefore the arterial one, '
+      + 'and a learner comparing this to a venous-referenced pump will see a difference this '
+      + 'model does not account for.',
   },
   notes:
     'Eleveld is the default adult propofol model here because it is the only shipped model derived '

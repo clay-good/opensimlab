@@ -34,10 +34,27 @@ export interface AirwayAnatomy {
  * laryngoscopy, matching the published elective-surgery ranges: grade 1 and 2
  * views in the large majority, grade 3 in a small percentage, grade 4 rare.
  */
-export const BASELINE_GRADE_PROBABILITIES: readonly number[] = [0.68, 0.25, 0.061, 0.009];
+export const BASELINE_GRADE_PROBABILITIES: readonly number[] = [0.68, 0.256, 0.06, 0.004];
 
-/** Videolaryngoscopy shifts the odds toward an adequate view. */
-export const VIDEO_GRADE_IMPROVEMENT = 0.55;
+/**
+ * Videolaryngoscopy shifts the odds toward an adequate view, and it shifts them
+ * hard. In known or predicted difficult airways videolaryngoscopy delivers a
+ * grade 1 or 2 view in the large majority of cases, which is the entire reason it
+ * is the rescue device in the difficult-airway guidelines. An earlier value of
+ * 0.55 left the highest-difficulty patient with a 44% chance of a poor view even
+ * with video, which would teach a learner that the rescue barely helps.
+ */
+export const VIDEO_GRADE_IMPROVEMENT = 0.82;
+
+/**
+ * How steeply the anatomy's declared difficulty moves weight toward the worse
+ * grades. Calibrated so the difficulty scale spans the reported range rather than
+ * saturating immediately: at difficulty 0.2 about 8% of views are grade 3 or 4,
+ * and only the most difficult declared anatomy approaches the ~20% reported in
+ * high-risk cohorts. An earlier exponent base of 6 gave 24% at difficulty 0.2 and
+ * 71% at 1.0, which is not a distribution any published series describes.
+ */
+export const DIFFICULTY_STEEPNESS = 1.9;
 
 export interface LaryngoscopyAttempt {
   /** 1 for the first attempt. */
@@ -72,7 +89,7 @@ export function gradeProbabilities(
     * (technique === 'video' ? 1 - VIDEO_GRADE_IMPROVEMENT : 1);
   const weights = BASELINE_GRADE_PROBABILITIES.map((base, index) => {
     // Grade index 0 is the best view; weight moves from it to the worse grades.
-    const towardWorse = Math.pow(1 + shift * 6, index - 1.2);
+    const towardWorse = Math.pow(1 + shift * DIFFICULTY_STEEPNESS, index - 1.2);
     return base * towardWorse;
   });
   const total = weights.reduce((a, b) => a + b, 0);

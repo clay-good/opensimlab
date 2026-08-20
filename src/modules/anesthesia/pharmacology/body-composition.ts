@@ -101,10 +101,14 @@ export function fatFreeMassJanmahasatian2005(covariates: Covariates): number {
  * Al-Sallami HS, Goulding A, Grant A, Taylor R, Holford N, Duffull SB.
  * Prediction of fat-free mass in children. *Clin Pharmacokinet* 2015;54:1169-78.
  *
- * Adults are handled by Janmahasatian; the paediatric form applies below 18 years.
+ * The equation is CONTINUOUS and applies at every age. Its age scale asymptotes
+ * toward Janmahasatian's adult prediction rather than switching to it, so there is
+ * no branch here and there must not be one: an earlier version returned the adult
+ * equation at and above 18 years, which made a female patient's fat-free mass drop
+ * 2.9% the instant she turned 18, and Eleveld's V3 and Q3 with it. Eleveld applies
+ * Al-Sallami across all ages, which is the behaviour this reproduces.
  */
 export function fatFreeMassAlSallami2015(covariates: Covariates): number {
-  if (covariates.ageYears >= 18) return fatFreeMassJanmahasatian2005(covariates);
   const bmi = bodyMassIndex(covariates);
   const age = covariates.ageYears;
   if (covariates.sex === 'male') {

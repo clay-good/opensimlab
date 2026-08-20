@@ -394,3 +394,37 @@ describe('Requirement: Laryngoscopy', () => {
     expect(patient.airway.trauma).toBeGreaterThan(first.traumaAdded);
   });
 });
+
+describe('Requirement: Laryngoscopy Grades Match Reported Incidence', () => {
+  // A simulator that makes every airway difficult distorts a learner's
+  // expectations as badly as one that makes none. These are the reported
+  // elective-surgery numbers the distribution is anchored to.
+  const poorView = (difficulty: number, technique: 'direct' | 'video') => {
+    const p = gradeProbabilities({ difficulty, difficultMaskVentilation: false }, technique, 0);
+    return (p[2] ?? 0) + (p[3] ?? 0);
+  };
+
+  it('Scenario: an unremarkable airway is a grade 1 or 2 view almost always', () => {
+    const p = gradeProbabilities({ difficulty: 0, difficultMaskVentilation: false }, 'direct', 0);
+    // Grade 3 in the low single digits, grade 4 rare: reported grade 4 incidence
+    // in elective surgery is roughly 0.1 to 0.5 percent.
+    expect((p[0] ?? 0) + (p[1] ?? 0)).toBeGreaterThan(0.9);
+    expect(p[3] ?? 0).toBeLessThan(0.006);
+  });
+
+  it('Scenario: difficulty spans the reported range instead of saturating', () => {
+    // Monotone, and even the most difficult declared anatomy stays inside what
+    // high-risk cohorts report rather than making a poor view the normal case.
+    expect(poorView(0.2, 'direct')).toBeGreaterThan(poorView(0, 'direct'));
+    expect(poorView(1, 'direct')).toBeGreaterThan(poorView(0.6, 'direct'));
+    expect(poorView(1, 'direct')).toBeLessThan(0.35);
+  });
+
+  it('Scenario: videolaryngoscopy rescues the difficult airway, as the guidelines assume', () => {
+    // Video delivers an adequate view in the large majority of difficult airways.
+    // That is why it is the rescue device, and a simulator in which it barely
+    // helps teaches the opposite of the difficult-airway guideline.
+    expect(poorView(1, 'video')).toBeLessThan(0.15);
+    expect(poorView(1, 'video')).toBeLessThan(poorView(1, 'direct') / 2);
+  });
+});

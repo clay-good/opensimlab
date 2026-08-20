@@ -18,6 +18,56 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'oxyhaemoglobin-curve-is-fixed',
+    simplification: 'The oxyhaemoglobin dissociation curve does not shift. Saturation is a '
+      + 'function of arterial oxygen tension alone, with no Bohr effect and no temperature term, '
+      + 'and core temperature never changes during a case.',
+    whereItMisleads: 'Anywhere a shift is the teaching point: the acidotic or hypercapnic patient '
+      + 'unloading oxygen more readily at the tissue, the hypothermic patient holding on to it, '
+      + 'and stored-blood transfusion.',
+    correctUnderstanding: 'Acidosis, hypercapnia and pyrexia move the curve right, so the same '
+      + 'saturation corresponds to a higher oxygen tension and oxygen is given up more readily at '
+      + 'the tissues. Here the curve is frozen at its normal position.',
+    briefIn: [],
+  },
+  {
+    id: 'no-shunt-or-dead-space-dynamics',
+    simplification: 'The alveolar-to-arterial oxygen gradient is a fixed constant per patient '
+      + 'profile. There is no shunt fraction and no ventilation-perfusion model, so the gradient '
+      + 'does not widen with apnoea, atelectasis, position or one-lung ventilation, and positive '
+      + 'end-expiratory pressure cannot narrow it.',
+    whereItMisleads: 'Recruitment, laparoscopy, the obese patient in Trendelenburg, and any '
+      + 'desaturation whose mechanism is shunt rather than hypoventilation.',
+    correctUnderstanding: 'Most intraoperative hypoxaemia is a shunt problem, and the difference '
+      + 'between a shunt and hypoventilation is what decides whether more oxygen or more pressure '
+      + 'is the answer. This simulator cannot teach that distinction.',
+    briefIn: [],
+  },
+  {
+    id: 'bolus-injection-is-instantaneous',
+    simplification: 'A bolus enters the central compartment instantaneously. Injection rate is '
+      + 'not modelled, so a dose given over two seconds and the same dose given over sixty behave '
+      + 'identically.',
+    whereItMisleads: 'Remifentanil in particular: the drug card correctly warns that a rapid '
+      + 'bolus causes bradycardia and chest-wall rigidity, and this simulator will let a learner '
+      + 'do exactly that with no consequence at all. The same applies to the peak-plasma spike '
+      + 'that drives propofol induction hypotension.',
+    correctUnderstanding: 'How fast you push it changes the peak plasma concentration and the '
+      + 'haemodynamic response, sometimes more than how much you push.',
+    briefIn: ['routine-induction'],
+  },
+  {
+    id: 'opioid-alone-hypnosis',
+    simplification: 'The Greco response surface necessarily gives remifentanil a hypnotic effect '
+      + 'of its own. At 8 ng/mL with no propofol it predicts a depth index around 71.',
+    whereItMisleads: 'Any attempt to explore what the opioid alone does to depth. Clinically, '
+      + 'remifentanil alone is a poor hypnotic and barely moves a processed EEG index.',
+    correctUnderstanding: 'Opioids blunt the response to stimulation far more than they produce '
+      + 'unconsciousness. An opioid-heavy technique with too little hypnotic is a recognised route '
+      + 'to awareness, and this surface understates that risk.',
+    briefIn: [],
+  },
+  {
     id: 'peep-not-modelled',
     simplification: 'Positive end-expiratory pressure can be set and the machine holds it, but '
       + 'its physiological effect is not modelled. It changes neither functional residual '
