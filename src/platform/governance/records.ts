@@ -9,7 +9,7 @@
 import type { BoardMember, ReviewableItem } from './review-gate';
 import { EXPLAINERS } from '@anesthesia/content/explainers';
 import { DRUG_CARDS } from '@anesthesia/content/drug-cards';
-import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
+import { SCENARIOS } from '@anesthesia/scenarios';
 import { REGIONS } from '@anesthesia/region/profiles';
 
 /**
@@ -29,13 +29,16 @@ export const EDITORIAL_BOARD: readonly BoardMember[] = [];
 export function reviewableItems(): ReviewableItem[] {
   const items: ReviewableItem[] = [];
 
-  items.push({
-    id: ROUTINE_INDUCTION.metadata.id,
-    kind: 'scenario',
-    contentVersion: ROUTINE_INDUCTION.metadata.version,
-    review: ROUTINE_INDUCTION.metadata.clinicalReview,
-    domains: ['adult-general-anaesthesia'],
-  });
+  // Every scenario in the registry, so a new one cannot ship unjudged.
+  for (const scenario of SCENARIOS) {
+    items.push({
+      id: scenario.metadata.id,
+      kind: 'scenario',
+      contentVersion: scenario.metadata.version,
+      review: scenario.metadata.clinicalReview,
+      domains: ['adult-general-anaesthesia'],
+    });
+  }
 
   for (const explainer of EXPLAINERS) {
     items.push({

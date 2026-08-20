@@ -18,6 +18,20 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'respiratory-depression-is-calibrated',
+    simplification: 'Propofol\'s respiratory dose-response is an Open Sim Lab calibration, not a '
+      + 'transcribed published model. Its shape is chosen so that an induction dose stops the '
+      + 'patient breathing and a sedative dose does not, and so that breathing returns as the '
+      + 'drug redistributes.',
+    whereItMisleads: 'Any attempt to read a specific apnoea duration off this simulator as if it '
+      + 'were a prediction for a real patient. The direction and the rough timescale are '
+      + 'defensible; the exact number is not a published one.',
+    correctUnderstanding: 'How long a given patient stays apnoeic after induction varies widely '
+      + 'and is not something a screen can tell you. What transfers is that the respiratory '
+      + 'endpoint is more sensitive than the hypnotic one.',
+    briefIn: [],
+  },
+  {
     id: 'oxyhaemoglobin-curve-is-fixed',
     simplification: 'The oxyhaemoglobin dissociation curve does not shift. Saturation is a '
       + 'function of arterial oxygen tension alone, with no Bohr effect and no temperature term, '

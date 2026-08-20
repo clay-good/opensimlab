@@ -11,7 +11,7 @@
 
 import { EDITORIAL_BOARD } from '@platform/governance/records';
 import { MODULES } from '@platform/modules/registry';
-import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
+import { DEFAULT_SCENARIO_ID, getScenario } from '@anesthesia/scenarios';
 import { ONE_LINE_DESCRIPTION } from '@landing/content';
 import { SITE_NAME, SITE_ORIGIN, canonicalUrl } from '@routes/routes';
 
@@ -65,30 +65,40 @@ export function softwareApplicationJsonLd(): JsonLd {
   };
 }
 
-export function learningResourceJsonLd(): JsonLd {
+/**
+ * The structured data for ONE scenario briefing. It takes the scenario id,
+ * because emitting the same description on every briefing route would be a claim
+ * the site does not make.
+ */
+export function learningResourceJsonLd(scenarioId: string = DEFAULT_SCENARIO_ID): JsonLd {
+  const scenario = getScenario(scenarioId) ?? getScenario(DEFAULT_SCENARIO_ID);
+  if (!scenario) throw new Error(`No scenario with id ${scenarioId}`);
   return {
     '@context': 'https://schema.org',
     '@type': 'LearningResource',
-    name: ROUTINE_INDUCTION.metadata.title,
-    url: canonicalUrl(`/anesthesia/scenario/${ROUTINE_INDUCTION.metadata.id}`),
+    name: scenario.metadata.title,
+    url: canonicalUrl(`/anesthesia/scenario/${scenario.metadata.id}`),
     learningResourceType: 'Simulation',
     educationalLevel: 'Undergraduate medical education, postgraduate year 1',
-    teaches: ROUTINE_INDUCTION.metadata.objectives.map((objective) => objective.statement),
-    timeRequired: `PT${ROUTINE_INDUCTION.metadata.estimatedMinutes}M`,
+    teaches: scenario.metadata.objectives.map((objective) => objective.statement),
+    timeRequired: `PT${scenario.metadata.estimatedMinutes}M`,
     isAccessibleForFree: true,
     inLanguage: 'en',
-    license: ROUTINE_INDUCTION.metadata.license,
+    license: scenario.metadata.license,
   };
 }
 
 /** The structured data for a route, or an empty list where it declares none. */
-export function structuredDataFor(types: readonly string[]): JsonLd[] {
+export function structuredDataFor(types: readonly string[], path?: string): JsonLd[] {
   const out: JsonLd[] = [];
+  const scenarioId = path?.startsWith('/anesthesia/scenario/')
+    ? path.slice('/anesthesia/scenario/'.length)
+    : undefined;
   for (const type of types) {
     if (type === 'WebSite') out.push(websiteJsonLd());
     if (type === 'Organization') out.push(organizationJsonLd());
     if (type === 'SoftwareApplication') out.push(softwareApplicationJsonLd());
-    if (type === 'LearningResource') out.push(learningResourceJsonLd());
+    if (type === 'LearningResource') out.push(learningResourceJsonLd(scenarioId));
   }
   return out;
 }

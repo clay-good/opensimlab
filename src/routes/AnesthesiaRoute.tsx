@@ -12,21 +12,31 @@ import { useSession, sessionInternals } from '@platform/session/session-store';
 import { NotForClinicalUseGate, hasAcknowledged, recordAcknowledgement } from '@platform/safety/not-for-clinical-use';
 import { SonificationEngine } from '@platform/audio/sonification';
 import { guessRegion, getRegion } from '@anesthesia/region/profiles';
-import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
+import { DEFAULT_SCENARIO_ID, getScenario, scenariosByDifficulty } from '@anesthesia/scenarios';
 import { ENGINE_VERSION } from '@anesthesia/engine';
 import { MODEL_SET_REVISION } from '@anesthesia/pharmacology/registry';
 import { Prebrief } from '@anesthesia/ui/Prebrief';
 import { Cockpit } from '@anesthesia/ui/Cockpit';
 import { Debrief } from '@anesthesia/ui/Debrief';
-import { assertTranscriptIsAnonymous } from '@platform/transcript/transcript';
+import { assertTranscriptIsAnonymous, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 
-const CONTENT_VERSION = ROUTINE_INDUCTION.metadata.version;
+/** The scenario a path names, falling back to the one a learner meets first. */
+function scenarioForPath(path: string) {
+  const prefix = '/anesthesia/scenario/';
+  const id = path.startsWith(prefix) ? path.slice(prefix.length).replace(/\/+$/, '') : '';
+  return getScenario(id) ?? getScenario(DEFAULT_SCENARIO_ID)!;
+}
 
 /** A seed derived from the scenario rather than from a clock, so a session replays. */
 const DEFAULT_SEED = 20260819;
 
 export function AnesthesiaRoute({ path }: { path: string }) {
   const session = useSession();
+  const scenario = useMemo(() => scenarioForPath(path), [path]);
+  const contentVersion = scenario.metadata.version;
+  // The index at /anesthesia lists what there is to do rather than dropping the
+  // learner into whichever scenario happened to be first.
+  const isIndex = !path.startsWith('/anesthesia/scenario/');
   const [acknowledged, setAcknowledged] = useState(() => hasAcknowledged());
   const [regionId, setRegionId] = useLocalPreference<string | null>('practice-region', null);
   const audio = useMemo(() => new SonificationEngine(), []);
@@ -40,19 +50,19 @@ export function AnesthesiaRoute({ path }: { path: string }) {
     if (!acknowledged || session.phase !== 'idle') return;
     session.begin(
       {
-        scenarioId: ROUTINE_INDUCTION.metadata.id,
-        scenarioVersion: ROUTINE_INDUCTION.metadata.version,
-        contentVersion: CONTENT_VERSION,
+        scenarioId: scenario.metadata.id,
+        scenarioVersion: scenario.metadata.version,
+        contentVersion: contentVersion,
         modelSetRevision: MODEL_SET_REVISION,
         engineVersion: ENGINE_VERSION,
         practiceRegion: region.id,
         seed: DEFAULT_SEED,
-        scenario: ROUTINE_INDUCTION,
+        scenario,
       },
       () => new Worker(new URL('../modules/anesthesia/solver.worker.ts', import.meta.url), { type: 'module' }),
       {
-        engine: ENGINE_VERSION, content: CONTENT_VERSION,
-        modelSet: MODEL_SET_REVISION, scenario: ROUTINE_INDUCTION.metadata.version,
+        engine: ENGINE_VERSION, content: contentVersion,
+        modelSet: MODEL_SET_REVISION, scenario: scenario.metadata.version,
       },
       'anesthesia',
     );
@@ -77,7 +87,7 @@ export function AnesthesiaRoute({ path }: { path: string }) {
         {/* The page content is delivered regardless; only interaction is gated. */}
         <main className="reading" id="main">
           <h1>Anesthesia simulator</h1>
-          <p>{ROUTINE_INDUCTION.metadata.title}</p>
+          <p>{isIndex ? 'Choose a scenario.' : scenario.metadata.title}</p>
         </main>
         <NotForClinicalUseGate
           open
@@ -87,18 +97,21 @@ export function AnesthesiaRoute({ path }: { path: string }) {
     );
   }
 
+  // The index: what there is to do, in the order it is worth doing.
+  if (isIndex) return <ScenarioIndex />;
+
   if (session.phase === 'ended') {
     const internals = sessionInternals();
     return (
       <Debrief
-        scenario={ROUTINE_INDUCTION}
+        scenario={scenario}
         history={session.history}
         log={session.log}
         actions={internals.recorder ? internals.recorder.build('pending').actions : []}
         attributionByTick={() => session.attribution}
         timeToPeakSeconds={{ propofol: 100, remifentanil: 90 }}
         replayOptions={{
-          scenario: ROUTINE_INDUCTION, seed: DEFAULT_SEED,
+          scenario, seed: DEFAULT_SEED,
           practiceRegion: region.id, ticks: session.tick || 1,
         }}
         preoxygenationSeconds={session.equipment?.preoxygenationSeconds ?? 0}
@@ -113,7 +126,7 @@ export function AnesthesiaRoute({ path }: { path: string }) {
     return (
       <>
         <Prebrief
-          scenario={ROUTINE_INDUCTION}
+          scenario={scenario}
           region={region}
           guidance={session.guidance}
           onGuidance={session.setGuidance}
@@ -132,5 +145,42 @@ export function AnesthesiaRoute({ path }: { path: string }) {
     );
   }
 
-  return <Cockpit scenario={ROUTINE_INDUCTION} region={region} audio={audio} onEnd={session.end} />;
+  return <Cockpit scenario={scenario} region={region} audio={audio} onEnd={session.end} />;
+}
+
+/**
+ * The scenario directory at `/anesthesia`.
+ *
+ * Ordered by difficulty, because the order is the teaching. Each entry says who
+ * the patient is and what the scenario is for, so a learner chooses rather than
+ * guesses.
+ */
+function ScenarioIndex() {
+  return (
+    <main className="reading" id="main">
+      <h1>Anesthesia simulator</h1>
+      <p>
+        Each scenario is a patient and a problem. Start at the top if this is your first one.
+      </p>
+      <ul className="scenario-index">
+        {scenariosByDifficulty().map((entry) => (
+          <li key={entry.metadata.id} className="scenario-index__item">
+            <a className="scenario-index__title" href={`/anesthesia/scenario/${entry.metadata.id}`}>
+              {entry.metadata.title}
+            </a>
+            <p className="scenario-index__patient">
+              {entry.patient.ageYears}-year-old {entry.patient.sex === 'male' ? 'man' : 'woman'},
+              {' '}ASA {entry.patient.asaClass}, for {entry.patient.procedure.toLowerCase()}.
+              {' '}About {entry.metadata.estimatedMinutes} simulated minutes.
+            </p>
+            <p className="scenario-index__teaches">
+              {entry.metadata.objectives[0]?.statement}
+            </p>
+            <span className="badge">{entry.metadata.difficulty}</span>
+          </li>
+        ))}
+      </ul>
+      <p className="reading__aside">{NOT_FOR_CLINICAL_USE}</p>
+    </main>
+  );
 }

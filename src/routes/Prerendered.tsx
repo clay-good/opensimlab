@@ -11,7 +11,7 @@ import { MODULES } from '@platform/modules/registry';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { Landing } from '@landing/Landing';
 import { About } from '@landing/About';
-import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
+import { DEFAULT_SCENARIO_ID, getScenario, scenariosByDifficulty } from '@anesthesia/scenarios';
 import { DocumentRoute } from './DocumentRoute';
 import { PlannedModuleRoute } from './PlannedModuleRoute';
 
@@ -24,7 +24,7 @@ export function PrerenderedBody({ path }: { path: string }) {
   const planned = MODULES.find((module) => `/${module.route}` === path && module.status === 'planned');
   if (planned) return <PlannedModuleRoute module={planned} />;
   if (path === '/anesthesia') return <AnesthesiaMarkup />;
-  if (path.startsWith('/anesthesia/scenario/')) return <ScenarioMarkup />;
+  if (path.startsWith('/anesthesia/scenario/')) return <ScenarioMarkup path={path} />;
   // The simulator route deliberately renders something different on the client —
   // the acknowledgement gate — so its prerendered markup is the crawler's copy
   // and the client mounts fresh over it rather than hydrating.
@@ -42,26 +42,34 @@ function AnesthesiaMarkup() {
     <main className="reading" id="main">
       <h1>Anesthesia simulator</h1>
       <p>{anesthesia?.description}</p>
-      <p><a href="/anesthesia/scenario/routine-induction">Routine induction of general anaesthesia</a></p>
+      <ul>
+        {scenariosByDifficulty().map((scenario) => (
+          <li key={scenario.metadata.id}>
+            <a href={`/anesthesia/scenario/${scenario.metadata.id}`}>{scenario.metadata.title}</a>
+          </li>
+        ))}
+      </ul>
       <p><a href="/">What Open Sim Lab is, who it is for, and where its pharmacology comes from</a></p>
       <p className="landing__disclaimer">{NOT_FOR_CLINICAL_USE}</p>
     </main>
   );
 }
 
-function ScenarioMarkup() {
-  const metadata = ROUTINE_INDUCTION.metadata;
+function ScenarioMarkup({ path }: { path: string }) {
+  const id = path.slice('/anesthesia/scenario/'.length).replace(/\/+$/, '');
+  const scenario = getScenario(id) ?? getScenario(DEFAULT_SCENARIO_ID)!;
+  const { metadata, patient } = scenario;
   return (
     <main className="reading" id="main">
       <h1>{metadata.title}</h1>
       <p>
-        {ROUTINE_INDUCTION.patient.ageYears}-year-old{' '}
-        {ROUTINE_INDUCTION.patient.sex === 'male' ? 'man' : 'woman'} for{' '}
-        {ROUTINE_INDUCTION.patient.procedure}. About {metadata.estimatedMinutes} simulated minutes.
+        {patient.ageYears}-year-old{' '}
+        {patient.sex === 'male' ? 'man' : 'woman'} for{' '}
+        {patient.procedure}. About {metadata.estimatedMinutes} simulated minutes.
       </p>
       <h2>What you will practise</h2>
       <ul>{metadata.objectives.map((objective) => <li key={objective.id}>{objective.statement}</li>)}</ul>
-      <p><a href="/anesthesia">Open the anesthesia simulator</a></p>
+      <p><a href="/anesthesia">Every anesthesia scenario</a></p>
       <p className="landing__disclaimer">{NOT_FOR_CLINICAL_USE}</p>
     </main>
   );

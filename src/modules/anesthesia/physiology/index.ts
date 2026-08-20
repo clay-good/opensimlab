@@ -104,6 +104,21 @@ export const PROPOFOL_HEMODYNAMIC = {
 /** Remifentanil's normalized effect for haemodynamic purposes. */
 export const REMIFENTANIL_HEMODYNAMIC = { ce50: 4.5, gamma: 1.6 } as const;
 
+/**
+ * Propofol's respiratory dose-response, which is SEPARATE from its hypnotic one
+ * and more sensitive than it. An induction dose reliably stops a patient
+ * breathing; a sedative dose leaves them breathing. Scaling respiratory
+ * depression off the depth index cannot produce both behaviours, and an earlier
+ * version that tried left a 2 mg/kg induction breathing calmly at 13 a minute
+ * with nobody ever desaturating.
+ *
+ * These are an Open Sim Lab calibration, not transcribed values: the steepness is
+ * chosen so apnoea arrives at induction concentrations and returns as the drug
+ * redistributes. The limitations register records it under
+ * `respiratory-depression-is-calibrated`.
+ */
+export const PROPOFOL_RESPIRATORY = { apnoeaCe50: 2.0, apnoeaGamma: 3.0 } as const;
+
 export class VirtualPatient {
   private readonly profile: PatientProfile;
   private readonly hemodynamics: HemodynamicState;
@@ -245,17 +260,35 @@ export class VirtualPatient {
     this.lastMap = hemo.meanArterialMmHg;
 
     // --- Ventilation and gas exchange ------------------------------------------
-    // Propofol and opioid both depress ventilation. In this slice a spontaneously
-    // breathing patient stops breathing as they go to sleep, which is the apnoea
-    // the learner has to manage.
-    const spontaneousDrive = clamp(1 - 0.6 * depthFraction - 1.1 * opioid, 0, 1);
+    // Propofol and opioid both depress ventilation, and they do it DIFFERENTLY.
+    //
+    // A hypnotic dose large enough to induce anaesthesia stops the patient
+    // breathing — that apnoea is the thing the learner has to manage, and it is
+    // why an earlier coefficient of 0.6 was wrong: it could not reach zero even
+    // at full depth, so a 2 mg/kg induction left the patient breathing calmly at
+    // 13 a minute and nobody ever desaturated.
+    //
+    // An opioid slows the RATE and largely spares the breath. That is the
+    // classic pattern — a patient taking deep, infrequent breaths — and it looks
+    // nothing like the shallow panting that scaling both by one number produces.
+    // Respiratory depression gets its own dose-response rather than being scaled
+    // off the hypnotic one. It has to: the respiratory endpoint is MORE sensitive
+    // than the hypnotic endpoint, which is why an induction dose reliably stops a
+    // patient breathing while a sedative dose leaves them breathing, and why a
+    // single coefficient on depth cannot produce both.
+    const hypnoticDepression = normalizedEffect(
+      drugs.propofolCe, PROPOFOL_RESPIRATORY.apnoeaCe50, PROPOFOL_RESPIRATORY.apnoeaGamma,
+    );
+    const opioidDepression = clamp(1.25 * opioid, 0, 1);
+    const rateDrive = clamp(1 - hypnoticDepression - opioidDepression, 0, 1);
+    const tidalDrive = clamp(1 - hypnoticDepression - 0.2 * opioidDepression, 0, 1);
     const delivering = ventilator.delivering;
     const tidal = delivering
       ? ventilator.tidalVolumeMl
-      : Math.round(this.profile.respiratory.frcLitres > 0 ? 500 * spontaneousDrive : 0);
+      : Math.round(this.profile.respiratory.frcLitres > 0 ? 500 * tidalDrive : 0);
     const rate = delivering
       ? ventilator.respiratoryRateBpm
-      : Math.round(14 * spontaneousDrive);
+      : Math.round(14 * rateDrive);
 
     const baselineCo = cardiacOutput(
       this.profile.hemodynamics.baselineHeartRateBpm, this.profile.hemodynamics.baselineStrokeVolumeMl,

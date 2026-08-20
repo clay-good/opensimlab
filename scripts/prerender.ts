@@ -27,7 +27,7 @@ const escape = (text: string): string =>
 function head(route: (typeof ROUTES)[number], styles: string): string {
   const canonical = canonicalUrl(route.path);
   const ogName = route.path === '/' ? 'index' : route.path.replace(/^\//, '').replace(/\//g, '-');
-  const jsonLd = structuredDataFor(route.structuredData);
+  const jsonLd = structuredDataFor(route.structuredData, route.path);
   return [
     '<!doctype html>',
     '<html lang="en">',

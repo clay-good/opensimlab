@@ -7,6 +7,7 @@
  */
 
 import { MODULES } from '@platform/modules/registry';
+import { SCENARIOS } from '@anesthesia/scenarios';
 
 export const SITE_ORIGIN = 'https://opensimlab.com';
 export const SITE_NAME = 'Open Sim Lab';
@@ -22,6 +23,19 @@ export interface RouteMetadata {
   readonly structuredData: readonly ('WebSite' | 'Organization' | 'SoftwareApplication' | 'LearningResource')[];
   /** The heading the prerendered document leads with. */
   readonly heading: string;
+}
+
+/**
+ * A briefing's description: the patient, the procedure, and what it teaches. Kept
+ * between 110 and 160 characters, which the discoverability tests assert.
+ */
+function scenarioDescription(scenario: (typeof SCENARIOS)[number]): string {
+  const { patient, metadata } = scenario;
+  const who = `${patient.ageYears}-year-old ${patient.sex === 'male' ? 'man' : 'woman'}`;
+  const first = metadata.objectives[0]?.statement.replace(/\.$/, '') ?? '';
+  const full = `A ${who} for ${patient.procedure.toLowerCase()}. ${first}.`;
+  if (full.length <= 160) return full;
+  return `${full.slice(0, 157)}...`;
 }
 
 /** The one title pattern, used by every route. */
@@ -60,16 +74,18 @@ export const ROUTES: readonly RouteMetadata[] = [
     structuredData: ['SoftwareApplication'],
     heading: 'Anesthesia simulator',
   },
-  {
-    path: '/anesthesia/scenario/routine-induction',
-    title: formatTitle('Routine induction'),
-    description:
-      'A healthy adult for a laparoscopic cholecystectomy. Preoxygenate, induce with propofol '
-      + 'and remifentanil, secure the airway, hold the pressure up.',
+  // One indexable briefing per scenario, generated from the registry so adding a
+  // scenario cannot leave it unroutable or unlisted.
+  ...SCENARIOS.map((scenario) => ({
+    path: `/anesthesia/scenario/${scenario.metadata.id}`,
+    title: formatTitle(scenario.metadata.title.length > 40
+      ? `${scenario.metadata.title.slice(0, 37)}…`
+      : scenario.metadata.title),
+    description: scenarioDescription(scenario),
     indexable: true,
-    structuredData: ['LearningResource'],
-    heading: 'Routine induction of general anaesthesia',
-  },
+    structuredData: ['LearningResource'] as const,
+    heading: scenario.metadata.title,
+  })),
   {
     path: '/validation',
     title: formatTitle('Validation report'),

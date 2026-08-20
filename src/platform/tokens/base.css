@@ -89,3 +89,18 @@ a:hover { text-decoration-color: var(--text-secondary); }
   transition: inset-block-start var(--motion-micro) var(--ease);
 }
 .skip-link:focus { inset-block-start: var(--space-2); }
+
+/* The scenario directory at /anesthesia. */
+.scenario-index { display: grid; gap: var(--space-3); list-style: none; padding-inline-start: 0; }
+.scenario-index__item {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+  background: var(--surface-1);
+  justify-items: start;
+}
+.scenario-index__title { font: var(--type-subtitle); }
+.scenario-index__patient { font: var(--type-body); color: var(--text-secondary); }
+.scenario-index__teaches { font: var(--type-micro); color: var(--text-tertiary); }

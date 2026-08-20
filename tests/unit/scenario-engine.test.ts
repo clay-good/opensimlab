@@ -5,12 +5,16 @@
 import { describe, expect, it } from 'vitest';
 import { AnesthesiaEngine, ENGINE_VERSION } from '@anesthesia/engine';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
+import { RAPID_DESATURATION } from '@anesthesia/scenarios/rapid-desaturation';
+import { HYPOTENSION_AFTER_INDUCTION } from '@anesthesia/scenarios/hypotension-after-induction';
+import { SCENARIOS } from '@anesthesia/scenarios';
+import { gradeProbabilities } from '@anesthesia/physiology';
 import { SCENARIO_SCHEMA, validateScenario } from '@anesthesia/scenarios/schema';
 import { EventLog, SEVERITIES, SEVERITY_GLYPH } from '@platform/log/event-log';
 import {
   AlarmEngine, ALARM_BURDEN_COUNT, DEFAULT_LIMITS, SILENCE_SECONDS, priorityRank,
 } from '@platform/alarms/alarms';
-import { formatElapsed } from '@platform/clock/simulation-clock';
+import { formatElapsed, TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 
 const engine = () => new AnesthesiaEngine({
   scenario: ROUTINE_INDUCTION, seed: 20260819, practiceRegion: 'US',
@@ -389,5 +393,99 @@ describe('Scenario: Hypoxic mixture is prevented', () => {
     expect(refusal).toBeDefined();
     expect(refusal?.message).toContain('0.21');
     expect(refusal?.message).toContain('anaesthesia machines');
+  });
+});
+
+describe('Requirement: Every Scenario In The Registry Is Valid And Distinct', () => {
+  it('Scenario: every scenario passes the published schema', () => {
+    for (const scenario of SCENARIOS) {
+      expect(validateScenario(scenario), scenario.metadata.id).toEqual([]);
+    }
+  });
+
+  it('Scenario: ids, titles and routes are unique', () => {
+    const ids = SCENARIOS.map((s) => s.metadata.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    const titles = SCENARIOS.map((s) => s.metadata.title);
+    expect(new Set(titles).size).toBe(titles.length);
+  });
+
+  it('Scenario: every objective maps to a rubric question', () => {
+    for (const scenario of SCENARIOS) {
+      const asked = new Set(scenario.debrief.rubric.map((item) => item.objectiveId));
+      for (const objective of scenario.metadata.objectives) {
+        expect(asked.has(objective.id), `${scenario.metadata.id}: ${objective.id} has no rubric question`)
+          .toBe(true);
+      }
+    }
+  });
+
+  it('Scenario: every scenario runs without throwing and produces a live patient', () => {
+    for (const scenario of SCENARIOS) {
+      const engine = new AnesthesiaEngine({ scenario, seed: 20260819, practiceRegion: 'US' });
+      let last = engine.step();
+      for (let tick = 0; tick < 600; tick += 1) last = engine.step();
+      expect(last.state.heartRateBpm, scenario.metadata.id).toBeGreaterThan(20);
+      expect(last.state.meanArterialMmHg, scenario.metadata.id).toBeGreaterThan(30);
+      expect(Number.isFinite(last.state.spo2Percent)).toBe(true);
+    }
+  });
+});
+
+describe('Requirement: The New Scenarios Teach What They Claim', () => {
+  /** Simulated seconds of apnoea from a given start until saturation reaches 90%. */
+  function timeToDesaturate(scenario: (typeof SCENARIOS)[number], preoxygenateSeconds: number): number {
+    const engine = new AnesthesiaEngine({ scenario, seed: 20260819, practiceRegion: 'US' });
+    engine.apply({ tick: 0, type: 'ventilator', payload: { fio2: 1, delivering: true, mode: 'volume-control' } });
+    for (let i = 0; i < preoxygenateSeconds * TICKS_PER_SECOND; i += 1) engine.step();
+    // Apnoea: the machine stops, and nothing is breathing.
+    engine.apply({ tick: 0, type: 'ventilator', payload: { delivering: false, mode: 'manual' } });
+    engine.apply({ tick: 0, type: 'bolus', payload: { drugId: 'propofol', amount: 2, unit: 'mg/kg' } });
+    for (let tick = 0; tick < 20 * 60 * TICKS_PER_SECOND; tick += 1) {
+      const result = engine.step();
+      if (result.state.spo2Percent <= 90) return tick / TICKS_PER_SECOND;
+    }
+    // Never reached 90% inside twenty simulated minutes.
+    return 20 * 60;
+  }
+
+  it('Scenario: the obese patient loses the margin the healthy one keeps', () => {
+    // Both are preoxygenated to the same endpoint and both are induced. The
+    // teaching claim of this scenario is that the obese patient's reserve is
+    // gone, so that is what is asserted: he desaturates inside five minutes and
+    // the healthy patient does not.
+    const healthy = timeToDesaturate(ROUTINE_INDUCTION, 180);
+    const obese = timeToDesaturate(RAPID_DESATURATION, 180);
+    expect(obese, 'obese patient time to 90%').toBeLessThan(5 * 60);
+    expect(healthy, 'healthy patient time to 90%').toBeGreaterThan(obese * 2);
+  });
+
+  it('Scenario: the obese patient has a genuinely harder airway', () => {
+    const easy = gradeProbabilities(ROUTINE_INDUCTION.patient.airway, 'direct', 0);
+    const hard = gradeProbabilities(RAPID_DESATURATION.patient.airway, 'direct', 0);
+    const poor = (p: number[]) => (p[2] ?? 0) + (p[3] ?? 0);
+    expect(poor(hard)).toBeGreaterThan(poor(easy) * 1.8);
+  });
+
+  it('Scenario: the hypovolaemic patient starts compensated and decompensates on induction', () => {
+    const engine = new AnesthesiaEngine({
+      scenario: HYPOTENSION_AFTER_INDUCTION, seed: 20260819, practiceRegion: 'US',
+    });
+    const before = engine.step().state;
+    // Compensated: a defensible pressure carried by a fast rate and a small
+    // stroke volume, which is exactly what makes the induction unforgiving.
+    expect(before.meanArterialMmHg).toBeGreaterThan(70);
+    expect(before.heartRateBpm).toBeGreaterThan(85);
+    expect(before.strokeVolumeMl).toBeLessThan(55);
+
+    engine.apply({ tick: 0, type: 'bolus', payload: { drugId: 'propofol', amount: 2, unit: 'mg/kg' } });
+    let worst = before.meanArterialMmHg;
+    for (let tick = 0; tick < 180 * TICKS_PER_SECOND; tick += 1) {
+      const state = engine.step().state;
+      if (state.meanArterialMmHg < worst) worst = state.meanArterialMmHg;
+    }
+    // A full 2 mg/kg in this patient takes her well below the threshold the
+    // outcome literature is organized around.
+    expect(worst).toBeLessThan(65);
   });
 });
