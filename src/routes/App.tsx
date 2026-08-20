@@ -78,11 +78,35 @@ function CurrentRoute() {
   const planned = MODULES.find((module) => `/${module.route}` === path && module.status === 'planned');
   if (planned) return <PlannedModuleRoute module={planned} />;
 
+  // The client-side not-found view. It has to match the prerendered 404
+  // document, because this is the one a visitor actually sees once the script
+  // has run — the static one is what a crawler and a scripting-disabled browser
+  // get, and the two saying different things would be its own small lie.
   return (
-    <main className="reading" id="main">
-      <h1>Nothing here</h1>
-      <p>That address does not match a page.</p>
-      <p><a href="/">Go to the Open Sim Lab front page</a></p>
-    </main>
+    <div className="document">
+      <header className="document__bar">
+        <a className="document__home" href="/">Open Sim Lab</a>
+      </header>
+      <main className="reading" id="main">
+        <h1>Nothing here</h1>
+        <p>
+          That address does not match a page. Nothing has been lost — this site is a handful of
+          pages, and they are all listed below.
+        </p>
+        <h2>Where you probably wanted to go</h2>
+        <ul>
+          <li><a href="/anesthesia">The anesthesia simulator</a> — every scenario</li>
+          <li><a href="/about">About Open Sim Lab</a> — what it teaches and who it is for</li>
+          <li><a href="/validation">The validation report</a> — how closely the patient matches the evidence</li>
+          <li><a href="/governance">Clinical governance</a> — who has reviewed what, and what is outstanding</li>
+          <li><a href="/limitations">The limitations register</a> — what this deliberately does not model</li>
+          <li><a href="/privacy">Privacy</a> — what is stored on your device, which is all of it</li>
+        </ul>
+      </main>
+      <footer className="document__foot">
+        <a href="/">Back to the front page</a>
+        <a href="/anesthesia">Open the simulator</a>
+      </footer>
+    </div>
   );
 }

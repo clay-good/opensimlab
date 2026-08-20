@@ -15,17 +15,66 @@ import { PRIVACY_CLAIMS } from '@platform/docs/privacy-claims';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { routeFor } from './routes';
 
+/**
+ * What each gate verdict means, said once for the whole group rather than
+ * repeated after every item id.
+ */
+const VERDICT_SUMMARY: Record<string, string> = {
+  unsigned: 'No named reviewer. Clinical content cannot ship signed by nobody.',
+  'version-drift': 'The content changed after it was reviewed, so the review no longer covers it.',
+  overdue: 'The review has passed its re-review date.',
+  incomplete: 'The review record is missing something it requires.',
+  current: 'Under current review.',
+};
+
+/** The trust documents, in the order a sceptical reader works through them. */
+const DOCUMENTS: readonly { path: string; label: string }[] = [
+  { path: '/validation', label: 'Validation' },
+  { path: '/governance', label: 'Governance' },
+  { path: '/limitations', label: 'Limitations' },
+  { path: '/privacy', label: 'Privacy' },
+];
+
 export function DocumentRoute({ path }: { path: string }) {
   const metadata = routeFor(path);
   return (
-    <main className="reading" id="main">
-      <h1>{metadata?.heading ?? 'Document'}</h1>
-      {path === '/validation' && <ValidationBody />}
-      {path === '/governance' && <GovernanceBody />}
-      {path === '/limitations' && <LimitationsBody />}
-      {path === '/privacy' && <PrivacyBody />}
-      <p><a href="/">Back to the Open Sim Lab front page</a></p>
-    </main>
+    <div className="document">
+      {/* Somewhere to go. A reader who arrives here from a footer link used to
+          be stranded on a page with no header and one link at the very bottom,
+          after several screens of table. */}
+      <header className="document__bar">
+        <a className="document__home" href="/">Open Sim Lab</a>
+        <nav aria-label="Trust documents">
+          <ul className="document__nav">
+            {DOCUMENTS.map((document) => (
+              <li key={document.path}>
+                <a
+                  href={document.path}
+                  {...(document.path === path ? { 'aria-current': 'page' } : {})}
+                >
+                  {document.label}
+                </a>
+              </li>
+            ))}
+            <li><a href="/anesthesia">Simulator</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      <main className="reading" id="main">
+        <h1>{metadata?.heading ?? 'Document'}</h1>
+        {path === '/validation' && <ValidationBody />}
+        {path === '/governance' && <GovernanceBody />}
+        {path === '/limitations' && <LimitationsBody />}
+        {path === '/privacy' && <PrivacyBody />}
+      </main>
+
+      <footer className="document__foot">
+        <a href="/">Back to the front page</a>
+        <a href="/about">About Open Sim Lab</a>
+        <a href="/anesthesia">Open the simulator</a>
+      </footer>
+    </div>
   );
 }
 
@@ -50,11 +99,25 @@ function ValidationBody() {
           {report.varvel.map((entry) => (
             <tr key={entry.modelId}>
               <td>{entry.modelId}</td>
-              <td colSpan={4}><Badge kind="out-of-range">Not validated</Badge> {entry.note}</td>
+              <td className="numeric">{entry.mdpe ?? '—'}</td>
+              <td className="numeric">{entry.mdape ?? '—'}</td>
+              <td className="numeric">{entry.wobble ?? '—'}</td>
+              <td className="numeric">{entry.divergence ?? '—'}</td>
             </tr>
           ))}
         </tbody>
       </table>
+      {/* The reason is identical for every row, so it is stated once. Repeating
+          the same paragraph four times inside a table makes the table
+          unreadable and says nothing the first one did not. */}
+      <p className="document__note">
+        <Badge kind="out-of-range">Not validated</Badge>{' '}
+        <strong>No model here has been validated against observed data.</strong> No openly
+        licensed dataset of measured concentrations has been obtained, so no bias, inaccuracy,
+        variability or drift figure is reported for any of them. Agreement with another model is
+        not a substitute for validation, and these columns stay empty until real observed data is
+        analysed.
+      </p>
       <CitationLink href="https://pubmed.ncbi.nlm.nih.gov/1588504/">
         Varvel, Donoho and Shafer, J Pharmacokinet Biopharm 1992
       </CitationLink>
@@ -129,16 +192,35 @@ function GovernanceBody() {
         current review.
       </p>
       <p className="field__hint">
-        The list below is every outstanding item by name. No aggregate figure is reported without it.
+        Every outstanding item is named below. No aggregate figure is reported without its list.
       </p>
-      <ul>
-        {coverage.outstanding.map((entry) => (
-          <li key={`${entry.item.kind}-${entry.item.id}`}>
-            <code>{entry.item.kind}</code> <strong>{entry.item.id}</strong> —{' '}
-            {'reason' in entry.verdict ? entry.verdict.reason : entry.verdict.status}
-          </li>
-        ))}
-      </ul>
+      {/* Grouped by VERDICT, then by kind.
+          Every one of these items is outstanding for the same reason, and the
+          reason string carries the item's own id inside it — so grouping on the
+          sentence grouped nothing, and printing it once per item, fourteen
+          times, buried the only thing the list is for: which items they are. */}
+      {[...new Set(coverage.outstanding.map((entry) => entry.verdict.status))].map((status) => {
+        const matching = coverage.outstanding.filter((entry) => entry.verdict.status === status);
+        const kinds = [...new Set(matching.map((entry) => entry.item.kind))];
+        return (
+          <section key={status} className="document__group">
+            <p><strong>{VERDICT_SUMMARY[status] ?? status}</strong> — {matching.length} items.</p>
+            <dl className="document__items">
+              {kinds.map((kind) => (
+                <div key={kind}>
+                  <dt><code>{kind}</code></dt>
+                  <dd>
+                    {matching
+                      .filter((entry) => entry.item.kind === kind)
+                      .map((entry) => entry.item.id)
+                      .join(', ')}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        );
+      })}
 
       <h2>Reporting a clinical error</h2>
       <p>
