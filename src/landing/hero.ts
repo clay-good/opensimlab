@@ -19,6 +19,18 @@ const HERO_HEART_RATE = 68;
 const PIXELS_PER_SECOND = 100;
 
 /**
+ * The millivolt window the hero's height maps onto, shared by the static path and
+ * the live sweep so the two cannot drift apart. Chosen so the isoelectric line
+ * sits at about a third of the way up and the R wave reaches about four fifths,
+ * which is roughly where a monitor puts them.
+ */
+export const HERO_RANGE = { minMv: -0.9, maxMv: 1.6 } as const;
+
+/** The hero's drawing box, in CSS pixels. The stylesheet matches it. */
+export const HERO_WIDTH_PX = 720;
+export const HERO_HEIGHT_PX = 200;
+
+/**
  * Render one still frame of the trace as an SVG path.
  *
  * This is the reduced-motion and no-JavaScript fallback: the SAME generator, the
@@ -40,26 +52,45 @@ export function heroStaticPath(widthPx: number, heightPx: number): string {
     }, buffer);
     samples.push(...buffer);
   }
-  const min = -1.0;
-  const max = 1.8;
-  const toY = (value: number) => {
-    const fraction = (value - min) / (max - min);
+  const toY = (value: number): number => {
+    const fraction = (value - HERO_RANGE.minMv) / (HERO_RANGE.maxMv - HERO_RANGE.minMv);
     const clamped = fraction < 0 ? 0 : fraction > 1 ? 1 : fraction;
-    return (heightPx - clamped * heightPx).toFixed(1);
+    return heightPx - clamped * heightPx;
   };
-  const step = SAMPLE_RATE_HZ.ecg / PIXELS_PER_SECOND;
+
+  // MIN-MAX decimation, one column at a time — the same thing the sweep renderer
+  // and the live hero do. Taking one nearest sample per column instead, which is
+  // what an earlier version did, aliases: an R wave is only two or three samples
+  // wide at 2.5 samples per column, so it was sometimes missed and sometimes
+  // caught at full height, and the trace came out as an irregular picket fence
+  // with no recognisable P or T wave between the spikes.
+  const perColumn = SAMPLE_RATE_HZ.ecg / PIXELS_PER_SECOND;
   const points: string[] = [];
   for (let x = 0; x < widthPx; x += 1) {
-    const index = Math.round(x * step);
-    const value = samples[index] ?? 0;
-    points.push(`${x === 0 ? 'M' : 'L'}${x} ${toY(value)}`);
+    const from = Math.floor(x * perColumn);
+    const to = Math.min(Math.floor((x + 1) * perColumn), samples.length);
+    let low = Infinity;
+    let high = -Infinity;
+    for (let i = from; i < to; i += 1) {
+      const value = samples[i] ?? 0;
+      if (value < low) low = value;
+      if (value > high) high = value;
+    }
+    if (low === Infinity) { low = 0; high = 0; }
+    points.push(`${x === 0 ? 'M' : 'L'}${x} ${toY(high).toFixed(1)}`);
+    if (low !== high) points.push(`L${x} ${toY(low).toFixed(1)}`);
   }
   return points.join(' ');
 }
 
 /** The static hero as a complete inline SVG. No image file is fetched. */
-export function heroStaticSvg(widthPx = 720, heightPx = 120): string {
-  return `<svg viewBox="0 0 ${widthPx} ${heightPx}" width="100%" height="100%" preserveAspectRatio="none" `
+export function heroStaticSvg(widthPx = HERO_WIDTH_PX, heightPx = HERO_HEIGHT_PX): string {
+  // `slice`, not `none`: stretching a 720 by 120 box into the 200 px-tall hero
+  // was making every deflection two thirds taller than it should be, and on a
+  // phone it squashed seven seconds of trace into 343 px so the heart looked
+  // like it was going at 140. Preserving the aspect ratio and cropping shows
+  // fewer beats at the right proportions, which is the correct trade.
+  return `<svg viewBox="0 0 ${widthPx} ${heightPx}" width="100%" height="100%" preserveAspectRatio="xMinYMid slice" `
     + `role="img" aria-label="A normal electrocardiogram trace, drawn by this project's own waveform engine." `
     + `xmlns="http://www.w3.org/2000/svg">`
     + `<rect width="${widthPx}" height="${heightPx}" fill="${NEUTRAL.void}"/>`
@@ -130,7 +161,7 @@ export function startLiveHero(canvas: HTMLCanvasElement): () => void {
       let high = -Infinity;
       for (const value of chunk) { if (value < low) low = value; if (value > high) high = value; }
       const toY = (value: number) => {
-        const fraction = (value + 1.0) / 2.8;
+        const fraction = (value - HERO_RANGE.minMv) / (HERO_RANGE.maxMv - HERO_RANGE.minMv);
         const clamped = fraction < 0 ? 0 : fraction > 1 ? 1 : fraction;
         return rect.height - clamped * rect.height;
       };
