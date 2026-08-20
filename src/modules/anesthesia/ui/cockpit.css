@@ -29,6 +29,13 @@
     var(--divider-thickness)
     minmax(0, 1fr);
   block-size: 100dvh;
+  /* The demonstration strip is an overlay, like every other surface that is not
+     one of the four regions — but unlike a drawer it is not dismissable, so the
+     cockpit gives up exactly its height while one is running. Without this the
+     strip covers the action cockpit, including at the beat that asks you to look
+     at the action cockpit. */
+  box-sizing: border-box;
+  padding-block-end: var(--demo-bar-height, 0px);
   max-inline-size: var(--max-content-width);
   margin-inline: auto;
   background: var(--surface-0);
@@ -146,7 +153,11 @@
  * than pushing the others out of the cockpit. */
 .monitor__tiles {
   display: grid;
-  grid-auto-rows: minmax(56px, 1fr);
+  /* `min-content`, not a pixel floor. A 56px floor is shorter than a tile's own
+   * content — a vital numeric is set large on purpose — so the grid squashed
+   * every tile and the overflow spilled over the tile below instead of the
+   * column scrolling. Whatever a tile needs, it gets; the column scrolls. */
+  grid-auto-rows: minmax(min-content, 1fr);
   gap: 1px;
   border-inline-start: 1px solid var(--line-subtle);
   min-inline-size: 0;
@@ -376,10 +387,28 @@
    move the traces the narration is asking you to look at.
    --------------------------------------------------------------------------- */
 
+/* Set on the cockpit only while a demonstration is running, so the reservation
+   above and the strip's own height are driven by one value and cannot drift. */
+.cockpit[data-demo-focus] { --demo-bar-height: 5rem; }
+
+/* The strip's height comes out of the ACTION COCKPIT, not out of the monitor.
+   Taking it from the fluid row shortened the monitor, which is the region most
+   of the narration is pointing at, while the action cockpit — which nobody
+   touches during a demonstration — kept its full height. The floor keeps the
+   tray usable the moment the viewer takes the controls. */
+.cockpit[data-demo-focus] {
+  grid-template-rows:
+    var(--status-bar-height)
+    minmax(0, 1fr)
+    var(--divider-thickness)
+    max(7rem, calc(var(--action-cockpit-height) - var(--demo-bar-height)));
+}
+
 .demo-bar {
   position: fixed;
   inset-inline: 0;
   inset-block-end: 0;
+  block-size: var(--demo-bar-height);
   z-index: 40;
   background: var(--surface-2);
   /* No drop shadow: nothing else in this interface casts one, and the strong
@@ -405,6 +434,11 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
+  /* A safety valve. The height is fixed so it always matches what the cockpit
+     gave up; if a future beat runs longer than fits, it scrolls rather than
+     being silently cut off. */
+  overflow-y: auto;
+  block-size: calc(var(--demo-bar-height) - 3px);
 }
 
 .demo-bar__label {
@@ -417,6 +451,10 @@
 
 .demo-bar__text {
   margin: 0;
+  /* Two lines whatever this beat says, so a longer narration does not reflow the
+     cockpit and move the traces the narration is asking you to look at. A rare
+     third line grows the row rather than being clipped. */
+  min-block-size: 2lh;
   font: var(--type-body);
   color: var(--text-primary);
   text-wrap: pretty;
@@ -438,6 +476,10 @@
 }
 
 @media (width <= 900px) {
+  /* Stacked, so the narration is not squeezed into a column narrower than a
+     sentence — which costs height, and the cockpit gives up that much more. */
+  .cockpit[data-demo-focus] { --demo-bar-height: 10rem; }
+
   .demo-bar__body {
     grid-template-columns: minmax(0, 1fr);
     justify-items: start;

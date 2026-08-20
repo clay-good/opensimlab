@@ -92,6 +92,16 @@ The monitor SHALL raise alarms at three priorities modeled on IEC 60601-1-8, the
 - **WHEN** more than five alarms are active simultaneously for over 60 simulated seconds
 - **THEN** the session records an alarm-burden marker that the debrief can surface, without suppressing any alarm
 
+#### Scenario: An alarm that cannot yet be true does not fire
+
+- **WHEN** a limit describes a departure from an intended state that the session has not yet reached — a depth index above the surgical range on a patient who has been given nothing, who reads about 93 awake
+- **THEN** that limit is held until its parameter has been inside its limits at least once in the session, so no alarm greets a visitor on the first frame, and the alarm that matters — lightening after surgical depth was reached — still fires
+
+#### Scenario: Holding an alarm is opt-in and never applies to an emergency
+
+- **WHEN** the alarm set is reviewed
+- **THEN** only limits explicitly marked as held behave this way, every other limit fires from a cold start, and a saturation below the critical threshold on the first frame alarms immediately
+
 #### Scenario: Audible alarm behavior is owned by the sonification capability
 
 - **WHEN** an alarm's audible signal is specified or implemented

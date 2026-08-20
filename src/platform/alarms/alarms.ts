@@ -35,6 +35,20 @@ export interface AlarmLimit {
   readonly message: string;
   /** Source the threshold derives from, so a reviewer can check it. */
   readonly source: string;
+  /**
+   * Hold this alarm until the parameter has been inside its limits at least
+   * once this session.
+   *
+   * For depth: an awake patient reads about 93, so a bare "above the surgical
+   * range" limit alarms on someone who has been given nothing, on the first
+   * frame, before the session has started. That is not a thing a depth monitor
+   * does and it is not a thing this project should teach. Being lighter than
+   * intended only means something once you have been deep enough to intend it,
+   * and *that* alarm — lightening during a case — is the one worth having.
+   *
+   * Opt-in per limit. Nothing that should alarm from a cold start uses it.
+   */
+  readonly armsAfterFirstNormal?: boolean;
 }
 
 export interface ActiveAlarm {
@@ -118,6 +132,8 @@ export const DEFAULT_LIMITS: readonly AlarmLimit[] = [
     id: 'depth-light', parameter: 'depthIndex', label: 'Depth', unit: '', priority: 'warning',
     high: 60, message: 'Predicted depth index above the usual surgical range',
     source: 'The 40–60 range the published models are discussed against.',
+    // Silent until the patient has actually reached surgical depth once.
+    armsAfterFirstNormal: true,
   },
   {
     id: 'depth-deep', parameter: 'depthIndex', label: 'Depth', unit: '', priority: 'advisory',
@@ -142,6 +158,8 @@ export interface AlarmEvaluation {
 export class AlarmEngine {
   private readonly active = new Map<string, ActiveAlarm>();
   private readonly silenced = new Map<string, number>();
+  /** Limits that have seen their parameter inside its limits at least once. */
+  private readonly armed = new Set<string>();
   private burdenSinceTick: number | null = null;
   private readonly limits: readonly AlarmLimit[];
 
@@ -174,7 +192,11 @@ export class AlarmEngine {
 
       const breached = (limit.low !== undefined && value < limit.low)
         || (limit.high !== undefined && value > limit.high);
-      if (!breached) continue;
+      if (!breached) {
+        this.armed.add(limit.id);
+        continue;
+      }
+      if (limit.armsAfterFirstNormal && !this.armed.has(limit.id)) continue;
 
       seen.add(limit.id);
       const existing = this.active.get(limit.id);
