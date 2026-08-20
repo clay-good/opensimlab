@@ -12,7 +12,7 @@
 import type { Transcript } from '@platform/transcript/transcript';
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import { getScenario } from '../scenarios';
-import { replay } from './replay';
+import { MAX_REPLAY_TICKS, replay } from './replay';
 import { findStacking } from './analysis';
 import { objectiveFindings } from '../ui/Debrief';
 import type { ObjectiveFinding } from './analysis';
@@ -33,6 +33,12 @@ export interface TranscriptAnalysis {
 export class UnreadableTranscript extends Error {}
 
 /**
+ * The most actions a transcript may claim. A learner pressing a control ten
+ * times a second for an hour would not reach this; a corrupt file will.
+ */
+export const MAX_TRANSCRIPT_ACTIONS = 50_000;
+
+/**
  * Parse a submitted file. Everything is checked: a transcript is a file from
  * outside, and the only reason to trust any of it is that the engine reproduces
  * it.
@@ -50,6 +56,20 @@ export function parseTranscript(text: string, label: string): Transcript {
   }
   if (!Array.isArray(candidate.actions) || typeof candidate.ticks !== 'number') {
     throw new UnreadableTranscript(`${label} is missing the record of what the learner did.`);
+  }
+  if (!Number.isFinite(candidate.ticks) || candidate.ticks < 0 || candidate.ticks > MAX_REPLAY_TICKS) {
+    throw new UnreadableTranscript(
+      `${label} claims a session of ${String(candidate.ticks)} ticks, which is not a session this `
+      + 'build will replay. The file is corrupt, or it is not from this simulator.',
+    );
+  }
+  // A file can carry any number of actions. Replaying is bounded by the tick
+  // count, but sorting and scanning a million of them is not, and an instructor
+  // opening a bad submission should get a message rather than a locked tab.
+  if (candidate.actions.length > MAX_TRANSCRIPT_ACTIONS) {
+    throw new UnreadableTranscript(
+      `${label} records ${candidate.actions.length} actions, far more than a session can contain.`,
+    );
   }
   if (typeof candidate.scenarioId !== 'string' || !getScenario(candidate.scenarioId)) {
     throw new UnreadableTranscript(

@@ -14,6 +14,7 @@
 
 import { AlarmEngine, type ActiveAlarm } from '@platform/alarms/alarms';
 import { CompartmentSolver, STEP_MINUTES } from '@platform/kernel/compartments';
+import { clamp } from '@platform/kernel/numeric';
 import type { Attribution, DrugConcentration, EngineEvent, EquipmentSnapshot, LearnerAction } from '@platform/kernel/protocol';
 import { createRng, type Rng } from '@platform/kernel/rng';
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
@@ -33,6 +34,21 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 export const ENGINE_VERSION = '0.1.0-alpha.1';
 
 export type Scenario = ScenarioDocument;
+
+/**
+ * What the anaesthesia machine can actually deliver.
+ *
+ * These are the machine's limits, not the physiology's. A setting outside them is
+ * clamped and the learner is told, exactly as a real machine refuses a dial
+ * position that does not exist.
+ */
+export const VENTILATOR_BOUNDS = {
+  fio2: { min: 0.21, max: 1 },
+  tidalVolumeMl: { min: 0, max: 1500 },
+  respiratoryRateBpm: { min: 0, max: 60 },
+  peep: { min: 0, max: 30 },
+  sevofluranePercent: { min: 0, max: 8 },
+} as const;
 
 /**
  * The end-tidal oxygen fraction at which the functional residual capacity counts
@@ -185,18 +201,73 @@ export class AnesthesiaEngine {
   }
 
   /** Apply a learner action at the current tick. */
+  /**
+   * A finite, non-negative number from an action payload, or null.
+   *
+   * Action payloads come from a control a learner typed into, a URL, or a
+   * transcript file — none of which this engine controls. A NaN dose used to
+   * propagate straight into the compartment solver and come out the far side as
+   * a patient with a mean arterial pressure of zero: a corpse that looked like
+   * physiology rather than like the bad input it was.
+   */
+  private static finiteAmount(value: unknown): number | null {
+    const amount = Number(value);
+    return Number.isFinite(amount) && amount >= 0 ? amount : null;
+  }
+
   apply(action: LearnerAction): void {
     switch (action.type) {
       case 'bolus': {
-        this.giveBolus(String(action.payload.drugId), Number(action.payload.amount), String(action.payload.unit ?? ''));
+        const amount = AnesthesiaEngine.finiteAmount(action.payload.amount);
+        if (amount === null) {
+          this.log('warning', 'drug', `bad-dose-${this.currentTick}`,
+            `A dose of "${String(action.payload.amount)}" is not a number of `
+            + `${String(action.payload.unit ?? 'units')}. Nothing was given.`);
+          break;
+        }
+        this.giveBolus(String(action.payload.drugId), amount, String(action.payload.unit ?? ''));
         break;
       }
       case 'infusion': {
-        this.setInfusion(String(action.payload.drugId), Number(action.payload.rate), String(action.payload.unit ?? ''));
+        const rate = AnesthesiaEngine.finiteAmount(action.payload.rate);
+        if (rate === null) {
+          this.log('warning', 'drug', `bad-rate-${this.currentTick}`,
+            `An infusion rate of "${String(action.payload.rate)}" is not a number. `
+            + 'The rate was left where it was.');
+          break;
+        }
+        this.setInfusion(String(action.payload.drugId), rate, String(action.payload.unit ?? ''));
         break;
       }
       case 'ventilator': {
-        this.setVentilator(action.payload as unknown as Partial<VentilatorSettings>);
+        // Only the settings that are actually usable are taken. A ventilator
+        // does not accept a respiratory rate of NaN and neither does this.
+        const payload = action.payload as Record<string, unknown>;
+        const settings: { -readonly [K in keyof VentilatorSettings]?: VentilatorSettings[K] } = {};
+        for (const [field, bound] of Object.entries(VENTILATOR_BOUNDS)) {
+          if (!(field in payload)) continue;
+          const value = AnesthesiaEngine.finiteAmount(payload[field]);
+          if (value === null) {
+            this.log('warning', 'ventilator', `bad-${field}-${this.currentTick}`,
+              `"${String(payload[field])}" is not a usable ${field}. That setting was ignored.`);
+            continue;
+          }
+          // Clamped to what the machine can actually deliver rather than merely
+          // to a finite number: a respiratory rate of a million is arithmetic,
+          // not ventilation, and no anaesthesia machine would accept it.
+          const clamped = clamp(value, bound.min, bound.max);
+          if (clamped !== value) {
+            this.log('warning', 'ventilator', `clamped-${field}-${this.currentTick}`,
+              `${field} of ${value} is outside what the machine delivers `
+              + `(${bound.min} to ${bound.max}). It was set to ${clamped}.`);
+          }
+          (settings as Record<string, number>)[field] = clamped;
+        }
+        if (typeof payload.delivering === 'boolean') settings.delivering = payload.delivering;
+        if (payload.mode === 'volume-control' || payload.mode === 'pressure-control' || payload.mode === 'manual') {
+          settings.mode = payload.mode;
+        }
+        this.setVentilator(settings);
         break;
       }
       case 'laryngoscopy': {

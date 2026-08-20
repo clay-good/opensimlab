@@ -20,6 +20,17 @@ export interface ReplayOptions {
   readonly ticks: number;
 }
 
+/**
+ * The longest run a replay will perform, in ticks: eight simulated hours.
+ *
+ * This is a HARD ceiling, not a preference. A replay's tick count comes from a
+ * transcript, and a transcript is a file from outside — an instructor opening a
+ * corrupted or hostile submission should not be able to hand this function a
+ * number that locks their tab up forever. Eight hours is longer than any
+ * scenario this project intends to ship and short enough to fail fast.
+ */
+export const MAX_REPLAY_TICKS = 8 * 60 * 60 * TICKS_PER_SECOND;
+
 /** Run the engine over an action list and return the history it produces. */
 export function replay(actions: readonly LearnerAction[], options: ReplayOptions): HistorySample[] {
   const engine = new AnesthesiaEngine({
@@ -28,7 +39,12 @@ export function replay(actions: readonly LearnerAction[], options: ReplayOptions
   const ordered = [...actions].sort((a, b) => a.tick - b.tick);
   const history: HistorySample[] = [];
   let next = 0;
-  for (let tick = 0; tick < options.ticks; tick += 1) {
+  // A non-finite or negative count runs nothing rather than looping forever or
+  // throwing from inside a render.
+  const limit = Number.isFinite(options.ticks)
+    ? Math.min(Math.max(Math.trunc(options.ticks), 0), MAX_REPLAY_TICKS)
+    : 0;
+  for (let tick = 0; tick < limit; tick += 1) {
     while (next < ordered.length && (ordered[next]?.tick ?? Infinity) <= tick) {
       engine.apply(ordered[next]!);
       next += 1;
