@@ -16,13 +16,27 @@ import { createRoot, type Root } from 'react-dom/client';
 import { createElement } from 'react';
 import { WaveformCanvas } from '@platform/ui/monitor';
 import { trackConfigs } from '@anesthesia/ui/tracks';
-import { SAMPLE_RATE_HZ } from '@anesthesia/waveforms/types';
+import { SAMPLE_RATE_HZ, SIGNAL_RANGE } from '@anesthesia/waveforms/types';
 
-/** Every stroke the component asks the canvas to make, in order. */
-interface Recorded { strokeStyles: string[]; clears: number }
+/**
+ * Every stroke the component asks the canvas to make, in order, and where the
+ * pen went.
+ *
+ * The stroke colours alone prove the renderer ran and touched every track. They
+ * do not prove it drew a WAVEFORM: a buffer of zeros strokes exactly the same
+ * colours along a flat line, and the whole monitor could go dead without a
+ * single assertion noticing. The pen positions are recorded so the drawn path
+ * can be checked for the vertical excursion a real trace has.
+ */
+interface Recorded {
+  strokeStyles: string[];
+  clears: number;
+  /** Pen positions per stroke colour, so each trace's shape can be inspected. */
+  points: Map<string, { x: number; y: number }[]>;
+}
 
 function installCanvasStub(): Recorded {
-  const recorded: Recorded = { strokeStyles: [], clears: 0 };
+  const recorded: Recorded = { strokeStyles: [], clears: 0, points: new Map() };
   // jsdom has no 2D context, so one is supplied that records what it is asked to
   // draw. The assertions are about the calls, not about pixels.
   const make = () => {
@@ -37,8 +51,8 @@ function installCanvasStub(): Recorded {
       save: () => {},
       restore: () => {},
       beginPath: () => {},
-      moveTo: () => {},
-      lineTo: () => {},
+      moveTo: (x: number, y: number) => { record(x, y); },
+      lineTo: (x: number, y: number) => { record(x, y); },
       closePath: () => {},
       setLineDash: () => {},
       clip: () => {},
@@ -47,6 +61,12 @@ function installCanvasStub(): Recorded {
         if (w > 100 && h > 100) recorded.clears += 1;
       },
       stroke: () => { recorded.strokeStyles.push(context._stroke); },
+    };
+    const record = (x: number, y: number) => {
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+      const into = recorded.points.get(context._stroke) ?? [];
+      into.push({ x, y });
+      recorded.points.set(context._stroke, into);
     };
     return context as unknown as CanvasRenderingContext2D;
   };
@@ -74,12 +94,28 @@ function installFrameClock() {
   };
 }
 
-/** One second of a plainly non-flat signal for every track. */
+/**
+ * One second of a plainly non-flat signal for every track.
+ *
+ * Scaled to each signal's OWN display range. A fixed amplitude of one is a
+ * plainly non-flat electrocardiogram, whose range is a couple of millivolts,
+ * and a dead flat arterial trace, whose range is two hundred millimetres of
+ * mercury — one millimetre out of two hundred is a third of a pixel. The
+ * fixture claimed to be non-flat for every track and was not, which is exactly
+ * the kind of thing that lets a shape assertion pass on nothing.
+ */
 function blocksOf(scale: number) {
   return (['ecg', 'arterial', 'capno', 'pleth'] as const).map((signal) => {
     const rate = SAMPLE_RATE_HZ[signal];
+    const { min, max } = SIGNAL_RANGE[signal];
+    const middle = (min + max) / 2;
+    // A third of the range peak to peak, so it is unmistakably a signal without
+    // running off the top and bottom of the canvas.
+    const amplitude = ((max - min) / 6) * scale;
     const samples = new Float32Array(rate);
-    for (let i = 0; i < rate; i += 1) samples[i] = Math.sin((i / rate) * Math.PI * 2) * scale;
+    for (let i = 0; i < rate; i += 1) {
+      samples[i] = middle + Math.sin((i / rate) * Math.PI * 2) * amplitude;
+    }
     return { trackId: signal, samples };
   });
 }
@@ -137,6 +173,45 @@ describe('Requirement: Sweeping Waveform Canvas', () => {
     expect(drawn.length).toBeGreaterThan(0);
     // Every configured track drew, not just the first.
     expect(new Set(drawn).size).toBe(traceColors.size);
+  });
+
+  it('Scenario: what is drawn is a waveform, not a flat line', () => {
+    // The gap the colour assertions leave: a buffer of zeros strokes exactly
+    // the same colours along a straight line. Every trace has to actually move
+    // vertically, or the monitor is dead and nothing here notices.
+    render(blocksOf(1));
+    for (let i = 0; i < 40; i += 1) act(() => clock.tick(16));
+
+    const traceColors = trackConfigs(false, new Set<string>(), false).map((track) => track.color);
+    for (const color of traceColors) {
+      const points = recorded.points.get(color) ?? [];
+      expect(points.length, `nothing was drawn in ${color}`).toBeGreaterThan(10);
+      const ys = points.map((point) => point.y);
+      const spread = Math.max(...ys) - Math.min(...ys);
+      expect(spread, `${color} was drawn as a flat line`).toBeGreaterThan(2);
+      // And it sweeps across rather than piling up in one column.
+      const xs = points.map((point) => point.x);
+      expect(Math.max(...xs) - Math.min(...xs), `${color} did not sweep`).toBeGreaterThan(5);
+    }
+  });
+
+  it('Scenario: a flat signal is drawn flat, so the check above means something', () => {
+    // The control. If a buffer of zeros also produced vertical spread, the
+    // assertion above would be measuring the renderer's own noise rather than
+    // the signal.
+    const flat = (['ecg', 'arterial', 'capno', 'pleth'] as const).map((signal) => {
+      const { min, max } = SIGNAL_RANGE[signal];
+      const samples = new Float32Array(SAMPLE_RATE_HZ[signal]);
+      samples.fill((min + max) / 2);
+      return { trackId: signal, samples };
+    });
+    render(flat as ReturnType<typeof blocksOf>);
+    for (let i = 0; i < 40; i += 1) act(() => clock.tick(16));
+
+    const color = trackConfigs(false, new Set<string>(), false)[0]!.color;
+    const ys = (recorded.points.get(color) ?? []).map((point) => point.y);
+    expect(ys.length).toBeGreaterThan(10);
+    expect(Math.max(...ys) - Math.min(...ys)).toBeLessThanOrEqual(2);
   });
 
   it('Scenario: a re-rendering parent does not erase the traces', () => {
