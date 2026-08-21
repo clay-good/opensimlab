@@ -214,6 +214,9 @@ export const SCENARIO_SCHEMA: SchemaNode = {
           repeatable: { type: 'boolean', description: 'Whether the event may fire more than once.' },
           value: NUMBER_FIELD('The magnitude, interpreted per event type.'),
           durationTicks: { type: 'integer', description: 'How long the event applies for.', minimum: 0 },
+          target: STRING_FIELD(
+            'What the event acts on: the rhythm id, the artifact id, or which equipment failed.', 3,
+          ),
           message: STRING_FIELD('Learner-facing text for a narrative event or the log entry.', 3),
           severity: { type: 'string', description: 'Log severity.', enum: ['info', 'advisory', 'warning', 'critical', 'artifact'] },
         },

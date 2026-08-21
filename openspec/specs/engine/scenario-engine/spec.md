@@ -50,8 +50,33 @@ A scenario SHALL be able to schedule events at fixed simulated times or on trigg
 
 #### Scenario: A conditional event fires on a state predicate
 
-- **WHEN** a scenario declares "trigger laryngospasm when the train-of-four ratio exceeds 0.7 and airway manipulation occurs"
+- **WHEN** a scenario declares an event conditioned on the patient's state, such as `spo2Percent < 90`
 - **THEN** the event fires the first time the predicate holds and is then marked consumed unless declared repeatable
+
+#### Scenario: A repeatable event is edge-triggered, not level-triggered
+
+- **WHEN** a repeatable event's condition holds continuously for several simulated minutes
+- **THEN** it fires once on the transition into that state and does not fire again until the condition has become false and true again, because an event firing on every tick its condition holds is a stuck key rather than a scenario
+
+#### Scenario: The predicate grammar cannot execute anything
+
+- **WHEN** a scenario's predicate is read
+- **THEN** it is parsed as exactly one comparison between one state field and one finite number, with no evaluation of the string as code by any mechanism, so a scenario contributed by a third party cannot run code
+
+#### Scenario: The grammar's limits are refused, not approximated
+
+- **WHEN** a predicate combines conditions, calls anything, or names something that is not a state field
+- **THEN** it is refused with a message naming what was wrong and what to write instead, and the event is recorded as one that will never fire — never silently accepted and then ignored
+
+#### Scenario: Every declared event type has an effect
+
+- **WHEN** the set of timeline event types is extended
+- **THEN** the engine's handling is exhaustive over that set and a type added without an implementation fails the build, so no event type can validate cleanly and then do nothing
+
+#### Scenario: An event that cannot act says so
+
+- **WHEN** an event omits what it needs — a sustained event with no duration, a rhythm change naming no rhythm, an equipment failure naming equipment the engine does not model
+- **THEN** the session log records what was missing and which event it was, rather than the event passing silently
 
 ### Requirement: Crisis Injector
 

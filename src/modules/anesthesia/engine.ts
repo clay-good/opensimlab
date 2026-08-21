@@ -29,6 +29,7 @@ import {
 } from './physiology';
 import { WaveformEngine, restingDrive, type ArtifactId, type RhythmId, type WaveformFrame } from './waveforms';
 import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/types';
+import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
 export const ENGINE_VERSION = '0.1.0-alpha.1';
@@ -116,6 +117,31 @@ export class AnesthesiaEngine {
   private readonly drugs = new Map<string, ActiveDrug>();
   private readonly covariates: Covariates;
   private readonly firedEvents = new Set<string>();
+  /**
+   * Every `when:` predicate, parsed once at construction.
+   *
+   * Parsed here rather than at each tick so a malformed predicate is a loud
+   * failure when the scenario loads, not a silent one ten minutes into a
+   * session — and so parsing is not repeated 36,000 times an hour.
+   */
+  private readonly predicates = new Map<string, StatePredicate>();
+  /**
+   * Events whose condition was true on the previous tick.
+   *
+   * Timeline events are EDGE-triggered. Without this a repeatable event on
+   * `spo2Percent < 90` would fire ten times a second for as long as the patient
+   * stayed desaturated, which is not a scenario, it is a stuck key.
+   */
+  private readonly conditionHeld = new Set<string>();
+  /**
+   * The last state the physiology produced.
+   *
+   * A `when:` predicate is decided against this rather than against the tick it
+   * fires in, because the state for a tick does not exist until after the
+   * timeline for that tick has been read. The cost is one tick — 100 ms — of
+   * latency, which is stated here rather than hidden.
+   */
+  private lastState: Readonly<Record<string, number>> = {};
   private running: RunningEvent[] = [];
   private currentTick = 0;
   private ventilator: VentilatorSettings;
@@ -188,6 +214,19 @@ export class AnesthesiaEngine {
         message: `${entry.drugId}: ${selection.model.id}. ${selection.reason}`,
         data: { drugId: entry.drugId, modelId: selection.model.id },
       });
+    }
+
+    // Predicates are parsed once, here, so a scenario with a malformed one says
+    // so at load rather than never firing the event and never saying why.
+    for (const event of this.scenario.timeline) {
+      if (event.when === undefined) continue;
+      try {
+        this.predicates.set(event.id, parsePredicate(event.when));
+      } catch (error) {
+        this.log('warning', 'scenario', `bad-predicate-${event.id}`,
+          `Timeline event "${event.id}" has a condition this engine cannot read, so it will never `
+          + `fire: ${error instanceof Error ? error.message : String(error)}`);
+      }
     }
   }
 
@@ -402,6 +441,132 @@ export class AnesthesiaEngine {
     });
   }
 
+
+  /**
+   * Whether a timeline event's condition is met right now.
+   *
+   * Exactly one of `atTick` and `when` is present — the scenario validator
+   * enforces that — so an event with neither, or with an unreadable predicate,
+   * simply never fires. The unreadable case is logged at construction.
+   */
+  private conditionMet(event: TimelineEvent): boolean {
+    if (event.atTick !== undefined) return this.currentTick >= event.atTick;
+    const predicate = this.predicates.get(event.id);
+    if (!predicate) return false;
+    return evaluatePredicate(predicate, this.lastState);
+  }
+
+  /**
+   * Perform a timeline event.
+   *
+   * The switch is exhaustive over `EventType` and the default calls
+   * `assertNever`, so adding a type to `EVENT_TYPES` without handling it here is
+   * a compile error. It used to be nothing at all: four of the nine declared
+   * types did nothing, an author's event validated cleanly and never fired, and
+   * the only way to find out was to read this method.
+   */
+  private fireTimelineEvent(event: TimelineEvent): void {
+    if (event.message) {
+      // The event's own id, unchanged, because the debrief timeline and the
+      // scenario tests both identify an event by it. Only a repeatable event
+      // needs the tick appended, and only so its second firing is a distinct
+      // log entry rather than a duplicate of its first.
+      const eventId = event.repeatable ? `${event.id}-${this.currentTick}` : event.id;
+      this.log(event.severity ?? 'info', 'scenario', eventId, event.message);
+    }
+
+    switch (event.type) {
+      // Sustained: these apply over a window and are summed or maxed each tick.
+      case 'surgical-stimulus':
+      case 'blood-loss':
+      case 'crystalloid':
+      case 'obstruction': {
+        if (event.durationTicks === undefined || event.value === undefined) {
+          this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" is a ${event.type}, which applies over a window, but it `
+            + 'declares no value or no durationTicks, so it has no effect.');
+          return;
+        }
+        this.running.push({
+          id: event.id, type: event.type, value: event.value,
+          untilTick: this.currentTick + event.durationTicks,
+        });
+        return;
+      }
+
+      // Instantaneous: these change something once, at the moment they fire.
+      case 'narrative':
+        // The message is the whole event, and it has already been logged.
+        return;
+
+      case 'rhythm-change': {
+        const rhythm = event.target;
+        if (!rhythm) {
+          this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" changes the rhythm but names no target rhythm.`);
+          return;
+        }
+        this.rhythm = rhythm as RhythmId;
+        this.log('critical', 'rhythm', `rhythm-${event.id}-${this.currentTick}`,
+          `Rhythm changed to ${this.rhythm}`);
+        return;
+      }
+
+      case 'artifact': {
+        const id = event.target;
+        if (!id) {
+          this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" injects an artifact but names no target artifact.`);
+          return;
+        }
+        // `value: 0` clears it; anything else, including absent, sets it.
+        const active = event.value !== 0;
+        this.artifacts[active ? 'add' : 'delete'](id as ArtifactId);
+        this.waveforms.setArtifact(id as ArtifactId, active);
+        this.log('artifact', 'artifact', `artifact-${id}-${this.currentTick}`,
+          `${active ? 'Injected' : 'Cleared'} sensor artifact: ${id}`);
+        return;
+      }
+
+      case 'equipment-failure': {
+        const failure = event.target;
+        // Only failures that map onto equipment this engine actually models. An
+        // invented failure that changed nothing would be the very thing this
+        // method exists to stop.
+        switch (failure) {
+          case 'ventilator-disconnection':
+            this.setVentilator({ delivering: false });
+            this.log('critical', 'equipment', `equipment-${event.id}-${this.currentTick}`,
+              'The breathing circuit has disconnected. The ventilator is no longer delivering.');
+            return;
+          case 'oxygen-supply':
+            this.setVentilator({ fio2: 0.21 });
+            this.log('critical', 'equipment', `equipment-${event.id}-${this.currentTick}`,
+              'Oxygen supply failure. The delivered fraction has fallen to air.');
+            return;
+          case 'vaporizer':
+            this.setVentilator({ sevofluranePercent: 0 });
+            this.log('critical', 'equipment', `equipment-${event.id}-${this.currentTick}`,
+              'The vaporizer has stopped delivering agent.');
+            return;
+          default:
+            this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
+              `Timeline event "${event.id}" declares an equipment failure this engine does not `
+              + `model: "${String(failure)}". Modelled failures are ventilator-disconnection, `
+              + 'oxygen-supply and vaporizer.');
+            return;
+        }
+      }
+    }
+
+    // Exhaustiveness. If a name is added to EVENT_TYPES and not handled above,
+    // this assignment fails to compile — which is the entire point of the switch
+    // being written this way.
+    const unhandled: never = event.type;
+    this.log('warning', 'scenario', `unhandled-event-${event.id}-${this.currentTick}`,
+      `Timeline event type "${String(unhandled)}" is declared but this engine does not handle it.`);
+  }
+
   /** Advance exactly one tick. */
   step(): EngineTick {
     // --- Timeline -------------------------------------------------------------
@@ -412,18 +577,16 @@ export class AnesthesiaEngine {
 
     for (const event of this.scenario.timeline) {
       const declared: TimelineEvent = event;
-      if (declared.atTick === undefined || this.firedEvents.has(declared.id)) continue;
-      if (this.currentTick < declared.atTick) continue;
+      const holds = this.conditionMet(declared);
+      const heldLastTick = this.conditionHeld.has(declared.id);
+      if (holds) this.conditionHeld.add(declared.id);
+      else this.conditionHeld.delete(declared.id);
+
+      // Rising edge only, and once unless the event says otherwise.
+      if (!holds || heldLastTick) continue;
+      if (!declared.repeatable && this.firedEvents.has(declared.id)) continue;
       this.firedEvents.add(declared.id);
-      if (declared.message) {
-        this.log(declared.severity ?? 'info', 'scenario', declared.id, declared.message);
-      }
-      if (declared.durationTicks !== undefined && declared.value !== undefined) {
-        this.running.push({
-          id: declared.id, type: declared.type, value: declared.value,
-          untilTick: this.currentTick + declared.durationTicks,
-        });
-      }
+      this.fireTimelineEvent(declared);
     }
     this.running = this.running.filter((event) => event.untilTick > this.currentTick);
     for (const event of this.running) {
@@ -516,6 +679,8 @@ export class AnesthesiaEngine {
         unit: drug.model.concentrationUnit,
       });
     }
+
+    this.lastState = result.state;
 
     const events = this.pendingEvents;
     this.pendingEvents = [];

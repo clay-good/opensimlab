@@ -106,6 +106,12 @@ export interface TimelineEvent {
   readonly repeatable?: boolean;
   readonly value?: number;
   readonly durationTicks?: number;
+  /**
+   * What the event acts on, for the types that need naming rather than sizing:
+   * the rhythm for `rhythm-change`, the artifact for `artifact`, and which piece
+   * of equipment failed for `equipment-failure`.
+   */
+  readonly target?: string;
   readonly message?: string;
   readonly severity?: 'info' | 'advisory' | 'warning' | 'critical' | 'artifact';
 }
