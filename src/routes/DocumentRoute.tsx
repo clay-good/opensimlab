@@ -6,7 +6,7 @@
  * a document cannot claim something the code does not do.
  */
 
-import { Badge, CitationLink, Panel } from '@platform/ui';
+import { Badge, CitationLink, Panel, SiteBar } from '@platform/ui';
 import { buildValidationReport } from '@platform/docs/validation-report';
 import { EDITORIAL_BOARD, HONEST_STATUS, reviewableItems } from '@platform/governance/records';
 import { reportCoverage } from '@platform/governance/review-gate';
@@ -29,40 +29,25 @@ const VERDICT_SUMMARY: Record<string, string> = {
   current: 'Under current review.',
 };
 
-/** The trust documents, in the order a sceptical reader works through them. */
-const DOCUMENTS: readonly { path: string; label: string }[] = [
-  { path: '/validation', label: 'Validation' },
-  { path: '/governance', label: 'Governance' },
-  { path: '/limitations', label: 'Limitations' },
-  { path: '/privacy', label: 'Privacy' },
-  { path: '/content-review', label: 'Review the content' },
+/**
+ * The trust documents the shared bar does not already carry.
+ *
+ * Validation and Governance are in the site bar for everyone, so only the two
+ * that are specific to a reader working through the documents are added here.
+ */
+const DOCUMENT_EXTRAS: readonly { href: string; label: string }[] = [
+  { href: '/limitations', label: 'Limitations' },
+  { href: '/privacy', label: 'Privacy' },
+  { href: '/content-review', label: 'Review the content' },
 ];
 
 export function DocumentRoute({ path }: { path: string }) {
   const metadata = routeFor(path);
   return (
     <div className="document">
-      {/* Somewhere to go. A reader who arrives here from a footer link used to
-          be stranded on a page with no header and one link at the very bottom,
-          after several screens of table. */}
-      <header className="document__bar">
-        <a className="document__home" href="/">Open Sim Lab</a>
-        <nav aria-label="Trust documents">
-          <ul className="document__nav">
-            {DOCUMENTS.map((document) => (
-              <li key={document.path}>
-                <a
-                  href={document.path}
-                  {...(document.path === path ? { 'aria-current': 'page' } : {})}
-                >
-                  {document.label}
-                </a>
-              </li>
-            ))}
-            <li><a href="/anesthesia">Simulator</a></li>
-          </ul>
-        </nav>
-      </header>
+      {/* The same bar every other surface carries, so navigation cannot drift
+          between the trust documents and the simulator. */}
+      <SiteBar current={path} extra={DOCUMENT_EXTRAS} />
 
       <main className="reading" id="main">
         <h1>{metadata?.heading ?? 'Document'}</h1>

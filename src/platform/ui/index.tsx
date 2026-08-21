@@ -596,3 +596,5 @@ export function useLocalPreference<T>(
   }, [key]);
   return [value, update];
 }
+
+export { SiteBar, SITE_BAR_LINKS, type SiteBarLink, type SiteBarProps } from './SiteBar';

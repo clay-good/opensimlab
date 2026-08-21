@@ -7,7 +7,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Button, useLocalPreference } from '@platform/ui';
+import { Button, SiteBar, useLocalPreference } from '@platform/ui';
 import { useSession, sessionInternals, type GuidanceLevel } from '@platform/session/session-store';
 import { NotForClinicalUseGate, hasAcknowledged, recordAcknowledgement } from '@platform/safety/not-for-clinical-use';
 import { SonificationEngine } from '@platform/audio/sonification';
@@ -281,7 +281,9 @@ export function AnesthesiaRoute({ path }: { path: string }) {
  */
 function UnknownScenario({ id }: { id: string }) {
   return (
-    <main className="reading" id="main">
+    <>
+      <SiteBar />
+      <main className="reading" id="main">
       <h1>No scenario called that</h1>
       <p>
         This link asks for a scenario with the id <code>{id}</code>, and there is not one.
@@ -302,13 +304,16 @@ function UnknownScenario({ id }: { id: string }) {
         ))}
       </ul>
       <p><a href="/anesthesia">Back to the scenario list</a></p>
-    </main>
+      </main>
+    </>
   );
 }
 
 function ScenarioIndex() {
   return (
-    <main className="reading" id="main">
+    <>
+      <SiteBar current="/anesthesia" />
+      <main className="reading" id="main">
       <h1>Anesthesia simulator</h1>
       <p>
         Each scenario is a patient and a problem. Start at the top if this is your first one.
@@ -332,6 +337,7 @@ function ScenarioIndex() {
         ))}
       </ul>
       <p className="reading__aside">{NOT_FOR_CLINICAL_USE}</p>
-    </main>
+      </main>
+    </>
   );
 }

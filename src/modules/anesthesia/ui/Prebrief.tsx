@@ -7,7 +7,7 @@
  * are safe — before the clock runs.
  */
 
-import { Badge, Button, Panel } from '@platform/ui';
+import { Badge, Button, Panel, SiteBar } from '@platform/ui';
 import { isUnreviewed, UNREVIEWED_NOTICE } from '@platform/governance/review-gate';
 import { FlagControl } from '@platform/governance/FlagControl';
 import { reviewModeFrom } from '@platform/governance/review-notes';
@@ -41,7 +41,9 @@ export interface PrebriefProps {
 export function Prebrief({ scenario, region, onStart, onWatch, guidance, onGuidance, assignmentLabel }: PrebriefProps) {
   const patient = scenario.patient;
   return (
-    <main className="reading" id="main">
+    <>
+      <SiteBar />
+      <main className="reading" id="main">
       {assignmentLabel && (
         <p className="field__label">Assignment: {assignmentLabel}</p>
       )}
@@ -157,6 +159,7 @@ export function Prebrief({ scenario, region, onStart, onWatch, guidance, onGuida
           You can take the controls at any point and carry on from where it got to.
         </p>
       )}
-    </main>
+      </main>
+    </>
   );
 }
