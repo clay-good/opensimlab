@@ -255,6 +255,10 @@
     grid-template-columns: minmax(0, 1fr);
   }
   .cockpit__analysis, .cockpit__actions { display: none; }
+  /* Both overlays end above the floating pills rather than under them. The
+     pills are the only way to close either one, so they stay on top — which
+     means whatever the overlay puts at its own bottom edge would otherwise sit
+     beneath them. It was the second row of dose buttons. */
   .cockpit--analysis-open .cockpit__analysis {
     display: block;
     position: fixed;
@@ -262,6 +266,8 @@
     inset-inline-end: 0;
     inline-size: min(360px, 100%);
     z-index: 55;
+    box-sizing: border-box;
+    padding-block-end: var(--mobile-actions-reserve);
     background: var(--surface-1);
     border-inline-start: 1px solid var(--line-strong);
   }
@@ -271,17 +277,36 @@
     inset-inline: 0;
     inset-block-end: 0;
     z-index: 56;
-    max-block-size: 60dvh;
+    /* A DEFINITE height, not a maximum.
+     *
+     * `.actions` inside is `block-size: 100%`, and a percentage against an
+     * auto-height parent is indefinite — so the grid took its content height,
+     * its scrolling row was never bounded, and the tray ran 160px past the
+     * bottom of the sheet and off the screen. The last row of dose buttons was
+     * simply not reachable on a phone. */
+    block-size: 60dvh;
+    box-sizing: border-box;
+    padding-block-end: var(--mobile-actions-reserve);
     background: var(--surface-1);
     border-block-start: 1px solid var(--line-strong);
   }
-  .monitor__body { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; }
+  /* Numerics ABOVE the traces on a phone.
+   *
+   * At this width the Action Cockpit is a bottom sheet taking up to 60dvh, and
+   * with the tiles at the bottom of the monitor the sheet covered them — so a
+   * learner giving a drug lost the heart rate, the pressure and the saturation
+   * at precisely the moment they were giving it. On a real workstation the
+   * numbers do not go away, and here they no longer can: nothing that opens
+   * from the bottom can reach them. */
+  .monitor__body { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
   .monitor__tiles {
+    order: -1;
     grid-auto-flow: column;
     grid-auto-columns: minmax(96px, 1fr);
     overflow-x: auto;
     border-inline-start: 0;
-    border-block-start: 1px solid var(--line-subtle);
+    border-block-start: 0;
+    border-block-end: 1px solid var(--line-subtle);
   }
   /* The sacrifice order reaches `patient-summary-detail` here. At a phone width
    * the whole patient summary and the speed multipliers leave the bar, and the

@@ -418,3 +418,48 @@ describe('Requirement: Nothing Fixed To The Bottom Covers A Value', () => {
     }
   });
 });
+
+describe('Requirement: A Phone Can Run A Full Scenario', () => {
+  /**
+   * Three defects found by measuring the cockpit at 360 by 780, which is the
+   * width the layout specification names.
+   */
+  const phone = cockpitCss.slice(cockpitCss.indexOf('@media (max-width: 767px)'));
+
+  it('keeps the numerics above the traces, so a bottom sheet cannot reach them', () => {
+    // The Action Cockpit is a bottom sheet here taking up to 60dvh. With the
+    // tiles at the bottom of the monitor the sheet covered them, so a learner
+    // giving a drug lost the heart rate, the pressure and the saturation at
+    // exactly the moment they were giving it.
+    expect(phone).toContain('grid-template-rows: auto minmax(0, 1fr)');
+    expect(phone).toMatch(/\.monitor__tiles \{[^}]*order: -1;/s);
+  });
+
+  it('gives the open bottom sheet a definite height, so its tray can scroll', () => {
+    // `.actions` inside is `block-size: 100%`, and a percentage against an
+    // auto-height parent is indefinite: the grid took its content height, its
+    // scrolling row was never bounded, and the tray ran past the bottom of the
+    // sheet and off the screen, taking the last row of dose buttons with it.
+    const sheet = phone.match(/\.cockpit--actions-open \.cockpit__actions \{([^}]*)\}/s)?.[1] ?? '';
+    expect(sheet).toMatch(/(?<!max-)block-size: 60dvh/);
+    expect(sheet).toContain('box-sizing: border-box');
+    expect(componentsCss + cockpitCss).toContain('.actions__tray { overflow: auto');
+  });
+
+  it('keeps both overlays clear of the pills that close them', () => {
+    // The pills are the only control that closes either overlay, so they stay on
+    // top — which means whatever an overlay puts at its own bottom edge would
+    // otherwise sit underneath them.
+    const ruleFor = (selector: string) => {
+      const at = phone.indexOf(selector);
+      expect(at, `${selector} is not in the phone breakpoint at all`).toBeGreaterThan(-1);
+      return phone.slice(at, phone.indexOf('}', at));
+    };
+    for (const selector of [
+      '.cockpit--analysis-open .cockpit__analysis',
+      '.cockpit--actions-open .cockpit__actions',
+    ]) {
+      expect(ruleFor(selector), selector).toContain('padding-block-end: var(--mobile-actions-reserve)');
+    }
+  });
+});
