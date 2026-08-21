@@ -10,7 +10,7 @@ import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { EDITORIAL_BOARD, HONEST_STATUS, reviewableItems } from '@platform/governance/records';
 import { EXPLAINERS, getExplainer, wordCount } from '@anesthesia/content/explainers';
 import { DRUG_CARDS, getDrugCard } from '@anesthesia/content/drug-cards';
-import { requireSource } from '@platform/docs/sources';
+import { registeredPmids, requireSource } from '@platform/docs/sources';
 
 const TODAY = new Date('2026-08-19T00:00:00Z');
 
@@ -294,5 +294,45 @@ describe('Requirement: Dosing A Learner Reads Can Be Checked', () => {
   it('Scenario: the dosing source does not imply the card is clinically reviewed', () => {
     // A citation is not a signature. Every card is still unsigned.
     for (const card of DRUG_CARDS) expect(isUnreviewed(card.review), card.drugId).toBe(true);
+  });
+});
+
+describe('Requirement: A Claim About Evidence Names The Evidence', () => {
+  /**
+   * The explainers' provenance lines were mostly gestures — "standard
+   * cardiovascular physiology", "the awareness trial literature". For a
+   * qualitative explanation that is honest enough. For a claim about what large
+   * trials found, it is not: the one explainer whose entire point is that a
+   * number deserves scepticism was itself making an unfalsifiable claim.
+   */
+  const claimsAboutTrials = (explainer: { body: string }) =>
+    /\btrials?\b|\bstudies\b|\bevidence\b/i.test(explainer.body);
+
+  it('Scenario: an explainer citing trials names them with an identifier', () => {
+    for (const explainer of EXPLAINERS) {
+      if (!claimsAboutTrials(explainer)) continue;
+      expect(explainer.reflects, `${explainer.id} claims trial evidence without naming it`)
+        .toMatch(/PMID \d{5,8}/);
+    }
+  });
+
+  it('Scenario: every PMID an explainer cites is in the source register', () => {
+    const registered = registeredPmids();
+    for (const explainer of EXPLAINERS) {
+      for (const match of explainer.reflects.matchAll(/PMID (\d{5,8})/g)) {
+        expect(registered.has(match[1]!), `${explainer.id} cites unregistered PMID ${match[1]}`)
+          .toBe(true);
+      }
+    }
+  });
+
+  it('Scenario: the depth explainer names both awareness trials', () => {
+    // B-Unaware and BAG-RECALL. Either alone understates the evidence, and
+    // BAG-RECALL is the larger and the one in a high-risk population.
+    const depth = getExplainer('depth-monitoring-and-its-limits');
+    expect(depth.reflects).toContain('18337600');
+    expect(depth.reflects).toContain('21848460');
+    expect(requireSource('avidan-2008').usedFor).toContain('B-Unaware');
+    expect(requireSource('avidan-2011').usedFor).toContain('BAG-RECALL');
   });
 });

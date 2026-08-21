@@ -461,6 +461,33 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: CHECKED,
   },
   {
+    id: 'avidan-2008',
+    pmid: '18337600',
+    authors: 'Avidan MS, Zhang L, Burnside BA, Finkel KJ, Searleman AC, Selvidge JA, et al.',
+    title: 'Anesthesia awareness and the bispectral index',
+    publication: 'N Engl J Med',
+    year: 2008,
+    locator: '358:1097-108',
+    usedFor: 'The depth explainer\'s statement that large trials have not shown a processed-EEG '
+      + 'index to be uniformly superior to end-tidal agent guidance for preventing awareness. '
+      + 'This is the B-Unaware trial.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-21',
+  },
+  {
+    id: 'avidan-2011',
+    pmid: '21848460',
+    authors: 'Avidan MS, Jacobsohn E, Glick D, Burnside BA, Zhang L, Villafranca A, et al.',
+    title: 'Prevention of intraoperative awareness in a high-risk surgical population',
+    publication: 'N Engl J Med',
+    year: 2011,
+    locator: '365:591-600',
+    usedFor: 'The same statement in the depth explainer. This is the BAG-RECALL trial, the larger '
+      + 'of the two and the one conducted in a high-risk population.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-21',
+  },
+  {
     id: 'schwid-2001',
     pmid: '11302037',
     authors: 'Schwid HA, Rooke GA, Michalowski P, Ross BK',

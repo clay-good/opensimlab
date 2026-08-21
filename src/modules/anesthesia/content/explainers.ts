@@ -203,7 +203,12 @@ export const EXPLAINERS: readonly Explainer[] = [
       + 'response to stimulus, and the clinical context all still matter.',
     diagram: { kind: 'synergy-surface', caption: 'The index is a model output, not a measurement.' },
     showMe: { scenarioId: 'routine-induction' },
-    reflects: 'Published pharmacodynamic models and the awareness trial literature.',
+    // Named trials, not "the awareness trial literature". This is the explainer
+    // whose entire point is that a number deserves scepticism, so the claim it
+    // makes about the evidence had better be checkable.
+    reflects: 'Published pharmacodynamic models; B-Unaware (Avidan et al., N Engl J Med '
+      + '2008;358:1097-108, PMID 18337600) and BAG-RECALL (Avidan et al., N Engl J Med '
+      + '2011;365:591-600, PMID 21848460) for the comparison with end-tidal agent guidance.',
     review: UNSIGNED,
   },
 ];
