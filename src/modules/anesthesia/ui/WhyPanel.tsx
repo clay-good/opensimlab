@@ -13,6 +13,16 @@ import { FIELDS, type StateField } from '@anesthesia/physiology';
 import { EXPLAINERS } from '@anesthesia/content/explainers';
 
 /** Which explainer each attribution term links to. */
+/**
+ * Which explainer answers "why is this happening" for each attribution term.
+ *
+ * EVERY term the engine can emit needs an entry. The panel names the term
+ * whatever happens, but the reading behind it is the point of opening the panel
+ * at all — and the terms added most recently were the ones most worth reading
+ * about: a learner watching a pressure collapse from unrelieved hypoxaemia is
+ * exactly the person who should be pushed toward the safe-apnoea explainer.
+ * `tests/ui/why-panel.test.tsx` fails the build if a term has no entry.
+ */
 const TERM_EXPLAINERS: Record<string, string> = {
   'propofol-vasodilation': 'vasodilation-versus-hypovolemia',
   'opioid-vasodilation': 'vasodilation-versus-hypovolemia',
@@ -22,7 +32,21 @@ const TERM_EXPLAINERS: Record<string, string> = {
   apnea: 'preoxygenation-and-safe-apnea-time',
   'opioid-bradycardia': 'hypnotic-opioid-synergy',
   'surgical-stimulus': 'hypnotic-opioid-synergy',
+  // The baroreflex is why a pressure that fell is not still falling, which is
+  // the same lesson as telling vasodilation from hypovolaemia.
+  baroreflex: 'vasodilation-versus-hypovolemia',
+  vasopressor: 'vasodilation-versus-hypovolemia',
+  'volatile-vasodilation': 'vasodilation-versus-hypovolemia',
+  'volatile-myocardial-depression': 'vasodilation-versus-hypovolemia',
+  // The hypoxic terms all lead to safe apnoea time, because the question they
+  // raise is always the same one: how long was there, and what was spent.
+  'hypoxic-tachycardia': 'preoxygenation-and-safe-apnea-time',
+  'hypoxic-bradycardia': 'preoxygenation-and-safe-apnea-time',
+  'hypoxic-myocardial-failure': 'preoxygenation-and-safe-apnea-time',
 };
+
+/** Exported so a test can require every emitted term to have an entry. */
+export const TERM_EXPLAINER_IDS = TERM_EXPLAINERS;
 
 export interface WhyPanelProps {
   readonly open: boolean;
