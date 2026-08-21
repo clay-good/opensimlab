@@ -11,7 +11,8 @@ import { buildValidationReport } from '@platform/docs/validation-report';
 import { EDITORIAL_BOARD, HONEST_STATUS, reviewableItems } from '@platform/governance/records';
 import { reportCoverage } from '@platform/governance/review-gate';
 import { LIMITATIONS } from '@platform/docs/limitations';
-import { SOURCES, formatSource } from '@platform/docs/sources';
+import { SOURCES, formatSource, requireSource } from '@platform/docs/sources';
+import { VERIFIED_CONSTANTS, confirmedCount } from '@platform/docs/verified-constants';
 import { PRIVACY_CLAIMS } from '@platform/docs/privacy-claims';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { routeFor } from './routes';
@@ -157,6 +158,33 @@ function ValidationBody() {
 
       <h2>Reproducing these numbers</h2>
       <p>{report.reproduce}</p>
+
+      <h2>Which numbers have actually been checked</h2>
+      <p>
+        {confirmedCount().confirmed} of {confirmedCount().total} recorded constants have been read
+        from their source&apos;s own text. The rest are listed with what was tried and why it
+        settled nothing, so a reviewer inherits a worklist rather than an instruction to check
+        everything.
+      </p>
+      <table>
+        <thead>
+          <tr><th>Constant</th><th className="numeric">Value</th><th>Source</th><th>Checked</th></tr>
+        </thead>
+        <tbody>
+          {VERIFIED_CONSTANTS.map((constant) => (
+            <tr key={constant.symbol}>
+              <td><code>{constant.symbol}</code><br /><span className="field__hint">{constant.note}</span></td>
+              <td className="numeric">{constant.value} {constant.units}</td>
+              <td>{requireSource(constant.sourceId).publication} {requireSource(constant.sourceId).year}</td>
+              <td>
+                <Badge kind={constant.status === 'confirmed' ? 'default' : 'out-of-range'}>
+                  {constant.status === 'confirmed' ? 'Confirmed' : 'Not checked'}
+                </Badge>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
       <h2>Every source, and what was taken from it</h2>
       <p>
