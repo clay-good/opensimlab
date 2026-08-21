@@ -348,3 +348,73 @@ describe('Requirement: The Concentration Plot Warns About The Right Drug', () =>
     expect(markup).not.toContain('remifentanil dose given while the');
   });
 });
+
+describe('Requirement: Nothing Fixed To The Bottom Covers A Value', () => {
+  /**
+   * The Analysis and Actions pills float bottom-right on a phone, and the vitals
+   * strip is the last thing in the monitor — so the pills landed on top of the
+   * end-tidal CO2 and the saturation. Two of the numbers a learner watches most,
+   * covered, on the surface where screen space is scarcest.
+   *
+   * These are source assertions rather than measurements, because jsdom does not
+   * lay out. What they guard is the invariant: every surface fixed to the bottom
+   * of the cockpit reserves its own height, and the cockpit gives up exactly the
+   * sum of those reservations.
+   */
+  /**
+   * Everything in the stylesheet that is fixed to the bottom of the viewport,
+   * and why each is allowed to be.
+   *
+   * A drawer is allowed to cover what is underneath it — that is what a drawer
+   * is, and the learner opened it. A persistent strip is not: nobody asked for
+   * it and it never goes away on its own.
+   */
+  const bottomOverlays: Record<string, 'reserves-its-height' | 'drawer-covers-by-design'> = {
+    '.demo-bar': 'reserves-its-height',
+    '.mobile-actions': 'reserves-its-height',
+    '.cockpit--actions-open': 'drawer-covers-by-design',
+  };
+
+  it('every bottom-fixed overlay has a reservation the cockpit honours', () => {
+    const padding = cockpitCss.match(/\.cockpit \{[^}]*padding-block-end:\s*([^;]+);/s)?.[1] ?? '';
+    expect(padding).toContain('--demo-bar-height');
+    expect(padding).toContain('--mobile-actions-reserve');
+    // Summed, not one or the other: on a phone during a demonstration both are
+    // on screen at once.
+    expect(padding).toMatch(/calc\(/);
+  });
+
+  it('reserves nothing when the overlay is not on screen', () => {
+    // Both fall back to zero, so a desktop cockpit with no demonstration gives
+    // up no height at all and the layout is exactly what it was.
+    expect(cockpitCss).toContain('var(--demo-bar-height, 0px)');
+    expect(cockpitCss).toContain('var(--mobile-actions-reserve, 0px)');
+  });
+
+  it('keeps the two bottom overlays off each other', () => {
+    // A demonstration on a phone puts both there at once.
+    expect(cockpitCss).toMatch(
+      /\.cockpit\[data-demo-focus\] \.mobile-actions \{[^}]*inset-block-end:\s*calc\(var\(--demo-bar-height\)/s,
+    );
+  });
+
+  it('has no bottom-fixed overlay this test does not know about', () => {
+    // If a third one is added, it has to be reasoned about here rather than
+    // quietly landing on whatever is underneath it.
+    // Not anchored to the line start: the rules that matter most are indented
+    // inside media queries, and an anchored pattern found only one of the three.
+    const fixedToBottom = [...new Set(
+      [...cockpitCss.matchAll(/(\.[\w-]+)[^{}]*\{[^{}]*position:\s*fixed;[^{}]*inset-block-end/gs)]
+        .map((match) => match[1]!),
+    )];
+    // The pattern has to be finding things for this test to mean anything.
+    expect(fixedToBottom.length).toBeGreaterThanOrEqual(3);
+    for (const selector of fixedToBottom) {
+      expect(
+        Object.keys(bottomOverlays),
+        `${selector} is fixed to the bottom of the cockpit and unaccounted for: either reserve `
+        + 'its height or record here why it may cover what is under it',
+      ).toContain(selector);
+    }
+  });
+});

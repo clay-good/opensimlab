@@ -35,7 +35,10 @@
      strip covers the action cockpit, including at the beat that asks you to look
      at the action cockpit. */
   box-sizing: border-box;
-  padding-block-end: var(--demo-bar-height, 0px);
+  /* Everything that floats over the bottom of the cockpit reserves its own
+     height here, so no overlay ever sits on top of a value. Both terms are zero
+     unless the surface they belong to is actually on screen. */
+  padding-block-end: calc(var(--demo-bar-height, 0px) + var(--mobile-actions-reserve, 0px));
   max-inline-size: var(--max-content-width);
   margin-inline: auto;
   background: var(--surface-0);
@@ -299,6 +302,12 @@
   /* The tray clears the floating action buttons, which sit over it. */
   .cockpit--actions-open .actions__tray { padding-block-end: var(--space-7); }
 
+  /* The Analysis and Actions pills float bottom-right, and the vitals strip is
+     the last thing in the monitor — so the pills landed squarely on top of the
+     end-tidal CO2 and the saturation, covering two of the numbers a learner
+     watches most. The cockpit gives up their height instead. */
+  .cockpit { --mobile-actions-reserve: calc(var(--control-height) + var(--space-4) * 2); }
+
   .mobile-actions {
     position: fixed;
     inset-block-end: var(--space-4);
@@ -306,6 +315,12 @@
     z-index: 57;
     display: flex;
     gap: var(--space-2);
+  }
+
+  /* A demonstration puts its own strip at the bottom. The pills sit above it
+     rather than on it. */
+  .cockpit[data-demo-focus] .mobile-actions {
+    inset-block-end: calc(var(--demo-bar-height) + var(--space-4));
   }
 }
 
