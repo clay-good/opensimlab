@@ -10,6 +10,7 @@ import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { EDITORIAL_BOARD, HONEST_STATUS, reviewableItems } from '@platform/governance/records';
 import { EXPLAINERS, getExplainer, wordCount } from '@anesthesia/content/explainers';
 import { DRUG_CARDS, getDrugCard } from '@anesthesia/content/drug-cards';
+import { requireSource } from '@platform/docs/sources';
 
 const TODAY = new Date('2026-08-19T00:00:00Z');
 
@@ -235,5 +236,51 @@ describe('Requirement: Unreviewed Content Is Marked Where It Is Used', () => {
     // The drug card drawer, the explainer drawer and the scenario briefing.
     expect((cockpit.match(/<UnreviewedMarker/g) ?? []).length).toBeGreaterThanOrEqual(2);
     expect(prebrief).toContain('has not been clinically reviewed');
+  });
+});
+
+describe('Requirement: Dosing A Learner Reads Can Be Checked', () => {
+  /**
+   * The doses on the drug cards had no source at all, while every model
+   * parameter in the project had one — so the most directly consequential text
+   * in the application was the only clinical content a reader could not check.
+   */
+  it('Scenario: every card names where its dosing was checked', () => {
+    for (const card of DRUG_CARDS) {
+      expect(card.dosing, card.drugId).toBeDefined();
+      expect(() => requireSource(card.dosing.sourceId)).not.toThrow();
+    }
+  });
+
+  it('Scenario: a card that differs from its label says so, and does not reconcile it', () => {
+    // Teaching ranges and licensed ranges genuinely differ. Which one a learner
+    // should be shown is a clinician's call, so the difference is surfaced
+    // rather than quietly resolved by whoever edited the file last.
+    const propofol = getDrugCard('propofol')!;
+    expect(propofol.dosing.comparedWithLabel).toContain('2–2.5 mg/kg');
+    expect(propofol.dosing.comparedWithLabel).toContain('teaching range');
+    expect(propofol.dosing.comparedWithLabel).toContain('clinician');
+  });
+
+  it('Scenario: a card that has NOT been checked says that too', () => {
+    const remifentanil = getDrugCard('remifentanil')!;
+    expect(remifentanil.dosing.comparedWithLabel).toContain('NOT yet checked');
+    // And says what a reviewer should do about it first.
+    expect(remifentanil.dosing.comparedWithLabel).toContain('reviewer should look at');
+  });
+
+  it('Scenario: the label sources say which country they are', () => {
+    // Licensed dosing differs by country and the practice-region profiles
+    // already know that. A label cited without its jurisdiction is a trap.
+    for (const card of DRUG_CARDS) {
+      const source = requireSource(card.dosing.sourceId);
+      expect(source.usedFor.length + source.verifiedAgainst.length).toBeGreaterThan(80);
+      expect(source.authors).toContain('United States');
+    }
+  });
+
+  it('Scenario: the dosing source does not imply the card is clinically reviewed', () => {
+    // A citation is not a signature. Every card is still unsigned.
+    for (const card of DRUG_CARDS) expect(isUnreviewed(card.review), card.drugId).toBe(true);
   });
 });

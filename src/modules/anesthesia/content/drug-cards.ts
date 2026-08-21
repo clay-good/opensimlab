@@ -21,6 +21,22 @@ export interface DrugCard {
   readonly contraindications: readonly string[];
   /** What to watch on the monitor after giving it. */
   readonly watchFor: string;
+  /**
+   * Where the dosing figures were checked, and how they compare.
+   *
+   * The doses on these cards had no source at all, while every model parameter
+   * in the project had one — so the most directly consequential text in the
+   * application was the only clinical content a reader could not check.
+   *
+   * Where the card's range differs from the label's, that is stated rather than
+   * reconciled. Teaching ranges and licensed ranges genuinely differ, and
+   * deciding which a learner should be shown is a clinician's call, not one to
+   * be made silently by whoever last edited the file.
+   */
+  readonly dosing: {
+    readonly sourceId: string;
+    readonly comparedWithLabel: string;
+  };
   readonly review: ClinicalReview;
 }
 
@@ -42,6 +58,17 @@ export const DRUG_CARDS: readonly DrugCard[] = [
     inductionDose: '1.5–2.5 mg/kg in a healthy adult, reduced in the elderly and in the haemodynamically compromised.',
     maintenanceDose: '4–12 mg/kg/h by infusion, titrated to effect.',
     onset: 'Loss of consciousness within one arm–brain circulation time; peak effect-site concentration around 1.5–2 minutes after a bolus.',
+    dosing: {
+      sourceId: 'propofol-us-label',
+      comparedWithLabel:
+        'The United States label gives 2–2.5 mg/kg for induction in ASA I–II adults under 65; '
+        + 'this card opens the range at 1.5, which is the teaching range and not the licensed '
+        + 'one. For maintenance the label gives 150–200 micrograms/kg/min for the first ten to '
+        + 'fifteen minutes and 50–100 thereafter — about 9–12 mg/kg/h then 3–6 — where this card '
+        + 'gives a single 4–12 mg/kg/h that spans both without distinguishing them. Both '
+        + 'differences are stated rather than reconciled, because choosing which range a learner '
+        + 'should be shown is a clinician\'s decision.',
+    },
     duration: 'A single bolus wears off by redistribution in 5–10 minutes. Offset after a long infusion is longer, and grows with duration.',
     adverseEffects: [
       'Dose-dependent hypotension, by vasodilation, venodilation reducing preload, and some '
@@ -78,6 +105,14 @@ export const DRUG_CARDS: readonly DrugCard[] = [
       + 'line warns against and show you no consequence. See the limitations register.',
     maintenanceDose: '0.05–0.5 µg/kg/min by infusion, titrated to the stimulus.',
     onset: 'Peak effect within about 1.5 minutes.',
+    dosing: {
+      sourceId: 'remifentanil-us-label',
+      comparedWithLabel:
+        'NOT yet checked against the label. The label record was located and its dosing table '
+        + 'was not read, so these figures rest on nothing a reader can verify. The maintenance '
+        + 'range given here is narrower than the licensed one at its upper end. This is the '
+        + 'first thing a reviewer should look at on this card.',
+    },
     duration:
       'Context-sensitive half-time stays around 3–4 minutes however long the infusion has run, '
       + 'which is what makes it different from every other opioid — and why analgesia must be '

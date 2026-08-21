@@ -60,8 +60,14 @@ describe('every entry says enough to be checked', () => {
     expect(source.year).toBeLessThanOrEqual(2026);
     // A locator a reader can actually turn to — a volume and pages, a version,
     // or an explicit statement that the source is not version-pinned.
-    if (source.unpinned) expect(source.locator).toContain('current');
-    else expect(source.locator).toMatch(/\d/);
+    if (source.unpinned) {
+      // A section name or "the current one" — and the entry has to say WHY it
+      // cannot be pinned, so `unpinned` never becomes a way to skip the work.
+      expect(source.locator.length).toBeGreaterThan(10);
+      expect(`${source.locator} ${source.verifiedAgainst}`).toContain('current');
+    } else {
+      expect(source.locator).toMatch(/\d/);
+    }
     // What was taken from it, specifically. "Pharmacology" would not do.
     expect(source.usedFor.length).toBeGreaterThan(60);
     // How the citation itself was checked, not somebody's recollection.
@@ -102,13 +108,16 @@ describe('standards are tracked for currency, because they are amended', () => {
 describe('a source that cannot be pinned says so', () => {
   it('is the exception, not the habit', () => {
     const unpinned = SOURCES.filter((source) => source.unpinned);
-    expect(unpinned.length).toBeLessThanOrEqual(2);
+    expect(unpinned.length).toBeLessThan(SOURCES.length / 4);
   });
 
-  it('is only used where the body publishes no version to cite', () => {
+  it('is only used where the issuer publishes no fixed version to cite', () => {
+    // A journal article is fixed once published, so a PMID and `unpinned` are
+    // contradictory. Continuously revised documents — a drug label, an exam
+    // content outline — are the only legitimate case.
     for (const source of SOURCES.filter((s) => s.unpinned)) {
       expect(source.pmid, `${source.id} has a PMID and does not need to be unpinned`).toBeUndefined();
-      expect(source.verifiedAgainst).toContain('stale');
+      expect(source.verifiedAgainst).toMatch(/stale|current/);
     }
   });
 });

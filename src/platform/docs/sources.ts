@@ -372,6 +372,45 @@ export const SOURCES: readonly Source[] = [
   },
 
   // --- Education -------------------------------------------------------------
+  // --- Drug labelling --------------------------------------------------------
+  //
+  // The dosing a learner reads had no source at all, while every model
+  // parameter had one. These are the labels the figures are now checked
+  // against. They are the UNITED STATES labels; the practice-region profiles
+  // already carry the fact that formularies and licensed dosing differ by
+  // country, and a reviewer outside the US should check against their own.
+  {
+    id: 'propofol-us-label',
+    authors: 'United States Food and Drug Administration approved labelling',
+    title: 'Propofol injectable emulsion — prescribing information',
+    publication: 'DailyMed, National Library of Medicine',
+    year: 2026,
+    locator: 'Dosage and Administration, adult induction and maintenance',
+    unpinned: true,
+    usedFor: 'The reference the propofol drug card\'s induction and maintenance figures are '
+      + 'checked against. The label gives 2 to 2.5 mg/kg for induction in ASA I-II adults under '
+      + '65, and 50 to 100 micrograms/kg/min for maintenance after an initial 150 to 200.',
+    verifiedAgainst: 'The DailyMed label text. Not version-pinned: a label is revised on the '
+      + 'manufacturer\'s schedule and DailyMed serves whichever revision is current, so naming a '
+      + 'year here would go stale silently.',
+    verifiedOn: CHECKED,
+  },
+  {
+    id: 'remifentanil-us-label',
+    authors: 'United States Food and Drug Administration approved labelling',
+    title: 'Remifentanil hydrochloride for injection — prescribing information',
+    publication: 'DailyMed, National Library of Medicine',
+    year: 2026,
+    locator: 'Dosage and Administration, general anaesthesia',
+    unpinned: true,
+    usedFor: 'The reference the remifentanil drug card\'s figures are checked against.',
+    verifiedAgainst: 'The DailyMed label record was located, but its full dosing table was not '
+      + 'read. The card\'s figures are therefore NOT confirmed against it, and the card says so '
+      + 'rather than implying they are. Not version-pinned, for the same reason as any label: '
+      + 'DailyMed serves whichever revision is current.',
+    verifiedOn: CHECKED,
+  },
+
   // --- Standards, which are amended rather than published once ---------------
   {
     id: 'asa-basic-monitoring',

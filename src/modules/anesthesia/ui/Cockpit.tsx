@@ -31,6 +31,7 @@ import { concentrationCsv } from './ConcentrationPanel';
 import { findStacking } from '@anesthesia/debrief/analysis';
 import { EXPLAINERS, getExplainer } from '@anesthesia/content/explainers';
 import { getDrugCard } from '@anesthesia/content/drug-cards';
+import { requireSource } from '@platform/docs/sources';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import type { SonificationEngine } from '@platform/audio/sonification';
 
@@ -579,6 +580,13 @@ function DrugCardBody({ drugId, reviewMode }: { drugId: string; reviewMode: bool
       <h3>Dosing</h3>
       <p>Induction: {card.inductionDose}</p>
       <p>Maintenance: {card.maintenanceDose}</p>
+      {/* Where these figures came from, and where they differ from the label.
+          A dose is the most consequential thing on this card and was the only
+          clinical content in the application a reader could not check. */}
+      <p className="field__hint">
+        Checked against {requireSource(card.dosing.sourceId).title}.{' '}
+        {card.dosing.comparedWithLabel}
+      </p>
       <h3>Onset and duration</h3>
       <p>{card.onset}</p>
       <p>{card.duration}</p>
