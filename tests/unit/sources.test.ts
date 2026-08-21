@@ -58,8 +58,10 @@ describe('every entry says enough to be checked', () => {
     expect(source.publication.length).toBeGreaterThan(3);
     expect(source.year).toBeGreaterThan(1950);
     expect(source.year).toBeLessThanOrEqual(2026);
-    // A locator a reader can actually turn to.
-    expect(source.locator).toMatch(/\d/);
+    // A locator a reader can actually turn to — a volume and pages, a version,
+    // or an explicit statement that the source is not version-pinned.
+    if (source.unpinned) expect(source.locator).toContain('current');
+    else expect(source.locator).toMatch(/\d/);
     // What was taken from it, specifically. "Pharmacology" would not do.
     expect(source.usedFor.length).toBeGreaterThan(60);
     // How the citation itself was checked, not somebody's recollection.
@@ -94,6 +96,20 @@ describe('standards are tracked for currency, because they are amended', () => {
     expect(iec.verifiedAgainst).toContain('paywalled');
     expect(iec.verifiedAgainst).toContain('not read');
     expect(iec.usedFor).toContain('not a certified medical device');
+  });
+});
+
+describe('a source that cannot be pinned says so', () => {
+  it('is the exception, not the habit', () => {
+    const unpinned = SOURCES.filter((source) => source.unpinned);
+    expect(unpinned.length).toBeLessThanOrEqual(2);
+  });
+
+  it('is only used where the body publishes no version to cite', () => {
+    for (const source of SOURCES.filter((s) => s.unpinned)) {
+      expect(source.pmid, `${source.id} has a PMID and does not need to be unpinned`).toBeUndefined();
+      expect(source.verifiedAgainst).toContain('stale');
+    }
   });
 });
 

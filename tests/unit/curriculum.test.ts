@@ -3,7 +3,11 @@
  * links, and learning/curriculum's instructor mode.
  */
 import { describe, expect, it } from 'vitest';
-import { FRAMEWORKS, MAPPING_DISCLAIMER, getFramework } from '@anesthesia/curriculum/frameworks';
+import {
+  ACGME_ANESTHESIOLOGY_MILESTONES, COA_STANDARDS, FRAMEWORKS, MAPPING_DISCLAIMER, NBCRNA_NCE,
+  getFramework,
+} from '@anesthesia/curriculum/frameworks';
+import { requireSource } from '@platform/docs/sources';
 import {
   SCENARIO_MAPPINGS, coverageFor, danglingMappings, mappingCsv, unmappedScenarios,
 } from '@anesthesia/curriculum/mapping';
@@ -115,5 +119,63 @@ describe('Requirement: Assignment Links Without Accounts', () => {
 
   it('Scenario: A seed is a whole number, so the same link is the same patient', () => {
     expect(readAssignment('?seed=12.7').seed).toBe(12);
+  });
+});
+
+describe('Requirement: A Named Framework Names A Version That Is Current', () => {
+  /**
+   * The interface told educators it was mapped against the COA practice
+   * doctorate standards "as revised 2022". The current standards were revised
+   * May 2025, effective January 2026, with a January 2024 revision in between —
+   * two revisions stale, on the page a nurse anaesthesia programme director
+   * reads first. Nothing here noticed, because nothing here looked.
+   *
+   * These bind each framework's displayed version to the source register, which
+   * records when the body last amended it and when that was checked.
+   */
+  const registered = (id: string) => requireSource(id);
+
+  it('Scenario: the COA standards name the revision the Council actually publishes', () => {
+    const source = registered('coa-practice-doctorate-standards');
+    expect(source.currency?.lastAmended.slice(0, 4)).toBe('2025');
+    expect(COA_STANDARDS.version).toContain('2025');
+    // And the effective date, because a programme needs to know which applies.
+    expect(COA_STANDARDS.version).toContain('January 2026');
+    expect(COA_STANDARDS.version).not.toContain('2022');
+  });
+
+  it('Scenario: the ACGME milestones name a version and no unverifiable year', () => {
+    // The sources disagree — a 2020 copyright, a 2021 describing paper, a 2022
+    // effective date. Naming the version alone is the only claim that is true
+    // whichever is right.
+    expect(ACGME_ANESTHESIOLOGY_MILESTONES.version).toBe('2.0');
+    expect(registered('acgme-anesthesiology-milestones-2').verifiedAgainst)
+      .toContain('Inconclusive');
+  });
+
+  it('Scenario: a framework with no citable version says "current" rather than a year', () => {
+    expect(NBCRNA_NCE.version).toContain('current');
+    expect(NBCRNA_NCE.version).not.toMatch(/\d{4}/);
+    expect(registered('nbcrna-nce-content-outline').unpinned).toBe(true);
+  });
+
+  it('Scenario: every framework the interface names is in the source register', () => {
+    const ids: Record<string, string> = {
+      'coa-standards': 'coa-practice-doctorate-standards',
+      'acgme-anesthesiology-milestones-2': 'acgme-anesthesiology-milestones-2',
+      'nbcrna-nce': 'nbcrna-nce-content-outline',
+    };
+    for (const framework of [COA_STANDARDS, ACGME_ANESTHESIOLOGY_MILESTONES, NBCRNA_NCE]) {
+      const sourceId = ids[framework.id];
+      expect(sourceId, `${framework.id} has no register entry`).toBeDefined();
+      expect(() => requireSource(sourceId!)).not.toThrow();
+    }
+  });
+
+  it('Scenario: none of them is claimed as an endorsement', () => {
+    for (const framework of [COA_STANDARDS, ACGME_ANESTHESIOLOGY_MILESTONES, NBCRNA_NCE]) {
+      expect(framework.fidelity).toBe('summarised');
+      expect(framework.note.toLowerCase()).toContain('not');
+    }
   });
 });

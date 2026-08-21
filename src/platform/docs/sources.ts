@@ -43,6 +43,15 @@ export interface Source {
   readonly year: number;
   /** Volume and pages, or a version designation for a standard. */
   readonly locator: string;
+  /**
+   * Deliberately not pinned to a version or a year.
+   *
+   * For a document the issuing body revises continuously and publishes only as
+   * "current", naming a year would go stale silently — which is exactly the
+   * failure this register exists to catch. Saying "the current one" stays true.
+   * Only set this where a pinned version genuinely does not exist to cite.
+   */
+  readonly unpinned?: boolean;
   /** Exactly what this project takes from it. Specific, not "pharmacology". */
   readonly usedFor: string;
   /** What the citation was checked against, and when. */
@@ -307,6 +316,58 @@ export const SOURCES: readonly Source[] = [
       + 'Note the version is 2020 and the publication year is 2021; both are stated so a reader '
       + 'looking for one does not conclude the other is wrong.',
     verifiedAgainst: NCBI,
+    verifiedOn: CHECKED,
+  },
+
+  // --- Curriculum frameworks -------------------------------------------------
+  //
+  // Mapped to, never transcribed, and endorsed by none of these bodies. They are
+  // registered because the interface names them to educators, and a named
+  // framework whose version is stale is worse than one with no version at all.
+  {
+    id: 'coa-practice-doctorate-standards',
+    authors: 'Council on Accreditation of Nurse Anesthesia Educational Programs',
+    title: 'Standards for Accreditation of Nurse Anesthesia Programs — Practice Doctorate',
+    publication: 'Council on Accreditation of Nurse Anesthesia Educational Programs',
+    year: 2025,
+    locator: 'Revised May 2025, effective January 2026',
+    usedFor: 'The curriculum content areas the anesthesia module is mapped against for nurse '
+      + 'anesthesia programmes. A mapping in this project\'s own words, not a transcription, and '
+      + 'not a claim of compliance.',
+    verifiedAgainst: 'The Council\'s own standards page. The project said "as revised 2022", '
+      + 'which was two revisions out of date — there was a January 2024 revision between.',
+    verifiedOn: CHECKED,
+    currency: { lastAmended: '2025-05-01', checkedAt: CHECKED },
+  },
+  {
+    id: 'acgme-anesthesiology-milestones-2',
+    authors: 'Accreditation Council for Graduate Medical Education',
+    title: 'Anesthesiology Milestones 2.0',
+    publication: 'Accreditation Council for Graduate Medical Education',
+    year: 2021,
+    locator: 'Version 2.0. Described in Ambardekar et al., Anesth Analg 2021;133:353-61',
+    usedFor: 'The subcompetencies a screen-based simulator could plausibly contribute evidence '
+      + 'toward, for anesthesiology residency programmes.',
+    verifiedAgainst: 'Inconclusive on the date. The document carries a 2020 copyright, the paper '
+      + 'describing it is 2021, and the effective date for programmes was 2022. The interface '
+      + 'therefore names the VERSION only and asserts no year. Needs someone who can establish '
+      + 'the correct designation.',
+    verifiedOn: CHECKED,
+  },
+  {
+    id: 'nbcrna-nce-content-outline',
+    authors: 'National Board of Certification and Recertification for Nurse Anesthetists',
+    title: 'National Certification Examination content outline',
+    publication: 'National Board of Certification and Recertification for Nurse Anesthetists',
+    year: 2026,
+    locator: 'The outline as published for the current examination',
+    unpinned: true,
+    usedFor: 'The five top-level content areas the anesthesia module is mapped against. The '
+      + 'divisions are the outline\'s own; the descriptions beneath them are this project\'s '
+      + 'summary and are not endorsed by the board.',
+    verifiedAgainst: 'Not version-pinned on purpose: the interface names the outline as published '
+      + 'for the CURRENT examination rather than a year, so it cannot go stale the way a pinned '
+      + 'year silently does.',
     verifiedOn: CHECKED,
   },
 

@@ -108,7 +108,10 @@ export const COA_STANDARDS: Framework = {
   name: 'Standards for Accreditation of Nurse Anesthesia Programs — Practice Doctorate',
   shortLabel: 'COA standards',
   body: 'Council on Accreditation of Nurse Anesthesia Educational Programs',
-  version: 'Practice doctorate standards, as revised 2022',
+  // Revised May 2025, effective January 2026. This said "as revised 2022",
+  // which was two revisions out of date: there was a January 2024 revision
+  // between. Checked against the Council's own standards page.
+  version: 'Practice doctorate standards, revised May 2025, effective January 2026',
   url: 'https://www.coacrna.org/',
   appliesTo: 'Nurse anesthesia programs and their curricula',
   fidelity: 'summarised',
@@ -160,7 +163,15 @@ export const ACGME_ANESTHESIOLOGY_MILESTONES: Framework = {
   name: 'Anesthesiology Milestones 2.0',
   shortLabel: 'ACGME milestones',
   body: 'Accreditation Council for Graduate Medical Education',
-  version: '2.0, published 2020',
+  // Version only, deliberately without a year.
+  //
+  // This said "published 2020". The sources disagree: the document itself
+  // carries a 2020 copyright, the paper describing it is Anesth Analg 2021, and
+  // the effective date for programmes was 2022. Rather than swap one
+  // unverifiable year for another, the version is stated on its own — which is
+  // the part that identifies the document — and the ambiguity is recorded in
+  // the source register for whoever can resolve it.
+  version: '2.0',
   url: 'https://www.acgme.org/specialties/anesthesiology/milestones/',
   appliesTo: 'Anesthesiology residents and their programs',
   fidelity: 'summarised',
