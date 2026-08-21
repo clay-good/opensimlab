@@ -157,6 +157,25 @@ export interface AlarmEvaluation {
   readonly burden: boolean;
 }
 
+/**
+ * The breached value, printed so it never contradicts the limit that produced it.
+ *
+ * The mean-arterial-pressure alarm fires below 65 and printed the value to the
+ * nearest whole number, so a pressure of 64.6 was announced as "Mean arterial
+ * pressure low: MAP 65mmHg" — a reading that says the limit was crossed and a
+ * number that says it was not. A learner reading that is being taught to
+ * distrust the display.
+ *
+ * One decimal is used only where rounding would put the number on the wrong
+ * side of its own threshold, so every other alarm reads as it always did.
+ */
+export function formatBreachedValue(value: number, limit: AlarmLimit): string {
+  const rounded = Number(value.toFixed(0));
+  const contradictsLow = limit.low !== undefined && value < limit.low && rounded >= limit.low;
+  const contradictsHigh = limit.high !== undefined && value > limit.high && rounded <= limit.high;
+  return contradictsLow || contradictsHigh ? value.toFixed(1) : rounded.toFixed(0);
+}
+
 /** Tracks alarm state across ticks. */
 export class AlarmEngine {
   private readonly active = new Map<string, ActiveAlarm>();
@@ -211,7 +230,7 @@ export class AlarmEngine {
         label: limit.label,
         value,
         unit: limit.unit,
-        message: `${limit.message}: ${limit.label} ${value.toFixed(0)}${limit.unit}`,
+        message: `${limit.message}: ${limit.label} ${formatBreachedValue(value, limit)}${limit.unit}`,
         sinceTick: existing?.sinceTick ?? tick,
         silencedUntilTick: silencedUntil !== undefined && silencedUntil > tick ? silencedUntil : null,
         underArtifact: options.artifactParameters?.has(limit.parameter) ?? false,
