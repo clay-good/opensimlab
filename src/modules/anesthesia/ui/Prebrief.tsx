@@ -8,6 +8,7 @@
  */
 
 import { Badge, Button, Panel, SiteBar } from '@platform/ui';
+import { limitationsToBrief } from '@platform/docs/scenario-limitations';
 import { isUnreviewed, UNREVIEWED_NOTICE } from '@platform/governance/review-gate';
 import { FlagControl } from '@platform/governance/FlagControl';
 import { reviewModeFrom } from '@platform/governance/review-notes';
@@ -95,12 +96,22 @@ export function Prebrief({ scenario, region, onStart, onWatch, guidance, onGuida
         </p>
       </section>
 
-      {scenario.metadata.limitations && scenario.metadata.limitations.length > 0 && (
+      {/* Sentences from the register, not the ids the scenario stores. This
+          used to print `scenario.metadata.limitations` verbatim, which for
+          three of the four scenarios meant showing a learner the bullet
+          "no-shunt-or-dead-space-dynamics". */}
+      {limitationsToBrief(scenario).length > 0 && (
         <section>
           <h2>What this scenario does not model</h2>
           <ul>
-            {scenario.metadata.limitations.map((limitation) => <li key={limitation}>{limitation}</li>)}
+            {limitationsToBrief(scenario).map((limitation) => (
+              <li key={limitation.id}>{limitation.headline}</li>
+            ))}
           </ul>
+          <p className="field__hint">
+            <a href="/limitations">The limitations register explains where each of these would
+            mislead you, and what the correct understanding is.</a>
+          </p>
         </section>
       )}
 

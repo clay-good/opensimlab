@@ -67,10 +67,16 @@ export const ROUTINE_INDUCTION: Scenario = {
         '2022 ASA Practice Guidelines for Management of the Difficult Airway (PMID 34762729)',
       ],
     },
+    // Ids, not sentences. These were prose, so they matched nothing in the
+    // limitations register and could not be linked to it — while the other
+    // three scenarios stored ids and had them printed at the learner as raw
+    // kebab-case. Ids everywhere, sentences rendered from the register.
     limitations: [
-      'Fresh gas flow is not modelled, so volatile wash-in does not change with flow.',
-      'Neuromuscular blockade is not modelled in this scenario; the train-of-four readout is inert.',
-      'Regional anaesthesia, coagulopathy and acid-base compensation are not modelled at all.',
+      'no-fresh-gas-flow',
+      'no-neuromuscular-blockade',
+      'no-regional-anaesthesia',
+      'no-coagulopathy',
+      'acid-base-approximate',
     ],
   },
   patient: {

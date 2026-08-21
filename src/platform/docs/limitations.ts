@@ -9,6 +9,15 @@
 
 export interface Limitation {
   readonly id: string;
+  /**
+   * One short sentence, for the scenario briefing.
+   *
+   * `simplification` is written for someone reading the register and runs to a
+   * paragraph. A briefing needs a line. Without one, briefings printed the raw
+   * id — a learner opening the bronchospasm scenario was shown the bullet
+   * "no-shunt-or-dead-space-dynamics".
+   */
+  readonly headline: string;
   readonly simplification: string;
   readonly whereItMisleads: string;
   readonly correctUnderstanding: string;
@@ -19,6 +28,7 @@ export interface Limitation {
 export const LIMITATIONS: readonly Limitation[] = [
   {
     id: 'ventilation-modes-are-not-distinguished',
+    headline: 'Volume control and pressure control ventilate identically here: there is no airway-pressure or compliance model, so falling tidal volume at a fixed pressure cannot be shown.',
     simplification: 'Volume control and pressure control ventilate identically. There is no '
       + 'airway-pressure or lung-compliance model, so the delivered tidal volume is always the one '
       + 'set, whichever mode is selected.',
@@ -34,6 +44,7 @@ export const LIMITATIONS: readonly Limitation[] = [
   },
   {
     id: 'volatile-circulatory-effect-is-a-teaching-model',
+    headline: 'How far a volatile agent drops the blood pressure is an Open Sim Lab teaching model, not a published figure.',
     simplification: 'Sevoflurane\'s effect on the depth index is anchored to a published quantity '
       + '— the MAC fraction at which a processed-EEG index sits at its midpoint, about one MAC — '
       + 'but its effect on blood pressure is an Open Sim Lab teaching model: fixed fractional falls '
@@ -50,6 +61,7 @@ export const LIMITATIONS: readonly Limitation[] = [
   },
   {
     id: 'hypoxic-collapse-is-a-teaching-model',
+    headline: 'How the circulation fails from hypoxaemia is an Open Sim Lab teaching model: the sequence is right, the exact thresholds are not published.',
     simplification: 'The circulation\'s response to hypoxaemia — a sympathetic tachycardia as the '
       + 'saturation falls, then bradycardia and falling output as the myocardium fails, then '
       + 'asystole — is an Open Sim Lab teaching model. The sequence is not in doubt; where each '
@@ -66,6 +78,7 @@ export const LIMITATIONS: readonly Limitation[] = [
   },
   {
     id: 'no-resuscitation',
+    headline: 'Once the circulation stops, nothing further is simulated — there are no compressions, no adrenaline and no defibrillation.',
     simplification: 'Once the circulation stops, this module simulates nothing further. There are '
       + 'no chest compressions, no adrenaline, no defibrillation and no return of spontaneous '
       + 'circulation. The patient stays arrested however the airway is subsequently managed.',
@@ -81,6 +94,7 @@ export const LIMITATIONS: readonly Limitation[] = [
   },
   {
     id: 'respiratory-depression-is-calibrated',
+    headline: "Propofol's respiratory dose-response is an Open Sim Lab calibration, so the direction and rough timescale of apnoea are defensible but the exact duration is not a published number.",
     simplification: 'Propofol\'s respiratory dose-response is an Open Sim Lab calibration, not a '
       + 'transcribed published model. Its shape is chosen so that an induction dose stops the '
       + 'patient breathing and a sedative dose does not, and so that breathing returns as the '
@@ -95,6 +109,7 @@ export const LIMITATIONS: readonly Limitation[] = [
   },
   {
     id: 'oxyhaemoglobin-curve-is-fixed',
+    headline: 'The oxyhaemoglobin dissociation curve does not shift with temperature, pH or carbon dioxide.',
     simplification: 'The oxyhaemoglobin dissociation curve does not shift. Saturation is a '
       + 'function of arterial oxygen tension alone, with no Bohr effect and no temperature term, '
       + 'and core temperature never changes during a case.',
@@ -108,6 +123,7 @@ export const LIMITATIONS: readonly Limitation[] = [
   },
   {
     id: 'no-shunt-or-dead-space-dynamics',
+    headline: 'There is no shunt or ventilation-perfusion model, so the oxygen gradient never widens with atelectasis, position or one-lung ventilation.',
     simplification: 'The alveolar-to-arterial oxygen gradient is a fixed constant per patient '
       + 'profile. There is no shunt fraction and no ventilation-perfusion model, so the gradient '
       + 'does not widen with apnoea, atelectasis, position or one-lung ventilation, and positive '
@@ -121,6 +137,7 @@ export const LIMITATIONS: readonly Limitation[] = [
   },
   {
     id: 'bolus-injection-is-instantaneous',
+    headline: 'A bolus arrives all at once, so injection rate has no effect and nothing that depends on giving a drug slowly can be shown.',
     simplification: 'A bolus enters the central compartment instantaneously. Injection rate is '
       + 'not modelled, so a dose given over two seconds and the same dose given over sixty behave '
       + 'identically.',
@@ -134,6 +151,7 @@ export const LIMITATIONS: readonly Limitation[] = [
   },
   {
     id: 'opioid-alone-hypnosis',
+    headline: 'The response surface gives the opioid more hypnotic effect of its own than it has clinically.',
     simplification: 'The Greco response surface necessarily gives remifentanil a hypnotic effect '
       + 'of its own. At 8 ng/mL with no propofol it predicts a depth index around 71.',
     whereItMisleads: 'Any attempt to explore what the opioid alone does to depth. Clinically, '
@@ -145,6 +163,7 @@ export const LIMITATIONS: readonly Limitation[] = [
   },
   {
     id: 'peep-not-modelled',
+    headline: 'PEEP is recorded but changes nothing: neither oxygenation nor venous return responds to it.',
     simplification: 'Positive end-expiratory pressure can be set and the machine holds it, but '
       + 'its physiological effect is not modelled. It changes neither functional residual '
       + 'capacity, nor shunt fraction, nor venous return.',
@@ -158,6 +177,7 @@ export const LIMITATIONS: readonly Limitation[] = [
   },
   {
     id: 'no-regional-anaesthesia',
+    headline: 'Regional anaesthesia is not modelled at all — no block, no spread, no failure.',
     simplification: 'Regional anaesthesia and block spread are not modelled at all.',
     whereItMisleads: 'Any case where a block would change the opioid requirement, the haemodynamics, '
       + 'or the recovery. Local anaesthetic systemic toxicity cannot be simulated either.',
@@ -167,6 +187,7 @@ export const LIMITATIONS: readonly Limitation[] = [
   },
   {
     id: 'no-coagulopathy',
+    headline: 'Coagulation is not modelled, so bleeding never becomes a clotting problem.',
     simplification: 'Coagulation is not modelled. Blood loss removes volume and haemoglobin and '
       + 'nothing else.',
     whereItMisleads: 'Massive transfusion, where dilutional and consumptive coagulopathy drives '
@@ -177,6 +198,7 @@ export const LIMITATIONS: readonly Limitation[] = [
   },
   {
     id: 'acid-base-approximate',
+    headline: 'Acid-base is approximated: there is no metabolic compensation and no lactate.',
     simplification: 'Acid-base compensation is approximated by the carbon dioxide model alone. '
       + 'There is no metabolic component, no base excess, and no renal compensation.',
     whereItMisleads: 'Prolonged cases, sepsis, diabetic emergencies, and any situation where a '
@@ -187,6 +209,7 @@ export const LIMITATIONS: readonly Limitation[] = [
   },
   {
     id: 'no-fresh-gas-flow',
+    headline: 'Fresh gas flow is not modelled, so volatile wash-in does not speed up or slow down with it.',
     simplification: 'Fresh gas flow is not modelled, so volatile wash-in does not change with flow '
       + 'and there is no circuit rebreathing.',
     whereItMisleads: 'Learning low-flow anaesthesia, or understanding why a vaporizer setting takes '
@@ -197,6 +220,7 @@ export const LIMITATIONS: readonly Limitation[] = [
   },
   {
     id: 'no-neuromuscular-blockade',
+    headline: 'Neuromuscular blockade is not modelled, so the train-of-four readout is inert.',
     simplification: 'Neuromuscular blockade is not modelled in this alpha. The train-of-four '
       + 'readout is inert and no blocking agent is in the formulary.',
     whereItMisleads: 'Anything about intubating conditions, residual blockade, or reversal. The '
@@ -207,6 +231,7 @@ export const LIMITATIONS: readonly Limitation[] = [
   },
   {
     id: 'interaction-coefficient-calibrated',
+    headline: 'The hypnotic-opioid interaction coefficient is an Open Sim Lab calibration, not a transcribed published value.',
     simplification: 'The propofol–remifentanil interaction uses a published response-surface FORM '
       + 'with a coefficient calibrated by Open Sim Lab rather than transcribed from a paper.',
     whereItMisleads: 'Any quantitative conclusion about exactly how much propofol a given '
@@ -217,6 +242,7 @@ export const LIMITATIONS: readonly Limitation[] = [
   },
   {
     id: 'no-team-or-communication',
+    headline: 'There is no team: nobody to ask, nobody to hand over to, and no communication to get wrong.',
     simplification: 'There is no surgeon, no scrub team, no assistant, and no communication of any '
       + 'kind.',
     whereItMisleads: 'Crisis management, where most of what determines the outcome is who you '
@@ -227,6 +253,7 @@ export const LIMITATIONS: readonly Limitation[] = [
   },
   {
     id: 'parameters-unverified',
+    headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '
       + 'publication but has NOT had the independent second-source check the project requires.',
     whereItMisleads: 'Any use of a specific number from this simulator as a fact. A mistyped digit '
