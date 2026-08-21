@@ -9,7 +9,7 @@
  */
 
 import { useState } from 'react';
-import { Button } from '@platform/ui';
+import { Button, SiteBar } from '@platform/ui';
 import { SCENARIOS, scenariosByDifficulty } from '@anesthesia/scenarios';
 import { SITE_ORIGIN } from './routes';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
@@ -95,20 +95,25 @@ function AssignmentBuilder() {
   );
 }
 
+/**
+ * The educator surfaces' own destinations, appended to the shared site bar.
+ *
+ * These three pages used to carry three separate hand-written copies of the
+ * same bar, and the reviewer page a fourth. Four bars is four things to keep in
+ * step, and they had already drifted: none of them offered the validation report
+ * or the governance page, which are the two pages an educator evaluating this
+ * most wants.
+ */
+const EDUCATOR_PAGES = [
+  { href: '/for-educators', label: 'For educators' },
+  { href: '/curriculum', label: 'Curriculum' },
+  { href: '/review', label: 'Review submissions' },
+];
+
 export function EducatorsRoute() {
   return (
     <div className="document">
-      <header className="document__bar">
-        <a className="document__home" href="/">Open Sim Lab</a>
-        <nav aria-label="Educator pages">
-          <ul className="document__nav">
-            <li><a href="/for-educators" aria-current="page">For educators</a></li>
-            <li><a href="/curriculum">Curriculum</a></li>
-            <li><a href="/review">Review submissions</a></li>
-            <li><a href="/anesthesia">Simulator</a></li>
-          </ul>
-        </nav>
-      </header>
+      <SiteBar current="/for-educators" extra={EDUCATOR_PAGES} />
 
       <main className="reading" id="main">
         <h1>For educators</h1>

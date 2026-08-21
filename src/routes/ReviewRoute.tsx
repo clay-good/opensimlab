@@ -13,7 +13,7 @@
  */
 
 import { useCallback, useState } from 'react';
-import { Badge, Button } from '@platform/ui';
+import { Badge, Button, SiteBar } from '@platform/ui';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import {
   UnreadableTranscript, analyseTranscript, parseTranscript, summariseCohort,
@@ -26,6 +26,21 @@ const OUTCOME_LABEL: Record<string, string> = {
   'not-met': 'Not met',
   'not-exercised': 'Not exercised',
 };
+
+/**
+ * The educator surfaces' own destinations, appended to the shared site bar.
+ *
+ * These three pages used to carry three separate hand-written copies of the
+ * same bar, and the reviewer page a fourth. Four bars is four things to keep in
+ * step, and they had already drifted: none of them offered the validation report
+ * or the governance page, which are the two pages an educator evaluating this
+ * most wants.
+ */
+const EDUCATOR_PAGES = [
+  { href: '/for-educators', label: 'For educators' },
+  { href: '/curriculum', label: 'Curriculum' },
+  { href: '/review', label: 'Review submissions' },
+];
 
 export function ReviewRoute() {
   const [analyses, setAnalyses] = useState<TranscriptAnalysis[]>([]);
@@ -53,17 +68,7 @@ export function ReviewRoute() {
 
   return (
     <div className="document">
-      <header className="document__bar">
-        <a className="document__home" href="/">Open Sim Lab</a>
-        <nav aria-label="Educator pages">
-          <ul className="document__nav">
-            <li><a href="/for-educators">For educators</a></li>
-            <li><a href="/curriculum">Curriculum</a></li>
-            <li><a href="/review" aria-current="page">Review submissions</a></li>
-            <li><a href="/anesthesia">Simulator</a></li>
-          </ul>
-        </nav>
-      </header>
+      <SiteBar current="/review" extra={EDUCATOR_PAGES} />
 
       <main className="reading" id="main">
         <h1>Review submitted sessions</h1>

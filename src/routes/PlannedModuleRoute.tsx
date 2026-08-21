@@ -5,11 +5,13 @@
  * the module that exists. It is prerendered and indexable, and promises no date.
  */
 
-import { Button } from '@platform/ui';
+import { Button, SiteBar } from '@platform/ui';
 import { RELEASE_FEED_URL, type ModuleDeclaration } from '@platform/modules/registry';
 
 export function PlannedModuleRoute({ module }: { module: ModuleDeclaration }) {
   return (
+    <>
+      <SiteBar />
     <main className="reading" id="main">
       <h1>{module.displayName} — planned</h1>
       <p>
@@ -41,5 +43,6 @@ export function PlannedModuleRoute({ module }: { module: ModuleDeclaration }) {
       </Button>
       <p><a href="/">Back to the Open Sim Lab front page</a></p>
     </main>
+    </>
   );
 }

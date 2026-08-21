@@ -12,6 +12,7 @@ import { About } from '@landing/About';
 import { PlannedModuleRoute } from './PlannedModuleRoute';
 import { MODULES } from '@platform/modules/registry';
 import { formatTitle, routeFor } from './routes';
+import { SiteBar } from '@platform/ui';
 import { UpdateNotice } from '@platform/offline/UpdateNotice';
 import { ErrorBoundary } from '@platform/ui/ErrorBoundary';
 
@@ -108,9 +109,7 @@ function CurrentRoute() {
   // get, and the two saying different things would be its own small lie.
   return (
     <div className="document">
-      <header className="document__bar">
-        <a className="document__home" href="/">Open Sim Lab</a>
-      </header>
+      <SiteBar />
       <main className="reading" id="main">
         <h1>Nothing here</h1>
         <p>

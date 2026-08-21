@@ -10,7 +10,7 @@
  */
 
 import { useMemo, useState } from 'react';
-import { Badge, Button } from '@platform/ui';
+import { Badge, Button, SiteBar } from '@platform/ui';
 import { EXPLAINERS } from '@anesthesia/content/explainers';
 import { DRUG_CARDS } from '@anesthesia/content/drug-cards';
 import { SCENARIOS } from '@anesthesia/scenarios';
@@ -68,6 +68,12 @@ function reviewableRows(): ReviewableRow[] {
   return rows;
 }
 
+/** The reviewer surfaces' own destinations, appended to the shared site bar. */
+const REVIEWER_PAGES = [
+  { href: '/content-review', label: 'Review the content' },
+  { href: '/limitations', label: 'Limitations' },
+];
+
 export function ContentReviewRoute() {
   const rows = useMemo(() => reviewableRows(), []);
   const [notes, setNotes] = useState(() => loadNotes());
@@ -97,17 +103,7 @@ export function ContentReviewRoute() {
 
   return (
     <div className="document">
-      <header className="document__bar">
-        <a className="document__home" href="/">Open Sim Lab</a>
-        <nav aria-label="Reviewer pages">
-          <ul className="document__nav">
-            <li><a href="/content-review" aria-current="page">Review the content</a></li>
-            <li><a href="/governance">Governance</a></li>
-            <li><a href="/limitations">Limitations</a></li>
-            <li><a href="/anesthesia">Simulator</a></li>
-          </ul>
-        </nav>
-      </header>
+      <SiteBar current="/content-review" extra={REVIEWER_PAGES} />
 
       <main className="reading" id="main">
         <h1>Review the clinical content</h1>

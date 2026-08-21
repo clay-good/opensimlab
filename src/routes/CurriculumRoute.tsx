@@ -9,12 +9,27 @@
  */
 
 import { useMemo, useState } from 'react';
-import { Badge, Button, SegmentedControl } from '@platform/ui';
+import { Badge, Button, SegmentedControl, SiteBar } from '@platform/ui';
 import { FRAMEWORKS, MAPPING_DISCLAIMER } from '@anesthesia/curriculum/frameworks';
 import {
   SCENARIO_MAPPINGS, coverageFor, mappingCsv, unmappedScenarios,
 } from '@anesthesia/curriculum/mapping';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
+
+/**
+ * The educator surfaces' own destinations, appended to the shared site bar.
+ *
+ * These three pages used to carry three separate hand-written copies of the
+ * same bar, and the reviewer page a fourth. Four bars is four things to keep in
+ * step, and they had already drifted: none of them offered the validation report
+ * or the governance page, which are the two pages an educator evaluating this
+ * most wants.
+ */
+const EDUCATOR_PAGES = [
+  { href: '/for-educators', label: 'For educators' },
+  { href: '/curriculum', label: 'Curriculum' },
+  { href: '/review', label: 'Review submissions' },
+];
 
 export function CurriculumRoute() {
   const [frameworkId, setFrameworkId] = useState(FRAMEWORKS[0]!.id);
@@ -35,17 +50,7 @@ export function CurriculumRoute() {
 
   return (
     <div className="document">
-      <header className="document__bar">
-        <a className="document__home" href="/">Open Sim Lab</a>
-        <nav aria-label="Educator pages">
-          <ul className="document__nav">
-            <li><a href="/for-educators">For educators</a></li>
-            <li><a href="/curriculum" aria-current="page">Curriculum</a></li>
-            <li><a href="/review">Review submissions</a></li>
-            <li><a href="/anesthesia">Simulator</a></li>
-          </ul>
-        </nav>
-      </header>
+      <SiteBar current="/curriculum" extra={EDUCATOR_PAGES} />
 
       <main className="reading" id="main">
         <h1>Curriculum coverage</h1>

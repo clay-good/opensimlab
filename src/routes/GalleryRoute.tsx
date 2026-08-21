@@ -11,7 +11,7 @@ import '@platform/ui/components.css';
 import {
   Abbreviation, Badge, Banner, Button, Card, Chip, CitationLink, Drawer, EmptyState, IconButton,
   LoadingState, Modal, NumericField, Panel, SegmentedControl, Select, Slider, SteppedDial, Tabs,
-  TabPanel, Timeline, Toggle,
+  SiteBar, TabPanel, Timeline, Toggle,
 } from '@platform/ui';
 import { AlarmRail, LogList, PlotCanvas, VitalTile } from '@platform/ui/monitor';
 import { NEUTRAL, RADIUS, SIGNAL, SPACE, TRACE, TRACE_IDS, TYPE, contrastRatio } from '@platform/tokens/tokens';
@@ -27,7 +27,9 @@ export function GalleryRoute() {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
-    <main className="reading" id="main" style={{ maxInlineSize: '90ch' }}>
+    <>
+      <SiteBar />
+      <main className="reading" id="main" style={{ maxInlineSize: '90ch' }}>
       <h1>Component gallery</h1>
       <p className="field__hint">
         Every component in the inventory, in every state. A screen never introduces a bespoke
@@ -221,7 +223,8 @@ export function GalleryRoute() {
           ))}
         </Row>
       </Section>
-    </main>
+      </main>
+    </>
   );
 }
 
