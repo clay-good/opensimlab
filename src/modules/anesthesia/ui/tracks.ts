@@ -78,7 +78,15 @@ export const TILES: readonly TileDefinition[] = [
 /** The explainer that maps each parameter to the standard's four categories. */
 export const ASA_MONITORING_EXPLAINER = {
   standard: 'ASA Standards for Basic Anesthetic Monitoring',
-  revisionYear: 2020,
+  /**
+   * Last amended 15 October 2025 (originally approved 21 October 1986).
+   *
+   * This said 2020, which was two revisions stale — found by checking the
+   * issuing body's own page rather than by anything in this repository
+   * noticing. The governance requirement about catching a superseded guideline
+   * is only worth having if somebody actually goes and looks.
+   */
+  revisionYear: 2025,
   categories: {
     oxygenation: 'Inspired oxygen concentration and blood oxygenation, evaluated continually.',
     ventilation: 'Adequacy of ventilation, evaluated continually, with end-tidal carbon dioxide '

@@ -69,6 +69,34 @@ describe('every entry says enough to be checked', () => {
   });
 });
 
+describe('standards are tracked for currency, because they are amended', () => {
+  it('records when the ASA monitoring standard was last amended, and when that was checked', () => {
+    // The interface told learners it was showing them the 2020 revision while
+    // the current one was 2025. Nothing here noticed, because nothing here
+    // looked. This is what looking leaves behind.
+    const asa = requireSource('asa-basic-monitoring');
+    expect(asa.currency).toBeDefined();
+    expect(asa.currency!.lastAmended).toBe('2025-10-15');
+    expect(asa.year).toBe(2025);
+  });
+
+  it('shows the revision year the standard actually carries', async () => {
+    const { ASA_MONITORING_EXPLAINER } = await import('@anesthesia/ui/tracks');
+    const asa = requireSource('asa-basic-monitoring');
+    expect(ASA_MONITORING_EXPLAINER.revisionYear)
+      .toBe(Number(asa.currency!.lastAmended.slice(0, 4)));
+  });
+
+  it('says plainly which standards were read and which were not', () => {
+    // IEC 60601-1-8 is paywalled. Following its conventions from secondary
+    // engineering references is defensible; claiming to have read it is not.
+    const iec = requireSource('iec-60601-1-8');
+    expect(iec.verifiedAgainst).toContain('paywalled');
+    expect(iec.verifiedAgainst).toContain('not read');
+    expect(iec.usedFor).toContain('not a certified medical device');
+  });
+});
+
 describe('the entries that were found to be wrong', () => {
   it('attributes the MAC age relation to Mapleson 1996, not to the 2003 charts', () => {
     const mapleson = requireSource('mapleson-1996');

@@ -25,6 +25,17 @@ export interface Source {
   readonly id: string;
   /** PubMed identifier, where the source is indexed there. */
   readonly pmid?: string;
+  /**
+   * For a standard or guideline rather than a paper: when the issuing body last
+   * amended it, and where that was read.
+   *
+   * A journal article is fixed once published. A standard is not — it is amended
+   * and the old version quietly stops being the one anybody follows. This
+   * project told learners it was showing them the 2020 revision of the ASA
+   * monitoring standards for as long as the current revision was 2025, because
+   * nothing here ever went and looked.
+   */
+  readonly currency?: { readonly lastAmended: string; readonly checkedAt: string };
   readonly authors: string;
   readonly title: string;
   /** Journal or issuing body. */
@@ -300,6 +311,41 @@ export const SOURCES: readonly Source[] = [
   },
 
   // --- Education -------------------------------------------------------------
+  // --- Standards, which are amended rather than published once ---------------
+  {
+    id: 'asa-basic-monitoring',
+    authors: 'Committee on Standards and Practice Parameters',
+    title: 'Standards for Basic Anesthetic Monitoring',
+    publication: 'American Society of Anesthesiologists',
+    year: 2025,
+    locator: 'Originally approved 21 October 1986; last amended 15 October 2025',
+    usedFor: 'The monitoring set the cockpit displays, and the four categories it is organised '
+      + 'around — oxygenation, ventilation, circulation and temperature — plus the requirement '
+      + 'for an oxygen analyser with a low-concentration limit alarm on the breathing system.',
+    verifiedAgainst: 'The issuing body\'s own standards page. This project displayed "revision '
+      + '2020" until that check was done, which was two revisions stale.',
+    verifiedOn: CHECKED,
+    currency: { lastAmended: '2025-10-15', checkedAt: CHECKED },
+  },
+  {
+    id: 'iec-60601-1-8',
+    authors: 'International Electrotechnical Commission',
+    title: 'Medical electrical equipment — Part 1-8: General requirements for basic safety and '
+      + 'essential performance — Collateral standard: General requirements, tests and guidance '
+      + 'for alarm systems in medical electrical equipment and medical electrical systems',
+    publication: 'International Electrotechnical Commission',
+    year: 2006,
+    locator: 'IEC 60601-1-8, with amendments',
+    usedFor: 'The three alarm priorities and their visual language: high priority red flashing at '
+      + '1.4 to 2.8 Hz, medium priority amber flashing at 0.4 to 0.8 Hz, low priority steady. The '
+      + 'simulator follows the standard\'s conventions so the visual language a learner '
+      + 'internalises here matches the equipment they meet clinically; it is not a certified '
+      + 'medical device and does not claim conformity.',
+    verifiedAgainst: 'Secondary engineering references describing the standard\'s priority '
+      + 'colours and flash-rate bands. The standard itself is paywalled and was not read.',
+    verifiedOn: CHECKED,
+  },
+
   {
     id: 'eppich-cheng-2015',
     pmid: '25710312',
