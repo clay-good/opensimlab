@@ -174,6 +174,91 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'mk-applied-foundational-science',
     objectiveIds: ['read-the-mechanism'],
   },
+
+  // --- Bronchospasm --------------------------------------------------------
+  //
+  // This scenario shipped unmapped. It was reported as unmapped, which is the
+  // machinery working, but the educators page said every scenario was mapped —
+  // so a programme director reading the coverage page saw three of four
+  // scenarios under a claim that it was all of them.
+  {
+    scenarioId: 'bronchospasm',
+    frameworkId: 'nbcrna-nce',
+    domainId: 'basic-sciences',
+    objectiveIds: ['read-the-capnogram', 'ventilate-before-desaturation'],
+  },
+  {
+    scenarioId: 'bronchospasm',
+    frameworkId: 'nbcrna-nce',
+    domainId: 'equipment-instrumentation-technology',
+    objectiveIds: ['read-the-capnogram'],
+  },
+  {
+    scenarioId: 'bronchospasm',
+    frameworkId: 'nbcrna-nce',
+    domainId: 'basic-principles',
+    objectiveIds: ['ventilate-before-desaturation', 'deepen-before-reaching-for-anything-else'],
+  },
+  {
+    scenarioId: 'bronchospasm',
+    frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['deepen-before-reaching-for-anything-else', 'manage-hypotension'],
+  },
+  {
+    scenarioId: 'bronchospasm',
+    frameworkId: 'coa-standards',
+    domainId: 'anesthesia-equipment-and-monitoring',
+    objectiveIds: ['read-the-capnogram'],
+  },
+  {
+    scenarioId: 'bronchospasm',
+    frameworkId: 'coa-standards',
+    domainId: 'airway-management',
+    objectiveIds: ['ventilate-before-desaturation', 'deepen-before-reaching-for-anything-else'],
+  },
+  {
+    scenarioId: 'bronchospasm',
+    frameworkId: 'coa-standards',
+    domainId: 'physiology-and-pathophysiology',
+    objectiveIds: ['read-the-capnogram', 'manage-hypotension'],
+  },
+  {
+    scenarioId: 'bronchospasm',
+    frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['deepen-before-reaching-for-anything-else', 'manage-hypotension'],
+  },
+  {
+    scenarioId: 'bronchospasm',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-anesthetic-plan-and-conduct',
+    objectiveIds: ['deepen-before-reaching-for-anything-else', 'manage-hypotension'],
+  },
+  {
+    scenarioId: 'bronchospasm',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-airway-management',
+    objectiveIds: ['ventilate-before-desaturation'],
+  },
+  {
+    scenarioId: 'bronchospasm',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-monitoring-and-equipment',
+    objectiveIds: ['read-the-capnogram'],
+  },
+  {
+    scenarioId: 'bronchospasm',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-crisis-management',
+    objectiveIds: ['deepen-before-reaching-for-anything-else', 'ventilate-before-desaturation'],
+  },
+  {
+    scenarioId: 'bronchospasm',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'mk-applied-foundational-science',
+    objectiveIds: ['read-the-capnogram'],
+  },
 ];
 
 export interface DomainCoverage {

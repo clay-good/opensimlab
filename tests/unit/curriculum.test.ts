@@ -179,3 +179,57 @@ describe('Requirement: A Named Framework Names A Version That Is Current', () =>
     }
   });
 });
+
+describe('Requirement: The Coverage Page Shows The Whole Catalogue', () => {
+  /**
+   * Bronchospasm shipped unmapped. The machinery worked — it was REPORTED as
+   * unmapped rather than dropped — but the educators page told a programme
+   * director that every scenario was mapped, so the coverage page showed three
+   * scenarios out of four under a claim that it was all of them.
+   *
+   * The reporting stays, because a future scenario will land before its mapping
+   * does and being visible is better than being silently absent. What is new is
+   * that shipping in that state fails the build.
+   */
+  it('Scenario: no scenario in the build is unmapped', () => {
+    const unmapped = unmappedScenarios().map((scenario) => scenario.metadata.id);
+    expect(unmapped, 'these scenarios are not mapped to any framework').toEqual([]);
+  });
+
+  it('Scenario: every scenario appears against every framework', () => {
+    // Not just mapped somewhere — a programme looking at their own framework
+    // should see the whole catalogue under it, not a subset.
+    for (const framework of FRAMEWORKS) {
+      const mapped = new Set(
+        SCENARIO_MAPPINGS.filter((m) => m.frameworkId === framework.id).map((m) => m.scenarioId),
+      );
+      for (const scenario of SCENARIOS) {
+        expect(mapped, `${scenario.metadata.id} is absent from ${framework.id}`)
+          .toContain(scenario.metadata.id);
+      }
+    }
+  });
+
+  it('Scenario: every mapping names objectives the scenario actually declares', () => {
+    // The mapping is only falsifiable if the objective ids are real. A mapping
+    // citing an objective that does not exist cannot be checked by opening the
+    // scenario, which is the whole reason the ids are recorded.
+    for (const mapping of SCENARIO_MAPPINGS) {
+      const scenario = SCENARIOS.find((s) => s.metadata.id === mapping.scenarioId)!;
+      expect(scenario, mapping.scenarioId).toBeDefined();
+      const declared = new Set(scenario.metadata.objectives.map((objective) => objective.id));
+      for (const id of mapping.objectiveIds) {
+        expect(declared, `${mapping.scenarioId}/${mapping.domainId} cites objective "${id}"`)
+          .toContain(id);
+      }
+    }
+  });
+
+  it('Scenario: the export still carries its disclaimer', () => {
+    // More coverage makes the mapping look more official, which is exactly when
+    // the disclaimer matters most.
+    const csv = mappingCsv();
+    expect(csv).toContain('No accrediting or certifying body has reviewed');
+    expect(csv).toContain('does not count toward any case requirement');
+  });
+});
