@@ -178,3 +178,62 @@ describe('a session that is managed properly', () => {
     expect(engine.equipment().rhythmId).not.toBe('asystole');
   });
 });
+
+describe('the traces at arrest', () => {
+  /**
+   * The engine sets the rhythm to asystole when the circulation stops, and the
+   * waveform engine has to be able to draw that. A rhythm the engine can reach
+   * but the renderer cannot draw would be a NaN in a Float32Array and a monitor
+   * full of nothing, at the single most dramatic moment a session has.
+   */
+  const arrested = (() => {
+    const engine = new AnesthesiaEngine({
+      scenario: ROUTINE_INDUCTION, seed: 7, practiceRegion: 'US',
+    });
+    let arrestedAt = -1;
+    for (let tick = 0; tick < 4000; tick += 1) {
+      if (tick === 50) {
+        engine.apply({
+          type: 'bolus', payload: { drugId: 'propofol', amount: 2.5, unit: 'mg/kg' }, tick,
+        } as never);
+      }
+      const result = engine.step();
+      if (arrestedAt < 0 && engine.equipment().rhythmId === 'asystole') arrestedAt = tick;
+      if (arrestedAt > 0 && tick === arrestedAt + 300) return { engine, result, arrestedAt };
+    }
+    throw new Error('the patient never arrested');
+  })();
+
+  const samples = (signal: 'ecg' | 'arterial' | 'capno' | 'pleth') =>
+    Array.from(arrested.result.waveforms[signal].samples as Float32Array);
+
+  it('draws every trace, with no NaN anywhere in the buffers', () => {
+    for (const signal of ['ecg', 'arterial', 'capno', 'pleth'] as const) {
+      const values = samples(signal);
+      expect(values.length, signal).toBeGreaterThan(0);
+      expect(values.every(Number.isFinite), `${signal} contains a non-finite sample`).toBe(true);
+    }
+  });
+
+  it('flattens the traces that need a circulation to exist', () => {
+    // An arterial line with no cardiac output, and a plethysmogram with no
+    // pulse, have nothing to show. A trace still pulsing here would contradict
+    // the rhythm the monitor is reporting.
+    for (const signal of ['arterial', 'pleth'] as const) {
+      const values = samples(signal);
+      expect(Math.max(...values) - Math.min(...values), `${signal} is still pulsing`)
+        .toBeLessThan(0.5);
+    }
+  });
+
+  it('leaves the electrocardiogram flat rather than beating', () => {
+    // Asystole is a flat line with baseline wander, not a rhythm.
+    const values = samples('ecg');
+    expect(Math.max(...values) - Math.min(...values)).toBeLessThan(0.2);
+  });
+
+  it('takes several minutes to get there, so it is watchable', () => {
+    expect(arrested.arrestedAt / 10).toBeGreaterThan(120);
+    expect(arrested.arrestedAt / 10).toBeLessThan(600);
+  });
+});
