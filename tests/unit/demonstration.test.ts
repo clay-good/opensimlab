@@ -258,3 +258,32 @@ describe('the demonstration link', () => {
     expect((landing.match(/variant="primary"/g) ?? []).length).toBe(1);
   });
 });
+
+describe('the narration survives the layout reflowing', () => {
+  /**
+   * "Everything on the right is her baseline" was false on a phone, where the
+   * numbers sit above the traces — and a phone is where most of the people this
+   * gets shown to will read it. The ring the beat's `focus` puts on the region
+   * is true at every width; a compass direction is true at one.
+   */
+  const DIRECTIONS = /\b(on the (left|right)|above|below|left-hand|right-hand|top of the screen)\b/i;
+
+  it('never tells the viewer to look in a direction', () => {
+    for (const beat of INDUCTION_DEMONSTRATION) {
+      expect(beat.narration, `beat at ${beat.atSecond}s gives a direction`)
+        .not.toMatch(DIRECTIONS);
+    }
+  });
+
+  it('names the region instead, which reflow cannot invalidate', () => {
+    const bar = readFileSync(join(process.cwd(), 'src/modules/anesthesia/ui/DemonstrationBar.tsx'), 'utf8');
+    const labels = bar.slice(bar.indexOf('const FOCUS_LABEL'), bar.indexOf('export function'));
+    expect(labels).not.toMatch(DIRECTIONS);
+    expect(labels).toContain("monitor: 'the monitor'");
+  });
+
+  it('still points somewhere for all but the closing beat', () => {
+    const pointed = INDUCTION_DEMONSTRATION.filter((beat) => beat.focus !== 'none');
+    expect(pointed.length).toBe(INDUCTION_DEMONSTRATION.length - 1);
+  });
+});

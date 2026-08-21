@@ -53,6 +53,12 @@ export interface DemonstrationBeat {
 /**
  * The script. Timings are in SIMULATED seconds; at five times speed the whole
  * thing runs in about a minute and a half of real time.
+ *
+ * NO NARRATION LINE SAYS LEFT, RIGHT, ABOVE OR BELOW. The cockpit reflows: on a
+ * phone the numbers sit above the traces and the analysis region is a drawer, so
+ * "everything on the right is her baseline" was simply false there — which is
+ * where most of the people this is shown to this weekend will read it. The beat's
+ * `focus` puts a ring on the region instead, and that is true at every width.
  */
 export const INDUCTION_DEMONSTRATION: readonly DemonstrationBeat[] = [
   // Second zero, not second two. The strip has to be saying something the
@@ -60,8 +66,8 @@ export const INDUCTION_DEMONSTRATION: readonly DemonstrationBeat[] = [
   // reads as one that has failed to start.
   {
     atSecond: 0,
-    narration: 'A healthy 42-year-old, breathing room air, nothing given yet. Everything on '
-      + 'the right is her baseline.',
+    narration: 'A healthy 42-year-old, breathing room air, nothing given yet. Every number on '
+      + 'the monitor is her baseline.',
     focus: 'monitor',
   },
   {
@@ -79,7 +85,7 @@ export const INDUCTION_DEMONSTRATION: readonly DemonstrationBeat[] = [
   },
   {
     atSecond: 190,
-    narration: 'Remifentanil first, then propofol. Now watch the plot on the left.',
+    narration: 'Remifentanil first, then propofol. Now watch the concentration plot.',
     focus: 'analysis',
     action: { type: 'bolus', payload: { drugId: 'remifentanil', amount: 50, unit: 'µg' } },
   },

@@ -19,11 +19,19 @@ export interface DemonstrationBarProps {
   readonly onTakeControls: () => void;
 }
 
-/** What each focus region is called, for the screen-reader announcement. */
+/**
+ * What each focus region is called, for the screen-reader announcement.
+ *
+ * Named, never placed. These used to say "on the right", "on the left" and
+ * "below", which described one layout out of three: the cockpit reflows, and on
+ * a phone the numbers are above the traces and the analysis region is a drawer.
+ * A direction that is wrong on a phone is worse than no direction at all,
+ * particularly for the reader who has only this text to go on.
+ */
 const FOCUS_LABEL: Record<DemonstrationBeat['focus'], string> = {
-  monitor: 'the monitor, on the right',
-  analysis: 'the concentration plot, on the left',
-  actions: 'the action cockpit, below',
+  monitor: 'the monitor',
+  analysis: 'the concentration plot',
+  actions: 'the action cockpit',
   none: '',
 };
 
