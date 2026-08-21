@@ -18,6 +18,21 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'ventilation-modes-are-not-distinguished',
+    simplification: 'Volume control and pressure control ventilate identically. There is no '
+      + 'airway-pressure or lung-compliance model, so the delivered tidal volume is always the one '
+      + 'set, whichever mode is selected.',
+    whereItMisleads: 'Any question about what changes when you switch modes, about peak versus '
+      + 'plateau pressure, or about what a pressure-controlled breath does to a patient whose '
+      + 'compliance is falling — a bronchospasm, for instance, where the difference is the whole '
+      + 'point.',
+    correctUnderstanding: 'In volume control the tidal volume is guaranteed and the airway '
+      + 'pressure is whatever the lung demands; in pressure control the pressure is guaranteed and '
+      + 'the volume falls as compliance falls. Falling tidal volume at a fixed pressure is an '
+      + 'early sign of worsening compliance, and this simulator cannot show it to you.',
+    briefIn: ['bronchospasm'],
+  },
+  {
     id: 'volatile-circulatory-effect-is-a-teaching-model',
     simplification: 'Sevoflurane\'s effect on the depth index is anchored to a published quantity '
       + '— the MAC fraction at which a processed-EEG index sits at its midpoint, about one MAC — '

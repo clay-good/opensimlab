@@ -161,6 +161,11 @@ The engine SHALL model sevoflurane uptake from the vaporizer through the breathi
 - **WHEN** 60% nitrous oxide is added at a fixed end-tidal sevoflurane concentration
 - **THEN** the total minimum alveolar concentration fraction rises additively as the iso-MAC charts describe, and the interface shows the contribution of each agent separately
 
+#### Scenario: A control the model does not use says so where it is used
+
+- **WHEN** a learner sets a control this module records but does not act on — PEEP, or pressure-control ventilation
+- **THEN** the session log states once, at that point, that the setting will change nothing and what specifically will not change, because a learner who sets PEEP and sees no response reasonably concludes that PEEP does not do much; and the limitations register carries the same entry
+
 #### Scenario: The vaporizer reaches the patient, not only the display
 
 - **WHEN** a learner sets the vaporizer and end-tidal sevoflurane rises

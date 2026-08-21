@@ -135,6 +135,8 @@ export class AnesthesiaEngine {
   private readonly conditionHeld = new Set<string>();
 /** True once the physiology has arrested the patient. It does not clear. */
   private arrestedByHypoxia = false;
+  /** Unmodelled settings already reported, so each is said once per session. */
+  private readonly reportedUnmodelled = new Set<string>();
   /**
    * The last state the physiology produced.
    *
@@ -431,6 +433,38 @@ export class AnesthesiaEngine {
     this.log('info', 'ventilator', `ventilator-${this.currentTick}`,
       `Ventilator: ${this.ventilator.mode}, FiO₂ ${this.ventilator.fio2.toFixed(2)}, `
       + `${this.ventilator.delivering ? `${this.ventilator.tidalVolumeMl} mL × ${this.ventilator.respiratoryRateBpm}` : 'not delivering'}`);
+    this.reportUnmodelledSettings(settings);
+  }
+
+  /**
+   * Settings this engine records but does not act on, named once each.
+   *
+   * Found by setting every ventilator control in turn and checking whether the
+   * patient noticed. PEEP and pressure-control both changed nothing at all: the
+   * number moved on screen, the log said the machine had been set, and the
+   * physiology was identical. That is the same defect the vaporizer had, and
+   * silently accepting a setting is worse than refusing it — a learner who sets
+   * PEEP and sees no change reasonably concludes PEEP does not do much.
+   *
+   * They are not removed, because they are real controls a learner should meet
+   * and their absence is recorded in the limitations register. They say so
+   * instead, once each, where they are used.
+   */
+  private reportUnmodelledSettings(settings: Partial<VentilatorSettings>): void {
+    if (settings.peep !== undefined && settings.peep > 0 && !this.reportedUnmodelled.has('peep')) {
+      this.reportedUnmodelled.add('peep');
+      this.log('advisory', 'ventilator', `unmodelled-peep-${this.currentTick}`,
+        'PEEP is recorded but this module does not model it. Neither oxygenation nor venous '
+        + 'return will change, and the limitations register says so. Do not read this session as '
+        + 'evidence about what PEEP does.');
+    }
+    if (settings.mode === 'pressure-control' && !this.reportedUnmodelled.has('pressure-control')) {
+      this.reportedUnmodelled.add('pressure-control');
+      this.log('advisory', 'ventilator', `unmodelled-mode-${this.currentTick}`,
+        'Pressure control is recorded but this module ventilates identically in either mode: it '
+        + 'has no airway-pressure or compliance model, so the delivered tidal volume is the one '
+        + 'you set. The difference between the modes is not simulated here.');
+    }
   }
 
   private log(
