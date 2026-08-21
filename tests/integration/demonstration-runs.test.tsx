@@ -1,0 +1,264 @@
+/**
+ * @vitest-environment jsdom
+ *
+ * The demonstration, driven end to end over simulated time.
+ *
+ * Everything else about the demonstration is covered in pieces: the script
+ * against the engine by replay, the hook and the strip in isolation. What was
+ * never covered is the whole thing running — the hook watching a real clock,
+ * dispatching into the real store, over the real worker protocol, into the real
+ * engine, for the full three hundred and thirty seconds.
+ *
+ * That gap was not theoretical. The `?demo=1` link shipped broken in exactly
+ * that seam: the demonstration started, and a late ready message from the solver
+ * put the session back to the briefing with the clock stopped. Every unit test
+ * passed. This is the test that would have caught it.
+ */
+import { describe, expect, it } from 'vitest';
+import { act } from 'react';
+import { createElement, useEffect } from 'react';
+import { createRoot } from 'react-dom/client';
+import {
+  WORKER_PROTOCOL_VERSION, assertProtocolVersion,
+  type FromWorkerMessage, type ToWorkerMessage,
+} from '@platform/kernel/protocol';
+import { AnesthesiaEngine, ENGINE_VERSION, type Scenario } from '@anesthesia/engine';
+import { MODEL_SET_REVISION } from '@anesthesia/pharmacology/registry';
+import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
+import { useSession } from '@platform/session/session-store';
+import type { PatientState } from '@anesthesia/physiology';
+import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
+import { useDemonstration } from '@anesthesia/demo/useDemonstration';
+import {
+  DEMONSTRATION_SECONDS, INDUCTION_DEMONSTRATION,
+} from '@anesthesia/demo/demonstration';
+
+/** The same in-process solver the session integration test uses. */
+class InProcessWorker implements Partial<Worker> {
+  onmessage: ((event: MessageEvent<FromWorkerMessage<PatientState>>) => void) | null = null;
+  onerror: ((event: unknown) => void) | null = null;
+  private engine: AnesthesiaEngine | null = null;
+  /** Every action the engine actually received, in order. */
+  readonly applied: { type: string; payload: Record<string, unknown> }[] = [];
+
+  postMessage(message: ToWorkerMessage): void {
+    assertProtocolVersion(message);
+    switch (message.type) {
+      case 'init':
+        this.engine = new AnesthesiaEngine({
+          scenario: message.scenario as Scenario,
+          seed: message.seed,
+          practiceRegion: message.practiceRegion,
+        });
+        this.emit({
+          v: WORKER_PROTOCOL_VERSION, type: 'ready',
+          engineVersion: ENGINE_VERSION, modelSetRevision: MODEL_SET_REVISION,
+        });
+        break;
+      case 'action':
+        this.applied.push({
+          type: message.action.type,
+          payload: message.action.payload as Record<string, unknown>,
+        });
+        this.engine?.apply(message.action);
+        break;
+      case 'advance': {
+        if (!this.engine) return;
+        let last = this.engine.step();
+        const events = [...last.events];
+        const signals = ['ecg', 'arterial', 'capno', 'pleth'] as const;
+        const collected: Record<string, number[]> = { ecg: [], arterial: [], capno: [], pleth: [] };
+        const collect = () => {
+          for (const signal of signals) collected[signal]!.push(...last.waveforms[signal].samples);
+        };
+        collect();
+        for (let i = 1; i < message.ticks; i += 1) {
+          last = this.engine.step();
+          events.push(...last.events);
+          collect();
+        }
+        this.emit({
+          v: WORKER_PROTOCOL_VERSION,
+          type: 'state',
+          tick: last.tick,
+          state: last.state,
+          concentrations: last.concentrations,
+          attribution: last.attribution,
+          waveforms: signals.map((signal) => ({
+            signal,
+            sampleRateHz: last.waveforms[signal].sampleRateHz,
+            startSeconds: last.waveforms[signal].startSeconds,
+            samples: new Float32Array(collected[signal]!),
+          })),
+          alarms: last.alarms.map((alarm) => ({
+            alarmId: alarm.id, priority: alarm.priority, parameter: alarm.parameter,
+            value: alarm.value, unit: alarm.unit, message: alarm.message,
+            sinceTick: alarm.sinceTick, silencedUntilTick: alarm.silencedUntilTick,
+          })),
+          events,
+          warnings: last.warnings,
+          equipment: last.equipment,
+        } as FromWorkerMessage<PatientState>);
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
+  terminate(): void {}
+
+  /**
+   * Emit a ready message out of band.
+   *
+   * The real failure needed a SECOND ready arriving after the session had
+   * started — React's development double-mount stands two solvers up, and the
+   * second one's ready landed on a running session. One `begin()` in a test
+   * emits one ready, before `play()`, which is why the first version of this
+   * file did not reproduce the bug it claimed to catch.
+   */
+  sendReadyAgain(): void {
+    this.emit({
+      v: WORKER_PROTOCOL_VERSION, type: 'ready',
+      engineVersion: ENGINE_VERSION, modelSetRevision: MODEL_SET_REVISION,
+    });
+  }
+
+  private emit(message: FromWorkerMessage<PatientState>): void {
+    this.onmessage?.({ data: message } as MessageEvent<FromWorkerMessage<PatientState>>);
+  }
+}
+
+/** Just the demonstration hook, wired to the real store. No canvas involved. */
+function Harness({ onBeat }: { onBeat: (narration: string | null, focus: string | null) => void }) {
+  const session = useSession();
+  const demonstration = useDemonstration({
+    active: true,
+    tick: session.tick,
+    act: session.act,
+    onFinished: () => {},
+  });
+  useEffect(() => {
+    onBeat(demonstration.beat?.narration ?? null, demonstration.beat?.focus ?? null);
+  }, [demonstration.beat, onBeat]);
+  return null;
+}
+
+describe('the demonstration, run for its full length', () => {
+  const workers: InProcessWorker[] = [];
+  const narrations: string[] = [];
+  const focuses: string[] = [];
+
+  (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+  const container = document.createElement('div');
+  document.body.appendChild(container);
+  const root = createRoot(container);
+
+  act(() => {
+    useSession.getState().begin(
+      {
+        scenarioId: ROUTINE_INDUCTION.metadata.id,
+        scenarioVersion: ROUTINE_INDUCTION.metadata.version,
+        contentVersion: ROUTINE_INDUCTION.metadata.version,
+        modelSetRevision: MODEL_SET_REVISION,
+        engineVersion: ENGINE_VERSION,
+        practiceRegion: 'US',
+        seed: 20260819,
+        scenario: ROUTINE_INDUCTION,
+      },
+      () => { const w = new InProcessWorker(); workers.push(w); return w as unknown as Worker; },
+      {
+        engine: ENGINE_VERSION, content: ROUTINE_INDUCTION.metadata.version,
+        modelSet: MODEL_SET_REVISION, scenario: ROUTINE_INDUCTION.metadata.version,
+      },
+      'anesthesia',
+    );
+  });
+
+  act(() => {
+    root.render(createElement(Harness, {
+      onBeat: (narration, focus) => {
+        if (narration && narrations[narrations.length - 1] !== narration) narrations.push(narration);
+        if (focus && focuses[focuses.length - 1] !== focus) focuses.push(focus);
+      },
+    }));
+  });
+
+  // Five times speed, exactly as the front door's link sets it, then the whole
+  // thing driven a frame at a time.
+  act(() => { useSession.getState().setSpeed(5); useSession.getState().play(); });
+  // Frames are driven in small batches, each in its own `act`, so React
+  // re-renders between them and the hook sees the clock ADVANCE rather than
+  // jump. Driving the whole run inside one `act` batches every update into a
+  // single render: the hook then sees tick 0 and then tick 3500, fires all five
+  // actions at the end, and the patient never meets a drug during the session.
+  // That is a faithful test of catch-up and a useless test of the demonstration.
+  const frameMs = 1000 / 60;
+  const framesPerBatch = 6;
+  const wallSeconds = (DEMONSTRATION_SECONDS + 20) / 5;
+  const batches = Math.round((wallSeconds * 1000) / frameMs / framesPerBatch);
+  /** The phase seen on every batch, so a momentary drop out of 'running' shows. */
+  const phasesSeen = new Set<string>();
+  for (let batch = 0; batch < batches; batch += 1) {
+    act(() => {
+      for (let i = 0; i < framesPerBatch; i += 1) useSession.getState().frame(frameMs);
+    });
+    phasesSeen.add(useSession.getState().phase);
+    // A quarter of the way in, a second solver reports ready — which is what
+    // React's development double-mount does, and what broke the front door's
+    // demonstration link. It must not disturb a session already under way.
+    if (batch === Math.round(batches / 4)) act(() => { workers[0]!.sendReadyAgain(); });
+  }
+
+  const applied = workers[0]!.applied;
+  const state = () => useSession.getState().state!;
+
+  it('reaches the end of the script rather than stalling part-way', () => {
+    expect(useSession.getState().tick / TICKS_PER_SECOND).toBeGreaterThan(DEMONSTRATION_SECONDS);
+    expect(useSession.getState().phase).toBe('running');
+    expect(useSession.getState().transport).toBe('running');
+  });
+
+  it('is not disturbed by a second solver reporting ready mid-run', () => {
+    // The bug this file exists for. A late ready message used to set the phase
+    // back to 'briefing', stopping the clock and returning the learner to the
+    // briefing screen — which is how the front door's demonstration link looked
+    // like it did nothing at all. The session must never have left 'running'.
+    expect([...phasesSeen]).toEqual(['running']);
+  });
+
+  it('performs every scripted action exactly once, and no others', () => {
+    const scripted = INDUCTION_DEMONSTRATION.filter((beat) => beat.action);
+    expect(applied).toHaveLength(scripted.length);
+    expect(applied.map((entry) => entry.type))
+      .toEqual(scripted.map((beat) => beat.action!.type));
+  });
+
+  it('says every line in the script, in order', () => {
+    expect(narrations).toEqual(INDUCTION_DEMONSTRATION.map((beat) => beat.narration));
+  });
+
+  it('moves the viewer between the regions rather than pointing at one', () => {
+    expect(new Set(focuses).size).toBeGreaterThanOrEqual(3);
+    expect(focuses[0]).toBe('monitor');
+    expect(focuses).toContain('analysis');
+    expect(focuses).toContain('actions');
+  });
+
+  it('leaves a patient the narration described: anaesthetised, ventilated, intubated', () => {
+    expect(state().depthIndex).toBeLessThan(60);
+    expect(state().etco2MmHg).toBeGreaterThan(20);
+    expect(useSession.getState().equipment?.airway.intubated).toBe(true);
+    expect(useSession.getState().equipment?.ventilator.delivering).toBe(true);
+  });
+
+  it('never desaturates the patient it was preoxygenating', () => {
+    expect(state().spo2Percent).toBeGreaterThan(95);
+  });
+
+  it('produces the waveform the monitor draws, not just numbers', () => {
+    const blocks = useSession.getState().waveformBlocks;
+    expect(blocks.length).toBeGreaterThan(0);
+    for (const block of blocks) expect(block.samples.length).toBeGreaterThan(0);
+  });
+});
