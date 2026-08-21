@@ -200,8 +200,13 @@ a:hover { text-decoration-color: var(--text-secondary); }
 .reading td { color: var(--text-secondary); }
 /* A numeric column is as narrow as its digits; prose takes what is left. */
 .reading td.numeric, .reading th.numeric { inline-size: 1%; white-space: nowrap; text-align: end; }
-/* A wide table scrolls inside itself rather than widening the page. */
-.reading > table { display: block; overflow-x: auto; }
+/* A wide table scrolls inside itself rather than widening the page.
+ *
+ * Every table, not just a direct child. This was `.reading > table`, and the
+ * curriculum page nests its table one level down inside a section — so on a
+ * phone that one table widened the document and the whole page scrolled
+ * sideways, which is the exact failure the rule exists to prevent. */
+.reading table { display: block; overflow-x: auto; }
 
 /* --- Educator surfaces ----------------------------------------------------- */
 .curriculum__scenarios { display: grid; gap: var(--space-2); list-style: none; padding-inline-start: 0; }
