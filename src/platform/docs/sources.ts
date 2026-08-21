@@ -403,11 +403,12 @@ export const SOURCES: readonly Source[] = [
     year: 2026,
     locator: 'Dosage and Administration, general anaesthesia',
     unpinned: true,
-    usedFor: 'The reference the remifentanil drug card\'s figures are checked against.',
-    verifiedAgainst: 'The DailyMed label record was located, but its full dosing table was not '
-      + 'read. The card\'s figures are therefore NOT confirmed against it, and the card says so '
-      + 'rather than implying they are. Not version-pinned, for the same reason as any label: '
-      + 'DailyMed serves whichever revision is current.',
+    usedFor: 'The reference the remifentanil drug card\'s figures are checked against. The label '
+      + 'gives 1 µg/kg over 30 to 60 seconds for induction, and 0.05 to 2 µg/kg/min for '
+      + 'maintenance with typical starting rates of 0.25 µg/kg/min alongside propofol or '
+      + 'isoflurane and 0.4 with nitrous oxide.',
+    verifiedAgainst: 'The DailyMed label text, dosage and administration. Not version-pinned, '
+      + 'for the same reason as any label: DailyMed serves whichever revision is current.',
     verifiedOn: CHECKED,
   },
 

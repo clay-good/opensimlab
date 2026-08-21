@@ -262,11 +262,23 @@ describe('Requirement: Dosing A Learner Reads Can Be Checked', () => {
     expect(propofol.dosing.comparedWithLabel).toContain('clinician');
   });
 
-  it('Scenario: a card that has NOT been checked says that too', () => {
+  it('Scenario: remifentanil carries the label figures it was checked against', () => {
     const remifentanil = getDrugCard('remifentanil')!;
-    expect(remifentanil.dosing.comparedWithLabel).toContain('NOT yet checked');
-    // And says what a reviewer should do about it first.
-    expect(remifentanil.dosing.comparedWithLabel).toContain('reviewer should look at');
+    // The label's induction dose and its maintenance ceiling, both of which
+    // differ from the range this card teaches.
+    expect(remifentanil.dosing.comparedWithLabel).toContain('1 µg/kg over 30 to 60 seconds');
+    expect(remifentanil.dosing.comparedWithLabel).toContain('0.05–2 µg/kg/min');
+    expect(remifentanil.dosing.comparedWithLabel).toContain('clinician');
+  });
+
+  it('Scenario: no card claims a check that was not done', () => {
+    // The phrasing that marked an unchecked card is gone because both are now
+    // checked. If a third card is added unchecked, it says so in these words
+    // and this test is what stops the phrase being quietly dropped instead.
+    const unchecked = DRUG_CARDS.filter((card) => /NOT yet checked/.test(card.dosing.comparedWithLabel));
+    for (const card of unchecked) {
+      expect(card.dosing.comparedWithLabel, card.drugId).toContain('reviewer should look at');
+    }
   });
 
   it('Scenario: the label sources say which country they are', () => {

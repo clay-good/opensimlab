@@ -108,10 +108,13 @@ export const DRUG_CARDS: readonly DrugCard[] = [
     dosing: {
       sourceId: 'remifentanil-us-label',
       comparedWithLabel:
-        'NOT yet checked against the label. The label record was located and its dosing table '
-        + 'was not read, so these figures rest on nothing a reader can verify. The maintenance '
-        + 'range given here is narrower than the licensed one at its upper end. This is the '
-        + 'first thing a reviewer should look at on this card.',
+        'The United States label gives 1 µg/kg over 30 to 60 seconds for induction, where this '
+        + 'card opens the range at 0.5 — the teaching range, not the licensed one. For '
+        + 'maintenance the label gives 0.05–2 µg/kg/min with typical starting rates of 0.25 '
+        + 'µg/kg/min alongside propofol or isoflurane and 0.4 with nitrous oxide, where this card '
+        + 'stops at 0.5. The card\'s upper bound covers the common range and the label\'s covers '
+        + 'what is licensed; both are stated rather than reconciled, because choosing which a '
+        + 'learner should be shown is a clinician\'s decision.',
     },
     duration:
       'Context-sensitive half-time stays around 3–4 minutes however long the infusion has run, '
