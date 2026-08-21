@@ -109,15 +109,49 @@ export const PROPOFOL_REMIFENTANIL_SURFACE: ResponseSurfaceParameters = {
   eMax: 0,
 };
 
-/** Combined normalized potency U, before the sigmoid. */
+/**
+ * The MAC fraction at which the depth index sits at its own midpoint.
+ *
+ * This is the anchor that lets a volatile enter the same normalized-potency
+ * units as propofol, and it has to be an anchor for the SAME endpoint the
+ * surface describes. Two candidates are wrong for that:
+ *
+ *  - MAC itself is an EC50 for MOVEMENT, not for hypnosis.
+ *  - MAC-awake, about 0.34, is an EC50 for RESPONSE TO COMMAND. Using it put the
+ *    index at 30 for half a MAC — a patient sedated to a whisper of agent
+ *    reported as deeply anaesthetised.
+ *
+ * The surface's propofol partner is Eleveld's Ce50 for the depth index itself,
+ * so the volatile's denominator must be the MAC fraction giving the same
+ * half-maximal index, which is about one MAC: processed-EEG indices sit in the
+ * mid-forties at 1.0 MAC sevoflurane, near 65 at 0.5 MAC and in the twenties at
+ * 2 MAC, and this value reproduces all three.
+ *
+ * Nickalls and Mapleson give the age relation for MAC, applied to the
+ * denominator before this fraction is taken, so an older patient reaches the
+ * same normalized potency at a lower end-tidal concentration.
+ */
+export const VOLATILE_DEPTH_MAC_50 = 0.95;
+
+/**
+ * Combined normalized potency U, before the sigmoid.
+ *
+ * `volatileMacFraction` enters ADDITIVELY. A volatile and an intravenous
+ * hypnotic are additive for the hypnotic endpoint to a good approximation, and
+ * the synergy term stays where it is established — between the hypnotic and the
+ * opioid. Treating the volatile as a third synergistic partner would be
+ * inventing an interaction to make a number move.
+ */
 export function combinedPotency(
   propofolCe: number,
   remifentanilCe: number,
   parameters: ResponseSurfaceParameters,
+  volatileMacFraction = 0,
 ): number {
   const uProp = Math.max(propofolCe, 0) / parameters.propofolCe50;
   const uRemi = Math.max(remifentanilCe, 0) / parameters.remifentanilCe50Hypnotic;
-  return uProp + uRemi + parameters.alpha * uProp * uRemi;
+  const uVol = Math.max(volatileMacFraction, 0) / VOLATILE_DEPTH_MAC_50;
+  return uProp + uRemi + uVol + parameters.alpha * uProp * uRemi;
 }
 
 /** The predicted depth index from the combined surface. */
@@ -125,8 +159,9 @@ export function responseSurfaceEffect(
   propofolCe: number,
   remifentanilCe: number,
   parameters: ResponseSurfaceParameters = PROPOFOL_REMIFENTANIL_SURFACE,
+  volatileMacFraction = 0,
 ): number {
-  const u = combinedPotency(propofolCe, remifentanilCe, parameters);
+  const u = combinedPotency(propofolCe, remifentanilCe, parameters, volatileMacFraction);
   if (u === 0) return parameters.e0;
   const ratio = Math.pow(u, parameters.gamma);
   return parameters.e0 + (parameters.eMax - parameters.e0) * (ratio / (1 + ratio));

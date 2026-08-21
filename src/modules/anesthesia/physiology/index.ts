@@ -215,7 +215,20 @@ export class VirtualPatient {
 
   /** The predicted depth index, from the response surface. Never a monitor reading. */
   depthIndex(drugs: DrugDrive): number {
-    return responseSurfaceEffect(drugs.propofolCe, drugs.remifentanilCe);
+    return responseSurfaceEffect(
+      drugs.propofolCe, drugs.remifentanilCe, undefined, this.volatileMacFraction(),
+    );
+  }
+
+  /**
+   * The age-adjusted MAC fraction the patient currently has on board.
+   *
+   * Read from the END-TIDAL concentration, not the vaporizer dial, for the same
+   * reason preoxygenation is judged end-tidal: the dial says what the machine is
+   * delivering and the end-tidal says what reached the patient.
+   */
+  volatileMacFraction(): number {
+    return macFraction('sevoflurane', this.sevofluranePercent, this.profile.ageYears);
   }
 
   /** Advance one tick. */
@@ -240,6 +253,11 @@ export class VirtualPatient {
     const opioid = normalizedEffect(
       drugs.remifentanilCe, REMIFENTANIL_HEMODYNAMIC.ce50, REMIFENTANIL_HEMODYNAMIC.gamma,
     );
+    // A volatile is not just a hypnotic. Sevoflurane vasodilates and depresses
+    // the myocardium in proportion to dose, which is why a patient maintained
+    // deep on agent alone is hypotensive, and why turning the vaporizer down is
+    // the first thing done about it.
+    const volatile = this.volatileMacFraction();
 
     const depth = this.depthIndex(drugs);
     // Depth runs 0 to 100 with 100 awake, so the anaesthetized fraction is its complement.
@@ -256,6 +274,7 @@ export class VirtualPatient {
       vasopressorEffect: drugs.vasopressorEffect,
       positivePressure: ventilator.delivering && ventilator.mode !== 'manual',
       saturationPercent: this.lastSaturationPercent,
+      volatileMacFraction: volatile,
     }, TICK_MINUTES);
 
     // No circulation, and none returns. Applied before attribution so the Why

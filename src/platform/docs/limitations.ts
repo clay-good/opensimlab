@@ -18,6 +18,22 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'volatile-circulatory-effect-is-a-teaching-model',
+    simplification: 'Sevoflurane\'s effect on the depth index is anchored to a published quantity '
+      + '— the MAC fraction at which a processed-EEG index sits at its midpoint, about one MAC — '
+      + 'but its effect on blood pressure is an Open Sim Lab teaching model: fixed fractional falls '
+      + 'in vascular resistance and stroke volume per MAC, plus a blunted baroreflex.',
+    whereItMisleads: 'Reading the exact pressure fall for a given vaporizer setting as a '
+      + 'prediction. The direction and the rough magnitude are right; the number is not published '
+      + 'and individual variation is large, particularly in the elderly and the hypovolaemic, '
+      + 'where the same MAC costs far more pressure than this model shows.',
+    correctUnderstanding: 'Volatile agents cause dose-dependent vasodilation and myocardial '
+      + 'depression and blunt the baroreflex, which is why volatile hypotension keeps falling '
+      + 'until the vaporizer is turned down, and why the elderly and the hypovolaemic tolerate '
+      + 'far less agent than a fit young adult.',
+    briefIn: [],
+  },
+  {
     id: 'hypoxic-collapse-is-a-teaching-model',
     simplification: 'The circulation\'s response to hypoxaemia — a sympathetic tachycardia as the '
       + 'saturation falls, then bradycardia and falling output as the myocardium fails, then '

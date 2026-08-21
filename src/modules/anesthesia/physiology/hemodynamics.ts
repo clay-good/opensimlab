@@ -100,6 +100,16 @@ export interface HemodynamicDrive {
    * the thing an airway emergency exists to teach.
    */
   readonly saturationPercent: number;
+  /**
+   * Age-adjusted MAC fraction of volatile agent on board.
+   *
+   * A learner could set the vaporizer to 8% and watch the end-tidal
+   * concentration and the MAC fraction climb while the patient stayed wide
+   * awake at a normal blood pressure, because nothing downstream read either
+   * number. A control that moves a figure on screen and does not touch the
+   * patient is worse than no control.
+   */
+  readonly volatileMacFraction: number;
 }
 
 /** The maximum effects each influence can have, at full effect. */
@@ -120,6 +130,26 @@ export const HEMODYNAMIC_GAINS = {
   vasopressorSvrRise: 0.60,
   /** Positive-pressure ventilation reduces stroke volume by this fraction. */
   positivePressureStrokeVolumeDrop: 0.08,
+} as const;
+
+/**
+ * The circulatory effect of a volatile agent, per MAC.
+ *
+ * OPEN SIM LAB TEACHING MODEL — not a published population model.
+ *
+ * Volatiles reduce systemic vascular resistance and depress the myocardium in a
+ * dose-dependent way; that is why a patient maintained deep on agent alone is
+ * hypotensive and why turning the vaporizer down is the first thing done about
+ * it. The gains here are per MAC and are chosen so that one MAC produces a
+ * clinically recognisable fall rather than to reproduce any published figure.
+ */
+export const VOLATILE_HEMODYNAMIC = {
+  /** Fractional fall in systemic vascular resistance per MAC. */
+  svrDropPerMac: 0.15,
+  /** Fractional fall in stroke volume per MAC. */
+  strokeVolumeDropPerMac: 0.10,
+  /** Fractional attenuation of baroreflex gain per MAC. */
+  baroreflexAttenuationPerMac: 0.35,
 } as const;
 
 /**
@@ -217,8 +247,10 @@ export function stepHemodynamics(
   const hypovolemia = clamp(1 - state.bloodVolumeMl / profile.bloodVolumeMl, 0, 1);
 
   // --- Systemic vascular resistance -----------------------------------------
+  const volatile = Math.max(drive.volatileMacFraction, 0);
   const vasodilationFactor = 1
     - HEMODYNAMIC_GAINS.propofolSvrDrop * drive.propofolVasodilation
+    - VOLATILE_HEMODYNAMIC.svrDropPerMac * volatile
     - HEMODYNAMIC_GAINS.opioidSvrDrop * drive.opioidEffect
     + HEMODYNAMIC_GAINS.stimulusSvrRise * drive.surgicalStimulus
     + HEMODYNAMIC_GAINS.vasopressorSvrRise * drive.vasopressorEffect;
@@ -227,7 +259,11 @@ export function stepHemodynamics(
   // --- Stroke volume ---------------------------------------------------------
   // Volume loss reduces preload; a fixed-stroke-volume patient cannot compensate.
   const preloadFactor = 1 - 1.2 * hypovolemia;
-  const depressionFactor = 1 - HEMODYNAMIC_GAINS.propofolStrokeVolumeDrop * drive.propofolDepression;
+  const depressionFactor = clamp(
+    1 - HEMODYNAMIC_GAINS.propofolStrokeVolumeDrop * drive.propofolDepression
+      - VOLATILE_HEMODYNAMIC.strokeVolumeDropPerMac * volatile,
+    0.15, 1,
+  );
   const ppvFactor = drive.positivePressure
     ? 1 - HEMODYNAMIC_GAINS.positivePressureStrokeVolumeDrop
     : 1;
@@ -254,7 +290,8 @@ export function stepHemodynamics(
   const error = profile.baselineMapMmHg - currentMap;
   const reflexGain = profile.baroreflexGain
     * (1 - 0.75 * drive.anesthesiaDepthFraction)
-    * (1 - 0.45 * drive.opioidEffect);
+    * (1 - 0.45 * drive.opioidEffect)
+    * clamp(1 - VOLATILE_HEMODYNAMIC.baroreflexAttenuationPerMac * volatile, 0.1, 1);
   // Myocardial failure OVERRIDES the reflex rather than being added to it. A
   // baroreflex demanding a tachycardia from a heart that is failing from hypoxia
   // does not get one, and a model that let it would show a patient compensating
@@ -285,6 +322,7 @@ export function stepHemodynamics(
   // in proportion to how far each moved that variable's target.
   const svrDrivers: [string, string, number, boolean][] = [
     ['propofol-vasodilation', 'Propofol vasodilation', -HEMODYNAMIC_GAINS.propofolSvrDrop * drive.propofolVasodilation, false],
+    ['volatile-vasodilation', 'Volatile agent vasodilation', -VOLATILE_HEMODYNAMIC.svrDropPerMac * volatile, true],
     ['opioid-vasodilation', 'Opioid vasodilation', -HEMODYNAMIC_GAINS.opioidSvrDrop * drive.opioidEffect, false],
     ['surgical-stimulus', 'Surgical stimulus', HEMODYNAMIC_GAINS.stimulusSvrRise * drive.surgicalStimulus, false],
     ['vasopressor', 'Vasopressor', HEMODYNAMIC_GAINS.vasopressorSvrRise * drive.vasopressorEffect, true],
@@ -303,6 +341,7 @@ export function stepHemodynamics(
     ['propofol-myocardial-depression', 'Propofol myocardial depression', -HEMODYNAMIC_GAINS.propofolStrokeVolumeDrop * drive.propofolDepression, false],
     ['hypovolemia', 'Reduced circulating volume', -1.2 * hypovolemia, false],
     ['positive-pressure-ventilation', 'Positive-pressure ventilation reducing venous return', drive.positivePressure ? -HEMODYNAMIC_GAINS.positivePressureStrokeVolumeDrop : 0, false],
+    ['volatile-myocardial-depression', 'Volatile agent myocardial depression', -VOLATILE_HEMODYNAMIC.strokeVolumeDropPerMac * volatile, true],
     ['hypoxic-myocardial-failure', 'Hypoxaemia failing the myocardium', -(1 - HYPOXIA.collapseStrokeVolumeFraction) * failure, true],
   ];
   const strokeWeight = strokeDrivers.reduce((sum, [, , value]) => sum + Math.abs(value), 0);

@@ -161,6 +161,26 @@ The engine SHALL model sevoflurane uptake from the vaporizer through the breathi
 - **WHEN** 60% nitrous oxide is added at a fixed end-tidal sevoflurane concentration
 - **THEN** the total minimum alveolar concentration fraction rises additively as the iso-MAC charts describe, and the interface shows the contribution of each agent separately
 
+#### Scenario: The vaporizer reaches the patient, not only the display
+
+- **WHEN** a learner sets the vaporizer and end-tidal sevoflurane rises
+- **THEN** the depth index falls and the blood pressure falls with it, so the setting changes the patient rather than only the numbers describing the gas; a control that moves a figure on screen without touching the patient SHALL NOT ship
+
+#### Scenario: The volatile's depth contribution is anchored to the depth endpoint
+
+- **WHEN** the MAC fraction is converted into the depth surface's normalized potency
+- **THEN** the denominator is the MAC fraction giving a half-maximal depth INDEX, about one MAC — not MAC, which is an EC50 for movement, and not MAC-awake, which is an EC50 for response to command — so the index reads in the mid-forties at 1.0 MAC, near 65 at 0.5 MAC and in the twenties at 2 MAC
+
+#### Scenario: A volatile adds to an intravenous hypnotic
+
+- **WHEN** propofol and sevoflurane are both present
+- **THEN** their normalized potencies combine additively, and the synergy term applies only between hypnotic and opioid where it is established
+
+#### Scenario: A volatile overdose looks like one
+
+- **WHEN** the vaporizer is left at 8 vol % until the end-tidal concentration approaches it
+- **THEN** the patient is reported at over 4 MAC, profoundly deep, and profoundly hypotensive, with the fall attributed to volatile vasodilation and myocardial depression and declared an Open Sim Lab teaching model
+
 #### Scenario: Fresh gas flow changes wash-in speed
 
 - **WHEN** the vaporizer is set to 4 vol % at a fresh gas flow of 1 L/min and again at 8 L/min
