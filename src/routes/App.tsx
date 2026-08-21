@@ -11,7 +11,7 @@ import { Landing } from '@landing/Landing';
 import { About } from '@landing/About';
 import { PlannedModuleRoute } from './PlannedModuleRoute';
 import { MODULES } from '@platform/modules/registry';
-import { routeFor } from './routes';
+import { formatTitle, routeFor } from './routes';
 import { UpdateNotice } from '@platform/offline/UpdateNotice';
 import { ErrorBoundary } from '@platform/ui/ErrorBoundary';
 
@@ -67,8 +67,14 @@ function CurrentRoute() {
   const path = usePath();
 
   useEffect(() => {
-    const metadata = routeFor(path);
-    if (!metadata) return;
+    // An unknown path gets the not-found title rather than keeping whatever the
+    // previous page set. A tab reading "Routine induction" over a page that says
+    // there is no such scenario is a small lie, and this site's whole argument
+    // is that it does not tell those. The strings match the prerendered 404.
+    const metadata = routeFor(path) ?? {
+      title: formatTitle('Page not found'),
+      description: 'That address does not match a page on Open Sim Lab.',
+    };
     document.title = metadata.title;
     const description = document.querySelector('meta[name="description"]');
     if (description) description.setAttribute('content', metadata.description);

@@ -13,6 +13,7 @@ import { NotForClinicalUseGate, hasAcknowledged, recordAcknowledgement } from '@
 import { SonificationEngine } from '@platform/audio/sonification';
 import { guessRegion, getRegion, REGIONS } from '@anesthesia/region/profiles';
 import { DEFAULT_SCENARIO_ID, getScenario, scenariosByDifficulty } from '@anesthesia/scenarios';
+import type { Scenario } from '@anesthesia/engine';
 import { ENGINE_VERSION } from '@anesthesia/engine';
 import { MODEL_SET_REVISION } from '@anesthesia/pharmacology/registry';
 import { Prebrief } from '@anesthesia/ui/Prebrief';
@@ -21,11 +22,26 @@ import { Cockpit } from '@anesthesia/ui/Cockpit';
 import { Debrief } from '@anesthesia/ui/Debrief';
 import { assertTranscriptIsAnonymous, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 
-/** The scenario a path names, falling back to the one a learner meets first. */
-function scenarioForPath(path: string) {
+/**
+ * The scenario a path names.
+ *
+ * `missingId` is the whole point of the return shape. This used to fall back to
+ * the default scenario for ANY unrecognised id, so `/anesthesia/scenario/
+ * bronchspasm` opened routine induction with the wrong URL still in the bar and
+ * nothing said otherwise. An instructor who typed a scenario id wrong in a
+ * cohort link would have sent thirty students to the wrong case without one of
+ * them being told.
+ */
+function scenarioForPath(path: string): { scenario: Scenario; missingId: string | null } {
+  const fallback = getScenario(DEFAULT_SCENARIO_ID)!;
   const prefix = '/anesthesia/scenario/';
-  const id = path.startsWith(prefix) ? path.slice(prefix.length).replace(/\/+$/, '') : '';
-  return getScenario(id) ?? getScenario(DEFAULT_SCENARIO_ID)!;
+  if (!path.startsWith(prefix)) return { scenario: fallback, missingId: null };
+  const id = path.slice(prefix.length).replace(/\/+$/, '');
+  const found = getScenario(id);
+  if (found) return { scenario: found, missingId: null };
+  // The id is shown back to whoever followed the link, bounded, because it came
+  // from a URL and a URL can carry anything.
+  return { scenario: fallback, missingId: id.slice(0, 80) };
 }
 
 /** A seed derived from the scenario rather than from a clock, so a session replays. */
@@ -68,7 +84,7 @@ export function readAssignment(search: string): Assignment {
 
 export function AnesthesiaRoute({ path }: { path: string }) {
   const session = useSession();
-  const scenario = useMemo(() => scenarioForPath(path), [path]);
+  const { scenario, missingId } = useMemo(() => scenarioForPath(path), [path]);
   const assignment = useMemo(
     () => readAssignment(typeof location === 'undefined' ? '' : location.search),
     [],
@@ -158,6 +174,10 @@ export function AnesthesiaRoute({ path }: { path: string }) {
     );
   }
 
+  // A link to a scenario that does not exist says so, rather than quietly
+  // opening a different patient.
+  if (missingId !== null) return <UnknownScenario id={missingId} />;
+
   // The index: what there is to do, in the order it is worth doing.
   if (isIndex) return <ScenarioIndex />;
 
@@ -229,6 +249,39 @@ export function AnesthesiaRoute({ path }: { path: string }) {
  * the patient is and what the scenario is for, so a learner chooses rather than
  * guesses.
  */
+/**
+ * A scenario id that is not in the registry.
+ *
+ * It names the id rather than saying "not found", because the person reading it
+ * is usually the one who wrote the link, and the id is the thing they got wrong.
+ */
+function UnknownScenario({ id }: { id: string }) {
+  return (
+    <main className="reading" id="main">
+      <h1>No scenario called that</h1>
+      <p>
+        This link asks for a scenario with the id <code>{id}</code>, and there is not one.
+        It may have been renamed, or the link may have a typo in it.
+      </p>
+      <p>
+        If you were given this link by an instructor, the id in it is the part to check. These are
+        all the scenarios there are:
+      </p>
+      <ul className="scenario-index">
+        {scenariosByDifficulty().map((entry) => (
+          <li key={entry.metadata.id} className="scenario-index__item">
+            <a className="scenario-index__title" href={`/anesthesia/scenario/${entry.metadata.id}`}>
+              {entry.metadata.title}
+            </a>
+            <p className="scenario-index__patient"><code>{entry.metadata.id}</code></p>
+          </li>
+        ))}
+      </ul>
+      <p><a href="/anesthesia">Back to the scenario list</a></p>
+    </main>
+  );
+}
+
 function ScenarioIndex() {
   return (
     <main className="reading" id="main">
