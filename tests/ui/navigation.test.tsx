@@ -17,6 +17,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { createElement } from 'react';
 import { SITE_BAR_LINKS, SiteBar } from '@platform/ui';
 import { Prebrief } from '@anesthesia/ui/Prebrief';
+import { About } from '@landing/About';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 
@@ -126,6 +127,20 @@ describe('there is one bar, not five', () => {
       if (!source.includes('<SiteBar')) withoutBar.push(name);
     }
     expect(withoutBar).toEqual([]);
+  });
+
+  it('the About page is not a dead end either, though it earns a breadcrumb instead', () => {
+    // About lives outside src/routes and is a long reading page rather than an
+    // application surface, so it carries a breadcrumb and a full link list
+    // rather than the bar. What matters is the same: you can always get out.
+    // Asserted against the rendered page, not the source: the trust links come
+    // from a shared list at runtime, so a source check would pass or fail on
+    // where the array happens to live.
+    const links = hrefs(renderToStaticMarkup(createElement(About)));
+    expect(links).toContain('/');
+    expect(links).toContain('/anesthesia');
+    expect(links).toContain('/validation');
+    expect(links).toContain('/governance');
   });
 
   it('the shared bar offers what the hand-written educator bars did not', () => {
