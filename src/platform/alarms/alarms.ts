@@ -88,15 +88,18 @@ export const DEFAULT_LIMITS: readonly AlarmLimit[] = [
     id: 'map-low', parameter: 'meanArterialMmHg', label: 'MAP', unit: 'mmHg', priority: 'warning',
     low: 65, message: 'Mean arterial pressure low',
     source: 'The threshold most of the intraoperative hypotension outcome literature is '
-      + 'organized around (Salmasi et al., Anesthesiology 2017; Sessler et al., Br J Anaesth 2019). '
+      + 'organized around (Salmasi et al., Anesthesiology 2017;126:47-65, PMID 27792044; Sessler et al., '
+      + 'Br J Anaesth 2019;122:563-74, PMID 30916004). '
       + 'An earlier build alarmed at 55, which taught that a mean arterial pressure of 56 was '
-      + 'unremarkable — and Walsh et al. (Anesthesiology 2013) associate as little as one to five '
+      + 'unremarkable — and Walsh et al. (Anesthesiology 2013;119:507-15, PMID 23835589) associate as '
+      + 'little as one to five '
       + 'minutes below 55 with acute kidney and myocardial injury.',
   },
   {
     id: 'map-very-low', parameter: 'meanArterialMmHg', label: 'MAP', unit: 'mmHg', priority: 'critical',
     low: 55, message: 'Mean arterial pressure critically low',
-    source: 'Walsh et al. (Anesthesiology 2013) associate exposure below a mean arterial pressure '
+    source: 'Walsh et al. (Anesthesiology 2013;119:507-15, PMID 23835589) associate exposure below a '
+      + 'mean arterial pressure '
       + 'of 55 with acute kidney injury and myocardial injury at durations as short as one to five '
       + 'minutes, so this is where the alarm becomes high priority rather than medium.',
   },

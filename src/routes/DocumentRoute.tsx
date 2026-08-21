@@ -11,6 +11,7 @@ import { buildValidationReport } from '@platform/docs/validation-report';
 import { EDITORIAL_BOARD, HONEST_STATUS, reviewableItems } from '@platform/governance/records';
 import { reportCoverage } from '@platform/governance/review-gate';
 import { LIMITATIONS } from '@platform/docs/limitations';
+import { SOURCES, formatSource } from '@platform/docs/sources';
 import { PRIVACY_CLAIMS } from '@platform/docs/privacy-claims';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { routeFor } from './routes';
@@ -156,6 +157,31 @@ function ValidationBody() {
 
       <h2>Reproducing these numbers</h2>
       <p>{report.reproduce}</p>
+
+      <h2>Every source, and what was taken from it</h2>
+      <p>
+        Each entry names what this simulator actually takes from that paper, so you can check the
+        specific claim rather than the general topic. Every citation was confirmed field by field
+        against the source&apos;s own record — an audit found the age-related MAC relation
+        attributed to the wrong paper of the same authors, which is exactly the kind of error a
+        citation nobody checks will carry indefinitely.
+      </p>
+      <p className="field__hint">
+        A test refuses the build if any citation appears in the code without an entry here.
+      </p>
+      <ul>
+        {SOURCES.map((source) => (
+          <li key={source.id} className="document__source">
+            <p><strong>{formatSource(source)}</strong></p>
+            <p>{source.usedFor}</p>
+            {source.pmid && (
+              <CitationLink href={`https://pubmed.ncbi.nlm.nih.gov/${source.pmid}/`}>
+                Look this up on PubMed
+              </CitationLink>
+            )}
+          </li>
+        ))}
+      </ul>
     </>
   );
 }

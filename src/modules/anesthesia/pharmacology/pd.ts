@@ -127,7 +127,7 @@ export const PROPOFOL_REMIFENTANIL_SURFACE: ResponseSurfaceParameters = {
  * mid-forties at 1.0 MAC sevoflurane, near 65 at 0.5 MAC and in the twenties at
  * 2 MAC, and this value reproduces all three.
  *
- * Nickalls and Mapleson give the age relation for MAC, applied to the
+ * Mapleson 1996 gives the age relation for MAC, applied to the
  * denominator before this fraction is taken, so an older patient reaches the
  * same normalized potency at a lower end-tidal concentration.
  */
@@ -193,16 +193,35 @@ export function additiveEffect(
 }
 
 /**
- * Age-related minimum alveolar concentration, by the iso-MAC relationship of
- * Nickalls and Mapleson (*Br J Anaesth* 2003;91:170-4):
+ * Age-related minimum alveolar concentration:
  *
  *   MAC(age) = MAC40 * 10^(-0.00269 * (age - 40))
  *
  * where MAC40 is the agent's minimum alveolar concentration at 40 years.
+ *
+ * PROVENANCE. The equation, this exponent and every MAC40 value below are from
+ * Mapleson WW, *Effect of age on MAC in humans: a meta-analysis*, Br J Anaesth
+ * 1996;76:179-85 (PMID 8777094), which states them directly: "b = -0.00269 (95%
+ * confidence limits -0.0030, -0.0024) and a = MAC at age 40 yr, which... is
+ * given by: halothane, 0.75%; isoflurane, 1.17%; enflurane, 1.63%; sevoflurane,
+ * 1.80%; desflurane 6.6%; nitrous oxide, 104%".
+ *
+ * These used to be attributed to Nickalls and Mapleson 2003. That paper is the
+ * iso-MAC CHARTS built on this relation, not its source, and a reader checking
+ * the numbers against it would not have found them. The charts are still the
+ * right citation for the clinical application and are cited as such.
+ *
+ * The published 95% confidence limits on the exponent are ±0.0003, which over
+ * the 40-year span from a 40-year-old to an 80-year-old is about ±3% on MAC —
+ * small enough that the age adjustment is worth making and large enough that it
+ * is not worth reading to three figures.
  */
 export const MAC_AGE_EXPONENT = -0.00269;
 
-/** MAC at 40 years, in volumes percent, per agent. */
+/** The published 95% confidence limits on the age exponent (Mapleson 1996). */
+export const MAC_AGE_EXPONENT_CL = [-0.0030, -0.0024] as const;
+
+/** MAC at 40 years, in volumes percent, per agent (Mapleson 1996, Table). */
 export const MAC_40: Record<'sevoflurane' | 'isoflurane' | 'desflurane', number> = {
   sevoflurane: 1.80,
   isoflurane: 1.17,
@@ -224,13 +243,15 @@ export function macFraction(agent: keyof typeof MAC_40, endTidalPercent: number,
 
 /**
  * Nitrous oxide contributes additively to the total MAC fraction, as the iso-MAC
- * charts describe. Its MAC at 40 years is about 104 volumes percent.
+ * charts describe. Its MAC at 40 years is 104 volumes percent (Mapleson 1996).
  *
- * It ages like every other agent. Nickalls and Mapleson apply the SAME −0.00269
- * exponent to nitrous oxide as to the volatiles, and treating its MAC as a fixed
- * 104 under-reads its contribution in exactly the patients where that matters
- * most: at 80 years its MAC is 81 volumes percent, so 50% nitrous is 0.62 MAC,
- * not the 0.48 a fixed denominator reports.
+ * It ages like every other agent, and that is the paper's own finding rather
+ * than an extrapolation: Mapleson reports log10 MAC decreasing with age "at the
+ * same rate for all inhaled anaesthetics" and lists nitrous oxide in the same
+ * table as the volatiles. Treating its MAC as a fixed 104 under-reads its
+ * contribution in exactly the patients where that matters most: at 80 years its
+ * MAC is 81 volumes percent, so 50% nitrous is 0.62 MAC, not the 0.48 a fixed
+ * denominator reports.
  */
 export const NITROUS_OXIDE_MAC_40_PERCENT = 104;
 

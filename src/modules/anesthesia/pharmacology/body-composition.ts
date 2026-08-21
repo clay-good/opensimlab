@@ -99,7 +99,7 @@ export function fatFreeMassJanmahasatian2005(covariates: Covariates): number {
  * relationship down through childhood.
  *
  * Al-Sallami HS, Goulding A, Grant A, Taylor R, Holford N, Duffull SB.
- * Prediction of fat-free mass in children. *Clin Pharmacokinet* 2015;54:1169-78.
+ * Prediction of fat-free mass in children. *Clin Pharmacokinet* 2015;54:1169-78. PMID 25940825.
  *
  * The equation is CONTINUOUS and applies at every age. Its age scale asymptotes
  * toward Janmahasatian's adult prediction rather than switching to it, so there is

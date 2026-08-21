@@ -88,7 +88,9 @@ export function physiologicalBenchmarks(): Benchmark[] {
     {
       id: 'iso-mac-age',
       name: 'Age-related minimum alveolar concentration, sevoflurane, 40 to 80 years',
-      citation: 'Nickalls RWD, Mapleson WW. Br J Anaesth 2003;91:170-4.',
+      citation: 'Mapleson WW. Br J Anaesth 1996;76:179-85 (PMID 8777094) for the relation and the '
+        + 'MAC40 values; Nickalls RWD, Mapleson WW. Br J Anaesth 2003;91:170-4 (PMID 12878613) '
+        + 'for the iso-MAC charts built on it.',
       expected: `ratio ${macExpected.toFixed(4)}`,
       observed: `ratio ${macRatio.toFixed(4)}`,
       tolerance: '±1%',

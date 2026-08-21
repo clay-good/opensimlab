@@ -23,7 +23,8 @@ export const RESPIRATORY_QUOTIENT = 0.8;
 export const CO2_STORE_ML_PER_MMHG = 66;
 
 /**
- * The oxyhaemoglobin dissociation curve, by the Severinghaus 1979 inversion.
+ * The oxyhaemoglobin dissociation curve, by the Severinghaus 1979 inversion
+ * (J Appl Physiol 1979;46:599-602, PMID 35496).
  *
  *   SO2 = 1 / (23400 / (PO2^3 + 150 * PO2) + 1)
  *
