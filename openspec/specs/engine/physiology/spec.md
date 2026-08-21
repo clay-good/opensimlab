@@ -46,6 +46,40 @@ Anesthetic agents SHALL act on the physiologic terms — vasodilation reduces `S
 - **WHEN** mean arterial pressure is low because circulating volume has fallen 25% from hemorrhage and phenylephrine alone is given
 - **THEN** mean arterial pressure rises only transiently and returns toward the hypotensive value, while cardiac output remains depressed, until volume is replaced
 
+### Requirement: The Circulation Responds To Hypoxaemia
+
+The haemodynamic model SHALL take arterial oxygen saturation as an input and SHALL reproduce the sequence that makes an unrelieved airway problem fatal: a sympathetic tachycardia as saturation falls, then bradycardia and falling cardiac output as the myocardium is impaired, then asystole. This response SHALL be declared an Open Sim Lab teaching model wherever it drives a number.
+
+#### Scenario: An abandoned patient does not quietly carry on
+
+- **WHEN** a patient is given an induction dose and then neither ventilated nor oxygenated
+- **THEN** the heart rate rises while the saturation falls, then falls as the saturation continues to fall, the mean arterial pressure falls with the cardiac output rather than recovering, and the patient arrests — over minutes, so that the deterioration is recognisable rather than instant
+
+#### Scenario: The early warning comes before the late one
+
+- **WHEN** the two hypoxic responses are compared
+- **THEN** the sympathetic response begins at a higher saturation than myocardial failure does, so a learner meets a rising heart rate with a falling saturation while the situation is still recoverable, and a falling heart rate only when it is very late
+
+#### Scenario: A managed patient never meets any of it
+
+- **WHEN** a patient is preoxygenated, induced and ventilated
+- **THEN** saturation never falls far enough for either hypoxic response to apply and the circulation behaves exactly as it did before this response existed
+
+#### Scenario: Arrest is where the module stops, and it says so
+
+- **WHEN** the circulation stops
+- **THEN** the session log states plainly that this module models no resuscitation — no compressions, no adrenaline, no defibrillation — the patient does not recover however the airway is subsequently managed, and the limitations register records both the teaching model and the absence of resuscitation
+
+#### Scenario: An arrest is in the state, not only on the display
+
+- **WHEN** oxygen is restored to an arrested patient
+- **THEN** the heart rate and the cardiac output in the patient state remain zero, so no surface, transcript or debrief can report a recovery the model did not produce
+
+#### Scenario: A monitor shows nothing rather than an impossible number
+
+- **WHEN** there is no cardiac output
+- **THEN** oxygen saturation, heart rate and the blood pressures are reported as unmeasurable rather than as zero, because a pulse oximeter reads the pulsatile component of absorbance and with no pulse there is nothing for it to read
+
 ### Requirement: Baroreflex And Autonomic Regulation
 
 The engine SHALL implement a baroreflex that adjusts heart rate and systemic vascular resistance toward a set-point mean arterial pressure with a first-order time constant, and SHALL attenuate reflex gain in proportion to anesthetic depth and to opioid effect-site concentration.

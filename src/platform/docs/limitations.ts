@@ -18,6 +18,37 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'hypoxic-collapse-is-a-teaching-model',
+    simplification: 'The circulation\'s response to hypoxaemia — a sympathetic tachycardia as the '
+      + 'saturation falls, then bradycardia and falling output as the myocardium fails, then '
+      + 'asystole — is an Open Sim Lab teaching model. The sequence is not in doubt; where each '
+      + 'threshold sits in an individual patient is not established to the standard this project '
+      + 'requires before calling something published.',
+    whereItMisleads: 'Reading a specific saturation off this simulator as the point at which a '
+      + 'real patient will become bradycardic or arrest. The order of events and the rough '
+      + 'timescale are defensible. The numbers are not a prediction for anybody.',
+    correctUnderstanding: 'Hypoxaemia severe enough to impair the myocardium causes bradycardia '
+      + 'and then asystole, and this is why an unrelieved airway problem kills. A rising heart '
+      + 'rate with a falling saturation is the early warning and is where the problem is still '
+      + 'fixable; a falling heart rate with a falling saturation is very late.',
+    briefIn: ['rapid-desaturation'],
+  },
+  {
+    id: 'no-resuscitation',
+    simplification: 'Once the circulation stops, this module simulates nothing further. There are '
+      + 'no chest compressions, no adrenaline, no defibrillation and no return of spontaneous '
+      + 'circulation. The patient stays arrested however the airway is subsequently managed.',
+    whereItMisleads: 'Concluding that restoring oxygen to an arrested patient is what brings them '
+      + 'back, or practising anything about cardiac arrest management here. An earlier build did '
+      + 'let the circulation return on its own once oxygen was restored, which taught exactly the '
+      + 'wrong lesson.',
+    correctUnderstanding: 'A hypoxic cardiac arrest is managed as a cardiac arrest: compressions, '
+      + 'oxygenation, adrenaline, and treatment of the cause, following a resuscitation algorithm. '
+      + 'Correcting the hypoxaemia is necessary and is not by itself sufficient. Learn arrest '
+      + 'management where it is actually taught, not here.',
+    briefIn: [],
+  },
+  {
     id: 'respiratory-depression-is-calibrated',
     simplification: 'Propofol\'s respiratory dose-response is an Open Sim Lab calibration, not a '
       + 'transcribed published model. Its shape is chosen so that an induction dose stops the '

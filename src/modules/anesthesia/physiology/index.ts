@@ -31,6 +31,15 @@ export { AttributionRecorder } from './attribution';
 /** One tick, in minutes. */
 export const TICK_MINUTES = 1 / 600;
 
+/**
+ * Cardiac output, litres per minute, below which the circulation has stopped.
+ *
+ * Not a threshold anyone published — it is the point at which this model's
+ * output is indistinguishable from none, and past which continuing to integrate
+ * a heart rate would be describing a patient who does not have one.
+ */
+export const ARREST_OUTPUT_L_PER_MIN = 0.4;
+
 /** Everything a scenario declares about its patient's physiology. */
 export interface PatientProfile {
   readonly hemodynamics: HemodynamicProfile;
@@ -128,6 +137,25 @@ export class VirtualPatient {
   private temperatureC: number;
   private sevofluranePercent = 0;
   private lastMap: number;
+  /**
+   * Saturation as of the previous tick, which is what the circulation responds
+   * to. Gas exchange is solved after the haemodynamics within a tick, so this is
+   * one tick — 100 ms — behind. That is stated rather than hidden; at this
+   * timescale it is invisible, and solving them simultaneously would mean an
+   * implicit step for no teaching gain.
+   */
+  private lastSaturationPercent = 97;
+  /**
+   * True once the circulation has stopped. It does not clear.
+   *
+   * Masking an arrest at the monitor is not enough: with only the display
+   * invalidated, the underlying heart rate and pressure recovered as soon as
+   * oxygen was restored, so the waveform engine was driving a rhythm the
+   * monitor called asystole and the transcript recorded a patient who got
+   * better. This module models no resuscitation, so an arrest is where its
+   * physiology stops — in the state itself, not just in what is shown.
+   */
+  private arrested = false;
 
   constructor(profile: PatientProfile, rng: Rng, initialFio2 = 0.21) {
     this.profile = profile;
@@ -227,7 +255,16 @@ export class VirtualPatient {
       anesthesiaDepthFraction: depthFraction,
       vasopressorEffect: drugs.vasopressorEffect,
       positivePressure: ventilator.delivering && ventilator.mode !== 'manual',
+      saturationPercent: this.lastSaturationPercent,
     }, TICK_MINUTES);
+
+    // No circulation, and none returns. Applied before attribution so the Why
+    // panel is describing the state the monitor is showing.
+    if (this.arrested || hemo.cardiacOutputLPerMin < ARREST_OUTPUT_L_PER_MIN) {
+      this.arrested = true;
+      this.hemodynamics.heartRateBpm = 0;
+      this.hemodynamics.strokeVolumeMl = 0;
+    }
 
     for (const influence of hemo.influences) {
       recorder.add(influence.variable, influence.termId, influence.label, influence.contribution, {
@@ -315,8 +352,15 @@ export class VirtualPatient {
       * (1 - Math.exp(-TICK_MINUTES / 2.5));
 
     // --- Assemble ---------------------------------------------------------------
-    const co = hemo.cardiacOutputLPerMin;
-    const map = hemo.meanArterialMmHg;
+    // Recomputed from the state rather than taken from the haemodynamic step,
+    // because an arrest zeroes the rate and the stroke volume AFTER that step
+    // ran — so the step's own output described a heart rate the patient no
+    // longer has, and the monitor showed a cardiac output beside a heart rate
+    // of zero.
+    const co = cardiacOutput(this.hemodynamics.heartRateBpm, this.hemodynamics.strokeVolumeMl);
+    const map = this.arrested
+      ? meanArterialPressure(co, this.hemodynamics.svrDynSCm5)
+      : hemo.meanArterialMmHg;
     const { systolic, diastolic } = pulsePressures(
       map, this.hemodynamics.strokeVolumeMl, this.hemodynamics.svrDynSCm5,
       this.profile.hemodynamics.arterialStiffness,
@@ -326,6 +370,9 @@ export class VirtualPatient {
       (co / Math.max(baselineCo, 0.1)) * Math.pow(baselineSvr(this.profile.hemodynamics) / Math.max(this.hemodynamics.svrDynSCm5, 1), 0.6) * 0.8,
       0.02, 1,
     );
+
+    // Carried to the next tick, where it drives the circulation.
+    this.lastSaturationPercent = gasResult.spo2Percent;
 
     const state: MutableState = {
       heartRateBpm: this.hemodynamics.heartRateBpm,

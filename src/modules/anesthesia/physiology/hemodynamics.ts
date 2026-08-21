@@ -90,6 +90,16 @@ export interface HemodynamicDrive {
   readonly vasopressorEffect: number;
   /** True while positive-pressure ventilation reduces venous return. */
   readonly positivePressure: boolean;
+  /**
+   * Arterial oxygen saturation, per cent, as of the previous step.
+   *
+   * The circulation used to have no oxygen input at all, which meant a patient
+   * left apnoeic desaturated to nothing while their heart rate sat at 81 and
+   * their blood pressure RECOVERED. A simulator that shows an unventilated
+   * patient's circulation carrying on indefinitely is teaching the opposite of
+   * the thing an airway emergency exists to teach.
+   */
+  readonly saturationPercent: number;
 }
 
 /** The maximum effects each influence can have, at full effect. */
@@ -111,6 +121,52 @@ export const HEMODYNAMIC_GAINS = {
   /** Positive-pressure ventilation reduces stroke volume by this fraction. */
   positivePressureStrokeVolumeDrop: 0.08,
 } as const;
+
+/**
+ * The response of the circulation to hypoxaemia.
+ *
+ * OPEN SIM LAB TEACHING MODEL — not a published population model.
+ *
+ * The SHAPE is not in doubt and is the reason airway emergencies kill: falling
+ * saturation first drives a sympathetic tachycardia, and once hypoxaemia is
+ * severe enough to impair the myocardium itself that reverses into bradycardia,
+ * falling output, and finally asystole. What is not established to the standard
+ * this project requires of a published model is where exactly each threshold
+ * sits in an individual, so these numbers are declared as a teaching model,
+ * attributed as one in the Why panel, and recorded in the limitations register.
+ *
+ * They are chosen so the qualitative sequence a learner must recognise happens
+ * in the right ORDER and over a realistic time course, not so that any single
+ * number is defensible on its own.
+ */
+export const HYPOXIA = {
+  /** Saturation below which the sympathetic response begins. */
+  sympatheticOnsetPercent: 92,
+  /** Saturation at which the sympathetic response is maximal. */
+  sympatheticPeakPercent: 80,
+  /** Peak hypoxic tachycardia, as a fraction of baseline heart rate. */
+  sympatheticHeartRateRise: 0.35,
+  /** Saturation below which myocardial failure begins to overtake the reflex. */
+  failureOnsetPercent: 70,
+  /** Saturation at which the model reaches complete circulatory collapse. */
+  collapsePercent: 35,
+  /** Heart rate at complete collapse, as a fraction of baseline: asystole. */
+  collapseHeartRateFraction: 0,
+  /** Stroke volume at complete collapse, as a fraction of baseline. */
+  collapseStrokeVolumeFraction: 0.05,
+} as const;
+
+/** 0 to 1 across the sympathetic band, then held at 1. */
+export function hypoxicSympatheticDrive(saturationPercent: number): number {
+  const span = HYPOXIA.sympatheticOnsetPercent - HYPOXIA.sympatheticPeakPercent;
+  return clamp((HYPOXIA.sympatheticOnsetPercent - saturationPercent) / span, 0, 1);
+}
+
+/** 0 to 1 from the onset of myocardial failure to complete collapse. */
+export function hypoxicFailureDrive(saturationPercent: number): number {
+  const span = HYPOXIA.failureOnsetPercent - HYPOXIA.collapsePercent;
+  return clamp((HYPOXIA.failureOnsetPercent - saturationPercent) / span, 0, 1);
+}
 
 /** Time constants, in minutes. */
 export const HEMODYNAMIC_TAU = {
@@ -176,12 +232,18 @@ export function stepHemodynamics(
     ? 1 - HEMODYNAMIC_GAINS.positivePressureStrokeVolumeDrop
     : 1;
   const targetStroke = profile.baselineStrokeVolumeMl
-    * clamp(preloadFactor, 0.2, 1.4) * depressionFactor * ppvFactor;
+    * clamp(preloadFactor, 0.2, 1.4) * depressionFactor * ppvFactor
+    * (1 - (1 - HYPOXIA.collapseStrokeVolumeFraction) * hypoxicFailureDrive(drive.saturationPercent));
+
+  // --- Hypoxaemia -------------------------------------------------------------
+  const sympathetic = hypoxicSympatheticDrive(drive.saturationPercent);
+  const failure = hypoxicFailureDrive(drive.saturationPercent);
 
   // --- Heart rate: intrinsic drive before the reflex --------------------------
   const intrinsicRate = profile.baselineHeartRateBpm
     * (1 - HEMODYNAMIC_GAINS.opioidHeartRateDrop * drive.opioidEffect)
-    * (1 + HEMODYNAMIC_GAINS.stimulusHeartRateRise * drive.surgicalStimulus);
+    * (1 + HEMODYNAMIC_GAINS.stimulusHeartRateRise * drive.surgicalStimulus)
+    * (1 + HYPOXIA.sympatheticHeartRateRise * sympathetic);
 
   // --- Baroreflex -------------------------------------------------------------
   // The reflex compares the current mean pressure with the set point and adjusts
@@ -193,7 +255,12 @@ export function stepHemodynamics(
   const reflexGain = profile.baroreflexGain
     * (1 - 0.75 * drive.anesthesiaDepthFraction)
     * (1 - 0.45 * drive.opioidEffect);
-  const reflexRateTarget = intrinsicRate + reflexGain * error * 0.55;
+  // Myocardial failure OVERRIDES the reflex rather than being added to it. A
+  // baroreflex demanding a tachycardia from a heart that is failing from hypoxia
+  // does not get one, and a model that let it would show a patient compensating
+  // their way through an unmanaged airway.
+  const reflexRateTarget = (intrinsicRate + reflexGain * error * 0.55)
+    * (1 - (1 - HYPOXIA.collapseHeartRateFraction) * failure);
   const reflexSvrTarget = targetSvr * (1 + reflexGain * clamp(error / profile.baselineMapMmHg, -0.6, 0.6) * 0.5);
 
   // --- Integrate --------------------------------------------------------------
@@ -236,6 +303,7 @@ export function stepHemodynamics(
     ['propofol-myocardial-depression', 'Propofol myocardial depression', -HEMODYNAMIC_GAINS.propofolStrokeVolumeDrop * drive.propofolDepression, false],
     ['hypovolemia', 'Reduced circulating volume', -1.2 * hypovolemia, false],
     ['positive-pressure-ventilation', 'Positive-pressure ventilation reducing venous return', drive.positivePressure ? -HEMODYNAMIC_GAINS.positivePressureStrokeVolumeDrop : 0, false],
+    ['hypoxic-myocardial-failure', 'Hypoxaemia failing the myocardium', -(1 - HYPOXIA.collapseStrokeVolumeFraction) * failure, true],
   ];
   const strokeWeight = strokeDrivers.reduce((sum, [, , value]) => sum + Math.abs(value), 0);
   for (const [termId, label, value, teaching] of strokeDrivers) {
@@ -250,6 +318,8 @@ export function stepHemodynamics(
     ['opioid-bradycardia', 'Opioid slowing the heart', -HEMODYNAMIC_GAINS.opioidHeartRateDrop * drive.opioidEffect, false],
     ['surgical-stimulus', 'Surgical stimulus', HEMODYNAMIC_GAINS.stimulusHeartRateRise * drive.surgicalStimulus, false],
     ['baroreflex', 'Baroreflex', reflexGain * error * 0.55 / Math.max(profile.baselineHeartRateBpm, 1), false],
+    ['hypoxic-tachycardia', 'Sympathetic response to falling saturation', HYPOXIA.sympatheticHeartRateRise * sympathetic, true],
+    ['hypoxic-bradycardia', 'Hypoxaemia failing the myocardium', -(1 - HYPOXIA.collapseHeartRateFraction) * failure, true],
   ];
   const rateWeight = rateDrivers.reduce((sum, [, , value]) => sum + Math.abs(value), 0);
   for (const [termId, label, value, teaching] of rateDrivers) {

@@ -133,6 +133,8 @@ export class AnesthesiaEngine {
    * stayed desaturated, which is not a scenario, it is a stuck key.
    */
   private readonly conditionHeld = new Set<string>();
+/** True once the physiology has arrested the patient. It does not clear. */
+  private arrestedByHypoxia = false;
   /**
    * The last state the physiology produced.
    *
@@ -621,6 +623,8 @@ export class AnesthesiaEngine {
     // A vasopressor's effect wanes; the teaching model decays it over about five minutes.
     this.vasopressorEffect *= Math.exp(-0.1 / 5);
 
+    this.reconcileArrest(result.state.cardiacOutputLPerMin ?? 0);
+
     // Preoxygenation is judged on the END-TIDAL fraction, because that is what
     // says the functional residual capacity has actually been denitrogenated. The
     // inspired fraction says only what the machine is delivering to the circuit:
@@ -741,6 +745,50 @@ export class AnesthesiaEngine {
     if (this.artifacts.has('circuit-disconnection')) signals.add('capno');
     if (this.artifacts.has('esophageal-intubation')) signals.add('capno');
     return signals;
+  }
+
+  /**
+   * Cardiac output below which there is no pulse to display or to measure.
+   *
+   * A pulse oximeter reads the PULSATILE component of absorbance. With no
+   * output there is nothing pulsatile to read, and the honest display is no
+   * reading — not the 0% an earlier build showed, which is a number the
+   * instrument cannot produce and which read as a measurement rather than as
+   * the absence of one.
+   */
+  private static readonly PULSELESS_OUTPUT_L_PER_MIN = 0.4;
+
+  /**
+   * Keep the displayed rhythm honest about what the circulation is doing.
+   *
+   * The physiology can now arrest a patient — a hypoxic myocardium fails, the
+   * rate falls, output goes to nothing — but the rhythm shown was whatever the
+   * scenario last set, so a patient with no cardiac output was displayed in
+   * sinus rhythm with a saturation of 0%. Both are things a monitor never shows.
+   */
+  private reconcileArrest(cardiacOutputLPerMin: number): void {
+    if (this.arrestedByHypoxia) return;
+    if (cardiacOutputLPerMin >= AnesthesiaEngine.PULSELESS_OUTPUT_L_PER_MIN) return;
+    if (this.rhythm === 'asystole') return;
+
+    this.arrestedByHypoxia = true;
+    this.rhythm = 'asystole';
+    this.log('critical', 'rhythm', `hypoxic-arrest-${this.currentTick}`,
+      'Cardiac output has fallen to nothing and the rhythm is asystole, following unrelieved '
+      + 'hypoxaemia. Open Sim Lab teaching model.');
+    // Said once, plainly, at the moment it becomes true.
+    //
+    // An earlier version let the circulation come back on its own as soon as
+    // oxygen was restored — asystole to a heart rate of 84 in twenty seconds,
+    // with no compressions and no adrenaline. That is a worse thing to teach
+    // than the bug it replaced: it says an arrest you caused will undo itself
+    // if you fix the airway. This module models no resuscitation at all, so the
+    // arrest is where its physiology stops and it says so instead of inventing
+    // a recovery.
+    this.log('critical', 'engine', `arrest-beyond-model-${this.currentTick}`,
+      'This module does not model resuscitation — no compressions, no adrenaline, no defibrillation '
+      + '— so the patient does not recover from here and nothing after this point is simulated '
+      + 'physiology. End the session and debrief what led to it.');
   }
 
   /**
