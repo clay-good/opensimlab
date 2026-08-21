@@ -10,7 +10,7 @@ import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createElement } from 'react';
 import { BREAKPOINTS, CONTROL_HEIGHT, HIT_TARGET, LAYOUT, MIN_TARGET_GAP, SACRIFICE_ORDER } from '@platform/tokens/tokens';
-import { ActionCockpit } from '@anesthesia/ui/ActionCockpit';
+import { ActionCockpit, NOT_IN_THIS_BUILD } from '@anesthesia/ui/ActionCockpit';
 import { StatusBar } from '@anesthesia/ui/StatusBar';
 import { ConcentrationPanel } from '@anesthesia/ui/ConcentrationPanel';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
@@ -461,5 +461,45 @@ describe('Requirement: A Phone Can Run A Full Scenario', () => {
     ]) {
       expect(ruleFor(selector), selector).toContain('padding-block-end: var(--mobile-actions-reserve)');
     }
+  });
+});
+
+describe('Requirement: The Action Cockpit Offers Only Trays That Do Something', () => {
+  /**
+   * Fluids & Blood and Resuscitation were tabs containing one sentence each,
+   * saying they were not in this build. Two fifths of the action cockpit's tabs
+   * led nowhere, on the region a learner spends the whole session in and the
+   * first one to run out of room on a laptop.
+   */
+  const source = readFileSync(join(root, 'src/modules/anesthesia/ui/ActionCockpit.tsx'), 'utf8');
+
+  it('Scenario: three trays, each of which does something', () => {
+    const trays = [...source.matchAll(/\{ id: '([a-z]+)', label: '([^']+)' \}/g)];
+    expect(trays).toHaveLength(3);
+    expect(trays.map((m) => m[1])).toEqual(['syringes', 'infusions', 'airway']);
+  });
+
+  it('Scenario: what is missing is still said, once, where it is looked for', () => {
+    expect(source).toContain('NOT_IN_THIS_BUILD');
+    expect(source).toContain('/limitations');
+    // Asserted against the exported sentence, not the source text, because the
+    // source wraps it across lines and a substring check there is a check on
+    // where the line breaks fall.
+    expect(NOT_IN_THIS_BUILD).toContain('Fluids');
+    expect(NOT_IN_THIS_BUILD).toContain('resuscitation');
+    // Resuscitation matters more now that the engine can arrest a patient, so
+    // the sentence has to say what that means rather than "not in this slice".
+    expect(NOT_IN_THIS_BUILD).toContain('does not recover');
+    expect(NOT_IN_THIS_BUILD).toContain('compressions');
+  });
+
+  it('Scenario: the notice costs the working controls no height', () => {
+    // As a row of its own it took forty pixels the tray does not have on a
+    // laptop with the demonstration strip up, and the dose buttons went below
+    // the fold. It lives inside the scrolling tray instead.
+    const trayRule = cockpitCss.slice(cockpitCss.indexOf('.actions {'));
+    expect(trayRule).toContain('grid-template-rows: auto auto minmax(0, 1fr);');
+    const notice = cockpitCss.slice(cockpitCss.indexOf('.actions__not-modelled'));
+    expect(notice.slice(0, 200)).not.toContain('position: fixed');
   });
 });

@@ -195,6 +195,14 @@
   color: var(--text-secondary);
 }
 .actions__tray { overflow: auto; padding: var(--space-3) var(--space-4); min-block-size: 0; min-inline-size: 0; }
+/* The last thing in the tray, saying what this build does not do. It replaced
+   two tabs that each contained a single sentence to the same effect. Inside the
+   scroll area, so it costs the working controls no height. */
+.actions__not-modelled {
+  margin-block: var(--space-4) 0;
+  padding-block-start: var(--space-3);
+  border-block-start: 1px solid var(--line-subtle);
+}
 /* The drug and equipment cards. `auto-fit` with a real minimum means the tray
  * uses the width it has — three cards on a laptop, six on a wide display —
  * instead of leaving a column of empty space beside a fixed grid. */

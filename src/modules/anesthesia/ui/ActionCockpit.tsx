@@ -15,7 +15,7 @@ import type { Scenario } from '@anesthesia/engine';
 import type { FormularyEntry } from '@anesthesia/scenarios/types';
 import type { RegionProfile } from '@anesthesia/region/profiles';
 
-export type TrayId = 'syringes' | 'infusions' | 'airway' | 'fluids' | 'resuscitation';
+export type TrayId = 'syringes' | 'infusions' | 'airway';
 
 export interface RunningInfusion {
   readonly drugId: string;
@@ -48,13 +48,33 @@ export interface ActionCockpitProps {
   readonly onDrugCard: (drugId: string) => void;
 }
 
+/**
+ * Three trays, not five.
+ *
+ * Fluids & Blood and Resuscitation were tabs containing one sentence each,
+ * saying they were not in this build. Two fifths of the action cockpit's tabs
+ * led nowhere, on the region a learner spends the session in and which is the
+ * first thing to run out of room on a laptop.
+ *
+ * The honesty is kept and the clutter is not: what is not modelled is now said
+ * once, in a line under the trays, where it is read rather than clicked into.
+ */
 const TRAYS: { id: TrayId; label: string }[] = [
   { id: 'syringes', label: 'Syringes' },
   { id: 'infusions', label: 'Infusions' },
   { id: 'airway', label: 'Airway & Vent' },
-  { id: 'fluids', label: 'Fluids & Blood' },
-  { id: 'resuscitation', label: 'Resuscitation' },
 ];
+
+/**
+ * Said once, in the place a learner would go looking for the missing thing.
+ *
+ * Resuscitation matters more than it used to: the engine can now arrest a
+ * patient from unrelieved hypoxaemia, so somebody WILL come here looking for
+ * chest compressions, and this is where they find out there are none.
+ */
+export const NOT_IN_THIS_BUILD =
+  'Fluids, blood products and resuscitation are not modelled. A patient who arrests does not '
+  + 'recover, because there are no compressions, no adrenaline and no defibrillation here.';
 
 export function ActionCockpit(props: ActionCockpitProps) {
   const [tray, setTray] = useState<TrayId>('syringes');
@@ -109,18 +129,15 @@ export function ActionCockpit(props: ActionCockpitProps) {
             onLaryngoscopy={props.onLaryngoscopy}
           />
         )}
-        {tray === 'fluids' && (
-          <p className="field__hint">
-            Fluids and blood products are not part of this alpha slice. The limitations register
-            records what is and is not modelled.
-          </p>
-        )}
-        {tray === 'resuscitation' && (
-          <p className="field__hint">
-            Resuscitation is not part of this alpha slice. Crisis scenarios are deliberately held
-            back until the routine patient is convincing to a clinician.
-          </p>
-        )}
+        {/* Inside the scrolling tray, not as a row of its own.
+            As a fixed row it cost the tray forty pixels it does not have on a
+            laptop with the demonstration strip up, and the dose buttons went
+            below the fold. Here it costs nothing and is still found by anyone
+            who scrolls to the end looking for the thing that is missing. */}
+        <p className="actions__not-modelled field__hint">
+          {NOT_IN_THIS_BUILD}{' '}
+          <a href="/limitations">The limitations register says what else.</a>
+        </p>
       </div>
     </div>
   );
