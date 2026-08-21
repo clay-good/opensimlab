@@ -78,25 +78,31 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
       + 'residents in their first year, nurse anaesthetist students, and the faculty who teach '
       + 'all three.',
       'It assumes basic cardiovascular and respiratory physiology and no anaesthesia experience at '
-      + 'all. It is not built for practising anaesthetists, though several have been asked to check '
-      + 'whether the patient behaves the way a real one would.',
+      + 'all. It is not built for practising anaesthetists — but it needs them, because no clinician '
+      + 'has yet checked whether this patient behaves the way a real one does. If that is you, the '
+      + 'governance page says exactly what is unreviewed and there is a control on every clinical '
+      + 'claim for telling us it is wrong.',
     ],
   },
   {
     id: 'inside-the-module',
     heading: 'What is inside the anesthesia module',
     paragraphs: [
-      'This is an early build. It contains one scenario — a routine induction on a healthy adult — '
-      + 'with two drugs, the real monitor, the real design system, and the real debrief.',
+      'This is an early build. It contains four scenarios — a routine induction on a healthy '
+      + 'adult, rapid desaturation in an obese patient, hypotension after induction, and '
+      + 'bronchospasm after intubation — with two drugs, the real monitor, the real design system, '
+      + 'and the real debrief.',
       'That narrowness is deliberate. The riskiest things in a project like this are whether the '
       + 'waveforms convince a clinician, whether it holds its frame rate on a modest phone, and '
-      + 'whether the physiology is plausible to someone who does this for a living. All three are '
-      + 'answered by one good scenario and none of them are answered by twenty mediocre ones.',
+      + 'whether the physiology is plausible to someone who does this for a living. None of those '
+      + 'are answered by twenty mediocre scenarios, and all of them are answered by a few good '
+      + 'ones that each teach a different failure.',
     ],
     list: [
       'A sweeping monitor with electrocardiogram, arterial pressure, capnography and plethysmography, all phase-coherent.',
       'Propofol and remifentanil, with their compartment kinetics and their interaction.',
-      'Apnoea and desaturation that follow the published times rather than a stopwatch.',
+      'Apnoea and desaturation that follow the published times rather than a stopwatch, and a '
+      + 'circulation that fails the way an unrelieved airway problem actually makes it fail.',
       'Laryngoscopy with a Cormack-Lehane grade, where repeated attempts make things worse.',
       'A PEARLS debrief with computed counterfactuals.',
     ],

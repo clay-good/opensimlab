@@ -17,7 +17,7 @@ import type { Scenario } from '@anesthesia/engine';
 import { ENGINE_VERSION } from '@anesthesia/engine';
 import { MODEL_SET_REVISION } from '@anesthesia/pharmacology/registry';
 import { Prebrief } from '@anesthesia/ui/Prebrief';
-import { DEMONSTRATION_SCENARIO_ID } from '@anesthesia/demo/demonstration';
+import { DEMONSTRATION_SCENARIO_ID, demonstrationRequested } from '@anesthesia/demo/demonstration';
 import { Cockpit } from '@anesthesia/ui/Cockpit';
 import { Debrief } from '@anesthesia/ui/Debrief';
 import { assertTranscriptIsAnonymous, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
@@ -97,6 +97,16 @@ export function AnesthesiaRoute({ path }: { path: string }) {
   // Whether the scripted demonstration is driving this session. Deliberately not
   // in the URL: a demonstration is something you start, not somewhere you are.
   const [demonstrating, setDemonstrating] = useState(false);
+  /**
+   * `?demo=1` starts the demonstration without the briefing.
+   *
+   * Someone who followed "watch a 90-second demonstration" from the front door
+   * has already decided to watch. Putting the briefing in front of them is
+   * asking the question they just answered.
+   */
+  const autoDemo = useRef(
+    demonstrationRequested(typeof location === 'undefined' ? '' : location.search),
+  );
   // Validated against the registry, not just type-checked: the default is null,
   // so a shape check cannot tell a real region id from any other string, and an
   // unknown one used to throw and take the whole simulator down.
@@ -144,6 +154,20 @@ export function AnesthesiaRoute({ path }: { path: string }) {
       'anesthesia',
     );
   }, [acknowledged, session, region.id]);
+
+  // `?demo=1`: skip the briefing and start watching. Fires once, only for the
+  // scenario the script was authored against, and only once the session is
+  // actually ready to run.
+  useEffect(() => {
+    if (!autoDemo.current) return;
+    if (session.phase !== 'briefing' && session.phase !== 'idle') return;
+    if (!session.ready) return;
+    if (scenario.metadata.id !== DEMONSTRATION_SCENARIO_ID) return;
+    autoDemo.current = false;
+    setDemonstrating(true);
+    session.setSpeed(5);
+    session.play();
+  }, [session, scenario.metadata.id]);
 
   const exportTranscript = useCallback(async () => {
     const transcript = await session.exportTranscript();

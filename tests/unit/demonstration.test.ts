@@ -7,9 +7,11 @@
  * happening is worse than no demonstration at all.
  */
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import {
-  DEMONSTRATION_SCENARIO_ID, DEMONSTRATION_SECONDS, INDUCTION_DEMONSTRATION,
-  beatAt, beatsToFire,
+  DEMONSTRATION_HREF, DEMONSTRATION_SCENARIO_ID, DEMONSTRATION_SECONDS, INDUCTION_DEMONSTRATION,
+  beatAt, beatsToFire, demonstrationRequested,
 } from '@anesthesia/demo/demonstration';
 import { SCENARIOS } from '@anesthesia/scenarios';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
@@ -216,5 +218,43 @@ describe.each(SEEDS)('what the narration promises actually happens (seed %i)', (
     for (const sample of history) {
       expect(sample.state.spo2Percent, `at tick ${sample.tick}`).toBeGreaterThan(90);
     }
+  });
+});
+
+/**
+ * The one link that starts it.
+ *
+ * The demonstration used to be four clicks from the front door — module index,
+ * scenario, briefing, then the control. Three too many for someone deciding in
+ * ten seconds whether any of this is worth their time.
+ */
+describe('the demonstration link', () => {
+  it('points at the scenario the script was authored against', () => {
+    expect(DEMONSTRATION_HREF).toContain(DEMONSTRATION_SCENARIO_ID);
+    expect(DEMONSTRATION_HREF.startsWith('/anesthesia/scenario/')).toBe(true);
+  });
+
+  it('asks for the demonstration in the query string', () => {
+    const [, search = ''] = DEMONSTRATION_HREF.split('?');
+    expect(demonstrationRequested(`?${search}`)).toBe(true);
+  });
+
+  it('is not requested by an ordinary visit', () => {
+    expect(demonstrationRequested('')).toBe(false);
+    expect(demonstrationRequested('?seed=7')).toBe(false);
+    expect(demonstrationRequested('?demo=0')).toBe(false);
+    expect(demonstrationRequested('?demo=yes')).toBe(false);
+    // An assignment link with a label must not accidentally start a demo.
+    expect(demonstrationRequested('?label=Week%201&seed=42')).toBe(false);
+  });
+
+  it('is the link the front door actually renders', () => {
+    // Defined once beside the script, so a rename cannot leave a dead link on
+    // the front page.
+    const landing = readFileSync(join(process.cwd(), 'src/landing/Landing.tsx'), 'utf8');
+    expect(landing).toContain('DEMONSTRATION_HREF');
+    expect(landing).toContain('Watch a 90-second demonstration');
+    // And it stays a quiet link: the page is allowed exactly one primary button.
+    expect((landing.match(/variant="primary"/g) ?? []).length).toBe(1);
   });
 });

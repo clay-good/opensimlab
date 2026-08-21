@@ -149,7 +149,19 @@ export const useSession = create<SessionState>((set, get) => ({
     });
 
     const client = new SolverClient<Record<string, number>>(createWorker, {
-      onReady: () => set({ ready: true, phase: 'briefing', error: null }),
+      // A ready message marks the solver ready. It does NOT decide what phase
+      // the session is in.
+      //
+      // It used to set the phase to 'briefing' unconditionally, so a ready that
+      // arrived after the learner had already started dropped a running session
+      // back to the briefing screen. That is how the `?demo=1` link failed:
+      // the demonstration started, the phase went to 'running', and a late
+      // ready put it straight back to the briefing with the clock stopped.
+      onReady: () => set((state) => ({
+        ready: true,
+        error: null,
+        phase: state.phase === 'idle' ? 'briefing' : state.phase,
+      })),
       onState: (message) => applyState(set, get, message),
       onError: (code, message) => set({ error: { code, message } }),
       onDeath: () => set({ phase: 'worker-lost', transport: 'paused' }),

@@ -14,6 +14,7 @@ import {
   SUGGESTED_CITATION, THREE_FACTS,
 } from '@landing/content';
 import { heroStaticSvg } from '@landing/hero';
+import { SCENARIOS } from '@anesthesia/scenarios';
 import { Landing } from '@landing/Landing';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -363,5 +364,41 @@ describe('Requirement: A Preview Build Does Not Invite Indexing', () => {
     expect(indexableRoutes().length).toBeGreaterThanOrEqual(10);
     expect(routeFor('/gallery')?.indexable).toBe(false);
     expect(routeFor('/')?.indexable).toBe(true);
+  });
+});
+
+describe('Requirement: The About Page Describes The Build That Ships', () => {
+  /**
+   * The page said "one scenario ... with two drugs" for as long as there were
+   * four. Nothing caught it, because prose is not compiled. A visitor deciding
+   * whether this is worth their time was reading a description of a build that
+   * stopped existing.
+   */
+  const inside = CONTENT_SECTIONS.find((section) => section.id === 'inside-the-module')!;
+  const prose = [...inside.paragraphs, ...(inside.list ?? [])].join(' ');
+
+  const NUMBER_WORDS: Record<number, string> = {
+    1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five', 6: 'six', 7: 'seven', 8: 'eight',
+  };
+
+  it('Scenario: the scenario count it claims is the number that ships', () => {
+    const claimed = NUMBER_WORDS[SCENARIOS.length];
+    expect(claimed, `no word for ${SCENARIOS.length} scenarios; extend NUMBER_WORDS`).toBeDefined();
+    expect(prose).toContain(`${claimed} scenario`);
+  });
+
+  it('Scenario: every scenario it names by title actually exists', () => {
+    // Guards the other direction: a scenario removed from the registry but left
+    // in the prose.
+    for (const scenario of SCENARIOS) {
+      const words = scenario.metadata.title.toLowerCase().split(' ');
+      const keyword = words.find((word) => word.length > 7) ?? words[0]!;
+      expect(prose.toLowerCase(), `"${scenario.metadata.title}" is not described`).toContain(keyword);
+    }
+  });
+
+  it('Scenario: the drug count it claims is the number in the formulary', () => {
+    const drugs = new Set(SCENARIOS.flatMap((s) => s.formulary.map((entry) => entry.drugId)));
+    expect(prose).toContain(`${NUMBER_WORDS[drugs.size]} drugs`);
   });
 });

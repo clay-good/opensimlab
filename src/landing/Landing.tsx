@@ -17,6 +17,7 @@ import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { HONEST_STATUS } from '@platform/governance/status';
 import { FOOTER_LINKS, ONE_LINE_DESCRIPTION, THREE_FACTS } from './content';
 import { heroStaticSvg, startLiveHero } from './hero';
+import { DEMONSTRATION_HREF } from '@anesthesia/demo/demonstration';
 
 /**
  * Prefetch the anaesthesia entry bundle at low priority after two seconds, so the
@@ -82,6 +83,13 @@ export function Landing() {
           >
             Open the anesthesia simulator
           </Button>
+          {/* The shortest path to the thing this simulator does that a textbook
+              cannot. It used to be four clicks from here — front door, module
+              index, scenario, briefing — which is three too many for someone
+              deciding in ten seconds whether any of this is worth their time. */}
+          <a className="landing__watch" href={DEMONSTRATION_HREF}>
+            Watch a 90-second demonstration
+          </a>
         </div>
 
         {/* The three facts, as one quiet line rather than a list of claims. */}

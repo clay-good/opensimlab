@@ -25,6 +25,20 @@ import type { LearnerAction } from '@platform/kernel/protocol';
  */
 export const DEMONSTRATION_SCENARIO_ID = 'routine-induction';
 
+/**
+ * The one link that starts the demonstration.
+ *
+ * Defined beside the script rather than written out wherever it is linked, so
+ * the front door and the scenario briefing cannot drift apart, and so a rename
+ * of the scenario is a compile error rather than a dead link.
+ */
+export const DEMONSTRATION_HREF = `/anesthesia/scenario/${DEMONSTRATION_SCENARIO_ID}?demo=1`;
+
+/** Whether a URL's query string asks for the demonstration to start straight away. */
+export function demonstrationRequested(search: string): boolean {
+  return new URLSearchParams(search).get('demo') === '1';
+}
+
 export interface DemonstrationBeat {
   /** Simulated seconds from the start of the scenario. */
   readonly atSecond: number;

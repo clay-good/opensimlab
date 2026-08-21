@@ -15,13 +15,21 @@
 
 /* --- The front door ------------------------------------------------------- */
 
+/* Centred, not a left-aligned column in the middle of the page.
+ *
+ * The front door used to sit in a 62ch column ragged-left, which on a laptop
+ * left the right two-fifths of the screen empty and made the whole thing read
+ * as a fragment of a longer document rather than as a front door. Centring the
+ * short block and giving the hero real width makes the page look like the one
+ * screen it is. */
 .landing__front {
   display: grid;
   gap: var(--space-4);
   align-content: center;
-  justify-items: start;
+  justify-items: center;
+  text-align: center;
   inline-size: 100%;
-  max-inline-size: 62ch;
+  max-inline-size: 68ch;
   margin-inline: auto;
   padding: var(--space-7) var(--space-5);
 }
@@ -52,7 +60,8 @@
 .landing__tagline {
   font: var(--type-subtitle);
   color: var(--text-secondary);
-  max-inline-size: 44ch;
+  max-inline-size: 46ch;
+  text-wrap: balance;
 }
 
 /* The hero: a live electrocardiogram from the project's own waveform engine.
@@ -66,7 +75,8 @@
 .landing__hero {
   position: relative;
   inline-size: 100%;
-  block-size: clamp(180px, 26dvh, 280px);
+  /* The hero is the argument the page makes, so it gets the room to make it. */
+  block-size: clamp(190px, 28dvh, 320px);
   margin-block: var(--space-3);
   background: var(--void);
   border: 1px solid var(--line);
@@ -91,9 +101,38 @@
 /* The static fallback occupies exactly the same box, so nothing shifts when the
  * live version takes over. */
 .landing__hero-fallback { position: absolute; inset: 0; }
-.landing__hero canvas { position: absolute; inset: 0; }
+/* An EXPLICIT size, not just `inset: 0`.
+ *
+ * A canvas is a replaced element: with auto width and height it lays out at its
+ * intrinsic size, which is whatever its width and height ATTRIBUTES say. The
+ * live hero sets those attributes from its measured box, so the box fed the
+ * attributes and the attributes fed the box — a feedback loop that shrank the
+ * canvas on every resize until the live trace was drawing into a 130 by 65
+ * corner of a 594 by 230 hero, with the static fallback showing through
+ * everywhere else and nothing looking obviously broken. */
+.landing__hero canvas {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+}
 
-.landing__action { margin-block-start: var(--space-2); }
+/* One primary action and one quiet one beside it. The demonstration is a way
+   IN, not a competitor: it is a text link, so nothing on the page competes with
+   the button for the eye. */
+.landing__action {
+  margin-block-start: var(--space-2);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.landing__watch {
+  font: var(--type-body);
+  color: var(--text-secondary);
+}
 
 /* The three facts and the module directory: two quiet lines, not two panels. */
 .landing__facts,
@@ -146,18 +185,23 @@
 
 /* --- Shared footer -------------------------------------------------------- */
 
+/* Centred with the front door above it. Left-aligned under a centred block
+   read as two pages stapled together. */
 .landing__footer {
   border-block-start: 1px solid var(--line);
   padding: var(--space-4) var(--space-5);
   inline-size: 100%;
-  max-inline-size: 62ch;
+  max-inline-size: 68ch;
   margin-inline: auto;
   display: grid;
+  justify-items: center;
+  text-align: center;
   gap: var(--space-2);
 }
 .landing__footer-links {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: var(--space-3);
   list-style: none;
   padding-inline-start: 0;

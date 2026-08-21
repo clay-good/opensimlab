@@ -25,6 +25,25 @@ The landing page SHALL fit its essential content — the name, the one-line desc
 - **WHEN** the landing page is measured from the top of the document to the bottom of the module line
 - **THEN** it occupies no more than one screen at 1440 px width, contains no prose section, no questions block and no expandable panel, and an automated test fails the build if a section is added to it
 
+### Requirement: The Demonstration Is One Click From The Front Door
+
+The front door SHALL offer, beside its single primary action, a quiet secondary link that starts the guided demonstration directly, without a briefing step. It SHALL NOT be a second primary control and SHALL NOT compete with the primary action for attention.
+
+#### Scenario: A visitor reaches a running demonstration in one click
+
+- **WHEN** a visitor follows the demonstration link from the front door
+- **THEN** the scenario the script was authored against opens already running at demonstration speed with the first narration on screen, and no briefing is interposed, because someone who chose to watch has already answered the question a briefing asks
+
+#### Scenario: It stays a link, not a second button
+
+- **WHEN** the front door renders
+- **THEN** exactly one primary button is present and the demonstration is offered as text beside it
+
+#### Scenario: An ordinary visit is never diverted into it
+
+- **WHEN** a scenario is opened without the demonstration being asked for — including from an assignment link carrying a seed, a label or a guidance level
+- **THEN** the briefing is shown as normal and no demonstration begins
+
 ### Requirement: The Hero Is The Product Running
 
 The hero element SHALL be a live electrocardiogram trace rendered by the project's own waveform engine, and it SHALL be the only saturated color on the page, in keeping with the design system's rule that color is a clinical signal and never decoration.
