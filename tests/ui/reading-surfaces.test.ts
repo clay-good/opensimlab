@@ -11,6 +11,8 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 const baseCss = readFileSync(join(process.cwd(), 'src/platform/tokens/base.css'), 'utf8');
+const cockpitCss = readFileSync(join(process.cwd(), 'src/modules/anesthesia/ui/cockpit.css'), 'utf8');
+const componentsCss = readFileSync(join(process.cwd(), 'src/platform/ui/components.css'), 'utf8');
 
 describe('Requirement: Wide Content Scrolls Inside Itself', () => {
   it('applies to every table on a reading surface, not only a direct child', () => {
@@ -48,5 +50,35 @@ describe('the routes that render a table', () => {
       expect(source, `${file} renders a table outside a reading surface`)
         .toContain('className="reading"');
     }
+  });
+});
+
+
+describe('Requirement: A Prose Page Is As Wide As The Window', () => {
+  it('bounds the document column, so no descendant can widen the page', () => {
+    // An implicit grid column is `auto`, which floors at its widest child's
+    // min-content. On the educator and review pages that floor came out at 396px
+    // against a 375px phone, and the whole document scrolled sideways.
+    const document = baseCss.slice(baseCss.indexOf('.document {'), baseCss.indexOf('.document__bar'));
+    expect(document).toContain('grid-template-columns: minmax(0, 1fr);');
+  });
+
+  it('bounds the reading column for the same reason', () => {
+    const reading = cockpitCss.slice(cockpitCss.indexOf('.reading {'), cockpitCss.indexOf('.reading > p'));
+    expect(reading).toContain('grid-template-columns: minmax(0, 1fr);');
+  });
+});
+
+describe('Requirement: A Field In Prose Reads As A Field', () => {
+  it('puts the label on its own line above its control', () => {
+    // `<label>` is inline. The debrief's `Your account` label sat on the same
+    // line as the textarea after it, which pushed the field into the right half
+    // of the column and left the label overlapping the hint below.
+    expect(componentsCss).toContain('.field__label { display: block; }');
+  });
+
+  it('gives a textarea the width of its column rather than its `cols` attribute', () => {
+    const textarea = componentsCss.slice(componentsCss.indexOf('textarea.field__input {'));
+    expect(textarea.slice(0, 120)).toContain('inline-size: 100%');
   });
 });

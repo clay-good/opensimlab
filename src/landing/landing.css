@@ -34,9 +34,22 @@
   padding: var(--space-7) var(--space-5);
 }
 
+/* The wordmark scales with the window rather than holding 56px everywhere. At a
+ * phone width the fixed size broke `Open Sim Lab` across two lines and took a
+ * third of the screen doing it, so the front door read as a headline with a page
+ * under it instead of as a front door. It reaches its full size at 431px and
+ * never exceeds it. */
 .landing__name {
   font: var(--type-vital-xl);
+  font-size: clamp(2.5rem, 13vw, 56px);
   letter-spacing: var(--type-vital-xl-tracking);
+}
+
+/* The front door is meant to be one screen. On a phone the 48px band above and
+ * below it was what pushed the footer under the fold, so at that width it comes
+ * back to the same 24px as the sides. */
+@media (max-width: 767px) {
+  .landing__front { padding-block: var(--space-5); }
 }
 
 /* The front door settles in rather than appearing. One short, single-shot

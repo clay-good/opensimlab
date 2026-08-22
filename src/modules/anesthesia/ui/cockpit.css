@@ -91,7 +91,17 @@
   background: var(--surface-1);
   overflow-x: auto;
 }
-.status-bar__patient { display: flex; gap: var(--space-3); align-items: baseline; min-inline-size: 0; }
+/* `overflow: hidden`, not just a zero minimum. The block shrinks to nothing in a
+ * crowded bar, but its summary is set `nowrap` — so the text carried on painting
+ * outside the shrunken box and landed on top of the simulator marker, leaving
+ * two sentences overlapping and neither of them readable. */
+.status-bar__patient {
+  display: flex;
+  gap: var(--space-3);
+  align-items: baseline;
+  min-inline-size: 0;
+  overflow: hidden;
+}
 .status-bar__patient-summary {
   font: var(--type-label);
   letter-spacing: var(--type-label-tracking);
@@ -251,9 +261,32 @@
   }
   .cockpit__analysis { border-inline-end: 0; border-block-start: 1px solid var(--line); }
   .monitor__body { grid-template-columns: 62% 38%; }
+
+  /* The first step in the status bar's sacrifice order. A tablet's bar has 752px
+   * and its contents ask for 1011, so the row scrolled sideways and the overflow
+   * button — the only way to the speed selector and the sound toggle — sat past
+   * the end of it. The patient's age, weight and ASA class go first (the Patient
+   * tab has them in full), then the speed selector, which the overflow menu
+   * already carries. The procedure and the simulator marker both stay: one is
+   * what you are doing, the other is a safety requirement. */
+  .status-bar__patient-summary { display: none; }
+  .status-bar .segmented { display: none; }
+
+  /* Two columns of vitals rather than one. The region is 38% of a tablet's width
+   * and the seven tiles are taller than it, so a single column showed four of
+   * them and put the saturation half over the edge; paired up they nearly all
+   * fit, and the one that does not is a short scroll rather than a guess. */
+  .monitor__tiles { grid-auto-flow: row; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-@media (max-width: 767px) {
+/* The phone reflow, and every viewport too SHORT for four stacked regions.
+ * A landscape phone is 800 by 370, which is wider than the phone breakpoint
+ * and shorter than anything the four-region layout can hold: the rule below
+ * used to leave the analysis and action regions as implicit auto rows, they
+ * took their content height, and the monitor's fluid row collapsed to nothing
+ * — the traces and the vitals were simply not on the screen. A viewport under
+ * 500px tall gets the overlay treatment whatever its width. */
+@media (max-width: 767px), (max-height: 499px) and (orientation: landscape) {
   .cockpit {
     grid-template-areas:
       'status'
@@ -310,12 +343,36 @@
   .monitor__tiles {
     order: -1;
     grid-auto-flow: column;
-    grid-auto-columns: minmax(96px, 1fr);
+    /* Undoes the tablet's two-column pairing: here the tiles are a single row. */
+    grid-template-columns: none;
+    /* 112px, not 96. A tile's content is a number, its unit and its alarm
+     * limits, and at 96 the unit did not fit: `92 mmHg` rendered as `92 mmH`
+     * with the `g` cut off by the next tile's background, on the two readings a
+     * learner looks at most. The strip already scrolls, so the honest fix is to
+     * give each tile the width its content actually needs. */
+    grid-auto-columns: minmax(112px, 1fr);
     overflow-x: auto;
+    /* The strip is a horizontal list, so it comes to rest on a tile edge rather
+     * than halfway through a number. */
+    scroll-snap-type: x proximity;
     border-inline-start: 0;
     border-block-start: 0;
     border-block-end: 1px solid var(--line-subtle);
   }
+  .monitor__tiles > * { scroll-snap-align: start; }
+  /* Tighter side padding, so the width the tile gained goes to the reading. */
+  .monitor__tiles .vital-tile { padding-inline: var(--space-2); }
+  /* The value steps down one size in the strip. At 40px the number alone took
+   * most of a 112px tile and pushed the unit onto its own line, which read as
+   * two facts rather than one reading. */
+  .monitor__tiles .vital-tile__value {
+    font: var(--type-vital-m);
+    letter-spacing: var(--type-vital-m-tracking);
+  }
+  .monitor__tiles .vital-tile__value-row { flex-wrap: wrap; gap: var(--space-1); }
+  /* A confidence badge takes its own line, so the unit never leaves the number
+   * it belongs to. Only the depth tile carries one. */
+  .monitor__tiles .vital-tile__value-row > .badge { flex-basis: 100%; }
   /* The sacrifice order reaches `patient-summary-detail` here. At a phone width
    * the whole patient summary and the speed multipliers leave the bar, and the
    * clock steps down a size, so the transport controls, the clock and the
@@ -357,18 +414,57 @@
   }
 }
 
+/* The last step in the sacrifice order, and the narrowest. Marker, clock, three
+ * transport controls and the overflow button need 350px; a 320px display has
+ * 311, so the last thing in the row — the overflow button itself — was clipped
+ * off the end, and with it the speed selector and the sound toggle became
+ * unreachable. Dropping the single step buys 48px. It is the least useful of
+ * the three on a touch screen, and it reappears in the overflow menu. */
+@media (max-width: 400px) {
+  .status-bar__step { display: none; }
+}
+
 /* A landscape phone prioritizes the monitor: the status bar compacts and the
  * action cockpit becomes a floating button opening a sheet. */
 @media (max-height: 499px) and (orientation: landscape) {
   .cockpit { grid-template-rows: var(--status-bar-height-compact) minmax(0, 1fr); }
   .status-bar { gap: var(--space-3); }
   .status-bar__clock { font: var(--type-subtitle); font-variant-numeric: tabular-nums; }
+  /* The overlay starts under the bar, which is the compact one at this height. */
+  .cockpit--analysis-open .cockpit__analysis { inset-block-start: var(--status-bar-height-compact); }
+
+  /* The vitals strip goes to one line per tile: label, number, unit, side by
+   * side. Stacked it was 122px of a 247px monitor — half the region, and the
+   * traces it sits above got less room than the numbers. Height is the scarce
+   * thing in landscape, so the alarm limits are what this width gives up; the
+   * alarm state itself still reads from the tile's fill, its border and its
+   * priority word, none of which move. */
+  .monitor__tiles { grid-auto-columns: minmax(160px, 1fr); }
+  .monitor__tiles .vital-tile {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-2);
+    padding-block: var(--space-2);
+  }
+  .monitor__tiles .vital-tile__value-row > .badge { flex-basis: auto; }
+  .monitor__tiles .vital-tile__limits,
+  .monitor__tiles .vital-tile__reason { display: none; }
 }
 
 /* A lecture display uses the extra space for data rather than whitespace: the
  * Analysis region shows the plot and the log at once instead of tabbed. */
 @media (min-width: 1920px) {
   .analysis--wide .analysis__body { display: grid; grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-3); }
+}
+
+/* The overflow menu's groups. Each is a control, its explanation, and anything
+ * the status bar gave up at this width. */
+.overflow-menu__speed, .overflow-menu__sound {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-2);
+  margin-block-end: var(--space-4);
 }
 
 /* --- The Why panel --------------------------------------------------------- */
@@ -388,6 +484,12 @@
   max-inline-size: 68ch;
   margin-inline: auto;
   display: grid;
+  /* One column, bounded by the region rather than by its content. Left implicit
+   * the track is `auto`, which floors at its widest child's min-content — and a
+   * child sized in percent inside an indefinite track resolves that floor wider
+   * than the viewport, which is what made the educator and review pages scroll
+   * sideways on a phone. */
+  grid-template-columns: minmax(0, 1fr);
   /* Items size to their content rather than stretching across the column. A
    * grid item defaults to `stretch`, which turned every button in a prose page
    * into a full-width slab. */

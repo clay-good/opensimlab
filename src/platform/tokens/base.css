@@ -31,6 +31,9 @@ h1, h2, h3, h4, p, figure, blockquote, dl, dd { margin: 0; }
 ul, ol { margin: 0; padding: 0; }
 img, svg, video, canvas { display: block; max-inline-size: 100%; }
 button, input, select, textarea { font: inherit; color: inherit; }
+/* A file input's intrinsic width is its button plus its filename, which on a
+ * phone is wider than the screen. */
+input[type='file'] { max-inline-size: 100%; }
 
 /* Numerics never jitter: digits are tabular everywhere. */
 .numeric, .tabular { font-variant-numeric: tabular-nums; }
@@ -94,6 +97,7 @@ a:hover { text-decoration-color: var(--text-secondary); }
 .scenario-index { display: grid; gap: var(--space-3); list-style: none; padding-inline-start: 0; }
 .scenario-index__item {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-1);
   padding: var(--space-4);
   border: 1px solid var(--line);
@@ -129,7 +133,17 @@ a:hover { text-decoration-color: var(--text-secondary); }
  * from a footer link needs somewhere to go, at the top, not one link buried
  * under several screens of table.
  */
-.document { min-block-size: 100dvh; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; }
+/* `minmax(0, 1fr)`, never the implicit `auto` column. An auto track takes its
+ * minimum from its widest child's min-content, so one un-shrinkable descendant
+ * — a form control sized in percent, a long unbroken token — widened the whole
+ * document past the viewport and every trust page scrolled sideways on a phone.
+ * The page is as wide as the window; what does not fit scrolls inside itself. */
+.document {
+  min-block-size: 100dvh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
+}
 .document__bar {
   display: flex;
   flex-wrap: wrap;
@@ -212,6 +226,11 @@ a:hover { text-decoration-color: var(--text-secondary); }
 .curriculum__scenarios { display: grid; gap: var(--space-2); list-style: none; padding-inline-start: 0; }
 .educators__builder {
   display: grid;
+  /* Bounded, like `.document`. The builder's fields are sized in percent, and a
+   * percentage against the implicit `auto` column resolves that column to the
+   * field's own intrinsic width — 325px against a 320px phone, which put the
+   * whole panel and every control in it past the right edge of the screen. */
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-3);
   padding: var(--space-4);
   border: 1px solid var(--line);
@@ -228,6 +247,9 @@ a:hover { text-decoration-color: var(--text-secondary); }
 }
 .review__drop {
   display: grid;
+  /* A file input carries a wide intrinsic size and ignores a percentage cap in
+   * an unbounded track, so this column is what stops it widening the page. */
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-2);
   padding: var(--space-5);
   border: 1px dashed var(--line-strong);
@@ -238,6 +260,7 @@ a:hover { text-decoration-color: var(--text-secondary); }
 }
 .review__session {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-2);
   padding: var(--space-4);
   border: 1px solid var(--line);
@@ -267,6 +290,7 @@ a:hover { text-decoration-color: var(--text-secondary); }
 /* --- Clinical review capture ---------------------------------------------- */
 .flag {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-2);
   margin-block-start: var(--space-4);
   padding: var(--space-3);

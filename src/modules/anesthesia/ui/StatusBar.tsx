@@ -56,7 +56,12 @@ export function StatusBar({
         {transport === 'running'
           ? <IconButton label="Pause" onClick={onPause}>⏸</IconButton>
           : <IconButton label="Play" onClick={onPlay}>▶</IconButton>}
-        <IconButton label="Advance one simulated second" onClick={onStep}>⏭</IconButton>
+        {/* The single-step control leaves the bar at a phone width. It is the
+            least useful of the three on a touch screen and the only one that
+            makes the row overflow on a 320 px display — where it took the
+            overflow menu off the end of the bar with it, which is worse than
+            losing the step itself. It reappears in the overflow menu. */}
+        <IconButton className="status-bar__step" label="Advance one simulated second" onClick={onStep}>⏭</IconButton>
         <IconButton label="Reset the scenario" onClick={onReset}>↺</IconButton>
       </div>
 

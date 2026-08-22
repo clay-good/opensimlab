@@ -494,9 +494,10 @@ export function Cockpit({
 
       <Modal open={shortcutsOpen} title="More options" onClose={() => setShortcutsOpen(false)}
         footer={<Button onClick={() => setShortcutsOpen(false)}>Close</Button>}>
-        {/* The speed selector leaves the status bar at a phone width under the
-            sacrifice order. Every removal has to stay reachable from the
-            overflow, so it is here in full whatever the width. */}
+        {/* The speed selector and the single-step control leave the status bar
+            at a phone width under the sacrifice order. Every removal has to stay
+            reachable from the overflow, so both are here in full whatever the
+            width. */}
         <div className="overflow-menu__speed">
           <SegmentedControl<SpeedMultiplier>
             label="Simulation speed"
@@ -509,6 +510,7 @@ export function Cockpit({
             }))}
           />
           <p className="field__hint">{scenario.patient.procedure}</p>
+          <Button onClick={session.singleStep}>Advance one simulated second</Button>
         </div>
         <div className="overflow-menu__sound">
           <Toggle

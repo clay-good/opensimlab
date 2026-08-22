@@ -148,6 +148,71 @@ describe('Requirement: Sacrifice Order Is Explicit', () => {
     expect(cockpitCss).toContain('var(--status-bar-height-compact) minmax(0, 1fr)');
     expect(LAYOUT.statusBarCompactHeightPx).toBe(40);
   });
+
+  it('Scenario: a viewport too short for four regions gets the overlay layout', () => {
+    // A landscape phone is 800 by 370 — wider than the phone breakpoint and far
+    // too short for four stacked regions. The reflow used to key on width alone,
+    // so at that size the analysis and action regions became implicit auto rows,
+    // took their content height, and squeezed the monitor's fluid row to nothing:
+    // neither the traces nor the vitals were on the screen at all.
+    expect(cockpitCss).toContain(
+      '@media (max-width: 767px), (max-height: 499px) and (orientation: landscape) {',
+    );
+  });
+
+  it('Scenario: the landscape vitals strip trades its alarm limits for trace height', () => {
+    // `alarm-limit-text` is second in the sacrifice order, and height is the
+    // scarce thing in landscape: stacked, the strip took half the monitor.
+    expect(SACRIFICE_ORDER.indexOf('alarm-limit-text')).toBeLessThan(
+      SACRIFICE_ORDER.indexOf('patient-summary-detail'),
+    );
+    const landscape = cockpitCss.slice(
+      cockpitCss.indexOf('@media (max-height: 499px) and (orientation: landscape)'),
+    );
+    expect(landscape).toContain('.monitor__tiles .vital-tile__limits,');
+  });
+});
+
+describe('Requirement: A Vital Reads As One Number With One Unit', () => {
+  it('gives a tile in the phone strip room for its unit', () => {
+    // At 96px `92 mmHg` rendered as `92 mmH`, with the `g` painted under the
+    // next tile's background — on two of the readings a learner watches most.
+    const floors = [...cockpitCss.matchAll(/grid-auto-columns: minmax\((\d+)px/g)]
+      .map((match) => Number(match[1]));
+    expect(floors.length, 'the tile strip declares a minimum column width').toBeGreaterThan(0);
+    for (const floor of floors) expect(floor).toBeGreaterThanOrEqual(112);
+  });
+
+  it('never lets a confidence badge push the unit off its number', () => {
+    expect(componentsCss).toMatch(/\.vital-tile__value-row \{[^}]*flex-wrap: wrap/);
+  });
+});
+
+describe('Requirement: The Status Bar Fits The Narrowest Phone', () => {
+  it('drops the single step below 400px, where the row cannot hold everything', () => {
+    // Marker, clock, three transport controls and the overflow button need 350px
+    // and a 320px display has 311, so the overflow button — the only way to the
+    // speed selector and the sound toggle — was clipped off the end of the row.
+    expect(cockpitCss).toContain('@media (max-width: 400px) {');
+    expect(cockpitCss).toContain('.status-bar__step { display: none; }');
+  });
+
+  it('keeps the step reachable from the overflow menu, like every other removal', () => {
+    const cockpit = readFileSync(join(root, 'src/modules/anesthesia/ui/Cockpit.tsx'), 'utf8');
+    const overflow = cockpit.slice(cockpit.indexOf('open={shortcutsOpen}'));
+    expect(overflow).toContain('session.singleStep');
+  });
+
+  it('clips the patient block rather than letting it paint over the marker', () => {
+    // The block shrinks to nothing in a crowded bar but its summary is `nowrap`,
+    // so the text carried on painting outside the box and landed on top of the
+    // simulator marker — two sentences overlapping, neither of them readable.
+    const patient = cockpitCss.slice(
+      cockpitCss.indexOf('.status-bar__patient {'),
+      cockpitCss.indexOf('.status-bar__patient-summary {'),
+    );
+    expect(patient).toContain('overflow: hidden;');
+  });
 });
 
 describe('Requirement: No Layout Shift During Simulation', () => {

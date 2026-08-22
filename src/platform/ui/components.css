@@ -119,6 +119,11 @@
 /* --- SegmentedControl ---------------------------------------------------- */
 .segmented {
   display: inline-flex;
+  /* Wraps rather than running off the page. Three options with a 44px hit target
+   * floor each need 347px, and the curriculum page's framework picker sits in a
+   * prose column on a 320px phone. */
+  flex-wrap: wrap;
+  max-inline-size: 100%;
   padding: var(--space-1);
   gap: var(--space-1);
   background: var(--surface-input);
@@ -164,6 +169,18 @@
   letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
   color: var(--text-secondary);
+}
+/* A label sits above its control, never beside it. `<label>` is inline by
+ * default, which put the debrief's `Your account` label on the same line as the
+ * textarea after it — the field ended up shoved into the right half of the
+ * column with the label overlapping the hint below. */
+.field__label { display: block; }
+/* A textarea is a block that fills its column. Left inline, its width came from
+ * the `cols` attribute nobody set. */
+textarea.field__input {
+  display: block;
+  inline-size: 100%;
+  resize: vertical;
 }
 .field__input, .select {
   min-block-size: var(--control-height);
@@ -423,7 +440,10 @@
   color: var(--text-secondary);
 }
 .vital-tile__alarm-word { color: var(--alarm-critical-text); font: var(--type-micro); }
-.vital-tile__value-row { display: flex; align-items: baseline; gap: var(--space-2); min-inline-size: 0; }
+/* Wraps. A confidence badge sits beside the reading when there is room and drops
+ * under it when there is not — a narrow tile used to push the badge past its own
+ * edge and paint it over the tile next door. */
+.vital-tile__value-row { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--space-2); min-inline-size: 0; }
 .vital-tile__value {
   font: var(--type-vital-l);
   letter-spacing: var(--type-vital-l-tracking);
