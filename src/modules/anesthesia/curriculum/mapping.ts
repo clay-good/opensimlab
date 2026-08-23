@@ -564,6 +564,48 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'mk-applied-foundational-science',
     objectiveIds: ['recognize-mh-hypermetabolism', 'reassess-mh-response'],
   },
+
+  // --- Routine pediatric intravenous induction ----------------------------
+  {
+    scenarioId: 'routine-pediatric-iv-induction', frameworkId: 'nbcrna-nce',
+    domainId: 'basic-principles',
+    objectiveIds: ['preoxygenate-child', 'dose-pediatric-propofol', 'ventilate-child-by-weight', 'avoid-pediatric-desaturation'],
+  },
+  {
+    scenarioId: 'routine-pediatric-iv-induction', frameworkId: 'nbcrna-nce',
+    domainId: 'basic-sciences',
+    objectiveIds: ['dose-pediatric-propofol', 'ventilate-child-by-weight'],
+  },
+  {
+    scenarioId: 'routine-pediatric-iv-induction', frameworkId: 'coa-standards',
+    domainId: 'pharmacology-of-anesthetic-agents',
+    objectiveIds: ['dose-pediatric-propofol'],
+  },
+  {
+    scenarioId: 'routine-pediatric-iv-induction', frameworkId: 'coa-standards',
+    domainId: 'physiology-and-pathophysiology',
+    objectiveIds: ['preoxygenate-child', 'ventilate-child-by-weight', 'avoid-pediatric-desaturation'],
+  },
+  {
+    scenarioId: 'routine-pediatric-iv-induction', frameworkId: 'coa-standards',
+    domainId: 'anesthesia-equipment-and-monitoring',
+    objectiveIds: ['ventilate-child-by-weight', 'avoid-pediatric-desaturation'],
+  },
+  {
+    scenarioId: 'routine-pediatric-iv-induction', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-pharmacologic-management',
+    objectiveIds: ['dose-pediatric-propofol'],
+  },
+  {
+    scenarioId: 'routine-pediatric-iv-induction', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-anesthetic-plan-and-conduct',
+    objectiveIds: ['preoxygenate-child', 'dose-pediatric-propofol', 'ventilate-child-by-weight', 'avoid-pediatric-desaturation'],
+  },
+  {
+    scenarioId: 'routine-pediatric-iv-induction', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'mk-applied-foundational-science',
+    objectiveIds: ['dose-pediatric-propofol', 'ventilate-child-by-weight'],
+  },
 ];
 
 export interface DomainCoverage {

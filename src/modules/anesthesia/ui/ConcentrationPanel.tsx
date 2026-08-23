@@ -13,6 +13,7 @@ import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import type { DrugConcentration } from '@platform/kernel/protocol';
 import type { HistorySample } from '@platform/session/session-store';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
+import { MODELS_BY_ID } from '@anesthesia/pharmacology/registry';
 
 const DRUG_TOKENS: Record<string, string> = {
   propofol: '--neuro',
@@ -54,6 +55,7 @@ export function ConcentrationPanel({
   history, current, tick, timeToPeakSeconds, stacking, onExportCsv, pendingCheck,
 }: ConcentrationPanelProps) {
   const [cursorSeconds, setCursorSeconds] = useState<number | null>(null);
+  const [openModelId, setOpenModelId] = useState<string | null>(null);
   const drugs = current.map((entry) => entry.drugId);
 
   const bands = useMemo(() => drugs.map((drugId) => {
@@ -97,6 +99,8 @@ export function ConcentrationPanel({
           && (band.effectSite[band.effectSite.length - 1]?.[1] ?? 0)
             > (band.effectSite[band.effectSite.length - 2]?.[1] ?? 0);
         const peakSeconds = timeToPeakSeconds[band.drugId];
+        const model = MODELS_BY_ID.get(band.entry.modelId);
+        const modelDetailsId = `model-details-${band.drugId}-${band.entry.modelId}`;
         return (
           <section key={band.drugId} aria-label={`${band.drugId} concentrations`}>
             <header style={{ display: 'flex', alignItems: 'baseline', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
@@ -105,6 +109,20 @@ export function ConcentrationPanel({
               <Badge kind={CONFIDENCE_KIND[band.entry.confidence]}>
                 {CONFIDENCE_LABEL[band.entry.confidence]}
               </Badge>
+              <span className="field__hint model-detail__identity">Model: {band.entry.modelId}</span>
+              {model && (
+                <Button
+                  className="model-detail__action"
+                  variant="ghost"
+                  aria-expanded={openModelId === band.entry.modelId}
+                  aria-controls={modelDetailsId}
+                  onClick={() => setOpenModelId((current) => (
+                    current === band.entry.modelId ? null : band.entry.modelId
+                  ))}
+                >
+                  Model details and source
+                </Button>
+              )}
               {/* The confidence badge already says "Pending independent check"
                   when that is the case, so a second badge saying it again is
                   noise. This one only fires for a model that is out of range AND
@@ -112,6 +130,22 @@ export function ConcentrationPanel({
               {pendingCheck && band.entry.confidence === 'out-of-range'
                 && <Badge kind="teaching">Also pending independent check</Badge>}
             </header>
+
+            {model && openModelId === band.entry.modelId && (
+              <div id={modelDetailsId} className="reading__aside">
+                <strong>{model.drugName}: {model.id}</strong>
+                <p>{model.notes}</p>
+                <p>
+                  Source: {model.citation.authors}. {model.citation.title}.{' '}
+                  <em>{model.citation.journal}</em> {model.citation.year}
+                  {model.citation.volumePages ? `;${model.citation.volumePages}` : ''}.
+                  {model.citation.pmid ? ` PMID ${model.citation.pmid}.` : ''}
+                  {model.citation.doi ? ` DOI ${model.citation.doi}.` : ''}
+                  {' '}Parameters: {model.citation.locator}.
+                </p>
+                <p>{model.citation.summary}</p>
+              </div>
+            )}
 
             <PlotCanvas series={band.series} height={140} cursorSeconds={cursorSeconds} xMax={xMax} yMax={band.yMax} />
 

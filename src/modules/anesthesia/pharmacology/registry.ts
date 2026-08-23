@@ -11,6 +11,7 @@ import { MissingCovariate } from '@platform/kernel/errors';
 import type { Covariates } from './body-composition';
 import { PROPOFOL_ELEVELD_2018 } from './models/propofol-eleveld-2018';
 import { PROPOFOL_MARSH_1991 } from './models/propofol-marsh-1991';
+import { PROPOFOL_PAEDFUSOR_2005 } from './models/propofol-paedfusor-2005';
 import { PROPOFOL_SCHNIDER_1998 } from './models/propofol-schnider-1998';
 import { REMIFENTANIL_MINTO_1997 } from './models/remifentanil-minto-1997';
 import { ROCURONIUM_CLINICAL_COURSE_TEACHING } from './models/rocuronium-clinical-course-teaching';
@@ -20,6 +21,7 @@ export const MODELS: readonly PharmacologyModel[] = [
   PROPOFOL_MARSH_1991,
   PROPOFOL_SCHNIDER_1998,
   PROPOFOL_ELEVELD_2018,
+  PROPOFOL_PAEDFUSOR_2005,
   REMIFENTANIL_MINTO_1997,
   ROCURONIUM_CLINICAL_COURSE_TEACHING,
 ];
@@ -28,7 +30,7 @@ export const MODELS: readonly PharmacologyModel[] = [
  * The model-set revision. It changes whenever any parameter changes, and it is
  * recorded in every transcript so a session can be interpreted years later.
  */
-export const MODEL_SET_REVISION = '2026.08.1';
+export const MODEL_SET_REVISION = '2026.08.2';
 
 export const MODELS_BY_ID: ReadonlyMap<string, PharmacologyModel> = new Map(
   MODELS.map((model) => [model.id, model]),
@@ -56,16 +58,29 @@ export function selectDefaultModel(drugId: string, covariates: Covariates): Mode
   if (candidates.length === 0) throw new Error(`No model available for drug: ${drugId}`);
 
   if (drugId === 'propofol') {
+    if (covariates.ageYears >= 1 && covariates.ageYears <= 12
+      && covariates.weightKg >= 5 && covariates.weightKg <= 61) {
+      return {
+        model: PROPOFOL_PAEDFUSOR_2005,
+        reason:
+          'Paedfusor 2005 selected because the patient is within its published 1–12 year '
+          + 'pediatric age band. It supplies PK and effect-site equilibration, not a validated '
+          + 'pediatric depth-response surface.',
+      };
+    }
     if (covariates.ageYears < 18) {
-      // No paediatric propofol model ships in this slice. Eleveld is the only
-      // shipped model whose derivation population includes children at all, and
-      // the reason is stated rather than the limitation hidden.
+      const outside: string[] = [];
+      if (covariates.ageYears < 1 || covariates.ageYears > 12) {
+        outside.push(`age ${covariates.ageYears} years is outside 1–12 years`);
+      }
+      if (covariates.weightKg < 5 || covariates.weightKg > 61) {
+        outside.push(`weight ${covariates.weightKg} kg is outside 5–61 kg`);
+      }
       return {
         model: PROPOFOL_ELEVELD_2018,
         reason:
-          'Eleveld 2018 selected for a paediatric patient because it is the only shipped model '
-          + 'whose derivation population spans childhood. A dedicated paediatric model '
-          + '(Paedfusor or Kataria) is not yet implemented; this is recorded in the limitations register.',
+          `Eleveld 2018 selected for this pediatric patient because ${outside.join(' and ')} `
+          + 'for the shipped Paedfusor envelope; Eleveld spans childhood.',
       };
     }
     return {

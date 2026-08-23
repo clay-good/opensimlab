@@ -33,6 +33,7 @@ import { concentrationCsv } from './ConcentrationPanel';
 import { findStacking } from '@anesthesia/debrief/analysis';
 import { EXPLAINERS, getExplainer } from '@anesthesia/content/explainers';
 import { getDrugCard } from '@anesthesia/content/drug-cards';
+import type { DrugConcentration } from '@platform/kernel/protocol';
 import { requireSource } from '@platform/docs/sources';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import type { SonificationEngine } from '@platform/audio/sonification';
@@ -46,6 +47,15 @@ export interface CockpitProps {
   /** Hand the session back to the learner, wherever the demonstration got to. */
   readonly onTakeControls?: (() => void) | undefined;
   readonly onEnd: () => void;
+}
+
+export function depthConfidenceFor(
+  concentrations: readonly Pick<DrugConcentration, 'drugId' | 'modelId'>[],
+) {
+  const propofol = concentrations.find((drug) => drug.drugId === 'propofol');
+  return propofol?.modelId === 'propofol-paedfusor-2005'
+    ? { label: 'Teaching model', kind: 'teaching' as const }
+    : { label: 'Predicted', kind: 'default' as const };
 }
 
 /** Download a file locally. No network request is made. */
@@ -206,6 +216,9 @@ export function Cockpit({
         ? { label: 'Out of range', kind: 'out-of-range' as const }
         : { label: confidence === 'published' ? 'Published' : 'Pending check', kind: 'default' as const };
   }, [session.concentrations]);
+  const depthModelConfidence = useMemo(() => {
+    return depthConfidenceFor(session.concentrations);
+  }, [session.concentrations]);
 
   // The animation loop turns wall-clock time into ticks. The clock, not the frame
   // rate, decides how many, so the trajectory is identical at any frame rate.
@@ -278,12 +291,13 @@ export function Cockpit({
       resuscitation,
       epinephrineLabel: term(region, 'epinephrine'),
       lastExposure,
+      actualBodyWeightKg: scenario.patient.weightKg,
       showEpinephrineSupport: hasAnaphylaxisResponse,
       showHypermetabolicSupport: hasHypermetabolicResponse,
     }));
   }, [
     session.state, session.alarms, speak, infusions, ventilator, invalidParameters,
-    scenario.equipment.monitoring, airway.jawThrustCpapSecondsRemaining,
+    scenario.equipment.monitoring, scenario.patient.weightKg, airway.jawThrustCpapSecondsRemaining,
     resuscitation, region, lastExposure, hasAnaphylaxisResponse, hasHypermetabolicResponse,
   ]);
 
@@ -412,7 +426,7 @@ export function Cockpit({
           canvasHeight="fill"
           onSilence={(alarmId) => session.act({ type: 'silence-alarm', payload: { alarmId } })}
           onWhy={setWhyField}
-          modelConfidence={{ label: 'Predicted', kind: 'default' }}
+          modelConfidence={depthModelConfidence}
           showTrainOfFour={scenario.equipment.monitoring.includes('train-of-four')}
           {...(neuromuscularConfidence ? { neuromuscularConfidence } : {})}
         />

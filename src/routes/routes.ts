@@ -8,6 +8,7 @@
 
 import { MODULES } from '@platform/modules/registry';
 import { SCENARIOS } from '@anesthesia/scenarios';
+import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
 
 export const SITE_ORIGIN = 'https://opensimlab.com';
 export const SITE_NAME = 'Open Sim Lab';
@@ -31,7 +32,7 @@ export interface RouteMetadata {
  */
 function scenarioDescription(scenario: (typeof SCENARIOS)[number]): string {
   const { patient, metadata } = scenario;
-  const who = `${patient.ageYears}-year-old ${patient.sex === 'male' ? 'man' : 'woman'}`;
+  const who = `${patient.ageYears}-year-old ${patientPersonNoun(patient)}`;
   let description = `A ${who} for ${patient.procedure.toLowerCase()}.`;
   // Objectives are added until the description is substantial enough to be worth
   // showing in a result, and stopped before it is truncated. A terse first

@@ -170,6 +170,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
         {tray === 'fluids' && (
           <FluidTray
             crystalloidTotalMl={props.resuscitation.crystalloidTotalMl}
+            ageYears={props.scenario.patient.ageYears}
             onFluid={props.onFluid}
           />
         )}
@@ -182,6 +183,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
             attemptInProgress={props.airwayAttemptInProgress ?? false}
             attemptSecondsRemaining={props.airwayAttemptSecondsRemaining ?? 0}
             jawThrustCpapSecondsRemaining={props.jawThrustCpapSecondsRemaining}
+            actualBodyWeightKg={props.scenario.patient.weightKg}
             region={props.region}
             onVentilator={props.onVentilator}
             onLaryngoscopy={props.onLaryngoscopy}
@@ -225,10 +227,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
   );
 }
 
-function FluidTray({ crystalloidTotalMl, onFluid }: {
+function FluidTray({ crystalloidTotalMl, ageYears, onFluid }: {
   crystalloidTotalMl: number;
+  ageYears: number;
   onFluid: (fluidId: string, volumeMl: number) => void;
 }) {
+  const pediatric = ageYears < 18;
   const [pending, setPending] = useState<{ fluidId: string; volumeMl: number } | null>(null);
   return (
     <div className="tray-grid">
@@ -241,7 +245,11 @@ function FluidTray({ crystalloidTotalMl, onFluid }: {
           <p className="syringe__remaining" role="status">
             Accepted total: {crystalloidTotalMl.toFixed(0)} mL
           </p>
-          {pending?.fluidId === fluid.id ? (
+          {pediatric ? (
+            <p className="field__hint">
+              No pediatric fluid bolus is stocked in this bounded induction case.
+            </p>
+          ) : pending?.fluidId === fluid.id ? (
             <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
               <span className="numeric">Give {pending.volumeMl} mL?</span>
               <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
@@ -252,7 +260,13 @@ function FluidTray({ crystalloidTotalMl, onFluid }: {
                 >
                   Give fluid
                 </Button>
-                <Button variant="ghost" compact onClick={() => setPending(null)}>Cancel</Button>
+                <Button
+                  variant="ghost"
+                  compact
+                  onClick={() => setPending(null)}
+                >
+                  Cancel
+                </Button>
               </div>
             </div>
           ) : (
@@ -633,6 +647,7 @@ function InfusionTray({ formulary, region, weightKg, hypnoticLine, onInfusion, o
 function AirwayTray({
   ventilator, intubated, attempts, lastGrade, attemptInProgress, attemptSecondsRemaining,
   jawThrustCpapSecondsRemaining, region, onVentilator, onLaryngoscopy, onAirwayManeuver,
+  actualBodyWeightKg,
 }: {
   ventilator: ActionCockpitProps['ventilator'];
   intubated: boolean;
@@ -641,6 +656,7 @@ function AirwayTray({
   attemptInProgress: boolean;
   attemptSecondsRemaining: number;
   jawThrustCpapSecondsRemaining: number;
+  actualBodyWeightKg: number;
   region: RegionProfile;
   onVentilator: (settings: Partial<ActionCockpitProps['ventilator']>) => void;
   onLaryngoscopy: (technique: 'direct' | 'video') => void;
@@ -685,6 +701,11 @@ function AirwayTray({
             step={10}
             onChange={(tidalVolumeMl) => onVentilator({ tidalVolumeMl })}
           />
+          <p className="field__hint" aria-live="off">
+            {ventilator.tidalVolumeMl} mL ={' '}
+            {(ventilator.tidalVolumeMl / actualBodyWeightKg).toFixed(1)} mL/kg actual body weight.
+            Conversion only, not a recommended target.
+          </p>
           <Slider
             label="Respiratory rate"
             unit="/min"

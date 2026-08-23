@@ -21,6 +21,7 @@ import { DEMONSTRATION_SCENARIO_ID, demonstrationRequested } from '@anesthesia/d
 import { Cockpit } from '@anesthesia/ui/Cockpit';
 import { Debrief } from '@anesthesia/ui/Debrief';
 import { assertTranscriptIsAnonymous, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
+import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
 
 /**
  * The scenario a path names.
@@ -325,7 +326,7 @@ function ScenarioIndex() {
               {entry.metadata.title}
             </a>
             <p className="scenario-index__patient">
-              {entry.patient.ageYears}-year-old {entry.patient.sex === 'male' ? 'man' : 'woman'},
+              {entry.patient.ageYears}-year-old {patientPersonNoun(entry.patient)},
               {' '}ASA {entry.patient.asaClass}, for {entry.patient.procedure.toLowerCase()}.
               {' '}About {entry.metadata.estimatedMinutes} simulated minutes.
             </p>

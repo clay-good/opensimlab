@@ -15,10 +15,11 @@ export const DRY_BAROMETRIC_MMHG = 713;
 export const RESPIRATORY_QUOTIENT = 0.8;
 
 /**
- * Effective body carbon dioxide store, in mL of carbon dioxide per mmHg of
- * arterial tension. Calibrated so that apnoea at a normal metabolic rate raises
- * arterial carbon dioxide by about 3 mmHg per minute, which is the rate clinical
- * teaching and the apnoeic-oxygenation literature describe.
+ * Effective adult body carbon dioxide store, in mL of carbon dioxide per mmHg
+ * of arterial tension. Calibrated so that apnoea at a normal adult metabolic
+ * rate raises arterial carbon dioxide by about 3 mmHg per minute. Pediatric
+ * profiles retain this teaching calibration per kilogram rather than pretending
+ * a pediatric storage coefficient was published.
  */
 export const CO2_STORE_ML_PER_MMHG = 66;
 
@@ -64,6 +65,12 @@ export interface RespiratoryProfile {
   readonly vco2LitresPerMin: number;
   /** Anatomical dead space, millilitres. */
   readonly deadSpaceMl: number;
+  /** Effective body carbon dioxide store, mL CO2 per mmHg arterial tension. */
+  readonly co2StoreMlPerMmHg: number;
+  /** Undepressed spontaneous tidal volume used when the machine is not delivering. */
+  readonly spontaneousTidalVolumeMl: number;
+  /** Undepressed spontaneous respiratory rate used when the machine is not delivering. */
+  readonly spontaneousRespiratoryRateBpm: number;
   /** Alveolar-to-arterial oxygen gradient, mmHg. Widened by disease and by obesity. */
   readonly aaGradientMmHg: number;
 }
@@ -71,12 +78,60 @@ export interface RespiratoryProfile {
 /** The three profiles the Benumof benchmark is stated for. */
 export const RESPIRATORY_PROFILES: Record<'healthy' | 'moderately-ill' | 'obese', RespiratoryProfile> = {
   // A healthy 70 kg adult.
-  healthy: { frcLitres: 2.5, vo2LitresPerMin: 0.25, vco2LitresPerMin: 0.2, deadSpaceMl: 150, aaGradientMmHg: 10 },
+  healthy: {
+    frcLitres: 2.5, vo2LitresPerMin: 0.25, vco2LitresPerMin: 0.2, deadSpaceMl: 150,
+    co2StoreMlPerMmHg: CO2_STORE_ML_PER_MMHG,
+    spontaneousTidalVolumeMl: 500, spontaneousRespiratoryRateBpm: 14, aaGradientMmHg: 10,
+  },
   // A moderately ill 70 kg adult: reduced reserve and a raised metabolic rate.
-  'moderately-ill': { frcLitres: 2.0, vo2LitresPerMin: 0.30, vco2LitresPerMin: 0.24, deadSpaceMl: 170, aaGradientMmHg: 20 },
+  'moderately-ill': {
+    frcLitres: 2.0, vo2LitresPerMin: 0.30, vco2LitresPerMin: 0.24, deadSpaceMl: 170,
+    co2StoreMlPerMmHg: CO2_STORE_ML_PER_MMHG,
+    spontaneousTidalVolumeMl: 500, spontaneousRespiratoryRateBpm: 14, aaGradientMmHg: 20,
+  },
   // An obese adult: functional residual capacity is much reduced and consumption raised.
-  obese: { frcLitres: 1.3, vo2LitresPerMin: 0.39, vco2LitresPerMin: 0.3, deadSpaceMl: 180, aaGradientMmHg: 30 },
+  obese: {
+    frcLitres: 1.3, vo2LitresPerMin: 0.39, vco2LitresPerMin: 0.3, deadSpaceMl: 180,
+    co2StoreMlPerMmHg: CO2_STORE_ML_PER_MMHG,
+    spontaneousTidalVolumeMl: 500, spontaneousRespiratoryRateBpm: 14, aaGradientMmHg: 30,
+  },
 };
+
+/**
+ * Healthy pediatric gas-exchange constants for the bounded 1–12 year profile.
+ *
+ * Metabolic production follows Lindahl et al. 1989 (PMID 2492815). Anatomic
+ * dead space follows Numa and Newth 1996 (PMID 8727530). The spontaneous tidal
+ * volume is the conservative 6 mL/kg approximation recommended from the
+ * anesthetized-child measurements of Lindahl, Hulse and Hatch 1984
+ * (PMID 6419754).
+ * FRC uses Thorsteinsson's nonlinear weight regression in healthy anesthetized
+ * children aged 0.1–11.2 years (PMID 2240677). CO2 storage has no corresponding
+ * pediatric parameter in this model; it retains the adult teaching calibration
+ * and scales it linearly by weight.
+ */
+export function healthyChildRespiratoryProfile(ageYears: number, weightKg: number): RespiratoryProfile {
+  const age = clamp(Number.isFinite(ageYears) ? ageYears : 6, 1, 12);
+  const weight = clamp(Number.isFinite(weightKg) ? weightKg : 20, 5, 61);
+  const vco2MlPerMin = 4.8 * weight + 6.4;
+  const deadSpaceMl = weight * (3.28 - 0.56 * Math.log(1 + age));
+  const spontaneousTidalVolumeMl = 6 * weight;
+  // At baseline this makes clearance equal production at PaCO2 40 mmHg.
+  const spontaneousRespiratoryRateBpm = Math.round(
+    (vco2MlPerMin / 1000) * 863 / 40
+      / Math.max((spontaneousTidalVolumeMl - deadSpaceMl) / 1000, 0.001),
+  );
+  return {
+    frcLitres: (9.51 * weight ** 1.31) / 1000,
+    vo2LitresPerMin: (5 * weight + 19.8) / 1000,
+    vco2LitresPerMin: vco2MlPerMin / 1000,
+    deadSpaceMl,
+    co2StoreMlPerMmHg: CO2_STORE_ML_PER_MMHG * weight / 70,
+    spontaneousTidalVolumeMl,
+    spontaneousRespiratoryRateBpm,
+    aaGradientMmHg: 10,
+  };
+}
 
 /** The gas state carried between steps. */
 export interface GasState {
@@ -151,7 +206,7 @@ export function stepGas(
   const metabolicRate = clamp(input.metabolicRateMultiplier ?? 1, 1, 5);
   const netLitresPerMin = profile.vco2LitresPerMin * metabolicRate - clearance;
   gas.paco2MmHg = Math.max(
-    gas.paco2MmHg + (netLitresPerMin * 1000 * minutes) / CO2_STORE_ML_PER_MMHG,
+    gas.paco2MmHg + (netLitresPerMin * 1000 * minutes) / profile.co2StoreMlPerMmHg,
     5,
   );
 

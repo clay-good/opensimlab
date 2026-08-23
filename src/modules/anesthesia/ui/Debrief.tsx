@@ -324,10 +324,126 @@ export function objectiveFindings(
     'stop-trigger-and-hyperventilate': 'malignant-hyperthermia-early-pattern',
     'give-initial-dantrolene': 'malignant-hyperthermia-early-pattern',
     'reassess-mh-response': 'malignant-hyperthermia-early-pattern',
+    'preoxygenate-child': 'preoxygenation-and-safe-apnea-time',
+    'dose-pediatric-propofol': 'hysteresis-and-effect-site-lag',
+    'ventilate-child-by-weight': 'capnogram-morphology',
+    'avoid-pediatric-desaturation': 'preoxygenation-and-safe-apnea-time',
   };
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if ([
+      'preoxygenate-child', 'dose-pediatric-propofol',
+      'ventilate-child-by-weight', 'avoid-pediatric-desaturation',
+    ].includes(objective.id)) {
+      const syringeCapacityMg = (scenario.formulary.find((entry) => entry.drugId === 'propofol')
+        ?.syringeVolumeMl ?? 0) * (scenario.formulary.find((entry) => entry.drugId === 'propofol')
+        ?.concentration ?? 0);
+      const induction = actions.find((action) => {
+        if (action.type !== 'bolus' || action.payload.drugId !== 'propofol') return false;
+        const amount = Number(action.payload.amount);
+        const unit = String(action.payload.unit);
+        if (unit !== 'mg' && unit !== 'mg/kg') return false;
+        const mass = unit === 'mg/kg'
+          ? amount * scenario.patient.weightKg : amount;
+        return Number.isFinite(amount) && amount > 0 && mass <= syringeCapacityMg;
+      });
+      if (!induction) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'No accepted positive propofol induction dose was recorded.',
+        } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'preoxygenate-child') {
+        const before = history.filter((entry) => entry.tick <= induction.tick).at(-1);
+        const endTidal = before?.state.endTidalO2Fraction ?? 0;
+        return {
+          ...base,
+          outcome: endTidal >= 0.9 ? 'met' : endTidal >= 0.8 ? 'partly-met' : 'not-met',
+          finding: `End-tidal oxygen fraction was ${endTidal.toFixed(2)} when the first accepted propofol dose was given. The 0.90 endpoint measures modeled lung denitrogenation; the inspired setting alone does not.`,
+          atTick: induction.tick,
+        } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'dose-pediatric-propofol') {
+        const amount = Number(induction.payload.amount);
+        const enteredPerKg = induction.payload.unit === 'mg/kg';
+        const perKg = enteredPerKg ? amount : amount / scenario.patient.weightKg;
+        return {
+          ...base,
+          outcome: enteredPerKg && perKg >= 2.5 && perKg <= 3.5 ? 'met'
+            : perKg >= 2 && perKg <= 4 ? 'partly-met' : 'not-met',
+          finding: `The first accepted propofol dose was ${perKg.toFixed(2)} mg/kg for the ${scenario.patient.weightKg.toFixed(0)} kg child${enteredPerKg ? ', entered by weight' : ', entered as an absolute dose'}. The labeled range is a starting guide to titrate against clinical response; Paedfusor supplies pediatric kinetics, not validated pediatric depth pharmacodynamics.`,
+          atTick: induction.tick,
+        } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'ventilate-child-by-weight') {
+        const initial = scenario.equipment.ventilator;
+        const ventilatorActions = actions
+          // Settings prepared before induction remain in force afterward. Rebuild the
+          // machine from every accepted-looking control change rather than requiring
+          // the learner to move the same controls again after giving propofol.
+          .filter((action) => action.type === 'ventilator');
+        const settingsAt = (tick: number) => ventilatorActions
+          .filter((action) => action.tick <= tick)
+          .reduce((settings, action) => {
+            const finite = (field: string, fallback: number, min: number, max: number) => {
+              if (action.payload[field] === undefined) return fallback;
+              const value = Number(action.payload[field]);
+              return Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : fallback;
+            };
+            return {
+              tidalVolumeMl: finite('tidalVolumeMl', settings.tidalVolumeMl, 0, 1500),
+              respiratoryRateBpm: finite('respiratoryRateBpm', settings.respiratoryRateBpm, 0, 60),
+              delivering: typeof action.payload.delivering === 'boolean'
+                ? action.payload.delivering : settings.delivering,
+            };
+          }, {
+            tidalVolumeMl: initial.tidalVolumeMl,
+            respiratoryRateBpm: initial.respiratoryRateBpm,
+            delivering: initial.delivering,
+          });
+        const finalTick = history.at(-1)?.tick ?? induction.tick;
+        const machine = settingsAt(finalTick);
+        const mlPerKg = machine.tidalVolumeMl / scenario.patient.weightKg;
+        const gasSamples = history.filter((entry) =>
+          entry.tick >= Math.max(induction.tick, finalTick - (30 * TICKS_PER_SECOND)));
+        const sustainedGas = gasSamples.length > 1
+          && (gasSamples.at(-1)!.tick - gasSamples[0]!.tick) >= 30 * TICKS_PER_SECOND
+          && gasSamples.every((entry) => {
+            const etco2 = entry.state.etco2MmHg ?? 0;
+            return etco2 >= 30 && etco2 <= 50;
+          });
+        const sustainedSizedDelivery = sustainedGas && gasSamples.every((entry) => {
+          const settings = settingsAt(entry.tick);
+          const sampleMlPerKg = settings.tidalVolumeMl / scenario.patient.weightKg;
+          return settings.delivering && sampleMlPerKg >= 6 && sampleMlPerKg <= 8;
+        });
+        const sized = mlPerKg >= 6 && mlPerKg <= 8 && machine.delivering;
+        return {
+          ...base,
+          outcome: sustainedSizedDelivery ? 'met'
+            : sized || sustainedGas ? 'partly-met' : 'not-met',
+          finding: `The final accepted settings delivered ${machine.tidalVolumeMl.toFixed(0)} mL (${mlPerKg.toFixed(1)} mL/kg) at ${machine.respiratoryRateBpm.toFixed(0)}/min. ${sustainedSizedDelivery ? 'Pediatric-sized delivered breaths and end-tidal carbon dioxide between 30 and 50 mmHg overlapped for the final 30 seconds.' : 'A full final 30 seconds combining pediatric-sized delivered breaths with end-tidal carbon dioxide between 30 and 50 mmHg was not recorded.'} These are modeled gas-exchange endpoints, not a device prescription.`,
+          atTick: finalTick,
+        } satisfies ObjectiveFinding;
+      }
+      const samples = history.filter((entry) => entry.tick >= induction.tick);
+      if (samples.length === 0) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'No post-induction saturation trace was available to evaluate this objective.',
+          atTick: induction.tick,
+        } satisfies ObjectiveFinding;
+      }
+      const lowest = Math.min(...samples.map((entry) => entry.state.spo2Percent ?? 100));
+      return {
+        ...base,
+        outcome: lowest >= 92 ? 'met' : lowest >= 88 ? 'partly-met' : 'not-met',
+        finding: `The lowest saturation after induction was ${lowest.toFixed(0)}%. This is one bounded 6-year-old respiratory profile, not a prediction for children of other ages or conditions.`,
+        atTick: samples.at(-1)?.tick ?? induction.tick,
+      } satisfies ObjectiveFinding;
+    }
 
     if (objective.id === 'preoxygenate') {
       // Three minutes at an END-TIDAL fraction of 0.9, which is the endpoint that

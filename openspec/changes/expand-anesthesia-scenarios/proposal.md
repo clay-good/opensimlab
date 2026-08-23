@@ -18,6 +18,8 @@ The fifth adds an antibiotic-triggered perioperative anaphylaxis teaching model,
 common NAP6 presentation of abrupt hypotension with possible bronchospasm and initial treatment.
 The sixth adds a volatile-triggered malignant-hyperthermia teaching model, centered on carbon
 dioxide as an early clue, later temperature, trigger removal, hyperventilation, and dantrolene.
+The seventh adds one bounded routine pediatric intravenous induction with Paedfusor propofol
+kinetics and weight-derived respiratory physiology for a healthy 6-year-old weighing 20 kg.
 
 ## What changes
 
@@ -63,9 +65,17 @@ dioxide as an early clue, later temperature, trigger removal, hyperventilation, 
   removal, high-flow 100% oxygen, hyperventilation, and exact 2.5 mg/kg IV dantrolene.
 - State the sixth boundary plainly: this is early recognition and initial response, without
   laboratory-guided complications, team actions, intensive care, or diagnostic confirmation.
+- Add an eleventh scenario for a healthy 6-year-old weighing 20 kg, with Paedfusor selected as the
+  pediatric propofol kinetic model and a bounded healthy-child respiratory profile.
+- Evaluate end-tidal preoxygenation, accepted 2.5–3.5 mg/kg propofol, 6–8 mL/kg delivered breaths
+  with sustained observed gas exchange, and the post-induction saturation margin.
+- State the seventh boundary plainly: the depth response is a shared teaching calibration, not
+  validated pediatric pharmacodynamics, and pediatric hemodynamic maturation, airway-device
+  sizing, maintenance, emergence, and generalization beyond this profile remain unavailable.
 
 ## Impact
 
-These six slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+These seven slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
 awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. They do not complete the bundled-library,
-neuromuscular-reversal, or crisis-injector requirements.
+neuromuscular-reversal, or crisis-injector requirements. The seventh also closes the bounded
+pediatric-family gap without claiming a general pediatric patient model.

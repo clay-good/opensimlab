@@ -16,6 +16,7 @@ import { CurriculumRoute } from './CurriculumRoute';
 import { DEFAULT_SCENARIO_ID, getScenario, scenariosByDifficulty } from '@anesthesia/scenarios';
 import { DocumentRoute } from './DocumentRoute';
 import { PlannedModuleRoute } from './PlannedModuleRoute';
+import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
 
 export function PrerenderedBody({ path }: { path: string }) {
   // The landing page, the informational routes and the planned-module pages
@@ -70,7 +71,7 @@ function ScenarioMarkup({ path }: { path: string }) {
       <h1>{metadata.title}</h1>
       <p>
         {patient.ageYears}-year-old{' '}
-        {patient.sex === 'male' ? 'man' : 'woman'} for{' '}
+        {patientPersonNoun(patient)} for{' '}
         {patient.procedure}. About {metadata.estimatedMinutes} simulated minutes.
       </p>
       <h2>What you will practise</h2>

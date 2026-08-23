@@ -243,6 +243,8 @@
 /* Crisis doses are time-critical touch actions. The default button follows the
  * 40px compact control density, so these need an explicit WCAG target floor. */
 .crisis-drug__action { min-block-size: 44px; }
+.model-detail__action { min-block-size: 44px; }
+.model-detail__identity { overflow-wrap: anywhere; }
 
 /* --- Reflow --------------------------------------------------------------
  * At `sm` the Analysis region moves below the Monitor. At `xs` it becomes a

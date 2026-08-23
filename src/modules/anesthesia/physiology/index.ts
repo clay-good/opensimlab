@@ -431,10 +431,10 @@ export class VirtualPatient {
     const delivering = ventilator.delivering;
     const commandedTidal = delivering
       ? ventilator.tidalVolumeMl
-      : Math.round(this.profile.respiratory.frcLitres > 0 ? 500 * tidalDrive : 0);
+      : Math.round(this.profile.respiratory.spontaneousTidalVolumeMl * tidalDrive);
     const commandedRate = delivering
       ? ventilator.respiratoryRateBpm
-      : Math.round(14 * rateDrive);
+      : Math.round(this.profile.respiratory.spontaneousRespiratoryRateBpm * rateDrive);
     const airwayPatency = 1 - clamp(scenario.upperAirwayClosureFraction ?? 0, 0, 1);
     // At five percent patency or less, the calculated few millilitres are below
     // effective dead-space ventilation. Calling a set respiratory rate a breath

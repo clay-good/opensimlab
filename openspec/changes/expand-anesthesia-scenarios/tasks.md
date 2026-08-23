@@ -88,6 +88,23 @@
   acidosis, potassium, dysrhythmia treatment, rhabdomyolysis, urine/coagulation monitoring, team
   or hotline actions, intensive care, recurrence, or confirmatory referral. None is implied.
 
+## Slice 7: bounded routine pediatric induction
+
+- [x] Add the age-1-to-12 Paedfusor propofol pharmacokinetic model and select it by default only
+  inside that applicability envelope.
+- [x] Add a bounded healthy-child respiratory teaching profile derived from age and weight, with
+  pediatric metabolic demand, functional residual capacity, dead space, and spontaneous breathing.
+- [x] Author and register one healthy 6-year-old, 20 kg intravenous-induction case using only
+  propofol from the modeled formulary.
+- [x] Evaluate end-tidal preoxygenation, accepted weight-based propofol, 6–8 mL/kg delivered
+  ventilation with sustained carbon-dioxide exchange, and the post-induction saturation margin.
+- [x] Map the scenario to NBCRNA, COA, and ACGME domains.
+- [x] Add Paedfusor and pediatric respiratory sources; update limitations, face-validity scope,
+  landing inventory, and discoverability assets.
+- [ ] Add validated pediatric depth pharmacodynamics, hemodynamic maturation, pediatric airway-
+  device sizing, maintenance, emergence, or generalization beyond this single profile. None is
+  implied by this slice.
+
 ## Remaining required scenario families
 
 - [x] Rapid-sequence induction with neuromuscular blockade.
@@ -96,7 +113,7 @@
 - [x] Malignant hyperthermia early recognition and initial response.
 - [ ] Local-anesthetic systemic toxicity.
 - [ ] Resuscitable cardiac arrest.
-- [ ] Pediatric anesthesia with pediatric pharmacokinetics and physiology.
+- [x] Pediatric anesthesia with pediatric pharmacokinetics and a bounded respiratory profile.
 - [x] Obstetric presentation: the hemorrhage case is a ruptured ectopic pregnancy.
 - [x] Geriatric presentation: hypotension after induction.
 - [x] Obesity presentation: rapid desaturation.

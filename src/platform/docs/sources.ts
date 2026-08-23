@@ -65,6 +65,37 @@ const CHECKED = '2026-08-20';
 export const SOURCES: readonly Source[] = [
   // --- Pharmacokinetic and pharmacodynamic models ---------------------------
   {
+    id: 'absalom-kenny-paedfusor-2005',
+    pmid: '15941735',
+    authors: 'Absalom A, Kenny G',
+    title: 'Paedfusor pharmacokinetic data set',
+    publication: 'Br J Anaesth', year: 2005, locator: '95:110',
+    usedFor: 'The age-1-to-12 Paedfusor propofol compartment volumes, transfer, elimination, and '
+      + 'effect-site equilibration rate constants, and the explicit boundary that this is a pediatric pharmacokinetic '
+      + 'model rather than validated pediatric depth pharmacodynamics.',
+    verifiedAgainst: NCBI, verifiedOn: '2026-08-23',
+  },
+  {
+    id: 'absalom-paedfusor-accuracy-2003',
+    pmid: '14504151',
+    authors: 'Absalom A, Amutike D, Lal A, White M, Kenny GNC',
+    title: 'Accuracy of the Paedfusor in children undergoing cardiac surgery or catheterization',
+    publication: 'Br J Anaesth', year: 2003, locator: '91:507-13',
+    usedFor: 'The Paedfusor evaluation population and predictive-performance evidence, including '
+      + 'the limits of generalizing its concentration predictions beyond the studied children.',
+    verifiedAgainst: NCBI, verifiedOn: '2026-08-23',
+  },
+  {
+    id: 'dailymed-propofol-current',
+    authors: 'US National Library of Medicine',
+    title: 'Propofol injectable emulsion prescribing information',
+    publication: 'DailyMed', year: 2026, locator: 'Current online drug label', unpinned: true,
+    usedFor: 'The 2.5–3.5 mg/kg labeled induction range for healthy pediatric patients aged '
+      + '3–16 years used as the bounded dosing objective in the routine pediatric case.',
+    verifiedAgainst: 'DailyMed current propofol injectable emulsion label',
+    verifiedOn: '2026-08-23',
+  },
+  {
     id: 'mccoy-rocuronium-1993',
     pmid: '8460753',
     authors: 'McCoy EP, Mirakhur RK, Maddineni VR, Wierda JMKH, Proost JH',
@@ -240,6 +271,55 @@ export const SOURCES: readonly Source[] = [
       + 'an obese adult.',
     verifiedAgainst: NCBI,
     verifiedOn: CHECKED,
+  },
+  {
+    id: 'videira-pediatric-preoxygenation-1992',
+    pmid: '1549927',
+    authors: 'Videira RL, Neto PP, do Amaral RV, Freeman JA',
+    title: 'Preoxygenation in children: for how long?',
+    publication: 'Acta Anaesthesiol Scand', year: 1992, locator: '36:109-11',
+    usedFor: 'The pediatric induction scenario\'s preoxygenation lesson: in a small trial, three '
+      + 'minutes rather than one prolonged mean time to 90% saturation during apnea from 91 to 144 seconds.',
+    verifiedAgainst: NCBI, verifiedOn: '2026-08-23',
+  },
+  {
+    id: 'thorsteinsson-pediatric-frc-1990',
+    pmid: '2240677',
+    authors: 'Thorsteinsson A, Jonmarker C, Larsson A, Vilstrup C, Werner O',
+    title: 'Functional residual capacity in anesthetized children: normal values and values in children with cardiac anomalies',
+    publication: 'Anesthesiology', year: 1990, locator: '73:876-81',
+    usedFor: 'The nonlinear weight regression for functional residual capacity in healthy '
+      + 'anesthetized children aged 0.1–11.2 years used by the bounded healthy-child respiratory profile.',
+    verifiedAgainst: NCBI, verifiedOn: '2026-08-23',
+  },
+  {
+    id: 'lindahl-pediatric-metabolism-1989',
+    pmid: '2492815',
+    authors: 'Lindahl SG',
+    title: 'Oxygen consumption and carbon dioxide elimination in infants and children during anaesthesia and surgery',
+    publication: 'Br J Anaesth', year: 1989, locator: '62:70-6',
+    usedFor: 'The body-weight equations anchoring oxygen consumption and carbon-dioxide production '
+      + 'in the bounded healthy-child respiratory profile.',
+    verifiedAgainst: NCBI, verifiedOn: '2026-08-23',
+  },
+  {
+    id: 'numa-newth-dead-space-1996',
+    pmid: '8727530',
+    authors: 'Numa AH, Newth CJL',
+    title: 'Anatomic dead space in infants and children',
+    publication: 'J Appl Physiol', year: 1996, locator: '80:1485-9',
+    usedFor: 'The age-and-weight dead-space equation used by the bounded healthy-child respiratory profile.',
+    verifiedAgainst: NCBI, verifiedOn: '2026-08-23',
+  },
+  {
+    id: 'lindahl-hulse-hatch-pediatric-ventilation-1984',
+    pmid: '6419754',
+    authors: 'Lindahl SG, Hulse MG, Hatch DJ',
+    title: 'Ventilation and gas exchange during anaesthesia and surgery in spontaneously breathing infants and children',
+    publication: 'Br J Anaesth', year: 1984, locator: '56:121-9',
+    usedFor: 'The anesthetized-child measurements supporting the conservative 6 mL/kg '
+      + 'spontaneous-tidal-volume approximation in the bounded healthy-child respiratory profile.',
+    verifiedAgainst: NCBI, verifiedOn: '2026-08-23',
   },
   {
     id: 'mcsharry-2003',

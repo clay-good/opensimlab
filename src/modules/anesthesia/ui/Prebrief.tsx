@@ -17,6 +17,7 @@ import type { Scenario } from '@anesthesia/engine';
 import { HONEST_STATUS } from '@platform/governance/status';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import type { RegionProfile } from '@anesthesia/region/profiles';
+import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
 
 export const FICTION_CONTRACT =
   'This is a simulation. The patient is not real, nothing you do here reaches anyone, and an '
@@ -49,7 +50,7 @@ export function Prebrief({ scenario, region, onStart, onWatch, guidance, onGuida
         <p className="field__label">Assignment: {assignmentLabel}</p>
       )}
       <h1>{scenario.metadata.title}</h1>
-      <p>{patient.ageYears}-year-old {patient.sex === 'male' ? 'man' : 'woman'}, {patient.weightKg} kg,
+      <p>{patient.ageYears}-year-old {patientPersonNoun(patient)}, {patient.weightKg} kg,
         ASA {patient.asaClass}, for {patient.procedure}.</p>
 
       <Panel title="The fiction contract">

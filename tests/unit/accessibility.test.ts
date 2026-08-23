@@ -75,14 +75,17 @@ describe('Requirement: Screen Reader Access To Live Physiology', () => {
     const summary = stateSummary(patient.snapshot(), {
       alarms: [],
       infusions: [{ drugId: 'remifentanil', rate: 17, unit: 'µg/min' }],
-      ventilator: { mode: 'volume-control', tidalVolumeMl: 500, respiratoryRateBpm: 12, fio2: 0.5, delivering: true },
+      ventilator: { mode: 'volume-control', tidalVolumeMl: 140, respiratoryRateBpm: 20, fio2: 0.5, delivering: true },
       invalid: new Set(),
+      actualBodyWeightKg: 20,
     });
     // All current vitals, active infusions, ventilator settings and active alarms.
     expect(summary).toContain('Heart rate');
     expect(summary).toContain('Oxygen saturation');
     expect(summary).toContain('remifentanil');
     expect(summary).toContain('Ventilator');
+    expect(summary).toContain('7.0 millilitres per kilogram actual body weight');
+    expect(summary).toContain('not a recommended target');
     expect(summary).toContain('No active alarms');
   });
 

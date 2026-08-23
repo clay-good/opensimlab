@@ -148,7 +148,7 @@ export const SCENARIO_SCHEMA: SchemaNode = {
           type: 'object', description: 'Respiratory reserve, which sets the safe apnoea time.',
           required: ['profile'],
           properties: {
-            profile: { type: 'string', description: 'Which published apnoea profile this patient matches.', enum: ['healthy', 'moderately-ill', 'obese'] },
+            profile: { type: 'string', description: 'Which gas-exchange profile this patient matches.', enum: ['healthy', 'moderately-ill', 'obese', 'healthy-child'] },
           },
         },
       },
@@ -368,12 +368,23 @@ export function validateScenarioSemantics(scenario: unknown): ValidationError[] 
   const errors: ValidationError[] = [];
   const record = scenario as Record<string, unknown>;
   const metadata = record.metadata as Record<string, unknown> | undefined;
+  const patient = record.patient as Record<string, unknown> | undefined;
+  const respiratory = patient?.respiratory as Record<string, unknown> | undefined;
   const timeline = record.timeline as Record<string, unknown>[] | undefined;
   const debrief = record.debrief as { rubric?: Record<string, unknown>[] } | undefined;
 
   const objectiveIds = new Set(
     ((metadata?.objectives as { id: string }[] | undefined) ?? []).map((o) => o.id),
   );
+  if (respiratory?.profile === 'healthy-child'
+    && (patient?.ageYears !== 6 || patient?.weightKg !== 20)) {
+    errors.push({
+      pointer: '/patient/respiratory/profile', rule: 'supported-profile',
+      message: 'The healthy-child respiratory profile is currently validated only for the bundled '
+        + '6-year-old, 20 kg teaching patient. Use that exact age and weight or author another '
+        + 'explicitly sourced respiratory profile.',
+    });
+  }
   (debrief?.rubric ?? []).forEach((item, index) => {
     if (!objectiveIds.has(item.objectiveId as string)) {
       errors.push({

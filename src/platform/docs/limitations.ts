@@ -369,6 +369,76 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: [],
   },
   {
+    id: 'paedfusor-pk-does-not-validate-pediatric-depth',
+    headline: 'Paedfusor supplies pediatric propofol kinetics, but the predicted depth response remains an Open Sim Lab teaching calibration.',
+    simplification: 'The age-1-to-12 Paedfusor compartments and effect-site equilibration drive '
+      + 'concentration. The source does not provide the pediatric depth-index pharmacodynamics '
+      + 'this simulator displays, so the existing concentration-to-depth response is not labeled published.',
+    whereItMisleads: 'Treating a displayed depth number, loss-of-consciousness threshold, or dose '
+      + 'response as validated for a real child.',
+    correctUnderstanding: 'Paedfusor predicts population-average propofol concentration from dose '
+      + 'and time. Pediatric clinical effect must be assessed directly and dosing titrated to response.',
+    briefIn: ['routine-pediatric-iv-induction'],
+  },
+  {
+    id: 'pediatric-respiratory-profile-is-a-teaching-model',
+    headline: 'The 6-year-old respiratory profile combines published size equations into one deterministic teaching patient.',
+    simplification: 'Functional residual capacity, oxygen consumption, carbon-dioxide production, '
+      + 'and dead space scale from age and weight. Functional residual capacity uses the published '
+      + 'Thorsteinsson nonlinear weight regression from healthy anesthetized children aged 0.1–11.2 years. '
+      + 'Carbon-dioxide storage retains an adult teaching calibration scaled by weight.',
+    whereItMisleads: 'Predicting an individual child\'s safe apnea time or assuming children of '
+      + 'different ages, illness, body composition, airway anatomy, or anesthetic state share this trajectory.',
+    correctUnderstanding: 'Children generally have less oxygen reserve relative to metabolic '
+      + 'demand than adults, but the margin varies substantially. Use observed oxygenation, '
+      + 'ventilation, and age-appropriate clinical guidance rather than this trace as a timer.',
+    briefIn: ['routine-pediatric-iv-induction'],
+  },
+  {
+    id: 'pediatric-hemodynamic-maturation-is-not-modeled',
+    headline: 'The child starts at pediatric vital signs, but the cardiovascular response equations are not developmentally matured.',
+    simplification: 'The scenario supplies a child-sized baseline blood volume, stroke volume, '
+      + 'heart rate, and pressure. Baroreflex, anesthetic vasodilation, myocardial depression, '
+      + 'and hypoxic failure otherwise use the same teaching equations as adults.',
+    whereItMisleads: 'Using the pressure or heart-rate trajectory to select a pediatric dose, '
+      + 'intervention threshold, or prediction of cardiovascular reserve.',
+    correctUnderstanding: 'Pediatric cardiovascular physiology and anesthetic responses vary '
+      + 'with developmental stage. This case teaches monitoring and sequence, not a validated hemodynamic trajectory.',
+    briefIn: ['routine-pediatric-iv-induction'],
+  },
+  {
+    id: 'pediatric-airway-equipment-sizing-is-not-modeled',
+    headline: 'Pediatric airway anatomy, device size, cuff pressure, and placement depth are not modeled.',
+    simplification: 'The same generic mask-ventilation and laryngoscopy controls used for adults '
+      + 'remain available. There is no device inventory, pediatric sizing calculation, pressure, '
+      + 'depth mark, leak, or age-specific airway success model.',
+    whereItMisleads: 'Treating a successful screen action as practice choosing or placing a real pediatric airway device.',
+    correctUnderstanding: 'Select, place, and confirm pediatric airway equipment using the child\'s '
+      + 'anatomy, weight, current guidance, and direct clinical evidence.',
+    briefIn: ['routine-pediatric-iv-induction'],
+  },
+  {
+    id: 'pediatric-case-is-one-bounded-profile',
+    headline: 'This is one healthy 6-year-old weighing 20 kg, not a model of infancy, adolescence, obesity, or pediatric disease.',
+    simplification: 'One age, weight, height, healthy respiratory profile, and ASA I baseline are '
+      + 'deliberately bundled so every stated assumption can be inspected.',
+    whereItMisleads: 'Generalizing the case to a neonate, infant, adolescent, child with obesity, '
+      + 'or child with cardiac, respiratory, metabolic, or developmental disease.',
+    correctUnderstanding: 'Pediatric anesthesia spans changing physiology and pharmacology. '
+      + 'Reassess model choice and every setting when the child differs from this bounded profile.',
+    briefIn: ['routine-pediatric-iv-induction'],
+  },
+  {
+    id: 'pediatric-emergence-is-not-modeled',
+    headline: 'The pediatric case ends after induction and stable ventilation; emergence and recovery are absent.',
+    simplification: 'There is no maintenance plan, wake-up trajectory, extubation, emergence '
+      + 'delirium, postoperative nausea, pain, airway obstruction, or recovery discharge assessment.',
+    whereItMisleads: 'Treating a stable induction as completion of an anesthetic or evidence of safe recovery.',
+    correctUnderstanding: 'Maintenance, emergence, airway removal, and recovery each require a '
+      + 'separate pediatric plan and continued observation.',
+    briefIn: ['routine-pediatric-iv-induction'],
+  },
+  {
     id: 'no-coagulopathy',
     headline: 'Coagulation is not modelled, so bleeding never becomes a clotting problem.',
     simplification: 'Coagulation is not modelled. Blood loss removes volume and haemoglobin and '

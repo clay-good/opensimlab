@@ -72,7 +72,9 @@ Reviewers run the routine induction themselves before answering.
 | B21 | Pressure and ventilation response to 50 micrograms IV epinephrine and 1,000 mL crystalloid | | |
 | B22 | Rising end-tidal carbon dioxide before tachycardia, rigidity, and later temperature change during the modeled hypermetabolic response | | |
 | B23 | Carbon-dioxide, heart-rate, rigidity, and temperature response after stopping volatile, hyperventilating with high-flow 100% oxygen, and giving dantrolene | | |
-| B24 | Overall: does this patient behave like a patient? | | |
+| B24 | Propofol concentration and shared teaching-depth trajectory after 2.5–3.5 mg/kg in the 6-year-old, 20 kg Paedfusor case | | |
+| B25 | Pediatric oxygen-reserve, desaturation, and carbon-dioxide trajectories during apnea and 6–8 mL/kg delivered ventilation | | |
+| B26 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -93,7 +95,8 @@ So that reviewers spend their attention on what this review is for:
   uptake, rebreathing, or agent-consumption model.
 - Balanced crystalloid uses a fixed-retention teaching model. There are no blood products,
   coagulation effects, laboratory guidance, or resuscitation actions.
-- Ten scenarios use propofol and remifentanil; the rapid-sequence and awareness-risk cases add rocuronium. The
+- Most adult scenarios use propofol and remifentanil; the pediatric case stocks propofol only,
+  and the rapid-sequence and awareness-risk cases add rocuronium. The
   hemorrhage case covers recognition and initial crystalloid temporization, not a
   massive-transfusion protocol.
 - The TIVA-line case models a binary propofol delivery interruption while the commanded pump rate
@@ -108,4 +111,7 @@ So that reviewers spend their attention on what this review is for:
 - The malignant-hyperthermia case models an early volatile-triggered hypermetabolic pattern and
   initial response. Exact trajectories and dantrolene relief are teaching models; laboratory-guided
   acidosis and hyperkalemia treatment, rhabdomyolysis, team actions, and post-crisis care are absent.
+- The pediatric case is one healthy 6-year-old weighing 20 kg. Paedfusor supplies kinetics but no
+  validated pediatric depth-response surface; pediatric hemodynamic maturation, airway-device
+  sizing, maintenance, emergence, and generalization beyond this profile are absent.
 - Nothing here has been clinically reviewed before — you are the first.

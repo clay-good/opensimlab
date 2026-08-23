@@ -154,6 +154,12 @@ Its sixth slice adds a volatile-triggered malignant-hyperthermia teaching model 
 carbon dioxide precedes tachycardia, observable rigidity, and later heat. Learners stop volatile
 delivery, establish high-flow 100% oxygen with hyperventilation, and give repeatable 2.5 mg/kg IV
 dantrolene. It covers early recognition and initial response, not the complete crisis or post-crisis protocol.
+Its seventh slice adds one bounded routine pediatric induction: a healthy 6-year-old weighing
+20 kg. Paedfusor supplies pediatric propofol kinetics, while preoxygenation, weight-based dosing,
+pediatric-sized breaths, and observed gas exchange form the learning task. The displayed depth
+response remains a shared teaching calibration, not validated pediatric pharmacodynamics; the
+case does not generalize to other ages or conditions and does not model pediatric hemodynamic
+maturation, airway-device sizing, maintenance, or emergence.
 
 ## Running it
 

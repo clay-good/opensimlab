@@ -108,3 +108,21 @@ bounded initial response, not a diagnostic test or complete protocol.
 The slice omits succinylcholine and masseter spasm, physical examination, circuit replacement and
 charcoal filters, blood gases, acidosis, potassium, dysrhythmia treatment, rhabdomyolysis, urine
 output, coagulation, team and hotline actions, intensive care, recurrence, and confirmation.
+
+## Slice 7: bounded routine pediatric induction
+
+The case is deliberately one healthy 6-year-old weighing 20 kg. Propofol uses the Paedfusor
+population pharmacokinetic model, selected by default only from age 1 through 12. Paedfusor does
+not supply a pediatric depth pharmacodynamic surface, so the displayed depth response remains the
+shared calibrated teaching response and is labeled accordingly.
+
+The healthy-child respiratory profile derives functional residual capacity, oxygen and carbon-
+dioxide metabolism, dead space, and spontaneous breathing from published pediatric observations.
+Objective evaluation checks end-tidal oxygen before the first accepted propofol dose, requires an
+accepted 2.5–3.5 mg/kg entry for the labeled healthy-child range, reconstructs separately dispatched
+ventilator settings including settings prepared before induction, and requires both 6–8 mL/kg
+delivered breaths and sustained end-tidal carbon dioxide between 30 and 50 mmHg. It also reports the
+lowest post-induction saturation. These are bounded gas-exchange outcomes, not device prescriptions.
+
+The slice does not model validated pediatric depth pharmacodynamics, hemodynamic maturation,
+pediatric airway-device sizing, maintenance, emergence, or children outside this one profile.

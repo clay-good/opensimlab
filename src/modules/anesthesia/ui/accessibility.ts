@@ -106,6 +106,7 @@ export function stateSummary(
     };
     readonly epinephrineLabel?: string;
     readonly lastExposure?: { readonly agentId: string; readonly tick: number } | null;
+    readonly actualBodyWeightKg?: number;
     readonly showEpinephrineSupport?: boolean;
     readonly showHypermetabolicSupport?: boolean;
   },
@@ -130,11 +131,17 @@ export function stateSummary(
     + (options.ventilator.freshGasFlowLPerMin === undefined
       ? '' : `fresh gas flow ${options.ventilator.freshGasFlowLPerMin.toFixed(1)} litres per minute, `)
     + (options.ventilator.delivering
-      ? `tidal volume ${options.ventilator.tidalVolumeMl} millilitres at ${options.ventilator.respiratoryRateBpm} per minute, `
+      ? `tidal volume ${options.ventilator.tidalVolumeMl} millilitres`
+        + (options.actualBodyWeightKg === undefined
+          ? '' : `, ${(options.ventilator.tidalVolumeMl / options.actualBodyWeightKg).toFixed(1)} millilitres per kilogram actual body weight`)
+        + ` at ${options.ventilator.respiratoryRateBpm} per minute, `
         + `delivered minute ventilation ${(
           options.ventilator.tidalVolumeMl * options.ventilator.respiratoryRateBpm / 1000
         ).toFixed(1)} litres per minute.`
       : 'not delivering breaths.'));
+  if (options.actualBodyWeightKg !== undefined) {
+    lines.push('The millilitres-per-kilogram value is a conversion using actual body weight, not a recommended target.');
+  }
   lines.push((options.jawThrustCpapSecondsRemaining ?? 0) > 0
     ? options.ventilator.delivering
       ? 'Jaw thrust and continuous positive airway pressure are being applied.'

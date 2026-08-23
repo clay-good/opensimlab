@@ -25,7 +25,7 @@ import type { PharmacologyModel } from './pharmacology/types';
 import { getFluid, MAX_FLUID_BOLUS_ML } from './content/fluids';
 import type { Covariates } from './pharmacology/body-composition';
 import {
-  RESPIRATORY_PROFILES, VirtualPatient, baselineSvr,
+  RESPIRATORY_PROFILES, VirtualPatient, baselineSvr, healthyChildRespiratoryProfile,
   JAW_THRUST_CPAP_SECONDS, stepLaryngospasm,
   type LaryngoscopyResult, type PatientProfile, type PatientState, type VentilatorSettings,
 } from './physiology';
@@ -34,7 +34,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.6';
+export const ENGINE_VERSION = '0.1.0-alpha.7';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -219,7 +219,9 @@ export class AnesthesiaEngine {
         bloodVolumeMl: p.baseline.bloodVolumeMl,
         hemoglobinGPerDl: p.baseline.hemoglobinGPerDl,
       },
-      respiratory: RESPIRATORY_PROFILES[p.respiratory.profile],
+      respiratory: p.respiratory.profile === 'healthy-child'
+        ? healthyChildRespiratoryProfile(p.ageYears, p.weightKg)
+        : RESPIRATORY_PROFILES[p.respiratory.profile],
       airway: { difficulty: p.airway.difficulty, difficultMaskVentilation: p.airway.difficultMaskVentilation },
       coreTemperatureC: p.baseline.coreTemperatureC,
       ageYears: p.ageYears,
@@ -549,7 +551,21 @@ export class AnesthesiaEngine {
   private giveBolus(drugId: string, amount: number, unit: string): void {
     const drug = this.drugs.get(drugId);
     if (!drug) return;
-    const mass = unit.includes('/kg') ? amount * this.covariates.weightKg : amount;
+    const absoluteUnit = drug.model.doseUnit;
+    const weightBasedUnit = `${absoluteUnit}/kg`;
+    if (unit !== absoluteUnit && unit !== weightBasedUnit) {
+      this.log('warning', 'drug', `bad-dose-unit-${drugId}-${this.currentTick}`,
+        `A ${drugId} bolus cannot be entered in "${unit || 'no unit'}". `
+        + `Use ${absoluteUnit} or ${weightBasedUnit}. Nothing was given.`);
+      return;
+    }
+    if (amount <= 0) {
+      this.log('warning', 'drug', `non-positive-dose-${drugId}-${this.currentTick}`,
+        `A ${drugId} bolus must be greater than zero ${unit}. Nothing was given.`);
+      return;
+    }
+    const weightBased = unit === weightBasedUnit;
+    const mass = weightBased ? amount * this.covariates.weightKg : amount;
     const volumeMl = mass / drug.concentration;
 
     // An implausible dose is flagged on what was ENTERED, before anything else,
@@ -580,7 +596,7 @@ export class AnesthesiaEngine {
       && drug.solver.effectSite < peak * 0.98 === false;
     this.log(implausible ? 'warning' : 'info', 'drug', `bolus-${drugId}-${this.currentTick}`,
       `${drugId} ${mass.toFixed(mass < 10 ? 1 : 0)} ${drug.model.doseUnit}`
-      + (unit.includes('/kg') ? ` (${amount} ${unit} at ${this.covariates.weightKg} kg)` : '')
+      + (weightBased ? ` (${amount} ${unit} at ${this.covariates.weightKg} kg)` : '')
       + (implausible ? ` — ${(mass / drug.typicalDose).toFixed(0)} times the typical dose` : ''),
       {
         drugId, mass, unit: drug.model.doseUnit, route: 'intravenous',
