@@ -42,14 +42,14 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Build
+        run: npm run build
+
       - name: Tests
         run: npm run test
 
       - name: Font budget
         run: npm run fonts
-
-      - name: Build
-        run: npm run build
 
       # Fails and names the largest contributors when a change pushes a bundle
       # past its budget.
@@ -69,9 +69,13 @@ jobs:
       - uses: actions/checkout@v4
       - name: Report the measurement status
         run: |
-          if [ -d docs/measurements ] && [ -n "$(ls -A docs/measurements 2>/dev/null)" ]; then
+          measurement=""
+          if [ -d docs/measurements ]; then
+            measurement="$(find docs/measurements -maxdepth 1 -type f -name '*.json' -print -quit)"
+          fi
+          if [ -n "$measurement" ]; then
             echo "Device measurements committed:"
-            ls -1 docs/measurements
+            find docs/measurements -maxdepth 1 -type f -name '*.json' -print | sort
           else
             echo "::warning::No device frame-budget measurement has been committed."
             echo "Open /frame-budget on a mid-range 2020 Android handset and commit the result"

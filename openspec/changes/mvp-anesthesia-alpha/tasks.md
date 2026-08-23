@@ -92,7 +92,7 @@
 
 - [x] 10.1 Implement the practice-region setting with United States and United Kingdom profiles as data files
 - [x] 10.2 Implement the region-driven formulary, units, and the not-FDA-approved labeling path for target-controlled infusion
-- [x] 10.3 Implement the `clinical_review` record format and the build gate that excludes unreviewed content — the gate runs in every build and currently excludes all twelve content items, because none are signed
+- [x] 10.3 Implement the `clinical_review` record format and the build gate that excludes unreviewed content — the gate runs in every build and currently excludes every registered content item, because none are signed
 - [x] 10.4 Write `GOVERNANCE.md`, `CORRECTIONS.md`, the limitations register, and the maintenance and succession statement
 - [x] 10.5 Implement the not-for-clinical-use acknowledgement, the persistent simulator marker, and the statement embedded in every export
 - [x] 10.6 Write the architecture tests: no inverse control in the kernel, no real-patient input path, no foreign origin, no external pharmacology dependency

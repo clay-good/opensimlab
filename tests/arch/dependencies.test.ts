@@ -79,3 +79,26 @@ describe('Scenario: The dependency graph is clean', () => {
     }
   });
 });
+
+describe('Requirement: Continuous Integration Works From A Clean Checkout', () => {
+  it('builds generated artifacts before the full test suite reads them', () => {
+    const manifest = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8')) as {
+      scripts: Record<string, string>;
+    };
+    const workflow = readFileSync(join(root, '.github/workflows/ci.yml'), 'utf8');
+    const ci = manifest.scripts.ci ?? '';
+
+    expect(ci.indexOf('npm run build')).toBeGreaterThanOrEqual(0);
+    expect(ci.indexOf('npm run test')).toBeGreaterThan(ci.indexOf('npm run build'));
+    expect(workflow.indexOf('- name: Build')).toBeGreaterThanOrEqual(0);
+    expect(workflow.indexOf('- name: Tests')).toBeGreaterThan(workflow.indexOf('- name: Build'));
+  });
+
+  it('does not mistake the measurement instructions for a device result', () => {
+    const workflow = readFileSync(join(root, '.github/workflows/ci.yml'), 'utf8');
+    const frameBudgetJob = workflow.slice(workflow.indexOf('frame-budget-status:'));
+
+    expect(frameBudgetJob).toContain("-name '*.json'");
+    expect(frameBudgetJob).not.toContain('ls -A docs/measurements');
+  });
+});

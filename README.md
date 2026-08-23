@@ -145,7 +145,7 @@ npm run dev
 npm run ci
 ```
 
-`npm run ci` runs the design-token lint, the full test suite, the build, the size budgets and the
+`npm run ci` runs the design-token lint, the build, the full test suite, the size budgets and the
 font budget. `npm run release` runs the clinical and validation gates and currently **refuses**,
 which is correct.
 
@@ -167,7 +167,7 @@ this describes what it currently *is*.
 
 **No clinician has signed any content in this build.** The editorial board is empty. Every
 scenario, drug card, explainer and region profile carries an unsigned review record, the build
-gate excludes all twelve of them from a release, and `npm run release` refuses to publish.
+gate excludes every one of them from a release, and `npm run release` refuses to publish.
 
 **No pharmacology parameter has had its independent second-source check.** The values are
 transcribed from the primary publications, but the check by a second person that this project
@@ -179,9 +179,9 @@ physical device. Both need people and hardware rather than more code.
 
 What *is* done: the waveform engine, the compartment solver, the physiology, the design system,
 the cockpit, the sound layer, the accessibility layer, the debrief, the practice regions, the
-prerendered front door, and the offline shell — with 333 tests, the Benumof apnea benchmarks
-inside 5% of the published times, and every architectural boundary the specification promises
-enforced by a test rather than by intention.
+prerendered front door, and the offline shell — with hundreds of automated tests, the Benumof
+apnea benchmarks inside 5% of the published times, and every architectural boundary the
+specification promises enforced by a test rather than by intention.
 
 [`openspec/changes/mvp-anesthesia-alpha/tasks.md`](openspec/changes/mvp-anesthesia-alpha/tasks.md)
 marks exactly which tasks are done and which are not, and why.
