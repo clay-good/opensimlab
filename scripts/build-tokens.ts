@@ -72,7 +72,7 @@ push('divider-hit', `${LAYOUT.dividerHitTargetPx}px`);
 push('alarm-rail-height', `${LAYOUT.alarmRailHeightPx}px`);
 push('max-content-width', `${LAYOUT.maxContentWidthPx}px`);
 push('control-height', `${CONTROL_HEIGHT.comfortable}px`);
-push('font-ui', "'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif");
+push('font-ui', "'Open Sim Lab Inter', system-ui, -apple-system, 'Segoe UI', sans-serif");
 push('font-mono', "'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace");
 
 lines.push('}', '');
@@ -124,15 +124,15 @@ writeFileSync(target, lines.join('\n'), 'utf8');
 const root = fileURLToPath(new URL('..', import.meta.url));
 const FACES = [
   {
-    family: 'Inter', file: 'inter-latin.woff2', weight: '400 700',
+    family: 'Open Sim Lab Inter', file: 'open-sim-lab-inter-latin.woff2', weight: '400 700',
     // Basic Latin, Latin-1 Supplement, Latin Extended-A, and the punctuation and
     // symbols the interface actually uses.
     range: 'U+0000-00FF, U+0100-017F, U+0131, U+0152-0153, U+02BB-02BC, '
-      + 'U+2000-206F, U+2070-209F, U+20A0-20BF, U+2122, U+2190-2193, U+2212, U+2215',
+      + 'U+2000-206F, U+2070-209F, U+20A0-20BF, U+2122, U+2190-2193, U+2212',
   },
   {
     family: 'JetBrains Mono', file: 'jetbrains-mono-latin.woff2', weight: '400 600',
-    range: 'U+0000-00FF, U+2000-206F, U+2212',
+    range: 'U+0000-00FF, U+2000-206F, U+2070-209F, U+2190-2193, U+2212',
   },
 ];
 
@@ -152,7 +152,7 @@ for (const face of FACES) {
   const present = existsSync(join(root, 'public', 'fonts', face.file));
   if (present) vendored += 1;
   const sources = present
-    ? `local('${face.family}'), url('/fonts/${face.file}') format('woff2')`
+    ? `url('/fonts/${face.file}') format('woff2')`
     : `local('${face.family}')`;
   fontLines.push(
     present

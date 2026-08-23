@@ -234,6 +234,10 @@ function main(): void {
     // The whole bundle is a few hundred kilobytes against an 8 MB budget, so
     // there is no reason to be clever about which parts of it to keep.
     const assets = readdirSync(join(dist, 'assets')).map((file) => `/assets/${file}`);
+    const fontsDir = join(dist, 'fonts');
+    const fonts = existsSync(fontsDir)
+      ? readdirSync(fontsDir).map((file) => `/fonts/${file}`)
+      : [];
     const icons = readdirSync(dist).filter((file) => file.startsWith('icon-'));
     // Every indexable route, so a briefing opens offline too.
     const documents = ROUTES.filter((route) => route.indexable).map((route) => route.path);
@@ -242,8 +246,17 @@ function main(): void {
       ...icons.map((icon) => `/${icon}`),
       ...documents.filter((path) => path !== '/'),
       ...new Set(assets),
+      ...fonts,
     ];
-    const version = simpleHash(precache.join('|'));
+    const documentPaths = new Set(documents);
+    const version = precacheVersion(precache.map((url) => {
+      const path = url === '/' || url === '/index.html'
+        ? join(dist, 'index.html')
+        : documentPaths.has(url)
+          ? join(dist, url.slice(1), 'index.html')
+          : join(dist, url.slice(1));
+      return { url, bytes: readFileSync(path) };
+    }));
     const sw = readFileSync(swPath, 'utf8')
       .replace('__CACHE_VERSION__', version)
       .replace("'__PRECACHE_MANIFEST__'", precache.map((asset) => JSON.stringify(asset)).join(', '));
@@ -257,6 +270,14 @@ function main(): void {
       : 'prerender: NOT INDEXABLE. robots.txt disallows everything and every page '
         + 'carries noindex. Rebuild with SITE_INDEXABLE=true once the custom domain is live.\n'),
   );
+}
+
+export function precacheVersion(
+  entries: readonly { readonly url: string; readonly bytes: Uint8Array }[],
+): string {
+  return simpleHash(entries
+    .map(({ url, bytes }) => `${url}:${Buffer.from(bytes).toString('base64')}`)
+    .join('|'));
 }
 
 /** A short stable hash, used as the cache version. */

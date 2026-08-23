@@ -7,6 +7,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { BUDGETS } from '../../scripts/check-budgets';
+import { precacheVersion } from '../../scripts/prerender';
 import { isCrawler } from '@platform/offline/register';
 import { AnesthesiaEngine } from '@anesthesia/engine';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
@@ -183,10 +184,20 @@ describe('Requirement: Everything The Offline Claim Names Is Actually Precached'
   });
 
   it('Scenario: every built asset is precached', () => {
-    const built = readdirSync(join(process.cwd(), 'dist/assets')).map((file) => `/assets/${file}`);
+    const built = [
+      ...readdirSync(join(process.cwd(), 'dist/assets')).map((file) => `/assets/${file}`),
+      ...readdirSync(join(process.cwd(), 'dist/fonts')).map((file) => `/fonts/${file}`),
+    ];
     for (const asset of built) {
       expect(precache, `${asset} is not precached`).toContain(asset);
     }
+  });
+
+  it('changes the cache version when bytes at a stable font URL change', () => {
+    const before = precacheVersion([{ url: '/fonts/example.woff2', bytes: Buffer.from('first') }]);
+    const after = precacheVersion([{ url: '/fonts/example.woff2', bytes: Buffer.from('second') }]);
+    expect(after).not.toBe(before);
+    expect(sw).not.toContain('__CACHE_VERSION__');
   });
 
   it('Scenario: every scenario briefing is precached', () => {
@@ -200,7 +211,7 @@ describe('Requirement: Everything The Offline Claim Names Is Actually Precached'
   it('Scenario: the precache stays inside the offline bundle budget', () => {
     // Precaching everything is only reasonable while everything is small.
     const bytes = precache
-      .filter((url) => url.startsWith('/assets/'))
+      .filter((url) => url.startsWith('/assets/') || url.startsWith('/fonts/'))
       .reduce((sum, url) => sum + statSync(join(process.cwd(), 'dist', url)).size, 0);
     expect(bytes).toBeLessThan(8 * 1024 * 1024);
   });

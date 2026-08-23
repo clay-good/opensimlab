@@ -11,7 +11,7 @@
  * read and the project holds a dependency ceiling.
  */
 
-// Replaced at build time with the content hash of the asset manifest.
+// Replaced at build time with a hash of every precached file's URL and bytes.
 const CACHE_VERSION = '__CACHE_VERSION__';
 const CACHE_NAME = `opensimlab-${CACHE_VERSION}`;
 

@@ -142,12 +142,6 @@ export const UNVALIDATED: readonly UnvalidatedItem[] = [
       + 'about screen-based simulation in general, not about this product.',
   },
   {
-    item: 'The self-hosted type',
-    reason: 'Inter and JetBrains Mono are declared with their Latin subsets and their 120 KB budget, '
-      + 'but the font files are not yet vendored, so both families currently fall through to the '
-      + 'platform system stack. `docs/fonts.md` records the procedure.',
-  },
-  {
     item: 'Screen reader narration',
     reason: 'Keyboard operability, visible focus, accessible names, target sizes and reflow to '
       + '360 by 780 CSS pixels have been exercised in a browser and are asserted by automated '

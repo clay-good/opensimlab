@@ -142,7 +142,7 @@ A critical alarm banner SHALL be a solid `--alarm-critical` fill with `--text-on
 
 ### Requirement: Typography
 
-The application SHALL use exactly two self-hosted variable font families, subset and preloaded: **Inter** for all interface text and numerics, and **JetBrains Mono** for the event log and any tabular code. All numerics SHALL set `font-variant-numeric: tabular-nums` so digits do not shift as values change. The type scale SHALL be exactly:
+The application SHALL use exactly two self-hosted variable font families, subset and preloaded: **Open Sim Lab Inter**, the OFL-compliant renamed subset of Inter, for all interface text and numerics; and **JetBrains Mono** for the event log and any tabular code. All numerics SHALL set `font-variant-numeric: tabular-nums` so digits do not shift as values change. The type scale SHALL be exactly:
 
 | Token | Size | Line height | Weight | Tracking | Use |
 | --- | --- | --- | --- | --- | --- |

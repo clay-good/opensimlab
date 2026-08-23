@@ -22,7 +22,7 @@
 - [x] 3.1 Write the design token module emitting both CSS custom properties and TypeScript constants from one source
 - [x] 3.2 Add the automated contrast test asserting every specified token pair, including `--text-tertiary` on `--surface-3` at 4.76:1
 - [x] 3.3 Add the token lint rule rejecting off-scale spacing, radius, and any saturated color outside the trace, alarm, and focus sets
-- [ ] 3.4 Self-host and subset Inter and JetBrains Mono; assert the combined Latin subset stays under 120 KB compressed — the `@font-face` rules, the Latin ranges, the budget check and the subsetting procedure are all in place. **The font files are not vendored**, so both families fall through to the system stack and `npm run fonts` says so out loud.
+- [x] 3.4 Self-host and subset Inter and JetBrains Mono; assert the combined Latin subset stays under 120 KB compressed — pinned OFL subsets from Inter 4.1 and JetBrains Mono 2.304 total 86.2 KB compressed, carry both license notices, preload on every route, and are included in the offline precache. The modified Inter subset is renamed Open Sim Lab Inter to respect its Reserved Font Name.
 - [x] 3.5 Design the solver worker protocol for the full specification: complete state vector, attribution terms, waveform sample buffers, versioned message shape
 - [x] 3.6 Define the transcript format with engine version, content version, model-set revision, practice region, seed, and ordered actions; write the replay harness and the state-trace hash comparison
 
