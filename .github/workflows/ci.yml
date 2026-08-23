@@ -34,7 +34,7 @@ jobs:
         run: npm ci
 
       - name: Specification validates strictly
-        run: npx --yes openspec@1 validate --specs --strict
+        run: npm run validate:specs
 
       - name: Types
         run: npx tsc -p tsconfig.json --noEmit

@@ -106,7 +106,7 @@ specification is the capability tree under [`openspec/specs/`](openspec/specs/).
 Validate the tree with:
 
 ```bash
-openspec validate --specs --strict
+npm run validate:specs
 ```
 
 ### The front door
@@ -145,8 +145,9 @@ npm run dev
 npm run ci
 ```
 
-`npm run ci` runs the design-token lint, the build, the full test suite, the size budgets and the
-font budget. `npm run release` runs the clinical and validation gates and currently **refuses**,
+`npm run ci` runs strict specification validation, the design-token lint, the build, the full test
+suite, the size budgets and the font budget. `npm run release` runs the clinical and validation
+gates and currently **refuses**,
 which is correct.
 
 | Route | What it is |

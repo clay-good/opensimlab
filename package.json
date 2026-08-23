@@ -23,7 +23,7 @@
     "test:watch": "vitest",
     "budget": "tsx scripts/check-budgets.ts",
     "validate:specs": "openspec validate --specs --strict",
-    "ci": "npm run lint && npm run build && npm run test && npm run budget && npm run fonts",
+    "ci": "npm run validate:specs && npm run lint && npm run build && npm run test && npm run budget && npm run fonts",
     "fonts": "tsx scripts/check-fonts.ts",
     "gate": "tsx scripts/check-review-gate.ts",
     "release": "tsx scripts/check-review-gate.ts --release",
@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",
+    "@fission-ai/openspec": "1.10.0",
     "@types/node": "26.2.0",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
