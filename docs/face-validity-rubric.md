@@ -76,6 +76,8 @@ So that reviewers spend their attention on what this review is for:
 
 - No neuromuscular blockade is modelled; the train-of-four readout is inert.
 - No fresh gas flow; volatile wash-in does not change with flow.
-- No fluids, no blood products, no crisis of any kind.
-- One scenario, one patient, two drugs.
+- Balanced crystalloid uses a fixed-retention teaching model. There are no blood products,
+  coagulation effects, laboratory guidance, or resuscitation actions.
+- Five scenarios use the same two-drug pharmacology; the hemorrhage case covers recognition and
+  initial crystalloid temporization, not a massive-transfusion protocol.
 - Nothing here has been clinically reviewed before — you are the first.

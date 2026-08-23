@@ -9,7 +9,7 @@
 import { useMemo, useState } from 'react';
 import { Badge, Button, CitationLink, Panel } from '@platform/ui';
 import { Timeline } from '@platform/ui';
-import { formatElapsed } from '@platform/clock/simulation-clock';
+import { formatElapsed, TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import type { Attribution, EngineEvent, LearnerAction } from '@platform/kernel/protocol';
 import type { HistorySample } from '@platform/session/session-store';
 import type { Scenario } from '@anesthesia/engine';
@@ -58,8 +58,10 @@ export function Debrief(props: DebriefProps) {
   );
 
   const findings = useMemo(
-    () => objectiveFindings(props.scenario, props.history, stacking.length, props.preoxygenationSeconds),
-    [props.scenario, props.history, stacking.length, props.preoxygenationSeconds],
+    () => objectiveFindings(
+      props.scenario, props.history, stacking.length, props.preoxygenationSeconds, props.actions,
+    ),
+    [props.scenario, props.history, stacking.length, props.preoxygenationSeconds, props.actions],
   );
 
   const counterfactuals = useMemo(() => {
@@ -289,6 +291,7 @@ export function objectiveFindings(
   history: readonly HistorySample[],
   stackingCount: number,
   preoxygenationSeconds: number,
+  actions: readonly LearnerAction[] = [],
 ): ObjectiveFinding[] {
   const concepts: Record<string, string> = {
     preoxygenate: 'preoxygenation-and-safe-apnea-time',
@@ -296,6 +299,10 @@ export function objectiveFindings(
     'manage-hypotension': 'vasodilation-versus-hypovolemia',
     'ventilate-before-desaturation': 'preoxygenation-and-safe-apnea-time',
     'blunt-incision': 'hypnotic-opioid-synergy',
+    'recognize-hemorrhage': 'vasodilation-versus-hypovolemia',
+    'temporize-volume-loss': 'vasodilation-versus-hypovolemia',
+    'avoid-full-dose-induction': 'hysteresis-and-effect-site-lag',
+    'read-the-mechanism': 'vasodilation-versus-hypovolemia',
   };
 
   return scenario.metadata.objectives.map((objective) => {
@@ -347,6 +354,57 @@ export function objectiveFindings(
             : '. Most of the outcome literature on intraoperative hypotension is organised around '
               + 'this threshold rather than a lower one.');
       return { ...base, outcome, finding } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'recognize-hemorrhage') {
+      const onset = scenario.timeline.find((event) => event.id === 'rapid-blood-loss')?.atTick;
+      if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) {
+        return { ...base, outcome: 'not-exercised', finding: 'The session ended before rapid blood loss began.' } satisfies ObjectiveFinding;
+      }
+      const first = actions.find((action) => action.type === 'fluid' && action.tick >= onset);
+      const delaySeconds = first ? (first.tick - onset) / TICKS_PER_SECOND : null;
+      const outcome = delaySeconds === null ? 'not-met' : delaySeconds <= 60 ? 'met' : 'partly-met';
+      const finding = delaySeconds === null
+        ? 'No crystalloid was given after rapid blood loss began.'
+        : `Crystalloid was first given ${delaySeconds.toFixed(0)} seconds after rapid blood loss began. `
+          + 'That timing is a behavioral proxy for recognition; it cannot prove what you noticed or why.';
+      return { ...base, outcome, finding, atTick: first?.tick } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'temporize-volume-loss' || objective.id === 'read-the-mechanism') {
+      const controlTick = scenario.timeline.find((event) => event.id === 'hemorrhage-controlled')?.atTick
+        ?? Infinity;
+      const fluidMl = actions
+        .filter((action) => action.type === 'fluid' && action.tick <= controlTick)
+        .reduce((sum, action) => sum + Number(action.payload.volumeMl ?? 0), 0);
+      const targetMl = objective.id === 'temporize-volume-loss' ? 1000 : 250;
+      return {
+        ...base,
+        outcome: fluidMl >= targetMl ? 'met' : fluidMl > 0 ? 'partly-met' : 'not-met',
+        finding: fluidMl > 0
+          ? `${fluidMl.toFixed(0)} mL of crystalloid was given. It temporarily expands circulating `
+            + 'volume in this model; it is not definitive hemorrhage replacement.'
+          : 'No crystalloid was given. A vasopressor can raise resistance, but it does not replace lost volume.',
+      } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'avoid-full-dose-induction') {
+      const first = actions.find(
+        (action) => action.type === 'bolus' && action.payload.drugId === 'propofol',
+      );
+      if (!first) {
+        return { ...base, outcome: 'not-exercised', finding: 'No propofol induction dose was recorded.' } satisfies ObjectiveFinding;
+      }
+      const entered = Number(first.payload.amount);
+      const perKg = String(first.payload.unit).includes('/kg')
+        ? entered
+        : entered / scenario.patient.weightKg;
+      return {
+        ...base,
+        outcome: perKg <= 0.75 ? 'met' : perKg <= 1.25 ? 'partly-met' : 'not-met',
+        finding: `The first propofol dose was ${perKg.toFixed(2)} mg/kg.`,
+        atTick: first.tick,
+      } satisfies ObjectiveFinding;
     }
 
     if (objective.id === 'ventilate-before-desaturation') {

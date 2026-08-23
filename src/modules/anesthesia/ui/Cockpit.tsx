@@ -415,6 +415,7 @@ export function Cockpit({
           lastGrade={airway.lastGrade}
           onBolus={(drugId, amount, unit) => session.act({ type: 'bolus', payload: { drugId, amount, unit } })}
           onInfusion={(drugId, rate, unit) => session.act({ type: 'infusion', payload: { drugId, rate, unit } })}
+          onFluid={(fluidId, volumeMl) => session.act({ type: 'fluid', payload: { fluidId, volumeMl } })}
           onVentilator={(settings) => session.act({ type: 'ventilator', payload: settings as never })}
           onLaryngoscopy={(technique) => session.act({ type: 'laryngoscopy', payload: { technique } })}
           onDrugCard={setDrugCardId}

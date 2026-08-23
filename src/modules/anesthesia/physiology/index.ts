@@ -135,6 +135,8 @@ export class VirtualPatient {
   readonly airway: AirwayState;
   private readonly rng: Rng;
   private temperatureC: number;
+  /** Circulating hemoglobin mass, so blood loss and crystalloid dilution remain coherent. */
+  private hemoglobinMassG: number;
   private sevofluranePercent = 0;
   private lastMap: number;
   /**
@@ -162,6 +164,8 @@ export class VirtualPatient {
     this.rng = rng;
     this.airway = new AirwayState();
     this.temperatureC = profile.coreTemperatureC;
+    this.hemoglobinMassG = profile.hemodynamics.hemoglobinGPerDl
+      * (profile.hemodynamics.bloodVolumeMl / 100);
     this.hemodynamics = {
       heartRateBpm: profile.hemodynamics.baselineHeartRateBpm,
       strokeVolumeMl: profile.hemodynamics.baselineStrokeVolumeMl,
@@ -193,7 +197,7 @@ export class VirtualPatient {
       strokeVolumeMl: this.hemodynamics.strokeVolumeMl,
       svrDynSCm5: this.hemodynamics.svrDynSCm5,
       bloodVolumeMl: this.hemodynamics.bloodVolumeMl,
-      hemoglobinGPerDl: this.profile.hemodynamics.hemoglobinGPerDl,
+      hemoglobinGPerDl: this.hemoglobinGPerDl(),
       spo2Percent: 100,
       pao2MmHg: 0,
       endTidalO2Fraction: 0.21,
@@ -237,10 +241,14 @@ export class VirtualPatient {
 
     // --- Volume ---------------------------------------------------------------
     if (scenario.bloodLossMl > 0 || scenario.crystalloidMl > 0) {
+      const beforeMl = Math.max(this.hemodynamics.bloodVolumeMl, 1);
+      const lostMl = Math.min(scenario.bloodLossMl, beforeMl);
+      // Whole-blood loss removes red cells at the current concentration.
+      this.hemoglobinMassG *= 1 - lostMl / beforeMl;
       // Crystalloid expands the intravascular space by roughly a quarter of the
       // volume infused; the rest redistributes.
       this.hemodynamics.bloodVolumeMl +=
-        scenario.crystalloidMl * 0.25 - scenario.bloodLossMl;
+        scenario.crystalloidMl * 0.25 - lostMl;
     }
 
     // --- Drug effects ---------------------------------------------------------
@@ -355,7 +363,7 @@ export class VirtualPatient {
       fio2: ventilator.fio2,
       cardiacOutputRatio: hemo.cardiacOutputLPerMin / Math.max(baselineCo, 0.1),
       obstructionFraction: scenario.obstructionFraction,
-      hemoglobinGPerDl: this.profile.hemodynamics.hemoglobinGPerDl,
+      hemoglobinGPerDl: this.hemoglobinGPerDl(),
       bloodVolumeMl: this.hemodynamics.bloodVolumeMl,
     }, this.profile.respiratory, TICK_MINUTES);
 
@@ -402,7 +410,7 @@ export class VirtualPatient {
       strokeVolumeMl: this.hemodynamics.strokeVolumeMl,
       svrDynSCm5: this.hemodynamics.svrDynSCm5,
       bloodVolumeMl: this.hemodynamics.bloodVolumeMl,
-      hemoglobinGPerDl: this.profile.hemodynamics.hemoglobinGPerDl,
+      hemoglobinGPerDl: this.hemoglobinGPerDl(),
       spo2Percent: gasResult.spo2Percent,
       pao2MmHg: gasResult.pao2MmHg,
       endTidalO2Fraction: gasResult.endTidalO2Fraction,
@@ -429,6 +437,10 @@ export class VirtualPatient {
       hypovolemiaFraction: hemo.hypovolemiaFraction,
       anesthesiaDepthFraction: depthFraction,
     };
+  }
+
+  private hemoglobinGPerDl(): number {
+    return this.hemoglobinMassG / Math.max(this.hemodynamics.bloodVolumeMl / 100, 0.01);
   }
 
   /** Perform a laryngoscopy attempt with the session's seeded generator. */

@@ -14,8 +14,9 @@ import { Badge, Button, NumericField, SegmentedControl, Slider, SteppedDial, Tab
 import type { Scenario } from '@anesthesia/engine';
 import type { FormularyEntry } from '@anesthesia/scenarios/types';
 import type { RegionProfile } from '@anesthesia/region/profiles';
+import { FLUIDS } from '@anesthesia/content/fluids';
 
-export type TrayId = 'syringes' | 'infusions' | 'airway';
+export type TrayId = 'syringes' | 'infusions' | 'fluids' | 'airway';
 
 export interface RunningInfusion {
   readonly drugId: string;
@@ -43,13 +44,14 @@ export interface ActionCockpitProps {
   readonly lastGrade: number | null;
   readonly onBolus: (drugId: string, amount: number, unit: string) => void;
   readonly onInfusion: (drugId: string, rate: number, unit: string) => void;
+  readonly onFluid: (fluidId: string, volumeMl: number) => void;
   readonly onVentilator: (settings: Partial<ActionCockpitProps['ventilator']>) => void;
   readonly onLaryngoscopy: (technique: 'direct' | 'video') => void;
   readonly onDrugCard: (drugId: string) => void;
 }
 
 /**
- * Three trays, not five.
+ * Four working trays, not placeholder tabs.
  *
  * Fluids & Blood and Resuscitation were tabs containing one sentence each,
  * saying they were not in this build. Two fifths of the action cockpit's tabs
@@ -62,6 +64,7 @@ export interface ActionCockpitProps {
 const TRAYS: { id: TrayId; label: string }[] = [
   { id: 'syringes', label: 'Syringes' },
   { id: 'infusions', label: 'Infusions' },
+  { id: 'fluids', label: 'Fluids' },
   { id: 'airway', label: 'Airway & Vent' },
 ];
 
@@ -73,7 +76,8 @@ const TRAYS: { id: TrayId; label: string }[] = [
  * chest compressions, and this is where they find out there are none.
  */
 export const NOT_IN_THIS_BUILD =
-  'Fluids, blood products and resuscitation are not modelled. A patient who arrests does not '
+  'Blood products and resuscitation are not modelled. Crystalloid uses a fixed 25% intravascular '
+  + 'retention teaching model. A patient who arrests does not '
   + 'recover, because there are no compressions, no adrenaline and no defibrillation here.';
 
 export function ActionCockpit(props: ActionCockpitProps) {
@@ -118,6 +122,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
             onInfusion={props.onInfusion}
           />
         )}
+        {tray === 'fluids' && <FluidTray onFluid={props.onFluid} />}
         {tray === 'airway' && (
           <AirwayTray
             ventilator={props.ventilator}
@@ -139,6 +144,49 @@ export function ActionCockpit(props: ActionCockpitProps) {
           <a href="/limitations">The limitations register says what else.</a>
         </p>
       </div>
+    </div>
+  );
+}
+
+function FluidTray({ onFluid }: { onFluid: (fluidId: string, volumeMl: number) => void }) {
+  const [pending, setPending] = useState<{ fluidId: string; volumeMl: number } | null>(null);
+  return (
+    <div className="tray-grid">
+      {FLUIDS.map((fluid) => (
+        <section className="syringe" key={fluid.id}>
+          <div className="syringe__name">{fluid.name}</div>
+          <p className="field__hint">
+            Fixed teaching model: {(fluid.retainedFraction * 100).toFixed(0)}% remains intravascular.
+          </p>
+          {pending?.fluidId === fluid.id ? (
+            <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
+              <span className="numeric">Give {pending.volumeMl} mL?</span>
+              <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                <Button
+                  variant="primary"
+                  compact
+                  onClick={() => { onFluid(pending.fluidId, pending.volumeMl); setPending(null); }}
+                >
+                  Give fluid
+                </Button>
+                <Button variant="ghost" compact onClick={() => setPending(null)}>Cancel</Button>
+              </div>
+            </div>
+          ) : (
+            <div className="syringe__presets">
+              {fluid.presetsMl.map((volumeMl) => (
+                <Button
+                  key={volumeMl}
+                  compact
+                  onClick={() => setPending({ fluidId: fluid.id, volumeMl })}
+                >
+                  {volumeMl} mL
+                </Button>
+              ))}
+            </div>
+          )}
+        </section>
+      ))}
     </div>
   );
 }

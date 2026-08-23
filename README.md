@@ -134,6 +134,11 @@ the frame budget on a real phone, and whether an anesthetist finds the patient c
 at a clinical face-validity gate rather than a launch, on the principle that crisis scenarios are
 worthless on an unconvincing patient.
 
+[`openspec/changes/expand-anesthesia-scenarios`](openspec/changes/expand-anesthesia-scenarios/)
+tracks the breadth work that follows that provisional gate. Its first verified slice adds
+unexpected intraoperative hemorrhage with learner-delivered crystalloid, while keeping blood
+products and massive-transfusion management explicitly out of scope.
+
 ## Running it
 
 Requires Node.js 22.13+ on the 22.x line, or Node.js 24+.

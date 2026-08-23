@@ -27,6 +27,19 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'crystalloid-volume-model',
+    headline: 'Crystalloid retains a fixed 25% intravascular fraction here; redistribution, electrolytes, and fluid rate are not modeled.',
+    simplification: 'A crystalloid bolus acts on the next simulation tick and exactly 25% remains '
+      + 'in the circulation. The added plasma dilutes hemoglobin, but there is no time-dependent '
+      + 'redistribution, renal loss, electrolyte effect, or distinction between crystalloid formulations.',
+    whereItMisleads: 'Reading the response to a fluid bolus as an individualized prediction, or '
+      + 'using this case to choose a product, rate, or endpoint for real hemorrhage resuscitation.',
+    correctUnderstanding: 'Fluid response depends on the patient, the product, the rate, ongoing '
+      + 'loss, capillary permeability, and repeated reassessment. Crystalloid is only a bridge in '
+      + 'major hemorrhage; definitive replacement includes blood products and hemorrhage control.',
+    briefIn: ['unexpected-intraoperative-hemorrhage', 'hypotension-after-induction'],
+  },
+  {
     id: 'ventilation-modes-are-not-distinguished',
     headline: 'Volume control and pressure control ventilate identically here: there is no airway-pressure or compliance model, so falling tidal volume at a fixed pressure cannot be shown.',
     simplification: 'Volume control and pressure control ventilate identically. There is no '
@@ -194,7 +207,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'management as much as volume does.',
     correctUnderstanding: 'In real major haemorrhage the clotting is often the problem, and '
       + 'replacing volume without addressing it makes the bleeding worse.',
-    briefIn: [],
+    briefIn: ['unexpected-intraoperative-hemorrhage'],
   },
   {
     id: 'acid-base-approximate',
@@ -249,7 +262,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'called, when, and what you said.',
     correctUnderstanding: 'Crisis resource management is a team skill. This simulator cannot teach '
       + 'it and mannequin-based simulation remains necessary for it.',
-    briefIn: [],
+    briefIn: ['unexpected-intraoperative-hemorrhage'],
   },
   {
     id: 'parameters-unverified',

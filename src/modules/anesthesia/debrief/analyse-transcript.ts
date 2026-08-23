@@ -110,7 +110,7 @@ export function analyseTranscript(transcript: Transcript, label: string): Transc
   });
   const stacking = findStacking(transcript.actions, history, { propofol: 100, remifentanil: 90 });
   const findings = objectiveFindings(
-    scenario, history, stacking.length, preoxygenationSeconds(history, transcript),
+    scenario, history, stacking.length, preoxygenationSeconds(history, transcript), transcript.actions,
   );
   return {
     transcript,

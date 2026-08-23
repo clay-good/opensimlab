@@ -259,6 +259,26 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'mk-applied-foundational-science',
     objectiveIds: ['read-the-capnogram'],
   },
+
+  // --- Unexpected intraoperative hemorrhage ------------------------------
+  {
+    scenarioId: 'unexpected-intraoperative-hemorrhage',
+    frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['recognize-hemorrhage', 'temporize-volume-loss', 'manage-hypotension'],
+  },
+  {
+    scenarioId: 'unexpected-intraoperative-hemorrhage',
+    frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['recognize-hemorrhage', 'avoid-full-dose-induction'],
+  },
+  {
+    scenarioId: 'unexpected-intraoperative-hemorrhage',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-crisis-management',
+    objectiveIds: ['recognize-hemorrhage', 'temporize-volume-loss', 'manage-hypotension'],
+  },
 ];
 
 export interface DomainCoverage {

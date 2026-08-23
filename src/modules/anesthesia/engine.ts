@@ -22,6 +22,7 @@ import { evaluateEnvelope } from './pharmacology/envelope';
 import { getModel, parametersFor, selectDefaultModel, MODEL_SET_REVISION } from './pharmacology/registry';
 import { normalizedEffect } from './pharmacology/pd';
 import type { PharmacologyModel } from './pharmacology/types';
+import { getFluid, MAX_FLUID_BOLUS_ML } from './content/fluids';
 import type { Covariates } from './pharmacology/body-composition';
 import {
   RESPIRATORY_PROFILES, VirtualPatient, baselineSvr,
@@ -155,6 +156,8 @@ export class AnesthesiaEngine {
   private readonly artifacts = new Set<ArtifactId>();
   private pendingEvents: EngineEvent[] = [];
   private vasopressorEffect = 0;
+  /** A learner fluid bolus waiting to reach the circulation on the next tick. */
+  private pendingCrystalloidMl = 0;
   private preoxygenationTicks = 0;
   private lastEffectSitePeak = new Map<string, number>();
 
@@ -332,9 +335,33 @@ export class AnesthesiaEngine {
         break;
       }
       case 'vasopressor': {
-        this.vasopressorEffect = Math.min(this.vasopressorEffect + Number(action.payload.effect ?? 0.4), 1);
+        const effect = AnesthesiaEngine.finiteAmount(action.payload.effect ?? 0.4);
+        if (effect === null) {
+          this.log('warning', 'drug', `bad-vasopressor-${this.currentTick}`,
+            `A vasopressor effect of "${String(action.payload.effect)}" is not usable. Nothing was given.`);
+          break;
+        }
+        this.vasopressorEffect = Math.min(this.vasopressorEffect + effect, 1);
         this.log('info', 'drug', `vasopressor-${this.currentTick}`,
           'Vasopressor given. Response from an Open Sim Lab teaching model, not a published population model.');
+        break;
+      }
+      case 'fluid': {
+        const fluidId = String(action.payload.fluidId ?? '');
+        const fluid = getFluid(fluidId);
+        const volumeMl = AnesthesiaEngine.finiteAmount(action.payload.volumeMl);
+        if (!fluid || volumeMl === null || volumeMl < 1 || volumeMl > MAX_FLUID_BOLUS_ML) {
+          this.log('warning', 'fluid', `bad-fluid-${this.currentTick}`,
+            !fluid
+              ? `This build does not stock a fluid called "${fluidId}". Nothing was given.`
+              : `A fluid volume of "${String(action.payload.volumeMl)}" is not usable. Enter 1 to `
+                + `${MAX_FLUID_BOLUS_ML} mL. Nothing was given.`);
+          break;
+        }
+        this.pendingCrystalloidMl += volumeMl;
+        this.log('info', 'fluid', `fluid-${fluid.id}-${this.currentTick}`,
+          `${fluid.name} ${volumeMl} mL given. The model retains ${fluid.retainedFraction * 100}% intravascularly.`,
+          { fluidId: fluid.id, volumeMl, retainedFraction: fluid.retainedFraction, teachingModel: true });
         break;
       }
       case 'silence-alarm': {
@@ -631,6 +658,8 @@ export class AnesthesiaEngine {
       if (event.type === 'crystalloid') crystalloidMl += event.value / 600;
       if (event.type === 'obstruction') obstruction = Math.max(obstruction, event.value);
     }
+    crystalloidMl += this.pendingCrystalloidMl;
+    this.pendingCrystalloidMl = 0;
 
     // --- Pharmacokinetics ------------------------------------------------------
     for (const drug of this.drugs.values()) {
