@@ -100,3 +100,26 @@ Recorded here rather than silently carried:
   haemoglobin and blood volume, so one cannot be added without changing it.
 - The alarm priority names in source are `critical`/`warning`/`advisory` rather than the
   standard's high/medium/low. The learner-facing display already uses the standard's words.
+
+## Concentration-time checks, 2026-08-23
+
+The acceptance text requires a published concentration-time point for every model. The Marsh
+paper does not provide one reproducible from a linked patient, administration history, and
+sample. Its separately computed golden point therefore does not close that requirement. These
+checks prove solver transcription and integration; they are not a Varvel validation study and
+do not make any model clinically verified.
+
+Primary locators: Marsh DOI `10.1093/bja/67.1.41`; Schnider DOI
+`10.1097/00000542-199805000-00006`, Figure 5; Eleveld DOI
+`10.1016/j.bja.2018.01.018`, Supplement S1; Minto Part II DOI
+`10.1097/00000542-199701000-00005`, Table 1.
+
+| Model | Protocol and source point | Acceptance |
+| --- | --- | --- |
+| Marsh 1991 | 70 kg adult, 140 mg bolus, plasma at 1 min. `scipy.linalg.expm` independently evaluated the production convention: published volumes and forward rates determine Q2/Q3, retaining more precision than the separately rounded published k21/k31. The source contains no reproducible individual trajectory. | synthetic golden 6.699642910679039 µg/mL, software-regression precision; does not satisfy task 4.5 |
+| Schnider 1998 | Figure 5 bottom: 50-year-old, 77 kg, 175 cm woman; infusion-only prediction at 200 µg/kg/min for 60 min, then 16 min off. | approximately 1.0 µg/mL, ±0.10 for the plotted line and 1 µg/mL axis ticks |
+| Eleveld 2018 | Official Supplement S1, study 30, subject 838: AGE is 66 years and PMA is separately supplied as 66.769 years; the patient is a 65 kg, 158 cm woman with concomitant drugs. A 120 mg bolus plus a separate 1,333.333 mg infusion at 8.333 mg/min (about 160.006 min) begin at t=0; arterial plasma is sampled at 75 min. The final PK stream converts PMA with `PMW=PMA*52`. | observed 4.25 µg/mL, bounded by one typical log residual-error standard deviation, `exp(±0.191307)` |
+| Minto 1997 | Part II Table 1, 20-year column: typical lean body mass 55 kg, 279 µg bolus, predicted effect site at 1.22 min. | 16.1 ng/mL, ±0.05 from the table's one-decimal precision |
+
+The Eleveld fixture transcribes one row, not the supplement dataset. No patient record or
+publisher attachment is bundled with the application.

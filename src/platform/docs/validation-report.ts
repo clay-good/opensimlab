@@ -109,9 +109,10 @@ export const UNVALIDATED: readonly UnvalidatedItem[] = [
   {
     item: 'Every pharmacokinetic model in this build',
     reason: 'No openly licensed observed-concentration dataset has been analysed, so no Varvel '
-      + 'performance metric is reported for any model. The solver tests also contain no numeric '
-      + 'concentration-time point traceable to a source paper for any shipped model; the Eleveld '
-      + 'bolus test is an internally derived qualitative profile, not a published point.',
+      + 'performance metric is reported for any model. The solver now has three source-reported '
+      + 'trajectory checks: Eleveld uses an observed clinical sample, while Schnider and Minto '
+      + 'use published predictions. Marsh has only an independently computed synthetic golden '
+      + 'because its paper does not publish a reproducible trajectory.',
   },
   {
     item: 'Every parameter transcription',

@@ -310,7 +310,7 @@ describe('Scenario: Transcription is verified against published reference values
   it('produces a plausible concentration-time profile after a standard induction bolus', () => {
     // A 2 mg/kg bolus in the reference adult. The peak plasma concentration
     // immediately after a bolus is dose / V1, and the effect site peaks later and
-    // lower. These are the published qualitative anchors for the profile.
+    // lower. These are internal solver properties, not source-published points.
     const parameters = parametersFor(PROPOFOL_ELEVELD_2018, ADULT);
     const solver = new CompartmentSolver(parameters);
     solver.bolus(2 * ADULT.weightKg);
@@ -320,6 +320,84 @@ describe('Scenario: Transcription is verified against published reference values
     // The effect site peaks in the range a clinician expects for propofol.
     expect(peakCe).toBeGreaterThan(2);
     expect(peakCe).toBeLessThan(12);
+  });
+});
+
+describe('Concentration-time regression checks', () => {
+  const advance = (solver: CompartmentSolver, minutes: number, rate: number) => {
+    const steps = Math.round(minutes / STEP_MINUTES);
+    expect(steps * STEP_MINUTES).toBeCloseTo(minutes, 12);
+    for (let step = 0; step < steps; step += 1) solver.step(rate);
+  };
+
+  it('matches an independently computed Marsh plasma golden point', () => {
+    const solver = new CompartmentSolver(parametersFor(PROPOFOL_MARSH_1991, ADULT));
+    solver.bolus(140);
+    advance(solver, 1, 0);
+
+    // Marsh does not publish a complete individual administration/covariate/sample
+    // tuple. This value was independently calculated with scipy.linalg.expm using
+    // the production convention: published volumes and forward rates determine
+    // Q2/Q3, so the implied return rates retain more precision than the paper's
+    // separately rounded k21/k31 values. This is a synthetic solver golden, not a
+    // source-reported trajectory.
+    expect(solver.plasma).toBeCloseTo(6.699642910679039, 10);
+  });
+
+  it('matches the Schnider Figure 5 infusion-only prediction', () => {
+    const covariates: Covariates = {
+      ageYears: 50, weightKg: 77, heightCm: 175, sex: 'female',
+    };
+    const solver = new CompartmentSolver(parametersFor(PROPOFOL_SCHNIDER_1998, covariates));
+    advance(solver, 60, 15.4);
+    advance(solver, 16, 0);
+
+    // Figure 5 bottom: 200 µg/kg/min in a 77 kg woman for 60 minutes,
+    // evaluated 16 minutes after stopping. The graph supports about 1.0 µg/mL;
+    // ±0.10 reflects its 1 µg/mL ticks and scan resolution.
+    expect(solver.plasma).toBeGreaterThanOrEqual(0.90);
+    expect(solver.plasma).toBeLessThanOrEqual(1.10);
+  });
+
+  it('matches an observed Eleveld Supplement S1 arterial-plasma row', () => {
+    const covariates: Covariates = {
+      ageYears: 66,
+      weightKg: 65,
+      heightCm: 158,
+      sex: 'female',
+      opioidsCoadministered: true,
+      // S1 supplies PMA in years; the final PK stream evaluates PMW=PMA*52.
+      postMenstrualAgeWeeks: 66.769 * 52,
+    };
+    const solver = new CompartmentSolver(parametersFor(PROPOFOL_ELEVELD_2018, covariates));
+    solver.bolus(120);
+    advance(solver, 75, 8.333);
+
+    // Supplement S1, study 30, subject 838: a 120 mg bolus and a separate
+    // 1,333.333 mg infusion at 8.333 mg/min (about 160.006 min) start at t=0.
+    // Arterial plasma at 75 minutes:
+    // exp(log concentration 1.44691898293633) = 4.25 µg/mL. This is a noisy
+    // clinical observation. The final PK stream's typical log residual error is
+    // 0.191307, so one source-model residual standard deviation gives the
+    // asymmetric bounds below. This is not a claim that a population prediction
+    // equals one person's measurement.
+    expect(solver.plasma).toBeGreaterThanOrEqual(4.25 * Math.exp(-0.191307));
+    expect(solver.plasma).toBeLessThanOrEqual(4.25 * Math.exp(0.191307));
+  });
+
+  it('matches the Minto Part II Table 1 effect-site prediction', () => {
+    const covariates: Covariates = {
+      ageYears: 20, weightKg: 70, heightCm: 168.8464, sex: 'male',
+    };
+    const solver = new CompartmentSolver(parametersFor(REMIFENTANIL_MINTO_1997, covariates));
+    solver.bolus(279);
+    advance(solver, 1.22, 0);
+
+    // Table 1, 20-year column: a 279 µg bolus reaches an effect-site peak of
+    // 16.1 ng/mL at 1.22 minutes for lean body mass 55 kg. The API covariates
+    // above produce James lean body mass 55 kg; they are not a paper subject.
+    expect(solver.effectSite).toBeCloseTo(16.1, 1);
+    expect(Math.abs(solver.effectSite - 16.1)).toBeLessThanOrEqual(0.05);
   });
 });
 
