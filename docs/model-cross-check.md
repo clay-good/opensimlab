@@ -7,7 +7,7 @@ and claims the code does not support. It does not and cannot replace a credentia
 clinician judging whether the patient behaves like a patient. That review is task 13 of the
 alpha change and it has still not happened. See [`GOVERNANCE.md`](../GOVERNANCE.md).
 
-Why record it at all: it found fourteen real defects, five of which a learner would have
+Why record it at all: it found fifteen real defects, five of which a learner would have
 seen on screen, and the provenance of a fix matters as much as the fix.
 
 ## Method and its limits
@@ -48,6 +48,7 @@ Each has a regression test that fails against the previous behaviour.
 | 12 | The Cormack-Lehane difficulty ramp was far too steep, and videolaryngoscopy under-credited | 24% grade 3/4 at low difficulty and 44% even with video would teach that difficult laryngoscopy is routine and that the rescue device barely helps |
 | 13 | Fat-free mass stepped discontinuously at exactly 18 years | A female patient's value dropped 2.9% on her eighteenth birthday, and Eleveld's V3 and Q3 moved with it |
 | 14 | Eleveld's asymmetric depth slopes were reversed and joined with a hard branch | The learner-visible depth index disagreed with the authors' final NONMEM stream, especially around Ce50. It now uses 1.89 below, 1.47 above, and the source's logistic blend |
+| 15 | An unused helper called the Q-to-S two-standard-deviation Gaussian support a QRS duration | It reported 147 ms without a clinical onset/offset definition, which could falsely imply the normal trace's width had been validated. The proxy was removed; tests now assert the published event timing, rate-stable Gaussian widths, and the declared narrow/wide distinction without inventing a diagnostic interval. |
 
 Smaller corrections in the same pass: the remifentanil model offered itself as the
 alternative when its own failure predicate fired; an envelope violation could be handed a
@@ -92,8 +93,6 @@ Recorded here rather than silently carried:
 - The baroreflex heart-rate limb has a 7.2 s time constant, which is the sympathetic
   timescale rather than the vagal one, and a 25% haemorrhage in an awake patient produces
   less tachycardia than the textbook class II picture.
-- `qrsDurationSeconds` returns 147 ms by its Gaussian-edge convention at every rate, which
-  is not a clinically usable QRS duration and should not be read as one.
 - Ventricular tachycardia morphology degenerates toward a continuous undulation at high
   rates, which would undermine a VT-versus-VF discrimination lesson.
 - There is no paediatric respiratory profile, and the benchmark harness hardcodes adult

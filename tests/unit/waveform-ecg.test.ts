@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import {
   EcgGenerator,
   MCSHARRY_TABLE_1,
-  qrsDurationSeconds,
+  eventTimeOffsetSeconds,
   qtIntervalSeconds,
   scaleEventsForRate,
 } from '@anesthesia/waveforms/ecg';
@@ -133,10 +133,17 @@ describe('Scenario: Rate changes do not distort morphology incorrectly', () => {
     expect(qtAt140 / qtAt60).toBeGreaterThan(linearRatio * 1.25);
   });
 
-  it('keeps QRS duration essentially rate independent', () => {
-    const qrsAt60 = qrsDurationSeconds(morphology, 1.0);
-    const qrsAt140 = qrsDurationSeconds(morphology, 60 / 140);
-    expect(Math.abs(qrsAt140 - qrsAt60)).toBeLessThan(1e-9);
+  it('keeps the published Q and S event timing rate independent', () => {
+    const q = morphology.events.find((event) => event.name === 'Q');
+    const s = morphology.events.find((event) => event.name === 'S');
+    expect(q).toBeDefined();
+    expect(s).toBeDefined();
+    if (!q || !s) return;
+
+    expect(eventTimeOffsetSeconds(q, 1)).toBeCloseTo(-1 / 24, 9);
+    expect(eventTimeOffsetSeconds(s, 1)).toBeCloseTo(1 / 24, 9);
+    expect(eventTimeOffsetSeconds(q, 60 / 140)).toBeCloseTo(-1 / 24, 9);
+    expect(eventTimeOffsetSeconds(s, 60 / 140)).toBeCloseTo(1 / 24, 9);
   });
 
   it('shortens the RR interval as expected', () => {
@@ -151,11 +158,34 @@ describe('Scenario: Rate changes do not distort morphology incorrectly', () => {
   });
 
   it('scales the rate-dependent events but not the QRS events', () => {
+    const at60 = scaleEventsForRate(MCSHARRY_TABLE_1, 1);
     const scaled = scaleEventsForRate(MCSHARRY_TABLE_1, 0.5);
     const q = scaled.find((e) => e.name === 'Q');
     const t = scaled.find((e) => e.name === 'T');
     expect(q?.b).toBeCloseTo(0.1 * 2, 9);
     expect(t?.b).toBeCloseTo(0.4 * Math.pow(0.5, -0.5), 9);
+
+    const widthSeconds = (event: (typeof scaled)[number], rr: number) =>
+      event.b * rr / (2 * Math.PI);
+    for (const name of ['Q', 'R', 'S'] as const) {
+      const reference = at60.find((event) => event.name === name);
+      const faster = scaled.find((event) => event.name === name);
+      expect(reference).toBeDefined();
+      expect(faster).toBeDefined();
+      if (reference && faster) {
+        expect(widthSeconds(faster, 0.5)).toBeCloseTo(widthSeconds(reference, 1), 9);
+      }
+    }
+  });
+
+  it('keeps declared wide-complex rhythms wider than sinus', () => {
+    const qrsWidth = (rhythm: RhythmId) => getRhythm(rhythm).morphology.events
+      .filter((event) => event.name === 'Q' || event.name === 'R' || event.name === 'S')
+      .reduce((sum, event) => sum + event.b, 0);
+    const sinusWidth = qrsWidth('sinus');
+    for (const rhythm of ['complete-heart-block', 'ventricular-tachycardia', 'paced'] as const) {
+      expect(qrsWidth(rhythm)).toBeGreaterThan(sinusWidth);
+    }
   });
 });
 

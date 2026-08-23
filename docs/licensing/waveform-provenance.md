@@ -26,7 +26,9 @@ The paper does not print a rate-scaling table. The rate behavior in this file is
 Lab's own encoding of two relationships a clinician expects, documented inline on
 `EcgEvent.rateExponent`:
 
-- QRS duration is essentially rate independent, so the Q, R and S events carry exponent `0`.
+- Q, R and S event offsets and Gaussian widths in seconds are rate independent, so those
+  events carry exponent `0`. The generator does not turn Gaussian support into a diagnostic
+  QRS duration; onset and offset still require clinician review of the rendered morphology.
 - The QT interval scales with the square root of the RR interval, the Bazett relationship,
   so the P and T events carry exponent `0.5`.
 

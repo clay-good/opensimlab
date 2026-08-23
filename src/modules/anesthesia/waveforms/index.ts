@@ -22,7 +22,7 @@ export * from './rhythms';
 export { alphaFromSlopes, alphaForObstruction, slopesForAlpha, AXIS_MMHG_PER_SECOND, CAPNO_PATTERNS } from './capnogram';
 export { ARTERIAL_DELAY_SECONDS, ejectionTimeSeconds, REFERENCE_SVR } from './arterial';
 export { PLETH_DELAY_SECONDS, LOW_SIGNAL_PERFUSION_INDEX, PlethGenerator } from './pleth';
-export { MCSHARRY_TABLE_1, qtIntervalSeconds, qrsDurationSeconds, scaleEventsForRate, EcgGenerator } from './ecg';
+export { MCSHARRY_TABLE_1, qtIntervalSeconds, scaleEventsForRate, EcgGenerator } from './ecg';
 
 /** One tick's worth of samples for every signal. */
 export interface WaveformFrame {

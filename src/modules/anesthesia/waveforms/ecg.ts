@@ -46,7 +46,7 @@ export interface EcgEvent {
    * This exponent is Open Sim Lab's own encoding of a published relationship,
    * not a value from the McSharry table. The paper notes that the whole complex
    * must not simply scale with rate. We encode the two rules a clinician expects:
-   *   - QRS duration is essentially rate independent  -> exponent 0
+   *   - Q, R and S event offsets and widths are rate independent -> exponent 0
    *   - QT scales with the square root of RR (Bazett)  -> exponent 0.5
    * Because time offset = theta * RR / (2*pi), an event whose time offset must
    * scale as RR^e needs theta scaled by RR^(e-1); the same factor applies to its
@@ -161,16 +161,6 @@ export function qtIntervalSeconds(morphology: BeatMorphology, rrSeconds: number)
   if (!q || !t) return 0;
   const toSeconds = (theta: number) => (theta / (2 * Math.PI)) * rrSeconds;
   return toSeconds(t.theta + 2 * t.b) - toSeconds(q.theta - 2 * q.b);
-}
-
-/** QRS duration in seconds, from the Q edge to the S edge at two standard deviations. */
-export function qrsDurationSeconds(morphology: BeatMorphology, rrSeconds: number): number {
-  const scaled = scaleEventsForRate(morphology.events, rrSeconds);
-  const q = scaled.find((e) => e.name === 'Q');
-  const s = scaled.find((e) => e.name === 'S');
-  if (!q || !s) return 0;
-  const toSeconds = (theta: number) => (theta / (2 * Math.PI)) * rrSeconds;
-  return toSeconds(s.theta + 2 * s.b) - toSeconds(q.theta - 2 * q.b);
 }
 
 /** Options for a generator instance. */
