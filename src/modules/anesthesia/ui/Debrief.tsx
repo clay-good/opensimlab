@@ -320,6 +320,10 @@ export function objectiveFindings(
     'give-initial-epinephrine': 'vasodilation-versus-hypovolemia',
     'support-anaphylaxis-circulation': 'vasodilation-versus-hypovolemia',
     'support-anaphylaxis-oxygenation': 'capnogram-morphology',
+    'recognize-mh-hypermetabolism': 'malignant-hyperthermia-early-pattern',
+    'stop-trigger-and-hyperventilate': 'malignant-hyperthermia-early-pattern',
+    'give-initial-dantrolene': 'malignant-hyperthermia-early-pattern',
+    'reassess-mh-response': 'malignant-hyperthermia-early-pattern',
   };
 
   return scenario.metadata.objectives.map((objective) => {
@@ -806,6 +810,135 @@ export function objectiveFindings(
           : actionsMet || lowest >= 88 ? 'partly-met' : 'not-met',
         finding: `Delivered oxygen was ${(delivered.fio2 * 100).toFixed(0)}% with ventilation ${delivered.delivering ? 'active' : 'inactive'}; the lowest modeled saturation was ${lowest.toFixed(0)}%. This observable response does not establish a definitive diagnosis or complete treatment.`,
         atTick: onset,
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
+      'recognize-mh-hypermetabolism', 'stop-trigger-and-hyperventilate',
+      'give-initial-dantrolene', 'reassess-mh-response',
+    ].includes(objective.id)) {
+      const onsetSample = history.find((entry) =>
+        (entry.state.muscleRigidityFraction ?? 0) > 0.01);
+      if (!onsetSample) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'No modeled rigidity developed. The latent event requires genuine end-tidal volatile exposure, so this trace does not establish that the crisis was exercised.',
+        } satisfies ObjectiveFinding;
+      }
+      const onset = onsetSample.tick;
+      const acceptedDantrolene = actions.find((action) =>
+        action.tick >= onset
+        && action.type === 'dantrolene'
+        && action.payload.route === 'iv'
+        && Number.isFinite(Number(action.payload.doseMgPerKg))
+        && Number(action.payload.doseMgPerKg) === 2.5);
+      const responseAction = actions.find((action) => {
+        if (action.tick < onset) return false;
+        if (action === acceptedDantrolene) return true;
+        if (action.type !== 'ventilator') return false;
+        const fio2 = Number(action.payload.fio2);
+        const flow = Number(action.payload.freshGasFlowLPerMin);
+        const sevo = Number(action.payload.sevofluranePercent);
+        return (Number.isFinite(fio2) && Math.min(1, Math.max(0, fio2)) >= 0.95)
+          || (Number.isFinite(flow) && Math.min(15, Math.max(0, flow)) >= 10)
+          || (Number.isFinite(sevo) && Math.min(8, Math.max(0, sevo)) === 0);
+      });
+      if (objective.id === 'recognize-mh-hypermetabolism') {
+        const delay = responseAction ? (responseAction.tick - onset) / TICKS_PER_SECOND : null;
+        return {
+          ...base,
+          outcome: delay === null ? 'not-met'
+            : delay <= 60 ? 'met' : delay <= 120 ? 'partly-met' : 'not-met',
+          finding: delay === null
+            ? 'No accepted initial-response action was recorded after modeled rigidity appeared. Rising carbon dioxide, tachycardia, and rigidity are clues, not a definitive diagnosis.'
+            : `An initial-response action was recorded ${delay.toFixed(0)} seconds after modeled rigidity appeared. This is an action proxy for recognizing an observable hypermetabolic pattern, not a diagnosis.`,
+          atTick: responseAction?.tick ?? onset,
+        } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'stop-trigger-and-hyperventilate') {
+        const cutoff = onset + (60 * TICKS_PER_SECOND);
+        const initial = scenario.equipment.ventilator;
+        const machine = actions
+          .filter((action) => action.type === 'ventilator' && action.tick <= cutoff)
+          .reduce((settings, action) => {
+            const finite = (field: string, fallback: number, min: number, max: number) => {
+              if (action.payload[field] === undefined) return fallback;
+              const value = Number(action.payload[field]);
+              return Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : fallback;
+            };
+            return {
+              fio2: finite('fio2', settings.fio2, 0, 1),
+              freshGasFlowLPerMin: finite(
+                'freshGasFlowLPerMin', settings.freshGasFlowLPerMin, 0.5, 15,
+              ),
+              tidalVolumeMl: finite('tidalVolumeMl', settings.tidalVolumeMl, 0, 1500),
+              respiratoryRateBpm: finite(
+                'respiratoryRateBpm', settings.respiratoryRateBpm, 0, 60,
+              ),
+              sevofluranePercent: finite(
+                'sevofluranePercent', settings.sevofluranePercent, 0, 8,
+              ),
+              delivering: action.payload.delivering === undefined
+                ? settings.delivering : action.payload.delivering === true,
+            };
+          }, {
+            fio2: initial.fio2,
+            freshGasFlowLPerMin: initial.freshGasFlowLPerMin ?? 1,
+            tidalVolumeMl: initial.tidalVolumeMl,
+            respiratoryRateBpm: initial.respiratoryRateBpm,
+            sevofluranePercent: 0,
+            delivering: initial.delivering,
+          });
+        const minuteVentilation = machine.tidalVolumeMl * machine.respiratoryRateBpm / 1000;
+        const baselineMinuteVentilation = initial.tidalVolumeMl * initial.respiratoryRateBpm / 1000;
+        const met = machine.sevofluranePercent === 0 && machine.fio2 >= 0.95
+          && machine.freshGasFlowLPerMin >= 10 && machine.delivering
+          && minuteVentilation >= baselineMinuteVentilation * 2;
+        return {
+          ...base, outcome: met ? 'met' : 'not-met', atTick: cutoff,
+          finding: `By 60 seconds, vaporizer delivery was ${machine.sevofluranePercent.toFixed(1)}%, oxygen ${(machine.fio2 * 100).toFixed(0)}%, fresh-gas flow ${machine.freshGasFlowLPerMin.toFixed(1)} L/min, and delivered minute ventilation ${minuteVentilation.toFixed(1)} L/min. The observable initial bundle requires zero volatile, at least 95% oxygen, at least 10 L/min fresh-gas flow, and twice the ${baselineMinuteVentilation.toFixed(1)} L/min baseline minute ventilation.`,
+        } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'give-initial-dantrolene') {
+        const delay = acceptedDantrolene
+          ? (acceptedDantrolene.tick - onset) / TICKS_PER_SECOND : null;
+        return {
+          ...base,
+          outcome: delay === null ? 'not-met'
+            : delay <= 90 ? 'met' : delay <= 180 ? 'partly-met' : 'not-met',
+          finding: delay === null
+            ? 'No accepted 2.5 mg/kg IV dantrolene dose was recorded after modeled rigidity appeared.'
+            : `An accepted 2.5 mg/kg IV dantrolene dose was recorded ${delay.toFixed(0)} seconds after modeled rigidity appeared. Repetition depends on the observable response; this model does not simulate vial preparation or an individualized dose course.`,
+          atTick: acceptedDantrolene?.tick ?? onset,
+        } satisfies ObjectiveFinding;
+      }
+      if (!acceptedDantrolene) {
+        return {
+          ...base, outcome: 'not-met', atTick: onset,
+          finding: 'No accepted dantrolene dose was recorded, so a post-treatment response cannot be assessed.',
+        } satisfies ObjectiveFinding;
+      }
+      const before = history.filter((entry) => entry.tick <= acceptedDantrolene.tick).at(-1);
+      const after = history.filter((entry) =>
+        entry.tick > acceptedDantrolene.tick
+        && entry.tick <= acceptedDantrolene.tick + (120 * TICKS_PER_SECOND));
+      const final = after.at(-1);
+      const improved = Boolean(before && final && (
+        (final.state.etco2MmHg ?? Infinity) < (before.state.etco2MmHg ?? -Infinity)
+        || (final.state.heartRateBpm ?? Infinity) < (before.state.heartRateBpm ?? -Infinity)
+        || (final.state.muscleRigidityFraction ?? Infinity)
+          < (before.state.muscleRigidityFraction ?? -Infinity)
+      ));
+      const peakTemperature = Math.max(...history
+        .filter((entry) => entry.tick >= onset)
+        .map((entry) => entry.state.coreTemperatureC ?? scenario.patient.baseline.coreTemperatureC));
+      return {
+        ...base,
+        outcome: !final ? 'partly-met' : improved ? 'met' : 'not-met',
+        finding: !before || !final
+          ? 'The trace ended before a full 120-second post-dantrolene reassessment window. Temperature is a late sign and is not required for early recognition.'
+          : `Over the 120-second reassessment, end-tidal carbon dioxide changed from ${(before.state.etco2MmHg ?? 0).toFixed(0)} to ${(final.state.etco2MmHg ?? 0).toFixed(0)} mmHg, heart rate from ${(before.state.heartRateBpm ?? 0).toFixed(0)} to ${(final.state.heartRateBpm ?? 0).toFixed(0)} bpm, and modeled rigidity from ${(before.state.muscleRigidityFraction ?? 0).toFixed(2)} to ${(final.state.muscleRigidityFraction ?? 0).toFixed(2)}. Peak temperature was ${peakTemperature.toFixed(1)}°C. This is a bounded modeled response; temperature is late and the display does not confirm a diagnosis.`,
+        atTick: final?.tick ?? acceptedDantrolene.tick,
       } satisfies ObjectiveFinding;
     }
 

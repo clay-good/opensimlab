@@ -16,6 +16,8 @@ The fourth adds laryngospasm after airway stimulation, limited to the first obse
 held jaw thrust with continuous positive airway pressure, high inspired oxygen, and deepening.
 The fifth adds an antibiotic-triggered perioperative anaphylaxis teaching model, centered on the
 common NAP6 presentation of abrupt hypotension with possible bronchospasm and initial treatment.
+The sixth adds a volatile-triggered malignant-hyperthermia teaching model, centered on carbon
+dioxide as an early clue, later temperature, trigger removal, hyperventilation, and dantrolene.
 
 ## What changes
 
@@ -56,9 +58,14 @@ common NAP6 presentation of abrupt hypotension with possible bronchospasm and in
   initial actions, without asserting a definitive diagnosis.
 - State the fifth boundary plainly: rash, tryptase, trigger removal, team behavior, arrest, and
   the complete refractory algorithm remain unavailable.
+- Add a tenth scenario with latent susceptibility activated only by genuine end-tidal volatile exposure.
+- Model carbon dioxide rising before tachycardia, rigidity, and later temperature; record trigger
+  removal, high-flow 100% oxygen, hyperventilation, and exact 2.5 mg/kg IV dantrolene.
+- State the sixth boundary plainly: this is early recognition and initial response, without
+  laboratory-guided complications, team actions, intensive care, or diagnostic confirmation.
 
 ## Impact
 
-These five slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
-awareness-under-paralysis, and anaphylaxis gaps and add an honest initial-response laryngospasm case. They do not complete the bundled-library,
+These six slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. They do not complete the bundled-library,
 neuromuscular-reversal, or crisis-injector requirements.

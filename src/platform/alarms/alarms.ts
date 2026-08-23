@@ -132,6 +132,11 @@ export const DEFAULT_LIMITS: readonly AlarmLimit[] = [
     source: 'Hypoventilation, or the first sign of a hypermetabolic state.',
   },
   {
+    id: 'temperature-high', parameter: 'coreTemperatureC', label: 'Temp', unit: '°C', priority: 'medium',
+    high: 39, message: 'Core temperature high',
+    source: 'The MHAUS acute-crisis threshold for active cooling during malignant hyperthermia.',
+  },
+  {
     id: 'depth-light', parameter: 'depthIndex', label: 'Depth', unit: '', priority: 'medium',
     high: 60, message: 'Predicted depth index above the usual surgical range',
     source: 'The 40–60 range the published models are discussed against.',

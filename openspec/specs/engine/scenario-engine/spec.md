@@ -89,7 +89,7 @@ The application SHALL provide a manual crisis injector covering at minimum: mass
 
 #### Scenario: Malignant hyperthermia follows the MHAUS protocol
 
-- **WHEN** malignant hyperthermia is triggered in a susceptible profile exposed to a volatile agent and succinylcholine
+- **WHEN** malignant hyperthermia is triggered in a susceptible profile exposed to a volatile agent or succinylcholine
 - **THEN** end-tidal carbon dioxide rises first and steeply, followed by tachycardia, muscle rigidity, and a later temperature rise; **AND** the scenario's protocol steps follow the MHAUS acute-crisis protocol — discontinue triggering agents, hyperventilate with 100% oxygen at 10 L/min, give dantrolene 2.5 mg/kg intravenously and repeat until end-tidal carbon dioxide, rigidity, and heart rate improve, treat acidosis and hyperkalemia, and cool actively above 39 °C, stopping below 38 °C
 
 #### Scenario: The first sign is the one the learner must catch

@@ -71,12 +71,29 @@
 - [ ] Add rash, swelling, tryptase, trigger removal, team behavior, arrest, epinephrine infusion,
   a full refractory pathway, or post-event investigation. None is implied by this slice.
 
+## Slice 6: early malignant hyperthermia response
+
+- [x] Add a latent volatile-triggered hypermetabolic teaching model in which carbon dioxide rises
+  before tachycardia, observable rigidity, and later temperature.
+- [x] Add bounded, logged, replayable fresh-gas flow, exact 2.5 mg/kg IV dantrolene, and
+  temperature-bounded active-cooling actions.
+- [x] Author and register an induction-to-volatile-maintenance case whose live event does not leak
+  hidden susceptibility or diagnosis.
+- [x] Evaluate accepted initial response, trigger removal, oxygen, fresh-gas flow, minute
+  ventilation, dantrolene timing, and observable response.
+- [x] Map the scenario to NBCRNA, COA, and ACGME domains.
+- [x] Add current MHAUS and EMHG guidance, Hopkins and Larach evidence, limitations,
+  face-validity scope, landing inventory, and discoverability assets.
+- [ ] Add succinylcholine or masseter spasm, circuit replacement or charcoal filters, blood gases,
+  acidosis, potassium, dysrhythmia treatment, rhabdomyolysis, urine/coagulation monitoring, team
+  or hotline actions, intensive care, recurrence, or confirmatory referral. None is implied.
+
 ## Remaining required scenario families
 
 - [x] Rapid-sequence induction with neuromuscular blockade.
 - [ ] Difficult-airway crisis beyond the existing obesity case.
 - [x] Anaphylaxis with antibiotic exposure and independently tested documented-allergy enforcement.
-- [ ] Malignant hyperthermia.
+- [x] Malignant hyperthermia early recognition and initial response.
 - [ ] Local-anesthetic systemic toxicity.
 - [ ] Resuscitable cardiac arrest.
 - [ ] Pediatric anesthesia with pediatric pharmacokinetics and physiology.

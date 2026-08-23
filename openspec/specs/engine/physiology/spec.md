@@ -189,7 +189,8 @@ The engine SHALL model sevoflurane uptake from the vaporizer through the breathi
 #### Scenario: Fresh gas flow changes wash-in speed
 
 - **WHEN** the vaporizer is set to 4 vol % at a fresh gas flow of 1 L/min and again at 8 L/min
-- **THEN** the end-tidal concentration approaches the dial setting substantially faster at the higher flow
+- **THEN** the end-tidal concentration approaches the dial setting substantially faster at the higher flow, and turning the vaporizer off washes agent out faster at higher flow
+- **AND** this flow-dependent time constant is identified as an Open Sim Lab teaching calibration rather than a breathing-system, uptake, distribution, or rebreathing model
 
 ### Requirement: Fluids, Blood Loss, And Transfusion
 

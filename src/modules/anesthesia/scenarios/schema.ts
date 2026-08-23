@@ -169,6 +169,7 @@ export const SCENARIO_SCHEMA: SchemaNode = {
             fio2: NUMBER_FIELD('Inspired oxygen fraction. The hypoxic guard forbids below 0.21.', 0.21, 1),
             tidalVolumeMl: NUMBER_FIELD('Set tidal volume.', 0, 1200),
             respiratoryRateBpm: NUMBER_FIELD('Set respiratory rate.', 0, 40),
+            freshGasFlowLPerMin: NUMBER_FIELD('Fresh gas flow.', 0.5, 15),
             delivering: { type: 'boolean', description: 'Whether breaths are being delivered at the start.' },
           },
         },

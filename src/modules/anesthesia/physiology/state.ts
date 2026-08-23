@@ -34,6 +34,7 @@ export const FIELDS = {
   respiratoryRateBpm: { unit: '/min', min: 0, max: 60, precision: 0, label: 'Respiratory rate' },
   tidalVolumeMl: { unit: 'mL', min: 0, max: 1500, precision: 0, label: 'Tidal volume' },
   coreTemperatureC: { unit: '°C', min: 25, max: 43, precision: 1, label: 'Core temperature' },
+  muscleRigidityFraction: { unit: '', min: 0, max: 1, precision: 2, label: 'Generalized muscle rigidity' },
   depthIndex: { unit: '', min: 0, max: 100, precision: 0, label: 'Predicted depth index' },
   trainOfFourRatio: { unit: '', min: 0, max: 1, precision: 2, label: 'Train-of-four ratio' },
   trainOfFourCount: { unit: 'twitches', min: 0, max: 4, precision: 0, label: 'Train-of-four count' },

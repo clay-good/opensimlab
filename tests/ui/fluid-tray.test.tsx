@@ -34,17 +34,20 @@ describe('Requirement: The fluids tray performs a real learner action', () => {
         resuscitation: {
           epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
           lastEpinephrineTick: null, crystalloidTotalMl: 750,
+          dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
+          lastDantroleneTick: null, activeCooling: false,
         },
         lastExposure: null,
         syringeRemaining: {},
         ventilator: {
           mode: 'manual', tidalVolumeMl: 500, respiratoryRateBpm: 12,
-          fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0,
+          fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 2,
         },
         intubated: false,
         airwayAttempts: 0,
         lastGrade: null,
         jawThrustCpapSecondsRemaining: 0,
+        muscleRigidityFraction: 0,
         onBolus: () => {},
         onInfusion: () => {},
         onHypnoticLine: () => {},
@@ -53,6 +56,8 @@ describe('Requirement: The fluids tray performs a real learner action', () => {
         onLaryngoscopy: () => {},
         onAirwayManeuver: () => {},
         onEpinephrine: () => {},
+        onDantrolene: () => {},
+        onActiveCooling: () => {},
         onDrugCard: () => {},
       }));
     });

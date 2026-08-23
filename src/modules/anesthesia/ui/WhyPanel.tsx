@@ -49,6 +49,11 @@ const TERM_EXPLAINERS: Record<string, string> = {
   'hypoxic-bradycardia': 'preoxygenation-and-safe-apnea-time',
   'hypoxic-myocardial-failure': 'preoxygenation-and-safe-apnea-time',
   'rocuronium-blockade': 'train-of-four-and-residual-blockade',
+  'hypermetabolic-tachycardia': 'malignant-hyperthermia-early-pattern',
+  'hypermetabolic-heat': 'malignant-hyperthermia-early-pattern',
+  'hypermetabolic-rigidity': 'malignant-hyperthermia-early-pattern',
+  'dantrolene-relief': 'malignant-hyperthermia-early-pattern',
+  'active-cooling': 'malignant-hyperthermia-early-pattern',
 };
 
 /** Exported so a test can require every emitted term to have an entry. */

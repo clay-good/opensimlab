@@ -52,17 +52,20 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       resuscitation: {
         epinephrineEffectFraction: 0.4, epinephrineTotalMicrograms: 20,
         lastEpinephrineTick: 900, crystalloidTotalMl: 1000,
+        dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
+        lastDantroleneTick: null, activeCooling: false,
       },
       lastExposure: { agentId: 'cefazolin', tick: 600 },
       syringeRemaining: {},
       ventilator: {
         mode: 'volume-control', tidalVolumeMl: 500, respiratoryRateBpm: 12,
-        fio2: 1, peep: 5, delivering: true, sevofluranePercent: 0,
+        fio2: 1, peep: 5, delivering: true, sevofluranePercent: 0, freshGasFlowLPerMin: 10,
       },
       intubated: true,
       airwayAttempts: 1,
       lastGrade: 1,
       jawThrustCpapSecondsRemaining: 0,
+      muscleRigidityFraction: 0,
       onBolus: () => {},
       onInfusion: () => {},
       onHypnoticLine: () => {},
@@ -71,6 +74,8 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       onLaryngoscopy: () => {},
       onAirwayManeuver: () => {},
       onEpinephrine,
+      onDantrolene: () => {},
+      onActiveCooling: () => {},
       onDrugCard: () => {},
     };
     act(() => root.render(createElement(ActionCockpit, props)));
@@ -82,7 +87,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
 
   it('shows the working tray only for a scenario that declares the crisis event', () => {
     renderCockpit(UNITED_STATES);
-    expect(button('Crisis drugs')).toBeInstanceOf(HTMLButtonElement);
+    expect(button('Crisis response')).toBeInstanceOf(HTMLButtonElement);
 
     const withoutCrisis = { ...CRISIS_SCENARIO, timeline: ROUTINE_INDUCTION.timeline };
     act(() => root.render(createElement(ActionCockpit, {
@@ -93,27 +98,31 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       resuscitation: {
         epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
         lastEpinephrineTick: null, crystalloidTotalMl: 0,
+        dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
+        lastDantroleneTick: null, activeCooling: false,
       },
       lastExposure: null,
       syringeRemaining: {},
       ventilator: {
         mode: 'manual', tidalVolumeMl: 500, respiratoryRateBpm: 12,
-        fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0,
+        fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 2,
       },
       intubated: false,
       airwayAttempts: 0,
       lastGrade: null,
       jawThrustCpapSecondsRemaining: 0,
+      muscleRigidityFraction: 0,
       onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {},
       onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {},
-      onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDrugCard: () => {},
+      onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
+      onActiveCooling: () => {}, onDrugCard: () => {},
     })));
-    expect(button('Crisis drugs')).toBeUndefined();
+    expect(button('Crisis response')).toBeUndefined();
   });
 
   it('uses regional terminology and requires confirmation of dose and IV route', () => {
     const onEpinephrine = renderCockpit(UNITED_KINGDOM);
-    act(() => button('Crisis drugs')!.click());
+    act(() => button('Crisis response')!.click());
 
     expect(container.textContent).toContain('Adrenaline');
     expect(container.textContent).toContain('Accepted total: 20 µg IV');
@@ -130,7 +139,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
 
   it('offers only bounded presets, no hostile free-dose or route field, inside the phone scroll area', () => {
     renderCockpit(UNITED_STATES);
-    act(() => button('Crisis drugs')!.click());
+    act(() => button('Crisis response')!.click());
 
     const doseButtons = [...container.querySelectorAll('button')]
       .filter((entry) => /^\d+ µg IV$/.test(entry.textContent?.trim() ?? ''));
@@ -142,7 +151,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
 
   it('computes every dose and confirmation control to at least a 44px touch height', () => {
     renderCockpit(UNITED_STATES);
-    act(() => button('Crisis drugs')!.click());
+    act(() => button('Crisis response')!.click());
 
     const assertTouchHeight = (control: HTMLButtonElement) => {
       expect(getComputedStyle(control).minBlockSize, control.outerHTML).toBe('44px');

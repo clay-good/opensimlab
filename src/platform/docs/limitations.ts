@@ -128,14 +128,14 @@ export const LIMITATIONS: readonly Limitation[] = [
     headline: 'The oxyhaemoglobin dissociation curve does not shift with temperature, pH or carbon dioxide.',
     simplification: 'The oxyhaemoglobin dissociation curve does not shift. Saturation is a '
       + 'function of arterial oxygen tension alone, with no Bohr effect and no temperature term, '
-      + 'and core temperature never changes during a case.',
+      + 'even when core temperature changes in the malignant-hyperthermia teaching model.',
     whereItMisleads: 'Anywhere a shift is the teaching point: the acidotic or hypercapnic patient '
       + 'unloading oxygen more readily at the tissue, the hypothermic patient holding on to it, '
       + 'and stored-blood transfusion.',
     correctUnderstanding: 'Acidosis, hypercapnia and pyrexia move the curve right, so the same '
       + 'saturation corresponds to a higher oxygen tension and oxygen is given up more readily at '
       + 'the tissues. Here the curve is frozen at its normal position.',
-    briefIn: [],
+    briefIn: ['early-malignant-hyperthermia-during-volatile-anesthesia'],
   },
   {
     id: 'no-shunt-or-dead-space-dynamics',
@@ -306,6 +306,59 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['perioperative-anaphylaxis-after-antibiotic'],
   },
   {
+    id: 'malignant-hyperthermia-is-a-teaching-model',
+    headline: 'The hypermetabolic carbon-dioxide, heart-rate, rigidity, and heat trajectories are bounded teaching models, not individualized predictions or a diagnostic test.',
+    simplification: 'One latent severity drives excess carbon-dioxide production, tachycardia, '
+      + 'displayed generalized rigidity, and delayed heat generation after genuine end-tidal '
+      + 'volatile exposure. The ordering is source-grounded; the exact values and timing are an '
+      + 'Open Sim Lab calibration.',
+    whereItMisleads: 'Reading a threshold or treatment response as proof of malignant '
+      + 'hyperthermia, or expecting every susceptible patient to follow this trajectory.',
+    correctUnderstanding: 'Malignant hyperthermia is suspected from an evolving clinical pattern '
+      + 'and exposure context. Treat promptly while considering alternatives and arrange '
+      + 'appropriate post-event investigation.',
+    briefIn: ['early-malignant-hyperthermia-during-volatile-anesthesia'],
+  },
+  {
+    id: 'dantrolene-course-is-a-teaching-model',
+    headline: 'Dantrolene is an instantaneous 2.5 mg/kg IV teaching action here; vial preparation, product differences, adverse effects, and individualized repeat requirements are not modeled.',
+    simplification: 'An accepted action immediately adds a bounded relief effect. The simulator '
+      + 'does not model reconstitution time, staff needed to prepare vials, large-bore access, '
+      + 'product concentration, cumulative-dose toxicity, weakness, or a patient-specific dose course.',
+    whereItMisleads: 'Using button speed as evidence that dantrolene can be prepared and delivered '
+      + 'that quickly, or assuming one modeled dose is always sufficient.',
+    correctUnderstanding: 'Give 2.5 mg/kg IV dantrolene promptly and repeat as needed until '
+      + 'carbon dioxide, rigidity, heart rate, and the wider clinical picture improve, using the '
+      + 'current protocol and available formulation.',
+    briefIn: ['early-malignant-hyperthermia-during-volatile-anesthesia'],
+  },
+  {
+    id: 'rigidity-is-observable-status-only',
+    headline: 'Generalized rigidity is a modeled status value, not a physical examination, masseter assessment, or validated measurement.',
+    simplification: 'A fraction from zero to one drives a plain-language rigidity status. There '
+      + 'is no muscle force, jaw examination, fasciculation, compartment pressure, or physical skill.',
+    whereItMisleads: 'Treating the displayed fraction as a clinical scale or assuming absence on '
+      + 'screen excludes a real muscular sign.',
+    correctUnderstanding: 'Assess rigidity clinically in context. Masseter spasm and generalized '
+      + 'rigidity are important findings, but their presence and timing vary.',
+    briefIn: ['early-malignant-hyperthermia-during-volatile-anesthesia'],
+  },
+  {
+    id: 'malignant-hyperthermia-initial-response-only',
+    headline: 'This case stops at early recognition and initial response; it is not the complete MHAUS or EMHG malignant-hyperthermia protocol.',
+    simplification: 'The cockpit can stop volatile delivery, raise fresh-gas flow, hyperventilate '
+      + 'with oxygen, give dantrolene, and start or stop bounded cooling. It does not model '
+      + 'succinylcholine or masseter spasm, charcoal filters or circuit replacement, blood gases, '
+      + 'acidosis, potassium, dysrhythmia treatment, rhabdomyolysis, urine output, coagulation, '
+      + 'team actions, hotline use, intensive care, recurrence, or confirmatory referral.',
+    whereItMisleads: 'Treating improvement in the initial modeled signs as completion of acute '
+      + 'management or readiness to end monitoring.',
+    correctUnderstanding: 'Follow the complete current protocol, including help, trigger removal, '
+      + 'dantrolene repetition, temperature-guided cooling, laboratory-guided complication '
+      + 'management, monitoring, transfer, and post-event investigation.',
+    briefIn: ['early-malignant-hyperthermia-during-volatile-anesthesia'],
+  },
+  {
     id: 'no-regional-anaesthesia',
     headline: 'Regional anaesthesia is not modelled at all — no block, no spread, no failure.',
     simplification: 'Regional anaesthesia and block spread are not modelled at all.',
@@ -338,15 +391,18 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: [],
   },
   {
-    id: 'no-fresh-gas-flow',
-    headline: 'Fresh gas flow is not modelled, so volatile wash-in does not speed up or slow down with it.',
-    simplification: 'Fresh gas flow is not modelled, so volatile wash-in does not change with flow '
-      + 'and there is no circuit rebreathing.',
-    whereItMisleads: 'Learning low-flow anaesthesia, or understanding why a vaporizer setting takes '
-      + 'so much longer to reach the alveolus at 0.5 L/min than at 8 L/min.',
-    correctUnderstanding: 'At low fresh gas flow the circuit concentration lags the dial setting '
-      + 'substantially, which is the whole difficulty of low-flow technique.',
-    briefIn: ['routine-induction'],
+    id: 'fresh-gas-flow-is-a-teaching-model',
+    headline: 'Fresh gas flow scales a calibrated volatile wash-in and washout time constant; there is no breathing-circuit, uptake, rebreathing, or agent-consumption model.',
+    simplification: 'The original 2.5-minute volatile time constant is divided by bounded fresh '
+      + 'gas flow. This gives the correct direction and a usable crisis response but does not '
+      + 'represent circuit volume, patient uptake, agent solubility, rebreathing, or consumption.',
+    whereItMisleads: 'Predicting a real end-tidal concentration, washout time, or agent use from a '
+      + 'specific fresh-gas flow, especially during low-flow anesthesia or workstation flushing.',
+    correctUnderstanding: 'Fresh-gas flow, circuit volume, uptake, solubility, and ventilation all '
+      + 'shape volatile wash-in and washout. Here flow changes one teaching-model time constant only.',
+    briefIn: [
+      'routine-induction', 'early-malignant-hyperthermia-during-volatile-anesthesia',
+    ],
   },
   {
     id: 'no-neuromuscular-blockade',

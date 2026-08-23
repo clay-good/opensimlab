@@ -35,17 +35,20 @@ describe('Requirement: bounded upper-airway support is operable without naming t
       resuscitation: {
         epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
         lastEpinephrineTick: null, crystalloidTotalMl: 0,
+        dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
+        lastDantroleneTick: null, activeCooling: false,
       },
       lastExposure: null,
       syringeRemaining: {},
       ventilator: {
         mode: 'manual', tidalVolumeMl: 500, respiratoryRateBpm: 12,
-        fio2: 1, peep: 5, delivering, sevofluranePercent: 0,
+        fio2: 1, peep: 5, delivering, sevofluranePercent: 0, freshGasFlowLPerMin: 2,
       },
       intubated: false,
       airwayAttempts: 0,
       lastGrade: null,
       jawThrustCpapSecondsRemaining: secondsRemaining,
+      muscleRigidityFraction: 0,
       onBolus: () => {},
       onInfusion: () => {},
       onHypnoticLine: () => {},
@@ -54,6 +57,8 @@ describe('Requirement: bounded upper-airway support is operable without naming t
       onLaryngoscopy: () => {},
       onAirwayManeuver,
       onEpinephrine: () => {},
+      onDantrolene: () => {},
+      onActiveCooling: () => {},
       onDrugCard: () => {},
     };
     act(() => root.render(createElement(ActionCockpit, props)));

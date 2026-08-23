@@ -23,6 +23,7 @@ export const ANNOUNCE_THRESHOLDS: Partial<Record<StateField, readonly number[]>>
   meanArterialMmHg: [65, 55, 45],
   heartRateBpm: [45, 50, 100, 120, 140],
   etco2MmHg: [20, 25, 45, 55],
+  coreTemperatureC: [38, 39],
   depthIndex: [30, 40, 60, 70],
   trainOfFourRatio: [0.1, 0.9],
 };
@@ -84,7 +85,14 @@ export function stateSummary(
   options: {
     readonly alarms: readonly EngineAlarm[];
     readonly infusions: readonly { drugId: string; rate: number; unit: string }[];
-    readonly ventilator: { mode: string; tidalVolumeMl: number; respiratoryRateBpm: number; fio2: number; delivering: boolean };
+    readonly ventilator: {
+      mode: string;
+      tidalVolumeMl: number;
+      respiratoryRateBpm: number;
+      fio2: number;
+      delivering: boolean;
+      freshGasFlowLPerMin?: number;
+    };
     readonly invalid: ReadonlySet<string>;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
@@ -92,9 +100,14 @@ export function stateSummary(
       readonly epinephrineEffectFraction: number;
       readonly epinephrineTotalMicrograms: number;
       readonly crystalloidTotalMl: number;
+      readonly dantroleneTotalMg?: number;
+      readonly dantroleneEffectFraction?: number;
+      readonly activeCooling?: boolean;
     };
     readonly epinephrineLabel?: string;
     readonly lastExposure?: { readonly agentId: string; readonly tick: number } | null;
+    readonly showEpinephrineSupport?: boolean;
+    readonly showHypermetabolicSupport?: boolean;
   },
 ): string {
   const lines: string[] = ['Current state.'];
@@ -114,20 +127,36 @@ export function stateSummary(
     : `Infusions: ${options.infusions.map((i) => `${i.drugId} at ${i.rate.toFixed(1)} ${i.unit}`).join(', ')}.`);
   lines.push(`Ventilator: ${options.ventilator.mode}, `
     + `inspired oxygen fraction ${options.ventilator.fio2.toFixed(2)}, `
+    + (options.ventilator.freshGasFlowLPerMin === undefined
+      ? '' : `fresh gas flow ${options.ventilator.freshGasFlowLPerMin.toFixed(1)} litres per minute, `)
     + (options.ventilator.delivering
-      ? `tidal volume ${options.ventilator.tidalVolumeMl} millilitres at ${options.ventilator.respiratoryRateBpm} per minute.`
+      ? `tidal volume ${options.ventilator.tidalVolumeMl} millilitres at ${options.ventilator.respiratoryRateBpm} per minute, `
+        + `delivered minute ventilation ${(
+          options.ventilator.tidalVolumeMl * options.ventilator.respiratoryRateBpm / 1000
+        ).toFixed(1)} litres per minute.`
       : 'not delivering breaths.'));
   lines.push((options.jawThrustCpapSecondsRemaining ?? 0) > 0
     ? options.ventilator.delivering
       ? 'Jaw thrust and continuous positive airway pressure are being applied.'
       : 'A jaw thrust hold is active, but the ventilator is not delivering positive pressure.'
     : 'No held airway maneuver is active.');
-  if (options.resuscitation) {
+  if (options.resuscitation && (options.showEpinephrineSupport ?? true)) {
     const name = options.epinephrineLabel ?? 'epinephrine';
     lines.push(`Accepted crisis support: ${name} ${options.resuscitation.epinephrineTotalMicrograms.toFixed(0)} micrograms intravenous; balanced crystalloid ${options.resuscitation.crystalloidTotalMl.toFixed(0)} millilitres.`);
     if (options.resuscitation.epinephrineEffectFraction > 0) {
       lines.push(`The ${name} teaching-model effect is active.`);
     }
+  }
+  if (options.resuscitation && options.showHypermetabolicSupport) {
+    lines.push(`Accepted dantrolene total: ${(options.resuscitation.dantroleneTotalMg ?? 0).toFixed(0)} milligrams intravenous.`);
+    if ((options.resuscitation.dantroleneEffectFraction ?? 0) > 0) {
+      lines.push('The dantrolene teaching-model effect is active.');
+    }
+    lines.push(`Active cooling is ${options.resuscitation.activeCooling ? 'on' : 'off'}.`);
+    const rigidity = state.muscleRigidityFraction >= 0.75 ? 'marked'
+      : state.muscleRigidityFraction >= 0.4 ? 'moderate'
+        : state.muscleRigidityFraction > 0.05 ? 'mild' : 'none observed';
+    lines.push(`Muscle rigidity: ${rigidity}.`);
   }
   if (options.lastExposure) {
     lines.push(`Most recent modeled trigger exposure: ${options.lastExposure.agentId}.`);

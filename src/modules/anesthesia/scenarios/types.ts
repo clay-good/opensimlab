@@ -78,6 +78,7 @@ export interface ScenarioEquipment {
     readonly fio2: number;
     readonly tidalVolumeMl: number;
     readonly respiratoryRateBpm: number;
+    readonly freshGasFlowLPerMin?: number;
     readonly delivering: boolean;
   };
 }

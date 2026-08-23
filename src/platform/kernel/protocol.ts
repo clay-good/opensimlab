@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 7 reports resuscitation delivery. */
-export const WORKER_PROTOCOL_VERSION = 7;
+/** Bumped whenever the message shape changes incompatibly. Version 8 reports MH support and fresh gas flow. */
+export const WORKER_PROTOCOL_VERSION = 8;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -159,6 +159,7 @@ export interface EquipmentSnapshot {
     readonly mode: 'volume-control' | 'pressure-control' | 'manual';
     readonly tidalVolumeMl: number;
     readonly respiratoryRateBpm: number;
+    readonly freshGasFlowLPerMin: number;
     readonly fio2: number;
     readonly peep: number;
     readonly delivering: boolean;
@@ -193,6 +194,10 @@ export interface EquipmentSnapshot {
     readonly epinephrineTotalMicrograms: number;
     readonly lastEpinephrineTick: number | null;
     readonly crystalloidTotalMl: number;
+    readonly dantroleneTotalMg: number;
+    readonly dantroleneEffectFraction: number;
+    readonly lastDantroleneTick: number | null;
+    readonly activeCooling: boolean;
   };
   /** The most recent modeled trigger exposure, without diagnosing the response. */
   readonly lastExposure: { readonly agentId: string; readonly tick: number } | null;

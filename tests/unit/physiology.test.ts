@@ -44,7 +44,7 @@ const ELDERLY_ASA3: PatientProfile = {
 
 const VENTILATED: VentilatorSettings = {
   peep: 0, mode: 'volume-control', tidalVolumeMl: 500, respiratoryRateBpm: 12,
-  fio2: 0.5, delivering: true, sevofluranePercent: 0,
+  fio2: 0.5, freshGasFlowLPerMin: 1, delivering: true, sevofluranePercent: 0,
 };
 const QUIET: ScenarioDrive = {
   surgicalStimulus: 0, obstructionFraction: 0, bloodLossMl: 0, crystalloidMl: 0,

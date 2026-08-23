@@ -70,7 +70,9 @@ Reviewers run the routine induction themselves before answering.
 | B19 | Saturation trajectory before and during the modeled initial laryngospasm response | | |
 | B20 | Abrupt pressure fall and bronchospasm after modeled cefazolin exposure | | |
 | B21 | Pressure and ventilation response to 50 micrograms IV epinephrine and 1,000 mL crystalloid | | |
-| B22 | Overall: does this patient behave like a patient? | | |
+| B22 | Rising end-tidal carbon dioxide before tachycardia, rigidity, and later temperature change during the modeled hypermetabolic response | | |
+| B23 | Carbon-dioxide, heart-rate, rigidity, and temperature response after stopping volatile, hyperventilating with high-flow 100% oxygen, and giving dantrolene | | |
+| B24 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -87,10 +89,11 @@ So that reviewers spend their attention on what this review is for:
 - Rocuronium onset and spontaneous recovery use a teaching model. Reversal and emergence are not modelled.
 - Peripheral train-of-four is observable but does not guarantee conditions at the larynx.
 - The full-stomach case does not model regurgitation, aspiration, or cricoid pressure.
-- No fresh gas flow; volatile wash-in does not change with flow.
+- Fresh gas flow scales a calibrated volatile wash-in/washout time constant; there is no circuit,
+  uptake, rebreathing, or agent-consumption model.
 - Balanced crystalloid uses a fixed-retention teaching model. There are no blood products,
   coagulation effects, laboratory guidance, or resuscitation actions.
-- Nine scenarios use propofol and remifentanil; the rapid-sequence and awareness-risk cases add rocuronium. The
+- Ten scenarios use propofol and remifentanil; the rapid-sequence and awareness-risk cases add rocuronium. The
   hemorrhage case covers recognition and initial crystalloid temporization, not a
   massive-transfusion protocol.
 - The TIVA-line case models a binary propofol delivery interruption while the commanded pump rate
@@ -102,4 +105,7 @@ So that reviewers spend their attention on what this review is for:
 - The perioperative-anaphylaxis case models cefazolin exposure followed by vasodilation, plasma
   leak, and bronchospasm. It cannot show rash, swelling, tryptase, trigger removal, team actions,
   arrest, or the refractory pathway, and its pattern or response does not establish a diagnosis.
+- The malignant-hyperthermia case models an early volatile-triggered hypermetabolic pattern and
+  initial response. Exact trajectories and dantrolene relief are teaching models; laboratory-guided
+  acidosis and hyperkalemia treatment, rhabdomyolysis, team actions, and post-crisis care are absent.
 - Nothing here has been clinically reviewed before — you are the first.

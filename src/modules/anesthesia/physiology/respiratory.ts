@@ -108,6 +108,8 @@ export interface VentilationInput {
   readonly hemoglobinGPerDl: number;
   /** Circulating blood volume, millilitres. */
   readonly bloodVolumeMl: number;
+  /** Bounded hypermetabolic oxygen consumption and carbon dioxide production multiplier. */
+  readonly metabolicRateMultiplier?: number;
 }
 
 export interface GasResult {
@@ -146,7 +148,8 @@ export function stepGas(
   // Carbon dioxide. Net accumulation is production minus clearance, and the
   // arterial tension moves by that net divided by the body's store.
   const clearance = (va * gas.paco2MmHg) / 863;
-  const netLitresPerMin = profile.vco2LitresPerMin - clearance;
+  const metabolicRate = clamp(input.metabolicRateMultiplier ?? 1, 1, 5);
+  const netLitresPerMin = profile.vco2LitresPerMin * metabolicRate - clearance;
   gas.paco2MmHg = Math.max(
     gas.paco2MmHg + (netLitresPerMin * 1000 * minutes) / CO2_STORE_ML_PER_MMHG,
     5,
@@ -172,7 +175,7 @@ export function stepGas(
   const bloodCapacitance = Math.max(litresPerSaturationPoint * saturationSlope, 0);
   const combinedCapacitance = alveolarCapacitance + bloodCapacitance;
 
-  const consumedLitres = profile.vo2LitresPerMin * minutes;
+  const consumedLitres = profile.vo2LitresPerMin * metabolicRate * minutes;
   const tensionFall = consumedLitres / combinedCapacitance;
   gas.alveolarOxygenLitres = Math.max(
     gas.alveolarOxygenLitres - alveolarCapacitance * tensionFall, 0,

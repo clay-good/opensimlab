@@ -150,6 +150,10 @@ Its fifth slice adds abrupt hypotension with coupled bronchospasm after cefazoli
 records initial intravenous epinephrine, crystalloid, oxygen, and ventilation. It models an
 observable response pattern, not definitive diagnosis, laboratory confirmation, team behavior,
 or refractory management.
+Its sixth slice adds a volatile-triggered malignant-hyperthermia teaching model in which rising
+carbon dioxide precedes tachycardia, observable rigidity, and later heat. Learners stop volatile
+delivery, establish high-flow 100% oxygen with hyperventilation, and give repeatable 2.5 mg/kg IV
+dantrolene. It covers early recognition and initial response, not the complete crisis or post-crisis protocol.
 
 ## Running it
 

@@ -34,10 +34,11 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.5';
+export const ENGINE_VERSION = '0.1.0-alpha.6';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
+export const DANTROLENE_DOSE_MG_PER_KG = 2.5;
 
 export type Scenario = ScenarioDocument;
 
@@ -58,6 +59,7 @@ export const VENTILATOR_BOUNDS = {
   fio2: { min: 0.21, max: 1, guardedBelow: true },
   tidalVolumeMl: { min: 0, max: 1500, guardedBelow: false },
   respiratoryRateBpm: { min: 0, max: 60, guardedBelow: false },
+  freshGasFlowLPerMin: { min: 0.5, max: 15, guardedBelow: false },
   peep: { min: 0, max: 30, guardedBelow: false },
   sevofluranePercent: { min: 0, max: 8, guardedBelow: false },
 } as const;
@@ -168,6 +170,14 @@ export class AnesthesiaEngine {
   private epinephrineTotalMicrograms = 0;
   private lastEpinephrineTick: number | null = null;
   private crystalloidTotalMl = 0;
+  private dantroleneTotalMg = 0;
+  private dantroleneEffectFraction = 0;
+  private lastDantroleneTick: number | null = null;
+  private activeCooling = false;
+  /** Latent susceptibility declared by content; exposure, not the event, starts physiology. */
+  private malignantHyperthermiaSusceptibility = 0;
+  /** Persistent crisis drive after genuine volatile exposure. */
+  private malignantHyperthermiaActivation = 0;
   private lastExposure: { agentId: string; tick: number } | null = null;
   /** Persistent mediator severity after a modeled exposure. */
   private anaphylaxisSeverity = 0;
@@ -220,7 +230,8 @@ export class AnesthesiaEngine {
     const v = options.scenario.equipment.ventilator;
     this.ventilator = {
       mode: v.mode, tidalVolumeMl: v.tidalVolumeMl, respiratoryRateBpm: v.respiratoryRateBpm,
-      fio2: v.fio2, peep: 0, delivering: v.delivering, sevofluranePercent: 0,
+      fio2: v.fio2, freshGasFlowLPerMin: v.freshGasFlowLPerMin ?? 1,
+      peep: 0, delivering: v.delivering, sevofluranePercent: 0,
     };
 
     for (const entry of options.scenario.formulary) {
@@ -400,6 +411,50 @@ export class AnesthesiaEngine {
           `Epinephrine ${dose} micrograms IV given for perioperative resuscitation. `
           + 'The response is an Open Sim Lab teaching effect, not an individual prediction.',
           { drugId: 'epinephrine', route: 'iv', doseMicrograms: dose, teachingModel: true });
+        break;
+      }
+      case 'dantrolene': {
+        const dose = AnesthesiaEngine.finiteAmount(action.payload.doseMgPerKg);
+        if (action.payload.route !== 'iv' || dose !== DANTROLENE_DOSE_MG_PER_KG) {
+          this.log('warning', 'drug', `bad-dantrolene-${this.currentTick}`,
+            `Dantrolene must be a finite ${DANTROLENE_DOSE_MG_PER_KG} mg/kg IV bolus in this `
+            + 'initial-response model. Nothing was given.');
+          break;
+        }
+        const actualMg = dose * this.covariates.weightKg;
+        this.dantroleneTotalMg += actualMg;
+        const hasActiveCrisis = this.malignantHyperthermiaActivation >= 0.05;
+        if (hasActiveCrisis) {
+          this.dantroleneEffectFraction = clamp(this.dantroleneEffectFraction + 0.6, 0, 1);
+          this.malignantHyperthermiaActivation *= 0.4;
+        }
+        this.lastDantroleneTick = this.currentTick;
+        this.log('warning', 'drug', `dantrolene-iv-${this.currentTick}`,
+          `Dantrolene ${dose} mg/kg IV (${actualMg.toFixed(0)} mg) given. The crisis response is `
+          + (hasActiveCrisis
+            ? 'an Open Sim Lab teaching effect, not an individual prediction.'
+            : 'No active hypermetabolic response was present, so prophylactic effect is not modeled.'), {
+            drugId: 'dantrolene', route: 'iv', doseMgPerKg: dose, actualMg,
+            effectApplied: hasActiveCrisis, teachingModel: true,
+          });
+        break;
+      }
+      case 'active-cooling': {
+        if (typeof action.payload.active !== 'boolean') {
+          this.log('warning', 'equipment', `bad-active-cooling-${this.currentTick}`,
+            'Active cooling requires an on or off setting. It was left unchanged.');
+          break;
+        }
+        if (action.payload.active && (this.lastState.coreTemperatureC ?? 0) <= 39) {
+          this.log('warning', 'equipment', `early-active-cooling-${this.currentTick}`,
+            'Active cooling was not started at or below 39 °C in this bounded model. Treat the '
+            + 'hypermetabolic crisis first and reassess core temperature.');
+          break;
+        }
+        this.activeCooling = action.payload.active;
+        this.log('info', 'equipment', `active-cooling-${this.currentTick}`,
+          `Active cooling ${this.activeCooling ? 'started' : 'stopped'}.`,
+          { active: this.activeCooling, teachingModel: true });
         break;
       }
       case 'fluid': {
@@ -608,7 +663,8 @@ export class AnesthesiaEngine {
     this.ventilator = { ...this.ventilator, ...settings };
     this.log('info', 'ventilator', `ventilator-${this.currentTick}`,
       `Ventilator: ${this.ventilator.mode}, FiO₂ ${this.ventilator.fio2.toFixed(2)}, `
-      + `${this.ventilator.delivering ? `${this.ventilator.tidalVolumeMl} mL × ${this.ventilator.respiratoryRateBpm}` : 'not delivering'}`);
+      + `${this.ventilator.delivering ? `${this.ventilator.tidalVolumeMl} mL × ${this.ventilator.respiratoryRateBpm}` : 'not delivering'}, `
+      + `fresh gas ${this.ventilator.freshGasFlowLPerMin.toFixed(1)} L/min`);
     this.reportUnmodelledSettings(settings);
   }
 
@@ -740,6 +796,21 @@ export class AnesthesiaEngine {
           return;
         }
         this.triggerAnaphylaxis('cefazolin', severity, `exposure-${event.id}-${this.currentTick}`);
+        return;
+      }
+
+      case 'malignant-hyperthermia': {
+        const severity = event.value;
+        if (event.target !== 'volatile-trigger' || typeof severity !== 'number'
+          || !Number.isFinite(severity) || severity < 0 || severity > 1) {
+          this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" must identify a volatile trigger and a finite `
+            + 'susceptibility from 0 to 1, so the event had no effect.');
+          return;
+        }
+        this.malignantHyperthermiaSusceptibility = Math.max(
+          this.malignantHyperthermiaSusceptibility, severity,
+        );
         return;
       }
 
@@ -879,6 +950,22 @@ export class AnesthesiaEngine {
     const remifentanilCe = remifentanil?.solver.hasEffectSiteCurve ? remifentanil.solver.effectSite : 0;
     const rocuroniumCe = rocuronium?.solver.hasEffectSiteCurve ? rocuronium.solver.effectSite : 0;
 
+    // The event declares latent susceptibility; real volatile exposure starts
+    // the physiology. Once active, trigger removal prevents further escalation
+    // but does not itself reverse the self-sustaining crisis.
+    const endTidalSevo = Number(this.lastState.endTidalSevofluranePercent ?? 0);
+    const volatileTriggerPresent = Number.isFinite(endTidalSevo) && endTidalSevo >= 0.2;
+    if (volatileTriggerPresent && this.malignantHyperthermiaSusceptibility > 0) {
+      const triggerTarget = this.malignantHyperthermiaSusceptibility
+        * (1 - 0.5 * this.dantroleneEffectFraction);
+      this.malignantHyperthermiaActivation += (
+        triggerTarget - this.malignantHyperthermiaActivation
+      ) * (1 - Math.exp(-1 / (600 * 0.25)));
+    }
+    this.malignantHyperthermiaActivation = clamp(this.malignantHyperthermiaActivation, 0, 1);
+    this.dantroleneEffectFraction *= Math.exp(-1 / (600 * 30));
+    const unopposedHypermetabolism = this.malignantHyperthermiaActivation;
+
     const unopposedAnaphylaxis = this.anaphylaxisSeverity
       * (1 - 0.75 * this.epinephrineEffect);
     obstruction = Math.max(obstruction, 0.85 * unopposedAnaphylaxis);
@@ -916,8 +1003,16 @@ export class AnesthesiaEngine {
         upperAirwayClosureFraction: this.upperAirwayClosureFraction,
         bloodLossMl, crystalloidMl,
         anaphylaxisFraction: unopposedAnaphylaxis, capillaryLeakMl,
+        hypermetabolicFraction: unopposedHypermetabolism,
+        activeCooling: this.activeCooling,
       },
     );
+    if (this.activeCooling && result.state.coreTemperatureC < 38) {
+      this.activeCooling = false;
+      this.log('info', 'equipment', `active-cooling-auto-stop-${this.currentTick}`,
+        'Active cooling stopped automatically below 38 °C.',
+        { active: false, teachingModel: true });
+    }
     // A vasopressor's effect wanes; the teaching model decays it over about five minutes.
     this.vasopressorEffect *= Math.exp(-0.1 / 5);
     // Titrated boluses are short acting; this teaching effect decays over roughly 90 seconds.
@@ -1035,6 +1130,10 @@ export class AnesthesiaEngine {
         epinephrineTotalMicrograms: this.epinephrineTotalMicrograms,
         lastEpinephrineTick: this.lastEpinephrineTick,
         crystalloidTotalMl: this.crystalloidTotalMl,
+        dantroleneTotalMg: this.dantroleneTotalMg,
+        dantroleneEffectFraction: this.dantroleneEffectFraction,
+        lastDantroleneTick: this.lastDantroleneTick,
+        activeCooling: this.activeCooling,
       },
       lastExposure: this.lastExposure ? { ...this.lastExposure } : null,
       drugs: [...this.drugs.values()].map((drug) => ({

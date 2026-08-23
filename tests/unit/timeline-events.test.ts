@@ -198,7 +198,8 @@ describe('every declared event type does something', () => {
     // if a name is added without being handled, so this asserts the list itself
     // has not regrown a member that was removed for being unimplementable.
     expect([...EVENT_TYPES]).not.toContain('objective-window');
-    expect(EVENT_TYPES).toHaveLength(10);
+    expect(EVENT_TYPES).toContain('malignant-hyperthermia');
+    expect(EVENT_TYPES).toHaveLength(11);
   });
 });
 

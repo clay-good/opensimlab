@@ -7,7 +7,7 @@
  * the same seed reproduce the same trace on any device.
  */
 
-import { clamp } from '@platform/kernel/numeric';
+import { approach, clamp } from '@platform/kernel/numeric';
 import type { Rng } from '@platform/kernel/rng';
 import type { Attribution } from '@platform/kernel/protocol';
 import { AttributionRecorder } from './attribution';
@@ -72,6 +72,8 @@ export interface VentilatorSettings {
   readonly tidalVolumeMl: number;
   readonly respiratoryRateBpm: number;
   readonly fio2: number;
+  /** Fresh gas flow, litres per minute, which sets volatile wash-in and washout speed. */
+  readonly freshGasFlowLPerMin: number;
   /**
    * Positive end-expiratory pressure, in cmH₂O. Carried so the tray shows the
    * setting the machine actually holds. Its effect on functional residual
@@ -100,6 +102,10 @@ export interface ScenarioDrive {
   readonly anaphylaxisFraction?: number;
   /** Plasma volume leaving the circulation this tick through capillary leak. */
   readonly capillaryLeakMl?: number;
+  /** 0 to 1 active hypermetabolic crisis after treatment opposition. */
+  readonly hypermetabolicFraction?: number;
+  /** Whether active cooling is being applied at a modeled treatment temperature. */
+  readonly activeCooling?: boolean;
 }
 
 export interface TickResult {
@@ -148,6 +154,9 @@ export class VirtualPatient {
   readonly airway: AirwayState;
   private readonly rng: Rng;
   private temperatureC: number;
+  private thermalLoadFraction = 0;
+  private hypermetabolicCardiovascularFraction = 0;
+  private muscleRigidityFraction = 0;
   /** Circulating hemoglobin mass, so blood loss and crystalloid dilution remain coherent. */
   private hemoglobinMassG: number;
   private sevofluranePercent = 0;
@@ -219,6 +228,7 @@ export class VirtualPatient {
       respiratoryRateBpm: 0,
       tidalVolumeMl: 0,
       coreTemperatureC: this.temperatureC,
+      muscleRigidityFraction: this.muscleRigidityFraction,
       depthIndex: 93,
       trainOfFourRatio: 1,
       trainOfFourCount: 4,
@@ -252,6 +262,47 @@ export class VirtualPatient {
   /** Advance one tick. */
   tick(drugs: DrugDrive, ventilator: VentilatorSettings, scenario: ScenarioDrive): TickResult {
     const recorder = new AttributionRecorder();
+    const hypermetabolic = clamp(scenario.hypermetabolicFraction ?? 0, 0, 1);
+    this.hypermetabolicCardiovascularFraction = approach(
+      this.hypermetabolicCardiovascularFraction, hypermetabolic, 0.9, TICK_MINUTES,
+    );
+    this.thermalLoadFraction = approach(
+      this.thermalLoadFraction, hypermetabolic, 2.5, TICK_MINUTES,
+    );
+    const previousRigidity = this.muscleRigidityFraction;
+    this.muscleRigidityFraction = approach(
+      this.muscleRigidityFraction, hypermetabolic, 3.2, TICK_MINUTES,
+    );
+    const rigidityChange = this.muscleRigidityFraction - previousRigidity;
+    if (Math.abs(rigidityChange) > 1e-12) {
+      recorder.add(
+        'muscleRigidityFraction', rigidityChange > 0 ? 'hypermetabolic-rigidity' : 'dantrolene-relief',
+        rigidityChange > 0 ? 'Hypermetabolic muscle rigidity' : 'Dantrolene relief of rigidity',
+        rigidityChange, { teachingModel: true },
+      );
+    }
+
+    const heatDelta = 0.42 * this.thermalLoadFraction * TICK_MINUTES;
+    const coolingDelta = scenario.activeCooling && this.temperatureC >= 38
+      ? -1.2 * TICK_MINUTES : 0;
+    const rawTemperatureDelta = heatDelta + coolingDelta;
+    const nextTemperature = clamp(this.temperatureC + rawTemperatureDelta, 25, 43);
+    const actualTemperatureDelta = nextTemperature - this.temperatureC;
+    const temperatureScale = Math.abs(rawTemperatureDelta) > 1e-12
+      ? actualTemperatureDelta / rawTemperatureDelta : 0;
+    this.temperatureC = nextTemperature;
+    if (heatDelta > 0 && temperatureScale !== 0) {
+      recorder.add(
+        'coreTemperatureC', 'hypermetabolic-heat', 'Hypermetabolic heat production',
+        heatDelta * temperatureScale, { teachingModel: true },
+      );
+    }
+    if (coolingDelta < 0 && temperatureScale !== 0) {
+      recorder.add(
+        'coreTemperatureC', 'active-cooling', 'Active cooling',
+        coolingDelta * temperatureScale, { teachingModel: true },
+      );
+    }
 
     // --- Volume ---------------------------------------------------------------
     if (scenario.bloodLossMl > 0 || scenario.crystalloidMl > 0 || (scenario.capillaryLeakMl ?? 0) > 0) {
@@ -307,6 +358,7 @@ export class VirtualPatient {
       vasopressorEffect: drugs.vasopressorEffect,
       anaphylaxisFraction: scenario.anaphylaxisFraction,
       epinephrineEffect: drugs.epinephrineEffect,
+      hypermetabolicFraction: this.hypermetabolicCardiovascularFraction,
       positivePressure: ventilator.delivering && ventilator.mode !== 'manual',
       saturationPercent: this.lastSaturationPercent,
       volatileMacFraction: volatile,
@@ -402,6 +454,7 @@ export class VirtualPatient {
       obstructionFraction: scenario.obstructionFraction,
       hemoglobinGPerDl: this.hemoglobinGPerDl(),
       bloodVolumeMl: this.hemodynamics.bloodVolumeMl,
+      metabolicRateMultiplier: 1 + 4 * hypermetabolic,
     }, this.profile.respiratory, TICK_MINUTES);
 
     if (tidal === 0 || rate === 0) {
@@ -426,10 +479,12 @@ export class VirtualPatient {
     }
 
     // --- Volatile agent ---------------------------------------------------------
-    // A first-order wash-in toward the dial setting. Fresh gas flow is not yet
-    // modelled in this slice; the limitations register records that.
+    // A first-order wash-in toward the dial setting, accelerated by fresh gas
+    // flow. This is a declared teaching calibration, not a breathing-system,
+    // uptake, distribution or rebreathing model.
+    const volatileTauMinutes = 2.5 / clamp(ventilator.freshGasFlowLPerMin, 0.5, 15);
     this.sevofluranePercent += (ventilator.sevofluranePercent - this.sevofluranePercent)
-      * (1 - Math.exp(-TICK_MINUTES / 2.5));
+      * (1 - Math.exp(-TICK_MINUTES / volatileTauMinutes));
 
     // --- Assemble ---------------------------------------------------------------
     // Recomputed from the state rather than taken from the haemodynamic step,
@@ -472,6 +527,7 @@ export class VirtualPatient {
       respiratoryRateBpm: rate,
       tidalVolumeMl: tidal,
       coreTemperatureC: this.temperatureC,
+      muscleRigidityFraction: this.muscleRigidityFraction,
       depthIndex: depth,
       trainOfFourRatio: neuromuscular.trainOfFourRatio,
       trainOfFourCount: neuromuscular.trainOfFourCount,

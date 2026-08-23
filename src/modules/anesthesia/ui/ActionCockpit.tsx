@@ -41,6 +41,10 @@ export interface ActionCockpitProps {
     readonly epinephrineTotalMicrograms: number;
     readonly lastEpinephrineTick: number | null;
     readonly crystalloidTotalMl: number;
+    readonly dantroleneTotalMg: number;
+    readonly dantroleneEffectFraction: number;
+    readonly lastDantroleneTick: number | null;
+    readonly activeCooling: boolean;
   };
   readonly lastExposure: { readonly agentId: string; readonly tick: number } | null;
   readonly syringeRemaining: Readonly<Record<string, number>>;
@@ -52,6 +56,7 @@ export interface ActionCockpitProps {
     peep: number;
     delivering: boolean;
     sevofluranePercent: number;
+    freshGasFlowLPerMin: number;
   };
   readonly intubated: boolean;
   readonly airwayAttempts: number;
@@ -59,6 +64,7 @@ export interface ActionCockpitProps {
   readonly airwayAttemptInProgress?: boolean;
   readonly airwayAttemptSecondsRemaining?: number;
   readonly jawThrustCpapSecondsRemaining: number;
+  readonly muscleRigidityFraction: number;
   readonly onBolus: (drugId: string, amount: number, unit: string) => void;
   readonly onInfusion: (drugId: string, rate: number, unit: string) => void;
   readonly onHypnoticLine: (action: 'inspect' | 'reconnect') => void;
@@ -67,6 +73,8 @@ export interface ActionCockpitProps {
   readonly onLaryngoscopy: (technique: 'direct' | 'video') => void;
   readonly onAirwayManeuver: (maneuver: 'jaw-thrust-cpap') => void;
   readonly onEpinephrine: (doseMicrograms: 10 | 20 | 50) => void;
+  readonly onDantrolene: () => void;
+  readonly onActiveCooling: (active: boolean) => void;
   readonly onDrugCard: (drugId: string) => void;
 }
 
@@ -95,7 +103,7 @@ const TRAYS: { id: TrayId; label: string }[] = [
   { id: 'fluids', label: 'Fluids' },
   { id: 'airway', label: 'Airway & Vent' },
 ];
-const CRISIS_TRAY = { id: 'crisis', label: 'Crisis drugs' } as const;
+const CRISIS_TRAY = { id: 'crisis', label: 'Crisis response' } as const;
 
 /**
  * Said once, in the place a learner would go looking for the missing thing.
@@ -111,8 +119,12 @@ export const NOT_IN_THIS_BUILD =
 
 export function ActionCockpit(props: ActionCockpitProps) {
   const [tray, setTray] = useState<TrayId>('syringes');
-  const hasCrisisDrugs = props.scenario.timeline.some((event) => event.type === 'anaphylaxis');
-  const trays = hasCrisisDrugs ? [...TRAYS, CRISIS_TRAY] : TRAYS;
+  const hasAnaphylaxisResponse = props.scenario.timeline.some((event) => event.type === 'anaphylaxis');
+  const hasHypermetabolicResponse = props.scenario.timeline.some(
+    (event) => event.type === 'malignant-hyperthermia',
+  );
+  const hasCrisisResponse = hasAnaphylaxisResponse || hasHypermetabolicResponse;
+  const trays = hasCrisisResponse ? [...TRAYS, CRISIS_TRAY] : TRAYS;
 
   return (
     <div className="actions">
@@ -176,13 +188,28 @@ export function ActionCockpit(props: ActionCockpitProps) {
             onAirwayManeuver={props.onAirwayManeuver}
           />
         )}
-        {tray === 'crisis' && hasCrisisDrugs && (
-          <CrisisDrugTray
-            region={props.region}
-            epinephrineTotalMicrograms={props.resuscitation.epinephrineTotalMicrograms}
-            lastExposure={props.lastExposure}
-            onEpinephrine={props.onEpinephrine}
-          />
+        {tray === 'crisis' && hasCrisisResponse && (
+          <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+            {hasAnaphylaxisResponse && (
+              <EpinephrineCrisisTray
+                region={props.region}
+                epinephrineTotalMicrograms={props.resuscitation.epinephrineTotalMicrograms}
+                lastExposure={props.lastExposure}
+                onEpinephrine={props.onEpinephrine}
+              />
+            )}
+            {hasHypermetabolicResponse && (
+              <HypermetabolicCrisisTray
+                weightKg={props.scenario.patient.weightKg}
+                muscleRigidityFraction={props.muscleRigidityFraction}
+                dantroleneTotalMg={props.resuscitation.dantroleneTotalMg}
+                dantroleneEffectFraction={props.resuscitation.dantroleneEffectFraction}
+                activeCooling={props.resuscitation.activeCooling}
+                onDantrolene={props.onDantrolene}
+                onActiveCooling={props.onActiveCooling}
+              />
+            )}
+          </div>
         )}
         {/* Inside the scrolling tray, not as a row of its own.
             As a fixed row it cost the tray forty pixels it does not have on a
@@ -247,7 +274,7 @@ function FluidTray({ crystalloidTotalMl, onFluid }: {
   );
 }
 
-function CrisisDrugTray({ region, epinephrineTotalMicrograms, lastExposure, onEpinephrine }: {
+function EpinephrineCrisisTray({ region, epinephrineTotalMicrograms, lastExposure, onEpinephrine }: {
   region: RegionProfile;
   epinephrineTotalMicrograms: number;
   lastExposure: { readonly agentId: string; readonly tick: number } | null;
@@ -311,6 +338,84 @@ function CrisisDrugTray({ region, epinephrineTotalMicrograms, lastExposure, onEp
             ? `${lastExposure.agentId} was the most recent modeled trigger exposure.`
             : 'No modeled trigger exposure has been recorded.'}
         </p>
+      </section>
+    </div>
+  );
+}
+
+function HypermetabolicCrisisTray({
+  weightKg, muscleRigidityFraction, dantroleneTotalMg, dantroleneEffectFraction,
+  activeCooling, onDantrolene, onActiveCooling,
+}: {
+  weightKg: number;
+  muscleRigidityFraction: number;
+  dantroleneTotalMg: number;
+  dantroleneEffectFraction: number;
+  activeCooling: boolean;
+  onDantrolene: () => void;
+  onActiveCooling: (active: boolean) => void;
+}) {
+  const [pending, setPending] = useState(false);
+  const doseMg = weightKg * 2.5;
+  const rigidity = muscleRigidityFraction >= 0.75 ? 'marked'
+    : muscleRigidityFraction >= 0.4 ? 'moderate'
+      : muscleRigidityFraction > 0.05 ? 'mild' : 'none observed';
+
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="dantrolene-title">
+        <div id="dantrolene-title" className="syringe__name">Dantrolene</div>
+        <div className="syringe__meta">Intravenous dose · weight-based</div>
+        <Badge kind="teaching">Teaching model</Badge>
+        <p className="field__hint">
+          Pre-prepared dose action. Reconstitution, vial inventory, laboratory treatment, and
+          dose adjustment beyond the displayed weight calculation are not modeled.
+        </p>
+        <p className="syringe__remaining" role="status">
+          Accepted total: {dantroleneTotalMg.toFixed(0)} mg IV
+          {dantroleneEffectFraction > 0 ? ' · modeled effect active' : ''}
+        </p>
+        {!pending ? (
+          <Button className="crisis-drug__action" onClick={() => setPending(true)}>
+            Prepare 2.5 mg/kg IV
+          </Button>
+        ) : (
+          <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
+            <span className="numeric">Give 2.5 mg/kg IV = {doseMg.toFixed(0)} mg?</span>
+            <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+              <Button
+                variant="primary"
+                className="crisis-drug__action"
+                onClick={() => { onDantrolene(); setPending(false); }}
+              >
+                Give dantrolene
+              </Button>
+              <Button
+                variant="ghost"
+                className="crisis-drug__action"
+                onClick={() => setPending(false)}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        )}
+      </section>
+      <section className="card" aria-labelledby="observable-signs-title">
+        <h3 id="observable-signs-title" className="panel__title" style={{ font: 'var(--type-subtitle)' }}>
+          Observable signs and support
+        </h3>
+        <p className="field__hint" role="status">Muscle rigidity: {rigidity}.</p>
+        <p className="field__hint" role="status">
+          Active cooling: {activeCooling ? 'on' : 'off'}.
+        </p>
+        <Button
+          className="crisis-drug__action"
+          variant={activeCooling ? 'ghost' : 'primary'}
+          onClick={() => onActiveCooling(!activeCooling)}
+        >
+          {activeCooling ? 'Stop active cooling' : 'Start active cooling'}
+        </Button>
       </section>
     </div>
   );
@@ -606,6 +711,16 @@ function AirwayTray({
             max={8}
             step={0.1}
             onChange={(sevofluranePercent) => onVentilator({ sevofluranePercent })}
+          />
+          <Slider
+            label="Fresh gas flow"
+            unit="L/min"
+            value={ventilator.freshGasFlowLPerMin}
+            min={0.5}
+            max={15}
+            step={0.5}
+            precision={1}
+            onChange={(freshGasFlowLPerMin) => onVentilator({ freshGasFlowLPerMin })}
           />
         </div>
         <p className="field__hint">

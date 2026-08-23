@@ -235,6 +235,39 @@ export const EXPLAINERS: readonly Explainer[] = [
       + 'Blockade (PMID 36520073).',
     review: UNSIGNED,
   },
+  {
+    id: 'malignant-hyperthermia-early-pattern',
+    title: 'Malignant hyperthermia: carbon dioxide before temperature',
+    body:
+      'Malignant hyperthermia is a rare hypermetabolic response in a susceptible person exposed '
+      + 'to a potent volatile anesthetic or succinylcholine. The name invites a dangerous mistake: '
+      + 'waiting for hyperthermia. Rising carbon dioxide despite adequate minute ventilation and '
+      + 'unexplained tachycardia are common early clues; rigidity may follow, while temperature is '
+      + 'often later. None of these findings alone proves the diagnosis.\n\n'
+      + 'When the pattern is suspected, stop triggering agents, use high-flow 100% oxygen and '
+      + 'hyperventilation, and give intravenous dantrolene promptly. MHAUS specifies 2.5 mg/kg IV '
+      + 'and repetition until carbon dioxide, rigidity, or heart rate improves. Cooling is guided '
+      + 'by temperature, not started and continued without an endpoint.\n\n'
+      + 'This scenario exposes only the early pattern and initial response. Its carbon-dioxide, '
+      + 'rigidity, heat, and dantrolene trajectories are bounded teaching models. Real management '
+      + 'also requires help, laboratory-guided treatment of acidosis and hyperkalemia, monitoring '
+      + 'for rhabdomyolysis and complications, and continued post-crisis care.',
+    diagram: {
+      kind: 'capnogram-phases',
+      caption: 'End-tidal carbon dioxide rises before the later modeled temperature increase.',
+    },
+    showMe: { scenarioId: 'early-malignant-hyperthermia-during-volatile-anesthesia', atTick: 2400 },
+    reflects: 'MHAUS Managing a Crisis, current page consulted 2026-08-23; EMHG updated 2024 '
+      + 'guideline (PMID 39482150); Larach et al. registry analysis (PMID 20081135).',
+    review: {
+      ...UNSIGNED,
+      sources: [
+        'MHAUS Managing a Crisis, current page consulted 2026-08-23',
+        'EMHG updated 2024 guideline, PMID 39482150',
+        'Larach et al. 2010, PMID 20081135',
+      ],
+    },
+  },
 ];
 
 export function getExplainer(id: string): Explainer {

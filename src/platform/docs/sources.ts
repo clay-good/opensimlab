@@ -352,6 +352,48 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-23',
   },
   {
+    id: 'mhaus-managing-crisis-current',
+    authors: 'Malignant Hyperthermia Association of the United States',
+    title: 'Managing a Crisis: Emergency Treatment for an Acute MH Event',
+    publication: 'MHAUS', year: 2026,
+    locator: 'Current online acute-crisis protocol', unpinned: true,
+    usedFor: 'The initial-response sequence and thresholds: discontinue triggers, 100% oxygen at '
+      + '10 L/min flow, 2.5 mg/kg IV dantrolene repeated to observable response, cooling above '
+      + '39°C and stopping below 38°C, plus the complete steps this slice explicitly omits.',
+    verifiedAgainst: 'The issuing body\'s current Managing a Crisis page, step by step',
+    verifiedOn: '2026-08-23',
+  },
+  {
+    id: 'emhg-mh-crisis-2024',
+    pmid: '39482150',
+    authors: 'Glahn KPE, Girard T, Hellblom A, Hopkins PM, Johannsen S, Rüffert H, Snoeck MM, Urwyler A',
+    title: 'Recognition and management of a malignant hyperthermia crisis: updated 2024 guideline from the European Malignant Hyperthermia Group',
+    publication: 'Br J Anaesth', year: 2025, locator: '134:221-3',
+    usedFor: 'Current independent guideline support for early recognition, removal of volatile '
+      + 'triggers, hyperventilation with 100% oxygen, and prompt dantrolene.',
+    verifiedAgainst: NCBI, verifiedOn: '2026-08-23',
+  },
+  {
+    id: 'hopkins-mh-2020',
+    pmid: '33399225',
+    authors: 'Hopkins PM, Girard T, Dalay S, Jenkins B, Thacker A, Patteril M, McGrady E',
+    title: 'Malignant hyperthermia 2020: Guideline from the Association of Anaesthetists',
+    publication: 'Anaesthesia', year: 2021, locator: '76:655-64',
+    usedFor: 'The volatile-triggered susceptible profile, rare-event incidence range, early '
+      + 'hypermetabolic presentation, and the boundary between acute response and post-crisis care.',
+    verifiedAgainst: NCBI, verifiedOn: '2026-08-23',
+  },
+  {
+    id: 'larach-mh-registry-2010',
+    pmid: '20081135',
+    authors: 'Larach MG, Gronert GA, Allen GC, Brandom BW, Lehman EB',
+    title: 'Clinical presentation, treatment, and complications of malignant hyperthermia in North America from 1987 to 2006',
+    publication: 'Anesth Analg', year: 2010, locator: '110:498-507',
+    usedFor: 'The early pattern and urgency: hypercarbia and sinus tachycardia were frequent '
+      + 'initial signs, while complications increased with higher temperature and delayed dantrolene.',
+    verifiedAgainst: NCBI, verifiedOn: '2026-08-23',
+  },
+  {
     id: 'nap6-epidemiology-2018',
     pmid: '29935567',
     authors: 'Harper NJN, Cook TM, Garcez T, Farmer L, Floss K, Marinho S, et al.',

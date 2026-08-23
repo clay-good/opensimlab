@@ -86,7 +86,7 @@ const QUIET: ScenarioDrive = {
 };
 const SPONTANEOUS: VentilatorSettings = {
   mode: 'manual', tidalVolumeMl: 500, respiratoryRateBpm: 12, fio2: 0.21,
-  peep: 0, delivering: false, sevofluranePercent: 0,
+  freshGasFlowLPerMin: 1, peep: 0, delivering: false, sevofluranePercent: 0,
 };
 const VENTILATED: VentilatorSettings = {
   ...SPONTANEOUS, mode: 'volume-control', delivering: true, fio2: 0.5,

@@ -72,7 +72,7 @@ export const ROUTINE_INDUCTION: Scenario = {
     // three scenarios stored ids and had them printed at the learner as raw
     // kebab-case. Ids everywhere, sentences rendered from the register.
     limitations: [
-      'no-fresh-gas-flow',
+      'fresh-gas-flow-is-a-teaching-model',
       'no-neuromuscular-blockade',
       'no-regional-anaesthesia',
       'no-coagulopathy',

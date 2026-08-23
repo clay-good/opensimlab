@@ -256,17 +256,20 @@ describe('Requirement: Cockpit Is Fully Operable Without A Mouse', () => {
     resuscitation: {
       epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
       lastEpinephrineTick: null, crystalloidTotalMl: 0,
+      dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
+      lastDantroleneTick: null, activeCooling: false,
     },
     lastExposure: null,
     syringeRemaining: {},
     ventilator: {
       mode: 'manual' as const, tidalVolumeMl: 500, respiratoryRateBpm: 12,
-      fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0,
+      fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 2,
     },
     intubated: false,
     airwayAttempts: 0,
     lastGrade: null,
     jawThrustCpapSecondsRemaining: 0,
+    muscleRigidityFraction: 0,
     onBolus: () => {},
     onInfusion: () => {},
     onHypnoticLine: () => {},
@@ -275,6 +278,8 @@ describe('Requirement: Cockpit Is Fully Operable Without A Mouse', () => {
     onLaryngoscopy: () => {},
     onAirwayManeuver: () => {},
     onEpinephrine: () => {},
+    onDantrolene: () => {},
+    onActiveCooling: () => {},
     onDrugCard: () => {},
   }));
 
@@ -565,9 +570,10 @@ describe('Requirement: The Action Cockpit Offers Only Trays That Do Something', 
     const trays = [...baseline.matchAll(/\{ id: '([a-z]+)', label: '([^']+)' \}/g)];
     expect(trays).toHaveLength(4);
     expect(trays.map((m) => m[1])).toEqual(['syringes', 'infusions', 'fluids', 'airway']);
-    expect(source).toContain("const CRISIS_TRAY = { id: 'crisis', label: 'Crisis drugs' }");
+    expect(source).toContain("const CRISIS_TRAY = { id: 'crisis', label: 'Crisis response' }");
     expect(source).toContain("event.type === 'anaphylaxis'");
-    expect(source).toContain('hasCrisisDrugs ? [...TRAYS, CRISIS_TRAY] : TRAYS');
+    expect(source).toContain("event.type === 'malignant-hyperthermia'");
+    expect(source).toContain('hasCrisisResponse ? [...TRAYS, CRISIS_TRAY] : TRAYS');
     // Five tabs fit a phone by scrolling within the strip, not by widening the cockpit.
     expect(componentsCss).toMatch(/\.tabs \{[^}]*overflow-x: auto/s);
   });

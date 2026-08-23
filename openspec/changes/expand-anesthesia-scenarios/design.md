@@ -90,3 +90,21 @@ including settings established before exposure; and
 the lowest saturation. These are observable action and state proxies, not a definitive diagnosis.
 The slice excludes cutaneous signs, tryptase, trigger removal, team behavior, arrest, infusion or
 refractory treatment, and post-event investigation.
+
+## Slice 6: early malignant hyperthermia response
+
+The case begins with ordinary induction and volatile maintenance. A latent event arms at 4
+simulated minutes but produces no syndrome without genuine end-tidal volatile exposure. Once
+triggered, modeled excess carbon-dioxide production appears first, followed by tachycardia and
+observable rigidity, with temperature rising later. The live event does not announce the hidden
+susceptibility or diagnosis.
+
+Objective evaluation uses the first modeled rigidity as an observable scoring anchor. It checks
+an accepted initial-response action, reconstructs vaporizer, oxygen, fresh-gas flow, delivered
+minute ventilation, accepts only exact 2.5 mg/kg IV dantrolene actions, and reports the subsequent
+carbon-dioxide, heart-rate, rigidity, and temperature trajectory. This is an early pattern and
+bounded initial response, not a diagnostic test or complete protocol.
+
+The slice omits succinylcholine and masseter spasm, physical examination, circuit replacement and
+charcoal filters, blood gases, acidosis, potassium, dysrhythmia treatment, rhabdomyolysis, urine
+output, coagulation, team and hotline actions, intensive care, recurrence, and confirmation.

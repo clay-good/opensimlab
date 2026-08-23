@@ -67,7 +67,7 @@ function downloadLocal(filename: string, contents: string, type: string): void {
  */
 const DEFAULT_VENTILATOR = {
   mode: 'manual', tidalVolumeMl: 500, respiratoryRateBpm: 12,
-  fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0,
+  fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 1,
 } as const;
 const DEFAULT_AIRWAY = {
   intubated: false, attempts: 0, lastGrade: null, attemptInProgress: false, attemptSecondsRemaining: 0,
@@ -77,6 +77,8 @@ const DEFAULT_HYPNOTIC_LINE = { connected: true, inspected: false } as const;
 const DEFAULT_RESUSCITATION = {
   epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
   lastEpinephrineTick: null, crystalloidTotalMl: 0,
+  dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
+  lastDantroleneTick: null, activeCooling: false,
 } as const;
 
 export function Cockpit({
@@ -161,6 +163,10 @@ export function Cockpit({
   const hypnoticLine = equipment?.hypnoticLine ?? DEFAULT_HYPNOTIC_LINE;
   const resuscitation = equipment?.resuscitation ?? DEFAULT_RESUSCITATION;
   const lastExposure = equipment?.lastExposure ?? null;
+  const hasAnaphylaxisResponse = scenario.timeline.some((event) => event.type === 'anaphylaxis');
+  const hasHypermetabolicResponse = scenario.timeline.some(
+    (event) => event.type === 'malignant-hyperthermia',
+  );
   const rhythm = (equipment?.rhythmId ?? 'sinus') as RhythmId;
   const invalidParameters = useMemo(
     () => new Set(equipment?.invalidParameters ?? []),
@@ -272,11 +278,13 @@ export function Cockpit({
       resuscitation,
       epinephrineLabel: term(region, 'epinephrine'),
       lastExposure,
+      showEpinephrineSupport: hasAnaphylaxisResponse,
+      showHypermetabolicSupport: hasHypermetabolicResponse,
     }));
   }, [
     session.state, session.alarms, speak, infusions, ventilator, invalidParameters,
     scenario.equipment.monitoring, airway.jawThrustCpapSecondsRemaining,
-    resuscitation, region, lastExposure,
+    resuscitation, region, lastExposure, hasAnaphylaxisResponse, hasHypermetabolicResponse,
   ]);
 
   const readWaveforms = useCallback(() => {
@@ -455,6 +463,7 @@ export function Cockpit({
           airwayAttemptInProgress={airway.attemptInProgress}
           airwayAttemptSecondsRemaining={airway.attemptSecondsRemaining}
           jawThrustCpapSecondsRemaining={airway.jawThrustCpapSecondsRemaining}
+          muscleRigidityFraction={session.state?.muscleRigidityFraction ?? 0}
           onBolus={(drugId, amount, unit) => session.act({ type: 'bolus', payload: { drugId, amount, unit } })}
           onInfusion={(drugId, rate, unit) => session.act({ type: 'infusion', payload: { drugId, rate, unit } })}
           onHypnoticLine={(action) => session.act({ type: 'hypnotic-line', payload: { action } })}
@@ -465,6 +474,10 @@ export function Cockpit({
           onEpinephrine={(doseMicrograms) => session.act({
             type: 'epinephrine', payload: { route: 'iv', doseMicrograms },
           })}
+          onDantrolene={() => session.act({
+            type: 'dantrolene', payload: { route: 'iv', doseMgPerKg: 2.5 },
+          })}
+          onActiveCooling={(active) => session.act({ type: 'active-cooling', payload: { active } })}
           onDrugCard={setDrugCardId}
         />
       </div>

@@ -37,17 +37,20 @@ describe('Requirement: a silent hypnotic-line failure must be inspected', () => 
         resuscitation: {
           epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
           lastEpinephrineTick: null, crystalloidTotalMl: 0,
+          dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
+          lastDantroleneTick: null, activeCooling: false,
         },
         lastExposure: null,
         syringeRemaining: {},
         ventilator: {
           mode: 'volume-control', tidalVolumeMl: 500, respiratoryRateBpm: 12,
-          fio2: 0.5, peep: 5, delivering: true, sevofluranePercent: 0,
+          fio2: 0.5, peep: 5, delivering: true, sevofluranePercent: 0, freshGasFlowLPerMin: 2,
         },
         intubated: true,
         airwayAttempts: 1,
         lastGrade: 1,
         jawThrustCpapSecondsRemaining: 0,
+        muscleRigidityFraction: 0,
         onBolus: () => {},
         onInfusion: () => {},
         onHypnoticLine,
@@ -56,6 +59,8 @@ describe('Requirement: a silent hypnotic-line failure must be inspected', () => 
         onLaryngoscopy: () => {},
         onAirwayManeuver: () => {},
         onEpinephrine: () => {},
+        onDantrolene: () => {},
+        onActiveCooling: () => {},
         onDrugCard: () => {},
       }));
     });

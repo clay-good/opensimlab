@@ -509,6 +509,61 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'mk-applied-foundational-science',
     objectiveIds: ['recognize-anaphylaxis-pattern', 'support-anaphylaxis-circulation'],
   },
+  {
+    scenarioId: 'early-malignant-hyperthermia-during-volatile-anesthesia', frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['recognize-mh-hypermetabolism', 'give-initial-dantrolene', 'reassess-mh-response'],
+  },
+  {
+    scenarioId: 'early-malignant-hyperthermia-during-volatile-anesthesia', frameworkId: 'nbcrna-nce',
+    domainId: 'basic-sciences',
+    objectiveIds: ['recognize-mh-hypermetabolism', 'reassess-mh-response'],
+  },
+  {
+    scenarioId: 'early-malignant-hyperthermia-during-volatile-anesthesia', frameworkId: 'nbcrna-nce',
+    domainId: 'equipment-instrumentation-technology',
+    objectiveIds: ['stop-trigger-and-hyperventilate'],
+  },
+  {
+    scenarioId: 'early-malignant-hyperthermia-during-volatile-anesthesia', frameworkId: 'coa-standards',
+    domainId: 'pharmacology-of-anesthetic-agents',
+    objectiveIds: ['give-initial-dantrolene'],
+  },
+  {
+    scenarioId: 'early-malignant-hyperthermia-during-volatile-anesthesia', frameworkId: 'coa-standards',
+    domainId: 'physiology-and-pathophysiology',
+    objectiveIds: ['recognize-mh-hypermetabolism', 'reassess-mh-response'],
+  },
+  {
+    scenarioId: 'early-malignant-hyperthermia-during-volatile-anesthesia', frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['recognize-mh-hypermetabolism', 'stop-trigger-and-hyperventilate', 'give-initial-dantrolene'],
+  },
+  {
+    scenarioId: 'early-malignant-hyperthermia-during-volatile-anesthesia', frameworkId: 'coa-standards',
+    domainId: 'anesthesia-equipment-and-monitoring',
+    objectiveIds: ['stop-trigger-and-hyperventilate', 'reassess-mh-response'],
+  },
+  {
+    scenarioId: 'early-malignant-hyperthermia-during-volatile-anesthesia', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-pharmacologic-management',
+    objectiveIds: ['give-initial-dantrolene'],
+  },
+  {
+    scenarioId: 'early-malignant-hyperthermia-during-volatile-anesthesia', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-monitoring-and-equipment',
+    objectiveIds: ['recognize-mh-hypermetabolism', 'stop-trigger-and-hyperventilate', 'reassess-mh-response'],
+  },
+  {
+    scenarioId: 'early-malignant-hyperthermia-during-volatile-anesthesia', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-crisis-management',
+    objectiveIds: ['recognize-mh-hypermetabolism', 'stop-trigger-and-hyperventilate', 'give-initial-dantrolene'],
+  },
+  {
+    scenarioId: 'early-malignant-hyperthermia-during-volatile-anesthesia', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'mk-applied-foundational-science',
+    objectiveIds: ['recognize-mh-hypermetabolism', 'reassess-mh-response'],
+  },
 ];
 
 export interface DomainCoverage {

@@ -61,6 +61,7 @@ describe('Requirement: Screen Reader Access To Live Physiology', () => {
   it('declares thresholds for the parameters that matter', () => {
     expect(Object.keys(ANNOUNCE_THRESHOLDS)).toContain('spo2Percent');
     expect(Object.keys(ANNOUNCE_THRESHOLDS)).toContain('meanArterialMmHg');
+    expect(ANNOUNCE_THRESHOLDS.coreTemperatureC).toEqual([38, 39]);
     // The signature changes only when a side changes.
     const a = thresholdSignature({ spo2Percent: 99, meanArterialMmHg: 88, heartRateBpm: 72, etco2MmHg: 38, depthIndex: 50 });
     const b = thresholdSignature({ spo2Percent: 98, meanArterialMmHg: 88, heartRateBpm: 72, etco2MmHg: 38, depthIndex: 50 });
@@ -207,6 +208,41 @@ describe('Requirement: Screen Reader Access To Live Physiology', () => {
     expect(summary).toContain('balanced crystalloid 1000 millilitres');
     expect(summary).toContain('Most recent modeled trigger exposure: cefazolin.');
     expect(summary.toLowerCase()).not.toContain('anaphylaxis');
+  });
+
+  it('announces high temperature and summarizes observable support without naming a diagnosis', () => {
+    const patient = new VirtualPatient(PROFILE, createRng(1)).snapshot();
+    const announcements = announcementsFor(
+      { ...patient, coreTemperatureC: 38.9 },
+      { ...patient, coreTemperatureC: 39.1 },
+      [],
+    );
+    expect(announcements.map((entry) => entry.text).join(' '))
+      .toContain('Core temperature rose above 39 °C, now 39.1 °C');
+
+    const summary = stateSummary({
+      ...patient, muscleRigidityFraction: 0.8,
+    }, {
+      alarms: [], infusions: [], invalid: new Set(),
+      ventilator: {
+        mode: 'volume-control', tidalVolumeMl: 500, respiratoryRateBpm: 14,
+        fio2: 1, delivering: true, freshGasFlowLPerMin: 10,
+      },
+      resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+        crystalloidTotalMl: 0, dantroleneTotalMg: 175,
+        dantroleneEffectFraction: 0.5, activeCooling: true,
+      },
+      showEpinephrineSupport: false,
+      showHypermetabolicSupport: true,
+    });
+    expect(summary).toContain('fresh gas flow 10.0 litres per minute');
+    expect(summary).toContain('delivered minute ventilation 7.0 litres per minute');
+    expect(summary).toContain('Accepted dantrolene total: 175 milligrams intravenous');
+    expect(summary).toContain('Active cooling is on');
+    expect(summary).toContain('Muscle rigidity: marked');
+    expect(summary.toLowerCase()).not.toContain('malignant hyperthermia');
+    expect(summary).not.toContain('epinephrine');
   });
 
   it('says the plethysmogram is non-pulsatile in pulseless electrical activity', () => {
