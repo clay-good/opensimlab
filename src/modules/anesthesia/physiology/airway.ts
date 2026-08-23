@@ -152,6 +152,7 @@ export class AirwayState {
   trauma = 0;
   attempts = 0;
   intubated = false;
+  supraglotticAirwayPlaced = false;
 
   beginAttempt(anatomy: AirwayAnatomy, technique: LaryngoscopyTechnique, rng: Rng): LaryngoscopyResult {
     this.attempts += 1;
@@ -161,7 +162,14 @@ export class AirwayState {
   }
 
   completeAttempt(result: LaryngoscopyResult): void {
-    if (result.intubated) this.intubated = true;
+    if (result.intubated) {
+      this.intubated = true;
+      this.supraglotticAirwayPlaced = false;
+    }
+  }
+
+  placeSupraglotticAirway(): void {
+    if (!this.intubated) this.supraglotticAirwayPlaced = true;
   }
 
   /** Compatibility helper for direct physiology tests and non-session callers. */

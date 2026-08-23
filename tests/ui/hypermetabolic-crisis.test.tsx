@@ -68,10 +68,12 @@ describe('Requirement: observable hypermetabolic crisis response controls', () =
       airwayAttempts: 1,
       lastGrade: 1,
       jawThrustCpapSecondsRemaining: 0,
+      airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null,
       muscleRigidityFraction: 0.8,
       onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {},
       onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {},
       onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene,
+      onCallForHelp: () => {}, onAirwayDevice: () => {},
       onActiveCooling, onDrugCard: () => {},
       ...overrides,
     };

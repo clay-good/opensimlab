@@ -88,14 +88,15 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
     id: 'inside-the-module',
     heading: 'What is inside the anesthesia module',
     paragraphs: [
-      'This is an early build. It contains eleven scenarios — a routine induction on a healthy '
+      'This is an early build. It contains twelve scenarios — a routine induction on a healthy '
       + 'adult, rapid desaturation in an obese patient, hypotension after induction, and '
       + 'bronchospasm after intubation, plus unexpected intraoperative hemorrhage with crystalloid '
       + 'temporization, rapid-sequence induction with modeled rocuronium onset, and silent TIVA-line '
       + 'disconnection under paralysis, initial laryngospasm response after airway stimulation, '
       + 'initial perioperative anaphylaxis response after antibiotic exposure, and early '
       + 'malignant-hyperthermia response during volatile anesthesia, plus a bounded routine '
-      + 'pediatric intravenous induction for a healthy 6-year-old '
+      + 'pediatric intravenous induction for a healthy 6-year-old and a difficult-airway case '
+      + 'limited to help escalation and supraglottic rescue oxygenation '
       + '— with three drugs: population PK/PD for propofol and remifentanil, pediatric Paedfusor PK, '
       + 'a clearly labeled rocuronium teaching model, scripted cefazolin exposure, and dedicated '
       + 'epinephrine and dantrolene crisis actions, the real monitor, the real design system, '

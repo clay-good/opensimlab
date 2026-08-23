@@ -20,6 +20,8 @@ The sixth adds a volatile-triggered malignant-hyperthermia teaching model, cente
 dioxide as an early clue, later temperature, trigger removal, hyperventilation, and dantrolene.
 The seventh adds one bounded routine pediatric intravenous induction with Paedfusor propofol
 kinetics and weight-derived respiratory physiology for a healthy 6-year-old weighing 20 kg.
+The eighth adds a failed-intubation course with early help escalation and supraglottic rescue,
+bounded to restoration and confirmation of oxygenation rather than the complete airway algorithm.
 
 ## What changes
 
@@ -72,10 +74,19 @@ kinetics and weight-derived respiratory physiology for a healthy 6-year-old weig
 - State the seventh boundary plainly: the depth response is a shared teaching calibration, not
   validated pediatric pharmacodynamics, and pediatric hemodynamic maturation, airway-device
   sizing, maintenance, emergence, and generalization beyond this profile remain unavailable.
+- Add a twelfth scenario with reproducible failed tracheal attempts, marginal facemask delivery,
+  a logged airway-help request, and a fixed 15-second supraglottic-airway insertion.
+- Evaluate attempt limitation, help timing, rescue-device placement, explicit oxygen delivery,
+  sustained capnography, and saturation from accepted events, actions, and observed state.
+- State the eighth boundary plainly: successful screen placement is not physical skill or tracheal
+  intubation, and the post-rescue plan, team performance, failed supraglottic ventilation,
+  cannot-intubate-cannot-oxygenate rescue, and emergency front-of-neck access remain unavailable.
 
 ## Impact
 
-These seven slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+These eight slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
 awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. They do not complete the bundled-library,
 neuromuscular-reversal, or crisis-injector requirements. The seventh also closes the bounded
-pediatric-family gap without claiming a general pediatric patient model.
+pediatric-family gap without claiming a general pediatric patient model. The eighth reaches the
+minimum count of 12 scenarios and closes the bounded difficult-airway rescue gap, while local-
+anesthetic systemic toxicity and cardiac arrest remain required library work.

@@ -82,6 +82,7 @@ const DEFAULT_VENTILATOR = {
 const DEFAULT_AIRWAY = {
   intubated: false, attempts: 0, lastGrade: null, attemptInProgress: false, attemptSecondsRemaining: 0,
   patencyFraction: 1, bronchospasmSeverity: 0, jawThrustCpapSecondsRemaining: 0,
+  device: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null,
 } as const;
 const DEFAULT_HYPNOTIC_LINE = { connected: true, inspected: false } as const;
 const DEFAULT_RESUSCITATION = {
@@ -477,6 +478,9 @@ export function Cockpit({
           airwayAttemptInProgress={airway.attemptInProgress}
           airwayAttemptSecondsRemaining={airway.attemptSecondsRemaining}
           jawThrustCpapSecondsRemaining={airway.jawThrustCpapSecondsRemaining}
+          airwayDevice={airway.device}
+          supraglotticInsertionSecondsRemaining={airway.supraglotticInsertionSecondsRemaining}
+          helpRequestedAtTick={airway.helpRequestedAtTick}
           muscleRigidityFraction={session.state?.muscleRigidityFraction ?? 0}
           onBolus={(drugId, amount, unit) => session.act({ type: 'bolus', payload: { drugId, amount, unit } })}
           onInfusion={(drugId, rate, unit) => session.act({ type: 'infusion', payload: { drugId, rate, unit } })}
@@ -485,6 +489,8 @@ export function Cockpit({
           onVentilator={(settings) => session.act({ type: 'ventilator', payload: settings as never })}
           onLaryngoscopy={(technique) => session.act({ type: 'laryngoscopy', payload: { technique } })}
           onAirwayManeuver={(maneuver) => session.act({ type: 'airway-maneuver', payload: { maneuver } })}
+          onCallForHelp={() => session.act({ type: 'call-for-help', payload: { context: 'airway' } })}
+          onAirwayDevice={(device) => session.act({ type: 'airway-device', payload: { device } })}
           onEpinephrine={(doseMicrograms) => session.act({
             type: 'epinephrine', payload: { route: 'iv', doseMicrograms },
           })}

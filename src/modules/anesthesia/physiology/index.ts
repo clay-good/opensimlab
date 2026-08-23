@@ -92,6 +92,8 @@ export interface ScenarioDrive {
   readonly surgicalStimulus: number;
   /** 0 to 1 airway obstruction. */
   readonly obstructionFraction: number;
+  /** Fraction of commanded tidal volume reaching the patient through the active assisted airway. */
+  readonly airwayDeliveryFraction?: number;
   /** 0 to 1 functional closure at the larynx, separate from lower-airway obstruction. */
   readonly upperAirwayClosureFraction?: number;
   /** Millilitres of blood lost this tick. */
@@ -435,12 +437,16 @@ export class VirtualPatient {
     const commandedRate = delivering
       ? ventilator.respiratoryRateBpm
       : Math.round(this.profile.respiratory.spontaneousRespiratoryRateBpm * rateDrive);
+    const assistedDeliveryFraction = delivering
+      ? clamp(scenario.airwayDeliveryFraction ?? 1, 0, 1)
+      : 1;
+    const deliveredTidal = Math.round(commandedTidal * assistedDeliveryFraction);
     const airwayPatency = 1 - clamp(scenario.upperAirwayClosureFraction ?? 0, 0, 1);
     // At five percent patency or less, the calculated few millilitres are below
     // effective dead-space ventilation. Calling a set respiratory rate a breath
     // here would draw a normal capnogram for a functionally closed airway.
     const flowPatency = airwayPatency <= 0.0500001 ? 0 : airwayPatency;
-    const tidal = Math.round(commandedTidal * flowPatency);
+    const tidal = Math.round(deliveredTidal * flowPatency);
     const rate = flowPatency > 0 ? commandedRate : 0;
 
     const baselineCo = cardiacOutput(
@@ -469,6 +475,12 @@ export class VirtualPatient {
       recorder.add(
         'etco2MmHg', 'upper-airway-closure', 'No gas passing the upper airway',
         -0.0001, { teachingModel: true },
+      );
+    }
+    if (delivering && assistedDeliveryFraction < 0.999) {
+      recorder.add(
+        'tidalVolumeMl', 'marginal-mask-ventilation', 'Marginal assisted facemask ventilation',
+        deliveredTidal - commandedTidal, { teachingModel: true },
       );
     }
     if (neuromuscular.blockadeFraction > 0.001) {

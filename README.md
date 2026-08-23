@@ -160,6 +160,11 @@ pediatric-sized breaths, and observed gas exchange form the learning task. The d
 response remains a shared teaching calibration, not validated pediatric pharmacodynamics; the
 case does not generalize to other ages or conditions and does not model pediatric hemodynamic
 maturation, airway-device sizing, maintenance, or emergence.
+Its eighth slice adds a reproducible failed-intubation course with marginal facemask ventilation,
+an explicit request for airway help, and a fixed-time supraglottic rescue. The
+learning endpoint is restored oxygen delivery and sustained capnography, not tracheal intubation.
+Placement technique, team arrival, repeated supraglottic attempts, aspiration protection, the
+post-rescue airway decision, and cannot-intubate-cannot-oxygenate rescue remain outside the model.
 
 ## Running it
 

@@ -20,6 +20,7 @@ import { LARYNGOSPASM_AFTER_AIRWAY_STIMULATION } from './laryngospasm-after-airw
 import { PERIOPERATIVE_ANAPHYLAXIS_AFTER_ANTIBIOTIC } from './perioperative-anaphylaxis-after-antibiotic';
 import { EARLY_MALIGNANT_HYPERTHERMIA_DURING_VOLATILE_ANESTHESIA } from './early-malignant-hyperthermia-during-volatile-anesthesia';
 import { ROUTINE_PEDIATRIC_IV_INDUCTION } from './routine-pediatric-iv-induction';
+import { DIFFICULT_AIRWAY_SUPRAGLOTTIC_RESCUE } from './difficult-airway-supraglottic-rescue';
 
 export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_INDUCTION,
@@ -33,6 +34,7 @@ export const SCENARIOS: readonly Scenario[] = [
   PERIOPERATIVE_ANAPHYLAXIS_AFTER_ANTIBIOTIC,
   EARLY_MALIGNANT_HYPERTHERMIA_DURING_VOLATILE_ANESTHESIA,
   ROUTINE_PEDIATRIC_IV_INDUCTION,
+  DIFFICULT_AIRWAY_SUPRAGLOTTIC_RESCUE,
 ];
 
 /** The scenario a learner meets first. */

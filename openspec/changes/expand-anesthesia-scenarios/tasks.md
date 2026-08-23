@@ -105,10 +105,27 @@
   device sizing, maintenance, emergence, or generalization beyond this single profile. None is
   implied by this slice.
 
+## Slice 8: difficult-airway supraglottic rescue
+
+- [x] Add a bounded difficult-airway event that configures reproducible failed tracheal attempts
+  and a fixed marginal facemask-delivery teaching fraction.
+- [x] Add logged, replayable airway-help and supraglottic-airway actions, including a fixed
+  15-second insertion interval without assisted ventilation.
+- [x] Author and register a can-oxygenate rescue case that does not leak the configured failure in
+  the live timeline before the learner encounters it.
+- [x] Evaluate end-tidal preoxygenation, accepted attempt limitation, early help escalation,
+  supraglottic placement, explicit oxygen delivery, sustained capnography, and saturation.
+- [x] Map the scenario to NBCRNA, COA, and ACGME domains.
+- [x] Add ASA and DAS source scope; update limitations, face-validity scope, landing inventory,
+  and discoverability assets.
+- [ ] Add changing facemask technique or seal, oral airways, supraglottic sizing or failure,
+  intubation through the device, wake-up or proceed decisions, aspiration, team performance,
+  cannot-intubate-cannot-oxygenate progression, or emergency front-of-neck access. None is implied.
+
 ## Remaining required scenario families
 
 - [x] Rapid-sequence induction with neuromuscular blockade.
-- [ ] Difficult-airway crisis beyond the existing obesity case.
+- [x] Difficult-airway rescue beyond the existing obesity case, bounded to supraglottic oxygenation.
 - [x] Anaphylaxis with antibiotic exposure and independently tested documented-allergy enforcement.
 - [x] Malignant hyperthermia early recognition and initial response.
 - [ ] Local-anesthetic systemic toxicity.

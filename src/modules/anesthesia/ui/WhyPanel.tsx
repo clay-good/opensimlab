@@ -30,6 +30,7 @@ const TERM_EXPLAINERS: Record<string, string> = {
   'propofol-myocardial-depression': 'vasodilation-versus-hypovolemia',
   'positive-pressure-ventilation': 'vasodilation-versus-hypovolemia',
   apnea: 'preoxygenation-and-safe-apnea-time',
+  'marginal-mask-ventilation': 'preoxygenation-and-safe-apnea-time',
   'upper-airway-closure': 'capnogram-morphology',
   'anaphylaxis-vasodilation': 'vasodilation-versus-hypovolemia',
   'anaphylaxis-capillary-leak': 'vasodilation-versus-hypovolemia',

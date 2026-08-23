@@ -541,6 +541,68 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['routine-induction'],
   },
   {
+    id: 'difficult-airway-failure-and-mask-ventilation-are-teaching-bounds',
+    headline: 'The difficult-airway case scripts failed tracheal attempts and a fixed 35% facemask delivery fraction so the rescue decision is reproducible.',
+    simplification: 'Every tracheal attempt in this case is configured to fail while retaining the '
+      + 'sampled view, duration, and trauma. After the first attempt begins, assisted facemask tidal '
+      + 'volume is fixed at 35% of the setting until a supraglottic airway is placed. Preoxygenation '
+      + 'before the unanticipated difficulty remains unaffected. There is no changing mask seal, airway '
+      + 'pressure, two-person technique, oral airway, or operator-dependent improvement.',
+    whereItMisleads: 'Reading the sampled view or fixed marginal facemask response as an individual '
+      + 'prediction, or treating unchanged screen controls as evidence that a real mask technique cannot improve.',
+    correctUnderstanding: 'Difficult-airway rescue is dynamic. Repositioning, adjuncts, two-person '
+      + 'technique, neuromuscular block, device choice, and operator skill can all change oxygenation.',
+    briefIn: ['difficult-airway-supraglottic-rescue'],
+  },
+  {
+    id: 'supraglottic-airway-placement-is-an-abstraction',
+    headline: 'Supraglottic placement is a fixed 15-second successful teaching action, not a physical skill or patient-specific success model.',
+    simplification: 'The action interrupts assisted ventilation for 15 simulated seconds and then '
+      + 'provides a full modeled route for delivered breaths. It has no device size, generation, '
+      + 'cuff pressure, leak, malposition, gastric drainage, insertion trauma, or repeated-attempt model.',
+    whereItMisleads: 'Treating a successful button action as evidence of device selection, insertion '
+      + 'skill, seal quality, aspiration protection, or likely success in a real difficult airway.',
+    correctUnderstanding: 'A supraglottic airway can restore oxygenation after failed intubation, '
+      + 'but placement and ventilation must be assessed clinically and attempts must remain limited.',
+    briefIn: ['difficult-airway-supraglottic-rescue'],
+  },
+  {
+    id: 'airway-help-request-does-not-model-a-team',
+    headline: 'The help control records escalation timing; no additional clinician arrives or performs an airway action.',
+    simplification: 'One accepted action records that airway help was requested. The simulator has '
+      + 'no roles, arrival delay, shared mental model, closed-loop communication, equipment handoff, '
+      + 'or change in success probability from a more experienced operator.',
+    whereItMisleads: 'Treating a logged request as evidence of effective communication, team response, '
+      + 'or crisis-resource-management performance.',
+    correctUnderstanding: 'Call for skilled help early, state the airway problem clearly, assign '
+      + 'tasks, and use closed-loop communication while oxygenation remains the priority.',
+    briefIn: ['difficult-airway-supraglottic-rescue'],
+  },
+  {
+    id: 'no-cico-or-front-of-neck-airway',
+    headline: 'This is a can-oxygenate rescue case; it does not model failed supraglottic ventilation or emergency front-of-neck access.',
+    simplification: 'The configured supraglottic airway succeeds. The scenario cannot progress to '
+      + 'cannot-intubate-cannot-oxygenate physiology, cricothyrotomy, surgical airway equipment, or '
+      + 'the immediate role and task sequence required for that emergency.',
+    whereItMisleads: 'Continuing supraglottic attempts while oxygenation fails, or believing this '
+      + 'case rehearses the final rescue pathway.',
+    correctUnderstanding: 'Failure to oxygenate through facemask and supraglottic routes requires '
+      + 'immediate progression through the applicable emergency front-of-neck-airway algorithm.',
+    briefIn: ['difficult-airway-supraglottic-rescue'],
+  },
+  {
+    id: 'no-post-supraglottic-airway-plan',
+    headline: 'The case ends after rescue oxygenation and does not choose whether to wake, intubate through the device, proceed, or use another airway plan.',
+    simplification: 'Once sustained gas exchange returns, there is no emergence, wake-up action, '
+      + 'fiberoptic or video-guided intubation through the device, exchange technique, tracheostomy, '
+      + 'aspiration consequence, or decision to proceed with surgery.',
+    whereItMisleads: 'Treating restored capnography as the end of difficult-airway management or as '
+      + 'permission to proceed with the planned operation.',
+    correctUnderstanding: 'Once oxygenation is restored, stop, reassess urgency and aspiration risk, '
+      + 'and make an explicit next plan with the team using the applicable guideline.',
+    briefIn: ['difficult-airway-supraglottic-rescue'],
+  },
+  {
     id: 'no-team-or-communication',
     headline: 'There is no team: nobody to ask, nobody to hand over to, and no communication to get wrong.',
     simplification: 'There is no surgeon, no scrub team, no assistant, and no communication of any '

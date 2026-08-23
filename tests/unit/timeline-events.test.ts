@@ -199,7 +199,8 @@ describe('every declared event type does something', () => {
     // has not regrown a member that was removed for being unimplementable.
     expect([...EVENT_TYPES]).not.toContain('objective-window');
     expect(EVENT_TYPES).toContain('malignant-hyperthermia');
-    expect(EVENT_TYPES).toHaveLength(11);
+    expect(EVENT_TYPES).toContain('difficult-airway');
+    expect(EVENT_TYPES).toHaveLength(12);
   });
 });
 

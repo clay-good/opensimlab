@@ -126,3 +126,26 @@ lowest post-induction saturation. These are bounded gas-exchange outcomes, not d
 
 The slice does not model validated pediatric depth pharmacodynamics, hemodynamic maturation,
 pediatric airway-device sizing, maintenance, emergence, or children outside this one profile.
+
+## Slice 8: difficult-airway supraglottic rescue
+
+The case begins as an ordinary elective induction with reassuring bedside assessment. A hidden
+scenario event configures every tracheal attempt to fail while retaining the sampled view,
+duration, and accumulated trauma. Assisted facemask ventilation delivers a fixed 35% of the set
+tidal volume after the first attempt begins and until a supraglottic airway is placed; preoxygenation
+before the unanticipated difficulty remains unaffected. This is a reproducible teaching course, not an
+individual prediction or a model of changing mask technique.
+
+The learner can request airway help once and insert a configured supraglottic airway. Insertion
+takes 15 simulated seconds without assisted ventilation, then provides a full modeled route for
+breaths but does not itself prove gas exchange. Objective evaluation uses accepted engine events
+to ignore refused and overlapping actions. It limits repeated completed laryngoscopy, records
+help timing, and requires an explicit post-placement start of assisted ventilation plus at least
+30 seconds of high inspired oxygen, end-tidal carbon dioxide from 25 to 55 mmHg, and saturation
+of at least 92%.
+
+The endpoint is rescue oxygenation, not tracheal intubation. The fixed successful device action
+does not model physical placement, size, seal, aspiration protection, or operator skill. Team
+arrival, repeated device attempts, the choice to wake or proceed, intubation through the device,
+failed supraglottic ventilation, cannot-intubate-cannot-oxygenate progression, and emergency
+front-of-neck access remain unavailable.

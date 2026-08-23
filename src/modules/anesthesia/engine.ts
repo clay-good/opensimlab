@@ -34,11 +34,13 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.7';
+export const ENGINE_VERSION = '0.1.0-alpha.8';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
 export const DANTROLENE_DOSE_MG_PER_KG = 2.5;
+/** Fixed interaction bound for placing the configured rescue supraglottic airway. */
+export const SGA_INSERTION_SECONDS = 15;
 
 export type Scenario = ScenarioDocument;
 
@@ -161,7 +163,15 @@ export class AnesthesiaEngine {
   /** The Cormack-Lehane grade of the last laryngoscopy, or null before the first. */
   private lastGrade: number | null = null;
   /** A sampled attempt that completes only after its simulated duration elapses. */
-  private pendingLaryngoscopy: { readonly result: LaryngoscopyResult; readonly completesAtTick: number } | null = null;
+  private pendingLaryngoscopy: {
+    readonly result: LaryngoscopyResult;
+    readonly completesAtTick: number;
+    readonly configuredFailure: boolean;
+  } | null = null;
+  private pendingSupraglotticInsertion: { readonly completesAtTick: number } | null = null;
+  private helpRequestedAtTick: number | null = null;
+  /** Null outside the configured teaching course; otherwise assisted facemask delivery fraction. */
+  private difficultAirwayMaskFraction: number | null = null;
   private readonly artifacts = new Set<ArtifactId>();
   private pendingEvents: EngineEvent[] = [];
   private vasopressorEffect = 0;
@@ -362,19 +372,72 @@ export class AnesthesiaEngine {
         this.setVentilator(settings);
         break;
       }
+      case 'call-for-help': {
+        if (action.payload.context !== 'airway' || this.helpRequestedAtTick !== null) {
+          this.log('warning', 'airway', `airway-help-refused-${this.currentTick}`,
+            action.payload.context !== 'airway'
+              ? 'Airway help requires the bounded airway context. No request was recorded.'
+              : 'Airway help has already been requested. No duplicate request was recorded.');
+          break;
+        }
+        this.helpRequestedAtTick = this.currentTick;
+        this.log('warning', 'airway', `airway-help-requested-${this.currentTick}`,
+          'Additional airway help requested. Team arrival and provider skill are not modeled.',
+          { context: 'airway' });
+        break;
+      }
+      case 'airway-device': {
+        const unavailable = this.difficultAirwayMaskFraction === null
+          || action.payload.device !== 'supraglottic-airway'
+          || this.patient.airway.intubated
+          || this.patient.airway.supraglotticAirwayPlaced
+          || this.pendingLaryngoscopy !== null
+          || this.pendingSupraglotticInsertion !== null;
+        if (unavailable) {
+          this.log('warning', 'airway', `sga-insertion-refused-${this.currentTick}`,
+            'A rescue supraglottic airway could not be started: it must be configured for this '
+            + 'scenario, named exactly, and no airway device or procedure may already be in place.');
+          break;
+        }
+        this.pendingSupraglotticInsertion = {
+          completesAtTick: this.currentTick + SGA_INSERTION_SECONDS * TICKS_PER_SECOND,
+        };
+        // Placement interrupts the commanded breaths as well as their physical
+        // delivery. Completion never restarts them behind the learner's back;
+        // ventilation must be explicitly resumed and then confirmed from gas
+        // exchange.
+        this.setVentilator({ delivering: false });
+        this.log('warning', 'airway', `sga-insertion-start-${this.currentTick}`,
+          `Supraglottic-airway insertion started. Assisted ventilation is interrupted for the `
+          + `${SGA_INSERTION_SECONDS}-second modeled insertion.`, {
+          device: 'supraglottic-airway', durationSeconds: SGA_INSERTION_SECONDS,
+        });
+        break;
+      }
       case 'laryngoscopy': {
-        if (this.patient.airway.intubated || this.pendingLaryngoscopy) {
+        if (this.patient.airway.intubated || this.patient.airway.supraglotticAirwayPlaced
+          || this.pendingLaryngoscopy || this.pendingSupraglotticInsertion) {
           this.log('warning', 'airway', `laryngoscopy-refused-${this.currentTick}`,
             this.patient.airway.intubated
               ? 'The tracheal tube is already in place. No new attempt was started.'
-              : 'A laryngoscopy attempt is already in progress. No overlapping attempt was started.');
+              : this.patient.airway.supraglotticAirwayPlaced
+                ? 'A supraglottic airway is in place. Removal or intubation through it is not modeled.'
+                : 'An airway procedure is already in progress. No overlapping attempt was started.');
           break;
         }
         const technique = action.payload.technique === 'video' ? 'video' : 'direct';
-        const result = this.patient.beginLaryngoscopy(technique);
+        const sampled = this.patient.beginLaryngoscopy(technique);
+        const configuredFailure = this.difficultAirwayMaskFraction !== null;
+        const result: LaryngoscopyResult = configuredFailure ? {
+          ...sampled,
+          intubated: false,
+          narrative: `Cormack-Lehane grade ${sampled.grade} view; intubation unsuccessful on `
+            + `attempt ${this.patient.airway.attempts} in the configured difficult-airway course.`,
+        } : sampled;
         this.pendingLaryngoscopy = {
           result,
           completesAtTick: this.currentTick + result.durationSeconds * TICKS_PER_SECOND,
+          configuredFailure,
         };
         this.log('warning', 'airway', `laryngoscopy-start-${this.patient.airway.attempts}`,
           `${technique === 'video' ? 'Video' : 'Direct'} laryngoscopy started. `
@@ -830,6 +893,27 @@ export class AnesthesiaEngine {
         return;
       }
 
+      case 'difficult-airway': {
+        const deliveryFraction = event.value;
+        if (event.target !== 'failed-intubation-with-marginal-mask'
+          || typeof deliveryFraction !== 'number' || !Number.isFinite(deliveryFraction)
+          || deliveryFraction <= 0 || deliveryFraction > 1) {
+          this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" must identify failed-intubation-with-marginal-mask `
+            + 'and a finite assisted-delivery fraction greater than 0 and at most 1.');
+          return;
+        }
+        if (this.patient.airway.intubated || this.patient.airway.supraglotticAirwayPlaced
+          || this.difficultAirwayMaskFraction !== null) {
+          this.log('warning', 'scenario', `inapplicable-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" cannot configure a difficult-airway course after an `
+            + 'airway device or course is already in place, so it had no effect.');
+          return;
+        }
+        this.difficultAirwayMaskFraction = deliveryFraction;
+        return;
+      }
+
       case 'rhythm-change': {
         const rhythm = event.target;
         if (!rhythm) {
@@ -907,12 +991,21 @@ export class AnesthesiaEngine {
 
   /** Advance exactly one tick. */
   step(): EngineTick {
+    if (this.pendingSupraglotticInsertion
+      && this.currentTick >= this.pendingSupraglotticInsertion.completesAtTick) {
+      this.patient.airway.placeSupraglotticAirway();
+      this.pendingSupraglotticInsertion = null;
+      this.log('warning', 'airway', `sga-insertion-complete-${this.currentTick}`,
+        'Supraglottic airway placed. Confirm gas exchange after explicitly starting assisted ventilation.',
+        { device: 'supraglottic-airway', teachingModel: true });
+    }
     if (this.pendingLaryngoscopy && this.currentTick >= this.pendingLaryngoscopy.completesAtTick) {
-      const { result } = this.pendingLaryngoscopy;
+      const { result, configuredFailure } = this.pendingLaryngoscopy;
       this.patient.airway.completeAttempt(result);
       this.lastGrade = result.grade;
       this.log('warning', 'airway', `laryngoscopy-${this.patient.airway.attempts}`, result.narrative, {
         grade: result.grade, attempt: this.patient.airway.attempts,
+        intubated: result.intubated, teachingModel: configuredFailure,
       });
       this.pendingLaryngoscopy = null;
       if (result.intubated) this.setVentilator({ mode: 'volume-control', delivering: true });
@@ -989,9 +1082,16 @@ export class AnesthesiaEngine {
     const capillaryLeakMl = unopposedAnaphylaxis * 5 / TICKS_PER_SECOND;
 
     // --- Physiology ------------------------------------------------------------
-    const effectiveVentilator = this.pendingLaryngoscopy
+    const effectiveVentilator = this.pendingLaryngoscopy || this.pendingSupraglotticInsertion
       ? { ...this.ventilator, delivering: false }
       : this.ventilator;
+    const airwayDeliveryFraction = this.patient.airway.intubated
+      || this.patient.airway.supraglotticAirwayPlaced
+      ? 1
+      // The difficulty is unanticipated: preoxygenation before the first
+      // attempt uses the ordinary facemask path. Marginal assisted ventilation
+      // becomes apparent only after the first failed tracheal attempt.
+      : this.patient.airway.attempts > 0 ? this.difficultAirwayMaskFraction ?? 1 : 1;
     const depthBeforePhysiology = this.patient.depthIndex({
       propofolCe, remifentanilCe, rocuroniumCe, vasopressorEffect: this.vasopressorEffect,
       epinephrineEffect: this.epinephrineEffect,
@@ -1015,7 +1115,7 @@ export class AnesthesiaEngine {
       },
       effectiveVentilator,
       {
-        surgicalStimulus: stimulus, obstructionFraction: obstruction,
+        surgicalStimulus: stimulus, obstructionFraction: obstruction, airwayDeliveryFraction,
         upperAirwayClosureFraction: this.upperAirwayClosureFraction,
         bloodLossMl, crystalloidMl,
         anaphylaxisFraction: unopposedAnaphylaxis, capillaryLeakMl,
@@ -1125,12 +1225,23 @@ export class AnesthesiaEngine {
       ventilator: { ...this.ventilator },
       airway: {
         intubated: this.patient.airway.intubated,
+        device: this.patient.airway.intubated
+          ? 'tracheal-tube'
+          : this.patient.airway.supraglotticAirwayPlaced
+            ? 'supraglottic-airway'
+            : 'facemask',
         attempts: this.patient.airway.attempts,
         lastGrade: this.lastGrade,
         attemptInProgress: this.pendingLaryngoscopy !== null,
         attemptSecondsRemaining: this.pendingLaryngoscopy
           ? Math.max(0, Math.ceil((this.pendingLaryngoscopy.completesAtTick - this.currentTick) / TICKS_PER_SECOND))
           : 0,
+        supraglotticInsertionSecondsRemaining: this.pendingSupraglotticInsertion
+          ? Math.max(1, Math.ceil(
+            (this.pendingSupraglotticInsertion.completesAtTick - this.currentTick) / TICKS_PER_SECOND,
+          ))
+          : 0,
+        helpRequestedAtTick: this.helpRequestedAtTick,
         patencyFraction: 1 - this.upperAirwayClosureFraction,
         bronchospasmSeverity: this.bronchospasmSeverity,
         jawThrustCpapSecondsRemaining: Math.max(

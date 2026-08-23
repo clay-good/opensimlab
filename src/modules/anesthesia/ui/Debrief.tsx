@@ -61,8 +61,9 @@ export function Debrief(props: DebriefProps) {
   const findings = useMemo(
     () => objectiveFindings(
       props.scenario, props.history, stacking.length, props.preoxygenationSeconds, props.actions,
+      props.log,
     ),
-    [props.scenario, props.history, stacking.length, props.preoxygenationSeconds, props.actions],
+    [props.scenario, props.history, stacking.length, props.preoxygenationSeconds, props.actions, props.log],
   );
 
   const counterfactuals = useMemo(() => {
@@ -293,6 +294,7 @@ export function objectiveFindings(
   stackingCount: number,
   preoxygenationSeconds: number,
   actions: readonly LearnerAction[] = [],
+  log: readonly EngineEvent[] = [],
 ): ObjectiveFinding[] {
   const concepts: Record<string, string> = {
     preoxygenate: 'preoxygenation-and-safe-apnea-time',
@@ -328,10 +330,143 @@ export function objectiveFindings(
     'dose-pediatric-propofol': 'hysteresis-and-effect-site-lag',
     'ventilate-child-by-weight': 'capnogram-morphology',
     'avoid-pediatric-desaturation': 'preoxygenation-and-safe-apnea-time',
+    'prepare-rescue-oxygen-reserve': 'preoxygenation-and-safe-apnea-time',
+    'limit-attempts-and-call-for-help': 'airway-assessment-predicts-poorly',
+    'place-supraglottic-rescue': 'airway-assessment-predicts-poorly',
+    'confirm-rescue-gas-exchange': 'capnogram-morphology',
   };
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if ([
+      'prepare-rescue-oxygen-reserve', 'limit-attempts-and-call-for-help',
+      'place-supraglottic-rescue', 'confirm-rescue-gas-exchange',
+    ].includes(objective.id)) {
+      const acceptedPropofol = log.find((entry) => entry.eventId.startsWith('bolus-propofol-'));
+      const inductionTick = acceptedPropofol?.tick ?? actions.find((action) =>
+        action.type === 'bolus'
+        && action.payload.drugId === 'propofol'
+        && (action.payload.unit === 'mg' || action.payload.unit === 'mg/kg')
+        && Number.isFinite(Number(action.payload.amount))
+        && Number(action.payload.amount) > 0)?.tick;
+      const laryngoscopyStarts = log.filter((entry) =>
+        entry.eventId.startsWith('laryngoscopy-start-'));
+      const failedAttempt = log.find((entry) =>
+        /^laryngoscopy-\d+$/.test(entry.eventId) && entry.data?.intubated === false);
+      const acceptedAttempts = log.filter((entry) => /^laryngoscopy-\d+$/.test(entry.eventId));
+      const help = log.find((entry) => entry.eventId.startsWith('airway-help-requested-'));
+      const sgaStart = log.find((entry) => entry.eventId.startsWith('sga-insertion-start-'));
+      const sgaComplete = log.find((entry) => entry.eventId.startsWith('sga-insertion-complete-'));
+
+      if (objective.id === 'prepare-rescue-oxygen-reserve') {
+        if (inductionTick === undefined) {
+          return {
+            ...base, outcome: 'not-exercised',
+            finding: 'No accepted positive propofol induction dose was recorded.',
+          } satisfies ObjectiveFinding;
+        }
+        const sample = history.filter((entry) => entry.tick <= inductionTick).at(-1);
+        const endTidal = sample?.state.endTidalO2Fraction ?? 0;
+        return {
+          ...base,
+          outcome: endTidal >= 0.9 ? 'met' : endTidal >= 0.8 ? 'partly-met' : 'not-met',
+          finding: `End-tidal oxygen fraction was ${endTidal.toFixed(2)} at the first accepted propofol dose. This is the modeled oxygen-reserve endpoint, not proof that every difficult-airway preparation step was complete.`,
+          atTick: inductionTick,
+        } satisfies ObjectiveFinding;
+      }
+
+      if (!failedAttempt) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: laryngoscopyStarts.length > 0
+            ? 'The session ended before a configured failed tracheal attempt completed.'
+            : 'No completed failed tracheal attempt was recorded.',
+        } satisfies ObjectiveFinding;
+      }
+      const extraAttemptsBeforeRescue = acceptedAttempts.filter((entry) =>
+        entry.tick > failedAttempt.tick && entry.tick <= (sgaComplete?.tick ?? Infinity));
+      const attemptsBeforeRescue = acceptedAttempts.filter((entry) =>
+        entry.tick <= (sgaComplete?.tick ?? Infinity));
+
+      if (objective.id === 'limit-attempts-and-call-for-help') {
+        const helpDelay = help ? (help.tick - failedAttempt.tick) / TICKS_PER_SECOND : null;
+        const helpWasEarly = help !== undefined
+          && help.tick >= (laryngoscopyStarts[0]?.tick ?? failedAttempt.tick)
+          && helpDelay! <= 30;
+        const attemptsLimited = extraAttemptsBeforeRescue.length === 0;
+        return {
+          ...base,
+          outcome: helpWasEarly && attemptsLimited ? 'met'
+            : helpWasEarly || attemptsLimited ? 'partly-met' : 'not-met',
+          finding: `${attemptsBeforeRescue.length} completed tracheal attempt${attemptsBeforeRescue.length === 1 ? ' was' : 's were'} recorded before rescue. ${help ? `Airway help was requested ${helpDelay! < 0 ? `${Math.abs(helpDelay!).toFixed(0)} seconds before` : `${helpDelay!.toFixed(0)} seconds after`} the failed attempt completed.` : 'No accepted airway-help request was recorded.'} The request records escalation only; team arrival and performance are not modeled.`,
+          atTick: help?.tick ?? failedAttempt.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      if (objective.id === 'place-supraglottic-rescue') {
+        if (!sgaComplete || !sgaStart || sgaStart.tick < failedAttempt.tick) {
+          return {
+            ...base, outcome: 'not-met', atTick: failedAttempt.tick,
+            finding: 'No accepted supraglottic-airway placement was completed after failed intubation.',
+          } satisfies ObjectiveFinding;
+        }
+        return {
+          ...base,
+          outcome: extraAttemptsBeforeRescue.length === 0 ? 'met' : 'partly-met',
+          finding: `A supraglottic airway was placed ${((sgaComplete.tick - failedAttempt.tick) / TICKS_PER_SECOND).toFixed(0)} seconds after failed intubation${extraAttemptsBeforeRescue.length === 0 ? ' without another completed tracheal attempt' : ` after ${extraAttemptsBeforeRescue.length} additional completed tracheal attempt${extraAttemptsBeforeRescue.length === 1 ? '' : 's'}`}. This records a modeled oxygenation route, not tracheal intubation or physical placement skill.`,
+          atTick: sgaComplete.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      if (!sgaComplete) {
+        return {
+          ...base, outcome: 'not-met', atTick: failedAttempt.tick,
+          finding: 'No completed supraglottic-airway placement was available for gas-exchange assessment.',
+        } satisfies ObjectiveFinding;
+      }
+      const postPlacementDelivery = actions.find((action) =>
+        action.type === 'ventilator' && action.tick >= sgaComplete.tick
+        && action.payload.delivering === true);
+      const ventilatorActions = actions.filter((action) => action.type === 'ventilator');
+      const settingsAt = (tick: number) => ventilatorActions
+        .filter((action) => action.tick <= tick)
+        .reduce((settings, action) => {
+          const requestedFio2 = action.payload.fio2 === undefined
+            ? null : Number(action.payload.fio2);
+          return {
+            fio2: requestedFio2 === null || !Number.isFinite(requestedFio2)
+              ? settings.fio2 : Math.min(1, Math.max(0.21, requestedFio2)),
+            delivering: typeof action.payload.delivering === 'boolean'
+              ? action.payload.delivering : settings.delivering,
+          };
+        }, {
+          fio2: scenario.equipment.ventilator.fio2,
+          delivering: scenario.equipment.ventilator.delivering,
+        });
+      const afterPlacement = history.filter((entry) => entry.tick >= sgaComplete.tick);
+      const sustained = afterPlacement.some((start) => {
+        const end = afterPlacement.find((entry) =>
+          entry.tick >= start.tick + (30 * TICKS_PER_SECOND));
+        if (!end) return false;
+        return history.filter((entry) => entry.tick >= start.tick && entry.tick <= end.tick)
+          .every((entry) => {
+            const settings = settingsAt(entry.tick);
+            const etco2 = entry.state.etco2MmHg ?? 0;
+            return settings.fio2 >= 0.95 && settings.delivering && etco2 >= 25 && etco2 <= 55;
+          });
+      });
+      const lowest = afterPlacement.length > 0
+        ? Math.min(...afterPlacement.map((entry) => entry.state.spo2Percent ?? 100)) : null;
+      const oxygenationProtected = lowest !== null && lowest >= 92;
+      return {
+        ...base,
+        outcome: postPlacementDelivery && sustained && oxygenationProtected ? 'met'
+          : sustained || oxygenationProtected ? 'partly-met' : 'not-met',
+        finding: `${postPlacementDelivery ? 'Explicit assisted ventilation was started after placement.' : 'No explicit post-placement start of assisted ventilation was recorded.'} ${sustained ? 'At least 30 seconds of high-inspired-oxygen delivery and end-tidal carbon dioxide from 25 to 55 mmHg followed.' : 'A full 30 seconds combining high inspired oxygen, active delivery, and end-tidal carbon dioxide from 25 to 55 mmHg was not recorded.'} ${lowest === null ? 'No post-placement saturation trace was available.' : `The lowest post-placement saturation was ${lowest.toFixed(0)}%.`} This confirms modeled gas exchange through a rescue device, not tracheal placement or a complete airway plan.`,
+        atTick: afterPlacement.at(-1)?.tick ?? sgaComplete.tick,
+      } satisfies ObjectiveFinding;
+    }
 
     if ([
       'preoxygenate-child', 'dose-pediatric-propofol',

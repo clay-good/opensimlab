@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 8 reports MH support and fresh gas flow. */
-export const WORKER_PROTOCOL_VERSION = 8;
+/** Bumped whenever the message shape changes incompatibly. Version 9 reports airway-device rescue state. */
+export const WORKER_PROTOCOL_VERSION = 9;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -167,6 +167,8 @@ export interface EquipmentSnapshot {
   };
   readonly airway: {
     readonly intubated: boolean;
+    /** The airway device actually in place; a facemask is the unsecured default. */
+    readonly device: 'facemask' | 'supraglottic-airway' | 'tracheal-tube';
     readonly attempts: number;
     /** The Cormack-Lehane grade of the last attempt, or null before the first. */
     readonly lastGrade: number | null;
@@ -174,6 +176,10 @@ export interface EquipmentSnapshot {
     readonly attemptInProgress: boolean;
     /** Whole simulated seconds remaining, or zero when no attempt is active. */
     readonly attemptSecondsRemaining: number;
+    /** Whole seconds remaining in a bounded supraglottic-airway insertion. */
+    readonly supraglotticInsertionSecondsRemaining: number;
+    /** Accepted request for airway help, or null when none was made. */
+    readonly helpRequestedAtTick: number | null;
     /** Fraction of the upper airway open to gas flow, without diagnosing its cause. */
     readonly patencyFraction: number;
     /** Lower-airway obstruction that shapes the capnogram, kept distinct from patency. */

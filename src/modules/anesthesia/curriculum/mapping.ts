@@ -606,6 +606,48 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'mk-applied-foundational-science',
     objectiveIds: ['dose-pediatric-propofol', 'ventilate-child-by-weight'],
   },
+
+  // --- Difficult-airway supraglottic rescue --------------------------------
+  {
+    scenarioId: 'difficult-airway-supraglottic-rescue', frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['limit-attempts-and-call-for-help', 'place-supraglottic-rescue', 'confirm-rescue-gas-exchange'],
+  },
+  {
+    scenarioId: 'difficult-airway-supraglottic-rescue', frameworkId: 'nbcrna-nce',
+    domainId: 'equipment-instrumentation-technology',
+    objectiveIds: ['place-supraglottic-rescue', 'confirm-rescue-gas-exchange'],
+  },
+  {
+    scenarioId: 'difficult-airway-supraglottic-rescue', frameworkId: 'coa-standards',
+    domainId: 'airway-management',
+    objectiveIds: ['limit-attempts-and-call-for-help', 'place-supraglottic-rescue'],
+  },
+  {
+    scenarioId: 'difficult-airway-supraglottic-rescue', frameworkId: 'coa-standards',
+    domainId: 'anesthesia-equipment-and-monitoring',
+    objectiveIds: ['confirm-rescue-gas-exchange'],
+  },
+  {
+    scenarioId: 'difficult-airway-supraglottic-rescue', frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['limit-attempts-and-call-for-help', 'place-supraglottic-rescue'],
+  },
+  {
+    scenarioId: 'difficult-airway-supraglottic-rescue', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-airway-management',
+    objectiveIds: ['limit-attempts-and-call-for-help', 'place-supraglottic-rescue'],
+  },
+  {
+    scenarioId: 'difficult-airway-supraglottic-rescue', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-monitoring-and-equipment',
+    objectiveIds: ['confirm-rescue-gas-exchange'],
+  },
+  {
+    scenarioId: 'difficult-airway-supraglottic-rescue', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-crisis-management',
+    objectiveIds: ['limit-attempts-and-call-for-help', 'place-supraglottic-rescue', 'confirm-rescue-gas-exchange'],
+  },
 ];
 
 export interface DomainCoverage {

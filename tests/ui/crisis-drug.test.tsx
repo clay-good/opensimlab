@@ -65,6 +65,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       airwayAttempts: 1,
       lastGrade: 1,
       jawThrustCpapSecondsRemaining: 0,
+      airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null,
       muscleRigidityFraction: 0,
       onBolus: () => {},
       onInfusion: () => {},
@@ -73,6 +74,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       onVentilator: () => {},
       onLaryngoscopy: () => {},
       onAirwayManeuver: () => {},
+      onCallForHelp: () => {}, onAirwayDevice: () => {},
       onEpinephrine,
       onDantrolene: () => {},
       onActiveCooling: () => {},
@@ -111,10 +113,12 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       airwayAttempts: 0,
       lastGrade: null,
       jawThrustCpapSecondsRemaining: 0,
+      airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null,
       muscleRigidityFraction: 0,
       onBolus: () => {}, onInfusion: () => {}, onHypnoticLine: () => {},
       onFluid: () => {}, onVentilator: () => {}, onLaryngoscopy: () => {},
       onAirwayManeuver: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
+      onCallForHelp: () => {}, onAirwayDevice: () => {},
       onActiveCooling: () => {}, onDrugCard: () => {},
     })));
     expect(button('Crisis response')).toBeUndefined();

@@ -74,7 +74,9 @@ Reviewers run the routine induction themselves before answering.
 | B23 | Carbon-dioxide, heart-rate, rigidity, and temperature response after stopping volatile, hyperventilating with high-flow 100% oxygen, and giving dantrolene | | |
 | B24 | Propofol concentration and shared teaching-depth trajectory after 2.5–3.5 mg/kg in the 6-year-old, 20 kg Paedfusor case | | |
 | B25 | Pediatric oxygen-reserve, desaturation, and carbon-dioxide trajectories during apnea and 6–8 mL/kg delivered ventilation | | |
-| B26 | Overall: does this patient behave like a patient? | | |
+| B26 | Oxygenation and carbon-dioxide trajectories during configured failed intubation, marginal facemask ventilation, and supraglottic rescue | | |
+| B27 | The timing cost and monitor transition during the fixed 15-second supraglottic insertion | | |
+| B28 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -114,4 +116,8 @@ So that reviewers spend their attention on what this review is for:
 - The pediatric case is one healthy 6-year-old weighing 20 kg. Paedfusor supplies kinetics but no
   validated pediatric depth-response surface; pediatric hemodynamic maturation, airway-device
   sizing, maintenance, emergence, and generalization beyond this profile are absent.
+- The difficult-airway case configures failed tracheal attempts, fixed 35% facemask delivery, and
+  successful 15-second supraglottic placement. It does not model physical technique, device sizing
+  or seal, team arrival, a post-rescue airway plan, failed supraglottic ventilation, or emergency
+  front-of-neck access.
 - Nothing here has been clinically reviewed before — you are the first.

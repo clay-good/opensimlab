@@ -384,7 +384,9 @@ export const SOURCES: readonly Source[] = [
     publication: 'Anesthesiology',
     year: 2022,
     locator: '136:31-81',
-    usedFor: 'The airway guideline named by the United States practice-region profile.',
+    usedFor: 'The airway guideline named by the United States practice-region profile and the '
+      + 'difficult-airway rescue case: call for help, track elapsed time and oxygen saturation, '
+      + 'limit repeated attempts, use supraglottic rescue when appropriate, and confirm ventilation.',
     verifiedAgainst: NCBI,
     verifiedOn: CHECKED,
   },
@@ -512,7 +514,9 @@ export const SOURCES: readonly Source[] = [
     publication: 'Br J Anaesth',
     year: 2015,
     locator: '115:827-48',
-    usedFor: 'The airway guideline named by the United Kingdom practice-region profile.',
+    usedFor: 'The airway guideline named by the United Kingdom practice-region profile and the '
+      + 'difficult-airway case boundary: declare failed intubation, prioritize oxygenation with a '
+      + 'second-generation supraglottic airway, limit attempts, then stop and choose the next plan.',
     verifiedAgainst: NCBI,
     verifiedOn: CHECKED,
   },
