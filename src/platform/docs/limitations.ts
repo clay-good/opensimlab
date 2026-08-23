@@ -233,14 +233,58 @@ export const LIMITATIONS: readonly Limitation[] = [
   },
   {
     id: 'no-neuromuscular-blockade',
-    headline: 'Neuromuscular blockade is not modelled, so the train-of-four readout is inert.',
-    simplification: 'Neuromuscular blockade is not modelled in this alpha. The train-of-four '
-      + 'readout is inert and no blocking agent is in the formulary.',
-    whereItMisleads: 'Anything about intubating conditions, residual blockade, or reversal. The '
-      + 'airway model here assumes conditions that a blocker would normally provide.',
+    headline: 'This scenario has no blocking agent, so it cannot teach neuromuscular blockade.',
+    simplification: 'The routine-induction scenario omits neuromuscular blockade from its '
+      + 'formulary. It therefore cannot demonstrate onset, recovery, or reversal.',
+    whereItMisleads: 'Treating the routine case as a complete model of clinical induction, where '
+      + 'a blocking agent would commonly be part of the airway plan.',
     correctUnderstanding: 'Extubating below a train-of-four ratio of 0.9 is residual blockade, and '
-      + 'a qualitative twitch assessment cannot exclude it. None of that is exercised here.',
+      + 'a qualitative twitch assessment cannot exclude it. Use the rapid-sequence case to '
+      + 'explore modeled rocuronium onset and spontaneous recovery.',
     briefIn: ['routine-induction'],
+  },
+  {
+    id: 'rocuronium-course-is-a-teaching-model',
+    headline: 'Rocuronium onset and recovery are an Open Sim Lab teaching model, not an individual prediction.',
+    simplification: 'The rocuronium course is calibrated to published onset and duration ranges '
+      + 'rather than transcribed as a validated population pharmacokinetic model.',
+    whereItMisleads: 'Reading the time to a train-of-four count of zero, or the recovery time, as '
+      + 'a prediction for a real patient.',
+    correctUnderstanding: 'Rocuronium onset and duration vary with dose, circulation, age, and '
+      + 'patient factors. Quantitative monitoring, not elapsed time alone, measures recovery.',
+    briefIn: ['rapid-sequence-induction'],
+  },
+  {
+    id: 'peripheral-tof-does-not-prove-laryngeal-conditions',
+    headline: 'A peripheral train-of-four measurement does not guarantee conditions at the larynx.',
+    simplification: 'The scenario uses a peripheral train-of-four endpoint as an observable proxy '
+      + 'for allowing block to develop; it does not model different onset at different muscles.',
+    whereItMisleads: 'Treating a count of zero at the hand as proof of intubating conditions.',
+    correctUnderstanding: 'Neuromuscular block develops and recovers differently across muscle '
+      + 'groups. Peripheral monitoring informs timing but does not inspect the larynx.',
+    briefIn: ['rapid-sequence-induction'],
+  },
+  {
+    id: 'no-neuromuscular-reversal-or-emergence',
+    headline: 'Neuromuscular reversal, extubation, and recovery-room outcomes are not simulated.',
+    simplification: 'Rocuronium recovers spontaneously in this slice. Sugammadex, neostigmine, '
+      + 'extubation, and postoperative residual weakness are not available actions or outcomes.',
+    whereItMisleads: 'Using this case to practise reversal dosing or decide when a real patient is '
+      + 'safe to extubate.',
+    correctUnderstanding: 'Current guidance calls for quantitative recovery to a train-of-four '
+      + 'ratio of at least 0.9 before extubation and chooses reversal according to block depth.',
+    briefIn: ['rapid-sequence-induction'],
+  },
+  {
+    id: 'no-aspiration-or-regurgitation',
+    headline: 'A full stomach changes the teaching plan here, but regurgitation and aspiration are not modeled.',
+    simplification: 'The patient is described as having a full stomach, but no gastric-volume, '
+      + 'regurgitation, aspiration, or aspiration-pneumonitis physiology exists in the engine.',
+    whereItMisleads: 'Interpreting an uneventful run as evidence that a particular technique '
+      + 'prevented aspiration.',
+    correctUnderstanding: 'Aspiration risk is the reason the airway plan changes. This simulator '
+      + 'can exercise preparation and timing, not estimate that risk or reproduce the event.',
+    briefIn: ['rapid-sequence-induction'],
   },
   {
     id: 'interaction-coefficient-calibrated',

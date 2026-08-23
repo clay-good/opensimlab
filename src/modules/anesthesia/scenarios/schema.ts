@@ -182,6 +182,10 @@ export const SCENARIO_SCHEMA: SchemaNode = {
         properties: {
           drugId: { type: 'string', description: 'International Nonproprietary Name, lowercase.', pattern: '^[a-z-]+$' },
           modelId: STRING_FIELD('Pharmacology model to use. Omitted means the default for the patient.', 3),
+          deliveryModes: {
+            type: 'array', description: 'Cockpit delivery modes offered for this drug.', minItems: 1,
+            items: { type: 'string', description: 'One supported cockpit delivery mode.', enum: ['bolus', 'infusion'] },
+          },
           concentration: NUMBER_FIELD('Syringe concentration.', 0.001, 1000),
           concentrationUnit: STRING_FIELD('Units of the concentration, stated in mass per volume.', 2),
           syringeVolumeMl: NUMBER_FIELD('Volume drawn up. An exhausted syringe cannot be pushed.', 1, 100),

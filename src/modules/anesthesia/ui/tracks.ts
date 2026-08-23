@@ -63,6 +63,8 @@ export interface TileDefinition {
   readonly asaCategory: 'oxygenation' | 'ventilation' | 'circulation' | 'temperature' | 'other';
   /** Why the value could be unmeasurable. */
   readonly invalidReason?: string;
+  /** Shown only in scenarios that declare quantitative neuromuscular monitoring. */
+  readonly neuromuscular?: boolean;
 }
 
 export const TILES: readonly TileDefinition[] = [
@@ -73,7 +75,12 @@ export const TILES: readonly TileDefinition[] = [
   { field: 'depthIndex', name: 'Depth', traceToken: '--neuro', lowLimit: 30, highLimit: 60, asaCategory: 'other' },
   { field: 'coreTemperatureC', name: 'Temp', traceToken: '--arterial', asaCategory: 'temperature' },
   { field: 'fio2', name: 'FiO₂', traceToken: '--spo2', asaCategory: 'oxygenation' },
+  { field: 'trainOfFourRatio', name: 'Train-of-four', traceToken: '--neuro', asaCategory: 'other', neuromuscular: true },
 ];
+
+export function tilesFor(showTrainOfFour: boolean): readonly TileDefinition[] {
+  return TILES.filter((tile) => !tile.neuromuscular || showTrainOfFour);
+}
 
 /** The explainer that maps each parameter to the standard's four categories. */
 export const ASA_MONITORING_EXPLAINER = {

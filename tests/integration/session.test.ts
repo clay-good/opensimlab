@@ -380,7 +380,7 @@ describe('Requirement: The Action Region Reflects The Patient', () => {
     expect(useSession.getState().equipment?.ventilator.fio2).toBeCloseTo(0.21, 5);
   });
 
-  it('Scenario: an airway attempt reports its Cormack-Lehane grade and its outcome', () => {
+  it('Scenario: an airway attempt consumes simulated time before reporting its outcome', () => {
     begin();
     useSession.getState().play();
     runFrames(1);
@@ -389,8 +389,15 @@ describe('Requirement: The Action Region Reflects The Patient', () => {
 
     useSession.getState().act({ type: 'laryngoscopy', payload: { technique: 'video' } });
     runFrames(1);
+    const during = useSession.getState().equipment?.airway;
+    expect(during?.attempts).toBe(1);
+    expect(during?.attemptInProgress).toBe(true);
+    expect(during?.lastGrade).toBeNull();
+
+    // Even the longest modelled attempt is complete after 70 simulated seconds.
+    runFrames(70);
     const airway = useSession.getState().equipment?.airway;
-    expect(airway?.attempts).toBe(1);
+    expect(airway?.attemptInProgress).toBe(false);
     expect(airway?.lastGrade).toBeGreaterThanOrEqual(1);
     expect(airway?.lastGrade).toBeLessThanOrEqual(4);
     // A grade 1 or 2 view intubates; a grade 3 or 4 does not. Either is a valid

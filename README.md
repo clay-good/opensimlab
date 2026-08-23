@@ -137,7 +137,10 @@ worthless on an unconvincing patient.
 [`openspec/changes/expand-anesthesia-scenarios`](openspec/changes/expand-anesthesia-scenarios/)
 tracks the breadth work that follows that provisional gate. Its first verified slice adds
 unexpected intraoperative hemorrhage with learner-delivered crystalloid, while keeping blood
-products and massive-transfusion management explicitly out of scope.
+products and massive-transfusion management explicitly out of scope. Its second slice adds a
+full-stomach rapid-sequence induction, modeled rocuronium onset, quantitative train-of-four
+monitoring, and airway attempts that consume simulated time. Reversal, emergence, and aspiration
+physiology remain explicit later work.
 
 ## Running it
 

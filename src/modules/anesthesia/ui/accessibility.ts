@@ -12,7 +12,7 @@ import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
 import type { EngineAlarm } from '@platform/kernel/protocol';
-import { TILES } from './tracks';
+import { tilesFor } from './tracks';
 
 /**
  * Thresholds that count as a clinically meaningful change. A drift of one beat
@@ -24,6 +24,7 @@ export const ANNOUNCE_THRESHOLDS: Partial<Record<StateField, readonly number[]>>
   heartRateBpm: [45, 50, 100, 120, 140],
   etco2MmHg: [20, 25, 45, 55],
   depthIndex: [30, 40, 60, 70],
+  trainOfFourRatio: [0.1, 0.9],
 };
 
 /** Which side of each threshold a value sits on, as a comparable signature. */
@@ -85,16 +86,20 @@ export function stateSummary(
     readonly infusions: readonly { drugId: string; rate: number; unit: string }[];
     readonly ventilator: { mode: string; tidalVolumeMl: number; respiratoryRateBpm: number; fio2: number; delivering: boolean };
     readonly invalid: ReadonlySet<string>;
+    readonly showTrainOfFour?: boolean;
   },
 ): string {
   const lines: string[] = ['Current state.'];
-  for (const tile of TILES) {
+  for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
     const spec = FIELDS[tile.field];
     if (options.invalid.has(tile.field)) {
       lines.push(`${spec.label}: not measurable. ${tile.invalidReason ?? ''}`.trim());
       continue;
     }
     lines.push(`${spec.label}: ${state[tile.field].toFixed(spec.precision)} ${spec.unit}`.trim());
+    if (tile.field === 'trainOfFourRatio') {
+      lines.push(`Train-of-four count: ${state.trainOfFourCount.toFixed(0)} of 4.`);
+    }
   }
   lines.push(options.infusions.length === 0
     ? 'No infusions running.'

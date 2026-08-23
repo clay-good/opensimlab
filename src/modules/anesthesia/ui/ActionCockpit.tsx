@@ -42,12 +42,22 @@ export interface ActionCockpitProps {
   readonly intubated: boolean;
   readonly airwayAttempts: number;
   readonly lastGrade: number | null;
+  readonly airwayAttemptInProgress?: boolean;
+  readonly airwayAttemptSecondsRemaining?: number;
   readonly onBolus: (drugId: string, amount: number, unit: string) => void;
   readonly onInfusion: (drugId: string, rate: number, unit: string) => void;
   readonly onFluid: (fluidId: string, volumeMl: number) => void;
   readonly onVentilator: (settings: Partial<ActionCockpitProps['ventilator']>) => void;
   readonly onLaryngoscopy: (technique: 'direct' | 'video') => void;
   readonly onDrugCard: (drugId: string) => void;
+}
+
+/** The scenario declares which trays may offer each drug. Existing entries default to both. */
+export function formularyForMode(
+  formulary: readonly FormularyEntry[],
+  mode: 'bolus' | 'infusion',
+): FormularyEntry[] {
+  return formulary.filter((drug) => drug.deliveryModes?.includes(mode) ?? true);
 }
 
 /**
@@ -129,6 +139,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             intubated={props.intubated}
             attempts={props.airwayAttempts}
             lastGrade={props.lastGrade}
+            attemptInProgress={props.airwayAttemptInProgress ?? false}
+            attemptSecondsRemaining={props.airwayAttemptSecondsRemaining ?? 0}
             region={props.region}
             onVentilator={props.onVentilator}
             onLaryngoscopy={props.onLaryngoscopy}
@@ -202,7 +214,7 @@ function SyringeTray({ formulary, remaining, weightKg, onBolus, onDrugCard }: {
 }) {
   return (
     <div className="tray-grid">
-      {formulary.map((drug) => (
+      {formularyForMode(formulary, 'bolus').map((drug) => (
         <Syringe
           key={drug.drugId}
           drug={drug}
@@ -309,7 +321,7 @@ function InfusionTray({ formulary, region, weightKg, onInfusion }: {
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
       <div className="tray-grid">
-        {formulary.map((drug) => {
+        {formularyForMode(formulary, 'infusion').map((drug) => {
           const massUnit = drug.concentrationUnit.split('/')[0] ?? 'mg';
           const rate = rates[drug.drugId] ?? 0;
           return (
@@ -372,11 +384,13 @@ function InfusionTray({ formulary, region, weightKg, onInfusion }: {
 
 // --- Airway and ventilator ---------------------------------------------------
 
-function AirwayTray({ ventilator, intubated, attempts, lastGrade, region, onVentilator, onLaryngoscopy }: {
+function AirwayTray({ ventilator, intubated, attempts, lastGrade, attemptInProgress, attemptSecondsRemaining, region, onVentilator, onLaryngoscopy }: {
   ventilator: ActionCockpitProps['ventilator'];
   intubated: boolean;
   attempts: number;
   lastGrade: number | null;
+  attemptInProgress: boolean;
+  attemptSecondsRemaining: number;
   region: RegionProfile;
   onVentilator: (settings: Partial<ActionCockpitProps['ventilator']>) => void;
   onLaryngoscopy: (technique: 'direct' | 'video') => void;
@@ -456,15 +470,17 @@ function AirwayTray({ ventilator, intubated, attempts, lastGrade, region, onVent
       <section>
         <h3 className="field__label">Airway</h3>
         <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
-          <Button onClick={() => onLaryngoscopy('direct')} disabled={intubated}>
+          <Button onClick={() => onLaryngoscopy('direct')} disabled={intubated || attemptInProgress}>
             Direct laryngoscopy
           </Button>
-          <Button onClick={() => onLaryngoscopy('video')} disabled={intubated}>
+          <Button onClick={() => onLaryngoscopy('video')} disabled={intubated || attemptInProgress}>
             Videolaryngoscopy
           </Button>
         </div>
         <p className="field__hint">
-          {intubated
+          {attemptInProgress
+            ? `Attempt in progress: ${attemptSecondsRemaining} simulated seconds remaining. Ventilation is interrupted.`
+            : intubated
             ? 'The tube is in and its position is confirmed by the capnogram.'
             : attempts === 0
               ? 'No attempt yet. Each attempt consumes time and the patient is apnoeic throughout.'

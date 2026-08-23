@@ -21,11 +21,13 @@ import {
 } from './respiratory';
 import { clampState, type ClampWarning, type MutableState, type PatientState } from './state';
 import { macFraction, normalizedEffect, responseSurfaceEffect } from '../pharmacology/pd';
+import { neuromuscularState } from './neuromuscular';
 
 export * from './state';
 export * from './respiratory';
 export * from './hemodynamics';
 export * from './airway';
+export * from './neuromuscular';
 export { AttributionRecorder } from './attribution';
 
 /** One tick, in minutes. */
@@ -55,6 +57,8 @@ export interface DrugDrive {
   readonly propofolCe: number;
   /** Remifentanil effect-site concentration, ng/mL. */
   readonly remifentanilCe: number;
+  /** Rocuronium effect-site concentration, mg/L. */
+  readonly rocuroniumCe?: number;
   /** Vasopressor effect, 0 to 1, from a teaching model. */
   readonly vasopressorEffect: number;
 }
@@ -208,6 +212,7 @@ export class VirtualPatient {
       coreTemperatureC: this.temperatureC,
       depthIndex: 93,
       trainOfFourRatio: 1,
+      trainOfFourCount: 4,
       endTidalSevofluranePercent: this.sevofluranePercent,
       macFraction: 0,
       fio2: 0.21,
@@ -344,8 +349,11 @@ export class VirtualPatient {
       drugs.propofolCe, PROPOFOL_RESPIRATORY.apnoeaCe50, PROPOFOL_RESPIRATORY.apnoeaGamma,
     );
     const opioidDepression = clamp(1.25 * opioid, 0, 1);
-    const rateDrive = clamp(1 - hypnoticDepression - opioidDepression, 0, 1);
-    const tidalDrive = clamp(1 - hypnoticDepression - 0.2 * opioidDepression, 0, 1);
+    const neuromuscular = neuromuscularState(drugs.rocuroniumCe ?? 0);
+    const rateDrive = clamp(1 - hypnoticDepression - opioidDepression, 0, 1)
+      * neuromuscular.respiratoryMuscleFraction;
+    const tidalDrive = clamp(1 - hypnoticDepression - 0.2 * opioidDepression, 0, 1)
+      * neuromuscular.respiratoryMuscleFraction;
     const delivering = ventilator.delivering;
     const tidal = delivering
       ? ventilator.tidalVolumeMl
@@ -370,6 +378,12 @@ export class VirtualPatient {
     if (tidal === 0 || rate === 0) {
       recorder.add('spo2Percent', 'apnea', 'Apnoea: no ventilation', -0.0001);
       recorder.add('paco2MmHg', 'apnea', 'Apnoea: carbon dioxide accumulating', 0.0001);
+    }
+    if (neuromuscular.blockadeFraction > 0.001) {
+      recorder.add(
+        'trainOfFourRatio', 'rocuronium-blockade', 'Rocuronium neuromuscular blockade',
+        neuromuscular.trainOfFourRatio - 1, { teachingModel: true },
+      );
     }
 
     // --- Volatile agent ---------------------------------------------------------
@@ -420,7 +434,8 @@ export class VirtualPatient {
       tidalVolumeMl: tidal,
       coreTemperatureC: this.temperatureC,
       depthIndex: depth,
-      trainOfFourRatio: 1,
+      trainOfFourRatio: neuromuscular.trainOfFourRatio,
+      trainOfFourCount: neuromuscular.trainOfFourCount,
       endTidalSevofluranePercent: this.sevofluranePercent,
       macFraction: this.sevofluranePercent > 0
         ? macFraction('sevoflurane', this.sevofluranePercent, this.profile.ageYears)
@@ -446,5 +461,9 @@ export class VirtualPatient {
   /** Perform a laryngoscopy attempt with the session's seeded generator. */
   laryngoscopy(technique: 'direct' | 'video') {
     return this.airway.attempt(this.profile.airway, technique, this.rng);
+  }
+
+  beginLaryngoscopy(technique: 'direct' | 'video') {
+    return this.airway.beginAttempt(this.profile.airway, technique, this.rng);
   }
 }

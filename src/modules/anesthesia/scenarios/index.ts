@@ -14,6 +14,7 @@ import { RAPID_DESATURATION } from './rapid-desaturation';
 import { HYPOTENSION_AFTER_INDUCTION } from './hypotension-after-induction';
 import { BRONCHOSPASM } from './bronchospasm';
 import { UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE } from './unexpected-intraoperative-hemorrhage';
+import { RAPID_SEQUENCE_INDUCTION } from './rapid-sequence-induction';
 
 export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_INDUCTION,
@@ -21,6 +22,7 @@ export const SCENARIOS: readonly Scenario[] = [
   HYPOTENSION_AFTER_INDUCTION,
   BRONCHOSPASM,
   UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE,
+  RAPID_SEQUENCE_INDUCTION,
 ];
 
 /** The scenario a learner meets first. */

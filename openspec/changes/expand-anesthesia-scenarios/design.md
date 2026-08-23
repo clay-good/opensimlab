@@ -23,3 +23,20 @@ Focused tests compare treated and untreated trajectories, prove one-shot fluid d
 hemoglobin dilution, hostile-input rejection, deterministic replay, objective timing outcomes,
 schema/registry validity, curriculum integrity, and the working tray. The full CI sequence then
 builds and prerenders every scenario route before running all tests and budgets.
+
+## Slice 2: rapid-sequence induction
+
+The case isolates preparation and timing in a full-stomach adult with an otherwise straightforward
+airway. Rocuronium is bolus-only and drives a quantitative train-of-four teaching model. It changes
+neither depth, analgesia, nor hemodynamics. Laryngoscopy becomes a pending action whose declared
+duration advances with the simulation; ventilation is absent until the attempt completes.
+
+Objective evaluation reads the state at the recorded action tick. It checks end-tidal oxygen at
+the first hypnotic dose, train-of-four at airway instrumentation, the lowest saturation, and
+subsequent delivered ventilation with carbon dioxide. These are behavioral observations, not a
+claim about the learner's reasoning or physical airway skill.
+
+The slice stops at a secured, ventilated airway. It does not model reversal, emergence, extubation,
+regurgitation, aspiration, cricoid pressure, or team behavior. Peripheral train-of-four is not
+presented as proof of conditions at the larynx, and the rocuronium trajectory is labeled as a
+teaching model rather than an individual prediction.

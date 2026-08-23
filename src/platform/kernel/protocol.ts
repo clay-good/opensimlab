@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 3 uses high/medium/low alarm priorities. */
-export const WORKER_PROTOCOL_VERSION = 3;
+export const WORKER_PROTOCOL_VERSION = 4;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -169,6 +169,10 @@ export interface EquipmentSnapshot {
     readonly attempts: number;
     /** The Cormack-Lehane grade of the last attempt, or null before the first. */
     readonly lastGrade: number | null;
+    /** True while an attempt is consuming simulated time. */
+    readonly attemptInProgress: boolean;
+    /** Whole simulated seconds remaining, or zero when no attempt is active. */
+    readonly attemptSecondsRemaining: number;
   };
   /** Per drug: the running infusion rate and what is left in the syringe. */
   readonly drugs: readonly {

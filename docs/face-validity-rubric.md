@@ -60,7 +60,9 @@ Reviewers run the routine induction themselves before answering.
 | B9 | The relationship between the depth index and the concentrations driving it | | |
 | B10 | The laryngoscopy view distribution across several attempts | | |
 | B11 | Whether repeated attempts worsen things at the rate you would expect | | |
-| B12 | Overall: does this patient behave like a patient? | | |
+| B12 | Rocuronium onset and spontaneous train-of-four recovery | | |
+| B13 | The saturation change while a laryngoscopy attempt consumes simulated time | | |
+| B14 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -74,10 +76,13 @@ Reviewers run the routine induction themselves before answering.
 
 So that reviewers spend their attention on what this review is for:
 
-- No neuromuscular blockade is modelled; the train-of-four readout is inert.
+- Rocuronium onset and spontaneous recovery use a teaching model. Reversal and emergence are not modelled.
+- Peripheral train-of-four is observable but does not guarantee conditions at the larynx.
+- The full-stomach case does not model regurgitation, aspiration, or cricoid pressure.
 - No fresh gas flow; volatile wash-in does not change with flow.
 - Balanced crystalloid uses a fixed-retention teaching model. There are no blood products,
   coagulation effects, laboratory guidance, or resuscitation actions.
-- Five scenarios use the same two-drug pharmacology; the hemorrhage case covers recognition and
-  initial crystalloid temporization, not a massive-transfusion protocol.
+- Six scenarios use propofol and remifentanil; the rapid-sequence case adds rocuronium. The
+  hemorrhage case covers recognition and initial crystalloid temporization, not a
+  massive-transfusion protocol.
 - Nothing here has been clinically reviewed before — you are the first.

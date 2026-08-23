@@ -91,6 +91,8 @@ export interface FormularyPreset {
 export interface FormularyEntry {
   readonly drugId: string;
   readonly modelId?: string;
+  /** Which cockpit trays may administer this drug. Omitted means both. */
+  readonly deliveryModes?: readonly ('bolus' | 'infusion')[];
   readonly concentration: number;
   readonly concentrationUnit: string;
   readonly syringeVolumeMl: number;

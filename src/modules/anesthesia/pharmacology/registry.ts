@@ -13,6 +13,7 @@ import { PROPOFOL_ELEVELD_2018 } from './models/propofol-eleveld-2018';
 import { PROPOFOL_MARSH_1991 } from './models/propofol-marsh-1991';
 import { PROPOFOL_SCHNIDER_1998 } from './models/propofol-schnider-1998';
 import { REMIFENTANIL_MINTO_1997 } from './models/remifentanil-minto-1997';
+import { ROCURONIUM_CLINICAL_COURSE_TEACHING } from './models/rocuronium-clinical-course-teaching';
 import type { PharmacologyModel } from './types';
 
 export const MODELS: readonly PharmacologyModel[] = [
@@ -20,13 +21,14 @@ export const MODELS: readonly PharmacologyModel[] = [
   PROPOFOL_SCHNIDER_1998,
   PROPOFOL_ELEVELD_2018,
   REMIFENTANIL_MINTO_1997,
+  ROCURONIUM_CLINICAL_COURSE_TEACHING,
 ];
 
 /**
  * The model-set revision. It changes whenever any parameter changes, and it is
  * recorded in every transcript so a session can be interpreted years later.
  */
-export const MODEL_SET_REVISION = '2026.08.0';
+export const MODEL_SET_REVISION = '2026.08.1';
 
 export const MODELS_BY_ID: ReadonlyMap<string, PharmacologyModel> = new Map(
   MODELS.map((model) => [model.id, model]),

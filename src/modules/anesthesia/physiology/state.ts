@@ -36,6 +36,7 @@ export const FIELDS = {
   coreTemperatureC: { unit: '°C', min: 25, max: 43, precision: 1, label: 'Core temperature' },
   depthIndex: { unit: '', min: 0, max: 100, precision: 0, label: 'Predicted depth index' },
   trainOfFourRatio: { unit: '', min: 0, max: 1, precision: 2, label: 'Train-of-four ratio' },
+  trainOfFourCount: { unit: 'twitches', min: 0, max: 4, precision: 0, label: 'Train-of-four count' },
   endTidalSevofluranePercent: { unit: 'vol %', min: 0, max: 8, precision: 1, label: 'End-tidal sevoflurane' },
   macFraction: { unit: 'MAC', min: 0, max: 5, precision: 2, label: 'Age-adjusted MAC fraction' },
   fio2: { unit: '', min: 0.21, max: 1, precision: 2, label: 'Inspired oxygen fraction' },

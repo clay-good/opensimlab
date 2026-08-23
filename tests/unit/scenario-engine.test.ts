@@ -434,6 +434,27 @@ describe('Requirement: Every Scenario In The Registry Is Valid And Distinct', ()
 });
 
 describe('Requirement: The New Scenarios Teach What They Claim', () => {
+  it('Scenario: laryngoscopy consumes its declared time and refuses an overlapping attempt', () => {
+    const sim = engine();
+    sim.step();
+    sim.apply({ tick: sim.tick, type: 'laryngoscopy', payload: { technique: 'video' } });
+    const started = sim.step();
+    expect(started.equipment.airway.attemptInProgress).toBe(true);
+    expect(started.equipment.airway.lastGrade).toBeNull();
+    const remaining = started.equipment.airway.attemptSecondsRemaining;
+
+    sim.apply({ tick: sim.tick, type: 'laryngoscopy', payload: { technique: 'direct' } });
+    expect(sim.equipment().airway.attempts).toBe(1);
+
+    let during = started;
+    for (let tick = 1; tick < remaining * TICKS_PER_SECOND; tick += 1) during = sim.step();
+    expect(during.equipment.airway.attemptInProgress).toBe(true);
+    const completed = sim.step();
+    expect(completed.equipment.airway.attemptInProgress).toBe(false);
+    expect(completed.equipment.airway.lastGrade).toBeGreaterThanOrEqual(1);
+    expect(completed.events.some((event) => event.eventId === 'laryngoscopy-1')).toBe(true);
+  });
+
   /** Simulated seconds of apnoea from a given start until saturation reaches 90%. */
   function timeToDesaturate(scenario: (typeof SCENARIOS)[number], preoxygenateSeconds: number): number {
     const engine = new AnesthesiaEngine({ scenario, seed: 20260819, practiceRegion: 'US' });

@@ -26,14 +26,14 @@ import { getFluid, MAX_FLUID_BOLUS_ML } from './content/fluids';
 import type { Covariates } from './pharmacology/body-composition';
 import {
   RESPIRATORY_PROFILES, VirtualPatient, baselineSvr,
-  type PatientProfile, type PatientState, type VentilatorSettings,
+  type LaryngoscopyResult, type PatientProfile, type PatientState, type VentilatorSettings,
 } from './physiology';
 import { WaveformEngine, restingDrive, type ArtifactId, type RhythmId, type WaveformFrame } from './waveforms';
 import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/types';
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.1';
+export const ENGINE_VERSION = '0.1.0-alpha.2';
 
 export type Scenario = ScenarioDocument;
 
@@ -78,6 +78,7 @@ export interface ActiveDrug {
   readonly concentration: number;
   readonly typicalDose: number;
   readonly selectionReason: string;
+  readonly deliveryModes: readonly ('bolus' | 'infusion')[];
 }
 
 export interface EngineTick {
@@ -153,6 +154,8 @@ export class AnesthesiaEngine {
   private rhythm: RhythmId = 'sinus';
   /** The Cormack-Lehane grade of the last laryngoscopy, or null before the first. */
   private lastGrade: number | null = null;
+  /** A sampled attempt that completes only after its simulated duration elapses. */
+  private pendingLaryngoscopy: { readonly result: LaryngoscopyResult; readonly completesAtTick: number } | null = null;
   private readonly artifacts = new Set<ArtifactId>();
   private pendingEvents: EngineEvent[] = [];
   private vasopressorEffect = 0;
@@ -213,6 +216,7 @@ export class AnesthesiaEngine {
         concentration: entry.concentration,
         typicalDose: entry.typicalDose,
         selectionReason: selection.reason,
+        deliveryModes: entry.deliveryModes ?? ['bolus', 'infusion'],
       });
       // The choice and its reason are recorded in the transcript.
       this.pendingEvents.push({
@@ -324,14 +328,24 @@ export class AnesthesiaEngine {
         break;
       }
       case 'laryngoscopy': {
-        const result = this.patient.laryngoscopy(action.payload.technique === 'video' ? 'video' : 'direct');
-        this.lastGrade = result.grade;
-        this.log('warning', 'airway', `laryngoscopy-${this.patient.airway.attempts}`, result.narrative, {
-          grade: result.grade, attempt: this.patient.airway.attempts, technique: String(action.payload.technique),
-        });
-        if (result.intubated) {
-          this.setVentilator({ mode: 'volume-control', delivering: true });
+        if (this.patient.airway.intubated || this.pendingLaryngoscopy) {
+          this.log('warning', 'airway', `laryngoscopy-refused-${this.currentTick}`,
+            this.patient.airway.intubated
+              ? 'The tracheal tube is already in place. No new attempt was started.'
+              : 'A laryngoscopy attempt is already in progress. No overlapping attempt was started.');
+          break;
         }
+        const technique = action.payload.technique === 'video' ? 'video' : 'direct';
+        const result = this.patient.beginLaryngoscopy(technique);
+        this.pendingLaryngoscopy = {
+          result,
+          completesAtTick: this.currentTick + result.durationSeconds * TICKS_PER_SECOND,
+        };
+        this.log('warning', 'airway', `laryngoscopy-start-${this.patient.airway.attempts}`,
+          `${technique === 'video' ? 'Video' : 'Direct'} laryngoscopy started. `
+          + `The patient will be unventilated for the modelled ${result.durationSeconds}-second attempt.`, {
+          attempt: this.patient.airway.attempts, technique, durationSeconds: result.durationSeconds,
+        });
         break;
       }
       case 'vasopressor': {
@@ -433,6 +447,12 @@ export class AnesthesiaEngine {
   private setInfusion(drugId: string, rate: number, unit: string): void {
     const drug = this.drugs.get(drugId);
     if (!drug) return;
+    if (!drug.deliveryModes.includes('infusion')) {
+      this.log('warning', 'drug', `unsupported-infusion-${drugId}-${this.currentTick}`,
+        `${drugId} is stocked for bolus use only in this scenario. The infusion was not started.`,
+        { drugId, requestedRate: rate, unit });
+      return;
+    }
     const previous = drug.infusionRate;
     // Rates are entered per minute or per kilogram per minute.
     drug.infusionRate = unit.includes('/kg') ? rate * this.covariates.weightKg : rate;
@@ -632,6 +652,16 @@ export class AnesthesiaEngine {
 
   /** Advance exactly one tick. */
   step(): EngineTick {
+    if (this.pendingLaryngoscopy && this.currentTick >= this.pendingLaryngoscopy.completesAtTick) {
+      const { result } = this.pendingLaryngoscopy;
+      this.patient.airway.completeAttempt(result);
+      this.lastGrade = result.grade;
+      this.log('warning', 'airway', `laryngoscopy-${this.patient.airway.attempts}`, result.narrative, {
+        grade: result.grade, attempt: this.patient.airway.attempts,
+      });
+      this.pendingLaryngoscopy = null;
+      if (result.intubated) this.setVentilator({ mode: 'volume-control', delivering: true });
+    }
     // --- Timeline -------------------------------------------------------------
     let stimulus = 0;
     let bloodLossMl = 0;
@@ -672,15 +702,20 @@ export class AnesthesiaEngine {
     }
     const propofol = this.drugs.get('propofol');
     const remifentanil = this.drugs.get('remifentanil');
+    const rocuronium = this.drugs.get('rocuronium');
     const propofolCe = propofol?.solver.hasEffectSiteCurve ? propofol.solver.effectSite : 0;
     // Remifentanil is dosed in micrograms into litres, so the plasma value is
     // µg/L, which is the same number as ng/mL.
     const remifentanilCe = remifentanil?.solver.hasEffectSiteCurve ? remifentanil.solver.effectSite : 0;
+    const rocuroniumCe = rocuronium?.solver.hasEffectSiteCurve ? rocuronium.solver.effectSite : 0;
 
     // --- Physiology ------------------------------------------------------------
+    const effectiveVentilator = this.pendingLaryngoscopy
+      ? { ...this.ventilator, delivering: false }
+      : this.ventilator;
     const result = this.patient.tick(
-      { propofolCe, remifentanilCe, vasopressorEffect: this.vasopressorEffect },
-      this.ventilator,
+      { propofolCe, remifentanilCe, rocuroniumCe, vasopressorEffect: this.vasopressorEffect },
+      effectiveVentilator,
       { surgicalStimulus: stimulus, obstructionFraction: obstruction, bloodLossMl, crystalloidMl },
     );
     // A vasopressor's effect wanes; the teaching model decays it over about five minutes.
@@ -715,7 +750,7 @@ export class AnesthesiaEngine {
       ventilating: result.state.respiratoryRateBpm > 0 && result.state.tidalVolumeMl > 0,
       anesthesiaDepthFraction: result.anesthesiaDepthFraction,
       hypovolemiaFraction: result.hypovolemiaFraction,
-      positivePressure: this.ventilator.delivering && this.ventilator.mode !== 'manual',
+      positivePressure: effectiveVentilator.delivering && effectiveVentilator.mode !== 'manual',
       curareCleftDepth: 0,
     }));
 
@@ -779,6 +814,10 @@ export class AnesthesiaEngine {
         intubated: this.patient.airway.intubated,
         attempts: this.patient.airway.attempts,
         lastGrade: this.lastGrade,
+        attemptInProgress: this.pendingLaryngoscopy !== null,
+        attemptSecondsRemaining: this.pendingLaryngoscopy
+          ? Math.max(0, Math.ceil((this.pendingLaryngoscopy.completesAtTick - this.currentTick) / TICKS_PER_SECOND))
+          : 0,
       },
       drugs: [...this.drugs.values()].map((drug) => ({
         drugId: drug.drugId,

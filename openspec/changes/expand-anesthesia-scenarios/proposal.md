@@ -6,10 +6,10 @@ The engine specification requires at least 12 bundled scenarios across routine a
 anesthesia. The alpha proved the platform with 4 scenarios, but it left major code-addressable
 coverage gaps once the external face-validity gate was treated as provisionally passed.
 
-The next increment is unexpected intraoperative hemorrhage. It is the smallest case that turns
-existing blood-loss physiology into a learner decision: circulating volume, cardiac output,
-pressure, end-tidal carbon dioxide, arterial respiratory variation, and attribution already
-respond to loss, but learners previously had no way to give fluid.
+The first increment was unexpected intraoperative hemorrhage. The second is rapid-sequence
+induction: the smallest case that turns the existing train-of-four state and declared airway
+duration into a learner decision about preoxygenation, neuromuscular-block onset, and the time
+spent without ventilation.
 
 ## What changes
 
@@ -23,8 +23,17 @@ respond to loss, but learners previously had no way to give fluid.
   curriculum frameworks.
 - State the boundary plainly: no blood products, coagulopathy, calcium, laboratory guidance,
   source-control action, team behavior, or massive-transfusion protocol is simulated.
+- Add a sixth scenario covering rapid-sequence induction in a full-stomach adult with an otherwise
+  straightforward airway.
+- Add rocuronium as a bolus-only teaching model that drives quantitative train-of-four count and
+  ratio, with no hypnotic, analgesic, or direct hemodynamic effect.
+- Make laryngoscopy consume its declared simulated time and evaluate whether the learner waited
+  for modeled block onset while preserving the oxygen margin.
+- State the second boundary plainly: reversal, emergence, extubation, regurgitation, aspiration,
+  cricoid pressure, and difficult-airway rescue remain unavailable.
 
 ## Impact
 
-This closes 1 of the required scenario-family gaps and makes an existing hypovolemia objective
-actionable. It does not complete the bundled-library or crisis-injector requirements.
+These two slices close the hemorrhage, obstetric-presentation, and rapid-sequence-induction gaps
+and make previously inert physiology actionable. They do not complete the bundled-library,
+neuromuscular-reversal, or crisis-injector requirements.

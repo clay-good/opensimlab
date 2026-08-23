@@ -43,6 +43,7 @@ const TERM_EXPLAINERS: Record<string, string> = {
   'hypoxic-tachycardia': 'preoxygenation-and-safe-apnea-time',
   'hypoxic-bradycardia': 'preoxygenation-and-safe-apnea-time',
   'hypoxic-myocardial-failure': 'preoxygenation-and-safe-apnea-time',
+  'rocuronium-blockade': 'train-of-four-and-residual-blockade',
 };
 
 /** Exported so a test can require every emitted term to have an entry. */
@@ -113,6 +114,11 @@ export function WhyPanel({
                     {term.termId.startsWith('opioid') && (
                       <Button variant="ghost" compact onClick={() => onOpenDrugCard('remifentanil')}>
                         Remifentanil card
+                      </Button>
+                    )}
+                    {term.termId.startsWith('rocuronium') && (
+                      <Button variant="ghost" compact onClick={() => onOpenDrugCard('rocuronium')}>
+                        Rocuronium card
                       </Button>
                     )}
                   </div>

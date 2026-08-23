@@ -67,7 +67,9 @@ const DEFAULT_VENTILATOR = {
   mode: 'manual', tidalVolumeMl: 500, respiratoryRateBpm: 12,
   fio2: 0.21, peep: 0, delivering: false, sevofluranePercent: 0,
 } as const;
-const DEFAULT_AIRWAY = { intubated: false, attempts: 0, lastGrade: null } as const;
+const DEFAULT_AIRWAY = {
+  intubated: false, attempts: 0, lastGrade: null, attemptInProgress: false, attemptSecondsRemaining: 0,
+} as const;
 
 export function Cockpit({
   scenario, region, audio, demonstrating = false, onTakeControls, onEnd,
@@ -178,6 +180,15 @@ export function Cockpit({
     () => Object.fromEntries((equipment?.drugs ?? []).map((drug) => [drug.drugId, drug.syringeRemainingMl])),
     [equipment?.drugs],
   );
+  const neuromuscularConfidence = useMemo(() => {
+    const confidence = session.concentrations.find((drug) => drug.drugId === 'rocuronium')?.confidence;
+    if (!confidence) return undefined;
+    return confidence === 'teaching'
+      ? { label: 'Teaching model', kind: 'teaching' as const }
+      : confidence === 'out-of-range'
+        ? { label: 'Out of range', kind: 'out-of-range' as const }
+        : { label: confidence === 'published' ? 'Published' : 'Pending check', kind: 'default' as const };
+  }, [session.concentrations]);
 
   // The animation loop turns wall-clock time into ticks. The clock, not the frame
   // rate, decides how many, so the trajectory is identical at any frame rate.
@@ -245,8 +256,9 @@ export function Cockpit({
       infusions,
       ventilator,
       invalid: invalidParameters,
+      showTrainOfFour: scenario.equipment.monitoring.includes('train-of-four'),
     }));
-  }, [session.state, session.alarms, speak, infusions, ventilator, invalidParameters]);
+  }, [session.state, session.alarms, speak, infusions, ventilator, invalidParameters, scenario.equipment.monitoring]);
 
   const readWaveforms = useCallback(() => {
     speak(waveformDescriptions({
@@ -371,6 +383,8 @@ export function Cockpit({
           onSilence={(alarmId) => session.act({ type: 'silence-alarm', payload: { alarmId } })}
           onWhy={setWhyField}
           modelConfidence={{ label: 'Predicted', kind: 'default' }}
+          showTrainOfFour={scenario.equipment.monitoring.includes('train-of-four')}
+          {...(neuromuscularConfidence ? { neuromuscularConfidence } : {})}
         />
       </div>
 
@@ -413,6 +427,8 @@ export function Cockpit({
           intubated={airway.intubated}
           airwayAttempts={airway.attempts}
           lastGrade={airway.lastGrade}
+          airwayAttemptInProgress={airway.attemptInProgress}
+          airwayAttemptSecondsRemaining={airway.attemptSecondsRemaining}
           onBolus={(drugId, amount, unit) => session.act({ type: 'bolus', payload: { drugId, amount, unit } })}
           onInfusion={(drugId, rate, unit) => session.act({ type: 'infusion', payload: { drugId, rate, unit } })}
           onFluid={(fluidId, volumeMl) => session.act({ type: 'fluid', payload: { fluidId, volumeMl } })}

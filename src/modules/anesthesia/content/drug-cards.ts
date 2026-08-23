@@ -138,6 +138,38 @@ export const DRUG_CARDS: readonly DrugCard[] = [
       + 'while leaning on the opioid is a recognised route to awareness.',
     review: UNSIGNED,
   },
+  {
+    drugId: 'rocuronium',
+    name: 'Rocuronium',
+    drugClass: 'Nondepolarizing neuromuscular blocking agent',
+    mechanism: 'Competitively blocks acetylcholine at the neuromuscular junction. It causes '
+      + 'paralysis and has no hypnotic, amnestic, or analgesic effect.',
+    inductionDose: '0.6 mg/kg for routine intubation; 0.6–1.2 mg/kg for rapid sequence intubation.',
+    maintenanceDose: 'Additional dosing is guided by quantitative neuromuscular monitoring. '
+      + 'This build offers an induction bolus only and does not model maintenance or reversal.',
+    onset: 'The label reports good or excellent intubating conditions in most adequately '
+      + 'anesthetized patients within 2 minutes after 0.6–1.2 mg/kg.',
+    duration: 'Recovery depends on dose and patient factors. This build uses a labeled teaching '
+      + 'model and must not be read as a prediction of an individual patient\'s recovery time.',
+    adverseEffects: [
+      'Apnea and inability to move or communicate while the block is active.',
+      'Residual neuromuscular weakness if recovery is incomplete.',
+      'Anaphylaxis and prolonged blockade are uncommon but consequential.',
+    ],
+    contraindications: [
+      'Known hypersensitivity to rocuronium or bromide ions.',
+      'Do not administer without adequate hypnosis, ventilation capability, and monitoring.',
+    ],
+    watchFor: 'Watch the quantitative train-of-four ratio and ventilation. The depth prediction '
+      + 'does not fall when rocuronium is given because paralysis is not anesthesia.',
+    dosing: {
+      sourceId: 'rocuronium-us-label',
+      comparedWithLabel: 'The United States label gives 0.6 mg/kg for routine intubation and '
+        + '0.6–1.2 mg/kg for rapid sequence intubation. This card carries those ranges, while '
+        + 'the simulator deliberately omits maintenance dosing and reversal.',
+    },
+    review: UNSIGNED,
+  },
 ];
 
 export function getDrugCard(drugId: string): DrugCard | undefined {

@@ -303,6 +303,10 @@ export function objectiveFindings(
     'temporize-volume-loss': 'vasodilation-versus-hypovolemia',
     'avoid-full-dose-induction': 'hysteresis-and-effect-site-lag',
     'read-the-mechanism': 'vasodilation-versus-hypovolemia',
+    'preoxygenate-before-induction': 'preoxygenation-and-safe-apnea-time',
+    'wait-for-intubating-block': 'train-of-four-and-residual-blockade',
+    'protect-the-apnea-margin': 'preoxygenation-and-safe-apnea-time',
+    'secure-and-confirm': 'capnogram-morphology',
   };
 
   return scenario.metadata.objectives.map((objective) => {
@@ -404,6 +408,97 @@ export function objectiveFindings(
         outcome: perKg <= 0.75 ? 'met' : perKg <= 1.25 ? 'partly-met' : 'not-met',
         finding: `The first propofol dose was ${perKg.toFixed(2)} mg/kg.`,
         atTick: first.tick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'preoxygenate-before-induction') {
+      const induction = actions.find(
+        (action) => action.type === 'bolus' && action.payload.drugId === 'propofol',
+      );
+      if (!induction) {
+        return { ...base, outcome: 'not-exercised', finding: 'No propofol induction dose was recorded.' } satisfies ObjectiveFinding;
+      }
+      const sample = history.filter((entry) => entry.tick <= induction.tick).at(-1);
+      const endTidal = sample?.state.endTidalO2Fraction ?? 0;
+      return {
+        ...base,
+        outcome: endTidal >= 0.9 ? 'met' : endTidal >= 0.8 ? 'partly-met' : 'not-met',
+        finding: `End-tidal oxygen fraction was ${endTidal.toFixed(2)} when the first propofol dose was given. `
+          + 'The modeled preoxygenation endpoint is 0.90; the inspired setting alone does not show that the lung reservoir is full.',
+        atTick: induction.tick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'wait-for-intubating-block') {
+      const hypnoticIndex = actions.findIndex(
+        (action) => action.type === 'bolus' && action.payload.drugId === 'propofol',
+      );
+      const blockerIndex = actions.findIndex(
+        (action) => action.type === 'bolus' && action.payload.drugId === 'rocuronium',
+      );
+      const blocker = actions.find(
+        (action) => action.type === 'bolus' && action.payload.drugId === 'rocuronium',
+      );
+      const airway = actions.find((action) => action.type === 'laryngoscopy');
+      if (!airway) {
+        return { ...base, outcome: 'not-exercised', finding: 'No laryngoscopy attempt was recorded.' } satisfies ObjectiveFinding;
+      }
+      if (!blocker || blocker.tick > airway.tick) {
+        return {
+          ...base, outcome: 'not-met', atTick: airway.tick,
+          finding: 'The airway was instrumented before a rocuronium dose was recorded.',
+        } satisfies ObjectiveFinding;
+      }
+      if (hypnoticIndex < 0 || hypnoticIndex > blockerIndex) {
+        return {
+          ...base, outcome: 'not-met', atTick: blocker.tick,
+          finding: 'Rocuronium was given before a propofol hypnotic. Neuromuscular blockade '
+            + 'prevents movement and breathing; it does not produce sleep, amnesia, or analgesia.',
+        } satisfies ObjectiveFinding;
+      }
+      const sample = history.filter((entry) => entry.tick <= airway.tick).at(-1);
+      const count = sample?.state.trainOfFourCount;
+      const ratio = sample?.state.trainOfFourRatio ?? 1;
+      const met = count !== undefined ? count === 0 : ratio <= 0.1;
+      const partial = count !== undefined ? count <= 2 : ratio <= 0.5;
+      const display = count !== undefined
+        ? `count ${count.toFixed(0)} and ratio ${ratio.toFixed(2)}`
+        : `ratio ${ratio.toFixed(2)}`;
+      return {
+        ...base,
+        outcome: met ? 'met' : partial ? 'partly-met' : 'not-met',
+        finding: `The train-of-four showed ${display} when laryngoscopy began. This is a peripheral `
+          + 'teaching-model measurement; it does not guarantee conditions at the larynx.',
+        atTick: airway.tick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'protect-the-apnea-margin') {
+      const lowest = Math.min(...history.map((sample) => sample.state.spo2Percent ?? 100));
+      return {
+        ...base,
+        outcome: lowest >= 92 ? 'met' : lowest >= 88 ? 'partly-met' : 'not-met',
+        finding: `The lowest saturation during the session was ${lowest.toFixed(0)}%. `
+          + 'Below 90% the oxyhaemoglobin dissociation curve is steep, so the remaining margin disappears quickly.',
+      } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'secure-and-confirm') {
+      const airway = actions.find((action) => action.type === 'laryngoscopy');
+      if (!airway) {
+        return { ...base, outcome: 'not-exercised', finding: 'No attempt to secure the airway was recorded.' } satisfies ObjectiveFinding;
+      }
+      const gasExchange = history.find((sample) =>
+        sample.tick > airway.tick
+        && (sample.state.respiratoryRateBpm ?? 0) > 0
+        && (sample.state.etco2MmHg ?? 0) >= 20);
+      return {
+        ...base,
+        outcome: gasExchange ? 'met' : 'partly-met',
+        finding: gasExchange
+          ? `Delivered ventilation resumed with sustained end-tidal carbon dioxide of ${(gasExchange.state.etco2MmHg ?? 0).toFixed(0)} mmHg after airway instrumentation.`
+          : 'Airway instrumentation was recorded, but the available trace did not show subsequent delivered ventilation with sustained carbon dioxide.',
+        atTick: gasExchange?.tick ?? airway.tick,
       } satisfies ObjectiveFinding;
     }
 

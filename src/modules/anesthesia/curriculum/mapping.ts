@@ -279,6 +279,62 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'pc-crisis-management',
     objectiveIds: ['recognize-hemorrhage', 'temporize-volume-loss', 'manage-hypotension'],
   },
+
+  // --- Rapid-sequence induction ------------------------------------------
+  {
+    scenarioId: 'rapid-sequence-induction',
+    frameworkId: 'nbcrna-nce',
+    domainId: 'basic-principles',
+    objectiveIds: ['preoxygenate-before-induction', 'protect-the-apnea-margin'],
+  },
+  {
+    scenarioId: 'rapid-sequence-induction',
+    frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['wait-for-intubating-block', 'secure-and-confirm'],
+  },
+  {
+    scenarioId: 'rapid-sequence-induction',
+    frameworkId: 'nbcrna-nce',
+    domainId: 'equipment-instrumentation-technology',
+    objectiveIds: ['wait-for-intubating-block', 'secure-and-confirm'],
+  },
+  {
+    scenarioId: 'rapid-sequence-induction',
+    frameworkId: 'coa-standards',
+    domainId: 'airway-management',
+    objectiveIds: ['protect-the-apnea-margin', 'secure-and-confirm'],
+  },
+  {
+    scenarioId: 'rapid-sequence-induction',
+    frameworkId: 'coa-standards',
+    domainId: 'pharmacology-of-anesthetic-agents',
+    objectiveIds: ['wait-for-intubating-block'],
+  },
+  {
+    scenarioId: 'rapid-sequence-induction',
+    frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['preoxygenate-before-induction', 'wait-for-intubating-block'],
+  },
+  {
+    scenarioId: 'rapid-sequence-induction',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-preanesthetic-evaluation',
+    objectiveIds: ['preoxygenate-before-induction'],
+  },
+  {
+    scenarioId: 'rapid-sequence-induction',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-pharmacologic-management',
+    objectiveIds: ['wait-for-intubating-block'],
+  },
+  {
+    scenarioId: 'rapid-sequence-induction',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-airway-management',
+    objectiveIds: ['protect-the-apnea-margin', 'secure-and-confirm'],
+  },
 ];
 
 export interface DomainCoverage {

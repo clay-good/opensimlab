@@ -211,6 +211,30 @@ export const EXPLAINERS: readonly Explainer[] = [
       + '2011;365:591-600, PMID 21848460) for the comparison with end-tidal agent guidance.',
     review: UNSIGNED,
   },
+  {
+    id: 'train-of-four-and-residual-blockade',
+    title: 'Train-of-four and residual neuromuscular blockade',
+    body:
+      'A train-of-four monitor stimulates a peripheral nerve four times and measures the muscle '
+      + 'response. The ratio of the fourth response to the first quantifies fade. A ratio near '
+      + '1 means the responses are similar; a lower ratio means neuromuscular transmission is '
+      + 'still impaired.\n\n'
+      + 'Rocuronium causes paralysis. It does not cause sleep, amnesia, or analgesia. A patient '
+      + 'can therefore be unable to breathe or move while still inadequately anesthetized. The '
+      + 'hypnotic must come first, and ventilation must be available before the blocker is given.\n\n'
+      + 'Counting visible twitches is not enough to exclude residual weakness. Fade becomes hard '
+      + 'to detect by touch or sight before the quantitative ratio has recovered to 0.9. That is '
+      + 'why current guidance calls for quantitative monitoring at the adductor pollicis and a '
+      + 'ratio of at least 0.9 before extubation.\n\n'
+      + 'The ratio here is produced by an Open Sim Lab teaching model. It demonstrates onset, '
+      + 'paralysis, and recovery directionally; it does not predict an individual recovery time '
+      + 'and this build does not model reversal.',
+    diagram: { kind: 'hysteresis', caption: 'Four measured responses: fade decreases as quantitative recovery approaches a ratio of 0.9.' },
+    showMe: { scenarioId: 'rapid-sequence-induction' },
+    reflects: '2023 ASA Practice Guidelines for Monitoring and Antagonism of Neuromuscular '
+      + 'Blockade (PMID 36520073).',
+    review: UNSIGNED,
+  },
 ];
 
 export function getExplainer(id: string): Explainer {

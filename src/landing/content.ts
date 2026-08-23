@@ -88,10 +88,11 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
     id: 'inside-the-module',
     heading: 'What is inside the anesthesia module',
     paragraphs: [
-      'This is an early build. It contains five scenarios — a routine induction on a healthy '
+      'This is an early build. It contains six scenarios — a routine induction on a healthy '
       + 'adult, rapid desaturation in an obese patient, hypotension after induction, and '
       + 'bronchospasm after intubation, plus unexpected intraoperative hemorrhage with crystalloid '
-      + 'temporization — with two drugs, the real monitor, the real design system, '
+      + 'temporization and rapid-sequence induction with modeled rocuronium onset — with three '
+      + 'drugs, the real monitor, the real design system, '
       + 'and the real debrief.',
       'That narrowness is deliberate. The riskiest things in a project like this are whether the '
       + 'waveforms convince a clinician, whether it holds its frame rate on a modest phone, and '
@@ -101,7 +102,8 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
     ],
     list: [
       'A sweeping monitor with electrocardiogram, arterial pressure, capnography and plethysmography, all phase-coherent.',
-      'Propofol and remifentanil, with their compartment kinetics and their interaction.',
+      'Propofol and remifentanil, with their compartment kinetics and interaction, plus a clearly '
+      + 'labeled teaching model of rocuronium onset and spontaneous recovery.',
       'Apnoea and desaturation that follow the published times rather than a stopwatch, and a '
       + 'circulation that fails the way an unrelieved airway problem actually makes it fail.',
       'Laryngoscopy with a Cormack-Lehane grade, where repeated attempts make things worse.',

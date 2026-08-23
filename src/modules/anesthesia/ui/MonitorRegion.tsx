@@ -10,7 +10,7 @@ import { useMemo } from 'react';
 import { AlarmRail, VitalTile, WaveformCanvas } from '@platform/ui/monitor';
 import type { EngineAlarm } from '@platform/kernel/protocol';
 import { FIELDS, type StateField } from '@anesthesia/physiology';
-import { TILES, TRACKS, trackConfigs } from './tracks';
+import { TRACKS, tilesFor, trackConfigs } from './tracks';
 import { waveformDescriptions } from './accessibility';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 
@@ -28,6 +28,8 @@ export interface MonitorRegionProps {
   readonly colorblindSafe: boolean;
   readonly showLimits: boolean;
   readonly primaryTracesOnly: boolean;
+  readonly showTrainOfFour?: boolean;
+  readonly neuromuscularConfidence?: { label: string; kind: 'default' | 'out-of-range' | 'teaching' };
   /**
    * A pixel height, or `fill` to take whatever height the region has. `fill` is
    * what the cockpit uses: a taller window should mean taller waveforms, not a
@@ -61,6 +63,7 @@ export function MonitorRegion(props: MonitorRegionProps) {
   };
 
   const visibleTracks = new Set(tracks.map((track) => track.id));
+  const tiles = tilesFor(props.showTrainOfFour ?? false);
 
   return (
     <div className="monitor">
@@ -101,7 +104,7 @@ export function MonitorRegion(props: MonitorRegionProps) {
         </div>
 
         <div className="monitor__tiles">
-          {TILES.map((tile) => {
+          {tiles.map((tile) => {
             const spec = FIELDS[tile.field];
             const invalid = props.invalidParameters.has(tile.field);
             return (
@@ -109,7 +112,9 @@ export function MonitorRegion(props: MonitorRegionProps) {
                 key={tile.field}
                 name={tile.name}
                 value={invalid || !props.state ? null : props.state[tile.field] ?? null}
-                unit={spec.unit}
+                unit={tile.field === 'trainOfFourRatio' && props.state
+                  ? `ratio · count ${props.state.trainOfFourCount?.toFixed(0) ?? '--'}`
+                  : spec.unit}
                 precision={spec.precision}
                 traceToken={tile.traceToken}
                 {...(props.showLimits && tile.lowLimit !== undefined ? { lowLimit: tile.lowLimit } : {})}
@@ -119,7 +124,9 @@ export function MonitorRegion(props: MonitorRegionProps) {
                 reasonApplies={invalid && props.state !== null}
                 artifact={props.artifactParameters.has(tile.field)}
                 {...(tile.field === 'depthIndex' && props.modelConfidence
-                  ? { confidence: props.modelConfidence } : {})}
+                  ? { confidence: props.modelConfidence }
+                  : tile.field === 'trainOfFourRatio' && props.neuromuscularConfidence
+                    ? { confidence: props.neuromuscularConfidence } : {})}
                 onOpenWhy={() => props.onWhy(tile.field)}
               />
             );

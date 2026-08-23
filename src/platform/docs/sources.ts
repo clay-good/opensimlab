@@ -65,6 +65,20 @@ const CHECKED = '2026-08-20';
 export const SOURCES: readonly Source[] = [
   // --- Pharmacokinetic and pharmacodynamic models ---------------------------
   {
+    id: 'mccoy-rocuronium-1993',
+    pmid: '8460753',
+    authors: 'McCoy EP, Mirakhur RK, Maddineni VR, Wierda JMKH, Proost JH',
+    title: 'Neuromuscular effects of rocuronium bromide (Org 9426) during fentanyl and halothane anaesthesia',
+    publication: 'Anaesthesia',
+    year: 1993,
+    locator: '48:103-5',
+    usedFor: 'Adult dose-response onset and spontaneous-recovery landmarks used to calibrate the '
+      + 'explicitly labeled rocuronium clinical-course teaching model. The compact PK/PD '
+      + 'parameters are Open Sim Lab constructions, not transcribed study parameters.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-23',
+  },
+  {
     id: 'eleveld-2018',
     pmid: '29661412',
     authors: 'Eleveld DJ, Colin P, Absalom AR, Struys MMRF',
@@ -295,6 +309,21 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: CHECKED,
   },
   {
+    id: 'asa-neuromuscular-blockade-2023',
+    pmid: '36520073',
+    authors: 'Thilen SR, Weigel WA, Todd MM, Dutton RP, Lien CA, Grant SA, et al.',
+    title: '2023 American Society of Anesthesiologists Practice Guidelines for Monitoring and '
+      + 'Antagonism of Neuromuscular Blockade',
+    publication: 'Anesthesiology',
+    year: 2023,
+    locator: '138:13-41',
+    usedFor: 'The quantitative train-of-four teaching: monitor at the adductor pollicis and '
+      + 'confirm a train-of-four ratio of at least 0.9 before extubation. The current slice does '
+      + 'not implement or teach reversal dosing.',
+    verifiedAgainst: NCBI,
+    verifiedOn: CHECKED,
+  },
+  {
     id: 'das-2015',
     pmid: '26556848',
     authors: 'Frerk C, Mitchell VS, McNarry AF, Mendonca C, Bhagrath R, Patel A, et al.',
@@ -411,6 +440,21 @@ export const SOURCES: readonly Source[] = [
       + 'isoflurane and 0.4 with nitrous oxide.',
     verifiedAgainst: 'The DailyMed label text, dosage and administration. Not version-pinned, '
       + 'for the same reason as any label: DailyMed serves whichever revision is current.',
+    verifiedOn: CHECKED,
+  },
+  {
+    id: 'rocuronium-us-label',
+    authors: 'United States Food and Drug Administration approved labelling',
+    title: 'Rocuronium bromide injection — prescribing information',
+    publication: 'DailyMed, National Library of Medicine',
+    year: 2026,
+    locator: 'Dosage and Administration, tracheal intubation and rapid sequence intubation',
+    unpinned: true,
+    usedFor: 'The reference the rocuronium drug card\'s figures are checked against. The label '
+      + 'gives 0.6 mg/kg for routine intubation and 0.6 to 1.2 mg/kg for rapid sequence '
+      + 'intubation, with additional dosing guided by return of neuromuscular function.',
+    verifiedAgainst: 'The current DailyMed label text, dosage and administration. Not '
+      + 'version-pinned because DailyMed serves the current manufacturer revision.',
     verifiedOn: CHECKED,
   },
 

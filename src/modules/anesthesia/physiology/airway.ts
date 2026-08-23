@@ -153,11 +153,21 @@ export class AirwayState {
   attempts = 0;
   intubated = false;
 
-  attempt(anatomy: AirwayAnatomy, technique: LaryngoscopyTechnique, rng: Rng): LaryngoscopyResult {
+  beginAttempt(anatomy: AirwayAnatomy, technique: LaryngoscopyTechnique, rng: Rng): LaryngoscopyResult {
     this.attempts += 1;
     const result = performLaryngoscopy(anatomy, { attemptNumber: this.attempts, technique }, this.trauma, rng);
     this.trauma = clamp(this.trauma + result.traumaAdded, 0, 1);
+    return result;
+  }
+
+  completeAttempt(result: LaryngoscopyResult): void {
     if (result.intubated) this.intubated = true;
+  }
+
+  /** Compatibility helper for direct physiology tests and non-session callers. */
+  attempt(anatomy: AirwayAnatomy, technique: LaryngoscopyTechnique, rng: Rng): LaryngoscopyResult {
+    const result = this.beginAttempt(anatomy, technique, rng);
+    this.completeAttempt(result);
     return result;
   }
 }
