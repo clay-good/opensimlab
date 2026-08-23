@@ -697,7 +697,7 @@ export class AnesthesiaEngine {
       invalidParameters: invalid,
     });
     for (const alarm of alarmResult.raised) {
-      this.log(alarm.priority === 'critical' ? 'critical' : alarm.priority === 'warning' ? 'warning' : 'advisory',
+      this.log(alarm.priority === 'high' ? 'critical' : alarm.priority === 'medium' ? 'warning' : 'advisory',
         'alarm', `alarm-${alarm.id}-${this.currentTick}`, alarm.message,
         { alarmId: alarm.id, parameter: alarm.parameter, value: alarm.value });
     }

@@ -11,7 +11,7 @@
  * not a certified medical device and claims no conformance.
  */
 
-export type AlarmPriority = 'critical' | 'warning' | 'advisory';
+export type AlarmPriority = 'high' | 'medium' | 'low';
 
 /** Simulated seconds an audible alarm stays silenced. */
 export const SILENCE_SECONDS = 120;
@@ -75,17 +75,17 @@ export const DEFAULT_LIMITS: readonly AlarmLimit[] = [
     // and a saturation of 89% needs prompt action rather than immediate action.
     // Grading both saturation alarms the same left the escalation to 85% carrying
     // no information at all.
-    id: 'spo2-low', parameter: 'spo2Percent', label: 'SpO₂', unit: '%', priority: 'warning',
+    id: 'spo2-low', parameter: 'spo2Percent', label: 'SpO₂', unit: '%', priority: 'medium',
     low: 90, message: 'Oxygen saturation low',
     source: 'The conventional intervention threshold; below it the dissociation curve falls steeply.',
   },
   {
-    id: 'spo2-very-low', parameter: 'spo2Percent', label: 'SpO₂', unit: '%', priority: 'critical',
+    id: 'spo2-very-low', parameter: 'spo2Percent', label: 'SpO₂', unit: '%', priority: 'high',
     low: 85, message: 'Oxygen saturation critically low',
     source: 'Severe hypoxaemia requiring immediate action.',
   },
   {
-    id: 'map-low', parameter: 'meanArterialMmHg', label: 'MAP', unit: 'mmHg', priority: 'warning',
+    id: 'map-low', parameter: 'meanArterialMmHg', label: 'MAP', unit: 'mmHg', priority: 'medium',
     low: 65, message: 'Mean arterial pressure low',
     source: 'The threshold most of the intraoperative hypotension outcome literature is '
       + 'organized around (Salmasi et al., Anesthesiology 2017;126:47-65, PMID 27792044; Sessler et al., '
@@ -96,7 +96,7 @@ export const DEFAULT_LIMITS: readonly AlarmLimit[] = [
       + 'minutes below 55 with acute kidney and myocardial injury.',
   },
   {
-    id: 'map-very-low', parameter: 'meanArterialMmHg', label: 'MAP', unit: 'mmHg', priority: 'critical',
+    id: 'map-very-low', parameter: 'meanArterialMmHg', label: 'MAP', unit: 'mmHg', priority: 'high',
     low: 55, message: 'Mean arterial pressure critically low',
     source: 'Walsh et al. (Anesthesiology 2013;119:507-15, PMID 23835589) associate exposure below a '
       + 'mean arterial pressure '
@@ -104,7 +104,7 @@ export const DEFAULT_LIMITS: readonly AlarmLimit[] = [
       + 'minutes, so this is where the alarm becomes high priority rather than medium.',
   },
   {
-    id: 'fio2-low', parameter: 'fio2', label: 'FiO₂', unit: '', priority: 'critical',
+    id: 'fio2-low', parameter: 'fio2', label: 'FiO₂', unit: '', priority: 'high',
     low: 0.21, message: 'Inspired oxygen fraction below room air',
     source: 'The ASA Standards for Basic Anesthetic Monitoring require an oxygen analyser with a '
       + 'low oxygen concentration limit alarm on the breathing system. The machine\'s hypoxic '
@@ -112,34 +112,34 @@ export const DEFAULT_LIMITS: readonly AlarmLimit[] = [
       + 'guard has been defeated.',
   },
   {
-    id: 'heart-rate-low', parameter: 'heartRateBpm', label: 'HR', unit: 'bpm', priority: 'warning',
+    id: 'heart-rate-low', parameter: 'heartRateBpm', label: 'HR', unit: 'bpm', priority: 'medium',
     low: 45, message: 'Bradycardia',
     source: 'Conventional intraoperative bradycardia threshold.',
   },
   {
-    id: 'heart-rate-high', parameter: 'heartRateBpm', label: 'HR', unit: 'bpm', priority: 'warning',
+    id: 'heart-rate-high', parameter: 'heartRateBpm', label: 'HR', unit: 'bpm', priority: 'medium',
     high: 120, message: 'Tachycardia',
     source: 'Conventional intraoperative tachycardia threshold.',
   },
   {
-    id: 'etco2-low', parameter: 'etco2MmHg', label: 'EtCO₂', unit: 'mmHg', priority: 'critical',
+    id: 'etco2-low', parameter: 'etco2MmHg', label: 'EtCO₂', unit: 'mmHg', priority: 'high',
     low: 20, message: 'End-tidal carbon dioxide low or absent',
     source: 'Loss of the capnogram is the earliest sign of a disconnected or misplaced airway.',
   },
   {
-    id: 'etco2-high', parameter: 'etco2MmHg', label: 'EtCO₂', unit: 'mmHg', priority: 'warning',
+    id: 'etco2-high', parameter: 'etco2MmHg', label: 'EtCO₂', unit: 'mmHg', priority: 'medium',
     high: 55, message: 'End-tidal carbon dioxide high',
     source: 'Hypoventilation, or the first sign of a hypermetabolic state.',
   },
   {
-    id: 'depth-light', parameter: 'depthIndex', label: 'Depth', unit: '', priority: 'warning',
+    id: 'depth-light', parameter: 'depthIndex', label: 'Depth', unit: '', priority: 'medium',
     high: 60, message: 'Predicted depth index above the usual surgical range',
     source: 'The 40–60 range the published models are discussed against.',
     // Silent until the patient has actually reached surgical depth once.
     armsAfterFirstNormal: true,
   },
   {
-    id: 'depth-deep', parameter: 'depthIndex', label: 'Depth', unit: '', priority: 'advisory',
+    id: 'depth-deep', parameter: 'depthIndex', label: 'Depth', unit: '', priority: 'low',
     low: 40, message: 'Predicted depth index below the usual surgical range',
     source: 'The 40–60 range the published models are discussed against. Both depth limits are '
       + 'that range\'s own bounds; an earlier build alarmed deep at 30, which is not what its '
@@ -274,5 +274,5 @@ export class AlarmEngine {
 }
 
 export function priorityRank(priority: AlarmPriority): number {
-  return priority === 'critical' ? 0 : priority === 'warning' ? 1 : 2;
+  return priority === 'high' ? 0 : priority === 'medium' ? 1 : 2;
 }

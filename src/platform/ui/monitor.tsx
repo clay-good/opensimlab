@@ -27,7 +27,7 @@ export interface VitalTileProps {
   readonly traceToken: string;
   readonly lowLimit?: number;
   readonly highLimit?: number;
-  readonly alarm?: 'critical' | 'warning' | 'advisory' | null;
+  readonly alarm?: 'high' | 'medium' | 'low' | null;
   /**
    * Why the value cannot be measured. Shown INSTEAD of a stale number, and only
    * when the parameter is genuinely unmeasurable — not merely absent because the
@@ -66,7 +66,7 @@ export function VitalTile({
     <div className="vital-tile" data-alarm={alarm ?? undefined}>
       <div className="vital-tile__label-row">
         <span>{name}</span>
-        {alarm && <span className="vital-tile__alarm-word">{alarm === 'critical' ? 'HIGH PRIORITY' : alarm === 'warning' ? 'MEDIUM' : 'LOW'}</span>}
+        {alarm && <span className="vital-tile__alarm-word">{alarm === 'high' ? 'HIGH PRIORITY' : alarm === 'medium' ? 'MEDIUM' : 'LOW'}</span>}
         {artifact && <span className="vital-tile__alarm-word">ARTIFACT</span>}
       </div>
       <div className="vital-tile__value-row">
@@ -340,7 +340,7 @@ export function PlotCanvas({ series, height, cursorSeconds, xMax, yMax }: PlotCa
 
 export interface AlarmRailItem {
   readonly id: string;
-  readonly priority: 'critical' | 'warning' | 'advisory';
+  readonly priority: 'high' | 'medium' | 'low';
   readonly message: string;
   readonly silencedUntilTick: number | null;
 }
@@ -357,7 +357,7 @@ export function AlarmRail({ alarms, tick, onSilence }: {
         return (
           <div key={alarm.id} className="alarm-rail__item" data-priority={alarm.priority}>
             <span className="alarm-rail__priority-word">
-              {alarm.priority === 'critical' ? 'High' : alarm.priority === 'warning' ? 'Medium' : 'Low'}
+              {alarm.priority === 'high' ? 'High' : alarm.priority === 'medium' ? 'Medium' : 'Low'}
             </span>
             <span>{alarm.message}</span>
             {remaining !== null

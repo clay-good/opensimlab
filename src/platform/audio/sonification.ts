@@ -70,19 +70,19 @@ export interface BurstPattern {
   readonly burstsPerCycle: number;
 }
 
-export const ALARM_BURSTS: Record<'critical' | 'warning' | 'advisory', BurstPattern> = {
+export const ALARM_BURSTS: Record<'high' | 'medium' | 'low', BurstPattern> = {
   // High priority: ten pulses, as two bursts of five, repeating quickly.
-  critical: {
+  high: {
     pulses: 5, pulseSeconds: 0.12, gapSeconds: 0.06,
     burstIntervalSeconds: 1.2, frequencyHz: 960, burstsPerCycle: 2,
   },
   // Medium priority: three pulses, repeating slowly.
-  warning: {
+  medium: {
     pulses: 3, pulseSeconds: 0.16, gapSeconds: 0.12,
     burstIntervalSeconds: 6.0, frequencyHz: 640, burstsPerCycle: 1,
   },
   // Low priority: one or two pulses, or a steady indication only.
-  advisory: {
+  low: {
     pulses: 1, pulseSeconds: 0.2, gapSeconds: 0,
     burstIntervalSeconds: 20, frequencyHz: 440, burstsPerCycle: 1,
   },
@@ -230,7 +230,7 @@ export class SonificationEngine {
   }
 
   /** Sound an alarm burst if enough time has passed since the last one. */
-  alarm(priority: 'critical' | 'warning' | 'advisory'): void {
+  alarm(priority: 'high' | 'medium' | 'low'): void {
     const context = this.context;
     if (!context || !this.settings.enabled || !this.alarmGain) return;
     const pattern = ALARM_BURSTS[priority];

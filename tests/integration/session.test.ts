@@ -225,7 +225,7 @@ describe('The worker protocol, the store, and the interface values', () => {
     expect(alarms.length).toBeGreaterThan(0);
     const alarm = alarms[0]!;
     expect(alarm.message.length).toBeGreaterThan(10);
-    expect(['critical', 'warning', 'advisory']).toContain(alarm.priority);
+    expect(['high', 'medium', 'low']).toContain(alarm.priority);
 
     useSession.getState().act({ type: 'silence-alarm', payload: { alarmId: alarm.alarmId } });
     runFrames(2);

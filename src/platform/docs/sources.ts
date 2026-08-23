@@ -250,7 +250,7 @@ export const SOURCES: readonly Source[] = [
     publication: 'Anesthesiology',
     year: 2013,
     locator: '119:507-15',
-    usedFor: 'The critical mean-arterial-pressure alarm at 55 mmHg, and the finding that exposure '
+    usedFor: 'The high-priority mean-arterial-pressure alarm at 55 mmHg, and the finding that exposure '
       + 'below it for as little as one to five minutes is associated with acute kidney and '
       + 'myocardial injury.',
     verifiedAgainst: NCBI,
@@ -264,7 +264,7 @@ export const SOURCES: readonly Source[] = [
     publication: 'Anesthesiology',
     year: 2017,
     locator: '126:47-65',
-    usedFor: 'One of the two sources for the warning-level mean-arterial-pressure alarm at 65 mmHg.',
+    usedFor: 'One of the two sources for the medium-priority mean-arterial-pressure alarm at 65 mmHg.',
     verifiedAgainst: NCBI,
     verifiedOn: CHECKED,
   },
@@ -276,7 +276,7 @@ export const SOURCES: readonly Source[] = [
     publication: 'Br J Anaesth',
     year: 2019,
     locator: '122:563-74',
-    usedFor: 'The other source for the warning-level mean-arterial-pressure alarm at 65 mmHg.',
+    usedFor: 'The other source for the medium-priority mean-arterial-pressure alarm at 65 mmHg.',
     verifiedAgainst: NCBI,
     verifiedOn: CHECKED,
   },

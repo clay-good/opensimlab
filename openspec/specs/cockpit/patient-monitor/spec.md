@@ -77,10 +77,10 @@ The monitor SHALL raise alarms at three priorities modeled on IEC 60601-1-8, the
 - **WHEN** the alarm implementation is reviewed
 - **THEN** the priority mapping, flash rates, and the rationale cite IEC 60601-1-8, and the documentation states plainly that the simulator follows the standard's conventions for teaching purposes and is not a certified medical device
 
-#### Scenario: Critical alarm is unmistakable
+#### Scenario: High-priority alarm is unmistakable
 
-- **WHEN** oxygen saturation falls below 90%
-- **THEN** a critical alarm fires with a red banner, the offending numeric flashes, the alarm text names the parameter and value, and an audible tone sounds if audio is enabled
+- **WHEN** oxygen saturation falls below 85%
+- **THEN** a high-priority alarm fires with a red banner, the offending numeric flashes, the alarm text names the parameter and value, and an audible tone sounds if audio is enabled
 
 #### Scenario: Silencing is temporary and visible
 
@@ -100,7 +100,7 @@ The monitor SHALL raise alarms at three priorities modeled on IEC 60601-1-8, the
 #### Scenario: Holding an alarm is opt-in and never applies to an emergency
 
 - **WHEN** the alarm set is reviewed
-- **THEN** only limits explicitly marked as held behave this way, every other limit fires from a cold start, and a saturation below the critical threshold on the first frame alarms immediately
+- **THEN** only limits explicitly marked as held behave this way, every other limit fires from a cold start, and a saturation below the high-priority threshold on the first frame alarms immediately
 
 #### Scenario: Audible alarm behavior is owned by the sonification capability
 

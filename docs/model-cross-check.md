@@ -7,7 +7,7 @@ and claims the code does not support. It does not and cannot replace a credentia
 clinician judging whether the patient behaves like a patient. That review is task 13 of the
 alpha change and it has still not happened. See [`GOVERNANCE.md`](../GOVERNANCE.md).
 
-Why record it at all: it found fifteen real defects, five of which a learner would have
+Why record it at all: it found sixteen real defects, five of which a learner would have
 seen on screen, and the provenance of a fix matters as much as the fix.
 
 ## Method and its limits
@@ -49,6 +49,7 @@ Each has a regression test that fails against the previous behaviour.
 | 13 | Fat-free mass stepped discontinuously at exactly 18 years | A female patient's value dropped 2.9% on her eighteenth birthday, and Eleveld's V3 and Q3 moved with it |
 | 14 | Eleveld's asymmetric depth slopes were reversed and joined with a hard branch | The learner-visible depth index disagreed with the authors' final NONMEM stream, especially around Ce50. It now uses 1.89 below, 1.47 above, and the source's logistic blend |
 | 15 | An unused helper called the Q-to-S two-standard-deviation Gaussian support a QRS duration | It reported 147 ms without a clinical onset/offset definition, which could falsely imply the normal trace's width had been validated. The proxy was removed; tests now assert the published event timing, rate-stable Gaussian widths, and the declared narrow/wide distinction without inventing a diagnostic interval. |
+| 16 | Alarm priorities used `critical`/`warning`/`advisory` internally while the governing monitor specification requires `high`/`medium`/`low` | The worker protocol, alarm engine, audio patterns, visual state, and accessibility announcements now share the standard priority vocabulary. Event-log severity and the existing visual color-token names remain separate domains. |
 
 Smaller corrections in the same pass: the remifentanil model offered itself as the
 alternative when its own failure predicate fired; an envelope violation could be handed a
@@ -97,8 +98,6 @@ Recorded here rather than silently carried:
   rates, which would undermine a VT-versus-VF discrimination lesson.
 - There is no paediatric respiratory profile, and the benchmark harness hardcodes adult
   haemoglobin and blood volume, so one cannot be added without changing it.
-- The alarm priority names in source are `critical`/`warning`/`advisory` rather than the
-  standard's high/medium/low. The learner-facing display already uses the standard's words.
 
 ## Concentration-time checks, 2026-08-23
 

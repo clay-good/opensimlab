@@ -66,8 +66,8 @@ export function announcementsFor(
       out.push({
         text: `${spec.label} ${isBelow ? 'fell below' : 'rose above'} ${threshold} ${spec.unit}`
           + `, now ${after.toFixed(spec.precision)} ${spec.unit}`
-          + (alarm ? `. ${alarm.priority === 'critical' ? 'High priority' : alarm.priority === 'warning' ? 'Medium priority' : 'Low priority'} alarm.` : ''),
-        severity: alarm?.priority === 'critical' ? 'critical' : alarm ? 'warning' : 'info',
+          + (alarm ? `. ${alarm.priority === 'high' ? 'High priority' : alarm.priority === 'medium' ? 'Medium priority' : 'Low priority'} alarm.` : ''),
+        severity: alarm?.priority === 'high' ? 'critical' : alarm ? 'warning' : 'info',
       });
     }
   }

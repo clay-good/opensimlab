@@ -38,19 +38,19 @@ export const AUDIO_VISUAL_PAIRS: readonly AudioVisualPair[] = [
     visualLocation: 'Monitor region.',
   },
   {
-    audioEvent: 'alarm-burst-critical',
+    audioEvent: 'alarm-burst-high',
     conveys: 'A high-priority alarm.',
     visualEquivalent: 'The alarm rail item flashing at 2 Hz with the words "High priority", plus the alarmed tile treatment.',
     visualLocation: 'AlarmRail above the traces.',
   },
   {
-    audioEvent: 'alarm-burst-warning',
+    audioEvent: 'alarm-burst-medium',
     conveys: 'A medium-priority alarm.',
     visualEquivalent: 'The alarm rail item flashing at 0.6 Hz with the word "Medium".',
     visualLocation: 'AlarmRail above the traces.',
   },
   {
-    audioEvent: 'alarm-burst-advisory',
+    audioEvent: 'alarm-burst-low',
     conveys: 'A low-priority alarm.',
     visualEquivalent: 'A steady alarm rail item with the word "Low".',
     visualLocation: 'AlarmRail above the traces.',
@@ -78,6 +78,6 @@ export const AUDIO_VISUAL_PAIRS: readonly AudioVisualPair[] = [
 /** Every audio event this build can emit. The audit compares against this list. */
 export const AUDIO_EVENTS: readonly string[] = [
   'pulse-tone', 'pulse-tone-pitch', 'pulse-tone-absent',
-  'alarm-burst-critical', 'alarm-burst-warning', 'alarm-burst-advisory',
+  'alarm-burst-high', 'alarm-burst-medium', 'alarm-burst-low',
   'extended-cue-map-drone', 'extended-cue-etco2-pulse', 'extended-cue-depth-drone',
 ];

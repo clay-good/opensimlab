@@ -113,7 +113,7 @@ The application SHALL define alarm and focus tokens as:
 --focus:               #7FB8FF;
 ```
 
-A critical alarm banner SHALL be a solid `--alarm-critical` fill with `--text-on-accent` text, because a filled banner reads as more urgent than colored text; where critical severity must appear as text on a dark surface it SHALL use `--alarm-critical-text`. Alarm color SHALL appear only in the alarm rail, the alarm banner, and the alarmed numeric's own treatment. Sensor artifact SHALL NOT receive a hue; it is expressed as a 45-degree hatch overlay at 8 px pitch in `--text-tertiary` at 20% opacity.
+A high-priority alarm banner SHALL be a solid `--alarm-critical` fill with `--text-on-accent` text, because a filled banner reads as more urgent than colored text; where high-priority alarm severity must appear as text on a dark surface it SHALL use `--alarm-critical-text`. Alarm color SHALL appear only in the alarm rail, the alarm banner, and the alarmed numeric's own treatment. Sensor artifact SHALL NOT receive a hue; it is expressed as a 45-degree hatch overlay at 8 px pitch in `--text-tertiary` at 20% opacity.
 
 #### Scenario: Artifact reads as "not physiology"
 
@@ -191,7 +191,7 @@ The application SHALL define exactly three motion durations and one easing curve
 #### Scenario: Motion is subordinate to the data
 
 - **WHEN** a panel opens or a value updates
-- **THEN** the transition completes within its token duration, and no animation loops, pulses, or draws attention away from the monitor except an active critical alarm
+- **THEN** the transition completes within its token duration, and no animation loops, pulses, or draws attention away from the monitor except an active high-priority alarm
 
 #### Scenario: Reduced motion removes transitions without removing meaning
 
@@ -218,7 +218,7 @@ A VitalTile SHALL present one physiological parameter with, in fixed positions: 
 
 #### Scenario: Alarm state changes treatment, not layout
 
-- **WHEN** a parameter breaches a critical limit
+- **WHEN** a parameter breaches a high-priority limit
 - **THEN** the tile gains an `--alarm-critical` 1 px border and `--alarm-critical-bg` fill, the value stays in its trace hue, the alarm word appears in the label row, and no element moves
 
 #### Scenario: An invalid value is stated, not faked

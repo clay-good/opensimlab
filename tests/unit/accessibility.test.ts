@@ -42,16 +42,16 @@ describe('Requirement: Screen Reader Access To Live Physiology', () => {
   it('announces a threshold crossing, naming the parameter, the value and the severity', () => {
     const announcements = announcementsFor(
       { heartRateBpm: 72, spo2Percent: 93, meanArterialMmHg: 88, etco2MmHg: 38, depthIndex: 50 },
-      { heartRateBpm: 72, spo2Percent: 88, meanArterialMmHg: 88, etco2MmHg: 38, depthIndex: 50 },
+      { heartRateBpm: 72, spo2Percent: 82, meanArterialMmHg: 88, etco2MmHg: 38, depthIndex: 50 },
       [{
-        alarmId: 'spo2-low', priority: 'critical', parameter: 'spo2Percent', value: 88,
-        unit: '%', message: 'Oxygen saturation low', sinceTick: 1, silencedUntilTick: null,
+        alarmId: 'spo2-very-low', priority: 'high', parameter: 'spo2Percent', value: 82,
+        unit: '%', message: 'Oxygen saturation critically low', sinceTick: 1, silencedUntilTick: null,
       }],
     );
     expect(announcements.length).toBeGreaterThan(0);
     const text = announcements.map((a) => a.text).join(' ');
     expect(text).toContain('Oxygen saturation');
-    expect(text).toContain('88');
+    expect(text).toContain('82');
     expect(text).toContain('High priority');
     expect(announcements.some((a) => a.severity === 'critical')).toBe(true);
   });

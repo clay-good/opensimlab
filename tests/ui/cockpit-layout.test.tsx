@@ -16,12 +16,23 @@ import { ConcentrationPanel } from '@anesthesia/ui/ConcentrationPanel';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { TILES, TRACKS, trackConfigs } from '@anesthesia/ui/tracks';
+import { Banner } from '@platform/ui';
 
 // `import.meta.url` is not a file URL under jsdom, so the repository root comes
 // from the process working directory, which vitest sets to the project root.
 const root = process.cwd();
 const cockpitCss = readFileSync(join(root, 'src/modules/anesthesia/ui/cockpit.css'), 'utf8');
 const componentsCss = readFileSync(join(root, 'src/platform/ui/components.css'), 'utf8');
+
+describe('Requirement: Generic Banners Do Not Imply Alarm Priority', () => {
+  it('keeps advisory guidance distinct from low-priority alarms', () => {
+    const markup = renderToStaticMarkup(createElement(Banner, {
+      kind: 'advisory', children: 'Consider checking the airway.',
+    }));
+    expect(markup).toContain('Consider checking the airway.');
+    expect(markup).not.toContain('Low priority');
+  });
+});
 
 describe('Requirement: Four-Region Cockpit', () => {
   it('Scenario: Region proportions at the reference desktop width', () => {
@@ -222,12 +233,12 @@ describe('Requirement: No Layout Shift During Simulation', () => {
     expect(cockpitCss).not.toMatch(/grid-template-(rows|columns):[^;]*\bauto\b[^;]*var\(--action-cockpit-height\)/);
     // The alarm treatment changes colour and border only; no element moves.
     const tileBlock = componentsCss.slice(componentsCss.indexOf('.vital-tile'), componentsCss.indexOf('.log-list'));
-    expect(tileBlock).toContain("[data-alarm='critical']");
-    expect(tileBlock).not.toMatch(/\[data-alarm='critical'\][^}]*(padding|margin|font-size|block-size)\s*:/);
+    expect(tileBlock).toContain("[data-alarm='high']");
+    expect(tileBlock).not.toMatch(/\[data-alarm='high'\][^}]*(padding|margin|font-size|block-size)\s*:/);
     // Numerics are tabular everywhere, so a changing value cannot resize its box.
     expect(componentsCss).toContain('font-variant-numeric: tabular-nums');
     // Flashing animates opacity only.
-    expect(componentsCss).toMatch(/@keyframes alarm-flash-critical \{[^}]*opacity/);
+    expect(componentsCss).toMatch(/@keyframes alarm-flash-high \{[^}]*opacity/);
   });
 
   it('Scenario: Long text does not reflow a tray', () => {

@@ -50,8 +50,8 @@
   /* Alarm flash periods, derived from the IEC 60601-1-8 rate bands.
    * These are clinical signals at a standard-mandated rate, not interface
    * transitions, so they are not bound by the 280 ms motion ceiling. */
-  --alarm-flash-critical-period: 500ms;  /* 2 Hz */
-  --alarm-flash-warning-period: 1667ms;  /* 0.6 Hz */
+  --alarm-flash-high-period: 500ms;  /* 2 Hz */
+  --alarm-flash-medium-period: 1667ms;  /* 0.6 Hz */
 
   /* Type scale. */
   --type-vital-xl: 600 56px/1 var(--font-ui);

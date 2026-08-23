@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. */
-export const WORKER_PROTOCOL_VERSION = 2;
+/** Bumped whenever the message shape changes incompatibly. Version 3 uses high/medium/low alarm priorities. */
+export const WORKER_PROTOCOL_VERSION = 3;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -74,7 +74,7 @@ export interface EngineEvent {
 /** An active alarm as the engine sees it. The monitor owns only the visual treatment. */
 export interface EngineAlarm {
   readonly alarmId: string;
-  readonly priority: 'critical' | 'warning' | 'advisory';
+  readonly priority: 'high' | 'medium' | 'low';
   readonly parameter: string;
   readonly value: number;
   readonly unit: string;

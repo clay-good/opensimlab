@@ -45,6 +45,10 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
+  it('Scenario: the alarm-priority wire change has protocol version 3', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(3);
+  });
+
   it('Scenario: init reports ready before any step runs', () => {
     init();
     expect(emitted.map((message) => message.type)).toEqual(['ready']);

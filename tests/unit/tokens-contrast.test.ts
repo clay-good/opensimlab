@@ -133,20 +133,20 @@ describe('Requirement: Typography', () => {
 
 describe('Scenario: Alarm treatment matches the clinical standard', () => {
   it('uses the IEC 60601-1-8 flash rate bands', () => {
-    expect(ALARM_FLASH_HZ.critical.min).toBe(1.4);
-    expect(ALARM_FLASH_HZ.critical.max).toBe(2.8);
-    expect(ALARM_FLASH_HZ.warning.min).toBe(0.4);
-    expect(ALARM_FLASH_HZ.warning.max).toBe(0.8);
-    expect(ALARM_FLASH_HZ.advisory.nominal).toBe(0);
+    expect(ALARM_FLASH_HZ.high.min).toBe(1.4);
+    expect(ALARM_FLASH_HZ.high.max).toBe(2.8);
+    expect(ALARM_FLASH_HZ.medium.min).toBe(0.4);
+    expect(ALARM_FLASH_HZ.medium.max).toBe(0.8);
+    expect(ALARM_FLASH_HZ.low.nominal).toBe(0);
     // The nominal rate each priority actually flashes at sits inside its band.
-    for (const priority of ['critical', 'warning'] as const) {
+    for (const priority of ['high', 'medium'] as const) {
       const band = ALARM_FLASH_HZ[priority];
       expect(band.nominal).toBeGreaterThanOrEqual(band.min);
       expect(band.nominal).toBeLessThanOrEqual(band.max);
     }
     // High priority is unambiguously faster than medium, so priority is
     // distinguishable without reading.
-    expect(ALARM_FLASH_HZ.critical.min).toBeGreaterThan(ALARM_FLASH_HZ.warning.max);
+    expect(ALARM_FLASH_HZ.high.min).toBeGreaterThan(ALARM_FLASH_HZ.medium.max);
   });
 });
 

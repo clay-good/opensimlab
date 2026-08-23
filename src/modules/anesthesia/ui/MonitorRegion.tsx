@@ -55,7 +55,7 @@ export function MonitorRegion(props: MonitorRegionProps) {
     mechanicalPulse: props.mechanicalPulse,
   }), [props.rhythm, props.state, props.waveformArtifacts, props.mechanicalPulse]);
 
-  const alarmFor = (field: string): 'critical' | 'warning' | 'advisory' | null => {
+  const alarmFor = (field: string): 'high' | 'medium' | 'low' | null => {
     const alarm = props.alarms.find((candidate) => candidate.parameter === field);
     return alarm ? alarm.priority : null;
   };

@@ -281,11 +281,11 @@ describe('Requirement: Alarm System Follows IEC 60601-1-8 Conventions', () => {
     // Medium priority at 88%: prompt action. IEC 60601-1-8 grades by urgency and
     // onset time, so grading this the same as 84% would make the escalation
     // carry no information.
-    expect(spo2?.priority).toBe('warning');
+    expect(spo2?.priority).toBe('medium');
     const severe = new AlarmEngine().evaluate(
       { spo2Percent: 83, meanArterialMmHg: 80, heartRateBpm: 70, etco2MmHg: 38, depthIndex: 50 }, 100,
     );
-    expect(severe.active.find((a) => a.id === 'spo2-very-low')?.priority).toBe('critical');
+    expect(severe.active.find((a) => a.id === 'spo2-very-low')?.priority).toBe('high');
     // The alarm text names the parameter and the value.
     expect(spo2?.message).toContain('SpO₂');
     expect(spo2?.message).toContain('88');
@@ -295,9 +295,9 @@ describe('Requirement: Alarm System Follows IEC 60601-1-8 Conventions', () => {
   it('sorts by priority so the most urgent is first', () => {
     const alarms = new AlarmEngine();
     const result = alarms.evaluate({ spo2Percent: 88, meanArterialMmHg: 50, heartRateBpm: 70, etco2MmHg: 38, depthIndex: 50 }, 1);
-    expect(result.active[0]?.priority).toBe('critical');
-    expect(priorityRank('critical')).toBeLessThan(priorityRank('warning'));
-    expect(priorityRank('warning')).toBeLessThan(priorityRank('advisory'));
+    expect(result.active[0]?.priority).toBe('high');
+    expect(priorityRank('high')).toBeLessThan(priorityRank('medium'));
+    expect(priorityRank('medium')).toBeLessThan(priorityRank('low'));
   });
 
   it('Scenario: Silencing is temporary and visible', () => {

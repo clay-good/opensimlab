@@ -87,9 +87,9 @@ export const SIGNAL = {
  * at 0.4-0.8 Hz; low priority is a steady indication.
  */
 export const ALARM_FLASH_HZ = {
-  critical: { min: 1.4, max: 2.8, nominal: 2.0 },
-  warning: { min: 0.4, max: 0.8, nominal: 0.6 },
-  advisory: { min: 0, max: 0, nominal: 0 },
+  high: { min: 1.4, max: 2.8, nominal: 2.0 },
+  medium: { min: 0.4, max: 0.8, nominal: 0.6 },
+  low: { min: 0, max: 0, nominal: 0 },
 } as const;
 
 export interface TypeStyle {

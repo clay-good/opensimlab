@@ -472,11 +472,6 @@ export function Banner({ kind = 'neutral', children, actions }: {
       className={`banner ${kind !== 'neutral' ? `banner--${kind}` : ''}`}
       role={kind === 'critical' ? 'alert' : 'status'}
     >
-      {kind !== 'neutral' && (
-        <span className="alarm-rail__priority-word">
-          {kind === 'critical' ? 'High priority' : kind === 'warning' ? 'Medium priority' : 'Low priority'}
-        </span>
-      )}
       <span className="banner__message">{children}</span>
       {actions}
     </div>

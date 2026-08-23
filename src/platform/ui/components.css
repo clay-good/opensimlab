@@ -377,19 +377,19 @@ textarea.field__input {
   font: var(--type-label);
   letter-spacing: var(--type-label-tracking);
 }
-.alarm-rail__item[data-priority='critical'] {
+.alarm-rail__item[data-priority='high'] {
   border-color: var(--alarm-critical);
   background: var(--alarm-critical-bg);
   color: var(--alarm-critical-text);
-  animation: alarm-flash-critical var(--alarm-flash-critical-period) steps(1, end) infinite;
+  animation: alarm-flash-high var(--alarm-flash-high-period) steps(1, end) infinite;
 }
-.alarm-rail__item[data-priority='warning'] {
+.alarm-rail__item[data-priority='medium'] {
   border-color: var(--alarm-warning);
   background: var(--alarm-warning-bg);
   color: var(--alarm-warning);
-  animation: alarm-flash-warning var(--alarm-flash-warning-period) steps(1, end) infinite;
+  animation: alarm-flash-medium var(--alarm-flash-medium-period) steps(1, end) infinite;
 }
-.alarm-rail__item[data-priority='advisory'] {
+.alarm-rail__item[data-priority='low'] {
   border-color: var(--alarm-advisory);
   background: var(--alarm-advisory-bg);
   color: var(--alarm-advisory);
@@ -403,17 +403,17 @@ textarea.field__input {
 
 /* 2 Hz for high priority and 0.6 Hz for medium, both inside the IEC 60601-1-8
  * bands. The animation only toggles opacity, so no layout moves. */
-@keyframes alarm-flash-critical { 0% { opacity: 1; } 50% { opacity: 0.45; } }
-@keyframes alarm-flash-warning { 0% { opacity: 1; } 50% { opacity: 0.6; } }
+@keyframes alarm-flash-high { 0% { opacity: 1; } 50% { opacity: 0.45; } }
+@keyframes alarm-flash-medium { 0% { opacity: 1; } 50% { opacity: 0.6; } }
 
 /* Reduced motion replaces flashing with a static treatment that still
  * distinguishes the three priorities by fill, border weight, and the priority
  * word, which is always present in the markup. */
 @media (prefers-reduced-motion: reduce) {
   .alarm-rail__item { animation: none !important; }
-  .alarm-rail__item[data-priority='critical'] { border-width: 3px; }
-  .alarm-rail__item[data-priority='warning'] { border-width: 2px; }
-  .alarm-rail__item[data-priority='advisory'] { border-width: 1px; }
+  .alarm-rail__item[data-priority='high'] { border-width: 3px; }
+  .alarm-rail__item[data-priority='medium'] { border-width: 2px; }
+  .alarm-rail__item[data-priority='low'] { border-width: 1px; }
 }
 
 /* --- VitalTile ------------------------------------------------------------ */
@@ -427,8 +427,8 @@ textarea.field__input {
   background: var(--surface-1);
   min-inline-size: 0;
 }
-.vital-tile[data-alarm='critical'] { border-color: var(--alarm-critical); background: var(--alarm-critical-bg); }
-.vital-tile[data-alarm='warning'] { border-color: var(--alarm-warning); background: var(--alarm-warning-bg); }
+.vital-tile[data-alarm='high'] { border-color: var(--alarm-critical); background: var(--alarm-critical-bg); }
+.vital-tile[data-alarm='medium'] { border-color: var(--alarm-warning); background: var(--alarm-warning-bg); }
 .vital-tile__label-row {
   display: flex;
   align-items: baseline;

@@ -42,10 +42,10 @@ describe('Requirement: Variable-Pitch Pulse Tone', () => {
 describe('Requirement: Alarm Tones Follow The Clinical Standard', () => {
   it('Scenario: Priority is identifiable without looking', () => {
     // Higher priority is more urgent in both rate and pattern.
-    expect(ALARM_BURSTS.critical.pulses).toBeGreaterThan(ALARM_BURSTS.warning.pulses);
-    expect(ALARM_BURSTS.critical.burstIntervalSeconds).toBeLessThan(ALARM_BURSTS.warning.burstIntervalSeconds);
-    expect(ALARM_BURSTS.warning.burstIntervalSeconds).toBeLessThan(ALARM_BURSTS.advisory.burstIntervalSeconds);
-    expect(ALARM_BURSTS.critical.burstsPerCycle).toBeGreaterThan(ALARM_BURSTS.warning.burstsPerCycle);
+    expect(ALARM_BURSTS.high.pulses).toBeGreaterThan(ALARM_BURSTS.medium.pulses);
+    expect(ALARM_BURSTS.high.burstIntervalSeconds).toBeLessThan(ALARM_BURSTS.medium.burstIntervalSeconds);
+    expect(ALARM_BURSTS.medium.burstIntervalSeconds).toBeLessThan(ALARM_BURSTS.low.burstIntervalSeconds);
+    expect(ALARM_BURSTS.high.burstsPerCycle).toBeGreaterThan(ALARM_BURSTS.medium.burstsPerCycle);
   });
 
   it('keeps every frequency inside the standard\'s stated range', () => {

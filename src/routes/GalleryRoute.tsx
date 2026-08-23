@@ -113,9 +113,9 @@ export function GalleryRoute() {
       </Section>
 
       <Section title="Banner">
-        <Banner kind="critical">A high-priority banner is a solid fill.</Banner>
-        <Banner kind="warning">A medium-priority banner.</Banner>
-        <Banner kind="advisory">A low-priority banner.</Banner>
+        <Banner kind="critical">A critical banner is a solid fill.</Banner>
+        <Banner kind="warning">A warning banner.</Banner>
+        <Banner kind="advisory">An advisory banner.</Banner>
         <Banner>A neutral banner.</Banner>
       </Section>
 
@@ -124,9 +124,9 @@ export function GalleryRoute() {
           tick={100}
           onSilence={() => {}}
           alarms={[
-            { id: 'a', priority: 'critical', message: 'Oxygen saturation low: SpO₂ 88%', silencedUntilTick: null },
-            { id: 'b', priority: 'warning', message: 'Mean arterial pressure low: MAP 52 mmHg', silencedUntilTick: 1300 },
-            { id: 'c', priority: 'advisory', message: 'Predicted depth index below the usual range', silencedUntilTick: null },
+            { id: 'a', priority: 'high', message: 'Oxygen saturation critically low: SpO₂ 82%', silencedUntilTick: null },
+            { id: 'b', priority: 'medium', message: 'Mean arterial pressure low: MAP 52 mmHg', silencedUntilTick: 1300 },
+            { id: 'c', priority: 'low', message: 'Predicted depth index below the usual range', silencedUntilTick: null },
           ]}
         />
       </Section>
@@ -134,8 +134,8 @@ export function GalleryRoute() {
       <Section title="VitalTile">
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 'var(--space-2)' }}>
           <VitalTile name="HR" value={72} unit="bpm" precision={0} traceToken="--ecg" lowLimit={45} highLimit={120} />
-          <VitalTile name="MAP" value={52} unit="mmHg" precision={0} traceToken="--arterial" lowLimit={55} alarm="warning" />
-          <VitalTile name="SpO₂" value={88} unit="%" precision={0} traceToken="--spo2" lowLimit={90} alarm="critical" />
+          <VitalTile name="MAP" value={52} unit="mmHg" precision={0} traceToken="--arterial" lowLimit={55} alarm="medium" />
+          <VitalTile name="SpO₂" value={82} unit="%" precision={0} traceToken="--spo2" lowLimit={90} alarm="high" />
           <VitalTile name="SpO₂" value={null} unit="%" precision={0} traceToken="--spo2" invalidReason="Probe not reading" />
           <VitalTile name="EtCO₂" value={38} unit="mmHg" precision={0} traceToken="--capno" artifact />
           <VitalTile name="Depth" value={45} unit="" precision={0} traceToken="--neuro" confidence={{ label: 'Predicted', kind: 'default' }} />
@@ -160,7 +160,7 @@ export function GalleryRoute() {
           entries={[
             { tick: 120, severity: 'info', category: 'drug', eventId: '1', message: 'propofol 140 mg' },
             { tick: 300, severity: 'warning', category: 'alarm', eventId: '2', message: 'Mean arterial pressure low: MAP 52 mmHg' },
-            { tick: 420, severity: 'critical', category: 'alarm', eventId: '3', message: 'Oxygen saturation low: SpO₂ 88%' },
+            { tick: 420, severity: 'critical', category: 'alarm', eventId: '3', message: 'Oxygen saturation critically low: SpO₂ 82%' },
             { tick: 500, severity: 'artifact', category: 'artifact', eventId: '4', message: 'Injected sensor artifact: arterial-damping' },
             { tick: 600, severity: 'advisory', category: 'scenario', eventId: '5', message: 'Surgical incision.' },
           ]}
