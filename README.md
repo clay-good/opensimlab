@@ -136,6 +136,8 @@ worthless on an unconvincing patient.
 
 ## Running it
 
+Requires Node.js 22.13+ on the 22.x line, or Node.js 24+.
+
 ```bash
 npm ci
 npm run dev
