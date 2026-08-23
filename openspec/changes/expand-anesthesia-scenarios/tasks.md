@@ -57,11 +57,25 @@
 - [ ] Add suction, separate airway adjuncts, source removal, succinylcholine, a refractory pathway,
   team actions, aspiration, or negative-pressure pulmonary edema. None is implied by this slice.
 
+## Slice 5: perioperative anaphylaxis initial response
+
+- [x] Add a persistent antibiotic-triggered teaching syndrome coupling vasodilation, plasma-only
+  capillary leak, and bronchospasm without inventing skin signs or laboratory confirmation.
+- [x] Add bounded, logged, replayable 10, 20, and 50 microgram IV epinephrine actions.
+- [x] Enforce a documented allergy after a real positive dose of the matching stocked drug.
+- [x] Author and register a cefazolin-exposure case with no presumed neuromuscular-blocker culprit.
+- [x] Evaluate initial epinephrine, crystalloid, oxygen, ventilation, and observable outcomes.
+- [x] Map the scenario to NBCRNA, COA, and ACGME domains.
+- [x] Add NAP6 and current RCUK sources; update limitations, face-validity scope, landing inventory,
+  and discoverability assets.
+- [ ] Add rash, swelling, tryptase, trigger removal, team behavior, arrest, epinephrine infusion,
+  a full refractory pathway, or post-event investigation. None is implied by this slice.
+
 ## Remaining required scenario families
 
 - [x] Rapid-sequence induction with neuromuscular blockade.
 - [ ] Difficult-airway crisis beyond the existing obesity case.
-- [ ] Anaphylaxis with allergy enforcement.
+- [x] Anaphylaxis with antibiotic exposure and independently tested documented-allergy enforcement.
 - [ ] Malignant hyperthermia.
 - [ ] Local-anesthetic systemic toxicity.
 - [ ] Resuscitable cardiac arrest.

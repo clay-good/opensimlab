@@ -68,7 +68,9 @@ Reviewers run the routine induction themselves before answering.
 | B17 | Abrupt upper-airway closure: absent gas movement and capnogram without a lower-airway shark fin | | |
 | B18 | Recovery of airway patency during the held jaw-thrust and continuous-positive-pressure teaching maneuver | | |
 | B19 | Saturation trajectory before and during the modeled initial laryngospasm response | | |
-| B20 | Overall: does this patient behave like a patient? | | |
+| B20 | Abrupt pressure fall and bronchospasm after modeled cefazolin exposure | | |
+| B21 | Pressure and ventilation response to 50 micrograms IV epinephrine and 1,000 mL crystalloid | | |
+| B22 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -88,7 +90,7 @@ So that reviewers spend their attention on what this review is for:
 - No fresh gas flow; volatile wash-in does not change with flow.
 - Balanced crystalloid uses a fixed-retention teaching model. There are no blood products,
   coagulation effects, laboratory guidance, or resuscitation actions.
-- Eight scenarios use propofol and remifentanil; the rapid-sequence and awareness-risk cases add rocuronium. The
+- Nine scenarios use propofol and remifentanil; the rapid-sequence and awareness-risk cases add rocuronium. The
   hemorrhage case covers recognition and initial crystalloid temporization, not a
   massive-transfusion protocol.
 - The TIVA-line case models a binary propofol delivery interruption while the commanded pump rate
@@ -97,4 +99,7 @@ So that reviewers spend their attention on what this review is for:
 - The laryngospasm case combines jaw thrust and continuous positive airway pressure into one fixed
   90-second teaching maneuver; that duration is not a clinical recommendation. It has no suction, separate airway adjunct, succinylcholine,
   refractory pathway, aspiration, or negative-pressure pulmonary edema.
+- The perioperative-anaphylaxis case models cefazolin exposure followed by vasodilation, plasma
+  leak, and bronchospasm. It cannot show rash, swelling, tryptase, trigger removal, team actions,
+  arrest, or the refractory pathway, and its pattern or response does not establish a diagnosis.
 - Nothing here has been clinically reviewed before — you are the first.

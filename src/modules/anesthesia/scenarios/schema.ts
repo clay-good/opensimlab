@@ -401,6 +401,20 @@ export function validateScenarioSemantics(scenario: unknown): ValidationError[] 
         message: `Timeline event "${String(event.id)}" must declare laryngospasm severity from 0 to 1.`,
       });
     }
+    if (event.type === 'anaphylaxis'
+      && (typeof event.value !== 'number' || !Number.isFinite(event.value)
+        || event.value < 0 || event.value > 1)) {
+      errors.push({
+        pointer: `/timeline/${index}/value`, rule: 'range',
+        message: `Timeline event "${String(event.id)}" must declare anaphylaxis severity from 0 to 1.`,
+      });
+    }
+    if (event.type === 'anaphylaxis' && event.target !== 'cefazolin') {
+      errors.push({
+        pointer: `/timeline/${index}/target`, rule: 'enum',
+        message: `Timeline event "${String(event.id)}" must identify the modeled exposure "cefazolin".`,
+      });
+    }
   });
 
   // The review record must cover the version actually shipping.

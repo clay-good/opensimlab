@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: the airway-patency equipment shape has protocol version 6', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(6);
+  it('Scenario: resuscitation delivery has protocol version 7', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(7);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

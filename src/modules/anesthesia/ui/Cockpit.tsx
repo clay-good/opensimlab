@@ -17,7 +17,7 @@ import { reviewModeFrom } from '@platform/governance/review-notes';
 import { APP_VERSION } from '@platform/governance/status';
 import type { StateField } from '@anesthesia/physiology';
 import type { Scenario } from '@anesthesia/engine';
-import type { RegionProfile } from '@anesthesia/region/profiles';
+import { term, type RegionProfile } from '@anesthesia/region/profiles';
 import { StatusBar } from './StatusBar';
 import { MonitorRegion } from './MonitorRegion';
 import { AnalysisRegion } from './AnalysisRegion';
@@ -25,7 +25,9 @@ import { ActionCockpit } from './ActionCockpit';
 import { DemonstrationBar } from './DemonstrationBar';
 import { useDemonstration } from '@anesthesia/demo/useDemonstration';
 import { WhyPanel } from './WhyPanel';
-import { announcementsFor, stateSummary, waveformDescriptions, SHORTCUTS } from './accessibility';
+import {
+  announcementsFor, mechanicalPulseFromState, stateSummary, waveformDescriptions, SHORTCUTS,
+} from './accessibility';
 import { promptFor, type Prompt } from './guidance';
 import { concentrationCsv } from './ConcentrationPanel';
 import { findStacking } from '@anesthesia/debrief/analysis';
@@ -72,6 +74,10 @@ const DEFAULT_AIRWAY = {
   patencyFraction: 1, bronchospasmSeverity: 0, jawThrustCpapSecondsRemaining: 0,
 } as const;
 const DEFAULT_HYPNOTIC_LINE = { connected: true, inspected: false } as const;
+const DEFAULT_RESUSCITATION = {
+  epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+  lastEpinephrineTick: null, crystalloidTotalMl: 0,
+} as const;
 
 export function Cockpit({
   scenario, region, audio, demonstrating = false, onTakeControls, onEnd,
@@ -153,6 +159,8 @@ export function Cockpit({
   const ventilator = equipment?.ventilator ?? DEFAULT_VENTILATOR;
   const airway = equipment?.airway ?? DEFAULT_AIRWAY;
   const hypnoticLine = equipment?.hypnoticLine ?? DEFAULT_HYPNOTIC_LINE;
+  const resuscitation = equipment?.resuscitation ?? DEFAULT_RESUSCITATION;
+  const lastExposure = equipment?.lastExposure ?? null;
   const rhythm = (equipment?.rhythmId ?? 'sinus') as RhythmId;
   const invalidParameters = useMemo(
     () => new Set(equipment?.invalidParameters ?? []),
@@ -261,10 +269,14 @@ export function Cockpit({
       invalid: invalidParameters,
       showTrainOfFour: scenario.equipment.monitoring.includes('train-of-four'),
       jawThrustCpapSecondsRemaining: airway.jawThrustCpapSecondsRemaining,
+      resuscitation,
+      epinephrineLabel: term(region, 'epinephrine'),
+      lastExposure,
     }));
   }, [
     session.state, session.alarms, speak, infusions, ventilator, invalidParameters,
     scenario.equipment.monitoring, airway.jawThrustCpapSecondsRemaining,
+    resuscitation, region, lastExposure,
   ]);
 
   const readWaveforms = useCallback(() => {
@@ -275,9 +287,9 @@ export function Cockpit({
       perfusionIndex: session.state?.perfusionIndex ?? 0.8,
       artifacts: waveformArtifacts,
       ventilating: (session.state?.respiratoryRateBpm ?? 0) > 0,
-      mechanicalPulse: ventilator.delivering,
+      mechanicalPulse: mechanicalPulseFromState(session.state),
     }).map((entry) => `${entry.label}: ${entry.description}`).join(' '));
-  }, [session.state, speak, rhythm, waveformArtifacts, ventilator.delivering, airway]);
+  }, [session.state, speak, rhythm, waveformArtifacts, airway]);
 
   // The keyboard layer. Every shortcut is documented in SHORTCUTS and reachable
   // from the reference without leaving the cockpit.
@@ -384,7 +396,7 @@ export function Cockpit({
           rhythm={rhythm}
           airwayPatencyFraction={airway.patencyFraction}
           bronchospasmSeverity={airway.bronchospasmSeverity}
-          mechanicalPulse={ventilator.delivering}
+          mechanicalPulse={mechanicalPulseFromState(session.state)}
           reducedMotion={reducedMotion}
           colorblindSafe={colorblindSafe}
           showLimits
@@ -433,6 +445,8 @@ export function Cockpit({
           region={region}
           infusions={infusions}
           hypnoticLine={hypnoticLine}
+          resuscitation={resuscitation}
+          lastExposure={lastExposure}
           syringeRemaining={syringeRemaining}
           ventilator={ventilator}
           intubated={airway.intubated}
@@ -448,6 +462,9 @@ export function Cockpit({
           onVentilator={(settings) => session.act({ type: 'ventilator', payload: settings as never })}
           onLaryngoscopy={(technique) => session.act({ type: 'laryngoscopy', payload: { technique } })}
           onAirwayManeuver={(maneuver) => session.act({ type: 'airway-maneuver', payload: { maneuver } })}
+          onEpinephrine={(doseMicrograms) => session.act({
+            type: 'epinephrine', payload: { route: 'iv', doseMicrograms },
+          })}
           onDrugCard={setDrugCardId}
         />
       </div>

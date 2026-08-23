@@ -459,6 +459,56 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'mk-applied-foundational-science',
     objectiveIds: ['deepen-during-laryngospasm'],
   },
+  {
+    scenarioId: 'perioperative-anaphylaxis-after-antibiotic', frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['recognize-anaphylaxis-pattern', 'give-initial-epinephrine', 'support-anaphylaxis-circulation'],
+  },
+  {
+    scenarioId: 'perioperative-anaphylaxis-after-antibiotic', frameworkId: 'nbcrna-nce',
+    domainId: 'basic-sciences',
+    objectiveIds: ['recognize-anaphylaxis-pattern', 'support-anaphylaxis-circulation'],
+  },
+  {
+    scenarioId: 'perioperative-anaphylaxis-after-antibiotic', frameworkId: 'nbcrna-nce',
+    domainId: 'equipment-instrumentation-technology',
+    objectiveIds: ['support-anaphylaxis-oxygenation'],
+  },
+  {
+    scenarioId: 'perioperative-anaphylaxis-after-antibiotic', frameworkId: 'coa-standards',
+    domainId: 'pharmacology-of-anesthetic-agents',
+    objectiveIds: ['give-initial-epinephrine'],
+  },
+  {
+    scenarioId: 'perioperative-anaphylaxis-after-antibiotic', frameworkId: 'coa-standards',
+    domainId: 'physiology-and-pathophysiology',
+    objectiveIds: ['recognize-anaphylaxis-pattern', 'support-anaphylaxis-circulation'],
+  },
+  {
+    scenarioId: 'perioperative-anaphylaxis-after-antibiotic', frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['recognize-anaphylaxis-pattern', 'give-initial-epinephrine'],
+  },
+  {
+    scenarioId: 'perioperative-anaphylaxis-after-antibiotic', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-pharmacologic-management',
+    objectiveIds: ['give-initial-epinephrine', 'support-anaphylaxis-circulation'],
+  },
+  {
+    scenarioId: 'perioperative-anaphylaxis-after-antibiotic', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-monitoring-and-equipment',
+    objectiveIds: ['support-anaphylaxis-oxygenation'],
+  },
+  {
+    scenarioId: 'perioperative-anaphylaxis-after-antibiotic', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-crisis-management',
+    objectiveIds: ['recognize-anaphylaxis-pattern', 'give-initial-epinephrine', 'support-anaphylaxis-circulation'],
+  },
+  {
+    scenarioId: 'perioperative-anaphylaxis-after-antibiotic', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'mk-applied-foundational-science',
+    objectiveIds: ['recognize-anaphylaxis-pattern', 'support-anaphylaxis-circulation'],
+  },
 ];
 
 export interface DomainCoverage {

@@ -62,6 +62,8 @@ export interface DrugDrive {
   readonly rocuroniumCe?: number;
   /** Vasopressor effect, 0 to 1, from a teaching model. */
   readonly vasopressorEffect: number;
+  /** Source-banded perioperative IV epinephrine teaching effect, 0 to 1. */
+  readonly epinephrineEffect?: number;
 }
 
 /** Ventilation and airway settings the learner controls. */
@@ -94,6 +96,10 @@ export interface ScenarioDrive {
   readonly bloodLossMl: number;
   /** Millilitres of crystalloid given this tick. */
   readonly crystalloidMl: number;
+  /** Unopposed systemic anaphylaxis effect, 0 to 1. */
+  readonly anaphylaxisFraction?: number;
+  /** Plasma volume leaving the circulation this tick through capillary leak. */
+  readonly capillaryLeakMl?: number;
 }
 
 export interface TickResult {
@@ -248,15 +254,26 @@ export class VirtualPatient {
     const recorder = new AttributionRecorder();
 
     // --- Volume ---------------------------------------------------------------
-    if (scenario.bloodLossMl > 0 || scenario.crystalloidMl > 0) {
+    if (scenario.bloodLossMl > 0 || scenario.crystalloidMl > 0 || (scenario.capillaryLeakMl ?? 0) > 0) {
       const beforeMl = Math.max(this.hemodynamics.bloodVolumeMl, 1);
       const lostMl = Math.min(scenario.bloodLossMl, beforeMl);
       // Whole-blood loss removes red cells at the current concentration.
       this.hemoglobinMassG *= 1 - lostMl / beforeMl;
       // Crystalloid expands the intravascular space by roughly a quarter of the
       // volume infused; the rest redistributes.
-      this.hemodynamics.bloodVolumeMl +=
-        scenario.crystalloidMl * 0.25 - lostMl;
+      this.hemodynamics.bloodVolumeMl = Math.max(
+        0,
+        this.hemodynamics.bloodVolumeMl
+          + scenario.crystalloidMl * 0.25
+          - lostMl
+          - Math.min(scenario.capillaryLeakMl ?? 0, beforeMl - lostMl),
+      );
+      if ((scenario.capillaryLeakMl ?? 0) > 0) {
+        recorder.add(
+          'bloodVolumeMl', 'anaphylaxis-capillary-leak', 'Plasma lost through capillary leak',
+          -Math.min(scenario.capillaryLeakMl ?? 0, beforeMl - lostMl), { teachingModel: true },
+        );
+      }
     }
 
     // --- Drug effects ---------------------------------------------------------
@@ -288,6 +305,8 @@ export class VirtualPatient {
       surgicalStimulus: stimulus,
       anesthesiaDepthFraction: depthFraction,
       vasopressorEffect: drugs.vasopressorEffect,
+      anaphylaxisFraction: scenario.anaphylaxisFraction,
+      epinephrineEffect: drugs.epinephrineEffect,
       positivePressure: ventilator.delivering && ventilator.mode !== 'manual',
       saturationPercent: this.lastSaturationPercent,
       volatileMacFraction: volatile,

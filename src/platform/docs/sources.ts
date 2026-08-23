@@ -352,6 +352,37 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-23',
   },
   {
+    id: 'nap6-epidemiology-2018',
+    pmid: '29935567',
+    authors: 'Harper NJN, Cook TM, Garcez T, Farmer L, Floss K, Marinho S, et al.',
+    title: 'Anaesthesia, surgery, and life-threatening allergic reactions: epidemiology and clinical features of perioperative anaphylaxis in the 6th National Audit Project (NAP6)',
+    publication: 'Br J Anaesth', year: 2018, locator: '121:159-71',
+    usedFor: 'The perioperative-anaphylaxis case frequency and presentation: approximately 1 in '
+      + '10,000 anesthetics; hypotension as the first feature in 46%, bronchospasm in 18%; and '
+      + 'antibiotics as 94 of 199 identified culprits versus 65 neuromuscular blockers.',
+    verifiedAgainst: NCBI, verifiedOn: '2026-08-23',
+  },
+  {
+    id: 'nap6-management-2018',
+    pmid: '29935569',
+    authors: 'Harper NJN, Cook TM, Garcez T, Lucas DN, Thomas M, Kemp H, et al.',
+    title: 'Anaesthesia, surgery, and life-threatening allergic reactions: management and outcomes of perioperative anaphylaxis in the 6th National Audit Project (NAP6)',
+    publication: 'Br J Anaesth', year: 2018, locator: '121:172-88',
+    usedFor: 'The case emphasis on prompt epinephrine and volume support, while explicitly '
+      + 'excluding the complete refractory pathway and post-event investigation.',
+    verifiedAgainst: NCBI, verifiedOn: '2026-08-23',
+  },
+  {
+    id: 'rcuk-perioperative-anaphylaxis-2024',
+    pmid: '38205901',
+    authors: 'Soar J, Savic L, Baretto R, Dewachter P, Harper NJN, Light K, et al.',
+    title: 'Emergency treatment of peri-operative anaphylaxis: Resuscitation Council UK algorithm for anaesthetists',
+    publication: 'Anaesthesia', year: 2024, locator: '79:535-41',
+    usedFor: 'The modeled adult initial 50 microgram intravenous epinephrine action, 100% oxygen, '
+      + 'and rapid 500-1,000 mL crystalloid bolus. The simulator does not implement the complete algorithm.',
+    verifiedAgainst: NCBI, verifiedOn: '2026-08-23',
+  },
+  {
     id: 'das-2015',
     pmid: '26556848',
     authors: 'Frerk C, Mitchell VS, McNarry AF, Mendonca C, Bhagrath R, Patel A, et al.',

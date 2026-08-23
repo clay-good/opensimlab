@@ -32,6 +32,11 @@ describe('Requirement: bounded upper-airway support is operable without naming t
       region: UNITED_STATES,
       infusions: [],
       hypnoticLine: { connected: true, inspected: false },
+      resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+        lastEpinephrineTick: null, crystalloidTotalMl: 0,
+      },
+      lastExposure: null,
       syringeRemaining: {},
       ventilator: {
         mode: 'manual', tidalVolumeMl: 500, respiratoryRateBpm: 12,
@@ -48,6 +53,7 @@ describe('Requirement: bounded upper-airway support is operable without naming t
       onVentilator: () => {},
       onLaryngoscopy: () => {},
       onAirwayManeuver,
+      onEpinephrine: () => {},
       onDrugCard: () => {},
     };
     act(() => root.render(createElement(ActionCockpit, props)));

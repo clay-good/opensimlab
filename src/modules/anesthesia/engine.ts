@@ -34,7 +34,10 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.4';
+export const ENGINE_VERSION = '0.1.0-alpha.5';
+
+/** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
+export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
 
 export type Scenario = ScenarioDocument;
 
@@ -160,6 +163,14 @@ export class AnesthesiaEngine {
   private readonly artifacts = new Set<ArtifactId>();
   private pendingEvents: EngineEvent[] = [];
   private vasopressorEffect = 0;
+  /** Distinct alpha/beta/bronchodilator teaching effect; never substituted by generic vasopressor. */
+  private epinephrineEffect = 0;
+  private epinephrineTotalMicrograms = 0;
+  private lastEpinephrineTick: number | null = null;
+  private crystalloidTotalMl = 0;
+  private lastExposure: { agentId: string; tick: number } | null = null;
+  /** Persistent mediator severity after a modeled exposure. */
+  private anaphylaxisSeverity = 0;
   /** A learner fluid bolus waiting to reach the circulation on the next tick. */
   private pendingCrystalloidMl = 0;
   /** Physical delivery state, intentionally separate from the pump's commanded rate. */
@@ -371,6 +382,26 @@ export class AnesthesiaEngine {
           'Vasopressor given. Response from an Open Sim Lab teaching model, not a published population model.');
         break;
       }
+      case 'epinephrine': {
+        const dose = AnesthesiaEngine.finiteAmount(action.payload.doseMicrograms);
+        if (action.payload.route !== 'iv' || dose === null
+          || dose < EPINEPHRINE_IV_BOUNDS.minMicrograms
+          || dose > EPINEPHRINE_IV_BOUNDS.maxMicrograms) {
+          this.log('warning', 'drug', `bad-epinephrine-${this.currentTick}`,
+            `IV epinephrine must be a finite ${EPINEPHRINE_IV_BOUNDS.minMicrograms} to `
+            + `${EPINEPHRINE_IV_BOUNDS.maxMicrograms} microgram titrated bolus in this slice. `
+            + 'Nothing was given.');
+          break;
+        }
+        this.epinephrineEffect = clamp(this.epinephrineEffect + dose / 100, 0, 1);
+        this.epinephrineTotalMicrograms += dose;
+        this.lastEpinephrineTick = this.currentTick;
+        this.log('warning', 'drug', `epinephrine-iv-${this.currentTick}`,
+          `Epinephrine ${dose} micrograms IV given for perioperative resuscitation. `
+          + 'The response is an Open Sim Lab teaching effect, not an individual prediction.',
+          { drugId: 'epinephrine', route: 'iv', doseMicrograms: dose, teachingModel: true });
+        break;
+      }
       case 'fluid': {
         const fluidId = String(action.payload.fluidId ?? '');
         const fluid = getFluid(fluidId);
@@ -384,6 +415,7 @@ export class AnesthesiaEngine {
           break;
         }
         this.pendingCrystalloidMl += volumeMl;
+        this.crystalloidTotalMl += volumeMl;
         this.log('info', 'fluid', `fluid-${fluid.id}-${this.currentTick}`,
           `${fluid.name} ${volumeMl} mL given. The model retains ${fluid.retainedFraction * 100}% intravascularly.`,
           { fluidId: fluid.id, volumeMl, retainedFraction: fluid.retainedFraction, teachingModel: true });
@@ -498,6 +530,46 @@ export class AnesthesiaEngine {
       {
         drugId, mass, unit: drug.model.doseUnit, route: 'intravenous',
         modelId: drug.model.id, implausible, stacking,
+      });
+
+    // A documented allergy is enforced only after drug actually leaves a
+    // non-empty syringe. A zero, malformed, unknown, or refused dose must not
+    // create a reaction the learner did not cause.
+    const normalizedDrug = AnesthesiaEngine.normalizedAgent(drugId);
+    const matchingAllergy = mass > 0
+      ? (this.scenario.patient.allergies ?? []).find((allergy) => {
+        const normalizedAllergy = AnesthesiaEngine.normalizedAgent(allergy);
+        return normalizedAllergy.includes(normalizedDrug)
+          && ['anaphylaxis', 'anaphylactic', 'allergy', 'allergic'].some(
+            (marker) => normalizedAllergy.includes(marker),
+          );
+      })
+      : undefined;
+    if (matchingAllergy) {
+      this.triggerAnaphylaxis(drugId, 1, `documented-allergy-${drugId}-${this.currentTick}`, matchingAllergy);
+    }
+  }
+
+  private static normalizedAgent(value: string): string {
+    return value.toLowerCase().replace(/[^a-z0-9]/g, '');
+  }
+
+  private triggerAnaphylaxis(
+    agentId: string,
+    severity: number,
+    eventId: string,
+    documentedAllergy?: string,
+  ): void {
+    this.lastExposure = { agentId, tick: this.currentTick };
+    this.anaphylaxisSeverity = Math.max(this.anaphylaxisSeverity, clamp(severity, 0, 1));
+    this.log('critical', 'exposure', eventId,
+      documentedAllergy
+        ? `${agentId} was administered despite the documented allergy "${documentedAllergy}". `
+          + 'A systemic reaction has begun.'
+        : `${agentId} exposure recorded. Abrupt cardiovascular and respiratory changes follow.`,
+      {
+        agentId, exposureTick: this.currentTick,
+        ...(documentedAllergy ? { documentedAllergy } : {}),
       });
   }
 
@@ -658,6 +730,19 @@ export class AnesthesiaEngine {
         return;
       }
 
+      case 'anaphylaxis': {
+        const severity = event.value;
+        if (event.target !== 'cefazolin' || typeof severity !== 'number'
+          || !Number.isFinite(severity) || severity < 0 || severity > 1) {
+          this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" must identify cefazolin exposure and a finite severity `
+            + 'from 0 to 1, so the event had no effect.');
+          return;
+        }
+        this.triggerAnaphylaxis('cefazolin', severity, `exposure-${event.id}-${this.currentTick}`);
+        return;
+      }
+
       case 'rhythm-change': {
         const rhythm = event.target;
         if (!rhythm) {
@@ -771,7 +856,6 @@ export class AnesthesiaEngine {
       if (event.type === 'crystalloid') crystalloidMl += event.value / 600;
       if (event.type === 'obstruction') obstruction = Math.max(obstruction, event.value);
     }
-    this.bronchospasmSeverity = obstruction;
     crystalloidMl += this.pendingCrystalloidMl;
     this.pendingCrystalloidMl = 0;
 
@@ -795,12 +879,19 @@ export class AnesthesiaEngine {
     const remifentanilCe = remifentanil?.solver.hasEffectSiteCurve ? remifentanil.solver.effectSite : 0;
     const rocuroniumCe = rocuronium?.solver.hasEffectSiteCurve ? rocuronium.solver.effectSite : 0;
 
+    const unopposedAnaphylaxis = this.anaphylaxisSeverity
+      * (1 - 0.75 * this.epinephrineEffect);
+    obstruction = Math.max(obstruction, 0.85 * unopposedAnaphylaxis);
+    this.bronchospasmSeverity = obstruction;
+    const capillaryLeakMl = unopposedAnaphylaxis * 5 / TICKS_PER_SECOND;
+
     // --- Physiology ------------------------------------------------------------
     const effectiveVentilator = this.pendingLaryngoscopy
       ? { ...this.ventilator, delivering: false }
       : this.ventilator;
     const depthBeforePhysiology = this.patient.depthIndex({
       propofolCe, remifentanilCe, rocuroniumCe, vasopressorEffect: this.vasopressorEffect,
+      epinephrineEffect: this.epinephrineEffect,
     });
     this.upperAirwayClosureFraction = stepLaryngospasm(
       this.upperAirwayClosureFraction,
@@ -815,16 +906,22 @@ export class AnesthesiaEngine {
       1 / TICKS_PER_SECOND,
     );
     const result = this.patient.tick(
-      { propofolCe, remifentanilCe, rocuroniumCe, vasopressorEffect: this.vasopressorEffect },
+      {
+        propofolCe, remifentanilCe, rocuroniumCe,
+        vasopressorEffect: this.vasopressorEffect, epinephrineEffect: this.epinephrineEffect,
+      },
       effectiveVentilator,
       {
         surgicalStimulus: stimulus, obstructionFraction: obstruction,
         upperAirwayClosureFraction: this.upperAirwayClosureFraction,
         bloodLossMl, crystalloidMl,
+        anaphylaxisFraction: unopposedAnaphylaxis, capillaryLeakMl,
       },
     );
     // A vasopressor's effect wanes; the teaching model decays it over about five minutes.
     this.vasopressorEffect *= Math.exp(-0.1 / 5);
+    // Titrated boluses are short acting; this teaching effect decays over roughly 90 seconds.
+    this.epinephrineEffect *= Math.exp(-0.1 / 90);
 
     this.reconcileArrest(result.state.cardiacOutputLPerMin ?? 0);
 
@@ -933,6 +1030,13 @@ export class AnesthesiaEngine {
         connected: this.hypnoticLineConnected,
         inspected: this.hypnoticLineInspected,
       },
+      resuscitation: {
+        epinephrineEffectFraction: this.epinephrineEffect,
+        epinephrineTotalMicrograms: this.epinephrineTotalMicrograms,
+        lastEpinephrineTick: this.lastEpinephrineTick,
+        crystalloidTotalMl: this.crystalloidTotalMl,
+      },
+      lastExposure: this.lastExposure ? { ...this.lastExposure } : null,
       drugs: [...this.drugs.values()].map((drug) => ({
         drugId: drug.drugId,
         infusionRate: drug.infusionRate,

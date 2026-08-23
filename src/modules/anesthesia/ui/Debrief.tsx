@@ -20,6 +20,7 @@ import {
 } from '@anesthesia/debrief/analysis';
 import { evaluateCounterfactual, type ReplayOptions } from '@anesthesia/debrief/replay';
 import { EXPLAINERS } from '@anesthesia/content/explainers';
+import { getFluid, MAX_FLUID_BOLUS_ML } from '@anesthesia/content/fluids';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 
 export interface DebriefProps {
@@ -315,6 +316,10 @@ export function objectiveFindings(
     'apply-initial-laryngospasm-measures': 'capnogram-morphology',
     'deepen-during-laryngospasm': 'vasodilation-versus-hypovolemia',
     'protect-oxygenation-during-laryngospasm': 'preoxygenation-and-safe-apnea-time',
+    'recognize-anaphylaxis-pattern': 'vasodilation-versus-hypovolemia',
+    'give-initial-epinephrine': 'vasodilation-versus-hypovolemia',
+    'support-anaphylaxis-circulation': 'vasodilation-versus-hypovolemia',
+    'support-anaphylaxis-oxygenation': 'capnogram-morphology',
   };
 
   return scenario.metadata.objectives.map((objective) => {
@@ -713,6 +718,94 @@ export function objectiveFindings(
         outcome: lowest >= 92 ? 'met' : lowest >= 88 ? 'partly-met' : 'not-met',
         finding: `The lowest saturation after airway closure was ${lowest.toFixed(0)}%. `
           + 'This is an oxygenation outcome, not proof that laryngospasm was definitively treated.',
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
+      'recognize-anaphylaxis-pattern', 'give-initial-epinephrine',
+      'support-anaphylaxis-circulation', 'support-anaphylaxis-oxygenation',
+    ].includes(objective.id)) {
+      const onset = scenario.timeline.find((event) => event.type === 'anaphylaxis')?.atTick;
+      if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'The session ended before the modeled cefazolin exposure.',
+        } satisfies ObjectiveFinding;
+      }
+      const epinephrine = actions.find((action) =>
+        action.tick >= onset && action.type === 'epinephrine'
+        && action.payload.route === 'iv'
+        && Number.isFinite(Number(action.payload.doseMicrograms))
+        && Number(action.payload.doseMicrograms) >= 10
+        && Number(action.payload.doseMicrograms) <= 50);
+      const epinephrineDelay = epinephrine ? (epinephrine.tick - onset) / TICKS_PER_SECOND : null;
+      if (objective.id === 'recognize-anaphylaxis-pattern') {
+        return {
+          ...base,
+          outcome: epinephrineDelay === null ? 'not-met'
+            : epinephrineDelay <= 60 ? 'met' : epinephrineDelay <= 120 ? 'partly-met' : 'not-met',
+          finding: epinephrineDelay === null
+            ? 'No first-line epinephrine action was recorded after cefazolin exposure. The modeled hypotension and bronchospasm are observable clues, not a definitive diagnosis.'
+            : `First-line epinephrine was recorded ${epinephrineDelay.toFixed(0)} seconds after cefazolin exposure. This is a behavioral response to an observable pattern, not proof of diagnosis.`,
+          atTick: epinephrine?.tick ?? onset,
+        } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'give-initial-epinephrine') {
+        const exactInitialDose = epinephrine?.payload.route === 'iv'
+          && Number(epinephrine.payload.doseMicrograms) === 50;
+        return {
+          ...base,
+          outcome: !epinephrine ? 'not-met'
+            : exactInitialDose && epinephrineDelay! <= 60 ? 'met'
+              : exactInitialDose && epinephrineDelay! <= 120 ? 'partly-met' : 'not-met',
+          finding: !epinephrine
+            ? 'No intravenous epinephrine dose was recorded after exposure.'
+            : `${Number(epinephrine.payload.doseMicrograms).toFixed(0)} micrograms of epinephrine by ${String(epinephrine.payload.route).toUpperCase()} was recorded ${epinephrineDelay!.toFixed(0)} seconds after exposure. The modeled adult initial target is 50 micrograms IV.`,
+          atTick: epinephrine?.tick ?? onset,
+        } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'support-anaphylaxis-circulation') {
+        const cutoff = onset + (120 * TICKS_PER_SECOND);
+        const volume = actions.filter((action) =>
+          action.tick >= onset && action.tick <= cutoff
+          && action.type === 'fluid'
+          && getFluid(String(action.payload.fluidId))?.id === 'balanced-crystalloid'
+          && Number.isFinite(Number(action.payload.volumeMl))
+          && Number(action.payload.volumeMl) >= 1
+          && Number(action.payload.volumeMl) <= MAX_FLUID_BOLUS_ML)
+          .reduce((sum, action) => sum + Number(action.payload.volumeMl ?? 0), 0);
+        return {
+          ...base,
+          outcome: volume >= 1000 ? 'met' : volume >= 500 ? 'partly-met' : 'not-met',
+          finding: `${volume.toFixed(0)} mL of balanced crystalloid was recorded in the first 120 seconds after exposure. This scores initial volume support, not a complete or individualized resuscitation.`,
+          atTick: onset,
+        } satisfies ObjectiveFinding;
+      }
+      const cutoff = onset + (60 * TICKS_PER_SECOND);
+      const delivered = actions
+        .filter((action) => action.type === 'ventilator' && action.tick <= cutoff)
+        .reduce((settings, action) => {
+          const requestedFio2 = action.payload.fio2 === undefined
+            ? null : Number(action.payload.fio2);
+          return {
+            fio2: requestedFio2 === null || !Number.isFinite(requestedFio2)
+              ? settings.fio2 : Math.min(1, Math.max(0, requestedFio2)),
+            delivering: action.payload.delivering === undefined
+              ? settings.delivering : action.payload.delivering === true,
+          };
+        }, {
+          fio2: scenario.equipment.ventilator.fio2,
+          delivering: scenario.equipment.ventilator.delivering,
+        });
+      const lowest = Math.min(...history.filter((entry) => entry.tick >= onset)
+        .map((entry) => entry.state.spo2Percent ?? 100));
+      const actionsMet = delivered.fio2 >= 0.95 && delivered.delivering;
+      return {
+        ...base,
+        outcome: actionsMet && lowest >= 92 ? 'met'
+          : actionsMet || lowest >= 88 ? 'partly-met' : 'not-met',
+        finding: `Delivered oxygen was ${(delivered.fio2 * 100).toFixed(0)}% with ventilation ${delivered.delivering ? 'active' : 'inactive'}; the lowest modeled saturation was ${lowest.toFixed(0)}%. This observable response does not establish a definitive diagnosis or complete treatment.`,
+        atTick: onset,
       } satisfies ObjectiveFinding;
     }
 

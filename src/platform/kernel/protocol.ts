@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 6 reports airway patency. */
-export const WORKER_PROTOCOL_VERSION = 6;
+/** Bumped whenever the message shape changes incompatibly. Version 7 reports resuscitation delivery. */
+export const WORKER_PROTOCOL_VERSION = 7;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -187,6 +187,15 @@ export interface EquipmentSnapshot {
     /** True after the learner has deliberately inspected or reconnected the line. */
     readonly inspected: boolean;
   };
+  /** Accepted crisis treatments and exposure, as distinct from requested actions. */
+  readonly resuscitation: {
+    readonly epinephrineEffectFraction: number;
+    readonly epinephrineTotalMicrograms: number;
+    readonly lastEpinephrineTick: number | null;
+    readonly crystalloidTotalMl: number;
+  };
+  /** The most recent modeled trigger exposure, without diagnosing the response. */
+  readonly lastExposure: { readonly agentId: string; readonly tick: number } | null;
   /** Per drug: the running infusion rate and what is left in the syringe. */
   readonly drugs: readonly {
     readonly drugId: string;

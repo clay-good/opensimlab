@@ -77,3 +77,16 @@ The event is refused after successful tracheal intubation, because glottic closu
 a tracheal tube. The slice does not offer suction, a separate airway adjunct, source removal,
 succinylcholine, help or team actions, refractory escalation, aspiration, or negative-pressure
 pulmonary edema.
+
+## Slice 5: perioperative anaphylaxis initial response
+
+At 3 simulated minutes, a fixed cefazolin exposure starts persistent coupled vasodilation,
+plasma-only capillary leak, and bronchospasm. This reflects NAP6's antibiotic predominance and
+common hypotensive presentation without implying that every case has the same trajectory.
+
+Objective evaluation checks the timing, route, and dose of epinephrine; cumulative balanced
+crystalloid in the first 120 seconds; oxygen and ventilation settings in effect by 60 seconds,
+including settings established before exposure; and
+the lowest saturation. These are observable action and state proxies, not a definitive diagnosis.
+The slice excludes cutaneous signs, tryptase, trigger removal, team behavior, arrest, infusion or
+refractory treatment, and post-event investigation.

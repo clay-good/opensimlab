@@ -146,6 +146,10 @@ blockade to teach inspection and restoration of TIVA delivery. It models a risk 
 consciousness or recall. Its fourth slice models abrupt upper-airway closure and a held jaw-thrust
 with continuous positive pressure, 100% oxygen, and anesthetic deepening. It stops at initial
 measures; suction, airway adjuncts, succinylcholine, and refractory management remain unavailable.
+Its fifth slice adds abrupt hypotension with coupled bronchospasm after cefazolin exposure and
+records initial intravenous epinephrine, crystalloid, oxygen, and ventilation. It models an
+observable response pattern, not definitive diagnosis, laboratory confirmation, team behavior,
+or refractory management.
 
 ## Running it
 

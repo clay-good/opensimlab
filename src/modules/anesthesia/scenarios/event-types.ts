@@ -10,7 +10,7 @@
  * used by any scenario. It was removed rather than given invented semantics.
  */
 export const EVENT_TYPES = [
-  'surgical-stimulus', 'blood-loss', 'crystalloid', 'obstruction', 'laryngospasm',
+  'surgical-stimulus', 'blood-loss', 'crystalloid', 'obstruction', 'laryngospasm', 'anaphylaxis',
   'narrative', 'rhythm-change', 'artifact', 'equipment-failure',
 ] as const;
 

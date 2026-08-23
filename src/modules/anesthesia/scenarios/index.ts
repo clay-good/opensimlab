@@ -17,6 +17,7 @@ import { UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE } from './unexpected-intraoperativ
 import { RAPID_SEQUENCE_INDUCTION } from './rapid-sequence-induction';
 import { AWARENESS_UNDER_PARALYSIS } from './awareness-under-paralysis';
 import { LARYNGOSPASM_AFTER_AIRWAY_STIMULATION } from './laryngospasm-after-airway-stimulation';
+import { PERIOPERATIVE_ANAPHYLAXIS_AFTER_ANTIBIOTIC } from './perioperative-anaphylaxis-after-antibiotic';
 
 export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_INDUCTION,
@@ -27,6 +28,7 @@ export const SCENARIOS: readonly Scenario[] = [
   RAPID_SEQUENCE_INDUCTION,
   AWARENESS_UNDER_PARALYSIS,
   LARYNGOSPASM_AFTER_AIRWAY_STIMULATION,
+  PERIOPERATIVE_ANAPHYLAXIS_AFTER_ANTIBIOTIC,
 ];
 
 /** The scenario a learner meets first. */

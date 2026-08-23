@@ -13,11 +13,11 @@ import { useState } from 'react';
 import { Badge, Button, NumericField, SegmentedControl, Slider, SteppedDial, Tabs, Toggle } from '@platform/ui';
 import type { Scenario } from '@anesthesia/engine';
 import type { FormularyEntry } from '@anesthesia/scenarios/types';
-import type { RegionProfile } from '@anesthesia/region/profiles';
+import { term, type RegionProfile } from '@anesthesia/region/profiles';
 import { FLUIDS } from '@anesthesia/content/fluids';
 import { JAW_THRUST_CPAP_SECONDS } from '@anesthesia/physiology';
 
-export type TrayId = 'syringes' | 'infusions' | 'fluids' | 'airway';
+export type TrayId = 'syringes' | 'infusions' | 'fluids' | 'airway' | 'crisis';
 
 export interface RunningInfusion {
   readonly drugId: string;
@@ -36,6 +36,13 @@ export interface ActionCockpitProps {
   readonly region: RegionProfile;
   readonly infusions: readonly RunningInfusion[];
   readonly hypnoticLine: HypnoticLineStatus;
+  readonly resuscitation: {
+    readonly epinephrineEffectFraction: number;
+    readonly epinephrineTotalMicrograms: number;
+    readonly lastEpinephrineTick: number | null;
+    readonly crystalloidTotalMl: number;
+  };
+  readonly lastExposure: { readonly agentId: string; readonly tick: number } | null;
   readonly syringeRemaining: Readonly<Record<string, number>>;
   readonly ventilator: {
     mode: 'volume-control' | 'pressure-control' | 'manual';
@@ -59,6 +66,7 @@ export interface ActionCockpitProps {
   readonly onVentilator: (settings: Partial<ActionCockpitProps['ventilator']>) => void;
   readonly onLaryngoscopy: (technique: 'direct' | 'video') => void;
   readonly onAirwayManeuver: (maneuver: 'jaw-thrust-cpap') => void;
+  readonly onEpinephrine: (doseMicrograms: 10 | 20 | 50) => void;
   readonly onDrugCard: (drugId: string) => void;
 }
 
@@ -87,6 +95,7 @@ const TRAYS: { id: TrayId; label: string }[] = [
   { id: 'fluids', label: 'Fluids' },
   { id: 'airway', label: 'Airway & Vent' },
 ];
+const CRISIS_TRAY = { id: 'crisis', label: 'Crisis drugs' } as const;
 
 /**
  * Said once, in the place a learner would go looking for the missing thing.
@@ -96,18 +105,20 @@ const TRAYS: { id: TrayId; label: string }[] = [
  * chest compressions, and this is where they find out there are none.
  */
 export const NOT_IN_THIS_BUILD =
-  'Blood products and resuscitation are not modelled. Crystalloid uses a fixed 25% intravascular '
+  'Blood products and cardiac-arrest resuscitation are not modelled. Crystalloid uses a fixed 25% intravascular '
   + 'retention teaching model. A patient who arrests does not '
-  + 'recover, because there are no compressions, no adrenaline and no defibrillation here.';
+  + 'recover, because there are no compressions, no arrest-dose adrenaline or epinephrine, and no defibrillation here.';
 
 export function ActionCockpit(props: ActionCockpitProps) {
   const [tray, setTray] = useState<TrayId>('syringes');
+  const hasCrisisDrugs = props.scenario.timeline.some((event) => event.type === 'anaphylaxis');
+  const trays = hasCrisisDrugs ? [...TRAYS, CRISIS_TRAY] : TRAYS;
 
   return (
     <div className="actions">
       <Tabs
         label="Action trays"
-        tabs={TRAYS}
+        tabs={trays}
         active={tray}
         onSelect={(id) => setTray(id as TrayId)}
       />
@@ -144,7 +155,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
             onHypnoticLine={props.onHypnoticLine}
           />
         )}
-        {tray === 'fluids' && <FluidTray onFluid={props.onFluid} />}
+        {tray === 'fluids' && (
+          <FluidTray
+            crystalloidTotalMl={props.resuscitation.crystalloidTotalMl}
+            onFluid={props.onFluid}
+          />
+        )}
         {tray === 'airway' && (
           <AirwayTray
             ventilator={props.ventilator}
@@ -158,6 +174,14 @@ export function ActionCockpit(props: ActionCockpitProps) {
             onVentilator={props.onVentilator}
             onLaryngoscopy={props.onLaryngoscopy}
             onAirwayManeuver={props.onAirwayManeuver}
+          />
+        )}
+        {tray === 'crisis' && hasCrisisDrugs && (
+          <CrisisDrugTray
+            region={props.region}
+            epinephrineTotalMicrograms={props.resuscitation.epinephrineTotalMicrograms}
+            lastExposure={props.lastExposure}
+            onEpinephrine={props.onEpinephrine}
           />
         )}
         {/* Inside the scrolling tray, not as a row of its own.
@@ -174,7 +198,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
   );
 }
 
-function FluidTray({ onFluid }: { onFluid: (fluidId: string, volumeMl: number) => void }) {
+function FluidTray({ crystalloidTotalMl, onFluid }: {
+  crystalloidTotalMl: number;
+  onFluid: (fluidId: string, volumeMl: number) => void;
+}) {
   const [pending, setPending] = useState<{ fluidId: string; volumeMl: number } | null>(null);
   return (
     <div className="tray-grid">
@@ -183,6 +210,9 @@ function FluidTray({ onFluid }: { onFluid: (fluidId: string, volumeMl: number) =
           <div className="syringe__name">{fluid.name}</div>
           <p className="field__hint">
             Fixed teaching model: {(fluid.retainedFraction * 100).toFixed(0)}% remains intravascular.
+          </p>
+          <p className="syringe__remaining" role="status">
+            Accepted total: {crystalloidTotalMl.toFixed(0)} mL
           </p>
           {pending?.fluidId === fluid.id ? (
             <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
@@ -213,6 +243,75 @@ function FluidTray({ onFluid }: { onFluid: (fluidId: string, volumeMl: number) =
           )}
         </section>
       ))}
+    </div>
+  );
+}
+
+function CrisisDrugTray({ region, epinephrineTotalMicrograms, lastExposure, onEpinephrine }: {
+  region: RegionProfile;
+  epinephrineTotalMicrograms: number;
+  lastExposure: { readonly agentId: string; readonly tick: number } | null;
+  onEpinephrine: (doseMicrograms: 10 | 20 | 50) => void;
+}) {
+  const [pendingDose, setPendingDose] = useState<10 | 20 | 50 | null>(null);
+  const regionalName = term(region, 'epinephrine');
+  const displayName = regionalName.charAt(0).toUpperCase() + regionalName.slice(1);
+
+  return (
+    <div className="tray-grid">
+      <section className="syringe">
+        <div className="syringe__name">{displayName}</div>
+        <div className="syringe__meta">Intravenous bolus · dose in micrograms</div>
+        <Badge kind="teaching">Teaching model</Badge>
+        <p className="field__hint">
+          Pre-prepared dose action. Concentration, dilution, pump delivery, and syringe inventory
+          are not modeled.
+        </p>
+        <p className="syringe__remaining" role="status">
+          Accepted total: {epinephrineTotalMicrograms.toFixed(0)} µg IV
+        </p>
+        {pendingDose === null ? (
+          <div className="syringe__presets">
+            {([10, 20, 50] as const).map((dose) => (
+              <Button
+                key={dose}
+                className="crisis-drug__action"
+                onClick={() => setPendingDose(dose)}
+              >
+                {dose} µg IV
+              </Button>
+            ))}
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
+            <span className="numeric">Give {pendingDose} µg IV {regionalName}?</span>
+            <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+              <Button
+                variant="primary"
+                className="crisis-drug__action"
+                onClick={() => { onEpinephrine(pendingDose); setPendingDose(null); }}
+              >
+                Give {displayName}
+              </Button>
+              <Button
+                variant="ghost"
+                className="crisis-drug__action"
+                onClick={() => setPendingDose(null)}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        )}
+      </section>
+      <section className="card">
+        <h3 className="panel__title" style={{ font: 'var(--type-subtitle)' }}>Recent exposure</h3>
+        <p className="field__hint">
+          {lastExposure
+            ? `${lastExposure.agentId} was the most recent modeled trigger exposure.`
+            : 'No modeled trigger exposure has been recorded.'}
+        </p>
+      </section>
     </div>
   );
 }

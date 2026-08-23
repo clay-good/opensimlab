@@ -34,6 +34,11 @@ describe('Requirement: a silent hypnotic-line failure must be inspected', () => 
           drugId: 'propofol', rate: 7, unit: 'mg/min', elapsedSeconds: 90,
         }],
         hypnoticLine,
+        resuscitation: {
+          epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+          lastEpinephrineTick: null, crystalloidTotalMl: 0,
+        },
+        lastExposure: null,
         syringeRemaining: {},
         ventilator: {
           mode: 'volume-control', tidalVolumeMl: 500, respiratoryRateBpm: 12,
@@ -50,6 +55,7 @@ describe('Requirement: a silent hypnotic-line failure must be inspected', () => 
         onVentilator: () => {},
         onLaryngoscopy: () => {},
         onAirwayManeuver: () => {},
+        onEpinephrine: () => {},
         onDrugCard: () => {},
       }));
     });

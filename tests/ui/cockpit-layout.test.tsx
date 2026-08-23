@@ -253,6 +253,11 @@ describe('Requirement: Cockpit Is Fully Operable Without A Mouse', () => {
     region: UNITED_STATES,
     infusions: [],
     hypnoticLine: { connected: true, inspected: false },
+    resuscitation: {
+      epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+      lastEpinephrineTick: null, crystalloidTotalMl: 0,
+    },
+    lastExposure: null,
     syringeRemaining: {},
     ventilator: {
       mode: 'manual' as const, tidalVolumeMl: 500, respiratoryRateBpm: 12,
@@ -269,6 +274,7 @@ describe('Requirement: Cockpit Is Fully Operable Without A Mouse', () => {
     onVentilator: () => {},
     onLaryngoscopy: () => {},
     onAirwayManeuver: () => {},
+    onEpinephrine: () => {},
     onDrugCard: () => {},
   }));
 
@@ -554,10 +560,16 @@ describe('Requirement: The Action Cockpit Offers Only Trays That Do Something', 
    */
   const source = readFileSync(join(root, 'src/modules/anesthesia/ui/ActionCockpit.tsx'), 'utf8');
 
-  it('Scenario: four trays, each of which does something', () => {
-    const trays = [...source.matchAll(/\{ id: '([a-z]+)', label: '([^']+)' \}/g)];
+  it('Scenario: four baseline trays, with the fifth crisis tray only where it works', () => {
+    const baseline = source.slice(source.indexOf('const TRAYS'), source.indexOf('];', source.indexOf('const TRAYS')));
+    const trays = [...baseline.matchAll(/\{ id: '([a-z]+)', label: '([^']+)' \}/g)];
     expect(trays).toHaveLength(4);
     expect(trays.map((m) => m[1])).toEqual(['syringes', 'infusions', 'fluids', 'airway']);
+    expect(source).toContain("const CRISIS_TRAY = { id: 'crisis', label: 'Crisis drugs' }");
+    expect(source).toContain("event.type === 'anaphylaxis'");
+    expect(source).toContain('hasCrisisDrugs ? [...TRAYS, CRISIS_TRAY] : TRAYS');
+    // Five tabs fit a phone by scrolling within the strip, not by widening the cockpit.
+    expect(componentsCss).toMatch(/\.tabs \{[^}]*overflow-x: auto/s);
   });
 
   it('Scenario: what is missing is still said, once, where it is looked for', () => {
@@ -573,6 +585,8 @@ describe('Requirement: The Action Cockpit Offers Only Trays That Do Something', 
     // the sentence has to say what that means rather than "not in this slice".
     expect(NOT_IN_THIS_BUILD).toContain('does not recover');
     expect(NOT_IN_THIS_BUILD).toContain('compressions');
+    expect(NOT_IN_THIS_BUILD).toContain('arrest-dose');
+    expect(NOT_IN_THIS_BUILD).toContain('epinephrine');
   });
 
   it('Scenario: the notice costs the working controls no height', () => {

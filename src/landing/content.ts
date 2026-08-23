@@ -88,13 +88,14 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
     id: 'inside-the-module',
     heading: 'What is inside the anesthesia module',
     paragraphs: [
-      'This is an early build. It contains eight scenarios — a routine induction on a healthy '
+      'This is an early build. It contains nine scenarios — a routine induction on a healthy '
       + 'adult, rapid desaturation in an obese patient, hypotension after induction, and '
       + 'bronchospasm after intubation, plus unexpected intraoperative hemorrhage with crystalloid '
       + 'temporization, rapid-sequence induction with modeled rocuronium onset, and silent TIVA-line '
-      + 'disconnection under paralysis, plus initial laryngospasm response after airway stimulation '
-      + '— with three '
-      + 'drugs, the real monitor, the real design system, '
+      + 'disconnection under paralysis, initial laryngospasm response after airway stimulation, '
+      + 'and initial perioperative anaphylaxis response after antibiotic exposure '
+      + '— with three drugs carrying population PK/PD models, scripted cefazolin exposure, a dedicated '
+      + 'epinephrine crisis action, the real monitor, the real design system, '
       + 'and the real debrief.',
       'That narrowness is deliberate. The riskiest things in a project like this are whether the '
       + 'waveforms convince a clinician, whether it holds its frame rate on a modest phone, and '

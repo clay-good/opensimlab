@@ -88,6 +88,13 @@ export function stateSummary(
     readonly invalid: ReadonlySet<string>;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
+    readonly resuscitation?: {
+      readonly epinephrineEffectFraction: number;
+      readonly epinephrineTotalMicrograms: number;
+      readonly crystalloidTotalMl: number;
+    };
+    readonly epinephrineLabel?: string;
+    readonly lastExposure?: { readonly agentId: string; readonly tick: number } | null;
   },
 ): string {
   const lines: string[] = ['Current state.'];
@@ -115,10 +122,29 @@ export function stateSummary(
       ? 'Jaw thrust and continuous positive airway pressure are being applied.'
       : 'A jaw thrust hold is active, but the ventilator is not delivering positive pressure.'
     : 'No held airway maneuver is active.');
+  if (options.resuscitation) {
+    const name = options.epinephrineLabel ?? 'epinephrine';
+    lines.push(`Accepted crisis support: ${name} ${options.resuscitation.epinephrineTotalMicrograms.toFixed(0)} micrograms intravenous; balanced crystalloid ${options.resuscitation.crystalloidTotalMl.toFixed(0)} millilitres.`);
+    if (options.resuscitation.epinephrineEffectFraction > 0) {
+      lines.push(`The ${name} teaching-model effect is active.`);
+    }
+  }
+  if (options.lastExposure) {
+    lines.push(`Most recent modeled trigger exposure: ${options.lastExposure.agentId}.`);
+  }
   lines.push(options.alarms.length === 0
     ? 'No active alarms.'
     : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
   return lines.join(' ');
+}
+
+/** Whether current patient state can produce arterial and pleth mechanical pulses. */
+export function mechanicalPulseFromState(
+  state: Readonly<Record<string, number>> | null,
+): boolean {
+  return (state?.heartRateBpm ?? 0) > 0
+    && (state?.strokeVolumeMl ?? 0) > 0
+    && (state?.cardiacOutputLPerMin ?? 0) > 0;
 }
 
 /**

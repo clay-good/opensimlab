@@ -14,6 +14,8 @@ whose disconnected line no longer delivers hypnotic, while quantitative block re
 as a warning.
 The fourth adds laryngospasm after airway stimulation, limited to the first observable response:
 held jaw thrust with continuous positive airway pressure, high inspired oxygen, and deepening.
+The fifth adds an antibiotic-triggered perioperative anaphylaxis teaching model, centered on the
+common NAP6 presentation of abrupt hypotension with possible bronchospasm and initial treatment.
 
 ## What changes
 
@@ -49,9 +51,14 @@ held jaw thrust with continuous positive airway pressure, high inspired oxygen, 
   propofol deepening timing, and the lowest saturation as observable behavioral proxies.
 - State the fourth boundary plainly: this is not a complete laryngospasm algorithm. Suction,
   separate adjuncts, succinylcholine, team actions, and refractory management remain unavailable.
+- Add a ninth scenario with cefazolin exposure, coupled vasodilation, plasma leak, and bronchospasm.
+- Record 50 micrograms IV epinephrine, rapid crystalloid, and oxygen/ventilation as observable
+  initial actions, without asserting a definitive diagnosis.
+- State the fifth boundary plainly: rash, tryptase, trigger removal, team behavior, arrest, and
+  the complete refractory algorithm remain unavailable.
 
 ## Impact
 
-These four slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction, and
-awareness-under-paralysis gaps and add an honest initial-response laryngospasm case. They do not complete the bundled-library,
+These five slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+awareness-under-paralysis, and anaphylaxis gaps and add an honest initial-response laryngospasm case. They do not complete the bundled-library,
 neuromuscular-reversal, or crisis-injector requirements.

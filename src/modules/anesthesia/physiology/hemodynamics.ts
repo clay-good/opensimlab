@@ -88,6 +88,10 @@ export interface HemodynamicDrive {
   readonly anesthesiaDepthFraction: number;
   /** Vasoconstrictor effect from a vasopressor, 0 to 1. */
   readonly vasopressorEffect: number;
+  /** Persistent mediator-driven vasodilation from anaphylaxis, 0 to 1. */
+  readonly anaphylaxisFraction?: number;
+  /** Titrated epinephrine alpha/beta effect, 0 to 1. */
+  readonly epinephrineEffect?: number;
   /** True while positive-pressure ventilation reduces venous return. */
   readonly positivePressure: boolean;
   /**
@@ -128,6 +132,12 @@ export const HEMODYNAMIC_GAINS = {
   stimulusSvrRise: 0.35,
   /** A vasopressor at full effect raises systemic vascular resistance by this fraction. */
   vasopressorSvrRise: 0.60,
+  /** Anaphylaxis at full effect lowers systemic vascular resistance by this fraction. */
+  anaphylaxisSvrDrop: 0.68,
+  /** Epinephrine at full teaching effect raises systemic vascular resistance by this fraction. */
+  epinephrineSvrRise: 0.85,
+  /** Epinephrine at full teaching effect raises intrinsic heart rate by this fraction. */
+  epinephrineHeartRateRise: 0.25,
   /** Positive-pressure ventilation reduces stroke volume by this fraction. */
   positivePressureStrokeVolumeDrop: 0.08,
 } as const;
@@ -248,12 +258,16 @@ export function stepHemodynamics(
 
   // --- Systemic vascular resistance -----------------------------------------
   const volatile = Math.max(drive.volatileMacFraction, 0);
+  const anaphylaxis = clamp(drive.anaphylaxisFraction ?? 0, 0, 1);
+  const epinephrine = clamp(drive.epinephrineEffect ?? 0, 0, 1);
   const vasodilationFactor = 1
     - HEMODYNAMIC_GAINS.propofolSvrDrop * drive.propofolVasodilation
     - VOLATILE_HEMODYNAMIC.svrDropPerMac * volatile
     - HEMODYNAMIC_GAINS.opioidSvrDrop * drive.opioidEffect
+    - HEMODYNAMIC_GAINS.anaphylaxisSvrDrop * anaphylaxis
     + HEMODYNAMIC_GAINS.stimulusSvrRise * drive.surgicalStimulus
-    + HEMODYNAMIC_GAINS.vasopressorSvrRise * drive.vasopressorEffect;
+    + HEMODYNAMIC_GAINS.vasopressorSvrRise * drive.vasopressorEffect
+    + HEMODYNAMIC_GAINS.epinephrineSvrRise * epinephrine;
   const targetSvr = baseSvr * clamp(vasodilationFactor, 0.25, 2.5);
 
   // --- Stroke volume ---------------------------------------------------------
@@ -279,7 +293,8 @@ export function stepHemodynamics(
   const intrinsicRate = profile.baselineHeartRateBpm
     * (1 - HEMODYNAMIC_GAINS.opioidHeartRateDrop * drive.opioidEffect)
     * (1 + HEMODYNAMIC_GAINS.stimulusHeartRateRise * drive.surgicalStimulus)
-    * (1 + HYPOXIA.sympatheticHeartRateRise * sympathetic);
+    * (1 + HYPOXIA.sympatheticHeartRateRise * sympathetic)
+    * (1 + HEMODYNAMIC_GAINS.epinephrineHeartRateRise * epinephrine);
 
   // --- Baroreflex -------------------------------------------------------------
   // The reflex compares the current mean pressure with the set point and adjusts
@@ -324,8 +339,10 @@ export function stepHemodynamics(
     ['propofol-vasodilation', 'Propofol vasodilation', -HEMODYNAMIC_GAINS.propofolSvrDrop * drive.propofolVasodilation, false],
     ['volatile-vasodilation', 'Volatile agent vasodilation', -VOLATILE_HEMODYNAMIC.svrDropPerMac * volatile, true],
     ['opioid-vasodilation', 'Opioid vasodilation', -HEMODYNAMIC_GAINS.opioidSvrDrop * drive.opioidEffect, false],
+    ['anaphylaxis-vasodilation', 'Anaphylaxis vasodilation', -HEMODYNAMIC_GAINS.anaphylaxisSvrDrop * anaphylaxis, true],
     ['surgical-stimulus', 'Surgical stimulus', HEMODYNAMIC_GAINS.stimulusSvrRise * drive.surgicalStimulus, false],
     ['vasopressor', 'Vasopressor', HEMODYNAMIC_GAINS.vasopressorSvrRise * drive.vasopressorEffect, true],
+    ['epinephrine-alpha', 'Epinephrine alpha effect', HEMODYNAMIC_GAINS.epinephrineSvrRise * epinephrine, true],
     ['baroreflex', 'Baroreflex', reflexGain * clamp(error / profile.baselineMapMmHg, -0.6, 0.6) * 0.5, false],
   ];
   const svrWeight = svrDrivers.reduce((sum, [, , value]) => sum + Math.abs(value), 0);
@@ -356,6 +373,7 @@ export function stepHemodynamics(
   const rateDrivers: [string, string, number, boolean][] = [
     ['opioid-bradycardia', 'Opioid slowing the heart', -HEMODYNAMIC_GAINS.opioidHeartRateDrop * drive.opioidEffect, false],
     ['surgical-stimulus', 'Surgical stimulus', HEMODYNAMIC_GAINS.stimulusHeartRateRise * drive.surgicalStimulus, false],
+    ['epinephrine-beta', 'Epinephrine beta effect', HEMODYNAMIC_GAINS.epinephrineHeartRateRise * epinephrine, true],
     ['baroreflex', 'Baroreflex', reflexGain * error * 0.55 / Math.max(profile.baselineHeartRateBpm, 1), false],
     ['hypoxic-tachycardia', 'Sympathetic response to falling saturation', HYPOXIA.sympatheticHeartRateRise * sympathetic, true],
     ['hypoxic-bradycardia', 'Hypoxaemia failing the myocardium', -(1 - HYPOXIA.collapseHeartRateFraction) * failure, true],

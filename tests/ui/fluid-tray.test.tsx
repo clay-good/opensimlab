@@ -31,6 +31,11 @@ describe('Requirement: The fluids tray performs a real learner action', () => {
         region: UNITED_STATES,
         infusions: [],
         hypnoticLine: { connected: true, inspected: false },
+        resuscitation: {
+          epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+          lastEpinephrineTick: null, crystalloidTotalMl: 750,
+        },
+        lastExposure: null,
         syringeRemaining: {},
         ventilator: {
           mode: 'manual', tidalVolumeMl: 500, respiratoryRateBpm: 12,
@@ -47,6 +52,7 @@ describe('Requirement: The fluids tray performs a real learner action', () => {
         onVentilator: () => {},
         onLaryngoscopy: () => {},
         onAirwayManeuver: () => {},
+        onEpinephrine: () => {},
         onDrugCard: () => {},
       }));
     });
@@ -55,9 +61,11 @@ describe('Requirement: The fluids tray performs a real learner action', () => {
       .find((entry) => entry.textContent?.trim() === label) as HTMLButtonElement | undefined;
     act(() => button('Fluids')!.click());
     expect(container.textContent).toContain('25% remains intravascular');
+    expect(container.textContent).toContain('Accepted total: 750 mL');
     act(() => button('1000 mL')!.click());
     expect(onFluid).not.toHaveBeenCalled();
     act(() => button('Give fluid')!.click());
     expect(onFluid).toHaveBeenCalledWith('balanced-crystalloid', 1000);
+    expect(container.textContent).toContain('Accepted total: 750 mL');
   });
 });

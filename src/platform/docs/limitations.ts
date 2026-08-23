@@ -37,7 +37,10 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Fluid response depends on the patient, the product, the rate, ongoing '
       + 'loss, capillary permeability, and repeated reassessment. Crystalloid is only a bridge in '
       + 'major hemorrhage; definitive replacement includes blood products and hemorrhage control.',
-    briefIn: ['unexpected-intraoperative-hemorrhage', 'hypotension-after-induction'],
+    briefIn: [
+      'unexpected-intraoperative-hemorrhage', 'hypotension-after-induction',
+      'perioperative-anaphylaxis-after-antibiotic',
+    ],
   },
   {
     id: 'ventilation-modes-are-not-distinguished',
@@ -264,6 +267,43 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'After significant laryngospasm, reassess for aspiration, pulmonary '
       + 'edema, hypoxemia, and the need for continued observation or respiratory support.',
     briefIn: ['laryngospasm-after-airway-stimulation'],
+  },
+  {
+    id: 'anaphylaxis-syndrome-is-a-teaching-model',
+    headline: 'The anaphylaxis syndrome is a bounded teaching model of vasodilation, plasma leak, and bronchospasm, not an individualized prediction or diagnosis.',
+    simplification: 'A single severity couples systemic vascular resistance loss, plasma-only '
+      + 'capillary leak, and lower-airway obstruction. Real presentations vary widely, and the '
+      + 'displayed trajectory is not a diagnostic test or patient-specific forecast.',
+    whereItMisleads: 'Inferring that one combination, timing, or treatment response establishes '
+      + 'anaphylaxis, or that a different presentation excludes it.',
+    correctUnderstanding: 'Perioperative anaphylaxis is a clinical diagnosis based on the event '
+      + 'context, evolving physiology, response to treatment, and subsequent specialist investigation.',
+    briefIn: ['perioperative-anaphylaxis-after-antibiotic'],
+  },
+  {
+    id: 'no-cutaneous-signs-or-tryptase',
+    headline: 'Rash, swelling, other cutaneous signs, and serum tryptase sampling or results are not modeled.',
+    simplification: 'The patient display shows circulation, ventilation, and oxygenation only. '
+      + 'It cannot show skin findings, airway edema, laboratory sampling, or later confirmatory investigation.',
+    whereItMisleads: 'Treating the absence of a visible rash on screen as clinical absence, or '
+      + 'treating the simulated physiologic pattern as laboratory confirmation.',
+    correctUnderstanding: 'Skin signs can be absent or obscured perioperatively. Record timing, '
+      + 'obtain appropriate samples, and arrange specialist follow-up under the applicable pathway.',
+    briefIn: ['perioperative-anaphylaxis-after-antibiotic'],
+  },
+  {
+    id: 'anaphylaxis-initial-treatment-only',
+    headline: 'This case models only initial oxygen, intravenous epinephrine, and crystalloid actions, not the complete or refractory anaphylaxis algorithm.',
+    simplification: 'There is no trigger-removal control, call-for-help or team behavior, '
+      + 'epinephrine infusion, alternative vasopressor strategy, glucagon, arrest response, '
+      + 'critical-care transfer, blood products, massive-transfusion protocol, or post-event '
+      + 'investigation workflow.',
+    whereItMisleads: 'Continuing the bounded initial actions when shock is refractory, or assuming '
+      + 'a successful modeled response completes clinical management.',
+    correctUnderstanding: 'Use the current perioperative algorithm, remove possible triggers, '
+      + 'call for help, repeat and escalate epinephrine and fluids as indicated, and complete '
+      + 'post-event documentation, sampling, and referral.',
+    briefIn: ['perioperative-anaphylaxis-after-antibiotic'],
   },
   {
     id: 'no-regional-anaesthesia',

@@ -2,9 +2,11 @@
 import { describe, expect, it } from 'vitest';
 import {
   ANNOUNCE_THRESHOLDS, SHORTCUTS, announcementsFor, stateSummary, thresholdSignature,
-  waveformDescriptions,
+  mechanicalPulseFromState, waveformDescriptions,
 } from '@anesthesia/ui/accessibility';
 import { VirtualPatient, RESPIRATORY_PROFILES, type PatientProfile } from '@anesthesia/physiology';
+import { AnesthesiaEngine } from '@anesthesia/engine';
+import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { createRng } from '@platform/kernel/rng';
 
 const PROFILE: PatientProfile = {
@@ -109,6 +111,37 @@ describe('Requirement: Screen Reader Access To Live Physiology', () => {
     expect(descriptions[1]?.description).toContain('dicrotic notch');
   });
 
+  it('describes normal baseline pulses from patient state even before ventilation starts', () => {
+    const engine = new AnesthesiaEngine({
+      scenario: ROUTINE_INDUCTION, seed: 7, practiceRegion: 'US',
+    });
+    const arterial: number[] = [];
+    const pleth: number[] = [];
+    let result = engine.step();
+    for (let tick = 0; tick < 20; tick += 1) {
+      result = engine.step();
+      arterial.push(...result.waveforms.arterial.samples);
+      pleth.push(...result.waveforms.pleth.samples);
+    }
+    // The canvas source was already truthful: both mechanical traces contain
+    // real signal while the ventilator is off.
+    expect(arterial.some((sample) => Math.abs(sample) > 1)).toBe(true);
+    expect(pleth.some((sample) => Math.abs(sample) > 0.01)).toBe(true);
+    expect(result.equipment.ventilator.delivering).toBe(false);
+
+    const descriptions = waveformDescriptions({
+      rhythm: 'sinus', bronchospasmSeverity: 0, airwayPatencyFraction: 1,
+      perfusionIndex: result.state.perfusionIndex, artifacts: new Set(),
+      ventilating: result.state.respiratoryRateBpm > 0,
+      mechanicalPulse: mechanicalPulseFromState(result.state),
+    });
+    expect(descriptions[1]?.description).toContain('dicrotic notch');
+    expect(descriptions[3]?.description).toContain('Regular pulses');
+    expect(mechanicalPulseFromState({
+      ...result.state, heartRateBpm: 0, strokeVolumeMl: 0, cardiacOutputLPerMin: 0,
+    })).toBe(false);
+  });
+
   it('names an artifact in the description rather than describing physiology', () => {
     const damped = waveformDescriptions({
       rhythm: 'sinus', bronchospasmSeverity: 0, airwayPatencyFraction: 1, perfusionIndex: 0.8,
@@ -152,6 +185,28 @@ describe('Requirement: Screen Reader Access To Live Physiology', () => {
     });
     expect(summary).toContain('Jaw thrust and continuous positive airway pressure are being applied.');
     expect(summary.toLowerCase()).not.toContain('laryngospasm');
+  });
+
+  it('reports accepted crisis support and exposure without naming a diagnosis', () => {
+    const patient = new VirtualPatient(PROFILE, createRng(1));
+    const summary = stateSummary(patient.snapshot(), {
+      alarms: [], infusions: [],
+      ventilator: {
+        mode: 'volume-control', tidalVolumeMl: 500, respiratoryRateBpm: 12,
+        fio2: 1, delivering: true,
+      },
+      invalid: new Set(), epinephrineLabel: 'adrenaline',
+      resuscitation: {
+        epinephrineEffectFraction: 0.4,
+        epinephrineTotalMicrograms: 50,
+        crystalloidTotalMl: 1000,
+      },
+      lastExposure: { agentId: 'cefazolin', tick: 600 },
+    });
+    expect(summary).toContain('adrenaline 50 micrograms intravenous');
+    expect(summary).toContain('balanced crystalloid 1000 millilitres');
+    expect(summary).toContain('Most recent modeled trigger exposure: cefazolin.');
+    expect(summary.toLowerCase()).not.toContain('anaphylaxis');
   });
 
   it('says the plethysmogram is non-pulsatile in pulseless electrical activity', () => {

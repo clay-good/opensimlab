@@ -31,6 +31,10 @@ const TERM_EXPLAINERS: Record<string, string> = {
   'positive-pressure-ventilation': 'vasodilation-versus-hypovolemia',
   apnea: 'preoxygenation-and-safe-apnea-time',
   'upper-airway-closure': 'capnogram-morphology',
+  'anaphylaxis-vasodilation': 'vasodilation-versus-hypovolemia',
+  'anaphylaxis-capillary-leak': 'vasodilation-versus-hypovolemia',
+  'epinephrine-alpha': 'vasodilation-versus-hypovolemia',
+  'epinephrine-beta': 'vasodilation-versus-hypovolemia',
   'opioid-bradycardia': 'hypnotic-opioid-synergy',
   'surgical-stimulus': 'hypnotic-opioid-synergy',
   // The baroreflex is why a pressure that fell is not still falling, which is
