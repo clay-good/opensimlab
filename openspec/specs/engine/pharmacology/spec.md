@@ -43,7 +43,7 @@ The anesthesia module SHALL ship at minimum the following models, each implement
 | Succinylcholine | Roy 2004 | Roy et al. 2004 |
 | Sevoflurane, isoflurane, desflurane | Age-related iso-MAC | Nickalls & Mapleson. *Br J Anaesth* 2003;91:170–4 |
 | Propofol + remifentanil | Response-surface interaction | Published hypnotic–opioid response-surface model |
-| Depth of anesthesia | Eleveld two-slope sigmoid | Eleveld et al. *Br J Anaesth* 2018 |
+| Depth of anesthesia | Eleveld smoothly blended asymmetric sigmoid | Eleveld et al. *Br J Anaesth* 2018 |
 
 Every entry SHALL resolve to an executable kernel and a full citation with a resolvable identifier.
 

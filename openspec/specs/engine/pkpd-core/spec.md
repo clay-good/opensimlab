@@ -63,14 +63,14 @@ The engine SHALL compute model parameters from patient covariates using the cova
 
 ### Requirement: Sigmoid Emax Pharmacodynamics
 
-The engine SHALL map effect-site concentration to effect using the sigmoidal Emax relationship `Effect(Ce) = E0 + (Emax − E0) * Ce^γ / (Ce50^γ + Ce^γ)`, with parameters supplied by the pharmacodynamic model. Models publishing asymmetric slopes SHALL apply the appropriate `γ` on each side of `Ce50`.
+The engine SHALL map effect-site concentration to effect using the sigmoidal Emax relationship `Effect(Ce) = E0 + (Emax − E0) * Ce^γ / (Ce50^γ + Ce^γ)`, with parameters supplied by the pharmacodynamic model. Models publishing asymmetric slopes SHALL preserve the source-defined concentration-dependent transition between them. The Eleveld model SHALL use the final NONMEM stream's `WGAM = 1 / (1 + exp(-30 * (Ce - Ce50)))`, blending 1.89 below with 1.47 above.
 
 #### Scenario: Propofol depth of anesthesia lands in the surgical range
 
 - **WHEN** the reference adult reaches a steady effect-site propofol concentration of 3.0 µg/mL
 - **THEN** the reported depth-of-anesthesia index lies within the closed interval [40, 60]
 
-#### Scenario: A two-slope sigmoid is continuous at Ce50
+#### Scenario: A source-smoothed asymmetric sigmoid is continuous at Ce50
 
 - **WHEN** effect is evaluated at `Ce50 − 1e-9` and `Ce50 + 1e-9`
 - **THEN** the results differ by less than 1e-6 index units

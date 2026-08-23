@@ -25,7 +25,7 @@ import {
 } from '@anesthesia/pharmacology/models/propofol-eleveld-2018';
 import { REMIFENTANIL_MINTO_1997 } from '@anesthesia/pharmacology/models/remifentanil-minto-1997';
 import {
-  additiveEffect, combinedPotency, macForAge, macFraction, responseSurfaceEffect,
+  additiveEffect, combinedPotency, evaluatePd, macForAge, macFraction, responseSurfaceEffect,
   sigmoidEmax, totalMacFraction, PROPOFOL_REMIFENTANIL_SURFACE,
 } from '@anesthesia/pharmacology/pd';
 import { createRng } from '@platform/kernel/rng';
@@ -172,22 +172,29 @@ describe('Requirement: Fixed-Step Deterministic Integration', () => {
 });
 
 describe('Requirement: Sigmoid Emax Pharmacodynamics', () => {
-  it('follows the Eleveld equation when Table 3 labels the asymmetric branches in reverse', () => {
-    expect(ELEVELD_PD.gammaLow).toBe(1.47);
-    expect(ELEVELD_PD.gammaHigh).toBe(1.89);
-    const below = sigmoidEmax(1.54, 3.08, ELEVELD_PD.gammaLow, ELEVELD_PD.gammaHigh, 93, 0);
-    const above = sigmoidEmax(6.16, 3.08, ELEVELD_PD.gammaLow, ELEVELD_PD.gammaHigh, 93, 0);
-    expect(below).toBeCloseTo(sigmoidEmax(1.54, 3.08, 1.47, 1.47, 93, 0), 12);
-    expect(above).toBeCloseTo(sigmoidEmax(6.16, 3.08, 1.89, 1.89, 93, 0), 12);
+  it('reproduces the Eleveld final NONMEM stream across its smoothed slope transition', () => {
+    expect(ELEVELD_PD.gammaLow).toBe(1.89);
+    expect(ELEVELD_PD.gammaHigh).toBe(1.47);
+    expect(ELEVELD_PD.gammaTransitionSteepness).toBe(30);
+    const expected = (ce: number) => {
+      const highWeight = 1 / (1 + Math.exp(-30 * (ce - 3.08)));
+      const gamma = highWeight * 1.47 + (1 - highWeight) * 1.89;
+      const ratio = Math.pow(ce / 3.08, gamma);
+      return 93 - 93 * ratio / (1 + ratio);
+    };
+    for (const ce of [2.98, 3.08, 3.18]) {
+      expect(evaluatePd(PROPOFOL_ELEVELD_2018.pd!, ELEVELD_REFERENCE, ce))
+        .toBeCloseTo(expected(ce), 12);
+    }
   });
 
-  it('Scenario: A two-slope sigmoid is continuous at Ce50', () => {
+  it('Scenario: A source-smoothed asymmetric sigmoid is continuous at Ce50', () => {
     const ce50 = 3.08;
-    const below = sigmoidEmax(ce50 - 1e-9, ce50, 1.47, 1.89, 93, 0);
-    const above = sigmoidEmax(ce50 + 1e-9, ce50, 1.47, 1.89, 93, 0);
+    const below = sigmoidEmax(ce50 - 1e-9, ce50, 1.89, 1.47, 93, 0, 30);
+    const above = sigmoidEmax(ce50 + 1e-9, ce50, 1.89, 1.47, 93, 0, 30);
     expect(Math.abs(below - above)).toBeLessThan(1e-6);
     // And both are exactly the midpoint at Ce50.
-    expect(sigmoidEmax(ce50, ce50, 1.47, 1.89, 93, 0)).toBeCloseTo(46.5, 9);
+    expect(sigmoidEmax(ce50, ce50, 1.89, 1.47, 93, 0, 30)).toBeCloseTo(46.5, 9);
   });
 
   it('Scenario: Propofol depth of anesthesia lands in the surgical range', () => {
@@ -208,9 +215,9 @@ describe('Requirement: Sigmoid Emax Pharmacodynamics', () => {
 
 describe('Requirement: Drug Interaction Response Surface', () => {
   it('Scenario: The surface degrades to the single-drug curve', () => {
-    for (const propofolCe of [0.5, 1.5, 3.0, 6.0]) {
+    for (const propofolCe of [0.5, 1.5, 2.98, 3.0, 3.08, 3.18, 6.0]) {
       const surface = responseSurfaceEffect(propofolCe, 0);
-      const alone = responseSurfaceEffect(propofolCe, 0, { ...PROPOFOL_REMIFENTANIL_SURFACE, alpha: 0 });
+      const alone = evaluatePd(PROPOFOL_ELEVELD_2018.pd!, ELEVELD_REFERENCE, propofolCe);
       expect(Math.abs(surface - alone)).toBeLessThan(1e-9);
     }
   });

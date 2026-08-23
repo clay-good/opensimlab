@@ -7,7 +7,7 @@ and claims the code does not support. It does not and cannot replace a credentia
 clinician judging whether the patient behaves like a patient. That review is task 13 of the
 alpha change and it has still not happened. See [`GOVERNANCE.md`](../GOVERNANCE.md).
 
-Why record it at all: it found thirteen real defects, four of which a learner would have
+Why record it at all: it found fourteen real defects, five of which a learner would have
 seen on screen, and the provenance of a fix matters as much as the fix.
 
 ## Method and its limits
@@ -22,9 +22,10 @@ Four independent passes over the code and tests, grouped as follows:
 | Clinical content | Drug cards, explainers, the scenario, the four waveform generators, the alarm set |
 
 **The central limitation: the original passes worked largely from recalled knowledge of the
-papers, not from the papers themselves.** On 2026-08-23 the Eleveld publisher PDF and
-corrigendum were checked directly, resolving the stale paywall note and the reference-person
-Q2 correction. The other items below remain unverified. A primary-source proofread is not the
+papers, not from the papers themselves.** On 2026-08-23 the Eleveld publisher PDF, corrigendum,
+and final S4 NONMEM stream were checked directly, resolving the stale paywall note and the
+reference-person Q2 correction and correcting the asymmetric depth transition. The other items
+below remain unverified. A primary-source proofread is not the
 independent second-person, second-source check required before a model may be called Published.
 
 ## Fixed
@@ -46,6 +47,7 @@ Each has a regression test that fails against the previous behaviour.
 | 11 | An unchecked transcription could display as "Published" | The rule was written in the type and never implemented. Such models now read "Pending independent check" |
 | 12 | The Cormack-Lehane difficulty ramp was far too steep, and videolaryngoscopy under-credited | 24% grade 3/4 at low difficulty and 44% even with video would teach that difficult laryngoscopy is routine and that the rescue device barely helps |
 | 13 | Fat-free mass stepped discontinuously at exactly 18 years | A female patient's value dropped 2.9% on her eighteenth birthday, and Eleveld's V3 and Q3 moved with it |
+| 14 | Eleveld's asymmetric depth slopes were reversed and joined with a hard branch | The learner-visible depth index disagreed with the authors' final NONMEM stream, especially around Ce50. It now uses 1.89 below, 1.47 above, and the source's logistic blend |
 
 Smaller corrections in the same pass: the remifentanil model offered itself as the
 alternative when its own failure predicate fired; an envelope violation could be handed a

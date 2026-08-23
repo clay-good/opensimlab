@@ -153,7 +153,7 @@ export const LIMITATIONS: readonly Limitation[] = [
     id: 'opioid-alone-hypnosis',
     headline: 'The response surface gives the opioid more hypnotic effect of its own than it has clinically.',
     simplification: 'The Greco response surface necessarily gives remifentanil a hypnotic effect '
-      + 'of its own. At 8 ng/mL with no propofol it predicts a depth index around 71.',
+      + 'of its own. At 8 ng/mL with no propofol it predicts a depth index around 76.',
     whereItMisleads: 'Any attempt to explore what the opioid alone does to depth. Clinically, '
       + 'remifentanil alone is a poor hypnotic and barely moves a processed EEG index.',
     correctUnderstanding: 'Opioids blunt the response to stimulation far more than they produce '

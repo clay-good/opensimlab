@@ -53,6 +53,7 @@ export const REMIFENTANIL_MINTO_1997: PharmacologyModel = {
     ce50: (covariates) => 13.1 - 0.148 * (covariates.ageYears - REFERENCE_AGE_YEARS),
     gammaLow: 2.44,
     gammaHigh: 2.44,
+    gammaTransitionSteepness: null,
     betweenSubjectCv: null,
   },
   envelope: {

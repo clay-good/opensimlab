@@ -72,8 +72,10 @@ export const SOURCES: readonly Source[] = [
     publication: 'Br J Anaesth',
     year: 2018,
     locator: '120:942-59',
-    usedFor: 'The default adult propofol model: every fixed effect, the covariate equations for '
-      + 'V1, V2, V3, CL, Q2, Q3 and ke0, and the depth-index Ce50.',
+    usedFor: 'The default adult propofol model: the implemented deterministic population-mean '
+      + 'fixed effects, the covariate equations for '
+      + 'V1, V2, V3, CL, Q2, Q3 and ke0, the depth-index Ce50, and the asymmetric gamma blend '
+      + 'from the final PD NONMEM stream in Supplementary Digital Content S4.',
     verifiedAgainst: NCBI,
     verifiedOn: CHECKED,
   },

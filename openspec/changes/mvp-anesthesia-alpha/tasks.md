@@ -33,7 +33,7 @@
 - [x] 4.3 Transcribe remifentanil Minto 1997; record the same transcription metadata — same caveat.
 - [x] 4.4 Implement the shared body-composition equations once, used by both
 - [ ] 4.5 Assert published reference-individual parameters and at least one published concentration-time point per model — reference-individual parameters are asserted for every model. No shipped model yet has a numeric published concentration-time assertion: the existing Eleveld bolus test is an internally derived qualitative profile, and the cited paper does not publish that 2 mg/kg reference-adult curve. This remains open pending traceable source data and a fully specified administration protocol, or an approved change to the requirement.
-- [x] 4.6 Implement the sigmoid Emax mapping and the propofol–remifentanil response surface; assert synergy exceeds additivity and degrades to the single-drug curve at zero
+- [x] 4.6 Implement the sigmoid Emax mapping and the propofol–remifentanil response surface; assert synergy exceeds additivity and degrades to the single-drug curve at zero — Eleveld's asymmetric gamma follows the authoritative final PD NONMEM stream: 1.89 below Ce50, 1.47 above, with the source's logistic blend coefficient 30.
 - [x] 4.7 Implement the envelope evaluator and the James lean-body-mass failure predicate; assert Schnider demotion at body mass index 47.3
 - [x] 4.8 Property tests: non-negative amounts, mass conservation without elimination, Hill monotonicity
 

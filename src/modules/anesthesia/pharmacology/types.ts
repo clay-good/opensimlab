@@ -92,7 +92,9 @@ export interface PdDeclaration {
   readonly gammaLow: number;
   /** Hill slope above Ce50, where the model publishes an asymmetric pair. */
   readonly gammaHigh: number;
-  /** Between-subject variability as a coefficient of variation, or null if unpublished. */
+  /** Logistic transition steepness around Ce50, or null for a hard branch. */
+  readonly gammaTransitionSteepness: number | null;
+  /** Represented between-subject variability as a coefficient of variation, or null if omitted. */
   readonly betweenSubjectCv: number | null;
 }
 

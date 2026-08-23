@@ -12,8 +12,8 @@ import type { PdDeclaration } from './types';
  *   Effect(Ce) = E0 + (Emax - E0) * Ce^gamma / (Ce50^gamma + Ce^gamma)
  *
  * Models that publish asymmetric slopes apply the appropriate gamma on each side
- * of Ce50. The two branches meet exactly at Ce50, where both reduce to the
- * midpoint, so the function is continuous there regardless of the slopes.
+ * of Ce50. When the source declares a transition steepness, the two slopes are
+ * blended logistically around Ce50 exactly as its fitted model specifies.
  */
 export function sigmoidEmax(
   ce: number,
@@ -22,17 +22,29 @@ export function sigmoidEmax(
   gammaHigh: number,
   e0: number,
   eMax: number,
+  gammaTransitionSteepness?: number,
 ): number {
   const concentration = Math.max(ce, 0);
   if (concentration === 0) return e0;
-  const gamma = concentration < ce50 ? gammaLow : gammaHigh;
+  const gamma = gammaTransitionSteepness === undefined
+    ? (concentration < ce50 ? gammaLow : gammaHigh)
+    : gammaLow + (gammaHigh - gammaLow)
+      / (1 + Math.exp(-gammaTransitionSteepness * (concentration - ce50)));
   const ratio = Math.pow(concentration / ce50, gamma);
   return e0 + (eMax - e0) * (ratio / (1 + ratio));
 }
 
 /** Evaluate a model's declared pharmacodynamics for a patient. */
 export function evaluatePd(pd: PdDeclaration, covariates: Covariates, ce: number): number {
-  return sigmoidEmax(ce, pd.ce50(covariates), pd.gammaLow, pd.gammaHigh, pd.e0, pd.eMax);
+  return sigmoidEmax(
+    ce,
+    pd.ce50(covariates),
+    pd.gammaLow,
+    pd.gammaHigh,
+    pd.e0,
+    pd.eMax,
+    pd.gammaTransitionSteepness ?? undefined,
+  );
 }
 
 /**
@@ -79,7 +91,7 @@ export function normalizedEffect(ce: number, ce50: number, gamma: number): numbe
  *
  * WHAT THIS FORM IMPLIES, SAID OUT LOUD. The Greco U₂ term necessarily gives
  * remifentanil a hypnotic effect of its own: at 8 ng/mL alone this surface
- * predicts a depth index around 71, a drop of about twenty points. Clinically,
+ * predicts a depth index around 76, a drop of about seventeen points. Clinically,
  * remifentanil alone is a poor hypnotic and does not reliably produce
  * unconsciousness at those concentrations, so the surface OVERSTATES what the
  * opioid does by itself. `remifentanilCe50Hypnotic` is deliberately large (18
@@ -92,8 +104,9 @@ export interface ResponseSurfaceParameters {
   readonly propofolCe50: number;
   /** Remifentanil scale over which it potentiates hypnosis, ng/mL. */
   readonly remifentanilCe50Hypnotic: number;
-  /** Steepness of the combined surface. */
-  readonly gamma: number;
+  readonly gammaLow: number;
+  readonly gammaHigh: number;
+  readonly gammaTransitionSteepness: number;
   /** Interaction coefficient. Greater than zero is synergy. */
   readonly alpha: number;
   readonly e0: number;
@@ -103,7 +116,9 @@ export interface ResponseSurfaceParameters {
 export const PROPOFOL_REMIFENTANIL_SURFACE: ResponseSurfaceParameters = {
   propofolCe50: 3.08,
   remifentanilCe50Hypnotic: 18.0,
-  gamma: 1.47,
+  gammaLow: 1.89,
+  gammaHigh: 1.47,
+  gammaTransitionSteepness: 30,
   alpha: 0.9,
   e0: 93,
   eMax: 0,
@@ -162,9 +177,16 @@ export function responseSurfaceEffect(
   volatileMacFraction = 0,
 ): number {
   const u = combinedPotency(propofolCe, remifentanilCe, parameters, volatileMacFraction);
-  if (u === 0) return parameters.e0;
-  const ratio = Math.pow(u, parameters.gamma);
-  return parameters.e0 + (parameters.eMax - parameters.e0) * (ratio / (1 + ratio));
+  const equivalentPropofolCe = u * parameters.propofolCe50;
+  return sigmoidEmax(
+    equivalentPropofolCe,
+    parameters.propofolCe50,
+    parameters.gammaLow,
+    parameters.gammaHigh,
+    parameters.e0,
+    parameters.eMax,
+    parameters.gammaTransitionSteepness,
+  );
 }
 
 /**

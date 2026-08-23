@@ -120,7 +120,8 @@ export const UNVALIDATED: readonly UnvalidatedItem[] = [
       + 'called published. An automated cross-check against the literature was run on 2026-08-20 '
       + 'and is recorded in docs/model-cross-check.md: it corrected thirteen defects and left six '
       + 'items it could not verify. A 2026-08-23 primary-source follow-up resolved two of those, '
-      + 'leaving four. It is a proofread, not a review, and it is not a substitute '
+      + 'corrected one additional defect, and left four. It is a proofread, not a review, and it '
+      + 'is not a substitute '
       + 'for either the second-source check or the clinical one.',
   },
   {

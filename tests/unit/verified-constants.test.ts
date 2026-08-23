@@ -13,7 +13,9 @@ import { registeredPmids, requireSource } from '@platform/docs/sources';
 import {
   MAC_40, MAC_AGE_EXPONENT, MAC_AGE_EXPONENT_CL, NITROUS_OXIDE_MAC_40_PERCENT,
 } from '@anesthesia/pharmacology/pd';
-import { ELEVELD_THETA } from '@anesthesia/pharmacology/models/propofol-eleveld-2018';
+import {
+  ELEVELD_PD, ELEVELD_THETA,
+} from '@anesthesia/pharmacology/models/propofol-eleveld-2018';
 import { saturationFromPo2 } from '@anesthesia/physiology/respiratory';
 
 /** The live value of each recorded symbol. */
@@ -26,6 +28,9 @@ const LIVE: Record<string, number> = {
   'saturationFromPo2 (the equation itself)': 23400,
   'ELEVELD_THETA.v1Ref': ELEVELD_THETA.v1Ref,
   'ELEVELD_THETA.v3Ref': ELEVELD_THETA.v3Ref,
+  'ELEVELD_PD.gammaLow': ELEVELD_PD.gammaLow,
+  'ELEVELD_PD.gammaHigh': ELEVELD_PD.gammaHigh,
+  'ELEVELD_PD.gammaTransitionSteepness': ELEVELD_PD.gammaTransitionSteepness,
 };
 
 describe('the recorded value is the value the code uses', () => {
@@ -64,8 +69,8 @@ describe('every entry can be acted on', () => {
 describe('what is confirmed, and what is honestly not', () => {
   it('confirms the constants read from a primary source', () => {
     const confirmed = VERIFIED_CONSTANTS.filter((c) => c.status === 'confirmed');
-    // Mapleson's five, Severinghaus's equation, and two Eleveld constants.
-    expect(confirmed).toHaveLength(8);
+    // Mapleson's five, Severinghaus's equation, and five Eleveld constants.
+    expect(confirmed).toHaveLength(11);
     for (const constant of confirmed) {
       expect(['mapleson-1996', 'severinghaus-1979', 'eleveld-2018'])
         .toContain(constant.sourceId);

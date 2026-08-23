@@ -13,8 +13,9 @@
  * confirmed constant cannot drift after being confirmed.
  *
  * WHAT COULD NOT BE CONFIRMED IS RECORDED TOO, WITH WHY. The Eleveld publisher
- * PDF is openly available from the University of Groningen, so the two recorded
- * constants below were checked directly against Table 2. They still await the
+ * PDF is openly available from the University of Groningen, and its official S4
+ * attachment contains the final PD NONMEM stream. Five sampled constants below
+ * were checked directly against those primary materials. They still await the
  * independent second-person, second-source check required by governance.
  */
 
@@ -106,6 +107,33 @@ export const VERIFIED_CONSTANTS: readonly VerifiedConstant[] = [
     note: 'Eleveld et al. 2018, Table 2, θ3: V3ref = 273 L (99% CI 243–306); the printed '
       + 'equation scales V3 by Al-Sallami fat-free mass. Read from the publisher PDF hosted by '
       + 'the University of Groningen on 2026-08-23.',
+  },
+  {
+    symbol: 'ELEVELD_PD.gammaLow',
+    value: 1.89,
+    units: 'Hill slope below Ce50',
+    sourceId: 'eleveld-2018',
+    status: 'confirmed',
+    note: 'Supplementary Digital Content S4 final PD $ERROR: below Ce50 the logistic weight '
+      + 'approaches zero, selecting GAM1 = exp(θ9) = 1.89.',
+  },
+  {
+    symbol: 'ELEVELD_PD.gammaHigh',
+    value: 1.47,
+    units: 'Hill slope above Ce50',
+    sourceId: 'eleveld-2018',
+    status: 'confirmed',
+    note: 'Supplementary Digital Content S4 final PD $ERROR: above Ce50 the logistic weight '
+      + 'approaches one, selecting GAM = exp(θ4) = 1.47.',
+  },
+  {
+    symbol: 'ELEVELD_PD.gammaTransitionSteepness',
+    value: 30,
+    units: 'per µg/mL around Ce50',
+    sourceId: 'eleveld-2018',
+    status: 'confirmed',
+    note: 'Supplementary Digital Content S4 final PD $ERROR declares '
+      + 'WGAM = 1 / (1 + exp(-30 * (CPLA - E50))).',
   },
 ];
 

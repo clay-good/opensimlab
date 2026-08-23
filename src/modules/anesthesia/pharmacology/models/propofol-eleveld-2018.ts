@@ -78,9 +78,11 @@ export const ELEVELD_PD = {
   /** ke0 weight exponent. */
   ke0WeightExponent: -0.25,
   /** Hill slope below Ce50. */
-  gammaLow: 1.47,
+  gammaLow: 1.89,
   /** Hill slope above Ce50. The model publishes an asymmetric pair. */
-  gammaHigh: 1.89,
+  gammaHigh: 1.47,
+  /** Logistic blend coefficient around Ce50, per µg/mL. */
+  gammaTransitionSteepness: 30,
 } as const;
 
 /** exp(x * (age - 35)), the paper's ageing function. */
@@ -159,6 +161,7 @@ export const PROPOFOL_ELEVELD_2018: PharmacologyModel = {
     ce50: (covariates) => ELEVELD_PD.ce50Ref * ageing(ELEVELD_PD.ce50Ageing, covariates.ageYears),
     gammaLow: ELEVELD_PD.gammaLow,
     gammaHigh: ELEVELD_PD.gammaHigh,
+    gammaTransitionSteepness: ELEVELD_PD.gammaTransitionSteepness,
     betweenSubjectCv: null,
   },
   envelope: {
@@ -177,37 +180,44 @@ export const PROPOFOL_ELEVELD_2018: PharmacologyModel = {
     volumePages: '120:942-59',
     pmid: '29661412',
     doi: '10.1016/j.bja.2018.01.018',
-    locator: 'Fixed-effect parameter table and covariate model.',
+    locator: 'Tables 2–3; Supplementary Digital Content S4 final PD model $PK/$ERROR.',
     summary:
       'A propofol model built by pooling many previously published datasets spanning neonates to '
       + 'the elderly, including obese patients, so that one parameter set covers the whole range '
       + 'rather than several models each covering a slice of it.',
   },
   transcription: {
-    primaryLocator: 'Fixed-effect parameter table; covariate equations for V1, V2, V3, CL, Q2, Q3, ke0 and Ce50.',
+    primaryLocator: 'Tables 2–3; covariate equations; Supplementary Digital Content S4 final PD $PK/$ERROR.',
     secondSource: null,
     checkedBy: null,
     checkedOn: null,
     status: 'pending-independent-check',
     note:
-      'The structural equations and every fixed-effect value are transcribed from the primary '
-      + 'publication. The independent second-source check by a different person, which this '
+      'The implemented deterministic population-mean equations and fixed effects are transcribed '
+      + 'from the primary publication. The independent second-source check by a different person, which this '
       + 'project requires before a model may carry the Published label, has NOT been performed, '
       + 'so every number this model drives is marked as pending an independent check.\n\n'
       + 'A PRIMARY-SOURCE PROOFREAD WAS PERFORMED. The publisher PDF made available by the '
-      + 'University of Groningen confirms the fixed-effect table and equations transcribed here. '
+      + 'University of Groningen confirms the fixed-effect table and equations transcribed here; '
+      + 'the publisher\'s S4 attachment supplies the final PD NONMEM stream. '
       + 'That proofread is not the independent second-person, second-source check required for '
       + 'the Published label. See `src/platform/docs/verified-constants.ts`.\n\n'
-      + 'TWO IMPLEMENTATION BOUNDARIES, STATED RATHER THAN GLOSSED.\n\n'
+      + 'THREE IMPLEMENTATION BOUNDARIES, STATED RATHER THAN GLOSSED.\n\n'
       + 'First, the corrigendum changes the abstract\'s evaluated Q2 for the reference individual '
       + 'from 1.75 to 1.83 L/min. The underlying Q2 fixed effect remains 1.75 L/min; the maturation '
       + 'term makes the evaluated reference value 1.83 L/min. It also directs implementers to the '
       + 'supplementary NONMEM streams when printed equations and tables disagree. One such '
-      + 'disagreement is the asymmetric PD slope: the equation assigns Q4 = 1.47 below Ce50 and '
-      + 'Q9 = 1.89 above, while Table 3 labels those sides in reverse. This implementation follows '
-      + 'the equation, consistent with an independent implementation adapted from the NONMEM '
-      + 'stream, and has a branch-specific regression test.\n\n'
-      + 'Second, arterial versus venous sampling. The paper publishes separate parameters for the '
+      + 'disagreement is the asymmetric PD slope: the printed equation assigns θ4 = 1.47 below '
+      + 'Ce50 and θ9 = 1.89 above, while Table 3 labels those sides in reverse. The authoritative '
+      + 'NONMEM stream confirms Table 3: 1.89 below and 1.47 above, joined by a logistic blend with '
+      + 'coefficient 30. This implementation follows that stream and has a source-formula '
+      + 'regression test.\n\n'
+      + 'Second, the source models BIS processing delay, residual error, and between-subject '
+      + 'random effects. Those measurement and variability terms are deliberately omitted here: '
+      + 'the simulator reports a deterministic population-mean predicted depth, not a noisy BIS '
+      + 'monitor observation. `betweenSubjectCv` is null because variability is not represented, '
+      + 'not because the paper failed to publish it.\n\n'
+      + 'Third, arterial versus venous sampling. The paper publishes separate parameters for the '
       + 'two sampling sites — a central-volume factor and a substantially faster venous ke0. Only '
       + 'the ARTERIAL branch is implemented here. Predicted onset is therefore the arterial one, '
       + 'and a learner comparing this to a venous-referenced pump will see a difference this '
