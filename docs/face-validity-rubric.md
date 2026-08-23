@@ -62,7 +62,10 @@ Reviewers run the routine induction themselves before answering.
 | B11 | Whether repeated attempts worsen things at the rate you would expect | | |
 | B12 | Rocuronium onset and spontaneous train-of-four recovery | | |
 | B13 | The saturation change while a laryngoscopy attempt consumes simulated time | | |
-| B14 | Overall: does this patient behave like a patient? | | |
+| B14 | Propofol effect-site concentration and predicted depth after TIVA-line disconnection and reconnection | | |
+| B15 | Train-of-four remaining suppressed while predicted depth rises after hypnotic delivery stops | | |
+| B16 | Ordinary vital signs remaining stable while the predicted depth warning develops | | |
+| B17 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -82,7 +85,10 @@ So that reviewers spend their attention on what this review is for:
 - No fresh gas flow; volatile wash-in does not change with flow.
 - Balanced crystalloid uses a fixed-retention teaching model. There are no blood products,
   coagulation effects, laboratory guidance, or resuscitation actions.
-- Six scenarios use propofol and remifentanil; the rapid-sequence case adds rocuronium. The
+- Seven scenarios use propofol and remifentanil; the rapid-sequence and awareness-risk cases add rocuronium. The
   hemorrhage case covers recognition and initial crystalloid temporization, not a
   massive-transfusion protocol.
+- The TIVA-line case models a binary propofol delivery interruption while the commanded pump rate
+  continues. It does not model consciousness, memory, distress, partial extravasation, pump
+  pressure alarms, or a processed EEG signal.
 - Nothing here has been clinically reviewed before — you are the first.

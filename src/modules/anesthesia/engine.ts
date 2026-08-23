@@ -33,7 +33,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.2';
+export const ENGINE_VERSION = '0.1.0-alpha.3';
 
 export type Scenario = ScenarioDocument;
 
@@ -161,6 +161,10 @@ export class AnesthesiaEngine {
   private vasopressorEffect = 0;
   /** A learner fluid bolus waiting to reach the circulation on the next tick. */
   private pendingCrystalloidMl = 0;
+  /** Physical delivery state, intentionally separate from the pump's commanded rate. */
+  private hypnoticLineConnected = true;
+  /** Whether the learner has deliberately inspected the line since its last failure. */
+  private hypnoticLineInspected = false;
   private preoxygenationTicks = 0;
   private lastEffectSitePeak = new Map<string, number>();
 
@@ -376,6 +380,39 @@ export class AnesthesiaEngine {
         this.log('info', 'fluid', `fluid-${fluid.id}-${this.currentTick}`,
           `${fluid.name} ${volumeMl} mL given. The model retains ${fluid.retainedFraction * 100}% intravascularly.`,
           { fluidId: fluid.id, volumeMl, retainedFraction: fluid.retainedFraction, teachingModel: true });
+        break;
+      }
+      case 'hypnotic-line': {
+        const lineAction = action.payload.action;
+        if (lineAction === 'inspect') {
+          this.hypnoticLineInspected = true;
+          this.log(
+            this.hypnoticLineConnected ? 'info' : 'warning', 'equipment',
+            `hypnotic-line-inspect-${this.currentTick}`,
+            this.hypnoticLineConnected
+              ? 'The propofol infusion line was inspected and is connected.'
+              : 'The propofol infusion line was inspected and is disconnected. The pump setting '
+                + 'has not been reaching the patient.',
+            { connected: this.hypnoticLineConnected },
+          );
+          break;
+        }
+        if (lineAction === 'reconnect') {
+          const wasConnected = this.hypnoticLineConnected;
+          this.hypnoticLineConnected = true;
+          this.hypnoticLineInspected = true;
+          const propofol = this.drugs.get('propofol');
+          this.log('info', 'equipment', `hypnotic-line-reconnect-${this.currentTick}`,
+            wasConnected
+              ? 'The propofol infusion line was already connected. Its delivery is unchanged.'
+              : 'The propofol infusion line was reconnected. The pump is again delivering its '
+                + 'unchanged commanded rate.', {
+              connected: true, commandedRate: propofol?.infusionRate ?? 0,
+            });
+          break;
+        }
+        this.log('warning', 'equipment', `bad-hypnotic-line-action-${this.currentTick}`,
+          `Unknown propofol infusion line action "${String(lineAction)}". Inspect or reconnect the line.`);
         break;
       }
       case 'silence-alarm': {
@@ -632,11 +669,18 @@ export class AnesthesiaEngine {
             this.log('critical', 'equipment', `equipment-${event.id}-${this.currentTick}`,
               'The vaporizer has stopped delivering agent.');
             return;
+          case 'hypnotic-line-disconnection':
+            this.hypnoticLineConnected = false;
+            this.hypnoticLineInspected = false;
+            // Deliberately no diagnostic log entry. The scenario event may carry
+            // a generic observation for replay/debrief, but naming the line fault
+            // here would reveal the answer before the learner inspects it.
+            return;
           default:
             this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
               `Timeline event "${event.id}" declares an equipment failure this engine does not `
               + `model: "${String(failure)}". Modelled failures are ventilator-disconnection, `
-              + 'oxygen-supply and vaporizer.');
+              + 'oxygen-supply, vaporizer and hypnotic-line-disconnection.');
             return;
         }
       }
@@ -693,7 +737,9 @@ export class AnesthesiaEngine {
 
     // --- Pharmacokinetics ------------------------------------------------------
     for (const drug of this.drugs.values()) {
-      drug.solver.step(drug.infusionRate);
+      const deliveredRate = drug.drugId === 'propofol' && !this.hypnoticLineConnected
+        ? 0 : drug.infusionRate;
+      drug.solver.step(deliveredRate);
       if (drug.solver.hasEffectSiteCurve) {
         const current = drug.solver.effectSite;
         const peak = this.lastEffectSitePeak.get(drug.drugId) ?? 0;
@@ -818,6 +864,10 @@ export class AnesthesiaEngine {
         attemptSecondsRemaining: this.pendingLaryngoscopy
           ? Math.max(0, Math.ceil((this.pendingLaryngoscopy.completesAtTick - this.currentTick) / TICKS_PER_SECOND))
           : 0,
+      },
+      hypnoticLine: {
+        connected: this.hypnoticLineConnected,
+        inspected: this.hypnoticLineInspected,
       },
       drugs: [...this.drugs.values()].map((drug) => ({
         drugId: drug.drugId,

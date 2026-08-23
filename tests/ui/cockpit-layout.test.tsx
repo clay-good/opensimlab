@@ -252,6 +252,7 @@ describe('Requirement: Cockpit Is Fully Operable Without A Mouse', () => {
     scenario: ROUTINE_INDUCTION,
     region: UNITED_STATES,
     infusions: [],
+    hypnoticLine: { connected: true, inspected: false },
     syringeRemaining: {},
     ventilator: {
       mode: 'manual' as const, tidalVolumeMl: 500, respiratoryRateBpm: 12,
@@ -262,6 +263,7 @@ describe('Requirement: Cockpit Is Fully Operable Without A Mouse', () => {
     lastGrade: null,
     onBolus: () => {},
     onInfusion: () => {},
+    onHypnoticLine: () => {},
     onFluid: () => {},
     onVentilator: () => {},
     onLaryngoscopy: () => {},

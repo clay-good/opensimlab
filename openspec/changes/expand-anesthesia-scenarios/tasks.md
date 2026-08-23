@@ -27,6 +27,19 @@
 - [ ] Add reversal, emergence, extubation, aspiration physiology, or cricoid pressure. None is
   implied by the induction-only slice.
 
+## Slice 3: awareness risk under paralysis
+
+- [x] Separate the commanded propofol pump rate from delivered hypnotic during a line failure.
+- [x] Add logged, replayable learner inspection and reconnection actions.
+- [x] Author and register a 10-minute-or-shorter induction-to-maintenance TIVA scenario.
+- [x] Evaluate hypnotic-before-block order, inspection and reconnection timing, and concurrent
+  predicted-depth and train-of-four state.
+- [x] Map the scenario to NBCRNA, COA, and ACGME domains.
+- [x] Add the NAP5 evidence base and state that risk modeling is not consciousness or recall.
+- [x] Update limitations, face-validity scope, landing-page inventory, and discoverability assets.
+- [ ] Add consciousness, distress, memory, explicit recall, processed EEG, partial line failure,
+  pump pressure behavior, or emergence. None is implied by this risk-recognition slice.
+
 ## Remaining required scenario families
 
 - [x] Rapid-sequence induction with neuromuscular blockade.
@@ -39,4 +52,4 @@
 - [x] Obstetric presentation: the hemorrhage case is a ruptured ectopic pregnancy.
 - [x] Geriatric presentation: hypotension after induction.
 - [x] Obesity presentation: rapid desaturation.
-- [ ] Awareness under paralysis with line disconnection.
+- [x] Awareness under paralysis with line disconnection.

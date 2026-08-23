@@ -40,3 +40,20 @@ The slice stops at a secured, ventilated airway. It does not model reversal, eme
 regurgitation, aspiration, cricoid pressure, or team behavior. Peripheral train-of-four is not
 presented as proof of conditions at the larynx, and the rocuronium trajectory is labeled as a
 teaching model rather than an individual prediction.
+
+## Slice 3: awareness risk under paralysis
+
+The case moves from induction into early TIVA maintenance within 10 simulated minutes. A scripted
+line disconnection stops propofol delivery while the commanded pump rate remains unchanged;
+remifentanil delivery continues. The learner must inspect and reconnect the hypnotic line rather
+than infer delivery from the pump setting. Quantitative train-of-four remains available because
+the teaching point depends on seeing that paralysis continues while hypnosis wanes.
+
+Objective evaluation reads only recorded actions and state. It checks propofol-before-rocuronium
+order, a running propofol infusion before failure, inspection and reconnection timing, and whether
+predicted depth rose above 60 while train-of-four remained suppressed. The NAP5 incidence figures
+frame why blockade is a risk multiplier; they are not applied as a probability for this patient.
+
+The slice models neither consciousness nor explicit recall, distress, movement, a processed EEG,
+partial line failure, pump pressure alarms, or emergence. A threshold crossing is described as a
+modeled risk pattern, never proof that awareness occurred.

@@ -25,10 +25,16 @@ export interface RunningInfusion {
   readonly elapsedSeconds: number;
 }
 
+export interface HypnoticLineStatus {
+  readonly connected: boolean;
+  readonly inspected: boolean;
+}
+
 export interface ActionCockpitProps {
   readonly scenario: Scenario;
   readonly region: RegionProfile;
   readonly infusions: readonly RunningInfusion[];
+  readonly hypnoticLine: HypnoticLineStatus;
   readonly syringeRemaining: Readonly<Record<string, number>>;
   readonly ventilator: {
     mode: 'volume-control' | 'pressure-control' | 'manual';
@@ -46,6 +52,7 @@ export interface ActionCockpitProps {
   readonly airwayAttemptSecondsRemaining?: number;
   readonly onBolus: (drugId: string, amount: number, unit: string) => void;
   readonly onInfusion: (drugId: string, rate: number, unit: string) => void;
+  readonly onHypnoticLine: (action: 'inspect' | 'reconnect') => void;
   readonly onFluid: (fluidId: string, volumeMl: number) => void;
   readonly onVentilator: (settings: Partial<ActionCockpitProps['ventilator']>) => void;
   readonly onLaryngoscopy: (technique: 'direct' | 'video') => void;
@@ -103,12 +110,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
       />
 
       {/* Pinned: running infusions are visible regardless of the selected tray. */}
-      <div className="actions__pinned" role="status" aria-label="Running infusions">
+      <div className="actions__pinned" role="status" aria-label="Pump settings for running infusions">
         {props.infusions.length === 0
           ? <span>No infusions running</span>
           : props.infusions.map((infusion) => (
             <span key={infusion.drugId} className="numeric">
-              {infusion.drugId} {infusion.rate.toFixed(1)} {infusion.unit} ·{' '}
+              Pump set: {infusion.drugId} {infusion.rate.toFixed(1)} {infusion.unit} ·{' '}
               {Math.floor(infusion.elapsedSeconds / 60)}m {Math.floor(infusion.elapsedSeconds % 60)}s
             </span>
           ))}
@@ -129,7 +136,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
             formulary={props.scenario.formulary}
             region={props.region}
             weightKg={props.scenario.patient.weightKg}
+            hypnoticLine={props.hypnoticLine}
             onInfusion={props.onInfusion}
+            onHypnoticLine={props.onHypnoticLine}
           />
         )}
         {tray === 'fluids' && <FluidTray onFluid={props.onFluid} />}
@@ -309,11 +318,13 @@ function Syringe({ drug, remainingMl, weightKg, onBolus, onDrugCard }: {
 
 // --- Infusions ---------------------------------------------------------------
 
-function InfusionTray({ formulary, region, weightKg, onInfusion }: {
+function InfusionTray({ formulary, region, weightKg, hypnoticLine, onInfusion, onHypnoticLine }: {
   formulary: readonly FormularyEntry[];
   region: RegionProfile;
   weightKg: number;
+  hypnoticLine: HypnoticLineStatus;
   onInfusion: (drugId: string, rate: number, unit: string) => void;
+  onHypnoticLine: (action: 'inspect' | 'reconnect') => void;
 }) {
   const [rates, setRates] = useState<Record<string, number>>({});
   const [tciOpen, setTciOpen] = useState(false);
@@ -348,6 +359,32 @@ function InfusionTray({ formulary, region, weightKg, onInfusion }: {
           );
         })}
       </div>
+
+      <section className="card" aria-labelledby="hypnotic-line-title">
+        <h3 id="hypnotic-line-title" className="panel__title" style={{ font: 'var(--type-subtitle)' }}>
+          Propofol delivery line
+        </h3>
+        {!hypnoticLine.inspected ? (
+          <>
+            <p className="field__hint">Delivery status has not been inspected.</p>
+            <Button onClick={() => onHypnoticLine('inspect')}>Inspect propofol line</Button>
+          </>
+        ) : hypnoticLine.connected ? (
+          <>
+            <p className="field__hint" role="status">Connected. Delivery matches the pump setpoint.</p>
+            <Button onClick={() => onHypnoticLine('inspect')}>Inspect propofol line again</Button>
+          </>
+        ) : (
+          <>
+            <p className="field__hint" role="status">
+              Disconnected. The pump setpoint is not reaching the patient.
+            </p>
+            <Button variant="primary" onClick={() => onHypnoticLine('reconnect')}>
+              Reconnect propofol line
+            </Button>
+          </>
+        )}
+      </section>
 
       {/* Target-controlled infusion availability follows the practice region. */}
       <section className="card">

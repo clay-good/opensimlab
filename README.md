@@ -140,7 +140,10 @@ unexpected intraoperative hemorrhage with learner-delivered crystalloid, while k
 products and massive-transfusion management explicitly out of scope. Its second slice adds a
 full-stomach rapid-sequence induction, modeled rocuronium onset, quantitative train-of-four
 monitoring, and airway attempts that consume simulated time. Reversal, emergence, and aspiration
-physiology remain explicit later work.
+physiology remain explicit later work. Its third slice separates a running propofol pump command
+from actual intravenous delivery, then uses a silent line disconnection under neuromuscular
+blockade to teach inspection and restoration of TIVA delivery. It models a risk pattern, not
+consciousness or recall.
 
 ## Running it
 

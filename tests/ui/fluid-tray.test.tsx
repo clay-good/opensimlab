@@ -30,6 +30,7 @@ describe('Requirement: The fluids tray performs a real learner action', () => {
         scenario: ROUTINE_INDUCTION,
         region: UNITED_STATES,
         infusions: [],
+        hypnoticLine: { connected: true, inspected: false },
         syringeRemaining: {},
         ventilator: {
           mode: 'manual', tidalVolumeMl: 500, respiratoryRateBpm: 12,
@@ -40,6 +41,7 @@ describe('Requirement: The fluids tray performs a real learner action', () => {
         lastGrade: null,
         onBolus: () => {},
         onInfusion: () => {},
+        onHypnoticLine: () => {},
         onFluid,
         onVentilator: () => {},
         onLaryngoscopy: () => {},

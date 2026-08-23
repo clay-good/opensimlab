@@ -307,6 +307,10 @@ export function objectiveFindings(
     'wait-for-intubating-block': 'train-of-four-and-residual-blockade',
     'protect-the-apnea-margin': 'preoxygenation-and-safe-apnea-time',
     'secure-and-confirm': 'capnogram-morphology',
+    'hypnosis-before-paralysis': 'train-of-four-and-residual-blockade',
+    'inspect-the-tiva-line': 'depth-monitoring-and-its-limits',
+    'restore-hypnotic-delivery': 'hysteresis-and-effect-site-lag',
+    'recognize-paralysis-risk': 'depth-monitoring-and-its-limits',
   };
 
   return scenario.metadata.objectives.map((objective) => {
@@ -499,6 +503,95 @@ export function objectiveFindings(
           ? `Delivered ventilation resumed with sustained end-tidal carbon dioxide of ${(gasExchange.state.etco2MmHg ?? 0).toFixed(0)} mmHg after airway instrumentation.`
           : 'Airway instrumentation was recorded, but the available trace did not show subsequent delivered ventilation with sustained carbon dioxide.',
         atTick: gasExchange?.tick ?? airway.tick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'hypnosis-before-paralysis') {
+      const propofol = actions.find(
+        (action) => action.type === 'bolus' && action.payload.drugId === 'propofol',
+      );
+      const rocuronium = actions.find(
+        (action) => action.type === 'bolus' && action.payload.drugId === 'rocuronium',
+      );
+      const infusion = actions.find(
+        (action) => action.type === 'infusion'
+          && action.payload.drugId === 'propofol'
+          && Number(action.payload.rate) > 0,
+      );
+      if (!propofol || !rocuronium) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'Both propofol hypnosis and rocuronium blockade were not recorded.',
+        } satisfies ObjectiveFinding;
+      }
+      const failureTick = scenario.timeline.find(
+        (event) => event.target === 'hypnotic-line-disconnection',
+      )?.atTick ?? Infinity;
+      const ordered = propofol.tick <= rocuronium.tick;
+      const maintained = infusion !== undefined && infusion.tick < failureTick;
+      return {
+        ...base,
+        outcome: !ordered ? 'not-met' : maintained ? 'met' : 'partly-met',
+        finding: `${ordered ? 'Propofol preceded rocuronium' : 'Rocuronium was given before propofol'}; `
+          + `${maintained ? 'a propofol infusion was running before the line failed.' : 'no running propofol infusion was recorded before the line failed.'} `
+          + 'Neuromuscular blockade prevents movement; it does not produce hypnosis or amnesia.',
+        atTick: rocuronium.tick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'inspect-the-tiva-line' || objective.id === 'restore-hypnotic-delivery') {
+      const failureTick = scenario.timeline.find(
+        (event) => event.target === 'hypnotic-line-disconnection',
+      )?.atTick;
+      if (failureTick === undefined || (history.at(-1)?.tick ?? 0) < failureTick) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'The session ended before the hypnotic line disconnected.',
+        } satisfies ObjectiveFinding;
+      }
+      const expectedAction = objective.id === 'inspect-the-tiva-line' ? 'inspect' : 'reconnect';
+      const action = actions.find((entry) =>
+        entry.type === 'hypnotic-line'
+        && entry.payload.action === expectedAction
+        && entry.tick >= failureTick);
+      const delay = action ? (action.tick - failureTick) / TICKS_PER_SECOND : null;
+      const metSeconds = objective.id === 'inspect-the-tiva-line' ? 45 : 90;
+      const partialSeconds = objective.id === 'inspect-the-tiva-line' ? 90 : 180;
+      return {
+        ...base,
+        outcome: delay === null ? 'not-met'
+          : delay <= metSeconds ? 'met' : delay <= partialSeconds ? 'partly-met' : 'not-met',
+        finding: delay === null
+          ? `The disconnected hypnotic line was not ${expectedAction === 'inspect' ? 'inspected' : 'reconnected'}.`
+          : `The hypnotic line was ${expectedAction === 'inspect' ? 'inspected' : 'reconnected'} ${delay.toFixed(0)} seconds after disconnection.`,
+        atTick: action?.tick ?? failureTick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'recognize-paralysis-risk') {
+      const failureTick = scenario.timeline.find(
+        (event) => event.target === 'hypnotic-line-disconnection',
+      )?.atTick;
+      if (failureTick === undefined || (history.at(-1)?.tick ?? 0) < failureTick) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'The session ended before the hypnotic line disconnected.',
+        } satisfies ObjectiveFinding;
+      }
+      const risk = history.find((sample) =>
+        sample.tick >= failureTick
+        && (sample.state.depthIndex ?? 0) > 60
+        && (sample.state.trainOfFourRatio ?? 1) <= 0.1);
+      const lightest = Math.max(...history
+        .filter((sample) => sample.tick >= failureTick)
+        .map((sample) => sample.state.depthIndex ?? 0));
+      return {
+        ...base,
+        outcome: risk ? 'met' : 'not-met',
+        finding: risk
+          ? `Predicted depth reached ${lightest.toFixed(0)} while train-of-four remained suppressed. This marks modeled awareness risk, not measured consciousness or recall.`
+          : `Predicted depth peaked at ${lightest.toFixed(0)} without a recorded interval above 60 while train-of-four was suppressed.`,
+        atTick: risk?.tick ?? failureTick,
       } satisfies ObjectiveFinding;
     }
 

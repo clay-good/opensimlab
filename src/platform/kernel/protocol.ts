@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 3 uses high/medium/low alarm priorities. */
-export const WORKER_PROTOCOL_VERSION = 4;
+/** Bumped whenever the message shape changes incompatibly. Version 5 reports hypnotic-line state. */
+export const WORKER_PROTOCOL_VERSION = 5;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -173,6 +173,13 @@ export interface EquipmentSnapshot {
     readonly attemptInProgress: boolean;
     /** Whole simulated seconds remaining, or zero when no attempt is active. */
     readonly attemptSecondsRemaining: number;
+  };
+  /** The physical delivery path for the propofol infusion. */
+  readonly hypnoticLine: {
+    /** False when the pump is running but its propofol is not reaching the patient. */
+    readonly connected: boolean;
+    /** True after the learner has deliberately inspected or reconnected the line. */
+    readonly inspected: boolean;
   };
   /** Per drug: the running infusion rate and what is left in the syringe. */
   readonly drugs: readonly {

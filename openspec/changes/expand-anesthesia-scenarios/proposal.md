@@ -6,10 +6,12 @@ The engine specification requires at least 12 bundled scenarios across routine a
 anesthesia. The alpha proved the platform with 4 scenarios, but it left major code-addressable
 coverage gaps once the external face-validity gate was treated as provisionally passed.
 
-The first increment was unexpected intraoperative hemorrhage. The second is rapid-sequence
+The first increment was unexpected intraoperative hemorrhage. The second was rapid-sequence
 induction: the smallest case that turns the existing train-of-four state and declared airway
 duration into a learner decision about preoxygenation, neuromuscular-block onset, and the time
-spent without ventilation.
+spent without ventilation. The third is awareness risk under paralysis: a running propofol pump
+whose disconnected line no longer delivers hypnotic, while quantitative block removes movement
+as a warning.
 
 ## What changes
 
@@ -31,9 +33,17 @@ spent without ventilation.
   for modeled block onset while preserving the oxygen margin.
 - State the second boundary plainly: reversal, emergence, extubation, regurgitation, aspiration,
   cricoid pressure, and difficult-airway rescue remain unavailable.
+- Add a seventh scenario covering a silent propofol-line disconnection during TIVA under modeled
+  neuromuscular blockade.
+- Keep the commanded pump rate separate from delivered propofol, expose explicit line inspection
+  and reconnection actions, and preserve both in deterministic replay.
+- Evaluate hypnotic-before-block order, line inspection and reconnection timing, and the concurrent
+  rise in predicted depth with suppressed train-of-four.
+- State the third boundary plainly: the case predicts a pharmacologic awareness-risk pattern; it
+  does not model consciousness, distress, memory, recall, or a processed EEG.
 
 ## Impact
 
-These two slices close the hemorrhage, obstetric-presentation, and rapid-sequence-induction gaps
-and make previously inert physiology actionable. They do not complete the bundled-library,
+These three slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction, and
+awareness-under-paralysis gaps and make previously inert physiology actionable. They do not complete the bundled-library,
 neuromuscular-reversal, or crisis-injector requirements.

@@ -172,7 +172,44 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Opioids blunt the response to stimulation far more than they produce '
       + 'unconsciousness. An opioid-heavy technique with too little hypnotic is a recognised route '
       + 'to awareness, and this surface understates that risk.',
-    briefIn: [],
+    briefIn: ['awareness-under-paralysis'],
+  },
+  {
+    id: 'awareness-risk-is-not-consciousness-or-recall',
+    headline: 'The scenario models a drug-delivery pattern associated with awareness risk; it does not model consciousness, distress, memory, or recall.',
+    simplification: 'A rising predicted depth index after hypnotic delivery stops marks a '
+      + 'pharmacologic warning pattern. There is no consciousness or memory state and the '
+      + 'simulator cannot determine whether this patient would experience or later report awareness.',
+    whereItMisleads: 'Treating a threshold crossing as proof that awareness occurred, or treating '
+      + 'a value below the threshold as proof that it did not.',
+    correctUnderstanding: 'Accidental awareness is a clinical outcome assessed from the patient, '
+      + 'not inferred with certainty from one modeled concentration or processed index.',
+    briefIn: ['awareness-under-paralysis'],
+  },
+  {
+    id: 'depth-index-is-a-drug-model-not-an-eeg',
+    headline: 'Predicted depth is computed from drug concentrations here; it is not a processed EEG or a measurement from the patient.',
+    simplification: 'The displayed depth index is calculated from the propofol-remifentanil '
+      + 'response surface. Electrode signal, electromyographic artifact, and patient-specific EEG '
+      + 'response are absent.',
+    whereItMisleads: 'Using this number as though it were a real processed-electroencephalogram '
+      + 'monitor, especially while judging awareness risk.',
+    correctUnderstanding: 'Processed EEG is one imperfect source of information interpreted '
+      + 'alongside drug delivery, end-tidal agent where applicable, clinical context, and the patient.',
+    briefIn: ['awareness-under-paralysis'],
+  },
+  {
+    id: 'tiva-line-disconnection-is-a-teaching-model',
+    headline: 'The TIVA-line failure is a binary delivery switch: the pump keeps its commanded rate while modeled propofol delivery is either connected or absent.',
+    simplification: 'The model separates the commanded pump rate from delivered propofol with a '
+      + 'single connected state. It does not model dead space, partial extravasation, backflow, '
+      + 'pressure alarms, cannula failure, or drug remaining in the line.',
+    whereItMisleads: 'Predicting how quickly a particular real disconnection becomes apparent or '
+      + 'how a specific pump, cannula, or line configuration behaves.',
+    correctUnderstanding: 'A running pump does not prove intravenous delivery. The visible '
+      + 'cannula and line require direct inspection throughout TIVA, especially during transfer '
+      + 'and when neuromuscular blockade removes movement as a warning.',
+    briefIn: ['awareness-under-paralysis'],
   },
   {
     id: 'peep-not-modelled',

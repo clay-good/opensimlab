@@ -521,6 +521,20 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-21',
   },
   {
+    id: 'pandit-nap5-2014',
+    pmid: '25204697',
+    authors: 'Pandit JJ, Andrade J, Bogod DG, Hitchman JM, Jonker WR, Lucas N, et al.',
+    title: '5th National Audit Project (NAP5) on accidental awareness during general anaesthesia: summary of main findings and risk factors',
+    publication: 'Br J Anaesth',
+    year: 2014,
+    locator: '113:549-59',
+    usedFor: 'The awareness-under-paralysis briefing and debrief: reported awareness incidence '
+      + 'near 1 in 19,600 overall, about 1 in 8,200 with neuromuscular blockade versus about 1 '
+      + 'in 135,900 without, and the concentration of reports at induction and emergence.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-23',
+  },
+  {
     id: 'avidan-2011',
     pmid: '21848460',
     authors: 'Avidan MS, Jacobsohn E, Glick D, Burnside BA, Zhang L, Villafranca A, et al.',

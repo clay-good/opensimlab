@@ -335,6 +335,68 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'pc-airway-management',
     objectiveIds: ['protect-the-apnea-margin', 'secure-and-confirm'],
   },
+
+  // --- Awareness under paralysis -----------------------------------------
+  {
+    scenarioId: 'awareness-under-paralysis',
+    frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['inspect-the-tiva-line', 'restore-hypnotic-delivery', 'recognize-paralysis-risk'],
+  },
+  {
+    scenarioId: 'awareness-under-paralysis',
+    frameworkId: 'nbcrna-nce',
+    domainId: 'equipment-instrumentation-technology',
+    objectiveIds: ['inspect-the-tiva-line', 'restore-hypnotic-delivery'],
+  },
+  {
+    scenarioId: 'awareness-under-paralysis',
+    frameworkId: 'nbcrna-nce',
+    domainId: 'basic-sciences',
+    objectiveIds: ['hypnosis-before-paralysis', 'recognize-paralysis-risk'],
+  },
+  {
+    scenarioId: 'awareness-under-paralysis',
+    frameworkId: 'coa-standards',
+    domainId: 'pharmacology-of-anesthetic-agents',
+    objectiveIds: ['hypnosis-before-paralysis', 'recognize-paralysis-risk'],
+  },
+  {
+    scenarioId: 'awareness-under-paralysis',
+    frameworkId: 'coa-standards',
+    domainId: 'anesthesia-equipment-and-monitoring',
+    objectiveIds: ['inspect-the-tiva-line', 'restore-hypnotic-delivery'],
+  },
+  {
+    scenarioId: 'awareness-under-paralysis',
+    frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['inspect-the-tiva-line', 'restore-hypnotic-delivery'],
+  },
+  {
+    scenarioId: 'awareness-under-paralysis',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-pharmacologic-management',
+    objectiveIds: ['hypnosis-before-paralysis', 'recognize-paralysis-risk'],
+  },
+  {
+    scenarioId: 'awareness-under-paralysis',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-monitoring-and-equipment',
+    objectiveIds: ['inspect-the-tiva-line', 'recognize-paralysis-risk'],
+  },
+  {
+    scenarioId: 'awareness-under-paralysis',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-crisis-management',
+    objectiveIds: ['inspect-the-tiva-line', 'restore-hypnotic-delivery'],
+  },
+  {
+    scenarioId: 'awareness-under-paralysis',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'mk-applied-foundational-science',
+    objectiveIds: ['recognize-paralysis-risk'],
+  },
 ];
 
 export interface DomainCoverage {

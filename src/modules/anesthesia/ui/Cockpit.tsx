@@ -70,6 +70,7 @@ const DEFAULT_VENTILATOR = {
 const DEFAULT_AIRWAY = {
   intubated: false, attempts: 0, lastGrade: null, attemptInProgress: false, attemptSecondsRemaining: 0,
 } as const;
+const DEFAULT_HYPNOTIC_LINE = { connected: true, inspected: false } as const;
 
 export function Cockpit({
   scenario, region, audio, demonstrating = false, onTakeControls, onEnd,
@@ -150,6 +151,7 @@ export function Cockpit({
   const equipment = session.equipment;
   const ventilator = equipment?.ventilator ?? DEFAULT_VENTILATOR;
   const airway = equipment?.airway ?? DEFAULT_AIRWAY;
+  const hypnoticLine = equipment?.hypnoticLine ?? DEFAULT_HYPNOTIC_LINE;
   const rhythm = (equipment?.rhythmId ?? 'sinus') as RhythmId;
   const invalidParameters = useMemo(
     () => new Set(equipment?.invalidParameters ?? []),
@@ -422,6 +424,7 @@ export function Cockpit({
           scenario={scenario}
           region={region}
           infusions={infusions}
+          hypnoticLine={hypnoticLine}
           syringeRemaining={syringeRemaining}
           ventilator={ventilator}
           intubated={airway.intubated}
@@ -431,6 +434,7 @@ export function Cockpit({
           airwayAttemptSecondsRemaining={airway.attemptSecondsRemaining}
           onBolus={(drugId, amount, unit) => session.act({ type: 'bolus', payload: { drugId, amount, unit } })}
           onInfusion={(drugId, rate, unit) => session.act({ type: 'infusion', payload: { drugId, rate, unit } })}
+          onHypnoticLine={(action) => session.act({ type: 'hypnotic-line', payload: { action } })}
           onFluid={(fluidId, volumeMl) => session.act({ type: 'fluid', payload: { fluidId, volumeMl } })}
           onVentilator={(settings) => session.act({ type: 'ventilator', payload: settings as never })}
           onLaryngoscopy={(technique) => session.act({ type: 'laryngoscopy', payload: { technique } })}
