@@ -64,34 +64,28 @@ describe('every entry can be acted on', () => {
 describe('what is confirmed, and what is honestly not', () => {
   it('confirms the constants read from a primary source', () => {
     const confirmed = VERIFIED_CONSTANTS.filter((c) => c.status === 'confirmed');
-    // Mapleson's five and Severinghaus's equation.
-    expect(confirmed).toHaveLength(6);
+    // Mapleson's five, Severinghaus's equation, and two Eleveld constants.
+    expect(confirmed).toHaveLength(8);
     for (const constant of confirmed) {
-      expect(['mapleson-1996', 'severinghaus-1979']).toContain(constant.sourceId);
+      expect(['mapleson-1996', 'severinghaus-1979', 'eleveld-2018'])
+        .toContain(constant.sourceId);
     }
   });
 
-  it('does not claim Eleveld was confirmed, because it was not', () => {
+  it('records the Eleveld constants checked directly against the primary paper', () => {
     const eleveld = VERIFIED_CONSTANTS.filter((c) => c.sourceId === 'eleveld-2018');
     expect(eleveld.length).toBeGreaterThan(0);
-    for (const constant of eleveld) expect(constant.status).toBe('unconfirmed');
+    for (const constant of eleveld) expect(constant.status).toBe('confirmed');
   });
 
-  it('says what was tried and why it settled nothing', () => {
-    // The point of an unconfirmed entry is that the next person does not repeat
-    // the dead end. Naming the paywall and the unreliable secondary is the
-    // whole value of the record.
-    const notes = unconfirmedConstants().map((c) => c.note).join(' ');
-    expect(notes).toContain('paywalled');
-    expect(notes).toContain('NOT changed');
-    expect(notes).toContain('reliably');
+  it('does not retain stale unconfirmed entries after the primary-source check', () => {
+    expect(unconfirmedConstants()).toEqual([]);
   });
 
-  it('reports coverage without rounding it into something reassuring', () => {
+  it('reports coverage of the constants recorded in this narrow register', () => {
     const { confirmed, total } = confirmedCount();
     expect(total).toBe(VERIFIED_CONSTANTS.length);
-    expect(confirmed).toBeLessThan(total);
-    expect(unconfirmedConstants()).toHaveLength(total - confirmed);
+    expect(confirmed).toBe(total);
   });
 });
 

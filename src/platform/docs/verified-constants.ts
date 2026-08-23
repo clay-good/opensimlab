@@ -12,13 +12,10 @@
  * A test asserts that the running code still uses the value recorded here, so a
  * confirmed constant cannot drift after being confirmed.
  *
- * WHAT COULD NOT BE CONFIRMED IS RECORDED TOO, WITH WHY. Eleveld 2018 is behind
- * a paywall. The one accessible secondary source that reproduces its parameter
- * table could not be read reliably — two retrievals of the same table returned
- * different clearance values, and its rows visibly mixed entries from adjacent
- * models — so nothing was confirmed from it and NOTHING WAS CHANGED on its
- * authority. Correcting a right number from an unreliable source is worse than
- * leaving it marked unchecked.
+ * WHAT COULD NOT BE CONFIRMED IS RECORDED TOO, WITH WHY. The Eleveld publisher
+ * PDF is openly available from the University of Groningen, so the two recorded
+ * constants below were checked directly against Table 2. They still await the
+ * independent second-person, second-source check required by governance.
  */
 
 export interface VerifiedConstant {
@@ -91,29 +88,24 @@ export const VERIFIED_CONSTANTS: readonly VerifiedConstant[] = [
       + 'within +/- 0.0055 fractional saturation.',
   },
 
-  // --- Not confirmed, and why ------------------------------------------------
   {
     symbol: 'ELEVELD_THETA.v1Ref',
     value: 6.28,
     units: 'litres',
     sourceId: 'eleveld-2018',
-    status: 'unconfirmed',
-    note: 'The primary is paywalled. A secondary source rendered this as 6.25, but the same '
-      + 'source could not be read reliably — two retrievals of its parameter table returned '
-      + 'different clearance values and its rows mixed entries from adjacent models — so it is '
-      + 'not treated as evidence either way and the value was NOT changed. Needs a reader with '
-      + 'the paper in front of them.',
+    status: 'confirmed',
+    note: 'Eleveld et al. 2018, Table 2, θ1: V1ref = 6.28 L (99% CI 5.97–6.80). '
+      + 'Read from the publisher PDF hosted by the University of Groningen on 2026-08-23.',
   },
   {
     symbol: 'ELEVELD_THETA.v3Ref',
     value: 273,
     units: 'litres',
     sourceId: 'eleveld-2018',
-    status: 'unconfirmed',
-    note: 'Same secondary source rendered V3 as 447 scaled by total body weight rather than 273 '
-      + 'scaled by fat-free mass. Given that source\'s demonstrated unreliability this resolves '
-      + 'nothing, but it is the parameter a checker should look at FIRST, because the two '
-      + 'renderings differ in both the constant and the covariate.',
+    status: 'confirmed',
+    note: 'Eleveld et al. 2018, Table 2, θ3: V3ref = 273 L (99% CI 243–306); the printed '
+      + 'equation scales V3 by Al-Sallami fat-free mass. Read from the publisher PDF hosted by '
+      + 'the University of Groningen on 2026-08-23.',
   },
 ];
 

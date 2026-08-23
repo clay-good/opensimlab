@@ -12,8 +12,7 @@ seen on screen, and the provenance of a fix matters as much as the fix.
 
 ## Method and its limits
 
-Four independent passes, each reading the source and the tests, re-deriving the arithmetic,
-and comparing against the published values:
+Four independent passes over the code and tests, grouped as follows:
 
 | Pass | Scope |
 | --- | --- |
@@ -22,11 +21,11 @@ and comparing against the published values:
 | Physiology | Benumof benchmark, the dissociation curve, gas exchange, haemodynamics, baroreflex, airway |
 | Clinical content | Drug cards, explainers, the scenario, the four waveform generators, the alarm set |
 
-**The central limitation: the passes worked largely from recalled knowledge of the papers,
-not from the papers themselves.** Where a value could not be confirmed, it is recorded as
-`cannot verify` below rather than being quietly blessed. A confident-sounding confirmation
-from an automated pass is worth nothing, and treating one as a check would be worse than
-having no check at all. Every item in "still unverified" needs a human with the paper open.
+**The central limitation: the original passes worked largely from recalled knowledge of the
+papers, not from the papers themselves.** On 2026-08-23 the Eleveld publisher PDF and
+corrigendum were checked directly, resolving the stale paywall note and the reference-person
+Q2 correction. The other items below remain unverified. A primary-source proofread is not the
+independent second-person, second-source check required before a model may be called Published.
 
 ## Fixed
 
@@ -73,18 +72,13 @@ build the mechanism badly in a weekend:
 These are the items a clinician reviewer should start with. They are ordered by what would
 be worst if wrong.
 
-1. **The Eleveld corrigendum.** An earlier version of the file asserted in three places that
-   the corrigendum was applied and recorded nowhere what it changed. The assertion has been
-   withdrawn. Someone has to check the corrigendum against the table.
-2. **Eleveld's arterial versus venous parameters.** The paper publishes both; only the
+1. **Eleveld's arterial versus venous parameters.** The paper publishes both; only the
    arterial branch is implemented, which is now stated in the file.
-3. **Eleveld's opiate covariate centring.** The terms are un-centred, which makes the
-   reference individual diverge from the θ table. If that is wrong, V3 is off by 38%.
-4. **Minto's pharmacodynamic parameters** (Ce50 13.1 ng/mL, age slope −0.148, γ 2.44). A
+2. **Minto's pharmacodynamic parameters** (Ce50 13.1 ng/mL, age slope −0.148, γ 2.44). A
    competing set attributed to the same paper circulates widely. Needs Part II, Table 2.
-5. **The applicability envelope bounds** for Minto, and Eleveld's upper age bound of 105,
+3. **The applicability envelope bounds** for Minto, and Eleveld's upper age bound of 105,
    which is beyond the derivation population and carries no failure predicate.
-6. **The `ke0` provenance** for Marsh (0.26) and Schnider (0.456). Both are the conventional
+4. **The `ke0` provenance** for Marsh (0.26) and Schnider (0.456). Both are the conventional
    values; neither comes from the cited paper.
 
 ## Known and not yet addressed

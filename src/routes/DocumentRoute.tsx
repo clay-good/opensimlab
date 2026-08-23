@@ -147,9 +147,8 @@ function ValidationBody() {
       <h2>Which numbers have actually been checked</h2>
       <p>
         {confirmedCount().confirmed} of {confirmedCount().total} recorded constants have been read
-        from their source&apos;s own text. The rest are listed with what was tried and why it
-        settled nothing, so a reviewer inherits a worklist rather than an instruction to check
-        everything.
+        from their source&apos;s own text. This is a narrow sampled register, not an exhaustive
+        transcription check or the independent verification required for publication.
       </p>
       <table>
         <thead>
@@ -163,7 +162,7 @@ function ValidationBody() {
               <td>{requireSource(constant.sourceId).publication} {requireSource(constant.sourceId).year}</td>
               <td>
                 <Badge kind={constant.status === 'confirmed' ? 'default' : 'out-of-range'}>
-                  {constant.status === 'confirmed' ? 'Confirmed' : 'Not checked'}
+                  {constant.status === 'confirmed' ? 'Read in primary source' : 'Not checked'}
                 </Badge>
               </td>
             </tr>

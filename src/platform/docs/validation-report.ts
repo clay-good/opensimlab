@@ -109,7 +109,9 @@ export const UNVALIDATED: readonly UnvalidatedItem[] = [
   {
     item: 'Every pharmacokinetic model in this build',
     reason: 'No openly licensed observed-concentration dataset has been analysed, so no Varvel '
-      + 'performance metric is reported for any model.',
+      + 'performance metric is reported for any model. The solver tests also contain no numeric '
+      + 'concentration-time point traceable to a source paper for any shipped model; the Eleveld '
+      + 'bolus test is an internally derived qualitative profile, not a published point.',
   },
   {
     item: 'Every parameter transcription',
@@ -117,7 +119,8 @@ export const UNVALIDATED: readonly UnvalidatedItem[] = [
       + 'second person against a second source, which this project requires before a model may be '
       + 'called published. An automated cross-check against the literature was run on 2026-08-20 '
       + 'and is recorded in docs/model-cross-check.md: it corrected thirteen defects and left six '
-      + 'items it could not verify. It is a proofread, not a review, and it is not a substitute '
+      + 'items it could not verify. A 2026-08-23 primary-source follow-up resolved two of those, '
+      + 'leaving four. It is a proofread, not a review, and it is not a substitute '
       + 'for either the second-source check or the clinical one.',
   },
   {

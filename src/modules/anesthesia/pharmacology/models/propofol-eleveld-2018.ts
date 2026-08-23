@@ -22,7 +22,11 @@ import { fatFreeMassAlSallami2015 } from '../body-composition';
 
 /** The reference individual the model is normalized to: 35 y, 70 kg, 170 cm, male. */
 export const ELEVELD_REFERENCE = {
-  ageYears: 35, weightKg: 70, heightCm: 170, sex: 'male' as const,
+  ageYears: 35,
+  weightKg: 70,
+  heightCm: 170,
+  sex: 'male' as const,
+  opioidsCoadministered: false,
 };
 
 /** Published fixed effects. Names follow the paper's theta numbering. */
@@ -190,21 +194,19 @@ export const PROPOFOL_ELEVELD_2018: PharmacologyModel = {
       + 'publication. The independent second-source check by a different person, which this '
       + 'project requires before a model may carry the Published label, has NOT been performed, '
       + 'so every number this model drives is marked as pending an independent check.\n\n'
-      + 'WHAT A SECOND-SOURCE CHECK ACTUALLY FOUND. The check was attempted. The primary is '
-      + 'paywalled, and the one reachable secondary that reproduces the parameter table could not '
-      + 'be read reliably: two retrievals of the same table returned different clearance values '
-      + 'and its rows visibly mixed entries from adjacent models. Nothing was confirmed from it '
-      + 'and NOTHING WAS CHANGED on its authority, because correcting a right number from an '
-      + 'unreliable source is worse than leaving it marked unchecked. It did disagree about V1 '
-      + '(6.25 against 6.28) and about V3 (447 scaled by total body weight against 273 scaled by '
-      + 'fat-free mass); those two are where a checker with the paper should start. See '
-      + '`src/platform/docs/verified-constants.ts`.\n\n'
-      + 'TWO THINGS THIS TRANSCRIPTION DOES NOT COVER, STATED RATHER THAN GLOSSED.\n\n'
-      + 'First, the corrigendum. An earlier version of this file asserted in three places that '
-      + 'the 2018 corrigendum was applied, and recorded nowhere what the corrigendum changed. An '
-      + 'unfalsifiable provenance claim on the default adult model is worse than no claim, so the '
-      + 'assertion is withdrawn until someone checks the corrigendum against this table and '
-      + 'records the result here.\n\n'
+      + 'A PRIMARY-SOURCE PROOFREAD WAS PERFORMED. The publisher PDF made available by the '
+      + 'University of Groningen confirms the fixed-effect table and equations transcribed here. '
+      + 'That proofread is not the independent second-person, second-source check required for '
+      + 'the Published label. See `src/platform/docs/verified-constants.ts`.\n\n'
+      + 'TWO IMPLEMENTATION BOUNDARIES, STATED RATHER THAN GLOSSED.\n\n'
+      + 'First, the corrigendum changes the abstract\'s evaluated Q2 for the reference individual '
+      + 'from 1.75 to 1.83 L/min. The underlying Q2 fixed effect remains 1.75 L/min; the maturation '
+      + 'term makes the evaluated reference value 1.83 L/min. It also directs implementers to the '
+      + 'supplementary NONMEM streams when printed equations and tables disagree. One such '
+      + 'disagreement is the asymmetric PD slope: the equation assigns Q4 = 1.47 below Ce50 and '
+      + 'Q9 = 1.89 above, while Table 3 labels those sides in reverse. This implementation follows '
+      + 'the equation, consistent with an independent implementation adapted from the NONMEM '
+      + 'stream, and has a branch-specific regression test.\n\n'
       + 'Second, arterial versus venous sampling. The paper publishes separate parameters for the '
       + 'two sampling sites — a central-volume factor and a substantially faster venous ke0. Only '
       + 'the ARTERIAL branch is implemented here. Predicted onset is therefore the arterial one, '
@@ -218,18 +220,18 @@ export const PROPOFOL_ELEVELD_2018: PharmacologyModel = {
   isTeachingModel: false,
   referenceIndividual: {
     covariates: ELEVELD_REFERENCE,
-    // The terms that are normalized to the reference individual vanish exactly
-    // there, so these four must reproduce the published constants to machine
-    // precision. Clearance, V3 and Q2 are deliberately NOT asserted here: their
-    // equations carry an opiates term and a maturation term that do not reduce to
-    // one at the reference individual, so asserting the bare published constant
-    // would be asserting something the model does not claim.
+    // The paper's reference individual explicitly has no concomitant drugs. Q2
+    // is the corrigendum's evaluated 1.83 L/min, not the 1.75 L/min fixed effect.
     expected: {
-      v1: ELEVELD_THETA.v1Ref,
-      v2: ELEVELD_THETA.v2Ref,
-      ke0: ELEVELD_PD.ke0Ref,
-      ce50: ELEVELD_PD.ce50Ref,
+      v1: 6.28,
+      v2: 25.5,
+      v3: 273,
+      cl: 1.79,
+      q2: 1.83,
+      q3: 1.11,
+      ke0: 0.146,
+      ce50: 3.08,
     },
-    tolerance: 1e-9,
+    tolerance: 1e-3,
   },
 };

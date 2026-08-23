@@ -20,7 +20,9 @@ import {
   MARSH_RATE_CONSTANTS, PROPOFOL_MARSH_1991,
 } from '@anesthesia/pharmacology/models/propofol-marsh-1991';
 import { PROPOFOL_SCHNIDER_1998 } from '@anesthesia/pharmacology/models/propofol-schnider-1998';
-import { PROPOFOL_ELEVELD_2018, ELEVELD_PD } from '@anesthesia/pharmacology/models/propofol-eleveld-2018';
+import {
+  ELEVELD_PD, ELEVELD_REFERENCE, ELEVELD_THETA, PROPOFOL_ELEVELD_2018,
+} from '@anesthesia/pharmacology/models/propofol-eleveld-2018';
 import { REMIFENTANIL_MINTO_1997 } from '@anesthesia/pharmacology/models/remifentanil-minto-1997';
 import {
   additiveEffect, combinedPotency, macForAge, macFraction, responseSurfaceEffect,
@@ -170,6 +172,15 @@ describe('Requirement: Fixed-Step Deterministic Integration', () => {
 });
 
 describe('Requirement: Sigmoid Emax Pharmacodynamics', () => {
+  it('follows the Eleveld equation when Table 3 labels the asymmetric branches in reverse', () => {
+    expect(ELEVELD_PD.gammaLow).toBe(1.47);
+    expect(ELEVELD_PD.gammaHigh).toBe(1.89);
+    const below = sigmoidEmax(1.54, 3.08, ELEVELD_PD.gammaLow, ELEVELD_PD.gammaHigh, 93, 0);
+    const above = sigmoidEmax(6.16, 3.08, ELEVELD_PD.gammaLow, ELEVELD_PD.gammaHigh, 93, 0);
+    expect(below).toBeCloseTo(sigmoidEmax(1.54, 3.08, 1.47, 1.47, 93, 0), 12);
+    expect(above).toBeCloseTo(sigmoidEmax(6.16, 3.08, 1.89, 1.89, 93, 0), 12);
+  });
+
   it('Scenario: A two-slope sigmoid is continuous at Ce50', () => {
     const ce50 = 3.08;
     const below = sigmoidEmax(ce50 - 1e-9, ce50, 1.47, 1.89, 93, 0);
@@ -247,6 +258,12 @@ describe('Requirement: Covariate Scaling', () => {
 });
 
 describe('Scenario: Transcription is verified against published reference values', () => {
+  it('applies the Eleveld corrigendum without changing the underlying Q2 fixed effect', () => {
+    expect(ELEVELD_THETA.q2Ref).toBe(1.75);
+    const parameters = parametersFor(PROPOFOL_ELEVELD_2018, ELEVELD_REFERENCE);
+    expect(parameters.intercompartmentalClearances[0]).toBeCloseTo(1.83, 2);
+  });
+
   it('reproduces every model\'s reference-individual parameters', () => {
     for (const model of MODELS) {
       const reference = model.referenceIndividual;
