@@ -33,6 +33,8 @@ function monitor(showTrainOfFour: boolean): string {
     artifactParameters={new Set()}
     waveformArtifacts={new Set()}
     rhythm="sinus"
+    airwayPatencyFraction={1}
+    bronchospasmSeverity={0}
     mechanicalPulse={false}
     reducedMotion
     colorblindSafe={false}

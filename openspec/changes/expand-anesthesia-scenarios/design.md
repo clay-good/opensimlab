@@ -57,3 +57,23 @@ frame why blockade is a risk multiplier; they are not applied as a probability f
 The slice models neither consciousness nor explicit recall, distress, movement, a processed EEG,
 partial line failure, pump pressure alarms, or emergence. A threshold crossing is described as a
 modeled risk pattern, never proof that awareness occurred.
+
+## Slice 4: laryngospasm initial response
+
+The case scripts severe upper-airway closure after stimulation while the airway remains unsecured.
+Closure removes gas movement and the capnogram without generating a lower-airway shark fin. A
+learner action holds a combined jaw-thrust and continuous-positive-pressure teaching maneuver for
+90 simulated seconds. The duration bounds the interface and is not a recommended clinical hold.
+Relief also requires active delivered ventilation and at least 95% oxygen;
+adequate modeled anesthetic depth enables the bounded response.
+
+Objective evaluation reconstructs inspired oxygen and breath delivery from separate cockpit
+actions, because the real controls dispatch them independently. It checks end-tidal oxygen at
+closure, timing of the held maneuver, timing of a propofol deepening action, and the lowest
+saturation. These are behavioral proxies and state outcomes, not evidence that a learner can
+perform a physical jaw thrust, obtain a mask seal, choose pressure, or complete the algorithm.
+
+The event is refused after successful tracheal intubation, because glottic closure cannot obstruct
+a tracheal tube. The slice does not offer suction, a separate airway adjunct, source removal,
+succinylcholine, help or team actions, refractory escalation, aspiration, or negative-pressure
+pulmonary edema.

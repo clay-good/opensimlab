@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 5 reports hypnotic-line state. */
-export const WORKER_PROTOCOL_VERSION = 5;
+/** Bumped whenever the message shape changes incompatibly. Version 6 reports airway patency. */
+export const WORKER_PROTOCOL_VERSION = 6;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -173,6 +173,12 @@ export interface EquipmentSnapshot {
     readonly attemptInProgress: boolean;
     /** Whole simulated seconds remaining, or zero when no attempt is active. */
     readonly attemptSecondsRemaining: number;
+    /** Fraction of the upper airway open to gas flow, without diagnosing its cause. */
+    readonly patencyFraction: number;
+    /** Lower-airway obstruction that shapes the capnogram, kept distinct from patency. */
+    readonly bronchospasmSeverity: number;
+    /** Whole seconds left in the bounded held jaw-thrust/CPAP maneuver. */
+    readonly jawThrustCpapSecondsRemaining: number;
   };
   /** The physical delivery path for the propofol infusion. */
   readonly hypnoticLine: {

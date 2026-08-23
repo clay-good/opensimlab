@@ -87,6 +87,7 @@ export function stateSummary(
     readonly ventilator: { mode: string; tidalVolumeMl: number; respiratoryRateBpm: number; fio2: number; delivering: boolean };
     readonly invalid: ReadonlySet<string>;
     readonly showTrainOfFour?: boolean;
+    readonly jawThrustCpapSecondsRemaining?: number;
   },
 ): string {
   const lines: string[] = ['Current state.'];
@@ -109,6 +110,11 @@ export function stateSummary(
     + (options.ventilator.delivering
       ? `tidal volume ${options.ventilator.tidalVolumeMl} millilitres at ${options.ventilator.respiratoryRateBpm} per minute.`
       : 'not delivering breaths.'));
+  lines.push((options.jawThrustCpapSecondsRemaining ?? 0) > 0
+    ? options.ventilator.delivering
+      ? 'Jaw thrust and continuous positive airway pressure are being applied.'
+      : 'A jaw thrust hold is active, but the ventilator is not delivering positive pressure.'
+    : 'No held airway maneuver is active.');
   lines.push(options.alarms.length === 0
     ? 'No active alarms.'
     : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
@@ -122,6 +128,7 @@ export function stateSummary(
 export function waveformDescriptions(options: {
   readonly rhythm: RhythmId;
   readonly bronchospasmSeverity: number;
+  readonly airwayPatencyFraction: number;
   readonly perfusionIndex: number;
   readonly artifacts: ReadonlySet<string>;
   readonly ventilating: boolean;
@@ -129,7 +136,7 @@ export function waveformDescriptions(options: {
 }): { signal: string; label: string; description: string }[] {
   const rhythm = getRhythm(options.rhythm);
   const alpha = alphaForObstruction(options.bronchospasmSeverity);
-  const capnoShape = !options.ventilating
+  const capnoShape = !options.ventilating || options.airwayPatencyFraction <= 0.05
     ? 'No waveform: no gas is moving.'
     : alpha > NORMAL_ALPHA_DEGREES + 15
       ? `Shark-fin shape: the expiratory upstroke is sloped and the plateau rises, giving an alpha angle of about ${alpha.toFixed(0)} degrees.`

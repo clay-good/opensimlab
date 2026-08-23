@@ -12,6 +12,8 @@ duration into a learner decision about preoxygenation, neuromuscular-block onset
 spent without ventilation. The third is awareness risk under paralysis: a running propofol pump
 whose disconnected line no longer delivers hypnotic, while quantitative block removes movement
 as a warning.
+The fourth adds laryngospasm after airway stimulation, limited to the first observable response:
+held jaw thrust with continuous positive airway pressure, high inspired oxygen, and deepening.
 
 ## What changes
 
@@ -41,9 +43,15 @@ as a warning.
   rise in predicted depth with suppressed train-of-four.
 - State the third boundary plainly: the case predicts a pharmacologic awareness-risk pattern; it
   does not model consciousness, distress, memory, recall, or a processed EEG.
+- Add an eighth scenario with persistent upper-airway closure, absent gas movement, and a bounded
+  learner-held jaw-thrust/continuous-positive-pressure maneuver.
+- Evaluate end-tidal oxygen at closure, the timing of the combined maneuver and delivered oxygen,
+  propofol deepening timing, and the lowest saturation as observable behavioral proxies.
+- State the fourth boundary plainly: this is not a complete laryngospasm algorithm. Suction,
+  separate adjuncts, succinylcholine, team actions, and refractory management remain unavailable.
 
 ## Impact
 
-These three slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction, and
-awareness-under-paralysis gaps and make previously inert physiology actionable. They do not complete the bundled-library,
+These four slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction, and
+awareness-under-paralysis gaps and add an honest initial-response laryngospasm case. They do not complete the bundled-library,
 neuromuscular-reversal, or crisis-injector requirements.

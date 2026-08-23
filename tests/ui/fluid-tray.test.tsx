@@ -39,12 +39,14 @@ describe('Requirement: The fluids tray performs a real learner action', () => {
         intubated: false,
         airwayAttempts: 0,
         lastGrade: null,
+        jawThrustCpapSecondsRemaining: 0,
         onBolus: () => {},
         onInfusion: () => {},
         onHypnoticLine: () => {},
         onFluid,
         onVentilator: () => {},
         onLaryngoscopy: () => {},
+        onAirwayManeuver: () => {},
         onDrugCard: () => {},
       }));
     });

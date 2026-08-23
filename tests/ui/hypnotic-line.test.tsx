@@ -42,12 +42,14 @@ describe('Requirement: a silent hypnotic-line failure must be inspected', () => 
         intubated: true,
         airwayAttempts: 1,
         lastGrade: 1,
+        jawThrustCpapSecondsRemaining: 0,
         onBolus: () => {},
         onInfusion: () => {},
         onHypnoticLine,
         onFluid: () => {},
         onVentilator: () => {},
         onLaryngoscopy: () => {},
+        onAirwayManeuver: () => {},
         onDrugCard: () => {},
       }));
     });

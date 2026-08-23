@@ -393,6 +393,14 @@ export function validateScenarioSemantics(scenario: unknown): ValidationError[] 
           + (hasTick ? 'It declares both.' : 'It declares neither.'),
       });
     }
+    if (event.type === 'laryngospasm'
+      && (typeof event.value !== 'number' || !Number.isFinite(event.value)
+        || event.value < 0 || event.value > 1)) {
+      errors.push({
+        pointer: `/timeline/${index}/value`, rule: 'range',
+        message: `Timeline event "${String(event.id)}" must declare laryngospasm severity from 0 to 1.`,
+      });
+    }
   });
 
   // The review record must cover the version actually shipping.

@@ -397,6 +397,68 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'mk-applied-foundational-science',
     objectiveIds: ['recognize-paralysis-risk'],
   },
+
+  // --- Laryngospasm after airway stimulation -----------------------------
+  {
+    scenarioId: 'laryngospasm-after-airway-stimulation',
+    frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['apply-initial-laryngospasm-measures', 'deepen-during-laryngospasm'],
+  },
+  {
+    scenarioId: 'laryngospasm-after-airway-stimulation',
+    frameworkId: 'nbcrna-nce',
+    domainId: 'basic-principles',
+    objectiveIds: ['preoxygenate-before-laryngospasm', 'protect-oxygenation-during-laryngospasm'],
+  },
+  {
+    scenarioId: 'laryngospasm-after-airway-stimulation',
+    frameworkId: 'nbcrna-nce',
+    domainId: 'equipment-instrumentation-technology',
+    objectiveIds: ['apply-initial-laryngospasm-measures'],
+  },
+  {
+    scenarioId: 'laryngospasm-after-airway-stimulation',
+    frameworkId: 'coa-standards',
+    domainId: 'airway-management',
+    objectiveIds: ['apply-initial-laryngospasm-measures', 'protect-oxygenation-during-laryngospasm'],
+  },
+  {
+    scenarioId: 'laryngospasm-after-airway-stimulation',
+    frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['deepen-during-laryngospasm', 'protect-oxygenation-during-laryngospasm'],
+  },
+  {
+    scenarioId: 'laryngospasm-after-airway-stimulation',
+    frameworkId: 'coa-standards',
+    domainId: 'anesthesia-equipment-and-monitoring',
+    objectiveIds: ['apply-initial-laryngospasm-measures'],
+  },
+  {
+    scenarioId: 'laryngospasm-after-airway-stimulation',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-airway-management',
+    objectiveIds: ['apply-initial-laryngospasm-measures', 'protect-oxygenation-during-laryngospasm'],
+  },
+  {
+    scenarioId: 'laryngospasm-after-airway-stimulation',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-monitoring-and-equipment',
+    objectiveIds: ['preoxygenate-before-laryngospasm', 'protect-oxygenation-during-laryngospasm'],
+  },
+  {
+    scenarioId: 'laryngospasm-after-airway-stimulation',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-crisis-management',
+    objectiveIds: ['apply-initial-laryngospasm-measures', 'deepen-during-laryngospasm'],
+  },
+  {
+    scenarioId: 'laryngospasm-after-airway-stimulation',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'mk-applied-foundational-science',
+    objectiveIds: ['deepen-during-laryngospasm'],
+  },
 ];
 
 export interface DomainCoverage {

@@ -23,6 +23,8 @@ export interface MonitorRegionProps {
   readonly artifactParameters: ReadonlySet<string>;
   readonly waveformArtifacts: ReadonlySet<string>;
   readonly rhythm: RhythmId;
+  readonly airwayPatencyFraction: number;
+  readonly bronchospasmSeverity: number;
   readonly mechanicalPulse: boolean;
   readonly reducedMotion: boolean;
   readonly colorblindSafe: boolean;
@@ -50,12 +52,16 @@ export function MonitorRegion(props: MonitorRegionProps) {
 
   const descriptions = useMemo(() => waveformDescriptions({
     rhythm: props.rhythm,
-    bronchospasmSeverity: 0,
+    bronchospasmSeverity: props.bronchospasmSeverity,
+    airwayPatencyFraction: props.airwayPatencyFraction,
     perfusionIndex: props.state?.perfusionIndex ?? 0.8,
     artifacts: props.waveformArtifacts,
     ventilating: (props.state?.respiratoryRateBpm ?? 0) > 0,
     mechanicalPulse: props.mechanicalPulse,
-  }), [props.rhythm, props.state, props.waveformArtifacts, props.mechanicalPulse]);
+  }), [
+    props.rhythm, props.state, props.waveformArtifacts, props.mechanicalPulse,
+    props.airwayPatencyFraction, props.bronchospasmSeverity,
+  ]);
 
   const alarmFor = (field: string): 'high' | 'medium' | 'low' | null => {
     const alarm = props.alarms.find((candidate) => candidate.parameter === field);

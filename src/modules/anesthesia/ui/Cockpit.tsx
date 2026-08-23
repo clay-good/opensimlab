@@ -69,6 +69,7 @@ const DEFAULT_VENTILATOR = {
 } as const;
 const DEFAULT_AIRWAY = {
   intubated: false, attempts: 0, lastGrade: null, attemptInProgress: false, attemptSecondsRemaining: 0,
+  patencyFraction: 1, bronchospasmSeverity: 0, jawThrustCpapSecondsRemaining: 0,
 } as const;
 const DEFAULT_HYPNOTIC_LINE = { connected: true, inspected: false } as const;
 
@@ -259,19 +260,24 @@ export function Cockpit({
       ventilator,
       invalid: invalidParameters,
       showTrainOfFour: scenario.equipment.monitoring.includes('train-of-four'),
+      jawThrustCpapSecondsRemaining: airway.jawThrustCpapSecondsRemaining,
     }));
-  }, [session.state, session.alarms, speak, infusions, ventilator, invalidParameters, scenario.equipment.monitoring]);
+  }, [
+    session.state, session.alarms, speak, infusions, ventilator, invalidParameters,
+    scenario.equipment.monitoring, airway.jawThrustCpapSecondsRemaining,
+  ]);
 
   const readWaveforms = useCallback(() => {
     speak(waveformDescriptions({
       rhythm,
-      bronchospasmSeverity: 0,
+      bronchospasmSeverity: airway.bronchospasmSeverity,
+      airwayPatencyFraction: airway.patencyFraction,
       perfusionIndex: session.state?.perfusionIndex ?? 0.8,
       artifacts: waveformArtifacts,
       ventilating: (session.state?.respiratoryRateBpm ?? 0) > 0,
       mechanicalPulse: ventilator.delivering,
     }).map((entry) => `${entry.label}: ${entry.description}`).join(' '));
-  }, [session.state, speak, rhythm, waveformArtifacts, ventilator.delivering]);
+  }, [session.state, speak, rhythm, waveformArtifacts, ventilator.delivering, airway]);
 
   // The keyboard layer. Every shortcut is documented in SHORTCUTS and reachable
   // from the reference without leaving the cockpit.
@@ -376,6 +382,8 @@ export function Cockpit({
           artifactParameters={artifactParameters}
           waveformArtifacts={waveformArtifacts}
           rhythm={rhythm}
+          airwayPatencyFraction={airway.patencyFraction}
+          bronchospasmSeverity={airway.bronchospasmSeverity}
           mechanicalPulse={ventilator.delivering}
           reducedMotion={reducedMotion}
           colorblindSafe={colorblindSafe}
@@ -432,12 +440,14 @@ export function Cockpit({
           lastGrade={airway.lastGrade}
           airwayAttemptInProgress={airway.attemptInProgress}
           airwayAttemptSecondsRemaining={airway.attemptSecondsRemaining}
+          jawThrustCpapSecondsRemaining={airway.jawThrustCpapSecondsRemaining}
           onBolus={(drugId, amount, unit) => session.act({ type: 'bolus', payload: { drugId, amount, unit } })}
           onInfusion={(drugId, rate, unit) => session.act({ type: 'infusion', payload: { drugId, rate, unit } })}
           onHypnoticLine={(action) => session.act({ type: 'hypnotic-line', payload: { action } })}
           onFluid={(fluidId, volumeMl) => session.act({ type: 'fluid', payload: { fluidId, volumeMl } })}
           onVentilator={(settings) => session.act({ type: 'ventilator', payload: settings as never })}
           onLaryngoscopy={(technique) => session.act({ type: 'laryngoscopy', payload: { technique } })}
+          onAirwayManeuver={(maneuver) => session.act({ type: 'airway-maneuver', payload: { maneuver } })}
           onDrugCard={setDrugCardId}
         />
       </div>

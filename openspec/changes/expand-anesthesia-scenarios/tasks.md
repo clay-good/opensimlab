@@ -40,6 +40,23 @@
 - [ ] Add consciousness, distress, memory, explicit recall, processed EEG, partial line failure,
   pump pressure behavior, or emergence. None is implied by this risk-recognition slice.
 
+## Slice 4: laryngospasm initial response
+
+- [x] Add persistent, bounded upper-airway closure distinct from lower-airway bronchospasm.
+- [x] Add a logged, replayable 90-second jaw-thrust/continuous-positive-pressure teaching maneuver;
+  the fixed duration is an interaction bound, not a clinical recommendation.
+- [x] Require the maneuver, active ventilation, high inspired oxygen, and adequate modeled depth
+  for the bounded initial-response trajectory.
+- [x] Refuse scripted closure after a tracheal tube has secured the airway.
+- [x] Author and register the airway-stimulation scenario without stocking a blocker rescue.
+- [x] Evaluate oxygen reserve, initial-action timing, deepening timing, and oxygenation from
+  recorded state and actions.
+- [x] Map the scenario to NBCRNA, COA, and ACGME domains.
+- [x] Add Difficult Airway Society and AIMS sources and update limitations, face-validity scope,
+  landing inventory, and discoverability assets.
+- [ ] Add suction, separate airway adjuncts, source removal, succinylcholine, a refractory pathway,
+  team actions, aspiration, or negative-pressure pulmonary edema. None is implied by this slice.
+
 ## Remaining required scenario families
 
 - [x] Rapid-sequence induction with neuromuscular blockade.

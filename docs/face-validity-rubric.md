@@ -65,7 +65,10 @@ Reviewers run the routine induction themselves before answering.
 | B14 | Propofol effect-site concentration and predicted depth after TIVA-line disconnection and reconnection | | |
 | B15 | Train-of-four remaining suppressed while predicted depth rises after hypnotic delivery stops | | |
 | B16 | Ordinary vital signs remaining stable while the predicted depth warning develops | | |
-| B17 | Overall: does this patient behave like a patient? | | |
+| B17 | Abrupt upper-airway closure: absent gas movement and capnogram without a lower-airway shark fin | | |
+| B18 | Recovery of airway patency during the held jaw-thrust and continuous-positive-pressure teaching maneuver | | |
+| B19 | Saturation trajectory before and during the modeled initial laryngospasm response | | |
+| B20 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -85,10 +88,13 @@ So that reviewers spend their attention on what this review is for:
 - No fresh gas flow; volatile wash-in does not change with flow.
 - Balanced crystalloid uses a fixed-retention teaching model. There are no blood products,
   coagulation effects, laboratory guidance, or resuscitation actions.
-- Seven scenarios use propofol and remifentanil; the rapid-sequence and awareness-risk cases add rocuronium. The
+- Eight scenarios use propofol and remifentanil; the rapid-sequence and awareness-risk cases add rocuronium. The
   hemorrhage case covers recognition and initial crystalloid temporization, not a
   massive-transfusion protocol.
 - The TIVA-line case models a binary propofol delivery interruption while the commanded pump rate
   continues. It does not model consciousness, memory, distress, partial extravasation, pump
   pressure alarms, or a processed EEG signal.
+- The laryngospasm case combines jaw thrust and continuous positive airway pressure into one fixed
+  90-second teaching maneuver; that duration is not a clinical recommendation. It has no suction, separate airway adjunct, succinylcholine,
+  refractory pathway, aspiration, or negative-pressure pulmonary edema.
 - Nothing here has been clinically reviewed before — you are the first.

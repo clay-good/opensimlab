@@ -26,6 +26,7 @@ import { getFluid, MAX_FLUID_BOLUS_ML } from './content/fluids';
 import type { Covariates } from './pharmacology/body-composition';
 import {
   RESPIRATORY_PROFILES, VirtualPatient, baselineSvr,
+  JAW_THRUST_CPAP_SECONDS, stepLaryngospasm,
   type LaryngoscopyResult, type PatientProfile, type PatientState, type VentilatorSettings,
 } from './physiology';
 import { WaveformEngine, restingDrive, type ArtifactId, type RhythmId, type WaveformFrame } from './waveforms';
@@ -33,7 +34,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.3';
+export const ENGINE_VERSION = '0.1.0-alpha.4';
 
 export type Scenario = ScenarioDocument;
 
@@ -165,6 +166,12 @@ export class AnesthesiaEngine {
   private hypnoticLineConnected = true;
   /** Whether the learner has deliberately inspected the line since its last failure. */
   private hypnoticLineInspected = false;
+  /** Persistent functional closure set by the scenario, 0 fully patent to 1 fully closed. */
+  private upperAirwayClosureFraction = 0;
+  /** Exclusive tick at which the bounded held airway maneuver ends. */
+  private jawThrustCpapUntilTick = 0;
+  /** Current lower-airway obstruction, retained for truthful equipment/accessibility output. */
+  private bronchospasmSeverity = 0;
   private preoxygenationTicks = 0;
   private lastEffectSitePeak = new Map<string, number>();
 
@@ -415,6 +422,19 @@ export class AnesthesiaEngine {
           `Unknown propofol infusion line action "${String(lineAction)}". Inspect or reconnect the line.`);
         break;
       }
+      case 'airway-maneuver': {
+        if (action.payload.maneuver !== 'jaw-thrust-cpap') {
+          this.log('warning', 'airway', `bad-airway-maneuver-${this.currentTick}`,
+            `Unknown airway maneuver "${String(action.payload.maneuver)}". Nothing was applied.`);
+          break;
+        }
+        this.jawThrustCpapUntilTick = this.currentTick
+          + JAW_THRUST_CPAP_SECONDS * TICKS_PER_SECOND;
+        this.log('info', 'airway', `jaw-thrust-cpap-${this.currentTick}`,
+          `Jaw thrust with continuous positive airway pressure started for ${JAW_THRUST_CPAP_SECONDS} seconds.`,
+          { maneuver: 'jaw-thrust-cpap', durationSeconds: JAW_THRUST_CPAP_SECONDS });
+        break;
+      }
       case 'silence-alarm': {
         this.alarmEngine.silence(String(action.payload.alarmId), this.currentTick, TICKS_PER_SECOND);
         break;
@@ -619,6 +639,25 @@ export class AnesthesiaEngine {
         // The message is the whole event, and it has already been logged.
         return;
 
+      case 'laryngospasm': {
+        if (this.patient.airway.intubated) {
+          this.log('warning', 'scenario', `inapplicable-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" cannot close an upper airway already secured by a `
+            + 'tracheal tube, so the event had no effect.');
+          return;
+        }
+        const severity = event.value;
+        if (typeof severity !== 'number' || !Number.isFinite(severity)
+          || severity < 0 || severity > 1) {
+          this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" has an invalid upper-airway closure severity. `
+            + 'It must be a finite number from 0 to 1, so the event had no effect.');
+          return;
+        }
+        this.upperAirwayClosureFraction = severity;
+        return;
+      }
+
       case 'rhythm-change': {
         const rhythm = event.target;
         if (!rhythm) {
@@ -732,6 +771,7 @@ export class AnesthesiaEngine {
       if (event.type === 'crystalloid') crystalloidMl += event.value / 600;
       if (event.type === 'obstruction') obstruction = Math.max(obstruction, event.value);
     }
+    this.bronchospasmSeverity = obstruction;
     crystalloidMl += this.pendingCrystalloidMl;
     this.pendingCrystalloidMl = 0;
 
@@ -759,10 +799,29 @@ export class AnesthesiaEngine {
     const effectiveVentilator = this.pendingLaryngoscopy
       ? { ...this.ventilator, delivering: false }
       : this.ventilator;
+    const depthBeforePhysiology = this.patient.depthIndex({
+      propofolCe, remifentanilCe, rocuroniumCe, vasopressorEffect: this.vasopressorEffect,
+    });
+    this.upperAirwayClosureFraction = stepLaryngospasm(
+      this.upperAirwayClosureFraction,
+      {
+        jawThrustCpap: this.currentTick < this.jawThrustCpapUntilTick,
+        positivePressure: effectiveVentilator.delivering
+          && effectiveVentilator.tidalVolumeMl > 0
+          && effectiveVentilator.respiratoryRateBpm > 0,
+        fio2: effectiveVentilator.fio2,
+        depthIndex: depthBeforePhysiology,
+      },
+      1 / TICKS_PER_SECOND,
+    );
     const result = this.patient.tick(
       { propofolCe, remifentanilCe, rocuroniumCe, vasopressorEffect: this.vasopressorEffect },
       effectiveVentilator,
-      { surgicalStimulus: stimulus, obstructionFraction: obstruction, bloodLossMl, crystalloidMl },
+      {
+        surgicalStimulus: stimulus, obstructionFraction: obstruction,
+        upperAirwayClosureFraction: this.upperAirwayClosureFraction,
+        bloodLossMl, crystalloidMl,
+      },
     );
     // A vasopressor's effect wanes; the teaching model decays it over about five minutes.
     this.vasopressorEffect *= Math.exp(-0.1 / 5);
@@ -864,6 +923,11 @@ export class AnesthesiaEngine {
         attemptSecondsRemaining: this.pendingLaryngoscopy
           ? Math.max(0, Math.ceil((this.pendingLaryngoscopy.completesAtTick - this.currentTick) / TICKS_PER_SECOND))
           : 0,
+        patencyFraction: 1 - this.upperAirwayClosureFraction,
+        bronchospasmSeverity: this.bronchospasmSeverity,
+        jawThrustCpapSecondsRemaining: Math.max(
+          0, Math.ceil((this.jawThrustCpapUntilTick - this.currentTick) / TICKS_PER_SECOND),
+        ),
       },
       hypnoticLine: {
         connected: this.hypnoticLineConnected,

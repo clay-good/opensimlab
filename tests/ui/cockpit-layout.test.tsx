@@ -261,12 +261,14 @@ describe('Requirement: Cockpit Is Fully Operable Without A Mouse', () => {
     intubated: false,
     airwayAttempts: 0,
     lastGrade: null,
+    jawThrustCpapSecondsRemaining: 0,
     onBolus: () => {},
     onInfusion: () => {},
     onHypnoticLine: () => {},
     onFluid: () => {},
     onVentilator: () => {},
     onLaryngoscopy: () => {},
+    onAirwayManeuver: () => {},
     onDrugCard: () => {},
   }));
 

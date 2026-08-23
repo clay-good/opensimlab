@@ -28,6 +28,7 @@ export * from './respiratory';
 export * from './hemodynamics';
 export * from './airway';
 export * from './neuromuscular';
+export * from './laryngospasm';
 export { AttributionRecorder } from './attribution';
 
 /** One tick, in minutes. */
@@ -87,6 +88,8 @@ export interface ScenarioDrive {
   readonly surgicalStimulus: number;
   /** 0 to 1 airway obstruction. */
   readonly obstructionFraction: number;
+  /** 0 to 1 functional closure at the larynx, separate from lower-airway obstruction. */
+  readonly upperAirwayClosureFraction?: number;
   /** Millilitres of blood lost this tick. */
   readonly bloodLossMl: number;
   /** Millilitres of crystalloid given this tick. */
@@ -355,12 +358,19 @@ export class VirtualPatient {
     const tidalDrive = clamp(1 - hypnoticDepression - 0.2 * opioidDepression, 0, 1)
       * neuromuscular.respiratoryMuscleFraction;
     const delivering = ventilator.delivering;
-    const tidal = delivering
+    const commandedTidal = delivering
       ? ventilator.tidalVolumeMl
       : Math.round(this.profile.respiratory.frcLitres > 0 ? 500 * tidalDrive : 0);
-    const rate = delivering
+    const commandedRate = delivering
       ? ventilator.respiratoryRateBpm
       : Math.round(14 * rateDrive);
+    const airwayPatency = 1 - clamp(scenario.upperAirwayClosureFraction ?? 0, 0, 1);
+    // At five percent patency or less, the calculated few millilitres are below
+    // effective dead-space ventilation. Calling a set respiratory rate a breath
+    // here would draw a normal capnogram for a functionally closed airway.
+    const flowPatency = airwayPatency <= 0.0500001 ? 0 : airwayPatency;
+    const tidal = Math.round(commandedTidal * flowPatency);
+    const rate = flowPatency > 0 ? commandedRate : 0;
 
     const baselineCo = cardiacOutput(
       this.profile.hemodynamics.baselineHeartRateBpm, this.profile.hemodynamics.baselineStrokeVolumeMl,
@@ -378,6 +388,16 @@ export class VirtualPatient {
     if (tidal === 0 || rate === 0) {
       recorder.add('spo2Percent', 'apnea', 'Apnoea: no ventilation', -0.0001);
       recorder.add('paco2MmHg', 'apnea', 'Apnoea: carbon dioxide accumulating', 0.0001);
+    }
+    if (airwayPatency < 0.999) {
+      recorder.add(
+        'tidalVolumeMl', 'upper-airway-closure', 'Functional upper-airway closure',
+        tidal - commandedTidal, { teachingModel: true },
+      );
+      recorder.add(
+        'etco2MmHg', 'upper-airway-closure', 'No gas passing the upper airway',
+        -0.0001, { teachingModel: true },
+      );
     }
     if (neuromuscular.blockadeFraction > 0.001) {
       recorder.add(

@@ -226,6 +226,46 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: [],
   },
   {
+    id: 'laryngospasm-initial-measures-are-a-teaching-model',
+    headline: 'Jaw thrust and continuous positive airway pressure are one fixed 90-second teaching maneuver here, not separate physical skills or a clinical duration.',
+    simplification: 'One action represents holding a jaw thrust and continuous positive airway '
+      + 'pressure for 90 simulated seconds. This duration bounds the interaction; it is not a '
+      + 'clinical recommendation. Relief depends on that hold, active ventilation, delivered '
+      + 'oxygen, and modeled anesthetic depth; hand position, mask seal, airway pressure, and '
+      + 'partial clinical response are not simulated.',
+    whereItMisleads: 'Using successful button timing as evidence that the learner can perform the '
+      + 'maneuver, obtain a mask seal, select safe pressure, or recognize every presentation.',
+    correctUnderstanding: 'Initial management requires opening the airway, 100% oxygen with '
+      + 'continuous positive pressure, avoiding further stimulation, and deepening anesthesia '
+      + 'while repeatedly reassessing ventilation and escalation needs.',
+    briefIn: ['laryngospasm-after-airway-stimulation'],
+  },
+  {
+    id: 'no-refractory-laryngospasm-pathway',
+    headline: 'This case stops at initial measures: there is no suction, separate airway adjunct, succinylcholine, intubation rescue, or refractory pathway.',
+    simplification: 'The cockpit can model the initial jaw-thrust/CPAP hold, oxygen delivery, and '
+      + 'propofol deepening. It does not offer suction, an oropharyngeal airway, removal of blood '
+      + 'or secretions, succinylcholine, or the complete escalation sequence.',
+    whereItMisleads: 'Treating initial modeled relief as a complete laryngospasm algorithm, or '
+      + 'continuing the same measures while oxygenation deteriorates in a refractory event.',
+    correctUnderstanding: 'Persistent closure or falling saturation requires immediate escalation '
+      + 'through the applicable clinical algorithm, including removal of the trigger, help, '
+      + 'additional airway measures, and neuromuscular blockade when indicated.',
+    briefIn: ['laryngospasm-after-airway-stimulation'],
+  },
+  {
+    id: 'no-negative-pressure-pulmonary-edema',
+    headline: 'Negative-pressure pulmonary edema, aspiration, and post-obstruction monitoring are not modeled after laryngospasm.',
+    simplification: 'The respiratory model ends with restoration of airway patency. It does not '
+      + 'create pulmonary edema from inspiratory effort against a closed glottis, aspiration from '
+      + 'regurgitation, or a later oxygenation problem after apparent relief.',
+    whereItMisleads: 'Assuming that restored capnography and saturation end the clinical problem '
+      + 'after a prolonged or severe episode.',
+    correctUnderstanding: 'After significant laryngospasm, reassess for aspiration, pulmonary '
+      + 'edema, hypoxemia, and the need for continued observation or respiratory support.',
+    briefIn: ['laryngospasm-after-airway-stimulation'],
+  },
+  {
     id: 'no-regional-anaesthesia',
     headline: 'Regional anaesthesia is not modelled at all — no block, no spread, no failure.',
     simplification: 'Regional anaesthesia and block spread are not modelled at all.',

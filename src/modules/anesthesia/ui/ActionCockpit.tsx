@@ -15,6 +15,7 @@ import type { Scenario } from '@anesthesia/engine';
 import type { FormularyEntry } from '@anesthesia/scenarios/types';
 import type { RegionProfile } from '@anesthesia/region/profiles';
 import { FLUIDS } from '@anesthesia/content/fluids';
+import { JAW_THRUST_CPAP_SECONDS } from '@anesthesia/physiology';
 
 export type TrayId = 'syringes' | 'infusions' | 'fluids' | 'airway';
 
@@ -50,12 +51,14 @@ export interface ActionCockpitProps {
   readonly lastGrade: number | null;
   readonly airwayAttemptInProgress?: boolean;
   readonly airwayAttemptSecondsRemaining?: number;
+  readonly jawThrustCpapSecondsRemaining: number;
   readonly onBolus: (drugId: string, amount: number, unit: string) => void;
   readonly onInfusion: (drugId: string, rate: number, unit: string) => void;
   readonly onHypnoticLine: (action: 'inspect' | 'reconnect') => void;
   readonly onFluid: (fluidId: string, volumeMl: number) => void;
   readonly onVentilator: (settings: Partial<ActionCockpitProps['ventilator']>) => void;
   readonly onLaryngoscopy: (technique: 'direct' | 'video') => void;
+  readonly onAirwayManeuver: (maneuver: 'jaw-thrust-cpap') => void;
   readonly onDrugCard: (drugId: string) => void;
 }
 
@@ -150,9 +153,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
             lastGrade={props.lastGrade}
             attemptInProgress={props.airwayAttemptInProgress ?? false}
             attemptSecondsRemaining={props.airwayAttemptSecondsRemaining ?? 0}
+            jawThrustCpapSecondsRemaining={props.jawThrustCpapSecondsRemaining}
             region={props.region}
             onVentilator={props.onVentilator}
             onLaryngoscopy={props.onLaryngoscopy}
+            onAirwayManeuver={props.onAirwayManeuver}
           />
         )}
         {/* Inside the scrolling tray, not as a row of its own.
@@ -421,17 +426,23 @@ function InfusionTray({ formulary, region, weightKg, hypnoticLine, onInfusion, o
 
 // --- Airway and ventilator ---------------------------------------------------
 
-function AirwayTray({ ventilator, intubated, attempts, lastGrade, attemptInProgress, attemptSecondsRemaining, region, onVentilator, onLaryngoscopy }: {
+function AirwayTray({
+  ventilator, intubated, attempts, lastGrade, attemptInProgress, attemptSecondsRemaining,
+  jawThrustCpapSecondsRemaining, region, onVentilator, onLaryngoscopy, onAirwayManeuver,
+}: {
   ventilator: ActionCockpitProps['ventilator'];
   intubated: boolean;
   attempts: number;
   lastGrade: number | null;
   attemptInProgress: boolean;
   attemptSecondsRemaining: number;
+  jawThrustCpapSecondsRemaining: number;
   region: RegionProfile;
   onVentilator: (settings: Partial<ActionCockpitProps['ventilator']>) => void;
   onLaryngoscopy: (technique: 'direct' | 'video') => void;
+  onAirwayManeuver: (maneuver: 'jaw-thrust-cpap') => void;
 }) {
+  const holdingAirway = jawThrustCpapSecondsRemaining > 0;
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
       <section>
@@ -507,6 +518,13 @@ function AirwayTray({ ventilator, intubated, attempts, lastGrade, attemptInProgr
       <section>
         <h3 className="field__label">Airway</h3>
         <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+          <Button
+            aria-describedby="jaw-thrust-cpap-status"
+            disabled={holdingAirway}
+            onClick={() => onAirwayManeuver('jaw-thrust-cpap')}
+          >
+            Apply jaw thrust + continuous positive pressure
+          </Button>
           <Button onClick={() => onLaryngoscopy('direct')} disabled={intubated || attemptInProgress}>
             Direct laryngoscopy
           </Button>
@@ -514,6 +532,13 @@ function AirwayTray({ ventilator, intubated, attempts, lastGrade, attemptInProgr
             Videolaryngoscopy
           </Button>
         </div>
+        <p id="jaw-thrust-cpap-status" className="field__hint">
+          {holdingAirway
+            ? ventilator.delivering
+              ? `Jaw thrust and continuous positive pressure in progress: ${Math.ceil(jawThrustCpapSecondsRemaining)} simulated seconds remaining.`
+              : `Jaw thrust hold in progress: ${Math.ceil(jawThrustCpapSecondsRemaining)} simulated seconds remaining. The ventilator is not delivering positive pressure.`
+            : `Applies a fixed ${JAW_THRUST_CPAP_SECONDS}-second teaching-model hold, not a recommended clinical duration. Assess its effect from gas movement and the capnogram.`}
+        </p>
         <p className="field__hint">
           {attemptInProgress
             ? `Attempt in progress: ${attemptSecondsRemaining} simulated seconds remaining. Ventilation is interrupted.`

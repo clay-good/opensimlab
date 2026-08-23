@@ -143,7 +143,9 @@ monitoring, and airway attempts that consume simulated time. Reversal, emergence
 physiology remain explicit later work. Its third slice separates a running propofol pump command
 from actual intravenous delivery, then uses a silent line disconnection under neuromuscular
 blockade to teach inspection and restoration of TIVA delivery. It models a risk pattern, not
-consciousness or recall.
+consciousness or recall. Its fourth slice models abrupt upper-airway closure and a held jaw-thrust
+with continuous positive pressure, 100% oxygen, and anesthetic deepening. It stops at initial
+measures; suction, airway adjuncts, succinylcholine, and refractory management remain unavailable.
 
 ## Running it
 

@@ -324,6 +324,34 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: CHECKED,
   },
   {
+    id: 'das-extubation-2012',
+    pmid: '22321104',
+    authors: 'Difficult Airway Society Extubation Guidelines Group, Popat M, Mitchell V, Dravid R, Patel A, Swampillai C, Higgs A',
+    title: 'Difficult Airway Society Guidelines for the management of tracheal extubation',
+    publication: 'Anaesthesia',
+    year: 2012,
+    locator: '67:318-40',
+    usedFor: 'The laryngospasm case\'s explicitly partial initial-response sequence: call for help, '
+      + 'ensure airway patency, apply continuous positive airway pressure with 100% oxygen, deepen '
+      + 'with propofol, and escalate to succinylcholine when closure persists or saturation falls.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-23',
+  },
+  {
+    id: 'visvanathan-laryngospasm-2005',
+    pmid: '15933300',
+    authors: 'Visvanathan T, Kluger MT, Webb RK, Westhorpe RN',
+    title: 'Crisis management during anaesthesia: laryngospasm',
+    publication: 'Qual Saf Health Care',
+    year: 2005,
+    locator: '14:e3',
+    usedFor: 'The laryngospasm case rationale and presentation: 189 AIMS incidents, direct airway '
+      + 'stimulation as a common precipitant, desaturation in more than 60%, and the need for '
+      + 'prompt structured recognition and management.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-23',
+  },
+  {
     id: 'das-2015',
     pmid: '26556848',
     authors: 'Frerk C, Mitchell VS, McNarry AF, Mendonca C, Bhagrath R, Patel A, et al.',

@@ -96,7 +96,7 @@ describe('Requirement: Screen Reader Access To Live Physiology', () => {
 
   it('Scenario: Waveforms have a non-visual equivalent', () => {
     const descriptions = waveformDescriptions({
-      rhythm: 'sinus', bronchospasmSeverity: 0, perfusionIndex: 0.8,
+      rhythm: 'sinus', bronchospasmSeverity: 0, airwayPatencyFraction: 1, perfusionIndex: 0.8,
       artifacts: new Set(), ventilating: true, mechanicalPulse: true,
     });
     expect(descriptions).toHaveLength(4);
@@ -111,12 +111,12 @@ describe('Requirement: Screen Reader Access To Live Physiology', () => {
 
   it('names an artifact in the description rather than describing physiology', () => {
     const damped = waveformDescriptions({
-      rhythm: 'sinus', bronchospasmSeverity: 0, perfusionIndex: 0.8,
+      rhythm: 'sinus', bronchospasmSeverity: 0, airwayPatencyFraction: 1, perfusionIndex: 0.8,
       artifacts: new Set(['arterial-damping']), ventilating: true, mechanicalPulse: true,
     });
     expect(damped[1]?.description).toContain('monitoring problem');
     const cautery = waveformDescriptions({
-      rhythm: 'sinus', bronchospasmSeverity: 0, perfusionIndex: 0.8,
+      rhythm: 'sinus', bronchospasmSeverity: 0, airwayPatencyFraction: 1, perfusionIndex: 0.8,
       artifacts: new Set(['electrocautery']), ventilating: true, mechanicalPulse: true,
     });
     expect(cautery[0]?.description).toContain('interference');
@@ -124,15 +124,39 @@ describe('Requirement: Screen Reader Access To Live Physiology', () => {
 
   it('describes the shark fin when the airway is obstructed', () => {
     const obstructed = waveformDescriptions({
-      rhythm: 'sinus', bronchospasmSeverity: 0.8, perfusionIndex: 0.8,
+      rhythm: 'sinus', bronchospasmSeverity: 0.8, airwayPatencyFraction: 1, perfusionIndex: 0.8,
       artifacts: new Set(), ventilating: true, mechanicalPulse: true,
     });
     expect(obstructed[2]?.description).toContain('Shark-fin');
   });
 
+  it('describes complete upper-airway closure without naming a diagnosis or a shark fin', () => {
+    const closed = waveformDescriptions({
+      rhythm: 'sinus', bronchospasmSeverity: 0, airwayPatencyFraction: 0, perfusionIndex: 0.8,
+      artifacts: new Set(), ventilating: true, mechanicalPulse: true,
+    });
+    expect(closed[2]?.description).toContain('No waveform: no gas is moving.');
+    expect(closed[2]?.description.toLowerCase()).not.toContain('laryngospasm');
+    expect(closed[2]?.description).not.toContain('Shark-fin');
+  });
+
+  it('includes active airway support in the on-demand state summary', () => {
+    const patient = new VirtualPatient(PROFILE, createRng(1));
+    const summary = stateSummary(patient.snapshot(), {
+      alarms: [], infusions: [],
+      ventilator: {
+        mode: 'manual', tidalVolumeMl: 500, respiratoryRateBpm: 12,
+        fio2: 1, delivering: true,
+      },
+      invalid: new Set(), jawThrustCpapSecondsRemaining: 12,
+    });
+    expect(summary).toContain('Jaw thrust and continuous positive airway pressure are being applied.');
+    expect(summary.toLowerCase()).not.toContain('laryngospasm');
+  });
+
   it('says the plethysmogram is non-pulsatile in pulseless electrical activity', () => {
     const pea = waveformDescriptions({
-      rhythm: 'pea', bronchospasmSeverity: 0, perfusionIndex: 0.8,
+      rhythm: 'pea', bronchospasmSeverity: 0, airwayPatencyFraction: 1, perfusionIndex: 0.8,
       artifacts: new Set(), ventilating: true, mechanicalPulse: false,
     });
     expect(pea[3]?.description).toContain('Non-pulsatile');

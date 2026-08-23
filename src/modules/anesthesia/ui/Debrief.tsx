@@ -311,6 +311,10 @@ export function objectiveFindings(
     'inspect-the-tiva-line': 'depth-monitoring-and-its-limits',
     'restore-hypnotic-delivery': 'hysteresis-and-effect-site-lag',
     'recognize-paralysis-risk': 'depth-monitoring-and-its-limits',
+    'preoxygenate-before-laryngospasm': 'preoxygenation-and-safe-apnea-time',
+    'apply-initial-laryngospasm-measures': 'capnogram-morphology',
+    'deepen-during-laryngospasm': 'vasodilation-versus-hypovolemia',
+    'protect-oxygenation-during-laryngospasm': 'preoxygenation-and-safe-apnea-time',
   };
 
   return scenario.metadata.objectives.map((objective) => {
@@ -592,6 +596,123 @@ export function objectiveFindings(
           ? `Predicted depth reached ${lightest.toFixed(0)} while train-of-four remained suppressed. This marks modeled awareness risk, not measured consciousness or recall.`
           : `Predicted depth peaked at ${lightest.toFixed(0)} without a recorded interval above 60 while train-of-four was suppressed.`,
         atTick: risk?.tick ?? failureTick,
+      } satisfies ObjectiveFinding;
+    }
+
+    const isLaryngospasmObjective = [
+      'preoxygenate-before-laryngospasm',
+      'apply-initial-laryngospasm-measures',
+      'deepen-during-laryngospasm',
+      'protect-oxygenation-during-laryngospasm',
+    ].includes(objective.id);
+    const laryngospasmOnset = scenario.timeline.find(
+      (event) => event.type === 'laryngospasm',
+    )?.atTick;
+    if (isLaryngospasmObjective && laryngospasmOnset !== undefined && actions.some(
+      (action) => action.type === 'laryngoscopy' && action.tick < laryngospasmOnset,
+    )) {
+      return {
+        ...base, outcome: 'not-exercised', atTick: laryngospasmOnset,
+        finding: 'Airway instrumentation was recorded before the scripted closure. The engine refuses upper-airway closure after successful tracheal intubation, and this trace does not prove whether an earlier attempt succeeded, so this objective is not inferred.',
+      } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'preoxygenate-before-laryngospasm') {
+      const onset = scenario.timeline.find((event) => event.type === 'laryngospasm')?.atTick;
+      if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'The session ended before the scripted airway closure began.',
+        } satisfies ObjectiveFinding;
+      }
+      const sample = history.filter((entry) => entry.tick <= onset).at(-1);
+      const endTidal = sample?.state.endTidalO2Fraction ?? 0;
+      return {
+        ...base,
+        outcome: endTidal >= 0.9 ? 'met' : endTidal >= 0.8 ? 'partly-met' : 'not-met',
+        finding: `End-tidal oxygen fraction was ${endTidal.toFixed(2)} when airway closure began. `
+          + 'This measures the modeled oxygen reserve, not whether every preparation step was clinically complete.',
+        atTick: onset,
+      } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'apply-initial-laryngospasm-measures') {
+      const onset = scenario.timeline.find((event) => event.type === 'laryngospasm')?.atTick;
+      if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'The session ended before the scripted airway closure began.',
+        } satisfies ObjectiveFinding;
+      }
+      const maneuver = actions.find((action) =>
+        action.tick >= onset
+        && action.type === 'airway-maneuver'
+        && action.payload.maneuver === 'jaw-thrust-cpap');
+      const delivered = actions
+        .filter((action) => action.type === 'ventilator' && action.tick <= (maneuver?.tick ?? Infinity))
+        .reduce((settings, action) => ({
+          fio2: action.payload.fio2 === undefined ? settings.fio2 : Number(action.payload.fio2),
+          delivering: action.payload.delivering === undefined
+            ? settings.delivering : action.payload.delivering === true,
+        }), {
+          fio2: scenario.equipment.ventilator.fio2,
+          delivering: scenario.equipment.ventilator.delivering,
+        });
+      if (!maneuver || delivered.fio2 < 0.95 || !delivered.delivering) {
+        return {
+          ...base, outcome: 'not-met', atTick: maneuver?.tick ?? onset,
+          finding: 'The trace did not record both a held jaw-thrust/CPAP maneuver and actively delivered oxygen at 95% or above. These are observable initial measures, not the complete laryngospasm algorithm.',
+        } satisfies ObjectiveFinding;
+      }
+      const delay = (maneuver.tick - onset) / TICKS_PER_SECOND;
+      return {
+        ...base,
+        outcome: delay <= 30 ? 'met' : delay <= 60 ? 'partly-met' : 'not-met',
+        finding: `The held jaw-thrust/CPAP maneuver began ${delay.toFixed(0)} seconds after closure with at least 95% oxygen actively delivered. These are observable initial measures, not proof of physical technique. `
+          + 'Suction, airway adjuncts, help, and refractory drug treatment are outside this modeled response.',
+        atTick: maneuver.tick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'deepen-during-laryngospasm') {
+      const onset = scenario.timeline.find((event) => event.type === 'laryngospasm')?.atTick;
+      if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'The session ended before the scripted airway closure began.',
+        } satisfies ObjectiveFinding;
+      }
+      const dose = actions.find((action) =>
+        action.tick >= onset
+        && action.type === 'bolus'
+        && action.payload.drugId === 'propofol');
+      const delay = dose ? (dose.tick - onset) / TICKS_PER_SECOND : null;
+      return {
+        ...base,
+        outcome: delay === null ? 'not-met' : delay <= 45 ? 'met' : delay <= 90 ? 'partly-met' : 'not-met',
+        finding: delay === null
+          ? 'No propofol deepening dose was recorded after closure.'
+          : `A propofol dose was recorded ${delay.toFixed(0)} seconds after closure. This timing is an action proxy; it does not establish that the dose or complete clinical sequence was adequate.`,
+        atTick: dose?.tick ?? onset,
+      } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'protect-oxygenation-during-laryngospasm') {
+      const onset = scenario.timeline.find((event) => event.type === 'laryngospasm')?.atTick;
+      if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'The session ended before the scripted airway closure began.',
+        } satisfies ObjectiveFinding;
+      }
+      const lowest = Math.min(...history
+        .filter((entry) => entry.tick >= onset)
+        .map((entry) => entry.state.spo2Percent ?? 100));
+      return {
+        ...base,
+        outcome: lowest >= 92 ? 'met' : lowest >= 88 ? 'partly-met' : 'not-met',
+        finding: `The lowest saturation after airway closure was ${lowest.toFixed(0)}%. `
+          + 'This is an oxygenation outcome, not proof that laryngospasm was definitively treated.',
       } satisfies ObjectiveFinding;
     }
 
