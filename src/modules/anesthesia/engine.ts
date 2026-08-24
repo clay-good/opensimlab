@@ -34,7 +34,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.10';
+export const ENGINE_VERSION = '0.1.0-alpha.11';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -235,6 +235,11 @@ export class AnesthesiaEngine {
   private defibrillationShockCount = 0;
   private lastDefibrillationEnergyJ: number | null = null;
   private roscAtTick: number | null = null;
+  /** Manual author-tool crises are transcript actions, never hidden state edits. */
+  private readonly injectedCrises = new Set<string>();
+  private lastInjectedCrisis: { crisisId: string; tick: number } | null = null;
+  private injectedBloodLossMlPerMin = 0;
+  private injectedBronchospasmSeverity = 0;
   /** A learner fluid bolus waiting to reach the circulation on the next tick. */
   private pendingCrystalloidMl = 0;
   /** Physical delivery state, intentionally separate from the pump's commanded rate. */
@@ -521,6 +526,69 @@ export class AnesthesiaEngine {
           `Epinephrine ${dose} micrograms IV given for perioperative resuscitation. `
           + 'The response is an Open Sim Lab teaching effect, not an individual prediction.',
           { drugId: 'epinephrine', route: 'iv', doseMicrograms: dose, teachingModel: true });
+        break;
+      }
+      case 'inject-crisis': {
+        const crisisId = String(action.payload.crisisId ?? '');
+        const supported = [
+          'massive-hemorrhage', 'anaphylaxis', 'laryngospasm', 'bronchospasm',
+          'malignant-hyperthermia', 'local-anesthetic-systemic-toxicity',
+          'cardiac-arrest-shockable', 'cardiac-arrest-non-shockable',
+          'tiva-line-disconnection-under-paralysis',
+        ];
+        if (!supported.includes(crisisId) || this.injectedCrises.has(crisisId)) {
+          this.log('warning', 'crisis-injector', `bad-crisis-injection-${this.currentTick}`,
+            !supported.includes(crisisId)
+              ? `The manual crisis injector does not implement "${crisisId}" in this slice. Nothing changed.`
+              : `The manual crisis "${crisisId}" has already been injected in this session. Nothing changed.`,
+            { crisisId });
+          break;
+        }
+        if (crisisId === 'laryngospasm' && this.patient.airway.intubated) {
+          this.log('warning', 'crisis-injector', `bad-crisis-injection-${this.currentTick}`,
+            'Manual laryngospasm cannot close an airway already secured by a tracheal tube. Nothing changed.',
+            { crisisId });
+          break;
+        }
+        this.injectedCrises.add(crisisId);
+        this.lastInjectedCrisis = { crisisId, tick: this.currentTick };
+        this.log('critical', 'crisis-injector', `crisis-injected-${crisisId}-${this.currentTick}`,
+          `Manual crisis injected: ${crisisId.replaceAll('-', ' ')}. This author tool is recorded in the transcript.`,
+          { crisisId, manualInjection: true });
+        switch (crisisId) {
+          case 'massive-hemorrhage':
+            this.injectedBloodLossMlPerMin = 100;
+            break;
+          case 'anaphylaxis':
+            this.triggerAnaphylaxis('manual-trigger', 1, `manual-anaphylaxis-${this.currentTick}`);
+            break;
+          case 'laryngospasm':
+            this.upperAirwayClosureFraction = 1;
+            break;
+          case 'bronchospasm':
+            this.injectedBronchospasmSeverity = 0.85;
+            break;
+          case 'malignant-hyperthermia':
+            this.malignantHyperthermiaSusceptibility = 1;
+            this.lastExposure = { agentId: 'manual-mh-susceptibility', tick: this.currentTick };
+            break;
+          case 'local-anesthetic-systemic-toxicity':
+            this.localAnestheticToxicitySeverity = 0.9;
+            this.lastExposure = { agentId: 'manual-local-anesthetic-exposure', tick: this.currentTick };
+            break;
+          case 'cardiac-arrest-shockable':
+            this.rhythm = 'ventricular-fibrillation';
+            this.startScriptedCardiacArrest();
+            break;
+          case 'cardiac-arrest-non-shockable':
+            this.rhythm = 'asystole';
+            this.startScriptedCardiacArrest();
+            break;
+          case 'tiva-line-disconnection-under-paralysis':
+            this.hypnoticLineConnected = false;
+            this.hypnoticLineInspected = false;
+            break;
+        }
         break;
       }
       case 'chest-compressions': {
@@ -1087,9 +1155,7 @@ export class AnesthesiaEngine {
         this.rhythm = rhythm as RhythmId;
         if (this.rhythm === 'ventricular-fibrillation' || this.rhythm === 'asystole'
           || this.rhythm === 'pea') {
-          this.cardiacArrestActive = true;
-          this.chestCompressionsActive = false;
-          this.chestCompressionTicks = 0;
+          this.startScriptedCardiacArrest();
         }
         this.log('critical', 'rhythm', `rhythm-${event.id}-${this.currentTick}`,
           `Rhythm changed to ${this.rhythm}`);
@@ -1209,6 +1275,8 @@ export class AnesthesiaEngine {
       if (event.type === 'crystalloid') crystalloidMl += event.value / 600;
       if (event.type === 'obstruction') obstruction = Math.max(obstruction, event.value);
     }
+    bloodLossMl += this.injectedBloodLossMlPerMin / 600;
+    obstruction = Math.max(obstruction, this.injectedBronchospasmSeverity);
     crystalloidMl += this.pendingCrystalloidMl;
     this.pendingCrystalloidMl = 0;
 
@@ -1501,6 +1569,8 @@ export class AnesthesiaEngine {
         roscAtTick: this.roscAtTick,
       },
       lastExposure: this.lastExposure ? { ...this.lastExposure } : null,
+      lastInjectedCrisis: this.lastInjectedCrisis ? { ...this.lastInjectedCrisis } : null,
+      injectedCrisisIds: [...this.injectedCrises],
       drugs: [...this.drugs.values()].map((drug) => ({
         drugId: drug.drugId,
         infusionRate: drug.infusionRate,
@@ -1573,6 +1643,13 @@ export class AnesthesiaEngine {
       'This module does not model resuscitation — no compressions, no adrenaline, no defibrillation '
       + '— so the patient does not recover from here and nothing after this point is simulated '
       + 'physiology. End the session and debrief what led to it.');
+  }
+
+  private startScriptedCardiacArrest(): void {
+    this.cardiacArrestActive = true;
+    this.chestCompressionsActive = false;
+    this.chestCompressionTicks = 0;
+    this.lastChestCompressionTick = null;
   }
 
   /**

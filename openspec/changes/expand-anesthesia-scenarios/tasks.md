@@ -167,3 +167,17 @@
 - [ ] Add physical compression quality, pad placement or safety, recurrent or refractory arrest,
   antiarrhythmics, reversible-cause treatment, individualized outcome, teams, or post-arrest care.
   None is implied by this initial-ROSC slice.
+
+## Slice 11: manual crisis-injector foundation
+
+- [x] Add a two-step scenario-author injector reachable from the cockpit overflow.
+- [x] Inject massive hemorrhage at 100 mL/min, anaphylaxis, laryngospasm, bronchospasm,
+  malignant-hyperthermia susceptibility, local-anesthetic toxicity, shockable VF arrest,
+  non-shockable asystolic arrest, and TIVA-line disconnection through existing engine physiology.
+- [x] Record every accepted or refused injection in the event log and transcript, expose the most
+  recent accepted injection in the equipment snapshot, and prove deterministic replay.
+- [x] Reject unknown and repeated injection requests without mutating the patient.
+- [x] State that volatile exposure is still required for the injected malignant-hyperthermia
+  susceptibility and paralysis is still required for the specified TIVA-awareness pattern.
+- [ ] Add high-spinal and air-embolism injection only after their hemodynamic, respiratory, and
+  observable monitor effects are implemented. Disabled or cosmetic controls do not satisfy this.

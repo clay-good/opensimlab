@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 11 reports cardiac-arrest response state. */
-export const WORKER_PROTOCOL_VERSION = 11;
+/** Bumped whenever the message shape changes incompatibly. Version 12 reports manual crisis injection. */
+export const WORKER_PROTOCOL_VERSION = 12;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -226,6 +226,10 @@ export interface EquipmentSnapshot {
   };
   /** The most recent modeled trigger exposure, without diagnosing the response. */
   readonly lastExposure: { readonly agentId: string; readonly tick: number } | null;
+  /** Most recently accepted manual crisis injection, or null before one is used. */
+  readonly lastInjectedCrisis: { readonly crisisId: string; readonly tick: number } | null;
+  /** All accepted manual crisis ids in this session, used to disable truthful repeat controls. */
+  readonly injectedCrisisIds: readonly string[];
   /** Per drug: the running infusion rate and what is left in the syringe. */
   readonly drugs: readonly {
     readonly drugId: string;

@@ -37,6 +37,7 @@ import type { DrugConcentration } from '@platform/kernel/protocol';
 import { requireSource } from '@platform/docs/sources';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import type { SonificationEngine } from '@platform/audio/sonification';
+import { ManualCrisisInjector } from './ManualCrisisInjector';
 
 export interface CockpitProps {
   readonly scenario: Scenario;
@@ -111,6 +112,7 @@ export function Cockpit({
   const [explainerId, setExplainerId] = useState<string | null>(null);
   const [drugCardId, setDrugCardId] = useState<string | null>(null);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [crisisInjectorOpen, setCrisisInjectorOpen] = useState(false);
   // Sound is OFF until the learner asks for it, and nothing asks them.
   //
   // The pulse tone is genuinely useful — its pitch falls with saturation, which
@@ -653,7 +655,18 @@ export function Cockpit({
           ))}
         </dl>
         <Button onClick={onEnd}>End the session and open the debrief</Button>
+        <Button onClick={() => { setShortcutsOpen(false); setCrisisInjectorOpen(true); }}>
+          Open manual crisis injector
+        </Button>
       </Modal>
+
+      <Drawer open={crisisInjectorOpen} title="Manual crisis injector"
+        onClose={() => setCrisisInjectorOpen(false)}>
+        <ManualCrisisInjector
+          injectedCrisisIds={equipment?.injectedCrisisIds ?? []}
+          onInject={(crisisId) => session.act({ type: 'inject-crisis', payload: { crisisId } })}
+        />
+      </Drawer>
 
       {session.phase === 'worker-lost' && (
         <Modal open title="The simulation engine stopped" dismissible={false}

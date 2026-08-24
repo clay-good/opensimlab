@@ -175,6 +175,11 @@ declared teaching device converts VF at 200 J under accepted case conditions and
 asystole or PEA. It stops at initial modeled ROSC and does not claim physical CPR skill,
 device-independent energy selection, reversible-cause treatment, individual outcome, or
 post-cardiac-arrest care.
+Its eleventh slice adds the manual crisis-injector foundation as a scenario-author tool. Nine
+already-modeled entries are two-step, logged, transcripted, and deterministic: hemorrhage,
+anaphylaxis, laryngospasm, bronchospasm, malignant-hyperthermia susceptibility, local-anesthetic
+toxicity, shockable and non-shockable arrest, and TIVA-line disconnection. High spinal and air
+embolism remain visibly unavailable until their physiology is implemented.
 
 ## Running it
 

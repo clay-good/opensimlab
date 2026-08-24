@@ -195,3 +195,22 @@ only to the declared teaching device; real biphasic energy follows manufacturer 
 cannot evaluate compression depth, recoil, pauses, pad contact, electrical safety, physical access,
 or teamwork. Reversible causes, refractory drugs, recurrent arrest, post-arrest care, and individual
 outcome remain outside this slice.
+
+## Slice 11: manual crisis-injector foundation
+
+The cockpit overflow opens a two-step scenario-author injector. Each accepted selection is an
+ordinary learner action with its simulated tick, so the event log, transcript, replay engine, and
+instructor review all see the same intervention. The engine refuses unknown and repeated ids rather
+than letting a control imply an effect it does not implement.
+
+This foundation routes 9 entries into physiology that already exists: ongoing whole-blood loss at
+100 mL/min; the bounded anaphylaxis, upper-airway closure, bronchospasm, local-anesthetic toxicity,
+and volatile-dependent malignant-hyperthermia drives; shockable VF and non-shockable asystolic
+arrest; and actual propofol-line disconnection without changing its pump command. Patient state and
+current equipment still govern the outcome: laryngospasm cannot close a tracheal tube, malignant-
+hyperthermia susceptibility does nothing without genuine volatile exposure, and line disconnection
+does not create the specified awareness-under-paralysis pattern unless paralysis is already present.
+
+High spinal and air embolism remain explicitly absent from the control until their distinct
+physiology and monitor consequences exist. This interim slice advances the injector infrastructure
+without turning the remaining names into inert buttons.
