@@ -155,6 +155,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       hasLastResponse: true,
       hasCardiacArrestResponse: true,
       hasHighSpinalResponse: true,
+      hasVenousAirEmbolismResponse: false,
     });
     renderCockpit(UNITED_STATES, vi.fn(), {
       scenario: ROUTINE_INDUCTION,
@@ -208,6 +209,34 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
     expect(container.textContent).toContain('Give ephedrine 12 mg IV?');
     act(() => button('Give ephedrine')!.click());
     expect(onEphedrine).toHaveBeenCalledWith(12);
+  });
+
+  it('exposes confirmed source control for a manually injected venous-air event', () => {
+    const onControlVenousAirEntry = vi.fn();
+    const onVenousAirEmbolismHelp = vi.fn();
+    renderCockpit(UNITED_STATES, vi.fn(), {
+      scenario: ROUTINE_INDUCTION,
+      injectedCrisisIds: ['air-embolism'],
+      resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+        lastEpinephrineTick: null, crystalloidTotalMl: 0,
+        dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
+        lastDantroleneTick: null, activeCooling: false,
+        venousAirEmbolismFraction: 0.7, venousAirEntryControlled: false,
+        venousAirEntryControlledAtTick: null,
+      },
+      onControlVenousAirEntry,
+      onVenousAirEmbolismHelp,
+    });
+    act(() => button('Crisis response')!.click());
+    expect(container.textContent).toContain('Modeled burden 70%');
+    act(() => button('Call for help')!.click());
+    expect(onVenousAirEmbolismHelp).toHaveBeenCalledOnce();
+    act(() => button('Stop suspected air entry')!.click());
+    expect(onControlVenousAirEntry).not.toHaveBeenCalled();
+    expect(container.textContent).toContain('Record intent to stop further air entry?');
+    act(() => button('Confirm source control')!.click());
+    expect(onControlVenousAirEntry).toHaveBeenCalledOnce();
   });
 
   it('offers only bounded presets, no hostile free-dose or route field, inside the phone scroll area', () => {

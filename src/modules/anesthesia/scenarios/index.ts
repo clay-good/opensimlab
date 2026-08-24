@@ -24,6 +24,7 @@ import { DIFFICULT_AIRWAY_SUPRAGLOTTIC_RESCUE } from './difficult-airway-supragl
 import { LOCAL_ANESTHETIC_SYSTEMIC_TOXICITY } from './local-anesthetic-systemic-toxicity';
 import { PERSISTENT_VF_CARDIAC_ARREST } from './persistent-vf-cardiac-arrest';
 import { HIGH_SPINAL_AFTER_EPIDURAL_TOP_UP } from './high-spinal-after-epidural-top-up';
+import { VENOUS_AIR_EMBOLISM_DURING_LINE_REMOVAL } from './venous-air-embolism-during-line-removal';
 
 export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_INDUCTION,
@@ -41,6 +42,7 @@ export const SCENARIOS: readonly Scenario[] = [
   LOCAL_ANESTHETIC_SYSTEMIC_TOXICITY,
   PERSISTENT_VF_CARDIAC_ARREST,
   HIGH_SPINAL_AFTER_EPIDURAL_TOP_UP,
+  VENOUS_AIR_EMBOLISM_DURING_LINE_REMOVAL,
 ];
 
 /** The scenario a learner meets first. */

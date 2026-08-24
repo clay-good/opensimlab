@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: bounded ephedrine state has protocol version 19', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(19);
+  it('Scenario: bounded venous-air-entry control has protocol version 20', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(20);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

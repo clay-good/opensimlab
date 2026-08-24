@@ -101,6 +101,8 @@ export function stateSummary(
       readonly epinephrineTotalMicrograms: number;
       readonly highSpinalFraction?: number;
       readonly ephedrineTotalMg?: number;
+      readonly venousAirEmbolismFraction?: number;
+      readonly venousAirEntryControlled?: boolean;
       readonly crystalloidTotalMl: number;
       readonly packedRedBloodCellUnits?: number;
       readonly bloodProductTotalMl?: number;
@@ -129,6 +131,7 @@ export function stateSummary(
     readonly showHypermetabolicSupport?: boolean;
     readonly showCardiacArrestSupport?: boolean;
     readonly showHighSpinalSupport?: boolean;
+    readonly showVenousAirEmbolismSupport?: boolean;
   },
 ): string {
   const lines: string[] = ['Current state.'];
@@ -193,6 +196,12 @@ export function stateSummary(
   if (options.resuscitation && options.showHighSpinalSupport) {
     lines.push(`High-spinal teaching progression: ${Math.round((options.resuscitation.highSpinalFraction ?? 0) * 100)} percent.`);
     lines.push(`Accepted ephedrine total: ${(options.resuscitation.ephedrineTotalMg ?? 0).toFixed(0)} milligrams intravenous.`);
+  }
+  if (options.resuscitation && options.showVenousAirEmbolismSupport) {
+    lines.push(`Abrupt pulmonary-flow teaching burden: ${Math.round((options.resuscitation.venousAirEmbolismFraction ?? 0) * 100)} percent.`);
+    lines.push(options.resuscitation.venousAirEntryControlled
+      ? 'Further modeled air entry is stopped; the residual teaching pattern is clearing.'
+      : 'Further modeled air entry has not been stopped.');
   }
   if (options.resuscitation && options.showHypermetabolicSupport) {
     lines.push(`Accepted dantrolene total: ${(options.resuscitation.dantroleneTotalMg ?? 0).toFixed(0)} milligrams intravenous.`);

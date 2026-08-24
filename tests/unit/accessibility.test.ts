@@ -294,6 +294,25 @@ describe('Requirement: Screen Reader Access To Live Physiology', () => {
     expect(summary).toContain('Accepted ephedrine total: 18 milligrams intravenous');
   });
 
+  it('summarizes the venous-air teaching burden and source-control state non-visually', () => {
+    const patient = new VirtualPatient(PROFILE, createRng(1)).snapshot();
+    const summary = stateSummary(patient, {
+      alarms: [], infusions: [], invalid: new Set(),
+      ventilator: {
+        mode: 'manual', tidalVolumeMl: 500, respiratoryRateBpm: 12,
+        fio2: 1, delivering: true,
+      },
+      resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, crystalloidTotalMl: 0,
+        venousAirEmbolismFraction: 0.42, venousAirEntryControlled: true,
+      },
+      showEpinephrineSupport: false,
+      showVenousAirEmbolismSupport: true,
+    });
+    expect(summary).toContain('Abrupt pulmonary-flow teaching burden: 42 percent');
+    expect(summary).toContain('Further modeled air entry is stopped');
+  });
+
   it('says the plethysmogram is non-pulsatile in pulseless electrical activity', () => {
     const pea = waveformDescriptions({
       rhythm: 'pea', bronchospasmSeverity: 0, airwayPatencyFraction: 1, perfusionIndex: 0.8,

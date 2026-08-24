@@ -192,6 +192,11 @@ response after an epidural top-up with help escalation, high inspired oxygen and
 a 250–500 mL crystalloid bolus, and confirmed 6/12 mg IV ephedrine actions. It does not model
 neuraxial dose or spread, pregnancy physiology, aortocaval compression, fetal status, delivery,
 full vasopressor pharmacology, or individualized outcome.
+Slice 18 promotes venous air embolism into the sixteenth authored scenario during central-line
+removal. It adds accepted help escalation, two-step intent to stop further air entry, 100% oxygen
+with active breath support, and gradual recovery of the residual monitor pattern. It does not model
+gas volume, embolus location, diagnostic certainty, neurologic injury, imaging, aspiration,
+positioning, hyperbaric therapy, physical source-control technique, team performance, or outcome.
 
 ## Running it
 

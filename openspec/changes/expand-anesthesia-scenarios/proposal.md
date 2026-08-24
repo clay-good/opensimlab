@@ -108,10 +108,12 @@ response, stopping before dysrhythmia treatment or cardiac arrest.
 - Promote the bounded high-spinal trajectory into a fifteenth authored scenario with a scored,
   replayable initial response: call for help, high inspired oxygen with active ventilation,
   250–500 mL crystalloid, and exact 6/12 mg IV ephedrine boluses.
+- Promote the bounded venous-air-embolism trajectory into a sixteenth authored scenario with
+  accepted escalation, source-control intent, 100% oxygen, and gradual monitor-pattern recovery.
 
 ## Impact
 
-These 17 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+These 18 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
 awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. The seventh also closes the bounded
 pediatric-family gap without claiming a general pediatric patient model. The eighth reaches the
 minimum count of 12 scenarios and closes the bounded difficult-airway rescue gap. The ninth closes
@@ -123,3 +125,5 @@ claiming diagnosis, treatment, block-height, or gas-volume simulation. The thirt
 bounded quantitative neuromuscular reversal while leaving emergence and extubation explicit. The
 seventeenth adds the fifteenth authored scenario and a bounded high-spinal initial response without
 claiming neuraxial spread, obstetric physiology, or individualized outcome.
+The eighteenth adds the sixteenth authored scenario and a bounded venous-air-embolism response
+without claiming gas volume, diagnostic certainty, physical source-control skill, or outcome.

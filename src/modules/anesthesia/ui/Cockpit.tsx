@@ -98,6 +98,8 @@ const DEFAULT_RESUSCITATION = {
   lastDantroleneTick: null, activeCooling: false,
   chestCompressionsActive: false,
   highSpinalFraction: 0, ephedrineTotalMg: 0, lastEphedrineTick: null,
+  venousAirEmbolismFraction: 0, venousAirEntryControlled: false,
+  venousAirEntryControlledAtTick: null,
 } as const;
 
 export function Cockpit({
@@ -187,6 +189,7 @@ export function Cockpit({
   const {
     hasAnaphylaxisResponse, hasHypermetabolicResponse, hasCardiacArrestResponse,
     hasHighSpinalResponse,
+    hasVenousAirEmbolismResponse,
   } = crisisResponseAvailability(scenario, injectedCrises);
   const rhythm = (equipment?.rhythmId ?? 'sinus') as RhythmId;
   const invalidParameters = useMemo(
@@ -307,12 +310,13 @@ export function Cockpit({
       showHypermetabolicSupport: hasHypermetabolicResponse,
       showCardiacArrestSupport: hasCardiacArrestResponse,
       showHighSpinalSupport: hasHighSpinalResponse,
+      showVenousAirEmbolismSupport: hasVenousAirEmbolismResponse,
     }));
   }, [
     session.state, session.alarms, speak, infusions, ventilator, invalidParameters,
     scenario.equipment.monitoring, scenario.patient.weightKg, airway.jawThrustCpapSecondsRemaining,
     resuscitation, region, lastExposure, hasAnaphylaxisResponse, hasHypermetabolicResponse,
-    hasCardiacArrestResponse, hasHighSpinalResponse,
+    hasCardiacArrestResponse, hasHighSpinalResponse, hasVenousAirEmbolismResponse,
   ]);
 
   const readWaveforms = useCallback(() => {
@@ -531,6 +535,12 @@ export function Cockpit({
           })}
           onHighSpinalHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'high-spinal' },
+          })}
+          onVenousAirEmbolismHelp={() => session.act({
+            type: 'call-for-help', payload: { context: 'venous-air-embolism' },
+          })}
+          onControlVenousAirEntry={() => session.act({
+            type: 'control-venous-air-entry', payload: { method: 'stop-entry' },
           })}
           onDantrolene={() => session.act({
             type: 'dantrolene', payload: { route: 'iv', doseMgPerKg: 2.5 },

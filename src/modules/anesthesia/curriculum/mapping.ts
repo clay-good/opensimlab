@@ -695,6 +695,21 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'pc-crisis-management',
     objectiveIds: ['call-for-high-spinal-help', 'support-high-spinal-breathing', 'support-high-spinal-circulation', 'protect-high-spinal-oxygenation'],
   },
+  {
+    scenarioId: 'venous-air-embolism-during-line-removal', frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['escalate-venous-air-pattern', 'control-venous-air-entry', 'support-venous-air-oxygenation', 'reassess-venous-air-recovery'],
+  },
+  {
+    scenarioId: 'venous-air-embolism-during-line-removal', frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['escalate-venous-air-pattern', 'control-venous-air-entry', 'support-venous-air-oxygenation', 'reassess-venous-air-recovery'],
+  },
+  {
+    scenarioId: 'venous-air-embolism-during-line-removal', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-crisis-management',
+    objectiveIds: ['escalate-venous-air-pattern', 'control-venous-air-entry', 'support-venous-air-oxygenation', 'reassess-venous-air-recovery'],
+  },
 ];
 
 export interface DomainCoverage {

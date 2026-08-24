@@ -354,6 +354,10 @@ export function objectiveFindings(
     'support-high-spinal-breathing': 'capnogram-morphology',
     'support-high-spinal-circulation': 'vasodilation-versus-hypovolemia',
     'protect-high-spinal-oxygenation': 'preoxygenation-and-safe-apnea-time',
+    'escalate-venous-air-pattern': 'capnogram-morphology',
+    'control-venous-air-entry': 'capnogram-morphology',
+    'support-venous-air-oxygenation': 'preoxygenation-and-safe-apnea-time',
+    'reassess-venous-air-recovery': 'capnogram-morphology',
   };
 
   return scenario.metadata.objectives.map((objective) => {
@@ -525,6 +529,107 @@ export function objectiveFindings(
           ? 'No post-event oxygen-saturation trace was available.'
           : `The lowest post-event oxygen saturation was ${lowest.toFixed(0)}%.`,
         atTick: postOnset.at(-1)?.tick ?? onset,
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
+      'escalate-venous-air-pattern', 'control-venous-air-entry',
+      'support-venous-air-oxygenation', 'reassess-venous-air-recovery',
+    ].includes(objective.id)) {
+      const onset = scenario.timeline.find((event) => event.type === 'venous-air-embolism')?.atTick;
+      if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'The session ended before the modeled venous-air event.',
+        } satisfies ObjectiveFinding;
+      }
+      const help = log.find((entry) => entry.eventId.startsWith('airway-help-requested-')
+        && entry.data?.context === 'venous-air-embolism');
+      const sourceControl = log.find(
+        (entry) => entry.eventId.startsWith('venous-air-entry-controlled-'),
+      );
+
+      if (objective.id === 'escalate-venous-air-pattern') {
+        const delay = help ? (help.tick - onset) / TICKS_PER_SECOND : null;
+        return {
+          ...base,
+          outcome: delay === null ? 'not-met' : delay <= 30 ? 'met' : delay <= 60 ? 'partly-met' : 'not-met',
+          finding: delay === null
+            ? 'No accepted help request for the abrupt cardiopulmonary change was recorded.'
+            : `Help was requested ${delay.toFixed(0)} seconds after the modeled event. Team arrival and performance are not simulated.`,
+          atTick: help?.tick ?? onset,
+        } satisfies ObjectiveFinding;
+      }
+
+      if (objective.id === 'control-venous-air-entry') {
+        const delay = sourceControl ? (sourceControl.tick - onset) / TICKS_PER_SECOND : null;
+        return {
+          ...base,
+          outcome: delay === null ? 'not-met' : delay <= 30 ? 'met' : delay <= 60 ? 'partly-met' : 'not-met',
+          finding: delay === null
+            ? 'No accepted intent to stop further air entry was recorded.'
+            : `Intent to stop further entry was accepted ${delay.toFixed(0)} seconds after the modeled event. Finding or physically controlling the source is not simulated.`,
+          atTick: sourceControl?.tick ?? onset,
+        } satisfies ObjectiveFinding;
+      }
+
+      if (objective.id === 'support-venous-air-oxygenation') {
+        const windowEnd = onset + 60 * TICKS_PER_SECOND;
+        let settings = {
+          fio2: scenario.equipment.ventilator.fio2,
+          delivering: scenario.equipment.ventilator.delivering,
+          tidalVolumeMl: scenario.equipment.ventilator.tidalVolumeMl,
+          respiratoryRateBpm: scenario.equipment.ventilator.respiratoryRateBpm,
+        };
+        let achievedAt: number | null = null;
+        for (const action of actions.filter((entry) => entry.type === 'ventilator'
+          && entry.tick >= onset && entry.tick <= windowEnd).sort((a, b) => a.tick - b.tick)) {
+          const finite = (value: unknown, current: number, min: number, max: number) => {
+            const requested = Number(value);
+            return value === undefined || !Number.isFinite(requested)
+              ? current : Math.min(max, Math.max(min, requested));
+          };
+          settings = {
+            fio2: finite(action.payload.fio2, settings.fio2, 0.21, 1),
+            delivering: typeof action.payload.delivering === 'boolean'
+              ? action.payload.delivering : settings.delivering,
+            tidalVolumeMl: finite(action.payload.tidalVolumeMl, settings.tidalVolumeMl, 0, 1500),
+            respiratoryRateBpm: finite(
+              action.payload.respiratoryRateBpm, settings.respiratoryRateBpm, 0, 60,
+            ),
+          };
+          if (achievedAt === null && settings.fio2 >= 1 && settings.delivering
+            && settings.tidalVolumeMl > 0 && settings.respiratoryRateBpm > 0) {
+            achievedAt = action.tick;
+          }
+        }
+        const delay = achievedAt === null ? null : (achievedAt - onset) / TICKS_PER_SECOND;
+        return {
+          ...base,
+          outcome: delay === null ? 'not-met' : 'met',
+          finding: delay === null
+            ? '100% inspired oxygen and active breath delivery were not both in effect within 60 seconds.'
+            : `100% inspired oxygen with active breath delivery was established ${delay.toFixed(0)} seconds after the modeled event. This assesses screen settings, not airway or mask skill.`,
+          atTick: achievedAt ?? windowEnd,
+        } satisfies ObjectiveFinding;
+      }
+
+      if (!sourceControl) {
+        return {
+          ...base, outcome: 'not-met',
+          finding: 'End-tidal carbon-dioxide recovery was not credited because no accepted source-control intent preceded it.',
+          atTick: history.at(-1)?.tick ?? onset,
+        } satisfies ObjectiveFinding;
+      }
+      const recovered = history.find((entry) => entry.tick >= sourceControl.tick
+        && (entry.state.etco2MmHg ?? 0) >= 28);
+      return {
+        ...base,
+        outcome: recovered ? 'met' : 'not-met',
+        finding: recovered
+          ? `End-tidal carbon dioxide recovered to ${(recovered.state.etco2MmHg ?? 0).toFixed(0)} mmHg after accepted source control. This is a teaching trajectory, not diagnostic confirmation or an individual prognosis.`
+          : 'End-tidal carbon dioxide had not recovered to 28 mmHg after accepted source control before the session ended.',
+        atTick: recovered?.tick ?? history.at(-1)?.tick ?? onset,
       } satisfies ObjectiveFinding;
     }
 

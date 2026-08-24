@@ -617,6 +617,20 @@ export const SOURCES: readonly Source[] = [
     currency: { lastAmended: '2024-07-01', checkedAt: '2026-08-24' },
   },
   {
+    id: 'esaic-estes-perioperative-cardiac-arrest-2023',
+    pmid: '37430174',
+    authors: 'Hinkelbein J, Andres J, Böttiger BW, et al.',
+    title: 'Cardiac arrest in the perioperative period: a consensus guideline for identification, treatment, and prevention from the European Society of Anaesthesiology and Intensive Care and the European Society for Trauma and Emergency Surgery',
+    publication: 'European Journal of Trauma and Emergency Surgery',
+    year: 2023,
+    locator: '49:2031–2046; management of gas embolism during surgery',
+    usedFor: 'The formal venous-air-embolism scenario response: find and stop further air '
+      + 'entrainment and use high inspired oxygen while reassessing. The simulator records '
+      + 'source-control intent but does not simulate physical source control or team actions.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-24',
+  },
+  {
     id: 'mccarthy-air-embolism-2017',
     pmid: '28106717',
     authors: 'McCarthy CJ, Behravesh S, Naidu SG, Oklu R',
@@ -624,9 +638,9 @@ export const SOURCES: readonly Source[] = [
     publication: 'Diagnostics (Basel)',
     year: 2017,
     locator: '7:5',
-    usedFor: 'The direction of the manual venous-air-embolism teaching trajectory: abrupt '
+    usedFor: 'The direction of the formal and manually injected venous-air-embolism teaching trajectory: abrupt '
       + 'end-tidal carbon-dioxide decline with desaturation and cardiopulmonary compromise. The '
-      + 'model does not infer gas volume, embolus location, diagnosis, or individual outcome.',
+      + 'model does not infer gas volume, embolus location, diagnosis, neurologic injury, or individual outcome.',
     verifiedAgainst: NCBI,
     verifiedOn: '2026-08-24',
   },

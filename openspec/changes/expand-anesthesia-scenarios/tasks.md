@@ -259,3 +259,16 @@
   scenario count are generated from the same source of truth.
 - [ ] Add neuraxial dose or spread, sensory or motor level, pregnancy physiology, aortocaval
   compression, fetal status, delivery, full vasopressor pharmacology, or individualized outcome.
+
+## Slice 18: authored venous-air-embolism recognition and initial response
+
+- [x] Add a sixteenth authored scenario that triggers the existing abrupt pulmonary-flow teaching
+  drive during central-line removal without directly imposing a respiratory-rate change.
+- [x] Add accepted, replayable help escalation and two-step source-control intent; stop new modeled
+  entry while clearing the residual pattern gradually rather than producing an instant cure.
+- [x] Score escalation, source-control intent, 100% oxygen with active breath delivery, and observed
+  carbon-dioxide recovery only from accepted actions, engine events, and state history.
+- [x] Add a compact mobile rescue tray, nonvisual status, curriculum mappings, current consensus
+  provenance, limitations, review items, structured data, social preview, and sitemap coverage.
+- [ ] Add gas volume, embolus location, diagnostic certainty, neurologic injury, imaging, central
+  aspiration, positioning, hyperbaric therapy, physical source-control skill, teams, or outcome prediction.

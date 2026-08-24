@@ -82,7 +82,8 @@ Reviewers run the routine induction themselves before answering.
 | B31 | Rhythm and monitor transition after accepted 1 mg IV epinephrine and the declared 200 J biphasic shock | | |
 | B32 | Progressive bradycardia, hypotension, reduced output, and impaired unassisted breathing in the authored high-spinal scenario and after manual injection | | |
 | B32a | Pressure and oxygenation response after help escalation, 250–500 mL crystalloid, high inspired oxygen with active ventilation, and 6–12 mg IV ephedrine | | |
-| B33 | Abrupt end-tidal carbon-dioxide, pressure, output, and saturation change after manual venous-air-embolism injection, without a directly imposed respiratory-rate change | | |
+| B33 | Abrupt end-tidal carbon-dioxide, pressure, output, and saturation change in the authored venous-air-embolism case and after manual injection, without a directly imposed respiratory-rate change | | |
+| B33a | Gradual carbon-dioxide, pressure, output, and saturation recovery after accepted source-control intent and 100% oxygen with active breath delivery | | |
 | B34 | Quantitative recovery after depth-matched 2/4 mg/kg sugammadex, and neostigmine with an antimuscarinic only during minimal block | | |
 | B35 | Overall: does this patient behave like a patient? | | |
 
@@ -143,9 +144,11 @@ So that reviewers spend their attention on what this review is for:
   teams, antiarrhythmics, and post-cardiac-arrest care are absent.
 - Authored and manually injected high-spinal events use a bounded teaching calibration, not neuraxial
   dose, spread, block-height, obstetric physiology, aortocaval compression, or individualized treatment
-  simulation. The ephedrine action applies a bounded vascular-tone effect. Manual venous-air-embolism injection
-  does not model gas volume, entry site, diagnosis, treatment, paradoxical or cerebral embolism,
-  or individualized outcome.
+  simulation. The ephedrine action applies a bounded vascular-tone effect. Authored and manually
+  injected venous-air-embolism events do not model gas volume, embolus location, diagnosis,
+  paradoxical or cerebral embolism, neurologic injury, imaging, aspiration, hyperbaric therapy,
+  physical source-control technique, team performance, or individualized outcome. Accepted
+  source-control intent stops new entry and starts a fixed recovery trajectory.
 - Neuromuscular reversal is a bounded teaching effect. The PTC is auto-derived, and reversal dose pharmacology, emergence,
   extubation, recurrent block, hypersensitivity, and postoperative residual weakness are absent.
 - Nothing here has been clinically reviewed before — you are the first.

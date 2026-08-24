@@ -72,6 +72,9 @@ export interface ActionCockpitProps {
     readonly highSpinalFraction?: number;
     readonly ephedrineTotalMg?: number;
     readonly lastEphedrineTick?: number | null;
+    readonly venousAirEmbolismFraction?: number;
+    readonly venousAirEntryControlled?: boolean;
+    readonly venousAirEntryControlledAtTick?: number | null;
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -119,6 +122,8 @@ export interface ActionCockpitProps {
   readonly onEpinephrine: (doseMicrograms: number) => void;
   readonly onEphedrine?: (doseMg: number) => void;
   readonly onHighSpinalHelp?: () => void;
+  readonly onVenousAirEmbolismHelp?: () => void;
+  readonly onControlVenousAirEntry?: () => void;
   readonly onDantrolene: () => void;
   readonly onActiveCooling: (active: boolean) => void;
   readonly onSeizureSuppression?: () => void;
@@ -159,6 +164,8 @@ export function crisisResponseAvailability(
         && ['ventricular-fibrillation', 'asystole', 'pea'].includes(event.target ?? '')),
     hasHighSpinalResponse: injected.has('high-spinal')
       || scenario.timeline.some((event) => event.type === 'high-spinal'),
+    hasVenousAirEmbolismResponse: injected.has('air-embolism')
+      || scenario.timeline.some((event) => event.type === 'venous-air-embolism'),
   };
 }
 
@@ -199,14 +206,14 @@ export function ActionCockpit(props: ActionCockpitProps) {
   const [tray, setTray] = useState<TrayId>('syringes');
   const {
     hasAnaphylaxisResponse, hasHypermetabolicResponse, hasLastResponse,
-    hasCardiacArrestResponse, hasHighSpinalResponse,
+    hasCardiacArrestResponse, hasHighSpinalResponse, hasVenousAirEmbolismResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
   );
   const hasEpinephrineResponse = hasAnaphylaxisResponse || hasLastResponse;
   const hasCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse
-    || hasCardiacArrestResponse || hasHighSpinalResponse;
+    || hasCardiacArrestResponse || hasHighSpinalResponse || hasVenousAirEmbolismResponse;
   const trays = hasCrisisResponse ? [...TRAYS, CRISIS_TRAY] : TRAYS;
   const hasRocuronium = props.scenario.formulary.some((entry) => entry.drugId === 'rocuronium');
 
@@ -355,6 +362,16 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 helpRequested={props.helpRequestedAtTick !== null}
                 onEphedrine={props.onEphedrine ?? (() => {})}
                 onCallForHelp={props.onHighSpinalHelp ?? (() => {})}
+              />
+            )}
+            {hasVenousAirEmbolismResponse && (
+              <VenousAirEmbolismTray
+                fraction={props.resuscitation.venousAirEmbolismFraction ?? 0}
+                sourceControlled={props.resuscitation.venousAirEntryControlled ?? false}
+                sourceControlledAtTick={props.resuscitation.venousAirEntryControlledAtTick ?? null}
+                helpRequested={props.helpRequestedAtTick !== null}
+                onCallForHelp={props.onVenousAirEmbolismHelp ?? (() => {})}
+                onControlSource={props.onControlVenousAirEntry ?? (() => {})}
               />
             )}
           </div>
@@ -721,6 +738,64 @@ function HighSpinalTray({
         )}
         <p className="field__hint">
           The listed dose band follows the source card; the response and 30 mg cap are bounded teaching behavior.
+        </p>
+      </section>
+    </div>
+  );
+}
+
+function VenousAirEmbolismTray({
+  fraction, sourceControlled, sourceControlledAtTick, helpRequested, onCallForHelp, onControlSource,
+}: {
+  fraction: number;
+  sourceControlled: boolean;
+  sourceControlledAtTick: number | null;
+  helpRequested: boolean;
+  onCallForHelp: () => void;
+  onControlSource: () => void;
+}) {
+  const [confirmingControl, setConfirmingControl] = useState(false);
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="venous-air-response-title">
+        <div id="venous-air-response-title" className="syringe__name">Abrupt pulmonary-flow response</div>
+        <Badge kind="teaching">Teaching model</Badge>
+        <p className="field__hint">
+          Escalate the abrupt monitor change, deliver 100% oxygen in Airway &amp; Vent, and stop further suspected air entry.
+        </p>
+        <p className="syringe__remaining" role="status">
+          Modeled burden {(fraction * 100).toFixed(0)}% · {helpRequested ? 'help requested' : 'help not requested'}
+        </p>
+        <Button disabled={helpRequested} onClick={onCallForHelp}>Call for help</Button>
+      </section>
+      <section className="syringe" aria-labelledby="venous-air-source-title">
+        <div id="venous-air-source-title" className="syringe__name">Prevent further entry</div>
+        <div className="syringe__meta">Intent action · physical source control is not simulated</div>
+        <p className="syringe__remaining" role="status">
+          {sourceControlled
+            ? `Further modeled entry stopped${sourceControlledAtTick === null ? '' : ' · residual pattern clearing'}`
+            : 'Further modeled entry continues'}
+        </p>
+        {!confirmingControl ? (
+          <Button disabled={sourceControlled} onClick={() => setConfirmingControl(true)}>
+            Stop suspected air entry
+          </Button>
+        ) : (
+          <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
+            <span>Record intent to stop further air entry?</span>
+            <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+              <Button variant="primary" compact onClick={() => {
+                onControlSource();
+                setConfirmingControl(false);
+              }}>
+                Confirm source control
+              </Button>
+              <Button variant="ghost" compact onClick={() => setConfirmingControl(false)}>Cancel</Button>
+            </div>
+          </div>
+        )}
+        <p className="field__hint">
+          The accepted action stops new entry only. Residual physiology clears gradually and does not predict an individual outcome.
         </p>
       </section>
     </div>

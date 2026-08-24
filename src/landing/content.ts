@@ -88,7 +88,7 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
     id: 'inside-the-module',
     heading: 'What is inside the anesthesia module',
     paragraphs: [
-      'This is an early build. It contains fifteen scenarios — a routine induction on a healthy '
+      'This is an early build. It contains sixteen scenarios — a routine induction on a healthy '
       + 'adult, rapid desaturation in an obese patient, hypotension after induction, and '
       + 'bronchospasm after intubation, plus unexpected intraoperative hemorrhage with crystalloid '
       + 'temporization, bounded adult packed-red-cell support, and a dilution-only coagulation panel with plasma support, rapid-sequence induction with modeled rocuronium onset, and silent TIVA-line '
@@ -100,6 +100,7 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
       + 'and initial local-anesthetic systemic-toxicity response with weight-banded 20% lipid '
       + 'and a bounded third-cycle persistent ventricular-fibrillation arrest response through initial modeled ROSC '
       + 'and high spinal after an epidural top-up with bounded help, oxygen, ventilation, fluid, and ephedrine actions '
+      + 'and venous air embolism during central-line removal with escalation, source-control intent, and oxygen support '
       + '— with three drugs: population PK/PD for propofol and remifentanil, pediatric Paedfusor PK, '
       + 'a clearly labeled rocuronium teaching model, scripted cefazolin exposure, and dedicated '
       + 'epinephrine, dantrolene, benzodiazepine-class, lipid-emulsion, compression, and defibrillation crisis actions, the real monitor, the real design system, '

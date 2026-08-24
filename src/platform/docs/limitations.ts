@@ -712,16 +712,19 @@ export const LIMITATIONS: readonly Limitation[] = [
   },
   {
     id: 'venous-air-embolism-injector-is-a-teaching-trajectory',
-    headline: 'The injected venous-air-embolism pattern is a calibrated monitor trajectory, not a gas-volume or diagnostic model.',
-    simplification: 'A manual injection rapidly lowers modeled pulmonary-flow observables, '
+    headline: 'The modeled venous-air-embolism pattern is a calibrated monitor trajectory, not a gas-volume or diagnostic model.',
+    simplification: 'A manual injection or authored event rapidly lowers modeled pulmonary-flow observables, '
       + 'end-tidal carbon dioxide, pressure, cardiac output, and oxygen saturation. It does not '
-      + 'represent gas volume, entry site, embolus location, cerebral or paradoxical embolism, or treatment.',
+      + 'represent gas volume, embolus location, cerebral or paradoxical embolism, neurologic '
+      + 'injury, imaging, aspiration, hyperbaric therapy, or physical source-control technique. '
+      + 'Accepted source-control intent stops new entry and clears the residual pattern on a fixed '
+      + '60-second teaching time constant.',
     whereItMisleads: 'Using the displayed change to diagnose an air embolism, estimate its size or '
       + 'location, or predict a particular patient outcome.',
     correctUnderstanding: 'A sudden end-tidal carbon-dioxide decrease and cardiopulmonary compromise '
       + 'during a compatible procedure require immediate clinical assessment and management; the '
       + 'monitor pattern is not specific to one diagnosis.',
-    briefIn: [],
+    briefIn: ['venous-air-embolism-during-line-removal'],
   },
   {
     id: 'no-team-or-communication',

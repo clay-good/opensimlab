@@ -170,6 +170,13 @@ The initial release SHALL ship at least twelve complete, openly licensed scenari
 - **THEN** bradycardia, hypotension, reduced cardiac output, and weakening unassisted breathing progress reproducibly; **AND** the learner can call for help, deliver high inspired oxygen with active ventilation, give 250–500 mL crystalloid, and confirm a listed 6 or 12 mg IV ephedrine bolus
 - **AND** the briefing states that neuraxial dose and spread, block height, pregnancy physiology, aortocaval compression, fetal status, delivery, full vasopressor pharmacology, and individualized outcome are not modeled
 
+#### Scenario: Venous air embolism has a bounded authored initial-response pathway
+
+- **WHEN** the venous-air-embolism scenario reaches its central-line-removal event
+- **THEN** end-tidal carbon dioxide, arterial pressure, cardiac output, and oxygen saturation fall abruptly without a directly imposed respiratory-rate change; **AND** the learner can call for help, record intent to stop further entry, and deliver 100% oxygen with active breath support
+- **AND** accepted source-control intent stops new entry while the residual monitor pattern clears gradually rather than disappearing instantly
+- **AND** the briefing states that gas volume, embolus location, diagnostic certainty, neurologic injury, imaging, aspiration, positioning, hyperbaric therapy, physical source-control skill, team performance, and individualized outcome are not modeled
+
 #### Scenario: Rare events are chosen because they are rare
 
 - **WHEN** the rationale for the crisis scenarios is reviewed

@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 19 reports bounded ephedrine state. */
-export const WORKER_PROTOCOL_VERSION = 19;
+/** Bumped whenever the message shape changes incompatibly. Version 20 reports bounded venous-air-entry control. */
+export const WORKER_PROTOCOL_VERSION = 20;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -234,6 +234,8 @@ export interface EquipmentSnapshot {
     readonly ephedrineTotalMg?: number;
     readonly lastEphedrineTick?: number | null;
     readonly venousAirEmbolismFraction?: number;
+    readonly venousAirEntryControlled?: boolean;
+    readonly venousAirEntryControlledAtTick?: number | null;
     /** Accepted quantitative neuromuscular-reversal teaching state. */
     readonly neuromuscularReversalFraction?: number;
     readonly postTetanicCount?: number;

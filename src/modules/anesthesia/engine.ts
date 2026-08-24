@@ -38,7 +38,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.19';
+export const ENGINE_VERSION = '0.1.0-alpha.20';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -255,6 +255,8 @@ export class AnesthesiaEngine {
   private lastEphedrineTick: number | null = null;
   private venousAirEmbolismSeverity = 0;
   private venousAirEmbolismFraction = 0;
+  private venousAirEntryControlled = false;
+  private venousAirEntryControlledAtTick: number | null = null;
   /** Bounded teaching opposition to the current rocuronium effect-site concentration. */
   private neuromuscularReversalFraction = 0;
   private postTetanicCount = 0;
@@ -448,11 +450,12 @@ export class AnesthesiaEngine {
       }
       case 'call-for-help': {
         const context = action.payload.context;
-        const supported = context === 'airway' || context === 'high-spinal';
+        const supported = context === 'airway' || context === 'high-spinal'
+          || context === 'venous-air-embolism';
         if (!supported || this.helpRequestedAtTick !== null) {
           this.log('warning', 'airway', `airway-help-refused-${this.currentTick}`,
             !supported
-              ? 'Help requires a supported airway or high-spinal context. No request was recorded.'
+              ? 'Help requires a supported airway, high-spinal, or venous-air-embolism context. No request was recorded.'
               : 'Help has already been requested. No duplicate request was recorded.');
           break;
         }
@@ -460,7 +463,9 @@ export class AnesthesiaEngine {
         this.log('warning', 'airway', `airway-help-requested-${this.currentTick}`,
           context === 'high-spinal'
             ? 'High-spinal help requested. Team arrival, communication, and provider actions are not modeled.'
-            : 'Additional airway help requested. Team arrival and provider skill are not modeled.',
+            : context === 'venous-air-embolism'
+              ? 'Help requested for the abrupt cardiopulmonary change. Team arrival, communication, and provider actions are not modeled.'
+              : 'Additional airway help requested. Team arrival and provider skill are not modeled.',
           { context });
         break;
       }
@@ -557,6 +562,26 @@ export class AnesthesiaEngine {
           });
         break;
       }
+      case 'control-venous-air-entry': {
+        const active = this.venousAirEmbolismSeverity > 0 || this.venousAirEmbolismFraction > 0.05;
+        if (action.payload.method !== 'stop-entry' || !active || this.venousAirEntryControlled) {
+          this.log('warning', 'crisis', `venous-air-entry-control-refused-${this.currentTick}`,
+            !active
+              ? 'No active modeled venous-air-entry event is available for this bounded action.'
+              : this.venousAirEntryControlled
+                ? 'Further modeled air entry has already been stopped.'
+                : 'The bounded source-control action requires the listed stop-entry method. No state changed.');
+          break;
+        }
+        this.venousAirEntryControlled = true;
+        this.venousAirEntryControlledAtTick = this.currentTick;
+        this.venousAirEmbolismSeverity = 0;
+        this.log('critical', 'crisis', `venous-air-entry-controlled-${this.currentTick}`,
+          'Intent to stop further venous air entry accepted. The residual monitor pattern now clears on a bounded teaching trajectory; finding or physically controlling a source is not simulated.', {
+            method: 'stop-entry', teachingModel: true,
+          });
+        break;
+      }
       case 'epinephrine': {
         const dose = AnesthesiaEngine.finiteAmount(action.payload.doseMicrograms);
         const duringLast = this.localAnestheticToxicitySeverity > 0;
@@ -644,6 +669,8 @@ export class AnesthesiaEngine {
             break;
           case 'air-embolism':
             this.venousAirEmbolismSeverity = 1;
+            this.venousAirEntryControlled = false;
+            this.venousAirEntryControlledAtTick = null;
             this.lastExposure = { agentId: 'manual-venous-air-entry', tick: this.currentTick };
             break;
         }
@@ -1332,6 +1359,21 @@ export class AnesthesiaEngine {
         return;
       }
 
+      case 'venous-air-embolism': {
+        const severity = event.value;
+        if (event.target !== 'central-venous-catheter-track' || typeof severity !== 'number'
+          || !Number.isFinite(severity) || severity < 0 || severity > 1) {
+          this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" must identify a central-venous-catheter-track and a finite severity from 0 to 1, so the event had no effect.`);
+          return;
+        }
+        this.venousAirEmbolismSeverity = Math.max(this.venousAirEmbolismSeverity, severity);
+        this.venousAirEntryControlled = false;
+        this.venousAirEntryControlledAtTick = null;
+        this.lastExposure = { agentId: 'central-venous-catheter-track', tick: this.currentTick };
+        return;
+      }
+
       case 'difficult-airway': {
         const deliveryFraction = event.value;
         if (event.target !== 'failed-intubation-with-marginal-mask'
@@ -1580,9 +1622,11 @@ export class AnesthesiaEngine {
     // direction is sourced; neither drive estimates block height or gas volume.
     this.highSpinalFraction += (this.highSpinalSeverity - this.highSpinalFraction)
       * (1 - Math.exp(-0.1 / 20));
+    const venousAirTimeConstantSeconds = this.venousAirEmbolismSeverity
+      >= this.venousAirEmbolismFraction ? 2 : 60;
     this.venousAirEmbolismFraction += (
       this.venousAirEmbolismSeverity - this.venousAirEmbolismFraction
-    ) * (1 - Math.exp(-0.1 / 2));
+    ) * (1 - Math.exp(-0.1 / venousAirTimeConstantSeconds));
 
     // --- Physiology ------------------------------------------------------------
     const effectiveVentilator = this.pendingLaryngoscopy || this.pendingSupraglotticInsertion
@@ -1882,6 +1926,8 @@ export class AnesthesiaEngine {
         ephedrineTotalMg: this.ephedrineTotalMg,
         lastEphedrineTick: this.lastEphedrineTick,
         venousAirEmbolismFraction: this.venousAirEmbolismFraction,
+        venousAirEntryControlled: this.venousAirEntryControlled,
+        venousAirEntryControlledAtTick: this.venousAirEntryControlledAtTick,
         neuromuscularReversalFraction: this.neuromuscularReversalFraction,
         postTetanicCount: this.postTetanicCount,
         lastNeuromuscularReversal: this.lastNeuromuscularReversal
