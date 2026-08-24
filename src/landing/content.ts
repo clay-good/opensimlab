@@ -88,15 +88,16 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
     id: 'inside-the-module',
     heading: 'What is inside the anesthesia module',
     paragraphs: [
-      'This is an early build. It contains sixteen scenarios — a routine induction on a healthy '
+      'This is an early build. It contains seventeen scenarios — a routine induction on a healthy '
       + 'adult, rapid desaturation in an obese patient, hypotension after induction, and '
       + 'bronchospasm after intubation with a region-aware inhaled bronchodilator response, plus unexpected intraoperative hemorrhage with crystalloid '
       + 'temporization, bounded adult packed-red-cell support, and a dilution-only coagulation panel with plasma support, rapid-sequence induction with modeled rocuronium onset, and silent TIVA-line '
       + 'disconnection under paralysis, initial laryngospasm response after airway stimulation, '
       + 'initial perioperative anaphylaxis response after antibiotic exposure, and early '
       + 'malignant-hyperthermia response during volatile anesthesia, plus a bounded routine '
-      + 'pediatric intravenous induction for a healthy 6-year-old and a difficult-airway case '
-      + 'limited to help escalation and supraglottic rescue oxygenation '
+      + 'pediatric intravenous induction for a healthy 6-year-old, an unanticipated difficult-airway case '
+      + 'limited to help escalation and supraglottic rescue oxygenation, and a known difficult-airway case '
+      + 'about using the prior record and stopping repeated laryngoscopy attempts '
       + 'and initial local-anesthetic systemic-toxicity response with weight-banded 20% lipid '
       + 'and a bounded third-cycle persistent ventricular-fibrillation arrest response through initial modeled ROSC '
       + 'and high spinal after an epidural top-up with bounded help, oxygen, ventilation, fluid, and ephedrine actions '

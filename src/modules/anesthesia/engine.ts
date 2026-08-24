@@ -1699,7 +1699,14 @@ export class AnesthesiaEngine {
         hypermetabolicFraction: unopposedHypermetabolism,
         activeCooling: this.activeCooling,
         localAnestheticToxicityFraction: unopposedLocalAnestheticToxicity,
-        spontaneousVentilationFraction: 1 - 0.7 * this.highSpinalFraction,
+        // An airway procedure occupies the airway. Disabling only commanded
+        // breaths left residual spontaneous breaths passing through active
+        // laryngoscopy, contradicting the attempt log and spending no oxygen
+        // reserve in a lightly anesthetized patient.
+        spontaneousVentilationFraction: this.pendingLaryngoscopy
+          || this.pendingSupraglotticInsertion
+          ? 0
+          : 1 - 0.7 * this.highSpinalFraction,
       },
     );
     if (this.activeCooling && result.state.coreTemperatureC < 38) {

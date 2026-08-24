@@ -39,9 +39,12 @@ export const PREPARATION_PATHS: readonly PreparationPathDefinition[] = [
     supportedRoles: ['Medical student', 'Resident', 'Nurse anesthesia learner'], limitations: BROWSER_LIMIT,
   },
   {
-    id: 'airway-oxygenation', version: '0.1.0', title: 'Airway and oxygenation',
+    id: 'airway-oxygenation', version: '0.2.0', title: 'Airway and oxygenation',
     description: 'Protect oxygen reserve, recognize obstruction, and change strategy before fixation causes harm.',
-    scenarioIds: ['routine-induction', 'rapid-desaturation', 'laryngospasm-after-airway-stimulation', 'difficult-airway-supraglottic-rescue'],
+    scenarioIds: [
+      'routine-induction', 'rapid-desaturation', 'laryngospasm-after-airway-stimulation',
+      'difficult-airway-supraglottic-rescue', 'repeated-laryngoscopy-harm',
+    ],
     prerequisites: ['Basic induction controls.'],
     targetCompetencies: ['Preoxygenation', 'Airway rescue', 'Oxygenation reassessment'],
     supportedRoles: ['Medical student', 'Resident', 'Nurse anesthesia learner'], limitations: BROWSER_LIMIT,

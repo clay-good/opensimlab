@@ -285,3 +285,18 @@
   curriculum mappings, limitations, review scope, and discoverability copy.
 - [ ] Add auscultation, tube/circuit checks, suction, HME or nebulizer delivery mechanics,
   dynamic hyperinflation, repeat-dose timing, advanced drugs, team performance, or outcome prediction.
+
+## Slice 20: known difficult airway and repeated laryngoscopy harm
+
+- [x] Check in an evidence brief using current ASA 2022 and DAS 2025 guidance and explicitly avoid
+  a universal maximum-attempt rule where the regional pathways differ.
+- [x] Add a seventeenth authored scenario with a visible prior difficult-airway record, full
+  facemask delivery, configured failed tracheal attempts, and existing supraglottic rescue.
+- [x] Make active laryngoscopy and supraglottic insertion suppress residual spontaneous as well as
+  commanded ventilation so every airway-procedure interval spends modeled oxygen reserve.
+- [x] Score pre-attempt escalation, attempt limitation, rescue placement, and sustained gas exchange
+  only from accepted actions, engine events, and visible state.
+- [x] Add curriculum mappings, exact limitations, the airway preparation-path update, generated
+  catalog/governance records, social preview, sitemap route, discoverability copy, and regressions.
+- [ ] Add edema, bleeding, aspiration, physical airway skills, changing facemask technique, awake
+  intubation, flexible endoscopy, front-of-neck access, teams, or a post-rescue airway plan.

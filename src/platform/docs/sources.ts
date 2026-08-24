@@ -587,6 +587,20 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: CHECKED,
   },
   {
+    id: 'das-2025',
+    pmid: '41203471',
+    authors: 'Ahmad I, El-Boghdadly K, Iliff H, Dua G, Higgs A, Huntington M, et al.',
+    title: 'Difficult Airway Society 2025 guidelines for management of unanticipated difficult tracheal intubation in adults',
+    publication: 'Br J Anaesth',
+    year: 2026,
+    locator: '136:283-307',
+    usedFor: 'The known difficult-airway case boundary: use prior information in planning, call '
+      + 'for help before fixation, limit unsuccessful attempts, preserve oxygenation, confirm '
+      + 'ventilation, and leave physical technique and the post-rescue plan outside the browser.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-24',
+  },
+  {
     id: 'asra-last-2020',
     pmid: '33148630',
     authors: 'Neal JM, Neal EJ, Weinberg GL',

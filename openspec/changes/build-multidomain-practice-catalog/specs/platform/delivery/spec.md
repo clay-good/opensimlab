@@ -133,7 +133,7 @@ MCP or API service.
 ### Requirement: Catalog And Domain Packs Have Enforced Transfer And Storage Budgets
 
 The base catalog/search/path/maturity manifests SHALL total no more than 250 KB compressed. No single
-domain pack's scenario/tutor/source data SHALL exceed 1.5 MB compressed, and the shell plus all 16
+domain pack's scenario/tutor/source data SHALL exceed 1.5 MB compressed, and the shell plus all 17
 installed domain packs SHALL remain within the master specification's 8 MB compressed full-offline-
 bundle budget, excluding explicitly optional audio that is not installed by default. CI SHALL report
 compressed and uncompressed deltas per pack and for the complete offline bundle.

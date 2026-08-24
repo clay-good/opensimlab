@@ -286,3 +286,22 @@ ventilation, and anesthetic-depth controls. Accepted events, not requested butto
 debrief. Auscultation, diagnostic certainty, tube and circuit checks, suction, nebulizer/HME
 delivery mechanics, repeat timing, advanced drugs, dynamic hyperinflation, teams, and individual
 response remain outside the model.
+
+## Slice 20: known difficult airway and repeated laryngoscopy harm
+
+The seventeenth authored scenario reuses the deterministic difficult-airway course with a full
+facemask delivery fraction. Unlike the unanticipated rescue case, the prebrief exposes a prior
+record of failed direct laryngoscopy and successful supraglottic oxygenation. The learner can call
+for help before the first attempt, protect oxygen reserve, stop after one configured failure, and
+move to the existing 15-second abstract supraglottic rescue.
+
+Each airway procedure now suppresses both commanded and residual spontaneous ventilation for its
+declared duration. Repeated accepted attempts therefore spend simulated oxygen reserve and retain
+the existing grade-dependent accumulated-trauma teaching state. The debrief scores only accepted
+help timing, attempts, device events, ventilation settings, and sustained visible gas exchange.
+
+The evidence brief binds the shared United States and United Kingdom boundary to the ASA 2022 and
+DAS 2025 guidelines without inventing a universal attempt ceiling. The case does not assess airway
+examination, positioning, manual ventilation, laryngoscopy, device insertion, communication quality,
+or team performance, and it does not model edema, bleeding, aspiration, front-of-neck access, awake
+intubation, flexible endoscopy, or the post-rescue plan.

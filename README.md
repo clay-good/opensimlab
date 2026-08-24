@@ -125,9 +125,9 @@ holds.
 
 The `/anesthesia` catalog keeps discovery local and linkable: search covers the patient, problem,
 procedure, and objectives, while difficulty, duration, and maturity filters are encoded in the URL.
-The unfiltered prerender still contains all 16 current scenarios, so filtering adds no telemetry and
+The unfiltered prerender still contains all 17 current scenarios, so filtering adds no telemetry and
 does not trade away no-script access or scenario-page indexing.
-`/catalog/anesthesia-catalog.json` publishes the same 16 exact-version entries, filters, objectives,
+`/catalog/anesthesia-catalog.json` publishes the same 17 exact-version entries, filters, objectives,
 and normalized search text for static integrations; its schema and data are included in the offline
 bundle and fail the build if they drift from the scenario registry or completion audit.
 The catalog also offers all 10 authored preparation goals from the product design. Each versioned
@@ -241,6 +241,11 @@ two-step 5 mg nebulized albuterol/salbutamol action. The bounded effect improves
 lower-airway obstruction while the capnogram, oxygen, depth, and pressure remain observable. It
 does not model examination, tube or circuit checks, suction, HME or nebulizer delivery, advanced
 drugs, team performance, or individualized response.
+Slice 20 adds the seventeenth authored scenario, a known difficult-airway case that makes the prior
+record actionable before induction and contrasts one bounded rescue attempt with repeated
+laryngoscopy. It uses the existing deterministic attempt-duration, accumulated-trauma, oxygen-reserve,
+help-escalation, and supraglottic-rescue capabilities. It does not assess examination, manual airway
+skill, communication quality, edema, bleeding, aspiration, front-of-neck access, or the post-rescue plan.
 
 ## Running it
 

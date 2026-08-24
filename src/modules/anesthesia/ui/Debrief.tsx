@@ -439,6 +439,7 @@ export function objectiveFindings(
     'ventilate-child-by-weight': 'capnogram-morphology',
     'avoid-pediatric-desaturation': 'preoxygenation-and-safe-apnea-time',
     'prepare-rescue-oxygen-reserve': 'preoxygenation-and-safe-apnea-time',
+    'act-on-prior-airway-record': 'airway-assessment-predicts-poorly',
     'limit-attempts-and-call-for-help': 'airway-assessment-predicts-poorly',
     'place-supraglottic-rescue': 'airway-assessment-predicts-poorly',
     'confirm-rescue-gas-exchange': 'capnogram-morphology',
@@ -827,7 +828,8 @@ export function objectiveFindings(
     }
 
     if ([
-      'prepare-rescue-oxygen-reserve', 'limit-attempts-and-call-for-help',
+      'prepare-rescue-oxygen-reserve', 'act-on-prior-airway-record',
+      'limit-attempts-and-call-for-help',
       'place-supraglottic-rescue', 'confirm-rescue-gas-exchange',
     ].includes(objective.id)) {
       const acceptedPropofol = log.find((entry) => entry.eventId.startsWith('bolus-propofol-'));
@@ -863,6 +865,28 @@ export function objectiveFindings(
         } satisfies ObjectiveFinding;
       }
 
+      if (objective.id === 'act-on-prior-airway-record') {
+        const firstAttempt = laryngoscopyStarts[0];
+        if (!firstAttempt) {
+          return {
+            ...base, outcome: help ? 'partly-met' : 'not-exercised',
+            finding: help
+              ? 'Airway help was requested, but no accepted laryngoscopy attempt followed during this session.'
+              : 'No accepted airway-help request or laryngoscopy attempt was recorded.',
+            atTick: help?.tick,
+          } satisfies ObjectiveFinding;
+        }
+        const usedBeforeAttempt = help !== undefined && help.tick < firstAttempt.tick;
+        return {
+          ...base,
+          outcome: usedBeforeAttempt ? 'met' : help ? 'partly-met' : 'not-met',
+          finding: help
+            ? `Airway help was requested ${Math.abs((firstAttempt.tick - help.tick) / TICKS_PER_SECOND).toFixed(0)} seconds ${usedBeforeAttempt ? 'before' : 'after'} the first laryngoscopy began. The record captures escalation timing, not communication quality, team arrival, or provider skill.`
+            : 'No accepted airway-help request was recorded before the first laryngoscopy began.',
+          atTick: help?.tick ?? firstAttempt.tick,
+        } satisfies ObjectiveFinding;
+      }
+
       if (!failedAttempt) {
         return {
           ...base, outcome: 'not-exercised',
@@ -878,9 +902,7 @@ export function objectiveFindings(
 
       if (objective.id === 'limit-attempts-and-call-for-help') {
         const helpDelay = help ? (help.tick - failedAttempt.tick) / TICKS_PER_SECOND : null;
-        const helpWasEarly = help !== undefined
-          && help.tick >= (laryngoscopyStarts[0]?.tick ?? failedAttempt.tick)
-          && helpDelay! <= 30;
+        const helpWasEarly = help !== undefined && helpDelay! <= 30;
         const attemptsLimited = extraAttemptsBeforeRescue.length === 0;
         return {
           ...base,

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 16,
+  "scenarioCount": 17,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -358,6 +358,29 @@
         "Reassess carbon dioxide, pressure, and oxygenation as the bounded pattern clears."
       ],
       "searchText": "venous-air-embolism-during-line-removal venous air embolism during line removal postoperative recovery after abdominal surgery internal jugular central venous catheter removal recognize the abrupt cardiopulmonary monitor pattern and call for help. a venous-air-event help request was accepted within 30 seconds of the modeled event. record intent to prevent further air entry while the source remains plausible. the bounded source-control intent was accepted within 30 seconds of the modeled event. deliver 100% oxygen with active breath support. inspired oxygen fraction 1.0 with active breath delivery was in effect within 60 seconds. reassess carbon dioxide, pressure, and oxygenation as the bounded pattern clears. end-tidal carbon dioxide recovered to at least 28 mmhg after accepted source control."
+    },
+    {
+      "id": "repeated-laryngoscopy-harm",
+      "path": "/anesthesia/scenario/repeated-laryngoscopy-harm",
+      "title": "Known difficult airway: stop repeated attempts",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 9,
+      "difficulty": "advanced",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Reach an end-tidal preoxygenation endpoint before induction.",
+        "Act on the prior difficult-airway record before laryngoscopy begins.",
+        "Stop after the failed tracheal attempt rather than spending more oxygen reserve.",
+        "Move to a supraglottic airway to restore a route for oxygenation.",
+        "Explicitly deliver oxygen and confirm sustained gas exchange after rescue."
+      ],
+      "searchText": "repeated-laryngoscopy-harm known difficult airway: stop repeated attempts inguinal hernia elective laparoscopic inguinal hernia repair reach an end-tidal preoxygenation endpoint before induction. end-tidal oxygen fraction was at least 0.90 before the first accepted propofol bolus. act on the prior difficult-airway record before laryngoscopy begins. an accepted airway-help request was recorded before the first accepted laryngoscopy attempt. stop after the failed tracheal attempt rather than spending more oxygen reserve. no further laryngoscopy was accepted before rescue, and airway help was requested no later than 30 seconds after the failed attempt. move to a supraglottic airway to restore a route for oxygenation. a supraglottic airway was placed after failed intubation without another tracheal attempt. explicitly deliver oxygen and confirm sustained gas exchange after rescue. after supraglottic placement, inspired oxygen was at least 0.95, breath delivery was active, saturation stayed at least 92%, and end-tidal carbon dioxide remained 25–55 mmhg for 30 seconds."
     }
   ],
   "preparationPathCount": 10,
@@ -417,14 +440,15 @@
     },
     {
       "id": "airway-oxygenation",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Airway and oxygenation",
       "description": "Protect oxygen reserve, recognize obstruction, and change strategy before fixation causes harm.",
       "scenarioIds": [
         "routine-induction",
         "rapid-desaturation",
         "laryngospasm-after-airway-stimulation",
-        "difficult-airway-supraglottic-rescue"
+        "difficult-airway-supraglottic-rescue",
+        "repeated-laryngoscopy-harm"
       ],
       "prerequisites": [
         "Basic induction controls."
@@ -440,7 +464,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 40
+      "estimatedMinutes": 49
     },
     {
       "id": "shock-perfusion",

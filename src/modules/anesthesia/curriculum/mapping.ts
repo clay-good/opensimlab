@@ -667,6 +667,38 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     objectiveIds: ['limit-attempts-and-call-for-help', 'place-supraglottic-rescue', 'confirm-rescue-gas-exchange'],
   },
 
+  // --- Known difficult airway: repeated laryngoscopy harm -------------------
+  {
+    scenarioId: 'repeated-laryngoscopy-harm', frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['act-on-prior-airway-record', 'limit-attempts-and-call-for-help', 'place-supraglottic-rescue'],
+  },
+  {
+    scenarioId: 'repeated-laryngoscopy-harm', frameworkId: 'nbcrna-nce',
+    domainId: 'equipment-instrumentation-technology',
+    objectiveIds: ['prepare-rescue-oxygen-reserve', 'place-supraglottic-rescue', 'confirm-rescue-gas-exchange'],
+  },
+  {
+    scenarioId: 'repeated-laryngoscopy-harm', frameworkId: 'coa-standards',
+    domainId: 'airway-management',
+    objectiveIds: ['act-on-prior-airway-record', 'limit-attempts-and-call-for-help', 'place-supraglottic-rescue'],
+  },
+  {
+    scenarioId: 'repeated-laryngoscopy-harm', frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['act-on-prior-airway-record', 'limit-attempts-and-call-for-help'],
+  },
+  {
+    scenarioId: 'repeated-laryngoscopy-harm', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-airway-management',
+    objectiveIds: ['act-on-prior-airway-record', 'limit-attempts-and-call-for-help', 'place-supraglottic-rescue'],
+  },
+  {
+    scenarioId: 'repeated-laryngoscopy-harm', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-crisis-management',
+    objectiveIds: ['limit-attempts-and-call-for-help', 'place-supraglottic-rescue', 'confirm-rescue-gas-exchange'],
+  },
+
   // --- Local-anesthetic systemic toxicity ----------------------------------
   {
     scenarioId: 'local-anesthetic-systemic-toxicity', frameworkId: 'nbcrna-nce',

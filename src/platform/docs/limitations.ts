@@ -649,17 +649,31 @@ export const LIMITATIONS: readonly Limitation[] = [
   },
   {
     id: 'difficult-airway-failure-and-mask-ventilation-are-teaching-bounds',
-    headline: 'The difficult-airway case scripts failed tracheal attempts and a fixed 35% facemask delivery fraction so the rescue decision is reproducible.',
-    simplification: 'Every tracheal attempt in this case is configured to fail while retaining the '
+    headline: 'The difficult-airway cases script failed tracheal attempts and an authored facemask delivery fraction so each rescue decision is reproducible.',
+    simplification: 'Every tracheal attempt in these cases is configured to fail while retaining the '
       + 'sampled view, duration, and trauma. After the first attempt begins, assisted facemask tidal '
-      + 'volume is fixed at 35% of the setting until a supraglottic airway is placed. Preoxygenation '
+      + 'volume is fixed at the scenario\'s declared fraction until a supraglottic airway is placed. Preoxygenation '
       + 'before the unanticipated difficulty remains unaffected. There is no changing mask seal, airway '
       + 'pressure, two-person technique, oral airway, or operator-dependent improvement.',
     whereItMisleads: 'Reading the sampled view or fixed marginal facemask response as an individual '
       + 'prediction, or treating unchanged screen controls as evidence that a real mask technique cannot improve.',
     correctUnderstanding: 'Difficult-airway rescue is dynamic. Repositioning, adjuncts, two-person '
       + 'technique, neuromuscular block, device choice, and operator skill can all change oxygenation.',
-    briefIn: ['difficult-airway-supraglottic-rescue'],
+    briefIn: ['difficult-airway-supraglottic-rescue', 'repeated-laryngoscopy-harm'],
+  },
+  {
+    id: 'repeated-laryngoscopy-trauma-is-a-teaching-model',
+    headline: 'Each accepted laryngoscopy adds a bounded airway-trauma value that worsens later view probabilities; swelling, bleeding, and physical injury are not modeled.',
+    simplification: 'The shared airway model adds a fixed grade-dependent trauma value when an '
+      + 'attempt begins. That value shifts later sampled views toward worse grades, while the attempt '
+      + 'also consumes simulated time without ventilation. It does not create edema, bleeding, tissue '
+      + 'injury, airway obstruction, aspiration, or patient-specific anatomy changes.',
+    whereItMisleads: 'Reading a later view, attempt duration, saturation, or rescue success as a '
+      + 'prediction of the effect of another attempt in a real patient.',
+    correctUnderstanding: 'Repeated airway instrumentation can cause trauma, make subsequent '
+      + 'management harder, and spend oxygen reserve. Limit attempts, change the plan, call for help, '
+      + 'and keep oxygenation central under the applicable difficult-airway guidance.',
+    briefIn: ['repeated-laryngoscopy-harm'],
   },
   {
     id: 'supraglottic-airway-placement-is-an-abstraction',
@@ -671,7 +685,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'skill, seal quality, aspiration protection, or likely success in a real difficult airway.',
     correctUnderstanding: 'A supraglottic airway can restore oxygenation after failed intubation, '
       + 'but placement and ventilation must be assessed clinically and attempts must remain limited.',
-    briefIn: ['difficult-airway-supraglottic-rescue'],
+    briefIn: ['difficult-airway-supraglottic-rescue', 'repeated-laryngoscopy-harm'],
   },
   {
     id: 'airway-help-request-does-not-model-a-team',
@@ -683,7 +697,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'or crisis-resource-management performance.',
     correctUnderstanding: 'Call for skilled help early, state the airway problem clearly, assign '
       + 'tasks, and use closed-loop communication while oxygenation remains the priority.',
-    briefIn: ['difficult-airway-supraglottic-rescue'],
+    briefIn: ['difficult-airway-supraglottic-rescue', 'repeated-laryngoscopy-harm'],
   },
   {
     id: 'no-cico-or-front-of-neck-airway',
@@ -695,7 +709,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'case rehearses the final rescue pathway.',
     correctUnderstanding: 'Failure to oxygenate through facemask and supraglottic routes requires '
       + 'immediate progression through the applicable emergency front-of-neck-airway algorithm.',
-    briefIn: ['difficult-airway-supraglottic-rescue'],
+    briefIn: ['difficult-airway-supraglottic-rescue', 'repeated-laryngoscopy-harm'],
   },
   {
     id: 'no-post-supraglottic-airway-plan',
@@ -707,7 +721,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'permission to proceed with the planned operation.',
     correctUnderstanding: 'Once oxygenation is restored, stop, reassess urgency and aspiration risk, '
       + 'and make an explicit next plan with the team using the applicable guideline.',
-    briefIn: ['difficult-airway-supraglottic-rescue'],
+    briefIn: ['difficult-airway-supraglottic-rescue', 'repeated-laryngoscopy-harm'],
   },
   {
     id: 'high-spinal-injector-is-a-teaching-trajectory',

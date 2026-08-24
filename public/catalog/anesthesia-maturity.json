@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "recordCount": 30,
+  "recordCount": 31,
   "records": [
     {
       "recordId": "scenario:routine-induction@0.1.0",
@@ -177,6 +177,17 @@
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#venous-air-embolism-during-line-removal@0.1.0",
         "/catalog/anesthesia-quality-audit.json#venous-air-embolism-during-line-removal@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:repeated-laryngoscopy-harm@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "repeated-laryngoscopy-harm",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#repeated-laryngoscopy-harm@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#repeated-laryngoscopy-harm@0.1.0"
       ]
     },
     {
