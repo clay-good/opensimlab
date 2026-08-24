@@ -123,6 +123,11 @@ link preview all get real content without executing the app. Search performance 
 through a webmaster console, which needs no script on the page, so the no-telemetry guarantee
 holds.
 
+The `/anesthesia` catalog keeps discovery local and linkable: search covers the patient, problem,
+procedure, and objectives, while difficulty, duration, and maturity filters are encoded in the URL.
+The unfiltered prerender still contains all 16 current scenarios, so filtering adds no telemetry and
+does not trade away no-script access or scenario-page indexing.
+
 ### What gets built first
 
 [`openspec/changes/mvp-anesthesia-alpha`](openspec/changes/mvp-anesthesia-alpha/) sequences the

@@ -94,6 +94,36 @@ a:hover { text-decoration-color: var(--text-secondary); }
 .skip-link:focus { inset-block-start: var(--space-2); }
 
 /* The scenario directory at /anesthesia. */
+.catalog-controls {
+  display: grid;
+  gap: var(--space-3);
+  margin-block: var(--space-6);
+  padding: var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+  background: var(--surface-1);
+}
+.catalog-controls__title { margin: 0; font: var(--type-subtitle); }
+.catalog-controls__grid {
+  display: grid;
+  grid-template-columns: minmax(12rem, 2fr) repeat(3, minmax(9rem, 1fr));
+  gap: var(--space-3);
+  align-items: end;
+}
+.catalog-controls__summary {
+  display: flex;
+  min-block-size: var(--control-height);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  color: var(--text-secondary);
+}
+.catalog-empty {
+  padding: var(--space-6);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-panel);
+  text-align: center;
+}
 .scenario-index { display: grid; gap: var(--space-3); list-style: none; padding-inline-start: 0; }
 .scenario-index__item {
   display: grid;
@@ -108,6 +138,18 @@ a:hover { text-decoration-color: var(--text-secondary); }
 .scenario-index__title { font: var(--type-subtitle); }
 .scenario-index__patient { font: var(--type-body); color: var(--text-secondary); }
 .scenario-index__teaches { font: var(--type-micro); color: var(--text-tertiary); }
+
+@media (max-width: 800px) {
+  .catalog-controls__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .catalog-controls__search { grid-column: 1 / -1; }
+}
+
+@media (max-width: 420px) {
+  .catalog-controls { padding: var(--space-3); }
+  .catalog-controls__grid { grid-template-columns: minmax(0, 1fr); }
+  .catalog-controls__search { grid-column: auto; }
+  .catalog-controls__summary { align-items: flex-start; flex-direction: column; }
+}
 
 /* The offer to take a newer build. A strip, not a modal: a learner in the middle
  * of an induction is not interrupted for this. */

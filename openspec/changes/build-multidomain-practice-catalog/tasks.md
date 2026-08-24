@@ -62,8 +62,15 @@ credited toward the catalog until every item in the completion contract passes.
 
 - [ ] Implement the catalog manifest, scenario completion validator, static search index, goal paths,
   domain/environment/duration/difficulty/fidelity/maturity filters, and URL state.
+  The anesthesia catalog now has bounded local search plus difficulty, duration, and maturity
+  filters with compact URL state. The existing completion audit remains the scenario validator.
+  A public manifest/search artifact, goal paths, and authored domain/environment/fidelity fields
+  remain.
 - [ ] Implement catalog desktop, tablet, 320 px phone, keyboard, screen-reader, reduced-motion, and
   no-script/prerendered experiences.
+  The default prerender contains all 16 scenario cards, controls are native keyboard and screen-
+  reader fields, result changes use a focused polite status, and browser inspection passes without
+  horizontal overflow at 320 px. Tablet and reduced-motion procedures remain.
 - [ ] Demonstrate with 20 moderated learners that named and need-based cases are found within the
   specified threshold; record the procedure and results without production telemetry.
 - [ ] Build shared operating-room, emergency-department, ICU, ward, delivery-room, neonatal, clinic,

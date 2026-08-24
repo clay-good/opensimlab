@@ -7,7 +7,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Button, SiteBar, useLocalPreference } from '@platform/ui';
+import { Button, Select, SiteBar, useLocalPreference } from '@platform/ui';
 import { useSession, sessionInternals, type GuidanceLevel } from '@platform/session/session-store';
 import { NotForClinicalUseGate, hasAcknowledged, recordAcknowledgement } from '@platform/safety/not-for-clinical-use';
 import { SonificationEngine } from '@platform/audio/sonification';
@@ -23,6 +23,14 @@ import { Debrief } from '@anesthesia/ui/Debrief';
 import { assertTranscriptIsAnonymous, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
 import { MaturityMarker } from '@platform/governance/MaturityMarker';
+import {
+  EMPTY_CATALOG_QUERY,
+  catalogQueryString,
+  filterCatalog,
+  hasCatalogFilters,
+  readCatalogQuery,
+  type CatalogQuery,
+} from '@anesthesia/catalog/query';
 
 /**
  * The scenario a path names.
@@ -312,17 +320,103 @@ function UnknownScenario({ id }: { id: string }) {
   );
 }
 
-function ScenarioIndex() {
+export function ScenarioIndex() {
+  const [query, setQuery] = useState<CatalogQuery>(() => readCatalogQuery(
+    typeof location === 'undefined' ? '' : location.search,
+  ));
+  const scenarios = filterCatalog(scenariosByDifficulty(), query);
+  const updateQuery = (next: CatalogQuery) => {
+    setQuery(next);
+    if (typeof history !== 'undefined') {
+      history.replaceState(null, '', `/anesthesia${catalogQueryString(next)}`);
+    }
+  };
   return (
     <>
       <SiteBar current="/anesthesia" />
       <main className="reading" id="main">
       <h1>Anesthesia simulator</h1>
       <p>
-        Each scenario is a patient and a problem. Start at the top if this is your first one.
+        Each scenario is a patient and a problem. Find the one that matches what you want to
+        practise, or start at the top if this is your first one.
       </p>
-      <ul className="scenario-index">
-        {scenariosByDifficulty().map((entry) => (
+      <section className="catalog-controls" aria-labelledby="catalog-controls-title">
+        <h2 id="catalog-controls-title" className="catalog-controls__title">Find a scenario</h2>
+        <div className="catalog-controls__grid">
+          <div className="field catalog-controls__search">
+            <label className="field__label" htmlFor="scenario-search">Patient, problem, or skill</label>
+            <input
+              id="scenario-search"
+              className="field__input"
+              type="search"
+              maxLength={80}
+              value={query.q}
+              placeholder="Try airway, child, hemorrhage…"
+              onChange={(event) => updateQuery({ ...query, q: event.target.value.slice(0, 80) })}
+            />
+          </div>
+          <Select
+            label="Difficulty"
+            value={query.difficulty}
+            onChange={(event) => updateQuery({
+              ...query, difficulty: event.target.value as CatalogQuery['difficulty'],
+            })}
+            options={[
+              { value: 'all', label: 'Any difficulty' },
+              { value: 'introductory', label: 'Introductory' },
+              { value: 'intermediate', label: 'Intermediate' },
+              { value: 'advanced', label: 'Advanced' },
+            ]}
+          />
+          <Select
+            label="Duration"
+            value={query.duration}
+            onChange={(event) => updateQuery({
+              ...query, duration: event.target.value as CatalogQuery['duration'],
+            })}
+            options={[
+              { value: 'all', label: 'Any duration' },
+              { value: 'under-10', label: 'Under 10 minutes' },
+              { value: '10-plus', label: '10 minutes or more' },
+            ]}
+          />
+          <Select
+            label="Maturity"
+            value={query.maturity}
+            onChange={(event) => updateQuery({
+              ...query, maturity: event.target.value as CatalogQuery['maturity'],
+            })}
+            options={[
+              { value: 'all', label: 'Any maturity' },
+              { value: 'draft', label: 'Draft' },
+              { value: 'preview', label: 'Preview' },
+              { value: 'source_checked', label: 'Sources checked' },
+              { value: 'clinically_reviewed', label: 'Clinically reviewed' },
+              { value: 'institution_endorsed', label: 'Institution endorsed' },
+              { value: 'withdrawn', label: 'Withdrawn' },
+            ]}
+          />
+        </div>
+        <div className="catalog-controls__summary">
+          <span role="status" aria-live="polite">
+            <strong>{scenarios.length}</strong> {scenarios.length === 1 ? 'scenario' : 'scenarios'}
+          </span>
+          {hasCatalogFilters(query) && (
+            <Button compact variant="ghost" onClick={() => updateQuery(EMPTY_CATALOG_QUERY)}>
+              Clear filters
+            </Button>
+          )}
+        </div>
+        <noscript>
+          <p className="field__hint">
+            Filtering needs JavaScript. Every scenario is still listed below and each briefing
+            works as a standalone page.
+          </p>
+        </noscript>
+      </section>
+      {scenarios.length > 0 && (
+        <ul className="scenario-index">
+          {scenarios.map((entry) => (
           <li key={entry.metadata.id} className="scenario-index__item">
             <a className="scenario-index__title" href={`/anesthesia/scenario/${entry.metadata.id}`}>
               {entry.metadata.title}
@@ -343,8 +437,16 @@ function ScenarioIndex() {
               contentVersion={entry.metadata.version}
             />
           </li>
-        ))}
-      </ul>
+          ))}
+        </ul>
+      )}
+      {scenarios.length === 0 && (
+        <div className="catalog-empty">
+          <h2>No scenarios match yet</h2>
+          <p>Try a broader word or clear a filter. Nothing has been hidden from the catalog.</p>
+          <Button onClick={() => updateQuery(EMPTY_CATALOG_QUERY)}>Show all scenarios</Button>
+        </div>
+      )}
       <p className="reading__aside">{NOT_FOR_CLINICAL_USE}</p>
       </main>
     </>
