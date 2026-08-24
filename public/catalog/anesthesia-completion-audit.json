@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "capabilityVersion": "0.1.0-alpha.23",
-  "scenarioCount": 19,
+  "capabilityVersion": "0.1.0-alpha.24",
+  "scenarioCount": 20,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -19,7 +19,7 @@
       ],
       "fidelityClass": "closed_loop_physiology",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.23",
+      "capabilityVersion": "0.1.0-alpha.24",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -28,7 +28,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario routine-induction carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.23 is bound by this audit."
+            "Capability version 0.1.0-alpha.24 is bound by this audit."
           ]
         },
         {
@@ -145,7 +145,7 @@
       ],
       "fidelityClass": "closed_loop_physiology",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.23",
+      "capabilityVersion": "0.1.0-alpha.24",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -154,7 +154,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario rapid-desaturation carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.23 is bound by this audit."
+            "Capability version 0.1.0-alpha.24 is bound by this audit."
           ]
         },
         {
@@ -271,7 +271,7 @@
       ],
       "fidelityClass": "closed_loop_physiology",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.23",
+      "capabilityVersion": "0.1.0-alpha.24",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -280,7 +280,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario hypotension-after-induction carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.23 is bound by this audit."
+            "Capability version 0.1.0-alpha.24 is bound by this audit."
           ]
         },
         {
@@ -397,7 +397,7 @@
       ],
       "fidelityClass": "closed_loop_physiology",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.23",
+      "capabilityVersion": "0.1.0-alpha.24",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -406,7 +406,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario bronchospasm carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.23 is bound by this audit."
+            "Capability version 0.1.0-alpha.24 is bound by this audit."
           ]
         },
         {
@@ -523,7 +523,7 @@
       ],
       "fidelityClass": "closed_loop_physiology",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.23",
+      "capabilityVersion": "0.1.0-alpha.24",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -532,7 +532,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario unexpected-intraoperative-hemorrhage carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.23 is bound by this audit."
+            "Capability version 0.1.0-alpha.24 is bound by this audit."
           ]
         },
         {
@@ -649,7 +649,7 @@
       ],
       "fidelityClass": "closed_loop_physiology",
       "contentVersion": "0.2.0",
-      "capabilityVersion": "0.1.0-alpha.23",
+      "capabilityVersion": "0.1.0-alpha.24",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -658,7 +658,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario rapid-sequence-induction carries stable content version 0.2.0.",
-            "Capability version 0.1.0-alpha.23 is bound by this audit."
+            "Capability version 0.1.0-alpha.24 is bound by this audit."
           ]
         },
         {
@@ -775,7 +775,7 @@
       ],
       "fidelityClass": "closed_loop_physiology",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.23",
+      "capabilityVersion": "0.1.0-alpha.24",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -784,7 +784,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario awareness-under-paralysis carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.23 is bound by this audit."
+            "Capability version 0.1.0-alpha.24 is bound by this audit."
           ]
         },
         {
@@ -901,7 +901,7 @@
       ],
       "fidelityClass": "closed_loop_physiology",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.23",
+      "capabilityVersion": "0.1.0-alpha.24",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -910,7 +910,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario laryngospasm-after-airway-stimulation carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.23 is bound by this audit."
+            "Capability version 0.1.0-alpha.24 is bound by this audit."
           ]
         },
         {
@@ -1027,7 +1027,7 @@
       ],
       "fidelityClass": "closed_loop_physiology",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.23",
+      "capabilityVersion": "0.1.0-alpha.24",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1036,7 +1036,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario perioperative-anaphylaxis-after-antibiotic carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.23 is bound by this audit."
+            "Capability version 0.1.0-alpha.24 is bound by this audit."
           ]
         },
         {
@@ -1153,7 +1153,7 @@
       ],
       "fidelityClass": "closed_loop_physiology",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.23",
+      "capabilityVersion": "0.1.0-alpha.24",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1162,7 +1162,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario early-malignant-hyperthermia-during-volatile-anesthesia carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.23 is bound by this audit."
+            "Capability version 0.1.0-alpha.24 is bound by this audit."
           ]
         },
         {
@@ -1279,7 +1279,7 @@
       ],
       "fidelityClass": "closed_loop_physiology",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.23",
+      "capabilityVersion": "0.1.0-alpha.24",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1288,7 +1288,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario routine-pediatric-iv-induction carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.23 is bound by this audit."
+            "Capability version 0.1.0-alpha.24 is bound by this audit."
           ]
         },
         {
@@ -1405,7 +1405,7 @@
       ],
       "fidelityClass": "closed_loop_physiology",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.23",
+      "capabilityVersion": "0.1.0-alpha.24",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1414,7 +1414,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario difficult-airway-supraglottic-rescue carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.23 is bound by this audit."
+            "Capability version 0.1.0-alpha.24 is bound by this audit."
           ]
         },
         {
@@ -1531,7 +1531,7 @@
       ],
       "fidelityClass": "closed_loop_physiology",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.23",
+      "capabilityVersion": "0.1.0-alpha.24",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1540,7 +1540,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario local-anesthetic-systemic-toxicity carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.23 is bound by this audit."
+            "Capability version 0.1.0-alpha.24 is bound by this audit."
           ]
         },
         {
@@ -1657,7 +1657,7 @@
       ],
       "fidelityClass": "closed_loop_physiology",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.23",
+      "capabilityVersion": "0.1.0-alpha.24",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1666,7 +1666,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario persistent-vf-cardiac-arrest carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.23 is bound by this audit."
+            "Capability version 0.1.0-alpha.24 is bound by this audit."
           ]
         },
         {
@@ -1783,7 +1783,7 @@
       ],
       "fidelityClass": "closed_loop_physiology",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.23",
+      "capabilityVersion": "0.1.0-alpha.24",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1792,7 +1792,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario high-spinal-after-epidural-top-up carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.23 is bound by this audit."
+            "Capability version 0.1.0-alpha.24 is bound by this audit."
           ]
         },
         {
@@ -1909,7 +1909,7 @@
       ],
       "fidelityClass": "closed_loop_physiology",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.23",
+      "capabilityVersion": "0.1.0-alpha.24",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1918,7 +1918,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario venous-air-embolism-during-line-removal carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.23 is bound by this audit."
+            "Capability version 0.1.0-alpha.24 is bound by this audit."
           ]
         },
         {
@@ -2035,7 +2035,7 @@
       ],
       "fidelityClass": "closed_loop_physiology",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.23",
+      "capabilityVersion": "0.1.0-alpha.24",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -2044,7 +2044,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario repeated-laryngoscopy-harm carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.23 is bound by this audit."
+            "Capability version 0.1.0-alpha.24 is bound by this audit."
           ]
         },
         {
@@ -2161,7 +2161,7 @@
       ],
       "fidelityClass": "closed_loop_physiology",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.23",
+      "capabilityVersion": "0.1.0-alpha.24",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -2170,7 +2170,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario capnography-sampling-line-obstruction carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.23 is bound by this audit."
+            "Capability version 0.1.0-alpha.24 is bound by this audit."
           ]
         },
         {
@@ -2287,7 +2287,7 @@
       ],
       "fidelityClass": "closed_loop_physiology",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.23",
+      "capabilityVersion": "0.1.0-alpha.24",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -2296,7 +2296,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario dilutional-coagulopathy carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.23 is bound by this audit."
+            "Capability version 0.1.0-alpha.24 is bound by this audit."
           ]
         },
         {
@@ -2374,6 +2374,132 @@
           "status": "satisfied",
           "evidence": [
             "5 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "missing",
+          "evidence": [
+            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "arterial-pressure-transducer-artifact",
+      "title": "Arterial-pressure transducer artifact",
+      "moduleId": "anesthesia",
+      "environment": "operating-room",
+      "estimatedMinutes": 6,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.24",
+      "maturity": "draft",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario arterial-pressure-transducer-artifact carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.24 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "3 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a seed policy."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "The timeline contains at least one non-narrative state event."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "missing",
+          "evidence": [
+            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "Guidance rules and an expert demonstration are not bound to this content version."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "missing",
+          "evidence": [
+            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "3 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "4 limitation record(s) are linked."
           ]
         },
         {

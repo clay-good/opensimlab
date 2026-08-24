@@ -342,6 +342,32 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'equipment-instrumentation-technology',
     objectiveIds: ['cross-check-capnography-loss', 'preserve-stable-ventilation', 'restore-capnography-sampling'],
   },
+
+  // --- Arterial-pressure transducer artifact -----------------------------
+  {
+    scenarioId: 'arterial-pressure-transducer-artifact',
+    frameworkId: 'nbcrna-nce', domainId: 'equipment-instrumentation-technology',
+    objectiveIds: [
+      'verify-invasive-pressure-independently', 'correct-transducer-level',
+      'assess-arterial-dynamic-response',
+    ],
+  },
+  {
+    scenarioId: 'arterial-pressure-transducer-artifact',
+    frameworkId: 'coa-standards', domainId: 'clinical-decision-making',
+    objectiveIds: [
+      'verify-invasive-pressure-independently', 'correct-transducer-level',
+      'assess-arterial-dynamic-response',
+    ],
+  },
+  {
+    scenarioId: 'arterial-pressure-transducer-artifact',
+    frameworkId: 'acgme-anesthesiology-milestones-2', domainId: 'pc-crisis-management',
+    objectiveIds: [
+      'verify-invasive-pressure-independently', 'correct-transducer-level',
+      'assess-arterial-dynamic-response',
+    ],
+  },
   {
     scenarioId: 'capnography-sampling-line-obstruction',
     frameworkId: 'coa-standards',

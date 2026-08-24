@@ -31,11 +31,11 @@ export const PREPARATION_PATHS: readonly PreparationPathDefinition[] = [
     supportedRoles: ['Medical student', 'Resident', 'Nurse anesthesia learner'], limitations: BROWSER_LIMIT,
   },
   {
-    id: 'deteriorating-patient', version: '0.1.0', title: 'Recognize a deteriorating patient',
-    description: 'Practice noticing change, joining clues, escalating, and reassessing after an initial response.',
-    scenarioIds: ['hypotension-after-induction', 'bronchospasm', 'perioperative-anaphylaxis-after-antibiotic', 'early-malignant-hyperthermia-during-volatile-anesthesia'],
+    id: 'deteriorating-patient', version: '0.2.0', title: 'Recognize a deteriorating patient',
+    description: 'Practice separating signal from patient change, joining clues, escalating, and reassessing after an initial response.',
+    scenarioIds: ['arterial-pressure-transducer-artifact', 'hypotension-after-induction', 'bronchospasm', 'perioperative-anaphylaxis-after-antibiotic', 'early-malignant-hyperthermia-during-volatile-anesthesia'],
     prerequisites: ['Basic monitor orientation.'],
-    targetCompetencies: ['Trend recognition', 'Prioritization', 'Reassessment'],
+    targetCompetencies: ['Signal verification', 'Trend recognition', 'Prioritization', 'Reassessment'],
     supportedRoles: ['Medical student', 'Resident', 'Nurse anesthesia learner'], limitations: BROWSER_LIMIT,
   },
   {

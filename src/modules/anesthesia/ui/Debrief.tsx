@@ -465,10 +465,74 @@ export function objectiveFindings(
     'cross-check-capnography-loss': 'capnogram-morphology',
     'preserve-stable-ventilation': 'capnogram-morphology',
     'restore-capnography-sampling': 'capnogram-morphology',
+    'verify-invasive-pressure-independently': 'vasodilation-versus-hypovolemia',
+    'correct-transducer-level': 'vasodilation-versus-hypovolemia',
+    'assess-arterial-dynamic-response': 'vasodilation-versus-hypovolemia',
   };
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if ([
+      'verify-invasive-pressure-independently', 'correct-transducer-level',
+      'assess-arterial-dynamic-response',
+    ].includes(objective.id)) {
+      const onset = scenario.timeline.find((entry) => entry.type === 'artifact'
+        && entry.target === 'arterial-transducer-misleveled')?.atTick;
+      if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'The session ended before the invasive pressure artifact appeared.',
+        } satisfies ObjectiveFinding;
+      }
+      const cuff = log.find((entry) => entry.tick >= onset && entry.eventId.startsWith('nibp-result-'));
+      const level = log.find((entry) => entry.tick >= onset && entry.eventId.startsWith('arterial-level-zero-'));
+      const assessed = log.find((entry) => entry.tick >= onset
+        && entry.eventId.startsWith('arterial-waveform-assessed-'));
+      const restored = log.find((entry) => entry.tick >= onset
+        && entry.eventId.startsWith('arterial-response-restored-'));
+
+      if (objective.id === 'verify-invasive-pressure-independently') {
+        const treatment = log.find((entry) => entry.tick >= onset
+          && (entry.eventId.startsWith('bolus-') || entry.eventId.startsWith('infusion-')
+            || entry.eventId.startsWith('fluid-')));
+        const delay = cuff ? (cuff.tick - onset) / TICKS_PER_SECOND : null;
+        const beforeTreatment = cuff !== undefined && (treatment === undefined || cuff.tick <= treatment.tick);
+        return {
+          ...base,
+          outcome: beforeTreatment && delay !== null && delay <= 60 ? 'met'
+            : cuff ? 'partly-met' : 'not-met',
+          finding: cuff
+            ? `The independent cuff completed ${delay?.toFixed(0)} seconds after the display changed and reported MAP ${Number(cuff.data?.meanArterialMmHg ?? 0).toFixed(0)} mmHg${beforeTreatment ? ', before any accepted fluid or drug treatment' : ', after an accepted patient-changing action'}.`
+            : 'No accepted independent cuff result followed the invasive display change.',
+          atTick: cuff?.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      if (objective.id === 'correct-transducer-level') {
+        const delay = level ? (level.tick - onset) / TICKS_PER_SECOND : null;
+        return {
+          ...base,
+          outcome: delay !== null && delay <= 60 ? 'met' : level ? 'partly-met' : 'not-met',
+          finding: level
+            ? `Level-and-zero intent removed the 20 cm hydrostatic offset ${delay?.toFixed(0)} seconds after the display changed. This records intent, not physical technique.`
+            : 'No accepted level-and-zero action removed the hydrostatic offset.',
+          atTick: level?.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      const correctOrder = assessed !== undefined && restored !== undefined && assessed.tick <= restored.tick;
+      return {
+        ...base,
+        outcome: correctOrder ? 'met' : assessed || restored ? 'partly-met' : 'not-met',
+        finding: correctOrder
+          ? 'Waveform assessment identified over-damping before accepted pressure-tubing replacement restored normal morphology. Both controls record screen intent rather than equipment skill.'
+          : assessed
+            ? 'Over-damped morphology was assessed, but no accepted pressure-tubing replacement restored the response.'
+            : 'No accepted waveform assessment preceded dynamic-response correction.',
+        atTick: restored?.tick ?? assessed?.tick,
+      } satisfies ObjectiveFinding;
+    }
 
     if ([
       'cross-check-capnography-loss', 'preserve-stable-ventilation',

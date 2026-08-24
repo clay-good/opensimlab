@@ -345,3 +345,26 @@ for unit-volume context, while explicitly refusing to convert either into indivi
 a major-hemorrhage rule. Laboratory and product delay, compatibility, consumption, platelets,
 cryoprecipitate, reactions, source control, team performance, massive-transfusion protocols, and
 outcome remain outside the model.
+
+## Slice 23: arterial-pressure transducer artifact
+
+The twentieth authored scenario begins with a comfortable, awake adult under established neuraxial
+anesthesia. At 60 seconds, a separate sensor state places the transducer 20 cm above its reference
+level and over-damps the fluid-filled pressure system. Canonical circulation does not change. The
+monitor subtracts a fixed 15 mmHg hydrostatic offset from displayed MAP and hatches the corrupted
+tile; the waveform engine independently blunts the upstroke and removes the dicrotic notch while
+leaving the trace unhached so those diagnostic features remain readable.
+
+A scenario-scoped Monitor tray keeps the diagnostic loop compact. Waveform assessment records the
+morphology interpretation, level-and-zero intent removes only the hydrostatic offset, and pressure-
+tubing replacement intent is unavailable until the waveform has been assessed and removes only the
+damping artifact. An independent cuff cycle takes 20 simulated seconds and samples canonical MAP
+when it completes. The nonvisual summary reads the same displayed MAP and exposes the independent
+cuff result only after that deliberate action; the corrupted MAP tile does not open the canonical
+physiology “Why” panel.
+
+The evidence brief uses Saugel et al. for leveling, zeroing, waveform-quality assessment, and the
+7.5 mmHg-per-10 cm relation; Gardner for the fluid-filled system’s dynamic-response basis; and the
+current ASA monitoring standard for circulation-monitoring context. Cannulation, cuff technique,
+positioning, cerebral reference levels, fast-flush execution, sterility, commercial-monitor behavior,
+device accuracy, and individualized treatment thresholds remain outside the model.

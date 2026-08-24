@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 19,
+  "scenarioCount": 20,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -423,6 +423,27 @@
         "Repeat the panel after plasma rather than assuming correction."
       ],
       "searchText": "dilutional-coagulopathy dilutional coagulopathy during ongoing bleeding periprosthetic femoral fracture revision hip arthroplasty under neuraxial anesthesia use the new diffuse oozing to prompt coagulation assessment. an accepted coagulation panel was obtained within 60 seconds of the diffuse-oozing cue and showed a pt ratio above 1.5. use the abnormal panel, not volume loss alone, to guide the bounded plasma response. four units of plasma were accepted after the abnormal panel while modeled bleeding remained active. repeat the panel after plasma rather than assuming correction. a second accepted panel within 60 seconds of plasma showed a lower pt ratio and higher fibrinogen concentration."
+    },
+    {
+      "id": "arterial-pressure-transducer-artifact",
+      "path": "/anesthesia/scenario/arterial-pressure-transducer-artifact",
+      "title": "Arterial-pressure transducer artifact",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 6,
+      "difficulty": "intermediate",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Verify an implausible invasive pressure with an independent cuff result before treating the patient.",
+        "Recognize and remove the hydrostatic pressure offset by recording level-and-zero intent.",
+        "Use waveform morphology to identify and correct the over-damped pressure system."
+      ],
+      "searchText": "arterial-pressure-transducer-artifact arterial-pressure transducer artifact quadriceps tendon rupture repair under neuraxial anesthesia verify an implausible invasive pressure with an independent cuff result before treating the patient. an accepted cuff cycle completed within 60 seconds of the artifact and before a patient-changing fluid or drug action. recognize and remove the hydrostatic pressure offset by recording level-and-zero intent. accepted level-and-zero intent removed the 20 cm transducer offset within 60 seconds of the artifact. use waveform morphology to identify and correct the over-damped pressure system. a waveform assessment preceded accepted pressure-tubing replacement and normal morphology returned."
     }
   ],
   "preparationPathCount": 10,
@@ -455,10 +476,11 @@
     },
     {
       "id": "deteriorating-patient",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Recognize a deteriorating patient",
-      "description": "Practice noticing change, joining clues, escalating, and reassessing after an initial response.",
+      "description": "Practice separating signal from patient change, joining clues, escalating, and reassessing after an initial response.",
       "scenarioIds": [
+        "arterial-pressure-transducer-artifact",
         "hypotension-after-induction",
         "bronchospasm",
         "perioperative-anaphylaxis-after-antibiotic",
@@ -468,6 +490,7 @@
         "Basic monitor orientation."
       ],
       "targetCompetencies": [
+        "Signal verification",
         "Trend recognition",
         "Prioritization",
         "Reassessment"
@@ -478,7 +501,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 42
+      "estimatedMinutes": 48
     },
     {
       "id": "airway-oxygenation",

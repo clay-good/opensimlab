@@ -28,7 +28,8 @@ import { DemonstrationBar } from './DemonstrationBar';
 import { useDemonstration } from '@anesthesia/demo/useDemonstration';
 import { WhyPanel } from './WhyPanel';
 import {
-  announcementsFor, mechanicalPulseFromState, stateSummary, waveformDescriptions, SHORTCUTS,
+  announcementsFor, arterialLineSummary, mechanicalPulseFromState, stateSummary,
+  waveformDescriptions, SHORTCUTS,
 } from './accessibility';
 import { promptFor, promptStillEligible, type Prompt } from '../tutor/guidance';
 import { concentrationCsv } from './ConcentrationPanel';
@@ -95,6 +96,11 @@ const DEFAULT_AIRWAY = {
 const DEFAULT_HYPNOTIC_LINE = { connected: true, inspected: false } as const;
 const DEFAULT_CAPNOGRAPHY_LINE = {
   obstructed: false, ventilationCrossChecked: false,
+} as const;
+const DEFAULT_ARTERIAL_LINE = {
+  displayedMeanArterialMmHg: null, mislevelingCm: 0,
+  dynamicResponse: 'normal', waveformAssessed: false, leveledAndZeroed: false,
+  cuff: { status: 'idle', secondsRemaining: 0, meanArterialMmHg: null, measuredAtTick: null },
 } as const;
 const DEFAULT_RESUSCITATION = {
   epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
@@ -204,6 +210,8 @@ export function Cockpit({
   const airway = equipment?.airway ?? DEFAULT_AIRWAY;
   const hypnoticLine = equipment?.hypnoticLine ?? DEFAULT_HYPNOTIC_LINE;
   const capnographyLine = equipment?.capnographyLine ?? DEFAULT_CAPNOGRAPHY_LINE;
+  const arterialLine = equipment?.arterialLine ?? DEFAULT_ARTERIAL_LINE;
+  const hasArterialLine = scenario.equipment.monitoring.includes('arterial-line');
   const resuscitation = equipment?.resuscitation ?? DEFAULT_RESUSCITATION;
   const lastExposure = equipment?.lastExposure ?? null;
   const injectedCrises = equipment?.injectedCrisisIds ?? [];
@@ -226,6 +234,12 @@ export function Cockpit({
     () => new Set(equipment?.waveformArtifacts ?? []),
     [equipment?.waveformArtifacts],
   );
+  const displayedState = useMemo(() => {
+    if (!hasArterialLine || !session.state || arterialLine.displayedMeanArterialMmHg === null) {
+      return session.state;
+    }
+    return { ...session.state, meanArterialMmHg: arterialLine.displayedMeanArterialMmHg };
+  }, [hasArterialLine, session.state, arterialLine.displayedMeanArterialMmHg]);
   const infusions = useMemo(
     () => (equipment?.drugs ?? [])
       .filter((drug) => drug.infusionRate > 0)
@@ -326,8 +340,8 @@ export function Cockpit({
   const speak = useCallback((text: string) => setAnnouncement(text), []);
 
   const readSummary = useCallback(() => {
-    if (!session.state) return;
-    speak(stateSummary(session.state as never, {
+    if (!displayedState) return;
+    speak(stateSummary(displayedState as never, {
       alarms: session.alarms,
       infusions,
       ventilator,
@@ -346,13 +360,14 @@ export function Cockpit({
       showVenousAirEmbolismSupport: hasVenousAirEmbolismResponse,
       showBronchospasmSupport: hasBronchospasmResponse,
       bronchodilatorLabel: term(region, 'salbutamol'),
-    }));
+    }) + (hasArterialLine ? ` ${arterialLineSummary(arterialLine)}` : ''));
   }, [
-    session.state, session.alarms, speak, infusions, ventilator, invalidParameters,
+    displayedState, session.alarms, speak, infusions, ventilator, invalidParameters,
     scenario.equipment.monitoring, scenario.patient.weightKg, airway.jawThrustCpapSecondsRemaining,
     resuscitation, region, lastExposure, hasAnaphylaxisResponse, hasHypermetabolicResponse,
     hasCardiacArrestResponse, hasHighSpinalResponse, hasVenousAirEmbolismResponse,
-    hasBronchospasmResponse, capnographyLine,
+    hasBronchospasmResponse, capnographyLine, hasArterialLine,
+    arterialLine.cuff.meanArterialMmHg,
   ]);
 
   const readWaveforms = useCallback(() => {
@@ -363,10 +378,27 @@ export function Cockpit({
       perfusionIndex: session.state?.perfusionIndex ?? 0.8,
       artifacts: waveformArtifacts,
       capnographySampleObstructed: capnographyLine.obstructed,
+      arterialDamped: arterialLine.dynamicResponse === 'overdamped',
       ventilating: (session.state?.respiratoryRateBpm ?? 0) > 0,
       mechanicalPulse: mechanicalPulseFromState(session.state),
     }).map((entry) => `${entry.label}: ${entry.description}`).join(' '));
-  }, [session.state, speak, rhythm, waveformArtifacts, airway, capnographyLine.obstructed]);
+  }, [session.state, speak, rhythm, waveformArtifacts, airway, capnographyLine.obstructed,
+    arterialLine.dynamicResponse]);
+
+  useEffect(() => {
+    if (arterialLine.mislevelingCm > 0 || arterialLine.dynamicResponse === 'overdamped') {
+      setAnnouncement('The invasive pressure display changed while canonical circulation remained stable. '
+        + `${arterialLine.mislevelingCm > 0 ? `The transducer is ${arterialLine.mislevelingCm} centimeters above its reference level. ` : ''}`
+        + `${arterialLine.dynamicResponse === 'overdamped' ? 'The arterial waveform is over-damped.' : ''}`);
+    }
+  }, [arterialLine.mislevelingCm, arterialLine.dynamicResponse]);
+
+  useEffect(() => {
+    if (arterialLine.cuff.status === 'complete'
+      && arterialLine.cuff.meanArterialMmHg !== null) {
+      setAnnouncement(`Independent cuff mean arterial pressure ${arterialLine.cuff.meanArterialMmHg.toFixed(0)} millimeters of mercury.`);
+    }
+  }, [arterialLine.cuff.status, arterialLine.cuff.meanArterialMmHg]);
 
   // The keyboard layer. Every shortcut is documented in SHORTCUTS and reachable
   // from the reference without leaving the cockpit.
@@ -499,7 +531,7 @@ export function Cockpit({
 
       <div className="cockpit__monitor" id="monitor-region">
         <MonitorRegion
-          state={session.state}
+          state={displayedState}
           blocks={session.waveformBlocks}
           alarms={session.alarms}
           tick={session.tick}
@@ -507,6 +539,7 @@ export function Cockpit({
           artifactParameters={artifactParameters}
           waveformArtifacts={waveformArtifacts}
           capnographySampleObstructed={capnographyLine.obstructed}
+          arterialDamped={arterialLine.dynamicResponse === 'overdamped'}
           rhythm={rhythm}
           airwayPatencyFraction={airway.patencyFraction}
           bronchospasmSeverity={airway.bronchospasmSeverity}
@@ -560,6 +593,7 @@ export function Cockpit({
           infusions={infusions}
           hypnoticLine={hypnoticLine}
           capnographyLine={capnographyLine}
+          arterialLine={arterialLine}
           resuscitation={resuscitation}
           injectedCrisisIds={injectedCrises}
           lastExposure={lastExposure}
@@ -585,6 +619,9 @@ export function Cockpit({
           onHypnoticLine={(action) => session.act({ type: 'hypnotic-line', payload: { action } })}
           onCapnographyLine={(action) => session.act({
             type: 'capnography-line', payload: { action },
+          })}
+          onArterialLine={(action) => session.act({
+            type: 'arterial-line', payload: { action },
           })}
           onFluid={(fluidId, volumeMl) => session.act({ type: 'fluid', payload: { fluidId, volumeMl } })}
           onBloodProduct={(productId, units) => session.act({

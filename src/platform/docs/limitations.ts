@@ -788,6 +788,41 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['capnography-sampling-line-obstruction'],
   },
   {
+    id: 'arterial-pressure-artifact-is-display-only',
+    headline: 'The arterial-line faults change the invasive display, not canonical circulation.',
+    simplification: 'A fixed 20 cm height error subtracts 15 mmHg from displayed MAP and a fixed '
+      + 'over-damping artifact blunts waveform morphology. Neither changes the patient state.',
+    whereItMisleads: 'Predicting a real device, tubing set, patient position, arterial site, or '
+      + 'the accuracy of an individual invasive pressure measurement.',
+    correctUnderstanding: 'Interpret invasive pressure only after checking the reference level, '
+      + 'zero, waveform quality, clinical context, and an independent measure when readings are implausible.',
+    briefIn: ['arterial-pressure-transducer-artifact'],
+  },
+  {
+    id: 'arterial-line-actions-are-screen-intent',
+    headline: 'Leveling, zeroing, waveform assessment, and tubing replacement are intent controls, not physical skills tests.',
+    simplification: 'The controls accept a named diagnostic or corrective intent and change the '
+      + 'bounded sensor state deterministically. They cannot observe setup, flushing, air bubbles, '
+      + 'sterility, tubing, stopcocks, transducer position, or the learner’s hands.',
+    whereItMisleads: 'Treating success in the browser as certification of arterial-line setup, '
+      + 'troubleshooting, infection control, or equipment competence.',
+    correctUnderstanding: 'Arterial pressure measurement is a technical skill that requires '
+      + 'supervised equipment-specific practice alongside interpretation training.',
+    briefIn: ['arterial-pressure-transducer-artifact'],
+  },
+  {
+    id: 'nibp-is-a-delayed-independent-sample',
+    headline: 'The cuff is a fixed delayed sample of canonical MAP, not a full oscillometric device model.',
+    simplification: 'A cuff cycle takes exactly 20 simulated seconds and returns canonical MAP at '
+      + 'completion. Cuff size, placement, motion, rhythm, arm position, inflation, deflation, '
+      + 'systolic and diastolic estimation, failed cycles, and device error are absent.',
+    whereItMisleads: 'Assuming a real cuff is always accurate, always succeeds, or should agree '
+      + 'exactly with an arterial catheter at every site and moment.',
+    correctUnderstanding: 'Non-invasive and invasive measurements each have limitations. Use '
+      + 'appropriate technique, assess signal quality and context, and investigate clinically important disagreement.',
+    briefIn: ['arterial-pressure-transducer-artifact'],
+  },
+  {
     id: 'no-team-or-communication',
     headline: 'There is no team: nobody to ask, nobody to hand over to, and no communication to get wrong.',
     simplification: 'There is no surgeon, no scrub team, no assistant, and no communication of any '

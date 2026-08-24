@@ -116,7 +116,7 @@ When a sensor artifact is active, the monitor SHALL display the corrupted signal
 - **WHEN** arterial line damping is active
 - **THEN** no learner-facing element shows the true mean arterial pressure, and only a deliberate clinical action such as cycling the non-invasive cuff or flushing the line reveals the discrepancy
 
-#### Scenario: Debrief reveals the truth afterward
+#### Scenario: Debrief reports the verified discrepancy afterward
 
 - **WHEN** the session ends and the debrief opens
-- **THEN** the true and displayed traces are shown together for the artifact interval, with the artifact interval marked
+- **THEN** the debrief reports accepted waveform assessment, level-and-zero timing, the independent cuff result, and signal restoration without claiming that an unimplemented dual-trace comparison exists

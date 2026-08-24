@@ -18,7 +18,7 @@ import { FLUIDS } from '@anesthesia/content/fluids';
 import { BLOOD_PRODUCTS } from '@anesthesia/content/blood-products';
 import { JAW_THRUST_CPAP_SECONDS } from '@anesthesia/physiology';
 
-export type TrayId = 'syringes' | 'infusions' | 'fluids' | 'airway' | 'crisis';
+export type TrayId = 'syringes' | 'infusions' | 'fluids' | 'airway' | 'monitor' | 'crisis';
 
 export interface RunningInfusion {
   readonly drugId: string;
@@ -37,12 +37,27 @@ export interface CapnographyLineStatus {
   readonly ventilationCrossChecked: boolean;
 }
 
+export interface ArterialLineStatus {
+  readonly displayedMeanArterialMmHg: number | null;
+  readonly mislevelingCm: number;
+  readonly dynamicResponse: 'normal' | 'overdamped';
+  readonly waveformAssessed: boolean;
+  readonly leveledAndZeroed: boolean;
+  readonly cuff: {
+    readonly status: 'idle' | 'cycling' | 'complete';
+    readonly secondsRemaining: number;
+    readonly meanArterialMmHg: number | null;
+    readonly measuredAtTick: number | null;
+  };
+}
+
 export interface ActionCockpitProps {
   readonly scenario: Scenario;
   readonly region: RegionProfile;
   readonly infusions: readonly RunningInfusion[];
   readonly hypnoticLine: HypnoticLineStatus;
   readonly capnographyLine?: CapnographyLineStatus;
+  readonly arterialLine?: ArterialLineStatus;
   readonly resuscitation: {
     readonly epinephrineEffectFraction: number;
     readonly epinephrineTotalMicrograms: number;
@@ -123,6 +138,9 @@ export interface ActionCockpitProps {
   readonly onInfusion: (drugId: string, rate: number, unit: string) => void;
   readonly onHypnoticLine: (action: 'inspect' | 'reconnect') => void;
   readonly onCapnographyLine?: (action: 'cross-check-ventilation' | 'reconnect') => void;
+  readonly onArterialLine?: (
+    action: 'assess-waveform' | 'level-zero' | 'cycle-cuff' | 'restore-dynamic-response',
+  ) => void;
   readonly onFluid: (fluidId: string, volumeMl: number) => void;
   readonly onBloodProduct?: (productId: string, units: number) => void;
   readonly onBloodBankRequest?: () => void;
@@ -236,12 +254,17 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasBronchospasmResponse;
   const trays = hasCrisisResponse ? [...TRAYS, CRISIS_TRAY] : TRAYS;
   const hasRocuronium = props.scenario.formulary.some((entry) => entry.drugId === 'rocuronium');
+  const hasArterialLineFault = props.scenario.timeline.some((event) => event.type === 'artifact'
+    && ['arterial-damping', 'arterial-transducer-misleveled'].includes(event.target ?? ''));
+  const visibleTrays = hasArterialLineFault
+    ? [...trays.slice(0, 3), { id: 'monitor' as const, label: 'Monitor' }, ...trays.slice(3)]
+    : trays;
 
   return (
     <div className="actions">
       <Tabs
         label="Action trays"
-        tabs={trays}
+        tabs={visibleTrays}
         active={tray}
         onSelect={(id) => setTray(id as TrayId)}
       />
@@ -336,6 +359,16 @@ export function ActionCockpit(props: ActionCockpitProps) {
             onCapnographyLine={props.onCapnographyLine ?? (() => {})}
           />
         )}
+        {tray === 'monitor' && hasArterialLineFault && (
+          <ArterialLineTray
+            status={props.arterialLine ?? {
+              displayedMeanArterialMmHg: null, mislevelingCm: 0,
+              dynamicResponse: 'normal', waveformAssessed: false, leveledAndZeroed: false,
+              cuff: { status: 'idle', secondsRemaining: 0, meanArterialMmHg: null, measuredAtTick: null },
+            }}
+            onAction={props.onArterialLine ?? (() => {})}
+          />
+        )}
         {tray === 'crisis' && hasCrisisResponse && (
           <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
             {hasEpinephrineResponse && (
@@ -422,11 +455,67 @@ export function ActionCockpit(props: ActionCockpitProps) {
             laptop with the demonstration strip up, and the dose buttons went
             below the fold. Here it costs nothing and is still found by anyone
             who scrolls to the end looking for the thing that is missing. */}
-        <p className="actions__not-modelled field__hint">
-          {NOT_IN_THIS_BUILD}{' '}
-          <a href="/limitations">The limitations register says what else.</a>
-        </p>
+        {(tray === 'fluids' || tray === 'crisis') && (
+          <p className="actions__not-modelled field__hint">
+            {NOT_IN_THIS_BUILD}{' '}
+            <a href="/limitations">The limitations register says what else.</a>
+          </p>
+        )}
       </div>
+    </div>
+  );
+}
+
+function ArterialLineTray({ status, onAction }: {
+  status: ArterialLineStatus;
+  onAction: NonNullable<ActionCockpitProps['onArterialLine']>;
+}) {
+  const faultActive = status.mislevelingCm > 0 || status.dynamicResponse === 'overdamped';
+  const cuffText = status.cuff.status === 'cycling'
+    ? `Cycling · ${status.cuff.secondsRemaining} simulated seconds remaining`
+    : status.cuff.status === 'complete' && status.cuff.meanArterialMmHg !== null
+      ? `Independent cuff MAP ${status.cuff.meanArterialMmHg.toFixed(0)} mmHg`
+      : 'No independent cuff result';
+  return (
+    <div className="tray-grid">
+      <section className="card" aria-labelledby="arterial-signal-title">
+        <h3 id="arterial-signal-title" className="field__label">Invasive pressure signal</h3>
+        <Badge kind={faultActive ? 'teaching' : 'default'}>
+          {faultActive ? 'Signal needs verification' : 'Signal restored'}
+        </Badge>
+        <p className="syringe__remaining numeric" role="status" aria-live="polite">
+          Displayed MAP {status.displayedMeanArterialMmHg?.toFixed(0) ?? '--'} mmHg
+        </p>
+        <p className="field__hint">
+          {status.dynamicResponse === 'overdamped'
+            ? status.waveformAssessed
+              ? 'Assessment recorded: blunted upstroke and absent dicrotic notch are consistent with over-damping.'
+              : 'The trace shape is available on the monitor; no morphology assessment is recorded yet.'
+            : 'Dynamic response is normal in this bounded pressure system.'}
+          {' '}
+          {status.mislevelingCm > 0
+            ? `The transducer is ${status.mislevelingCm.toFixed(0)} cm above its reference level.`
+            : status.leveledAndZeroed ? 'Level-and-zero intent is recorded.' : 'No leveling fault is active.'}
+        </p>
+        <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+          <Button disabled={!faultActive || status.waveformAssessed}
+            onClick={() => onAction('assess-waveform')}>Assess waveform</Button>
+          <Button disabled={status.mislevelingCm === 0}
+            onClick={() => onAction('level-zero')}>Level &amp; zero</Button>
+          <Button disabled={status.dynamicResponse !== 'overdamped' || !status.waveformAssessed}
+            onClick={() => onAction('restore-dynamic-response')}>Replace pressure tubing</Button>
+        </div>
+        <p className="field__hint">These controls record diagnostic and corrective intent. They do not assess setup, flushing, sterility, or physical skill.</p>
+      </section>
+      <section className="card" aria-labelledby="independent-pressure-title">
+        <h3 id="independent-pressure-title" className="field__label">Independent pressure</h3>
+        <p className="syringe__remaining numeric" role="status" aria-live="polite">{cuffText}</p>
+        <Button disabled={status.cuff.status === 'cycling'}
+          onClick={() => onAction('cycle-cuff')}>
+          {status.cuff.status === 'cycling' ? 'Cuff cycling…' : 'Cycle cuff'}
+        </Button>
+        <p className="field__hint">The cuff result arrives after a fixed 20 simulated seconds and samples canonical pressure only when the cycle completes.</p>
+      </section>
     </div>
   );
 }

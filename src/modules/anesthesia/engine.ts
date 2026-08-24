@@ -38,13 +38,18 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.23';
+export const ENGINE_VERSION = '0.1.0-alpha.24';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
 export const DANTROLENE_DOSE_MG_PER_KG = 2.5;
 /** Fixed interaction bound for placing the configured rescue supraglottic airway. */
 export const SGA_INSERTION_SECONDS = 15;
+/** Fixed delay for the independent cuff sample in the arterial-line teaching case. */
+export const NIBP_CYCLE_SECONDS = 20;
+/** Blood-column approximation: 10 cm of vertical error changes pressure by about 7.5 mmHg. */
+export const ARTERIAL_HYDROSTATIC_MMHG_PER_CM = 0.75;
+export const ARTERIAL_MISLEVELING_CM = 20;
 
 export const LAST_LIPID_CONCENTRATION_PERCENT = 20;
 export const LAST_LIPID_MAX_ML_PER_KG = 12;
@@ -203,6 +208,12 @@ export class AnesthesiaEngine {
   private readonly artifacts = new Set<ArtifactId>();
   /** Learner-recorded discrimination step for a displayed capnography failure. */
   private capnographyVentilationCrossChecked = false;
+  /** Learner-visible arterial sensor state; canonical pressure remains in the patient. */
+  private arterialWaveformAssessed = false;
+  private arterialLeveledAndZeroed = false;
+  private pendingNibpCompletesAtTick: number | null = null;
+  private nibpMeanArterialMmHg: number | null = null;
+  private nibpMeasuredAtTick: number | null = null;
   private pendingEvents: EngineEvent[] = [];
   private vasopressorEffect = 0;
   /** Distinct alpha/beta/bronchodilator teaching effect; never substituted by generic vasopressor. */
@@ -1057,10 +1068,87 @@ export class AnesthesiaEngine {
         if (id === 'sampling-line-obstruction' && active && !this.artifacts.has(id)) {
           this.capnographyVentilationCrossChecked = false;
         }
+        if ((id === 'arterial-damping' || id === 'arterial-transducer-misleveled')
+          && active && !this.artifacts.has(id)) {
+          this.arterialWaveformAssessed = false;
+          this.arterialLeveledAndZeroed = false;
+          this.pendingNibpCompletesAtTick = null;
+          this.nibpMeanArterialMmHg = null;
+          this.nibpMeasuredAtTick = null;
+        }
         this.artifacts[active ? 'add' : 'delete'](id);
         this.waveforms.setArtifact(id, active);
         this.log('artifact', 'artifact', `artifact-${id}-${this.currentTick}`,
           `${active ? 'Injected' : 'Cleared'} sensor artifact: ${id}`);
+        break;
+      }
+      case 'arterial-line': {
+        const lineAction = action.payload.action;
+        const hasFault = this.artifacts.has('arterial-damping')
+          || this.artifacts.has('arterial-transducer-misleveled');
+        if (lineAction === 'assess-waveform') {
+          if (!hasFault || this.arterialWaveformAssessed) {
+            this.log('warning', 'equipment', `arterial-waveform-assessment-refused-${this.currentTick}`,
+              hasFault ? 'The arterial waveform has already been assessed.' : 'No modeled arterial-line fault is active.');
+            break;
+          }
+          this.arterialWaveformAssessed = true;
+          this.log('artifact', 'equipment', `arterial-waveform-assessed-${this.currentTick}`,
+            this.artifacts.has('arterial-damping')
+              ? 'Waveform assessment recorded: the trace is over-damped, with a blunted upstroke and absent dicrotic notch.'
+              : 'Waveform assessment recorded: morphology is preserved despite the pressure offset.',
+            { intentOnly: true, overdamped: this.artifacts.has('arterial-damping') });
+          break;
+        }
+        if (lineAction === 'level-zero') {
+          if (!this.artifacts.has('arterial-transducer-misleveled')) {
+            this.log('warning', 'equipment', `arterial-level-zero-refused-${this.currentTick}`,
+              'The modeled transducer is already level and zeroed.');
+            break;
+          }
+          this.artifacts.delete('arterial-transducer-misleveled');
+          this.arterialLeveledAndZeroed = true;
+          this.log('artifact', 'equipment', `arterial-level-zero-${this.currentTick}`,
+            'Level-and-zero intent accepted. The hydrostatic display offset is removed; physical technique is not assessed.',
+            { intentOnly: true, priorMislevelingCm: ARTERIAL_MISLEVELING_CM });
+          break;
+        }
+        if (lineAction === 'cycle-cuff') {
+          const configured = this.scenario.timeline.some((event) => event.type === 'artifact'
+            && (event.target === 'arterial-damping'
+              || event.target === 'arterial-transducer-misleveled'));
+          if (!configured || this.pendingNibpCompletesAtTick !== null) {
+            this.log('warning', 'equipment', `nibp-cycle-refused-${this.currentTick}`,
+              this.pendingNibpCompletesAtTick !== null
+                ? 'A non-invasive pressure cycle is already in progress.'
+                : 'This scenario does not configure the bounded independent cuff action.');
+            break;
+          }
+          this.pendingNibpCompletesAtTick = this.currentTick + NIBP_CYCLE_SECONDS * TICKS_PER_SECOND;
+          this.nibpMeanArterialMmHg = null;
+          this.nibpMeasuredAtTick = null;
+          this.log('info', 'equipment', `nibp-cycle-started-${this.currentTick}`,
+            `Non-invasive pressure cycle started. A result will be available in ${NIBP_CYCLE_SECONDS} simulated seconds.`,
+            { durationSeconds: NIBP_CYCLE_SECONDS });
+          break;
+        }
+        if (lineAction === 'restore-dynamic-response') {
+          if (!this.artifacts.has('arterial-damping') || !this.arterialWaveformAssessed) {
+            this.log('warning', 'equipment', `arterial-response-restoration-refused-${this.currentTick}`,
+              !this.artifacts.has('arterial-damping')
+                ? 'The modeled arterial pressure system already has a normal dynamic response.'
+                : 'Assess the waveform before replacing the modeled pressure tubing.');
+            break;
+          }
+          this.artifacts.delete('arterial-damping');
+          this.waveforms.setArtifact('arterial-damping', false);
+          this.log('artifact', 'equipment', `arterial-response-restored-${this.currentTick}`,
+            'Pressure-tubing replacement intent accepted. Normal waveform response is restored; flushing and setup technique are not assessed.',
+            { intentOnly: true });
+          break;
+        }
+        this.log('warning', 'equipment', `bad-arterial-line-action-${this.currentTick}`,
+          `Unknown arterial-line action "${String(lineAction)}". Nothing changed.`);
         break;
       }
       case 'capnography-line': {
@@ -1491,6 +1579,14 @@ export class AnesthesiaEngine {
         if (id === 'sampling-line-obstruction' && active && !this.artifacts.has(id)) {
           this.capnographyVentilationCrossChecked = false;
         }
+        if ((id === 'arterial-damping' || id === 'arterial-transducer-misleveled')
+          && active && !this.artifacts.has(id)) {
+          this.arterialWaveformAssessed = false;
+          this.arterialLeveledAndZeroed = false;
+          this.pendingNibpCompletesAtTick = null;
+          this.nibpMeanArterialMmHg = null;
+          this.nibpMeasuredAtTick = null;
+        }
         this.artifacts[active ? 'add' : 'delete'](id as ArtifactId);
         this.waveforms.setArtifact(id as ArtifactId, active);
         this.log('artifact', 'artifact', `artifact-${id}-${this.currentTick}`,
@@ -1910,6 +2006,17 @@ export class AnesthesiaEngine {
       });
     }
 
+    if (this.pendingNibpCompletesAtTick !== null
+      && this.currentTick >= this.pendingNibpCompletesAtTick) {
+      this.nibpMeanArterialMmHg = state.meanArterialMmHg;
+      this.nibpMeasuredAtTick = this.currentTick;
+      this.pendingNibpCompletesAtTick = null;
+      this.log('info', 'equipment', `nibp-result-${this.currentTick}`,
+        `Non-invasive cuff result: mean arterial pressure ${state.meanArterialMmHg.toFixed(0)} mmHg.`, {
+          meanArterialMmHg: state.meanArterialMmHg,
+        });
+    }
+
     this.lastState = state;
 
     const events = this.pendingEvents;
@@ -1970,6 +2077,29 @@ export class AnesthesiaEngine {
       capnographyLine: {
         obstructed: this.artifacts.has('sampling-line-obstruction'),
         ventilationCrossChecked: this.capnographyVentilationCrossChecked,
+      },
+      arterialLine: {
+        displayedMeanArterialMmHg: this.scenario.equipment.monitoring.includes('arterial-line')
+          && typeof this.lastState.meanArterialMmHg === 'number'
+          && Number.isFinite(this.lastState.meanArterialMmHg)
+          ? Math.max(0, this.lastState.meanArterialMmHg
+            - (this.artifacts.has('arterial-transducer-misleveled')
+              ? ARTERIAL_MISLEVELING_CM * ARTERIAL_HYDROSTATIC_MMHG_PER_CM : 0))
+          : null,
+        mislevelingCm: this.artifacts.has('arterial-transducer-misleveled')
+          ? ARTERIAL_MISLEVELING_CM : 0,
+        dynamicResponse: this.artifacts.has('arterial-damping') ? 'overdamped' : 'normal',
+        waveformAssessed: this.arterialWaveformAssessed,
+        leveledAndZeroed: this.arterialLeveledAndZeroed,
+        cuff: {
+          status: this.pendingNibpCompletesAtTick !== null ? 'cycling'
+            : this.nibpMeanArterialMmHg !== null ? 'complete' : 'idle',
+          secondsRemaining: this.pendingNibpCompletesAtTick === null ? 0 : Math.max(0, Math.ceil(
+            (this.pendingNibpCompletesAtTick - this.currentTick) / TICKS_PER_SECOND,
+          )),
+          meanArterialMmHg: this.nibpMeanArterialMmHg,
+          measuredAtTick: this.nibpMeasuredAtTick,
+        },
       },
       resuscitation: {
         epinephrineEffectFraction: this.epinephrineEffect,
@@ -2044,7 +2174,9 @@ export class AnesthesiaEngine {
    */
   waveformArtifactSignals(): Set<string> {
     const signals = new Set<string>();
-    if (this.artifacts.has('arterial-damping')) signals.add('arterial');
+    // Do not hatch an over-damped arterial trace: its altered morphology is the
+    // evidence the learner must inspect. The MAP tile still carries the explicit
+    // artifact treatment, and the waveform samples themselves remain damped.
     if (this.artifacts.has('electrocautery')) signals.add('ecg');
     if (this.artifacts.has('probe-displacement')) signals.add('pleth');
     if (this.artifacts.has('circuit-disconnection')) signals.add('capno');
@@ -2127,7 +2259,8 @@ export class AnesthesiaEngine {
   /** Parameters currently under a sensor artifact, for the hatch overlay. */
   artifactParameters(): Set<string> {
     const parameters = new Set<string>();
-    if (this.artifacts.has('arterial-damping')) {
+    if (this.artifacts.has('arterial-damping')
+      || this.artifacts.has('arterial-transducer-misleveled')) {
       parameters.add('systolicMmHg'); parameters.add('diastolicMmHg'); parameters.add('meanArterialMmHg');
     }
     if (this.artifacts.has('electrocautery')) parameters.add('heartRateBpm');

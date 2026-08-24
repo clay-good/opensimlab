@@ -331,3 +331,20 @@
 - [ ] Add the earlier resuscitation sequence, laboratory or product delay, compatibility, consumption,
   platelets, cryoprecipitate, viscoelastic testing, reactions, source control, teams, a
   massive-transfusion protocol, or individual outcome.
+
+## Slice 23: arterial-pressure transducer artifact
+
+- [x] Check in an evidence brief with the hydrostatic relation, dynamic-response basis, current
+  monitoring context, explicit learning boundary, and device/psychomotor exclusions.
+- [x] Add a twentieth authored stable-neuraxial scenario with separate canonical patient pressure
+  and learner-visible arterial sensor state.
+- [x] Model a 20 cm mislevel as a 15 mmHg display-only offset, over-damped waveform morphology, and
+  a 20-second delayed cuff sample of canonical MAP.
+- [x] Add accepted waveform-assessment, level-and-zero, cuff-cycle, and pressure-tubing replacement
+  actions with independent correction paths, hostile-action refusal, replayable event evidence, and
+  ordered debrief scoring.
+- [x] Add a compact keyboard-operable Monitor tray, screen-reader morphology and summary output,
+  curriculum mappings, limitations, preparation-path coverage, catalog assets, and route SEO.
+- [ ] Add cannulation, physical leveling/zeroing/flushing, cuff technique or failure, patient-position
+  reference selection, commercial-monitor behavior, sterility, arterial-site differences, or
+  individualized device accuracy and treatment thresholds.

@@ -615,6 +615,28 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-24',
   },
   {
+    id: 'saugel-arterial-pressure-measurement-2020',
+    pmid: '32331527',
+    authors: 'Saugel B, Kouz K, Meidert AS, Schulte-Uentrop L, Romagnoli S',
+    title: 'How to measure blood pressure using an arterial catheter: a systematic 5-step approach',
+    publication: 'Crit Care', year: 2020, locator: '24:172',
+    usedFor: 'The arterial-pressure artifact boundary: a 10 cm leveling error produces about '
+      + '7.5 mmHg of hydrostatic pressure error; correct measurement requires leveling and zeroing; '
+      + 'and waveform morphology is used to assess the dynamic response of the pressure system.',
+    verifiedAgainst: NCBI, verifiedOn: '2026-08-24',
+  },
+  {
+    id: 'gardner-dynamic-response-1981',
+    pmid: '7469106',
+    authors: 'Gardner RM',
+    title: 'Direct blood pressure measurement--dynamic response requirements',
+    publication: 'Anesthesiology', year: 1981, locator: '54:227-36',
+    usedFor: 'The bounded arterial waveform teaching model: a fluid-filled pressure system has '
+      + 'a dynamic response whose damping and natural frequency can distort the displayed waveform '
+      + 'without changing the patient.',
+    verifiedAgainst: NCBI, verifiedOn: '2026-08-24',
+  },
+  {
     id: 'wfsa-capnometer-specifications-2021',
     pmid: '34427566',
     authors: 'Gelb AW, McDougall RJ, Gore-Booth J, Mainland PA; WFSA Ad Hoc Capnometry Workgroup',

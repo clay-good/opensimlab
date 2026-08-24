@@ -88,6 +88,7 @@ export type RhythmId =
 /** A sensor artifact corrupts what is displayed without touching the state vector. */
 export type ArtifactId =
   | 'arterial-damping'
+  | 'arterial-transducer-misleveled'
   | 'electrocautery'
   | 'probe-displacement'
   | 'circuit-disconnection'

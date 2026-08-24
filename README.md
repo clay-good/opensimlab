@@ -256,6 +256,12 @@ explicitly declared diluted factor and fibrinogen state plus modest ongoing blee
 an accepted coagulation panel, panel-guided bounded plasma, and repeat testing. It does not replay
 the earlier resuscitation or model laboratory and product delays, compatibility, consumption,
 platelets, cryoprecipitate, reactions, source control, teams, or a massive-transfusion protocol.
+Slice 23 adds the twentieth authored scenario, a stable neuraxial-anesthesia case in which a raised
+arterial transducer lowers displayed MAP and an over-damped pressure system blunts waveform
+morphology without changing canonical circulation. A dedicated Monitor tray supports waveform
+assessment, level-and-zero intent, delayed cuff verification, and pressure-tubing replacement
+intent. It does not certify physical technique or model a commercial monitor, complete cuff,
+positioning, arterial-site, or individualized device-error system.
 
 ## Running it
 

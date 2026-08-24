@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: capnography sample-path state has protocol version 22', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(22);
+  it('Scenario: arterial pressure-system state has protocol version 23', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(23);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

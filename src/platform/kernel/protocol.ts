@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 22 reports the capnography sample path. */
-export const WORKER_PROTOCOL_VERSION = 22;
+/** Bumped whenever the message shape changes incompatibly. Version 23 reports the arterial pressure system. */
+export const WORKER_PROTOCOL_VERSION = 23;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -198,6 +198,20 @@ export interface EquipmentSnapshot {
   readonly capnographyLine: {
     readonly obstructed: boolean;
     readonly ventilationCrossChecked: boolean;
+  };
+  /** The invasive-pressure display path, kept separate from canonical patient pressure. */
+  readonly arterialLine?: {
+    readonly displayedMeanArterialMmHg: number | null;
+    readonly mislevelingCm: number;
+    readonly dynamicResponse: 'normal' | 'overdamped';
+    readonly waveformAssessed: boolean;
+    readonly leveledAndZeroed: boolean;
+    readonly cuff: {
+      readonly status: 'idle' | 'cycling' | 'complete';
+      readonly secondsRemaining: number;
+      readonly meanArterialMmHg: number | null;
+      readonly measuredAtTick: number | null;
+    };
   };
   /** Accepted crisis treatments and exposure, as distinct from requested actions. */
   readonly resuscitation: {

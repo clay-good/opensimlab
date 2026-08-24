@@ -23,6 +23,7 @@ export interface MonitorRegionProps {
   readonly artifactParameters: ReadonlySet<string>;
   readonly waveformArtifacts: ReadonlySet<string>;
   readonly capnographySampleObstructed?: boolean;
+  readonly arterialDamped?: boolean;
   readonly rhythm: RhythmId;
   readonly airwayPatencyFraction: number;
   readonly bronchospasmSeverity: number;
@@ -58,12 +59,13 @@ export function MonitorRegion(props: MonitorRegionProps) {
     perfusionIndex: props.state?.perfusionIndex ?? 0.8,
     artifacts: props.waveformArtifacts,
     capnographySampleObstructed: props.capnographySampleObstructed,
+    arterialDamped: props.arterialDamped,
     ventilating: (props.state?.respiratoryRateBpm ?? 0) > 0,
     mechanicalPulse: props.mechanicalPulse,
   }), [
     props.rhythm, props.state, props.waveformArtifacts, props.mechanicalPulse,
     props.airwayPatencyFraction, props.bronchospasmSeverity,
-    props.capnographySampleObstructed,
+    props.capnographySampleObstructed, props.arterialDamped,
   ]);
 
   const alarmFor = (field: string): 'high' | 'medium' | 'low' | null => {
@@ -140,7 +142,8 @@ export function MonitorRegion(props: MonitorRegionProps) {
                   ? { confidence: props.modelConfidence }
                   : tile.field === 'trainOfFourRatio' && props.neuromuscularConfidence
                     ? { confidence: props.neuromuscularConfidence } : {})}
-                onOpenWhy={() => props.onWhy(tile.field)}
+                {...(props.artifactParameters.has(tile.field)
+                  ? {} : { onOpenWhy: () => props.onWhy(tile.field) })}
               />
             );
           })}

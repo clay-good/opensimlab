@@ -291,6 +291,7 @@ export function waveformDescriptions(options: {
   readonly perfusionIndex: number;
   readonly artifacts: ReadonlySet<string>;
   readonly capnographySampleObstructed?: boolean;
+  readonly arterialDamped?: boolean;
   readonly ventilating: boolean;
   readonly mechanicalPulse: boolean;
 }): { signal: string; label: string; description: string }[] {
@@ -315,7 +316,7 @@ export function waveformDescriptions(options: {
 
   const arterialShape = !options.mechanicalPulse
     ? 'Flat: no pulsatile pressure.'
-    : options.artifacts.has('arterial-damping')
+    : options.arterialDamped || options.artifacts.has('arterial-damping')
       ? 'Damped: the dicrotic notch is lost and the trace is narrow. This is a monitoring problem, not a pressure change.'
       : 'Sharp upstroke, a dicrotic notch on the downslope, and a diastolic runoff.';
 
@@ -330,6 +331,33 @@ export function waveformDescriptions(options: {
     { signal: 'capno', label: 'Capnography', description: capnoShape },
     { signal: 'pleth', label: 'Plethysmogram', description: plethShape },
   ];
+}
+
+/** A concise nonvisual equivalent of the scenario-scoped arterial pressure system. */
+export function arterialLineSummary(status: {
+  readonly displayedMeanArterialMmHg: number | null;
+  readonly mislevelingCm: number;
+  readonly dynamicResponse: 'normal' | 'overdamped';
+  readonly cuff: {
+    readonly status: 'idle' | 'cycling' | 'complete';
+    readonly secondsRemaining: number;
+    readonly meanArterialMmHg: number | null;
+  };
+}): string {
+  const display = status.displayedMeanArterialMmHg === null
+    ? 'Invasive mean arterial pressure is unavailable.'
+    : `Displayed invasive mean arterial pressure ${status.displayedMeanArterialMmHg.toFixed(0)} millimeters of mercury.`;
+  const fault = status.mislevelingCm > 0
+    ? ` The transducer is ${status.mislevelingCm.toFixed(0)} centimeters above its reference level.`
+    : '';
+  const response = status.dynamicResponse === 'overdamped'
+    ? ' The arterial waveform is over-damped.' : '';
+  const cuff = status.cuff.status === 'cycling'
+    ? ` The independent cuff is cycling with ${status.cuff.secondsRemaining} simulated seconds remaining.`
+    : status.cuff.status === 'complete' && status.cuff.meanArterialMmHg !== null
+      ? ` Independent cuff mean arterial pressure ${status.cuff.meanArterialMmHg.toFixed(0)} millimeters of mercury.`
+      : '';
+  return `${display}${fault}${response}${cuff}`;
 }
 
 /**

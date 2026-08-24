@@ -121,10 +121,13 @@ response, stopping before dysrhythmia treatment or cardiac arrest.
 - Add a nineteenth scenario that begins from a declared prior-dilution state during ongoing bleeding,
   then requires an accepted coagulation panel, bounded lab-guided plasma, and repeat testing without
   claiming a compatibility or massive-transfusion workflow.
+- Add a twentieth scenario that keeps patient pressure separate from a misleveled and over-damped
+  invasive display, then requires waveform assessment, level-and-zero intent, a delayed independent
+  cuff result, and bounded signal restoration before any patient-changing treatment.
 
 ## Impact
 
-These 21 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+These 23 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
 awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. The seventh also closes the bounded
 pediatric-family gap without claiming a general pediatric patient model. The eighth reaches the
 minimum count of 12 scenarios and closes the bounded difficult-airway rescue gap. The ninth closes
@@ -150,3 +153,7 @@ and reconnection evidence but no claim of physical examination or device trouble
 The twenty-second adds the nineteenth authored scenario and turns the existing bounded coagulation
 capability into a distinct assessment-treatment-reassessment lesson without replaying an invented
 earlier resuscitation sequence or overstating the instantaneous blood-product controls.
+The twenty-third adds the twentieth authored scenario and closes the arterial-transducer artifact
+gap with separate patient and sensor state, a hydrostatic display offset, dynamic-response morphology,
+a delayed independent cuff sample, and accepted diagnostic/corrective intent without claiming
+psychomotor or device-specific competence.
