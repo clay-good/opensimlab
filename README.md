@@ -217,7 +217,9 @@ npm run ci
 ```
 
 `npm run ci` runs strict specification validation, the design-token lint, the build, the full test
-suite, the size budgets and the font budget. `npm run release` runs the clinical and validation
+suite, the public-tree audit, the size budgets and the font budget. Run
+`npm run public-ready:history` from a complete clone to repeat the full-history secret and
+contributor-metadata audit. `npm run release` runs the clinical and validation
 gates and currently **refuses**,
 which is correct.
 

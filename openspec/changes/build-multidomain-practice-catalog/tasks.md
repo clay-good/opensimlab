@@ -22,7 +22,7 @@ credited toward the catalog until every item in the completion contract passes.
 
 ## 1. Public repository and release posture
 
-- [ ] Complete secret, license, private-data, history, dependency, and contributor-identity audits
+- [x] Complete secret, license, private-data, history, dependency, and contributor-identity audits
   before changing repository visibility.
 - [ ] Add public contribution, security, code-of-conduct, governance, reviewer, scenario-author,
   evidence-brief, correction, and organizational-endorsement documentation.
