@@ -187,6 +187,10 @@ export function formularyForMode(
   return formulary.filter((drug) => drug.deliveryModes?.includes(mode) ?? true);
 }
 
+export function scenarioSupportsCoagulation(scenario: Scenario): boolean {
+  return scenario.metadata.limitations?.includes('bounded-dilutional-coagulopathy') ?? false;
+}
+
 /** One source of truth for both visible rescue trays and the nonvisual state summary. */
 export function crisisResponseAvailability(
   scenario: Scenario,
@@ -241,7 +245,7 @@ const CRISIS_TRAY = { id: 'crisis', label: 'Crisis response' } as const;
  */
 export const NOT_IN_THIS_BUILD =
   'Packed red cells use a bounded adult-only 300 mL and 60 g hemoglobin per-unit teaching model. '
-  + 'The hemorrhage scenarios use a confirmed instantaneous blood-bank handoff, then offer an immediate PT-ratio/fibrinogen teaching panel and fixed-unit plasma response. '
+  + 'Scenarios that declare bounded dilutional coagulopathy also offer an immediate PT-ratio/fibrinogen teaching panel and fixed-unit plasma response. '
   + 'Compatibility, reactions, infusion rate, platelets, cryoprecipitate, viscoelastic testing, consumption, and a massive-transfusion protocol are not modeled. '
   + 'Crystalloid uses a fixed 25% intravascular retention teaching model. '
   + 'Cardiac-arrest resuscitation actions — compressions, arrest-dose epinephrine, and defibrillation — '
@@ -334,6 +338,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
             bloodProductTotalMl={props.resuscitation.bloodProductTotalMl ?? 0}
             ageYears={props.scenario.patient.ageYears}
             hemorrhageAvailable={props.resuscitation.hemorrhageActive ?? false}
+            coagulationAvailable={scenarioSupportsCoagulation(props.scenario)}
             coagulationPanelReported={props.resuscitation.coagulationPanelReported ?? false}
             prothrombinTimeRatio={props.prothrombinTimeRatio}
             fibrinogenGPerL={props.fibrinogenGPerL}
@@ -787,7 +792,7 @@ function CardiacArrestTray({
 
 function FluidTray({
   crystalloidTotalMl, packedRedBloodCellUnits, freshFrozenPlasmaUnits, bloodProductTotalMl,
-  ageYears, hemorrhageAvailable, coagulationPanelReported, bloodProductsReleased,
+  ageYears, hemorrhageAvailable, coagulationAvailable, coagulationPanelReported, bloodProductsReleased,
   prothrombinTimeRatio, fibrinogenGPerL,
   onFluid, onBloodProduct, onBloodBankRequest, onCoagulationLabs,
 }: {
@@ -797,6 +802,7 @@ function FluidTray({
   bloodProductTotalMl: number;
   ageYears: number;
   hemorrhageAvailable: boolean;
+  coagulationAvailable: boolean;
   coagulationPanelReported: boolean;
   bloodProductsReleased: boolean;
   prothrombinTimeRatio?: number;
@@ -884,7 +890,7 @@ function FluidTray({
           ))}
         </section>
       )}
-      {hemorrhageAvailable && !pediatric && (
+      {hemorrhageAvailable && coagulationAvailable && !pediatric && (
         <section className="syringe">
           <div className="syringe__name">Coagulation panel</div>
           <p className="field__hint">Reports immediate PT-ratio and fibrinogen teaching values. Repeat after treatment to reassess.</p>
@@ -899,7 +905,7 @@ function FluidTray({
         </section>
       )}
       {BLOOD_PRODUCTS.filter((product) => hemorrhageAvailable && bloodProductsReleased
-        && (product.kind === 'red-cells' || coagulationPanelReported)).map((product) => (
+        && (product.kind === 'red-cells' || (coagulationAvailable && coagulationPanelReported))).map((product) => (
         <section className="syringe" key={product.id}>
           <div className="syringe__name">{product.name}</div>
           <p className="field__hint">

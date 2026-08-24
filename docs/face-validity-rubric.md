@@ -91,7 +91,8 @@ Reviewers run the routine induction themselves before answering.
 | B37 | Arterial transducer misleveling lowers only displayed MAP, over-damping changes only morphology, and an independent cuff continues to sample canonical pressure | | |
 | B38 | Exhausted absorbent raises the capnogram inspiratory baseline and end-tidal carbon dioxide; high fresh-gas flow reduces rebreathing and replacement produces plausible washout | | |
 | B39 | During routine volatile maintenance, anticipatory modeled opioid delivery plausibly limits the declared stimulus response and reduction after stimulus offset allows pressure and depth to recover together | | |
-| B40 | Overall: does this patient behave like a patient? | | |
+| B40 | During the dedicated blood-bank handoff, ordered release and fixed-unit red-cell support produce the declared volume, hemoglobin, calculated oxygen-delivery, and pressure response without presenting the control as a compatibility workflow | | |
+| B41 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -121,6 +122,10 @@ So that reviewers spend their attention on what this review is for:
 - Routine inhalational maintenance uses one fixed surgical-stimulus window and one expert infusion
   fixture. It does not prescribe a real anesthetic, measure consciousness, model pain or memory,
   reproduce a commercial depth monitor, individualize MAC, or predict patient response.
+- The dedicated blood-bank handoff makes an ordered confirmation transcript inspectable, but its
+  release is instantaneous. It has no specimen, patient or unit identifier, ABO/RhD type, antibody
+  screen, compatibility test, crossmatch, inventory, delay, emergency-release authorization,
+  consent, issue record, bedside check, administration workflow, reaction, or team communication.
 - Balanced crystalloid uses a fixed-retention teaching model. Adult packed red cells use fixed
   300 mL and 60 g hemoglobin units with a two-unit cap. A dilution-only factor/fibrinogen model,
   immediate teaching panel, and fixed 275 mL plasma units are available only while modeled

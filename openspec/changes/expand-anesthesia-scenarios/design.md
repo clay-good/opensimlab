@@ -412,3 +412,19 @@ formulary range; and Association monitoring guidance for continuous assessment a
 limits. Pain, memory, consciousness, commercial depth monitoring, individualized MAC, real surgical
 nociception, injection-rate effects, neuromuscular blockade, emergence, and patient-specific dosing
 remain outside the model.
+
+## Slice 26: bounded blood-bank handoff scenario
+
+The twenty-third authored scenario starts during established volatile anesthesia. A fixed
+200 mL/min operative blood-loss event runs from 60 to 240 seconds. The existing blood-bank control
+accepts a confirmed request only while that event is active, then immediately reveals the bounded
+adult products. The expert teaching fixture requests release at 60.1 seconds and selects 2 fixed
+red-cell units at 90 seconds; those values calibrate deterministic comparison and are not clinical
+timing or dose recommendations.
+
+The debrief reads only accepted and refused engine events. It scores timely release, rejects credit
+for selecting a product before release, and reports the fixed event's hemoglobin and calculated
+oxygen-delivery change alongside final pressure. Replay brackets hemorrhage onset and the accepted
+release. The evidence brief and every learner-facing boundary state that specimens, identifiers,
+typing, antibody screening, crossmatch, inventory, delay, authorization, consent, issue records,
+bedside checks, administration, reactions, local policy, and communication are not modeled.

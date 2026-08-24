@@ -39,7 +39,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'major hemorrhage; definitive replacement includes blood products and hemorrhage control.',
     briefIn: [
       'unexpected-intraoperative-hemorrhage', 'hypotension-after-induction',
-      'perioperative-anaphylaxis-after-antibiotic',
+      'perioperative-anaphylaxis-after-antibiotic', 'blood-bank-handoff',
     ],
   },
   {
@@ -524,7 +524,7 @@ export const LIMITATIONS: readonly Limitation[] = [
     whereItMisleads: 'Choosing, preparing, checking, timing, monitoring, or responding to a real transfusion.',
     correctUnderstanding: 'Real packed-red-cell components vary, require compatibility and bedside '
       + 'checks, are administered over time, and can cause serious reactions including TACO and TRALI.',
-    briefIn: ['unexpected-intraoperative-hemorrhage', 'dilutional-coagulopathy'],
+    briefIn: ['unexpected-intraoperative-hemorrhage', 'dilutional-coagulopathy', 'blood-bank-handoff'],
   },
   {
     id: 'bounded-dilutional-coagulopathy',
@@ -548,7 +548,7 @@ export const LIMITATIONS: readonly Limitation[] = [
     simplification: 'One confirmed request immediately releases the bounded adult products while active hemorrhage continues. There is no specimen, patient or unit ABO/RhD type, antibody screen, crossmatch, inventory, delay, emergency-release authorization, bedside check, or issue record.',
     whereItMisleads: 'Choosing a component, estimating availability, bypassing testing, documenting emergency release, or checking a real unit and recipient.',
     correctUnderstanding: 'Real transfusion services identify the recipient, test and select compatible components under local procedures, document any emergency release, and complete bedside identification checks. Urgency changes the authorized workflow; it does not make compatibility irrelevant.',
-    briefIn: ['unexpected-intraoperative-hemorrhage', 'dilutional-coagulopathy'],
+    briefIn: ['unexpected-intraoperative-hemorrhage', 'dilutional-coagulopathy', 'blood-bank-handoff'],
   },
   {
     id: 'no-coagulopathy',
@@ -885,7 +885,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'called, when, and what you said.',
     correctUnderstanding: 'Crisis resource management is a team skill. This simulator cannot teach '
       + 'it and mannequin-based simulation remains necessary for it.',
-    briefIn: ['unexpected-intraoperative-hemorrhage'],
+    briefIn: ['unexpected-intraoperative-hemorrhage', 'blood-bank-handoff'],
   },
   {
     id: 'parameters-unverified',

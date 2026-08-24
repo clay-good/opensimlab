@@ -3,7 +3,8 @@ import { act } from 'react';
 import { createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ActionCockpit } from '@anesthesia/ui/ActionCockpit';
+import { ActionCockpit, scenarioSupportsCoagulation } from '@anesthesia/ui/ActionCockpit';
+import { BLOOD_BANK_HANDOFF } from '@anesthesia/scenarios/blood-bank-handoff';
 import { UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE } from '@anesthesia/scenarios/unexpected-intraoperative-hemorrhage';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 
@@ -21,6 +22,11 @@ describe('Requirement: The fluids tray performs a real learner action', () => {
   afterEach(() => {
     act(() => root.unmount());
     container.remove();
+  });
+
+  it('keeps coagulation controls out of the focused blood-bank handoff', () => {
+    expect(scenarioSupportsCoagulation(BLOOD_BANK_HANDOFF)).toBe(false);
+    expect(scenarioSupportsCoagulation(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE)).toBe(true);
   });
 
   it('requires confirmation and sends the selected product and volume', () => {

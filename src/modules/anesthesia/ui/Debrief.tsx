@@ -479,10 +479,74 @@ export function objectiveFindings(
     'maintain-bounded-depth': 'depth-monitoring-and-its-limits',
     'anticipate-surgical-stimulus': 'hypnotic-opioid-synergy',
     'reassess-when-stimulus-falls': 'vasodilation-versus-hypovolemia',
+    'request-blood-bank-release': 'vasodilation-versus-hypovolemia',
+    'use-released-red-cells': 'vasodilation-versus-hypovolemia',
+    'reassess-red-cell-response': 'vasodilation-versus-hypovolemia',
   };
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if ([
+      'request-blood-bank-release', 'use-released-red-cells', 'reassess-red-cell-response',
+    ].includes(objective.id)) {
+      const onset = scenario.timeline.find((entry) => entry.id === 'operative-hemorrhage')?.atTick;
+      if (onset === undefined) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'The authored operative-hemorrhage event was unavailable.',
+        } satisfies ObjectiveFinding;
+      }
+      const release = log.find((entry) => entry.eventId.startsWith('blood-bank-release-'));
+      const redCells = log.find((entry) => entry.eventId.startsWith('blood-product-packed-red-blood-cells-'));
+      const refusedBeforeRelease = log.some((entry) => entry.eventId.startsWith('bad-blood-product-')
+        && (release === undefined || entry.tick < release.tick));
+
+      if (objective.id === 'request-blood-bank-release') {
+        const delay = release ? (release.tick - onset) / TICKS_PER_SECOND : Infinity;
+        return {
+          ...base,
+          outcome: delay >= 0 && delay <= 60 ? 'met' : release ? 'partly-met' : 'not-met',
+          finding: release
+            ? `The bounded blood-bank release was accepted ${delay.toFixed(1)} seconds after hemorrhage onset. The simulator did not collect a specimen, test compatibility, check inventory, or apply local emergency-release policy.`
+            : 'No bounded blood-bank release was accepted while the modeled hemorrhage was active.',
+          atTick: release?.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      if (objective.id === 'use-released-red-cells') {
+        const ordered = release !== undefined && redCells !== undefined
+          && redCells.tick > release.tick && !refusedBeforeRelease;
+        return {
+          ...base,
+          outcome: ordered ? 'met' : release || redCells ? 'partly-met' : 'not-met',
+          finding: `${redCells ? `${Number(redCells.data?.units ?? 0)} fixed red-cell unit${Number(redCells.data?.units ?? 0) === 1 ? ' was' : 's were'} accepted after release` : 'No red-cell action was accepted'}. ${refusedBeforeRelease ? 'A blood-product action was refused before release.' : 'No blood-product action was refused before release.'} This order is teaching evidence, not a compatibility workflow.`,
+          atTick: redCells?.tick ?? release?.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      if ((history.at(-1)?.tick ?? 0) < 3600) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'The session ended before the authored reassessment point.',
+        } satisfies ObjectiveFinding;
+      }
+      const hemoglobinDelta = Number(redCells?.data?.hemoglobinDeltaGPerDl ?? 0);
+      const oxygenBefore = Number(redCells?.data?.oxygenDeliveryBeforeMlPerMin ?? 0);
+      const oxygenAfter = Number(redCells?.data?.oxygenDeliveryAfterMlPerMin ?? 0);
+      const final = history.filter((entry) => entry.tick <= 3600).at(-1);
+      const finalMap = Number(final?.state.meanArterialMmHg ?? 0);
+      const modeledResponse = hemoglobinDelta > 0 && oxygenAfter > oxygenBefore;
+      const recovered = finalMap >= 65;
+      return {
+        ...base,
+        outcome: modeledResponse && recovered ? 'met' : modeledResponse || recovered ? 'partly-met' : 'not-met',
+        finding: redCells
+          ? `The fixed-unit event changed modeled hemoglobin by ${hemoglobinDelta.toFixed(2)} g/dL and calculated oxygen delivery from ${oxygenBefore.toFixed(0)} to ${oxygenAfter.toFixed(0)} mL/min. Final mean arterial pressure was ${finalMap.toFixed(0)} mmHg.`
+          : `No accepted red-cell event was available to reassess. Final mean arterial pressure was ${finalMap.toFixed(0)} mmHg.`,
+        atTick: final?.tick,
+      } satisfies ObjectiveFinding;
+    }
 
     if ([
       'maintain-bounded-depth', 'anticipate-surgical-stimulus',

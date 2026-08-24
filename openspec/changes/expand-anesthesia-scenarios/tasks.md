@@ -380,3 +380,19 @@
 - [ ] Add pain, memory, consciousness, commercial processed-EEG behavior, individualized MAC,
   real surgical nociception, injection-rate effects, neuromuscular blockade, emergence, or
   patient-specific dosing.
+
+## Slice 26: bounded blood-bank handoff scenario
+
+- [x] Check in an evidence brief covering the current AABB circular, current JPAC component
+  specification, exact teaching fixtures, and every omitted compatibility-workflow safeguard.
+- [x] Add a twenty-third authored scenario with established general anesthesia, fixed active blood
+  loss, a confirmed bounded release, fixed-unit red-cell support, and a final reassessment window.
+- [x] Reuse the existing hemorrhage, blood-bank request, blood-product, event-log, and replay paths
+  without adding a second compatibility or transfusion physiology implementation.
+- [x] Score timely accepted release, ordered red-cell selection, modeled response, and final pressure
+  from accepted/refused engine events and recorded state.
+- [x] Add catalog assets, curriculum and preparation-path coverage, route SEO, expert/no-action/
+  out-of-order/replay regressions, responsive browser inspection, and final full-CI evidence.
+- [ ] Add specimens, identifiers, ABO/RhD type, antibody screening, compatibility testing,
+  crossmatch, inventory, delay, emergency-release authorization, consent, prescription, issue
+  records, bedside checks, administration workflow, reactions, local policy, or team communication.

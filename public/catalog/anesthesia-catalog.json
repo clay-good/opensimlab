@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 22,
+  "scenarioCount": 23,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -486,6 +486,27 @@
         "Reduce or stop the modeled opioid when the stimulus ends, then confirm pressure and depth recover together."
       ],
       "searchText": "routine-inhalational-maintenance routine inhalational maintenance symptomatic cholelithiasis laparoscopic cholecystectomy use end-tidal agent, predicted depth, and the whole patient trend to preserve a bounded maintenance state. predicted depth remained between 40 and 60 for at least 80% of the scored maintenance window. anticipate the declared surgical stimulus with modeled analgesic delivery, then judge the observed response. an accepted remifentanil infusion was running before stimulus onset, and heart rate and mean arterial pressure each rose by less than 20% in the following minute. reduce or stop the modeled opioid when the stimulus ends, then confirm pressure and depth recover together. remifentanil was reduced or stopped within 30 seconds of stimulus offset; by scenario end mean arterial pressure was at least 65 mmhg and predicted depth was between 40 and 60."
+    },
+    {
+      "id": "blood-bank-handoff",
+      "path": "/anesthesia/scenario/blood-bank-handoff",
+      "title": "Blood-bank handoff",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 6,
+      "difficulty": "intermediate",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Recognize active operative blood loss and make the bounded blood-bank request before selecting a product.",
+        "Use the released red-cell teaching action in the correct order without treating the simulator as a compatibility workflow.",
+        "Reassess perfusion and the modeled hemoglobin and oxygen-delivery response after the red-cell action."
+      ],
+      "searchText": "blood-bank-handoff blood-bank handoff pelvic sarcoma open pelvic tumor resection recognize active operative blood loss and make the bounded blood-bank request before selecting a product. an accepted blood-bank release was recorded within 60 seconds of the declared hemorrhage onset. use the released red-cell teaching action in the correct order without treating the simulator as a compatibility workflow. packed red cells were accepted after release, with no refused blood-product action before the release. reassess perfusion and the modeled hemoglobin and oxygen-delivery response after the red-cell action. the accepted red-cell event recorded increased hemoglobin and calculated oxygen delivery, and final mean arterial pressure was at least 65 mmhg."
     }
   ],
   "preparationPathCount": 10,
@@ -576,12 +597,13 @@
     },
     {
       "id": "shock-perfusion",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "title": "Shock and perfusion",
-      "description": "Compare vasodilation, blood loss, dilutional coagulopathy, anaphylaxis, and neuraxial cardiovascular collapse.",
+      "description": "Compare vasodilation, blood loss, ordered red-cell support, dilutional coagulopathy, anaphylaxis, and neuraxial cardiovascular collapse.",
       "scenarioIds": [
         "hypotension-after-induction",
         "unexpected-intraoperative-hemorrhage",
+        "blood-bank-handoff",
         "dilutional-coagulopathy",
         "perioperative-anaphylaxis-after-antibiotic",
         "high-spinal-after-epidural-top-up"
@@ -600,7 +622,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 43
+      "estimatedMinutes": 49
     },
     {
       "id": "rhythm-resuscitation",
@@ -734,11 +756,12 @@
     },
     {
       "id": "handoff-escalation",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Handoff and escalation",
-      "description": "Practice recognizing when the simulated problem exceeds solo management and help is part of the response.",
+      "description": "Practice recognizing when the simulated problem exceeds solo management, ordering a bounded handoff, and making help part of the response.",
       "scenarioIds": [
         "unexpected-intraoperative-hemorrhage",
+        "blood-bank-handoff",
         "bronchospasm",
         "perioperative-anaphylaxis-after-antibiotic",
         "early-malignant-hyperthermia-during-volatile-anesthesia",
@@ -758,7 +781,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 47
+      "estimatedMinutes": 53
     }
   ]
 }

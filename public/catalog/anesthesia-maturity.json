@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "recordCount": 36,
+  "recordCount": 37,
   "records": [
     {
       "recordId": "scenario:routine-induction@0.1.0",
@@ -243,6 +243,17 @@
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#routine-inhalational-maintenance@0.1.0",
         "/catalog/anesthesia-quality-audit.json#routine-inhalational-maintenance@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:blood-bank-handoff@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "blood-bank-handoff",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#blood-bank-handoff@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#blood-bank-handoff@0.1.0"
       ]
     },
     {

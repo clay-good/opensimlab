@@ -31,6 +31,7 @@ import { DILUTIONAL_COAGULOPATHY } from './dilutional-coagulopathy';
 import { ARTERIAL_PRESSURE_TRANSDUCER_ARTIFACT } from './arterial-pressure-transducer-artifact';
 import { CIRCLE_SYSTEM_REBREATHING } from './circle-system-rebreathing';
 import { ROUTINE_INHALATIONAL_MAINTENANCE } from './routine-inhalational-maintenance';
+import { BLOOD_BANK_HANDOFF } from './blood-bank-handoff';
 
 export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_INDUCTION,
@@ -55,6 +56,7 @@ export const SCENARIOS: readonly Scenario[] = [
   ARTERIAL_PRESSURE_TRANSDUCER_ARTIFACT,
   CIRCLE_SYSTEM_REBREATHING,
   ROUTINE_INHALATIONAL_MAINTENANCE,
+  BLOOD_BANK_HANDOFF,
 ];
 
 /** The scenario a learner meets first. */

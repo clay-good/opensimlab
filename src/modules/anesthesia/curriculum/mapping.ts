@@ -298,6 +298,27 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     objectiveIds: ['recognize-hemorrhage', 'temporize-volume-loss', 'manage-hypotension'],
   },
 
+  // --- Blood-bank handoff -------------------------------------------------
+  {
+    scenarioId: 'blood-bank-handoff', frameworkId: 'nbcrna-nce', domainId: 'advanced-principles',
+    objectiveIds: [
+      'request-blood-bank-release', 'use-released-red-cells', 'reassess-red-cell-response',
+    ],
+  },
+  {
+    scenarioId: 'blood-bank-handoff', frameworkId: 'coa-standards', domainId: 'clinical-decision-making',
+    objectiveIds: [
+      'request-blood-bank-release', 'use-released-red-cells', 'reassess-red-cell-response',
+    ],
+  },
+  {
+    scenarioId: 'blood-bank-handoff',
+    frameworkId: 'acgme-anesthesiology-milestones-2', domainId: 'pc-crisis-management',
+    objectiveIds: [
+      'request-blood-bank-release', 'use-released-red-cells', 'reassess-red-cell-response',
+    ],
+  },
+
   // --- Dilutional coagulopathy -------------------------------------------
   {
     scenarioId: 'dilutional-coagulopathy',
