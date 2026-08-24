@@ -606,14 +606,15 @@ export const SOURCES: readonly Source[] = [
     authors: 'Obstetric Anaesthetists\' Association',
     title: 'High central neuraxial block',
     publication: 'OAA Quick Reference Handbook',
-    year: 2026,
-    locator: 'current online guide, section 2-7',
-    unpinned: true,
-    usedFor: 'The direction of the manual high-spinal teaching trajectory: rapidly progressive '
-      + 'hypotension, bradycardia, and impaired breathing after neuraxial local anesthetic. The '
-      + 'model does not estimate block height, obstetric physiology, or treatment response.',
+    year: 2024,
+    locator: 'section 2-7, version 1; handbook contents updated July 2024',
+    usedFor: 'The formal scenario and manual injector: rapidly progressive hypotension, '
+      + 'bradycardia, and impaired breathing after neuraxial local anesthetic; call for help; '
+      + 'high inspired oxygen with ventilation support; a 250–500 mL fluid bolus; and 6–12 mg '
+      + 'IV ephedrine boluses. The 30 mg cap and exact treatment response remain teaching behavior.',
     verifiedAgainst: 'Obstetric Anaesthetists\' Association current official quick-reference PDF',
     verifiedOn: '2026-08-24',
+    currency: { lastAmended: '2024-07-01', checkedAt: '2026-08-24' },
   },
   {
     id: 'mccarthy-air-embolism-2017',

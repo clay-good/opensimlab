@@ -680,6 +680,21 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'pc-crisis-management',
     objectiveIds: ['resume-arrest-compressions', 'give-arrest-epinephrine', 'defibrillate-persistent-vf', 'avoid-shocking-nonshockable-rhythm'],
   },
+  {
+    scenarioId: 'high-spinal-after-epidural-top-up', frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['call-for-high-spinal-help', 'support-high-spinal-breathing', 'support-high-spinal-circulation', 'protect-high-spinal-oxygenation'],
+  },
+  {
+    scenarioId: 'high-spinal-after-epidural-top-up', frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['call-for-high-spinal-help', 'support-high-spinal-breathing', 'support-high-spinal-circulation', 'protect-high-spinal-oxygenation'],
+  },
+  {
+    scenarioId: 'high-spinal-after-epidural-top-up', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-crisis-management',
+    objectiveIds: ['call-for-high-spinal-help', 'support-high-spinal-breathing', 'support-high-spinal-circulation', 'protect-high-spinal-oxygenation'],
+  },
 ];
 
 export interface DomainCoverage {

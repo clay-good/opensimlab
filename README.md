@@ -187,6 +187,11 @@ toxicity, shockable and non-shockable arrest, and TIVA-line disconnection. Its t
 completes the required 11-entry control with distinct high-spinal and venous-air-embolism teaching
 trajectories. Their exact slopes are calibrations, not block-height, gas-volume, diagnostic,
 treatment, or outcome models.
+Slice 17 promotes high spinal into the fifteenth authored scenario: a bounded initial
+response after an epidural top-up with help escalation, high inspired oxygen and active ventilation,
+a 250–500 mL crystalloid bolus, and confirmed 6/12 mg IV ephedrine actions. It does not model
+neuraxial dose or spread, pregnancy physiology, aortocaval compression, fetal status, delivery,
+full vasopressor pharmacology, or individualized outcome.
 
 ## Running it
 

@@ -105,10 +105,13 @@ response, stopping before dysrhythmia treatment or cardiac arrest.
 - Complete bounded quantitative neuromuscular reversal with the specified 2/4 mg/kg sugammadex
   depth branches and neostigmine with an antimuscarinic only during minimal block, without
   claiming emergence or extubation.
+- Promote the bounded high-spinal trajectory into a fifteenth authored scenario with a scored,
+  replayable initial response: call for help, high inspired oxygen with active ventilation,
+  250–500 mL crystalloid, and exact 6/12 mg IV ephedrine boluses.
 
 ## Impact
 
-These fourteen slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+These 17 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
 awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. The seventh also closes the bounded
 pediatric-family gap without claiming a general pediatric patient model. The eighth reaches the
 minimum count of 12 scenarios and closes the bounded difficult-airway rescue gap. The ninth closes
@@ -117,4 +120,6 @@ resuscitable cardiac-arrest library family through initial modeled ROSC. The ele
 replayable injector foundation for 9 modeled crises. The twelfth adds distinct high-spinal and
 venous-air-embolism physiology and completes the required 11-entry manual injector without
 claiming diagnosis, treatment, block-height, or gas-volume simulation. The thirteenth completes
-bounded quantitative neuromuscular reversal while leaving emergence and extubation explicit.
+bounded quantitative neuromuscular reversal while leaving emergence and extubation explicit. The
+seventeenth adds the fifteenth authored scenario and a bounded high-spinal initial response without
+claiming neuraxial spread, obstetric physiology, or individualized outcome.

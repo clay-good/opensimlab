@@ -97,6 +97,7 @@ const DEFAULT_RESUSCITATION = {
   dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
   lastDantroleneTick: null, activeCooling: false,
   chestCompressionsActive: false,
+  highSpinalFraction: 0, ephedrineTotalMg: 0, lastEphedrineTick: null,
 } as const;
 
 export function Cockpit({
@@ -185,6 +186,7 @@ export function Cockpit({
   const injectedCrises = equipment?.injectedCrisisIds ?? [];
   const {
     hasAnaphylaxisResponse, hasHypermetabolicResponse, hasCardiacArrestResponse,
+    hasHighSpinalResponse,
   } = crisisResponseAvailability(scenario, injectedCrises);
   const rhythm = (equipment?.rhythmId ?? 'sinus') as RhythmId;
   const invalidParameters = useMemo(
@@ -304,12 +306,13 @@ export function Cockpit({
       showEpinephrineSupport: hasAnaphylaxisResponse,
       showHypermetabolicSupport: hasHypermetabolicResponse,
       showCardiacArrestSupport: hasCardiacArrestResponse,
+      showHighSpinalSupport: hasHighSpinalResponse,
     }));
   }, [
     session.state, session.alarms, speak, infusions, ventilator, invalidParameters,
     scenario.equipment.monitoring, scenario.patient.weightKg, airway.jawThrustCpapSecondsRemaining,
     resuscitation, region, lastExposure, hasAnaphylaxisResponse, hasHypermetabolicResponse,
-    hasCardiacArrestResponse,
+    hasCardiacArrestResponse, hasHighSpinalResponse,
   ]);
 
   const readWaveforms = useCallback(() => {
@@ -522,6 +525,12 @@ export function Cockpit({
           onAirwayDevice={(device) => session.act({ type: 'airway-device', payload: { device } })}
           onEpinephrine={(doseMicrograms) => session.act({
             type: 'epinephrine', payload: { route: 'iv', doseMicrograms },
+          })}
+          onEphedrine={(doseMg) => session.act({
+            type: 'ephedrine', payload: { route: 'iv', doseMg },
+          })}
+          onHighSpinalHelp={() => session.act({
+            type: 'call-for-help', payload: { context: 'high-spinal' },
           })}
           onDantrolene={() => session.act({
             type: 'dantrolene', payload: { route: 'iv', doseMgPerKg: 2.5 },

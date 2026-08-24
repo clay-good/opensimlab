@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: blood-bank release state has protocol version 18', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(18);
+  it('Scenario: bounded ephedrine state has protocol version 19', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(19);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

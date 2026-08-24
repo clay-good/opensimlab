@@ -246,3 +246,16 @@
   is instantaneous and assumes appropriate product selection.
 - [ ] Add specimens, ABO/RhD typing, antibody screening, crossmatch, inventory, release delay,
   patient or unit identifiers, emergency-release authorization, bedside checks, or issue records.
+
+## Slice 17: authored high-spinal recognition and initial response
+
+- [x] Add a fifteenth authored scenario that triggers the existing progressive high-spinal drive
+  after an epidural top-up and exposes the observable respiratory and cardiovascular compromise.
+- [x] Add accepted, replayable high-spinal help and exact 6/12 mg IV ephedrine actions with a
+  cumulative 30 mg teaching cap, plus the existing oxygen, ventilation, and 250–500 mL fluid controls.
+- [x] Score escalation, breathing support, circulation support, and observed oxygenation only from
+  accepted actions and state; add nonvisual status, curriculum mappings, and current OAA provenance.
+- [x] Register the scenario so its detail page, structured data, social card, sitemap, and public
+  scenario count are generated from the same source of truth.
+- [ ] Add neuraxial dose or spread, sensory or motor level, pregnancy physiology, aortocaval
+  compression, fetal status, delivery, full vasopressor pharmacology, or individualized outcome.

@@ -69,6 +69,9 @@ export interface ActionCockpitProps {
     readonly defibrillationShockCount?: number;
     readonly lastDefibrillationEnergyJ?: number | null;
     readonly roscAtTick?: number | null;
+    readonly highSpinalFraction?: number;
+    readonly ephedrineTotalMg?: number;
+    readonly lastEphedrineTick?: number | null;
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -114,6 +117,8 @@ export interface ActionCockpitProps {
   readonly onCallForHelp: () => void;
   readonly onAirwayDevice: (device: 'supraglottic-airway') => void;
   readonly onEpinephrine: (doseMicrograms: number) => void;
+  readonly onEphedrine?: (doseMg: number) => void;
+  readonly onHighSpinalHelp?: () => void;
   readonly onDantrolene: () => void;
   readonly onActiveCooling: (active: boolean) => void;
   readonly onSeizureSuppression?: () => void;
@@ -152,6 +157,8 @@ export function crisisResponseAvailability(
       || injected.has('cardiac-arrest-non-shockable')
       || scenario.timeline.some((event) => event.type === 'rhythm-change'
         && ['ventricular-fibrillation', 'asystole', 'pea'].includes(event.target ?? '')),
+    hasHighSpinalResponse: injected.has('high-spinal')
+      || scenario.timeline.some((event) => event.type === 'high-spinal'),
   };
 }
 
@@ -192,13 +199,14 @@ export function ActionCockpit(props: ActionCockpitProps) {
   const [tray, setTray] = useState<TrayId>('syringes');
   const {
     hasAnaphylaxisResponse, hasHypermetabolicResponse, hasLastResponse,
-    hasCardiacArrestResponse,
+    hasCardiacArrestResponse, hasHighSpinalResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
   );
   const hasEpinephrineResponse = hasAnaphylaxisResponse || hasLastResponse;
-  const hasCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse || hasCardiacArrestResponse;
+  const hasCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse
+    || hasCardiacArrestResponse || hasHighSpinalResponse;
   const trays = hasCrisisResponse ? [...TRAYS, CRISIS_TRAY] : TRAYS;
   const hasRocuronium = props.scenario.formulary.some((entry) => entry.drugId === 'rocuronium');
 
@@ -337,6 +345,16 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 onCompressions={props.onChestCompressions ?? (() => {})}
                 onEpinephrine={props.onArrestEpinephrine ?? (() => {})}
                 onDefibrillation={props.onDefibrillation ?? (() => {})}
+              />
+            )}
+            {hasHighSpinalResponse && (
+              <HighSpinalTray
+                fraction={props.resuscitation.highSpinalFraction ?? 0}
+                ephedrineTotalMg={props.resuscitation.ephedrineTotalMg ?? 0}
+                lastEphedrineTick={props.resuscitation.lastEphedrineTick ?? null}
+                helpRequested={props.helpRequestedAtTick !== null}
+                onEphedrine={props.onEphedrine ?? (() => {})}
+                onCallForHelp={props.onHighSpinalHelp ?? (() => {})}
               />
             )}
           </div>
@@ -639,6 +657,72 @@ function FluidTray({
           <Button compact onClick={onCoagulationLabs}>Request panel</Button>
         </section>
       )}
+    </div>
+  );
+}
+
+function HighSpinalTray({
+  fraction, ephedrineTotalMg, lastEphedrineTick, helpRequested, onEphedrine, onCallForHelp,
+}: {
+  fraction: number;
+  ephedrineTotalMg: number;
+  lastEphedrineTick: number | null;
+  helpRequested: boolean;
+  onEphedrine: (doseMg: number) => void;
+  onCallForHelp: () => void;
+}) {
+  const [pendingDose, setPendingDose] = useState<number | null>(null);
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="high-spinal-response-title">
+        <div id="high-spinal-response-title" className="syringe__name">High spinal response</div>
+        <Badge kind="teaching">Teaching model</Badge>
+        <p className="field__hint">
+          Call for help, support breathing in Airway &amp; Vent, and give a 250–500 mL fluid bolus in Fluids.
+        </p>
+        <p className="syringe__remaining" role="status">
+          Modeled progression {(fraction * 100).toFixed(0)}% · {helpRequested ? 'help requested' : 'help not requested'}
+        </p>
+        <Button disabled={helpRequested} onClick={onCallForHelp}>Call for help</Button>
+      </section>
+      <section className="syringe" aria-labelledby="ephedrine-title">
+        <div id="ephedrine-title" className="syringe__name">Ephedrine</div>
+        <div className="syringe__meta">IV bolus · bounded high-spinal response</div>
+        <p className="syringe__remaining" role="status">
+          Accepted total: {ephedrineTotalMg.toFixed(0)} mg
+          {lastEphedrineTick === null ? '' : ' · modeled effect active'}
+        </p>
+        {pendingDose === null ? (
+          <div className="syringe__presets">
+            {[6, 12].map((doseMg) => (
+              <Button
+                key={doseMg}
+                compact
+                disabled={ephedrineTotalMg + doseMg > 30}
+                onClick={() => setPendingDose(doseMg)}
+              >
+                {doseMg} mg
+              </Button>
+            ))}
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
+            <span className="numeric">Give ephedrine {pendingDose} mg IV?</span>
+            <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+              <Button variant="primary" compact onClick={() => {
+                onEphedrine(pendingDose);
+                setPendingDose(null);
+              }}>
+                Give ephedrine
+              </Button>
+              <Button variant="ghost" compact onClick={() => setPendingDose(null)}>Cancel</Button>
+            </div>
+          </div>
+        )}
+        <p className="field__hint">
+          The listed dose band follows the source card; the response and 30 mg cap are bounded teaching behavior.
+        </p>
+      </section>
     </div>
   );
 }

@@ -275,6 +275,25 @@ describe('Requirement: Screen Reader Access To Live Physiology', () => {
     expect(summary).toContain('last energy 200 joules');
   });
 
+  it('summarizes the high-spinal teaching progression and accepted vasopressor non-visually', () => {
+    const patient = new VirtualPatient(PROFILE, createRng(1)).snapshot();
+    const summary = stateSummary(patient, {
+      alarms: [], infusions: [], invalid: new Set(),
+      ventilator: {
+        mode: 'volume-control', tidalVolumeMl: 500, respiratoryRateBpm: 12,
+        fio2: 1, delivering: true,
+      },
+      resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, crystalloidTotalMl: 500,
+        highSpinalFraction: 0.75, ephedrineTotalMg: 18,
+      },
+      showEpinephrineSupport: false,
+      showHighSpinalSupport: true,
+    });
+    expect(summary).toContain('High-spinal teaching progression: 75 percent');
+    expect(summary).toContain('Accepted ephedrine total: 18 milligrams intravenous');
+  });
+
   it('says the plethysmogram is non-pulsatile in pulseless electrical activity', () => {
     const pea = waveformDescriptions({
       rhythm: 'pea', bronchospasmSeverity: 0, airwayPatencyFraction: 1, perfusionIndex: 0.8,

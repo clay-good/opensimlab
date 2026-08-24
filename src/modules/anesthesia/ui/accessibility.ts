@@ -99,6 +99,8 @@ export function stateSummary(
     readonly resuscitation?: {
       readonly epinephrineEffectFraction: number;
       readonly epinephrineTotalMicrograms: number;
+      readonly highSpinalFraction?: number;
+      readonly ephedrineTotalMg?: number;
       readonly crystalloidTotalMl: number;
       readonly packedRedBloodCellUnits?: number;
       readonly bloodProductTotalMl?: number;
@@ -126,6 +128,7 @@ export function stateSummary(
     readonly showEpinephrineSupport?: boolean;
     readonly showHypermetabolicSupport?: boolean;
     readonly showCardiacArrestSupport?: boolean;
+    readonly showHighSpinalSupport?: boolean;
   },
 ): string {
   const lines: string[] = ['Current state.'];
@@ -186,6 +189,10 @@ export function stateSummary(
   }
   if (options.resuscitation && (options.resuscitation.packedRedBloodCellUnits ?? 0) > 0) {
     lines.push(`Accepted packed red cells: ${options.resuscitation.packedRedBloodCellUnits} units, ${(options.resuscitation.bloodProductTotalMl ?? 0).toFixed(0)} millilitres in the bounded teaching model.`);
+  }
+  if (options.resuscitation && options.showHighSpinalSupport) {
+    lines.push(`High-spinal teaching progression: ${Math.round((options.resuscitation.highSpinalFraction ?? 0) * 100)} percent.`);
+    lines.push(`Accepted ephedrine total: ${(options.resuscitation.ephedrineTotalMg ?? 0).toFixed(0)} milligrams intravenous.`);
   }
   if (options.resuscitation && options.showHypermetabolicSupport) {
     lines.push(`Accepted dantrolene total: ${(options.resuscitation.dantroleneTotalMg ?? 0).toFixed(0)} milligrams intravenous.`);

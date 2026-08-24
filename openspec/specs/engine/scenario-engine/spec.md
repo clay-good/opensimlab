@@ -164,6 +164,12 @@ The initial release SHALL ship at least twelve complete, openly licensed scenari
 - **WHEN** the bundled library is inventoried
 - **THEN** it includes at least one routine induction, one rapid-sequence induction, one difficult airway, one hemorrhage, one anaphylaxis, one malignant hyperthermia, one local anesthetic systemic toxicity, one cardiac arrest, one pediatric case, one obstetric case, one geriatric case, one obesity case, and one awareness-under-paralysis case
 
+#### Scenario: High spinal has a bounded authored initial-response pathway
+
+- **WHEN** the high-spinal scenario reaches its neuraxial event
+- **THEN** bradycardia, hypotension, reduced cardiac output, and weakening unassisted breathing progress reproducibly; **AND** the learner can call for help, deliver high inspired oxygen with active ventilation, give 250–500 mL crystalloid, and confirm a listed 6 or 12 mg IV ephedrine bolus
+- **AND** the briefing states that neuraxial dose and spread, block height, pregnancy physiology, aortocaval compression, fetal status, delivery, full vasopressor pharmacology, and individualized outcome are not modeled
+
 #### Scenario: Rare events are chosen because they are rare
 
 - **WHEN** the rationale for the crisis scenarios is reviewed

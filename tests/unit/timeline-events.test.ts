@@ -201,7 +201,8 @@ describe('every declared event type does something', () => {
     expect(EVENT_TYPES).toContain('malignant-hyperthermia');
     expect(EVENT_TYPES).toContain('difficult-airway');
     expect(EVENT_TYPES).toContain('local-anesthetic-toxicity');
-    expect(EVENT_TYPES).toHaveLength(13);
+    expect(EVENT_TYPES).toContain('high-spinal');
+    expect(EVENT_TYPES).toHaveLength(14);
   });
 });
 

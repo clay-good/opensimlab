@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 18 reports blood-bank release state. */
-export const WORKER_PROTOCOL_VERSION = 18;
+/** Bumped whenever the message shape changes incompatibly. Version 19 reports bounded ephedrine state. */
+export const WORKER_PROTOCOL_VERSION = 19;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -231,6 +231,8 @@ export interface EquipmentSnapshot {
     readonly roscAtTick?: number | null;
     /** Early high-spinal and venous-air-embolism teaching drives. */
     readonly highSpinalFraction?: number;
+    readonly ephedrineTotalMg?: number;
+    readonly lastEphedrineTick?: number | null;
     readonly venousAirEmbolismFraction?: number;
     /** Accepted quantitative neuromuscular-reversal teaching state. */
     readonly neuromuscularReversalFraction?: number;

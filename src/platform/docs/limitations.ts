@@ -697,16 +697,18 @@ export const LIMITATIONS: readonly Limitation[] = [
   },
   {
     id: 'high-spinal-injector-is-a-teaching-trajectory',
-    headline: 'The injected high-spinal pattern is a calibrated trajectory, not a block-height or obstetric model.',
-    simplification: 'A manual injection ramps one bounded drive that lowers heart rate, vascular '
+    headline: 'The modeled high-spinal pattern is a calibrated trajectory, not a block-height or obstetric model.',
+    simplification: 'A manual injection or authored event ramps one bounded drive that lowers heart rate, vascular '
       + 'tone, cardiac output, pressure, and unassisted breathing. It does not calculate neuraxial '
-      + 'dose, spread, sensory or motor level, pregnancy physiology, or patient-specific onset.',
+      + 'dose, spread, sensory or motor level, pregnancy physiology, aortocaval compression, or '
+      + 'patient-specific onset. Ephedrine changes bounded vascular tone without modeling its full '
+      + 'pharmacology, anticholinergics, or an individualized response.',
     whereItMisleads: 'Predicting the extent, speed, presentation, or outcome of a real high central '
       + 'neuraxial block from the displayed values.',
     correctUnderstanding: 'High central neuraxial block can progress rapidly to hypotension, '
       + 'bradycardia, breathing difficulty, apnea, and unconsciousness; assess the patient and '
       + 'support airway, breathing, and circulation using the applicable emergency guidance.',
-    briefIn: [],
+    briefIn: ['high-spinal-after-epidural-top-up'],
   },
   {
     id: 'venous-air-embolism-injector-is-a-teaching-trajectory',

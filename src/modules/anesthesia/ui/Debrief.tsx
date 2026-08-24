@@ -350,6 +350,10 @@ export function objectiveFindings(
     'give-arrest-epinephrine': 'vasodilation-versus-hypovolemia',
     'defibrillate-persistent-vf': 'capnogram-morphology',
     'avoid-shocking-nonshockable-rhythm': 'capnogram-morphology',
+    'call-for-high-spinal-help': 'vasodilation-versus-hypovolemia',
+    'support-high-spinal-breathing': 'capnogram-morphology',
+    'support-high-spinal-circulation': 'vasodilation-versus-hypovolemia',
+    'protect-high-spinal-oxygenation': 'preoxygenation-and-safe-apnea-time',
   };
 
   return scenario.metadata.objectives.map((objective) => {
@@ -426,6 +430,101 @@ export function objectiveFindings(
           ? 'No accepted shock was delivered to asystole or pulseless electrical activity.'
           : `${nonShockable.length} accepted shock${nonShockable.length === 1 ? ' was' : 's were'} delivered to a non-shockable rhythm and did not convert it.`,
         atTick: nonShockable[0]?.tick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
+      'call-for-high-spinal-help', 'support-high-spinal-breathing',
+      'support-high-spinal-circulation', 'protect-high-spinal-oxygenation',
+    ].includes(objective.id)) {
+      const onset = scenario.timeline.find((event) => event.type === 'high-spinal')?.atTick;
+      if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'The session ended before the modeled high-spinal event.',
+        } satisfies ObjectiveFinding;
+      }
+      const windowEnd = onset + 60 * TICKS_PER_SECOND;
+      const help = log.find((entry) => entry.eventId.startsWith('airway-help-requested-')
+        && entry.data?.context === 'high-spinal');
+
+      if (objective.id === 'call-for-high-spinal-help') {
+        const delay = help ? (help.tick - onset) / TICKS_PER_SECOND : null;
+        return {
+          ...base,
+          outcome: delay === null ? 'not-met' : delay <= 30 ? 'met' : delay <= 60 ? 'partly-met' : 'not-met',
+          finding: delay === null
+            ? 'No accepted high-spinal help request was recorded.'
+            : `Help was requested ${delay.toFixed(0)} seconds after the modeled event. Team arrival, communication, and performance are not simulated.`,
+          atTick: help?.tick ?? onset,
+        } satisfies ObjectiveFinding;
+      }
+
+      if (objective.id === 'support-high-spinal-breathing') {
+        let settings = {
+          fio2: scenario.equipment.ventilator.fio2,
+          delivering: scenario.equipment.ventilator.delivering,
+          tidalVolumeMl: scenario.equipment.ventilator.tidalVolumeMl,
+          respiratoryRateBpm: scenario.equipment.ventilator.respiratoryRateBpm,
+        };
+        let achievedAt: number | null = settings.fio2 >= 0.95 && settings.delivering ? onset : null;
+        for (const action of actions.filter((entry) => entry.type === 'ventilator'
+          && entry.tick >= onset && entry.tick <= windowEnd).sort((a, b) => a.tick - b.tick)) {
+          const numeric = (value: unknown, current: number, min: number, max: number) => {
+            const requested = Number(value);
+            return value === undefined || !Number.isFinite(requested)
+              ? current : Math.min(max, Math.max(min, requested));
+          };
+          settings = {
+            fio2: numeric(action.payload.fio2, settings.fio2, 0.21, 1),
+            delivering: typeof action.payload.delivering === 'boolean'
+              ? action.payload.delivering : settings.delivering,
+            tidalVolumeMl: numeric(action.payload.tidalVolumeMl, settings.tidalVolumeMl, 0, 1500),
+            respiratoryRateBpm: numeric(
+              action.payload.respiratoryRateBpm, settings.respiratoryRateBpm, 0, 60,
+            ),
+          };
+          if (achievedAt === null && settings.fio2 >= 0.95 && settings.delivering
+            && settings.tidalVolumeMl > 0 && settings.respiratoryRateBpm > 0) {
+            achievedAt = action.tick;
+          }
+        }
+        const delay = achievedAt === null ? null : (achievedAt - onset) / TICKS_PER_SECOND;
+        return {
+          ...base,
+          outcome: delay === null ? 'not-met' : delay <= 60 ? 'met' : 'not-met',
+          finding: delay === null
+            ? 'At least 95% inspired oxygen and active breath delivery were not both in effect within 60 seconds.'
+            : `At least 95% inspired oxygen with active breath delivery was established ${delay.toFixed(0)} seconds after the modeled event. This assesses screen settings, not mask seal or airway skill.`,
+          atTick: achievedAt ?? windowEnd,
+        } satisfies ObjectiveFinding;
+      }
+
+      if (objective.id === 'support-high-spinal-circulation') {
+        const fluid = log.find((entry) => entry.eventId.startsWith('fluid-')
+          && entry.tick >= onset && entry.tick <= windowEnd
+          && Number(entry.data?.volumeMl) >= 250 && Number(entry.data?.volumeMl) <= 500);
+        const ephedrine = log.find((entry) => entry.eventId.startsWith('ephedrine-iv-')
+          && entry.tick >= onset && entry.tick <= windowEnd);
+        return {
+          ...base,
+          outcome: fluid && ephedrine ? 'met' : fluid || ephedrine ? 'partly-met' : 'not-met',
+          finding: `${fluid ? `${Number(fluid.data?.volumeMl).toFixed(0)} mL crystalloid was accepted within 60 seconds.` : 'No 250–500 mL crystalloid bolus was accepted within 60 seconds.'} ${ephedrine ? `${Number(ephedrine.data?.doseMg).toFixed(0)} mg IV ephedrine was accepted within 60 seconds.` : 'No listed IV ephedrine bolus was accepted within 60 seconds.'} The response is a bounded teaching calibration.`,
+          atTick: Math.max(fluid?.tick ?? onset, ephedrine?.tick ?? onset),
+        } satisfies ObjectiveFinding;
+      }
+
+      const postOnset = history.filter((entry) => entry.tick >= onset);
+      const lowest = postOnset.length > 0
+        ? Math.min(...postOnset.map((entry) => entry.state.spo2Percent ?? 100)) : null;
+      return {
+        ...base,
+        outcome: lowest === null ? 'not-exercised'
+          : lowest >= 92 ? 'met' : lowest >= 88 ? 'partly-met' : 'not-met',
+        finding: lowest === null
+          ? 'No post-event oxygen-saturation trace was available.'
+          : `The lowest post-event oxygen saturation was ${lowest.toFixed(0)}%.`,
+        atTick: postOnset.at(-1)?.tick ?? onset,
       } satisfies ObjectiveFinding;
     }
 

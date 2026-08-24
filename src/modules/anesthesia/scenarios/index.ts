@@ -23,6 +23,7 @@ import { ROUTINE_PEDIATRIC_IV_INDUCTION } from './routine-pediatric-iv-induction
 import { DIFFICULT_AIRWAY_SUPRAGLOTTIC_RESCUE } from './difficult-airway-supraglottic-rescue';
 import { LOCAL_ANESTHETIC_SYSTEMIC_TOXICITY } from './local-anesthetic-systemic-toxicity';
 import { PERSISTENT_VF_CARDIAC_ARREST } from './persistent-vf-cardiac-arrest';
+import { HIGH_SPINAL_AFTER_EPIDURAL_TOP_UP } from './high-spinal-after-epidural-top-up';
 
 export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_INDUCTION,
@@ -39,6 +40,7 @@ export const SCENARIOS: readonly Scenario[] = [
   DIFFICULT_AIRWAY_SUPRAGLOTTIC_RESCUE,
   LOCAL_ANESTHETIC_SYSTEMIC_TOXICITY,
   PERSISTENT_VF_CARDIAC_ARREST,
+  HIGH_SPINAL_AFTER_EPIDURAL_TOP_UP,
 ];
 
 /** The scenario a learner meets first. */

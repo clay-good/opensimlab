@@ -38,7 +38,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.18';
+export const ENGINE_VERSION = '0.1.0-alpha.19';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -251,6 +251,8 @@ export class AnesthesiaEngine {
   private injectedBronchospasmSeverity = 0;
   private highSpinalSeverity = 0;
   private highSpinalFraction = 0;
+  private ephedrineTotalMg = 0;
+  private lastEphedrineTick: number | null = null;
   private venousAirEmbolismSeverity = 0;
   private venousAirEmbolismFraction = 0;
   /** Bounded teaching opposition to the current rocuronium effect-site concentration. */
@@ -445,17 +447,21 @@ export class AnesthesiaEngine {
         break;
       }
       case 'call-for-help': {
-        if (action.payload.context !== 'airway' || this.helpRequestedAtTick !== null) {
+        const context = action.payload.context;
+        const supported = context === 'airway' || context === 'high-spinal';
+        if (!supported || this.helpRequestedAtTick !== null) {
           this.log('warning', 'airway', `airway-help-refused-${this.currentTick}`,
-            action.payload.context !== 'airway'
-              ? 'Airway help requires the bounded airway context. No request was recorded.'
-              : 'Airway help has already been requested. No duplicate request was recorded.');
+            !supported
+              ? 'Help requires a supported airway or high-spinal context. No request was recorded.'
+              : 'Help has already been requested. No duplicate request was recorded.');
           break;
         }
         this.helpRequestedAtTick = this.currentTick;
         this.log('warning', 'airway', `airway-help-requested-${this.currentTick}`,
-          'Additional airway help requested. Team arrival and provider skill are not modeled.',
-          { context: 'airway' });
+          context === 'high-spinal'
+            ? 'High-spinal help requested. Team arrival, communication, and provider actions are not modeled.'
+            : 'Additional airway help requested. Team arrival and provider skill are not modeled.',
+          { context });
         break;
       }
       case 'airway-device': {
@@ -528,6 +534,27 @@ export class AnesthesiaEngine {
         this.vasopressorEffect = Math.min(this.vasopressorEffect + effect, 1);
         this.log('info', 'drug', `vasopressor-${this.currentTick}`,
           'Vasopressor given. Response from an Open Sim Lab teaching model, not a published population model.');
+        break;
+      }
+      case 'ephedrine': {
+        const doseMg = AnesthesiaEngine.finiteAmount(action.payload.doseMg);
+        const active = this.highSpinalSeverity > 0 || this.highSpinalFraction > 0.01;
+        if (action.payload.route !== 'iv' || doseMg === null
+          || ![6, 12].includes(doseMg) || this.ephedrineTotalMg + doseMg > 30 || !active) {
+          this.log('warning', 'drug', `bad-ephedrine-${this.currentTick}`,
+            !active
+              ? 'The bounded ephedrine action is available only after the modeled high-spinal event.'
+              : 'Ephedrine requires a listed 6 or 12 mg IV bolus and no more than 30 mg cumulatively in this teaching case. Nothing was given.');
+          break;
+        }
+        this.ephedrineTotalMg += doseMg;
+        this.lastEphedrineTick = this.currentTick;
+        this.vasopressorEffect = clamp(this.vasopressorEffect + doseMg / 12, 0, 1);
+        this.log('warning', 'drug', `ephedrine-iv-${this.currentTick}`,
+          `Ephedrine ${doseMg} mg IV given. The pressure response is a bounded teaching effect, not an individual prediction.`, {
+            drugId: 'ephedrine', route: 'iv', doseMg,
+            cumulativeDoseMg: this.ephedrineTotalMg, teachingModel: true,
+          });
         break;
       }
       case 'epinephrine': {
@@ -1292,6 +1319,19 @@ export class AnesthesiaEngine {
         return;
       }
 
+      case 'high-spinal': {
+        const severity = event.value;
+        if (event.target !== 'neuraxial-local-anesthetic' || typeof severity !== 'number'
+          || !Number.isFinite(severity) || severity < 0 || severity > 1) {
+          this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" must identify neuraxial-local-anesthetic exposure and a finite severity from 0 to 1, so the event had no effect.`);
+          return;
+        }
+        this.highSpinalSeverity = Math.max(this.highSpinalSeverity, severity);
+        this.lastExposure = { agentId: 'neuraxial-local-anesthetic', tick: this.currentTick };
+        return;
+      }
+
       case 'difficult-airway': {
         const deliveryFraction = event.value;
         if (event.target !== 'failed-intubation-with-marginal-mask'
@@ -1839,6 +1879,8 @@ export class AnesthesiaEngine {
         lastDefibrillationEnergyJ: this.lastDefibrillationEnergyJ,
         roscAtTick: this.roscAtTick,
         highSpinalFraction: this.highSpinalFraction,
+        ephedrineTotalMg: this.ephedrineTotalMg,
+        lastEphedrineTick: this.lastEphedrineTick,
         venousAirEmbolismFraction: this.venousAirEmbolismFraction,
         neuromuscularReversalFraction: this.neuromuscularReversalFraction,
         postTetanicCount: this.postTetanicCount,

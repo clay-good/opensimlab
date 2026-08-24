@@ -80,7 +80,8 @@ Reviewers run the routine induction themselves before answering.
 | B29 | Seizure and cardiovascular response after oxygen/ventilation, benzodiazepine suppression, and initial 20% lipid | | |
 | B30 | Pulseless VF transition and bounded low-flow state while fixed-rate modeled compressions are active | | |
 | B31 | Rhythm and monitor transition after accepted 1 mg IV epinephrine and the declared 200 J biphasic shock | | |
-| B32 | Progressive bradycardia, hypotension, reduced output, and impaired unassisted breathing after manual high-spinal injection | | |
+| B32 | Progressive bradycardia, hypotension, reduced output, and impaired unassisted breathing in the authored high-spinal scenario and after manual injection | | |
+| B32a | Pressure and oxygenation response after help escalation, 250–500 mL crystalloid, high inspired oxygen with active ventilation, and 6–12 mg IV ephedrine | | |
 | B33 | Abrupt end-tidal carbon-dioxide, pressure, output, and saturation change after manual venous-air-embolism injection, without a directly imposed respiratory-rate change | | |
 | B34 | Quantitative recovery after depth-matched 2/4 mg/kg sugammadex, and neostigmine with an antimuscarinic only during minimal block | | |
 | B35 | Overall: does this patient behave like a patient? | | |
@@ -140,8 +141,9 @@ So that reviewers spend their attention on what this review is for:
   at the declared 200 J setting is deterministic and device-specific, not an outcome prediction.
   Compression quality, pad contact and safety, reversible causes, refractory or recurrent arrest,
   teams, antiarrhythmics, and post-cardiac-arrest care are absent.
-- Manual high-spinal injection uses a bounded teaching calibration, not neuraxial dose, spread,
-  block-height, obstetric-physiology, or treatment simulation. Manual venous-air-embolism injection
+- Authored and manually injected high-spinal events use a bounded teaching calibration, not neuraxial
+  dose, spread, block-height, obstetric physiology, aortocaval compression, or individualized treatment
+  simulation. The ephedrine action applies a bounded vascular-tone effect. Manual venous-air-embolism injection
   does not model gas volume, entry site, diagnosis, treatment, paradoxical or cerebral embolism,
   or individualized outcome.
 - Neuromuscular reversal is a bounded teaching effect. The PTC is auto-derived, and reversal dose pharmacology, emergence,

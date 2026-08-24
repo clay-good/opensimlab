@@ -148,18 +148,19 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
   it('shows every matching rescue control after a manual injection into an ordinary scenario', () => {
     expect(crisisResponseAvailability(ROUTINE_INDUCTION, [
       'anaphylaxis', 'malignant-hyperthermia',
-      'local-anesthetic-systemic-toxicity', 'cardiac-arrest-shockable',
+      'local-anesthetic-systemic-toxicity', 'cardiac-arrest-shockable', 'high-spinal',
     ])).toEqual({
       hasAnaphylaxisResponse: true,
       hasHypermetabolicResponse: true,
       hasLastResponse: true,
       hasCardiacArrestResponse: true,
+      hasHighSpinalResponse: true,
     });
     renderCockpit(UNITED_STATES, vi.fn(), {
       scenario: ROUTINE_INDUCTION,
       injectedCrisisIds: [
         'anaphylaxis', 'malignant-hyperthermia',
-        'local-anesthetic-systemic-toxicity', 'cardiac-arrest-shockable',
+        'local-anesthetic-systemic-toxicity', 'cardiac-arrest-shockable', 'high-spinal',
       ],
       resuscitation: {
         epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
@@ -170,6 +171,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
         chestCompressionSeconds: 0, compressionPerfusionFraction: 0,
         arrestEpinephrineTotalMg: 0, lastArrestEpinephrineTick: null,
         defibrillationShockCount: 0, lastDefibrillationEnergyJ: null, roscAtTick: null,
+        highSpinalFraction: 0.8, ephedrineTotalMg: 12, lastEphedrineTick: 900,
       },
     });
     act(() => button('Crisis response')!.click());
@@ -177,6 +179,35 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
     expect(container.textContent).toContain('Prepare 2.5 mg/kg IV');
     expect(container.textContent).toContain('Start compressions');
     expect(container.textContent).toContain('Epinephrine');
+    expect(container.textContent).toContain('High spinal response');
+  });
+
+  it('requires confirmation for the bounded high-spinal response actions', () => {
+    const onEphedrine = vi.fn();
+    const onHighSpinalHelp = vi.fn();
+    renderCockpit(UNITED_STATES, vi.fn(), {
+      scenario: ROUTINE_INDUCTION,
+      injectedCrisisIds: ['high-spinal'],
+      resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+        lastEpinephrineTick: null, crystalloidTotalMl: 0,
+        dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
+        lastDantroleneTick: null, activeCooling: false,
+        highSpinalFraction: 0.5, ephedrineTotalMg: 6, lastEphedrineTick: 700,
+      },
+      onEphedrine,
+      onHighSpinalHelp,
+    });
+    act(() => button('Crisis response')!.click());
+
+    expect(container.textContent).toContain('Modeled progression 50%');
+    act(() => button('Call for help')!.click());
+    expect(onHighSpinalHelp).toHaveBeenCalledOnce();
+    act(() => button('12 mg')!.click());
+    expect(onEphedrine).not.toHaveBeenCalled();
+    expect(container.textContent).toContain('Give ephedrine 12 mg IV?');
+    act(() => button('Give ephedrine')!.click());
+    expect(onEphedrine).toHaveBeenCalledWith(12);
   });
 
   it('offers only bounded presets, no hostile free-dose or route field, inside the phone scroll area', () => {
