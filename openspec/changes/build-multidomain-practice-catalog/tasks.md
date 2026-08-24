@@ -12,7 +12,7 @@ credited toward the catalog until every item in the completion contract passes.
   delivery, module, curriculum, pedagogy, safety, adoption, and sustainability specifications.
 - [x] Publish a machine-readable scenario completion schema and validate all existing anesthesia
   scenarios against it without changing their behavior.
-- [ ] Publish machine-readable training-value, authored-defaults, scenario-hazard, and state-space
+- [x] Publish machine-readable training-value, authored-defaults, scenario-hazard, and state-space
   verification schemas; require all four before a scenario counts as playable.
 - [ ] Add architecture tests rejecting standalone calculators, scores, classifications,
   conversions, lookups, checklist answers, documentation generators, real-patient entry, and public

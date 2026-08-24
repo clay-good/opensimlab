@@ -196,6 +196,11 @@ describe('Requirement: Everything The Offline Claim Names Is Actually Precached'
   it('precaches the public completion schema and current anesthesia audit', () => {
     expect(precache).toContain('/catalog/scenario-completion.schema.json');
     expect(precache).toContain('/catalog/anesthesia-completion-audit.json');
+    for (const artifact of [
+      'training-value.schema.json', 'authored-defaults.schema.json',
+      'scenario-hazard.schema.json', 'state-space-verification.schema.json',
+      'anesthesia-quality-audit.json',
+    ]) expect(precache).toContain(`/catalog/${artifact}`);
   });
 
   it('changes the cache version when bytes at a stable font URL change', () => {

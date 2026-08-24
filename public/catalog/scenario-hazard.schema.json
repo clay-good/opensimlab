@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opensimlab.com/catalog/scenario-hazard.schema.json",
+  "title": "Open Sim Lab scenario-hazard record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "scenarioId",
+    "contentVersion",
+    "hazards"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "scenarioId": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "contentVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "hazards": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "allOf": [
+        {
+          "contains": {
+            "properties": {
+              "category": {
+                "const": "premature-closure"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          }
+        },
+        {
+          "contains": {
+            "properties": {
+              "category": {
+                "const": "cue-leakage"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          }
+        },
+        {
+          "contains": {
+            "properties": {
+              "category": {
+                "const": "negative-transfer"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          }
+        },
+        {
+          "contains": {
+            "properties": {
+              "category": {
+                "const": "unsupported-precision"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          }
+        },
+        {
+          "contains": {
+            "properties": {
+              "category": {
+                "const": "omitted-alternatives"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          }
+        },
+        {
+          "contains": {
+            "properties": {
+              "category": {
+                "const": "invalid-actions"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          }
+        },
+        {
+          "contains": {
+            "properties": {
+              "category": {
+                "const": "model-boundary-crossing"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          }
+        },
+        {
+          "contains": {
+            "properties": {
+              "category": {
+                "const": "catastrophic-outcome-framing"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          }
+        },
+        {
+          "contains": {
+            "properties": {
+              "category": {
+                "const": "accessibility-misunderstanding"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          }
+        },
+        {
+          "contains": {
+            "properties": {
+              "category": {
+                "const": "regional-variation"
+              }
+            },
+            "required": [
+              "category"
+            ]
+          }
+        }
+      ],
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "category",
+          "description",
+          "disposition",
+          "evidence"
+        ],
+        "properties": {
+          "category": {
+            "enum": [
+              "premature-closure",
+              "cue-leakage",
+              "negative-transfer",
+              "unsupported-precision",
+              "omitted-alternatives",
+              "invalid-actions",
+              "model-boundary-crossing",
+              "catastrophic-outcome-framing",
+              "accessibility-misunderstanding",
+              "regional-variation"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "disposition": {
+            "enum": [
+              "mitigated",
+              "limited",
+              "tested",
+              "accepted-with-rationale"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    }
+  }
+}

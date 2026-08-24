@@ -240,6 +240,11 @@ contract each existing scenario satisfies and, just as importantly, which eviden
 missing. Structurally valid does not mean complete; incomplete scenarios are never counted as
 complete by trusting a card or a boolean.
 
+The same catalog directory publishes training-value, authored-defaults, scenario-hazard, and
+state-space-verification schemas plus `/catalog/anesthesia-quality-audit.json`. A scenario is
+playable only when its completion contract and all four version-bound quality records pass. The
+current audit honestly reports 0 playable scenarios while those records are still being authored.
+
 Architecture tests keep tutor rules outside engine and session mutation paths. The same boundary
 also rejects any reporting code that reads browser storage, transcripts, reflections, or progress;
 reporting must receive an explicit bounded projection when it is implemented.

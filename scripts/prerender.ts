@@ -245,6 +245,11 @@ function main(): void {
     const machineReadableCatalog = [
       '/catalog/scenario-completion.schema.json',
       '/catalog/anesthesia-completion-audit.json',
+      '/catalog/training-value.schema.json',
+      '/catalog/authored-defaults.schema.json',
+      '/catalog/scenario-hazard.schema.json',
+      '/catalog/state-space-verification.schema.json',
+      '/catalog/anesthesia-quality-audit.json',
     ];
     const precache = [
       '/', '/index.html', '/manifest.webmanifest',
