@@ -38,6 +38,8 @@ import { requireSource } from '@platform/docs/sources';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import type { SonificationEngine } from '@platform/audio/sonification';
 import { ManualCrisisInjector } from './ManualCrisisInjector';
+import { MaturityMarker } from '@platform/governance/MaturityMarker';
+import type { ContentMaturity, MaturitySubjectKind } from '@platform/catalog/maturity';
 
 export interface CockpitProps {
   readonly scenario: Scenario;
@@ -409,6 +411,11 @@ export function Cockpit({
     ...(actionHeight.size !== null ? { '--action-cockpit-height': `${actionHeight.size}px` } : {}),
     ...(analysisWidth.size !== null ? { '--analysis-fraction': `${analysisWidth.size}px` } : {}),
   } as CSSProperties;
+  const resetScenario = () => {
+    if (confirm('Reset the scenario? The clock returns to zero, the patient returns to baseline, the log is cleared, and any running infusion stops.')) {
+      session.resetSession();
+    }
+  };
 
   return (
     <div
@@ -434,7 +441,7 @@ export function Cockpit({
           onPlay={session.play}
           onPause={session.pause}
           onStep={session.singleStep}
-          onReset={() => { if (confirm('Reset the scenario? The clock returns to zero, the patient returns to baseline, the log is cleared, and any running infusion stops.')) session.resetSession(); }}
+          onReset={resetScenario}
           onSpeed={(speed: SpeedMultiplier) => session.setSpeed(speed)}
           onOverflow={() => setShortcutsOpen(true)}
         />
@@ -638,7 +645,13 @@ export function Cockpit({
             ))}
             <p className="reading__aside">{getExplainer(explainerId).diagram.caption}</p>
             <p className="reading__aside">Reflects: {getExplainer(explainerId).reflects}</p>
-            <UnreviewedMarker review={getExplainer(explainerId).review} />
+            <UnreviewedMarker
+              status={getExplainer(explainerId).maturity}
+              subjectKind="explanation"
+              subjectId={getExplainer(explainerId).id}
+              contentVersion={getExplainer(explainerId).review.contentVersion}
+              review={getExplainer(explainerId).review}
+            />
             {reviewMode && (
               <FlagControl
                 itemKey={`explainer:${explainerId}`}
@@ -660,10 +673,8 @@ export function Cockpit({
 
       <Modal open={shortcutsOpen} title="More options" onClose={() => setShortcutsOpen(false)}
         footer={<Button onClick={() => setShortcutsOpen(false)}>Close</Button>}>
-        {/* The speed selector and the single-step control leave the status bar
-            at a phone width under the sacrifice order. Every removal has to stay
-            reachable from the overflow, so both are here in full whatever the
-            width. */}
+        {/* Speed, step, and reset leave the status bar under its phone sacrifice
+            order. Every removal stays reachable here at every width. */}
         <div className="overflow-menu__speed">
           <SegmentedControl<SpeedMultiplier>
             label="Simulation speed"
@@ -677,6 +688,7 @@ export function Cockpit({
           />
           <p className="field__hint">{scenario.patient.procedure}</p>
           <Button onClick={session.singleStep}>Advance one simulated second</Button>
+          <Button onClick={resetScenario}>Reset the scenario</Button>
         </div>
         <div className="overflow-menu__sound">
           <Toggle
@@ -775,7 +787,13 @@ function DrugCardBody({ drugId, reviewMode }: { drugId: string; reviewMode: bool
       <ul>{card.contraindications.map((item) => <li key={item}>{item}</li>)}</ul>
       <h3>What to watch on the monitor</h3>
       <p>{card.watchFor}</p>
-      <UnreviewedMarker review={card.review} />
+      <UnreviewedMarker
+        status={card.maturity}
+        subjectKind="drug-card"
+        subjectId={card.drugId}
+        contentVersion={card.review.contentVersion}
+        review={card.review}
+      />
       {reviewMode && (
         <FlagControl
           itemKey={`drug-card:${card.drugId}`}
@@ -796,18 +814,36 @@ function DrugCardBody({ drugId, reviewMode }: { drugId: string; reviewMode: bool
  * scroll past, and it does not tell a reader WHICH claim in front of them nobody
  * checked. This sits at the bottom of the specific claim.
  */
-export function UnreviewedMarker({ review }: { review: { reviewer: string; reviewedOn: string } }) {
-  if (!isUnreviewed(review)) {
-    return (
-      <p className="reading__aside">
-        Reviewed by {review.reviewer} on {review.reviewedOn}.
-      </p>
-    );
-  }
-  return (
+export interface UnreviewedMarkerProps {
+  readonly status: ContentMaturity;
+  readonly subjectKind: MaturitySubjectKind;
+  readonly subjectId: string;
+  readonly contentVersion: string;
+  readonly review: { readonly reviewer: string; readonly reviewedOn: string };
+}
+
+export function UnreviewedMarker({
+  status, subjectKind, subjectId, contentVersion, review,
+}: UnreviewedMarkerProps) {
+  const reviewNotice = isUnreviewed(review) ? (
     <p className="reading__aside" data-unreviewed="true">
       <strong>Not clinically reviewed.</strong> {UNREVIEWED_NOTICE}
     </p>
+  ) : (
+      <p className="reading__aside">
+        Reviewed by {review.reviewer} on {review.reviewedOn}.
+      </p>
+  );
+  return (
+    <>
+      <MaturityMarker
+        status={status}
+        subjectKind={subjectKind}
+        subjectId={subjectId}
+        contentVersion={contentVersion}
+      />
+      {reviewNotice}
+    </>
   );
 }
 

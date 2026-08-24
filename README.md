@@ -259,7 +259,9 @@ scenarios, explainers, drug cards, and practice-region profiles. The current rec
 no source check, clinical review, or endorsement is inferred.
 The shared publication policy separately names every preview gate and reserves reviewed-only claims
 for exact-version `clinically_reviewed` or `institution_endorsed` records.
-Scenario cards and briefings link their text-and-icon maturity marker to that exact public record.
+Scenario cards, briefings, live sessions, debriefs, explainers, drug cards, and practice-region
+context link their text-and-icon maturity marker to that exact public record. Live-session links
+open the offline catalog in a new tab so checking the evidence never interrupts the simulation.
 Release commands now expose separate preview and reviewed channels; neither has an unsigned-alpha
 bypass, and missing exact-version maturity records fail closed.
 

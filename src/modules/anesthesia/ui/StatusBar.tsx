@@ -11,6 +11,7 @@ import { SPEED_MULTIPLIERS, type SpeedMultiplier } from '@platform/clock/simulat
 import { IconButton, SegmentedControl } from '@platform/ui';
 import { PERSISTENT_MARKER_TEXT } from '@platform/safety/not-for-clinical-use';
 import type { Scenario } from '@anesthesia/engine';
+import { MaturityMarker } from '@platform/governance/MaturityMarker';
 
 export interface StatusBarProps {
   readonly scenario: Scenario;
@@ -48,6 +49,14 @@ export function StatusBar({
         <span className="status-bar__marker-short" aria-hidden="true">Simulator</span>
       </span>
 
+      <MaturityMarker
+        compact
+        status={scenario.metadata.maturity}
+        subjectKind="scenario"
+        subjectId={scenario.metadata.id}
+        contentVersion={scenario.metadata.version}
+      />
+
       <span className="status-bar__clock numeric" aria-label={`Elapsed simulated time ${elapsed}`}>
         {elapsed}
       </span>
@@ -56,13 +65,11 @@ export function StatusBar({
         {transport === 'running'
           ? <IconButton label="Pause" onClick={onPause}>⏸</IconButton>
           : <IconButton label="Play" onClick={onPlay}>▶</IconButton>}
-        {/* The single-step control leaves the bar at a phone width. It is the
-            least useful of the three on a touch screen and the only one that
-            makes the row overflow on a 320 px display — where it took the
-            overflow menu off the end of the bar with it, which is worse than
-            losing the step itself. It reappears in the overflow menu. */}
+        {/* Step and reset leave the bar as phone space tightens. Both remain in
+            More options; preserving that gateway is more useful than clipping
+            it to duplicate secondary controls in the bar. */}
         <IconButton className="status-bar__step" label="Advance one simulated second" onClick={onStep}>⏭</IconButton>
-        <IconButton label="Reset the scenario" onClick={onReset}>↺</IconButton>
+        <IconButton className="status-bar__reset" label="Reset the scenario" onClick={onReset}>↺</IconButton>
       </div>
 
       <SegmentedControl<SpeedMultiplier>

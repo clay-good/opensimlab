@@ -297,6 +297,7 @@ textarea.field__input {
 .maturity-marker:hover { border-color: var(--text-secondary); color: var(--text-primary); }
 .maturity-marker:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 .maturity-marker__icon { color: var(--text-primary); font-size: 1.1em; }
+.maturity-marker--compact { gap: var(--space-1); padding: 2px var(--space-2); }
 .maturity-marker[data-maturity='preview'],
 .maturity-marker[data-maturity='source_checked'] { border-style: dashed; }
 

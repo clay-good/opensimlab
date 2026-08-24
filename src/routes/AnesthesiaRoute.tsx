@@ -338,6 +338,7 @@ function ScenarioIndex() {
             <span className="badge">{entry.metadata.difficulty}</span>
             <MaturityMarker
               status={entry.metadata.maturity}
+              subjectKind="scenario"
               subjectId={entry.metadata.id}
               contentVersion={entry.metadata.version}
             />

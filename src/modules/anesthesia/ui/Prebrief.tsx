@@ -96,6 +96,13 @@ export function Prebrief({ scenario, region, onStart, onWatch, guidance, onGuida
             ? 'Target-controlled infusion is a first-class control here.'
             : 'Manual weight-based infusion is the default here.'}
         </p>
+        <MaturityMarker
+          compact
+          status={region.maturity}
+          subjectKind="practice-region"
+          subjectId={region.id}
+          contentVersion={region.version}
+        />
       </section>
 
       {/* Sentences from the register, not the ids the scenario stores. This
@@ -143,6 +150,7 @@ export function Prebrief({ scenario, region, onStart, onWatch, guidance, onGuida
 
       <MaturityMarker
         status={scenario.metadata.maturity}
+        subjectKind="scenario"
         subjectId={scenario.metadata.id}
         contentVersion={scenario.metadata.version}
       />

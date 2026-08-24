@@ -80,6 +80,7 @@ function ScenarioMarkup({ path }: { path: string }) {
         <h1>{metadata.title}</h1>
         <MaturityMarker
           status={metadata.maturity}
+          subjectKind="scenario"
           subjectId={metadata.id}
           contentVersion={metadata.version}
         />

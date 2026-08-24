@@ -22,6 +22,7 @@ import { evaluateCounterfactual, type ReplayOptions } from '@anesthesia/debrief/
 import { EXPLAINERS } from '@anesthesia/content/explainers';
 import { getFluid, MAX_FLUID_BOLUS_ML } from '@anesthesia/content/fluids';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
+import { MaturityMarker } from '@platform/governance/MaturityMarker';
 
 export interface DebriefProps {
   readonly scenario: Scenario;
@@ -98,6 +99,12 @@ export function Debrief(props: DebriefProps) {
       <a className="skip-link" href="#main">Skip to main content</a>
       <main className="reading" id="main">
       <h1>Debrief</h1>
+      <MaturityMarker
+        status={props.scenario.metadata.maturity}
+        subjectKind="scenario"
+        subjectId={props.scenario.metadata.id}
+        contentVersion={props.scenario.metadata.version}
+      />
       <nav className="phase-nav" aria-label="Debrief phases">
         {PEARLS_PHASES.map((entry, index) => (
           <Button

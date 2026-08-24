@@ -135,6 +135,7 @@
   padding: 2px var(--space-2);
   white-space: nowrap;
 }
+.status-bar > .maturity-marker { flex: 0 0 auto; }
 
 /* --- Monitor region ------------------------------------------------------- */
 .monitor {
@@ -380,13 +381,13 @@
    * it belongs to. Only the depth tile carries one. */
   .monitor__tiles .vital-tile__value-row > .badge { flex-basis: 100%; }
   /* The sacrifice order reaches `patient-summary-detail` here. At a phone width
-   * the whole patient summary and the speed multipliers leave the bar, and the
-   * clock steps down a size, so the transport controls, the clock and the
-   * simulator marker all fit inside 360 px without the bar becoming a sideways
-   * scroll. Both removals stay reachable from the overflow menu. */
+   * the patient summary, speed multipliers, step, and reset leave the bar, and
+   * the clock steps down a size. Every removed control stays in More options,
+   * whose reachability matters more than duplicating a secondary action. */
   .status-bar { gap: var(--space-1); padding-inline: var(--space-1); overflow-x: clip; }
   /* The marker drops its chip so it costs its text and nothing more. */
   .status-bar__marker { border: 0; padding: 0; }
+  .status-bar > .maturity-marker { border: 0; padding: 0; }
   .status-bar__patient { display: none; }
   .status-bar .segmented { display: none; }
   /* The simulator marker never leaves — it is a safety requirement, not chrome —
@@ -394,6 +395,7 @@
   .status-bar__marker-long { display: none; }
   .status-bar__marker-short { display: inline; }
   .status-bar__clock { font: var(--type-title); letter-spacing: var(--type-title-tracking); flex: 0 0 auto; }
+  .status-bar__reset { display: none; }
 
   /* The tray clears the floating action buttons, which sit over it. */
   .cockpit--actions-open .actions__tray { padding-block-end: var(--space-7); }
@@ -420,12 +422,8 @@
   }
 }
 
-/* The last step in the sacrifice order, and the narrowest. Marker, clock, three
- * transport controls and the overflow button need 350px; a 320px display has
- * 311, so the last thing in the row — the overflow button itself — was clipped
- * off the end, and with it the speed selector and the sound toggle became
- * unreachable. Dropping the single step buys 48px. It is the least useful of
- * the three on a touch screen, and it reappears in the overflow menu. */
+/* The last step in the sacrifice order. At the narrowest width, step also moves
+ * into More options so the gateway itself cannot be clipped. */
 @media (max-width: 400px) {
   .status-bar__step { display: none; }
 }

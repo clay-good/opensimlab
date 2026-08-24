@@ -360,6 +360,14 @@ describe('Requirement: Status Bar Contents', () => {
     expect(markup).toContain('not for clinical use');
   });
 
+  it('keeps the exact maturity record reachable without leaving the live session', () => {
+    expect(markup).toContain('Draft');
+    expect(markup).toContain(
+      '/catalog/anesthesia-maturity.json#scenario:routine-induction@0.1.0',
+    );
+    expect(markup).toContain('target="_blank"');
+  });
+
   it('offers the transport controls and the speed selector', () => {
     expect(markup).toContain('aria-label="Transport controls"');
     expect(markup).toContain('aria-label="Simulation speed"');
@@ -407,14 +415,18 @@ describe('Requirement: Reflow To A Phone Without Sideways Scrolling', () => {
     // The simulator marker is a safety requirement, not chrome. It stays, in a
     // short form that is complete rather than an ellipsis.
     expect(cockpitCss).toContain('.status-bar__marker-short { display: inline; }');
+    expect(cockpitCss).toContain('.status-bar > .maturity-marker { border: 0; padding: 0; }');
+    expect(cockpitCss).toContain('.status-bar__reset { display: none; }');
   });
 
   it('Scenario: everything the status bar drops stays reachable from the overflow', () => {
     const cockpit = readFileSync(join(root, 'src/modules/anesthesia/ui/Cockpit.tsx'), 'utf8');
     const overflow = cockpit.slice(cockpit.indexOf('open={shortcutsOpen}'));
-    // The speed selector and the procedure name both reappear in the overflow.
+    // The speed selector, procedure name, step, and reset all reappear in the overflow.
     expect(overflow).toContain('SPEED_MULTIPLIERS');
     expect(overflow).toContain('scenario.patient.procedure');
+    expect(overflow).toContain('session.singleStep');
+    expect(overflow).toContain('Reset the scenario');
   });
 });
 

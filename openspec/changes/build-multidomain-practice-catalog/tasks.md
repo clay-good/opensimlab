@@ -40,10 +40,11 @@ credited toward the catalog until every item in the completion contract passes.
   `institution_endorsed`, and `withdrawn` records with exact content-version binding.
 - [ ] Replace unsigned-content exclusion with preview publication rules and persistent honest labels.
   The shared policy now names every preview gate and all six honest labels; scenario metadata,
-  catalog cards, no-script briefings, and interactive prebriefs use the exact-version record.
-  Preview and reviewed release channels now fail closed against those records. Live-session,
-  debrief, source, and non-scenario label integration remain. All 30 current scenarios, explainers,
-  drug cards, and practice regions now carry exact-version records.
+  catalog cards, no-script briefings, interactive prebriefs, live sessions, debriefs, explainers,
+  drug cards, and practice-region context use the exact-version record. Preview and reviewed
+  release channels now fail closed against those records. Dedicated source-surface integration
+  remains. All 30 current scenarios, explainers, drug cards, and practice regions now carry
+  exact-version records.
 - [ ] Preserve strict gates for reviewed-only catalog views, adoption packs, review badges,
   curriculum coverage claims, and organization endorsements.
   The reviewed release channel now requires reviewed/endorsed maturity, current exact-version
@@ -55,7 +56,7 @@ credited toward the catalog until every item in the completion contract passes.
 - [ ] Migrate current anesthesia content to preview without fabricating signatures or source checks.
 - [ ] Add public dashboards for scenario counts and all maturity, overdue, withdrawn, correction,
   limitation, and endorsement records.
-- [ ] Test that every status badge resolves offline to the exact machine-readable record.
+- [x] Test that every status badge resolves offline to the exact machine-readable record.
 
 ## 3. Shared catalog and environment shell
 
