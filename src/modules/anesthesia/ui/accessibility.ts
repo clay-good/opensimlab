@@ -103,6 +103,8 @@ export function stateSummary(
       readonly ephedrineTotalMg?: number;
       readonly venousAirEmbolismFraction?: number;
       readonly venousAirEntryControlled?: boolean;
+      readonly salbutamolTotalMg?: number;
+      readonly bronchodilatorEffectFraction?: number;
       readonly crystalloidTotalMl: number;
       readonly packedRedBloodCellUnits?: number;
       readonly bloodProductTotalMl?: number;
@@ -132,6 +134,8 @@ export function stateSummary(
     readonly showCardiacArrestSupport?: boolean;
     readonly showHighSpinalSupport?: boolean;
     readonly showVenousAirEmbolismSupport?: boolean;
+    readonly showBronchospasmSupport?: boolean;
+    readonly bronchodilatorLabel?: string;
   },
 ): string {
   const lines: string[] = ['Current state.'];
@@ -202,6 +206,13 @@ export function stateSummary(
     lines.push(options.resuscitation.venousAirEntryControlled
       ? 'Further modeled air entry is stopped; the residual teaching pattern is clearing.'
       : 'Further modeled air entry has not been stopped.');
+  }
+  if (options.resuscitation && options.showBronchospasmSupport) {
+    const name = options.bronchodilatorLabel ?? 'salbutamol';
+    lines.push(`Accepted nebulized ${name}: ${(options.resuscitation.salbutamolTotalMg ?? 0).toFixed(0)} milligrams.`);
+    if ((options.resuscitation.bronchodilatorEffectFraction ?? 0) > 0) {
+      lines.push('The bronchodilator teaching-model effect is active.');
+    }
   }
   if (options.resuscitation && options.showHypermetabolicSupport) {
     lines.push(`Accepted dantrolene total: ${(options.resuscitation.dantroleneTotalMg ?? 0).toFixed(0)} milligrams intravenous.`);

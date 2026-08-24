@@ -59,6 +59,20 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['bronchospasm'],
   },
   {
+    id: 'bronchospasm-response-is-bounded',
+    headline: 'Bronchospasm treatment is a bounded adult teaching response; examination, circuit delivery, repeat timing, advanced drugs, and individualized response are not modeled.',
+    simplification: 'A confirmed 5 mg nebulized salbutamol action reduces modeled lower-airway '
+      + 'obstruction on a fixed trajectory. The simulator does not model auscultation, tube or '
+      + 'circuit checks, suction, nebulizer placement, HME removal, circuit delivery losses, '
+      + 'repeat-dose timing, second-line drugs, dynamic hyperinflation, or individualized response.',
+    whereItMisleads: 'Treating improvement after the button as proof of diagnosis, assuming the '
+      + 'displayed dose reached the lung, or using the fixed response to predict a real patient.',
+    correctUnderstanding: 'Call for help, use 100% oxygen, deepen anesthesia, stop stimulation, '
+      + 'exclude mechanical and diagnostic alternatives, deliver a bronchodilator effectively, '
+      + 'and reassess against the current applicable emergency guidance.',
+    briefIn: ['bronchospasm'],
+  },
+  {
     id: 'volatile-circulatory-effect-is-a-teaching-model',
     headline: 'How far a volatile agent drops the blood pressure is an Open Sim Lab teaching model, not a published figure.',
     simplification: 'Sevoflurane\'s effect on the depth index is anchored to a published quantity '

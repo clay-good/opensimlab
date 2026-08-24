@@ -313,6 +313,26 @@ describe('Requirement: Screen Reader Access To Live Physiology', () => {
     expect(summary).toContain('Further modeled air entry is stopped');
   });
 
+  it('summarizes accepted regional bronchodilator treatment non-visually', () => {
+    const patient = new VirtualPatient(PROFILE, createRng(1)).snapshot();
+    const summary = stateSummary(patient, {
+      alarms: [], infusions: [], invalid: new Set(),
+      ventilator: {
+        mode: 'volume-control', tidalVolumeMl: 500, respiratoryRateBpm: 12,
+        fio2: 1, delivering: true,
+      },
+      resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, crystalloidTotalMl: 0,
+        salbutamolTotalMg: 5, bronchodilatorEffectFraction: 0.65,
+      },
+      showEpinephrineSupport: false,
+      showBronchospasmSupport: true,
+      bronchodilatorLabel: 'albuterol',
+    });
+    expect(summary).toContain('Accepted nebulized albuterol: 5 milligrams');
+    expect(summary).toContain('bronchodilator teaching-model effect is active');
+  });
+
   it('says the plethysmogram is non-pulsatile in pulseless electrical activity', () => {
     const pea = waveformDescriptions({
       rhythm: 'pea', bronchospasmSeverity: 0, airwayPatencyFraction: 1, perfusionIndex: 0.8,

@@ -273,3 +273,16 @@ evidence, not a monitor tile.
 This foundation does not model ordering, compatibility, crossmatch, infusion time, warming, storage,
 transfusion reactions, calcium, electrolytes, coagulation, laboratory guidance, other components, or
 a massive-transfusion protocol. Its two-unit cap is an interaction boundary, not a clinical endpoint.
+
+## Slice 19: complete the legacy bronchospasm response
+
+The existing case keeps its progressive shark-fin capnogram and obstruction timeline. A distinct
+bronchodilator state opposes only modeled lower-airway obstruction: each accepted exact 5 mg
+nebulized salbutamol action adds a bounded teaching effect, capped after 10 mg and decaying over
+10 modeled minutes. The United States profile presents the same agent as albuterol.
+
+The crisis tray adds help and two-step bronchodilator controls beside the existing oxygen,
+ventilation, and anesthetic-depth controls. Accepted events, not requested buttons, drive the
+debrief. Auscultation, diagnostic certainty, tube and circuit checks, suction, nebulizer/HME
+delivery mechanics, repeat timing, advanced drugs, dynamic hyperinflation, teams, and individual
+response remain outside the model.

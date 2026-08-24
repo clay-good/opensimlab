@@ -64,6 +64,23 @@ const CHECKED = '2026-08-20';
 
 export const SOURCES: readonly Source[] = [
   {
+    id: 'association-qrh-2023',
+    authors: 'Association of Anaesthetists',
+    title: 'Quick Reference Handbook: Guidelines for crises in anaesthesia',
+    publication: 'Association of Anaesthetists',
+    year: 2023,
+    locator: 'June 2023; 3-4 Bronchospasm v3 and 3-5 Circulatory embolus v1',
+    usedFor: 'The bounded bronchospasm response sequence of help, 100% oxygen, deepening '
+      + 'anesthesia, excluding mimics, and first-line 5 mg nebulized salbutamol; and the venous-air '
+      + 'response emphasis on help, stopping the trigger, and 100% oxygen.',
+    verifiedAgainst: 'Association of Anaesthetists official June 2023 QRH PDF',
+    verifiedOn: '2026-08-24',
+    currency: {
+      lastAmended: '2023-06-01',
+      checkedAt: '2026-08-24',
+    },
+  },
+  {
     id: 'aabb-circular-blood-components-current',
     currency: { lastAmended: '2024-06-01', checkedAt: '2026-08-24' },
     authors: 'AABB, American Red Cross, America\'s Blood Centers, Armed Services Blood Program',

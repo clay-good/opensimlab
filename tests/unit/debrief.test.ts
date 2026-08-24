@@ -211,6 +211,30 @@ describe('Scenario: Findings are specific', () => {
       .toContain('behavioral proxy');
     expect(findings.find((entry) => entry.objectiveId === 'deepen-before-reaching-for-anything-else')?.outcome)
       .toBe('met');
+
+    const completeLog: EngineEvent[] = [
+      ...accepted,
+      {
+        tick: 2450, severity: 'warning', category: 'airway',
+        eventId: 'airway-help-requested-2450', message: 'help',
+        data: { context: 'bronchospasm' },
+      },
+      {
+        tick: 2500, severity: 'warning', category: 'drug',
+        eventId: 'salbutamol-nebulized-2500', message: 'salbutamol',
+        data: { drugId: 'salbutamol', route: 'nebulized', doseMg: 5 },
+      },
+    ];
+    const actions: LearnerAction[] = [{
+      tick: 2460, type: 'ventilator', payload: { fio2: 1, delivering: true },
+    }];
+    const complete = objectiveFindings(BRONCHOSPASM, history, 0, 0, actions, completeLog);
+    expect(complete.find((entry) => entry.objectiveId === 'escalate-bronchospasm')?.outcome)
+      .toBe('met');
+    expect(complete.find((entry) => entry.objectiveId === 'give-first-line-bronchodilator')?.outcome)
+      .toBe('met');
+    expect(complete.find((entry) => entry.objectiveId === 'give-first-line-bronchodilator')?.finding)
+      .toContain('does not establish actual lung delivery');
   });
 
   it('names stacked boluses with the interval and the time to peak effect', () => {

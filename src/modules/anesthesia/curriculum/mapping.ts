@@ -197,13 +197,19 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     scenarioId: 'bronchospasm',
     frameworkId: 'nbcrna-nce',
     domainId: 'basic-principles',
-    objectiveIds: ['ventilate-before-desaturation', 'deepen-before-reaching-for-anything-else'],
+    objectiveIds: [
+      'ventilate-before-desaturation', 'deepen-before-reaching-for-anything-else',
+      'give-first-line-bronchodilator',
+    ],
   },
   {
     scenarioId: 'bronchospasm',
     frameworkId: 'nbcrna-nce',
     domainId: 'advanced-principles',
-    objectiveIds: ['deepen-before-reaching-for-anything-else', 'manage-hypotension'],
+    objectiveIds: [
+      'deepen-before-reaching-for-anything-else', 'manage-hypotension',
+      'give-first-line-bronchodilator',
+    ],
   },
   {
     scenarioId: 'bronchospasm',
@@ -215,7 +221,10 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     scenarioId: 'bronchospasm',
     frameworkId: 'coa-standards',
     domainId: 'airway-management',
-    objectiveIds: ['ventilate-before-desaturation', 'deepen-before-reaching-for-anything-else'],
+    objectiveIds: [
+      'ventilate-before-desaturation', 'deepen-before-reaching-for-anything-else',
+      'give-first-line-bronchodilator',
+    ],
   },
   {
     scenarioId: 'bronchospasm',
@@ -227,13 +236,19 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     scenarioId: 'bronchospasm',
     frameworkId: 'coa-standards',
     domainId: 'clinical-decision-making',
-    objectiveIds: ['deepen-before-reaching-for-anything-else', 'manage-hypotension'],
+    objectiveIds: [
+      'deepen-before-reaching-for-anything-else', 'manage-hypotension',
+      'escalate-bronchospasm',
+    ],
   },
   {
     scenarioId: 'bronchospasm',
     frameworkId: 'acgme-anesthesiology-milestones-2',
     domainId: 'pc-anesthetic-plan-and-conduct',
-    objectiveIds: ['deepen-before-reaching-for-anything-else', 'manage-hypotension'],
+    objectiveIds: [
+      'deepen-before-reaching-for-anything-else', 'manage-hypotension',
+      'give-first-line-bronchodilator',
+    ],
   },
   {
     scenarioId: 'bronchospasm',
@@ -251,7 +266,10 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     scenarioId: 'bronchospasm',
     frameworkId: 'acgme-anesthesiology-milestones-2',
     domainId: 'pc-crisis-management',
-    objectiveIds: ['deepen-before-reaching-for-anything-else', 'ventilate-before-desaturation'],
+    objectiveIds: [
+      'deepen-before-reaching-for-anything-else', 'ventilate-before-desaturation',
+      'escalate-bronchospasm', 'give-first-line-bronchodilator',
+    ],
   },
   {
     scenarioId: 'bronchospasm',

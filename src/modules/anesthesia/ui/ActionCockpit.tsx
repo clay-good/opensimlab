@@ -52,6 +52,9 @@ export interface ActionCockpitProps {
     readonly dantroleneEffectFraction: number;
     readonly lastDantroleneTick: number | null;
     readonly activeCooling: boolean;
+    readonly salbutamolTotalMg?: number;
+    readonly lastSalbutamolTick?: number | null;
+    readonly bronchodilatorEffectFraction?: number;
     readonly localAnestheticToxicityFraction?: number;
     readonly seizureActivityFraction?: number;
     readonly seizureSuppressed?: boolean;
@@ -105,6 +108,7 @@ export interface ActionCockpitProps {
   readonly supraglotticInsertionSecondsRemaining: number;
   readonly helpRequestedAtTick: number | null;
   readonly muscleRigidityFraction: number;
+  readonly bronchospasmSeverity?: number;
   readonly trainOfFourRatio?: number;
   readonly trainOfFourCount?: number;
   readonly onBolus: (drugId: string, amount: number, unit: string) => void;
@@ -124,6 +128,8 @@ export interface ActionCockpitProps {
   readonly onHighSpinalHelp?: () => void;
   readonly onVenousAirEmbolismHelp?: () => void;
   readonly onControlVenousAirEntry?: () => void;
+  readonly onBronchospasmHelp?: () => void;
+  readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
   readonly onActiveCooling: (active: boolean) => void;
   readonly onSeizureSuppression?: () => void;
@@ -166,6 +172,9 @@ export function crisisResponseAvailability(
       || scenario.timeline.some((event) => event.type === 'high-spinal'),
     hasVenousAirEmbolismResponse: injected.has('air-embolism')
       || scenario.timeline.some((event) => event.type === 'venous-air-embolism'),
+    hasBronchospasmResponse: injected.has('bronchospasm')
+      || scenario.timeline.some((event) => event.type === 'obstruction'
+        && event.id.includes('bronchospasm')),
   };
 }
 
@@ -207,13 +216,15 @@ export function ActionCockpit(props: ActionCockpitProps) {
   const {
     hasAnaphylaxisResponse, hasHypermetabolicResponse, hasLastResponse,
     hasCardiacArrestResponse, hasHighSpinalResponse, hasVenousAirEmbolismResponse,
+    hasBronchospasmResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
   );
   const hasEpinephrineResponse = hasAnaphylaxisResponse || hasLastResponse;
   const hasCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse
-    || hasCardiacArrestResponse || hasHighSpinalResponse || hasVenousAirEmbolismResponse;
+    || hasCardiacArrestResponse || hasHighSpinalResponse || hasVenousAirEmbolismResponse
+    || hasBronchospasmResponse;
   const trays = hasCrisisResponse ? [...TRAYS, CRISIS_TRAY] : TRAYS;
   const hasRocuronium = props.scenario.formulary.some((entry) => entry.drugId === 'rocuronium');
 
@@ -374,6 +385,18 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 onControlSource={props.onControlVenousAirEntry ?? (() => {})}
               />
             )}
+            {hasBronchospasmResponse && (
+              <BronchospasmTray
+                region={props.region}
+                obstructionSeverity={props.bronchospasmSeverity ?? 0}
+                effectFraction={props.resuscitation.bronchodilatorEffectFraction ?? 0}
+                salbutamolTotalMg={props.resuscitation.salbutamolTotalMg ?? 0}
+                lastSalbutamolTick={props.resuscitation.lastSalbutamolTick ?? null}
+                helpRequested={props.helpRequestedAtTick !== null}
+                onCallForHelp={props.onBronchospasmHelp ?? (() => {})}
+                onBronchodilator={props.onInhaledBronchodilator ?? (() => {})}
+              />
+            )}
           </div>
         )}
         {/* Inside the scrolling tray, not as a row of its own.
@@ -386,6 +409,71 @@ export function ActionCockpit(props: ActionCockpitProps) {
           <a href="/limitations">The limitations register says what else.</a>
         </p>
       </div>
+    </div>
+  );
+}
+
+function BronchospasmTray({
+  region, obstructionSeverity, effectFraction, salbutamolTotalMg, lastSalbutamolTick, helpRequested,
+  onCallForHelp, onBronchodilator,
+}: {
+  region: RegionProfile;
+  obstructionSeverity: number;
+  effectFraction: number;
+  salbutamolTotalMg: number;
+  lastSalbutamolTick: number | null;
+  helpRequested: boolean;
+  onCallForHelp: () => void;
+  onBronchodilator: () => void;
+}) {
+  const [confirming, setConfirming] = useState(false);
+  const regionalName = term(region, 'salbutamol');
+  const displayName = regionalName.charAt(0).toUpperCase() + regionalName.slice(1);
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="bronchospasm-response-title">
+        <div id="bronchospasm-response-title" className="syringe__name">Lower-airway response</div>
+        <Badge kind="teaching">Teaching model</Badge>
+        <p className="field__hint">
+          Call for help, deliver 100% oxygen and deepen anesthesia in Airway &amp; Vent, then exclude mechanical mimics.
+        </p>
+        <p className="syringe__remaining" role="status">
+          {obstructionSeverity > 0.05
+            ? `Modeled lower-airway obstruction ${(obstructionSeverity * 100).toFixed(0)}%`
+            : 'No lower-airway obstruction observed'}
+          {' · '}{helpRequested ? 'help requested' : 'help not requested'}
+          {effectFraction > 0 ? ' · modeled bronchodilator effect active' : ''}
+        </p>
+        <Button disabled={helpRequested} onClick={onCallForHelp}>Call for help</Button>
+      </section>
+      <section className="syringe" aria-labelledby="bronchodilator-title">
+        <div id="bronchodilator-title" className="syringe__name">{displayName}</div>
+        <div className="syringe__meta">5 mg nebulized · bounded adult response</div>
+        <p className="syringe__remaining" role="status">
+          Accepted total: {salbutamolTotalMg.toFixed(0)} mg
+          {lastSalbutamolTick === null ? '' : ' · modeled effect active'}
+        </p>
+        {!confirming ? (
+          <Button disabled={obstructionSeverity <= 0.05 || salbutamolTotalMg + 5 > 10}
+            onClick={() => setConfirming(true)}>
+            Prepare {displayName} 5 mg nebulized
+          </Button>
+        ) : (
+          <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
+            <span>Give {regionalName} 5 mg nebulized?</span>
+            <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+              <Button variant="primary" compact onClick={() => {
+                onBronchodilator();
+                setConfirming(false);
+              }}>Give {displayName}</Button>
+              <Button variant="ghost" compact onClick={() => setConfirming(false)}>Cancel</Button>
+            </div>
+          </div>
+        )}
+        <p className="field__hint">
+          Nebulizer placement, circuit and HME delivery losses, repeat timing, advanced drugs, and individual response are not modeled.
+        </p>
+      </section>
     </div>
   );
 }

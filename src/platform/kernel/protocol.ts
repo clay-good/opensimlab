@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 20 reports bounded venous-air-entry control. */
-export const WORKER_PROTOCOL_VERSION = 20;
+/** Bumped whenever the message shape changes incompatibly. Version 21 reports bounded inhaled bronchodilator state. */
+export const WORKER_PROTOCOL_VERSION = 21;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -210,6 +210,9 @@ export interface EquipmentSnapshot {
     readonly dantroleneEffectFraction: number;
     readonly lastDantroleneTick: number | null;
     readonly activeCooling: boolean;
+    readonly salbutamolTotalMg?: number;
+    readonly lastSalbutamolTick?: number | null;
+    readonly bronchodilatorEffectFraction?: number;
     /** Bounded local-anesthetic toxicity response state. Optional for older saved snapshots. */
     readonly localAnestheticToxicityFraction?: number;
     readonly seizureActivityFraction?: number;

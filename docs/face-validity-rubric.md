@@ -84,6 +84,7 @@ Reviewers run the routine induction themselves before answering.
 | B32a | Pressure and oxygenation response after help escalation, 250–500 mL crystalloid, high inspired oxygen with active ventilation, and 6–12 mg IV ephedrine | | |
 | B33 | Abrupt end-tidal carbon-dioxide, pressure, output, and saturation change in the authored venous-air-embolism case and after manual injection, without a directly imposed respiratory-rate change | | |
 | B33a | Gradual carbon-dioxide, pressure, output, and saturation recovery after accepted source-control intent and 100% oxygen with active breath delivery | | |
+| B33b | Lower-airway obstruction and shark-fin capnogram improve directionally after accepted nebulized salbutamol, without implying diagnosis, circuit delivery, or an individualized response | | |
 | B34 | Quantitative recovery after depth-matched 2/4 mg/kg sugammadex, and neostigmine with an antimuscarinic only during minimal block | | |
 | B35 | Overall: does this patient behave like a patient? | | |
 

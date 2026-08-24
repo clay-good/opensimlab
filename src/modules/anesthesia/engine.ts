@@ -38,7 +38,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.20';
+export const ENGINE_VERSION = '0.1.0-alpha.21';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -279,6 +279,9 @@ export class AnesthesiaEngine {
   private jawThrustCpapUntilTick = 0;
   /** Current lower-airway obstruction, retained for truthful equipment/accessibility output. */
   private bronchospasmSeverity = 0;
+  private bronchodilatorEffectFraction = 0;
+  private salbutamolTotalMg = 0;
+  private lastSalbutamolTick: number | null = null;
   private preoxygenationTicks = 0;
   private lastEffectSitePeak = new Map<string, number>();
 
@@ -451,11 +454,11 @@ export class AnesthesiaEngine {
       case 'call-for-help': {
         const context = action.payload.context;
         const supported = context === 'airway' || context === 'high-spinal'
-          || context === 'venous-air-embolism';
+          || context === 'venous-air-embolism' || context === 'bronchospasm';
         if (!supported || this.helpRequestedAtTick !== null) {
           this.log('warning', 'airway', `airway-help-refused-${this.currentTick}`,
             !supported
-              ? 'Help requires a supported airway, high-spinal, or venous-air-embolism context. No request was recorded.'
+              ? 'Help requires a supported airway or modeled crisis context. No request was recorded.'
               : 'Help has already been requested. No duplicate request was recorded.');
           break;
         }
@@ -465,7 +468,9 @@ export class AnesthesiaEngine {
             ? 'High-spinal help requested. Team arrival, communication, and provider actions are not modeled.'
             : context === 'venous-air-embolism'
               ? 'Help requested for the abrupt cardiopulmonary change. Team arrival, communication, and provider actions are not modeled.'
-              : 'Additional airway help requested. Team arrival and provider skill are not modeled.',
+              : context === 'bronchospasm'
+                ? 'Help requested for the lower-airway obstruction pattern. Team arrival, examination, and provider actions are not modeled.'
+                : 'Additional airway help requested. Team arrival and provider skill are not modeled.',
           { context });
         break;
       }
@@ -579,6 +584,29 @@ export class AnesthesiaEngine {
         this.log('critical', 'crisis', `venous-air-entry-controlled-${this.currentTick}`,
           'Intent to stop further venous air entry accepted. The residual monitor pattern now clears on a bounded teaching trajectory; finding or physically controlling a source is not simulated.', {
             method: 'stop-entry', teachingModel: true,
+          });
+        break;
+      }
+      case 'inhaled-bronchodilator': {
+        const doseMg = AnesthesiaEngine.finiteAmount(action.payload.doseMg);
+        const active = this.bronchospasmSeverity > 0.05;
+        if (action.payload.agentId !== 'salbutamol' || action.payload.route !== 'nebulized'
+          || doseMg !== 5 || !active || this.salbutamolTotalMg + doseMg > 10) {
+          this.log('warning', 'drug', `bronchodilator-refused-${this.currentTick}`,
+            !active
+              ? 'The bounded bronchodilator action is available only during modeled lower-airway obstruction.'
+              : 'The adult teaching action requires 5 mg nebulized salbutamol and no more than 10 mg cumulatively. Nothing was given.');
+          break;
+        }
+        this.salbutamolTotalMg += doseMg;
+        this.lastSalbutamolTick = this.currentTick;
+        this.bronchodilatorEffectFraction = clamp(
+          this.bronchodilatorEffectFraction + 0.65, 0, 1,
+        );
+        this.log('warning', 'drug', `salbutamol-nebulized-${this.currentTick}`,
+          `Salbutamol ${doseMg} mg nebulized. Delivery and bronchodilation are bounded teaching effects, not an individual prediction.`, {
+            drugId: 'salbutamol', route: 'nebulized', doseMg,
+            cumulativeDoseMg: this.salbutamolTotalMg, teachingModel: true,
           });
         break;
       }
@@ -1616,6 +1644,7 @@ export class AnesthesiaEngine {
     this.seizureActivityFraction = this.seizureSuppressed
       ? 0 : clamp((unopposedLocalAnestheticToxicity - 0.2) / 0.6, 0, 1);
     obstruction = Math.max(obstruction, 0.85 * unopposedAnaphylaxis);
+    obstruction *= 1 - 0.8 * this.bronchodilatorEffectFraction;
     this.bronchospasmSeverity = obstruction;
     const capillaryLeakMl = unopposedAnaphylaxis * 5 / TICKS_PER_SECOND;
     // Exact slopes and magnitudes are bounded teaching calibrations. The clinical
@@ -1683,6 +1712,7 @@ export class AnesthesiaEngine {
     this.vasopressorEffect *= Math.exp(-0.1 / 5);
     // Titrated boluses are short acting; this teaching effect decays over roughly 90 seconds.
     this.epinephrineEffect *= Math.exp(-0.1 / 90);
+    this.bronchodilatorEffectFraction *= Math.exp(-0.1 / 600);
 
     if (!this.cardiacArrestActive) this.reconcileArrest(result.state.cardiacOutputLPerMin ?? 0);
 
@@ -1904,6 +1934,9 @@ export class AnesthesiaEngine {
         dantroleneEffectFraction: this.dantroleneEffectFraction,
         lastDantroleneTick: this.lastDantroleneTick,
         activeCooling: this.activeCooling,
+        salbutamolTotalMg: this.salbutamolTotalMg,
+        lastSalbutamolTick: this.lastSalbutamolTick,
+        bronchodilatorEffectFraction: this.bronchodilatorEffectFraction,
         localAnestheticToxicityFraction: this.localAnestheticToxicitySeverity
           * (1 - 0.8 * this.lipidEmulsionEffectFraction),
         seizureActivityFraction: this.seizureActivityFraction,

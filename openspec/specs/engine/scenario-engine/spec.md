@@ -177,6 +177,14 @@ The initial release SHALL ship at least twelve complete, openly licensed scenari
 - **AND** accepted source-control intent stops new entry while the residual monitor pattern clears gradually rather than disappearing instantly
 - **AND** the briefing states that gas volume, embolus location, diagnostic certainty, neurologic injury, imaging, aspiration, positioning, hyperbaric therapy, physical source-control skill, team performance, and individualized outcome are not modeled
 
+#### Scenario: Bronchospasm has a bounded authored initial-response pathway
+
+- **WHEN** the bronchospasm scenario reaches its lower-airway obstruction event
+- **THEN** the learner can request help and confirm 5 mg nebulized salbutamol, called albuterol in
+  the United States profile, while using the existing oxygen, ventilation, and anesthetic controls
+- **AND** accepted treatment reduces modeled obstruction on a deterministic teaching trajectory
+  without claiming diagnosis, circuit delivery, advanced-drug management, or individual outcome
+
 #### Scenario: Rare events are chosen because they are rare
 
 - **WHEN** the rationale for the crisis scenarios is reviewed

@@ -313,6 +313,8 @@ export function objectiveFindings(
     'limit-attempts': 'airway-assessment-predicts-poorly',
     'read-the-capnogram': 'capnogram-morphology',
     'deepen-before-reaching-for-anything-else': 'hysteresis-and-effect-site-lag',
+    'escalate-bronchospasm': 'capnogram-morphology',
+    'give-first-line-bronchodilator': 'capnogram-morphology',
     'preoxygenate-before-induction': 'preoxygenation-and-safe-apnea-time',
     'wait-for-intubating-block': 'train-of-four-and-residual-blockade',
     'protect-the-apnea-margin': 'preoxygenation-and-safe-apnea-time',
@@ -1151,6 +1153,39 @@ export function objectiveFindings(
             ? `Predicted depth was already ${Number(onsetDepth ?? reachedSurgicalRange.state.depthIndex).toFixed(0)} at onset and remained at or below 60 in the first two minutes.`
             : 'No accepted propofol bolus was recorded and predicted depth did not reach 60 or below in the first two minutes.',
         atTick: acceptedBolus?.tick ?? reachedSurgicalRange?.tick ?? onset,
+      } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'escalate-bronchospasm'
+      || objective.id === 'give-first-line-bronchodilator') {
+      const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;
+      if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) {
+        return { ...base, outcome: 'not-exercised', finding: 'The session ended before bronchospasm began.' } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'give-first-line-bronchodilator') {
+        const accepted = log.find((entry) => entry.eventId.startsWith('salbutamol-nebulized-')
+          && entry.tick >= onset && entry.tick <= onset + 120 * TICKS_PER_SECOND);
+        return {
+          ...base,
+          outcome: accepted ? 'met' : 'not-met',
+          finding: accepted
+            ? `A confirmed 5 mg nebulized salbutamol action was accepted ${((accepted.tick - onset) / TICKS_PER_SECOND).toFixed(0)} seconds after obstruction began. The model does not establish actual lung delivery or predict individual response.`
+            : 'No confirmed 5 mg nebulized salbutamol action was accepted in the first two minutes after obstruction began.',
+          atTick: accepted?.tick ?? onset,
+        } satisfies ObjectiveFinding;
+      }
+      const deadline = onset + 60 * TICKS_PER_SECOND;
+      const help = log.find((entry) => entry.eventId.startsWith('airway-help-requested-')
+        && entry.data?.context === 'bronchospasm' && entry.tick >= onset && entry.tick <= deadline);
+      const oxygen = actions.find((action) => action.type === 'ventilator'
+        && action.tick >= onset && action.tick <= deadline
+        && Number(action.payload.fio2) >= 1);
+      return {
+        ...base,
+        outcome: help && oxygen ? 'met' : help || oxygen ? 'partly-met' : 'not-met',
+        finding: `${help ? 'Help was requested' : 'Help was not requested'} within 60 seconds. `
+          + `${oxygen ? 'A 100% inspired-oxygen setting was recorded' : 'No 100% inspired-oxygen setting was recorded'} within 60 seconds. This assesses accepted help and screen settings, not team arrival or gas delivery.`,
+        atTick: help?.tick ?? oxygen?.tick ?? onset,
       } satisfies ObjectiveFinding;
     }
 

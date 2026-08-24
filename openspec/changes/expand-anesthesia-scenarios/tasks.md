@@ -272,3 +272,16 @@
   provenance, limitations, review items, structured data, social preview, and sitemap coverage.
 - [ ] Add gas volume, embolus location, diagnostic certainty, neurologic injury, imaging, central
   aspiration, positioning, hyperbaric therapy, physical source-control skill, teams, or outcome prediction.
+
+## Slice 19: complete the legacy bronchospasm initial response
+
+- [x] Add accepted, replayable bronchospasm help and exact 5 mg nebulized salbutamol actions with
+  a cumulative 10 mg teaching cap and regional albuterol/salbutamol terminology.
+- [x] Reduce only modeled lower-airway obstruction through a bounded effect while preserving the
+  existing capnogram-morphology lesson and deterministic trajectory.
+- [x] Score escalation, 100% inspired oxygen, anesthetic deepening, and first-line bronchodilator
+  timing from recorded actions and accepted events.
+- [x] Add compact two-step controls, nonvisual status, current Association QRH provenance,
+  curriculum mappings, limitations, review scope, and discoverability copy.
+- [ ] Add auscultation, tube/circuit checks, suction, HME or nebulizer delivery mechanics,
+  dynamic hyperinflation, repeat-dose timing, advanced drugs, team performance, or outcome prediction.

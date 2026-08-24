@@ -39,6 +39,7 @@ export const VENOUS_AIR_EMBOLISM_DURING_LINE_REMOVAL: Scenario = {
       competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01',
       contentVersion: '0.1.0',
       sources: [
+        'Association of Anaesthetists Quick Reference Handbook, June 2023, 3-5 Circulatory embolus v1.',
         'Hinkelbein et al. Cardiac arrest in the perioperative period: a consensus guideline. European Journal of Trauma and Emergency Surgery. 2023;49:2031–2046. PMID 37430174.',
         'McCarthy et al. Air Embolism: Diagnosis, Clinical Management and Outcomes. Diagnostics. 2017;7:5. PMID 28106717.',
       ],

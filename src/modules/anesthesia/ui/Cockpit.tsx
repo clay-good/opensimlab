@@ -96,6 +96,7 @@ const DEFAULT_RESUSCITATION = {
   bloodProductsReleased: false,
   dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
   lastDantroleneTick: null, activeCooling: false,
+  salbutamolTotalMg: 0, lastSalbutamolTick: null, bronchodilatorEffectFraction: 0,
   chestCompressionsActive: false,
   highSpinalFraction: 0, ephedrineTotalMg: 0, lastEphedrineTick: null,
   venousAirEmbolismFraction: 0, venousAirEntryControlled: false,
@@ -190,6 +191,7 @@ export function Cockpit({
     hasAnaphylaxisResponse, hasHypermetabolicResponse, hasCardiacArrestResponse,
     hasHighSpinalResponse,
     hasVenousAirEmbolismResponse,
+    hasBronchospasmResponse,
   } = crisisResponseAvailability(scenario, injectedCrises);
   const rhythm = (equipment?.rhythmId ?? 'sinus') as RhythmId;
   const invalidParameters = useMemo(
@@ -311,12 +313,15 @@ export function Cockpit({
       showCardiacArrestSupport: hasCardiacArrestResponse,
       showHighSpinalSupport: hasHighSpinalResponse,
       showVenousAirEmbolismSupport: hasVenousAirEmbolismResponse,
+      showBronchospasmSupport: hasBronchospasmResponse,
+      bronchodilatorLabel: term(region, 'salbutamol'),
     }));
   }, [
     session.state, session.alarms, speak, infusions, ventilator, invalidParameters,
     scenario.equipment.monitoring, scenario.patient.weightKg, airway.jawThrustCpapSecondsRemaining,
     resuscitation, region, lastExposure, hasAnaphylaxisResponse, hasHypermetabolicResponse,
     hasCardiacArrestResponse, hasHighSpinalResponse, hasVenousAirEmbolismResponse,
+    hasBronchospasmResponse,
   ]);
 
   const readWaveforms = useCallback(() => {
@@ -511,6 +516,7 @@ export function Cockpit({
           supraglotticInsertionSecondsRemaining={airway.supraglotticInsertionSecondsRemaining}
           helpRequestedAtTick={airway.helpRequestedAtTick}
           muscleRigidityFraction={session.state?.muscleRigidityFraction ?? 0}
+          bronchospasmSeverity={airway.bronchospasmSeverity}
           trainOfFourRatio={session.state?.trainOfFourRatio ?? 1}
           trainOfFourCount={session.state?.trainOfFourCount ?? 4}
           onBolus={(drugId, amount, unit) => session.act({ type: 'bolus', payload: { drugId, amount, unit } })}
@@ -541,6 +547,14 @@ export function Cockpit({
           })}
           onControlVenousAirEntry={() => session.act({
             type: 'control-venous-air-entry', payload: { method: 'stop-entry' },
+          })}
+          onBronchospasmHelp={() => session.act({
+            type: 'call-for-help', payload: { context: 'bronchospasm' },
+          })}
+          onInhaledBronchodilator={() => session.act({
+            type: 'inhaled-bronchodilator', payload: {
+              agentId: 'salbutamol', route: 'nebulized', doseMg: 5,
+            },
           })}
           onDantrolene={() => session.act({
             type: 'dantrolene', payload: { route: 'iv', doseMgPerKg: 2.5 },

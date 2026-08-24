@@ -110,10 +110,12 @@ response, stopping before dysrhythmia treatment or cardiac arrest.
   250–500 mL crystalloid, and exact 6/12 mg IV ephedrine boluses.
 - Promote the bounded venous-air-embolism trajectory into a sixteenth authored scenario with
   accepted escalation, source-control intent, 100% oxygen, and gradual monitor-pattern recovery.
+- Complete the legacy bronchospasm scenario with accepted help, region-aware 5 mg nebulized
+  albuterol/salbutamol, and bounded obstruction relief without simulating circuit delivery.
 
 ## Impact
 
-These 18 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+These 19 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
 awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. The seventh also closes the bounded
 pediatric-family gap without claiming a general pediatric patient model. The eighth reaches the
 minimum count of 12 scenarios and closes the bounded difficult-airway rescue gap. The ninth closes
@@ -127,3 +129,6 @@ seventeenth adds the fifteenth authored scenario and a bounded high-spinal initi
 claiming neuraxial spread, obstetric physiology, or individualized outcome.
 The eighteenth adds the sixteenth authored scenario and a bounded venous-air-embolism response
 without claiming gas volume, diagnostic certainty, physical source-control skill, or outcome.
+The nineteenth completes the older bronchospasm case with a first-line response while preserving
+its waveform-recognition lesson and explicitly excluding examination, delivery mechanics,
+advanced drugs, and individual outcome.

@@ -41,6 +41,16 @@ export const BRONCHOSPASM: Scenario = {
           + 'in the two minutes after the obstruction began.',
       },
       {
+        id: 'escalate-bronchospasm',
+        statement: 'Escalate the evolving lower-airway obstruction and establish high inspired oxygen.',
+        measure: 'Help was requested and inspired oxygen was set to 100% within 60 seconds of onset.',
+      },
+      {
+        id: 'give-first-line-bronchodilator',
+        statement: 'Give the modeled first-line inhaled bronchodilator after recognizing obstruction.',
+        measure: 'A confirmed 5 mg nebulized salbutamol action was accepted within two minutes of onset.',
+      },
+      {
         id: 'ventilate-before-desaturation',
         statement: 'Keep the saturation up while you work out what is happening.',
         measure: 'Oxygen saturation never fell below 92%.',
@@ -63,6 +73,7 @@ export const BRONCHOSPASM: Scenario = {
       sources: [
         'ASA Standards for Basic Anesthetic Monitoring',
         '2022 ASA Practice Guidelines for Management of the Difficult Airway (PMID 34762729)',
+        'Association of Anaesthetists Quick Reference Handbook, June 2023, 3-4 Bronchospasm v3',
       ],
     },
     limitations: [
@@ -70,6 +81,7 @@ export const BRONCHOSPASM: Scenario = {
       'bolus-injection-is-instantaneous',
       'respiratory-depression-is-calibrated',
       'peep-not-modelled',
+      'bronchospasm-response-is-bounded',
     ],
   },
   patient: {
@@ -207,6 +219,18 @@ export const BRONCHOSPASM: Scenario = {
         objectiveId: 'ventilate-before-desaturation',
         question: 'How much margin did you have, and what were you watching to know it?',
         concept: 'preoxygenation-and-safe-apnea-time',
+      },
+      {
+        id: 'when-did-you-escalate',
+        objectiveId: 'escalate-bronchospasm',
+        question: 'When did you call for help and establish 100% oxygen relative to the first waveform change?',
+        concept: 'bronchospasm-initial-response',
+      },
+      {
+        id: 'when-did-you-give-the-bronchodilator',
+        objectiveId: 'give-first-line-bronchodilator',
+        question: 'When was the first-line inhaled bronchodilator accepted, and what delivery details remain outside this model?',
+        concept: 'bronchospasm-initial-response',
       },
       {
         id: 'what-happened-to-the-pressure',

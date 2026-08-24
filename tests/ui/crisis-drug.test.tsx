@@ -8,6 +8,7 @@ import {
   ActionCockpit, crisisResponseAvailability, type ActionCockpitProps,
 } from '@anesthesia/ui/ActionCockpit';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
+import { BRONCHOSPASM } from '@anesthesia/scenarios/bronchospasm';
 import { UNITED_KINGDOM, UNITED_STATES } from '@anesthesia/region/profiles';
 
 const CRISIS_SCENARIO = {
@@ -156,6 +157,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       hasCardiacArrestResponse: true,
       hasHighSpinalResponse: true,
       hasVenousAirEmbolismResponse: false,
+      hasBronchospasmResponse: false,
     });
     renderCockpit(UNITED_STATES, vi.fn(), {
       scenario: ROUTINE_INDUCTION,
@@ -181,6 +183,44 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
     expect(container.textContent).toContain('Start compressions');
     expect(container.textContent).toContain('Epinephrine');
     expect(container.textContent).toContain('High spinal response');
+  });
+
+  it('uses regional bronchodilator terminology and requires confirmation', () => {
+    const onInhaledBronchodilator = vi.fn();
+    const onBronchospasmHelp = vi.fn();
+    renderCockpit(UNITED_STATES, vi.fn(), { scenario: BRONCHOSPASM });
+    act(() => button('Crisis response')!.click());
+    expect(container.textContent).toContain('No lower-airway obstruction observed');
+    expect(button('Prepare Albuterol 5 mg nebulized')?.disabled).toBe(true);
+
+    renderCockpit(UNITED_STATES, vi.fn(), {
+      scenario: BRONCHOSPASM,
+      bronchospasmSeverity: 0.35,
+      resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+        lastEpinephrineTick: null, crystalloidTotalMl: 0,
+        dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
+        lastDantroleneTick: null, activeCooling: false,
+        salbutamolTotalMg: 5, lastSalbutamolTick: 2500,
+        bronchodilatorEffectFraction: 0.65,
+      },
+      onInhaledBronchodilator,
+      onBronchospasmHelp,
+    });
+    act(() => button('Crisis response')!.click());
+    expect(container.textContent).toContain('Albuterol');
+    expect(container.textContent).toContain('Accepted total: 5 mg');
+    act(() => button('Call for help')!.click());
+    expect(onBronchospasmHelp).toHaveBeenCalledOnce();
+    act(() => button('Prepare Albuterol 5 mg nebulized')!.click());
+    expect(onInhaledBronchodilator).not.toHaveBeenCalled();
+    expect(container.textContent).toContain('Give albuterol 5 mg nebulized?');
+    act(() => button('Give Albuterol')!.click());
+    expect(onInhaledBronchodilator).toHaveBeenCalledOnce();
+
+    renderCockpit(UNITED_KINGDOM, vi.fn(), { scenario: BRONCHOSPASM });
+    act(() => button('Crisis response')!.click());
+    expect(container.textContent).toContain('Salbutamol');
   });
 
   it('requires confirmation for the bounded high-spinal response actions', () => {

@@ -197,6 +197,11 @@ removal. It adds accepted help escalation, two-step intent to stop further air e
 with active breath support, and gradual recovery of the residual monitor pattern. It does not model
 gas volume, embolus location, diagnostic certainty, neurologic injury, imaging, aspiration,
 positioning, hyperbaric therapy, physical source-control technique, team performance, or outcome.
+Slice 19 completes the legacy bronchospasm case with accepted help escalation and a region-aware,
+two-step 5 mg nebulized albuterol/salbutamol action. The bounded effect improves the modeled
+lower-airway obstruction while the capnogram, oxygen, depth, and pressure remain observable. It
+does not model examination, tube or circuit checks, suction, HME or nebulizer delivery, advanced
+drugs, team performance, or individualized response.
 
 ## Running it
 
