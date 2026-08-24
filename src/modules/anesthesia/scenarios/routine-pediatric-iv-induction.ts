@@ -7,6 +7,7 @@ export const ROUTINE_PEDIATRIC_IV_INDUCTION: Scenario = {
   metadata: {
     id: 'routine-pediatric-iv-induction',
     version: '0.1.0',
+    maturity: 'draft',
     title: 'Routine pediatric intravenous induction',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

@@ -7,6 +7,7 @@
  */
 
 import type { EventType } from './event-types';
+import type { ContentMaturity } from '@platform/catalog/maturity';
 
 export interface ScenarioObjective {
   readonly id: string;
@@ -28,6 +29,7 @@ export interface ClinicalReviewRecord {
 export interface ScenarioMetadata {
   readonly id: string;
   readonly version: string;
+  readonly maturity: ContentMaturity;
   readonly title: string;
   readonly author: string;
   readonly license: string;

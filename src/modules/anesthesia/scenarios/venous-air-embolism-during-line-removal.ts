@@ -7,6 +7,7 @@ export const VENOUS_AIR_EMBOLISM_DURING_LINE_REMOVAL: Scenario = {
   metadata: {
     id: 'venous-air-embolism-during-line-removal',
     version: '0.1.0',
+    maturity: 'draft',
     title: 'Venous air embolism during line removal',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

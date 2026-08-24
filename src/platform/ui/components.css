@@ -280,6 +280,26 @@ textarea.field__input {
 .badge--out-of-range { border-color: var(--alarm-warning); color: var(--alarm-warning); }
 .badge--teaching { border-style: dashed; }
 
+.maturity-marker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  inline-size: fit-content;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--surface-2) 88%, transparent);
+  color: var(--text-secondary);
+  font: var(--type-micro);
+  letter-spacing: var(--type-micro-tracking);
+  text-decoration: none;
+}
+.maturity-marker:hover { border-color: var(--text-secondary); color: var(--text-primary); }
+.maturity-marker:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.maturity-marker__icon { color: var(--text-primary); font-size: 1.1em; }
+.maturity-marker[data-maturity='preview'],
+.maturity-marker[data-maturity='source_checked'] { border-style: dashed; }
+
 /* --- Tooltip and Popover -------------------------------------------------- */
 .tooltip {
   position: absolute;

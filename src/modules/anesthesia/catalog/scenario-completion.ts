@@ -86,7 +86,7 @@ export function auditAnesthesiaScenario(
     fidelityClass: 'closed_loop_physiology',
     contentVersion: scenario.metadata.version,
     capabilityVersion,
-    maturity: 'draft',
+    maturity: scenario.metadata.maturity,
     complete: requirements.every((entry) => entry.status === 'satisfied'),
     requirements,
   };

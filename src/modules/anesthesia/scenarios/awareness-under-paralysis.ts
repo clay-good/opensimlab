@@ -13,6 +13,7 @@ export const AWARENESS_UNDER_PARALYSIS: Scenario = {
   metadata: {
     id: 'awareness-under-paralysis',
     version: '0.1.0',
+    maturity: 'draft',
     title: 'Silent TIVA-line disconnection',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

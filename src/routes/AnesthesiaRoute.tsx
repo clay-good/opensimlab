@@ -22,6 +22,7 @@ import { Cockpit } from '@anesthesia/ui/Cockpit';
 import { Debrief } from '@anesthesia/ui/Debrief';
 import { assertTranscriptIsAnonymous, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
+import { MaturityMarker } from '@platform/governance/MaturityMarker';
 
 /**
  * The scenario a path names.
@@ -335,6 +336,11 @@ function ScenarioIndex() {
               {entry.metadata.objectives[0]?.statement}
             </p>
             <span className="badge">{entry.metadata.difficulty}</span>
+            <MaturityMarker
+              status={entry.metadata.maturity}
+              subjectId={entry.metadata.id}
+              contentVersion={entry.metadata.version}
+            />
           </li>
         ))}
       </ul>

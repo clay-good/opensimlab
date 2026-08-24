@@ -15,7 +15,7 @@ export type PublicationVerdict =
   | { readonly status: 'blocked'; readonly reasons: readonly string[] };
 
 export const MATURITY_LABELS: Readonly<Record<ContentMaturity, string>> = {
-  draft: 'Draft — not publicly playable',
+  draft: 'Draft — development build',
   preview: 'Preview — not clinically reviewed',
   source_checked: 'Sources checked — clinical behavior not reviewed',
   clinically_reviewed: 'Clinically reviewed',

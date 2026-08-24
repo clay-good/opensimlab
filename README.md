@@ -258,6 +258,7 @@ pinned provenance hash.
 The current records remain `draft`; no source check, clinical review, or endorsement is inferred.
 The shared publication policy separately names every preview gate and reserves reviewed-only claims
 for exact-version `clinically_reviewed` or `institution_endorsed` records.
+Scenario cards and briefings link their text-and-icon maturity marker to that exact public record.
 
 Architecture tests keep tutor rules outside engine and session mutation paths. The same boundary
 also rejects any reporting code that reads browser storage, transcripts, reflections, or progress;

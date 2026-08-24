@@ -12,6 +12,7 @@
  */
 
 import { EVENT_TYPES } from './event-types';
+import { MATURITY_STATUSES } from '@platform/catalog/maturity';
 
 export type JsonType = 'object' | 'array' | 'string' | 'number' | 'integer' | 'boolean';
 
@@ -62,10 +63,11 @@ export const SCENARIO_SCHEMA: SchemaNode = {
     metadata: {
       type: 'object',
       description: 'What this scenario is, who wrote it, and what it teaches.',
-      required: ['id', 'version', 'title', 'author', 'license', 'estimatedMinutes', 'difficulty', 'objectives', 'clinicalReview'],
+      required: ['id', 'version', 'maturity', 'title', 'author', 'license', 'estimatedMinutes', 'difficulty', 'objectives', 'clinicalReview'],
       properties: {
         id: { type: 'string', description: 'Stable identifier, lowercase with hyphens.', pattern: '^[a-z0-9-]+$' },
         version: { type: 'string', description: 'Semantic version of the scenario content.', pattern: '^\\d+\\.\\d+\\.\\d+$' },
+        maturity: { type: 'string', description: 'Exact-version public maturity.', enum: MATURITY_STATUSES },
         title: STRING_FIELD('Learner-facing title.', 3),
         author: STRING_FIELD('Who wrote the scenario.', 2),
         license: STRING_FIELD('The open content license this scenario is released under.', 2),
@@ -85,7 +87,7 @@ export const SCENARIO_SCHEMA: SchemaNode = {
         },
         clinicalReview: {
           type: 'object',
-          description: 'The signed clinical review record. Content without one is excluded from the build.',
+          description: 'The exact-version clinical review record. Unsigned preview content remains explicitly labeled.',
           required: ['reviewer', 'credential', 'reviewedOn', 'contentVersion', 'sources', 'reviewBy'],
           properties: {
             reviewer: STRING_FIELD('Full name of the reviewing clinician.', 2),

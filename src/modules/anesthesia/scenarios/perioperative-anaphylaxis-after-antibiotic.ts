@@ -7,6 +7,7 @@ export const PERIOPERATIVE_ANAPHYLAXIS_AFTER_ANTIBIOTIC: Scenario = {
   metadata: {
     id: 'perioperative-anaphylaxis-after-antibiotic',
     version: '0.1.0',
+    maturity: 'draft',
     title: 'Perioperative anaphylaxis after antibiotic exposure',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

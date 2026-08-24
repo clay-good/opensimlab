@@ -7,6 +7,7 @@ export const LOCAL_ANESTHETIC_SYSTEMIC_TOXICITY: Scenario = {
   metadata: {
     id: 'local-anesthetic-systemic-toxicity',
     version: '0.1.0',
+    maturity: 'draft',
     title: 'Local-anesthetic systemic toxicity after block injection',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

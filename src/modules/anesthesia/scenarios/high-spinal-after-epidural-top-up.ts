@@ -7,6 +7,7 @@ export const HIGH_SPINAL_AFTER_EPIDURAL_TOP_UP: Scenario = {
   metadata: {
     id: 'high-spinal-after-epidural-top-up',
     version: '0.1.0',
+    maturity: 'draft',
     title: 'High spinal after epidural top-up',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

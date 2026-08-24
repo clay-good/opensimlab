@@ -14,6 +14,7 @@ export const RAPID_SEQUENCE_INDUCTION: Scenario = {
   metadata: {
     id: 'rapid-sequence-induction',
     version: '0.2.0',
+    maturity: 'draft',
     title: 'Rapid-sequence induction',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

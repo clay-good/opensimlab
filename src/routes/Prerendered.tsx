@@ -17,6 +17,7 @@ import { DEFAULT_SCENARIO_ID, getScenario, scenariosByDifficulty } from '@anesth
 import { DocumentRoute } from './DocumentRoute';
 import { PlannedModuleRoute } from './PlannedModuleRoute';
 import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
+import { MaturityMarker } from '@platform/governance/MaturityMarker';
 import { SiteBar } from '@platform/ui';
 import { isUnreviewed } from '@platform/governance/review-gate';
 
@@ -77,6 +78,11 @@ function ScenarioMarkup({ path }: { path: string }) {
       <SiteBar />
       <main className="reading" id="main">
         <h1>{metadata.title}</h1>
+        <MaturityMarker
+          status={metadata.maturity}
+          subjectId={metadata.id}
+          contentVersion={metadata.version}
+        />
         <p>
           {patient.ageYears}-year-old{' '}
           {patientPersonNoun(patient)} for{' '}

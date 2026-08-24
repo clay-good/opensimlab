@@ -13,6 +13,7 @@ import { isUnreviewed, UNREVIEWED_NOTICE } from '@platform/governance/review-gat
 import { FlagControl } from '@platform/governance/FlagControl';
 import { reviewModeFrom } from '@platform/governance/review-notes';
 import { APP_VERSION } from '@platform/governance/status';
+import { MaturityMarker } from '@platform/governance/MaturityMarker';
 import type { Scenario } from '@anesthesia/engine';
 import { HONEST_STATUS } from '@platform/governance/status';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
@@ -139,6 +140,12 @@ export function Prebrief({ scenario, region, onStart, onWatch, guidance, onGuida
       <Badge kind="out-of-range">{HONEST_STATUS.headline}</Badge>
       <p className="reading__aside">{HONEST_STATUS.detail}</p>
       <p className="reading__aside">{NOT_FOR_CLINICAL_USE}</p>
+
+      <MaturityMarker
+        status={scenario.metadata.maturity}
+        subjectId={scenario.metadata.id}
+        contentVersion={scenario.metadata.version}
+      />
 
       {/* The scenario's own review record, before the learner starts, not after. */}
       {isUnreviewed(scenario.metadata.clinicalReview) && (
