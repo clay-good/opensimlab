@@ -103,4 +103,11 @@ describe('what a scenario briefing names', () => {
     expect(limitationsToBrief(desat).map((l) => l.id))
       .toContain('hypoxic-collapse-is-a-teaching-model');
   });
+
+  it('gives the hemorrhage case one current coagulation boundary, not the obsolete absence claim', () => {
+    const hemorrhage = SCENARIOS.find((s) => s.metadata.id === 'unexpected-intraoperative-hemorrhage')!;
+    const named = limitationsToBrief(hemorrhage).map((limitation) => limitation.id);
+    expect(named).toContain('bounded-dilutional-coagulopathy');
+    expect(named).not.toContain('no-coagulopathy');
+  });
 });

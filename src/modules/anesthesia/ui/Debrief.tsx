@@ -1532,7 +1532,7 @@ export function objectiveFindings(
  * did is not a description of what happened.
  */
 const LEARNER_ACTION_CATEGORIES = new Set([
-  'drug', 'ventilator', 'airway', 'fluid', 'blood-product', 'rhythm',
+  'drug', 'ventilator', 'airway', 'fluid', 'blood-product', 'laboratory', 'rhythm',
 ]);
 
 export function describedEvents(log: readonly EngineEvent[], limit = 40): EngineEvent[] {

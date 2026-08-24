@@ -587,7 +587,9 @@ describe('Requirement: The Action Cockpit Offers Only Trays That Do Something', 
     // source wraps it across lines and a substring check there is a check on
     // where the line breaks fall.
     expect(NOT_IN_THIS_BUILD).toContain('Packed red cells');
-    expect(NOT_IN_THIS_BUILD).toContain('other blood products');
+    expect(NOT_IN_THIS_BUILD).toContain('plasma');
+    expect(NOT_IN_THIS_BUILD).toContain('platelets');
+    expect(NOT_IN_THIS_BUILD).toContain('cryoprecipitate');
     expect(NOT_IN_THIS_BUILD).toContain('25%');
     expect(NOT_IN_THIS_BUILD).toContain('resuscitation');
     // Resuscitation matters more now that the engine can arrest a patient, so

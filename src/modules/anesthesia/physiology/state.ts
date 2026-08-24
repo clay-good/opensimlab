@@ -27,6 +27,8 @@ export const FIELDS = {
   svrDynSCm5: { unit: 'dyn·s·cm⁻⁵', min: 100, max: 4000, precision: 0, label: 'Systemic vascular resistance' },
   bloodVolumeMl: { unit: 'mL', min: 500, max: 9000, precision: 0, label: 'Circulating blood volume' },
   hemoglobinGPerDl: { unit: 'g/dL', min: 1, max: 22, precision: 1, label: 'Haemoglobin' },
+  prothrombinTimeRatio: { unit: '× normal', min: 0.8, max: 5, precision: 2, label: 'Prothrombin time ratio' },
+  fibrinogenGPerL: { unit: 'g/L', min: 0.2, max: 8, precision: 1, label: 'Fibrinogen' },
   spo2Percent: { unit: '%', min: 0, max: 100, precision: 0, label: 'Oxygen saturation' },
   pao2MmHg: { unit: 'mmHg', min: 0, max: 700, precision: 0, label: 'Arterial oxygen tension' },
   paco2MmHg: { unit: 'mmHg', min: 5, max: 200, precision: 0, label: 'Arterial carbon dioxide tension' },

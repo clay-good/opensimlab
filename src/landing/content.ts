@@ -91,7 +91,7 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
       'This is an early build. It contains fourteen scenarios — a routine induction on a healthy '
       + 'adult, rapid desaturation in an obese patient, hypotension after induction, and '
       + 'bronchospasm after intubation, plus unexpected intraoperative hemorrhage with crystalloid '
-      + 'temporization and bounded adult packed-red-cell support, rapid-sequence induction with modeled rocuronium onset, and silent TIVA-line '
+      + 'temporization, bounded adult packed-red-cell support, and a dilution-only coagulation panel with plasma support, rapid-sequence induction with modeled rocuronium onset, and silent TIVA-line '
       + 'disconnection under paralysis, initial laryngospasm response after airway stimulation, '
       + 'initial perioperative anaphylaxis response after antibiotic exposure, and early '
       + 'malignant-hyperthermia response during volatile anesthesia, plus a bounded routine '

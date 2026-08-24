@@ -504,10 +504,19 @@ export const LIMITATIONS: readonly Limitation[] = [
     headline: 'Packed red cells are an instantaneous fixed-unit teaching model, not a transfusion workflow.',
     simplification: 'An adult action adds exactly 300 mL and 60 g hemoglobin per unit on the next '
       + '100 ms tick, with a two-unit cumulative cap. Product variation, delivery time, storage, '
-      + 'warming, compatibility, crossmatch, reactions, calcium, and electrolytes are absent.',
+      + 'warming, compatibility, crossmatch, reactions, calcium, and electrolytes are absent. '
+      + 'The hemorrhage case models fixed-unit plasma separately; packed red cells themselves do not restore clotting factors.',
     whereItMisleads: 'Choosing, preparing, checking, timing, monitoring, or responding to a real transfusion.',
     correctUnderstanding: 'Real packed-red-cell components vary, require compatibility and bedside '
       + 'checks, are administered over time, and can cause serious reactions including TACO and TRALI.',
+    briefIn: ['unexpected-intraoperative-hemorrhage'],
+  },
+  {
+    id: 'bounded-dilutional-coagulopathy',
+    headline: 'Coagulation is a dilution-only teaching model, not a bleeding or massive-transfusion prediction.',
+    simplification: 'Normal factor and fibrinogen mass are removed proportionally with blood and plasma leak, diluted by retained crystalloid and red-cell volume, and restored toward baseline by fixed 275 mL plasma units. PT ratio is the inverse normalized factor concentration; fibrinogen starts at 3 g/L. Results and plasma effects are instantaneous.',
+    whereItMisleads: 'Consumptive coagulopathy, hyperfibrinolysis, obstetric or trauma-specific targets, anticoagulants, liver disease, hypothermia, acidosis, viscoelastic testing, and protocolized massive transfusion.',
+    correctUnderstanding: 'Real major hemorrhage requires source control, repeated laboratory or viscoelastic assessment, local protocol activation, and targeted blood-component support. Plasma dosing and response vary and can cause serious harm.',
     briefIn: ['unexpected-intraoperative-hemorrhage'],
   },
   {
@@ -519,7 +528,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'management as much as volume does.',
     correctUnderstanding: 'In real major haemorrhage the clotting is often the problem, and '
       + 'replacing volume without addressing it makes the bleeding worse.',
-    briefIn: ['unexpected-intraoperative-hemorrhage'],
+    briefIn: [],
   },
   {
     id: 'acid-base-approximate',

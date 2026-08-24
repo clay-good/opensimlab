@@ -89,6 +89,20 @@ describe('Requirement: Canonical Patient State Vector', () => {
     );
   });
 
+  it('dilutes coagulation factors with retained crystalloid and restores them with plasma', () => {
+    const patient = new VirtualPatient(HEALTHY_ADULT, createRng(21));
+    const diluted = patient.tick(NO_DRUGS, VENTILATED, { ...QUIET, crystalloidMl: 4000 });
+    expect(diluted.state.prothrombinTimeRatio).toBeGreaterThan(1.15);
+    expect(diluted.state.fibrinogenGPerL).toBeLessThan(2.6);
+    const treated = patient.tick(NO_DRUGS, VENTILATED, {
+      ...QUIET, freshFrozenPlasmaVolumeMl: 1100,
+    });
+    expect(treated.plasmaTransfusion?.prothrombinTimeRatioAfter)
+      .toBeLessThan(treated.plasmaTransfusion?.prothrombinTimeRatioBefore ?? 0);
+    expect(treated.plasmaTransfusion?.fibrinogenAfterGPerL)
+      .toBeGreaterThan(treated.plasmaTransfusion?.fibrinogenBeforeGPerL ?? Infinity);
+  });
+
   it('Scenario: Every state variable is typed and bounded', () => {
     for (const [name, spec] of Object.entries(FIELDS)) {
       expect(spec.unit, `${name} needs a unit`).toBeDefined();

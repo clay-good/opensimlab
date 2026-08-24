@@ -87,6 +87,26 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'Current JPAC Red Book chapter 7.3 PDF, Table 7.3.1',
     verifiedOn: '2026-08-24',
   },
+  {
+    id: 'nice-ng24-fresh-frozen-plasma-current',
+    currency: { lastAmended: '2026-02-26', checkedAt: '2026-08-24' },
+    authors: 'National Institute for Health and Care Excellence',
+    title: 'Blood transfusion: Fresh frozen plasma transfusion',
+    publication: 'NICE guideline NG24', year: 2026, locator: 'Recommendations 1.9.1 and 1.10.1',
+    usedFor: 'Clinical context for the learner-visible coagulation panel and plasma response: the guidance considers plasma for clinically significant bleeding with abnormal coagulation results and calls for reassessment. The simulator does not turn that context into an eligibility or dosing rule.',
+    verifiedAgainst: 'Current NICE NG24 web guidance, updated February 26, 2026',
+    verifiedOn: '2026-08-24',
+  },
+  {
+    id: 'nhsbt-ffp-dosage-poster',
+    currency: { lastAmended: '2010-08-01', checkedAt: '2026-08-24' },
+    authors: 'NHS Blood and Transplant Better Blood Transfusion Team',
+    title: 'Fresh-Frozen Plasma Dosage',
+    publication: 'NHSBT', year: 2010, locator: 'Version 1, adult therapeutic dose chart',
+    usedFor: 'The 12 to 15 mL/kg adult therapeutic-dose context and approximate 275 mL mean unit volume. The simulator fixes unit volume but does not present it as a dose recommendation.',
+    verifiedAgainst: 'Official NHSBT dosage poster hosted by JPAC',
+    verifiedOn: '2026-08-24',
+  },
   // --- Pharmacokinetic and pharmacodynamic models ---------------------------
   {
     id: 'absalom-kenny-paedfusor-2005',

@@ -24,7 +24,7 @@ import { normalizedEffect } from './pharmacology/pd';
 import type { PharmacologyModel } from './pharmacology/types';
 import { getFluid, MAX_FLUID_BOLUS_ML } from './content/fluids';
 import {
-  getBloodProduct, MAX_PRBC_UNITS_PER_ACTION, MAX_PRBC_UNITS_TOTAL,
+  getBloodProduct, MAX_PRBC_UNITS_PER_ACTION,
 } from './content/blood-products';
 import { oxygenDeliveryMlPerMin } from './physiology/oxygen-delivery';
 import type { Covariates } from './pharmacology/body-composition';
@@ -38,7 +38,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.15';
+export const ENGINE_VERSION = '0.1.0-alpha.16';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -209,6 +209,7 @@ export class AnesthesiaEngine {
   private lastEpinephrineTick: number | null = null;
   private crystalloidTotalMl = 0;
   private packedRedBloodCellUnits = 0;
+  private freshFrozenPlasmaUnits = 0;
   private bloodProductTotalMl = 0;
   private dantroleneTotalMg = 0;
   private dantroleneEffectFraction = 0;
@@ -261,6 +262,7 @@ export class AnesthesiaEngine {
   private pendingPackedRedCellUnits = 0;
   private pendingPackedRedCellVolumeMl = 0;
   private pendingPackedRedCellHemoglobinG = 0;
+  private pendingFreshFrozenPlasmaVolumeMl = 0;
   /** Physical delivery state, intentionally separate from the pump's commanded rate. */
   private hypnoticLineConnected = true;
   /** Whether the learner has deliberately inspected the line since its last failure. */
@@ -832,24 +834,55 @@ export class AnesthesiaEngine {
         const productId = String(action.payload.productId ?? '');
         const product = getBloodProduct(productId);
         const units = AnesthesiaEngine.finiteAmount(action.payload.units);
+        const totalForProduct = product?.kind === 'plasma'
+          ? this.freshFrozenPlasmaUnits : this.packedRedBloodCellUnits;
+        const permittedUnits = product?.kind === 'plasma'
+          ? product.presetsUnits.includes(units ?? -1)
+          : units !== null && units <= MAX_PRBC_UNITS_PER_ACTION;
+        const hemorrhageActive = this.running.some((event) => event.type === 'blood-loss')
+          || this.injectedBloodLossMlPerMin > 0;
         const invalid = !product || units === null || !Number.isInteger(units)
-          || units < 1 || units > MAX_PRBC_UNITS_PER_ACTION
-          || this.packedRedBloodCellUnits + units > MAX_PRBC_UNITS_TOTAL
-          || this.scenario.patient.ageYears < 18;
+          || units < 1 || !permittedUnits
+          || totalForProduct + units > product.maxUnitsTotal
+          || this.scenario.patient.ageYears < 18
+          || (product.kind === 'plasma' && !hemorrhageActive);
         if (invalid) {
           this.log('warning', 'blood-product', `bad-blood-product-${this.currentTick}`,
             !product
               ? `This build does not stock a blood product called "${productId}". Nothing was given.`
               : this.scenario.patient.ageYears < 18
-                ? 'Packed red cells are not stocked in this bounded pediatric induction case.'
-                : `Packed red cells require 1 or 2 whole units and no more than ${MAX_PRBC_UNITS_TOTAL} units cumulatively. Nothing was given.`);
+                ? 'Blood products are not stocked in this bounded pediatric induction case.'
+                : product.kind === 'plasma' && !hemorrhageActive
+                  ? 'Fresh frozen plasma is stocked only while modeled hemorrhage is active.'
+                  : `${product.name} requires one listed whole-unit preset and no more than ${product.maxUnitsTotal} units cumulatively. Nothing was given.`);
           break;
         }
-        this.pendingPackedRedCellUnits += units;
-        this.pendingPackedRedCellVolumeMl += units * product.volumeMlPerUnit;
-        this.pendingPackedRedCellHemoglobinG += units * product.hemoglobinGPerUnit;
-        this.packedRedBloodCellUnits += units;
+        if (product.kind === 'red-cells') {
+          this.pendingPackedRedCellUnits += units;
+          this.pendingPackedRedCellVolumeMl += units * product.volumeMlPerUnit;
+          this.pendingPackedRedCellHemoglobinG += units * product.hemoglobinGPerUnit;
+          this.packedRedBloodCellUnits += units;
+        } else {
+          this.pendingFreshFrozenPlasmaVolumeMl += units * product.volumeMlPerUnit;
+          this.freshFrozenPlasmaUnits += units;
+        }
         this.bloodProductTotalMl += units * product.volumeMlPerUnit;
+        break;
+      }
+      case 'coagulation-labs': {
+        const hemorrhageActive = this.running.some((event) => event.type === 'blood-loss')
+          || this.injectedBloodLossMlPerMin > 0;
+        if (!hemorrhageActive) {
+          this.log('warning', 'laboratory', `bad-coagulation-labs-${this.currentTick}`,
+            'The bounded coagulation panel is available only while modeled hemorrhage is active.');
+          break;
+        }
+        this.log('info', 'laboratory', `coagulation-labs-${this.currentTick}`,
+          `Coagulation panel: prothrombin time ratio ${(this.lastState.prothrombinTimeRatio ?? 1).toFixed(2)} × normal; fibrinogen ${(this.lastState.fibrinogenGPerL ?? 3).toFixed(1)} g/L. Results are immediate bounded teaching values.`, {
+            prothrombinTimeRatio: this.lastState.prothrombinTimeRatio ?? 1,
+            fibrinogenGPerL: this.lastState.fibrinogenGPerL ?? 3,
+            teachingModel: true,
+          });
         break;
       }
       case 'hypnotic-line': {
@@ -1387,9 +1420,11 @@ export class AnesthesiaEngine {
     const packedRedCellUnits = this.pendingPackedRedCellUnits;
     const packedRedCellVolumeMl = this.pendingPackedRedCellVolumeMl;
     const packedRedCellHemoglobinG = this.pendingPackedRedCellHemoglobinG;
+    const freshFrozenPlasmaVolumeMl = this.pendingFreshFrozenPlasmaVolumeMl;
     this.pendingPackedRedCellUnits = 0;
     this.pendingPackedRedCellVolumeMl = 0;
     this.pendingPackedRedCellHemoglobinG = 0;
+    this.pendingFreshFrozenPlasmaVolumeMl = 0;
     const stateBeforeStep = Object.keys(this.lastState).length > 0
       ? this.lastState as PatientState
       : this.patient.snapshot();
@@ -1516,7 +1551,7 @@ export class AnesthesiaEngine {
         surgicalStimulus: stimulus, obstructionFraction: obstruction, airwayDeliveryFraction,
         upperAirwayClosureFraction: this.upperAirwayClosureFraction,
         bloodLossMl, crystalloidMl,
-        packedRedCellVolumeMl, packedRedCellHemoglobinG,
+        packedRedCellVolumeMl, packedRedCellHemoglobinG, freshFrozenPlasmaVolumeMl,
         anaphylaxisFraction: unopposedAnaphylaxis, capillaryLeakMl,
         hypermetabolicFraction: unopposedHypermetabolism,
         activeCooling: this.activeCooling,
@@ -1602,6 +1637,20 @@ export class AnesthesiaEngine {
           cumulativeUnits: this.packedRedBloodCellUnits,
           cumulativeVolumeMl: this.bloodProductTotalMl,
           teachingModel: true,
+        });
+    }
+    if (result.plasmaTransfusion && freshFrozenPlasmaVolumeMl > 0) {
+      const units = freshFrozenPlasmaVolumeMl / 275;
+      this.log('info', 'blood-product', `blood-product-fresh-frozen-plasma-${this.currentTick}`,
+        `${units} units fresh frozen plasma given (${freshFrozenPlasmaVolumeMl.toFixed(0)} mL). `
+        + `Prothrombin time ratio changed from ${result.plasmaTransfusion.prothrombinTimeRatioBefore.toFixed(2)} to ${result.plasmaTransfusion.prothrombinTimeRatioAfter.toFixed(2)} × normal; fibrinogen changed from ${result.plasmaTransfusion.fibrinogenBeforeGPerL.toFixed(1)} to ${result.plasmaTransfusion.fibrinogenAfterGPerL.toFixed(1)} g/L.`, {
+          productId: 'fresh-frozen-plasma', units, volumeMl: freshFrozenPlasmaVolumeMl,
+          prothrombinTimeRatioBefore: result.plasmaTransfusion.prothrombinTimeRatioBefore,
+          prothrombinTimeRatioAfter: result.plasmaTransfusion.prothrombinTimeRatioAfter,
+          fibrinogenBeforeGPerL: result.plasmaTransfusion.fibrinogenBeforeGPerL,
+          fibrinogenAfterGPerL: result.plasmaTransfusion.fibrinogenAfterGPerL,
+          cumulativeUnits: this.freshFrozenPlasmaUnits,
+          cumulativeVolumeMl: this.bloodProductTotalMl, teachingModel: true,
         });
     }
 
@@ -1730,7 +1779,10 @@ export class AnesthesiaEngine {
         epinephrineTotalMicrograms: this.epinephrineTotalMicrograms,
         lastEpinephrineTick: this.lastEpinephrineTick,
         crystalloidTotalMl: this.crystalloidTotalMl,
+        hemorrhageActive: this.running.some((event) => event.type === 'blood-loss')
+          || this.injectedBloodLossMlPerMin > 0,
         packedRedBloodCellUnits: this.packedRedBloodCellUnits,
+        freshFrozenPlasmaUnits: this.freshFrozenPlasmaUnits,
         bloodProductTotalMl: this.bloodProductTotalMl,
         dantroleneTotalMg: this.dantroleneTotalMg,
         dantroleneEffectFraction: this.dantroleneEffectFraction,

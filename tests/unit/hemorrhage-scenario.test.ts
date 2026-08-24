@@ -130,6 +130,94 @@ describe('Requirement: Packed red cells restore hemoglobin and calculated oxygen
   });
 });
 
+describe('Requirement: Bounded plasma support follows a coagulation panel', () => {
+  it('reports dilutional change and a four-unit plasma response', () => {
+    const sim = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
+    advance(sim, 301);
+    sim.apply({ tick: sim.tick, type: 'fluid', payload: {
+      fluidId: 'balanced-crystalloid', volumeMl: 2000,
+    } });
+    const diluted = sim.step();
+    sim.apply({ tick: sim.tick, type: 'coagulation-labs', payload: {} });
+    const labs = sim.step();
+    sim.apply({ tick: sim.tick, type: 'blood-product', payload: {
+      productId: 'fresh-frozen-plasma', units: 4,
+    } });
+    const treated = sim.step();
+    const event = treated.events.find((entry) => entry.eventId.includes('fresh-frozen-plasma'));
+
+    expect(diluted.state.prothrombinTimeRatio).toBeGreaterThan(1);
+    expect(labs.events.some((entry) => entry.category === 'laboratory')).toBe(true);
+    expect(treated.state.prothrombinTimeRatio).toBeLessThan(diluted.state.prothrombinTimeRatio);
+    expect(treated.state.fibrinogenGPerL).toBeGreaterThan(diluted.state.fibrinogenGPerL);
+    expect(treated.equipment.resuscitation.freshFrozenPlasmaUnits).toBe(4);
+    expect(event?.data?.volumeMl).toBe(1100);
+  });
+
+  it('rejects plasma outside a hemorrhage case and over its four-unit cap', () => {
+    const routine = engine();
+    routine.step();
+    routine.apply({ tick: routine.tick, type: 'blood-product', payload: {
+      productId: 'fresh-frozen-plasma', units: 4,
+    } });
+    expect(routine.step().equipment.resuscitation.freshFrozenPlasmaUnits).toBe(0);
+
+    const bleeding = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
+    bleeding.step();
+    bleeding.apply({ tick: bleeding.tick, type: 'blood-product', payload: {
+      productId: 'fresh-frozen-plasma', units: 3,
+    } });
+    const prebleed = bleeding.step();
+    expect(prebleed.equipment.resuscitation.freshFrozenPlasmaUnits).toBe(0);
+    bleeding.apply({ tick: bleeding.tick, type: 'coagulation-labs', payload: {} });
+    const refusedPanel = bleeding.step();
+    expect(refusedPanel.events.some(
+      (entry) => entry.eventId.startsWith('bad-coagulation-labs-'),
+    )).toBe(true);
+    expect(refusedPanel.events.some(
+      (entry) => entry.eventId.startsWith('coagulation-labs-'),
+    )).toBe(false);
+    advance(bleeding, 300);
+    bleeding.apply({ tick: bleeding.tick, type: 'blood-product', payload: {
+      productId: 'fresh-frozen-plasma', units: 4,
+    } });
+    bleeding.step();
+    bleeding.apply({ tick: bleeding.tick, type: 'blood-product', payload: {
+      productId: 'fresh-frozen-plasma', units: 3,
+    } });
+    const refused = bleeding.step();
+    expect(refused.equipment.resuscitation.freshFrozenPlasmaUnits).toBe(4);
+    expect(refused.events.some((entry) => entry.eventId.startsWith('bad-blood-product-'))).toBe(true);
+  });
+
+  it.each([0, -1, 1, 2, 2.5, 5, Infinity])('rejects an unsupported plasma request of %s units', (units) => {
+    const sim = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
+    advance(sim, 301);
+    const control = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
+    advance(control, 301);
+    sim.apply({ tick: sim.tick, type: 'blood-product', payload: {
+      productId: 'fresh-frozen-plasma', units,
+    } });
+    const refused = sim.step();
+    expect(refused.state.bloodVolumeMl).toBeCloseTo(control.step().state.bloodVolumeMl, 8);
+    expect(refused.equipment.resuscitation.freshFrozenPlasmaUnits).toBe(0);
+  });
+
+  it('replays plasma and the requested panel deterministically', () => {
+    const run = () => {
+      const sim = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
+      advance(sim, 1200);
+      sim.apply({ tick: sim.tick, type: 'coagulation-labs', payload: {} });
+      sim.step();
+      sim.apply({ tick: sim.tick, type: 'blood-product', payload: {
+        productId: 'fresh-frozen-plasma', units: 3,
+      } });
+      return advance(sim, 200);
+    };
+    expect(run()).toEqual(run());
+  });
+});
+
 describe('Requirement: The hemorrhage scenario teaches a coherent causal picture', () => {
   it('blood loss lowers volume, cardiac output, pressure, and end-tidal carbon dioxide', () => {
     const noLoss: Scenario = {

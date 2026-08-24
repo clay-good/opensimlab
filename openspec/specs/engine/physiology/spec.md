@@ -206,6 +206,16 @@ The engine SHALL track circulating volume and hemoglobin, apply the differing vo
 - **WHEN** two units of packed red cells are given in the same state
 - **THEN** hemoglobin and calculated oxygen delivery both rise, and the event log records the volume and the hemoglobin change
 
+#### Scenario: Crystalloid dilutes a bounded coagulation state
+
+- **WHEN** retained crystalloid and red-cell volume replace whole blood during the hemorrhage case
+- **THEN** normalized factor and fibrinogen concentrations fall, the requested teaching panel reports PT ratio and fibrinogen, and whole-blood loss alone does not invent a concentration change
+
+#### Scenario: Plasma moves the bounded state toward baseline
+
+- **WHEN** a listed whole-unit plasma preset is given during modeled active hemorrhage
+- **THEN** its fixed normal-donor plasma volume raises factor and fibrinogen concentrations toward baseline, and the event log records before and after values without claiming consumption, individualized response, or a massive-transfusion protocol
+
 ### Requirement: Surgical Stimulus
 
 The engine SHALL model surgical stimulus as a time-varying scalar that raises heart rate, blood pressure, and the predicted depth-of-anesthesia index, and that is opposed by hypnotic and opioid effect.

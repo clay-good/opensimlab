@@ -104,6 +104,8 @@ export interface ScenarioDrive {
   readonly packedRedCellVolumeMl?: number;
   /** Hemoglobin mass carried by packed red cells delivered this tick. */
   readonly packedRedCellHemoglobinG?: number;
+  /** Normal-donor plasma volume delivered this tick. */
+  readonly freshFrozenPlasmaVolumeMl?: number;
   /** Unopposed systemic anaphylaxis effect, 0 to 1. */
   readonly anaphylaxisFraction?: number;
   /** Plasma volume leaving the circulation this tick through capillary leak. */
@@ -128,6 +130,13 @@ export interface TickResult {
     readonly hemoglobinG: number;
     readonly hemoglobinBeforeGPerDl: number;
     readonly hemoglobinAfterGPerDl: number;
+  };
+  readonly plasmaTransfusion?: {
+    readonly volumeMl: number;
+    readonly prothrombinTimeRatioBefore: number;
+    readonly prothrombinTimeRatioAfter: number;
+    readonly fibrinogenBeforeGPerL: number;
+    readonly fibrinogenAfterGPerL: number;
   };
   /** 0 to 1, for the waveform layer. */
   readonly hypovolemiaFraction: number;
@@ -176,6 +185,8 @@ export class VirtualPatient {
   private muscleRigidityFraction = 0;
   /** Circulating hemoglobin mass, so blood loss and crystalloid dilution remain coherent. */
   private hemoglobinMassG: number;
+  private coagulationFactorMass: number;
+  private fibrinogenMassG: number;
   private sevofluranePercent = 0;
   private lastMap: number;
   /**
@@ -205,6 +216,8 @@ export class VirtualPatient {
     this.temperatureC = profile.coreTemperatureC;
     this.hemoglobinMassG = profile.hemodynamics.hemoglobinGPerDl
       * (profile.hemodynamics.bloodVolumeMl / 100);
+    this.coagulationFactorMass = profile.hemodynamics.bloodVolumeMl;
+    this.fibrinogenMassG = 3 * profile.hemodynamics.bloodVolumeMl / 1000;
     this.hemodynamics = {
       heartRateBpm: profile.hemodynamics.baselineHeartRateBpm,
       strokeVolumeMl: profile.hemodynamics.baselineStrokeVolumeMl,
@@ -237,6 +250,8 @@ export class VirtualPatient {
       svrDynSCm5: this.hemodynamics.svrDynSCm5,
       bloodVolumeMl: this.hemodynamics.bloodVolumeMl,
       hemoglobinGPerDl: this.hemoglobinGPerDl(),
+      prothrombinTimeRatio: this.prothrombinTimeRatio(),
+      fibrinogenGPerL: this.fibrinogenGPerL(),
       spo2Percent: 100,
       pao2MmHg: 0,
       endTidalO2Fraction: 0.21,
@@ -280,6 +295,7 @@ export class VirtualPatient {
   tick(drugs: DrugDrive, ventilator: VentilatorSettings, scenario: ScenarioDrive): TickResult {
     const recorder = new AttributionRecorder();
     let transfusion: TickResult['transfusion'];
+    let plasmaTransfusion: TickResult['plasmaTransfusion'];
     const hypermetabolic = clamp(scenario.hypermetabolicFraction ?? 0, 0, 1);
     this.hypermetabolicCardiovascularFraction = approach(
       this.hypermetabolicCardiovascularFraction, hypermetabolic, 0.9, TICK_MINUTES,
@@ -324,11 +340,18 @@ export class VirtualPatient {
 
     // --- Volume ---------------------------------------------------------------
     if (scenario.bloodLossMl > 0 || scenario.crystalloidMl > 0
-      || (scenario.capillaryLeakMl ?? 0) > 0 || (scenario.packedRedCellVolumeMl ?? 0) > 0) {
+      || (scenario.capillaryLeakMl ?? 0) > 0 || (scenario.packedRedCellVolumeMl ?? 0) > 0
+      || (scenario.freshFrozenPlasmaVolumeMl ?? 0) > 0) {
       const beforeMl = Math.max(this.hemodynamics.bloodVolumeMl, 1);
       const lostMl = Math.min(scenario.bloodLossMl, beforeMl);
       // Whole-blood loss removes red cells at the current concentration.
       this.hemoglobinMassG *= 1 - lostMl / beforeMl;
+      this.coagulationFactorMass *= 1 - lostMl / beforeMl;
+      this.fibrinogenMassG *= 1 - lostMl / beforeMl;
+      const afterLossMl = Math.max(beforeMl - lostMl, 1);
+      const leakMl = Math.min(scenario.capillaryLeakMl ?? 0, afterLossMl);
+      this.coagulationFactorMass *= 1 - leakMl / afterLossMl;
+      this.fibrinogenMassG *= 1 - leakMl / afterLossMl;
       // Crystalloid expands the intravascular space by roughly a quarter of the
       // volume infused; the rest redistributes.
       this.hemodynamics.bloodVolumeMl = Math.max(
@@ -336,7 +359,7 @@ export class VirtualPatient {
         this.hemodynamics.bloodVolumeMl
           + scenario.crystalloidMl * 0.25
           - lostMl
-          - Math.min(scenario.capillaryLeakMl ?? 0, beforeMl - lostMl),
+          - leakMl,
       );
       const packedVolumeMl = Math.max(0, scenario.packedRedCellVolumeMl ?? 0);
       const packedHemoglobinG = Math.max(0, scenario.packedRedCellHemoglobinG ?? 0);
@@ -349,6 +372,21 @@ export class VirtualPatient {
           hemoglobinG: packedHemoglobinG,
           hemoglobinBeforeGPerDl,
           hemoglobinAfterGPerDl: this.hemoglobinGPerDl(),
+        };
+      }
+      const plasmaVolumeMl = Math.max(0, scenario.freshFrozenPlasmaVolumeMl ?? 0);
+      if (plasmaVolumeMl > 0) {
+        const prothrombinTimeRatioBefore = this.prothrombinTimeRatio();
+        const fibrinogenBeforeGPerL = this.fibrinogenGPerL();
+        this.hemodynamics.bloodVolumeMl += plasmaVolumeMl;
+        this.coagulationFactorMass += plasmaVolumeMl;
+        this.fibrinogenMassG += 3 * plasmaVolumeMl / 1000;
+        plasmaTransfusion = {
+          volumeMl: plasmaVolumeMl,
+          prothrombinTimeRatioBefore,
+          prothrombinTimeRatioAfter: this.prothrombinTimeRatio(),
+          fibrinogenBeforeGPerL,
+          fibrinogenAfterGPerL: this.fibrinogenGPerL(),
         };
       }
       if ((scenario.capillaryLeakMl ?? 0) > 0) {
@@ -565,6 +603,8 @@ export class VirtualPatient {
       svrDynSCm5: this.hemodynamics.svrDynSCm5,
       bloodVolumeMl: this.hemodynamics.bloodVolumeMl,
       hemoglobinGPerDl: this.hemoglobinGPerDl(),
+      prothrombinTimeRatio: this.prothrombinTimeRatio(),
+      fibrinogenGPerL: this.fibrinogenGPerL(),
       spo2Percent: gasResult.spo2Percent,
       pao2MmHg: gasResult.pao2MmHg,
       endTidalO2Fraction: gasResult.endTidalO2Fraction,
@@ -591,6 +631,7 @@ export class VirtualPatient {
       attribution: recorder.build(),
       warnings,
       ...(transfusion ? { transfusion } : {}),
+      ...(plasmaTransfusion ? { plasmaTransfusion } : {}),
       hypovolemiaFraction: hemo.hypovolemiaFraction,
       anesthesiaDepthFraction: depthFraction,
     };
@@ -598,6 +639,15 @@ export class VirtualPatient {
 
   private hemoglobinGPerDl(): number {
     return this.hemoglobinMassG / Math.max(this.hemodynamics.bloodVolumeMl / 100, 0.01);
+  }
+
+  private prothrombinTimeRatio(): number {
+    const factorFraction = this.coagulationFactorMass / Math.max(this.hemodynamics.bloodVolumeMl, 1);
+    return clamp(1 / Math.max(factorFraction, 0.2), 0.8, 5);
+  }
+
+  private fibrinogenGPerL(): number {
+    return this.fibrinogenMassG / Math.max(this.hemodynamics.bloodVolumeMl / 1000, 0.001);
   }
 
   /** Perform a laryngoscopy attempt with the session's seeded generator. */

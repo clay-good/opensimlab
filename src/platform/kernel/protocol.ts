@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 15 reports bounded PRBC totals. */
-export const WORKER_PROTOCOL_VERSION = 15;
+/** Bumped whenever the message shape changes incompatibly. Version 16 reports bounded plasma totals. */
+export const WORKER_PROTOCOL_VERSION = 16;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -200,7 +200,9 @@ export interface EquipmentSnapshot {
     readonly epinephrineTotalMicrograms: number;
     readonly lastEpinephrineTick: number | null;
     readonly crystalloidTotalMl: number;
+    readonly hemorrhageActive?: boolean;
     readonly packedRedBloodCellUnits?: number;
+    readonly freshFrozenPlasmaUnits?: number;
     readonly bloodProductTotalMl?: number;
     readonly dantroleneTotalMg: number;
     readonly dantroleneEffectFraction: number;

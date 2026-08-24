@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: bounded packed-red-cell totals have protocol version 15', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(15);
+  it('Scenario: bounded plasma totals have protocol version 16', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(16);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

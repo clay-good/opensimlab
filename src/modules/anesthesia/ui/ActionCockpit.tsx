@@ -42,7 +42,9 @@ export interface ActionCockpitProps {
     readonly epinephrineTotalMicrograms: number;
     readonly lastEpinephrineTick: number | null;
     readonly crystalloidTotalMl: number;
+    readonly hemorrhageActive?: boolean;
     readonly packedRedBloodCellUnits?: number;
+    readonly freshFrozenPlasmaUnits?: number;
     readonly bloodProductTotalMl?: number;
     readonly dantroleneTotalMg: number;
     readonly dantroleneEffectFraction: number;
@@ -102,6 +104,7 @@ export interface ActionCockpitProps {
   readonly onHypnoticLine: (action: 'inspect' | 'reconnect') => void;
   readonly onFluid: (fluidId: string, volumeMl: number) => void;
   readonly onBloodProduct?: (productId: string, units: number) => void;
+  readonly onCoagulationLabs?: () => void;
   readonly onVentilator: (settings: Partial<ActionCockpitProps['ventilator']>) => void;
   readonly onLaryngoscopy: (technique: 'direct' | 'video') => void;
   readonly onAirwayManeuver: (maneuver: 'jaw-thrust-cpap') => void;
@@ -176,7 +179,8 @@ const CRISIS_TRAY = { id: 'crisis', label: 'Crisis response' } as const;
  */
 export const NOT_IN_THIS_BUILD =
   'Packed red cells use a bounded adult-only 300 mL and 60 g hemoglobin per-unit teaching model. '
-  + 'Compatibility, reactions, infusion rate, coagulation, laboratory guidance, and other blood products are not modeled. '
+  + 'The hemorrhage case also has an immediate PT-ratio/fibrinogen teaching panel and fixed-unit plasma response. '
+  + 'Compatibility, reactions, infusion rate, platelets, cryoprecipitate, viscoelastic testing, consumption, and a massive-transfusion protocol are not modeled. '
   + 'Crystalloid uses a fixed 25% intravascular retention teaching model. '
   + 'Cardiac-arrest resuscitation actions — compressions, arrest-dose epinephrine, and defibrillation — '
   + 'are available only in the bounded scripted arrest case; a patient with hypoxic arrest elsewhere does not recover.';
@@ -251,10 +255,13 @@ export function ActionCockpit(props: ActionCockpitProps) {
           <FluidTray
             crystalloidTotalMl={props.resuscitation.crystalloidTotalMl}
             packedRedBloodCellUnits={props.resuscitation.packedRedBloodCellUnits ?? 0}
+            freshFrozenPlasmaUnits={props.resuscitation.freshFrozenPlasmaUnits ?? 0}
             bloodProductTotalMl={props.resuscitation.bloodProductTotalMl ?? 0}
             ageYears={props.scenario.patient.ageYears}
+            hemorrhageAvailable={props.resuscitation.hemorrhageActive ?? false}
             onFluid={props.onFluid}
             onBloodProduct={props.onBloodProduct ?? (() => {})}
+            onCoagulationLabs={props.onCoagulationLabs ?? (() => {})}
           />
         )}
         {tray === 'airway' && (
@@ -470,15 +477,18 @@ function CardiacArrestTray({
 }
 
 function FluidTray({
-  crystalloidTotalMl, packedRedBloodCellUnits, bloodProductTotalMl,
-  ageYears, onFluid, onBloodProduct,
+  crystalloidTotalMl, packedRedBloodCellUnits, freshFrozenPlasmaUnits, bloodProductTotalMl,
+  ageYears, hemorrhageAvailable, onFluid, onBloodProduct, onCoagulationLabs,
 }: {
   crystalloidTotalMl: number;
   packedRedBloodCellUnits: number;
+  freshFrozenPlasmaUnits: number;
   bloodProductTotalMl: number;
   ageYears: number;
+  hemorrhageAvailable: boolean;
   onFluid: (fluidId: string, volumeMl: number) => void;
   onBloodProduct: (productId: string, units: number) => void;
+  onCoagulationLabs: () => void;
 }) {
   const pediatric = ageYears < 18;
   const [pending, setPending] = useState<{ fluidId: string; volumeMl: number } | null>(null);
@@ -533,16 +543,18 @@ function FluidTray({
           )}
         </section>
       ))}
-      {BLOOD_PRODUCTS.map((product) => (
+      {BLOOD_PRODUCTS.filter((product) => product.kind === 'red-cells' || hemorrhageAvailable).map((product) => (
         <section className="syringe" key={product.id}>
           <div className="syringe__name">{product.name}</div>
           <p className="field__hint">
-            Fixed teaching model: 1 unit adds {product.volumeMlPerUnit} mL and{' '}
-            {product.hemoglobinGPerUnit} g hemoglobin.
+            {product.kind === 'red-cells'
+              ? `Fixed teaching model: 1 unit adds ${product.volumeMlPerUnit} mL and ${product.hemoglobinGPerUnit} g hemoglobin.`
+              : `Fixed teaching model: 1 unit adds ${product.volumeMlPerUnit} mL of normal-donor plasma.`}
           </p>
           <p className="syringe__remaining" role="status">
-            Accepted: {packedRedBloodCellUnits} unit{packedRedBloodCellUnits === 1 ? '' : 's'} ·{' '}
-            {bloodProductTotalMl.toFixed(0)} mL
+            Accepted: {product.kind === 'red-cells' ? packedRedBloodCellUnits : freshFrozenPlasmaUnits}{' '}
+            unit{(product.kind === 'red-cells' ? packedRedBloodCellUnits : freshFrozenPlasmaUnits) === 1 ? '' : 's'} ·{' '}
+            all blood products {bloodProductTotalMl.toFixed(0)} mL
           </p>
           {pediatric ? (
             <p className="field__hint">
@@ -562,7 +574,7 @@ function FluidTray({
                     setPendingBlood(null);
                   }}
                 >
-                  Give packed red cells
+                  Give {product.kind === 'red-cells' ? 'packed red cells' : 'plasma'}
                 </Button>
                 <Button variant="ghost" compact onClick={() => setPendingBlood(null)}>Cancel</Button>
               </div>
@@ -573,7 +585,8 @@ function FluidTray({
                 <Button
                   key={units}
                   compact
-                  disabled={packedRedBloodCellUnits + units > 2}
+                  disabled={(product.kind === 'red-cells' ? packedRedBloodCellUnits : freshFrozenPlasmaUnits)
+                    + units > product.maxUnitsTotal}
                   onClick={() => setPendingBlood({ productId: product.id, units })}
                 >
                   {units} unit{units === 1 ? '' : 's'}
@@ -583,6 +596,13 @@ function FluidTray({
           )}
         </section>
       ))}
+      {hemorrhageAvailable && !pediatric && (
+        <section className="syringe">
+          <div className="syringe__name">Coagulation panel</div>
+          <p className="field__hint">Reports the current PT ratio and fibrinogen teaching values in the event log.</p>
+          <Button compact onClick={onCoagulationLabs}>Request panel</Button>
+        </section>
+      )}
     </div>
   );
 }

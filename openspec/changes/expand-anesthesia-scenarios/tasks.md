@@ -221,4 +221,16 @@
   cumulative totals, and deterministic replay.
 - [x] Add a two-step keyboard-operable tray, nonvisual summary, sources, and explicit limitations.
 - [ ] Add ordering, compatibility, crossmatch, delivery rate, warming, reactions, storage effects,
-  coagulation, laboratories, other products, calcium, or a massive-transfusion protocol.
+  platelets, cryoprecipitate, calcium, or a massive-transfusion protocol.
+
+## Slice 15: bounded dilutional coagulation and plasma
+
+- [x] Track normalized clotting-factor and fibrinogen mass through whole-blood loss, plasma leak,
+  retained crystalloid, packed red cells, and fixed-unit plasma.
+- [x] Add an immediate PT-ratio/fibrinogen teaching panel and fixed 275 mL adult plasma units only
+  while modeled hemorrhage is active.
+- [x] Record before/after factor and fibrinogen values, cumulative units, invalid requests, and
+  deterministic state through the existing transcript path.
+- [x] Add two-step keyboard controls, current NICE/NHSBT source scope, and explicit limitations.
+- [ ] Add consumption, fibrinolysis, platelet count or products, cryoprecipitate, viscoelastic
+  testing, lab delay, compatibility, warming, reactions, calcium, or a massive-transfusion protocol.
