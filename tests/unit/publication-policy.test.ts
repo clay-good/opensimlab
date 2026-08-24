@@ -2,7 +2,12 @@ import { describe, expect, it } from 'vitest';
 import type { ContentMaturity, MaturityRecord } from '@platform/catalog/maturity';
 import {
   MATURITY_LABELS, PREVIEW_GATES, isReviewedOnlyStatus, maturityLabelFor, previewPublication,
+  scenarioPreviewEvidence,
 } from '@platform/governance/publication';
+import { ENGINE_VERSION } from '@anesthesia/engine';
+import { SCENARIOS } from '@anesthesia/scenarios';
+import { buildAnesthesiaCompletionCatalog } from '@anesthesia/catalog/scenario-completion';
+import { buildScenarioQualityCatalog } from '@platform/catalog/scenario-quality';
 
 const record = (status: ContentMaturity): MaturityRecord => ({
   recordId: `scenario:test@1.0.0`, subjectKind: 'scenario', subjectId: 'test',
@@ -49,5 +54,26 @@ describe('maturity publication policy', () => {
     expect(maturityLabelFor(preview, 'test', '1.0.0')).toBe(MATURITY_LABELS.preview);
     expect(maturityLabelFor(preview, 'test', '2.0.0')).toBeUndefined();
     expect(maturityLabelFor(preview, 'another-item', '1.0.0')).toBeUndefined();
+  });
+
+  it('derives preview evidence from exact-version generated audits', () => {
+    const completion = buildAnesthesiaCompletionCatalog(SCENARIOS, ENGINE_VERSION);
+    const quality = buildScenarioQualityCatalog(completion);
+    const first = completion.scenarios[0]!;
+    const firstQuality = quality.scenarios[0]!;
+    const evidence = scenarioPreviewEvidence(first, firstQuality, {
+      validationReportPresent: true, faceValidityProcedureDocumented: true,
+    });
+    expect(evidence.passed).toContain('build-integrity');
+    expect(evidence.passed).toContain('sources');
+    expect(evidence.passed).toContain('limitations');
+    expect(evidence.passed).not.toContain('completion-contract');
+    expect(evidence.passed).not.toContain('tests');
+
+    expect(() => scenarioPreviewEvidence(first, {
+      ...firstQuality, contentVersion: '99.0.0',
+    }, {
+      validationReportPresent: true, faceValidityProcedureDocumented: true,
+    })).toThrow('Preview evidence version mismatch');
   });
 });

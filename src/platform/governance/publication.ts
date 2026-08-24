@@ -1,4 +1,6 @@
 import type { ContentMaturity, MaturityRecord } from '../catalog/maturity';
+import type { ScenarioCompletionAudit } from '../catalog/scenario-completion';
+import type { ScenarioQualityAudit } from '../catalog/scenario-quality';
 
 export const PREVIEW_GATES = [
   'build-integrity', 'sources', 'safety-scope', 'completion-contract',
@@ -8,6 +10,11 @@ export type PreviewGate = typeof PREVIEW_GATES[number];
 
 export interface PreviewEvidence {
   readonly passed: readonly PreviewGate[];
+}
+
+export interface ReleaseEvidenceOptions {
+  readonly validationReportPresent: boolean;
+  readonly faceValidityProcedureDocumented: boolean;
 }
 
 export type PublicationVerdict =
@@ -42,6 +49,35 @@ export function previewPublication(
   return missing.length === 0
     ? { status: 'publishable' }
     : { status: 'blocked', reasons: missing.map((gate) => `missing preview gate: ${gate}`) };
+}
+
+/** Derive named preview gates from the generated exact-version scenario audits. */
+export function scenarioPreviewEvidence(
+  completion: ScenarioCompletionAudit,
+  quality: ScenarioQualityAudit,
+  options: ReleaseEvidenceOptions,
+): PreviewEvidence {
+  if (completion.scenarioId !== quality.scenarioId
+    || completion.contentVersion !== quality.contentVersion) {
+    throw new Error(
+      `Preview evidence version mismatch: ${completion.scenarioId}@${completion.contentVersion} `
+      + `and ${quality.scenarioId}@${quality.contentVersion}.`,
+    );
+  }
+  const satisfied = (id: string) => completion.requirements.some((requirement) => (
+    requirement.id === id && requirement.status === 'satisfied'
+  ));
+  const passed: PreviewGate[] = ['build-integrity'];
+  if (satisfied('source-provenance')) passed.push('sources');
+  if (satisfied('bounded-fictional-patient') && satisfied('scenario-specific-limitations')) {
+    passed.push('safety-scope');
+  }
+  if (completion.complete) passed.push('completion-contract');
+  if (quality.qualityRecords.every((record) => record.status === 'present')) passed.push('tests');
+  if (satisfied('scenario-specific-limitations')) passed.push('limitations');
+  if (options.validationReportPresent) passed.push('validation-report');
+  if (options.faceValidityProcedureDocumented) passed.push('face-validity-procedure');
+  return { passed };
 }
 
 /** Preview and source checking never satisfy an authority claim. */

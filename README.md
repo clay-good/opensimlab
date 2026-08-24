@@ -259,6 +259,8 @@ The current records remain `draft`; no source check, clinical review, or endorse
 The shared publication policy separately names every preview gate and reserves reviewed-only claims
 for exact-version `clinically_reviewed` or `institution_endorsed` records.
 Scenario cards and briefings link their text-and-icon maturity marker to that exact public record.
+Release commands now expose separate preview and reviewed channels; neither has an unsigned-alpha
+bypass, and missing exact-version maturity records fail closed.
 
 Architecture tests keep tutor rules outside engine and session mutation paths. The same boundary
 also rejects any reporting code that reads browser storage, transcripts, reflections, or progress;

@@ -27,7 +27,8 @@
         "explanation",
         "debrief-rule",
         "alarm-threshold",
-        "normal-range"
+        "normal-range",
+        "practice-region"
       ]
     },
     "subjectId": {

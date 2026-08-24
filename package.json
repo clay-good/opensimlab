@@ -33,11 +33,12 @@
     "fonts": "tsx scripts/check-fonts.ts",
     "gate": "tsx scripts/check-review-gate.ts",
     "check:indexable": "tsx scripts/check-indexable.ts",
-    "release": "tsx scripts/check-review-gate.ts --release",
-    "release:alpha": "tsx scripts/check-review-gate.ts --release --alpha",
+    "release": "npm run release:preview",
+    "release:preview": "tsx scripts/check-review-gate.ts --release --channel=preview",
+    "release:reviewed": "tsx scripts/check-review-gate.ts --release --channel=reviewed",
     "preview:worker": "wrangler dev --local",
-    "deploy": "npm run build:indexable && npm run release && wrangler deploy",
-    "deploy:alpha": "npm run build:indexable && npm run release:alpha && wrangler deploy"
+    "deploy": "npm run build:indexable && npm run release:preview && wrangler deploy",
+    "deploy:reviewed": "npm run build:indexable && npm run release:reviewed && wrangler deploy"
   },
   "dependencies": {
     "react": "19.2.8",

@@ -1,7 +1,7 @@
 /** Acceptance tests for platform/clinical-governance and learning/knowledge-layer. */
 import { describe, expect, it } from 'vitest';
 import {
-  OVERDUE_GRACE_DAYS, UNREVIEWED_NOTICE, UNSIGNED_MARKER, gate, isUnreviewed, mayShip,
+  OVERDUE_GRACE_DAYS, UNREVIEWED_NOTICE, UNSIGNED_MARKER, gate, isUnreviewed,
   needsCoSignature, needsPendingMarker, reportCoverage, uncoveredDomains, type ReviewableItem,
 } from '@platform/governance/review-gate';
 import { readFileSync } from 'node:fs';
@@ -25,37 +25,34 @@ const signed = (overrides: Partial<ReviewableItem> = {}): ReviewableItem => ({
   ...overrides,
 });
 
-describe('Requirement: Every Clinical Assertion Is Signed', () => {
-  it('Scenario: Unreviewed clinical content cannot reach production', () => {
+describe('Requirement: Reviewed claims require exact signatures', () => {
+  it('keeps unsigned content out of reviewed-only channels', () => {
     const unsigned = signed({
       review: { ...signed().review, reviewer: UNSIGNED_MARKER, credential: UNSIGNED_MARKER },
     });
     const verdict = gate(unsigned, TODAY);
     expect(verdict.status).toBe('unsigned');
-    expect(mayShip(verdict)).toBe(false);
-    // The build log names the item.
+    // The review record names the item and affects authority, not preview availability.
     expect('reason' in verdict && verdict.reason).toContain('test-item');
+    expect('reason' in verdict && verdict.reason).toContain('reviewed-only');
   });
 
   it('Scenario: Re-review is triggered by change, not by calendar alone', () => {
     const drifted = signed({ contentVersion: '1.1.0' });
     const verdict = gate(drifted, TODAY);
     expect(verdict.status).toBe('version-drift');
-    expect(mayShip(verdict)).toBe(false);
     expect('reason' in verdict && verdict.reason).toContain('re-review');
   });
 
   it('passes a current, signed, sourced item', () => {
     const verdict = gate(signed(), TODAY);
     expect(verdict.status).toBe('current');
-    expect(mayShip(verdict)).toBe(true);
     expect(needsPendingMarker(verdict)).toBe(false);
   });
 
   it('refuses an item that names no sources', () => {
     const verdict = gate(signed({ review: { ...signed().review, sources: [] } }), TODAY);
     expect(verdict.status).toBe('incomplete');
-    expect(mayShip(verdict)).toBe(false);
   });
 });
 
@@ -66,14 +63,12 @@ describe('Requirement: Guideline Currency Is Tracked And Surfaced', () => {
     const verdict = gate(slightlyOverdue, TODAY);
     expect(verdict.status).toBe('overdue');
     expect(needsPendingMarker(verdict)).toBe(true);
-    expect(mayShip(verdict)).toBe(true);
 
-    // Beyond the grace period it is excluded.
+    // Beyond the grace period the maturity transition can deterministically fall back.
     const longOverdue = signed({ review: { ...signed().review, reviewBy: '2026-01-01' } });
     const late = gate(longOverdue, TODAY);
     expect(late.status).toBe('overdue');
     expect('daysOverdue' in late && late.daysOverdue).toBeGreaterThan(OVERDUE_GRACE_DAYS);
-    expect(mayShip(late)).toBe(false);
   });
 });
 

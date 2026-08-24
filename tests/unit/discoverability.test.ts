@@ -304,7 +304,10 @@ describe('Requirement: Crawlability Basics', () => {
     expect(pkg.scripts['build:indexable']).toContain('SITE_INDEXABLE=true');
     expect(pkg.scripts['build:indexable']).toContain('check:indexable');
     expect(pkg.scripts.deploy).toContain('build:indexable');
-    expect(pkg.scripts['deploy:alpha']).toContain('build:indexable');
+    expect(pkg.scripts.deploy).toContain('release:preview');
+    expect(pkg.scripts['deploy:reviewed']).toContain('build:indexable');
+    expect(pkg.scripts['deploy:reviewed']).toContain('release:reviewed');
+    expect(pkg.scripts['deploy:alpha']).toBeUndefined();
   });
 });
 

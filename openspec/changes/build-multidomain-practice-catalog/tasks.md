@@ -41,9 +41,13 @@ credited toward the catalog until every item in the completion contract passes.
 - [ ] Replace unsigned-content exclusion with preview publication rules and persistent honest labels.
   The shared policy now names every preview gate and all six honest labels; scenario metadata,
   catalog cards, no-script briefings, and interactive prebriefs use the exact-version record.
-  Release-gate, live-session, debrief, source, and non-scenario integration remain.
+  Preview and reviewed release channels now fail closed against those records. Live-session,
+  debrief, source, and non-scenario label integration remain.
 - [ ] Preserve strict gates for reviewed-only catalog views, adoption packs, review badges,
   curriculum coverage claims, and organization endorsements.
+  The reviewed release channel now requires reviewed/endorsed maturity, current exact-version
+  review, qualified domain coverage, and completed face validity. Catalog, adoption-pack,
+  curriculum, and endorsement consumers remain.
 - [ ] Add reviewer qualification, conflict, scope, expiration, revocation, and clinical-diff rules.
 - [ ] Add organization endorsement records and exact wording that identifies scope without implying
   certification.

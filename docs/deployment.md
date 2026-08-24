@@ -52,23 +52,27 @@ npm run deploy
 ```
 
 That runs an explicitly indexable build, verifies every crawl signal in the
-finished artifact, then runs the release gate and `wrangler deploy`. **It will
-refuse**, and it should: the gate blocks a release while clinical content is
-unsigned, no reviewer covers a content domain, or the face-validity review is
-incomplete. All three are currently true.
+finished artifact, then runs the preview release gate and `wrangler deploy`.
+Preview does not require a clinical signature. It does require an exact-version
+`preview` or higher maturity record plus build integrity, sources, safety scope,
+the completion contract, tests, limitations, a validation report, and a
+documented face-validity procedure for every included item.
 
-To publish the alpha anyway:
+The current scenarios remain `draft`, and explainers, drug cards, and practice
+regions do not yet have maturity records, so this command refuses today. There
+is no unsigned-alpha bypass: work advances by satisfying preview evidence and
+changing the exact status record, not by weakening the release command.
+
+To build the stricter reviewed-only channel:
 
 ```
-npm run deploy:alpha
+npm run deploy:reviewed
 ```
 
-This is the declared unreviewed-alpha channel. It names every item it is
-publishing unsigned, and it is only defensible because each of those items
-carries its own "Not clinically reviewed" line at the point of use in the
-interface. A physiological benchmark outside tolerance still blocks it: the
-channel is a statement about what has not been REVIEWED, never a licence for a
-number the project can check itself to be wrong.
+That additionally requires current exact-version clinical reviews, qualified
+board coverage for every domain, completed face-validity review, and reviewed
+or endorsed maturity. Preview and source-checked content cannot enter this
+channel. Physiological benchmarks outside tolerance block both channels.
 
 ## Checking it locally under the real runtime
 

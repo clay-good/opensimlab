@@ -3,10 +3,9 @@
  * Assertion Is Signed; platform/safety-and-scope → Clinical Content Review Is
  * Delegated To Governance).
  *
- * ONE gate, implemented once. A content item without a current review record is
- * excluded from the release build regardless of which capability's requirement is
- * cited, the build log names it, and the surface that would have shown it degrades
- * gracefully rather than showing unreviewed text.
+ * ONE review judge, implemented once. It determines whether an exact content
+ * version may carry a clinical-review claim. Publication availability is a
+ * separate maturity decision in `publication.ts`.
  */
 
 export interface ReviewRecord {
@@ -54,7 +53,7 @@ export function gate(item: ReviewableItem, today: Date): GateVerdict {
   if (review.reviewer === UNSIGNED_MARKER || review.credential === UNSIGNED_MARKER) {
     return {
       status: 'unsigned',
-      reason: `${item.kind} "${item.id}" has no named reviewer. Clinical content cannot ship unsigned.`,
+      reason: `${item.kind} "${item.id}" has no named reviewer and cannot enter a reviewed-only channel.`,
     };
   }
   if (review.sources.length === 0) {
@@ -69,7 +68,7 @@ export function gate(item: ReviewableItem, today: Date): GateVerdict {
       status: 'version-drift',
       reason: `${item.kind} "${item.id}" is at version ${item.contentVersion} but its review covers `
         + `${review.contentVersion}. A change to the text or to any numeric value invalidates the `
-        + 'review, so it needs re-review before the next release.',
+        + 'review, so it needs re-review before carrying a reviewed claim.',
     };
   }
   const reviewBy = new Date(review.reviewBy);
@@ -85,14 +84,6 @@ export function gate(item: ReviewableItem, today: Date): GateVerdict {
     };
   }
   return { status: 'current' };
-}
-
-/** True when the item may be shown to a learner at all. */
-export function mayShip(verdict: GateVerdict): boolean {
-  return verdict.status === 'current'
-    // An overdue item still shows, marked as pending re-review, until the grace
-    // period runs out; after that it is excluded.
-    || (verdict.status === 'overdue' && verdict.daysOverdue <= OVERDUE_GRACE_DAYS);
 }
 
 /** True when the interface must mark the item as pending re-review. */

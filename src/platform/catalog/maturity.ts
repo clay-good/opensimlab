@@ -10,7 +10,7 @@ export type ContentMaturity = typeof MATURITY_STATUSES[number];
 
 export const MATURITY_SUBJECT_KINDS = [
   'scenario', 'capability', 'protocol', 'drug-card', 'tutor-rule',
-  'explanation', 'debrief-rule', 'alarm-threshold', 'normal-range',
+  'explanation', 'debrief-rule', 'alarm-threshold', 'normal-range', 'practice-region',
 ] as const;
 export type MaturitySubjectKind = typeof MATURITY_SUBJECT_KINDS[number];
 
