@@ -200,7 +200,8 @@ describe('every declared event type does something', () => {
     expect([...EVENT_TYPES]).not.toContain('objective-window');
     expect(EVENT_TYPES).toContain('malignant-hyperthermia');
     expect(EVENT_TYPES).toContain('difficult-airway');
-    expect(EVENT_TYPES).toHaveLength(12);
+    expect(EVENT_TYPES).toContain('local-anesthetic-toxicity');
+    expect(EVENT_TYPES).toHaveLength(13);
   });
 });
 

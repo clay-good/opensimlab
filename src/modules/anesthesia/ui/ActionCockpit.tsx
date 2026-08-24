@@ -11,7 +11,7 @@
 
 import { useState } from 'react';
 import { Badge, Button, NumericField, SegmentedControl, Slider, SteppedDial, Tabs, Toggle } from '@platform/ui';
-import type { Scenario } from '@anesthesia/engine';
+import { lastLipidProtocolForWeight, type Scenario } from '@anesthesia/engine';
 import type { FormularyEntry } from '@anesthesia/scenarios/types';
 import { term, type RegionProfile } from '@anesthesia/region/profiles';
 import { FLUIDS } from '@anesthesia/content/fluids';
@@ -45,6 +45,14 @@ export interface ActionCockpitProps {
     readonly dantroleneEffectFraction: number;
     readonly lastDantroleneTick: number | null;
     readonly activeCooling: boolean;
+    readonly localAnestheticToxicityFraction?: number;
+    readonly seizureActivityFraction?: number;
+    readonly seizureSuppressed?: boolean;
+    readonly lipidEmulsionTotalMl?: number;
+    readonly lipidEmulsionBolusRemainingMl?: number;
+    readonly lipidEmulsionInfusionMlPerMin?: number;
+    readonly lipidEmulsionEffectFraction?: number;
+    readonly lastLipidEmulsionTick?: number | null;
   };
   readonly lastExposure: { readonly agentId: string; readonly tick: number } | null;
   readonly syringeRemaining: Readonly<Record<string, number>>;
@@ -77,9 +85,11 @@ export interface ActionCockpitProps {
   readonly onAirwayManeuver: (maneuver: 'jaw-thrust-cpap') => void;
   readonly onCallForHelp: () => void;
   readonly onAirwayDevice: (device: 'supraglottic-airway') => void;
-  readonly onEpinephrine: (doseMicrograms: 10 | 20 | 50) => void;
+  readonly onEpinephrine: (doseMicrograms: number) => void;
   readonly onDantrolene: () => void;
   readonly onActiveCooling: (active: boolean) => void;
+  readonly onSeizureSuppression?: () => void;
+  readonly onLipidEmulsion?: () => void;
   readonly onDrugCard: (drugId: string) => void;
 }
 
@@ -131,7 +141,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
   );
-  const hasCrisisResponse = hasAnaphylaxisResponse || hasHypermetabolicResponse;
+  const hasLastResponse = props.scenario.timeline.some(
+    (event) => event.type === 'local-anesthetic-toxicity',
+  );
+  const hasEpinephrineResponse = hasAnaphylaxisResponse || hasLastResponse;
+  const hasCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse;
   const trays = hasCrisisResponse ? [...TRAYS, CRISIS_TRAY] : TRAYS;
 
   return (
@@ -206,12 +220,24 @@ export function ActionCockpit(props: ActionCockpitProps) {
         )}
         {tray === 'crisis' && hasCrisisResponse && (
           <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-            {hasAnaphylaxisResponse && (
+            {hasEpinephrineResponse && (
               <EpinephrineCrisisTray
                 region={props.region}
                 epinephrineTotalMicrograms={props.resuscitation.epinephrineTotalMicrograms}
                 lastExposure={props.lastExposure}
+                lastMaximumMicrograms={hasLastResponse ? props.scenario.patient.weightKg : undefined}
                 onEpinephrine={props.onEpinephrine}
+              />
+            )}
+            {hasLastResponse && (
+              <LocalAnestheticToxicityTray
+                weightKg={props.scenario.patient.weightKg}
+                seizureActivityFraction={props.resuscitation.seizureActivityFraction ?? 0}
+                seizureSuppressed={props.resuscitation.seizureSuppressed ?? false}
+                lipidEmulsionTotalMl={props.resuscitation.lipidEmulsionTotalMl ?? 0}
+                lipidEmulsionInfusionMlPerMin={props.resuscitation.lipidEmulsionInfusionMlPerMin ?? 0}
+                onSeizureSuppression={props.onSeizureSuppression ?? (() => {})}
+                onLipidEmulsion={props.onLipidEmulsion ?? (() => {})}
               />
             )}
             {hasHypermetabolicResponse && (
@@ -302,15 +328,20 @@ function FluidTray({ crystalloidTotalMl, ageYears, onFluid }: {
   );
 }
 
-function EpinephrineCrisisTray({ region, epinephrineTotalMicrograms, lastExposure, onEpinephrine }: {
+function EpinephrineCrisisTray({
+  region, epinephrineTotalMicrograms, lastExposure, lastMaximumMicrograms, onEpinephrine,
+}: {
   region: RegionProfile;
   epinephrineTotalMicrograms: number;
   lastExposure: { readonly agentId: string; readonly tick: number } | null;
-  onEpinephrine: (doseMicrograms: 10 | 20 | 50) => void;
+  lastMaximumMicrograms?: number;
+  onEpinephrine: (doseMicrograms: number) => void;
 }) {
-  const [pendingDose, setPendingDose] = useState<10 | 20 | 50 | null>(null);
+  const [pendingDose, setPendingDose] = useState<number | null>(null);
   const regionalName = term(region, 'epinephrine');
   const displayName = regionalName.charAt(0).toUpperCase() + regionalName.slice(1);
+  const doses = (lastMaximumMicrograms === undefined ? [10, 20, 50] : [5, 10, 20, 50])
+    .filter((dose) => lastMaximumMicrograms === undefined || dose <= lastMaximumMicrograms);
 
   return (
     <div className="tray-grid">
@@ -327,7 +358,7 @@ function EpinephrineCrisisTray({ region, epinephrineTotalMicrograms, lastExposur
         </p>
         {pendingDose === null ? (
           <div className="syringe__presets">
-            {([10, 20, 50] as const).map((dose) => (
+            {doses.map((dose) => (
               <Button
                 key={dose}
                 className="crisis-drug__action"
@@ -365,6 +396,81 @@ function EpinephrineCrisisTray({ region, epinephrineTotalMicrograms, lastExposur
           {lastExposure
             ? `${lastExposure.agentId} was the most recent modeled trigger exposure.`
             : 'No modeled trigger exposure has been recorded.'}
+        </p>
+      </section>
+    </div>
+  );
+}
+
+function LocalAnestheticToxicityTray({
+  weightKg, seizureActivityFraction, seizureSuppressed, lipidEmulsionTotalMl,
+  lipidEmulsionInfusionMlPerMin, onSeizureSuppression, onLipidEmulsion,
+}: {
+  weightKg: number;
+  seizureActivityFraction: number;
+  seizureSuppressed: boolean;
+  lipidEmulsionTotalMl: number;
+  lipidEmulsionInfusionMlPerMin: number;
+  onSeizureSuppression: () => void;
+  onLipidEmulsion: () => void;
+}) {
+  const [pending, setPending] = useState<'benzodiazepine' | 'lipid' | null>(null);
+  const protocol = lastLipidProtocolForWeight(weightKg);
+  const seizureStatus = seizureSuppressed ? 'suppressed after accepted treatment'
+    : seizureActivityFraction > 0 ? 'active modeled seizure activity' : 'none observed';
+
+  return (
+    <div className="tray-grid">
+      <section className="syringe">
+        <div className="syringe__name">Seizure suppression</div>
+        <div className="syringe__meta">IV benzodiazepine · agent-class action</div>
+        <Badge kind="teaching">Teaching model</Badge>
+        <p className="syringe__remaining" role="status">Status: {seizureStatus}</p>
+        <p className="field__hint">Drug selection, dose, kinetics, and physical administration are not modeled.</p>
+        {pending !== 'benzodiazepine' ? (
+          <Button className="crisis-drug__action" onClick={() => setPending('benzodiazepine')}>
+            Prepare IV benzodiazepine
+          </Button>
+        ) : (
+          <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+            <Button variant="primary" className="crisis-drug__action" onClick={() => {
+              onSeizureSuppression(); setPending(null);
+            }}>Give benzodiazepine</Button>
+            <Button variant="ghost" className="crisis-drug__action" onClick={() => setPending(null)}>Cancel</Button>
+          </div>
+        )}
+      </section>
+      <section className="syringe">
+        <div className="syringe__name">20% lipid emulsion</div>
+        <div className="syringe__meta">ASRA 2020 initial weight-banded protocol</div>
+        <Badge kind="teaching">Teaching model</Badge>
+        <p className="syringe__remaining" role="status">
+          Accepted total: {lipidEmulsionTotalMl.toFixed(0)} mL
+          {lipidEmulsionInfusionMlPerMin > 0
+            ? ` · ${lipidEmulsionInfusionMlPerMin.toFixed(1)} mL/min running` : ''}
+        </p>
+        <p className="field__hint">
+          {weightKg.toFixed(0)} kg ({protocol.band}): {protocol.initialBolusMl.toFixed(0)} mL initial
+          bolus over 3 modeled minutes, then {protocol.infusionMlPerMin.toFixed(1)} mL/min for the
+          bounded 20-minute initial course. Safety ceiling{' '}
+          {protocol.maxTotalMl.toFixed(0)} mL.
+        </p>
+        {pending !== 'lipid' ? (
+          <Button className="crisis-drug__action" disabled={lipidEmulsionInfusionMlPerMin > 0}
+            onClick={() => setPending('lipid')}>
+            Start initial lipid protocol
+          </Button>
+        ) : (
+          <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+            <Button variant="primary" className="crisis-drug__action" onClick={() => {
+              onLipidEmulsion(); setPending(null);
+            }}>Start 20% lipid</Button>
+            <Button variant="ghost" className="crisis-drug__action" onClick={() => setPending(null)}>Cancel</Button>
+          </div>
+        )}
+        <p className="field__hint">
+          If epinephrine is used, the modeled maximum is 1 µg/kg IV. Vasopressin, beta blockers,
+          calcium-channel blockers, and further local anesthetic are not stocked here.
         </p>
       </section>
     </div>

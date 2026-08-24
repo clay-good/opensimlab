@@ -128,10 +128,25 @@
 - [x] Difficult-airway rescue beyond the existing obesity case, bounded to supraglottic oxygenation.
 - [x] Anaphylaxis with antibiotic exposure and independently tested documented-allergy enforcement.
 - [x] Malignant hyperthermia early recognition and initial response.
-- [ ] Local-anesthetic systemic toxicity.
+- [x] Local-anesthetic systemic toxicity.
 - [ ] Resuscitable cardiac arrest.
 - [x] Pediatric anesthesia with pediatric pharmacokinetics and a bounded respiratory profile.
 - [x] Obstetric presentation: the hemorrhage case is a ruptured ectopic pregnancy.
 - [x] Geriatric presentation: hypotension after induction.
 - [x] Obesity presentation: rapid desaturation.
 - [x] Awareness under paralysis with line disconnection.
+
+## Slice 9: bounded local-anesthetic systemic-toxicity response
+
+- [x] Add a deterministic bupivacaine-exposure event with observable seizure status and bounded
+  cardiovascular depression that does not invent cardiac arrest.
+- [x] Add logged, replayable IV benzodiazepine seizure suppression without claiming dose pharmacology.
+- [x] Add the ASRA 2020 initial 20% lipid bolus and infusion with explicit weight bands and a
+  12 mL/kg cumulative cap.
+- [x] Enforce LAST epinephrine at no more than 1 microgram/kg while preserving anaphylaxis dosing.
+- [x] Surface the checklist's named drug avoidance and keep those agents unavailable.
+- [x] Author, register, evaluate, and curriculum-map the 60 kg adult scenario.
+- [x] Update sources, limitations, face-validity scope, landing inventory, and discoverability.
+- [ ] Add repeat lipid bolus, doubled infusion for instability, dysrhythmia treatment, full arrest
+  care, cardiopulmonary bypass, team actions, transport, observation, or a regional-block model.
+  None is implied by this initial-response slice.

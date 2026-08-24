@@ -498,6 +498,14 @@ export function Cockpit({
             type: 'dantrolene', payload: { route: 'iv', doseMgPerKg: 2.5 },
           })}
           onActiveCooling={(active) => session.act({ type: 'active-cooling', payload: { active } })}
+          onSeizureSuppression={() => session.act({
+            type: 'seizure-suppression', payload: { route: 'iv', medicationClass: 'benzodiazepine' },
+          })}
+          onLipidEmulsion={() => session.act({
+            type: 'lipid-emulsion', payload: {
+              route: 'iv', protocol: 'initial', concentrationPercent: 20,
+            },
+          })}
           onDrugCard={setDrugCardId}
         />
       </div>

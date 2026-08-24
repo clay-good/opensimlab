@@ -363,10 +363,34 @@ export const LIMITATIONS: readonly Limitation[] = [
     headline: 'Regional anaesthesia is not modelled at all — no block, no spread, no failure.',
     simplification: 'Regional anaesthesia and block spread are not modelled at all.',
     whereItMisleads: 'Any case where a block would change the opioid requirement, the haemodynamics, '
-      + 'or the recovery. Local anaesthetic systemic toxicity cannot be simulated either.',
+      + 'or the recovery. The LAST case scripts a toxicity exposure; it does not simulate a block or derive toxicity from an injected dose.',
     correctUnderstanding: 'A working block changes the whole anaesthetic plan. Nothing you learn '
       + 'here about opioid dosing transfers to a patient with a block in place.',
-    briefIn: [],
+    briefIn: ['local-anesthetic-systemic-toxicity'],
+  },
+  {
+    id: 'last-syndrome-is-a-teaching-model',
+    headline: 'The local-anesthetic toxicity trajectory is a deterministic teaching model, not a dose-to-concentration or diagnostic model.',
+    simplification: 'A scripted bupivacaine exposure starts bounded seizure status, bradycardia, '
+      + 'and myocardial depression. The engine does not calculate exposure from injection dose, site, uptake, or plasma concentration.',
+    whereItMisleads: 'Predicting whether, when, or how an individual patient will develop LAST, '
+      + 'or treating this sequence as required for the diagnosis.',
+    correctUnderstanding: 'LAST can present variably. Diagnose and treat from the clinical context '
+      + 'and current guidance; this case rehearses one observable pattern and initial response.',
+    briefIn: ['local-anesthetic-systemic-toxicity'],
+  },
+  {
+    id: 'last-initial-response-only',
+    headline: 'This case implements the bounded initial ASRA 2020 LAST response, not refractory resuscitation or follow-up.',
+    simplification: 'The cockpit supports oxygen and ventilation, an agent-class benzodiazepine '
+      + 'action without dose pharmacology, reduced-dose epinephrine, and the initial weight-banded '
+      + '20% lipid bolus and infusion. Repeat bolus, doubled infusion, dysrhythmia treatment, '
+      + 'compressions, defibrillation, cardiopulmonary bypass, team actions, transport, and observation are absent.',
+    whereItMisleads: 'Treating modeled improvement as completion of the checklist, proof of diagnosis, '
+      + 'or a guarantee of recovery.',
+    correctUnderstanding: 'Use the complete current ASRA checklist, obtain help, reassess continuously, '
+      + 'escalate refractory instability, and continue post-event care outside this bounded simulation.',
+    briefIn: ['local-anesthetic-systemic-toxicity'],
   },
   {
     id: 'paedfusor-pk-does-not-validate-pediatric-depth',

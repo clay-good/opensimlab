@@ -108,6 +108,8 @@ export interface ScenarioDrive {
   readonly hypermetabolicFraction?: number;
   /** Whether active cooling is being applied at a modeled treatment temperature. */
   readonly activeCooling?: boolean;
+  /** Unopposed local-anesthetic cardiovascular toxicity, 0 to 1. */
+  readonly localAnestheticToxicityFraction?: number;
 }
 
 export interface TickResult {
@@ -361,6 +363,7 @@ export class VirtualPatient {
       anaphylaxisFraction: scenario.anaphylaxisFraction,
       epinephrineEffect: drugs.epinephrineEffect,
       hypermetabolicFraction: this.hypermetabolicCardiovascularFraction,
+      localAnestheticToxicityFraction: scenario.localAnestheticToxicityFraction,
       positivePressure: ventilator.delivering && ventilator.mode !== 'manual',
       saturationPercent: this.lastSaturationPercent,
       volatileMacFraction: volatile,

@@ -88,7 +88,7 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
     id: 'inside-the-module',
     heading: 'What is inside the anesthesia module',
     paragraphs: [
-      'This is an early build. It contains twelve scenarios — a routine induction on a healthy '
+      'This is an early build. It contains thirteen scenarios — a routine induction on a healthy '
       + 'adult, rapid desaturation in an obese patient, hypotension after induction, and '
       + 'bronchospasm after intubation, plus unexpected intraoperative hemorrhage with crystalloid '
       + 'temporization, rapid-sequence induction with modeled rocuronium onset, and silent TIVA-line '
@@ -97,9 +97,10 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
       + 'malignant-hyperthermia response during volatile anesthesia, plus a bounded routine '
       + 'pediatric intravenous induction for a healthy 6-year-old and a difficult-airway case '
       + 'limited to help escalation and supraglottic rescue oxygenation '
+      + 'and initial local-anesthetic systemic-toxicity response with weight-banded 20% lipid '
       + '— with three drugs: population PK/PD for propofol and remifentanil, pediatric Paedfusor PK, '
       + 'a clearly labeled rocuronium teaching model, scripted cefazolin exposure, and dedicated '
-      + 'epinephrine and dantrolene crisis actions, the real monitor, the real design system, '
+      + 'epinephrine, dantrolene, benzodiazepine-class, and lipid-emulsion crisis actions, the real monitor, the real design system, '
       + 'and the real debrief.',
       'That narrowness is deliberate. The riskiest things in a project like this are whether the '
       + 'waveforms convince a clinician, whether it holds its frame rate on a modest phone, and '

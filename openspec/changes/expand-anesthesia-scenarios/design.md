@@ -149,3 +149,29 @@ does not model physical placement, size, seal, aspiration protection, or operato
 arrival, repeated device attempts, the choice to wake or proceed, intubation through the device,
 failed supraglottic ventilation, cannot-intubate-cannot-oxygenate progression, and emergency
 front-of-neck access remain unavailable.
+
+## Slice 9: bounded local-anesthetic systemic-toxicity response
+
+The case starts with an awake 60 kg adult during a planned peripheral-block injection. A scripted
+bupivacaine exposure produces one deterministic severe-toxicity pattern: observable seizure status,
+bradycardia, and myocardial depression. It does not calculate exposure from injection technique,
+dose, site, uptake, plasma concentration, or block spread, and the live event reports findings
+rather than naming a diagnosis.
+
+The crisis tray follows the initial ASRA 2020 checklist steps that this engine can represent.
+Airway support uses the existing oxygen and breath-delivery controls. An agent-class IV
+benzodiazepine action suppresses the modeled seizure without inventing a dose or pharmacokinetic
+course. Epinephrine is limited to no more than 1 microgram/kg while toxicity is active. The tray
+names vasopressin, beta blockers, calcium-channel blockers, and further local anesthetic as absent.
+
+For patients below 70 kg, initial 20% lipid uses a 1.5 mL/kg bolus and 0.25 mL/kg/min infusion. At
+70 kg or more, the implementation convention uses the checklist's fixed approximately 100 mL
+bolus and 250 mL over 20 minutes. The bounded initial course stops after 20 minutes; 12 mL/kg is
+enforced only as a safety ceiling, not used as a target. Lipid opposes the bounded toxicity drive
+as an Open Sim Lab teaching effect; improvement is not an antidote claim or a guarantee.
+
+Objective evaluation reads accepted engine events, not requested actions. It checks initial-
+response timing, concurrent high oxygen and active breath delivery, accepted seizure suppression,
+the exact 60 kg lipid calculation, and any accepted epinephrine dose. Repeat or doubled lipid,
+dysrhythmia treatment, arrest care, bypass, teams, transport, observation, and regional anesthesia
+remain outside this slice.

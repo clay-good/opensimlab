@@ -34,13 +34,37 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.8';
+export const ENGINE_VERSION = '0.1.0-alpha.9';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
 export const DANTROLENE_DOSE_MG_PER_KG = 2.5;
 /** Fixed interaction bound for placing the configured rescue supraglottic airway. */
 export const SGA_INSERTION_SECONDS = 15;
+
+export const LAST_LIPID_CONCENTRATION_PERCENT = 20;
+export const LAST_LIPID_MAX_ML_PER_KG = 12;
+export const LAST_LIPID_BOLUS_SECONDS = 180;
+/** Bounded initial infusion course; the safety ceiling remains a ceiling, not a target. */
+export const LAST_LIPID_INITIAL_INFUSION_SECONDS = 20 * 60;
+
+/** ASRA 2020 initial 20% lipid dosing, with 70 kg assigned to the fixed-dose band. */
+export function lastLipidProtocolForWeight(weightKg: number) {
+  if (!Number.isFinite(weightKg) || weightKg <= 0) throw new Error('Weight must be finite and positive.');
+  return weightKg < 70
+    ? {
+      band: 'under-70-kg' as const,
+      initialBolusMl: 1.5 * weightKg,
+      infusionMlPerMin: 0.25 * weightKg,
+      maxTotalMl: LAST_LIPID_MAX_ML_PER_KG * weightKg,
+    }
+    : {
+      band: '70-kg-or-more' as const,
+      initialBolusMl: 100,
+      infusionMlPerMin: 250 / 20,
+      maxTotalMl: LAST_LIPID_MAX_ML_PER_KG * weightKg,
+    };
+}
 
 export type Scenario = ScenarioDocument;
 
@@ -191,6 +215,16 @@ export class AnesthesiaEngine {
   private lastExposure: { agentId: string; tick: number } | null = null;
   /** Persistent mediator severity after a modeled exposure. */
   private anaphylaxisSeverity = 0;
+  /** Persistent toxicity after the scenario's modeled intravascular exposure. */
+  private localAnestheticToxicitySeverity = 0;
+  private seizureSuppressed = false;
+  private seizureActivityFraction = 0;
+  private lipidEmulsionTotalMl = 0;
+  private lipidEmulsionBolusRemainingMl = 0;
+  private lipidEmulsionInfusionMlPerMin = 0;
+  private lipidEmulsionInfusionStartedAtTick: number | null = null;
+  private lipidEmulsionEffectFraction = 0;
+  private lastLipidEmulsionTick: number | null = null;
   /** A learner fluid bolus waiting to reach the circulation on the next tick. */
   private pendingCrystalloidMl = 0;
   /** Physical delivery state, intentionally separate from the pump's commanded rate. */
@@ -460,12 +494,13 @@ export class AnesthesiaEngine {
       }
       case 'epinephrine': {
         const dose = AnesthesiaEngine.finiteAmount(action.payload.doseMicrograms);
-        if (action.payload.route !== 'iv' || dose === null
-          || dose < EPINEPHRINE_IV_BOUNDS.minMicrograms
-          || dose > EPINEPHRINE_IV_BOUNDS.maxMicrograms) {
+        const duringLast = this.localAnestheticToxicitySeverity > 0;
+        const minimum = duringLast ? 0 : EPINEPHRINE_IV_BOUNDS.minMicrograms;
+        const maximum = duringLast ? this.covariates.weightKg : EPINEPHRINE_IV_BOUNDS.maxMicrograms;
+        if (action.payload.route !== 'iv' || dose === null || dose <= minimum || dose > maximum) {
           this.log('warning', 'drug', `bad-epinephrine-${this.currentTick}`,
-            `IV epinephrine must be a finite ${EPINEPHRINE_IV_BOUNDS.minMicrograms} to `
-            + `${EPINEPHRINE_IV_BOUNDS.maxMicrograms} microgram titrated bolus in this slice. `
+            `IV epinephrine must be a finite ${duringLast ? 'dose greater than 0 and no more than' : `${EPINEPHRINE_IV_BOUNDS.minMicrograms} to`} `
+            + `${maximum.toFixed(0)} micrograms in this scenario. `
             + 'Nothing was given.');
           break;
         }
@@ -476,6 +511,48 @@ export class AnesthesiaEngine {
           `Epinephrine ${dose} micrograms IV given for perioperative resuscitation. `
           + 'The response is an Open Sim Lab teaching effect, not an individual prediction.',
           { drugId: 'epinephrine', route: 'iv', doseMicrograms: dose, teachingModel: true });
+        break;
+      }
+      case 'seizure-suppression': {
+        if (action.payload.route !== 'iv' || action.payload.medicationClass !== 'benzodiazepine'
+          || this.seizureActivityFraction <= 0) {
+          this.log('warning', 'drug', `bad-seizure-suppression-${this.currentTick}`,
+            'This bounded action requires active modeled seizure activity and an IV benzodiazepine. No treatment was given.');
+          break;
+        }
+        this.seizureSuppressed = true;
+        this.log('warning', 'drug', `seizure-suppression-${this.currentTick}`,
+          'IV benzodiazepine seizure suppression given. Drug selection, dose, kinetics, and physical administration are not modeled.',
+          { medicationClass: 'benzodiazepine', route: 'iv', teachingModel: true });
+        break;
+      }
+      case 'lipid-emulsion': {
+        const concentration = AnesthesiaEngine.finiteAmount(action.payload.concentrationPercent);
+        if (action.payload.route !== 'iv' || action.payload.protocol !== 'initial'
+          || concentration !== LAST_LIPID_CONCENTRATION_PERCENT
+          || this.localAnestheticToxicitySeverity <= 0 || this.lipidEmulsionInfusionMlPerMin > 0) {
+          this.log('warning', 'drug', `bad-lipid-emulsion-${this.currentTick}`,
+            'Initial lipid rescue requires an active modeled toxicity event, 20% lipid emulsion, the IV route, and no infusion already running. Nothing was started.');
+          break;
+        }
+        const protocol = lastLipidProtocolForWeight(this.covariates.weightKg);
+        this.lipidEmulsionBolusRemainingMl = protocol.initialBolusMl;
+        this.lipidEmulsionInfusionMlPerMin = protocol.infusionMlPerMin;
+        this.lipidEmulsionInfusionStartedAtTick = this.currentTick;
+        this.lipidEmulsionEffectFraction = 0;
+        this.lastLipidEmulsionTick = this.currentTick;
+        this.log('warning', 'drug', `lipid-emulsion-${this.currentTick}`,
+          `20% lipid emulsion started: ${protocol.initialBolusMl.toFixed(0)} mL initial bolus over `
+          + `${LAST_LIPID_BOLUS_SECONDS / 60} modeled minutes and `
+          + `${protocol.infusionMlPerMin.toFixed(1)} mL/min infusion (${protocol.band}). `
+          + `The ${protocol.maxTotalMl.toFixed(0)} mL cumulative cap and response are teaching-model bounds.`, {
+            concentrationPercent: LAST_LIPID_CONCENTRATION_PERCENT,
+            initialBolusMl: protocol.initialBolusMl,
+            infusionMlPerMin: protocol.infusionMlPerMin,
+            maxTotalMl: protocol.maxTotalMl,
+            weightBand: protocol.band,
+            teachingModel: true,
+          });
         break;
       }
       case 'dantrolene': {
@@ -893,6 +970,21 @@ export class AnesthesiaEngine {
         return;
       }
 
+      case 'local-anesthetic-toxicity': {
+        const severity = event.value;
+        if (event.target !== 'bupivacaine' || typeof severity !== 'number'
+          || !Number.isFinite(severity) || severity < 0 || severity > 1) {
+          this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" must identify bupivacaine exposure and a finite severity from 0 to 1, so the event had no effect.`);
+          return;
+        }
+        this.localAnestheticToxicitySeverity = Math.max(
+          this.localAnestheticToxicitySeverity, severity,
+        );
+        this.lastExposure = { agentId: 'bupivacaine', tick: this.currentTick };
+        return;
+      }
+
       case 'difficult-airway': {
         const deliveryFraction = event.value;
         if (event.target !== 'failed-intubation-with-marginal-mask'
@@ -1077,6 +1169,40 @@ export class AnesthesiaEngine {
 
     const unopposedAnaphylaxis = this.anaphylaxisSeverity
       * (1 - 0.75 * this.epinephrineEffect);
+    if (this.lipidEmulsionInfusionMlPerMin > 0) {
+      const protocol = lastLipidProtocolForWeight(this.covariates.weightKg);
+      if (this.lipidEmulsionInfusionStartedAtTick !== null
+        && this.currentTick - this.lipidEmulsionInfusionStartedAtTick
+          >= LAST_LIPID_INITIAL_INFUSION_SECONDS * TICKS_PER_SECOND) {
+        this.lipidEmulsionInfusionMlPerMin = 0;
+        this.log('info', 'drug', `lipid-emulsion-initial-course-complete-${this.currentTick}`,
+          'The bounded 20-minute initial lipid infusion course is complete. The 12 mL/kg value remains a safety ceiling, not a target dose.');
+      } else {
+        const bolusPerTick = protocol.initialBolusMl
+          / (LAST_LIPID_BOLUS_SECONDS * TICKS_PER_SECOND);
+        const deliveredBolusMl = Math.min(this.lipidEmulsionBolusRemainingMl, bolusPerTick);
+        this.lipidEmulsionBolusRemainingMl -= deliveredBolusMl;
+        const deliveredMl = deliveredBolusMl + this.lipidEmulsionInfusionMlPerMin / 600;
+        this.lipidEmulsionTotalMl = Math.min(
+          protocol.maxTotalMl, this.lipidEmulsionTotalMl + deliveredMl,
+        );
+        const bolusFraction = 1 - this.lipidEmulsionBolusRemainingMl / protocol.initialBolusMl;
+        this.lipidEmulsionEffectFraction = clamp(
+          0.35 * bolusFraction + 0.65 * Math.max(0, this.lipidEmulsionTotalMl - protocol.initialBolusMl)
+            / Math.max(protocol.maxTotalMl - protocol.initialBolusMl, 1),
+          0, 1,
+        );
+        if (this.lipidEmulsionTotalMl >= protocol.maxTotalMl) {
+          this.lipidEmulsionInfusionMlPerMin = 0;
+          this.log('info', 'drug', `lipid-emulsion-cap-${this.currentTick}`,
+            `20% lipid emulsion stopped at the modeled ${protocol.maxTotalMl.toFixed(0)} mL cumulative cap.`);
+        }
+      }
+    }
+    const unopposedLocalAnestheticToxicity = this.localAnestheticToxicitySeverity
+      * (1 - 0.8 * this.lipidEmulsionEffectFraction);
+    this.seizureActivityFraction = this.seizureSuppressed
+      ? 0 : clamp((unopposedLocalAnestheticToxicity - 0.2) / 0.6, 0, 1);
     obstruction = Math.max(obstruction, 0.85 * unopposedAnaphylaxis);
     this.bronchospasmSeverity = obstruction;
     const capillaryLeakMl = unopposedAnaphylaxis * 5 / TICKS_PER_SECOND;
@@ -1121,6 +1247,7 @@ export class AnesthesiaEngine {
         anaphylaxisFraction: unopposedAnaphylaxis, capillaryLeakMl,
         hypermetabolicFraction: unopposedHypermetabolism,
         activeCooling: this.activeCooling,
+        localAnestheticToxicityFraction: unopposedLocalAnestheticToxicity,
       },
     );
     if (this.activeCooling && result.state.coreTemperatureC < 38) {
@@ -1261,6 +1388,15 @@ export class AnesthesiaEngine {
         dantroleneEffectFraction: this.dantroleneEffectFraction,
         lastDantroleneTick: this.lastDantroleneTick,
         activeCooling: this.activeCooling,
+        localAnestheticToxicityFraction: this.localAnestheticToxicitySeverity
+          * (1 - 0.8 * this.lipidEmulsionEffectFraction),
+        seizureActivityFraction: this.seizureActivityFraction,
+        seizureSuppressed: this.seizureSuppressed,
+        lipidEmulsionTotalMl: this.lipidEmulsionTotalMl,
+        lipidEmulsionBolusRemainingMl: this.lipidEmulsionBolusRemainingMl,
+        lipidEmulsionInfusionMlPerMin: this.lipidEmulsionInfusionMlPerMin,
+        lipidEmulsionEffectFraction: this.lipidEmulsionEffectFraction,
+        lastLipidEmulsionTick: this.lastLipidEmulsionTick,
       },
       lastExposure: this.lastExposure ? { ...this.lastExposure } : null,
       drugs: [...this.drugs.values()].map((drug) => ({

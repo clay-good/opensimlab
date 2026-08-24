@@ -21,6 +21,7 @@ import { PERIOPERATIVE_ANAPHYLAXIS_AFTER_ANTIBIOTIC } from './perioperative-anap
 import { EARLY_MALIGNANT_HYPERTHERMIA_DURING_VOLATILE_ANESTHESIA } from './early-malignant-hyperthermia-during-volatile-anesthesia';
 import { ROUTINE_PEDIATRIC_IV_INDUCTION } from './routine-pediatric-iv-induction';
 import { DIFFICULT_AIRWAY_SUPRAGLOTTIC_RESCUE } from './difficult-airway-supraglottic-rescue';
+import { LOCAL_ANESTHETIC_SYSTEMIC_TOXICITY } from './local-anesthetic-systemic-toxicity';
 
 export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_INDUCTION,
@@ -35,6 +36,7 @@ export const SCENARIOS: readonly Scenario[] = [
   EARLY_MALIGNANT_HYPERTHERMIA_DURING_VOLATILE_ANESTHESIA,
   ROUTINE_PEDIATRIC_IV_INDUCTION,
   DIFFICULT_AIRWAY_SUPRAGLOTTIC_RESCUE,
+  LOCAL_ANESTHETIC_SYSTEMIC_TOXICITY,
 ];
 
 /** The scenario a learner meets first. */

@@ -76,7 +76,9 @@ Reviewers run the routine induction themselves before answering.
 | B25 | Pediatric oxygen-reserve, desaturation, and carbon-dioxide trajectories during apnea and 6–8 mL/kg delivered ventilation | | |
 | B26 | Oxygenation and carbon-dioxide trajectories during configured failed intubation, marginal facemask ventilation, and supraglottic rescue | | |
 | B27 | The timing cost and monitor transition during the fixed 15-second supraglottic insertion | | |
-| B28 | Overall: does this patient behave like a patient? | | |
+| B28 | Seizure status, bradycardia, cardiac-output, and pressure trajectory after scripted bupivacaine exposure | | |
+| B29 | Seizure and cardiovascular response after oxygen/ventilation, benzodiazepine suppression, and initial 20% lipid | | |
+| B30 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -120,4 +122,8 @@ So that reviewers spend their attention on what this review is for:
   successful 15-second supraglottic placement. It does not model physical technique, device sizing
   or seal, team arrival, a post-rescue airway plan, failed supraglottic ventilation, or emergency
   front-of-neck access.
+- The local-anesthetic toxicity case scripts exposure rather than modeling a block, injection,
+  uptake, or plasma concentration. Seizure status and cardiovascular depression are teaching
+  trajectories. Benzodiazepine dosing, repeat or doubled lipid, dysrhythmia treatment, arrest care,
+  bypass, team actions, transport, and observation are absent.
 - Nothing here has been clinically reviewed before — you are the first.

@@ -334,10 +334,107 @@ export function objectiveFindings(
     'limit-attempts-and-call-for-help': 'airway-assessment-predicts-poorly',
     'place-supraglottic-rescue': 'airway-assessment-predicts-poorly',
     'confirm-rescue-gas-exchange': 'capnogram-morphology',
+    'recognize-last-pattern': 'vasodilation-versus-hypovolemia',
+    'support-last-airway-and-seizure': 'capnogram-morphology',
+    'start-last-lipid': 'vasodilation-versus-hypovolemia',
+    'use-reduced-last-epinephrine': 'vasodilation-versus-hypovolemia',
   };
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if ([
+      'recognize-last-pattern', 'support-last-airway-and-seizure',
+      'start-last-lipid', 'use-reduced-last-epinephrine',
+    ].includes(objective.id)) {
+      const onset = scenario.timeline.find((event) => event.type === 'local-anesthetic-toxicity')?.atTick;
+      if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'The session ended before the modeled local-anesthetic exposure.',
+        } satisfies ObjectiveFinding;
+      }
+      const windowEnd = onset + 60 * TICKS_PER_SECOND;
+      const seizureTreatment = log.find((entry) => entry.eventId.startsWith('seizure-suppression-'));
+      const lipid = log.find((entry) => entry.eventId.startsWith('lipid-emulsion-'));
+      const epinephrine = log.find((entry) => entry.eventId.startsWith('epinephrine-iv-'));
+
+      if (objective.id === 'recognize-last-pattern') {
+        const first = [seizureTreatment, lipid, epinephrine]
+          .filter((entry): entry is EngineEvent => entry !== undefined)
+          .sort((a, b) => a.tick - b.tick)[0];
+        const delay = first ? (first.tick - onset) / TICKS_PER_SECOND : null;
+        return {
+          ...base,
+          outcome: delay === null ? 'not-met' : delay <= 60 ? 'met' : 'partly-met',
+          finding: delay === null
+            ? 'No accepted initial-response action followed the modeled exposure.'
+            : `The first accepted response was recorded ${delay.toFixed(0)} seconds after exposure. This timing is a behavioral proxy; the scripted pattern and response do not prove a diagnosis.`,
+          atTick: first?.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      if (objective.id === 'support-last-airway-and-seizure') {
+        const settings = actions.filter((action) => action.type === 'ventilator' && action.tick <= windowEnd)
+          .reduce((current, action) => ({
+            fio2: action.payload.fio2 === undefined || !Number.isFinite(Number(action.payload.fio2))
+              ? current.fio2 : Math.min(1, Math.max(0.21, Number(action.payload.fio2))),
+            delivering: typeof action.payload.delivering === 'boolean'
+              ? action.payload.delivering : current.delivering,
+            tidalVolumeMl: action.payload.tidalVolumeMl === undefined
+              || !Number.isFinite(Number(action.payload.tidalVolumeMl))
+              ? current.tidalVolumeMl
+              : Math.min(1500, Math.max(0, Number(action.payload.tidalVolumeMl))),
+            respiratoryRateBpm: action.payload.respiratoryRateBpm === undefined
+              || !Number.isFinite(Number(action.payload.respiratoryRateBpm))
+              ? current.respiratoryRateBpm
+              : Math.min(60, Math.max(0, Number(action.payload.respiratoryRateBpm))),
+          }), {
+            fio2: scenario.equipment.ventilator.fio2,
+            delivering: scenario.equipment.ventilator.delivering,
+            tidalVolumeMl: scenario.equipment.ventilator.tidalVolumeMl,
+            respiratoryRateBpm: scenario.equipment.ventilator.respiratoryRateBpm,
+          });
+        const oxygen = settings.fio2 >= 0.95 && settings.delivering
+          && settings.tidalVolumeMl > 0 && settings.respiratoryRateBpm > 0;
+        const seizurePrompt = seizureTreatment !== undefined && seizureTreatment.tick <= windowEnd;
+        return {
+          ...base,
+          outcome: oxygen && seizurePrompt ? 'met' : oxygen || seizurePrompt ? 'partly-met' : 'not-met',
+          finding: `${oxygen ? 'At least 95% inspired oxygen with active breath delivery was in effect by 60 seconds.' : 'High inspired oxygen and active breath delivery were not both in effect by 60 seconds.'} ${seizurePrompt ? 'An IV benzodiazepine seizure-suppression action was accepted within 60 seconds.' : 'No IV benzodiazepine action was accepted within 60 seconds.'} This does not assess physical airway skill or drug dosing.`,
+          atTick: seizureTreatment?.tick ?? windowEnd,
+        } satisfies ObjectiveFinding;
+      }
+
+      if (objective.id === 'start-last-lipid') {
+        const prompt = lipid !== undefined && lipid.tick <= windowEnd;
+        const exact = lipid?.data?.concentrationPercent === 20
+          && lipid.data.initialBolusMl === 90 && lipid.data.infusionMlPerMin === 15;
+        return {
+          ...base,
+          outcome: prompt && exact ? 'met' : lipid ? 'partly-met' : 'not-met',
+          finding: lipid
+            ? `The accepted 20% lipid action calculated ${Number(lipid.data?.initialBolusMl ?? 0).toFixed(0)} mL initial bolus and ${Number(lipid.data?.infusionMlPerMin ?? 0).toFixed(1)} mL/min infusion ${((lipid.tick - onset) / TICKS_PER_SECOND).toFixed(0)} seconds after exposure. The response is a bounded teaching model, not a guarantee of recovery.`
+            : 'No initial 20% lipid-emulsion protocol was accepted after exposure.',
+          atTick: lipid?.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      if (!epinephrine) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'No accepted epinephrine action was recorded. The ASRA checklist does not require epinephrine when circulation is stable.',
+        } satisfies ObjectiveFinding;
+      }
+      const dose = Number(epinephrine.data?.doseMicrograms ?? Infinity);
+      const perKg = dose / scenario.patient.weightKg;
+      return {
+        ...base,
+        outcome: perKg <= 1 ? 'met' : 'not-met',
+        finding: `The first accepted epinephrine bolus was ${dose.toFixed(0)} micrograms IV (${perKg.toFixed(2)} micrograms/kg). The bounded LAST action refuses doses above 1 microgram/kg.`,
+        atTick: epinephrine.tick,
+      } satisfies ObjectiveFinding;
+    }
 
     if ([
       'prepare-rescue-oxygen-reserve', 'limit-attempts-and-call-for-help',

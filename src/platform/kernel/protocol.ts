@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 9 reports airway-device rescue state. */
-export const WORKER_PROTOCOL_VERSION = 9;
+/** Bumped whenever the message shape changes incompatibly. Version 10 reports bounded LAST response state. */
+export const WORKER_PROTOCOL_VERSION = 10;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -204,6 +204,15 @@ export interface EquipmentSnapshot {
     readonly dantroleneEffectFraction: number;
     readonly lastDantroleneTick: number | null;
     readonly activeCooling: boolean;
+    /** Bounded local-anesthetic toxicity response state. Optional for older saved snapshots. */
+    readonly localAnestheticToxicityFraction?: number;
+    readonly seizureActivityFraction?: number;
+    readonly seizureSuppressed?: boolean;
+    readonly lipidEmulsionTotalMl?: number;
+    readonly lipidEmulsionBolusRemainingMl?: number;
+    readonly lipidEmulsionInfusionMlPerMin?: number;
+    readonly lipidEmulsionEffectFraction?: number;
+    readonly lastLipidEmulsionTick?: number | null;
   };
   /** The most recent modeled trigger exposure, without diagnosing the response. */
   readonly lastExposure: { readonly agentId: string; readonly tick: number } | null;

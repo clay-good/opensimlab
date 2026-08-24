@@ -22,6 +22,8 @@ The seventh adds one bounded routine pediatric intravenous induction with Paedfu
 kinetics and weight-derived respiratory physiology for a healthy 6-year-old weighing 20 kg.
 The eighth adds a failed-intubation course with early help escalation and supraglottic rescue,
 bounded to restoration and confirmation of oxygenation rather than the complete airway algorithm.
+The ninth adds one bounded local-anesthetic systemic-toxicity pattern and the initial ASRA 2020
+response, stopping before dysrhythmia treatment or cardiac arrest.
 
 ## What changes
 
@@ -81,12 +83,19 @@ bounded to restoration and confirmation of oxygenation rather than the complete 
 - State the eighth boundary plainly: successful screen placement is not physical skill or tracheal
   intubation, and the post-rescue plan, team performance, failed supraglottic ventilation,
   cannot-intubate-cannot-oxygenate rescue, and emergency front-of-neck access remain unavailable.
+- Add a thirteenth scenario after a scripted bupivacaine exposure in a 60 kg adult.
+- Model observable seizure status and bounded cardiovascular depression, with IV benzodiazepine
+  suppression, reduced-dose epinephrine, and weight-banded 20% lipid emulsion.
+- Trace initial lipid dosing, the 12 mL/kg cap, and named drug avoidance to the ASRA 2020 checklist.
+- State the ninth boundary plainly: this is not regional-anesthesia, dose-to-toxicity, dysrhythmia,
+  arrest, refractory resuscitation, team, transport, or observation simulation.
 
 ## Impact
 
-These eight slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+These nine slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
 awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. They do not complete the bundled-library,
 neuromuscular-reversal, or crisis-injector requirements. The seventh also closes the bounded
 pediatric-family gap without claiming a general pediatric patient model. The eighth reaches the
-minimum count of 12 scenarios and closes the bounded difficult-airway rescue gap, while local-
-anesthetic systemic toxicity and cardiac arrest remain required library work.
+minimum count of 12 scenarios and closes the bounded difficult-airway rescue gap. The ninth closes
+the required bounded local-anesthetic systemic-toxicity family. Resuscitable cardiac arrest remains
+required library work, and the manual crisis injector remains a separate platform requirement.

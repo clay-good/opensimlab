@@ -528,9 +528,12 @@ export const SOURCES: readonly Source[] = [
     publication: 'Reg Anesth Pain Med',
     year: 2021,
     locator: '46:81-2',
-    usedFor: 'The local-anaesthetic systemic toxicity checklist named as a crisis protocol source. '
-      + 'Note the version is 2020 and the publication year is 2021; both are stated so a reader '
-      + 'looking for one does not conclude the other is wrong.',
+    usedFor: 'The 2020 local-anesthetic systemic-toxicity checklist steps modeled here: airway '
+      + 'management, benzodiazepine seizure suppression, epinephrine no greater than 1 microgram/kg, '
+      + 'avoidance of vasopressin, beta blockers, calcium-channel blockers and local anesthetic, '
+      + 'and initial 20% lipid dosing. Below 70 kg the model uses a 1.5 mL/kg bolus and 0.25 mL/kg/min '
+      + 'infusion; at 70 kg or more it uses about 100 mL and 250 mL over 20 minutes. Total lipid is '
+      + 'capped at 12 mL/kg. The checklist version is 2020 and publication year is 2021.',
     verifiedAgainst: NCBI,
     verifiedOn: CHECKED,
   },

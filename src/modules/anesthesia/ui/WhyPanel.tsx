@@ -36,6 +36,8 @@ const TERM_EXPLAINERS: Record<string, string> = {
   'anaphylaxis-capillary-leak': 'vasodilation-versus-hypovolemia',
   'epinephrine-alpha': 'vasodilation-versus-hypovolemia',
   'epinephrine-beta': 'vasodilation-versus-hypovolemia',
+  'local-anesthetic-bradycardia': 'vasodilation-versus-hypovolemia',
+  'local-anesthetic-myocardial-depression': 'vasodilation-versus-hypovolemia',
   'opioid-bradycardia': 'hypnotic-opioid-synergy',
   'surgical-stimulus': 'hypnotic-opioid-synergy',
   // The baroreflex is why a pressure that fell is not still falling, which is

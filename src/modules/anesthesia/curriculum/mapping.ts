@@ -648,6 +648,23 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'pc-crisis-management',
     objectiveIds: ['limit-attempts-and-call-for-help', 'place-supraglottic-rescue', 'confirm-rescue-gas-exchange'],
   },
+
+  // --- Local-anesthetic systemic toxicity ----------------------------------
+  {
+    scenarioId: 'local-anesthetic-systemic-toxicity', frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['recognize-last-pattern', 'support-last-airway-and-seizure', 'start-last-lipid', 'use-reduced-last-epinephrine'],
+  },
+  {
+    scenarioId: 'local-anesthetic-systemic-toxicity', frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['recognize-last-pattern', 'support-last-airway-and-seizure', 'start-last-lipid'],
+  },
+  {
+    scenarioId: 'local-anesthetic-systemic-toxicity', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-crisis-management',
+    objectiveIds: ['recognize-last-pattern', 'support-last-airway-and-seizure', 'start-last-lipid', 'use-reduced-last-epinephrine'],
+  },
 ];
 
 export interface DomainCoverage {
