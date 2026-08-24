@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opensimlab.com/catalog/scenario-catalog.schema.json",
+  "title": "Open Sim Lab public scenario catalog and search index",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "moduleId",
+    "scenarioCount",
+    "scenarios"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "moduleId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scenarioCount": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "scenarios": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "path",
+          "title",
+          "contentVersion",
+          "estimatedMinutes",
+          "difficulty",
+          "maturity",
+          "environment",
+          "practiceRegions",
+          "fidelityClass",
+          "objectives",
+          "searchText"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "path": {
+            "type": "string",
+            "pattern": "^/anesthesia/scenario/[a-z0-9-]+$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "contentVersion": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+$"
+          },
+          "estimatedMinutes": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "difficulty": {
+            "enum": [
+              "introductory",
+              "intermediate",
+              "advanced"
+            ]
+          },
+          "maturity": {
+            "enum": [
+              "draft",
+              "preview",
+              "source_checked",
+              "clinically_reviewed",
+              "institution_endorsed",
+              "withdrawn"
+            ]
+          },
+          "environment": {
+            "type": "string",
+            "minLength": 1
+          },
+          "practiceRegions": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "fidelityClass": {
+            "type": "string",
+            "minLength": 1
+          },
+          "objectives": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "searchText": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

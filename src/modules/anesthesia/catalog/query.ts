@@ -51,7 +51,7 @@ export function catalogQueryString(query: CatalogQuery): string {
   return value ? `?${value}` : '';
 }
 
-function searchableText(scenario: Scenario): string {
+export function scenarioSearchText(scenario: Scenario): string {
   return [
     scenario.metadata.id,
     scenario.metadata.title,
@@ -72,7 +72,7 @@ export function filterCatalog(
     if (query.duration === 'under-10' && scenario.metadata.estimatedMinutes >= 10) return false;
     if (query.duration === '10-plus' && scenario.metadata.estimatedMinutes < 10) return false;
     if (query.maturity !== 'all' && scenario.metadata.maturity !== query.maturity) return false;
-    const text = searchableText(scenario);
+    const text = scenarioSearchText(scenario);
     return terms.every((term) => text.includes(term));
   });
 }

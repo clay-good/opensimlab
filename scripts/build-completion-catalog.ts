@@ -10,6 +10,10 @@ import { buildMaturityCatalog, MATURITY_RECORD_SCHEMA } from '@platform/catalog/
 import { additionalMaturitySubjects } from '@platform/governance/records';
 import { ASSET_LICENSE_MANIFEST, buildEvidenceSourceManifest } from '@platform/catalog/provenance';
 import { SOURCES } from '@platform/docs/sources';
+import {
+  buildPublicScenarioCatalog,
+  SCENARIO_CATALOG_SCHEMA,
+} from '@anesthesia/catalog/public-catalog';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const target = join(root, 'public', 'catalog');
@@ -17,6 +21,16 @@ mkdirSync(target, { recursive: true });
 
 const completion = buildAnesthesiaCompletionCatalog(SCENARIOS, ENGINE_VERSION);
 const quality = buildScenarioQualityCatalog(completion);
+writeFileSync(
+  join(target, 'scenario-catalog.schema.json'),
+  `${JSON.stringify(SCENARIO_CATALOG_SCHEMA, null, 2)}\n`,
+  'utf8',
+);
+writeFileSync(
+  join(target, 'anesthesia-catalog.json'),
+  `${JSON.stringify(buildPublicScenarioCatalog(SCENARIOS, completion), null, 2)}\n`,
+  'utf8',
+);
 writeFileSync(
   join(target, 'scenario-completion.schema.json'),
   `${JSON.stringify(SCENARIO_COMPLETION_SCHEMA, null, 2)}\n`,

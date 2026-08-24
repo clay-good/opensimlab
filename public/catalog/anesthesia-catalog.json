@@ -1,0 +1,363 @@
+{
+  "schemaVersion": 1,
+  "moduleId": "anesthesia",
+  "scenarioCount": 16,
+  "scenarios": [
+    {
+      "id": "routine-induction",
+      "path": "/anesthesia/scenario/routine-induction",
+      "title": "Routine induction of general anaesthesia",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 12,
+      "difficulty": "introductory",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Preoxygenate before inducing, and explain what it buys you.",
+        "Wait for the effect site rather than the syringe: recognise that the last dose has not yet fully acted.",
+        "Recognise vasodilatory hypotension after induction and treat the mechanism.",
+        "Establish ventilation before saturation falls.",
+        "Give enough opioid that incision does not provoke a haemodynamic response."
+      ],
+      "searchText": "routine-induction routine induction of general anaesthesia symptomatic cholelithiasis laparoscopic cholecystectomy preoxygenate before inducing, and explain what it buys you. end-tidal oxygen fraction reached 0.9 and was held there for at least three minutes before the airway was secured. end-tidal, not inspired: the inspired fraction says what the machine delivered, not whether the lungs filled. wait for the effect site rather than the syringe: recognise that the last dose has not yet fully acted. no propofol bolus was given while effect-site concentration was still rising toward its peak from the previous one. recognise vasodilatory hypotension after induction and treat the mechanism. mean arterial pressure spent less than two minutes below 65 mmhg, and never fell below 55 mmhg. establish ventilation before saturation falls. oxygen saturation never fell below 92%. give enough opioid that incision does not provoke a haemodynamic response. heart rate and mean arterial pressure rose by less than 20% in the minute after incision."
+    },
+    {
+      "id": "rapid-desaturation",
+      "path": "/anesthesia/scenario/rapid-desaturation",
+      "title": "Rapid desaturation in the obese patient",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 10,
+      "difficulty": "intermediate",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Preoxygenate properly, because this patient gives you almost no margin.",
+        "Secure the airway, or go back to the mask, before the saturation falls.",
+        "Limit laryngoscopy attempts, and change something between them.",
+        "Wait for the effect site rather than the syringe."
+      ],
+      "searchText": "rapid-desaturation rapid desaturation in the obese patient symptomatic gallstones laparoscopic cholecystectomy preoxygenate properly, because this patient gives you almost no margin. end-tidal oxygen fraction reached 0.9 and was held there for at least three minutes before the airway was secured. secure the airway, or go back to the mask, before the saturation falls. oxygen saturation never fell below 92%. limit laryngoscopy attempts, and change something between them. no more than two attempts at direct laryngoscopy before switching technique or returning to mask ventilation. wait for the effect site rather than the syringe. no propofol bolus was given while effect-site concentration was still rising toward its peak from the previous one."
+    },
+    {
+      "id": "hypotension-after-induction",
+      "path": "/anesthesia/scenario/hypotension-after-induction",
+      "title": "Hypotension after induction",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 12,
+      "difficulty": "intermediate",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Dose the induction for the patient in front of you, not for the textbook adult.",
+        "Keep the mean arterial pressure up.",
+        "Work out whether the pressure fell because the vessels dilated or because the tank is empty, and treat that.",
+        "Establish ventilation before saturation falls."
+      ],
+      "searchText": "hypotension-after-induction hypotension after induction small bowel obstruction, vomiting for two days laparotomy dose the induction for the patient in front of you, not for the textbook adult. the first propofol bolus was no more than 1.5 mg/kg, and it was given slowly enough that the effect site was allowed to catch up before more was given. keep the mean arterial pressure up. mean arterial pressure spent less than two minutes below 65 mmhg, and never fell below 55 mmhg. work out whether the pressure fell because the vessels dilated or because the tank is empty, and treat that. fluid was given, rather than vasopressor alone, in a patient whose pulse pressure was narrow and swinging with the ventilator. establish ventilation before saturation falls. oxygen saturation never fell below 92%."
+    },
+    {
+      "id": "bronchospasm",
+      "path": "/anesthesia/scenario/bronchospasm",
+      "title": "Bronchospasm after intubation",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 12,
+      "difficulty": "intermediate",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Read the capnogram as a shape, not as a number.",
+        "Deepen the anaesthetic before treating the wheeze as a separate problem.",
+        "Escalate the evolving lower-airway obstruction and establish high inspired oxygen.",
+        "Give the modeled first-line inhaled bronchodilator after recognizing obstruction.",
+        "Keep the saturation up while you work out what is happening.",
+        "Keep the mean arterial pressure up."
+      ],
+      "searchText": "bronchospasm bronchospasm after intubation recurrent tonsillitis tonsillectomy read the capnogram as a shape, not as a number. the obstruction was recognised while the end-tidal carbon dioxide value was still inside its alarm limits — that is, from the waveform rather than from the alarm. deepen the anaesthetic before treating the wheeze as a separate problem. predicted depth was brought back into the surgical range, or a bolus was given, in the two minutes after the obstruction began. escalate the evolving lower-airway obstruction and establish high inspired oxygen. help was requested and inspired oxygen was set to 100% within 60 seconds of onset. give the modeled first-line inhaled bronchodilator after recognizing obstruction. a confirmed 5 mg nebulized salbutamol action was accepted within two minutes of onset. keep the saturation up while you work out what is happening. oxygen saturation never fell below 92%. keep the mean arterial pressure up. mean arterial pressure spent less than two minutes below 65 mmhg, and never fell below 55 mmhg."
+    },
+    {
+      "id": "unexpected-intraoperative-hemorrhage",
+      "path": "/anesthesia/scenario/unexpected-intraoperative-hemorrhage",
+      "title": "Unexpected intraoperative hemorrhage",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 9,
+      "difficulty": "advanced",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Recognize compensated hemorrhage before the pressure is the only clue.",
+        "Temporize volume loss while definitive hemorrhage control is obtained.",
+        "Reduce the induction dose for a patient who is already volume depleted.",
+        "Protect perfusion while the surgeon controls the bleeding."
+      ],
+      "searchText": "unexpected-intraoperative-hemorrhage unexpected intraoperative hemorrhage hemoperitoneum from a ruptured ectopic pregnancy emergency laparotomy recognize compensated hemorrhage before the pressure is the only clue. balanced crystalloid was started within 60 seconds of the rapid blood-loss event. temporize volume loss while definitive hemorrhage control is obtained. at least 1,000 ml of balanced crystalloid was given before surgical control. reduce the induction dose for a patient who is already volume depleted. the first propofol bolus was no more than 0.75 mg/kg. protect perfusion while the surgeon controls the bleeding. mean arterial pressure spent less than two minutes below 65 mmhg and never fell below 55 mmhg."
+    },
+    {
+      "id": "rapid-sequence-induction",
+      "path": "/anesthesia/scenario/rapid-sequence-induction",
+      "title": "Rapid-sequence induction",
+      "contentVersion": "0.2.0",
+      "estimatedMinutes": 10,
+      "difficulty": "intermediate",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Fill the patient's oxygen reserve before giving the first induction drug.",
+        "Give the hypnotic before paralysis, then allow the modeled block to develop.",
+        "Secure ventilation before the oxygen reserve is exhausted.",
+        "Resume delivered ventilation and sustained gas exchange after airway instrumentation.",
+        "Match reversal to the observed block depth and confirm quantitative recovery."
+      ],
+      "searchText": "rapid-sequence-induction rapid-sequence induction small bowel obstruction with ongoing vomiting emergency laparotomy fill the patient's oxygen reserve before giving the first induction drug. end-tidal oxygen fraction reached at least 0.90 before the first propofol bolus. give the hypnotic before paralysis, then allow the modeled block to develop. propofol preceded rocuronium, and the train-of-four count reached zero before laryngoscopy. secure ventilation before the oxygen reserve is exhausted. oxygen saturation remained at or above 92% throughout induction and airway management. resume delivered ventilation and sustained gas exchange after airway instrumentation. laryngoscopy was followed by delivered ventilation and sustained capnography. match reversal to the observed block depth and confirm quantitative recovery. an accepted depth-matched reversal was followed by a train-of-four ratio of at least 0.9."
+    },
+    {
+      "id": "awareness-under-paralysis",
+      "path": "/anesthesia/scenario/awareness-under-paralysis",
+      "title": "Silent TIVA-line disconnection",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 10,
+      "difficulty": "advanced",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Establish hypnosis before giving a drug that removes movement as a warning.",
+        "Investigate the intravenous delivery path when predicted depth rises without a vital-sign explanation.",
+        "Reconnect the hypnotic line before a silent delivery failure becomes prolonged.",
+        "Use quantitative block and predicted depth together; paralysis is not hypnosis."
+      ],
+      "searchText": "awareness-under-paralysis silent tiva-line disconnection symptomatic cholelithiasis laparoscopic cholecystectomy establish hypnosis before giving a drug that removes movement as a warning. propofol preceded rocuronium, and propofol infusion was running before the line failure. investigate the intravenous delivery path when predicted depth rises without a vital-sign explanation. the hypnotic line was inspected within 45 seconds of its disconnection. reconnect the hypnotic line before a silent delivery failure becomes prolonged. the propofol line was reconnected within 90 seconds of disconnection. use quantitative block and predicted depth together; paralysis is not hypnosis. the trace showed suppressed train-of-four while predicted depth rose above 60. nap5 (br j anaesth 2014;113:549-59) reported awareness near 1 in 19,600 overall, about 1 in 8,200 with neuromuscular blockade versus about 1 in 135,900 without, with two-thirds at induction or emergence."
+    },
+    {
+      "id": "laryngospasm-after-airway-stimulation",
+      "path": "/anesthesia/scenario/laryngospasm-after-airway-stimulation",
+      "title": "Laryngospasm after airway stimulation",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 8,
+      "difficulty": "intermediate",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Build an oxygen reserve before airway stimulation.",
+        "Respond with a held jaw thrust, continuous positive airway pressure, and 100% oxygen.",
+        "Deepen anesthesia promptly while maintaining the airway maneuver.",
+        "Preserve the oxygen margin while the initial measures take effect."
+      ],
+      "searchText": "laryngospasm-after-airway-stimulation laryngospasm after airway stimulation displaced distal radius fracture open reduction of a distal radius fracture build an oxygen reserve before airway stimulation. end-tidal oxygen fraction was at least 0.90 when the scripted airway closure began. respond with a held jaw thrust, continuous positive airway pressure, and 100% oxygen. the combined jaw-thrust and cpap maneuver and at least 95% delivered oxygen were recorded within 30 seconds of closure. deepen anesthesia promptly while maintaining the airway maneuver. a propofol bolus was recorded within 45 seconds of closure. this is an action proxy, not proof that the clinical dose or sequence was complete. preserve the oxygen margin while the initial measures take effect. oxygen saturation remained at or above 92% during the scenario."
+    },
+    {
+      "id": "perioperative-anaphylaxis-after-antibiotic",
+      "path": "/anesthesia/scenario/perioperative-anaphylaxis-after-antibiotic",
+      "title": "Perioperative anaphylaxis after antibiotic exposure",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 8,
+      "difficulty": "advanced",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Recognize abrupt hypotension after antibiotic exposure with possible bronchospasm.",
+        "Give the modeled adult initial dose of intravenous epinephrine promptly.",
+        "Begin rapid crystalloid resuscitation for vasodilation and capillary leak.",
+        "Deliver 100% oxygen and active ventilation while reassessing the observable response."
+      ],
+      "searchText": "perioperative-anaphylaxis-after-antibiotic perioperative anaphylaxis after antibiotic exposure symptomatic cholelithiasis laparoscopic cholecystectomy recognize abrupt hypotension after antibiotic exposure with possible bronchospasm. a first-line epinephrine action was recorded within 60 seconds of the modeled exposure. this is a behavioral proxy, not a definitive diagnosis. give the modeled adult initial dose of intravenous epinephrine promptly. exactly 50 micrograms of intravenous epinephrine was recorded within 60 seconds of exposure. begin rapid crystalloid resuscitation for vasodilation and capillary leak. at least 1,000 ml of balanced crystalloid was recorded within 120 seconds of exposure. deliver 100% oxygen and active ventilation while reassessing the observable response. by 60 seconds after exposure, at least 95% oxygen and active ventilation were in effect, whether established before or after exposure, and saturation remained at or above 92%."
+    },
+    {
+      "id": "early-malignant-hyperthermia-during-volatile-anesthesia",
+      "path": "/anesthesia/scenario/early-malignant-hyperthermia-during-volatile-anesthesia",
+      "title": "Early malignant hyperthermia during volatile anesthesia",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 10,
+      "difficulty": "advanced",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Recognize the early hypermetabolic pattern.",
+        "Stop volatile delivery and hyperventilate with 100% oxygen at high fresh-gas flow.",
+        "Give 2.5 mg/kg intravenous dantrolene promptly and repeat while observable signs persist.",
+        "Reassess carbon dioxide, heart rate, rigidity, and the later temperature trajectory after initial treatment."
+      ],
+      "searchText": "early-malignant-hyperthermia-during-volatile-anesthesia early malignant hyperthermia during volatile anesthesia anterior cruciate ligament rupture arthroscopic anterior cruciate ligament reconstruction recognize the early hypermetabolic pattern. an accepted malignant-hyperthermia response action was recorded within 60 seconds of the first modeled rigidity. this is an action proxy, not a diagnosis. stop volatile delivery and hyperventilate with 100% oxygen at high fresh-gas flow. the vaporizer was at zero, oxygen at least 95%, fresh-gas flow at least 10 l/min, and actively delivered minute ventilation at least twice baseline within 60 seconds of the first modeled rigidity. give 2.5 mg/kg intravenous dantrolene promptly and repeat while observable signs persist. an accepted 2.5 mg/kg intravenous dantrolene action was recorded within 90 seconds of the first modeled rigidity. reassess carbon dioxide, heart rate, rigidity, and the later temperature trajectory after initial treatment. within 120 seconds after accepted dantrolene, end-tidal carbon dioxide, heart rate, or modeled rigidity fell from its treatment-time value. temperature is reported as a late sign, not a recognition requirement."
+    },
+    {
+      "id": "routine-pediatric-iv-induction",
+      "path": "/anesthesia/scenario/routine-pediatric-iv-induction",
+      "title": "Routine pediatric intravenous induction",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 8,
+      "difficulty": "introductory",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Fill the child's oxygen reserve before giving propofol.",
+        "Calculate the induction dose from the child's 20 kg actual body weight.",
+        "Deliver pediatric-sized breaths and adjust the rate to observed gas exchange.",
+        "Establish ventilation before the child reaches the steep part of the oxygen curve."
+      ],
+      "searchText": "routine-pediatric-iv-induction routine pediatric intravenous induction need for diagnostic imaging under general anesthesia magnetic resonance imaging of the brain fill the child's oxygen reserve before giving propofol. end-tidal oxygen fraction reached at least 0.90 before the first accepted propofol bolus. calculate the induction dose from the child's 20 kg actual body weight. the first accepted propofol bolus was entered in mg/kg and was within the labeled 2.5–3.5 mg/kg range for a healthy child aged 3–16 years. deliver pediatric-sized breaths and adjust the rate to observed gas exchange. after induction, accepted delivered ventilation used 6–8 ml/kg tidal volume and sustained end-tidal carbon dioxide between 30 and 50 mmhg. establish ventilation before the child reaches the steep part of the oxygen curve. oxygen saturation remained at or above 92% from the first propofol bolus through the end of the case."
+    },
+    {
+      "id": "difficult-airway-supraglottic-rescue",
+      "path": "/anesthesia/scenario/difficult-airway-supraglottic-rescue",
+      "title": "Difficult airway: supraglottic rescue",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 10,
+      "difficulty": "advanced",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Reach an end-tidal preoxygenation endpoint before induction.",
+        "Stop repeated tracheal attempts and request airway help early.",
+        "Move to a supraglottic airway to restore a route for oxygenation.",
+        "Explicitly deliver high-concentration oxygen and confirm sustained gas exchange."
+      ],
+      "searchText": "difficult-airway-supraglottic-rescue difficult airway: supraglottic rescue symptomatic uterine fibroids elective laparoscopic hysterectomy reach an end-tidal preoxygenation endpoint before induction. end-tidal oxygen fraction was at least 0.90 before the first accepted propofol bolus. stop repeated tracheal attempts and request airway help early. no further laryngoscopy was accepted before rescue, and airway help was requested from the start of the failed attempt through 30 seconds after it completed. move to a supraglottic airway to restore a route for oxygenation. a supraglottic airway was placed after failed intubation without another tracheal attempt. explicitly deliver high-concentration oxygen and confirm sustained gas exchange. after supraglottic placement, inspired oxygen was at least 0.95, breath delivery was active, saturation stayed at least 92%, and end-tidal carbon dioxide remained 25–55 mmhg for 30 seconds."
+    },
+    {
+      "id": "local-anesthetic-systemic-toxicity",
+      "path": "/anesthesia/scenario/local-anesthetic-systemic-toxicity",
+      "title": "Local-anesthetic systemic toxicity after block injection",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 8,
+      "difficulty": "advanced",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Recognize neurologic and cardiovascular toxicity after local-anesthetic exposure.",
+        "Deliver high inspired oxygen with active ventilation and suppress modeled seizure activity.",
+        "Start the ASRA 2020 weight-banded initial 20% lipid-emulsion protocol.",
+        "If epinephrine is used, keep the initial IV bolus at or below 1 microgram/kg and reassess."
+      ],
+      "searchText": "local-anesthetic-systemic-toxicity local-anesthetic systemic toxicity after block injection distal radius fracture open reduction after planned upper-limb block recognize neurologic and cardiovascular toxicity after local-anesthetic exposure. an accepted initial response was recorded within 60 seconds of the modeled exposure. deliver high inspired oxygen with active ventilation and suppress modeled seizure activity. at least 95% oxygen and active ventilation were in effect, and an iv benzodiazepine action was accepted within 60 seconds. start the asra 2020 weight-banded initial 20% lipid-emulsion protocol. the engine accepted 20% lipid, calculated the 60 kg initial bolus as 90 ml, and started 15 ml/min infusion within 60 seconds. if epinephrine is used, keep the initial iv bolus at or below 1 microgram/kg and reassess. the first accepted epinephrine action, if any, was no more than 60 micrograms iv."
+    },
+    {
+      "id": "persistent-vf-cardiac-arrest",
+      "path": "/anesthesia/scenario/persistent-vf-cardiac-arrest",
+      "title": "Persistent ventricular-fibrillation cardiac arrest",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 8,
+      "difficulty": "advanced",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Recognize pulseless ventricular fibrillation and resume chest compressions.",
+        "Give the adult cardiac-arrest dose of epinephrine during the third VF cycle.",
+        "Select the declared biphasic device energy and defibrillate persistent VF.",
+        "Distinguish shockable VF from non-shockable asystole or PEA."
+      ],
+      "searchText": "persistent-vf-cardiac-arrest persistent ventricular-fibrillation cardiac arrest coronary artery disease intraoperative ventricular-fibrillation response recognize pulseless ventricular fibrillation and resume chest compressions. modeled 110/min chest compressions were accepted within 20 seconds of the vf event. give the adult cardiac-arrest dose of epinephrine during the third vf cycle. exactly 1 mg iv or io epinephrine was accepted while compressions were active. select the declared biphasic device energy and defibrillate persistent vf. a 200 j shock was accepted after compressions and 1 mg epinephrine, producing bounded modeled rosc. distinguish shockable vf from non-shockable asystole or pea. no defibrillation was delivered to a non-shockable rhythm."
+    },
+    {
+      "id": "high-spinal-after-epidural-top-up",
+      "path": "/anesthesia/scenario/high-spinal-after-epidural-top-up",
+      "title": "High spinal after epidural top-up",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 8,
+      "difficulty": "advanced",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Recognize the rapidly progressive pattern and call for help.",
+        "Give high inspired oxygen and support breathing as ventilation weakens.",
+        "Treat hypotension with a small fluid bolus and the stocked vasopressor.",
+        "Protect oxygenation while the modeled block progresses."
+      ],
+      "searchText": "high-spinal-after-epidural-top-up high spinal after epidural top-up term pregnancy with fetal distress emergency cesarean delivery recognize the rapidly progressive pattern and call for help. a high-spinal help request was accepted within 30 seconds of the modeled event. give high inspired oxygen and support breathing as ventilation weakens. at least 95% inspired oxygen with active breath delivery was in effect within 60 seconds. treat hypotension with a small fluid bolus and the stocked vasopressor. a 250–500 ml crystalloid bolus and a listed ephedrine bolus were accepted within 60 seconds. protect oxygenation while the modeled block progresses. oxygen saturation remained at or above 92%."
+    },
+    {
+      "id": "venous-air-embolism-during-line-removal",
+      "path": "/anesthesia/scenario/venous-air-embolism-during-line-removal",
+      "title": "Venous air embolism during line removal",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 8,
+      "difficulty": "advanced",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Recognize the abrupt cardiopulmonary monitor pattern and call for help.",
+        "Record intent to prevent further air entry while the source remains plausible.",
+        "Deliver 100% oxygen with active breath support.",
+        "Reassess carbon dioxide, pressure, and oxygenation as the bounded pattern clears."
+      ],
+      "searchText": "venous-air-embolism-during-line-removal venous air embolism during line removal postoperative recovery after abdominal surgery internal jugular central venous catheter removal recognize the abrupt cardiopulmonary monitor pattern and call for help. a venous-air-event help request was accepted within 30 seconds of the modeled event. record intent to prevent further air entry while the source remains plausible. the bounded source-control intent was accepted within 30 seconds of the modeled event. deliver 100% oxygen with active breath support. inspired oxygen fraction 1.0 with active breath delivery was in effect within 60 seconds. reassess carbon dioxide, pressure, and oxygenation as the bounded pattern clears. end-tidal carbon dioxide recovered to at least 28 mmhg after accepted source control."
+    }
+  ]
+}

@@ -127,6 +127,9 @@ The `/anesthesia` catalog keeps discovery local and linkable: search covers the 
 procedure, and objectives, while difficulty, duration, and maturity filters are encoded in the URL.
 The unfiltered prerender still contains all 16 current scenarios, so filtering adds no telemetry and
 does not trade away no-script access or scenario-page indexing.
+`/catalog/anesthesia-catalog.json` publishes the same 16 exact-version entries, filters, objectives,
+and normalized search text for static integrations; its schema and data are included in the offline
+bundle and fail the build if they drift from the scenario registry or completion audit.
 
 ### What gets built first
 

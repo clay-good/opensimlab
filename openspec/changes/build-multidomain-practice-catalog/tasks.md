@@ -63,9 +63,9 @@ credited toward the catalog until every item in the completion contract passes.
 - [ ] Implement the catalog manifest, scenario completion validator, static search index, goal paths,
   domain/environment/duration/difficulty/fidelity/maturity filters, and URL state.
   The anesthesia catalog now has bounded local search plus difficulty, duration, and maturity
-  filters with compact URL state. The existing completion audit remains the scenario validator.
-  A public manifest/search artifact, goal paths, and authored domain/environment/fidelity fields
-  remain.
+  filters with compact URL state. A schema-valid public manifest/search artifact is generated from
+  the same registry and exact-version completion audit and ships offline. Goal paths and authored
+  domain/environment/fidelity filters remain.
 - [ ] Implement catalog desktop, tablet, 320 px phone, keyboard, screen-reader, reduced-motion, and
   no-script/prerendered experiences.
   The default prerender contains all 16 scenario cards, controls are native keyboard and screen-

@@ -1,5 +1,7 @@
 /** Machine-readable catalog files that every distributable build publishes. */
 export const PUBLIC_CATALOG_ARTIFACTS = [
+  '/catalog/scenario-catalog.schema.json',
+  '/catalog/anesthesia-catalog.json',
   '/catalog/scenario-completion.schema.json',
   '/catalog/anesthesia-completion-audit.json',
   '/catalog/training-value.schema.json',
