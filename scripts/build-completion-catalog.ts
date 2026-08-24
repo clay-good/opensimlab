@@ -6,6 +6,8 @@ import { SCENARIOS } from '@anesthesia/scenarios';
 import { buildAnesthesiaCompletionCatalog } from '@anesthesia/catalog/scenario-completion';
 import { SCENARIO_COMPLETION_SCHEMA } from '@platform/catalog/scenario-completion';
 import { buildScenarioQualityCatalog, QUALITY_SCHEMAS } from '@platform/catalog/scenario-quality';
+import { ASSET_LICENSE_MANIFEST, buildEvidenceSourceManifest } from '@platform/catalog/provenance';
+import { SOURCES } from '@platform/docs/sources';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const target = join(root, 'public', 'catalog');
@@ -30,5 +32,7 @@ writeFileSync(
   `${JSON.stringify(buildScenarioQualityCatalog(completion), null, 2)}\n`,
   'utf8',
 );
+writeFileSync(join(target, 'asset-licenses.json'), `${JSON.stringify(ASSET_LICENSE_MANIFEST, null, 2)}\n`, 'utf8');
+writeFileSync(join(target, 'evidence-sources.json'), `${JSON.stringify(buildEvidenceSourceManifest(SOURCES), null, 2)}\n`, 'utf8');
 
 process.stdout.write(`catalog: audited ${SCENARIOS.length} anesthesia scenarios\n`);

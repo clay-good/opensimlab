@@ -250,6 +250,8 @@ function main(): void {
       '/catalog/scenario-hazard.schema.json',
       '/catalog/state-space-verification.schema.json',
       '/catalog/anesthesia-quality-audit.json',
+      '/catalog/asset-licenses.json',
+      '/catalog/evidence-sources.json',
     ];
     const precache = [
       '/', '/index.html', '/manifest.webmanifest',

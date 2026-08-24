@@ -200,6 +200,7 @@ describe('Requirement: Everything The Offline Claim Names Is Actually Precached'
       'training-value.schema.json', 'authored-defaults.schema.json',
       'scenario-hazard.schema.json', 'state-space-verification.schema.json',
       'anesthesia-quality-audit.json',
+      'asset-licenses.json', 'evidence-sources.json',
     ]) expect(precache).toContain(`/catalog/${artifact}`);
   });
 

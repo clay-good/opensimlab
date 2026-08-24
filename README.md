@@ -247,6 +247,12 @@ state-space-verification schemas plus `/catalog/anesthesia-quality-audit.json`. 
 playable only when its completion contract and all four version-bound quality records pass. The
 current audit honestly reports 0 playable scenarios while those records are still being authored.
 
+`/catalog/asset-licenses.json` classifies every shipped media asset by source, author, license,
+modification, and redistribution terms; `/catalog/evidence-sources.json` publishes the complete
+clinical source register. Both are generated, offline-available release artifacts. The build fails
+if any media asset is unclassified, multiply classified, missing its license, or differs from a
+pinned provenance hash.
+
 Architecture tests keep tutor rules outside engine and session mutation paths. The same boundary
 also rejects any reporting code that reads browser storage, transcripts, reflections, or progress;
 reporting must receive an explicit bounded projection when it is implemented.
