@@ -139,8 +139,9 @@ tracks the breadth work that follows that provisional gate. Its first verified s
 unexpected intraoperative hemorrhage with learner-delivered crystalloid. A later bounded foundation
 adds adult packed red cells with fixed unit volume, hemoglobin mass, and calculated oxygen-delivery
 evidence. The next bounded slice adds dilution-only factor and fibrinogen mass, an immediate
-PT-ratio/fibrinogen teaching panel, and fixed-volume plasma; compatibility, consumption, platelets,
-cryoprecipitate, and massive-transfusion management remain explicitly out of scope. Its second slice adds a
+PT-ratio/fibrinogen teaching panel, and fixed-volume plasma. A confirmed teaching handoff now
+precedes product release, while compatibility, consumption, platelets, cryoprecipitate, and
+massive-transfusion management remain explicitly out of scope. Its second slice adds a
 full-stomach rapid-sequence induction, modeled rocuronium onset, quantitative train-of-four
 monitoring, and airway attempts that consume simulated time. A later bounded slice adds depth-
 matched sugammadex and neostigmine with an antimuscarinic only during minimal block; emergence, extubation, and

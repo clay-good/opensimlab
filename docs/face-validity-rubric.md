@@ -105,7 +105,8 @@ So that reviewers spend their attention on what this review is for:
 - Balanced crystalloid uses a fixed-retention teaching model. Adult packed red cells use fixed
   300 mL and 60 g hemoglobin units with a two-unit cap. A dilution-only factor/fibrinogen model,
   immediate teaching panel, and fixed 275 mL plasma units are available only in the hemorrhage
-  case. Compatibility, reactions, consumption, platelets, cryoprecipitate, viscoelastic testing,
+  case after an instantaneous confirmed blood-bank handoff. Compatibility, reactions, consumption,
+  platelets, cryoprecipitate, viscoelastic testing,
   and a massive-transfusion protocol remain absent.
 - Most adult scenarios use propofol and remifentanil; the pediatric case stocks propofol only,
   and the rapid-sequence and awareness-risk cases add rocuronium. The

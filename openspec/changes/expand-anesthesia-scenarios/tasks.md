@@ -235,3 +235,14 @@
 - [x] Add two-step keyboard controls, current NICE/NHSBT source scope, and explicit limitations.
 - [ ] Add consumption, fibrinolysis, platelet count or products, cryoprecipitate, viscoelastic
   testing, lab delay, compatibility, warming, reactions, calcium, or a massive-transfusion protocol.
+
+## Slice 16: bounded blood-bank handoff
+
+- [x] Require a confirmed, logged, replayable blood-bank request before any modeled blood product
+  can be selected during active hemorrhage.
+- [x] Reveal the released products progressively in the fluid tray and expose accepted release state
+  through the worker protocol.
+- [x] State in the control, event log, briefing, source scope, and limitations register that release
+  is instantaneous and assumes appropriate product selection.
+- [ ] Add specimens, ABO/RhD typing, antibody screening, crossmatch, inventory, release delay,
+  patient or unit identifiers, emergency-release authorization, bedside checks, or issue records.

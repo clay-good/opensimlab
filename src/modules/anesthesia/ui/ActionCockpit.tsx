@@ -46,6 +46,7 @@ export interface ActionCockpitProps {
     readonly packedRedBloodCellUnits?: number;
     readonly freshFrozenPlasmaUnits?: number;
     readonly coagulationPanelReported?: boolean;
+    readonly bloodProductsReleased?: boolean;
     readonly bloodProductTotalMl?: number;
     readonly dantroleneTotalMg: number;
     readonly dantroleneEffectFraction: number;
@@ -105,6 +106,7 @@ export interface ActionCockpitProps {
   readonly onHypnoticLine: (action: 'inspect' | 'reconnect') => void;
   readonly onFluid: (fluidId: string, volumeMl: number) => void;
   readonly onBloodProduct?: (productId: string, units: number) => void;
+  readonly onBloodBankRequest?: () => void;
   readonly onCoagulationLabs?: () => void;
   readonly onVentilator: (settings: Partial<ActionCockpitProps['ventilator']>) => void;
   readonly onLaryngoscopy: (technique: 'direct' | 'video') => void;
@@ -180,7 +182,7 @@ const CRISIS_TRAY = { id: 'crisis', label: 'Crisis response' } as const;
  */
 export const NOT_IN_THIS_BUILD =
   'Packed red cells use a bounded adult-only 300 mL and 60 g hemoglobin per-unit teaching model. '
-  + 'The hemorrhage case also has an immediate PT-ratio/fibrinogen teaching panel and fixed-unit plasma response. '
+  + 'The hemorrhage case uses a confirmed instantaneous blood-bank handoff, then offers an immediate PT-ratio/fibrinogen teaching panel and fixed-unit plasma response. '
   + 'Compatibility, reactions, infusion rate, platelets, cryoprecipitate, viscoelastic testing, consumption, and a massive-transfusion protocol are not modeled. '
   + 'Crystalloid uses a fixed 25% intravascular retention teaching model. '
   + 'Cardiac-arrest resuscitation actions — compressions, arrest-dose epinephrine, and defibrillation — '
@@ -261,8 +263,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             ageYears={props.scenario.patient.ageYears}
             hemorrhageAvailable={props.resuscitation.hemorrhageActive ?? false}
             coagulationPanelReported={props.resuscitation.coagulationPanelReported ?? false}
+            bloodProductsReleased={props.resuscitation.bloodProductsReleased ?? false}
             onFluid={props.onFluid}
             onBloodProduct={props.onBloodProduct ?? (() => {})}
+            onBloodBankRequest={props.onBloodBankRequest ?? (() => {})}
             onCoagulationLabs={props.onCoagulationLabs ?? (() => {})}
           />
         )}
@@ -480,8 +484,8 @@ function CardiacArrestTray({
 
 function FluidTray({
   crystalloidTotalMl, packedRedBloodCellUnits, freshFrozenPlasmaUnits, bloodProductTotalMl,
-  ageYears, hemorrhageAvailable, coagulationPanelReported,
-  onFluid, onBloodProduct, onCoagulationLabs,
+  ageYears, hemorrhageAvailable, coagulationPanelReported, bloodProductsReleased,
+  onFluid, onBloodProduct, onBloodBankRequest, onCoagulationLabs,
 }: {
   crystalloidTotalMl: number;
   packedRedBloodCellUnits: number;
@@ -490,13 +494,16 @@ function FluidTray({
   ageYears: number;
   hemorrhageAvailable: boolean;
   coagulationPanelReported: boolean;
+  bloodProductsReleased: boolean;
   onFluid: (fluidId: string, volumeMl: number) => void;
   onBloodProduct: (productId: string, units: number) => void;
+  onBloodBankRequest: () => void;
   onCoagulationLabs: () => void;
 }) {
   const pediatric = ageYears < 18;
   const [pending, setPending] = useState<{ fluidId: string; volumeMl: number } | null>(null);
   const [pendingBlood, setPendingBlood] = useState<{ productId: string; units: number } | null>(null);
+  const [pendingBloodBank, setPendingBloodBank] = useState(false);
   return (
     <div className="tray-grid">
       {FLUIDS.map((fluid) => (
@@ -547,7 +554,31 @@ function FluidTray({
           )}
         </section>
       ))}
-      {BLOOD_PRODUCTS.filter((product) => hemorrhageAvailable
+      {hemorrhageAvailable && !pediatric && (
+        <section className="syringe">
+          <div className="syringe__name">Blood bank</div>
+          <p className="field__hint">
+            Teaching handoff only. Compatibility testing, inventory, timing, and local emergency-release policy are not modeled.
+          </p>
+          <p className="syringe__remaining" role="status">
+            {bloodProductsReleased ? 'Products released' : 'Products not requested'}
+          </p>
+          {!bloodProductsReleased && (pendingBloodBank ? (
+            <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+              <Button variant="primary" compact onClick={() => {
+                onBloodBankRequest();
+                setPendingBloodBank(false);
+              }}>
+                Send request
+              </Button>
+              <Button variant="ghost" compact onClick={() => setPendingBloodBank(false)}>Cancel</Button>
+            </div>
+          ) : (
+            <Button compact onClick={() => setPendingBloodBank(true)}>Request products</Button>
+          ))}
+        </section>
+      )}
+      {BLOOD_PRODUCTS.filter((product) => hemorrhageAvailable && bloodProductsReleased
         && (product.kind === 'red-cells' || coagulationPanelReported)).map((product) => (
         <section className="syringe" key={product.id}>
           <div className="syringe__name">{product.name}</div>

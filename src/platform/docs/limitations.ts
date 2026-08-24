@@ -521,6 +521,14 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['unexpected-intraoperative-hemorrhage'],
   },
   {
+    id: 'blood-bank-handoff-is-instantaneous',
+    headline: 'The blood-bank request is an instantaneous teaching handoff, not a compatibility workflow.',
+    simplification: 'One confirmed request immediately releases the bounded adult products while active hemorrhage continues. There is no specimen, patient or unit ABO/RhD type, antibody screen, crossmatch, inventory, delay, emergency-release authorization, bedside check, or issue record.',
+    whereItMisleads: 'Choosing a component, estimating availability, bypassing testing, documenting emergency release, or checking a real unit and recipient.',
+    correctUnderstanding: 'Real transfusion services identify the recipient, test and select compatible components under local procedures, document any emergency release, and complete bedside identification checks. Urgency changes the authorized workflow; it does not make compatibility irrelevant.',
+    briefIn: ['unexpected-intraoperative-hemorrhage'],
+  },
+  {
     id: 'no-coagulopathy',
     headline: 'Coagulation is not modelled, so bleeding never becomes a clotting problem.',
     simplification: 'Coagulation is not modelled. Blood loss removes volume and haemoglobin, and '

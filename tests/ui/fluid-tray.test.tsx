@@ -26,6 +26,7 @@ describe('Requirement: The fluids tray performs a real learner action', () => {
   it('requires confirmation and sends the selected product and volume', () => {
     const onFluid = vi.fn();
     const onBloodProduct = vi.fn();
+    const onBloodBankRequest = vi.fn();
     const onCoagulationLabs = vi.fn();
     const resuscitation = {
       epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
@@ -37,12 +38,15 @@ describe('Requirement: The fluids tray performs a real learner action', () => {
     const renderCockpit = (
       hemorrhageActive: boolean,
       coagulationPanelReported = false,
+      bloodProductsReleased = false,
     ) => createElement(ActionCockpit, {
       scenario: UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE,
       region: UNITED_STATES,
       infusions: [],
       hypnoticLine: { connected: true, inspected: false },
-      resuscitation: { ...resuscitation, hemorrhageActive, coagulationPanelReported },
+      resuscitation: {
+        ...resuscitation, hemorrhageActive, coagulationPanelReported, bloodProductsReleased,
+      },
       lastExposure: null,
       syringeRemaining: {},
       ventilator: {
@@ -60,6 +64,7 @@ describe('Requirement: The fluids tray performs a real learner action', () => {
       onHypnoticLine: () => {},
       onFluid,
       onBloodProduct,
+      onBloodBankRequest,
       onCoagulationLabs,
       onVentilator: () => {},
       onLaryngoscopy: () => {},
@@ -84,11 +89,18 @@ describe('Requirement: The fluids tray performs a real learner action', () => {
     expect(container.textContent).not.toContain('Coagulation panel');
     act(() => root.render(renderCockpit(true)));
     expect(container.textContent).toContain('Coagulation panel');
-    expect(container.textContent).toContain('Packed red blood cells');
+    expect(container.textContent).toContain('Products not requested');
+    expect(container.textContent).not.toContain('Packed red blood cells');
+    act(() => button('Request products')!.click());
+    expect(onBloodBankRequest).not.toHaveBeenCalled();
+    act(() => button('Send request')!.click());
+    expect(onBloodBankRequest).toHaveBeenCalledOnce();
     expect(container.textContent).not.toContain('Fresh frozen plasma');
     act(() => button('Request panel')!.click());
     expect(onCoagulationLabs).toHaveBeenCalledOnce();
-    act(() => root.render(renderCockpit(true, true)));
+    act(() => root.render(renderCockpit(true, true, true)));
+    expect(container.textContent).toContain('Products released');
+    expect(container.textContent).toContain('Packed red blood cells');
     act(() => button('1000 mL')!.click());
     expect(onFluid).not.toHaveBeenCalled();
     act(() => button('Give fluid')!.click());

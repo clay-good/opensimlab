@@ -71,8 +71,10 @@ export const SOURCES: readonly Source[] = [
     publication: 'AABB', year: 2024, locator: 'June 2024 current circular',
     usedFor: 'The bounded packed-red-cell component model: red-cell components contain 50 to 80 g '
       + 'of hemoglobin, and apheresis red cells contain approximately 60 g per unit. The simulator '
-      + 'uses 60 g as a fixed teaching value, not an individual component prediction.',
-    verifiedAgainst: 'Current AABB watermarked circular PDF, component description',
+      + 'uses 60 g as a fixed teaching value, not an individual component prediction. The circular '
+      + 'also supplies the compatibility and facility-procedure context that the instantaneous '
+      + 'blood-bank handoff explicitly does not simulate.',
+    verifiedAgainst: 'Current AABB watermarked circular PDF, component and compatibility sections',
     verifiedOn: '2026-08-24',
   },
   {

@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: coagulation-panel state has protocol version 17', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(17);
+  it('Scenario: blood-bank release state has protocol version 18', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(18);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

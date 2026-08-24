@@ -38,7 +38,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.17';
+export const ENGINE_VERSION = '0.1.0-alpha.18';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -211,6 +211,7 @@ export class AnesthesiaEngine {
   private packedRedBloodCellUnits = 0;
   private freshFrozenPlasmaUnits = 0;
   private coagulationPanelReported = false;
+  private bloodProductsReleased = false;
   private bloodProductTotalMl = 0;
   private dantroleneTotalMg = 0;
   private dantroleneEffectFraction = 0;
@@ -831,6 +832,27 @@ export class AnesthesiaEngine {
           { fluidId: fluid.id, volumeMl, retainedFraction: fluid.retainedFraction, teachingModel: true });
         break;
       }
+      case 'blood-bank-request': {
+        const hemorrhageActive = this.running.some((event) => event.type === 'blood-loss')
+          || this.injectedBloodLossMlPerMin > 0;
+        if (!hemorrhageActive || this.scenario.patient.ageYears < 18 || this.bloodProductsReleased) {
+          this.log('warning', 'blood-product', `bad-blood-bank-request-${this.currentTick}`,
+            !hemorrhageActive
+              ? 'The bounded blood-bank request is available only while modeled hemorrhage is active.'
+              : this.scenario.patient.ageYears < 18
+                ? 'A blood-bank workflow is not included in this bounded pediatric induction case.'
+                : 'The bounded blood-bank request has already been accepted.');
+          break;
+        }
+        this.bloodProductsReleased = true;
+        this.log('info', 'blood-product', `blood-bank-release-${this.currentTick}`,
+          'Blood products released. This teaching handoff assumes appropriately selected products arrive immediately; specimen collection, compatibility testing, inventory, and local emergency-release policy are not modeled.', {
+            teachingModel: true,
+            immediateRelease: true,
+            compatibilityModeled: false,
+          });
+        break;
+      }
       case 'blood-product': {
         const productId = String(action.payload.productId ?? '');
         const product = getBloodProduct(productId);
@@ -847,6 +869,7 @@ export class AnesthesiaEngine {
           || totalForProduct + units > product.maxUnitsTotal
           || this.scenario.patient.ageYears < 18
           || !hemorrhageActive
+          || !this.bloodProductsReleased
           || (product.kind === 'plasma' && !this.coagulationPanelReported);
         if (invalid) {
           this.log('warning', 'blood-product', `bad-blood-product-${this.currentTick}`,
@@ -856,6 +879,8 @@ export class AnesthesiaEngine {
                 ? 'Blood products are not stocked in this bounded pediatric induction case.'
                 : !hemorrhageActive
                   ? 'Blood products are stocked only while modeled hemorrhage is active.'
+                  : !this.bloodProductsReleased
+                    ? 'Request the bounded blood-bank release before selecting a blood product.'
                   : product.kind === 'plasma' && !this.coagulationPanelReported
                     ? 'Request the bounded coagulation panel before selecting fresh frozen plasma.'
                   : `${product.name} requires one listed whole-unit preset and no more than ${product.maxUnitsTotal} units cumulatively. Nothing was given.`);
@@ -1789,6 +1814,7 @@ export class AnesthesiaEngine {
         packedRedBloodCellUnits: this.packedRedBloodCellUnits,
         freshFrozenPlasmaUnits: this.freshFrozenPlasmaUnits,
         coagulationPanelReported: this.coagulationPanelReported,
+        bloodProductsReleased: this.bloodProductsReleased,
         bloodProductTotalMl: this.bloodProductTotalMl,
         dantroleneTotalMg: this.dantroleneTotalMg,
         dantroleneEffectFraction: this.dantroleneEffectFraction,

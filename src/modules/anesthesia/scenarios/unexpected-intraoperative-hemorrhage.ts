@@ -64,6 +64,7 @@ export const UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE: Scenario = {
       'crystalloid-volume-model',
       'prbc-fixed-unit-model',
       'bounded-dilutional-coagulopathy',
+      'blood-bank-handoff-is-instantaneous',
       'no-team-or-communication',
       'bolus-injection-is-instantaneous',
     ],

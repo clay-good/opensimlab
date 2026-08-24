@@ -93,6 +93,7 @@ const DEFAULT_RESUSCITATION = {
   packedRedBloodCellUnits: 0, bloodProductTotalMl: 0,
   freshFrozenPlasmaUnits: 0,
   coagulationPanelReported: false,
+  bloodProductsReleased: false,
   dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
   lastDantroleneTick: null, activeCooling: false,
   chestCompressionsActive: false,
@@ -512,6 +513,7 @@ export function Cockpit({
           onBloodProduct={(productId, units) => session.act({
             type: 'blood-product', payload: { productId, units },
           })}
+          onBloodBankRequest={() => session.act({ type: 'blood-bank-request', payload: {} })}
           onCoagulationLabs={() => session.act({ type: 'coagulation-labs', payload: {} })}
           onVentilator={(settings) => session.act({ type: 'ventilator', payload: settings as never })}
           onLaryngoscopy={(technique) => session.act({ type: 'laryngoscopy', payload: { technique } })}

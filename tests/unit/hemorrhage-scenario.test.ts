@@ -15,6 +15,11 @@ function advance(sim: AnesthesiaEngine, ticks: number) {
   return last;
 }
 
+function releaseProducts(sim: AnesthesiaEngine) {
+  sim.apply({ tick: sim.tick, type: 'blood-bank-request', payload: {} });
+  return sim.step();
+}
+
 describe('Requirement: Learner-delivered crystalloid changes the patient once', () => {
   it('retains one quarter intravascularly, dilutes hemoglobin, and does not repeat', () => {
     const sim = engine();
@@ -67,18 +72,21 @@ describe('Requirement: Packed red cells restore hemoglobin and calculated oxygen
   const action = (units = 2, productId = 'packed-red-blood-cells'): LearnerAction => ({
     tick: 1, type: 'blood-product', payload: { productId, units },
   });
-
   it('delivers two fixed units once and records the physiological change', () => {
     const sim = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
     advance(sim, 301);
     const control = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
     advance(control, 301);
+    releaseProducts(sim);
+    releaseProducts(control);
     sim.apply({ ...action(), tick: sim.tick });
     const treated = sim.step();
     const untreated = control.step();
     const next = sim.step();
     const untreatedNext = control.step();
-    const event = treated.events.find((entry) => entry.category === 'blood-product');
+    const event = treated.events.find(
+      (entry) => entry.eventId.startsWith('blood-product-packed-red-blood-cells-'),
+    );
 
     expect(treated.state.bloodVolumeMl - untreated.state.bloodVolumeMl).toBeCloseTo(600, 5);
     expect(treated.state.hemoglobinGPerDl).toBeGreaterThan(untreated.state.hemoglobinGPerDl);
@@ -103,6 +111,8 @@ describe('Requirement: Packed red cells restore hemoglobin and calculated oxygen
     advance(sim, 301);
     const control = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
     advance(control, 301);
+    releaseProducts(sim);
+    releaseProducts(control);
     sim.apply({ ...action(units, productId), tick: sim.tick });
     const result = sim.step();
     const untreated = control.step();
@@ -114,6 +124,7 @@ describe('Requirement: Packed red cells restore hemoglobin and calculated oxygen
   it('enforces the cumulative two-unit boundary', () => {
     const sim = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
     advance(sim, 301);
+    releaseProducts(sim);
     sim.apply({ ...action(1), tick: sim.tick });
     sim.step();
     sim.apply({ ...action(1), tick: sim.tick });
@@ -137,10 +148,39 @@ describe('Requirement: Packed red cells restore hemoglobin and calculated oxygen
     )).toBe(true);
   });
 
+  it('requires one accepted blood-bank release before products can be given', () => {
+    const sim = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
+    advance(sim, 301);
+    sim.apply({ ...action(2), tick: sim.tick });
+    const refused = sim.step();
+    expect(refused.equipment.resuscitation.packedRedBloodCellUnits).toBe(0);
+    expect(refused.events.some(
+      (entry) => entry.message.includes('Request the bounded blood-bank release'),
+    )).toBe(true);
+    const released = releaseProducts(sim);
+    expect(released.equipment.resuscitation.bloodProductsReleased).toBe(true);
+    expect(released.events.some((entry) => entry.eventId.startsWith('blood-bank-release-'))).toBe(true);
+    const repeated = releaseProducts(sim);
+    expect(repeated.events.some(
+      (entry) => entry.eventId.startsWith('bad-blood-bank-request-'),
+    )).toBe(true);
+  });
+
+  it('rejects a blood-bank request before modeled hemorrhage is active', () => {
+    const sim = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
+    sim.step();
+    const refused = releaseProducts(sim);
+    expect(refused.equipment.resuscitation.bloodProductsReleased).toBe(false);
+    expect(refused.events.some(
+      (entry) => entry.eventId.startsWith('bad-blood-bank-request-'),
+    )).toBe(true);
+  });
+
   it('replays the same packed-red-cell trajectory deterministically', () => {
     const run = () => {
       const sim = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
       advance(sim, 2400);
+      releaseProducts(sim);
       sim.apply({ ...action(2), tick: sim.tick });
       return advance(sim, 800).state;
     };
@@ -152,6 +192,7 @@ describe('Requirement: Bounded plasma support follows a coagulation panel', () =
   it('reports dilutional change and a four-unit plasma response', () => {
     const sim = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
     advance(sim, 301);
+    releaseProducts(sim);
     sim.apply({ tick: sim.tick, type: 'fluid', payload: {
       fluidId: 'balanced-crystalloid', volumeMl: 2000,
     } });
@@ -196,6 +237,7 @@ describe('Requirement: Bounded plasma support follows a coagulation panel', () =
       (entry) => entry.eventId.startsWith('coagulation-labs-'),
     )).toBe(false);
     advance(bleeding, 300);
+    releaseProducts(bleeding);
     bleeding.apply({ tick: bleeding.tick, type: 'blood-product', payload: {
       productId: 'fresh-frozen-plasma', units: 4,
     } });
@@ -224,6 +266,8 @@ describe('Requirement: Bounded plasma support follows a coagulation panel', () =
     advance(sim, 301);
     const control = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
     advance(control, 301);
+    releaseProducts(sim);
+    releaseProducts(control);
     sim.apply({ tick: sim.tick, type: 'coagulation-labs', payload: {} });
     control.apply({ tick: control.tick, type: 'coagulation-labs', payload: {} });
     sim.step();
@@ -240,6 +284,7 @@ describe('Requirement: Bounded plasma support follows a coagulation panel', () =
     const run = () => {
       const sim = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
       advance(sim, 1200);
+      releaseProducts(sim);
       sim.apply({ tick: sim.tick, type: 'coagulation-labs', payload: {} });
       sim.step();
       sim.apply({ tick: sim.tick, type: 'blood-product', payload: {
