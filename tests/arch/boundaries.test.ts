@@ -109,7 +109,7 @@ describe('Requirement: No Telemetry, No Analytics, No Third-Party Requests', () 
     // The single permitted foreign origins are documentation links a human clicks,
     // which are never fetched by the application.
     // Namespace URIs are identifiers, not addresses: nothing ever fetches them.
-    const namespaceUris = /^https?:\/\/(www\.w3\.org|schema\.org|www\.sitemaps\.org)\//;
+    const namespaceUris = /^https?:\/\/(www\.w3\.org|schema\.org|www\.sitemaps\.org|json-schema\.org)\//;
     // The framework bodies are here for the same reason as the journals: the
     // curriculum mapping has to link a program director to the document it is a
     // reading OF, so they can check it against the one they are accredited to.

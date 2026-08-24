@@ -232,6 +232,12 @@ which is correct.
 | `/gallery` | Every component in every state, for visual review |
 | `/frame-budget` | The measurement harness, to be run on a real device |
 
+The build also publishes `/catalog/scenario-completion.schema.json` and
+`/catalog/anesthesia-completion-audit.json`. The audit names which parts of the new completion
+contract each existing scenario satisfies and, just as importantly, which evidence is still
+missing. Structurally valid does not mean complete; incomplete scenarios are never counted as
+complete by trusting a card or a boolean.
+
 ## Status: alpha, and not yet clinically reviewed
 
 This is worth stating plainly, because everything above describes what the project is *for* and

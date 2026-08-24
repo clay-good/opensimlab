@@ -1,0 +1,2025 @@
+{
+  "schemaVersion": 1,
+  "moduleId": "anesthesia",
+  "capabilityVersion": "0.1.0-alpha.21",
+  "scenarioCount": 16,
+  "completeScenarioCount": 0,
+  "scenarios": [
+    {
+      "scenarioId": "routine-induction",
+      "title": "Routine induction of general anaesthesia",
+      "moduleId": "anesthesia",
+      "environment": "operating-room",
+      "estimatedMinutes": 12,
+      "difficulty": "introductory",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.21",
+      "maturity": "draft",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario routine-induction carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.21 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "5 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a seed policy."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "The timeline contains at least one non-narrative state event."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "missing",
+          "evidence": [
+            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "Guidance rules and an expert demonstration are not bound to this content version."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "missing",
+          "evidence": [
+            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "3 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "5 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "missing",
+          "evidence": [
+            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "rapid-desaturation",
+      "title": "Rapid desaturation in the obese patient",
+      "moduleId": "anesthesia",
+      "environment": "operating-room",
+      "estimatedMinutes": 10,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.21",
+      "maturity": "draft",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario rapid-desaturation carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.21 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "4 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a seed policy."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "The timeline contains at least one non-narrative state event."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "missing",
+          "evidence": [
+            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "Guidance rules and an expert demonstration are not bound to this content version."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "missing",
+          "evidence": [
+            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "3 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "missing",
+          "evidence": [
+            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "hypotension-after-induction",
+      "title": "Hypotension after induction",
+      "moduleId": "anesthesia",
+      "environment": "operating-room",
+      "estimatedMinutes": 12,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.21",
+      "maturity": "draft",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario hypotension-after-induction carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.21 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "4 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a seed policy."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "The timeline contains at least one non-narrative state event."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "missing",
+          "evidence": [
+            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "Guidance rules and an expert demonstration are not bound to this content version."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "missing",
+          "evidence": [
+            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "3 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "missing",
+          "evidence": [
+            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "bronchospasm",
+      "title": "Bronchospasm after intubation",
+      "moduleId": "anesthesia",
+      "environment": "operating-room",
+      "estimatedMinutes": 12,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.21",
+      "maturity": "draft",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario bronchospasm carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.21 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "missing",
+          "evidence": [
+            "The completion contract requires 2–5 objectives and a rubric mapping for every objective."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a seed policy."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "The timeline contains at least one non-narrative state event."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "missing",
+          "evidence": [
+            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "Guidance rules and an expert demonstration are not bound to this content version."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "missing",
+          "evidence": [
+            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "3 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "5 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "missing",
+          "evidence": [
+            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "unexpected-intraoperative-hemorrhage",
+      "title": "Unexpected intraoperative hemorrhage",
+      "moduleId": "anesthesia",
+      "environment": "operating-room",
+      "estimatedMinutes": 9,
+      "difficulty": "advanced",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.21",
+      "maturity": "draft",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario unexpected-intraoperative-hemorrhage carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.21 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "4 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a seed policy."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "The timeline contains at least one non-narrative state event."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "missing",
+          "evidence": [
+            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "Guidance rules and an expert demonstration are not bound to this content version."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "missing",
+          "evidence": [
+            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "7 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "6 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "missing",
+          "evidence": [
+            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "rapid-sequence-induction",
+      "title": "Rapid-sequence induction",
+      "moduleId": "anesthesia",
+      "environment": "operating-room",
+      "estimatedMinutes": 10,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "contentVersion": "0.2.0",
+      "capabilityVersion": "0.1.0-alpha.21",
+      "maturity": "draft",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario rapid-sequence-induction carries stable content version 0.2.0.",
+            "Capability version 0.1.0-alpha.21 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "5 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a seed policy."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "missing",
+          "evidence": [
+            "No non-narrative state progression is declared."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "missing",
+          "evidence": [
+            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "Guidance rules and an expert demonstration are not bound to this content version."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "missing",
+          "evidence": [
+            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "3 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "6 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "missing",
+          "evidence": [
+            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "awareness-under-paralysis",
+      "title": "Silent TIVA-line disconnection",
+      "moduleId": "anesthesia",
+      "environment": "operating-room",
+      "estimatedMinutes": 10,
+      "difficulty": "advanced",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.21",
+      "maturity": "draft",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario awareness-under-paralysis carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.21 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "4 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a seed policy."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "The timeline contains at least one non-narrative state event."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "missing",
+          "evidence": [
+            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "Guidance rules and an expert demonstration are not bound to this content version."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "missing",
+          "evidence": [
+            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "3 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "7 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "missing",
+          "evidence": [
+            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "laryngospasm-after-airway-stimulation",
+      "title": "Laryngospasm after airway stimulation",
+      "moduleId": "anesthesia",
+      "environment": "operating-room",
+      "estimatedMinutes": 8,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.21",
+      "maturity": "draft",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario laryngospasm-after-airway-stimulation carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.21 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "4 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a seed policy."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "The timeline contains at least one non-narrative state event."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "missing",
+          "evidence": [
+            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "Guidance rules and an expert demonstration are not bound to this content version."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "missing",
+          "evidence": [
+            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "2 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "6 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "missing",
+          "evidence": [
+            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "perioperative-anaphylaxis-after-antibiotic",
+      "title": "Perioperative anaphylaxis after antibiotic exposure",
+      "moduleId": "anesthesia",
+      "environment": "operating-room",
+      "estimatedMinutes": 8,
+      "difficulty": "advanced",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.21",
+      "maturity": "draft",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario perioperative-anaphylaxis-after-antibiotic carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.21 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "4 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a seed policy."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "The timeline contains at least one non-narrative state event."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "missing",
+          "evidence": [
+            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "Guidance rules and an expert demonstration are not bound to this content version."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "missing",
+          "evidence": [
+            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "3 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "6 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "missing",
+          "evidence": [
+            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "early-malignant-hyperthermia-during-volatile-anesthesia",
+      "title": "Early malignant hyperthermia during volatile anesthesia",
+      "moduleId": "anesthesia",
+      "environment": "operating-room",
+      "estimatedMinutes": 10,
+      "difficulty": "advanced",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.21",
+      "maturity": "draft",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario early-malignant-hyperthermia-during-volatile-anesthesia carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.21 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "4 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a seed policy."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "The timeline contains at least one non-narrative state event."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "missing",
+          "evidence": [
+            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "Guidance rules and an expert demonstration are not bound to this content version."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "missing",
+          "evidence": [
+            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "4 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "7 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "missing",
+          "evidence": [
+            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "routine-pediatric-iv-induction",
+      "title": "Routine pediatric intravenous induction",
+      "moduleId": "anesthesia",
+      "environment": "operating-room",
+      "estimatedMinutes": 8,
+      "difficulty": "introductory",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.21",
+      "maturity": "draft",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario routine-pediatric-iv-induction carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.21 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "4 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a seed policy."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "missing",
+          "evidence": [
+            "No non-narrative state progression is declared."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "missing",
+          "evidence": [
+            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "Guidance rules and an expert demonstration are not bound to this content version."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "missing",
+          "evidence": [
+            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "8 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "7 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "missing",
+          "evidence": [
+            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "difficult-airway-supraglottic-rescue",
+      "title": "Difficult airway: supraglottic rescue",
+      "moduleId": "anesthesia",
+      "environment": "operating-room",
+      "estimatedMinutes": 10,
+      "difficulty": "advanced",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.21",
+      "maturity": "draft",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario difficult-airway-supraglottic-rescue carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.21 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "4 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a seed policy."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "The timeline contains at least one non-narrative state event."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "missing",
+          "evidence": [
+            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "Guidance rules and an expert demonstration are not bound to this content version."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "missing",
+          "evidence": [
+            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "2 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "9 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "missing",
+          "evidence": [
+            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "local-anesthetic-systemic-toxicity",
+      "title": "Local-anesthetic systemic toxicity after block injection",
+      "moduleId": "anesthesia",
+      "environment": "operating-room",
+      "estimatedMinutes": 8,
+      "difficulty": "advanced",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.21",
+      "maturity": "draft",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario local-anesthetic-systemic-toxicity carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.21 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "4 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a seed policy."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "The timeline contains at least one non-narrative state event."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "missing",
+          "evidence": [
+            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "Guidance rules and an expert demonstration are not bound to this content version."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "missing",
+          "evidence": [
+            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "1 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "4 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "missing",
+          "evidence": [
+            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "persistent-vf-cardiac-arrest",
+      "title": "Persistent ventricular-fibrillation cardiac arrest",
+      "moduleId": "anesthesia",
+      "environment": "operating-room",
+      "estimatedMinutes": 8,
+      "difficulty": "advanced",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.21",
+      "maturity": "draft",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario persistent-vf-cardiac-arrest carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.21 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "4 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a seed policy."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "The timeline contains at least one non-narrative state event."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "missing",
+          "evidence": [
+            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "Guidance rules and an expert demonstration are not bound to this content version."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "missing",
+          "evidence": [
+            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "1 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "4 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "missing",
+          "evidence": [
+            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "high-spinal-after-epidural-top-up",
+      "title": "High spinal after epidural top-up",
+      "moduleId": "anesthesia",
+      "environment": "operating-room",
+      "estimatedMinutes": 8,
+      "difficulty": "advanced",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.21",
+      "maturity": "draft",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario high-spinal-after-epidural-top-up carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.21 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "4 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a seed policy."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "The timeline contains at least one non-narrative state event."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "missing",
+          "evidence": [
+            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "Guidance rules and an expert demonstration are not bound to this content version."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "missing",
+          "evidence": [
+            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "1 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "4 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "missing",
+          "evidence": [
+            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "venous-air-embolism-during-line-removal",
+      "title": "Venous air embolism during line removal",
+      "moduleId": "anesthesia",
+      "environment": "operating-room",
+      "estimatedMinutes": 8,
+      "difficulty": "advanced",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.21",
+      "maturity": "draft",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario venous-air-embolism-during-line-removal carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.21 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "4 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a seed policy."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "The timeline contains at least one non-narrative state event."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "missing",
+          "evidence": [
+            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "Guidance rules and an expert demonstration are not bound to this content version."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "missing",
+          "evidence": [
+            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "3 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "missing",
+          "evidence": [
+            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+          ]
+        }
+      ]
+    }
+  ]
+}

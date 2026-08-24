@@ -242,12 +242,17 @@ function main(): void {
     const icons = readdirSync(dist).filter((file) => file.startsWith('icon-'));
     // Every indexable route, so a briefing opens offline too.
     const documents = ROUTES.filter((route) => route.indexable).map((route) => route.path);
+    const machineReadableCatalog = [
+      '/catalog/scenario-completion.schema.json',
+      '/catalog/anesthesia-completion-audit.json',
+    ];
     const precache = [
       '/', '/index.html', '/manifest.webmanifest',
       ...icons.map((icon) => `/${icon}`),
       ...documents.filter((path) => path !== '/'),
       ...new Set(assets),
       ...fonts,
+      ...machineReadableCatalog,
     ];
     const documentPaths = new Set(documents);
     const version = precacheVersion(precache.map((url) => {

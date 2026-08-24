@@ -9,7 +9,7 @@ credited toward the catalog until every item in the completion contract passes.
   privacy exception, report retention, and no-hosted-MCP decision.
 - [ ] Resolve every conflict between this change and the master clinical-governance, privacy,
   delivery, module, curriculum, pedagogy, safety, adoption, and sustainability specifications.
-- [ ] Publish a machine-readable scenario completion schema and validate all existing anesthesia
+- [x] Publish a machine-readable scenario completion schema and validate all existing anesthesia
   scenarios against it without changing their behavior.
 - [ ] Add architecture tests proving that tutor rules cannot mutate patient state and reporting
   cannot read local progress, reflections, or arbitrary browser storage.

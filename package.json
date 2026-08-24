@@ -11,10 +11,11 @@
   "packageManager": "npm@11.12.0",
   "scripts": {
     "dev": "vite",
-    "build": "npm run tokens && tsc -p tsconfig.json --noEmit && npm run og && vite build && npm run prerender && npm run gate",
+    "build": "npm run tokens && tsc -p tsconfig.json --noEmit && npm run catalog && npm run og && vite build && npm run prerender && npm run gate",
     "build:indexable": "SITE_INDEXABLE=true npm run build && npm run check:indexable",
     "preview": "vite preview",
     "tokens": "tsx scripts/build-tokens.ts",
+    "catalog": "tsx scripts/build-completion-catalog.ts",
     "prerender": "tsx --import ./scripts/register-css-stub.mjs scripts/prerender.ts",
     "og": "tsx --import ./scripts/register-css-stub.mjs scripts/build-og.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
