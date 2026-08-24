@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: bounded venous-air-entry control has protocol version 20', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(21);
+  it('Scenario: capnography sample-path state has protocol version 22', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(22);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

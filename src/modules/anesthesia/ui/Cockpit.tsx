@@ -93,6 +93,9 @@ const DEFAULT_AIRWAY = {
   device: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null,
 } as const;
 const DEFAULT_HYPNOTIC_LINE = { connected: true, inspected: false } as const;
+const DEFAULT_CAPNOGRAPHY_LINE = {
+  obstructed: false, ventilationCrossChecked: false,
+} as const;
 const DEFAULT_RESUSCITATION = {
   epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
   lastEpinephrineTick: null, crystalloidTotalMl: 0,
@@ -200,6 +203,7 @@ export function Cockpit({
   const ventilator = equipment?.ventilator ?? DEFAULT_VENTILATOR;
   const airway = equipment?.airway ?? DEFAULT_AIRWAY;
   const hypnoticLine = equipment?.hypnoticLine ?? DEFAULT_HYPNOTIC_LINE;
+  const capnographyLine = equipment?.capnographyLine ?? DEFAULT_CAPNOGRAPHY_LINE;
   const resuscitation = equipment?.resuscitation ?? DEFAULT_RESUSCITATION;
   const lastExposure = equipment?.lastExposure ?? null;
   const injectedCrises = equipment?.injectedCrisisIds ?? [];
@@ -330,6 +334,7 @@ export function Cockpit({
       invalid: invalidParameters,
       showTrainOfFour: scenario.equipment.monitoring.includes('train-of-four'),
       jawThrustCpapSecondsRemaining: airway.jawThrustCpapSecondsRemaining,
+      capnographyLine,
       resuscitation,
       epinephrineLabel: term(region, 'epinephrine'),
       lastExposure,
@@ -347,7 +352,7 @@ export function Cockpit({
     scenario.equipment.monitoring, scenario.patient.weightKg, airway.jawThrustCpapSecondsRemaining,
     resuscitation, region, lastExposure, hasAnaphylaxisResponse, hasHypermetabolicResponse,
     hasCardiacArrestResponse, hasHighSpinalResponse, hasVenousAirEmbolismResponse,
-    hasBronchospasmResponse,
+    hasBronchospasmResponse, capnographyLine,
   ]);
 
   const readWaveforms = useCallback(() => {
@@ -357,10 +362,11 @@ export function Cockpit({
       airwayPatencyFraction: airway.patencyFraction,
       perfusionIndex: session.state?.perfusionIndex ?? 0.8,
       artifacts: waveformArtifacts,
+      capnographySampleObstructed: capnographyLine.obstructed,
       ventilating: (session.state?.respiratoryRateBpm ?? 0) > 0,
       mechanicalPulse: mechanicalPulseFromState(session.state),
     }).map((entry) => `${entry.label}: ${entry.description}`).join(' '));
-  }, [session.state, speak, rhythm, waveformArtifacts, airway]);
+  }, [session.state, speak, rhythm, waveformArtifacts, airway, capnographyLine.obstructed]);
 
   // The keyboard layer. Every shortcut is documented in SHORTCUTS and reachable
   // from the reference without leaving the cockpit.
@@ -500,6 +506,7 @@ export function Cockpit({
           invalidParameters={invalidParameters}
           artifactParameters={artifactParameters}
           waveformArtifacts={waveformArtifacts}
+          capnographySampleObstructed={capnographyLine.obstructed}
           rhythm={rhythm}
           airwayPatencyFraction={airway.patencyFraction}
           bronchospasmSeverity={airway.bronchospasmSeverity}
@@ -552,6 +559,7 @@ export function Cockpit({
           region={region}
           infusions={infusions}
           hypnoticLine={hypnoticLine}
+          capnographyLine={capnographyLine}
           resuscitation={resuscitation}
           injectedCrisisIds={injectedCrises}
           lastExposure={lastExposure}
@@ -573,6 +581,9 @@ export function Cockpit({
           onBolus={(drugId, amount, unit) => session.act({ type: 'bolus', payload: { drugId, amount, unit } })}
           onInfusion={(drugId, rate, unit) => session.act({ type: 'infusion', payload: { drugId, rate, unit } })}
           onHypnoticLine={(action) => session.act({ type: 'hypnotic-line', payload: { action } })}
+          onCapnographyLine={(action) => session.act({
+            type: 'capnography-line', payload: { action },
+          })}
           onFluid={(fluidId, volumeMl) => session.act({ type: 'fluid', payload: { fluidId, volumeMl } })}
           onBloodProduct={(productId, units) => session.act({
             type: 'blood-product', payload: { productId, units },

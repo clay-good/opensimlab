@@ -246,6 +246,11 @@ record actionable before induction and contrasts one bounded rescue attempt with
 laryngoscopy. It uses the existing deterministic attempt-duration, accumulated-trauma, oxygen-reserve,
 help-escalation, and supraglottic-rescue capabilities. It does not assess examination, manual airway
 skill, communication quality, edema, bleeding, aspiration, front-of-neck access, or the post-rescue plan.
+Slice 21 adds the eighteenth authored scenario, an awake, steadily breathing regional-anesthesia
+case whose carbon-dioxide sampling line becomes obstructed. The displayed capnogram and end-tidal
+number disappear while canonical ventilation, saturation, and plethysmography remain stable. A
+cross-check and confirmed reconnection are logged and replayable. It does not model physical
+examination, device-specific troubleshooting, analyzer mechanics, alarm timing, or sedation technique.
 
 ## Running it
 

@@ -305,6 +305,26 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'basic-principles',
     objectiveIds: ['preoxygenate-before-induction', 'protect-the-apnea-margin'],
   },
+
+  // --- Capnography sampling-line obstruction -----------------------------
+  {
+    scenarioId: 'capnography-sampling-line-obstruction',
+    frameworkId: 'nbcrna-nce',
+    domainId: 'equipment-instrumentation-technology',
+    objectiveIds: ['cross-check-capnography-loss', 'preserve-stable-ventilation', 'restore-capnography-sampling'],
+  },
+  {
+    scenarioId: 'capnography-sampling-line-obstruction',
+    frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['cross-check-capnography-loss', 'preserve-stable-ventilation', 'restore-capnography-sampling'],
+  },
+  {
+    scenarioId: 'capnography-sampling-line-obstruction',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-crisis-management',
+    objectiveIds: ['cross-check-capnography-loss', 'preserve-stable-ventilation', 'restore-capnography-sampling'],
+  },
   {
     scenarioId: 'rapid-sequence-induction',
     frameworkId: 'nbcrna-nce',

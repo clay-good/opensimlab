@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 61,
+  "sourceCount": 63,
   "sources": [
     {
       "id": "association-qrh-2023",
@@ -568,6 +568,32 @@
       "verifiedAgainst": "NCBI E-utilities record, field by field",
       "verifiedOn": "2026-08-24",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/41203471/"
+    },
+    {
+      "id": "association-monitoring-2021",
+      "pmid": "34013531",
+      "authors": "Klein AA, Meek T, Allcock E, Cook TM, Mincher N, Morris C, et al.",
+      "title": "Recommendations for standards of monitoring during anaesthesia and recovery 2021: Guideline from the Association of Anaesthetists",
+      "publication": "Anaesthesia",
+      "year": 2021,
+      "locator": "76:1212-23",
+      "usedFor": "The sampling-line-obstruction scenario boundary: waveform capnography is a minimum monitor during general anesthesia, monitors supplement clinical observation, and an unexpected capnography loss must be cross-checked against independent patient evidence.",
+      "verifiedAgainst": "NCBI E-utilities record, field by field",
+      "verifiedOn": "2026-08-24",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/34013531/"
+    },
+    {
+      "id": "wfsa-capnometer-specifications-2021",
+      "pmid": "34427566",
+      "authors": "Gelb AW, McDougall RJ, Gore-Booth J, Mainland PA; WFSA Ad Hoc Capnometry Workgroup",
+      "title": "The World Federation of Societies of Anaesthesiologists Minimum Capnometer Specifications 2021-A Guide for Health Care Decision Makers",
+      "publication": "Anesth Analg",
+      "year": 2021,
+      "locator": "133:1132-7",
+      "usedFor": "The role of capnometry as a safety technology for detecting airway-device position, gas exchange, obstruction, cardiac-output change, and metabolic change; signal loss is therefore a finding to discriminate, not a diagnosis by itself.",
+      "verifiedAgainst": "NCBI E-utilities record, field by field",
+      "verifiedOn": "2026-08-24",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/34427566/"
     },
     {
       "id": "asra-last-2020",

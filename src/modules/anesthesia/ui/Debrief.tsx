@@ -459,10 +459,80 @@ export function objectiveFindings(
     'control-venous-air-entry': 'capnogram-morphology',
     'support-venous-air-oxygenation': 'preoxygenation-and-safe-apnea-time',
     'reassess-venous-air-recovery': 'capnogram-morphology',
+    'cross-check-capnography-loss': 'capnogram-morphology',
+    'preserve-stable-ventilation': 'capnogram-morphology',
+    'restore-capnography-sampling': 'capnogram-morphology',
   };
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if ([
+      'cross-check-capnography-loss', 'preserve-stable-ventilation',
+      'restore-capnography-sampling',
+    ].includes(objective.id)) {
+      const onset = scenario.timeline.find((entry) => entry.type === 'artifact'
+        && entry.target === 'sampling-line-obstruction')?.atTick;
+      if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'The session ended before the carbon-dioxide sampling line became obstructed.',
+        } satisfies ObjectiveFinding;
+      }
+      const crossCheck = log.find((entry) =>
+        entry.eventId.startsWith('capnography-cross-check-') && entry.tick >= onset);
+      const restored = log.find((entry) =>
+        entry.eventId.startsWith('capnography-line-restored-') && entry.tick >= onset);
+      const crossCheckDelay = crossCheck ? (crossCheck.tick - onset) / TICKS_PER_SECOND : null;
+      const restoreDelay = restored ? (restored.tick - onset) / TICKS_PER_SECOND : null;
+
+      if (objective.id === 'cross-check-capnography-loss') {
+        const beforeRestore = crossCheck !== undefined
+          && (restored === undefined || crossCheck.tick <= restored.tick);
+        return {
+          ...base,
+          outcome: beforeRestore && crossCheckDelay !== null && crossCheckDelay <= 30
+            ? 'met'
+            : beforeRestore && crossCheckDelay !== null && crossCheckDelay <= 60
+              ? 'partly-met'
+              : 'not-met',
+          finding: crossCheckDelay === null
+            ? 'No accepted independent ventilation cross-check was recorded.'
+            : `An independent ventilation cross-check was recorded ${crossCheckDelay.toFixed(0)} seconds after sampled capnography disappeared${beforeRestore ? ', before the sample path was restored' : ', after the sample path was already restored'}. This records screen intent, not a physical examination.`,
+          atTick: crossCheck?.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      if (objective.id === 'preserve-stable-ventilation') {
+        const until = restored?.tick ?? history.at(-1)?.tick ?? onset;
+        const interval = history.filter((entry) => entry.tick >= onset && entry.tick <= until);
+        const lowestSaturation = interval.length > 0
+          ? Math.min(...interval.map((entry) => entry.state.spo2Percent ?? 0)) : 0;
+        const lowestRate = interval.length > 0
+          ? Math.min(...interval.map((entry) => entry.state.respiratoryRateBpm ?? 0)) : 0;
+        const patientChanging = actions.find((entry) => entry.tick >= onset && entry.tick <= until
+          && ['ventilator', 'laryngoscopy', 'airway-device', 'airway-maneuver'].includes(entry.type));
+        const stable = lowestSaturation >= 94 && lowestRate > 0;
+        return {
+          ...base,
+          outcome: stable && !patientChanging ? 'met' : stable ? 'partly-met' : 'not-met',
+          finding: `Available screen evidence before restoration showed a lowest saturation of ${lowestSaturation.toFixed(0)}% and respiratory rate of ${lowestRate.toFixed(0)}/min. ${patientChanging ? `A patient-changing ${patientChanging.type} action was recorded before the sample path was restored.` : 'No airway instrumentation or commanded-breath change was recorded.'}`,
+          atTick: patientChanging?.tick ?? restored?.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      const crossCheckedFirst = crossCheck !== undefined && restored !== undefined
+        && crossCheck.tick <= restored.tick;
+      return {
+        ...base,
+        outcome: restored === undefined ? 'not-met'
+          : crossCheckedFirst && restoreDelay !== null && restoreDelay <= 60 ? 'met' : 'partly-met',
+        finding: restored === undefined
+          ? 'No accepted sampling-line reconnection was recorded.'
+          : `The sample path was restored ${restoreDelay?.toFixed(0)} seconds after signal loss${crossCheckedFirst ? ', after the independent ventilation cross-check' : ', before an accepted independent ventilation cross-check'}. The waveform restoration is a deterministic equipment action, not a troubleshooting skill assessment.`,
+        atTick: restored?.tick,
+      } satisfies ObjectiveFinding;
+    }
 
     if ([
       'resume-arrest-compressions', 'give-arrest-epinephrine',

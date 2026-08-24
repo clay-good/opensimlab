@@ -157,6 +157,13 @@ describe('Requirement: Screen Reader Access To Live Physiology', () => {
       artifacts: new Set(['electrocautery']), ventilating: true, mechanicalPulse: true,
     });
     expect(cautery[0]?.description).toContain('interference');
+    const samplingLine = waveformDescriptions({
+      rhythm: 'sinus', bronchospasmSeverity: 0, airwayPatencyFraction: 1, perfusionIndex: 0.8,
+      artifacts: new Set(['capno']), capnographySampleObstructed: true,
+      ventilating: true, mechanicalPulse: true,
+    });
+    expect(samplingLine[2]?.description).toContain('sampling line is obstructed');
+    expect(samplingLine[2]?.description).toContain('monitoring problem');
   });
 
   it('describes the shark fin when the airway is obstructed', () => {

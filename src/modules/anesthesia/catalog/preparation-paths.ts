@@ -66,9 +66,12 @@ export const PREPARATION_PATHS: readonly PreparationPathDefinition[] = [
     supportedRoles: ['Medical student', 'Resident', 'Nurse anesthesia learner'], limitations: BROWSER_LIMIT,
   },
   {
-    id: 'ventilation-respiratory-failure', version: '0.1.0', title: 'Ventilation and respiratory failure',
+    id: 'ventilation-respiratory-failure', version: '0.2.0', title: 'Ventilation and respiratory failure',
     description: 'Use saturation, capnography, and airway state together rather than chasing one number.',
-    scenarioIds: ['rapid-desaturation', 'bronchospasm', 'laryngospasm-after-airway-stimulation', 'venous-air-embolism-during-line-removal'],
+    scenarioIds: [
+      'capnography-sampling-line-obstruction', 'rapid-desaturation', 'bronchospasm',
+      'laryngospasm-after-airway-stimulation', 'venous-air-embolism-during-line-removal',
+    ],
     prerequisites: ['Basic monitor orientation.'],
     targetCompetencies: ['Capnogram interpretation', 'Ventilation support', 'Cause-directed reassessment'],
     supportedRoles: ['Medical student', 'Resident', 'Nurse anesthesia learner'], limitations: BROWSER_LIMIT,

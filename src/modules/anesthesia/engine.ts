@@ -38,7 +38,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.21';
+export const ENGINE_VERSION = '0.1.0-alpha.22';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -201,6 +201,8 @@ export class AnesthesiaEngine {
   /** Null outside the configured teaching course; otherwise assisted facemask delivery fraction. */
   private difficultAirwayMaskFraction: number | null = null;
   private readonly artifacts = new Set<ArtifactId>();
+  /** Learner-recorded discrimination step for a displayed capnography failure. */
+  private capnographyVentilationCrossChecked = false;
   private pendingEvents: EngineEvent[] = [];
   private vasopressorEffect = 0;
   /** Distinct alpha/beta/bronchodilator teaching effect; never substituted by generic vasopressor. */
@@ -1050,10 +1052,45 @@ export class AnesthesiaEngine {
       case 'artifact': {
         const id = String(action.payload.artifactId) as ArtifactId;
         const active = action.payload.active !== false;
+        if (id === 'sampling-line-obstruction' && active && !this.artifacts.has(id)) {
+          this.capnographyVentilationCrossChecked = false;
+        }
         this.artifacts[active ? 'add' : 'delete'](id);
         this.waveforms.setArtifact(id, active);
         this.log('artifact', 'artifact', `artifact-${id}-${this.currentTick}`,
           `${active ? 'Injected' : 'Cleared'} sensor artifact: ${id}`);
+        break;
+      }
+      case 'capnography-line': {
+        const lineAction = action.payload.action;
+        const obstructed = this.artifacts.has('sampling-line-obstruction');
+        if (lineAction === 'cross-check-ventilation') {
+          if (!obstructed || this.capnographyVentilationCrossChecked) {
+            this.log('warning', 'equipment', `capnography-cross-check-refused-${this.currentTick}`,
+              !obstructed
+                ? 'The carbon-dioxide sample path is not obstructed, so no fault cross-check was recorded.'
+                : 'Ventilation has already been cross-checked for this sampling-line fault.');
+            break;
+          }
+          this.capnographyVentilationCrossChecked = true;
+          this.log('info', 'equipment', `capnography-cross-check-${this.currentTick}`,
+            'Ventilation cross-check recorded: spontaneous respiratory movement, saturation, and the plethysmogram remain available. This is screen intent, not a physical examination.');
+          break;
+        }
+        if (lineAction === 'reconnect') {
+          if (!obstructed) {
+            this.log('warning', 'equipment', `capnography-line-reconnect-refused-${this.currentTick}`,
+              'The carbon-dioxide sample path is not obstructed. No reconnection was recorded.');
+            break;
+          }
+          this.artifacts.delete('sampling-line-obstruction');
+          this.waveforms.setArtifact('sampling-line-obstruction', false);
+          this.log('info', 'equipment', `capnography-line-restored-${this.currentTick}`,
+            'Carbon-dioxide sampling line reconnected. Confirm the sampled number and waveform return.');
+          break;
+        }
+        this.log('warning', 'equipment', `bad-capnography-line-action-${this.currentTick}`,
+          `Unknown capnography-line action "${String(lineAction)}". Nothing changed.`);
         break;
       }
       case 'rhythm': {
@@ -1449,6 +1486,9 @@ export class AnesthesiaEngine {
         }
         // `value: 0` clears it; anything else, including absent, sets it.
         const active = event.value !== 0;
+        if (id === 'sampling-line-obstruction' && active && !this.artifacts.has(id)) {
+          this.capnographyVentilationCrossChecked = false;
+        }
         this.artifacts[active ? 'add' : 'delete'](id as ArtifactId);
         this.waveforms.setArtifact(id as ArtifactId, active);
         this.log('artifact', 'artifact', `artifact-${id}-${this.currentTick}`,
@@ -1925,6 +1965,10 @@ export class AnesthesiaEngine {
         connected: this.hypnoticLineConnected,
         inspected: this.hypnoticLineInspected,
       },
+      capnographyLine: {
+        obstructed: this.artifacts.has('sampling-line-obstruction'),
+        ventilationCrossChecked: this.capnographyVentilationCrossChecked,
+      },
       resuscitation: {
         epinephrineEffectFraction: this.epinephrineEffect,
         epinephrineTotalMicrograms: this.epinephrineTotalMicrograms,
@@ -2003,6 +2047,7 @@ export class AnesthesiaEngine {
     if (this.artifacts.has('probe-displacement')) signals.add('pleth');
     if (this.artifacts.has('circuit-disconnection')) signals.add('capno');
     if (this.artifacts.has('esophageal-intubation')) signals.add('capno');
+    if (this.artifacts.has('sampling-line-obstruction')) signals.add('capno');
     return signals;
   }
 
@@ -2073,6 +2118,7 @@ export class AnesthesiaEngine {
       invalid.add('meanArterialMmHg');
     }
     if (this.artifacts.has('probe-displacement')) invalid.add('spo2Percent');
+    if (this.artifacts.has('sampling-line-obstruction')) invalid.add('etco2MmHg');
     return invalid;
   }
 
@@ -2084,6 +2130,7 @@ export class AnesthesiaEngine {
     }
     if (this.artifacts.has('electrocautery')) parameters.add('heartRateBpm');
     if (this.artifacts.has('probe-displacement')) parameters.add('spo2Percent');
+    if (this.artifacts.has('sampling-line-obstruction')) parameters.add('etco2MmHg');
     return parameters;
   }
 

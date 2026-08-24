@@ -305,3 +305,22 @@ DAS 2025 guidelines without inventing a universal attempt ceiling. The case does
 examination, positioning, manual ventilation, laryngoscopy, device insertion, communication quality,
 or team performance, and it does not model edema, bleeding, aspiration, front-of-neck access, awake
 intubation, flexible endoscopy, or the post-rescue plan.
+
+## Slice 21: capnography sampling-line obstruction during stable ventilation
+
+The eighteenth authored scenario begins with an awake patient under regional anesthesia who is
+spontaneously ventilating through a nasal carbon-dioxide sampling cannula. At a fixed tick, a new
+sampling-line artifact flattens only the displayed capnogram and invalidates only the displayed
+end-tidal number. Canonical carbon dioxide, respiratory rate, tidal volume, oxygen saturation, and
+the plethysmogram keep following the unchanged respiratory model.
+
+The Airway & Vent tray exposes an independent ventilation cross-check and a two-step reconnection.
+Accepted engine events, not optimistic interface state, drive the debrief. The scenario scores timely
+cross-checking, preservation of the stable respiratory trajectory, and restoration after the
+cross-check. The nonvisual waveform description names an obstructed sample path rather than falsely
+describing absent gas movement.
+
+The evidence brief uses the Association of Anaesthetists 2021 monitoring guideline and WFSA 2021
+minimum capnometer specification. It does not model water traps, kinks, leaks, secretions, sample
+pumps, transport delay, dilution, calibration, analyzer faults, alarm timing, physical examination,
+technical troubleshooting, communication, or sedation technique.

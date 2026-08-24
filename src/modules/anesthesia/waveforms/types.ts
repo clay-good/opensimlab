@@ -91,4 +91,5 @@ export type ArtifactId =
   | 'electrocautery'
   | 'probe-displacement'
   | 'circuit-disconnection'
-  | 'esophageal-intubation';
+  | 'esophageal-intubation'
+  | 'sampling-line-obstruction';

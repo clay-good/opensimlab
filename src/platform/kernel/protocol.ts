@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 21 reports bounded inhaled bronchodilator state. */
-export const WORKER_PROTOCOL_VERSION = 21;
+/** Bumped whenever the message shape changes incompatibly. Version 22 reports the capnography sample path. */
+export const WORKER_PROTOCOL_VERSION = 22;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -193,6 +193,11 @@ export interface EquipmentSnapshot {
     readonly connected: boolean;
     /** True after the learner has deliberately inspected or reconnected the line. */
     readonly inspected: boolean;
+  };
+  /** The sidestream carbon-dioxide sample path, distinct from patient ventilation. */
+  readonly capnographyLine: {
+    readonly obstructed: boolean;
+    readonly ventilationCrossChecked: boolean;
   };
   /** Accepted crisis treatments and exposure, as distinct from requested actions. */
   readonly resuscitation: {

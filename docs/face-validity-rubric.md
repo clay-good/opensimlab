@@ -86,7 +86,8 @@ Reviewers run the routine induction themselves before answering.
 | B33a | Gradual carbon-dioxide, pressure, output, and saturation recovery after accepted source-control intent and 100% oxygen with active breath delivery | | |
 | B33b | Lower-airway obstruction and shark-fin capnogram improve directionally after accepted nebulized salbutamol, without implying diagnosis, circuit delivery, or an individualized response | | |
 | B34 | Quantitative recovery after depth-matched 2/4 mg/kg sugammadex, and neostigmine with an antimuscarinic only during minimal block | | |
-| B35 | Overall: does this patient behave like a patient? | | |
+| B35 | Sampling-line obstruction removes only the displayed capnogram and end-tidal number while modeled ventilation, saturation, and plethysmography stay stable; reconnection restores the sample | | |
+| B36 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -100,11 +101,15 @@ Reviewers run the routine induction themselves before answering.
 
 So that reviewers spend their attention on what this review is for:
 
-- Rocuronium onset and spontaneous recovery use a teaching model. Reversal and emergence are not modelled.
+- Rocuronium onset and spontaneous recovery use a teaching model. Quantitative reversal is a bounded
+  teaching effect; emergence, extubation, recurrent block, and postoperative outcomes are not modeled.
 - Peripheral train-of-four is observable but does not guarantee conditions at the larynx.
 - The full-stomach case does not model regurgitation, aspiration, or cricoid pressure.
 - Fresh gas flow scales a calibrated volatile wash-in/washout time constant; there is no circuit,
   uptake, rebreathing, or agent-consumption model.
+- Capnography sampling-line obstruction is a display-only artifact with immediate deterministic
+  reconnection. It has no water trap, kink, leak, secretion, pump, calibration, dilution, analyzer,
+  or device-specific alarm model, and its cross-check control does not assess physical examination.
 - Balanced crystalloid uses a fixed-retention teaching model. Adult packed red cells use fixed
   300 mL and 60 g hemoglobin units with a two-unit cap. A dilution-only factor/fibrinogen model,
   immediate teaching panel, and fixed 275 mL plasma units are available only in the hemorrhage

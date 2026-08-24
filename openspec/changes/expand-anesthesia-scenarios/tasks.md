@@ -300,3 +300,18 @@
   catalog/governance records, social preview, sitemap route, discoverability copy, and regressions.
 - [ ] Add edema, bleeding, aspiration, physical airway skills, changing facemask technique, awake
   intubation, flexible endoscopy, front-of-neck access, teams, or a post-rescue airway plan.
+
+## Slice 21: capnography sampling-line obstruction during stable ventilation
+
+- [x] Check in an evidence brief using the Association of Anaesthetists 2021 monitoring guideline
+  and WFSA 2021 minimum capnometer specification.
+- [x] Add an eighteenth authored scenario whose fixed sampling-line obstruction changes only the
+  displayed capnogram and end-tidal number while canonical respiratory state stays stable.
+- [x] Add accepted, replayable ventilation cross-check and confirmed reconnection actions, with
+  duplicate and hostile actions refused without mutation.
+- [x] Score discrimination, preservation of stable ventilation, and restoration only from accepted
+  events, actions, and recorded state.
+- [x] Add keyboard-operable controls, nonvisual state and waveform descriptions, curriculum
+  mappings, limitations, preparation-path coverage, catalog assets, and responsive inspection.
+- [ ] Add water traps, kinks, leaks, secretions, sample pumps, transport delay, dilution, calibration,
+  analyzer failures, device-specific alarms, physical examination, or technical troubleshooting.

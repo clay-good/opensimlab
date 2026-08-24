@@ -131,7 +131,9 @@ export class WaveformEngine {
       etco2MmHg: drive.etco2MmHg,
       respiratoryRateBpm: drive.respiratoryRateBpm,
       bronchospasmSeverity: drive.bronchospasmSeverity,
-      ventilating: drive.ventilating && !this.artifacts.has('circuit-disconnection'),
+      ventilating: drive.ventilating
+        && !this.artifacts.has('circuit-disconnection')
+        && !this.artifacts.has('sampling-line-obstruction'),
       curareCleftDepth: drive.curareCleftDepth,
       inspiredCo2MmHg: 0,
       heartRateBpm: drive.heartRateBpm,

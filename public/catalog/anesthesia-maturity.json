@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "recordCount": 31,
+  "recordCount": 32,
   "records": [
     {
       "recordId": "scenario:routine-induction@0.1.0",
@@ -188,6 +188,17 @@
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#repeated-laryngoscopy-harm@0.1.0",
         "/catalog/anesthesia-quality-audit.json#repeated-laryngoscopy-harm@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:capnography-sampling-line-obstruction@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "capnography-sampling-line-obstruction",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#capnography-sampling-line-obstruction@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#capnography-sampling-line-obstruction@0.1.0"
       ]
     },
     {

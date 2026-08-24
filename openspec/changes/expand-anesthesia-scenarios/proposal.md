@@ -115,10 +115,13 @@ response, stopping before dysrhythmia treatment or cardiac arrest.
 - Add a seventeenth scenario that makes a documented difficult-airway history actionable before
   induction, contrasts one failed attempt with repeated laryngoscopy, and moves to bounded
   supraglottic rescue without adding new airway physiology.
+- Add an eighteenth scenario that isolates a capnography sampling-line obstruction during stable
+  spontaneous ventilation, requires an independent cross-check before confirmed reconnection, and
+  never changes canonical respiratory physiology to create the display fault.
 
 ## Impact
 
-These 20 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+These 21 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
 awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. The seventh also closes the bounded
 pediatric-family gap without claiming a general pediatric patient model. The eighth reaches the
 minimum count of 12 scenarios and closes the bounded difficult-airway rescue gap. The ninth closes
@@ -138,3 +141,6 @@ advanced drugs, and individual outcome.
 The twentieth adds the seventeenth authored scenario and distinguishes a known difficult airway
 from the existing unanticipated marginal-mask course through prior information, full facemask
 delivery, pre-attempt escalation evidence, and a debrief centered on the cost of repetition.
+The twenty-first adds the eighteenth authored scenario and a distinct signal-versus-patient lesson:
+sampled carbon dioxide disappears while canonical ventilation stays stable, with accepted cross-check
+and reconnection evidence but no claim of physical examination or device troubleshooting skill.

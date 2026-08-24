@@ -755,6 +755,31 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['venous-air-embolism-during-line-removal'],
   },
   {
+    id: 'capnography-sampling-line-obstruction-is-display-only',
+    headline: 'The obstructed sampling line changes the capnography display, not patient ventilation.',
+    simplification: 'One fixed artifact flattens the sampled waveform and removes the displayed '
+      + 'end-tidal number while canonical respiratory state, saturation, and the plethysmogram '
+      + 'continue unchanged. Reconnection clears it immediately on the next engine tick.',
+    whereItMisleads: 'Predicting the behavior, alarm timing, or troubleshooting steps of a real '
+      + 'water trap, kink, leak, secretion, pump, analyzer, calibration fault, or diluted sample.',
+    correctUnderstanding: 'Unexpected capnography loss requires immediate patient and equipment '
+      + 'assessment. Independent evidence helps distinguish loss of ventilation from loss of the '
+      + 'sampling signal, but stable saturation alone does not prove adequate ventilation.',
+    briefIn: ['capnography-sampling-line-obstruction'],
+  },
+  {
+    id: 'capnography-cross-check-is-screen-intent',
+    headline: 'The ventilation cross-check records a decision, not a physical examination or equipment skill.',
+    simplification: 'One button records that the learner compared the available respiratory rate, '
+      + 'saturation, plethysmogram, and breath-delivery state. It cannot see chest or bag movement, '
+      + 'hear breath sounds, inspect tubing, assess the airway, or judge communication.',
+    whereItMisleads: 'Treating a successful screen action as evidence of clinical examination, '
+      + 'device troubleshooting, airway management, or team performance.',
+    correctUnderstanding: 'Use the monitor alongside direct patient observation and systematic '
+      + 'equipment assessment. Those psychomotor and team skills require supervised practice.',
+    briefIn: ['capnography-sampling-line-obstruction'],
+  },
+  {
     id: 'no-team-or-communication',
     headline: 'There is no team: nobody to ask, nobody to hand over to, and no communication to get wrong.',
     simplification: 'There is no surgeon, no scrub team, no assistant, and no communication of any '

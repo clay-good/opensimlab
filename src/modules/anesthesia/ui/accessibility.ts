@@ -96,6 +96,10 @@ export function stateSummary(
     readonly invalid: ReadonlySet<string>;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
+    readonly capnographyLine?: {
+      readonly obstructed: boolean;
+      readonly ventilationCrossChecked: boolean;
+    };
     readonly resuscitation?: {
       readonly epinephrineEffectFraction: number;
       readonly epinephrineTotalMicrograms: number;
@@ -187,6 +191,14 @@ export function stateSummary(
       ? 'Jaw thrust and continuous positive airway pressure are being applied.'
       : 'A jaw thrust hold is active, but the ventilator is not delivering positive pressure.'
     : 'No held airway maneuver is active.');
+  if (options.capnographyLine) {
+    lines.push(options.capnographyLine.obstructed
+      ? 'Carbon-dioxide sampling line obstructed; the displayed end-tidal value and waveform are unavailable.'
+      : 'Carbon-dioxide sampling line connected.');
+    lines.push(options.capnographyLine.ventilationCrossChecked
+      ? 'Independent ventilation evidence has been cross-checked.'
+      : 'No independent ventilation cross-check has been recorded.');
+  }
   if (options.resuscitation && (options.showEpinephrineSupport ?? true)) {
     const name = options.epinephrineLabel ?? 'epinephrine';
     lines.push(`Accepted crisis support: ${name} ${options.resuscitation.epinephrineTotalMicrograms.toFixed(0)} micrograms intravenous; balanced crystalloid ${options.resuscitation.crystalloidTotalMl.toFixed(0)} millilitres.`);
@@ -266,13 +278,17 @@ export function waveformDescriptions(options: {
   readonly airwayPatencyFraction: number;
   readonly perfusionIndex: number;
   readonly artifacts: ReadonlySet<string>;
+  readonly capnographySampleObstructed?: boolean;
   readonly ventilating: boolean;
   readonly mechanicalPulse: boolean;
 }): { signal: string; label: string; description: string }[] {
   const rhythm = getRhythm(options.rhythm);
   const alpha = alphaForObstruction(options.bronchospasmSeverity);
-  const capnoShape = !options.ventilating || options.airwayPatencyFraction <= 0.05
-    ? 'No waveform: no gas is moving.'
+  const capnoShape = options.capnographySampleObstructed
+    || options.artifacts.has('sampling-line-obstruction')
+    ? 'No sampled waveform: the carbon-dioxide sampling line is obstructed. This is a monitoring problem; cross-check ventilation independently.'
+    : !options.ventilating || options.airwayPatencyFraction <= 0.05
+      ? 'No waveform: no gas is moving.'
     : alpha > NORMAL_ALPHA_DEGREES + 15
       ? `Shark-fin shape: the expiratory upstroke is sloped and the plateau rises, giving an alpha angle of about ${alpha.toFixed(0)} degrees.`
       : `Normal rectangular shape with a flat alveolar plateau, alpha angle about ${alpha.toFixed(0)} degrees.`;

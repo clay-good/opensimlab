@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 17,
+  "scenarioCount": 18,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -381,6 +381,27 @@
         "Explicitly deliver oxygen and confirm sustained gas exchange after rescue."
       ],
       "searchText": "repeated-laryngoscopy-harm known difficult airway: stop repeated attempts inguinal hernia elective laparoscopic inguinal hernia repair reach an end-tidal preoxygenation endpoint before induction. end-tidal oxygen fraction was at least 0.90 before the first accepted propofol bolus. act on the prior difficult-airway record before laryngoscopy begins. an accepted airway-help request was recorded before the first accepted laryngoscopy attempt. stop after the failed tracheal attempt rather than spending more oxygen reserve. no further laryngoscopy was accepted before rescue, and airway help was requested no later than 30 seconds after the failed attempt. move to a supraglottic airway to restore a route for oxygenation. a supraglottic airway was placed after failed intubation without another tracheal attempt. explicitly deliver oxygen and confirm sustained gas exchange after rescue. after supraglottic placement, inspired oxygen was at least 0.95, breath delivery was active, saturation stayed at least 92%, and end-tidal carbon dioxide remained 25–55 mmhg for 30 seconds."
+    },
+    {
+      "id": "capnography-sampling-line-obstruction",
+      "path": "/anesthesia/scenario/capnography-sampling-line-obstruction",
+      "title": "Capnography sampling-line obstruction",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 5,
+      "difficulty": "introductory",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Cross-check the patient and independent signals before treating a flat capnogram as apnea.",
+        "Preserve the stable respiratory trajectory while diagnosing the isolated monitor failure.",
+        "Restore the carbon-dioxide sample path and confirm that the waveform returns."
+      ],
+      "searchText": "capnography-sampling-line-obstruction capnography sampling-line obstruction distal radius fracture wrist fixation under brachial plexus block cross-check the patient and independent signals before treating a flat capnogram as apnea. an accepted ventilation cross-check was recorded within 30 seconds of sampling-line obstruction and before reconnection. preserve the stable respiratory trajectory while diagnosing the isolated monitor failure. before sample-path restoration, spontaneous respiratory rate stayed above zero, saturation stayed at least 94%, and no airway instrumentation or commanded-breath change was recorded. restore the carbon-dioxide sample path and confirm that the waveform returns. an accepted sample-line reconnection followed the cross-check within 60 seconds of obstruction."
     }
   ],
   "preparationPathCount": 10,
@@ -520,10 +541,11 @@
     },
     {
       "id": "ventilation-respiratory-failure",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Ventilation and respiratory failure",
       "description": "Use saturation, capnography, and airway state together rather than chasing one number.",
       "scenarioIds": [
+        "capnography-sampling-line-obstruction",
         "rapid-desaturation",
         "bronchospasm",
         "laryngospasm-after-airway-stimulation",
@@ -543,7 +565,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 38
+      "estimatedMinutes": 43
     },
     {
       "id": "pediatric-emergencies",

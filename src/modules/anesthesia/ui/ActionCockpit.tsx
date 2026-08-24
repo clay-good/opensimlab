@@ -32,11 +32,17 @@ export interface HypnoticLineStatus {
   readonly inspected: boolean;
 }
 
+export interface CapnographyLineStatus {
+  readonly obstructed: boolean;
+  readonly ventilationCrossChecked: boolean;
+}
+
 export interface ActionCockpitProps {
   readonly scenario: Scenario;
   readonly region: RegionProfile;
   readonly infusions: readonly RunningInfusion[];
   readonly hypnoticLine: HypnoticLineStatus;
+  readonly capnographyLine?: CapnographyLineStatus;
   readonly resuscitation: {
     readonly epinephrineEffectFraction: number;
     readonly epinephrineTotalMicrograms: number;
@@ -114,6 +120,7 @@ export interface ActionCockpitProps {
   readonly onBolus: (drugId: string, amount: number, unit: string) => void;
   readonly onInfusion: (drugId: string, rate: number, unit: string) => void;
   readonly onHypnoticLine: (action: 'inspect' | 'reconnect') => void;
+  readonly onCapnographyLine?: (action: 'cross-check-ventilation' | 'reconnect') => void;
   readonly onFluid: (fluidId: string, volumeMl: number) => void;
   readonly onBloodProduct?: (productId: string, units: number) => void;
   readonly onBloodBankRequest?: () => void;
@@ -309,6 +316,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
             supraglotticInsertionSecondsRemaining={props.supraglotticInsertionSecondsRemaining}
             helpRequestedAtTick={props.helpRequestedAtTick}
             showDifficultAirwayRescue={hasDifficultAirwayResponse}
+            showCapnographyLine={props.scenario.timeline.some(
+              (event) => event.type === 'artifact' && event.target === 'sampling-line-obstruction',
+            )}
+            capnographyLine={props.capnographyLine ?? {
+              obstructed: false, ventilationCrossChecked: false,
+            }}
             actualBodyWeightKg={props.scenario.patient.weightKg}
             region={props.region}
             onVentilator={props.onVentilator}
@@ -316,6 +329,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
             onAirwayManeuver={props.onAirwayManeuver}
             onCallForHelp={props.onCallForHelp}
             onAirwayDevice={props.onAirwayDevice}
+            onCapnographyLine={props.onCapnographyLine ?? (() => {})}
           />
         )}
         {tray === 'crisis' && hasCrisisResponse && (
@@ -1331,6 +1345,7 @@ function AirwayTray({
   jawThrustCpapSecondsRemaining, device, supraglotticInsertionSecondsRemaining,
   helpRequestedAtTick, showDifficultAirwayRescue, region, onVentilator, onLaryngoscopy,
   onAirwayManeuver, onCallForHelp, onAirwayDevice,
+  showCapnographyLine, capnographyLine, onCapnographyLine,
   actualBodyWeightKg,
 }: {
   ventilator: ActionCockpitProps['ventilator'];
@@ -1344,6 +1359,8 @@ function AirwayTray({
   supraglotticInsertionSecondsRemaining: number;
   helpRequestedAtTick: number | null;
   showDifficultAirwayRescue: boolean;
+  showCapnographyLine: boolean;
+  capnographyLine: CapnographyLineStatus;
   actualBodyWeightKg: number;
   region: RegionProfile;
   onVentilator: (settings: Partial<ActionCockpitProps['ventilator']>) => void;
@@ -1351,7 +1368,9 @@ function AirwayTray({
   onAirwayManeuver: (maneuver: 'jaw-thrust-cpap') => void;
   onCallForHelp: () => void;
   onAirwayDevice: (device: 'supraglottic-airway') => void;
+  onCapnographyLine: (action: 'cross-check-ventilation' | 'reconnect') => void;
 }) {
+  const [pendingCapnographyReconnect, setPendingCapnographyReconnect] = useState(false);
   const holdingAirway = jawThrustCpapSecondsRemaining > 0;
   const insertingSupraglottic = supraglotticInsertionSecondsRemaining > 0;
   const helpRequested = helpRequestedAtTick !== null;
@@ -1527,6 +1546,55 @@ function AirwayTray({
           {region.airwayGuideline.version}).
         </p>
       </section>
+
+      {showCapnographyLine && (
+        <section className="card" aria-labelledby="capnography-sample-path-title">
+          <h3 id="capnography-sample-path-title" className="field__label">
+            Carbon-dioxide sample path
+          </h3>
+          <p className="field__hint" role="status" aria-live="polite">
+            {capnographyLine.obstructed
+              ? 'No carbon-dioxide sample is reaching the monitor. Patient ventilation and the sampled display are separate states.'
+              : 'The carbon-dioxide sample path is connected.'}
+            {' '}
+            {capnographyLine.ventilationCrossChecked
+              ? 'Independent ventilation evidence has been cross-checked.'
+              : 'No independent ventilation cross-check has been recorded.'}
+          </p>
+          <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+            <Button
+              disabled={!capnographyLine.obstructed || capnographyLine.ventilationCrossChecked}
+              onClick={() => onCapnographyLine('cross-check-ventilation')}
+            >
+              Cross-check ventilation
+            </Button>
+            {!pendingCapnographyReconnect ? (
+              <Button
+                disabled={!capnographyLine.obstructed}
+                onClick={() => setPendingCapnographyReconnect(true)}
+              >
+                Reconnect sampling line
+              </Button>
+            ) : (
+              <>
+                <Button variant="primary" onClick={() => {
+                  onCapnographyLine('reconnect');
+                  setPendingCapnographyReconnect(false);
+                }}>
+                  Confirm reconnect
+                </Button>
+                <Button variant="ghost" onClick={() => setPendingCapnographyReconnect(false)}>
+                  Cancel
+                </Button>
+              </>
+            )}
+          </div>
+          <p className="field__hint">
+            This records screen intent only. It does not assess chest movement, bag movement,
+            auscultation, circuit inspection, or technical skill.
+          </p>
+        </section>
+      )}
     </div>
   );
 }
