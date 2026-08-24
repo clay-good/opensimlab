@@ -296,8 +296,9 @@ export const LIMITATIONS: readonly Limitation[] = [
     headline: 'This case models only initial oxygen, intravenous epinephrine, and crystalloid actions, not the complete or refractory anaphylaxis algorithm.',
     simplification: 'There is no trigger-removal control, call-for-help or team behavior, '
       + 'epinephrine infusion, alternative vasopressor strategy, glucagon, arrest response, '
-      + 'critical-care transfer, blood products, massive-transfusion protocol, or post-event '
-      + 'investigation workflow.',
+      + 'critical-care transfer, massive-transfusion protocol, or post-event investigation '
+      + 'workflow. Generic packed-red-cell physiology is available but is not part of the '
+      + 'bounded anaphylaxis response or its evaluation; other blood products are absent.',
     whereItMisleads: 'Continuing the bounded initial actions when shock is refractory, or assuming '
       + 'a successful modeled response completes clinical management.',
     correctUnderstanding: 'Use the current perioperative algorithm, remove possible triggers, '
@@ -499,10 +500,21 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['routine-pediatric-iv-induction'],
   },
   {
+    id: 'prbc-fixed-unit-model',
+    headline: 'Packed red cells are an instantaneous fixed-unit teaching model, not a transfusion workflow.',
+    simplification: 'An adult action adds exactly 300 mL and 60 g hemoglobin per unit on the next '
+      + '100 ms tick, with a two-unit cumulative cap. Product variation, delivery time, storage, '
+      + 'warming, compatibility, crossmatch, reactions, calcium, and electrolytes are absent.',
+    whereItMisleads: 'Choosing, preparing, checking, timing, monitoring, or responding to a real transfusion.',
+    correctUnderstanding: 'Real packed-red-cell components vary, require compatibility and bedside '
+      + 'checks, are administered over time, and can cause serious reactions including TACO and TRALI.',
+    briefIn: ['unexpected-intraoperative-hemorrhage'],
+  },
+  {
     id: 'no-coagulopathy',
     headline: 'Coagulation is not modelled, so bleeding never becomes a clotting problem.',
-    simplification: 'Coagulation is not modelled. Blood loss removes volume and haemoglobin and '
-      + 'nothing else.',
+    simplification: 'Coagulation is not modelled. Blood loss removes volume and haemoglobin, and '
+      + 'bounded packed red cells restore only volume and hemoglobin mass.',
     whereItMisleads: 'Massive transfusion, where dilutional and consumptive coagulopathy drives '
       + 'management as much as volume does.',
     correctUnderstanding: 'In real major haemorrhage the clotting is often the problem, and '

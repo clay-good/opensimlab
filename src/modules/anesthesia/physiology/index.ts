@@ -100,6 +100,10 @@ export interface ScenarioDrive {
   readonly bloodLossMl: number;
   /** Millilitres of crystalloid given this tick. */
   readonly crystalloidMl: number;
+  /** Adult packed-red-cell volume delivered this tick. */
+  readonly packedRedCellVolumeMl?: number;
+  /** Hemoglobin mass carried by packed red cells delivered this tick. */
+  readonly packedRedCellHemoglobinG?: number;
   /** Unopposed systemic anaphylaxis effect, 0 to 1. */
   readonly anaphylaxisFraction?: number;
   /** Plasma volume leaving the circulation this tick through capillary leak. */
@@ -118,6 +122,13 @@ export interface TickResult {
   readonly state: PatientState;
   readonly attribution: readonly Attribution[];
   readonly warnings: readonly ClampWarning[];
+  /** The isolated concentration effect of packed red cells during this tick. */
+  readonly transfusion?: {
+    readonly volumeMl: number;
+    readonly hemoglobinG: number;
+    readonly hemoglobinBeforeGPerDl: number;
+    readonly hemoglobinAfterGPerDl: number;
+  };
   /** 0 to 1, for the waveform layer. */
   readonly hypovolemiaFraction: number;
   readonly anesthesiaDepthFraction: number;
@@ -268,6 +279,7 @@ export class VirtualPatient {
   /** Advance one tick. */
   tick(drugs: DrugDrive, ventilator: VentilatorSettings, scenario: ScenarioDrive): TickResult {
     const recorder = new AttributionRecorder();
+    let transfusion: TickResult['transfusion'];
     const hypermetabolic = clamp(scenario.hypermetabolicFraction ?? 0, 0, 1);
     this.hypermetabolicCardiovascularFraction = approach(
       this.hypermetabolicCardiovascularFraction, hypermetabolic, 0.9, TICK_MINUTES,
@@ -311,7 +323,8 @@ export class VirtualPatient {
     }
 
     // --- Volume ---------------------------------------------------------------
-    if (scenario.bloodLossMl > 0 || scenario.crystalloidMl > 0 || (scenario.capillaryLeakMl ?? 0) > 0) {
+    if (scenario.bloodLossMl > 0 || scenario.crystalloidMl > 0
+      || (scenario.capillaryLeakMl ?? 0) > 0 || (scenario.packedRedCellVolumeMl ?? 0) > 0) {
       const beforeMl = Math.max(this.hemodynamics.bloodVolumeMl, 1);
       const lostMl = Math.min(scenario.bloodLossMl, beforeMl);
       // Whole-blood loss removes red cells at the current concentration.
@@ -325,6 +338,19 @@ export class VirtualPatient {
           - lostMl
           - Math.min(scenario.capillaryLeakMl ?? 0, beforeMl - lostMl),
       );
+      const packedVolumeMl = Math.max(0, scenario.packedRedCellVolumeMl ?? 0);
+      const packedHemoglobinG = Math.max(0, scenario.packedRedCellHemoglobinG ?? 0);
+      if (packedVolumeMl > 0 && packedHemoglobinG > 0) {
+        const hemoglobinBeforeGPerDl = this.hemoglobinGPerDl();
+        this.hemodynamics.bloodVolumeMl += packedVolumeMl;
+        this.hemoglobinMassG += packedHemoglobinG;
+        transfusion = {
+          volumeMl: packedVolumeMl,
+          hemoglobinG: packedHemoglobinG,
+          hemoglobinBeforeGPerDl,
+          hemoglobinAfterGPerDl: this.hemoglobinGPerDl(),
+        };
+      }
       if ((scenario.capillaryLeakMl ?? 0) > 0) {
         recorder.add(
           'bloodVolumeMl', 'anaphylaxis-capillary-leak', 'Plasma lost through capillary leak',
@@ -564,6 +590,7 @@ export class VirtualPatient {
       state,
       attribution: recorder.build(),
       warnings,
+      ...(transfusion ? { transfusion } : {}),
       hypovolemiaFraction: hemo.hypovolemiaFraction,
       anesthesiaDepthFraction: depthFraction,
     };

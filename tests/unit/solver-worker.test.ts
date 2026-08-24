@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: neuromuscular reversal truth has protocol version 14', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(14);
+  it('Scenario: bounded packed-red-cell totals have protocol version 15', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(15);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

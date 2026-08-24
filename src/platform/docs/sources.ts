@@ -63,6 +63,30 @@ const NCBI = 'NCBI E-utilities record, field by field';
 const CHECKED = '2026-08-20';
 
 export const SOURCES: readonly Source[] = [
+  {
+    id: 'aabb-circular-blood-components-current',
+    currency: { lastAmended: '2024-06-01', checkedAt: '2026-08-24' },
+    authors: 'AABB, American Red Cross, America\'s Blood Centers, Armed Services Blood Program',
+    title: 'Circular of Information for the Use of Human Blood and Blood Components',
+    publication: 'AABB', year: 2024, locator: 'June 2024 current circular',
+    usedFor: 'The bounded packed-red-cell component model: red-cell components contain 50 to 80 g '
+      + 'of hemoglobin, and apheresis red cells contain approximately 60 g per unit. The simulator '
+      + 'uses 60 g as a fixed teaching value, not an individual component prediction.',
+    verifiedAgainst: 'Current AABB watermarked circular PDF, component description',
+    verifiedOn: '2026-08-24',
+  },
+  {
+    id: 'jpac-red-cell-components-current',
+    currency: { lastAmended: '2026-05-01', checkedAt: '2026-08-24' },
+    authors: 'Joint United Kingdom Blood Transfusion and Tissue Transplantation Services Professional Advisory Committee',
+    title: 'Guidelines: Red Cell Components',
+    publication: 'Guidelines for the Blood Transfusion Services in the United Kingdom',
+    year: 2026, locator: 'Chapter 7.3, current component specification',
+    usedFor: 'The 280 ± 60 mL red-cell-component specification. The simulator rounds this to a '
+      + 'fixed 300 mL per unit for a bounded teaching model.',
+    verifiedAgainst: 'Current JPAC Red Book chapter 7.3 PDF, Table 7.3.1',
+    verifiedOn: '2026-08-24',
+  },
   // --- Pharmacokinetic and pharmacodynamic models ---------------------------
   {
     id: 'absalom-kenny-paedfusor-2005',

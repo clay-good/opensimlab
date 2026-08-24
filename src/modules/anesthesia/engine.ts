@@ -23,6 +23,10 @@ import { getModel, parametersFor, selectDefaultModel, MODEL_SET_REVISION } from 
 import { normalizedEffect } from './pharmacology/pd';
 import type { PharmacologyModel } from './pharmacology/types';
 import { getFluid, MAX_FLUID_BOLUS_ML } from './content/fluids';
+import {
+  getBloodProduct, MAX_PRBC_UNITS_PER_ACTION, MAX_PRBC_UNITS_TOTAL,
+} from './content/blood-products';
+import { oxygenDeliveryMlPerMin } from './physiology/oxygen-delivery';
 import type { Covariates } from './pharmacology/body-composition';
 import {
   RESPIRATORY_PROFILES, VirtualPatient, baselineSvr, healthyChildRespiratoryProfile,
@@ -34,7 +38,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.14';
+export const ENGINE_VERSION = '0.1.0-alpha.15';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -204,6 +208,8 @@ export class AnesthesiaEngine {
   private epinephrineTotalMicrograms = 0;
   private lastEpinephrineTick: number | null = null;
   private crystalloidTotalMl = 0;
+  private packedRedBloodCellUnits = 0;
+  private bloodProductTotalMl = 0;
   private dantroleneTotalMg = 0;
   private dantroleneEffectFraction = 0;
   private lastDantroleneTick: number | null = null;
@@ -252,6 +258,9 @@ export class AnesthesiaEngine {
   } | null = null;
   /** A learner fluid bolus waiting to reach the circulation on the next tick. */
   private pendingCrystalloidMl = 0;
+  private pendingPackedRedCellUnits = 0;
+  private pendingPackedRedCellVolumeMl = 0;
+  private pendingPackedRedCellHemoglobinG = 0;
   /** Physical delivery state, intentionally separate from the pump's commanded rate. */
   private hypnoticLineConnected = true;
   /** Whether the learner has deliberately inspected the line since its last failure. */
@@ -819,6 +828,30 @@ export class AnesthesiaEngine {
           { fluidId: fluid.id, volumeMl, retainedFraction: fluid.retainedFraction, teachingModel: true });
         break;
       }
+      case 'blood-product': {
+        const productId = String(action.payload.productId ?? '');
+        const product = getBloodProduct(productId);
+        const units = AnesthesiaEngine.finiteAmount(action.payload.units);
+        const invalid = !product || units === null || !Number.isInteger(units)
+          || units < 1 || units > MAX_PRBC_UNITS_PER_ACTION
+          || this.packedRedBloodCellUnits + units > MAX_PRBC_UNITS_TOTAL
+          || this.scenario.patient.ageYears < 18;
+        if (invalid) {
+          this.log('warning', 'blood-product', `bad-blood-product-${this.currentTick}`,
+            !product
+              ? `This build does not stock a blood product called "${productId}". Nothing was given.`
+              : this.scenario.patient.ageYears < 18
+                ? 'Packed red cells are not stocked in this bounded pediatric induction case.'
+                : `Packed red cells require 1 or 2 whole units and no more than ${MAX_PRBC_UNITS_TOTAL} units cumulatively. Nothing was given.`);
+          break;
+        }
+        this.pendingPackedRedCellUnits += units;
+        this.pendingPackedRedCellVolumeMl += units * product.volumeMlPerUnit;
+        this.pendingPackedRedCellHemoglobinG += units * product.hemoglobinGPerUnit;
+        this.packedRedBloodCellUnits += units;
+        this.bloodProductTotalMl += units * product.volumeMlPerUnit;
+        break;
+      }
       case 'hypnotic-line': {
         const lineAction = action.payload.action;
         if (lineAction === 'inspect') {
@@ -1351,6 +1384,15 @@ export class AnesthesiaEngine {
     obstruction = Math.max(obstruction, this.injectedBronchospasmSeverity);
     crystalloidMl += this.pendingCrystalloidMl;
     this.pendingCrystalloidMl = 0;
+    const packedRedCellUnits = this.pendingPackedRedCellUnits;
+    const packedRedCellVolumeMl = this.pendingPackedRedCellVolumeMl;
+    const packedRedCellHemoglobinG = this.pendingPackedRedCellHemoglobinG;
+    this.pendingPackedRedCellUnits = 0;
+    this.pendingPackedRedCellVolumeMl = 0;
+    this.pendingPackedRedCellHemoglobinG = 0;
+    const stateBeforeStep = Object.keys(this.lastState).length > 0
+      ? this.lastState as PatientState
+      : this.patient.snapshot();
 
     // --- Pharmacokinetics ------------------------------------------------------
     for (const drug of this.drugs.values()) {
@@ -1474,6 +1516,7 @@ export class AnesthesiaEngine {
         surgicalStimulus: stimulus, obstructionFraction: obstruction, airwayDeliveryFraction,
         upperAirwayClosureFraction: this.upperAirwayClosureFraction,
         bloodLossMl, crystalloidMl,
+        packedRedCellVolumeMl, packedRedCellHemoglobinG,
         anaphylaxisFraction: unopposedAnaphylaxis, capillaryLeakMl,
         hypermetabolicFraction: unopposedHypermetabolism,
         activeCooling: this.activeCooling,
@@ -1537,6 +1580,30 @@ export class AnesthesiaEngine {
       perfusionIndex: 0,
       etco2MmHg: this.chestCompressionsActive ? 18 : 0,
     } : crisisState;
+
+    if (result.transfusion && packedRedCellUnits > 0) {
+      const beforeOxygenDelivery = oxygenDeliveryMlPerMin(stateBeforeStep);
+      const afterOxygenDelivery = oxygenDeliveryMlPerMin(state);
+      const hemoglobinDelta = result.transfusion.hemoglobinAfterGPerDl
+        - result.transfusion.hemoglobinBeforeGPerDl;
+      this.log('info', 'blood-product', `blood-product-packed-red-blood-cells-${this.currentTick}`,
+        `${packedRedCellUnits} unit${packedRedCellUnits === 1 ? '' : 's'} packed red blood cells given `
+        + `(${result.transfusion.volumeMl.toFixed(0)} mL). Hemoglobin changed by `
+        + `${hemoglobinDelta.toFixed(2)} g/dL and calculated oxygen delivery changed from `
+        + `${beforeOxygenDelivery.toFixed(0)} to ${afterOxygenDelivery.toFixed(0)} mL/min.`, {
+          productId: 'packed-red-blood-cells', units: packedRedCellUnits,
+          volumeMl: result.transfusion.volumeMl,
+          hemoglobinG: result.transfusion.hemoglobinG,
+          hemoglobinBeforeGPerDl: result.transfusion.hemoglobinBeforeGPerDl,
+          hemoglobinAfterGPerDl: result.transfusion.hemoglobinAfterGPerDl,
+          hemoglobinDeltaGPerDl: hemoglobinDelta,
+          oxygenDeliveryBeforeMlPerMin: beforeOxygenDelivery,
+          oxygenDeliveryAfterMlPerMin: afterOxygenDelivery,
+          cumulativeUnits: this.packedRedBloodCellUnits,
+          cumulativeVolumeMl: this.bloodProductTotalMl,
+          teachingModel: true,
+        });
+    }
 
     // Preoxygenation is judged on the END-TIDAL fraction, because that is what
     // says the functional residual capacity has actually been denitrogenated. The
@@ -1663,6 +1730,8 @@ export class AnesthesiaEngine {
         epinephrineTotalMicrograms: this.epinephrineTotalMicrograms,
         lastEpinephrineTick: this.lastEpinephrineTick,
         crystalloidTotalMl: this.crystalloidTotalMl,
+        packedRedBloodCellUnits: this.packedRedBloodCellUnits,
+        bloodProductTotalMl: this.bloodProductTotalMl,
         dantroleneTotalMg: this.dantroleneTotalMg,
         dantroleneEffectFraction: this.dantroleneEffectFraction,
         lastDantroleneTick: this.lastDantroleneTick,

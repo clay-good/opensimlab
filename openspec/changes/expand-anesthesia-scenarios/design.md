@@ -2,8 +2,8 @@
 
 ## Scope
 
-The slice teaches recognition and temporization, not definitive hemorrhage resuscitation.
-Balanced crystalloid is the only new treatment. A bolus acts on the next 100 ms engine tick;
+Slice 1 teaches recognition and temporization, not definitive hemorrhage resuscitation.
+Balanced crystalloid is its only new treatment. A bolus acts on the next 100 ms engine tick;
 25% expands circulating volume and the added plasma dilutes hemoglobin. This fixed fraction is
 identified as an Open Sim Lab teaching model wherever the action is offered or explained.
 
@@ -12,8 +12,9 @@ identified as an Open Sim Lab teaching model wherever the action is offered or e
 - A single fluid action is limited to 1–5,000 mL and unknown products are rejected.
 - Whole-blood loss removes red-cell mass and plasma in proportion, so it does not immediately
   change hemoglobin concentration. Crystalloid adds no red-cell mass and therefore dilutes it.
-- Blood products and every massive-transfusion concern remain unavailable and are named in the
-  briefing limitations. The case must never claim that crystalloid is definitive replacement.
+- Slice 14 later adds bounded adult packed-red-cell physiology. Compatibility, other products,
+  coagulation, laboratories, and every massive-transfusion concern remain unavailable. The case
+  must never claim that crystalloid is definitive replacement.
 - Objective evaluation uses recorded action timing and volume as a behavioral proxy. The debrief
   explicitly says that this cannot prove what the learner noticed or why.
 
@@ -255,3 +256,20 @@ count teaching proxy beside two-step
 controls. This is not emergence or an extubation decision. Individual recovery time, recurrent
 block, hypersensitivity, neostigmine or antimuscarinic dose pharmacology, airway removal, and
 postoperative outcomes remain unavailable.
+
+## Slice 14: bounded adult packed-red-cell foundation
+
+The adult fluids tray adds packed red cells as units rather than arbitrary milliliters. One unit is
+a fixed 300 mL component carrying 60 g hemoglobin, bounded to one or two integer units per action
+and two units cumulatively. The values sit within current AABB hemoglobin-content and JPAC volume
+specifications but are labeled as a teaching convention rather than an individual product prediction.
+
+Whole-blood loss first removes plasma and red-cell mass proportionally. Plasma leak and crystalloid
+then change circulating volume, after which packed red cells add their retained volume and hemoglobin
+mass. The engine isolates the packed-red-cell hemoglobin change for the event log and calculates
+arterial oxygen content and systemic oxygen delivery from the final state. Oxygen delivery is debrief
+evidence, not a monitor tile.
+
+This foundation does not model ordering, compatibility, crossmatch, infusion time, warming, storage,
+transfusion reactions, calcium, electrolytes, coagulation, laboratory guidance, other components, or
+a massive-transfusion protocol. Its two-unit cap is an interaction boundary, not a clinical endpoint.

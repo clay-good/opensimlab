@@ -35,8 +35,10 @@ response, stopping before dysrhythmia treatment or cardiac arrest.
   crystalloid causes dilution.
 - Evaluate the new scenario's objectives from the recorded actions and map them to the supported
   curriculum frameworks.
-- State the boundary plainly: no blood products, coagulopathy, calcium, laboratory guidance,
-  source-control action, team behavior, or massive-transfusion protocol is simulated.
+- Add a later bounded adult packed-red-cell foundation with fixed unit volume and hemoglobin mass,
+  separate cumulative totals, and calculated oxygen-delivery evidence.
+- State the remaining boundary plainly: compatibility, other blood products, coagulopathy, calcium,
+  laboratory guidance, source-control action, team behavior, and a massive-transfusion protocol are absent.
 - Add a sixth scenario covering rapid-sequence induction in a full-stomach adult with an otherwise
   straightforward airway.
 - Add rocuronium as a bolus-only teaching model that drives quantitative train-of-four count and
@@ -106,7 +108,7 @@ response, stopping before dysrhythmia treatment or cardiac arrest.
 
 ## Impact
 
-These thirteen slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+These fourteen slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
 awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. The seventh also closes the bounded
 pediatric-family gap without claiming a general pediatric patient model. The eighth reaches the
 minimum count of 12 scenarios and closes the bounded difficult-airway rescue gap. The ninth closes

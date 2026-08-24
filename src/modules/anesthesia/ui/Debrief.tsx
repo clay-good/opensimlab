@@ -1528,7 +1528,9 @@ export function objectiveFindings(
  * drug is logged at `info`, and a description phase that omits what the learner
  * did is not a description of what happened.
  */
-const LEARNER_ACTION_CATEGORIES = new Set(['drug', 'ventilator', 'airway', 'fluid', 'rhythm']);
+const LEARNER_ACTION_CATEGORIES = new Set([
+  'drug', 'ventilator', 'airway', 'fluid', 'blood-product', 'rhythm',
+]);
 
 export function describedEvents(log: readonly EngineEvent[], limit = 40): EngineEvent[] {
   return log

@@ -204,11 +204,14 @@ describe('Requirement: Screen Reader Access To Live Physiology', () => {
         epinephrineEffectFraction: 0.4,
         epinephrineTotalMicrograms: 50,
         crystalloidTotalMl: 1000,
+        packedRedBloodCellUnits: 2,
+        bloodProductTotalMl: 600,
       },
       lastExposure: { agentId: 'cefazolin', tick: 600 },
     });
     expect(summary).toContain('adrenaline 50 micrograms intravenous');
     expect(summary).toContain('balanced crystalloid 1000 millilitres');
+    expect(summary).toContain('Accepted packed red cells: 2 units, 600 millilitres');
     expect(summary).toContain('Most recent modeled trigger exposure: cefazolin.');
     expect(summary.toLowerCase()).not.toContain('anaphylaxis');
   });

@@ -63,6 +63,73 @@ describe('Requirement: Learner-delivered crystalloid changes the patient once', 
   });
 });
 
+describe('Requirement: Packed red cells restore hemoglobin and calculated oxygen delivery', () => {
+  const action = (units = 2, productId = 'packed-red-blood-cells'): LearnerAction => ({
+    tick: 1, type: 'blood-product', payload: { productId, units },
+  });
+
+  it('delivers two fixed units once and records the physiological change', () => {
+    const sim = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
+    const before = sim.step().state;
+    sim.apply(action());
+    const treated = sim.step();
+    const next = sim.step();
+    const event = treated.events.find((entry) => entry.category === 'blood-product');
+
+    expect(treated.state.bloodVolumeMl - before.bloodVolumeMl).toBeCloseTo(600, 5);
+    expect(treated.state.hemoglobinGPerDl).toBeGreaterThan(before.hemoglobinGPerDl);
+    expect(next.state.bloodVolumeMl).toBeCloseTo(treated.state.bloodVolumeMl, 5);
+    expect(treated.equipment.resuscitation.packedRedBloodCellUnits).toBe(2);
+    expect(treated.equipment.resuscitation.bloodProductTotalMl).toBe(600);
+    expect(event?.data?.volumeMl).toBe(600);
+    expect(Number(event?.data?.hemoglobinDeltaGPerDl)).toBeGreaterThan(0);
+    expect(Number(event?.data?.oxygenDeliveryAfterMlPerMin))
+      .toBeGreaterThan(Number(event?.data?.oxygenDeliveryBeforeMlPerMin));
+  });
+
+  it.each([
+    ['unknown product', 1, 'whole-blood'],
+    ['zero units', 0, 'packed-red-blood-cells'],
+    ['negative units', -1, 'packed-red-blood-cells'],
+    ['fractional units', 1.5, 'packed-red-blood-cells'],
+    ['infinite units', Infinity, 'packed-red-blood-cells'],
+    ['too many units', 3, 'packed-red-blood-cells'],
+  ])('rejects %s without mutation', (_label, units, productId) => {
+    const sim = engine();
+    const before = sim.step().state;
+    sim.apply(action(units, productId));
+    const result = sim.step();
+    expect(result.state.bloodVolumeMl).toBeCloseTo(before.bloodVolumeMl, 8);
+    expect(result.state.hemoglobinGPerDl).toBeCloseTo(before.hemoglobinGPerDl, 8);
+    expect(result.events.some((entry) => entry.eventId.startsWith('bad-blood-product-'))).toBe(true);
+  });
+
+  it('enforces the cumulative two-unit boundary', () => {
+    const sim = engine();
+    sim.step();
+    sim.apply(action(1));
+    sim.step();
+    sim.apply(action(1));
+    sim.step();
+    const before = sim.equipment().resuscitation;
+    sim.apply(action(1));
+    const refused = sim.step();
+    expect(before.packedRedBloodCellUnits).toBe(2);
+    expect(refused.equipment.resuscitation.packedRedBloodCellUnits).toBe(2);
+    expect(refused.events.some((entry) => entry.eventId.startsWith('bad-blood-product-'))).toBe(true);
+  });
+
+  it('replays the same packed-red-cell trajectory deterministically', () => {
+    const run = () => {
+      const sim = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
+      advance(sim, 2400);
+      sim.apply({ ...action(2), tick: sim.tick });
+      return advance(sim, 800).state;
+    };
+    expect(run()).toEqual(run());
+  });
+});
+
 describe('Requirement: The hemorrhage scenario teaches a coherent causal picture', () => {
   it('blood loss lowers volume, cardiac output, pressure, and end-tidal carbon dioxide', () => {
     const noLoss: Scenario = {

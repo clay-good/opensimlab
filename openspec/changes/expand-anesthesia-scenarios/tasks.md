@@ -9,8 +9,10 @@
 - [x] Evaluate its objectives from recorded actions and expose them in instructor analysis.
 - [x] Map the scenario to NBCRNA, COA, and ACGME domains.
 - [x] Update limitations, face-validity scope, and landing-page inventory.
-- [ ] Add blood products, coagulation, laboratory guidance, and a traceable massive-transfusion
-  protocol. This remains a separate slice and is not implied by the crystalloid implementation.
+- [x] Add a bounded adult packed-red-cell foundation that restores volume, hemoglobin mass, and
+  calculated oxygen delivery; log accepted units and physiological change; expose separate totals.
+- [ ] Add compatibility workflow, other blood products, coagulation, laboratory guidance, calcium,
+  and a traceable massive-transfusion protocol. None is implied by the packed-red-cell foundation.
 
 ## Slice 2: rapid-sequence induction
 
@@ -209,3 +211,14 @@
   face-validity review items.
 - [ ] Add neostigmine dose pharmacology, emergence, extubation, recurrent block, hypersensitivity,
   individual recovery prediction, or postoperative outcomes. None is implied.
+
+## Slice 14: bounded adult packed-red-cell foundation
+
+- [x] Add fixed 300 mL and 60 g hemoglobin adult packed-red-cell units with a two-unit cumulative cap.
+- [x] Add retained volume and hemoglobin mass inside physiology and calculate oxygen delivery from
+  cardiac output, hemoglobin, saturation, and arterial oxygen tension.
+- [x] Record accepted units, volume, isolated hemoglobin change, calculated oxygen-delivery change,
+  cumulative totals, and deterministic replay.
+- [x] Add a two-step keyboard-operable tray, nonvisual summary, sources, and explicit limitations.
+- [ ] Add ordering, compatibility, crossmatch, delivery rate, warming, reactions, storage effects,
+  coagulation, laboratories, other products, calcium, or a massive-transfusion protocol.

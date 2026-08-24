@@ -100,6 +100,8 @@ export function stateSummary(
       readonly epinephrineEffectFraction: number;
       readonly epinephrineTotalMicrograms: number;
       readonly crystalloidTotalMl: number;
+      readonly packedRedBloodCellUnits?: number;
+      readonly bloodProductTotalMl?: number;
       readonly dantroleneTotalMg?: number;
       readonly dantroleneEffectFraction?: number;
       readonly activeCooling?: boolean;
@@ -181,6 +183,9 @@ export function stateSummary(
     if (options.resuscitation.epinephrineEffectFraction > 0) {
       lines.push(`The ${name} teaching-model effect is active.`);
     }
+  }
+  if (options.resuscitation && (options.resuscitation.packedRedBloodCellUnits ?? 0) > 0) {
+    lines.push(`Accepted packed red cells: ${options.resuscitation.packedRedBloodCellUnits} units, ${(options.resuscitation.bloodProductTotalMl ?? 0).toFixed(0)} millilitres in the bounded teaching model.`);
   }
   if (options.resuscitation && options.showHypermetabolicSupport) {
     lines.push(`Accepted dantrolene total: ${(options.resuscitation.dantroleneTotalMg ?? 0).toFixed(0)} milligrams intravenous.`);

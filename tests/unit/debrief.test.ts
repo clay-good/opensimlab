@@ -324,11 +324,15 @@ describe('Requirement: The Description Phase Describes What Happened', () => {
       { tick: 10, severity: 'info', category: 'drug', eventId: 'bolus-propofol-10', message: 'propofol 136 mg' },
       { tick: 12, severity: 'info', category: 'ventilator', eventId: 'vent-12', message: 'Ventilator: volume-control' },
       { tick: 20, severity: 'warning', category: 'airway', eventId: 'laryngoscopy-1', message: 'Grade 1 view' },
+      { tick: 25, severity: 'info', category: 'blood-product', eventId: 'blood-product-packed-red-blood-cells-25', message: '2 units packed red cells; calculated oxygen delivery increased' },
       { tick: 30, severity: 'info', category: 'alarm', eventId: 'alarm-clear-x', message: 'Alarm cleared: x' },
     ];
     const described = describedEvents(log);
     expect(described.map((entry) => entry.eventId))
-      .toEqual(['bolus-propofol-10', 'vent-12', 'laryngoscopy-1']);
+      .toEqual([
+        'bolus-propofol-10', 'vent-12', 'laryngoscopy-1',
+        'blood-product-packed-red-blood-cells-25',
+      ]);
     // The alarm-clearing chatter stays out: it is not something the learner did.
     expect(described.some((entry) => entry.category === 'alarm')).toBe(false);
   });

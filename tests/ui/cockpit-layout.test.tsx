@@ -586,7 +586,8 @@ describe('Requirement: The Action Cockpit Offers Only Trays That Do Something', 
     // Asserted against the exported sentence, not the source text, because the
     // source wraps it across lines and a substring check there is a check on
     // where the line breaks fall.
-    expect(NOT_IN_THIS_BUILD).toContain('Blood products');
+    expect(NOT_IN_THIS_BUILD).toContain('Packed red cells');
+    expect(NOT_IN_THIS_BUILD).toContain('other blood products');
     expect(NOT_IN_THIS_BUILD).toContain('25%');
     expect(NOT_IN_THIS_BUILD).toContain('resuscitation');
     // Resuscitation matters more now that the engine can arrest a patient, so

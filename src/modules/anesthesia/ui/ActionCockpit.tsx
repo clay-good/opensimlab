@@ -15,6 +15,7 @@ import { lastLipidProtocolForWeight, type Scenario } from '@anesthesia/engine';
 import type { FormularyEntry } from '@anesthesia/scenarios/types';
 import { term, type RegionProfile } from '@anesthesia/region/profiles';
 import { FLUIDS } from '@anesthesia/content/fluids';
+import { BLOOD_PRODUCTS } from '@anesthesia/content/blood-products';
 import { JAW_THRUST_CPAP_SECONDS } from '@anesthesia/physiology';
 
 export type TrayId = 'syringes' | 'infusions' | 'fluids' | 'airway' | 'crisis';
@@ -41,6 +42,8 @@ export interface ActionCockpitProps {
     readonly epinephrineTotalMicrograms: number;
     readonly lastEpinephrineTick: number | null;
     readonly crystalloidTotalMl: number;
+    readonly packedRedBloodCellUnits?: number;
+    readonly bloodProductTotalMl?: number;
     readonly dantroleneTotalMg: number;
     readonly dantroleneEffectFraction: number;
     readonly lastDantroleneTick: number | null;
@@ -98,6 +101,7 @@ export interface ActionCockpitProps {
   readonly onInfusion: (drugId: string, rate: number, unit: string) => void;
   readonly onHypnoticLine: (action: 'inspect' | 'reconnect') => void;
   readonly onFluid: (fluidId: string, volumeMl: number) => void;
+  readonly onBloodProduct?: (productId: string, units: number) => void;
   readonly onVentilator: (settings: Partial<ActionCockpitProps['ventilator']>) => void;
   readonly onLaryngoscopy: (technique: 'direct' | 'video') => void;
   readonly onAirwayManeuver: (maneuver: 'jaw-thrust-cpap') => void;
@@ -171,7 +175,9 @@ const CRISIS_TRAY = { id: 'crisis', label: 'Crisis response' } as const;
  * arrest elsewhere, where resuscitation remains outside the model.
  */
 export const NOT_IN_THIS_BUILD =
-  'Blood products are not modeled. Crystalloid uses a fixed 25% intravascular retention teaching model. '
+  'Packed red cells use a bounded adult-only 300 mL and 60 g hemoglobin per-unit teaching model. '
+  + 'Compatibility, reactions, infusion rate, coagulation, laboratory guidance, and other blood products are not modeled. '
+  + 'Crystalloid uses a fixed 25% intravascular retention teaching model. '
   + 'Cardiac-arrest resuscitation actions — compressions, arrest-dose epinephrine, and defibrillation — '
   + 'are available only in the bounded scripted arrest case; a patient with hypoxic arrest elsewhere does not recover.';
 
@@ -244,8 +250,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
         {tray === 'fluids' && (
           <FluidTray
             crystalloidTotalMl={props.resuscitation.crystalloidTotalMl}
+            packedRedBloodCellUnits={props.resuscitation.packedRedBloodCellUnits ?? 0}
+            bloodProductTotalMl={props.resuscitation.bloodProductTotalMl ?? 0}
             ageYears={props.scenario.patient.ageYears}
             onFluid={props.onFluid}
+            onBloodProduct={props.onBloodProduct ?? (() => {})}
           />
         )}
         {tray === 'airway' && (
@@ -460,13 +469,20 @@ function CardiacArrestTray({
   );
 }
 
-function FluidTray({ crystalloidTotalMl, ageYears, onFluid }: {
+function FluidTray({
+  crystalloidTotalMl, packedRedBloodCellUnits, bloodProductTotalMl,
+  ageYears, onFluid, onBloodProduct,
+}: {
   crystalloidTotalMl: number;
+  packedRedBloodCellUnits: number;
+  bloodProductTotalMl: number;
   ageYears: number;
   onFluid: (fluidId: string, volumeMl: number) => void;
+  onBloodProduct: (productId: string, units: number) => void;
 }) {
   const pediatric = ageYears < 18;
   const [pending, setPending] = useState<{ fluidId: string; volumeMl: number } | null>(null);
+  const [pendingBlood, setPendingBlood] = useState<{ productId: string; units: number } | null>(null);
   return (
     <div className="tray-grid">
       {FLUIDS.map((fluid) => (
@@ -511,6 +527,56 @@ function FluidTray({ crystalloidTotalMl, ageYears, onFluid }: {
                   onClick={() => setPending({ fluidId: fluid.id, volumeMl })}
                 >
                   {volumeMl} mL
+                </Button>
+              ))}
+            </div>
+          )}
+        </section>
+      ))}
+      {BLOOD_PRODUCTS.map((product) => (
+        <section className="syringe" key={product.id}>
+          <div className="syringe__name">{product.name}</div>
+          <p className="field__hint">
+            Fixed teaching model: 1 unit adds {product.volumeMlPerUnit} mL and{' '}
+            {product.hemoglobinGPerUnit} g hemoglobin.
+          </p>
+          <p className="syringe__remaining" role="status">
+            Accepted: {packedRedBloodCellUnits} unit{packedRedBloodCellUnits === 1 ? '' : 's'} ·{' '}
+            {bloodProductTotalMl.toFixed(0)} mL
+          </p>
+          {pediatric ? (
+            <p className="field__hint">
+              No pediatric blood product is stocked in this bounded induction case.
+            </p>
+          ) : pendingBlood?.productId === product.id ? (
+            <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
+              <span className="numeric">
+                Give {pendingBlood.units} unit{pendingBlood.units === 1 ? '' : 's'}?
+              </span>
+              <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                <Button
+                  variant="primary"
+                  compact
+                  onClick={() => {
+                    onBloodProduct(pendingBlood.productId, pendingBlood.units);
+                    setPendingBlood(null);
+                  }}
+                >
+                  Give packed red cells
+                </Button>
+                <Button variant="ghost" compact onClick={() => setPendingBlood(null)}>Cancel</Button>
+              </div>
+            </div>
+          ) : (
+            <div className="syringe__presets">
+              {product.presetsUnits.map((units) => (
+                <Button
+                  key={units}
+                  compact
+                  disabled={packedRedBloodCellUnits + units > 2}
+                  onClick={() => setPendingBlood({ productId: product.id, units })}
+                >
+                  {units} unit{units === 1 ? '' : 's'}
                 </Button>
               ))}
             </div>

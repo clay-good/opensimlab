@@ -9,6 +9,9 @@ import {
   type ScenarioDrive, type VentilatorSettings,
 } from '@anesthesia/physiology';
 import { createRng } from '@platform/kernel/rng';
+import {
+  arterialOxygenContentMlPerDl, oxygenDeliveryMlPerMin,
+} from '@anesthesia/physiology/oxygen-delivery';
 
 const HEALTHY_ADULT: PatientProfile = {
   hemodynamics: {
@@ -64,6 +67,28 @@ function run(
 }
 
 describe('Requirement: Canonical Patient State Vector', () => {
+  it('calculates oxygen content and delivery from hemoglobin, saturation, tension, and flow', () => {
+    expect(arterialOxygenContentMlPerDl(10, 100, 100)).toBeCloseTo(13.7, 8);
+    expect(oxygenDeliveryMlPerMin({
+      cardiacOutputLPerMin: 5, hemoglobinGPerDl: 10, spo2Percent: 100, pao2MmHg: 100,
+    })).toBeCloseTo(685, 8);
+  });
+
+  it('isolates the packed-red-cell hemoglobin change from simultaneous plasma leak', () => {
+    const patient = new VirtualPatient(HEALTHY_ADULT, createRng(20));
+    const result = patient.tick(NO_DRUGS, VENTILATED, {
+      ...QUIET, capillaryLeakMl: 100, packedRedCellVolumeMl: 300,
+      packedRedCellHemoglobinG: 60,
+    });
+    expect(result.transfusion?.volumeMl).toBe(300);
+    expect(result.transfusion?.hemoglobinG).toBe(60);
+    expect(result.transfusion?.hemoglobinAfterGPerDl)
+      .toBeGreaterThan(result.transfusion?.hemoglobinBeforeGPerDl ?? Infinity);
+    expect(result.state.hemoglobinGPerDl).toBeCloseTo(
+      result.transfusion?.hemoglobinAfterGPerDl ?? 0, 8,
+    );
+  });
+
   it('Scenario: Every state variable is typed and bounded', () => {
     for (const [name, spec] of Object.entries(FIELDS)) {
       expect(spec.unit, `${name} needs a unit`).toBeDefined();

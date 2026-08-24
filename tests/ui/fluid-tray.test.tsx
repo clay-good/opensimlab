@@ -25,6 +25,7 @@ describe('Requirement: The fluids tray performs a real learner action', () => {
 
   it('requires confirmation and sends the selected product and volume', () => {
     const onFluid = vi.fn();
+    const onBloodProduct = vi.fn();
     act(() => {
       root.render(createElement(ActionCockpit, {
         scenario: ROUTINE_INDUCTION,
@@ -53,6 +54,7 @@ describe('Requirement: The fluids tray performs a real learner action', () => {
         onInfusion: () => {},
         onHypnoticLine: () => {},
         onFluid,
+        onBloodProduct,
         onVentilator: () => {},
         onLaryngoscopy: () => {},
         onAirwayManeuver: () => {},
@@ -74,5 +76,12 @@ describe('Requirement: The fluids tray performs a real learner action', () => {
     act(() => button('Give fluid')!.click());
     expect(onFluid).toHaveBeenCalledWith('balanced-crystalloid', 1000);
     expect(container.textContent).toContain('Accepted total: 750 mL');
+
+    expect(container.textContent).toContain('1 unit adds 300 mL and 60 g hemoglobin');
+    expect(container.textContent).toContain('Accepted: 0 units · 0 mL');
+    act(() => button('2 units')!.click());
+    expect(onBloodProduct).not.toHaveBeenCalled();
+    act(() => button('Give packed red cells')!.click());
+    expect(onBloodProduct).toHaveBeenCalledWith('packed-red-blood-cells', 2);
   });
 });

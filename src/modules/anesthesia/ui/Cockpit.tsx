@@ -89,6 +89,7 @@ const DEFAULT_HYPNOTIC_LINE = { connected: true, inspected: false } as const;
 const DEFAULT_RESUSCITATION = {
   epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
   lastEpinephrineTick: null, crystalloidTotalMl: 0,
+  packedRedBloodCellUnits: 0, bloodProductTotalMl: 0,
   dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
   lastDantroleneTick: null, activeCooling: false,
   chestCompressionsActive: false,
@@ -505,6 +506,9 @@ export function Cockpit({
           onInfusion={(drugId, rate, unit) => session.act({ type: 'infusion', payload: { drugId, rate, unit } })}
           onHypnoticLine={(action) => session.act({ type: 'hypnotic-line', payload: { action } })}
           onFluid={(fluidId, volumeMl) => session.act({ type: 'fluid', payload: { fluidId, volumeMl } })}
+          onBloodProduct={(productId, units) => session.act({
+            type: 'blood-product', payload: { productId, units },
+          })}
           onVentilator={(settings) => session.act({ type: 'ventilator', payload: settings as never })}
           onLaryngoscopy={(technique) => session.act({ type: 'laryngoscopy', payload: { technique } })}
           onAirwayManeuver={(maneuver) => session.act({ type: 'airway-maneuver', payload: { maneuver } })}

@@ -2,9 +2,10 @@
  * Unexpected intraoperative hemorrhage: recognize volume loss and temporize it.
  *
  * The patient begins compensated, then loses volume rapidly when the abdomen is
- * opened. Balanced crystalloid can temporarily improve circulating volume, but
- * this case intentionally stops short of blood products or a massive-
- * transfusion protocol because those capabilities are not modeled yet.
+ * opened. Balanced crystalloid can temporarily improve circulating volume, and
+ * a bounded adult packed-red-cell action can restore volume and hemoglobin mass.
+ * Compatibility, coagulation, laboratory guidance, and a massive-transfusion
+ * protocol remain outside this case.
  */
 
 import type { Scenario } from './types';
@@ -52,11 +53,14 @@ export const UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE: Scenario = {
       sources: [
         'Advanced Trauma Life Support, American College of Surgeons, 10th edition',
         'Mutschler M, et al. Injury 2014;45 Suppl 3:S35-8',
+        'AABB Circular of Information for the Use of Human Blood and Blood Components, June 2024',
+        'JPAC Guidelines for the Blood Transfusion Services, current Chapter 7.3',
         'ASA Standards for Basic Anesthetic Monitoring',
       ],
     },
     limitations: [
       'crystalloid-volume-model',
+      'prbc-fixed-unit-model',
       'no-coagulopathy',
       'no-team-or-communication',
       'bolus-injection-is-instantaneous',

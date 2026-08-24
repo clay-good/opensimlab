@@ -102,12 +102,13 @@ So that reviewers spend their attention on what this review is for:
 - The full-stomach case does not model regurgitation, aspiration, or cricoid pressure.
 - Fresh gas flow scales a calibrated volatile wash-in/washout time constant; there is no circuit,
   uptake, rebreathing, or agent-consumption model.
-- Balanced crystalloid uses a fixed-retention teaching model. There are no blood products,
-  coagulation effects, laboratory guidance, or resuscitation actions.
+- Balanced crystalloid uses a fixed-retention teaching model. Adult packed red cells use fixed
+  300 mL and 60 g hemoglobin units with a two-unit cap. Compatibility, reactions, coagulation,
+  laboratory guidance, other products, and a massive-transfusion protocol remain absent.
 - Most adult scenarios use propofol and remifentanil; the pediatric case stocks propofol only,
   and the rapid-sequence and awareness-risk cases add rocuronium. The
-  hemorrhage case covers recognition and initial crystalloid temporization, not a
-  massive-transfusion protocol.
+  hemorrhage case covers recognition, initial crystalloid temporization, and bounded packed-red-cell
+  physiology, not a massive-transfusion protocol.
 - The TIVA-line case models a binary propofol delivery interruption while the commanded pump rate
   continues. It does not model consciousness, memory, distress, partial extravasation, pump
   pressure alarms, or a processed EEG signal.
