@@ -9,12 +9,12 @@ changed, and which release carried the fix.
 
 ## How to report something
 
-Open an issue on the [public repository](https://github.com/clay-good/opensimlab/issues).
-Every content item in the application has a "report a clinical issue" control that opens
-one with the item id, the content version and the application version already filled in.
-You do not need an account with this project.
+Public issue intake and the shared in-product report control are not available yet because the
+repository remains private and the report service has not been implemented. Invited clinical
+reviewers can use `/content-review`, export their local notes file, and return it through their
+existing private invitation channel. Do not include real patient or learner information.
 
-Reports are acknowledged within five working days. An error that could teach an unsafe
+Once public intake ships, reports are acknowledged within five working days. An error that could teach an unsafe
 practice is triaged as urgent and the affected content is disabled in the next build
 regardless of the release schedule.
 

@@ -72,12 +72,13 @@ register and every item citing the old version is queued for re-review.
 
 ## Reporting a clinical inaccuracy
 
-A "report a clinical issue" control is reachable from every content item. It pre-fills the
-item id, the content version and the application version, and opens a public issue on the
-repository. **You do not need an account with this project.**
+The shared in-product report control and isolated report service are specified but **not yet
+implemented**. The repository is also still private, so there is no public issue intake today.
+Clinician reviewers with repository access can record claim-specific notes on `/content-review`,
+export one local file, and send it through the private channel by which they were invited.
 
-Reports are acknowledged within five working days. Corrections are appended permanently to
-[`CORRECTIONS.md`](CORRECTIONS.md) and never deleted or rewritten.
+Once public intake ships, usable reports will be acknowledged within five working days. Corrections
+are appended permanently to [`CORRECTIONS.md`](CORRECTIONS.md) and never deleted or rewritten.
 
 An error that could teach an unsafe practice is triaged as urgent: the affected content is
 disabled in the next build regardless of the release schedule, and the corrections log
@@ -85,8 +86,10 @@ records the timeline.
 
 ## Auditing this from outside
 
-Everything above lives in this repository in machine-readable form, so an institution can
-audit it without contacting anyone:
+The repository is intended to become the public source of truth, but it remains private today. The
+current records are internally auditable and the public-readiness result is recorded in
+[`docs/public-readiness-audit.md`](docs/public-readiness-audit.md). Do not infer public availability
+from the planned architecture.
 
 | Record | Where |
 | --- | --- |

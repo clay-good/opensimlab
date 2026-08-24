@@ -32,16 +32,14 @@ applicability envelope. There is no external dataset dependency, nothing vendore
 nothing fetched at build or runtime. Tests assert published reference values so a mistyped
 digit fails immediately.
 
-**Nothing leaves the device.** No login, no accounts, no server, no analytics, no
-telemetry. Progress, transcripts, and debriefs live in the browser on that device. Sharing
-happens only through a file the learner exports deliberately.
+**Practice stays on the device.** No login, accounts, analytics, or telemetry. Progress,
+transcripts, reflections, tutoring, and debriefs stay in the browser. The current build sends
+nothing; a future report service may receive only a report the user previews and explicitly sends.
 
-**Every clinical claim is signed, sourced, and correctable.** A named editorial board of
-credentialed clinicians reviews every scenario, protocol, drug card, and explainer, with
-declared competing interests and a re-review date. Crisis protocols trace to their issuing
-body — MHAUS, ASRA, ASA. Physiology is checked against published benchmarks as automated
-tests. What the simulator does *not* model is published as a limitations register, and
-mistakes go into a permanent public corrections log.
+**Clinical claims are sourced, gated, and correctable.** The editorial board is currently empty,
+so no clinical content is signed and the release gate says so. Crisis protocols trace to their
+issuing bodies, physiology is checked against published benchmarks, limitations are public, and
+confirmed mistakes remain in a permanent corrections log.
 
 ## The specification
 
@@ -204,6 +202,10 @@ does not model examination, tube or circuit checks, suction, HME or nebulizer de
 drugs, team performance, or individualized response.
 
 ## Running it
+
+Contributions follow [CONTRIBUTING.md](CONTRIBUTING.md). Clinical authors should begin with the
+[scenario author guide](docs/scenario-author-guide.md) and
+[evidence brief](docs/evidence-brief.md); security concerns follow [SECURITY.md](SECURITY.md).
 
 Requires Node.js 22.13+ on the 22.x line, or Node.js 24+.
 

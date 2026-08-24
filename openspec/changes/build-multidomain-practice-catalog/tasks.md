@@ -24,7 +24,7 @@ credited toward the catalog until every item in the completion contract passes.
 
 - [x] Complete secret, license, private-data, history, dependency, and contributor-identity audits
   before changing repository visibility.
-- [ ] Add public contribution, security, code-of-conduct, governance, reviewer, scenario-author,
+- [x] Add public contribution, security, code-of-conduct, governance, reviewer, scenario-author,
   evidence-brief, correction, and organizational-endorsement documentation.
 - [ ] Add issue and pull-request templates that require scope, source locators, tests, limitations,
   maturity effect, and reviewer-domain impact.
