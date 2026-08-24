@@ -70,15 +70,19 @@ describe('Requirement: Packed red cells restore hemoglobin and calculated oxygen
 
   it('delivers two fixed units once and records the physiological change', () => {
     const sim = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
-    const before = sim.step().state;
-    sim.apply(action());
+    advance(sim, 301);
+    const control = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
+    advance(control, 301);
+    sim.apply({ ...action(), tick: sim.tick });
     const treated = sim.step();
+    const untreated = control.step();
     const next = sim.step();
+    const untreatedNext = control.step();
     const event = treated.events.find((entry) => entry.category === 'blood-product');
 
-    expect(treated.state.bloodVolumeMl - before.bloodVolumeMl).toBeCloseTo(600, 5);
-    expect(treated.state.hemoglobinGPerDl).toBeGreaterThan(before.hemoglobinGPerDl);
-    expect(next.state.bloodVolumeMl).toBeCloseTo(treated.state.bloodVolumeMl, 5);
+    expect(treated.state.bloodVolumeMl - untreated.state.bloodVolumeMl).toBeCloseTo(600, 5);
+    expect(treated.state.hemoglobinGPerDl).toBeGreaterThan(untreated.state.hemoglobinGPerDl);
+    expect(next.state.bloodVolumeMl - untreatedNext.state.bloodVolumeMl).toBeCloseTo(600, 5);
     expect(treated.equipment.resuscitation.packedRedBloodCellUnits).toBe(2);
     expect(treated.equipment.resuscitation.bloodProductTotalMl).toBe(600);
     expect(event?.data?.volumeMl).toBe(600);
@@ -95,28 +99,42 @@ describe('Requirement: Packed red cells restore hemoglobin and calculated oxygen
     ['infinite units', Infinity, 'packed-red-blood-cells'],
     ['too many units', 3, 'packed-red-blood-cells'],
   ])('rejects %s without mutation', (_label, units, productId) => {
-    const sim = engine();
-    const before = sim.step().state;
-    sim.apply(action(units, productId));
+    const sim = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
+    advance(sim, 301);
+    const control = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
+    advance(control, 301);
+    sim.apply({ ...action(units, productId), tick: sim.tick });
     const result = sim.step();
-    expect(result.state.bloodVolumeMl).toBeCloseTo(before.bloodVolumeMl, 8);
-    expect(result.state.hemoglobinGPerDl).toBeCloseTo(before.hemoglobinGPerDl, 8);
+    const untreated = control.step();
+    expect(result.state.bloodVolumeMl).toBeCloseTo(untreated.state.bloodVolumeMl, 8);
+    expect(result.state.hemoglobinGPerDl).toBeCloseTo(untreated.state.hemoglobinGPerDl, 8);
     expect(result.events.some((entry) => entry.eventId.startsWith('bad-blood-product-'))).toBe(true);
   });
 
   it('enforces the cumulative two-unit boundary', () => {
-    const sim = engine();
+    const sim = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
+    advance(sim, 301);
+    sim.apply({ ...action(1), tick: sim.tick });
     sim.step();
-    sim.apply(action(1));
-    sim.step();
-    sim.apply(action(1));
+    sim.apply({ ...action(1), tick: sim.tick });
     sim.step();
     const before = sim.equipment().resuscitation;
-    sim.apply(action(1));
+    sim.apply({ ...action(1), tick: sim.tick });
     const refused = sim.step();
     expect(before.packedRedBloodCellUnits).toBe(2);
     expect(refused.equipment.resuscitation.packedRedBloodCellUnits).toBe(2);
     expect(refused.events.some((entry) => entry.eventId.startsWith('bad-blood-product-'))).toBe(true);
+  });
+
+  it('rejects packed red cells before modeled hemorrhage is active', () => {
+    const sim = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
+    sim.step();
+    sim.apply({ ...action(2), tick: sim.tick });
+    const refused = sim.step();
+    expect(refused.equipment.resuscitation.packedRedBloodCellUnits).toBe(0);
+    expect(refused.events.some(
+      (entry) => entry.message.includes('only while modeled hemorrhage is active'),
+    )).toBe(true);
   });
 
   it('replays the same packed-red-cell trajectory deterministically', () => {

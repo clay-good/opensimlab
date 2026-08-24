@@ -547,8 +547,8 @@ function FluidTray({
           )}
         </section>
       ))}
-      {BLOOD_PRODUCTS.filter((product) => product.kind === 'red-cells'
-        || (hemorrhageAvailable && coagulationPanelReported)).map((product) => (
+      {BLOOD_PRODUCTS.filter((product) => hemorrhageAvailable
+        && (product.kind === 'red-cells' || coagulationPanelReported)).map((product) => (
         <section className="syringe" key={product.id}>
           <div className="syringe__name">{product.name}</div>
           <p className="field__hint">

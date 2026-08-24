@@ -846,15 +846,16 @@ export class AnesthesiaEngine {
           || units < 1 || !permittedUnits
           || totalForProduct + units > product.maxUnitsTotal
           || this.scenario.patient.ageYears < 18
-          || (product.kind === 'plasma' && (!hemorrhageActive || !this.coagulationPanelReported));
+          || !hemorrhageActive
+          || (product.kind === 'plasma' && !this.coagulationPanelReported);
         if (invalid) {
           this.log('warning', 'blood-product', `bad-blood-product-${this.currentTick}`,
             !product
               ? `This build does not stock a blood product called "${productId}". Nothing was given.`
               : this.scenario.patient.ageYears < 18
                 ? 'Blood products are not stocked in this bounded pediatric induction case.'
-                : product.kind === 'plasma' && !hemorrhageActive
-                  ? 'Fresh frozen plasma is stocked only while modeled hemorrhage is active.'
+                : !hemorrhageActive
+                  ? 'Blood products are stocked only while modeled hemorrhage is active.'
                   : product.kind === 'plasma' && !this.coagulationPanelReported
                     ? 'Request the bounded coagulation panel before selecting fresh frozen plasma.'
                   : `${product.name} requires one listed whole-unit preset and no more than ${product.maxUnitsTotal} units cumulatively. Nothing was given.`);

@@ -80,9 +80,11 @@ describe('Requirement: The fluids tray performs a real learner action', () => {
     expect(container.textContent).toContain('25% remains intravascular');
     expect(container.textContent).toContain('Accepted total: 750 mL');
     expect(container.textContent).not.toContain('Fresh frozen plasma');
+    expect(container.textContent).not.toContain('Packed red blood cells');
     expect(container.textContent).not.toContain('Coagulation panel');
     act(() => root.render(renderCockpit(true)));
     expect(container.textContent).toContain('Coagulation panel');
+    expect(container.textContent).toContain('Packed red blood cells');
     expect(container.textContent).not.toContain('Fresh frozen plasma');
     act(() => button('Request panel')!.click());
     expect(onCoagulationLabs).toHaveBeenCalledOnce();

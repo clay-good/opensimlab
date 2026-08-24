@@ -203,7 +203,7 @@ The engine SHALL track circulating volume and hemoglobin, apply the differing vo
 
 #### Scenario: Packed red cells restore oxygen delivery
 
-- **WHEN** two units of packed red cells are given in the same state
+- **WHEN** two units of packed red cells are given during modeled active hemorrhage in the same state
 - **THEN** hemoglobin and calculated oxygen delivery both rise, and the event log records the volume and the hemoglobin change
 
 #### Scenario: Crystalloid dilutes a bounded coagulation state

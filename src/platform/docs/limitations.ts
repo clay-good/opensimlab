@@ -505,7 +505,8 @@ export const LIMITATIONS: readonly Limitation[] = [
     simplification: 'An adult action adds exactly 300 mL and 60 g hemoglobin per unit on the next '
       + '100 ms tick, with a two-unit cumulative cap. Product variation, delivery time, storage, '
       + 'warming, compatibility, crossmatch, reactions, calcium, and electrolytes are absent. '
-      + 'The hemorrhage case models fixed-unit plasma separately; packed red cells themselves do not restore clotting factors.',
+      + 'The control is stocked only while modeled hemorrhage is active. The hemorrhage case models '
+      + 'fixed-unit plasma separately; packed red cells themselves do not restore clotting factors.',
     whereItMisleads: 'Choosing, preparing, checking, timing, monitoring, or responding to a real transfusion.',
     correctUnderstanding: 'Real packed-red-cell components vary, require compatibility and bedside '
       + 'checks, are administered over time, and can cause serious reactions including TACO and TRALI.',

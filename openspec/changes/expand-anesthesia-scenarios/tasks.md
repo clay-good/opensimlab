@@ -214,7 +214,8 @@
 
 ## Slice 14: bounded adult packed-red-cell foundation
 
-- [x] Add fixed 300 mL and 60 g hemoglobin adult packed-red-cell units with a two-unit cumulative cap.
+- [x] Add fixed 300 mL and 60 g hemoglobin adult packed-red-cell units during active modeled
+  hemorrhage, with a two-unit cumulative cap.
 - [x] Add retained volume and hemoglobin mass inside physiology and calculate oxygen delivery from
   cardiac output, hemoglobin, saturation, and arterial oxygen tension.
 - [x] Record accepted units, volume, isolated hemoglobin change, calculated oxygen-delivery change,
