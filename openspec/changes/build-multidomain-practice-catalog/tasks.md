@@ -94,6 +94,9 @@ credited toward the catalog until every item in the completion contract passes.
   context now reaches the debrief and a suggestion may be dismissed locally for exactly 7 days.
   Persisted attempt history remains tracked by the next task.
 - [ ] Add private local practice history, self-comparison, targeted repetition, and export/import.
+  Bounded exact-version attempt summaries, objective-word self-comparison, goal-path continuation,
+  and atomic export/import/erase are implemented locally. Replay-safe targeted decision-point
+  repetition remains.
 - [ ] Prohibit leaderboards, cross-learner percentiles, streak loss, public performance, points for
   irrelevant speed, and tutor network calls through tests and copy review.
 - [ ] Verify every tutor observation and claimed outcome against deterministic expert, common-error,

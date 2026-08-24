@@ -6,7 +6,7 @@
  * directive feedback is the framework's core sequence.
  */
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, Button, CitationLink, Panel } from '@platform/ui';
 import { Timeline } from '@platform/ui';
 import { formatElapsed, TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
@@ -24,6 +24,12 @@ import { getFluid, MAX_FLUID_BOLUS_ML } from '@anesthesia/content/fluids';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { MaturityMarker } from '@platform/governance/MaturityMarker';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
+import {
+  appendPracticeAttempt,
+  loadPracticeHistory,
+  objectiveChanges,
+  previousScenarioAttempt,
+} from '@anesthesia/catalog/practice-history';
 
 export interface DebriefProps {
   readonly scenario: Scenario;
@@ -38,12 +44,15 @@ export interface DebriefProps {
   readonly onExportTranscript: () => void;
   readonly onReplayScenario: () => void;
   readonly nextRecommendation?: GoalRecommendationProps;
+  readonly completedAt?: () => string;
 }
 
 export function Debrief(props: DebriefProps) {
   const [phase, setPhase] = useState<PearlsPhase>('reactions');
   const [account, setAccount] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [priorAttempts] = useState(() => loadPracticeHistory());
+  const historySaved = useRef(false);
 
   const episodes = useMemo(() => [
     ...findEpisodes(props.history, {
@@ -95,6 +104,27 @@ export function Debrief(props: DebriefProps) {
     .filter((entry) => entry.severity !== 'info')
     .map((entry) => ({ tick: entry.tick, severity: entry.severity, label: entry.message }));
   const totalTicks = props.history[props.history.length - 1]?.tick ?? 1;
+  const previousAttempt = previousScenarioAttempt(
+    priorAttempts, props.scenario.metadata.id, props.scenario.metadata.version,
+  );
+  const changes = objectiveChanges(previousAttempt, findings);
+
+  useEffect(() => {
+    if (phase !== 'summary' || historySaved.current) return;
+    historySaved.current = true;
+    appendPracticeAttempt({
+      schemaVersion: 1,
+      scenarioId: props.scenario.metadata.id,
+      contentVersion: props.scenario.metadata.version,
+      goalId: props.nextRecommendation?.pathId ?? null,
+      completedAt: props.completedAt?.() ?? new Date().toISOString(),
+      simulatedSeconds: totalTicks / TICKS_PER_SECOND,
+      objectives: findings.map((finding) => ({
+        objectiveId: finding.objectiveId, outcome: finding.outcome,
+      })),
+    });
+  }, [phase, props.scenario.metadata.id, props.scenario.metadata.version,
+    props.nextRecommendation?.pathId, props.completedAt, totalTicks, findings]);
 
   return (
     <>
@@ -257,7 +287,38 @@ export function Debrief(props: DebriefProps) {
           </ul>
           <p className="reading__aside">
             There is no overall score, no pass or fail, and no comparison with anyone else. Nothing
-            about this session has left the device, so there is nothing to compare it against.
+            about this session has left the device. Any comparison below uses only your own prior
+            bounded attempt summary on this device.
+          </p>
+
+          <h2>Your own prior attempt</h2>
+          {previousAttempt ? (
+            changes.length > 0 ? (
+              <ul>
+                {changes.map((change) => {
+                  const objective = props.scenario.metadata.objectives.find(
+                    (entry) => entry.id === change.objectiveId,
+                  );
+                  return (
+                    <li key={change.objectiveId}>
+                      <strong>{objective?.statement ?? change.objectiveId}</strong>
+                      <br />
+                      <span className="field__hint">
+                        Previously {outcomeWord(change.previous).toLowerCase()}; now{' '}
+                        {outcomeWord(change.current).toLowerCase()}.
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : <p>The objective outcomes are unchanged from your last attempt at this exact content version.</p>
+          ) : (
+            <p>This is the first bounded attempt summary stored for this exact content version.</p>
+          )}
+          <p className="field__hint">
+            Stored locally: scenario and content version, selected public goal, simulated duration,
+            completion time, and objective outcome words. No reflection, action list, physiology
+            trace, identity, or overall score is stored here.
           </p>
 
           <h2>Where this goes next</h2>

@@ -10,7 +10,7 @@
 export interface LocalDataItem {
   readonly key: string;
   readonly name: string;
-  readonly kind: 'preference' | 'acknowledgement' | 'transcript' | 'recommendation';
+  readonly kind: 'preference' | 'acknowledgement' | 'transcript' | 'recommendation' | 'history';
   readonly purpose: string;
 }
 
@@ -56,6 +56,12 @@ export const LOCAL_DATA_ITEMS: readonly LocalDataItem[] = [
     name: 'Hidden practice suggestions',
     kind: 'recommendation',
     purpose: 'Goal-path suggestions you hid, with only the local 7-day expiry for each public path id.',
+  },
+  {
+    key: 'opensimlab.practice-history',
+    name: 'Private practice history',
+    kind: 'history',
+    purpose: 'Up to 50 bounded attempt summaries: scenario/version, public goal, simulated duration, completion time, and objective outcome words.',
   },
   {
     key: 'opensimlab.transcripts',

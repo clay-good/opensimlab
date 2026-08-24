@@ -154,7 +154,7 @@ describe('Requirement: Local Storage Is Small, Inspectable, And Erasable', () =>
   it('stores only preferences, the acknowledgement, and transcripts', async () => {
     const { LOCAL_DATA_ITEMS } = await import('@platform/offline/local-data');
     for (const item of LOCAL_DATA_ITEMS) {
-      expect(['preference', 'acknowledgement', 'transcript', 'recommendation']).toContain(item.kind);
+      expect(['preference', 'acknowledgement', 'transcript', 'recommendation', 'history']).toContain(item.kind);
       expect(item.purpose.length).toBeGreaterThan(15);
     }
     // Every key the application writes is declared here, so the data panel can

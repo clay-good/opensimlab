@@ -6,7 +6,8 @@
  * a document cannot claim something the code does not do.
  */
 
-import { Badge, CitationLink, Panel, SiteBar } from '@platform/ui';
+import { useState } from 'react';
+import { Badge, Button, CitationLink, Panel, SiteBar } from '@platform/ui';
 import { buildValidationReport } from '@platform/docs/validation-report';
 import { EDITORIAL_BOARD, HONEST_STATUS, reviewableItems } from '@platform/governance/records';
 import { reportCoverage } from '@platform/governance/review-gate';
@@ -16,6 +17,13 @@ import { VERIFIED_CONSTANTS, confirmedCount } from '@platform/docs/verified-cons
 import { PRIVACY_CLAIMS } from '@platform/docs/privacy-claims';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { routeFor } from './routes';
+import {
+  importPracticeHistory,
+  loadPracticeHistory,
+  practiceHistoryExport,
+  PRACTICE_HISTORY_KEY,
+} from '@anesthesia/catalog/practice-history';
+import { eraseOne } from '@platform/offline/local-data';
 
 /**
  * What each gate verdict means, said once for the whole group rather than
@@ -298,6 +306,18 @@ function LimitationsBody() {
 }
 
 function PrivacyBody() {
+  const [attemptCount, setAttemptCount] = useState(() => loadPracticeHistory().length);
+  const [historyMessage, setHistoryMessage] = useState('');
+  const [historyImport, setHistoryImport] = useState('');
+  const downloadHistory = () => {
+    const blob = new Blob([practiceHistoryExport(loadPracticeHistory())], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'opensimlab-practice-history.json';
+    anchor.click();
+    URL.revokeObjectURL(url);
+  };
   return (
     <>
       <p>
@@ -310,6 +330,7 @@ function PrivacyBody() {
         <li>Your preferences, in this browser&apos;s local storage on this device.</li>
         <li>Your acknowledgement of the not-for-clinical-use statement, in the same place.</li>
         <li>The expiry of any goal-path suggestion you hide for 7 days.</li>
+        <li>Your newest 50 bounded practice-attempt summaries, in the same place.</li>
         <li>Session transcripts, if you save them, in the same place.</li>
       </ul>
       <p>Nothing else, and nothing anywhere else.</p>
@@ -319,6 +340,52 @@ function PrivacyBody() {
         Nothing, unless you deliberately export a file and send it somewhere yourself. There is no
         upload, no share link, and no cloud destination anywhere in the application.
       </p>
+
+      <h2>Your private practice history</h2>
+      <p>
+        <strong>{attemptCount}</strong> bounded {attemptCount === 1 ? 'attempt summary is' : 'attempt summaries are'} stored on this device.
+        Each contains only the scenario and content version, selected public goal, simulated
+        duration, completion time, and objective outcome words.
+      </p>
+      <p className="field__hint">
+        No reflection, action list, physiology trace, patient data, identity, or overall score is
+        included. The newest 50 summaries are kept; older ones fall away locally.
+      </p>
+      <label className="field" htmlFor="practice-history-import">
+        <span className="field__label">Practice-history JSON to import</span>
+        <textarea
+          id="practice-history-import"
+          aria-label="Practice-history JSON to import"
+          className="field__input"
+          rows={5}
+          value={historyImport}
+          onChange={(event) => setHistoryImport(event.target.value)}
+          placeholder="Paste the contents of an Open Sim Lab practice-history export"
+        />
+        <span className="field__hint">Import is atomic: invalid or oversized JSON changes nothing.</span>
+      </label>
+      <div className="phase-nav">
+        <Button onClick={downloadHistory}>Export practice history</Button>
+        <Button onClick={() => {
+          try {
+            const history = importPracticeHistory(historyImport);
+            setAttemptCount(history.length);
+            setHistoryImport('');
+            setHistoryMessage(`Imported. ${history.length} bounded attempt summaries are now stored.`);
+          } catch (error) {
+            setHistoryMessage(error instanceof Error ? error.message : 'Could not import that JSON.');
+          }
+        }}>Import practice history</Button>
+        <Button variant="danger" onClick={() => {
+          if (!confirm('Erase all private practice history from this device? This cannot be undone unless you exported it first.')) return;
+          try { eraseOne(localStorage, PRACTICE_HISTORY_KEY); } catch { /* Storage may be blocked. */ }
+          setAttemptCount(0);
+          setHistoryMessage('Private practice history erased from this device.');
+        }}>
+          Erase practice history
+        </Button>
+      </div>
+      {historyMessage && <p role="status" className="field__hint">{historyMessage}</p>}
 
       <h2>What the host necessarily sees</h2>
       <p>

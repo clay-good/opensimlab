@@ -136,6 +136,12 @@ limits; selection stays in the public URL, locks nothing, and explains the first
 That goal follows the learner into debrief, where one next rehearsal is suggested with exact maturity
 and a local-only “hide for 7 days” control. The stored dismissal contains only a public path ID and
 expiry; it never contains performance, reflection, identity, or transcript data.
+The debrief also keeps at most 50 private attempt summaries on the device. Each records only the
+exact scenario and content version, selected public goal, simulated duration, completion time, and
+objective outcome words. It can compare those words with the learner's own prior attempt at that
+exact version and continue the selected path; it never stores reflections, actions, physiology,
+identity, or an overall score. `/privacy` makes that bounded history exportable, importable, and
+independently erasable.
 
 ### What gets built first
 

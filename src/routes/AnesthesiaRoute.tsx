@@ -36,8 +36,8 @@ import {
   pathMinutes,
   preparationPath,
   recommendNextScenario,
-  recommendAfterScenario,
 } from '@anesthesia/catalog/preparation-paths';
+import { completedScenarioIds, loadPracticeHistory } from '@anesthesia/catalog/practice-history';
 
 /**
  * The scenario a path names.
@@ -231,7 +231,9 @@ export function AnesthesiaRoute({ path }: { path: string }) {
     const internals = sessionInternals();
     const nextRecommendation = selectedGoal === 'all' ? undefined : (() => {
       const goal = preparationPath(selectedGoal);
-      const next = recommendAfterScenario(goal, scenariosByDifficulty(), scenario.metadata.id);
+      const completed = completedScenarioIds(loadPracticeHistory());
+      completed.add(scenario.metadata.id);
+      const next = recommendNextScenario(goal, scenariosByDifficulty(), completed);
       return {
         pathId: goal.id, pathTitle: goal.title,
         scenario: next.scenario, reason: next.reason,
