@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 21,
+  "scenarioCount": 22,
   "playableScenarioCount": 0,
   "scenarios": [
     {
@@ -755,6 +755,42 @@
           "status": "missing",
           "evidence": [
             "No version-bound state-space-verification record exists for circle-system-rebreathing 0.1.0."
+          ]
+        }
+      ],
+      "playable": false
+    },
+    {
+      "scenarioId": "routine-inhalational-maintenance",
+      "contentVersion": "0.1.0",
+      "completionComplete": false,
+      "qualityRecords": [
+        {
+          "kind": "training-value",
+          "status": "missing",
+          "evidence": [
+            "No version-bound training-value record exists for routine-inhalational-maintenance 0.1.0."
+          ]
+        },
+        {
+          "kind": "authored-defaults",
+          "status": "missing",
+          "evidence": [
+            "No version-bound authored-defaults record exists for routine-inhalational-maintenance 0.1.0."
+          ]
+        },
+        {
+          "kind": "scenario-hazard",
+          "status": "missing",
+          "evidence": [
+            "No version-bound scenario-hazard record exists for routine-inhalational-maintenance 0.1.0."
+          ]
+        },
+        {
+          "kind": "state-space-verification",
+          "status": "missing",
+          "evidence": [
+            "No version-bound state-space-verification record exists for routine-inhalational-maintenance 0.1.0."
           ]
         }
       ],

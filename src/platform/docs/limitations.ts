@@ -87,7 +87,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'depression and blunt the baroreflex, which is why volatile hypotension keeps falling '
       + 'until the vaporizer is turned down, and why the elderly and the hypovolaemic tolerate '
       + 'far less agent than a fit young adult.',
-    briefIn: [],
+    briefIn: ['routine-inhalational-maintenance'],
   },
   {
     id: 'hypoxic-collapse-is-a-teaching-model',
@@ -189,7 +189,7 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Opioids blunt the response to stimulation far more than they produce '
       + 'unconsciousness. An opioid-heavy technique with too little hypnotic is a recognised route '
       + 'to awareness, and this surface understates that risk.',
-    briefIn: ['awareness-under-paralysis'],
+    briefIn: ['awareness-under-paralysis', 'routine-inhalational-maintenance'],
   },
   {
     id: 'awareness-risk-is-not-consciousness-or-recall',
@@ -213,7 +213,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'monitor, especially while judging awareness risk.',
     correctUnderstanding: 'Processed EEG is one imperfect source of information interpreted '
       + 'alongside drug delivery, end-tidal agent where applicable, clinical context, and the patient.',
-    briefIn: ['awareness-under-paralysis'],
+    briefIn: ['awareness-under-paralysis', 'routine-inhalational-maintenance'],
   },
   {
     id: 'tiva-line-disconnection-is-a-teaching-model',
@@ -584,6 +584,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'shape volatile wash-in and washout. Here flow changes one teaching-model time constant only.',
     briefIn: [
       'routine-induction', 'early-malignant-hyperthermia-during-volatile-anesthesia',
+      'routine-inhalational-maintenance',
     ],
   },
   {
@@ -850,9 +851,23 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['circle-system-rebreathing'],
   },
   {
+    id: 'routine-maintenance-is-a-bounded-teaching-trajectory',
+    headline: 'The changing maintenance case is a fixed teaching trajectory, not an individualized anesthetic plan or dose recommendation.',
+    simplification: 'A fictional patient starts with fixed ventilation and volatile delivery, then '
+      + 'receives one scripted surgical-stimulus window. The expert transcript uses one '
+      + 'remifentanil infusion inside the US label range and stops it when that stimulus ends.',
+    whereItMisleads: 'Copying the starting volatile setting, expert infusion rate, timing, depth '
+      + 'range, or hemodynamic response into care of a real patient, or assuming every surgical '
+      + 'stimulus can be anticipated this precisely.',
+    correctUnderstanding: 'Maintenance anesthesia is individualized from the procedure, patient, '
+      + 'drug delivery, ventilation, monitoring, direct observation, and repeated reassessment. '
+      + 'The fixed values here exist only to make planning and reassessment reproducible.',
+    briefIn: ['routine-inhalational-maintenance'],
+  },
+  {
     id: 'initial-maintenance-state-is-not-an-individual-prediction',
     headline: 'The established maintenance setup is a scenario starting condition, not a patient-specific anesthetic plan.',
-    simplification: 'The case starts with a tracheal tube, volume-controlled breaths, 2% delivered '
+    simplification: 'The case starts with a tracheal tube, volume-controlled breaths, 1.6% delivered '
       + 'sevoflurane, 50% oxygen, and 1 L/min fresh-gas flow. It does not model the induction, '
       + 'intubation, tube confirmation, surgical stimulation, analgesia, or individualized maintenance choice that preceded it.',
     whereItMisleads: 'Using the starting settings as a recommended anesthetic, dose, ventilation '

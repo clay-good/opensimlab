@@ -378,6 +378,42 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
       'replace-exhausted-absorbent',
     ],
   },
+
+  // --- Routine inhalational maintenance ----------------------------------
+  {
+    scenarioId: 'routine-inhalational-maintenance',
+    frameworkId: 'nbcrna-nce', domainId: 'basic-principles',
+    objectiveIds: [
+      'maintain-bounded-depth', 'anticipate-surgical-stimulus',
+      'reassess-when-stimulus-falls',
+    ],
+  },
+  {
+    scenarioId: 'routine-inhalational-maintenance',
+    frameworkId: 'coa-standards', domainId: 'pharmacology-of-anesthetic-agents',
+    objectiveIds: [
+      'maintain-bounded-depth', 'anticipate-surgical-stimulus',
+      'reassess-when-stimulus-falls',
+    ],
+  },
+  {
+    scenarioId: 'routine-inhalational-maintenance',
+    frameworkId: 'coa-standards', domainId: 'clinical-decision-making',
+    objectiveIds: ['anticipate-surgical-stimulus', 'reassess-when-stimulus-falls'],
+  },
+  {
+    scenarioId: 'routine-inhalational-maintenance',
+    frameworkId: 'acgme-anesthesiology-milestones-2', domainId: 'pc-anesthetic-plan-and-conduct',
+    objectiveIds: [
+      'maintain-bounded-depth', 'anticipate-surgical-stimulus',
+      'reassess-when-stimulus-falls',
+    ],
+  },
+  {
+    scenarioId: 'routine-inhalational-maintenance',
+    frameworkId: 'acgme-anesthesiology-milestones-2', domainId: 'pc-pharmacologic-management',
+    objectiveIds: ['anticipate-surgical-stimulus', 'reassess-when-stimulus-falls'],
+  },
   {
     scenarioId: 'arterial-pressure-transducer-artifact',
     frameworkId: 'coa-standards', domainId: 'clinical-decision-making',

@@ -23,9 +23,12 @@ const BROWSER_LIMIT = 'This path rehearses screen-observable decisions and physi
 
 export const PREPARATION_PATHS: readonly PreparationPathDefinition[] = [
   {
-    id: 'first-lab', version: '0.1.0', title: 'My first simulation lab',
-    description: 'Build a calm foundation: prepare, induce, reassess, and respond to a common pressure change.',
-    scenarioIds: ['routine-induction', 'hypotension-after-induction', 'rapid-desaturation'],
+    id: 'first-lab', version: '0.2.0', title: 'My first simulation lab',
+    description: 'Build a calm foundation: prepare, induce, maintain, reassess, and respond to a common pressure change.',
+    scenarioIds: [
+      'routine-induction', 'routine-inhalational-maintenance',
+      'hypotension-after-induction', 'rapid-desaturation',
+    ],
     prerequisites: ['No prior simulator experience required.'],
     targetCompetencies: ['Preoxygenation', 'Induction sequencing', 'Early reassessment'],
     supportedRoles: ['Medical student', 'Resident', 'Nurse anesthesia learner'], limitations: BROWSER_LIMIT,
@@ -94,9 +97,12 @@ export const PREPARATION_PATHS: readonly PreparationPathDefinition[] = [
     supportedRoles: ['Medical student', 'Resident', 'Nurse anesthesia learner'], limitations: `${BROWSER_LIMIT} This development path currently contains one obstetric scenario.`,
   },
   {
-    id: 'medication-infusion-safety', version: '0.1.0', title: 'Medication and infusion safety',
-    description: 'Rehearse effect-site delay, paralysis, delivery failure, and toxicity as distinct medication risks.',
-    scenarioIds: ['routine-induction', 'rapid-sequence-induction', 'awareness-under-paralysis', 'local-anesthetic-systemic-toxicity'],
+    id: 'medication-infusion-safety', version: '0.2.0', title: 'Medication and infusion safety',
+    description: 'Rehearse effect-site delay, changing maintenance needs, paralysis, delivery failure, and toxicity as distinct medication risks.',
+    scenarioIds: [
+      'routine-induction', 'routine-inhalational-maintenance', 'rapid-sequence-induction',
+      'awareness-under-paralysis', 'local-anesthetic-systemic-toxicity',
+    ],
     prerequisites: ['Read syringe and infusion controls.'],
     targetCompetencies: ['Dose timing', 'Delivery-state inspection', 'Toxicity recognition'],
     supportedRoles: ['Medical student', 'Resident', 'Nurse anesthesia learner'], limitations: BROWSER_LIMIT,

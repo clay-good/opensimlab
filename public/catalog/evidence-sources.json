@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 67,
+  "sourceCount": 68,
   "sources": [
     {
       "id": "association-qrh-2023",
@@ -761,6 +761,17 @@
       "usedFor": "The reference the propofol drug card's induction and maintenance figures are checked against. The label gives 2 to 2.5 mg/kg for induction in ASA I-II adults under 65, and 50 to 100 micrograms/kg/min for maintenance after an initial 150 to 200.",
       "verifiedAgainst": "The DailyMed label text. Not version-pinned: a label is revised on the manufacturer's schedule and DailyMed serves whichever revision is current, so naming a year here would go stale silently.",
       "verifiedOn": "2026-08-20"
+    },
+    {
+      "id": "sevoflurane-us-label",
+      "authors": "United States Food and Drug Administration approved labelling",
+      "title": "Sevoflurane — prescribing information",
+      "publication": "Drugs@FDA",
+      "year": 2022,
+      "locator": "Dosage and Administration, Maintenance; Table 9, MAC values by age",
+      "usedFor": "The routine inhalational-maintenance boundary: sevoflurane is indicated for adult maintenance; the labeled usual surgical range is 0.5 to 3%; and MAC varies with age. The label does not define an individual target for the fictional patient.",
+      "verifiedAgainst": "FDA prescribing information, reference ID 4944925",
+      "verifiedOn": "2026-08-24"
     },
     {
       "id": "remifentanil-us-label",

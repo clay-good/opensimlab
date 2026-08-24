@@ -825,6 +825,19 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: CHECKED,
   },
   {
+    id: 'sevoflurane-us-label',
+    authors: 'United States Food and Drug Administration approved labelling',
+    title: 'Sevoflurane — prescribing information',
+    publication: 'Drugs@FDA',
+    year: 2022,
+    locator: 'Dosage and Administration, Maintenance; Table 9, MAC values by age',
+    usedFor: 'The routine inhalational-maintenance boundary: sevoflurane is indicated for adult '
+      + 'maintenance; the labeled usual surgical range is 0.5 to 3%; and MAC varies with age. '
+      + 'The label does not define an individual target for the fictional patient.',
+    verifiedAgainst: 'FDA prescribing information, reference ID 4944925',
+    verifiedOn: '2026-08-24',
+  },
+  {
     id: 'remifentanil-us-label',
     authors: 'United States Food and Drug Administration approved labelling',
     title: 'Remifentanil hydrochloride for injection — prescribing information',

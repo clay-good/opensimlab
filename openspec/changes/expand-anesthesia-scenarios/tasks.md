@@ -364,3 +364,19 @@
 - [ ] Add canister chemistry, channeling, desiccation, color indicators, valve failure, circuit
   pressure or compliance, commercial alarm behavior, physical exchange, full carbon-dioxide and
   acid-base physiology, teams, or individual outcome prediction.
+
+## Slice 25: routine inhalational maintenance
+
+- [x] Check in an evidence brief covering FDA sevoflurane labeling, age-adjusted MAC context,
+  remifentanil labeling, monitoring guidance, exact teaching fixtures, and unsafe inferences.
+- [x] Add a twenty-second authored scenario with an established tracheal tube, mechanical
+  ventilation, end-tidal volatile state, and a declared changing surgical-stimulus window.
+- [x] Reuse accepted remifentanil infusion actions and existing volatile, depth, stimulus, and
+  hemodynamic capabilities without adding a scenario-only physiological path.
+- [x] Score bounded depth, anticipatory infusion evidence and hemodynamic response, timely
+  quiet-phase reduction, and final recovery from accepted actions and recorded state.
+- [x] Add catalog assets, responsive browser inspection, curriculum and preparation-path coverage,
+  route SEO, expert/no-action/replay regressions, and final full-CI evidence.
+- [ ] Add pain, memory, consciousness, commercial processed-EEG behavior, individualized MAC,
+  real surgical nociception, injection-rate effects, neuromuscular blockade, emergence, or
+  patient-specific dosing.

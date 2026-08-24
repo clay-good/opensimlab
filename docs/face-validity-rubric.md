@@ -90,7 +90,8 @@ Reviewers run the routine induction themselves before answering.
 | B36 | In the dilutional-coagulopathy case, four fixed plasma units move PT ratio and fibrinogen in a plausible direction and magnitude, and a repeated panel displays the retained change | | |
 | B37 | Arterial transducer misleveling lowers only displayed MAP, over-damping changes only morphology, and an independent cuff continues to sample canonical pressure | | |
 | B38 | Exhausted absorbent raises the capnogram inspiratory baseline and end-tidal carbon dioxide; high fresh-gas flow reduces rebreathing and replacement produces plausible washout | | |
-| B39 | Overall: does this patient behave like a patient? | | |
+| B39 | During routine volatile maintenance, anticipatory modeled opioid delivery plausibly limits the declared stimulus response and reduction after stimulus offset allows pressure and depth to recover together | | |
+| B40 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -117,6 +118,9 @@ So that reviewers spend their attention on what this review is for:
 - Circle-system rebreathing uses fixed inspired-carbon-dioxide and washout time constants plus a
   linear fresh-gas bridge. It does not predict a real absorber, workstation, patient, exchange
   procedure, or valve fault, and its controls record screen intent rather than physical skill.
+- Routine inhalational maintenance uses one fixed surgical-stimulus window and one expert infusion
+  fixture. It does not prescribe a real anesthetic, measure consciousness, model pain or memory,
+  reproduce a commercial depth monitor, individualize MAC, or predict patient response.
 - Balanced crystalloid uses a fixed-retention teaching model. Adult packed red cells use fixed
   300 mL and 60 g hemoglobin units with a two-unit cap. A dilution-only factor/fibrinogen model,
   immediate teaching panel, and fixed 275 mL plasma units are available only while modeled

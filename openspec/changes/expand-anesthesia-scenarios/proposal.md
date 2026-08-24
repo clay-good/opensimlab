@@ -127,10 +127,13 @@ response, stopping before dysrhythmia treatment or cardiac arrest.
 - Add a twenty-first scenario with exhausted circle-system carbon-dioxide absorbent, a raised
   inspiratory capnogram baseline, a high-fresh-gas-flow bridge, ordered assessment and replacement
   intent, and confirmed washout without claiming workstation-specific technique or patient prediction.
+- Add a twenty-second scenario for routine inhalational maintenance with an established airway and
+  volatile state, a declared changing surgical stimulus, modeled opioid planning, and quiet-phase
+  reassessment without presenting any setting or infusion rate as an individualized prescription.
 
 ## Impact
 
-These 24 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+These 25 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
 awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. The seventh also closes the bounded
 pediatric-family gap without claiming a general pediatric patient model. The eighth reaches the
 minimum count of 12 scenarios and closes the bounded difficult-airway rescue gap. The ninth closes
@@ -164,3 +167,7 @@ The twenty-fourth adds the twenty-first authored scenario and closes the exhaust
 rebreathing gap with an elevated inspiratory baseline, actual modeled carbon-dioxide exposure,
 a bounded fresh-gas-flow bridge, ordered correction, and washout without claiming a complete
 workstation, acid-base, or individual patient model.
+The twenty-fifth adds the twenty-second authored scenario and the catalog's first deliberately
+non-crisis maintenance loop: plan before a declared stimulus, read end-tidal agent, predicted depth,
+heart rate, and pressure together, then reduce an earlier input when the stimulus falls. The fixed
+stimulus and expert infusion are teaching fixtures, not a patient-specific anesthetic plan.

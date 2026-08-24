@@ -4,6 +4,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
+import { ROUTINE_INHALATIONAL_MAINTENANCE } from '@anesthesia/scenarios/routine-inhalational-maintenance';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 
 describe('Requirement: a silent hypnotic-line failure must be inspected', () => {
@@ -25,10 +26,11 @@ describe('Requirement: a silent hypnotic-line failure must be inspected', () => 
   const renderCockpit = (
     hypnoticLine: ActionCockpitProps['hypnoticLine'],
     onHypnoticLine = vi.fn(),
+    scenario: ActionCockpitProps['scenario'] = ROUTINE_INDUCTION,
   ) => {
     act(() => {
       root.render(createElement(ActionCockpit, {
-        scenario: ROUTINE_INDUCTION,
+        scenario,
         region: UNITED_STATES,
         infusions: [{
           drugId: 'propofol', rate: 7, unit: 'mg/min', elapsedSeconds: 90,
@@ -99,5 +101,16 @@ describe('Requirement: a silent hypnotic-line failure must be inspected', () => 
     expect(container.textContent).toContain('The pump setpoint is not reaching the patient.');
     act(() => reconnect!.click());
     expect(onHypnoticLine).toHaveBeenCalledWith('reconnect');
+  });
+
+  it('hides propofol-only support when the scenario does not stock propofol', () => {
+    renderCockpit(
+      { connected: true, inspected: false }, vi.fn(), ROUTINE_INHALATIONAL_MAINTENANCE,
+    );
+    act(() => button('Infusions')!.click());
+
+    expect(container.textContent).toContain('remifentanil');
+    expect(container.textContent).not.toContain('Propofol delivery line');
+    expect(container.textContent).not.toContain('Target-controlled infusion');
   });
 });

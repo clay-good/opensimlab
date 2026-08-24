@@ -60,6 +60,11 @@ export function applicableReplayPoint(
   ));
 }
 
+export function analysisIssue(episodes: readonly Episode[]): string {
+  return episodes[0]?.label.toLowerCase()
+    ?? 'the relationship between your plan and the patient response';
+}
+
 export function Debrief(props: DebriefProps) {
   const [phase, setPhase] = useState<PearlsPhase>('reactions');
   const [account, setAccount] = useState('');
@@ -107,7 +112,7 @@ export function Debrief(props: DebriefProps) {
     return out;
   }, [phase, props.actions, props.history, props.replayOptions]);
 
-  const keyIssue = episodes[0]?.label.toLowerCase() ?? 'how the induction went';
+  const keyIssue = analysisIssue(episodes);
   const identified = accountIdentifies(account, [
     'vasodilat', 'pressure', 'saturation', 'desaturat', 'apno', 'apne', 'stack', 'wait',
   ]);
@@ -471,10 +476,95 @@ export function objectiveFindings(
     'recognize-inspired-carbon-dioxide': 'capnogram-morphology',
     'bridge-with-fresh-gas-flow': 'capnogram-morphology',
     'replace-exhausted-absorbent': 'capnogram-morphology',
+    'maintain-bounded-depth': 'depth-monitoring-and-its-limits',
+    'anticipate-surgical-stimulus': 'hypnotic-opioid-synergy',
+    'reassess-when-stimulus-falls': 'vasodilation-versus-hypovolemia',
   };
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if ([
+      'maintain-bounded-depth', 'anticipate-surgical-stimulus',
+      'reassess-when-stimulus-falls',
+    ].includes(objective.id)) {
+      const onset = scenario.timeline.find((entry) => entry.id === 'dissection')?.atTick;
+      const duration = scenario.timeline.find((entry) => entry.id === 'dissection')?.durationTicks;
+      if (onset === undefined || duration === undefined) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'The authored surgical-stimulus window was unavailable.',
+        } satisfies ObjectiveFinding;
+      }
+      const offset = onset + duration;
+      const acceptedInfusions = log.filter((entry) => entry.eventId.startsWith('infusion-remifentanil-'));
+      const preStimulusSetting = acceptedInfusions.filter((entry) => entry.tick < onset).at(-1);
+      const runningAtOnset = Number(preStimulusSetting?.data?.newRate ?? 0) > 0
+        ? preStimulusSetting
+        : undefined;
+
+      if (objective.id === 'maintain-bounded-depth') {
+        const window = history.filter((entry) => entry.tick >= 1200 && entry.tick <= 5400);
+        if (window.length === 0) {
+          return {
+            ...base, outcome: 'not-exercised',
+            finding: 'The session ended before the scored maintenance window began.',
+          } satisfies ObjectiveFinding;
+        }
+        const inRange = window.filter((entry) => Number(entry.state.depthIndex) >= 40
+          && Number(entry.state.depthIndex) <= 60).length;
+        const fraction = inRange / window.length;
+        return {
+          ...base,
+          outcome: fraction >= 0.8 ? 'met' : fraction >= 0.5 ? 'partly-met' : 'not-met',
+          finding: `Predicted depth stayed between 40 and 60 for ${(fraction * 100).toFixed(0)}% of the recorded maintenance window. This is a drug-model trace, not measured consciousness.`,
+        } satisfies ObjectiveFinding;
+      }
+
+      if (objective.id === 'anticipate-surgical-stimulus') {
+        if ((history.at(-1)?.tick ?? 0) < onset + 600) {
+          return {
+            ...base, outcome: 'not-exercised',
+            finding: 'The session ended before the first minute of surgical response was available.',
+          } satisfies ObjectiveFinding;
+        }
+        const baseline = history.filter((entry) => entry.tick < onset).at(-1);
+        const response = history.filter((entry) => entry.tick >= onset && entry.tick <= onset + 600);
+        const baselineHr = Number(baseline?.state.heartRateBpm ?? 0);
+        const baselineMap = Number(baseline?.state.meanArterialMmHg ?? 0);
+        const peakHr = Math.max(...response.map((entry) => Number(entry.state.heartRateBpm ?? 0)));
+        const peakMap = Math.max(...response.map((entry) => Number(entry.state.meanArterialMmHg ?? 0)));
+        const hrRise = baselineHr > 0 ? (peakHr - baselineHr) / baselineHr : Infinity;
+        const mapRise = baselineMap > 0 ? (peakMap - baselineMap) / baselineMap : Infinity;
+        const bounded = hrRise < 0.2 && mapRise < 0.2;
+        return {
+          ...base,
+          outcome: runningAtOnset && bounded ? 'met' : runningAtOnset || bounded ? 'partly-met' : 'not-met',
+          finding: `${runningAtOnset ? 'Accepted remifentanil infusion was running before' : 'No accepted remifentanil infusion was running before'} the stimulus. In the following minute, heart rate rose ${(hrRise * 100).toFixed(1)}% and mean arterial pressure rose ${(mapRise * 100).toFixed(1)}% from their immediate pre-stimulus values.`,
+          atTick: runningAtOnset?.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      if ((history.at(-1)?.tick ?? 0) < 5400) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'The session ended before the quiet-phase recovery could be assessed.',
+        } satisfies ObjectiveFinding;
+      }
+      const reduced = acceptedInfusions.find((entry) => entry.tick >= offset
+        && Number(entry.data?.newRate ?? 0) < Number(entry.data?.previousRate ?? 0));
+      const final = history.filter((entry) => entry.tick <= 5400).at(-1);
+      const finalMap = Number(final?.state.meanArterialMmHg ?? 0);
+      const finalDepth = Number(final?.state.depthIndex ?? Infinity);
+      const timely = reduced !== undefined && reduced.tick <= offset + 300;
+      const recovered = finalMap >= 65 && finalDepth >= 40 && finalDepth <= 60;
+      return {
+        ...base,
+        outcome: timely && recovered ? 'met' : timely || recovered ? 'partly-met' : 'not-met',
+        finding: `${reduced ? `The accepted infusion reduction followed stimulus offset by ${((reduced.tick - offset) / TICKS_PER_SECOND).toFixed(0)} seconds` : 'No accepted remifentanil reduction followed stimulus offset'}. At scenario end, mean arterial pressure was ${finalMap.toFixed(0)} mmHg and predicted depth was ${finalDepth.toFixed(0)}.`,
+        atTick: reduced?.tick ?? final?.tick,
+      } satisfies ObjectiveFinding;
+    }
 
     if ([
       'recognize-inspired-carbon-dioxide', 'bridge-with-fresh-gas-flow',

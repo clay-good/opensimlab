@@ -1423,6 +1423,7 @@ function InfusionTray({ formulary, region, weightKg, hypnoticLine, onInfusion, o
 }) {
   const [rates, setRates] = useState<Record<string, number>>({});
   const [tciOpen, setTciOpen] = useState(false);
+  const hasPropofol = formulary.some((drug) => drug.drugId === 'propofol');
 
   return (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
@@ -1455,7 +1456,7 @@ function InfusionTray({ formulary, region, weightKg, hypnoticLine, onInfusion, o
         })}
       </div>
 
-      <section className="card" aria-labelledby="hypnotic-line-title">
+      {hasPropofol && <section className="card" aria-labelledby="hypnotic-line-title">
         <h3 id="hypnotic-line-title" className="panel__title" style={{ font: 'var(--type-subtitle)' }}>
           Propofol delivery line
         </h3>
@@ -1479,10 +1480,10 @@ function InfusionTray({ formulary, region, weightKg, hypnoticLine, onInfusion, o
             </Button>
           </>
         )}
-      </section>
+      </section>}
 
       {/* Target-controlled infusion availability follows the practice region. */}
-      <section className="card">
+      {hasPropofol && <section className="card">
         <h3 className="panel__title" style={{ font: 'var(--type-subtitle)' }}>
           Target-controlled infusion
           {!region.targetControlledInfusion.routine && <> <Badge kind="out-of-range">Out of region</Badge></>}
@@ -1509,7 +1510,7 @@ function InfusionTray({ formulary, region, weightKg, hypnoticLine, onInfusion, o
             )}
           </>
         )}
-      </section>
+      </section>}
     </div>
   );
 }

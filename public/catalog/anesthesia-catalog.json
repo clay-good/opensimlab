@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 21,
+  "scenarioCount": 22,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -465,17 +465,39 @@
         "Replace the exhausted absorbent after assessing the trace, then confirm inspired carbon dioxide clears."
       ],
       "searchText": "circle-system-rebreathing circle-system rebreathing symptomatic cholelithiasis laparoscopic cholecystectomy recognize rebreathing from a raised inspiratory carbon-dioxide baseline while breath delivery continues. an accepted capnogram assessment was recorded within 30 seconds of absorbent failure. increase fresh-gas flow as a bounded bridge while preparing definitive circuit correction. fresh-gas flow reached at least 10 l/min within 60 seconds of failure and before absorbent replacement. replace the exhausted absorbent after assessing the trace, then confirm inspired carbon dioxide clears. accepted absorbent replacement followed assessment within 90 seconds of failure and inspired carbon dioxide later fell below 1 mmhg."
+    },
+    {
+      "id": "routine-inhalational-maintenance",
+      "path": "/anesthesia/scenario/routine-inhalational-maintenance",
+      "title": "Routine inhalational maintenance",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 9,
+      "difficulty": "introductory",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Use end-tidal agent, predicted depth, and the whole patient trend to preserve a bounded maintenance state.",
+        "Anticipate the declared surgical stimulus with modeled analgesic delivery, then judge the observed response.",
+        "Reduce or stop the modeled opioid when the stimulus ends, then confirm pressure and depth recover together."
+      ],
+      "searchText": "routine-inhalational-maintenance routine inhalational maintenance symptomatic cholelithiasis laparoscopic cholecystectomy use end-tidal agent, predicted depth, and the whole patient trend to preserve a bounded maintenance state. predicted depth remained between 40 and 60 for at least 80% of the scored maintenance window. anticipate the declared surgical stimulus with modeled analgesic delivery, then judge the observed response. an accepted remifentanil infusion was running before stimulus onset, and heart rate and mean arterial pressure each rose by less than 20% in the following minute. reduce or stop the modeled opioid when the stimulus ends, then confirm pressure and depth recover together. remifentanil was reduced or stopped within 30 seconds of stimulus offset; by scenario end mean arterial pressure was at least 65 mmhg and predicted depth was between 40 and 60."
     }
   ],
   "preparationPathCount": 10,
   "preparationPaths": [
     {
       "id": "first-lab",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "My first simulation lab",
-      "description": "Build a calm foundation: prepare, induce, reassess, and respond to a common pressure change.",
+      "description": "Build a calm foundation: prepare, induce, maintain, reassess, and respond to a common pressure change.",
       "scenarioIds": [
         "routine-induction",
+        "routine-inhalational-maintenance",
         "hypotension-after-induction",
         "rapid-desaturation"
       ],
@@ -493,7 +515,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 34
+      "estimatedMinutes": 43
     },
     {
       "id": "deteriorating-patient",
@@ -684,11 +706,12 @@
     },
     {
       "id": "medication-infusion-safety",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Medication and infusion safety",
-      "description": "Rehearse effect-site delay, paralysis, delivery failure, and toxicity as distinct medication risks.",
+      "description": "Rehearse effect-site delay, changing maintenance needs, paralysis, delivery failure, and toxicity as distinct medication risks.",
       "scenarioIds": [
         "routine-induction",
+        "routine-inhalational-maintenance",
         "rapid-sequence-induction",
         "awareness-under-paralysis",
         "local-anesthetic-systemic-toxicity"
@@ -707,7 +730,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 40
+      "estimatedMinutes": 49
     },
     {
       "id": "handoff-escalation",

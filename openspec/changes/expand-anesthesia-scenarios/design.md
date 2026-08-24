@@ -391,3 +391,24 @@ guidance for waveform-capnography context. Exact concentrations and time constan
 calibrations. Canister chemistry, channeling, desiccation, color change, valves, leaks, pressure,
 commercial alarms, physical exchange, acid-base effects, sympathetic response, teams, and
 individual outcome remain outside the model.
+
+## Slice 25: routine inhalational maintenance
+
+The twenty-second authored scenario begins after tracheal-tube confirmation with volume-controlled
+ventilation, 2 L/min fresh-gas flow, and 1.2% delivered and end-tidal sevoflurane established. These
+settings are a fictional starting condition, not a recommendation. A moderate scripted surgical
+stimulus begins at 240 seconds and ends at 360 seconds.
+
+The learner can start the existing modeled remifentanil infusion before that declared stimulus,
+observe heart rate, pressure, predicted depth, end-tidal agent, and infusion effect together, then
+reduce or stop the infusion when the stimulus falls. The debrief uses accepted infusion events and
+recorded state to score time in the displayed depth range, relative hemodynamic response, timely
+quiet-phase reassessment, and recovery by scenario end. Replay points bracket stimulus onset and
+offset.
+
+The evidence brief uses the FDA sevoflurane label for indication, labeled range, and age-specific MAC
+context; Mapleson for the age relation already in the engine; the current US remifentanil label for
+formulary range; and Association monitoring guidance for continuous assessment and processed-EEG
+limits. Pain, memory, consciousness, commercial depth monitoring, individualized MAC, real surgical
+nociception, injection-rate effects, neuromuscular blockade, emergence, and patient-specific dosing
+remain outside the model.

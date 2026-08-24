@@ -9,7 +9,7 @@ import { compareRuns, evaluateCounterfactual, replay } from '@anesthesia/debrief
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import type { EngineEvent, LearnerAction } from '@platform/kernel/protocol';
-import { describedEvents, objectiveFindings } from '@anesthesia/ui/Debrief';
+import { analysisIssue, describedEvents, objectiveFindings } from '@anesthesia/ui/Debrief';
 import { SCENARIOS } from '@anesthesia/scenarios';
 import { AnesthesiaEngine } from '@anesthesia/engine';
 import { EXPLAINERS } from '@anesthesia/content/explainers';
@@ -33,6 +33,10 @@ const NEGLECTFUL: LearnerAction[] = [
 ];
 
 describe('Requirement: Debrief Follows The PEARLS Framework', () => {
+  it('uses scenario-neutral analysis language when no adverse episode occurred', () => {
+    expect(analysisIssue([])).toBe('the relationship between your plan and the patient response');
+  });
+
   it('proceeds through the framework\'s phases in order', () => {
     expect(PEARLS_PHASES.map((phase) => phase.id)).toEqual(['reactions', 'description', 'analysis', 'summary']);
     for (const phase of PEARLS_PHASES) expect(phase.purpose.length).toBeGreaterThan(20);
