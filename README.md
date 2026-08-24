@@ -256,6 +256,8 @@ pinned provenance hash.
 `/catalog/maturity-record.schema.json` defines the shared six-state maturity vocabulary, and
 `/catalog/anesthesia-maturity.json` binds each current status to an exact scenario content version.
 The current records remain `draft`; no source check, clinical review, or endorsement is inferred.
+The shared publication policy separately names every preview gate and reserves reviewed-only claims
+for exact-version `clinically_reviewed` or `institution_endorsed` records.
 
 Architecture tests keep tutor rules outside engine and session mutation paths. The same boundary
 also rejects any reporting code that reads browser storage, transcripts, reflections, or progress;

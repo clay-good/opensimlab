@@ -39,6 +39,8 @@ credited toward the catalog until every item in the completion contract passes.
 - [x] Implement `draft`, `preview`, `source_checked`, `clinically_reviewed`,
   `institution_endorsed`, and `withdrawn` records with exact content-version binding.
 - [ ] Replace unsigned-content exclusion with preview publication rules and persistent honest labels.
+  The shared policy now names every preview gate and all six honest labels; release-gate and surface
+  integration remain.
 - [ ] Preserve strict gates for reviewed-only catalog views, adoption packs, review badges,
   curriculum coverage claims, and organization endorsements.
 - [ ] Add reviewer qualification, conflict, scope, expiration, revocation, and clinical-diff rules.
