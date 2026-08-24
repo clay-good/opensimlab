@@ -9,8 +9,15 @@
 
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import type { LearnerAction } from '@platform/kernel/protocol';
+import type { ContentMaturity } from '@platform/catalog/maturity';
 
 export type GuidanceLevel = 'guided' | 'coached' | 'unassisted';
+export type TutorAssistanceLevel = 'orient' | 'notice' | 'connect' | 'prioritize' | 'direct' | 'explain';
+export type TutorTriggerId =
+  | 'pre-induction-low-fio2'
+  | 'apnea-after-bolus'
+  | 'recent-bolus'
+  | 'map-below-60';
 
 export interface Prompt {
   readonly id: string;
@@ -20,6 +27,10 @@ export interface Prompt {
   readonly because: string;
   /** The explainer that goes deeper. */
   readonly concept?: string;
+  readonly ruleVersion: string;
+  readonly assistanceLevel: TutorAssistanceLevel;
+  readonly maturity: ContentMaturity;
+  readonly sourceId: string;
 }
 
 export interface GuidanceInput {
@@ -35,21 +46,40 @@ export interface GuidanceInput {
 /** How often the same prompt may be repeated, in simulated seconds. */
 export const PROMPT_COOLDOWN_SECONDS = 90;
 
-/** The prompts this slice can raise, in priority order. */
-export const PROMPTS: readonly {
-  readonly prompt: Prompt;
+export interface TutorRule {
+  readonly schemaVersion: 1;
+  readonly version: string;
+  readonly objectiveId: string;
+  readonly triggerId: TutorTriggerId;
+  readonly assistanceLevel: TutorAssistanceLevel;
+  readonly sourceId: string;
+  readonly maturity: ContentMaturity;
+  readonly applicability: string;
+  readonly prerequisiteObservations: readonly string[];
+  readonly suppressionConditions: readonly string[];
+  readonly urgent: boolean;
+  readonly cooldownSeconds: number;
+  readonly prompt: Omit<Prompt, 'ruleVersion' | 'assistanceLevel' | 'maturity' | 'sourceId'>;
   readonly applies: (input: GuidanceInput) => boolean;
-  /** Simulated seconds that must have elapsed before this can fire. */
   readonly afterSeconds: number;
-}[] = [
+}
+
+/** The prompts this slice can raise, in priority order. */
+export const TUTOR_RULES: readonly TutorRule[] = [
   {
+    schemaVersion: 1, version: '0.1.0', objectiveId: 'preoxygenate', triggerId: 'pre-induction-low-fio2',
+    assistanceLevel: 'direct', sourceId: 'preoxygenation-and-safe-apnea-time', maturity: 'draft',
+    applicability: 'Before any bolus, while inspired oxygen remains below 0.8.',
+    prerequisiteObservations: ['inspired oxygen fraction', 'accepted bolus actions'],
+    suppressionConditions: ['any active alarm', 'unassisted mode', 'coached mode', '90-second cooldown'],
+    urgent: false, cooldownSeconds: PROMPT_COOLDOWN_SECONDS,
     afterSeconds: 60,
     prompt: {
       id: 'preoxygenate',
       suggestion: 'Raise the inspired oxygen fraction and give it a few minutes before you induce.',
       because:
-        'Preoxygenation replaces the nitrogen in the lungs with oxygen. It is the difference '
-        + 'between about eight minutes of safe apnoea in this patient and under one.',
+        'Preoxygenation replaces the nitrogen in the lungs with oxygen and extends the available '
+        + 'apnoea time. The margin varies with the patient and must be confirmed at end expiration.',
       concept: 'preoxygenation-and-safe-apnea-time',
     },
     applies: (input) =>
@@ -57,6 +87,12 @@ export const PROMPTS: readonly {
       && !input.actions.some((action) => action.type === 'bolus'),
   },
   {
+    schemaVersion: 1, version: '0.1.0', objectiveId: 'ventilate-before-desaturation', triggerId: 'apnea-after-bolus',
+    assistanceLevel: 'direct', sourceId: 'preoxygenation-and-safe-apnea-time', maturity: 'draft',
+    applicability: 'After an accepted bolus when modeled respiration is zero and ventilation is absent.',
+    prerequisiteObservations: ['modeled respiratory rate', 'ventilation state', 'accepted bolus actions'],
+    suppressionConditions: ['any active alarm', 'unassisted mode', '90-second cooldown'],
+    urgent: true, cooldownSeconds: PROMPT_COOLDOWN_SECONDS,
     afterSeconds: 0,
     prompt: {
       id: 'ventilate',
@@ -72,6 +108,12 @@ export const PROMPTS: readonly {
       && input.actions.some((action) => action.type === 'bolus'),
   },
   {
+    schemaVersion: 1, version: '0.1.0', objectiveId: 'avoid-stacking', triggerId: 'recent-bolus',
+    assistanceLevel: 'direct', sourceId: 'hysteresis-and-effect-site-lag', maturity: 'draft',
+    applicability: 'Within 100 simulated seconds of the most recent accepted bolus.',
+    prerequisiteObservations: ['accepted bolus actions', 'simulated time since bolus'],
+    suppressionConditions: ['any active alarm', 'unassisted mode', 'coached mode', '90-second cooldown'],
+    urgent: false, cooldownSeconds: PROMPT_COOLDOWN_SECONDS,
     afterSeconds: 0,
     prompt: {
       id: 'wait-for-effect-site',
@@ -91,6 +133,12 @@ export const PROMPTS: readonly {
     },
   },
   {
+    schemaVersion: 1, version: '0.1.0', objectiveId: 'treat-the-mechanism', triggerId: 'map-below-60',
+    assistanceLevel: 'connect', sourceId: 'vasodilation-versus-hypovolemia', maturity: 'draft',
+    applicability: 'When the modeled mean arterial pressure is below 60 mmHg.',
+    prerequisiteObservations: ['mean arterial pressure'],
+    suppressionConditions: ['any active alarm', 'unassisted mode', '90-second cooldown'],
+    urgent: true, cooldownSeconds: PROMPT_COOLDOWN_SECONDS,
     afterSeconds: 0,
     prompt: {
       id: 'treat-the-mechanism',
@@ -103,6 +151,21 @@ export const PROMPTS: readonly {
     applies: (input) => (input.state?.meanArterialMmHg ?? 100) < 60,
   },
 ];
+
+/** Backward-compatible name for consumers that enumerate current rules. */
+export const PROMPTS = TUTOR_RULES;
+
+export function promptStillEligible(
+  level: GuidanceLevel,
+  input: GuidanceInput,
+  promptId: string,
+): boolean {
+  if (level === 'unassisted' || input.alarmCount > 0) return false;
+  const rule = TUTOR_RULES.find((candidate) => candidate.prompt.id === promptId);
+  if (!rule || input.tick < rule.afterSeconds * TICKS_PER_SECOND) return false;
+  if (level === 'coached' && !rule.urgent) return false;
+  return rule.applies(input);
+}
 
 /**
  * The prompt to show, if any.
@@ -123,17 +186,18 @@ export function promptFor(
   if (input.alarmCount > 0) return null;
 
   for (const candidate of PROMPTS) {
-    if (input.tick < candidate.afterSeconds * TICKS_PER_SECOND) continue;
-    if (!candidate.applies(input)) continue;
-    // Coached raises only the two prompts about imminent harm.
-    if (level === 'coached' && !['ventilate', 'treat-the-mechanism'].includes(candidate.prompt.id)) {
-      continue;
-    }
+    if (!promptStillEligible(level, input, candidate.prompt.id)) continue;
     const lastShown = alreadyShown.get(candidate.prompt.id);
-    if (lastShown !== undefined && input.tick - lastShown < PROMPT_COOLDOWN_SECONDS * TICKS_PER_SECOND) {
+    if (lastShown !== undefined && input.tick - lastShown < candidate.cooldownSeconds * TICKS_PER_SECOND) {
       continue;
     }
-    return candidate.prompt;
+    return {
+      ...candidate.prompt,
+      ruleVersion: candidate.version,
+      assistanceLevel: candidate.assistanceLevel,
+      maturity: candidate.maturity,
+      sourceId: candidate.sourceId,
+    };
   }
   return null;
 }

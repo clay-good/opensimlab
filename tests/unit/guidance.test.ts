@@ -1,6 +1,8 @@
 /** Acceptance tests for learning/pedagogy's guidance requirements. */
 import { describe, expect, it } from 'vitest';
-import { PROMPTS, promptFor, unpromptedOmissions, type GuidanceInput } from '@anesthesia/tutor/guidance';
+import {
+  PROMPTS, promptFor, promptStillEligible, unpromptedOmissions, type GuidanceInput,
+} from '@anesthesia/tutor/guidance';
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import { replay } from '@anesthesia/debrief/replay';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
@@ -24,6 +26,10 @@ describe('Requirement: Progressive Guidance Levels', () => {
     expect(prompt?.suggestion.length).toBeGreaterThan(20);
     expect(prompt?.because.length).toBeGreaterThan(40);
     expect(prompt?.concept).toBe('preoxygenation-and-safe-apnea-time');
+    expect(prompt).toMatchObject({
+      ruleVersion: '0.1.0', assistanceLevel: 'direct', maturity: 'draft',
+      sourceId: 'preoxygenation-and-safe-apnea-time',
+    });
   });
 
   it('Scenario: Unassisted mode is silent', () => {
@@ -53,6 +59,15 @@ describe('Requirement: Progressive Guidance Levels', () => {
     expect(promptFor('guided', { ...base, tick: 700 + 91 * TICKS_PER_SECOND }, shown)?.id).toBe('preoxygenate');
   });
 
+  it('keeps a displayed prompt eligible until its observable condition resolves', () => {
+    expect(promptStillEligible('guided', base, 'preoxygenate')).toBe(true);
+    expect(promptStillEligible('guided', {
+      ...base, state: { ...base.state!, fio2: 1 },
+    }, 'preoxygenate')).toBe(false);
+    expect(promptStillEligible('guided', { ...base, alarmCount: 1 }, 'preoxygenate')).toBe(false);
+    expect(promptStillEligible('unassisted', base, 'preoxygenate')).toBe(false);
+  });
+
   it('Scenario: Guidance level never alters the patient', async () => {
     // The same transcript replayed under each level gives an identical state
     // trace, because guidance is not an input to the engine at all.
@@ -76,5 +91,19 @@ describe('Requirement: Progressive Guidance Levels', () => {
       expect(candidate.prompt.because.length).toBeGreaterThan(40);
     }
     expect(new Set(PROMPTS.map((c) => c.prompt.id)).size).toBe(PROMPTS.length);
+  });
+
+  it('makes every tutor rule versioned, reviewable, and resistant to spam', () => {
+    for (const rule of PROMPTS) {
+      expect(rule).toMatchObject({ schemaVersion: 1, version: '0.1.0', maturity: 'draft' });
+      expect(rule.cooldownSeconds).toBeGreaterThanOrEqual(30);
+      expect(rule.sourceId).toBe(rule.prompt.concept);
+      expect(rule.triggerId).toMatch(/^[a-z0-9-]+$/);
+      expect(rule.objectiveId).toMatch(/^[a-z0-9-]+$/);
+      expect(rule.applicability.length).toBeGreaterThan(20);
+      expect(rule.prerequisiteObservations.length).toBeGreaterThan(0);
+      expect(rule.suppressionConditions).toContain('any active alarm');
+    }
+    expect(new Set(PROMPTS.map((rule) => rule.triggerId)).size).toBe(PROMPTS.length);
   });
 });

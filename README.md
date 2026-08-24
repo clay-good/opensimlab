@@ -146,6 +146,11 @@ The hypotension scenario also authors the first replay-safe decision point. When
 needs work, debrief can reconstruct the original deterministic state at that exact tick, preserve
 the parent run, and pause in a clearly labeled rehearsal branch for a different response. Scenarios
 without an authored, objective-linked point never offer targeted repetition.
+In-session tutor prompts are checked-in, versioned rules rather than generated advice. Each declares
+its observable trigger, objective, earliest time, cooldown, prerequisite observations, urgency,
+assistance level, applicability, source explainer, maturity, and suppression conditions. The prompt
+shows its assistance level, draft status, rule version, and a local source/explanation link; changing
+Guided, Coached, or Unassisted presentation never reaches the patient engine.
 
 ### What gets built first
 

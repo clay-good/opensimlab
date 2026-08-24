@@ -82,14 +82,20 @@ credited toward the catalog until every item in the completion contract passes.
 
 ## 4. Private tutor
 
-- [ ] Define tutor-rule schema with trigger, earliest time, cooldown, prerequisite observation,
+- [x] Define tutor-rule schema with trigger, earliest time, cooldown, prerequisite observation,
   assistance level, explanation, source, maturity, and suppression fields.
+  Every current rule declares schema and content versions, a named trigger, objective, earliest
+  time, at least a 30-second cooldown, prerequisite observations, urgency, assistance level,
+  source explainer, exact maturity, applicability, and suppression conditions.
 - [ ] Implement Orient, Notice, Connect, Prioritize, Direct, and Explain interventions.
-- [ ] Preserve identical patient trajectories across Guided, Coached, and Unassisted modes.
+- [x] Preserve identical patient trajectories across Guided, Coached, and Unassisted modes.
+  Guidance remains a presentational read of canonical state and accepted actions; deterministic
+  trace-hash tests prove the engine receives no guidance-level input.
 - [ ] Add tutor-collapse, pause, replay decision point, explanation depth, and permanently dismissible
   onboarding controls.
   The first objective-linked replay-safe decision point, paused deterministic branch, and dismissible
-  branch notice are implemented. Tutor collapse, explanation depth, and onboarding remain.
+  branch notice are implemented. Opening a tutor source also pauses the simulated patient before
+  the explanation modal appears. Tutor collapse, explanation depth, and onboarding remain.
 - [x] Add the 10 goal-based preparation paths and local next-scenario recommendation logic.
   Recommendations are ordered locally from the selected versioned path, explain the chosen goal,
   carry the scenario's exact maturity link, and accept local completed-scenario evidence. Goal

@@ -30,7 +30,7 @@ import { WhyPanel } from './WhyPanel';
 import {
   announcementsFor, mechanicalPulseFromState, stateSummary, waveformDescriptions, SHORTCUTS,
 } from './accessibility';
-import { promptFor, type Prompt } from '../tutor/guidance';
+import { promptFor, promptStillEligible, type Prompt } from '../tutor/guidance';
 import { concentrationCsv } from './ConcentrationPanel';
 import { findStacking } from '@anesthesia/debrief/analysis';
 import { EXPLAINERS, getExplainer } from '@anesthesia/content/explainers';
@@ -284,18 +284,22 @@ export function Cockpit({
   // never feeds anything back, which is what makes the trajectory identical at
   // every guidance level.
   useEffect(() => {
-    const next = promptFor(session.guidance, {
+    const input = {
       tick: session.tick,
       state: session.state,
       actions: sessionInternals().recorder?.build('pending').actions ?? [],
       ventilating: (session.state?.respiratoryRateBpm ?? 0) > 0,
       alarmCount: session.alarms.length,
-    }, promptsShown.current);
-    if (next && next.id !== prompt?.id) {
+    };
+    if (prompt) {
+      if (!promptStillEligible(session.guidance, input, prompt.id)) setPrompt(null);
+      return;
+    }
+    const next = promptFor(session.guidance, input, promptsShown.current);
+    if (next) {
       promptsShown.current.set(next.id, session.tick);
       setPrompt(next);
     }
-    if (!next && prompt) setPrompt(null);
   }, [session.tick, session.guidance, session.state, session.alarms.length, prompt]);
 
   const speak = useCallback((text: string) => setAnnouncement(text), []);
@@ -633,11 +637,19 @@ export function Cockpit({
             <strong>{prompt.suggestion}</strong>
             <br />
             <span className="field__hint">{prompt.because}</span>
+            <br />
+            <span className="field__hint">
+              {prompt.assistanceLevel[0]?.toUpperCase()}{prompt.assistanceLevel.slice(1)} ·{' '}
+              {prompt.maturity[0]?.toUpperCase()}{prompt.maturity.slice(1)} · rule {prompt.ruleVersion}
+            </span>
             {prompt.concept && (
               <>
                 {' '}
-                <Button variant="ghost" compact onClick={() => setExplainerId(prompt.concept!)}>
-                  Read more about this
+                <Button variant="ghost" compact onClick={() => {
+                  session.pause();
+                  setExplainerId(prompt.concept!);
+                }}>
+                  Inspect source and explanation
                 </Button>
               </>
             )}
