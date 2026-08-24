@@ -36,7 +36,7 @@ credited toward the catalog until every item in the completion contract passes.
 
 ## 2. Maturity and governance transition
 
-- [ ] Implement `draft`, `preview`, `source_checked`, `clinically_reviewed`,
+- [x] Implement `draft`, `preview`, `source_checked`, `clinically_reviewed`,
   `institution_endorsed`, and `withdrawn` records with exact content-version binding.
 - [ ] Replace unsigned-content exclusion with preview publication rules and persistent honest labels.
 - [ ] Preserve strict gates for reviewed-only catalog views, adoption packs, review badges,

@@ -6,6 +6,9 @@
  * a partly built scenario into a playable-count claim.
  */
 
+import type { ContentMaturity } from './maturity';
+export type { ContentMaturity } from './maturity';
+
 export const COMPLETION_SCHEMA_VERSION = 1;
 
 export const COMPLETION_REQUIREMENTS = [
@@ -33,9 +36,6 @@ export type ScenarioEnvironment =
   | 'delivery-room' | 'neonatal-unit' | 'clinic' | 'prehospital';
 export type FidelityClass =
   | 'closed_loop_physiology' | 'state_transition' | 'branching_encounter';
-export type ContentMaturity =
-  | 'draft' | 'preview' | 'source_checked' | 'clinically_reviewed'
-  | 'institution_endorsed' | 'withdrawn';
 
 export interface CompletionRequirementAudit {
   readonly id: CompletionRequirementId;

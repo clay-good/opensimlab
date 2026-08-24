@@ -12,6 +12,7 @@ import { isCrawler } from '@platform/offline/register';
 import { AnesthesiaEngine } from '@anesthesia/engine';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { ROUTES } from '@routes/routes';
+import { PUBLIC_CATALOG_ARTIFACTS } from '@platform/catalog/public-artifacts';
 
 const root = fileURLToPath(new URL('../..', import.meta.url));
 const serviceWorker = readFileSync(join(root, 'public/sw.js'), 'utf8');
@@ -193,15 +194,8 @@ describe('Requirement: Everything The Offline Claim Names Is Actually Precached'
     }
   });
 
-  it('precaches the public completion schema and current anesthesia audit', () => {
-    expect(precache).toContain('/catalog/scenario-completion.schema.json');
-    expect(precache).toContain('/catalog/anesthesia-completion-audit.json');
-    for (const artifact of [
-      'training-value.schema.json', 'authored-defaults.schema.json',
-      'scenario-hazard.schema.json', 'state-space-verification.schema.json',
-      'anesthesia-quality-audit.json',
-      'asset-licenses.json', 'evidence-sources.json',
-    ]) expect(precache).toContain(`/catalog/${artifact}`);
+  it('precaches every public machine-readable catalog artifact', () => {
+    for (const artifact of PUBLIC_CATALOG_ARTIFACTS) expect(precache).toContain(artifact);
   });
 
   it('changes the cache version when bytes at a stable font URL change', () => {

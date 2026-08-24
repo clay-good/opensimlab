@@ -7,6 +7,8 @@ export const PUBLIC_CATALOG_ARTIFACTS = [
   '/catalog/scenario-hazard.schema.json',
   '/catalog/state-space-verification.schema.json',
   '/catalog/anesthesia-quality-audit.json',
+  '/catalog/maturity-record.schema.json',
+  '/catalog/anesthesia-maturity.json',
   '/catalog/asset-licenses.json',
   '/catalog/evidence-sources.json',
 ] as const;

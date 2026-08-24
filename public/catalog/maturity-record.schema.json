@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://opensimlab.com/catalog/maturity-record.schema.json",
+  "title": "Open Sim Lab exact-version maturity record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "recordId",
+    "subjectKind",
+    "subjectId",
+    "contentVersion",
+    "status",
+    "evidence"
+  ],
+  "properties": {
+    "recordId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9:._@-]+$"
+    },
+    "subjectKind": {
+      "enum": [
+        "scenario",
+        "capability",
+        "protocol",
+        "drug-card",
+        "tutor-rule",
+        "explanation",
+        "debrief-rule",
+        "alarm-threshold",
+        "normal-range"
+      ]
+    },
+    "subjectId": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "contentVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "preview",
+        "source_checked",
+        "clinically_reviewed",
+        "institution_endorsed",
+        "withdrawn"
+      ]
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}

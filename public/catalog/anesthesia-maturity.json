@@ -1,0 +1,183 @@
+{
+  "schemaVersion": 1,
+  "moduleId": "anesthesia",
+  "recordCount": 16,
+  "records": [
+    {
+      "recordId": "scenario:routine-induction@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "routine-induction",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#routine-induction@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#routine-induction@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:rapid-desaturation@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "rapid-desaturation",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#rapid-desaturation@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#rapid-desaturation@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:hypotension-after-induction@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "hypotension-after-induction",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#hypotension-after-induction@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#hypotension-after-induction@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:bronchospasm@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "bronchospasm",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#bronchospasm@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#bronchospasm@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:unexpected-intraoperative-hemorrhage@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "unexpected-intraoperative-hemorrhage",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#unexpected-intraoperative-hemorrhage@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#unexpected-intraoperative-hemorrhage@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:rapid-sequence-induction@0.2.0",
+      "subjectKind": "scenario",
+      "subjectId": "rapid-sequence-induction",
+      "contentVersion": "0.2.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#rapid-sequence-induction@0.2.0",
+        "/catalog/anesthesia-quality-audit.json#rapid-sequence-induction@0.2.0"
+      ]
+    },
+    {
+      "recordId": "scenario:awareness-under-paralysis@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "awareness-under-paralysis",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#awareness-under-paralysis@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#awareness-under-paralysis@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:laryngospasm-after-airway-stimulation@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "laryngospasm-after-airway-stimulation",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#laryngospasm-after-airway-stimulation@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#laryngospasm-after-airway-stimulation@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:perioperative-anaphylaxis-after-antibiotic@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "perioperative-anaphylaxis-after-antibiotic",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#perioperative-anaphylaxis-after-antibiotic@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#perioperative-anaphylaxis-after-antibiotic@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:early-malignant-hyperthermia-during-volatile-anesthesia@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "early-malignant-hyperthermia-during-volatile-anesthesia",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#early-malignant-hyperthermia-during-volatile-anesthesia@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#early-malignant-hyperthermia-during-volatile-anesthesia@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:routine-pediatric-iv-induction@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "routine-pediatric-iv-induction",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#routine-pediatric-iv-induction@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#routine-pediatric-iv-induction@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:difficult-airway-supraglottic-rescue@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "difficult-airway-supraglottic-rescue",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#difficult-airway-supraglottic-rescue@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#difficult-airway-supraglottic-rescue@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:local-anesthetic-systemic-toxicity@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "local-anesthetic-systemic-toxicity",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#local-anesthetic-systemic-toxicity@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#local-anesthetic-systemic-toxicity@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:persistent-vf-cardiac-arrest@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "persistent-vf-cardiac-arrest",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#persistent-vf-cardiac-arrest@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#persistent-vf-cardiac-arrest@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:high-spinal-after-epidural-top-up@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "high-spinal-after-epidural-top-up",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#high-spinal-after-epidural-top-up@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#high-spinal-after-epidural-top-up@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:venous-air-embolism-during-line-removal@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "venous-air-embolism-during-line-removal",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#venous-air-embolism-during-line-removal@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#venous-air-embolism-during-line-removal@0.1.0"
+      ]
+    }
+  ]
+}
