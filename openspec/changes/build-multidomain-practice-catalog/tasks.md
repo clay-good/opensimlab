@@ -112,8 +112,12 @@ credited toward the catalog until every item in the completion contract passes.
   atomic export/import/erase, and objective-linked replay-safe targeted repetition are implemented
   locally. A branch reconstructs the authored tick, preserves the original run, and records new
   actions separately.
-- [ ] Prohibit leaderboards, cross-learner percentiles, streak loss, public performance, points for
+- [x] Prohibit leaderboards, cross-learner percentiles, streak loss, public performance, points for
   irrelevant speed, and tutor network calls through tests and copy review.
+  Architecture tests scan all shipped source for the prohibited incentive mechanics and scan tutor,
+  history, recommendation, and debrief surfaces for browser network primitives. Hostile fixtures
+  prove every detector fires, while copy assertions preserve the explicit no-score, no-ranking,
+  local-only promises where learner performance and tutor behavior are discussed.
 - [ ] Verify every tutor observation and claimed outcome against deterministic expert, common-error,
   and recovery transcripts.
 

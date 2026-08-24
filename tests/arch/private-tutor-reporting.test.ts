@@ -26,6 +26,13 @@ const tutorFiles = walk(join(root, 'src', 'platform', 'tutor'))
   .concat(walk(join(root, 'src', 'modules')).filter((file) => file.path.includes('/tutor/')));
 const reportingFiles = walk(join(root, 'src', 'platform', 'reporting'));
 const sourceFiles = walk(join(root, 'src'));
+const tutorSurfaceFiles = tutorFiles.concat(sourceFiles.filter((file) => [
+  'src/modules/anesthesia/ui/TutorRegion.tsx',
+  'src/modules/anesthesia/ui/Debrief.tsx',
+  'src/modules/anesthesia/ui/GoalRecommendation.tsx',
+  'src/modules/anesthesia/catalog/practice-history.ts',
+  'src/modules/anesthesia/catalog/recommendation-state.ts',
+].includes(file.path)));
 
 const importedSpecifiers = (text: string): string[] => [...text.matchAll(
   /(?:import|export)\s+(?:type\s+)?(?:[^'";]+?\s+from\s+)?['"]([^'"]+)['"]/g,
@@ -67,6 +74,33 @@ function reportingViolations(file: SourceFile): string[] {
   return violations;
 }
 
+function tutorNetworkViolations(file: SourceFile): string[] {
+  const forbidden = [
+    /\bfetch\s*\(/,
+    /\bXMLHttpRequest\b/,
+    /\bWebSocket\b/,
+    /\bEventSource\b/,
+    /\bsendBeacon\s*\(/,
+  ];
+  return forbidden
+    .filter((pattern) => pattern.test(file.text))
+    .map((pattern) => `matches network primitive ${pattern}`);
+}
+
+function incentiveViolations(file: SourceFile): string[] {
+  const forbidden = [
+    /\bleaderboards?\b/i,
+    /\b(?:daily|weekly|practice)\s+streaks?\b/i,
+    /\b(?:cross[- ]learner|learner)\s+percentiles?\b/i,
+    /\b(?:earn|award|gain|lose|lost)\w*\s+(?:\d+\s+)?points?\b/i,
+    /\bpublic\s+(?:performance|score|result|ranking)\b/i,
+    /\b(?:points|score|reward)\w*.{0,80}\b(?:fast(?:er|est)?|speed)\b|\b(?:fast(?:er|est)?|speed)\w*.{0,80}\b(?:points|score|reward)\b/is,
+  ];
+  return forbidden
+    .filter((pattern) => pattern.test(file.text))
+    .map((pattern) => `matches prohibited incentive ${pattern}`);
+}
+
 describe('Requirement: Tutor and reporting boundaries are structural', () => {
   it('keeps every tutor rule outside patient mutation paths', () => {
     expect(tutorFiles.length).toBeGreaterThan(0);
@@ -100,5 +134,41 @@ describe('Requirement: Tutor and reporting boundaries are structural', () => {
       path: 'src/platform/reporting/hostile.ts',
       text: "import { inventory } from '@platform/offline/local-data';\nlocalStorage.getItem('opensimlab.progress');",
     })).toHaveLength(4);
+  });
+
+  it('keeps tutor, history, recommendation, and debrief surfaces offline', () => {
+    expect(tutorSurfaceFiles.length).toBeGreaterThan(0);
+    for (const file of tutorSurfaceFiles) {
+      expect(tutorNetworkViolations(file), file.path).toEqual([]);
+    }
+  });
+
+  it('rejects network primitives from a tutor surface', () => {
+    expect(tutorNetworkViolations({
+      path: 'src/modules/example/tutor/hostile.ts',
+      text: "fetch('/coach'); new WebSocket('wss://coach.invalid'); navigator.sendBeacon('/score');",
+    })).toHaveLength(3);
+  });
+
+  it('prohibits distorted learner incentives from shipped source and copy', () => {
+    for (const file of sourceFiles) {
+      expect(incentiveViolations(file), file.path).toEqual([]);
+    }
+  });
+
+  it('detects leaderboard, streak, comparison, points, and speed-reward mechanics', () => {
+    expect(incentiveViolations({
+      path: 'src/modules/example/hostile.tsx',
+      text: 'Leaderboard · daily streak · learner percentile · earn 50 points · public performance · speed reward',
+    })).toHaveLength(6);
+  });
+
+  it('keeps the learner-facing boundary explicit where performance is discussed', () => {
+    const debrief = sourceFiles.find((file) => file.path === 'src/modules/anesthesia/ui/Debrief.tsx')!.text;
+    const review = sourceFiles.find((file) => file.path === 'src/routes/ReviewRoute.tsx')!.text;
+    const tutor = sourceFiles.find((file) => file.path === 'src/modules/anesthesia/ui/TutorRegion.tsx')!.text;
+    expect(debrief).toContain('There is no overall score, no pass or fail, and no comparison with anyone else.');
+    expect(review).toContain('There is no ranking of learners here and there will not be one');
+    expect(tutor).toContain('works entirely on this device');
   });
 });
