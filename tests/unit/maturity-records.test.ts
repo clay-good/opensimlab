@@ -6,23 +6,29 @@ import { SCENARIOS } from '@anesthesia/scenarios';
 import { buildAnesthesiaCompletionCatalog } from '@anesthesia/catalog/scenario-completion';
 import { buildScenarioQualityCatalog } from '@platform/catalog/scenario-quality';
 import {
-  buildScenarioMaturityCatalog, MATURITY_RECORD_SCHEMA, MATURITY_STATUSES,
+  buildMaturityCatalog, MATURITY_RECORD_SCHEMA, MATURITY_STATUSES,
   maturityFor, validateMaturityCatalog,
 } from '@platform/catalog/maturity';
+import { additionalMaturitySubjects, reviewableItems } from '@platform/governance/records';
 
 const completion = buildAnesthesiaCompletionCatalog(SCENARIOS, ENGINE_VERSION);
 const quality = buildScenarioQualityCatalog(completion);
-const catalog = buildScenarioMaturityCatalog(completion, quality);
+const catalog = buildMaturityCatalog(completion, quality, additionalMaturitySubjects());
 
 describe('exact-version maturity records', () => {
-  it('supports the complete public vocabulary and records every current scenario honestly', () => {
+  it('supports the complete public vocabulary and records every clinical item honestly', () => {
     expect(MATURITY_STATUSES).toEqual([
       'draft', 'preview', 'source_checked', 'clinically_reviewed',
       'institution_endorsed', 'withdrawn',
     ]);
     expect(validateMaturityCatalog(catalog)).toEqual([]);
-    expect(catalog.recordCount).toBe(SCENARIOS.length);
+    expect(catalog.recordCount).toBe(reviewableItems().length);
+    expect(catalog.recordCount).toBe(30);
     expect(catalog.records.every((record) => record.status === 'draft')).toBe(true);
+    expect(maturityFor(catalog, 'explanation', 'hysteresis-and-effect-site-lag', '0.1.0'))
+      .toBeDefined();
+    expect(maturityFor(catalog, 'drug-card', 'propofol', '0.1.0')).toBeDefined();
+    expect(maturityFor(catalog, 'practice-region', 'US', '0.1.0')).toBeDefined();
   });
 
   it('never applies a record to a different content version', () => {
@@ -31,9 +37,10 @@ describe('exact-version maturity records', () => {
       catalog, 'scenario', current.metadata.id, current.metadata.version,
     )?.status).toBe('draft');
     expect(maturityFor(catalog, 'scenario', current.metadata.id, '99.0.0')).toBeUndefined();
-    expect(() => buildScenarioMaturityCatalog(completion, {
+    expect(() => buildMaturityCatalog(completion, {
       ...quality, scenarios: quality.scenarios.slice(1),
-    })).toThrow(`No exact-version quality audit for ${current.metadata.id} ${current.metadata.version}.`);
+    }, additionalMaturitySubjects()))
+      .toThrow(`No exact-version quality audit for ${current.metadata.id} ${current.metadata.version}.`);
   });
 
   it('rejects duplicate subjects, unknown statuses, and dishonest counts', () => {

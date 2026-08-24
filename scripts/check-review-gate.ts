@@ -7,12 +7,12 @@ import { SCENARIOS } from '@anesthesia/scenarios';
 import { buildAnesthesiaCompletionCatalog } from '@anesthesia/catalog/scenario-completion';
 import { buildScenarioQualityCatalog } from '@platform/catalog/scenario-quality';
 import {
-  buildScenarioMaturityCatalog, maturityFor, type MaturitySubjectKind,
+  buildMaturityCatalog, maturityFor, type MaturitySubjectKind,
 } from '@platform/catalog/maturity';
 import {
   isReviewedOnlyStatus, previewPublication, scenarioPreviewEvidence,
 } from '@platform/governance/publication';
-import { EDITORIAL_BOARD, reviewableItems } from '@platform/governance/records';
+import { EDITORIAL_BOARD, additionalMaturitySubjects, reviewableItems } from '@platform/governance/records';
 import { gate, reportCoverage, uncoveredDomains } from '@platform/governance/review-gate';
 import { buildValidationReport } from '@platform/docs/validation-report';
 
@@ -42,7 +42,7 @@ function main(): void {
   const channel = releaseChannelFrom(process.argv.slice(2));
   const completion = buildAnesthesiaCompletionCatalog(SCENARIOS, ENGINE_VERSION);
   const quality = buildScenarioQualityCatalog(completion);
-  const maturity = buildScenarioMaturityCatalog(completion, quality);
+  const maturity = buildMaturityCatalog(completion, quality, additionalMaturitySubjects());
   const validation = buildValidationReport();
   const evidenceOptions = {
     validationReportPresent: true,
@@ -70,6 +70,15 @@ function main(): void {
     if (!record) {
       blocking.push(`${item.kind} "${item.id}" has no exact-version maturity record`);
       continue;
+    }
+    if (item.kind !== 'scenario') {
+      // Non-scenario completion/source/test contracts are not implemented yet.
+      // Passing no gates makes that absence explicit and fail-closed; draft and
+      // withdrawn status block before those missing gates are considered.
+      const verdict = previewPublication(record, { passed: [] });
+      if (verdict.status === 'blocked') {
+        blocking.push(`${item.kind} "${item.id}" ${verdict.reasons.join('; ')}`);
+      }
     }
     if (channel === 'reviewed' && !isReviewedOnlyStatus(record.status)) {
       blocking.push(`${item.kind} "${item.id}" is ${record.status}, not clinically reviewed`);
@@ -102,7 +111,7 @@ function main(): void {
   }
 
   process.stdout.write(
-    `publication gate: ${channel} channel; ${maturity.recordCount} scenario maturity records; `
+    `publication gate: ${channel} channel; ${maturity.recordCount} clinical maturity records; `
     + `${reviewCoverage.current} of ${reviewCoverage.total} clinical items under current review\n`,
   );
   for (const reason of blocking) process.stdout.write(`  - ${reason}\n`);

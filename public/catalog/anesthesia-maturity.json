@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "recordCount": 16,
+  "recordCount": 30,
   "records": [
     {
       "recordId": "scenario:routine-induction@0.1.0",
@@ -177,6 +177,149 @@
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#venous-air-embolism-during-line-removal@0.1.0",
         "/catalog/anesthesia-quality-audit.json#venous-air-embolism-during-line-removal@0.1.0"
+      ]
+    },
+    {
+      "recordId": "explanation:hysteresis-and-effect-site-lag@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "hysteresis-and-effect-site-lag",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "src/modules/anesthesia/content/explainers.ts#hysteresis-and-effect-site-lag"
+      ]
+    },
+    {
+      "recordId": "explanation:preoxygenation-and-safe-apnea-time@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "preoxygenation-and-safe-apnea-time",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "src/modules/anesthesia/content/explainers.ts#preoxygenation-and-safe-apnea-time"
+      ]
+    },
+    {
+      "recordId": "explanation:hypnotic-opioid-synergy@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "hypnotic-opioid-synergy",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "src/modules/anesthesia/content/explainers.ts#hypnotic-opioid-synergy"
+      ]
+    },
+    {
+      "recordId": "explanation:vasodilation-versus-hypovolemia@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "vasodilation-versus-hypovolemia",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "src/modules/anesthesia/content/explainers.ts#vasodilation-versus-hypovolemia"
+      ]
+    },
+    {
+      "recordId": "explanation:capnogram-morphology@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "capnogram-morphology",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "src/modules/anesthesia/content/explainers.ts#capnogram-morphology"
+      ]
+    },
+    {
+      "recordId": "explanation:airway-assessment-predicts-poorly@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "airway-assessment-predicts-poorly",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "src/modules/anesthesia/content/explainers.ts#airway-assessment-predicts-poorly"
+      ]
+    },
+    {
+      "recordId": "explanation:depth-monitoring-and-its-limits@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "depth-monitoring-and-its-limits",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "src/modules/anesthesia/content/explainers.ts#depth-monitoring-and-its-limits"
+      ]
+    },
+    {
+      "recordId": "explanation:train-of-four-and-residual-blockade@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "train-of-four-and-residual-blockade",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "src/modules/anesthesia/content/explainers.ts#train-of-four-and-residual-blockade"
+      ]
+    },
+    {
+      "recordId": "explanation:malignant-hyperthermia-early-pattern@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "malignant-hyperthermia-early-pattern",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "src/modules/anesthesia/content/explainers.ts#malignant-hyperthermia-early-pattern"
+      ]
+    },
+    {
+      "recordId": "drug-card:propofol@0.1.0",
+      "subjectKind": "drug-card",
+      "subjectId": "propofol",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "src/modules/anesthesia/content/drug-cards.ts#propofol",
+        "/catalog/evidence-sources.json#propofol-us-label"
+      ]
+    },
+    {
+      "recordId": "drug-card:remifentanil@0.1.0",
+      "subjectKind": "drug-card",
+      "subjectId": "remifentanil",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "src/modules/anesthesia/content/drug-cards.ts#remifentanil",
+        "/catalog/evidence-sources.json#remifentanil-us-label"
+      ]
+    },
+    {
+      "recordId": "drug-card:rocuronium@0.1.0",
+      "subjectKind": "drug-card",
+      "subjectId": "rocuronium",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "src/modules/anesthesia/content/drug-cards.ts#rocuronium",
+        "/catalog/evidence-sources.json#rocuronium-us-label"
+      ]
+    },
+    {
+      "recordId": "practice-region:us@0.1.0",
+      "subjectKind": "practice-region",
+      "subjectId": "US",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "src/modules/anesthesia/region/profiles.ts#US"
+      ]
+    },
+    {
+      "recordId": "practice-region:gb@0.1.0",
+      "subjectKind": "practice-region",
+      "subjectId": "GB",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "src/modules/anesthesia/region/profiles.ts#GB"
       ]
     }
   ]

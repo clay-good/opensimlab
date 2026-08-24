@@ -11,6 +11,7 @@ import { EXPLAINERS } from '@anesthesia/content/explainers';
 import { DRUG_CARDS } from '@anesthesia/content/drug-cards';
 import { SCENARIOS } from '@anesthesia/scenarios';
 import { REGIONS } from '@anesthesia/region/profiles';
+import type { MaturitySubjectInput } from '@platform/catalog/maturity';
 
 /**
  * The editorial board.
@@ -78,6 +79,30 @@ export function reviewableItems(): ReviewableItem[] {
   }
 
   return items;
+}
+
+/** Non-scenario content included in the same exact-version maturity catalog. */
+export function additionalMaturitySubjects(): MaturitySubjectInput[] {
+  return [
+    ...EXPLAINERS.map((explainer): MaturitySubjectInput => ({
+      subjectKind: 'explanation', subjectId: explainer.id,
+      contentVersion: explainer.review.contentVersion, status: explainer.maturity,
+      evidence: [`src/modules/anesthesia/content/explainers.ts#${explainer.id}`],
+    })),
+    ...DRUG_CARDS.map((card): MaturitySubjectInput => ({
+      subjectKind: 'drug-card', subjectId: card.drugId,
+      contentVersion: card.review.contentVersion, status: card.maturity,
+      evidence: [
+        `src/modules/anesthesia/content/drug-cards.ts#${card.drugId}`,
+        `/catalog/evidence-sources.json#${card.dosing.sourceId}`,
+      ],
+    })),
+    ...REGIONS.map((region): MaturitySubjectInput => ({
+      subjectKind: 'practice-region', subjectId: region.id,
+      contentVersion: region.version, status: region.maturity,
+      evidence: [`src/modules/anesthesia/region/profiles.ts#${region.id}`],
+    })),
+  ];
 }
 
 /**

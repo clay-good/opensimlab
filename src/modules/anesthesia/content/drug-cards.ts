@@ -7,9 +7,11 @@
  */
 
 import type { ClinicalReview } from './explainers';
+import type { ContentMaturity } from '@platform/catalog/maturity';
 
 export interface DrugCard {
   readonly drugId: string;
+  readonly maturity: ContentMaturity;
   readonly name: string;
   readonly drugClass: string;
   readonly mechanism: string;
@@ -52,6 +54,7 @@ const UNSIGNED: ClinicalReview = {
 export const DRUG_CARDS: readonly DrugCard[] = [
   {
     drugId: 'propofol',
+    maturity: 'draft',
     name: 'Propofol',
     drugClass: 'Intravenous hypnotic',
     mechanism: 'Potentiates GABA-A receptor activity, producing hypnosis. It has no analgesic effect.',
@@ -96,6 +99,7 @@ export const DRUG_CARDS: readonly DrugCard[] = [
   },
   {
     drugId: 'remifentanil',
+    maturity: 'draft',
     name: 'Remifentanil',
     drugClass: 'Ultra-short-acting synthetic opioid',
     mechanism: 'Mu-opioid receptor agonist. Metabolized by non-specific plasma and tissue esterases, independently of liver and kidney.',
@@ -140,6 +144,7 @@ export const DRUG_CARDS: readonly DrugCard[] = [
   },
   {
     drugId: 'rocuronium',
+    maturity: 'draft',
     name: 'Rocuronium',
     drugClass: 'Nondepolarizing neuromuscular blocking agent',
     mechanism: 'Competitively blocks acetylcholine at the neuromuscular junction. It causes '

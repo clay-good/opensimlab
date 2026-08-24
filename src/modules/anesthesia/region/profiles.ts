@@ -10,6 +10,8 @@
  * merely present.
  */
 
+import type { ContentMaturity } from '@platform/catalog/maturity';
+
 export interface GuidelineReference {
   readonly name: string;
   readonly issuingBody: string;
@@ -35,6 +37,7 @@ export interface FormularyPresentation {
 export interface RegionProfile {
   readonly id: string;
   readonly version: string;
+  readonly maturity: ContentMaturity;
   readonly name: string;
   /** Browser language tags this profile is the best guess for. */
   readonly localeHints: readonly string[];
@@ -64,6 +67,7 @@ export interface RegionProfile {
 export const UNITED_STATES: RegionProfile = {
   id: 'US',
   version: '0.1.0',
+  maturity: 'draft',
   name: 'United States',
   localeHints: ['en-US'],
   unitSystem: 'conventional',
@@ -106,6 +110,7 @@ export const UNITED_STATES: RegionProfile = {
 export const UNITED_KINGDOM: RegionProfile = {
   id: 'GB',
   version: '0.1.0',
+  maturity: 'draft',
   name: 'United Kingdom',
   localeHints: ['en-GB', 'en-IE'],
   unitSystem: 'si',

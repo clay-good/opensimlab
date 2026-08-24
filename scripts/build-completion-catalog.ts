@@ -6,7 +6,8 @@ import { SCENARIOS } from '@anesthesia/scenarios';
 import { buildAnesthesiaCompletionCatalog } from '@anesthesia/catalog/scenario-completion';
 import { SCENARIO_COMPLETION_SCHEMA } from '@platform/catalog/scenario-completion';
 import { buildScenarioQualityCatalog, QUALITY_SCHEMAS } from '@platform/catalog/scenario-quality';
-import { buildScenarioMaturityCatalog, MATURITY_RECORD_SCHEMA } from '@platform/catalog/maturity';
+import { buildMaturityCatalog, MATURITY_RECORD_SCHEMA } from '@platform/catalog/maturity';
+import { additionalMaturitySubjects } from '@platform/governance/records';
 import { ASSET_LICENSE_MANIFEST, buildEvidenceSourceManifest } from '@platform/catalog/provenance';
 import { SOURCES } from '@platform/docs/sources';
 
@@ -41,7 +42,7 @@ writeFileSync(
 );
 writeFileSync(
   join(target, 'anesthesia-maturity.json'),
-  `${JSON.stringify(buildScenarioMaturityCatalog(completion, quality), null, 2)}\n`,
+  `${JSON.stringify(buildMaturityCatalog(completion, quality, additionalMaturitySubjects()), null, 2)}\n`,
   'utf8',
 );
 writeFileSync(join(target, 'asset-licenses.json'), `${JSON.stringify(ASSET_LICENSE_MANIFEST, null, 2)}\n`, 'utf8');

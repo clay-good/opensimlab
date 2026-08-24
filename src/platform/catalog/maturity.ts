@@ -31,6 +31,22 @@ export interface MaturityCatalog {
   readonly records: readonly MaturityRecord[];
 }
 
+export interface MaturitySubjectInput {
+  readonly subjectKind: MaturitySubjectKind;
+  readonly subjectId: string;
+  readonly contentVersion: string;
+  readonly status: ContentMaturity;
+  readonly evidence: readonly string[];
+}
+
+export function maturityRecordId(
+  subjectKind: MaturitySubjectKind,
+  subjectId: string,
+  contentVersion: string,
+): string {
+  return `${subjectKind}:${subjectId.toLowerCase()}@${contentVersion}`;
+}
+
 export const MATURITY_RECORD_SCHEMA = {
   $schema: 'https://json-schema.org/draft/2020-12/schema',
   $id: 'https://opensimlab.com/catalog/maturity-record.schema.json',
@@ -40,7 +56,7 @@ export const MATURITY_RECORD_SCHEMA = {
   properties: {
     recordId: { type: 'string', pattern: '^[a-z0-9][a-z0-9:._@-]+$' },
     subjectKind: { enum: [...MATURITY_SUBJECT_KINDS] },
-    subjectId: { type: 'string', pattern: '^[a-z0-9-]+$' },
+    subjectId: { type: 'string', pattern: '^[A-Za-z0-9-]+$' },
     contentVersion: { type: 'string', pattern: '^\\d+\\.\\d+\\.\\d+$' },
     status: { enum: [...MATURITY_STATUSES] },
     evidence: { type: 'array', minItems: 1, items: { type: 'string', minLength: 1 } },
@@ -59,18 +75,19 @@ export function maturityFor(
     && record.contentVersion === contentVersion);
 }
 
-export function buildScenarioMaturityCatalog(
+export function buildMaturityCatalog(
   completion: ScenarioCompletionCatalog,
   quality: ScenarioQualityCatalog,
+  additionalSubjects: readonly MaturitySubjectInput[] = [],
 ): MaturityCatalog {
-  const records = completion.scenarios.map((scenario): MaturityRecord => {
+  const scenarioRecords = completion.scenarios.map((scenario): MaturityRecord => {
     const qualityRecord = quality.scenarios.find((entry) => entry.scenarioId === scenario.scenarioId
       && entry.contentVersion === scenario.contentVersion);
     if (!qualityRecord) {
       throw new Error(`No exact-version quality audit for ${scenario.scenarioId} ${scenario.contentVersion}.`);
     }
     return {
-      recordId: `scenario:${scenario.scenarioId}@${scenario.contentVersion}`,
+      recordId: maturityRecordId('scenario', scenario.scenarioId, scenario.contentVersion),
       subjectKind: 'scenario', subjectId: scenario.scenarioId,
       contentVersion: scenario.contentVersion, status: scenario.maturity,
       evidence: [
@@ -79,6 +96,19 @@ export function buildScenarioMaturityCatalog(
       ],
     };
   });
+  const records = [
+    ...scenarioRecords,
+    ...additionalSubjects.map((subject): MaturityRecord => ({
+      recordId: maturityRecordId(subject.subjectKind, subject.subjectId, subject.contentVersion),
+      ...subject,
+    })),
+  ];
+  const subjectVersions = new Set<string>();
+  for (const record of records) {
+    const key = `${record.subjectKind}:${record.subjectId}@${record.contentVersion}`;
+    if (subjectVersions.has(key)) throw new Error(`Duplicate exact-version maturity subject ${key}.`);
+    subjectVersions.add(key);
+  }
   return {
     schemaVersion: MATURITY_SCHEMA_VERSION, moduleId: completion.moduleId,
     recordCount: records.length, records,
@@ -112,8 +142,8 @@ export function validateMaturityCatalog(value: unknown): string[] {
     if (!MATURITY_SUBJECT_KINDS.includes(record.subjectKind as MaturitySubjectKind)) {
       errors.push(`${pointer}/subjectKind: unsupported value`);
     }
-    if (typeof record.subjectId !== 'string' || !/^[a-z0-9-]+$/.test(record.subjectId)) {
-      errors.push(`${pointer}/subjectId: expected stable lowercase identifier`);
+    if (typeof record.subjectId !== 'string' || !/^[A-Za-z0-9-]+$/.test(record.subjectId)) {
+      errors.push(`${pointer}/subjectId: expected stable identifier`);
     }
     if (typeof record.contentVersion !== 'string' || !/^\d+\.\d+\.\d+$/.test(record.contentVersion)) {
       errors.push(`${pointer}/contentVersion: expected semantic version`);

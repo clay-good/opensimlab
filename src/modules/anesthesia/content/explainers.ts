@@ -3,9 +3,10 @@
  *
  * Each is under 250 words, in plain language, with one diagram and a link to the
  * scenario that demonstrates it. Every one is clinical content and carries a
- * clinical review record; the build excludes the surface that would show an
- * unreviewed one.
+ * clinical review and exact maturity records.
  */
+
+import type { ContentMaturity } from '@platform/catalog/maturity';
 
 export interface Diagram {
   /** Inline SVG drawn from design tokens. No image file is fetched. */
@@ -24,6 +25,7 @@ export interface ClinicalReview {
 
 export interface Explainer {
   readonly id: string;
+  readonly maturity: ContentMaturity;
   readonly title: string;
   /** Under 250 words. The word count is asserted in the tests. */
   readonly body: string;
@@ -47,6 +49,7 @@ const UNSIGNED: ClinicalReview = {
 export const EXPLAINERS: readonly Explainer[] = [
   {
     id: 'hysteresis-and-effect-site-lag',
+    maturity: 'draft',
     title: 'Hysteresis and effect-site lag',
     body:
       'When you push a bolus, the concentration in the blood spikes within seconds. The '
@@ -69,6 +72,7 @@ export const EXPLAINERS: readonly Explainer[] = [
   },
   {
     id: 'preoxygenation-and-safe-apnea-time',
+    maturity: 'draft',
     title: 'Preoxygenation and safe apnoea time',
     body:
       'Breathing high-concentration oxygen before you take the airway away replaces the nitrogen '
@@ -95,6 +99,7 @@ export const EXPLAINERS: readonly Explainer[] = [
   },
   {
     id: 'hypnotic-opioid-synergy',
+    maturity: 'draft',
     title: 'Hypnotic–opioid synergy',
     body:
       'Propofol and remifentanil are not additive. Given together they produce more effect than '
@@ -117,6 +122,7 @@ export const EXPLAINERS: readonly Explainer[] = [
   },
   {
     id: 'vasodilation-versus-hypovolemia',
+    maturity: 'draft',
     title: 'Vasodilation is not hypovolaemia',
     body:
       'Two patients have a mean arterial pressure of 52. One is vasodilated from an induction '
@@ -139,6 +145,7 @@ export const EXPLAINERS: readonly Explainer[] = [
   },
   {
     id: 'capnogram-morphology',
+    maturity: 'draft',
     title: 'Reading the capnogram shape',
     body:
       'The end-tidal number tells you one thing. The shape tells you several, and it usually tells '
@@ -162,6 +169,7 @@ export const EXPLAINERS: readonly Explainer[] = [
   },
   {
     id: 'airway-assessment-predicts-poorly',
+    maturity: 'draft',
     title: 'Airway assessment predicts poorly, and what to do about it',
     body:
       'Bedside airway tests — the Mallampati classification, thyromental distance, mouth opening, '
@@ -186,6 +194,7 @@ export const EXPLAINERS: readonly Explainer[] = [
   },
   {
     id: 'depth-monitoring-and-its-limits',
+    maturity: 'draft',
     title: 'Depth of anaesthesia and what an index cannot tell you',
     body:
       'The depth value on this screen is a PREDICTION. It is computed from effect-site '
@@ -213,6 +222,7 @@ export const EXPLAINERS: readonly Explainer[] = [
   },
   {
     id: 'train-of-four-and-residual-blockade',
+    maturity: 'draft',
     title: 'Train-of-four and residual neuromuscular blockade',
     body:
       'A train-of-four monitor stimulates a peripheral nerve four times and measures the muscle '
@@ -239,6 +249,7 @@ export const EXPLAINERS: readonly Explainer[] = [
   },
   {
     id: 'malignant-hyperthermia-early-pattern',
+    maturity: 'draft',
     title: 'Malignant hyperthermia: carbon dioxide before temperature',
     body:
       'Malignant hyperthermia is a rare hypermetabolic response in a susceptible person exposed '

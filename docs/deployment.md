@@ -58,10 +58,11 @@ Preview does not require a clinical signature. It does require an exact-version
 the completion contract, tests, limitations, a validation report, and a
 documented face-validity procedure for every included item.
 
-The current scenarios remain `draft`, and explainers, drug cards, and practice
-regions do not yet have maturity records, so this command refuses today. There
-is no unsigned-alpha bypass: work advances by satisfying preview evidence and
-changing the exact status record, not by weakening the release command.
+All current scenarios, explainers, drug cards, and practice regions remain
+`draft`, and their completion evidence is not finished, so this command refuses
+today. There is no unsigned-alpha bypass: work advances by satisfying preview
+evidence and changing the exact status record, not by weakening the release
+command.
 
 To build the stricter reviewed-only channel:
 
