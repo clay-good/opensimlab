@@ -124,10 +124,13 @@ response, stopping before dysrhythmia treatment or cardiac arrest.
 - Add a twentieth scenario that keeps patient pressure separate from a misleveled and over-damped
   invasive display, then requires waveform assessment, level-and-zero intent, a delayed independent
   cuff result, and bounded signal restoration before any patient-changing treatment.
+- Add a twenty-first scenario with exhausted circle-system carbon-dioxide absorbent, a raised
+  inspiratory capnogram baseline, a high-fresh-gas-flow bridge, ordered assessment and replacement
+  intent, and confirmed washout without claiming workstation-specific technique or patient prediction.
 
 ## Impact
 
-These 23 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+These 24 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
 awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. The seventh also closes the bounded
 pediatric-family gap without claiming a general pediatric patient model. The eighth reaches the
 minimum count of 12 scenarios and closes the bounded difficult-airway rescue gap. The ninth closes
@@ -157,3 +160,7 @@ The twenty-third adds the twentieth authored scenario and closes the arterial-tr
 gap with separate patient and sensor state, a hydrostatic display offset, dynamic-response morphology,
 a delayed independent cuff sample, and accepted diagnostic/corrective intent without claiming
 psychomotor or device-specific competence.
+The twenty-fourth adds the twenty-first authored scenario and closes the exhausted-absorbent
+rebreathing gap with an elevated inspiratory baseline, actual modeled carbon-dioxide exposure,
+a bounded fresh-gas-flow bridge, ordered correction, and washout without claiming a complete
+workstation, acid-base, or individual patient model.

@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 23 reports the arterial pressure system. */
-export const WORKER_PROTOCOL_VERSION = 23;
+export const WORKER_PROTOCOL_VERSION = 24;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -198,6 +198,13 @@ export interface EquipmentSnapshot {
   readonly capnographyLine: {
     readonly obstructed: boolean;
     readonly ventilationCrossChecked: boolean;
+  };
+  /** The circle breathing system, distinct from the sampled capnography line. */
+  readonly breathingCircuit?: {
+    readonly co2Absorbent: 'normal' | 'exhausted';
+    readonly inspiredCo2MmHg: number;
+    readonly capnogramAssessed: boolean;
+    readonly absorbentReplaced: boolean;
   };
   /** The invasive-pressure display path, kept separate from canonical patient pressure. */
   readonly arterialLine?: {

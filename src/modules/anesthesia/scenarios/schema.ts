@@ -165,6 +165,10 @@ export const SCENARIO_SCHEMA: SchemaNode = {
           type: 'array', description: 'Monitors attached at the start.', minItems: 1,
           items: { type: 'string', description: 'One monitored parameter.', enum: ['ecg', 'nibp', 'arterial-line', 'capnography', 'pulse-oximetry', 'temperature', 'depth-index', 'train-of-four'] },
         },
+        airwayDevice: {
+          type: 'string', description: 'Airway device already in place at scenario start.',
+          enum: ['facemask', 'tracheal-tube'],
+        },
         ventilator: {
           type: 'object', description: 'Initial ventilator settings.',
           required: ['mode', 'fio2'],
@@ -174,6 +178,7 @@ export const SCENARIO_SCHEMA: SchemaNode = {
             tidalVolumeMl: NUMBER_FIELD('Set tidal volume.', 0, 1200),
             respiratoryRateBpm: NUMBER_FIELD('Set respiratory rate.', 0, 40),
             freshGasFlowLPerMin: NUMBER_FIELD('Fresh gas flow.', 0.5, 15),
+            sevofluranePercent: NUMBER_FIELD('Initial delivered sevoflurane concentration.', 0, 8),
             delivering: { type: 'boolean', description: 'Whether breaths are being delivered at the start.' },
           },
         },

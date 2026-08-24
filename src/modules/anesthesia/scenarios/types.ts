@@ -79,12 +79,14 @@ export interface ScenarioPatient {
 
 export interface ScenarioEquipment {
   readonly monitoring: readonly string[];
+  readonly airwayDevice?: 'facemask' | 'tracheal-tube';
   readonly ventilator: {
     readonly mode: 'volume-control' | 'pressure-control' | 'manual';
     readonly fio2: number;
     readonly tidalVolumeMl: number;
     readonly respiratoryRateBpm: number;
     readonly freshGasFlowLPerMin?: number;
+    readonly sevofluranePercent?: number;
     readonly delivering: boolean;
   };
 }

@@ -29,6 +29,7 @@ import { REPEATED_LARYNGOSCOPY_HARM } from './repeated-laryngoscopy-harm';
 import { CAPNOGRAPHY_SAMPLING_LINE_OBSTRUCTION } from './capnography-sampling-line-obstruction';
 import { DILUTIONAL_COAGULOPATHY } from './dilutional-coagulopathy';
 import { ARTERIAL_PRESSURE_TRANSDUCER_ARTIFACT } from './arterial-pressure-transducer-artifact';
+import { CIRCLE_SYSTEM_REBREATHING } from './circle-system-rebreathing';
 
 export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_INDUCTION,
@@ -51,6 +52,7 @@ export const SCENARIOS: readonly Scenario[] = [
   CAPNOGRAPHY_SAMPLING_LINE_OBSTRUCTION,
   DILUTIONAL_COAGULOPATHY,
   ARTERIAL_PRESSURE_TRANSDUCER_ARTIFACT,
+  CIRCLE_SYSTEM_REBREATHING,
 ];
 
 /** The scenario a learner meets first. */

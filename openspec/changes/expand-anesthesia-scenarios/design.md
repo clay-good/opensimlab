@@ -368,3 +368,26 @@ The evidence brief uses Saugel et al. for leveling, zeroing, waveform-quality as
 current ASA monitoring standard for circulation-monitoring context. Cannulation, cuff technique,
 positioning, cerebral reference levels, fast-flush execution, sterility, commercial-monitor behavior,
 device accuracy, and individualized treatment thresholds remain outside the model.
+
+## Slice 24: circle-system rebreathing from exhausted absorbent
+
+The twenty-first authored scenario begins after a tracheal tube, volume-controlled ventilation,
+and 1.6% delivered sevoflurane are established at 1 L/min fresh-gas flow. At 180 seconds, exhausted
+absorbent raises inspired carbon dioxide toward 8 mmHg on a fixed 45-second teaching time constant.
+The phase-I capnogram baseline and patient end-tidal value rise while delivered breaths, sampling,
+saturation, temperature, and airway patency remain available.
+
+Higher fresh-gas flow lowers the inspired-carbon-dioxide target on a declared linear bridge curve
+but does not repair the absorber. A scenario-scoped Circuit tray records capnogram assessment,
+links directly to the existing fresh-gas control, and permits absorber-replacement intent only after
+assessment. Replacement clears the fault and washes inspired carbon dioxide toward zero with a
+fixed 10-second time constant. The same state drives the waveform, visual tray, nonvisual summary,
+announcements, transcript, replay, and debrief.
+
+The evidence brief uses Verbeke et al. 2023 for inspired-carbon-dioxide detection, the 3-4 mmHg
+routine replacement threshold, and the fresh-gas-flow relationship; the 2024 APSF article for
+workstation-specific exchange and backup-ventilation boundaries; and Association monitoring
+guidance for waveform-capnography context. Exact concentrations and time constants are teaching
+calibrations. Canister chemistry, channeling, desiccation, color change, valves, leaks, pressure,
+commercial alarms, physical exchange, acid-base effects, sympathetic response, teams, and
+individual outcome remain outside the model.

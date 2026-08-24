@@ -189,8 +189,8 @@ credited toward the catalog until every item in the completion contract passes.
   claiming to simulate team performance.
 - [ ] For every capability: sources, applicability, calibration, invariants, hostile inputs,
   deterministic replay, nonvisual representation, limitations, and cross-scenario regression.
-- [ ] Add equipment-state capabilities for breathing-circuit carbon-dioxide rebreathing,
-  endotracheal-tube position, tracheostomy patency, and neonatal pleural-pressure deterioration;
+- [ ] Add equipment-state capabilities for endotracheal-tube position, tracheostomy patency, and
+  neonatal pleural-pressure deterioration; circle-system carbon-dioxide rebreathing is complete;
   state changes must alter canonical flow/ventilation rather than display text alone.
 - [ ] Add bounded state-transition capabilities for evolving aortic malperfusion, autonomic
   dysreflexia, methemoglobinemia saturation gap, and cellular-therapy cytokine-release syndrome,
@@ -198,7 +198,7 @@ credited toward the catalog until every item in the completion contract passes.
 
 ## 8. Catalog production waves
 
-- [ ] Wave A: migrate and complete 39 anesthesia scenarios.
+- [ ] Wave A: migrate and complete 39 anesthesia scenarios — 21 are authored and registered.
 - [ ] Wave B: complete 25 emergency-medicine and 24 critical-care scenarios.
 - [ ] Wave C: complete 17 cardiology and 15 respiratory-medicine scenarios.
 - [ ] Wave D: complete 16 pediatric, 15 obstetric, and 11 neonatal scenarios.

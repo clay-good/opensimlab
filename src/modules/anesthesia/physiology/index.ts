@@ -211,11 +211,17 @@ export class VirtualPatient {
    */
   private arrested = false;
 
-  constructor(profile: PatientProfile, rng: Rng, initialFio2 = 0.21) {
+  constructor(
+    profile: PatientProfile,
+    rng: Rng,
+    initialFio2 = 0.21,
+    initialSevofluranePercent = 0,
+  ) {
     this.profile = profile;
     this.rng = rng;
     this.airway = new AirwayState();
     this.temperatureC = profile.coreTemperatureC;
+    this.sevofluranePercent = clamp(initialSevofluranePercent, 0, 8);
     this.hemoglobinMassG = profile.hemodynamics.hemoglobinGPerDl
       * (profile.hemodynamics.bloodVolumeMl / 100);
     this.coagulationFactorMass = (profile.initialCoagulationFactorFraction ?? 1)

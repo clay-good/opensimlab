@@ -88,7 +88,9 @@ Reviewers run the routine induction themselves before answering.
 | B34 | Quantitative recovery after depth-matched 2/4 mg/kg sugammadex, and neostigmine with an antimuscarinic only during minimal block | | |
 | B35 | Sampling-line obstruction removes only the displayed capnogram and end-tidal number while modeled ventilation, saturation, and plethysmography stay stable; reconnection restores the sample | | |
 | B36 | In the dilutional-coagulopathy case, four fixed plasma units move PT ratio and fibrinogen in a plausible direction and magnitude, and a repeated panel displays the retained change | | |
-| B37 | Overall: does this patient behave like a patient? | | |
+| B37 | Arterial transducer misleveling lowers only displayed MAP, over-damping changes only morphology, and an independent cuff continues to sample canonical pressure | | |
+| B38 | Exhausted absorbent raises the capnogram inspiratory baseline and end-tidal carbon dioxide; high fresh-gas flow reduces rebreathing and replacement produces plausible washout | | |
+| B39 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -106,11 +108,15 @@ So that reviewers spend their attention on what this review is for:
   teaching effect; emergence, extubation, recurrent block, and postoperative outcomes are not modeled.
 - Peripheral train-of-four is observable but does not guarantee conditions at the larynx.
 - The full-stomach case does not model regurgitation, aspiration, or cricoid pressure.
-- Fresh gas flow scales a calibrated volatile wash-in/washout time constant; there is no circuit,
-  uptake, rebreathing, or agent-consumption model.
+- Fresh gas flow scales calibrated volatile wash-in/washout and, only in the dedicated exhausted-
+  absorbent case, a bounded rebreathing curve. There is no complete circuit, tissue-uptake,
+  canister-chemistry, valve, acid-base, sympathetic-response, or agent-consumption model.
 - Capnography sampling-line obstruction is a display-only artifact with immediate deterministic
   reconnection. It has no water trap, kink, leak, secretion, pump, calibration, dilution, analyzer,
   or device-specific alarm model, and its cross-check control does not assess physical examination.
+- Circle-system rebreathing uses fixed inspired-carbon-dioxide and washout time constants plus a
+  linear fresh-gas bridge. It does not predict a real absorber, workstation, patient, exchange
+  procedure, or valve fault, and its controls record screen intent rather than physical skill.
 - Balanced crystalloid uses a fixed-retention teaching model. Adult packed red cells use fixed
   300 mL and 60 g hemoglobin units with a two-unit cap. A dilution-only factor/fibrinogen model,
   immediate teaching panel, and fixed 275 mL plasma units are available only while modeled

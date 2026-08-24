@@ -292,6 +292,7 @@ export function waveformDescriptions(options: {
   readonly artifacts: ReadonlySet<string>;
   readonly capnographySampleObstructed?: boolean;
   readonly arterialDamped?: boolean;
+  readonly inspiredCo2MmHg?: number;
   readonly ventilating: boolean;
   readonly mechanicalPulse: boolean;
 }): { signal: string; label: string; description: string }[] {
@@ -302,6 +303,8 @@ export function waveformDescriptions(options: {
     ? 'No sampled waveform: the carbon-dioxide sampling line is obstructed. This is a monitoring problem; cross-check ventilation independently.'
     : !options.ventilating || options.airwayPatencyFraction <= 0.05
       ? 'No waveform: no gas is moving.'
+    : (options.inspiredCo2MmHg ?? 0) >= 0.5
+      ? `Rebreathing pattern: the inspiratory baseline remains about ${(options.inspiredCo2MmHg ?? 0).toFixed(1)} millimeters of mercury above zero while expiratory waveforms continue.`
     : alpha > NORMAL_ALPHA_DEGREES + 15
       ? `Shark-fin shape: the expiratory upstroke is sloped and the plateau rises, giving an alpha angle of about ${alpha.toFixed(0)} degrees.`
       : `Normal rectangular shape with a flat alveolar plateau, alpha angle about ${alpha.toFixed(0)} degrees.`;
@@ -358,6 +361,22 @@ export function arterialLineSummary(status: {
       ? ` Independent cuff mean arterial pressure ${status.cuff.meanArterialMmHg.toFixed(0)} millimeters of mercury.`
       : '';
   return `${display}${fault}${response}${cuff}`;
+}
+
+/** A concise nonvisual equivalent of the scenario-scoped circle system. */
+export function breathingCircuitSummary(status: {
+  readonly co2Absorbent: 'normal' | 'exhausted';
+  readonly inspiredCo2MmHg: number;
+  readonly capnogramAssessed: boolean;
+  readonly absorbentReplaced: boolean;
+}): string {
+  const absorber = status.co2Absorbent === 'exhausted'
+    ? 'The modeled carbon-dioxide absorbent is exhausted.'
+    : status.absorbentReplaced
+      ? 'Absorbent replacement intent is recorded.'
+      : 'The modeled carbon-dioxide absorbent is normal.';
+  return `Inspired carbon dioxide ${status.inspiredCo2MmHg.toFixed(1)} millimeters of mercury. ${absorber}`
+    + (status.capnogramAssessed ? ' Raised inspiratory baseline assessment is recorded.' : '');
 }
 
 /**

@@ -823,6 +823,45 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['arterial-pressure-transducer-artifact'],
   },
   {
+    id: 'circle-system-rebreathing-is-a-bounded-teaching-trajectory',
+    headline: 'The exhausted-absorbent response is a declared teaching curve, not a workstation or patient prediction.',
+    simplification: 'One authored equipment failure raises inspired carbon dioxide toward 8 mmHg '
+      + 'at 1 L/min fresh-gas flow over a fixed 45-second time constant. Higher flow reduces that '
+      + 'target on a fixed curve; replacement clears it with a fixed 10-second washout. Inspired '
+      + 'carbon dioxide is added to the existing end-tidal value without a full carbon-dioxide '
+      + 'production, distribution, ventilation, acid-base, sympathetic, or intracranial model.',
+    whereItMisleads: 'Predicting absorber life, canister breakthrough, inspired or arterial carbon '
+      + 'dioxide, alarm timing, hemodynamic effects, or response for a real patient or machine.',
+    correctUnderstanding: 'A raised inspired carbon-dioxide baseline during circle-system use '
+      + 'requires prompt patient and equipment assessment. Follow the workstation instructions '
+      + 'and local response process; flow and replacement behavior are device- and context-specific.',
+    briefIn: ['circle-system-rebreathing'],
+  },
+  {
+    id: 'breathing-circuit-actions-are-screen-intent',
+    headline: 'Capnogram assessment and absorbent replacement are intent controls, not equipment-skills certification.',
+    simplification: 'Buttons record interpretation and corrective intent. The simulator cannot '
+      + 'inspect the patient, breathing hoses, valves, seals, canister, granules, color indicator, '
+      + 'workstation pause mode, backup circuit, or the learner’s physical technique.',
+    whereItMisleads: 'Treating a successful browser action as proof of systematic machine '
+      + 'troubleshooting, safe canister exchange, or competence on a particular workstation.',
+    correctUnderstanding: 'Circle-system troubleshooting and absorbent exchange require '
+      + 'supervised, equipment-specific practice with the manufacturer’s instructions and a backup plan.',
+    briefIn: ['circle-system-rebreathing'],
+  },
+  {
+    id: 'initial-maintenance-state-is-not-an-individual-prediction',
+    headline: 'The established maintenance setup is a scenario starting condition, not a patient-specific anesthetic plan.',
+    simplification: 'The case starts with a tracheal tube, volume-controlled breaths, 2% delivered '
+      + 'sevoflurane, 50% oxygen, and 1 L/min fresh-gas flow. It does not model the induction, '
+      + 'intubation, tube confirmation, surgical stimulation, analgesia, or individualized maintenance choice that preceded it.',
+    whereItMisleads: 'Using the starting settings as a recommended anesthetic, dose, ventilation '
+      + 'strategy, or evidence that a particular patient is adequately anesthetized.',
+    correctUnderstanding: 'Maintenance anesthesia and ventilation must be individualized and '
+      + 'continuously assessed. These fixed settings exist only to create a stable equipment-diagnosis window.',
+    briefIn: ['circle-system-rebreathing'],
+  },
+  {
     id: 'no-team-or-communication',
     headline: 'There is no team: nobody to ask, nobody to hand over to, and no communication to get wrong.',
     simplification: 'There is no surgeon, no scrub team, no assistant, and no communication of any '

@@ -16,7 +16,7 @@ const quality = buildScenarioQualityCatalog(
 describe('machine-readable scenario quality contracts', () => {
   it('audits all scenarios and counts none playable while four records are absent', () => {
     expect(validateScenarioQualityCatalog(quality)).toEqual([]);
-    expect(quality.scenarioCount).toBe(20);
+    expect(quality.scenarioCount).toBe(21);
     expect(quality.playableScenarioCount).toBe(0);
     for (const scenario of quality.scenarios) {
       expect(scenario.qualityRecords.map((record) => record.kind)).toEqual(QUALITY_RECORD_KINDS);

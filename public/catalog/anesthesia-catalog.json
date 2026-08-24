@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 20,
+  "scenarioCount": 21,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -444,6 +444,27 @@
         "Use waveform morphology to identify and correct the over-damped pressure system."
       ],
       "searchText": "arterial-pressure-transducer-artifact arterial-pressure transducer artifact quadriceps tendon rupture repair under neuraxial anesthesia verify an implausible invasive pressure with an independent cuff result before treating the patient. an accepted cuff cycle completed within 60 seconds of the artifact and before a patient-changing fluid or drug action. recognize and remove the hydrostatic pressure offset by recording level-and-zero intent. accepted level-and-zero intent removed the 20 cm transducer offset within 60 seconds of the artifact. use waveform morphology to identify and correct the over-damped pressure system. a waveform assessment preceded accepted pressure-tubing replacement and normal morphology returned."
+    },
+    {
+      "id": "circle-system-rebreathing",
+      "path": "/anesthesia/scenario/circle-system-rebreathing",
+      "title": "Circle-system rebreathing",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 8,
+      "difficulty": "intermediate",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Recognize rebreathing from a raised inspiratory carbon-dioxide baseline while breath delivery continues.",
+        "Increase fresh-gas flow as a bounded bridge while preparing definitive circuit correction.",
+        "Replace the exhausted absorbent after assessing the trace, then confirm inspired carbon dioxide clears."
+      ],
+      "searchText": "circle-system-rebreathing circle-system rebreathing symptomatic cholelithiasis laparoscopic cholecystectomy recognize rebreathing from a raised inspiratory carbon-dioxide baseline while breath delivery continues. an accepted capnogram assessment was recorded within 30 seconds of absorbent failure. increase fresh-gas flow as a bounded bridge while preparing definitive circuit correction. fresh-gas flow reached at least 10 l/min within 60 seconds of failure and before absorbent replacement. replace the exhausted absorbent after assessing the trace, then confirm inspired carbon dioxide clears. accepted absorbent replacement followed assessment within 90 seconds of failure and inspired carbon dioxide later fell below 1 mmhg."
     }
   ],
   "preparationPathCount": 10,
@@ -586,11 +607,12 @@
     },
     {
       "id": "ventilation-respiratory-failure",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "title": "Ventilation and respiratory failure",
       "description": "Use saturation, capnography, and airway state together rather than chasing one number.",
       "scenarioIds": [
         "capnography-sampling-line-obstruction",
+        "circle-system-rebreathing",
         "rapid-desaturation",
         "bronchospasm",
         "laryngospasm-after-airway-stimulation",
@@ -610,7 +632,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 43
+      "estimatedMinutes": 51
     },
     {
       "id": "pediatric-emergencies",

@@ -135,7 +135,7 @@ export class WaveformEngine {
         && !this.artifacts.has('circuit-disconnection')
         && !this.artifacts.has('sampling-line-obstruction'),
       curareCleftDepth: drive.curareCleftDepth,
-      inspiredCo2MmHg: 0,
+      inspiredCo2MmHg: drive.inspiredCo2MmHg,
       heartRateBpm: drive.heartRateBpm,
       esophageal: this.artifacts.has('esophageal-intubation'),
     }, this.buffers.capno);
@@ -189,6 +189,7 @@ export function restingDrive(overrides: Partial<WaveformDrive> = {}): WaveformDr
     perfusionIndex: 0.8,
     spo2Percent: 98,
     etco2MmHg: 38,
+    inspiredCo2MmHg: 0,
     respiratoryRateBpm: 12,
     bronchospasmSeverity: 0,
     ventilating: true,

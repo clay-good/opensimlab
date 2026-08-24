@@ -352,6 +352,32 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
       'assess-arterial-dynamic-response',
     ],
   },
+
+  // --- Circle-system rebreathing ----------------------------------------
+  {
+    scenarioId: 'circle-system-rebreathing',
+    frameworkId: 'nbcrna-nce', domainId: 'equipment-instrumentation-technology',
+    objectiveIds: [
+      'recognize-inspired-carbon-dioxide', 'bridge-with-fresh-gas-flow',
+      'replace-exhausted-absorbent',
+    ],
+  },
+  {
+    scenarioId: 'circle-system-rebreathing',
+    frameworkId: 'coa-standards', domainId: 'clinical-decision-making',
+    objectiveIds: [
+      'recognize-inspired-carbon-dioxide', 'bridge-with-fresh-gas-flow',
+      'replace-exhausted-absorbent',
+    ],
+  },
+  {
+    scenarioId: 'circle-system-rebreathing',
+    frameworkId: 'acgme-anesthesiology-milestones-2', domainId: 'pc-crisis-management',
+    objectiveIds: [
+      'recognize-inspired-carbon-dioxide', 'bridge-with-fresh-gas-flow',
+      'replace-exhausted-absorbent',
+    ],
+  },
   {
     scenarioId: 'arterial-pressure-transducer-artifact',
     frameworkId: 'coa-standards', domainId: 'clinical-decision-making',

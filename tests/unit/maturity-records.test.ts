@@ -23,7 +23,7 @@ describe('exact-version maturity records', () => {
     ]);
     expect(validateMaturityCatalog(catalog)).toEqual([]);
     expect(catalog.recordCount).toBe(reviewableItems().length);
-    expect(catalog.recordCount).toBe(34);
+    expect(catalog.recordCount).toBe(35);
     expect(catalog.records.every((record) => record.status === 'draft')).toBe(true);
     expect(maturityFor(catalog, 'explanation', 'hysteresis-and-effect-site-lag', '0.1.0'))
       .toBeDefined();

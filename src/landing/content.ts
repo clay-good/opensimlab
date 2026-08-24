@@ -88,7 +88,7 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
     id: 'inside-the-module',
     heading: 'What is inside the anesthesia module',
     paragraphs: [
-      'This is an early build. It contains twenty scenarios — a routine induction on a healthy '
+      'This is an early build. It contains twenty-one scenarios — a routine induction on a healthy '
       + 'adult, rapid desaturation in an obese patient, hypotension after induction, and '
       + 'bronchospasm after intubation with a region-aware inhaled bronchodilator response, plus unexpected intraoperative hemorrhage with crystalloid '
       + 'temporization, bounded adult packed-red-cell support, and a dilution-only coagulation panel with plasma support, rapid-sequence induction with modeled rocuronium onset, and silent TIVA-line '
@@ -105,6 +105,7 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
       + 'and a stable-ventilation capnography sampling-line obstruction that separates monitor failure from patient change '
       + 'and a dedicated dilutional-coagulopathy handoff that rehearses panel-guided plasma and repeat testing '
       + 'and an arterial-pressure transducer artifact that separates hydrostatic offset, waveform damping, cuff verification, and patient physiology '
+      + 'and circle-system rebreathing from exhausted absorbent with a raised inspiratory carbon-dioxide baseline, fresh-gas bridge, and confirmed washout '
       + '— with three drugs: population PK/PD for propofol and remifentanil, pediatric Paedfusor PK, '
       + 'a clearly labeled rocuronium teaching model, scripted cefazolin exposure, and dedicated '
       + 'epinephrine, dantrolene, benzodiazepine-class, lipid-emulsion, compression, and defibrillation crisis actions, the real monitor, the real design system, '
@@ -112,7 +113,7 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
       'That narrowness is deliberate. The riskiest things in a project like this are whether the '
       + 'waveforms convince a clinician, whether it holds its frame rate on a modest phone, and '
       + 'whether the physiology is plausible to someone who does this for a living. None of those '
-      + 'are answered by twenty mediocre scenarios, and all of them are answered by a few good '
+      + 'are answered by many mediocre scenarios, and all of them are answered by a few good '
       + 'ones that each teach a different failure.',
     ],
     list: [

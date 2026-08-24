@@ -18,7 +18,7 @@ import { FLUIDS } from '@anesthesia/content/fluids';
 import { BLOOD_PRODUCTS } from '@anesthesia/content/blood-products';
 import { JAW_THRUST_CPAP_SECONDS } from '@anesthesia/physiology';
 
-export type TrayId = 'syringes' | 'infusions' | 'fluids' | 'airway' | 'monitor' | 'crisis';
+export type TrayId = 'syringes' | 'infusions' | 'fluids' | 'airway' | 'monitor' | 'circuit' | 'crisis';
 
 export interface RunningInfusion {
   readonly drugId: string;
@@ -51,6 +51,13 @@ export interface ArterialLineStatus {
   };
 }
 
+export interface BreathingCircuitStatus {
+  readonly co2Absorbent: 'normal' | 'exhausted';
+  readonly inspiredCo2MmHg: number;
+  readonly capnogramAssessed: boolean;
+  readonly absorbentReplaced: boolean;
+}
+
 export interface ActionCockpitProps {
   readonly scenario: Scenario;
   readonly region: RegionProfile;
@@ -58,6 +65,7 @@ export interface ActionCockpitProps {
   readonly hypnoticLine: HypnoticLineStatus;
   readonly capnographyLine?: CapnographyLineStatus;
   readonly arterialLine?: ArterialLineStatus;
+  readonly breathingCircuit?: BreathingCircuitStatus;
   readonly resuscitation: {
     readonly epinephrineEffectFraction: number;
     readonly epinephrineTotalMicrograms: number;
@@ -141,6 +149,7 @@ export interface ActionCockpitProps {
   readonly onArterialLine?: (
     action: 'assess-waveform' | 'level-zero' | 'cycle-cuff' | 'restore-dynamic-response',
   ) => void;
+  readonly onBreathingCircuit?: (action: 'assess-capnogram' | 'replace-absorbent') => void;
   readonly onFluid: (fluidId: string, volumeMl: number) => void;
   readonly onBloodProduct?: (productId: string, units: number) => void;
   readonly onBloodBankRequest?: () => void;
@@ -256,9 +265,14 @@ export function ActionCockpit(props: ActionCockpitProps) {
   const hasRocuronium = props.scenario.formulary.some((entry) => entry.drugId === 'rocuronium');
   const hasArterialLineFault = props.scenario.timeline.some((event) => event.type === 'artifact'
     && ['arterial-damping', 'arterial-transducer-misleveled'].includes(event.target ?? ''));
-  const visibleTrays = hasArterialLineFault
-    ? [...trays.slice(0, 3), { id: 'monitor' as const, label: 'Monitor' }, ...trays.slice(3)]
-    : trays;
+  const hasCircuitFault = props.scenario.timeline.some((event) => event.type === 'equipment-failure'
+    && event.target === 'co2-absorbent-exhaustion');
+  const equipmentTrays = [
+    ...(hasArterialLineFault ? [{ id: 'monitor' as const, label: 'Monitor' }] : []),
+    ...(hasCircuitFault ? [{ id: 'circuit' as const, label: 'Circuit' }] : []),
+  ];
+  const visibleTrays = equipmentTrays.length > 0
+    ? [...trays.slice(0, 3), ...equipmentTrays, ...trays.slice(3)] : trays;
 
   return (
     <div className="actions">
@@ -369,6 +383,17 @@ export function ActionCockpit(props: ActionCockpitProps) {
             onAction={props.onArterialLine ?? (() => {})}
           />
         )}
+        {tray === 'circuit' && hasCircuitFault && (
+          <BreathingCircuitTray
+            status={props.breathingCircuit ?? {
+              co2Absorbent: 'normal', inspiredCo2MmHg: 0,
+              capnogramAssessed: false, absorbentReplaced: false,
+            }}
+            freshGasFlowLPerMin={props.ventilator.freshGasFlowLPerMin}
+            onAction={props.onBreathingCircuit ?? (() => {})}
+            onOpenVentilator={() => setTray('airway')}
+          />
+        )}
         {tray === 'crisis' && hasCrisisResponse && (
           <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
             {hasEpinephrineResponse && (
@@ -462,6 +487,54 @@ export function ActionCockpit(props: ActionCockpitProps) {
           </p>
         )}
       </div>
+    </div>
+  );
+}
+
+function BreathingCircuitTray({
+  status, freshGasFlowLPerMin, onAction, onOpenVentilator,
+}: {
+  status: BreathingCircuitStatus;
+  freshGasFlowLPerMin: number;
+  onAction: NonNullable<ActionCockpitProps['onBreathingCircuit']>;
+  onOpenVentilator: () => void;
+}) {
+  const failureActive = status.co2Absorbent === 'exhausted';
+  return (
+    <div className="tray-grid">
+      <section className="card" aria-labelledby="circle-system-title">
+        <h3 id="circle-system-title" className="field__label">Circle breathing system</h3>
+        <Badge kind={failureActive ? 'teaching' : 'default'}>
+          {failureActive ? 'Rebreathing needs correction' : 'Absorption restored'}
+        </Badge>
+        <p className="syringe__remaining numeric" role="status" aria-live="polite">
+          Inspired CO₂ {status.inspiredCo2MmHg.toFixed(1)} mmHg
+        </p>
+        <p className="field__hint">
+          {failureActive
+            ? status.capnogramAssessed
+              ? 'Assessment recorded: the inspiratory baseline remains above zero while delivered breaths continue.'
+              : 'Read the inspiratory baseline, expiratory shape, breath delivery, and independent signals before choosing the circuit cause.'
+            : status.absorbentReplaced
+              ? 'Replacement intent is recorded. Watch the inspiratory baseline wash back toward zero.'
+              : 'No modeled absorber failure is active.'}
+        </p>
+        <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+          <Button disabled={!failureActive || status.capnogramAssessed}
+            onClick={() => onAction('assess-capnogram')}>Assess capnogram</Button>
+          <Button disabled={!failureActive || !status.capnogramAssessed}
+            onClick={() => onAction('replace-absorbent')}>Replace absorbent</Button>
+        </div>
+        <p className="field__hint">These controls record interpretation and corrective intent. They do not assess canister exchange, workstation-specific pause modes, seals, valves, or physical skill.</p>
+      </section>
+      <section className="card" aria-labelledby="fresh-gas-bridge-title">
+        <h3 id="fresh-gas-bridge-title" className="field__label">Fresh-gas bridge</h3>
+        <p className="syringe__remaining numeric" role="status">
+          Fresh gas {freshGasFlowLPerMin.toFixed(1)} L/min
+        </p>
+        <p className="field__hint">Higher flow reduces modeled rebreathing while you prepare definitive correction. It does not repair exhausted absorbent.</p>
+        <Button onClick={onOpenVentilator}>Open Airway &amp; Vent</Button>
+      </section>
     </div>
   );
 }

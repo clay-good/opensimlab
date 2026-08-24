@@ -615,6 +615,28 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-24',
   },
   {
+    id: 'verbeke-co2-absorber-2023',
+    authors: 'Verbeke D, Jouwena J, De Wolf AM, Hendrickx JFA',
+    title: 'When to replace a CO2 absorber?',
+    publication: 'Acta Anaesthesiol Belg', year: 2023, locator: '74:43-49',
+    usedFor: 'The exhausted-absorbent scenario boundary: inspired carbon dioxide, not absorbent '
+      + 'color alone, identifies breakthrough; 3-4 mmHg is the review’s routine replacement '
+      + 'threshold; and higher fresh-gas flow can reduce rebreathing while replacement is prepared.',
+    verifiedAgainst: 'Publisher PDF and DOI 10.56126/74.1.06',
+    verifiedOn: '2026-08-24',
+  },
+  {
+    id: 'apsf-absorbent-replacement-2024',
+    authors: 'Feldman JM',
+    title: 'Replacing CO2 Absorbent During Surgery—The Risk of Hypoventilation Continues',
+    publication: 'APSF Newsletter', year: 2024, locator: '39(3)',
+    usedFor: 'The circle-system equipment boundary: carbon-dioxide absorption permits low-flow '
+      + 'circle anesthesia, inspired carbon dioxide indicates ineffective absorbent, and actual '
+      + 'intraprocedure exchange depends on workstation design and requires backup ventilation.',
+    verifiedAgainst: 'Anesthesia Patient Safety Foundation article and October 2024 newsletter PDF',
+    verifiedOn: '2026-08-24',
+  },
+  {
     id: 'saugel-arterial-pressure-measurement-2020',
     pmid: '32331527',
     authors: 'Saugel B, Kouz K, Meidert AS, Schulte-Uentrop L, Romagnoli S',

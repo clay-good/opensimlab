@@ -468,10 +468,84 @@ export function objectiveFindings(
     'verify-invasive-pressure-independently': 'vasodilation-versus-hypovolemia',
     'correct-transducer-level': 'vasodilation-versus-hypovolemia',
     'assess-arterial-dynamic-response': 'vasodilation-versus-hypovolemia',
+    'recognize-inspired-carbon-dioxide': 'capnogram-morphology',
+    'bridge-with-fresh-gas-flow': 'capnogram-morphology',
+    'replace-exhausted-absorbent': 'capnogram-morphology',
   };
 
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
+
+    if ([
+      'recognize-inspired-carbon-dioxide', 'bridge-with-fresh-gas-flow',
+      'replace-exhausted-absorbent',
+    ].includes(objective.id)) {
+      const onset = scenario.timeline.find((entry) => entry.type === 'equipment-failure'
+        && entry.target === 'co2-absorbent-exhaustion')?.atTick;
+      if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'The session ended before the circle-system rebreathing pattern appeared.',
+        } satisfies ObjectiveFinding;
+      }
+      const assessed = log.find((entry) => entry.tick >= onset
+        && entry.eventId.startsWith('circuit-capnogram-assessed-'));
+      const replaced = log.find((entry) => entry.tick >= onset
+        && entry.eventId.startsWith('circuit-absorbent-replaced-'));
+      const flow = actions.find((entry) => entry.tick >= onset
+        && entry.type === 'ventilator'
+        && Number(entry.payload.freshGasFlowLPerMin ?? 0) >= 10
+        && log.some((accepted) => accepted.tick === entry.tick
+          && accepted.eventId === `ventilator-${entry.tick}`));
+
+      if (objective.id === 'recognize-inspired-carbon-dioxide') {
+        const delay = assessed ? (assessed.tick - onset) / TICKS_PER_SECOND : null;
+        const beforeReplacement = assessed !== undefined
+          && (replaced === undefined || assessed.tick <= replaced.tick);
+        return {
+          ...base,
+          outcome: beforeReplacement && delay !== null && delay <= 30 ? 'met'
+            : beforeReplacement ? 'partly-met' : 'not-met',
+          finding: assessed
+            ? `Capnogram assessment was accepted ${delay?.toFixed(0)} seconds after the inspiratory baseline began to rise${beforeReplacement ? ', before absorber replacement' : ', after absorber replacement'}. This records screen interpretation, not physical inspection.`
+            : 'No accepted capnogram assessment identified the raised inspiratory baseline.',
+          atTick: assessed?.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      if (objective.id === 'bridge-with-fresh-gas-flow') {
+        const delay = flow ? (flow.tick - onset) / TICKS_PER_SECOND : null;
+        const beforeReplacement = flow !== undefined
+          && (replaced === undefined || flow.tick <= replaced.tick);
+        return {
+          ...base,
+          outcome: beforeReplacement && delay !== null && delay <= 60 ? 'met'
+            : beforeReplacement ? 'partly-met' : 'not-met',
+          finding: flow
+            ? `Fresh-gas flow reached ${Number(flow.payload.freshGasFlowLPerMin).toFixed(0)} L/min ${delay?.toFixed(0)} seconds after onset${beforeReplacement ? ', before definitive correction' : ', after the absorbent was already replaced'}. The response follows a bounded teaching curve.`
+            : 'No accepted fresh-gas-flow setting of at least 10 L/min was recorded after onset.',
+          atTick: flow?.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      const baselineEtco2 = history.filter((entry) => entry.tick < onset).at(-1)?.state.etco2MmHg;
+      const recovered = replaced && baselineEtco2 !== undefined
+        ? history.find((entry) => entry.tick > replaced.tick
+          && Number(entry.state.etco2MmHg ?? Infinity) <= baselineEtco2 + 1)
+        : undefined;
+      const correctOrder = assessed !== undefined && replaced !== undefined
+        && assessed.tick <= replaced.tick;
+      const delay = replaced ? (replaced.tick - onset) / TICKS_PER_SECOND : null;
+      return {
+        ...base,
+        outcome: correctOrder && delay !== null && delay <= 90 && recovered ? 'met'
+          : correctOrder || recovered ? 'partly-met' : 'not-met',
+        finding: !replaced
+          ? 'No accepted absorbent replacement followed the rebreathing pattern.'
+          : `${correctOrder ? 'Absorbent replacement followed capnogram assessment' : 'Absorbent replacement did not follow an accepted assessment'} ${delay?.toFixed(0)} seconds after onset${recovered ? '; end-tidal carbon dioxide later returned within 1 mmHg of the pre-fault value' : '; the recorded session did not confirm carbon-dioxide washout'}. Physical exchange is not assessed.`,
+        atTick: recovered?.tick ?? replaced?.tick,
+      } satisfies ObjectiveFinding;
+    }
 
     if ([
       'verify-invasive-pressure-independently', 'correct-transducer-level',

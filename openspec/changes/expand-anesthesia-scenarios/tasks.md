@@ -348,3 +348,19 @@
 - [ ] Add cannulation, physical leveling/zeroing/flushing, cuff technique or failure, patient-position
   reference selection, commercial-monitor behavior, sterility, arterial-site differences, or
   individualized device accuracy and treatment thresholds.
+
+## Slice 24: circle-system rebreathing from exhausted absorbent
+
+- [x] Check in an evidence brief covering inspired-carbon-dioxide recognition, fresh-gas-flow
+  bridging, workstation-specific exchange safety, and explicit physiology/equipment exclusions.
+- [x] Add a twenty-first authored established-maintenance scenario with a starting tracheal tube,
+  delivered volatile agent, mechanical ventilation, and a fixed exhausted-absorbent event.
+- [x] Raise the capnogram inspiratory baseline and patient end-tidal carbon dioxide on declared
+  deterministic teaching curves while preserving delivered breaths and signal validity.
+- [x] Add ordered capnogram-assessment and absorber-replacement intent plus a focused Circuit tray,
+  fresh-gas bridge, nonvisual output, announcements, replay, and evidence-based debrief scoring.
+- [x] Add curriculum mappings, limitations, preparation-path coverage, catalog assets, route SEO,
+  hostile/out-of-order action regressions, and responsive browser inspection.
+- [ ] Add canister chemistry, channeling, desiccation, color indicators, valve failure, circuit
+  pressure or compliance, commercial alarm behavior, physical exchange, full carbon-dioxide and
+  acid-base physiology, teams, or individual outcome prediction.

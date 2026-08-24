@@ -38,7 +38,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.24';
+export const ENGINE_VERSION = '0.1.0-alpha.25';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -50,6 +50,8 @@ export const NIBP_CYCLE_SECONDS = 20;
 /** Blood-column approximation: 10 cm of vertical error changes pressure by about 7.5 mmHg. */
 export const ARTERIAL_HYDROSTATIC_MMHG_PER_CM = 0.75;
 export const ARTERIAL_MISLEVELING_CM = 20;
+/** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
+export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
 export const LAST_LIPID_CONCENTRATION_PERCENT = 20;
 export const LAST_LIPID_MAX_ML_PER_KG = 12;
@@ -208,6 +210,11 @@ export class AnesthesiaEngine {
   private readonly artifacts = new Set<ArtifactId>();
   /** Learner-recorded discrimination step for a displayed capnography failure. */
   private capnographyVentilationCrossChecked = false;
+  /** Circle-system state; unlike a sample-line artifact, rebreathing changes the patient. */
+  private co2AbsorbentExhausted = false;
+  private inspiredCo2MmHg = 0;
+  private circuitCapnogramAssessed = false;
+  private circuitAbsorbentReplaced = false;
   /** Learner-visible arterial sensor state; canonical pressure remains in the patient. */
   private arterialWaveformAssessed = false;
   private arterialLeveledAndZeroed = false;
@@ -330,14 +337,22 @@ export class AnesthesiaEngine {
       initialCoagulationFactorFraction: p.baseline.coagulationFactorFraction,
       initialFibrinogenGPerL: p.baseline.fibrinogenGPerL,
     };
-    this.patient = new VirtualPatient(profile, this.rng.fork('patient'), options.scenario.equipment.ventilator.fio2);
+    this.patient = new VirtualPatient(
+      profile,
+      this.rng.fork('patient'),
+      options.scenario.equipment.ventilator.fio2,
+      options.scenario.equipment.ventilator.sevofluranePercent ?? 0,
+    );
+    if (options.scenario.equipment.airwayDevice === 'tracheal-tube') {
+      this.patient.airway.intubated = true;
+    }
     this.waveforms = new WaveformEngine({ seed: options.seed, tickSeconds: 0.1 });
 
     const v = options.scenario.equipment.ventilator;
     this.ventilator = {
       mode: v.mode, tidalVolumeMl: v.tidalVolumeMl, respiratoryRateBpm: v.respiratoryRateBpm,
       fio2: v.fio2, freshGasFlowLPerMin: v.freshGasFlowLPerMin ?? 1,
-      peep: 0, delivering: v.delivering, sevofluranePercent: 0,
+      peep: 0, delivering: v.delivering, sevofluranePercent: v.sevofluranePercent ?? 0,
     };
 
     for (const entry of options.scenario.formulary) {
@@ -1183,6 +1198,43 @@ export class AnesthesiaEngine {
           `Unknown capnography-line action "${String(lineAction)}". Nothing changed.`);
         break;
       }
+      case 'breathing-circuit': {
+        const circuitAction = action.payload.action;
+        if (circuitAction === 'assess-capnogram') {
+          if (!this.co2AbsorbentExhausted || this.circuitCapnogramAssessed) {
+            this.log('warning', 'equipment', `circuit-assessment-refused-${this.currentTick}`,
+              !this.co2AbsorbentExhausted
+                ? 'No modeled carbon-dioxide absorber failure is active.'
+                : 'The raised inspiratory carbon-dioxide baseline has already been assessed.');
+            break;
+          }
+          this.circuitCapnogramAssessed = true;
+          this.log('warning', 'equipment', `circuit-capnogram-assessed-${this.currentTick}`,
+            'Capnogram assessment recorded: inspired carbon dioxide remains above zero while breath delivery continues, consistent with rebreathing in this bounded circuit model.', {
+              inspiredCo2MmHg: this.inspiredCo2MmHg, intentOnly: true,
+            });
+          break;
+        }
+        if (circuitAction === 'replace-absorbent') {
+          if (!this.co2AbsorbentExhausted || !this.circuitCapnogramAssessed) {
+            this.log('warning', 'equipment', `circuit-absorbent-replacement-refused-${this.currentTick}`,
+              !this.co2AbsorbentExhausted
+                ? 'The modeled carbon-dioxide absorbent is not exhausted.'
+                : 'Assess the capnogram before replacing the modeled absorbent.');
+            break;
+          }
+          this.co2AbsorbentExhausted = false;
+          this.circuitAbsorbentReplaced = true;
+          this.log('warning', 'equipment', `circuit-absorbent-replaced-${this.currentTick}`,
+            'Carbon-dioxide absorbent replacement intent accepted. Inspired carbon dioxide will wash out on a bounded teaching trajectory; physical exchange and workstation-specific safety are not assessed.', {
+              intentOnly: true, inspiredCo2MmHgBefore: this.inspiredCo2MmHg,
+            });
+          break;
+        }
+        this.log('warning', 'equipment', `bad-breathing-circuit-action-${this.currentTick}`,
+          `Unknown breathing-circuit action "${String(circuitAction)}". Nothing changed.`);
+        break;
+      }
       case 'rhythm': {
         this.rhythm = String(action.payload.rhythmId) as RhythmId;
         this.log('critical', 'rhythm', `rhythm-${this.currentTick}`, `Rhythm changed to ${this.rhythm}`);
@@ -1622,11 +1674,18 @@ export class AnesthesiaEngine {
             // a generic observation for replay/debrief, but naming the line fault
             // here would reveal the answer before the learner inspects it.
             return;
+          case 'co2-absorbent-exhaustion':
+            this.co2AbsorbentExhausted = true;
+            this.circuitCapnogramAssessed = false;
+            this.circuitAbsorbentReplaced = false;
+            // Do not diagnose the cause in the event log. The raised inspiratory
+            // baseline is the evidence the learner is meant to interpret.
+            return;
           default:
             this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
               `Timeline event "${event.id}" declares an equipment failure this engine does not `
               + `model: "${String(failure)}". Modelled failures are ventilator-disconnection, `
-              + 'oxygen-supply, vaporizer and hypnotic-line-disconnection.');
+              + 'oxygen-supply, vaporizer, hypnotic-line-disconnection and co2-absorbent-exhaustion.');
             return;
         }
       }
@@ -1893,6 +1952,24 @@ export class AnesthesiaEngine {
       };
     }
 
+    // Exhausted absorbent permits carbon dioxide breakthrough into inspiration.
+    // Higher fresh-gas flow reduces rebreathing but does not repair the absorber;
+    // the exact curve and time constants are declared teaching calibrations.
+    const freshGasBridgeFraction = clamp(
+      1 - (this.ventilator.freshGasFlowLPerMin - 1) / 14, 0.05, 1,
+    );
+    const inspiredCo2Target = this.co2AbsorbentExhausted
+      ? EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG * freshGasBridgeFraction : 0;
+    const circuitTimeConstantSeconds = this.co2AbsorbentExhausted ? 45 : 10;
+    this.inspiredCo2MmHg += (inspiredCo2Target - this.inspiredCo2MmHg)
+      * (1 - Math.exp(-0.1 / circuitTimeConstantSeconds));
+    if (this.inspiredCo2MmHg > 0.001) {
+      crisisState = {
+        ...crisisState,
+        etco2MmHg: crisisState.etco2MmHg + this.inspiredCo2MmHg,
+      };
+    }
+
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
       heartRateBpm: 0,
@@ -1965,6 +2042,7 @@ export class AnesthesiaEngine {
       perfusionIndex: state.perfusionIndex,
       spo2Percent: state.spo2Percent,
       etco2MmHg: state.etco2MmHg,
+      inspiredCo2MmHg: this.inspiredCo2MmHg,
       respiratoryRateBpm: Math.max(state.respiratoryRateBpm, 1),
       bronchospasmSeverity: obstruction,
       ventilating: state.respiratoryRateBpm > 0 && state.tidalVolumeMl > 0,
@@ -2077,6 +2155,12 @@ export class AnesthesiaEngine {
       capnographyLine: {
         obstructed: this.artifacts.has('sampling-line-obstruction'),
         ventilationCrossChecked: this.capnographyVentilationCrossChecked,
+      },
+      breathingCircuit: {
+        co2Absorbent: this.co2AbsorbentExhausted ? 'exhausted' : 'normal',
+        inspiredCo2MmHg: this.inspiredCo2MmHg,
+        capnogramAssessed: this.circuitCapnogramAssessed,
+        absorbentReplaced: this.circuitAbsorbentReplaced,
       },
       arterialLine: {
         displayedMeanArterialMmHg: this.scenario.equipment.monitoring.includes('arterial-line')

@@ -55,6 +55,8 @@ export interface WaveformDrive {
   perfusionIndex: number;
   spo2Percent: number;
   etco2MmHg: number;
+  /** Inspired carbon dioxide from a breathing-circuit fault, mmHg. */
+  inspiredCo2MmHg: number;
   respiratoryRateBpm: number;
   /** 0..1; 0 is unobstructed, 1 is severe obstruction (shark fin). */
   bronchospasmSeverity: number;
