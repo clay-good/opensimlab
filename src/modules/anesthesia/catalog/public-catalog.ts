@@ -2,6 +2,11 @@ import type { Scenario } from '@anesthesia/engine';
 import { scenarioSearchText } from './query';
 import type { ScenarioCompletionCatalog } from '@platform/catalog/scenario-completion';
 import type { ContentMaturity } from '@platform/catalog/maturity';
+import {
+  PREPARATION_PATHS,
+  pathMinutes,
+  type PreparationPathDefinition,
+} from './preparation-paths';
 
 export const SCENARIO_CATALOG_SCHEMA_VERSION = 1;
 
@@ -25,6 +30,8 @@ export interface PublicScenarioCatalog {
   readonly moduleId: string;
   readonly scenarioCount: number;
   readonly scenarios: readonly PublicScenarioCatalogEntry[];
+  readonly preparationPathCount: number;
+  readonly preparationPaths: readonly (PreparationPathDefinition & { readonly estimatedMinutes: number })[];
 }
 
 const strings = { type: 'array', minItems: 1, items: { type: 'string', minLength: 1 } } as const;
@@ -34,7 +41,7 @@ export const SCENARIO_CATALOG_SCHEMA = {
   $id: 'https://opensimlab.com/catalog/scenario-catalog.schema.json',
   title: 'Open Sim Lab public scenario catalog and search index',
   type: 'object', additionalProperties: false,
-  required: ['schemaVersion', 'moduleId', 'scenarioCount', 'scenarios'],
+  required: ['schemaVersion', 'moduleId', 'scenarioCount', 'scenarios', 'preparationPathCount', 'preparationPaths'],
   properties: {
     schemaVersion: { const: SCENARIO_CATALOG_SCHEMA_VERSION },
     moduleId: { type: 'string', minLength: 1 },
@@ -63,6 +70,27 @@ export const SCENARIO_CATALOG_SCHEMA = {
           fidelityClass: { type: 'string', minLength: 1 },
           objectives: strings,
           searchText: { type: 'string', minLength: 1 },
+        },
+      },
+    },
+    preparationPathCount: { const: 10 },
+    preparationPaths: {
+      type: 'array', minItems: 10, maxItems: 10,
+      items: {
+        type: 'object', additionalProperties: false,
+        required: ['id', 'version', 'title', 'description', 'scenarioIds', 'prerequisites',
+          'targetCompetencies', 'supportedRoles', 'limitations', 'estimatedMinutes'],
+        properties: {
+          id: { type: 'string', pattern: '^[a-z0-9-]+$' },
+          version: { type: 'string', pattern: '^\\d+\\.\\d+\\.\\d+$' },
+          title: { type: 'string', minLength: 1 },
+          description: { type: 'string', minLength: 1 },
+          scenarioIds: strings,
+          prerequisites: strings,
+          targetCompetencies: strings,
+          supportedRoles: strings,
+          limitations: { type: 'string', minLength: 1 },
+          estimatedMinutes: { type: 'integer', minimum: 1 },
         },
       },
     },
@@ -103,6 +131,10 @@ export function buildPublicScenarioCatalog(
     moduleId: completion.moduleId,
     scenarioCount: entries.length,
     scenarios: entries,
+    preparationPathCount: PREPARATION_PATHS.length,
+    preparationPaths: PREPARATION_PATHS.map((path) => ({
+      ...path, estimatedMinutes: pathMinutes(path, scenarios),
+    })),
   };
 }
 
@@ -116,6 +148,11 @@ export function validatePublicScenarioCatalog(value: unknown): string[] {
   if (!Array.isArray(catalog.scenarios)) return [...errors, '/scenarios: expected array'];
   if (catalog.scenarioCount !== catalog.scenarios.length) {
     errors.push('/scenarioCount: does not match scenarios length');
+  }
+  if (!Array.isArray(catalog.preparationPaths)) {
+    errors.push('/preparationPaths: expected array');
+  } else if (catalog.preparationPathCount !== catalog.preparationPaths.length) {
+    errors.push('/preparationPathCount: does not match preparationPaths length');
   }
   const ids = new Set<string>();
   catalog.scenarios.forEach((raw, index) => {

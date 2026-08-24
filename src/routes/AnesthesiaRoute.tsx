@@ -31,6 +31,12 @@ import {
   readCatalogQuery,
   type CatalogQuery,
 } from '@anesthesia/catalog/query';
+import {
+  PREPARATION_PATHS,
+  pathMinutes,
+  preparationPath,
+  recommendNextScenario,
+} from '@anesthesia/catalog/preparation-paths';
 
 /**
  * The scenario a path names.
@@ -325,6 +331,10 @@ export function ScenarioIndex() {
     typeof location === 'undefined' ? '' : location.search,
   ));
   const scenarios = filterCatalog(scenariosByDifficulty(), query);
+  const selectedPath = query.goal === 'all' ? null : preparationPath(query.goal);
+  const recommendation = selectedPath
+    ? recommendNextScenario(selectedPath, scenariosByDifficulty())
+    : null;
   const updateQuery = (next: CatalogQuery) => {
     setQuery(next);
     if (typeof history !== 'undefined') {
@@ -342,6 +352,53 @@ export function ScenarioIndex() {
       </p>
       <section className="catalog-controls" aria-labelledby="catalog-controls-title">
         <h2 id="catalog-controls-title" className="catalog-controls__title">Find a scenario</h2>
+        <Select
+          label="What are you preparing for?"
+          value={query.goal}
+          onChange={(event) => updateQuery({
+            ...query, goal: event.target.value as CatalogQuery['goal'],
+          })}
+          options={[
+            { value: 'all', label: 'Show me everything' },
+            ...PREPARATION_PATHS.map((path) => ({ value: path.id, label: path.title })),
+          ]}
+        />
+        {selectedPath && recommendation && (
+          <div className="catalog-path">
+            <div>
+              <p className="catalog-path__eyebrow">Your private practice path</p>
+              <h3>{selectedPath.title}</h3>
+              <p>{selectedPath.description}</p>
+            </div>
+            <dl className="catalog-path__facts">
+              <div><dt>Plan</dt><dd>{selectedPath.scenarioIds.length} scenarios · {pathMinutes(selectedPath, scenariosByDifficulty())} minutes</dd></div>
+              <div>
+                <dt>Start here</dt>
+                <dd>
+                  <a href={`/anesthesia/scenario/${recommendation.scenario.metadata.id}`}>
+                    {recommendation.scenario.metadata.title}
+                  </a>
+                  <MaturityMarker
+                    compact
+                    status={recommendation.scenario.metadata.maturity}
+                    subjectKind="scenario"
+                    subjectId={recommendation.scenario.metadata.id}
+                    contentVersion={recommendation.scenario.metadata.version}
+                  />
+                </dd>
+              </div>
+              <div><dt>Why</dt><dd>{recommendation.reason}</dd></div>
+            </dl>
+            <div className="catalog-path__competencies" aria-label="Path goals">
+              {selectedPath.targetCompetencies.map((competency) => (
+                <span className="chip" key={competency}>{competency}</span>
+              ))}
+            </div>
+            <p className="field__hint">Assumes: {selectedPath.prerequisites.join(' ')}</p>
+            <p className="reading__aside">{selectedPath.limitations}</p>
+            <p className="field__hint">Nothing is locked. Choose “Show me everything” at any time.</p>
+          </div>
+        )}
         <div className="catalog-controls__grid">
           <div className="field catalog-controls__search">
             <label className="field__label" htmlFor="scenario-search">Patient, problem, or skill</label>

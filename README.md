@@ -130,6 +130,9 @@ does not trade away no-script access or scenario-page indexing.
 `/catalog/anesthesia-catalog.json` publishes the same 16 exact-version entries, filters, objectives,
 and normalized search text for static integrations; its schema and data are included in the offline
 bundle and fail the build if they drift from the scenario registry or completion audit.
+The catalog also offers all 10 authored preparation goals from the product design. Each versioned
+path names its ordered scenarios, total time, prerequisites, target behaviors, supported roles, and
+limits; selection stays in the public URL, locks nothing, and explains the first local recommendation.
 
 ### What gets built first
 

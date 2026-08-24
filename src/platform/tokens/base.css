@@ -104,6 +104,36 @@ a:hover { text-decoration-color: var(--text-secondary); }
   background: var(--surface-1);
 }
 .catalog-controls__title { margin: 0; font: var(--type-subtitle); }
+.catalog-controls > .field { min-inline-size: 0; }
+.catalog-controls .select { inline-size: 100%; max-inline-size: 100%; }
+.catalog-path {
+  display: grid;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-panel);
+  background: linear-gradient(135deg, var(--surface-2), var(--surface-1));
+}
+.catalog-path h3, .catalog-path p { margin-block: 0; }
+.catalog-path__eyebrow {
+  color: var(--text-tertiary);
+  font: var(--type-micro);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+}
+.catalog-path__facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+}
+.catalog-path__facts div { min-inline-size: 0; }
+.catalog-path__facts dt { color: var(--text-tertiary); font: var(--type-micro); text-transform: uppercase; }
+.catalog-path__facts dd { margin: var(--space-1) 0 0; }
+.catalog-path__facts dd .maturity-marker { margin-block-start: var(--space-2); }
+.catalog-path__competencies { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .catalog-controls__grid {
   display: grid;
   grid-template-columns: minmax(12rem, 2fr) repeat(3, minmax(9rem, 1fr));
@@ -149,6 +179,7 @@ a:hover { text-decoration-color: var(--text-secondary); }
   .catalog-controls__grid { grid-template-columns: minmax(0, 1fr); }
   .catalog-controls__search { grid-column: auto; }
   .catalog-controls__summary { align-items: flex-start; flex-direction: column; }
+  .catalog-path__facts { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* The offer to take a newer build. A strip, not a modal: a learner in the middle

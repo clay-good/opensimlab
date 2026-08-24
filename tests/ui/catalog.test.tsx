@@ -27,6 +27,18 @@ describe('scenario catalog', () => {
     expect(markup).toContain('Clear filters');
   });
 
+  it('turns a chosen goal into a finite, honest, non-locking plan', () => {
+    history.replaceState(null, '', '/anesthesia?goal=first-lab');
+    const markup = renderToStaticMarkup(<ScenarioIndex />);
+    expect(markup).toContain('Your private practice path');
+    expect(markup).toContain('My first simulation lab');
+    expect(markup).toContain('3 scenarios · 34 minutes');
+    expect(markup).toContain('Recommended because you chose');
+    expect(markup).toContain('does not assess psychomotor technique');
+    expect(markup).toContain('Nothing is locked');
+    expect(markup).toContain('#scenario:routine-induction@0.1.0');
+  });
+
   it('offers a calm recovery when no scenario matches', () => {
     history.replaceState(null, '', '/anesthesia?q=not-a-clinical-concept');
     const markup = renderToStaticMarkup(<ScenarioIndex />);

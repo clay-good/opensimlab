@@ -1,5 +1,11 @@
 import type { Scenario } from '@anesthesia/engine';
 import type { ContentMaturity } from '@platform/catalog/maturity';
+import {
+  PREPARATION_PATH_IDS,
+  pathScenarios,
+  preparationPath,
+  type PreparationPathId,
+} from './preparation-paths';
 
 export type CatalogDifficulty = Scenario['metadata']['difficulty'] | 'all';
 export type CatalogDuration = 'all' | 'under-10' | '10-plus';
@@ -7,13 +13,14 @@ export type CatalogMaturity = ContentMaturity | 'all';
 
 export interface CatalogQuery {
   readonly q: string;
+  readonly goal: PreparationPathId | 'all';
   readonly difficulty: CatalogDifficulty;
   readonly duration: CatalogDuration;
   readonly maturity: CatalogMaturity;
 }
 
 export const EMPTY_CATALOG_QUERY: CatalogQuery = {
-  q: '', difficulty: 'all', duration: 'all', maturity: 'all',
+  q: '', goal: 'all', difficulty: 'all', duration: 'all', maturity: 'all',
 };
 
 const DIFFICULTIES: readonly CatalogDifficulty[] = [
@@ -34,6 +41,7 @@ export function readCatalogQuery(search: string): CatalogQuery {
   const params = new URLSearchParams(search);
   return {
     q: (params.get('q') ?? '').trim().slice(0, 80),
+    goal: oneOf(params.get('goal'), ['all', ...PREPARATION_PATH_IDS], 'all'),
     difficulty: oneOf(params.get('difficulty'), DIFFICULTIES, 'all'),
     duration: oneOf(params.get('duration'), DURATIONS, 'all'),
     maturity: oneOf(params.get('maturity'), MATURITIES, 'all'),
@@ -44,6 +52,7 @@ export function readCatalogQuery(search: string): CatalogQuery {
 export function catalogQueryString(query: CatalogQuery): string {
   const params = new URLSearchParams();
   if (query.q) params.set('q', query.q);
+  if (query.goal !== 'all') params.set('goal', query.goal);
   if (query.difficulty !== 'all') params.set('difficulty', query.difficulty);
   if (query.duration !== 'all') params.set('duration', query.duration);
   if (query.maturity !== 'all') params.set('maturity', query.maturity);
@@ -67,7 +76,10 @@ export function filterCatalog(
   query: CatalogQuery,
 ): Scenario[] {
   const terms = query.q.toLocaleLowerCase().split(/\s+/).filter(Boolean);
-  return scenarios.filter((scenario) => {
+  const ordered = query.goal === 'all'
+    ? [...scenarios]
+    : pathScenarios(preparationPath(query.goal), scenarios);
+  return ordered.filter((scenario) => {
     if (query.difficulty !== 'all' && scenario.metadata.difficulty !== query.difficulty) return false;
     if (query.duration === 'under-10' && scenario.metadata.estimatedMinutes >= 10) return false;
     if (query.duration === '10-plus' && scenario.metadata.estimatedMinutes < 10) return false;

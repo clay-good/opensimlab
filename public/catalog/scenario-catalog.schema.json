@@ -8,7 +8,9 @@
     "schemaVersion",
     "moduleId",
     "scenarioCount",
-    "scenarios"
+    "scenarios",
+    "preparationPathCount",
+    "preparationPaths"
   ],
   "properties": {
     "schemaVersion": {
@@ -106,6 +108,88 @@
           "searchText": {
             "type": "string",
             "minLength": 1
+          }
+        }
+      }
+    },
+    "preparationPathCount": {
+      "const": 10
+    },
+    "preparationPaths": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "version",
+          "title",
+          "description",
+          "scenarioIds",
+          "prerequisites",
+          "targetCompetencies",
+          "supportedRoles",
+          "limitations",
+          "estimatedMinutes"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "scenarioIds": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "prerequisites": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "targetCompetencies": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "supportedRoles": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "limitations": {
+            "type": "string",
+            "minLength": 1
+          },
+          "estimatedMinutes": {
+            "type": "integer",
+            "minimum": 1
           }
         }
       }

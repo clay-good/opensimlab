@@ -17,6 +17,7 @@ describe('public scenario catalog', () => {
   it('publishes every scenario once with exact-version discovery data', () => {
     expect(validatePublicScenarioCatalog(catalog)).toEqual([]);
     expect(catalog.scenarioCount).toBe(SCENARIOS.length);
+    expect(catalog.preparationPathCount).toBe(10);
     expect(new Set(catalog.scenarios.map((scenario) => scenario.id)).size).toBe(SCENARIOS.length);
     for (const scenario of catalog.scenarios) {
       expect(scenario.searchText).toContain(scenario.title.toLocaleLowerCase());

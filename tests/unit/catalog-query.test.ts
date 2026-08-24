@@ -19,7 +19,7 @@ describe('scenario catalog query', () => {
 
   it('combines difficulty, duration, and maturity filters', () => {
     const matches = filterCatalog(SCENARIOS, {
-      q: '', difficulty: 'advanced', duration: 'under-10', maturity: 'draft',
+      q: '', goal: 'all', difficulty: 'advanced', duration: 'under-10', maturity: 'draft',
     });
     expect(matches.length).toBeGreaterThan(0);
     expect(matches.every((scenario) => scenario.metadata.difficulty === 'advanced')).toBe(true);
@@ -28,7 +28,7 @@ describe('scenario catalog query', () => {
   });
 
   it('round-trips known URL state and omits defaults', () => {
-    const search = '?q=airway&difficulty=advanced&duration=10-plus&maturity=draft';
+    const search = '?q=airway&goal=airway-oxygenation&difficulty=advanced&duration=10-plus&maturity=draft';
     expect(catalogQueryString(readCatalogQuery(search))).toBe(search);
     expect(catalogQueryString(EMPTY_CATALOG_QUERY)).toBe('');
   });
@@ -38,8 +38,19 @@ describe('scenario catalog query', () => {
       `?q=${'x'.repeat(200)}&difficulty=expert&duration=forever&maturity=approved`,
     );
     expect(parsed.q).toHaveLength(80);
+    expect(parsed.goal).toBe('all');
     expect(parsed.difficulty).toBe('all');
     expect(parsed.duration).toBe('all');
     expect(parsed.maturity).toBe('all');
+  });
+
+  it('uses a selected goal as an ordered, non-locking catalog path', () => {
+    const matches = filterCatalog(SCENARIOS, {
+      ...EMPTY_CATALOG_QUERY, goal: 'airway-oxygenation',
+    });
+    expect(matches.map((scenario) => scenario.metadata.id)).toEqual([
+      'routine-induction', 'rapid-desaturation', 'laryngospasm-after-airway-stimulation',
+      'difficult-airway-supraglottic-rescue',
+    ]);
   });
 });

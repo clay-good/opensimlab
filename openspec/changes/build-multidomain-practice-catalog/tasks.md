@@ -64,8 +64,9 @@ credited toward the catalog until every item in the completion contract passes.
   domain/environment/duration/difficulty/fidelity/maturity filters, and URL state.
   The anesthesia catalog now has bounded local search plus difficulty, duration, and maturity
   filters with compact URL state. A schema-valid public manifest/search artifact is generated from
-  the same registry and exact-version completion audit and ships offline. Goal paths and authored
-  domain/environment/fidelity filters remain.
+  the same registry and exact-version completion audit and ships offline. All 10 goal paths are
+  versioned, URL-selectable, included in that public artifact, and validated against the registry.
+  Authored domain/environment/fidelity filters remain.
 - [ ] Implement catalog desktop, tablet, 320 px phone, keyboard, screen-reader, reduced-motion, and
   no-script/prerendered experiences.
   The default prerender contains all 16 scenario cards, controls are native keyboard and screen-
@@ -87,7 +88,10 @@ credited toward the catalog until every item in the completion contract passes.
 - [ ] Preserve identical patient trajectories across Guided, Coached, and Unassisted modes.
 - [ ] Add tutor-collapse, pause, replay decision point, explanation depth, and permanently dismissible
   onboarding controls.
-- [ ] Add the 10 goal-based preparation paths and local next-scenario recommendation logic.
+- [x] Add the 10 goal-based preparation paths and local next-scenario recommendation logic.
+  Recommendations are ordered locally from the selected versioned path, explain the chosen goal,
+  carry the scenario's exact maturity link, and accept local completed-scenario evidence. Persisted
+  attempt history and 7-day dismissal are intentionally tracked by the next task.
 - [ ] Add private local practice history, self-comparison, targeted repetition, and export/import.
 - [ ] Prohibit leaderboards, cross-learner percentiles, streak loss, public performance, points for
   irrelevant speed, and tutor network calls through tests and copy review.
