@@ -92,7 +92,8 @@ Reviewers run the routine induction themselves before answering.
 | B38 | Exhausted absorbent raises the capnogram inspiratory baseline and end-tidal carbon dioxide; high fresh-gas flow reduces rebreathing and replacement produces plausible washout | | |
 | B39 | During routine volatile maintenance, anticipatory modeled opioid delivery plausibly limits the declared stimulus response and reduction after stimulus offset allows pressure and depth to recover together | | |
 | B40 | During the dedicated blood-bank handoff, ordered release and fixed-unit red-cell support produce the declared volume, hemoglobin, calculated oxygen-delivery, and pressure response without presenting the control as a compatibility workflow | | |
-| B41 | Overall: does this patient behave like a patient? | | |
+| B41 | During routine geriatric induction, five spaced 20 mg propofol increments produce a plausible delayed depth and pressure trajectory while preoxygenation and 6–8 mL/kg delivered ventilation preserve oxygenation | | |
+| B42 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -153,6 +154,10 @@ So that reviewers spend their attention on what this review is for:
 - The pediatric case is one healthy 6-year-old weighing 20 kg. Paedfusor supplies kinetics but no
   validated pediatric depth-response surface; pediatric hemodynamic maturation, airway-device
   sizing, maintenance, emergence, and generalization beyond this profile are absent.
+- The geriatric induction case is one stable 76-year-old profile. The Eleveld population model uses
+  age, but authored stiffness and baroreflex settings are teaching inputs. Injection rate, frailty,
+  cognition, delirium, organ dysfunction, polypharmacy, individual dose prediction, airway skill,
+  intubation, and emergence are absent.
 - The difficult-airway case configures failed tracheal attempts, fixed 35% facemask delivery, and
   successful 15-second supraglottic placement. It does not model physical technique, device sizing
   or seal, team arrival, a post-rescue airway plan, failed supraglottic ventilation, or emergency

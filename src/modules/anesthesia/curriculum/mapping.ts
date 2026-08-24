@@ -422,6 +422,42 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     frameworkId: 'coa-standards', domainId: 'clinical-decision-making',
     objectiveIds: ['anticipate-surgical-stimulus', 'reassess-when-stimulus-falls'],
   },
+
+  // --- Routine geriatric intravenous induction ---------------------------
+  {
+    scenarioId: 'routine-geriatric-induction',
+    frameworkId: 'nbcrna-nce', domainId: 'basic-principles',
+    objectiveIds: [
+      'preoxygenate-older-adult', 'titrate-geriatric-propofol',
+      'protect-geriatric-perfusion', 'ventilate-geriatric-induction',
+    ],
+  },
+  {
+    scenarioId: 'routine-geriatric-induction',
+    frameworkId: 'coa-standards', domainId: 'pharmacology-of-anesthetic-agents',
+    objectiveIds: ['titrate-geriatric-propofol', 'protect-geriatric-perfusion'],
+  },
+  {
+    scenarioId: 'routine-geriatric-induction',
+    frameworkId: 'coa-standards', domainId: 'clinical-decision-making',
+    objectiveIds: [
+      'preoxygenate-older-adult', 'titrate-geriatric-propofol',
+      'protect-geriatric-perfusion', 'ventilate-geriatric-induction',
+    ],
+  },
+  {
+    scenarioId: 'routine-geriatric-induction',
+    frameworkId: 'acgme-anesthesiology-milestones-2', domainId: 'pc-anesthetic-plan-and-conduct',
+    objectiveIds: [
+      'preoxygenate-older-adult', 'titrate-geriatric-propofol',
+      'protect-geriatric-perfusion', 'ventilate-geriatric-induction',
+    ],
+  },
+  {
+    scenarioId: 'routine-geriatric-induction',
+    frameworkId: 'acgme-anesthesiology-milestones-2', domainId: 'pc-pharmacologic-management',
+    objectiveIds: ['titrate-geriatric-propofol', 'protect-geriatric-perfusion'],
+  },
   {
     scenarioId: 'routine-inhalational-maintenance',
     frameworkId: 'acgme-anesthesiology-milestones-2', domainId: 'pc-anesthetic-plan-and-conduct',

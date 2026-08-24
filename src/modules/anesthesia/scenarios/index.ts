@@ -32,6 +32,7 @@ import { ARTERIAL_PRESSURE_TRANSDUCER_ARTIFACT } from './arterial-pressure-trans
 import { CIRCLE_SYSTEM_REBREATHING } from './circle-system-rebreathing';
 import { ROUTINE_INHALATIONAL_MAINTENANCE } from './routine-inhalational-maintenance';
 import { BLOOD_BANK_HANDOFF } from './blood-bank-handoff';
+import { ROUTINE_GERIATRIC_INDUCTION } from './routine-geriatric-induction';
 
 export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_INDUCTION,
@@ -57,6 +58,7 @@ export const SCENARIOS: readonly Scenario[] = [
   CIRCLE_SYSTEM_REBREATHING,
   ROUTINE_INHALATIONAL_MAINTENANCE,
   BLOOD_BANK_HANDOFF,
+  ROUTINE_GERIATRIC_INDUCTION,
 ];
 
 /** The scenario a learner meets first. */

@@ -816,9 +816,10 @@ export const SOURCES: readonly Source[] = [
     year: 2026,
     locator: 'Dosage and Administration, adult induction and maintenance',
     unpinned: true,
-    usedFor: 'The reference the propofol drug card\'s induction and maintenance figures are '
-      + 'checked against. The label gives 2 to 2.5 mg/kg for induction in ASA I-II adults under '
-      + '65, and 50 to 100 micrograms/kg/min for maintenance after an initial 150 to 200.',
+    usedFor: 'The reference the propofol drug card and geriatric-induction boundary are checked '
+      + 'against. The label gives 2 to 2.5 mg/kg for induction in ASA I-II adults under 65, '
+      + 'approximately 1 to 1.5 mg/kg for elderly or debilitated patients, titration to clinical '
+      + 'response, and slower administration to reduce undesirable cardiorespiratory depression.',
     verifiedAgainst: 'The DailyMed label text. Not version-pinned: a label is revised on the '
       + 'manufacturer\'s schedule and DailyMed serves whichever revision is current, so naming a '
       + 'year here would go stale silently.',

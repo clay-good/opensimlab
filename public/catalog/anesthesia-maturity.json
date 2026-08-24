@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "recordCount": 37,
+  "recordCount": 38,
   "records": [
     {
       "recordId": "scenario:routine-induction@0.1.0",
@@ -254,6 +254,17 @@
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#blood-bank-handoff@0.1.0",
         "/catalog/anesthesia-quality-audit.json#blood-bank-handoff@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:routine-geriatric-induction@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "routine-geriatric-induction",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#routine-geriatric-induction@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#routine-geriatric-induction@0.1.0"
       ]
     },
     {

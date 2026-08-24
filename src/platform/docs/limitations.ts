@@ -177,7 +177,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'that drives propofol induction hypotension.',
     correctUnderstanding: 'How fast you push it changes the peak plasma concentration and the '
       + 'haemodynamic response, sometimes more than how much you push.',
-    briefIn: ['routine-induction'],
+    briefIn: ['routine-induction', 'routine-geriatric-induction'],
   },
   {
     id: 'opioid-alone-hypnosis',
@@ -190,6 +190,18 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'unconsciousness. An opioid-heavy technique with too little hypnotic is a recognised route '
       + 'to awareness, and this surface understates that risk.',
     briefIn: ['awareness-under-paralysis', 'routine-inhalational-maintenance'],
+  },
+  {
+    id: 'geriatric-induction-is-one-bounded-profile',
+    headline: 'This is one stable older-adult teaching profile, not a geriatric dose predictor or a model of frailty.',
+    simplification: 'The Eleveld population model applies its age covariate to this fictional '
+      + '76-year-old patient. The authored arterial stiffness and baroreflex settings create one '
+      + 'deterministic teaching trajectory; they are not inferred from clinical measurements.',
+    whereItMisleads: 'Choosing a dose for an individual older adult, or predicting the effects of '
+      + 'frailty, cognitive impairment, delirium risk, organ dysfunction, polypharmacy, or reduced reserve.',
+    correctUnderstanding: 'Older-adult induction is titrated to observed clinical response and '
+      + 'context. Age is only one contributor, and this trajectory cannot replace patient assessment.',
+    briefIn: ['routine-geriatric-induction'],
   },
   {
     id: 'awareness-risk-is-not-consciousness-or-recall',
@@ -213,7 +225,10 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'monitor, especially while judging awareness risk.',
     correctUnderstanding: 'Processed EEG is one imperfect source of information interpreted '
       + 'alongside drug delivery, end-tidal agent where applicable, clinical context, and the patient.',
-    briefIn: ['awareness-under-paralysis', 'routine-inhalational-maintenance'],
+    briefIn: [
+      'awareness-under-paralysis', 'routine-inhalational-maintenance',
+      'routine-geriatric-induction',
+    ],
   },
   {
     id: 'tiva-line-disconnection-is-a-teaching-model',

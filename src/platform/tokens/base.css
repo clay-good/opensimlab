@@ -229,7 +229,13 @@ a:hover { text-decoration-color: var(--text-secondary); }
   inset-block-start: 0;
   z-index: 10;
 }
-.document__home { font: var(--type-subtitle); color: var(--text-primary); }
+.document__home {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--control-height);
+  font: var(--type-subtitle);
+  color: var(--text-primary);
+}
 .document__nav {
   display: flex;
   flex-wrap: wrap;
@@ -239,7 +245,12 @@ a:hover { text-decoration-color: var(--text-secondary); }
   font: var(--type-micro);
   letter-spacing: var(--type-micro-tracking);
 }
-.document__nav a { color: var(--text-secondary); }
+.document__nav a {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--control-height);
+  color: var(--text-secondary);
+}
 .document__nav a[aria-current='page'] { color: var(--text-primary); text-decoration-thickness: 2px; }
 .document__foot {
   display: flex;

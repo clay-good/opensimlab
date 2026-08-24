@@ -396,3 +396,18 @@
 - [ ] Add specimens, identifiers, ABO/RhD type, antibody screening, compatibility testing,
   crossmatch, inventory, delay, emergency-release authorization, consent, prescription, issue
   records, bedside checks, administration workflow, reactions, local policy, or team communication.
+
+## Slice 27: bounded routine geriatric intravenous induction
+
+- [x] Check in an evidence brief covering the current propofol label, Eleveld population model,
+  monitoring context, exact expert fixture, and unsafe inference boundaries.
+- [x] Add a twenty-fourth authored scenario for one stable older adult with end-tidal preoxygenation,
+  small spaced propofol increments, effect-site lag, pressure observation, and early ventilation.
+- [x] Reuse the existing propofol, oxygen, respiratory, hemodynamic, ventilator, event-log, and replay
+  paths without adding a geriatric-only physiological implementation.
+- [x] Score oxygen reserve, accepted total and increment timing, pressure nadir, delivered tidal
+  volume per kilogram, and saturation from accepted actions and recorded state.
+- [x] Add catalog assets, curriculum and preparation-path coverage, route SEO, expert/no-action/
+  large-bolus/replay regressions, responsive browser inspection, and final full-CI evidence.
+- [ ] Add injection-rate effects, individual dose prediction, frailty, cognition, delirium, organ
+  dysfunction, polypharmacy, physical airway skill, neuromuscular blockade, intubation, or emergence.

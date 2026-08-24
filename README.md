@@ -125,9 +125,9 @@ holds.
 
 The `/anesthesia` catalog keeps discovery local and linkable: search covers the patient, problem,
 procedure, and objectives, while difficulty, duration, and maturity filters are encoded in the URL.
-The unfiltered prerender still contains all 23 current scenarios, so filtering adds no telemetry and
+The unfiltered prerender still contains all 24 current scenarios, so filtering adds no telemetry and
 does not trade away no-script access or scenario-page indexing.
-`/catalog/anesthesia-catalog.json` publishes the same 23 exact-version entries, filters, objectives,
+`/catalog/anesthesia-catalog.json` publishes the same 24 exact-version entries, filters, objectives,
 and normalized search text for static integrations; its schema and data are included in the offline
 bundle and fail the build if they drift from the scenario registry or completion audit.
 The catalog also offers all 10 authored preparation goals from the product design. Each versioned
@@ -279,6 +279,11 @@ confirm the bounded release, select the released red-cell teaching action, and r
 hemoglobin, calculated oxygen-delivery, and pressure response. It deliberately omits specimens,
 identifiers, compatibility, inventory, delay, authorization, bedside checks, administration, and
 team communication, so it cannot be mistaken for a real transfusion workflow.
+Slice 27 adds the twenty-fourth authored scenario, a calm routine geriatric intravenous induction
+for one stable 76-year-old profile. The learner builds end-tidal oxygen reserve, gives the labeled
+older-adult propofol range in small spaced increments, watches the modeled effect site and pressure,
+and begins bounded delivered ventilation. It does not predict an individual dose or model injection
+rate, frailty, cognition, delirium, organ dysfunction, polypharmacy, airway skill, or emergence.
 
 ## Running it
 
@@ -333,7 +338,7 @@ if any media asset is unclassified, multiply classified, missing its license, or
 pinned provenance hash.
 
 `/catalog/maturity-record.schema.json` defines the shared six-state maturity vocabulary, and
-`/catalog/anesthesia-maturity.json` binds each current status to an exact content version for all 37
+`/catalog/anesthesia-maturity.json` binds each current status to an exact content version for all 38
 scenarios, explainers, drug cards, and practice-region profiles. The current records remain `draft`;
 no source check, clinical review, or endorsement is inferred.
 The shared publication policy separately names every preview gate and reserves reviewed-only claims

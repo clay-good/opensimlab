@@ -428,3 +428,21 @@ oxygen-delivery change alongside final pressure. Replay brackets hemorrhage onse
 release. The evidence brief and every learner-facing boundary state that specimens, identifiers,
 typing, antibody screening, crossmatch, inventory, delay, authorization, consent, issue records,
 bedside checks, administration, reactions, local policy, and communication are not modeled.
+
+## Slice 27: bounded routine geriatric intravenous induction
+
+The twenty-fourth authored scenario isolates a calm elective induction for one stable 76-year-old,
+72 kg profile. It reuses the Eleveld population-mean propofol PK/PD, oxygen-wash-in, respiratory
+depression, pressure, and delivered-ventilation paths. No geriatric-only physiology is added.
+
+The expert fixture establishes 0.933 end-tidal oxygen before the first dose, then gives five accepted
+20 mg propofol increments 20 seconds apart: 100 mg total, or 1.39 mg/kg. Delivered ventilation begins
+at 450 mL and 12 breaths/min. In seed 616, predicted depth reaches 49.69, mean arterial pressure
+reaches 73.19 mmHg, and saturation stays above 99.99%. These are deterministic teaching outputs,
+not dose or outcome recommendations.
+
+The debrief reads accepted bolus events, accepted ventilation actions, and recorded state. It scores
+oxygen reserve before dose, total dose and increment timing, post-dose pressure nadir, 6–8 mL/kg
+delivered ventilation, and saturation. The evidence brief and learner-facing limitations exclude
+injection rate, individual dose selection, frailty, cognition, delirium, organ dysfunction,
+polypharmacy, physical airway skill, neuromuscular blockade, intubation, and emergence.

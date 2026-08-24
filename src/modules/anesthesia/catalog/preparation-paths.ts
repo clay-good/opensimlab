@@ -97,10 +97,11 @@ export const PREPARATION_PATHS: readonly PreparationPathDefinition[] = [
     supportedRoles: ['Medical student', 'Resident', 'Nurse anesthesia learner'], limitations: `${BROWSER_LIMIT} This development path currently contains one obstetric scenario.`,
   },
   {
-    id: 'medication-infusion-safety', version: '0.2.0', title: 'Medication and infusion safety',
-    description: 'Rehearse effect-site delay, changing maintenance needs, paralysis, delivery failure, and toxicity as distinct medication risks.',
+    id: 'medication-infusion-safety', version: '0.3.0', title: 'Medication and infusion safety',
+    description: 'Rehearse age-bounded titration, effect-site delay, changing maintenance needs, paralysis, delivery failure, and toxicity as distinct medication risks.',
     scenarioIds: [
-      'routine-induction', 'routine-inhalational-maintenance', 'rapid-sequence-induction',
+      'routine-induction', 'routine-geriatric-induction',
+      'routine-inhalational-maintenance', 'rapid-sequence-induction',
       'awareness-under-paralysis', 'local-anesthetic-systemic-toxicity',
     ],
     prerequisites: ['Read syringe and infusion controls.'],

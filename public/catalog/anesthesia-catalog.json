@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 23,
+  "scenarioCount": 24,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -507,6 +507,28 @@
         "Reassess perfusion and the modeled hemoglobin and oxygen-delivery response after the red-cell action."
       ],
       "searchText": "blood-bank-handoff blood-bank handoff pelvic sarcoma open pelvic tumor resection recognize active operative blood loss and make the bounded blood-bank request before selecting a product. an accepted blood-bank release was recorded within 60 seconds of the declared hemorrhage onset. use the released red-cell teaching action in the correct order without treating the simulator as a compatibility workflow. packed red cells were accepted after release, with no refused blood-product action before the release. reassess perfusion and the modeled hemoglobin and oxygen-delivery response after the red-cell action. the accepted red-cell event recorded increased hemoglobin and calculated oxygen delivery, and final mean arterial pressure was at least 65 mmhg."
+    },
+    {
+      "id": "routine-geriatric-induction",
+      "path": "/anesthesia/scenario/routine-geriatric-induction",
+      "title": "Routine geriatric intravenous induction",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 8,
+      "difficulty": "introductory",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Establish an oxygen reserve before beginning the modeled older-adult induction.",
+        "Titrate the labeled older-adult propofol range in increments and watch the modeled effect site catch up.",
+        "Preserve perfusion while the incremental hypnotic effect develops.",
+        "Begin age-appropriate delivered ventilation before oxygen saturation falls."
+      ],
+      "searchText": "routine-geriatric-induction routine geriatric intravenous induction reducible inguinal hernia elective open inguinal hernia repair establish an oxygen reserve before beginning the modeled older-adult induction. end-tidal oxygen fraction reached at least 0.85 before the first accepted propofol bolus. titrate the labeled older-adult propofol range in increments and watch the modeled effect site catch up. accepted propofol totaled 1–1.5 mg/kg, no bolus exceeded 20 mg, and consecutive boluses were at least 10 seconds apart. preserve perfusion while the incremental hypnotic effect develops. mean arterial pressure never fell below 65 mmhg after the first propofol bolus. begin age-appropriate delivered ventilation before oxygen saturation falls. accepted delivered ventilation at 6–8 ml/kg began after propofol and oxygen saturation remained at least 92% through the case."
     }
   ],
   "preparationPathCount": 10,
@@ -728,11 +750,12 @@
     },
     {
       "id": "medication-infusion-safety",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "title": "Medication and infusion safety",
-      "description": "Rehearse effect-site delay, changing maintenance needs, paralysis, delivery failure, and toxicity as distinct medication risks.",
+      "description": "Rehearse age-bounded titration, effect-site delay, changing maintenance needs, paralysis, delivery failure, and toxicity as distinct medication risks.",
       "scenarioIds": [
         "routine-induction",
+        "routine-geriatric-induction",
         "routine-inhalational-maintenance",
         "rapid-sequence-induction",
         "awareness-under-paralysis",
@@ -752,7 +775,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 49
+      "estimatedMinutes": 57
     },
     {
       "id": "handoff-escalation",

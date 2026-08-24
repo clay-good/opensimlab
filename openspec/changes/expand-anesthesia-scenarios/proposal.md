@@ -132,10 +132,13 @@ response, stopping before dysrhythmia treatment or cardiac arrest.
   reassessment without presenting any setting or infusion rate as an individualized prescription.
 - Add a twenty-third scenario that turns the existing confirmed blood-bank release into a dedicated
   ordered-action lesson with fixed-unit red-cell response and explicit compatibility-workflow exclusions.
+- Add a twenty-fourth scenario that isolates a stable older-adult intravenous induction, connects
+  end-tidal oxygen reserve to small spaced propofol increments and effect-site lag, and preserves
+  pressure and ventilation without claiming individual dose prediction or a general frailty model.
 
 ## Impact
 
-These 26 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+These 27 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
 awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. The seventh also closes the bounded
 pediatric-family gap without claiming a general pediatric patient model. The eighth reaches the
 minimum count of 12 scenarios and closes the bounded difficult-airway rescue gap. The ninth closes
@@ -177,3 +180,7 @@ The twenty-sixth adds the twenty-third authored scenario and makes the previousl
 blood-bank request a focused recognition-release-response lesson. Accepted event order and the
 fixed red-cell model are inspectable, while specimens, identifiers, compatibility, inventory,
 delay, emergency release, bedside checks, administration, and team communication remain excluded.
+The twenty-seventh adds the twenty-fourth authored scenario and the catalog's first stable
+older-adult induction loop. The labeled range, accepted increments, end-tidal oxygen, effect-site
+trajectory, pressure, and ventilation are inspectable, while injection rate, frailty, cognition,
+delirium, organ dysfunction, polypharmacy, physical airway skill, and individual prediction remain excluded.

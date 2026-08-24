@@ -408,6 +408,10 @@ export function objectiveFindings(
     'manage-hypotension': 'vasodilation-versus-hypovolemia',
     'ventilate-before-desaturation': 'preoxygenation-and-safe-apnea-time',
     'blunt-incision': 'hypnotic-opioid-synergy',
+    'preoxygenate-older-adult': 'preoxygenation-and-safe-apnea-time',
+    'titrate-geriatric-propofol': 'hysteresis-and-effect-site-lag',
+    'protect-geriatric-perfusion': 'vasodilation-versus-hypovolemia',
+    'ventilate-geriatric-induction': 'preoxygenation-and-safe-apnea-time',
     'recognize-hemorrhage': 'vasodilation-versus-hypovolemia',
     'temporize-volume-loss': 'vasodilation-versus-hypovolemia',
     'avoid-full-dose-induction': 'hysteresis-and-effect-site-lag',
@@ -1623,6 +1627,89 @@ export function objectiveFindings(
         finding: `The follow-up panel was obtained ${delaySeconds.toFixed(0)} seconds after plasma: `
           + `PT ratio ${afterRatio.toFixed(2)} × normal and fibrinogen ${afterFibrinogen.toFixed(1)} g/L.`,
         atTick: panel.tick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
+      'preoxygenate-older-adult', 'titrate-geriatric-propofol',
+      'protect-geriatric-perfusion', 'ventilate-geriatric-induction',
+    ].includes(objective.id)) {
+      const first = log.find((entry) => entry.eventId.startsWith('bolus-propofol-'));
+      const sessionEnd = history.at(-1)?.tick ?? 0;
+      if (!first) {
+        return {
+          ...base,
+          outcome: sessionEnd < 1200 ? 'not-exercised' : 'not-met',
+          finding: sessionEnd < 1200
+            ? 'The session ended before the induction practice window began.'
+            : 'No accepted propofol induction dose was recorded.',
+        } satisfies ObjectiveFinding;
+      }
+
+      if (objective.id === 'preoxygenate-older-adult') {
+        const before = history.filter((entry) => entry.tick <= first.tick).at(-1);
+        const endTidalOxygen = Number(before?.state.endTidalO2Fraction ?? 0);
+        return {
+          ...base,
+          outcome: endTidalOxygen >= 0.85 ? 'met' : 'not-met',
+          finding: `End-tidal oxygen was ${(endTidalOxygen * 100).toFixed(0)}% before the first accepted propofol dose. Inspired oxygen alone does not prove that reserve reached the patient.`,
+          atTick: first.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      const boluses = log.filter((entry) => entry.eventId.startsWith('bolus-propofol-'));
+      if (objective.id === 'titrate-geriatric-propofol') {
+        const totalMg = boluses.reduce((sum, entry) => sum + Number(entry.data?.mass ?? 0), 0);
+        const perKg = totalMg / scenario.patient.weightKg;
+        const largest = Math.max(...boluses.map((entry) => Number(entry.data?.mass ?? 0)));
+        const shortestGap = boluses.length < 2 ? Infinity : Math.min(...boluses.slice(1)
+          .map((entry, index) => entry.tick - boluses[index]!.tick));
+        const inRange = perKg >= 1 && perKg <= 1.5;
+        const incremental = largest <= 20 && shortestGap >= 10 * TICKS_PER_SECOND;
+        return {
+          ...base,
+          outcome: inRange && incremental ? 'met' : inRange || incremental ? 'partly-met' : 'not-met',
+          finding: `${boluses.length} accepted increment${boluses.length === 1 ? '' : 's'} totaled ${totalMg.toFixed(0)} mg (${perKg.toFixed(2)} mg/kg); the largest was ${largest.toFixed(0)} mg${Number.isFinite(shortestGap) ? ` and the shortest interval was ${(shortestGap / TICKS_PER_SECOND).toFixed(0)} seconds` : ''}. The displayed depth is a population-model trajectory, not proof of individual unconsciousness.`,
+          atTick: boluses.at(-1)?.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      const afterDose = history.filter((entry) => entry.tick >= first.tick);
+      if (afterDose.length === 0) {
+        return {
+          ...base,
+          outcome: 'not-exercised',
+          finding: 'The session ended before a post-dose physiology sample was recorded.',
+          atTick: first.tick,
+        } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'protect-geriatric-perfusion') {
+        const nadir = afterDose.reduce((lowest, entry) => Number(entry.state.meanArterialMmHg) < Number(lowest.state.meanArterialMmHg) ? entry : lowest);
+        const map = Number(nadir.state.meanArterialMmHg);
+        return {
+          ...base,
+          outcome: map >= 65 ? 'met' : 'not-met',
+          finding: `Mean arterial pressure reached a nadir of ${map.toFixed(0)} mmHg after the first accepted dose in this one bounded teaching profile.`,
+          atTick: nadir.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      const ventilation = actions.find((action) => action.type === 'ventilator'
+        && action.tick > first.tick && action.payload.delivering === true);
+      const tidalVolume = Number(ventilation?.payload.tidalVolumeMl ?? 0);
+      const mlPerKg = tidalVolume / scenario.patient.weightKg;
+      const ageAppropriate = mlPerKg >= 6 && mlPerKg <= 8;
+      const minSpo2 = afterDose.reduce((lowest, entry) => Math.min(
+        lowest, Number(entry.state.spo2Percent ?? 100),
+      ), 100);
+      return {
+        ...base,
+        outcome: ventilation && ageAppropriate && minSpo2 >= 92 ? 'met'
+          : ventilation || minSpo2 >= 92 ? 'partly-met' : 'not-met',
+        finding: ventilation
+          ? `Delivered ventilation began ${(ventilation.tick - first.tick) / TICKS_PER_SECOND} seconds after the first dose at ${mlPerKg.toFixed(1)} mL/kg; saturation remained at least ${minSpo2.toFixed(1)}%. This assesses accepted screen settings, not airway or mask skill.`
+          : `No accepted delivered-ventilation setting followed propofol; saturation reached ${minSpo2.toFixed(1)}%.`,
+        atTick: ventilation?.tick ?? afterDose.at(-1)?.tick,
       } satisfies ObjectiveFinding;
     }
 
