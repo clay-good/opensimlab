@@ -1,0 +1,190 @@
+# Implementation plan: multidomain practice catalog
+
+Every checkbox represents implementation work outside this spec-only change. A scenario is not
+credited toward the catalog until every item in the completion contract passes.
+
+## 0. Ratify the contract
+
+- [ ] Approve the product position, 240-scenario catalog, fidelity classes, maturity vocabulary,
+  privacy exception, report retention, and no-hosted-MCP decision.
+- [ ] Resolve every conflict between this change and the master clinical-governance, privacy,
+  delivery, module, curriculum, pedagogy, safety, adoption, and sustainability specifications.
+- [ ] Publish a machine-readable scenario completion schema and validate all existing anesthesia
+  scenarios against it without changing their behavior.
+- [ ] Add architecture tests proving that tutor rules cannot mutate patient state and reporting
+  cannot read local progress, reflections, or arbitrary browser storage.
+
+## 1. Public repository and release posture
+
+- [ ] Complete secret, license, private-data, history, dependency, and contributor-identity audits
+  before changing repository visibility.
+- [ ] Add public contribution, security, code-of-conduct, governance, reviewer, scenario-author,
+  evidence-brief, correction, and organizational-endorsement documentation.
+- [ ] Add issue and pull-request templates that require scope, source locators, tests, limitations,
+  maturity effect, and reviewer-domain impact.
+- [ ] Add asset-license and evidence-source manifests and fail the build on unclassified assets.
+- [ ] Prove a clean public clone can build and self-host the static simulator without Cloudflare
+  credentials or the report service.
+
+## 2. Maturity and governance transition
+
+- [ ] Implement `draft`, `preview`, `source_checked`, `clinically_reviewed`,
+  `institution_endorsed`, and `withdrawn` records with exact content-version binding.
+- [ ] Replace unsigned-content exclusion with preview publication rules and persistent honest labels.
+- [ ] Preserve strict gates for reviewed-only catalog views, adoption packs, review badges,
+  curriculum coverage claims, and organization endorsements.
+- [ ] Add reviewer qualification, conflict, scope, expiration, revocation, and clinical-diff rules.
+- [ ] Add organization endorsement records and exact wording that identifies scope without implying
+  certification.
+- [ ] Migrate current anesthesia content to preview without fabricating signatures or source checks.
+- [ ] Add public dashboards for scenario counts and all maturity, overdue, withdrawn, correction,
+  limitation, and endorsement records.
+- [ ] Test that every status badge resolves offline to the exact machine-readable record.
+
+## 3. Shared catalog and environment shell
+
+- [ ] Implement the catalog manifest, scenario completion validator, static search index, goal paths,
+  domain/environment/duration/difficulty/fidelity/maturity filters, and URL state.
+- [ ] Implement catalog desktop, tablet, 320 px phone, keyboard, screen-reader, reduced-motion, and
+  no-script/prerendered experiences.
+- [ ] Demonstrate with 20 moderated learners that named and need-based cases are found within the
+  specified threshold; record the procedure and results without production telemetry.
+- [ ] Build shared operating-room, emergency-department, ICU, ward, delivery-room, neonatal, clinic,
+  and prehospital frames from one interaction grammar.
+- [ ] Add static domain-pack loading with integrity, version compatibility, atomic offline caching,
+  storage budgeting, and safe pack rollback.
+- [ ] Ensure planned titles are distinct from playable scenarios and excluded from complete counts.
+
+## 4. Private tutor
+
+- [ ] Define tutor-rule schema with trigger, earliest time, cooldown, prerequisite observation,
+  assistance level, explanation, source, maturity, and suppression fields.
+- [ ] Implement Orient, Notice, Connect, Prioritize, Direct, and Explain interventions.
+- [ ] Preserve identical patient trajectories across Guided, Coached, and Unassisted modes.
+- [ ] Add tutor-collapse, pause, replay decision point, explanation depth, and permanently dismissible
+  onboarding controls.
+- [ ] Add the 10 goal-based preparation paths and local next-scenario recommendation logic.
+- [ ] Add private local practice history, self-comparison, targeted repetition, and export/import.
+- [ ] Prohibit leaderboards, cross-learner percentiles, streak loss, public performance, points for
+  irrelevant speed, and tutor network calls through tests and copy review.
+- [ ] Verify every tutor observation and claimed outcome against deterministic expert, common-error,
+  and recovery transcripts.
+
+## 5. Report-a-problem foundation
+
+- [ ] Specify and implement the exact report request/response schemas and generated scenario report
+  catalog.
+- [ ] Add one shared report control to prebrief, live, debrief, source, and limitation surfaces.
+- [ ] Implement the accessible payload-preview dialog, category-only submission, optional 500-
+  character note, and opt-in bounded recent context.
+- [ ] Structurally exclude reflections, local history, progress, imported files, arbitrary storage,
+  real-world timestamps, identity, locale, user agent, and device data.
+- [ ] Implement a separately routed API-only Worker for exact config and POST paths with no asset,
+  preview, `workers.dev`, public-read, or broader API surface.
+- [ ] Add server-derived metadata, origin/URL/content-type/body/schema/control-character validation,
+  Turnstile Siteverify hostname/action checks, daily HMAC quotas, verified-attempt quotas, global
+  ceilings, dedupe, generic accepted responses, and fail-closed errors.
+- [ ] Add D1 migrations for reports, counters, triage, severity, resolution evidence, and public
+  correction links.
+- [ ] Add daily scheduled retention for 30-day reports and 14-day counters plus manual recovery
+  commands.
+- [ ] Add a zone WAF rate-limit launch requirement, secret-handling runbook, test keys, cost model,
+  live verification checklist, kill switch, and self-hosting behavior.
+- [ ] Test offline and report-service failures without disrupting the simulator.
+
+## 6. Safe maintenance automation
+
+- [ ] Document the fixed sanitized report projection supplied to maintenance agents and quote notes
+  as untrusted evidence.
+- [ ] Implement a daily batch triage job with read-only production access and a separate branch-only
+  repository credential; do not trigger one agent per report.
+- [ ] Permit agents to reproduce, source-check, add a failing regression, and draft a PR only.
+- [ ] Prevent report text from selecting tools, changing instructions, accessing secrets, writing
+  D1, merging, deploying, or changing review/endorsement records.
+- [ ] Require human or named clinical review according to severity before merge and release.
+- [ ] Add weekly open-report review, duplicate grouping, urgent-content withdrawal, resolution,
+  correction-log, retention, and false-report procedures.
+- [ ] Measure prompt-injection, malformed-context, duplicate-flood, stale-version, and withdrawn-
+  scenario cases in an adversarial test suite.
+
+## 7. Shared clinical capabilities
+
+- [ ] General observations, histories, focused examinations, orders, results, trends, and canonical
+  units with region-aware display.
+- [ ] Medication and infusion intent with scenario-bounded formularies; never expose a real-patient
+  calculator or accept real-patient details.
+- [ ] Oxygen devices, airway states, spontaneous/assisted ventilation, noninvasive support,
+  mechanical ventilation, gas exchange, and device failure.
+- [ ] Fluids, blood components, hemorrhage, vascular tone, cardiac output, oxygen delivery, and
+  shock composition.
+- [ ] Rhythm generation, conduction, pacing, synchronized cardioversion, defibrillation,
+  compressions, and bounded arrest/ROSC states.
+- [ ] Neurologic responsiveness, seizure, paralysis, sedation, intracranial-pressure, and airway-
+  protection teaching states with explicit non-examination limits.
+- [ ] Glucose, sodium, potassium, calcium, magnesium, renal clearance, fluid balance, acid-base, and
+  temperature teaching models with calibration envelopes.
+- [ ] Infection source, inflammatory trajectory, antimicrobial timing as authored treatment intent,
+  perfusion failure, and reassessment.
+- [ ] Maternal physiology, fetal-tracing teaching state where licensed/sourced, delivery events,
+  hemorrhage, hypertensive disorders, and neonatal handoff.
+- [ ] Neonatal transition, respiratory support, thermoregulation, glucose, and bradycardia.
+- [ ] Toxicologic syndrome drives, decontamination boundaries, antidote intent, and elimination
+  limits without individual outcome prediction.
+- [ ] Communication events for help, escalation, consultation, handoff, and disposition without
+  claiming to simulate team performance.
+- [ ] For every capability: sources, applicability, calibration, invariants, hostile inputs,
+  deterministic replay, nonvisual representation, limitations, and cross-scenario regression.
+
+## 8. Catalog production waves
+
+- [ ] Wave A: migrate and complete 36 anesthesia scenarios.
+- [ ] Wave B: complete 24 emergency-medicine and 20 critical-care scenarios.
+- [ ] Wave C: complete 16 cardiology and 14 respiratory-medicine scenarios.
+- [ ] Wave D: complete 16 pediatric, 14 obstetric, and 10 neonatal scenarios.
+- [ ] Wave E: complete 14 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
+- [ ] Wave F: complete 10 infectious-disease and 14 toxicology scenarios.
+- [ ] Wave G: complete 10 hematology/oncology, 10 surgery/trauma, and 8 medical-surgical-nursing
+  scenarios.
+- [ ] After every wave, verify the exact cumulative count, distinctness, capability reuse, path and
+  competency coverage, sources, maturity labels, domain-pack budget, offline behavior, mobile
+  layout, and complete regression fixtures.
+
+## 9. Evidence and review for every scenario
+
+- [ ] Write the evidence brief before implementation and identify disputed regional practice.
+- [ ] Record primary/authoritative sources, exact locators, date consulted, applicability, review-by
+  date, and copyrighted-material boundary.
+- [ ] Define 2–5 observable objectives and explicitly mark psychomotor, physical-examination, team,
+  and communication claims the browser cannot assess.
+- [ ] Produce expert, common-error, and recovery transcripts before calling the scenario complete.
+- [ ] Add PEARLS debrief, causal attribution, bounded counterfactual, tutor rules, limitations,
+  accessibility summary, and report coverage.
+- [ ] Advance maturity only through independently verified, exact-version records.
+
+## 10. Institutional adoption
+
+- [ ] Generate a static adoption pack for a selected release containing catalog, competency maps,
+  scenario maturity, sources, limitations, corrections, accessibility conformance, privacy/data
+  flow, security model, build provenance, review records, and endorsement records.
+- [ ] Support reviewed-only course links and pinned static content-pack versions without learner
+  accounts or observation.
+- [ ] Add local instructor import and cohort analysis while preserving learner-controlled export.
+- [ ] Pilot with at least 3 distinct programs and record adoption objections, review scope, and
+  corrections without collecting production learner telemetry.
+- [ ] Publish organization endorsements only after authority, scope, version, region, expiration,
+  conflicts, and revocation paths are complete.
+
+## 11. Release verification
+
+- [ ] Run full type, lint, architecture, unit, property, golden trace, deterministic replay,
+  accessibility, responsive, performance, offline, content, maturity, privacy, report-security,
+  source, license, and static-build gates.
+- [ ] Verify exactly 240 complete scenario IDs and zero placeholder cards included in the total.
+- [ ] Verify a full session makes no API call, then preview and submit one bounded report and inspect
+  the D1 row.
+- [ ] Verify all preview, reviewed, endorsed, overdue, and withdrawn labels against public records.
+- [ ] Verify report Worker failure, D1 exhaustion, Turnstile failure, domain-pack failure, and offline
+  installation leave playable cached scenarios intact.
+- [ ] Re-run moderated catalog, first-action, tutor-understanding, and report-access procedures.
+- [ ] Publish the release changelog with capability changes, scenario counts by maturity, known
+  limitations, corrections, review coverage, and no unsupported efficacy claim.
