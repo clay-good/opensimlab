@@ -94,12 +94,14 @@ credited toward the catalog until every item in the completion contract passes.
 - [x] Preserve identical patient trajectories across Guided, Coached, and Unassisted modes.
   Guidance remains a presentational read of canonical state and accepted actions; deterministic
   trace-hash tests prove the engine receives no guidance-level input.
-- [ ] Add tutor-collapse, pause, replay decision point, explanation depth, and permanently dismissible
+- [x] Add tutor-collapse, pause, replay decision point, explanation depth, and permanently dismissible
   onboarding controls.
   The first objective-linked replay-safe decision point, paused deterministic branch, and dismissible
   branch notice are implemented. Opening a tutor source also pauses the simulated patient before
   the explanation modal appears. Compact prompt, situational “Why this now?”, and full sourced
-  explanation depths are implemented. Tutor collapse and onboarding remain.
+  explanation depths are implemented. Every prompt collapses to one labeled expansion control. The
+  nonblocking local introduction can be permanently dismissed, remains reachable from More options,
+  and stays absent with all other tutor UI in Unassisted mode.
 - [x] Add the 10 goal-based preparation paths and local next-scenario recommendation logic.
   Recommendations are ordered locally from the selected versioned path, explain the chosen goal,
   carry the scenario's exact maturity link, and accept local completed-scenario evidence. Goal

@@ -5,7 +5,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import './cockpit.css';
-import { Banner, Button, Drawer, Modal, SegmentedControl, Toggle, usePrefersReducedMotion, useLocalPreference } from '@platform/ui';
+import { Button, Drawer, Modal, SegmentedControl, Toggle, usePrefersReducedMotion, useLocalPreference } from '@platform/ui';
 import { useSession, sessionInternals } from '@platform/session/session-store';
 import {
   formatElapsed, SPEED_MULTIPLIERS, TICKS_PER_SECOND, type SpeedMultiplier,
@@ -42,6 +42,9 @@ import type { SonificationEngine } from '@platform/audio/sonification';
 import { ManualCrisisInjector } from './ManualCrisisInjector';
 import { MaturityMarker } from '@platform/governance/MaturityMarker';
 import type { ContentMaturity, MaturitySubjectKind } from '@platform/catalog/maturity';
+import {
+  TUTOR_INTRODUCTION_PREFERENCE, TutorIntroduction, TutorPromptCard,
+} from './TutorRegion';
 
 export interface CockpitProps {
   readonly scenario: Scenario;
@@ -140,6 +143,13 @@ export function Cockpit({
   const [selectedTick, setSelectedTick] = useState<number | null>(null);
   const [prompt, setPrompt] = useState<Prompt | null>(null);
   const [promptWhyOpen, setPromptWhyOpen] = useState(false);
+  const [tutorCollapsed, setTutorCollapsed] = useState(false);
+  const [tutorIntroductionDismissed, setTutorIntroductionDismissed] = useLocalPreference(
+    TUTOR_INTRODUCTION_PREFERENCE, false,
+  );
+  const [tutorIntroductionOpen, setTutorIntroductionOpen] = useState(
+    () => !tutorIntroductionDismissed && session.guidance !== 'unassisted',
+  );
   const promptsShown = useRef(new Map<string, number>());
   const [analysisOpen, setAnalysisOpen] = useState(false);
   const [actionsOpen, setActionsOpen] = useState(false);
@@ -285,6 +295,7 @@ export function Cockpit({
   // never feeds anything back, which is what makes the trajectory identical at
   // every guidance level.
   useEffect(() => {
+    if (tutorIntroductionOpen) return;
     const input = {
       tick: session.tick,
       state: session.state,
@@ -303,9 +314,10 @@ export function Cockpit({
     if (next) {
       promptsShown.current.set(next.id, session.tick);
       setPromptWhyOpen(false);
+      setTutorCollapsed(false);
       setPrompt(next);
     }
-  }, [session.tick, session.guidance, session.state, session.alarms.length, prompt]);
+  }, [session.tick, session.guidance, session.state, session.alarms.length, prompt, tutorIntroductionOpen]);
 
   const speak = useCallback((text: string) => setAnnouncement(text), []);
 
@@ -633,48 +645,29 @@ export function Cockpit({
       </div>
 
       {/* Guidance. Non-blocking, dismissible, and never shown during an alarm. */}
-      {prompt && (
-        <div className="tutor-prompt">
-          <Banner
-            kind="advisory"
-            actions={(
-              <>
-                <Button compact variant="ghost" onClick={() => setPromptWhyOpen((open) => !open)}>
-                  {promptWhyOpen ? 'Hide why' : 'Why this now?'}
-                </Button>
-                <Button compact variant="ghost" onClick={() => {
-                  setPrompt(null);
-                  setPromptWhyOpen(false);
-                }}>Dismiss</Button>
-              </>
-            )}
-          >
-            <strong>{prompt.suggestion}</strong>
-            {promptWhyOpen && (
-              <>
-                <br />
-                <span className="field__hint">{prompt.because}</span>
-              </>
-            )}
-            <br />
-            <span className="field__hint">
-              {prompt.assistanceLevel[0]?.toUpperCase()}{prompt.assistanceLevel.slice(1)} ·{' '}
-              {prompt.maturity[0]?.toUpperCase()}{prompt.maturity.slice(1)} · rule {prompt.ruleVersion}
-            </span>
-            {prompt.concept && (
-              <>
-                {' '}
-                <Button variant="ghost" compact onClick={() => {
-                  session.pause();
-                  setExplainerId(prompt.concept!);
-                }}>
-                  Full source
-                </Button>
-              </>
-            )}
-          </Banner>
-        </div>
-      )}
+      {tutorIntroductionOpen && session.alarms.length === 0 ? (
+        <TutorIntroduction onDismissPermanently={() => {
+          setTutorIntroductionDismissed(true);
+          setTutorIntroductionOpen(false);
+        }} />
+      ) : !tutorIntroductionOpen && prompt ? (
+        <TutorPromptCard
+          prompt={prompt}
+          collapsed={tutorCollapsed}
+          whyOpen={promptWhyOpen}
+          onToggleCollapsed={() => setTutorCollapsed((collapsed) => !collapsed)}
+          onToggleWhy={() => setPromptWhyOpen((open) => !open)}
+          onDismiss={() => {
+            setPrompt(null);
+            setPromptWhyOpen(false);
+            setTutorCollapsed(false);
+          }}
+          onOpenSource={() => {
+            session.pause();
+            setExplainerId(prompt.concept!);
+          }}
+        />
+      ) : null}
 
       {/* The live regions. Polite for ordinary change, assertive for critical. */}
       <div className="visually-hidden" aria-live="polite" aria-atomic="true">{announcement}</div>
@@ -760,6 +753,12 @@ export function Cockpit({
             and cue is also shown.
           </p>
         </div>
+        <Button onClick={() => {
+          setShortcutsOpen(false);
+          setTutorIntroductionOpen(true);
+        }}>
+          Show private tutor introduction
+        </Button>
         <h3>Keyboard shortcuts</h3>
         <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 'var(--space-2) var(--space-4)' }}>
           {SHORTCUTS.map((shortcut) => (

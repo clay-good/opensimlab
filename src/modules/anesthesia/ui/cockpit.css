@@ -74,6 +74,9 @@
   transform: translateX(-50%);
   inline-size: min(35rem, 92vw);
 }
+.tutor-prompt--collapsed {
+  inline-size: auto;
+}
 .cockpit__analysis { grid-area: analysis; min-inline-size: 0; min-block-size: 0; }
 .cockpit__monitor { grid-area: monitor; min-inline-size: 0; min-block-size: 0; }
 .cockpit__actions { grid-area: actions; min-block-size: 0; }

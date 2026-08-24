@@ -156,6 +156,9 @@ Orient, Notice, Connect, Prioritize, and Direct only after the shared cooldown; 
 observable action. Prompts appear once per rule, never compete with an alarm, and offer 3 deliberate
 depths: the compact intervention, “Why this now?”, and the full local source. On phones the tutor
 sits above the action dock instead of covering the monitor values.
+A first-run introduction explains the private, local tutor without stopping the clock. It can be
+permanently dismissed on that device, reopened from More options, and each live prompt collapses to
+one labeled control. Unassisted sessions show neither the introduction nor live tutor prompts.
 
 ### What gets built first
 
