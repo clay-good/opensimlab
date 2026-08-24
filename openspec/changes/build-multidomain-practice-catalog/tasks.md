@@ -11,7 +11,7 @@ credited toward the catalog until every item in the completion contract passes.
   delivery, module, curriculum, pedagogy, safety, adoption, and sustainability specifications.
 - [x] Publish a machine-readable scenario completion schema and validate all existing anesthesia
   scenarios against it without changing their behavior.
-- [ ] Add architecture tests proving that tutor rules cannot mutate patient state and reporting
+- [x] Add architecture tests proving that tutor rules cannot mutate patient state and reporting
   cannot read local progress, reflections, or arbitrary browser storage.
 
 ## 1. Public repository and release posture

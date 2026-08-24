@@ -28,7 +28,7 @@ import { WhyPanel } from './WhyPanel';
 import {
   announcementsFor, mechanicalPulseFromState, stateSummary, waveformDescriptions, SHORTCUTS,
 } from './accessibility';
-import { promptFor, type Prompt } from './guidance';
+import { promptFor, type Prompt } from '../tutor/guidance';
 import { concentrationCsv } from './ConcentrationPanel';
 import { findStacking } from '@anesthesia/debrief/analysis';
 import { EXPLAINERS, getExplainer } from '@anesthesia/content/explainers';

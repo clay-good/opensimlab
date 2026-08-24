@@ -238,6 +238,10 @@ contract each existing scenario satisfies and, just as importantly, which eviden
 missing. Structurally valid does not mean complete; incomplete scenarios are never counted as
 complete by trusting a card or a boolean.
 
+Architecture tests keep tutor rules outside engine and session mutation paths. The same boundary
+also rejects any reporting code that reads browser storage, transcripts, reflections, or progress;
+reporting must receive an explicit bounded projection when it is implemented.
+
 ## Status: alpha, and not yet clinically reviewed
 
 This is worth stating plainly, because everything above describes what the project is *for* and

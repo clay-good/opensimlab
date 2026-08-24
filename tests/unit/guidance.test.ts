@@ -1,6 +1,6 @@
 /** Acceptance tests for learning/pedagogy's guidance requirements. */
 import { describe, expect, it } from 'vitest';
-import { PROMPTS, promptFor, unpromptedOmissions, type GuidanceInput } from '@anesthesia/ui/guidance';
+import { PROMPTS, promptFor, unpromptedOmissions, type GuidanceInput } from '@anesthesia/tutor/guidance';
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import { replay } from '@anesthesia/debrief/replay';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
