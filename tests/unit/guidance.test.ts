@@ -22,12 +22,12 @@ const base: GuidanceInput = {
 describe('Requirement: Progressive Guidance Levels', () => {
   it('Scenario: Guided mode prompts the next step, and says why it matters', () => {
     const prompt = promptFor('guided', base, NONE);
-    expect(prompt?.id).toBe('preoxygenate');
+    expect(prompt?.id).toBe('preoxygenate-orient');
     expect(prompt?.suggestion.length).toBeGreaterThan(20);
     expect(prompt?.because.length).toBeGreaterThan(40);
     expect(prompt?.concept).toBe('preoxygenation-and-safe-apnea-time');
     expect(prompt).toMatchObject({
-      ruleVersion: '0.1.0', assistanceLevel: 'direct', maturity: 'draft',
+      ruleVersion: '0.1.0', assistanceLevel: 'orient', maturity: 'draft',
       sourceId: 'preoxygenation-and-safe-apnea-time',
     });
   });
@@ -54,18 +54,40 @@ describe('Requirement: Progressive Guidance Levels', () => {
   });
 
   it('does not repeat the same prompt inside its cooldown', () => {
-    const shown = new Map([['preoxygenate', 700]]);
+    const shown = new Map([['preoxygenate-orient', 700]]);
     expect(promptFor('guided', base, shown)).toBeNull();
-    expect(promptFor('guided', { ...base, tick: 700 + 91 * TICKS_PER_SECOND }, shown)?.id).toBe('preoxygenate');
+    expect(promptFor('guided', { ...base, tick: 700 + 31 * TICKS_PER_SECOND }, shown)?.id)
+      .toBe('preoxygenate-notice');
   });
 
   it('keeps a displayed prompt eligible until its observable condition resolves', () => {
-    expect(promptStillEligible('guided', base, 'preoxygenate')).toBe(true);
+    expect(promptStillEligible('guided', base, 'preoxygenate-orient')).toBe(true);
     expect(promptStillEligible('guided', {
       ...base, state: { ...base.state!, fio2: 1 },
-    }, 'preoxygenate')).toBe(false);
-    expect(promptStillEligible('guided', { ...base, alarmCount: 1 }, 'preoxygenate')).toBe(false);
-    expect(promptStillEligible('unassisted', base, 'preoxygenate')).toBe(false);
+    }, 'preoxygenate-orient')).toBe(false);
+    expect(promptStillEligible('guided', { ...base, alarmCount: 1 }, 'preoxygenate-orient')).toBe(false);
+    expect(promptStillEligible('unassisted', base, 'preoxygenate-orient')).toBe(false);
+  });
+
+  it('escalates one preoxygenation objective through the authored ladder deterministically', () => {
+    const shown = new Map<string, number>();
+    let tick = 200 * TICKS_PER_SECOND;
+    const levels: string[] = [];
+    for (let index = 0; index < 5; index += 1) {
+      const prompt = promptFor('guided', { ...base, tick }, shown)!;
+      levels.push(prompt.assistanceLevel);
+      shown.set(prompt.id, tick);
+      tick += 31 * TICKS_PER_SECOND;
+    }
+    expect(levels).toEqual(['orient', 'notice', 'connect', 'prioritize', 'direct']);
+
+    const explained = promptFor('guided', {
+      ...base,
+      tick,
+      state: { ...base.state!, fio2: 1 },
+      actions: [{ tick: tick - 10, type: 'ventilator', payload: { fio2: 1 } }],
+    }, shown);
+    expect(explained?.assistanceLevel).toBe('explain');
   });
 
   it('Scenario: Guidance level never alters the patient', async () => {
@@ -104,6 +126,7 @@ describe('Requirement: Progressive Guidance Levels', () => {
       expect(rule.prerequisiteObservations.length).toBeGreaterThan(0);
       expect(rule.suppressionConditions).toContain('any active alarm');
     }
-    expect(new Set(PROMPTS.map((rule) => rule.triggerId)).size).toBe(PROMPTS.length);
+    expect(new Set(PROMPTS.map((rule) => rule.assistanceLevel)))
+      .toEqual(new Set(['orient', 'notice', 'connect', 'prioritize', 'direct', 'explain']));
   });
 });

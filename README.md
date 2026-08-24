@@ -151,6 +151,11 @@ its observable trigger, objective, earliest time, cooldown, prerequisite observa
 assistance level, applicability, source explainer, maturity, and suppression conditions. The prompt
 shows its assistance level, draft status, rule version, and a local source/explanation link; changing
 Guided, Coached, or Unassisted presentation never reaches the patient engine.
+Guided practice begins with the smallest useful intervention and escalates one behavior through
+Orient, Notice, Connect, Prioritize, and Direct only after the shared cooldown; Explain follows an
+observable action. Prompts appear once per rule, never compete with an alarm, and offer 3 deliberate
+depths: the compact intervention, “Why this now?”, and the full local source. On phones the tutor
+sits above the action dock instead of covering the monitor values.
 
 ### What gets built first
 

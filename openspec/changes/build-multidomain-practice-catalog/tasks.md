@@ -87,7 +87,10 @@ credited toward the catalog until every item in the completion contract passes.
   Every current rule declares schema and content versions, a named trigger, objective, earliest
   time, at least a 30-second cooldown, prerequisite observations, urgency, assistance level,
   source explainer, exact maturity, applicability, and suppression conditions.
-- [ ] Implement Orient, Notice, Connect, Prioritize, Direct, and Explain interventions.
+- [x] Implement Orient, Notice, Connect, Prioritize, Direct, and Explain interventions.
+  The preoxygenation behavior now exercises the complete ladder from the smallest useful orientation
+  through a direct action, followed by an observable post-action explanation. Each rule appears once
+  per session and same-objective escalation waits at least 30 simulated seconds.
 - [x] Preserve identical patient trajectories across Guided, Coached, and Unassisted modes.
   Guidance remains a presentational read of canonical state and accepted actions; deterministic
   trace-hash tests prove the engine receives no guidance-level input.
@@ -95,7 +98,8 @@ credited toward the catalog until every item in the completion contract passes.
   onboarding controls.
   The first objective-linked replay-safe decision point, paused deterministic branch, and dismissible
   branch notice are implemented. Opening a tutor source also pauses the simulated patient before
-  the explanation modal appears. Tutor collapse, explanation depth, and onboarding remain.
+  the explanation modal appears. Compact prompt, situational “Why this now?”, and full sourced
+  explanation depths are implemented. Tutor collapse and onboarding remain.
 - [x] Add the 10 goal-based preparation paths and local next-scenario recommendation logic.
   Recommendations are ordered locally from the selected versioned path, explain the chosen goal,
   carry the scenario's exact maturity link, and accept local completed-scenario evidence. Goal

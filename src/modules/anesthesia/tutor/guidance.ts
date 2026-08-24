@@ -15,6 +15,7 @@ export type GuidanceLevel = 'guided' | 'coached' | 'unassisted';
 export type TutorAssistanceLevel = 'orient' | 'notice' | 'connect' | 'prioritize' | 'direct' | 'explain';
 export type TutorTriggerId =
   | 'pre-induction-low-fio2'
+  | 'preoxygenation-established'
   | 'apnea-after-bolus'
   | 'recent-bolus'
   | 'map-below-60';
@@ -68,12 +69,80 @@ export interface TutorRule {
 export const TUTOR_RULES: readonly TutorRule[] = [
   {
     schemaVersion: 1, version: '0.1.0', objectiveId: 'preoxygenate', triggerId: 'pre-induction-low-fio2',
+    assistanceLevel: 'orient', sourceId: 'preoxygenation-and-safe-apnea-time', maturity: 'draft',
+    applicability: 'Before any bolus, while inspired oxygen remains below 0.8.',
+    prerequisiteObservations: ['inspired oxygen fraction', 'accepted bolus actions'],
+    suppressionConditions: ['any active alarm', 'unassisted mode', 'coached mode', '30-second same-objective cooldown'],
+    urgent: false, cooldownSeconds: 30, afterSeconds: 15,
+    prompt: {
+      id: 'preoxygenate-orient',
+      suggestion: 'First goal: build oxygen reserve before the airway is taken away.',
+      because: 'The airway and ventilation tray contains the observable oxygen control and the patient panel shows whether reserve is actually building.',
+      concept: 'preoxygenation-and-safe-apnea-time',
+    },
+    applies: (input) =>
+      (input.state?.fio2 ?? 0.21) < 0.8
+      && !input.actions.some((action) => action.type === 'bolus'),
+  },
+  {
+    schemaVersion: 1, version: '0.1.0', objectiveId: 'preoxygenate', triggerId: 'pre-induction-low-fio2',
+    assistanceLevel: 'notice', sourceId: 'preoxygenation-and-safe-apnea-time', maturity: 'draft',
+    applicability: 'Before any bolus, while inspired oxygen remains below 0.8.',
+    prerequisiteObservations: ['inspired oxygen fraction', 'accepted bolus actions'],
+    suppressionConditions: ['any active alarm', 'unassisted mode', 'coached mode', '30-second same-objective cooldown'],
+    urgent: false, cooldownSeconds: 30, afterSeconds: 45,
+    prompt: {
+      id: 'preoxygenate-notice',
+      suggestion: 'Notice: inspired oxygen is still near room-air concentration.',
+      because: 'This names only the visible signal. It does not assume why it has not changed or tell you which control to choose.',
+      concept: 'preoxygenation-and-safe-apnea-time',
+    },
+    applies: (input) =>
+      (input.state?.fio2 ?? 0.21) < 0.8
+      && !input.actions.some((action) => action.type === 'bolus'),
+  },
+  {
+    schemaVersion: 1, version: '0.1.0', objectiveId: 'preoxygenate', triggerId: 'pre-induction-low-fio2',
+    assistanceLevel: 'connect', sourceId: 'preoxygenation-and-safe-apnea-time', maturity: 'draft',
+    applicability: 'Before any bolus, while inspired oxygen remains below 0.8.',
+    prerequisiteObservations: ['inspired oxygen fraction', 'accepted bolus actions'],
+    suppressionConditions: ['any active alarm', 'unassisted mode', 'coached mode', '30-second same-objective cooldown'],
+    urgent: false, cooldownSeconds: 30, afterSeconds: 75,
+    prompt: {
+      id: 'preoxygenate-connect',
+      suggestion: 'Connect the current oxygen fraction with what happens if breathing stops.',
+      because: 'The present saturation can look normal while the lung oxygen reservoir is still small; reserve determines how long that plateau lasts.',
+      concept: 'preoxygenation-and-safe-apnea-time',
+    },
+    applies: (input) =>
+      (input.state?.fio2 ?? 0.21) < 0.8
+      && !input.actions.some((action) => action.type === 'bolus'),
+  },
+  {
+    schemaVersion: 1, version: '0.1.0', objectiveId: 'preoxygenate', triggerId: 'pre-induction-low-fio2',
+    assistanceLevel: 'prioritize', sourceId: 'preoxygenation-and-safe-apnea-time', maturity: 'draft',
+    applicability: 'Before any bolus, while inspired oxygen remains below 0.8.',
+    prerequisiteObservations: ['inspired oxygen fraction', 'accepted bolus actions'],
+    suppressionConditions: ['any active alarm', 'unassisted mode', 'coached mode', '30-second same-objective cooldown'],
+    urgent: false, cooldownSeconds: 30, afterSeconds: 105,
+    prompt: {
+      id: 'preoxygenate-prioritize',
+      suggestion: 'Before induction, prioritize building and confirming oxygen reserve.',
+      because: 'This names the next category of work without selecting a control or pretending the inspired fraction proves the lungs are filled.',
+      concept: 'preoxygenation-and-safe-apnea-time',
+    },
+    applies: (input) =>
+      (input.state?.fio2 ?? 0.21) < 0.8
+      && !input.actions.some((action) => action.type === 'bolus'),
+  },
+  {
+    schemaVersion: 1, version: '0.1.0', objectiveId: 'preoxygenate', triggerId: 'pre-induction-low-fio2',
     assistanceLevel: 'direct', sourceId: 'preoxygenation-and-safe-apnea-time', maturity: 'draft',
     applicability: 'Before any bolus, while inspired oxygen remains below 0.8.',
     prerequisiteObservations: ['inspired oxygen fraction', 'accepted bolus actions'],
-    suppressionConditions: ['any active alarm', 'unassisted mode', 'coached mode', '90-second cooldown'],
-    urgent: false, cooldownSeconds: PROMPT_COOLDOWN_SECONDS,
-    afterSeconds: 60,
+    suppressionConditions: ['any active alarm', 'unassisted mode', 'coached mode', '30-second same-objective cooldown'],
+    urgent: false, cooldownSeconds: 30,
+    afterSeconds: 135,
     prompt: {
       id: 'preoxygenate',
       suggestion: 'Raise the inspired oxygen fraction and give it a few minutes before you induce.',
@@ -84,6 +153,28 @@ export const TUTOR_RULES: readonly TutorRule[] = [
     },
     applies: (input) =>
       (input.state?.fio2 ?? 0.21) < 0.8
+      && !input.actions.some((action) => action.type === 'bolus'),
+  },
+  {
+    schemaVersion: 1, version: '0.1.0', objectiveId: 'preoxygenate', triggerId: 'preoxygenation-established',
+    assistanceLevel: 'explain', sourceId: 'preoxygenation-and-safe-apnea-time', maturity: 'draft',
+    applicability: 'After the learner records an inspired oxygen setting of at least 0.8 before induction.',
+    prerequisiteObservations: ['inspired oxygen fraction', 'accepted ventilator actions'],
+    suppressionConditions: ['any active alarm', 'unassisted mode', 'coached mode', '30-second same-objective cooldown'],
+    urgent: false, cooldownSeconds: 30, afterSeconds: 0,
+    prompt: {
+      id: 'preoxygenate-explain',
+      suggestion: 'What changed: the circuit is now delivering a high oxygen fraction.',
+      because: 'That begins replacing nitrogen with oxygen, but end-tidal oxygen near 0.9 and enough time—not the setting alone—confirm useful reserve.',
+      concept: 'preoxygenation-and-safe-apnea-time',
+    },
+    applies: (input) =>
+      (input.state?.fio2 ?? 0.21) >= 0.8
+      && input.actions.some((action) => (
+        action.type === 'ventilator'
+        && typeof action.payload.fio2 === 'number'
+        && action.payload.fio2 >= 0.8
+      ))
       && !input.actions.some((action) => action.type === 'bolus'),
   },
   {
@@ -187,8 +278,21 @@ export function promptFor(
 
   for (const candidate of PROMPTS) {
     if (!promptStillEligible(level, input, candidate.prompt.id)) continue;
-    const lastShown = alreadyShown.get(candidate.prompt.id);
-    if (lastShown !== undefined && input.tick - lastShown < candidate.cooldownSeconds * TICKS_PER_SECOND) {
+    // One intervention per rule per session. A still-unresolved objective moves
+    // up the authored ladder after the shared cooldown; it does not repeat the
+    // same wording forever.
+    if (alreadyShown.has(candidate.prompt.id)) continue;
+    const sameObjectiveShownAt = TUTOR_RULES
+      .filter((rule) => rule.objectiveId === candidate.objectiveId)
+      .flatMap((rule) => {
+        const shownAt = alreadyShown.get(rule.prompt.id);
+        return shownAt === undefined ? [] : [shownAt];
+      });
+    const lastObjectiveIntervention = sameObjectiveShownAt.length > 0
+      ? Math.max(...sameObjectiveShownAt)
+      : undefined;
+    if (lastObjectiveIntervention !== undefined
+      && input.tick - lastObjectiveIntervention < candidate.cooldownSeconds * TICKS_PER_SECOND) {
       continue;
     }
     return {
@@ -207,7 +311,7 @@ export function promptFor(
  * omission under Unassisted is still visible afterwards.
  */
 export function unpromptedOmissions(input: GuidanceInput): string[] {
-  return PROMPTS
+  return [...new Set(PROMPTS
     .filter((candidate) => input.tick >= candidate.afterSeconds * TICKS_PER_SECOND && candidate.applies(input))
-    .map((candidate) => candidate.prompt.id);
+    .map((candidate) => candidate.objectiveId))];
 }

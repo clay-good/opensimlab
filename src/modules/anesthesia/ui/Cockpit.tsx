@@ -139,6 +139,7 @@ export function Cockpit({
   const [criticalAnnouncement, setCriticalAnnouncement] = useState('');
   const [selectedTick, setSelectedTick] = useState<number | null>(null);
   const [prompt, setPrompt] = useState<Prompt | null>(null);
+  const [promptWhyOpen, setPromptWhyOpen] = useState(false);
   const promptsShown = useRef(new Map<string, number>());
   const [analysisOpen, setAnalysisOpen] = useState(false);
   const [actionsOpen, setActionsOpen] = useState(false);
@@ -292,12 +293,16 @@ export function Cockpit({
       alarmCount: session.alarms.length,
     };
     if (prompt) {
-      if (!promptStillEligible(session.guidance, input, prompt.id)) setPrompt(null);
+      if (!promptStillEligible(session.guidance, input, prompt.id)) {
+        setPrompt(null);
+        setPromptWhyOpen(false);
+      }
       return;
     }
     const next = promptFor(session.guidance, input, promptsShown.current);
     if (next) {
       promptsShown.current.set(next.id, session.tick);
+      setPromptWhyOpen(false);
       setPrompt(next);
     }
   }, [session.tick, session.guidance, session.state, session.alarms.length, prompt]);
@@ -629,14 +634,28 @@ export function Cockpit({
 
       {/* Guidance. Non-blocking, dismissible, and never shown during an alarm. */}
       {prompt && (
-        <div style={{ position: 'fixed', insetBlockStart: 'calc(var(--status-bar-height) + var(--space-3))', insetInlineStart: '50%', transform: 'translateX(-50%)', zIndex: 54, inlineSize: 'min(560px, 92vw)' }}>
+        <div className="tutor-prompt">
           <Banner
             kind="advisory"
-            actions={<Button compact variant="ghost" onClick={() => setPrompt(null)}>Dismiss</Button>}
+            actions={(
+              <>
+                <Button compact variant="ghost" onClick={() => setPromptWhyOpen((open) => !open)}>
+                  {promptWhyOpen ? 'Hide why' : 'Why this now?'}
+                </Button>
+                <Button compact variant="ghost" onClick={() => {
+                  setPrompt(null);
+                  setPromptWhyOpen(false);
+                }}>Dismiss</Button>
+              </>
+            )}
           >
             <strong>{prompt.suggestion}</strong>
-            <br />
-            <span className="field__hint">{prompt.because}</span>
+            {promptWhyOpen && (
+              <>
+                <br />
+                <span className="field__hint">{prompt.because}</span>
+              </>
+            )}
             <br />
             <span className="field__hint">
               {prompt.assistanceLevel[0]?.toUpperCase()}{prompt.assistanceLevel.slice(1)} ·{' '}
@@ -649,7 +668,7 @@ export function Cockpit({
                   session.pause();
                   setExplainerId(prompt.concept!);
                 }}>
-                  Inspect source and explanation
+                  Full source
                 </Button>
               </>
             )}

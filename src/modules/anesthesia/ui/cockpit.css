@@ -65,6 +65,15 @@
   color: var(--text-primary);
   font: var(--type-label);
 }
+
+.tutor-prompt {
+  position: fixed;
+  z-index: 54;
+  inset-block-start: calc(var(--status-bar-height) + var(--space-3));
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  inline-size: min(35rem, 92vw);
+}
 .cockpit__analysis { grid-area: analysis; min-inline-size: 0; min-block-size: 0; }
 .cockpit__monitor { grid-area: monitor; min-inline-size: 0; min-block-size: 0; }
 .cockpit__actions { grid-area: actions; min-block-size: 0; }
@@ -322,6 +331,14 @@
     grid-template-columns: minmax(0, 1fr);
   }
   .cockpit__analysis, .cockpit__actions { display: none; }
+  .tutor-prompt {
+    inset-block: auto calc(var(--control-height) + var(--space-4) * 3);
+    inline-size: calc(100vw - var(--space-4) * 2);
+  }
+  .tutor-prompt .banner {
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+  }
   /* Both overlays end above the floating pills rather than under them. The
      pills are the only way to close either one, so they stay on top — which
      means whatever the overlay puts at its own bottom edge would otherwise sit
