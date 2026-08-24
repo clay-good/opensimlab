@@ -38,7 +38,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.16';
+export const ENGINE_VERSION = '0.1.0-alpha.17';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -210,6 +210,7 @@ export class AnesthesiaEngine {
   private crystalloidTotalMl = 0;
   private packedRedBloodCellUnits = 0;
   private freshFrozenPlasmaUnits = 0;
+  private coagulationPanelReported = false;
   private bloodProductTotalMl = 0;
   private dantroleneTotalMg = 0;
   private dantroleneEffectFraction = 0;
@@ -845,7 +846,7 @@ export class AnesthesiaEngine {
           || units < 1 || !permittedUnits
           || totalForProduct + units > product.maxUnitsTotal
           || this.scenario.patient.ageYears < 18
-          || (product.kind === 'plasma' && !hemorrhageActive);
+          || (product.kind === 'plasma' && (!hemorrhageActive || !this.coagulationPanelReported));
         if (invalid) {
           this.log('warning', 'blood-product', `bad-blood-product-${this.currentTick}`,
             !product
@@ -854,6 +855,8 @@ export class AnesthesiaEngine {
                 ? 'Blood products are not stocked in this bounded pediatric induction case.'
                 : product.kind === 'plasma' && !hemorrhageActive
                   ? 'Fresh frozen plasma is stocked only while modeled hemorrhage is active.'
+                  : product.kind === 'plasma' && !this.coagulationPanelReported
+                    ? 'Request the bounded coagulation panel before selecting fresh frozen plasma.'
                   : `${product.name} requires one listed whole-unit preset and no more than ${product.maxUnitsTotal} units cumulatively. Nothing was given.`);
           break;
         }
@@ -877,6 +880,7 @@ export class AnesthesiaEngine {
             'The bounded coagulation panel is available only while modeled hemorrhage is active.');
           break;
         }
+        this.coagulationPanelReported = true;
         this.log('info', 'laboratory', `coagulation-labs-${this.currentTick}`,
           `Coagulation panel: prothrombin time ratio ${(this.lastState.prothrombinTimeRatio ?? 1).toFixed(2)} × normal; fibrinogen ${(this.lastState.fibrinogenGPerL ?? 3).toFixed(1)} g/L. Results are immediate bounded teaching values.`, {
             prothrombinTimeRatio: this.lastState.prothrombinTimeRatio ?? 1,
@@ -1783,6 +1787,7 @@ export class AnesthesiaEngine {
           || this.injectedBloodLossMlPerMin > 0,
         packedRedBloodCellUnits: this.packedRedBloodCellUnits,
         freshFrozenPlasmaUnits: this.freshFrozenPlasmaUnits,
+        coagulationPanelReported: this.coagulationPanelReported,
         bloodProductTotalMl: this.bloodProductTotalMl,
         dantroleneTotalMg: this.dantroleneTotalMg,
         dantroleneEffectFraction: this.dantroleneEffectFraction,

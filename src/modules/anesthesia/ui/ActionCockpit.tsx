@@ -45,6 +45,7 @@ export interface ActionCockpitProps {
     readonly hemorrhageActive?: boolean;
     readonly packedRedBloodCellUnits?: number;
     readonly freshFrozenPlasmaUnits?: number;
+    readonly coagulationPanelReported?: boolean;
     readonly bloodProductTotalMl?: number;
     readonly dantroleneTotalMg: number;
     readonly dantroleneEffectFraction: number;
@@ -259,6 +260,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
             bloodProductTotalMl={props.resuscitation.bloodProductTotalMl ?? 0}
             ageYears={props.scenario.patient.ageYears}
             hemorrhageAvailable={props.resuscitation.hemorrhageActive ?? false}
+            coagulationPanelReported={props.resuscitation.coagulationPanelReported ?? false}
             onFluid={props.onFluid}
             onBloodProduct={props.onBloodProduct ?? (() => {})}
             onCoagulationLabs={props.onCoagulationLabs ?? (() => {})}
@@ -478,7 +480,8 @@ function CardiacArrestTray({
 
 function FluidTray({
   crystalloidTotalMl, packedRedBloodCellUnits, freshFrozenPlasmaUnits, bloodProductTotalMl,
-  ageYears, hemorrhageAvailable, onFluid, onBloodProduct, onCoagulationLabs,
+  ageYears, hemorrhageAvailable, coagulationPanelReported,
+  onFluid, onBloodProduct, onCoagulationLabs,
 }: {
   crystalloidTotalMl: number;
   packedRedBloodCellUnits: number;
@@ -486,6 +489,7 @@ function FluidTray({
   bloodProductTotalMl: number;
   ageYears: number;
   hemorrhageAvailable: boolean;
+  coagulationPanelReported: boolean;
   onFluid: (fluidId: string, volumeMl: number) => void;
   onBloodProduct: (productId: string, units: number) => void;
   onCoagulationLabs: () => void;
@@ -543,7 +547,8 @@ function FluidTray({
           )}
         </section>
       ))}
-      {BLOOD_PRODUCTS.filter((product) => product.kind === 'red-cells' || hemorrhageAvailable).map((product) => (
+      {BLOOD_PRODUCTS.filter((product) => product.kind === 'red-cells'
+        || (hemorrhageAvailable && coagulationPanelReported)).map((product) => (
         <section className="syringe" key={product.id}>
           <div className="syringe__name">{product.name}</div>
           <p className="field__hint">

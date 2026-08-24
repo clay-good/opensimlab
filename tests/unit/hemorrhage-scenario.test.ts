@@ -181,6 +181,17 @@ describe('Requirement: Bounded plasma support follows a coagulation panel', () =
     bleeding.apply({ tick: bleeding.tick, type: 'blood-product', payload: {
       productId: 'fresh-frozen-plasma', units: 4,
     } });
+    const refusedBeforePanel = bleeding.step();
+    expect(refusedBeforePanel.equipment.resuscitation.freshFrozenPlasmaUnits).toBe(0);
+    expect(refusedBeforePanel.events.some(
+      (entry) => entry.message.includes('Request the bounded coagulation panel'),
+    )).toBe(true);
+    bleeding.apply({ tick: bleeding.tick, type: 'coagulation-labs', payload: {} });
+    const panel = bleeding.step();
+    expect(panel.equipment.resuscitation.coagulationPanelReported).toBe(true);
+    bleeding.apply({ tick: bleeding.tick, type: 'blood-product', payload: {
+      productId: 'fresh-frozen-plasma', units: 4,
+    } });
     bleeding.step();
     bleeding.apply({ tick: bleeding.tick, type: 'blood-product', payload: {
       productId: 'fresh-frozen-plasma', units: 3,
@@ -195,6 +206,10 @@ describe('Requirement: Bounded plasma support follows a coagulation panel', () =
     advance(sim, 301);
     const control = engine(UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE);
     advance(control, 301);
+    sim.apply({ tick: sim.tick, type: 'coagulation-labs', payload: {} });
+    control.apply({ tick: control.tick, type: 'coagulation-labs', payload: {} });
+    sim.step();
+    control.step();
     sim.apply({ tick: sim.tick, type: 'blood-product', payload: {
       productId: 'fresh-frozen-plasma', units,
     } });

@@ -213,7 +213,7 @@ The engine SHALL track circulating volume and hemoglobin, apply the differing vo
 
 #### Scenario: Plasma moves the bounded state toward baseline
 
-- **WHEN** a listed whole-unit plasma preset is given during modeled active hemorrhage
+- **WHEN** a listed whole-unit plasma preset is given during modeled active hemorrhage after the teaching panel is reported
 - **THEN** its fixed normal-donor plasma volume raises factor and fibrinogen concentrations toward baseline, and the event log records before and after values without claiming consumption, individualized response, or a massive-transfusion protocol
 
 ### Requirement: Surgical Stimulus

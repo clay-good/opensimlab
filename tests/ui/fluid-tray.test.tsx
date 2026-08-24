@@ -34,12 +34,15 @@ describe('Requirement: The fluids tray performs a real learner action', () => {
       dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
       lastDantroleneTick: null, activeCooling: false,
     } as const;
-    const renderCockpit = (hemorrhageActive: boolean) => createElement(ActionCockpit, {
+    const renderCockpit = (
+      hemorrhageActive: boolean,
+      coagulationPanelReported = false,
+    ) => createElement(ActionCockpit, {
       scenario: UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE,
       region: UNITED_STATES,
       infusions: [],
       hypnoticLine: { connected: true, inspected: false },
-      resuscitation: { ...resuscitation, hemorrhageActive },
+      resuscitation: { ...resuscitation, hemorrhageActive, coagulationPanelReported },
       lastExposure: null,
       syringeRemaining: {},
       ventilator: {
@@ -79,6 +82,11 @@ describe('Requirement: The fluids tray performs a real learner action', () => {
     expect(container.textContent).not.toContain('Fresh frozen plasma');
     expect(container.textContent).not.toContain('Coagulation panel');
     act(() => root.render(renderCockpit(true)));
+    expect(container.textContent).toContain('Coagulation panel');
+    expect(container.textContent).not.toContain('Fresh frozen plasma');
+    act(() => button('Request panel')!.click());
+    expect(onCoagulationLabs).toHaveBeenCalledOnce();
+    act(() => root.render(renderCockpit(true, true)));
     act(() => button('1000 mL')!.click());
     expect(onFluid).not.toHaveBeenCalled();
     act(() => button('Give fluid')!.click());
@@ -96,7 +104,5 @@ describe('Requirement: The fluids tray performs a real learner action', () => {
     act(() => button('4 units')!.click());
     act(() => button('Give plasma')!.click());
     expect(onBloodProduct).toHaveBeenCalledWith('fresh-frozen-plasma', 4);
-    act(() => button('Request panel')!.click());
-    expect(onCoagulationLabs).toHaveBeenCalledOnce();
   });
 });

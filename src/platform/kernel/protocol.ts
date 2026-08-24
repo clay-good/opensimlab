@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 16 reports bounded plasma totals. */
-export const WORKER_PROTOCOL_VERSION = 16;
+/** Bumped whenever the message shape changes incompatibly. Version 17 reports coagulation-panel state. */
+export const WORKER_PROTOCOL_VERSION = 17;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -203,6 +203,7 @@ export interface EquipmentSnapshot {
     readonly hemorrhageActive?: boolean;
     readonly packedRedBloodCellUnits?: number;
     readonly freshFrozenPlasmaUnits?: number;
+    readonly coagulationPanelReported?: boolean;
     readonly bloodProductTotalMl?: number;
     readonly dantroleneTotalMg: number;
     readonly dantroleneEffectFraction: number;
