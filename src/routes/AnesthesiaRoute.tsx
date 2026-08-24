@@ -36,6 +36,7 @@ import {
   pathMinutes,
   preparationPath,
   recommendNextScenario,
+  recommendAfterScenario,
 } from '@anesthesia/catalog/preparation-paths';
 
 /**
@@ -103,6 +104,10 @@ export function AnesthesiaRoute({ path }: { path: string }) {
   const { scenario, missingId } = useMemo(() => scenarioForPath(path), [path]);
   const assignment = useMemo(
     () => readAssignment(typeof location === 'undefined' ? '' : location.search),
+    [],
+  );
+  const selectedGoal = useMemo(
+    () => readCatalogQuery(typeof location === 'undefined' ? '' : location.search).goal,
     [],
   );
   const contentVersion = scenario.metadata.version;
@@ -224,6 +229,14 @@ export function AnesthesiaRoute({ path }: { path: string }) {
 
   if (session.phase === 'ended') {
     const internals = sessionInternals();
+    const nextRecommendation = selectedGoal === 'all' ? undefined : (() => {
+      const goal = preparationPath(selectedGoal);
+      const next = recommendAfterScenario(goal, scenariosByDifficulty(), scenario.metadata.id);
+      return {
+        pathId: goal.id, pathTitle: goal.title,
+        scenario: next.scenario, reason: next.reason,
+      };
+    })();
     return (
       <Debrief
         scenario={scenario}
@@ -240,6 +253,7 @@ export function AnesthesiaRoute({ path }: { path: string }) {
         onOpenExplainer={() => { /* the debrief opens explainers inline */ }}
         onExportTranscript={() => { void exportTranscript(); }}
         onReplayScenario={session.resetSession}
+        {...(nextRecommendation ? { nextRecommendation } : {})}
       />
     );
   }
@@ -341,6 +355,9 @@ export function ScenarioIndex() {
       history.replaceState(null, '', `/anesthesia${catalogQueryString(next)}`);
     }
   };
+  const scenarioHref = (id: string) => `/anesthesia/scenario/${id}${
+    query.goal === 'all' ? '' : `?goal=${query.goal}`
+  }`;
   return (
     <>
       <SiteBar current="/anesthesia" />
@@ -375,7 +392,7 @@ export function ScenarioIndex() {
               <div>
                 <dt>Start here</dt>
                 <dd>
-                  <a href={`/anesthesia/scenario/${recommendation.scenario.metadata.id}`}>
+                  <a href={scenarioHref(recommendation.scenario.metadata.id)}>
                     {recommendation.scenario.metadata.title}
                   </a>
                   <MaturityMarker
@@ -475,7 +492,7 @@ export function ScenarioIndex() {
         <ul className="scenario-index">
           {scenarios.map((entry) => (
           <li key={entry.metadata.id} className="scenario-index__item">
-            <a className="scenario-index__title" href={`/anesthesia/scenario/${entry.metadata.id}`}>
+            <a className="scenario-index__title" href={scenarioHref(entry.metadata.id)}>
               {entry.metadata.title}
             </a>
             <p className="scenario-index__patient">

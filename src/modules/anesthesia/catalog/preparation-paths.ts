@@ -133,3 +133,19 @@ export function recommendNextScenario(
   const scenario = ordered.find((candidate) => !completedScenarioIds.has(candidate.metadata.id)) ?? ordered[0]!;
   return { scenario, reason: `Recommended because you chose “${path.title}.”` };
 }
+
+export function recommendAfterScenario(
+  path: PreparationPathDefinition,
+  scenarios: readonly Scenario[],
+  currentScenarioId: string,
+): { readonly scenario: Scenario; readonly reason: string } {
+  const ordered = pathScenarios(path, scenarios);
+  const currentIndex = ordered.findIndex((scenario) => scenario.metadata.id === currentScenarioId);
+  const next = currentIndex >= 0 && currentIndex < ordered.length - 1
+    ? ordered[currentIndex + 1]!
+    : ordered[0]!;
+  const reason = currentIndex === ordered.length - 1
+    ? `You reached the end of “${path.title}.” Revisit its foundation or choose any other scenario.`
+    : `Next in “${path.title}” after this scenario.`;
+  return { scenario: next, reason };
+}

@@ -5,6 +5,7 @@ import {
   pathMinutes,
   pathScenarios,
   recommendNextScenario,
+  recommendAfterScenario,
 } from '@anesthesia/catalog/preparation-paths';
 
 describe('goal-based preparation paths', () => {
@@ -38,5 +39,15 @@ describe('goal-based preparation paths', () => {
     expect(() => pathScenarios({
       ...PREPARATION_PATHS[0]!, scenarioIds: ['not-a-scenario'],
     }, SCENARIOS)).toThrow(/unknown scenario/);
+  });
+
+  it('continues after the scenario just completed and wraps without locking', () => {
+    const path = PREPARATION_PATHS[0]!;
+    const next = recommendAfterScenario(path, SCENARIOS, path.scenarioIds[0]!);
+    expect(next.scenario.metadata.id).toBe(path.scenarioIds[1]);
+    expect(next.reason).toContain('Next in');
+    const wrap = recommendAfterScenario(path, SCENARIOS, path.scenarioIds.at(-1)!);
+    expect(wrap.scenario.metadata.id).toBe(path.scenarioIds[0]);
+    expect(wrap.reason).toContain('reached the end');
   });
 });

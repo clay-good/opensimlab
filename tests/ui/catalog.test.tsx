@@ -37,6 +37,7 @@ describe('scenario catalog', () => {
     expect(markup).toContain('does not assess psychomotor technique');
     expect(markup).toContain('Nothing is locked');
     expect(markup).toContain('#scenario:routine-induction@0.1.0');
+    expect(markup).toContain('/anesthesia/scenario/routine-induction?goal=first-lab');
   });
 
   it('offers a calm recovery when no scenario matches', () => {

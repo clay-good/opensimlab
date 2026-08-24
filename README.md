@@ -133,6 +133,9 @@ bundle and fail the build if they drift from the scenario registry or completion
 The catalog also offers all 10 authored preparation goals from the product design. Each versioned
 path names its ordered scenarios, total time, prerequisites, target behaviors, supported roles, and
 limits; selection stays in the public URL, locks nothing, and explains the first local recommendation.
+That goal follows the learner into debrief, where one next rehearsal is suggested with exact maturity
+and a local-only “hide for 7 days” control. The stored dismissal contains only a public path ID and
+expiry; it never contains performance, reflection, identity, or transcript data.
 
 ### What gets built first
 

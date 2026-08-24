@@ -309,6 +309,7 @@ function PrivacyBody() {
       <ul>
         <li>Your preferences, in this browser&apos;s local storage on this device.</li>
         <li>Your acknowledgement of the not-for-clinical-use statement, in the same place.</li>
+        <li>The expiry of any goal-path suggestion you hide for 7 days.</li>
         <li>Session transcripts, if you save them, in the same place.</li>
       </ul>
       <p>Nothing else, and nothing anywhere else.</p>

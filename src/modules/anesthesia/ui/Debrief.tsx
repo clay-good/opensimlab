@@ -23,6 +23,7 @@ import { EXPLAINERS } from '@anesthesia/content/explainers';
 import { getFluid, MAX_FLUID_BOLUS_ML } from '@anesthesia/content/fluids';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { MaturityMarker } from '@platform/governance/MaturityMarker';
+import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 
 export interface DebriefProps {
   readonly scenario: Scenario;
@@ -36,6 +37,7 @@ export interface DebriefProps {
   readonly onOpenExplainer: (id: string) => void;
   readonly onExportTranscript: () => void;
   readonly onReplayScenario: () => void;
+  readonly nextRecommendation?: GoalRecommendationProps;
 }
 
 export function Debrief(props: DebriefProps) {
@@ -259,6 +261,7 @@ export function Debrief(props: DebriefProps) {
           </p>
 
           <h2>Where this goes next</h2>
+          {props.nextRecommendation && <GoalRecommendation {...props.nextRecommendation} />}
           <div className="phase-nav">
             <Button onClick={props.onReplayScenario}>Run it again and compare with this attempt</Button>
             <Button onClick={props.onExportTranscript}>Export the transcript</Button>

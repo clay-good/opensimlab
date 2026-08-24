@@ -10,7 +10,7 @@
 export interface LocalDataItem {
   readonly key: string;
   readonly name: string;
-  readonly kind: 'preference' | 'acknowledgement' | 'transcript';
+  readonly kind: 'preference' | 'acknowledgement' | 'transcript' | 'recommendation';
   readonly purpose: string;
 }
 
@@ -50,6 +50,12 @@ export const LOCAL_DATA_ITEMS: readonly LocalDataItem[] = [
     name: 'Width of the analysis region',
     kind: 'preference',
     purpose: 'The width you dragged the analysis panel to, so it is the same next time.',
+  },
+  {
+    key: 'opensimlab.recommendation-dismissals',
+    name: 'Hidden practice suggestions',
+    kind: 'recommendation',
+    purpose: 'Goal-path suggestions you hid, with only the local 7-day expiry for each public path id.',
   },
   {
     key: 'opensimlab.transcripts',

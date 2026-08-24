@@ -90,8 +90,9 @@ credited toward the catalog until every item in the completion contract passes.
   onboarding controls.
 - [x] Add the 10 goal-based preparation paths and local next-scenario recommendation logic.
   Recommendations are ordered locally from the selected versioned path, explain the chosen goal,
-  carry the scenario's exact maturity link, and accept local completed-scenario evidence. Persisted
-  attempt history and 7-day dismissal are intentionally tracked by the next task.
+  carry the scenario's exact maturity link, and accept local completed-scenario evidence. Goal
+  context now reaches the debrief and a suggestion may be dismissed locally for exactly 7 days.
+  Persisted attempt history remains tracked by the next task.
 - [ ] Add private local practice history, self-comparison, targeted repetition, and export/import.
 - [ ] Prohibit leaderboards, cross-learner percentiles, streak loss, public performance, points for
   irrelevant speed, and tutor network calls through tests and copy review.
