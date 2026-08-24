@@ -1,0 +1,68 @@
+name: Change or scenario proposal
+description: Propose a focused product, content, accessibility, or fictional-scenario change.
+title: "proposal: "
+labels: [proposal]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include real patient, learner, credential, report, or other private data. Security
+        concerns belong in the private Security channel. A proposal does not become reviewed or
+        playable until every applicable gate passes.
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and learner value
+      description: Name the user, problem, exact in/out boundary, and why simulation is necessary.
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Sources and exact locators
+      description: Give issuing body, title, version/date, URL/DOI/PMID, page/section/table, and applicability. Write "not clinical" only when genuinely inapplicable.
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Tests and verification
+      description: Name failing/passing tests, fixtures, manual/browser checks, and independent anchors needed.
+    validations:
+      required: true
+  - type: textarea
+    id: limitations
+    attributes:
+      label: Limitations and hazards
+      description: Name exclusions, unsupported precision, negative-transfer risk, accessibility risk, and mitigations.
+    validations:
+      required: true
+  - type: dropdown
+    id: maturity
+    attributes:
+      label: Maturity effect
+      description: State the highest status this proposal could honestly support.
+      options: [draft, preview, source_checked, clinically_reviewed, institution_endorsed, withdrawn, no-content-effect]
+    validations:
+      required: true
+  - type: textarea
+    id: reviewer_domains
+    attributes:
+      label: Reviewer-domain impact
+      description: Name every clinical, educational, accessibility, security, or regional review domain affected.
+    validations:
+      required: true
+  - type: textarea
+    id: provenance
+    attributes:
+      label: Contribution provenance
+      description: Name human and automated contributors, source-acquisition method, and any generated prose, code, media, or data.
+    validations:
+      required: true
+  - type: checkboxes
+    id: boundary
+    attributes:
+      label: Safety boundary
+      options:
+        - label: This proposal uses fictional authored data and does not create a calculator, real-patient input, clinical decision aid, or public compute endpoint.
+          required: true

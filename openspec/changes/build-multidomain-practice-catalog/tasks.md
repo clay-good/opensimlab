@@ -26,7 +26,7 @@ credited toward the catalog until every item in the completion contract passes.
   before changing repository visibility.
 - [x] Add public contribution, security, code-of-conduct, governance, reviewer, scenario-author,
   evidence-brief, correction, and organizational-endorsement documentation.
-- [ ] Add issue and pull-request templates that require scope, source locators, tests, limitations,
+- [x] Add issue and pull-request templates that require scope, source locators, tests, limitations,
   maturity effect, and reviewer-domain impact.
 - [ ] Add asset-license and evidence-source manifests and fail the build on unclassified assets.
 - [ ] Prove a clean public clone can build and self-host the static simulator without Cloudflare

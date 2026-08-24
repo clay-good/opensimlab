@@ -17,7 +17,7 @@ private, so external intake begins only after visibility changes.
 
 ## Make a change
 
-1. Open a focused issue or proposal describing the learner value and scope.
+1. Open the structured **Change or scenario proposal** issue form describing the learner value and scope.
 2. For clinical content, write the evidence brief before numerical behavior.
 3. Implement the smallest coherent change, including sources, limitations, tests, and maturity
    impact. Never copy proprietary question-bank, simulator, table, figure, or monitor content.
