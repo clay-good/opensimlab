@@ -146,7 +146,7 @@ export const DRUG_CARDS: readonly DrugCard[] = [
       + 'paralysis and has no hypnotic, amnestic, or analgesic effect.',
     inductionDose: '0.6 mg/kg for routine intubation; 0.6–1.2 mg/kg for rapid sequence intubation.',
     maintenanceDose: 'Additional dosing is guided by quantitative neuromuscular monitoring. '
-      + 'This build offers an induction bolus only and does not model maintenance or reversal.',
+      + 'This build offers an induction bolus and bounded depth-matched reversal, not maintenance.',
     onset: 'The label reports good or excellent intubating conditions in most adequately '
       + 'anesthetized patients within 2 minutes after 0.6–1.2 mg/kg.',
     duration: 'Recovery depends on dose and patient factors. This build uses a labeled teaching '
@@ -166,7 +166,7 @@ export const DRUG_CARDS: readonly DrugCard[] = [
       sourceId: 'rocuronium-us-label',
       comparedWithLabel: 'The United States label gives 0.6 mg/kg for routine intubation and '
         + '0.6–1.2 mg/kg for rapid sequence intubation. This card carries those ranges, while '
-        + 'the simulator deliberately omits maintenance dosing and reversal.',
+        + 'the simulator omits maintenance dosing and models reversal separately from this card.',
     },
     review: UNSIGNED,
   },

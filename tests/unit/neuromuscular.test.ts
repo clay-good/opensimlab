@@ -10,8 +10,19 @@ import { evaluateEnvelope } from '@anesthesia/pharmacology/envelope';
 import { parametersFor } from '@anesthesia/pharmacology/registry';
 import { ROCURONIUM_CLINICAL_COURSE_TEACHING } from '@anesthesia/pharmacology/models/rocuronium-clinical-course-teaching';
 import { createRng } from '@platform/kernel/rng';
+import { replay } from '@anesthesia/debrief/replay';
+import type { LearnerAction } from '@platform/kernel/protocol';
 
 const ADULT = { ageYears: 35, weightKg: 70, heightCm: 170, sex: 'male' as const };
+
+const rocuroniumScenario = {
+  ...ROUTINE_INDUCTION,
+  formulary: [...ROUTINE_INDUCTION.formulary, {
+    drugId: 'rocuronium', concentration: 10, concentrationUnit: 'mg/mL' as const,
+    deliveryModes: ['bolus'] as const, syringeVolumeMl: 20, typicalDose: 42,
+    presets: [{ label: '0.6 mg/kg', amount: 0.6, unit: 'mg/kg' }],
+  }],
+};
 
 function rocuroniumCourse(doseMgPerKg: number, minutes: number) {
   const solver = new CompartmentSolver(
@@ -145,6 +156,147 @@ describe('engine rocuronium plumbing', () => {
     expect(result.state.trainOfFourRatio).toBe(0);
     expect(result.attribution.find((entry) => entry.variable === 'trainOfFourRatio')?.terms[0]?.teachingModel)
       .toBe(true);
+  });
+
+  it('reverses observed moderate and deep block with the specified sugammadex dose', () => {
+    const reverseAt = (predicate: (result: ReturnType<AnesthesiaEngine['step']>) => boolean) => {
+      const subject = new AnesthesiaEngine({
+        scenario: rocuroniumScenario as never, seed: 6, practiceRegion: 'US',
+      });
+      subject.apply({ tick: 0, type: 'bolus', payload: {
+        drugId: 'rocuronium', amount: 0.6, unit: 'mg/kg',
+      } });
+      let result = subject.step();
+      for (let tick = 1; tick < 30_000 && !predicate(result); tick += 1) result = subject.step();
+      return { subject, result };
+    };
+
+    const moderate = reverseAt((result) => result.state.trainOfFourCount === 1);
+    const preReversalEffectSite = moderate.result.concentrations
+      .find((entry) => entry.drugId === 'rocuronium')!.effectSite;
+    moderate.subject.apply({ tick: moderate.subject.tick, type: 'neuromuscular-reversal', payload: {
+      agent: 'sugammadex', route: 'iv', doseMgPerKg: 2,
+    } });
+    let result = moderate.subject.step();
+    expect(result.state.trainOfFourRatio).toBeGreaterThanOrEqual(0.9);
+    expect(result.equipment.resuscitation.lastNeuromuscularReversal?.doseMgPerKg).toBe(2);
+    moderate.subject.apply({ tick: moderate.subject.tick, type: 'bolus', payload: {
+      drugId: 'rocuronium', amount: 0.6, unit: 'mg/kg',
+    } });
+    result = moderate.subject.step();
+    expect(result.events.some((event) => event.eventId.startsWith('rocuronium-after-reversal-refused-')))
+      .toBe(true);
+    expect(result.equipment.resuscitation.neuromuscularReversalFraction).toBe(0.995);
+    expect(result.equipment.resuscitation.lastNeuromuscularReversal?.agent).toBe('sugammadex');
+    expect(result.state.trainOfFourRatio).toBeGreaterThanOrEqual(0.9);
+    expect(result.concentrations.find((entry) => entry.drugId === 'rocuronium')?.effectSite)
+      .toBeLessThan(preReversalEffectSite * 0.01);
+
+    const deep = reverseAt((entry) => entry.state.trainOfFourCount === 0
+      && (entry.equipment.resuscitation.postTetanicCount ?? 0) >= 1);
+    deep.subject.apply({ tick: deep.subject.tick, type: 'neuromuscular-reversal', payload: {
+      agent: 'sugammadex', route: 'iv', doseMgPerKg: 4,
+    } });
+    result = deep.subject.step();
+    expect(result.state.trainOfFourRatio).toBeGreaterThanOrEqual(0.9);
+    expect(result.equipment.resuscitation.lastNeuromuscularReversal?.doseMgPerKg).toBe(4);
+  });
+
+  it('allows bounded neostigmine recovery only after block is already minimal', () => {
+    const subject = new AnesthesiaEngine({
+      scenario: rocuroniumScenario as never, seed: 9, practiceRegion: 'US',
+    });
+    subject.apply({ tick: 0, type: 'bolus', payload: {
+      drugId: 'rocuronium', amount: 0.6, unit: 'mg/kg',
+    } });
+    let result = subject.step();
+    for (let tick = 1; tick < 60_000
+      && !(result.state.trainOfFourCount === 4
+        && result.state.trainOfFourRatio >= 0.4 && result.state.trainOfFourRatio < 0.9);
+      tick += 1) result = subject.step();
+    expect(result.state.trainOfFourCount).toBe(4);
+    expect(result.state.trainOfFourRatio).toBeGreaterThanOrEqual(0.4);
+    expect(result.state.trainOfFourRatio).toBeLessThan(0.9);
+    subject.apply({ tick: subject.tick, type: 'neuromuscular-reversal', payload: {
+      agent: 'neostigmine', route: 'iv', antimuscarinic: true,
+    } });
+    result = subject.step();
+    expect(result.state.trainOfFourRatio).toBeGreaterThanOrEqual(0.9);
+    expect(result.equipment.resuscitation.lastNeuromuscularReversal?.agent).toBe('neostigmine');
+  });
+
+  it('rejects hostile sugammadex doses without recording treatment', () => {
+    const subject = new AnesthesiaEngine({
+      scenario: rocuroniumScenario as never, seed: 10, practiceRegion: 'US',
+    });
+    subject.apply({ tick: 0, type: 'bolus', payload: {
+      drugId: 'rocuronium', amount: 0.6, unit: 'mg/kg',
+    } });
+    let result = subject.step();
+    for (let tick = 1; tick < 18_000 && result.state.trainOfFourCount !== 1; tick += 1) {
+      result = subject.step();
+    }
+    for (const doseMgPerKg of [Number.NaN, Number.POSITIVE_INFINITY, -1, 4]) {
+      subject.apply({ tick: subject.tick, type: 'neuromuscular-reversal', payload: {
+        agent: 'sugammadex', route: 'iv', doseMgPerKg,
+      } });
+      result = subject.step();
+      expect(result.equipment.resuscitation.lastNeuromuscularReversal).toBeNull();
+      expect(result.equipment.resuscitation.neuromuscularReversalFraction).toBe(0);
+    }
+  });
+
+  it('rejects neostigmine outside minimal block and without an antimuscarinic', () => {
+    const subject = new AnesthesiaEngine({
+      scenario: rocuroniumScenario as never, seed: 7, practiceRegion: 'US',
+    });
+    subject.apply({ tick: 0, type: 'bolus', payload: {
+      drugId: 'rocuronium', amount: 0.6, unit: 'mg/kg',
+    } });
+    let result = subject.step();
+    for (let tick = 1; tick < 18_000 && result.state.trainOfFourCount !== 0; tick += 1) {
+      result = subject.step();
+    }
+    subject.apply({ tick: subject.tick, type: 'neuromuscular-reversal', payload: {
+      agent: 'sugammadex', route: 'iv', doseMgPerKg: 2,
+    } });
+    result = subject.step();
+    expect(result.events.some((event) => event.eventId.startsWith('bad-sugammadex-'))).toBe(true);
+    expect(result.equipment.resuscitation.lastNeuromuscularReversal).toBeNull();
+
+    subject.apply({ tick: subject.tick, type: 'neuromuscular-reversal', payload: {
+      agent: 'neostigmine', route: 'iv', antimuscarinic: true,
+    } });
+    result = subject.step();
+    expect(result.state.trainOfFourCount).toBeLessThanOrEqual(1);
+    expect(result.state.trainOfFourRatio).toBe(0);
+    expect(result.equipment.resuscitation.neuromuscularReversalFraction).toBe(0);
+    expect(result.equipment.resuscitation.lastNeuromuscularReversal).toBeNull();
+    expect(result.events.some((event) => event.eventId.startsWith('bad-neostigmine-'))).toBe(true);
+
+    for (let tick = 1; tick < 60_000
+      && !(result.state.trainOfFourCount === 4 && result.state.trainOfFourRatio >= 0.4);
+      tick += 1) result = subject.step();
+    subject.apply({ tick: subject.tick, type: 'neuromuscular-reversal', payload: {
+      agent: 'neostigmine', route: 'iv',
+    } });
+    result = subject.step();
+    expect(result.equipment.resuscitation.lastNeuromuscularReversal).toBeNull();
+    expect(result.events.some((event) => event.eventId.startsWith('bad-neostigmine-'))).toBe(true);
+  });
+
+  it('replays accepted neuromuscular reversal deterministically', () => {
+    const actions: LearnerAction[] = [
+      { tick: 0, type: 'bolus', payload: { drugId: 'rocuronium', amount: 0.6, unit: 'mg/kg' } },
+      { tick: 100, type: 'neuromuscular-reversal', payload: {
+        agent: 'sugammadex', route: 'iv', doseMgPerKg: 2,
+      } },
+    ];
+    const options = { scenario: rocuroniumScenario as never, seed: 8, practiceRegion: 'US', ticks: 500 };
+    const first = replay(actions, options);
+    expect(first).toEqual(replay(actions, options));
+    expect(first.find((sample) => sample.tick >= 100)?.state.trainOfFourRatio)
+      .toBeGreaterThanOrEqual(0.9);
   });
 
   it('refuses a rocuronium infusion when the scenario stocks it for bolus use only', () => {

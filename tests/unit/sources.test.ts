@@ -167,6 +167,15 @@ describe('the entries that were found to be wrong', () => {
     expect(airEmbolism.pmid).toBe('28106717');
     expect(airEmbolism.usedFor).toContain('end-tidal carbon-dioxide');
   });
+
+  it('records the quantitative neuromuscular-reversal depth branches', () => {
+    const source = requireSource('asa-neuromuscular-blockade-2023');
+    expect(source.pmid).toBe('36520073');
+    expect(source.usedFor).toContain('2 mg/kg sugammadex');
+    expect(source.usedFor).toContain('4 mg/kg');
+    expect(source.usedFor).toContain('restrict neostigmine with antimuscarinic coadministration');
+    expect(source.usedFor).toContain('ratio of at least 0.9');
+  });
 });
 
 describe('the code agrees with the register', () => {

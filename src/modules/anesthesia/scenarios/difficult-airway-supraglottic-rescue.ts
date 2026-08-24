@@ -51,7 +51,7 @@ export const DIFFICULT_AIRWAY_SUPRAGLOTTIC_RESCUE: Scenario = {
       'no-post-supraglottic-airway-plan',
       'rocuronium-course-is-a-teaching-model',
       'peripheral-tof-does-not-prove-laryngeal-conditions',
-      'no-neuromuscular-reversal-or-emergence',
+      'neuromuscular-reversal-is-bounded-without-emergence',
       'bolus-injection-is-instantaneous',
     ],
   },

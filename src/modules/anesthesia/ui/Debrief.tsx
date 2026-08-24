@@ -310,6 +310,7 @@ export function objectiveFindings(
     'wait-for-intubating-block': 'train-of-four-and-residual-blockade',
     'protect-the-apnea-margin': 'preoxygenation-and-safe-apnea-time',
     'secure-and-confirm': 'capnogram-morphology',
+    'reverse-observed-block': 'train-of-four-and-residual-blockade',
     'hypnosis-before-paralysis': 'train-of-four-and-residual-blockade',
     'inspect-the-tiva-line': 'depth-monitoring-and-its-limits',
     'restore-hypnotic-delivery': 'hysteresis-and-effect-site-lag',
@@ -907,7 +908,8 @@ export function objectiveFindings(
         ...base,
         outcome: met ? 'met' : partial ? 'partly-met' : 'not-met',
         finding: `The train-of-four showed ${display} when laryngoscopy began. This is a peripheral `
-          + 'teaching-model measurement; it does not guarantee conditions at the larynx.',
+          + 'teaching-model measurement; it does not guarantee conditions at the larynx. At '
+          + 'emergence, a quantitative ratio below 0.9 is residual blockade even when qualitative fade is not detectable.',
         atTick: airway.tick,
       } satisfies ObjectiveFinding;
     }
@@ -938,6 +940,32 @@ export function objectiveFindings(
           ? `Delivered ventilation resumed with sustained end-tidal carbon dioxide of ${(gasExchange.state.etco2MmHg ?? 0).toFixed(0)} mmHg after airway instrumentation.`
           : 'Airway instrumentation was recorded, but the available trace did not show subsequent delivered ventilation with sustained carbon dioxide.',
         atTick: gasExchange?.tick ?? airway.tick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'reverse-observed-block') {
+      const accepted = log.find((entry) => entry.category === 'drug'
+        && (entry.eventId.startsWith('sugammadex-') || entry.eventId.startsWith('neostigmine-')));
+      if (!accepted) {
+        const attempted = actions.find((action) => action.type === 'neuromuscular-reversal');
+        return {
+          ...base,
+          outcome: attempted ? 'not-met' : 'not-exercised',
+          finding: attempted
+            ? 'A reversal was requested, but the engine did not accept it for the observed block depth and required coadministration.'
+            : 'No neuromuscular reversal was recorded.',
+          atTick: attempted?.tick,
+        } satisfies ObjectiveFinding;
+      }
+      const recovery = history.find((sample) => sample.tick >= accepted.tick
+        && (sample.state.trainOfFourRatio ?? 0) >= 0.9);
+      return {
+        ...base,
+        outcome: recovery ? 'met' : 'partly-met',
+        finding: recovery
+          ? `The depth-matched reversal was accepted, and the quantitative train-of-four ratio reached ${(recovery.state.trainOfFourRatio ?? 0).toFixed(2)}.`
+          : 'The depth-matched reversal was accepted, but the recorded trace did not confirm a quantitative train-of-four ratio of at least 0.9.',
+        atTick: recovery?.tick ?? accepted.tick,
       } satisfies ObjectiveFinding;
     }
 

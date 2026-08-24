@@ -9,7 +9,7 @@
 import { useMemo } from 'react';
 import { AlarmRail, VitalTile, WaveformCanvas } from '@platform/ui/monitor';
 import type { EngineAlarm } from '@platform/kernel/protocol';
-import { FIELDS, type StateField } from '@anesthesia/physiology';
+import { FIELDS, qualitativeTwitchAssessment, type StateField } from '@anesthesia/physiology';
 import { TRACKS, tilesFor, trackConfigs } from './tracks';
 import { waveformDescriptions } from './accessibility';
 import type { RhythmId } from '@anesthesia/waveforms/types';
@@ -119,7 +119,11 @@ export function MonitorRegion(props: MonitorRegionProps) {
                 name={tile.name}
                 value={invalid || !props.state ? null : props.state[tile.field] ?? null}
                 unit={tile.field === 'trainOfFourRatio' && props.state
-                  ? `ratio · count ${props.state.trainOfFourCount?.toFixed(0) ?? '--'}`
+                  ? `ratio · count ${props.state.trainOfFourCount?.toFixed(0) ?? '--'} · qualitative ${
+                    qualitativeTwitchAssessment(
+                      props.state.trainOfFourCount ?? 4, props.state.trainOfFourRatio ?? 1,
+                    )
+                  }`
                   : spec.unit}
                 precision={spec.precision}
                 traceToken={tile.traceToken}

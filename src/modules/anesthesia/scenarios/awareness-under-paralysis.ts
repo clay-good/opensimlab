@@ -63,7 +63,7 @@ export const AWARENESS_UNDER_PARALYSIS: Scenario = {
       'tiva-line-disconnection-is-a-teaching-model',
       'opioid-alone-hypnosis',
       'rocuronium-course-is-a-teaching-model',
-      'no-neuromuscular-reversal-or-emergence',
+      'neuromuscular-reversal-is-bounded-without-emergence',
       'no-team-or-communication',
     ],
   },

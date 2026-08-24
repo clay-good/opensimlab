@@ -291,7 +291,7 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     scenarioId: 'rapid-sequence-induction',
     frameworkId: 'nbcrna-nce',
     domainId: 'advanced-principles',
-    objectiveIds: ['wait-for-intubating-block', 'secure-and-confirm'],
+    objectiveIds: ['wait-for-intubating-block', 'secure-and-confirm', 'reverse-observed-block'],
   },
   {
     scenarioId: 'rapid-sequence-induction',
@@ -309,7 +309,7 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     scenarioId: 'rapid-sequence-induction',
     frameworkId: 'coa-standards',
     domainId: 'pharmacology-of-anesthetic-agents',
-    objectiveIds: ['wait-for-intubating-block'],
+    objectiveIds: ['wait-for-intubating-block', 'reverse-observed-block'],
   },
   {
     scenarioId: 'rapid-sequence-induction',
@@ -327,7 +327,7 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     scenarioId: 'rapid-sequence-induction',
     frameworkId: 'acgme-anesthesiology-milestones-2',
     domainId: 'pc-pharmacologic-management',
-    objectiveIds: ['wait-for-intubating-block'],
+    objectiveIds: ['wait-for-intubating-block', 'reverse-observed-block'],
   },
   {
     scenarioId: 'rapid-sequence-induction',

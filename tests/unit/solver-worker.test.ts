@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: complete manual crisis injection truth has protocol version 13', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(13);
+  it('Scenario: neuromuscular reversal truth has protocol version 14', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(14);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

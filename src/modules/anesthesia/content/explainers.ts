@@ -228,7 +228,9 @@ export const EXPLAINERS: readonly Explainer[] = [
       + 'ratio of at least 0.9 before extubation.\n\n'
       + 'The ratio here is produced by an Open Sim Lab teaching model. It demonstrates onset, '
       + 'paralysis, and recovery directionally; it does not predict an individual recovery time '
-      + 'and this build does not model reversal.',
+      + 'or readiness for extubation. The reversal controls use the measured depth and the 2/4 '
+      + 'mg/kg sugammadex branches in current guidance. Neostigmine with an antimuscarinic is an '
+      + 'agent-class teaching effect accepted only during minimal block; dose pharmacology is not modeled.',
     diagram: { kind: 'hysteresis', caption: 'Four measured responses: fade decreases as quantitative recovery approaches a ratio of 0.9.' },
     showMe: { scenarioId: 'rapid-sequence-induction' },
     reflects: '2023 ASA Practice Guidelines for Monitoring and Antagonism of Neuromuscular '

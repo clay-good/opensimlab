@@ -400,8 +400,11 @@ export const SOURCES: readonly Source[] = [
     year: 2023,
     locator: '138:13-41',
     usedFor: 'The quantitative train-of-four teaching: monitor at the adductor pollicis and '
-      + 'confirm a train-of-four ratio of at least 0.9 before extubation. The current slice does '
-      + 'not implement or teach reversal dosing.',
+      + 'confirm a train-of-four ratio of at least 0.9 before extubation; use 2 mg/kg sugammadex '
+      + 'with at least one train-of-four twitch and 4 mg/kg with no twitches but a post-tetanic '
+      + 'count of at least one; and restrict neostigmine with antimuscarinic coadministration to '
+      + 'minimal blockade. The displayed post-tetanic count is an auto-derived teaching proxy. '
+      + 'Exact reversal dose pharmacology, emergence, and extubation are not modeled.',
     verifiedAgainst: NCBI,
     verifiedOn: CHECKED,
   },

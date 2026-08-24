@@ -13,7 +13,7 @@ export const RAPID_SEQUENCE_INDUCTION: Scenario = {
   schemaVersion: 1,
   metadata: {
     id: 'rapid-sequence-induction',
-    version: '0.1.0',
+    version: '0.2.0',
     title: 'Rapid-sequence induction',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',
@@ -40,6 +40,11 @@ export const RAPID_SEQUENCE_INDUCTION: Scenario = {
         statement: 'Resume delivered ventilation and sustained gas exchange after airway instrumentation.',
         measure: 'Laryngoscopy was followed by delivered ventilation and sustained capnography.',
       },
+      {
+        id: 'reverse-observed-block',
+        statement: 'Match reversal to the observed block depth and confirm quantitative recovery.',
+        measure: 'An accepted depth-matched reversal was followed by a train-of-four ratio of at least 0.9.',
+      },
     ],
     clinicalReview: {
       reviewer: 'UNSIGNED',
@@ -48,7 +53,7 @@ export const RAPID_SEQUENCE_INDUCTION: Scenario = {
       competingInterests: 'None declared',
       reviewedOn: '1970-01-01',
       reviewBy: '1970-01-01',
-      contentVersion: '0.1.0',
+      contentVersion: '0.2.0',
       sources: [
         'Wierda et al. 1991 rocuronium pharmacokinetic and pharmacodynamic model',
         '2023 ASA Practice Guidelines for Monitoring and Antagonism of Neuromuscular Blockade',
@@ -58,7 +63,7 @@ export const RAPID_SEQUENCE_INDUCTION: Scenario = {
     limitations: [
       'rocuronium-course-is-a-teaching-model',
       'peripheral-tof-does-not-prove-laryngeal-conditions',
-      'no-neuromuscular-reversal-or-emergence',
+      'neuromuscular-reversal-is-bounded-without-emergence',
       'no-aspiration-or-regurgitation',
       'no-team-or-communication',
       'bolus-injection-is-instantaneous',
@@ -164,6 +169,11 @@ export const RAPID_SEQUENCE_INDUCTION: Scenario = {
         id: 'confirmation', objectiveId: 'secure-and-confirm',
         question: 'What evidence showed that delivered ventilation and gas exchange had resumed?',
         concept: 'capnogram-morphology',
+      },
+      {
+        id: 'reversal-depth', objectiveId: 'reverse-observed-block',
+        question: 'Which measured block depth supported your reversal choice, and did the quantitative ratio recover to at least 0.9?',
+        concept: 'train-of-four-and-residual-blockade',
       },
     ],
   },

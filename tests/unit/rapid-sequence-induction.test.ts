@@ -33,9 +33,10 @@ function finding(
   objectiveId: string,
   history: readonly never[],
   actions: readonly LearnerAction[],
+  log: readonly never[] = [],
 ) {
   return objectiveFindings(
-    RAPID_SEQUENCE_INDUCTION, history, 0, 0, actions,
+    RAPID_SEQUENCE_INDUCTION, history, 0, 0, actions, log,
   ).find((entry) => entry.objectiveId === objectiveId)!;
 }
 
@@ -151,5 +152,25 @@ describe('Requirement: RSI objectives are derived from recorded state and action
     const noExchange = [state(900, { spo2Percent: 87 }), state(1100, { spo2Percent: 87 })];
     expect(finding('protect-the-apnea-margin', noExchange, [airway]).outcome).toBe('not-met');
     expect(finding('secure-and-confirm', noExchange, [airway]).outcome).toBe('partly-met');
+  });
+
+  it('scores only an accepted reversal followed by quantitative recovery', () => {
+    const reversal: LearnerAction = {
+      tick: 1200, type: 'neuromuscular-reversal',
+      payload: { agent: 'sugammadex', route: 'iv', doseMgPerKg: 4 },
+    };
+    const accepted = [{
+      tick: 1200, severity: 'info', category: 'drug', eventId: 'sugammadex-1200',
+      message: 'accepted',
+    }] as never;
+    expect(finding(
+      'reverse-observed-block',
+      [state(1200, { trainOfFourCount: 0, trainOfFourRatio: 0 }),
+        state(1201, { trainOfFourCount: 4, trainOfFourRatio: 0.95 })],
+      [reversal], accepted,
+    ).outcome).toBe('met');
+    expect(finding(
+      'reverse-observed-block', [state(1201, { trainOfFourRatio: 0 })], [reversal],
+    ).outcome).toBe('not-met');
   });
 });

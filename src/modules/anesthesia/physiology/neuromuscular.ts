@@ -12,6 +12,8 @@ export interface NeuromuscularState {
   readonly trainOfFourCount: number;
   /** Residual respiratory-muscle function, 0 to 1. */
   readonly respiratoryMuscleFraction: number;
+  /** Bounded post-tetanic count teaching proxy, used only while TOF count is zero. */
+  readonly postTetanicCount: number;
 }
 
 /**
@@ -47,5 +49,15 @@ export function neuromuscularState(rocuroniumCeMgPerL: number): NeuromuscularSta
     // measurement site. This small offset avoids claiming identical sensitivity
     // while still making profound block abolish spontaneous ventilation.
     respiratoryMuscleFraction: clamp(1 - blockadeFraction / 0.95, 0, 1),
+    postTetanicCount: trainOfFourCount > 0 ? 0
+      : firstTwitchFraction < 0.005 ? 0
+        : firstTwitchFraction < 0.02 ? 1
+          : firstTwitchFraction < 0.035 ? 2 : 3,
   };
+}
+
+/** What touch or sight would report; deliberately less sensitive than the numeric ratio. */
+export function qualitativeTwitchAssessment(trainOfFourCount: number, trainOfFourRatio: number) {
+  if (trainOfFourCount < 4) return `${trainOfFourCount.toFixed(0)} visible twitches`;
+  return trainOfFourRatio >= 0.4 ? 'no detectable fade' : 'fade detectable';
 }

@@ -132,10 +132,10 @@ The engine SHALL model neuromuscular blockade as a train-of-four ratio and count
 - **WHEN** sugammadex 2 mg/kg is given with at least one train-of-four twitch present, and 4 mg/kg with no twitches but a post-tetanic count of one or more
 - **THEN** the train-of-four ratio recovers to 0.9 or greater, consistent with the 2023 ASA practice guideline for monitoring and antagonism of neuromuscular blockade
 
-#### Scenario: Neostigmine fails from deep block
+#### Scenario: Neostigmine is restricted to minimal block
 
-- **WHEN** neostigmine is given at a train-of-four count of zero
-- **THEN** recovery is minimal, demonstrating why the guideline restricts neostigmine to minimal blockade and recommends sugammadex from deep and moderate blockade
+- **WHEN** neostigmine with an antimuscarinic is requested outside four twitches and a quantitative ratio from 0.4 to below 0.9
+- **THEN** the request is rejected without recovery, demonstrating why the guideline restricts neostigmine to minimal blockade and recommends sugammadex from deep and moderate blockade
 
 #### Scenario: Qualitative assessment cannot exclude residual blockade
 

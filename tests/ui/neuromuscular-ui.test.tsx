@@ -1,8 +1,10 @@
 /** @vitest-environment jsdom */
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
+import { act, createElement } from 'react';
+import { createRoot } from 'react-dom/client';
+import { describe, expect, it, vi } from 'vitest';
 import { MonitorRegion } from '@anesthesia/ui/MonitorRegion';
-import { formularyForMode } from '@anesthesia/ui/ActionCockpit';
+import { formularyForMode, NeuromuscularReversalTray } from '@anesthesia/ui/ActionCockpit';
 import { stateSummary } from '@anesthesia/ui/accessibility';
 import type { FormularyEntry } from '@anesthesia/scenarios/types';
 
@@ -66,14 +68,92 @@ describe('neuromuscular controls and monitoring', () => {
     expect(monitor(false)).not.toContain('Train-of-four');
   });
 
+  it('shows the qualitative assessment missing residual blockade that the ratio detects', () => {
+    const residual = renderToStaticMarkup(<MonitorRegion
+      state={{ ...STATE, trainOfFourRatio: 0.6, trainOfFourCount: 4 }}
+      blocks={[]} alarms={[]} tick={0} invalidParameters={new Set()}
+      artifactParameters={new Set()} waveformArtifacts={new Set()} rhythm="sinus"
+      airwayPatencyFraction={1} bronchospasmSeverity={0} mechanicalPulse={false}
+      reducedMotion colorblindSafe={false} showLimits primaryTracesOnly={false}
+      canvasHeight={320} onSilence={() => undefined} onWhy={() => undefined}
+      showTrainOfFour neuromuscularConfidence={{ label: 'Teaching model', kind: 'teaching' }}
+    />);
+    expect(residual).toContain('0.60');
+    expect(residual).toContain('qualitative no detectable fade');
+  });
+
   it('includes the conditional value in the on-demand screen-reader summary', () => {
     const common = { alarms: [], infusions: [], ventilator: {
       mode: 'manual', tidalVolumeMl: 500, respiratoryRateBpm: 12, fio2: 1, delivering: false,
     }, invalid: new Set<string>() };
-    expect(stateSummary(STATE as never, { ...common, showTrainOfFour: true }))
+    const summary = stateSummary(STATE as never, {
+      ...common,
+      showTrainOfFour: true,
+      resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, crystalloidTotalMl: 0,
+        postTetanicCount: 1,
+        lastNeuromuscularReversal: { agent: 'sugammadex', doseMgPerKg: 4, tick: 100 },
+      },
+      showEpinephrineSupport: false,
+    });
+    expect(summary)
       .toContain('Train-of-four ratio: 0.08');
-    expect(stateSummary(STATE as never, { ...common, showTrainOfFour: true }))
+    expect(summary)
       .toContain('Train-of-four count: 0 of 4');
+    expect(summary).toContain('Auto-derived post-tetanic-count teaching proxy: 1');
+    expect(summary).toContain('Last accepted neuromuscular reversal: sugammadex 4');
     expect(stateSummary(STATE as never, common)).not.toContain('Train-of-four ratio');
+  });
+
+  it('makes depth-matched reversal keyboard-operable with two-step confirmation', () => {
+    (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    const onReverse = vi.fn();
+    act(() => root.render(createElement(NeuromuscularReversalTray, {
+      trainOfFourRatio: 0, trainOfFourCount: 0, postTetanicCount: 1,
+      lastReversal: null, onReverse,
+    })));
+    const button = (label: string) => [...container.querySelectorAll('button')]
+      .find((entry) => entry.textContent?.trim() === label) as HTMLButtonElement | undefined;
+    expect(button('Sugammadex 2 mg/kg IV')?.disabled).toBe(true);
+    expect(button('Sugammadex 4 mg/kg IV')?.disabled).toBe(false);
+    expect(button('Neostigmine + antimuscarinic IV')?.disabled).toBe(true);
+    expect(container.textContent).toContain('auto-derived PTC teaching proxy 1');
+    act(() => { button('Sugammadex 4 mg/kg IV')!.focus(); button('Sugammadex 4 mg/kg IV')!.click(); });
+    expect(onReverse).not.toHaveBeenCalled();
+    act(() => button('Give reversal')!.click());
+    expect(onReverse).toHaveBeenCalledWith('sugammadex', 4);
+    act(() => root.unmount());
+    container.remove();
+  });
+
+  it('offers combined neostigmine only during minimal block', () => {
+    (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    const onReverse = vi.fn();
+    const renderTray = (trainOfFourCount: number, trainOfFourRatio: number) => act(() => root.render(
+      createElement(NeuromuscularReversalTray, {
+        trainOfFourRatio, trainOfFourCount, postTetanicCount: 0,
+        lastReversal: null, onReverse,
+      }),
+    ));
+    const button = () => [...container.querySelectorAll('button')]
+      .find((entry) => entry.textContent?.trim() === 'Neostigmine + antimuscarinic IV') as HTMLButtonElement;
+    renderTray(3, 0.6);
+    expect(button().disabled).toBe(true);
+    renderTray(4, 0.39);
+    expect(button().disabled).toBe(true);
+    renderTray(4, 0.6);
+    expect(button().disabled).toBe(false);
+    act(() => button().click());
+    act(() => ([...container.querySelectorAll('button')]
+      .find((entry) => entry.textContent?.trim() === 'Give reversal') as HTMLButtonElement).click());
+    expect(onReverse).toHaveBeenCalledWith('neostigmine');
+    act(() => root.unmount());
+    container.remove();
   });
 });

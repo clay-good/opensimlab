@@ -62,6 +62,12 @@ export interface ActionCockpitProps {
     readonly defibrillationShockCount?: number;
     readonly lastDefibrillationEnergyJ?: number | null;
     readonly roscAtTick?: number | null;
+    readonly postTetanicCount?: number;
+    readonly lastNeuromuscularReversal?: {
+      readonly agent: 'sugammadex' | 'neostigmine';
+      readonly doseMgPerKg: number | null;
+      readonly tick: number;
+    } | null;
   };
   readonly injectedCrisisIds?: readonly string[];
   readonly lastExposure: { readonly agentId: string; readonly tick: number } | null;
@@ -86,6 +92,8 @@ export interface ActionCockpitProps {
   readonly supraglotticInsertionSecondsRemaining: number;
   readonly helpRequestedAtTick: number | null;
   readonly muscleRigidityFraction: number;
+  readonly trainOfFourRatio?: number;
+  readonly trainOfFourCount?: number;
   readonly onBolus: (drugId: string, amount: number, unit: string) => void;
   readonly onInfusion: (drugId: string, rate: number, unit: string) => void;
   readonly onHypnoticLine: (action: 'inspect' | 'reconnect') => void;
@@ -103,6 +111,9 @@ export interface ActionCockpitProps {
   readonly onChestCompressions?: (active: boolean) => void;
   readonly onArrestEpinephrine?: () => void;
   readonly onDefibrillation?: (energyJ: number) => void;
+  readonly onNeuromuscularReversal?: (
+    agent: 'sugammadex' | 'neostigmine', doseMgPerKg?: number,
+  ) => void;
   readonly onDrugCard: (drugId: string) => void;
 }
 
@@ -176,6 +187,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
   const hasEpinephrineResponse = hasAnaphylaxisResponse || hasLastResponse;
   const hasCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse || hasCardiacArrestResponse;
   const trays = hasCrisisResponse ? [...TRAYS, CRISIS_TRAY] : TRAYS;
+  const hasRocuronium = props.scenario.formulary.some((entry) => entry.drugId === 'rocuronium');
 
   return (
     <div className="actions">
@@ -200,13 +212,24 @@ export function ActionCockpit(props: ActionCockpitProps) {
 
       <div className="actions__tray">
         {tray === 'syringes' && (
-          <SyringeTray
-            formulary={props.scenario.formulary}
-            remaining={props.syringeRemaining}
-            weightKg={props.scenario.patient.weightKg}
-            onBolus={props.onBolus}
-            onDrugCard={props.onDrugCard}
-          />
+          <>
+            <SyringeTray
+              formulary={props.scenario.formulary}
+              remaining={props.syringeRemaining}
+              weightKg={props.scenario.patient.weightKg}
+              onBolus={props.onBolus}
+              onDrugCard={props.onDrugCard}
+            />
+            {hasRocuronium && (
+              <NeuromuscularReversalTray
+                trainOfFourRatio={props.trainOfFourRatio ?? 1}
+                trainOfFourCount={props.trainOfFourCount ?? 4}
+                postTetanicCount={props.resuscitation.postTetanicCount ?? 0}
+                lastReversal={props.resuscitation.lastNeuromuscularReversal ?? null}
+                onReverse={props.onNeuromuscularReversal ?? (() => {})}
+              />
+            )}
+          </>
         )}
         {tray === 'infusions' && (
           <InfusionTray
@@ -307,6 +330,60 @@ export function ActionCockpit(props: ActionCockpitProps) {
         </p>
       </div>
     </div>
+  );
+}
+
+export function NeuromuscularReversalTray({
+  trainOfFourRatio, trainOfFourCount, postTetanicCount, lastReversal, onReverse,
+}: {
+  trainOfFourRatio: number;
+  trainOfFourCount: number;
+  postTetanicCount: number;
+  lastReversal: {
+    readonly agent: 'sugammadex' | 'neostigmine';
+    readonly doseMgPerKg: number | null;
+    readonly tick: number;
+  } | null;
+  onReverse: (agent: 'sugammadex' | 'neostigmine', doseMgPerKg?: number) => void;
+}) {
+  const [pending, setPending] = useState<'sugammadex-2' | 'sugammadex-4' | 'neostigmine' | null>(null);
+  const recovered = trainOfFourRatio >= 0.9;
+  const status = `TOF ${trainOfFourCount}/4 · ratio ${trainOfFourRatio.toFixed(2)}`
+    + (trainOfFourCount === 0 ? ` · auto-derived PTC teaching proxy ${postTetanicCount}` : '');
+  const give = () => {
+    if (pending === 'sugammadex-2') onReverse('sugammadex', 2);
+    if (pending === 'sugammadex-4') onReverse('sugammadex', 4);
+    if (pending === 'neostigmine') onReverse('neostigmine');
+    setPending(null);
+  };
+  return (
+    <section className="card" aria-label="Neuromuscular reversal">
+      <h3 className="panel__title">Neuromuscular reversal</h3>
+      <Badge kind="teaching">Teaching model</Badge>
+      <p className="syringe__remaining" role="status">{status}</p>
+      {lastReversal && (
+        <p className="field__hint">Last accepted: {lastReversal.agent}
+          {lastReversal.doseMgPerKg === null ? '' : ` ${lastReversal.doseMgPerKg} mg/kg`} IV.</p>
+      )}
+      {pending === null ? (
+        <div className="syringe__presets">
+          <Button disabled={recovered || trainOfFourCount < 1}
+            onClick={() => setPending('sugammadex-2')}>Sugammadex 2 mg/kg IV</Button>
+          <Button disabled={recovered || trainOfFourCount !== 0 || postTetanicCount < 1}
+            onClick={() => setPending('sugammadex-4')}>Sugammadex 4 mg/kg IV</Button>
+          <Button disabled={recovered || trainOfFourCount !== 4 || trainOfFourRatio < 0.4}
+            onClick={() => setPending('neostigmine')}>Neostigmine + antimuscarinic IV</Button>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+          <Button variant="primary" onClick={give}>Give reversal</Button>
+          <Button variant="ghost" onClick={() => setPending(null)}>Cancel</Button>
+        </div>
+      )}
+      <p className="field__hint">Choose from the measured depth. Neostigmine is available only
+        with an antimuscarinic during minimal block. Dose pharmacology, emergence, extubation,
+        and individual recovery are not modeled. Confirm ratio ≥0.9 quantitatively.</p>
+    </section>
   );
 }
 

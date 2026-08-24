@@ -111,6 +111,12 @@ export function stateSummary(
       readonly defibrillationShockCount?: number;
       readonly lastDefibrillationEnergyJ?: number | null;
       readonly roscAtTick?: number | null;
+      readonly postTetanicCount?: number;
+      readonly lastNeuromuscularReversal?: {
+        readonly agent: 'sugammadex' | 'neostigmine';
+        readonly doseMgPerKg: number | null;
+        readonly tick: number;
+      } | null;
     };
     readonly epinephrineLabel?: string;
     readonly lastExposure?: { readonly agentId: string; readonly tick: number } | null;
@@ -130,6 +136,19 @@ export function stateSummary(
     lines.push(`${spec.label}: ${state[tile.field].toFixed(spec.precision)} ${spec.unit}`.trim());
     if (tile.field === 'trainOfFourRatio') {
       lines.push(`Train-of-four count: ${state.trainOfFourCount.toFixed(0)} of 4.`);
+      if (state.trainOfFourCount === 4 && state.trainOfFourRatio >= 0.4
+        && state.trainOfFourRatio < 0.9) {
+        lines.push('Qualitative assessment: no detectable fade, but the quantitative ratio still shows residual blockade below 0.9.');
+      }
+      if (state.trainOfFourCount === 0 && options.resuscitation?.postTetanicCount !== undefined) {
+        lines.push(`Auto-derived post-tetanic-count teaching proxy: ${options.resuscitation.postTetanicCount.toFixed(0)}.`);
+      }
+      const reversal = options.resuscitation?.lastNeuromuscularReversal;
+      if (reversal) {
+        lines.push(`Last accepted neuromuscular reversal: ${reversal.agent}`
+          + (reversal.doseMgPerKg === null ? '' : ` ${reversal.doseMgPerKg} milligrams per kilogram`)
+          + ' intravenous.');
+      }
     }
   }
   lines.push(options.infusions.length === 0

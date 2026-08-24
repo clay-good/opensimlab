@@ -24,8 +24,9 @@
   recorded state and actions.
 - [x] Map the scenario to NBCRNA, COA, and ACGME domains.
 - [x] Update limitations, face-validity scope, and landing-page inventory.
-- [ ] Add reversal, emergence, extubation, aspiration physiology, or cricoid pressure. None is
-  implied by the induction-only slice.
+- [x] Add bounded, quantitative neuromuscular reversal as a later slice.
+- [ ] Add emergence, extubation, aspiration physiology, or cricoid pressure. None is implied by
+  the induction-only or bounded-reversal slices.
 
 ## Slice 3: awareness risk under paralysis
 
@@ -196,3 +197,15 @@
   and paradoxical-embolism boundaries in the injector, limitations register, and review rubric.
 - [ ] Add patient-specific block spread, gas volume or entry mechanics, diagnostic certainty,
   individualized outcomes, or treatment pathways. None is implied by this injector slice.
+
+## Slice 13: bounded quantitative neuromuscular reversal
+
+- [x] Derive a bounded post-tetanic-count proxy from the same rocuronium teaching course as TOF.
+- [x] Accept 2 mg/kg sugammadex with at least one TOF twitch and 4 mg/kg with zero twitches plus
+  post-tetanic count of at least one; reject depth-dose mismatches without mutation.
+- [x] Accept neostigmine with an antimuscarinic only during minimal block and reject deeper requests.
+- [x] Drive ratio recovery to at least 0.9, record accepted state, and prove deterministic replay.
+- [x] Add a scored reversal objective, two-step keyboard controls, source scope, limitations, and
+  face-validity review items.
+- [ ] Add neostigmine dose pharmacology, emergence, extubation, recurrent block, hypersensitivity,
+  individual recovery prediction, or postoperative outcomes. None is implied.

@@ -26,7 +26,7 @@ import { getFluid, MAX_FLUID_BOLUS_ML } from './content/fluids';
 import type { Covariates } from './pharmacology/body-composition';
 import {
   RESPIRATORY_PROFILES, VirtualPatient, baselineSvr, healthyChildRespiratoryProfile,
-  JAW_THRUST_CPAP_SECONDS, stepLaryngospasm,
+  JAW_THRUST_CPAP_SECONDS, neuromuscularState, stepLaryngospasm,
   type LaryngoscopyResult, type PatientProfile, type PatientState, type VentilatorSettings,
 } from './physiology';
 import { WaveformEngine, restingDrive, type ArtifactId, type RhythmId, type WaveformFrame } from './waveforms';
@@ -34,7 +34,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.13';
+export const ENGINE_VERSION = '0.1.0-alpha.14';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -244,6 +244,12 @@ export class AnesthesiaEngine {
   private highSpinalFraction = 0;
   private venousAirEmbolismSeverity = 0;
   private venousAirEmbolismFraction = 0;
+  /** Bounded teaching opposition to the current rocuronium effect-site concentration. */
+  private neuromuscularReversalFraction = 0;
+  private postTetanicCount = 0;
+  private lastNeuromuscularReversal: {
+    agent: 'sugammadex' | 'neostigmine'; doseMgPerKg: number | null; tick: number;
+  } | null = null;
   /** A learner fluid bolus waiting to reach the circulation on the next tick. */
   private pendingCrystalloidMl = 0;
   /** Physical delivery state, intentionally separate from the pump's commanded rate. */
@@ -603,6 +609,50 @@ export class AnesthesiaEngine {
         }
         break;
       }
+      case 'neuromuscular-reversal': {
+        const agent = action.payload.agent;
+        const route = action.payload.route;
+        const dose = Number(action.payload.doseMgPerKg);
+        const count = Number(this.lastState.trainOfFourCount ?? 4);
+        const ratio = Number(this.lastState.trainOfFourRatio ?? 1);
+        const hasRocuronium = this.drugs.has('rocuronium');
+        if (!hasRocuronium || route !== 'iv'
+          || (agent !== 'sugammadex' && agent !== 'neostigmine')) {
+          this.log('warning', 'drug', `bad-neuromuscular-reversal-${this.currentTick}`,
+            'Neuromuscular reversal requires modeled rocuronium, an IV route, and a supported agent. Nothing was given.');
+          break;
+        }
+        if (agent === 'sugammadex') {
+          const validDose = Number.isFinite(dose)
+            && ((count >= 1 && dose === 2) || (count === 0 && this.postTetanicCount >= 1 && dose === 4));
+          if (!validDose || ratio >= 0.9) {
+            this.log('warning', 'drug', `bad-sugammadex-${this.currentTick}`,
+              'Sugammadex requires 2 mg/kg with at least one train-of-four twitch, or 4 mg/kg with no twitches and a post-tetanic count of at least one. Nothing was given.');
+            break;
+          }
+          this.neuromuscularReversalFraction = Math.max(this.neuromuscularReversalFraction, 0.995);
+          this.lastNeuromuscularReversal = { agent, doseMgPerKg: dose, tick: this.currentTick };
+          this.log('info', 'drug', `sugammadex-${this.currentTick}`,
+            `Sugammadex ${dose} mg/kg IV accepted for the observed block depth. Recovery is a bounded teaching effect; confirm a quantitative train-of-four ratio of at least 0.9.`,
+            { agent, route, doseMgPerKg: dose, trainOfFourCount: count, postTetanicCount: this.postTetanicCount });
+          break;
+        }
+        const antimuscarinic = action.payload.antimuscarinic === true;
+        const minimalBlock = count === 4 && ratio >= 0.4 && ratio < 0.9;
+        if (!antimuscarinic || !minimalBlock) {
+          this.log('warning', 'drug', `bad-neostigmine-${this.currentTick}`,
+            'Neostigmine requires coadministration with an antimuscarinic and minimal block: four train-of-four twitches with a quantitative ratio from 0.4 to below 0.9. Nothing was given.');
+          break;
+        }
+        this.neuromuscularReversalFraction = Math.max(
+          this.neuromuscularReversalFraction, 0.9,
+        );
+        this.lastNeuromuscularReversal = { agent, doseMgPerKg: null, tick: this.currentTick };
+        this.log('info', 'drug', `neostigmine-${this.currentTick}`,
+          'Neostigmine with an antimuscarinic IV was accepted during minimal block as an agent-class teaching action. Dose pharmacology is not modeled; quantitative recovery must still reach at least 0.9.',
+          { agent, route, antimuscarinic, trainOfFourCount: count, teachingModel: true });
+        break;
+      }
       case 'chest-compressions': {
         const active = action.payload.active;
         if (!this.cardiacArrestActive || typeof active !== 'boolean') {
@@ -842,6 +892,11 @@ export class AnesthesiaEngine {
   private giveBolus(drugId: string, amount: number, unit: string): void {
     const drug = this.drugs.get(drugId);
     if (!drug) return;
+    if (drugId === 'rocuronium' && this.lastNeuromuscularReversal !== null) {
+      this.log('warning', 'drug', `rocuronium-after-reversal-refused-${this.currentTick}`,
+        'Additional rocuronium after modeled reversal is outside this bounded teaching model. Nothing was given; prior opposed drug was not reactivated.');
+      return;
+    }
     const absoluteUnit = drug.model.doseUnit;
     const weightBasedUnit = `${absoluteUnit}/kg`;
     if (unit !== absoluteUnit && unit !== weightBasedUnit) {
@@ -938,6 +993,11 @@ export class AnesthesiaEngine {
   private setInfusion(drugId: string, rate: number, unit: string): void {
     const drug = this.drugs.get(drugId);
     if (!drug) return;
+    if (drugId === 'rocuronium' && rate > 0 && this.lastNeuromuscularReversal !== null) {
+      this.log('warning', 'drug', `rocuronium-after-reversal-refused-${this.currentTick}`,
+        'Additional rocuronium after modeled reversal is outside this bounded teaching model. The infusion was not started; prior opposed drug was not reactivated.');
+      return;
+    }
     if (!drug.deliveryModes.includes('infusion')) {
       this.log('warning', 'drug', `unsupported-infusion-${drugId}-${this.currentTick}`,
         `${drugId} is stocked for bolus use only in this scenario. The infusion was not started.`,
@@ -1310,7 +1370,9 @@ export class AnesthesiaEngine {
     // Remifentanil is dosed in micrograms into litres, so the plasma value is
     // µg/L, which is the same number as ng/mL.
     const remifentanilCe = remifentanil?.solver.hasEffectSiteCurve ? remifentanil.solver.effectSite : 0;
-    const rocuroniumCe = rocuronium?.solver.hasEffectSiteCurve ? rocuronium.solver.effectSite : 0;
+    const rawRocuroniumCe = rocuronium?.solver.hasEffectSiteCurve ? rocuronium.solver.effectSite : 0;
+    const rocuroniumCe = rawRocuroniumCe * (1 - this.neuromuscularReversalFraction);
+    this.postTetanicCount = neuromuscularState(rocuroniumCe).postTetanicCount;
 
     // The event declares latent susceptibility; real volatile exposure starts
     // the physiology. Once active, trigger removal prevents further escalation
@@ -1530,7 +1592,11 @@ export class AnesthesiaEngine {
         modelId: drug.model.id,
         confidence: envelope.label,
         plasma: drug.solver.plasma,
-        effectSite: drug.solver.hasEffectSiteCurve ? drug.solver.effectSite : Number.NaN,
+        effectSite: drug.solver.hasEffectSiteCurve
+          ? drug.solver.effectSite * (drug.drugId === 'rocuronium'
+            ? 1 - this.neuromuscularReversalFraction
+            : 1)
+          : Number.NaN,
         unit: drug.model.concentrationUnit,
       });
     }
@@ -1621,6 +1687,10 @@ export class AnesthesiaEngine {
         roscAtTick: this.roscAtTick,
         highSpinalFraction: this.highSpinalFraction,
         venousAirEmbolismFraction: this.venousAirEmbolismFraction,
+        neuromuscularReversalFraction: this.neuromuscularReversalFraction,
+        postTetanicCount: this.postTetanicCount,
+        lastNeuromuscularReversal: this.lastNeuromuscularReversal
+          ? { ...this.lastNeuromuscularReversal } : null,
       },
       lastExposure: this.lastExposure ? { ...this.lastExposure } : null,
       lastInjectedCrisis: this.lastInjectedCrisis ? { ...this.lastInjectedCrisis } : null,

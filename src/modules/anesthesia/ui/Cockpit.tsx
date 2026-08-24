@@ -499,6 +499,8 @@ export function Cockpit({
           supraglotticInsertionSecondsRemaining={airway.supraglotticInsertionSecondsRemaining}
           helpRequestedAtTick={airway.helpRequestedAtTick}
           muscleRigidityFraction={session.state?.muscleRigidityFraction ?? 0}
+          trainOfFourRatio={session.state?.trainOfFourRatio ?? 1}
+          trainOfFourCount={session.state?.trainOfFourCount ?? 4}
           onBolus={(drugId, amount, unit) => session.act({ type: 'bolus', payload: { drugId, amount, unit } })}
           onInfusion={(drugId, rate, unit) => session.act({ type: 'infusion', payload: { drugId, rate, unit } })}
           onHypnoticLine={(action) => session.act({ type: 'hypnotic-line', payload: { action } })}
@@ -531,6 +533,12 @@ export function Cockpit({
           })}
           onDefibrillation={(energyJ) => session.act({
             type: 'defibrillation', payload: { energyJ, waveform: 'biphasic' },
+          })}
+          onNeuromuscularReversal={(agent, doseMgPerKg) => session.act({
+            type: 'neuromuscular-reversal', payload: {
+              agent, route: 'iv', ...(doseMgPerKg === undefined ? {} : { doseMgPerKg }),
+              ...(agent === 'neostigmine' ? { antimuscarinic: true } : {}),
+            },
           })}
           onDrugCard={setDrugCardId}
         />

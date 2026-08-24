@@ -568,12 +568,15 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['rapid-sequence-induction'],
   },
   {
-    id: 'no-neuromuscular-reversal-or-emergence',
-    headline: 'Neuromuscular reversal, extubation, and recovery-room outcomes are not simulated.',
-    simplification: 'Rocuronium recovers spontaneously in this slice. Sugammadex, neostigmine, '
-      + 'extubation, and postoperative residual weakness are not available actions or outcomes.',
-    whereItMisleads: 'Using this case to practise reversal dosing or decide when a real patient is '
-      + 'safe to extubate.',
+    id: 'neuromuscular-reversal-is-bounded-without-emergence',
+    headline: 'Reversal is a bounded quantitative teaching effect; emergence, extubation, and recovery-room outcomes are not simulated.',
+    simplification: 'Sugammadex follows the specified 2/4 mg/kg depth branches. Neostigmine with '
+      + 'an antimuscarinic is accepted only during minimal block. The post-tetanic count is an '
+      + 'auto-derived teaching proxy; stimulation technique is not modeled. There is no dose '
+      + 'pharmacology, antimuscarinic identity or adverse-effect model, emergence, airway removal, '
+      + 'recurrent block, hypersensitivity, or postoperative weakness.',
+    whereItMisleads: 'Predicting an individual recovery time or treating a screen ratio as proof '
+      + 'that a real patient is otherwise ready for extubation.',
     correctUnderstanding: 'Current guidance calls for quantitative recovery to a train-of-four '
       + 'ratio of at least 0.9 before extubation and chooses reversal according to block depth.',
     briefIn: ['rapid-sequence-induction'],

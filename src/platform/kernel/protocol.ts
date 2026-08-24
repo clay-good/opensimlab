@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 13 completes manual crisis injection. */
-export const WORKER_PROTOCOL_VERSION = 13;
+/** Bumped whenever the message shape changes incompatibly. Version 14 reports neuromuscular reversal. */
+export const WORKER_PROTOCOL_VERSION = 14;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -226,6 +226,14 @@ export interface EquipmentSnapshot {
     /** Early high-spinal and venous-air-embolism teaching drives. */
     readonly highSpinalFraction?: number;
     readonly venousAirEmbolismFraction?: number;
+    /** Accepted quantitative neuromuscular-reversal teaching state. */
+    readonly neuromuscularReversalFraction?: number;
+    readonly postTetanicCount?: number;
+    readonly lastNeuromuscularReversal?: {
+      readonly agent: 'sugammadex' | 'neostigmine';
+      readonly doseMgPerKg: number | null;
+      readonly tick: number;
+    } | null;
   };
   /** The most recent modeled trigger exposure, without diagnosing the response. */
   readonly lastExposure: { readonly agentId: string; readonly tick: number } | null;

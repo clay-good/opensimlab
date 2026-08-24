@@ -36,8 +36,8 @@ the first hypnotic dose, train-of-four at airway instrumentation, the lowest sat
 subsequent delivered ventilation with carbon dioxide. These are behavioral observations, not a
 claim about the learner's reasoning or physical airway skill.
 
-The slice stops at a secured, ventilated airway. It does not model reversal, emergence, extubation,
-regurgitation, aspiration, cricoid pressure, or team behavior. Peripheral train-of-four is not
+The induction slice stops at a secured, ventilated airway. Slice 13 later adds bounded reversal;
+emergence, extubation, regurgitation, aspiration, cricoid pressure, and team behavior remain absent. Peripheral train-of-four is not
 presented as proof of conditions at the larynx, and the rocuronium trajectory is labeled as a
 teaching model rather than an individual prediction.
 
@@ -234,3 +234,24 @@ physiologically distinct, and include both actions in deterministic replay. High
 impairment enters the gas-exchange solver rather than changing display values after the fact.
 Accepted manual injections also activate the matching rescue tray and nonvisual support summary;
 the static scenario timeline is not the only source of control availability.
+
+## Slice 13: bounded quantitative neuromuscular reversal
+
+The existing rocuronium course gains a bounded post-tetanic-count proxy and a distinct reversal
+opposition state. Sugammadex accepts only the master specification's observed-depth branches:
+2 mg/kg with at least one train-of-four twitch, or 4 mg/kg with zero twitches and a post-tetanic
+count of at least one. An accepted action reduces the effective rocuronium drive and the same
+quantitative monitor must show a ratio of at least 0.9. Later rocuronium is refused because this
+bounded model cannot separate previously opposed drug from a new dose without reactivating both.
+
+Neostigmine with an antimuscarinic is an agent-class teaching action because this slice has no
+sourced dose-kinetic model. It is accepted only at minimal blockade: four twitches and a ratio from
+0.4 to below 0.9. Deeper requests are rejected, preserving the reason current guidance restricts
+it to minimal blockade. Every request is logged and replayable; depth-dose mismatches, bad routes,
+unsupported agents, and nonfinite doses mutate nothing.
+
+The cockpit exposes the measured train-of-four count and ratio plus an auto-derived post-tetanic-
+count teaching proxy beside two-step
+controls. This is not emergence or an extubation decision. Individual recovery time, recurrent
+block, hypersensitivity, neostigmine or antimuscarinic dose pharmacology, airway removal, and
+postoperative outcomes remain unavailable.

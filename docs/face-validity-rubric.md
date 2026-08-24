@@ -82,7 +82,8 @@ Reviewers run the routine induction themselves before answering.
 | B31 | Rhythm and monitor transition after accepted 1 mg IV epinephrine and the declared 200 J biphasic shock | | |
 | B32 | Progressive bradycardia, hypotension, reduced output, and impaired unassisted breathing after manual high-spinal injection | | |
 | B33 | Abrupt end-tidal carbon-dioxide, pressure, output, and saturation change after manual venous-air-embolism injection, without a directly imposed respiratory-rate change | | |
-| B34 | Overall: does this patient behave like a patient? | | |
+| B34 | Quantitative recovery after depth-matched 2/4 mg/kg sugammadex, and neostigmine with an antimuscarinic only during minimal block | | |
+| B35 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -139,4 +140,6 @@ So that reviewers spend their attention on what this review is for:
   block-height, obstetric-physiology, or treatment simulation. Manual venous-air-embolism injection
   does not model gas volume, entry site, diagnosis, treatment, paradoxical or cerebral embolism,
   or individualized outcome.
+- Neuromuscular reversal is a bounded teaching effect. The PTC is auto-derived, and reversal dose pharmacology, emergence,
+  extubation, recurrent block, hypersensitivity, and postoperative residual weakness are absent.
 - Nothing here has been clinically reviewed before — you are the first.

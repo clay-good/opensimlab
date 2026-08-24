@@ -43,8 +43,9 @@ response, stopping before dysrhythmia treatment or cardiac arrest.
   ratio, with no hypnotic, analgesic, or direct hemodynamic effect.
 - Make laryngoscopy consume its declared simulated time and evaluate whether the learner waited
   for modeled block onset while preserving the oxygen margin.
-- State the second boundary plainly: reversal, emergence, extubation, regurgitation, aspiration,
-  cricoid pressure, and difficult-airway rescue remain unavailable.
+- State the second boundary plainly: the induction case stops before reversal, emergence,
+  extubation, regurgitation, aspiration, cricoid pressure, or difficult-airway rescue. A later
+  bounded slice adds reversal without implying the other endpoints.
 - Add a seventh scenario covering a silent propofol-line disconnection during TIVA under modeled
   neuromuscular blockade.
 - Keep the commanded pump rate separate from delivered propofol, expose explicit line inspection
@@ -99,16 +100,19 @@ response, stopping before dysrhythmia treatment or cardiac arrest.
   physiology, with two-step confirmation and explicit patient/equipment preconditions.
 - Complete the injector with distinct high-spinal and venous-air-embolism teaching trajectories;
   inert or cosmetic controls do not count as crisis coverage.
+- Complete bounded quantitative neuromuscular reversal with the specified 2/4 mg/kg sugammadex
+  depth branches and neostigmine with an antimuscarinic only during minimal block, without
+  claiming emergence or extubation.
 
 ## Impact
 
-These twelve slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
-awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. They do not complete the neuromuscular-reversal
-requirements. The seventh also closes the bounded
+These thirteen slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. The seventh also closes the bounded
 pediatric-family gap without claiming a general pediatric patient model. The eighth reaches the
 minimum count of 12 scenarios and closes the bounded difficult-airway rescue gap. The ninth closes
 the required bounded local-anesthetic systemic-toxicity family. The tenth closes the required
 resuscitable cardiac-arrest library family through initial modeled ROSC. The eleventh supplies the
 replayable injector foundation for 9 modeled crises. The twelfth adds distinct high-spinal and
 venous-air-embolism physiology and completes the required 11-entry manual injector without
-claiming diagnosis, treatment, block-height, or gas-volume simulation.
+claiming diagnosis, treatment, block-height, or gas-volume simulation. The thirteenth completes
+bounded quantitative neuromuscular reversal while leaving emergence and extubation explicit.
