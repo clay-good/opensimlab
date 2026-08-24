@@ -10,6 +10,12 @@ import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import type { EngineEvent, LearnerAction } from '@platform/kernel/protocol';
 import { describedEvents, objectiveFindings } from '@anesthesia/ui/Debrief';
+import { SCENARIOS } from '@anesthesia/scenarios';
+import { AnesthesiaEngine } from '@anesthesia/engine';
+import { EXPLAINERS } from '@anesthesia/content/explainers';
+import { HYPOTENSION_AFTER_INDUCTION } from '@anesthesia/scenarios/hypotension-after-induction';
+import { RAPID_DESATURATION } from '@anesthesia/scenarios/rapid-desaturation';
+import { BRONCHOSPASM } from '@anesthesia/scenarios/bronchospasm';
 
 const OPTIONS = {
   scenario: ROUTINE_INDUCTION, seed: 424242, practiceRegion: 'US', ticks: 4200,
@@ -132,6 +138,81 @@ describe('Scenario: Counterfactual is computed, not asserted', () => {
 });
 
 describe('Scenario: Findings are specific', () => {
+  it('evaluates every declared objective and links it to an explainer', () => {
+    const explainerIds = new Set(EXPLAINERS.map((entry) => entry.id));
+    for (const scenario of SCENARIOS) {
+      const engine = new AnesthesiaEngine({ scenario, seed: 1, practiceRegion: 'US' });
+      const tick = engine.step();
+      const findings = objectiveFindings(scenario, [{
+        tick: tick.tick, state: tick.state, concentrations: tick.concentrations,
+      }], 0, 0, [], tick.events);
+      expect(findings).toHaveLength(scenario.metadata.objectives.length);
+      for (const finding of findings) {
+        expect(finding.finding, `${scenario.metadata.id}/${finding.objectiveId}`)
+          .not.toBe('Not evaluated in this scenario.');
+        expect(explainerIds.has(finding.concept ?? ''), `${scenario.metadata.id}/${finding.objectiveId}`)
+          .toBe(true);
+      }
+    }
+  });
+
+  it('uses accepted propofol delivery for patient-specific induction feedback', () => {
+    const history = [{ tick: 0, state: { depthIndex: 90 }, concentrations: [] }] as never;
+    const raw: LearnerAction[] = [{
+      tick: 10, type: 'bolus', payload: { drugId: 'propofol', amount: 1, unit: 'mg/kg' },
+    }];
+    const withoutAcceptedEvent = objectiveFindings(
+      HYPOTENSION_AFTER_INDUCTION, history, 0, 0, raw, [],
+    ).find((entry) => entry.objectiveId === 'dose-for-the-patient')!;
+    expect(withoutAcceptedEvent.outcome).toBe('not-exercised');
+
+    const accepted: EngineEvent[] = [{
+      tick: 10, severity: 'info', category: 'drug', eventId: 'bolus-propofol-10',
+      message: 'propofol 70 mg', data: { drugId: 'propofol', mass: 70 },
+    }];
+    const finding = objectiveFindings(
+      HYPOTENSION_AFTER_INDUCTION, history, 0, 0, raw, accepted,
+    ).find((entry) => entry.objectiveId === 'dose-for-the-patient')!;
+    expect(finding.outcome).toBe('met');
+    expect(finding.finding).toContain('1.30 mg/kg');
+  });
+
+  it('evaluates accepted airway attempts and a real change of plan', () => {
+    const history = [{ tick: 100, state: { spo2Percent: 98 }, concentrations: [] }] as never;
+    const accepted: EngineEvent[] = [
+      { tick: 10, severity: 'warning', category: 'airway', eventId: 'laryngoscopy-start-1', message: 'Direct', data: { technique: 'direct' } },
+      { tick: 50, severity: 'warning', category: 'airway', eventId: 'laryngoscopy-1', message: 'Secured', data: { intubated: true } },
+    ];
+    const finding = objectiveFindings(
+      RAPID_DESATURATION, history, 0, 0, [], accepted,
+    ).find((entry) => entry.objectiveId === 'limit-attempts')!;
+    expect(finding.outcome).toBe('met');
+
+    const repeated = [1, 2, 3].map((attempt) => ({
+      tick: attempt * 10, severity: 'warning' as const, category: 'airway',
+      eventId: `laryngoscopy-start-${attempt}`, message: 'Direct', data: { technique: 'direct' },
+    }));
+    expect(objectiveFindings(RAPID_DESATURATION, history, 0, 0, [], repeated)
+      .find((entry) => entry.objectiveId === 'limit-attempts')?.outcome).toBe('not-met');
+  });
+
+  it('turns the bronchospasm response into bounded, honest tutor feedback', () => {
+    const history = [
+      { tick: 2400, state: { etco2MmHg: 40, depthIndex: 72 }, concentrations: [] },
+      { tick: 2500, state: { etco2MmHg: 44, depthIndex: 58 }, concentrations: [] },
+    ] as never;
+    const accepted: EngineEvent[] = [{
+      tick: 2500, severity: 'info', category: 'drug', eventId: 'bolus-propofol-2500',
+      message: 'propofol 20 mg', data: { drugId: 'propofol', mass: 20 },
+    }];
+    const findings = objectiveFindings(BRONCHOSPASM, history, 0, 0, [], accepted);
+    expect(findings.find((entry) => entry.objectiveId === 'read-the-capnogram')?.outcome).toBe('met');
+    expect(findings.find((entry) => entry.objectiveId === 'read-the-capnogram')?.finding)
+      .toContain('behavioral proxy');
+    expect(findings.find((entry) => entry.objectiveId === 'deepen-before-reaching-for-anything-else')?.outcome)
+      .toBe('met');
+  });
+
   it('names stacked boluses with the interval and the time to peak effect', () => {
     const stacked: LearnerAction[] = [
       { tick: 600, type: 'bolus', payload: { drugId: 'propofol', amount: 80, unit: 'mg' } },

@@ -109,8 +109,21 @@ describe('Requirement: Hemorrhage objectives are evaluated from the recorded act
   }] as never;
 
   function finding(id: string, actions: readonly LearnerAction[]) {
+    const log = actions.flatMap((action) => action.type === 'fluid'
+      && action.payload.fluidId === 'balanced-crystalloid'
+      && Number.isFinite(Number(action.payload.volumeMl))
+      && Number(action.payload.volumeMl) > 0
+      && Number(action.payload.volumeMl) <= 5000
+      ? [{
+        tick: action.tick, severity: 'info' as const, category: 'fluid',
+        eventId: `fluid-balanced-crystalloid-${action.tick}`,
+        message: 'Accepted fluid', data: {
+          fluidId: 'balanced-crystalloid', volumeMl: Number(action.payload.volumeMl),
+        },
+      }]
+      : []);
     return objectiveFindings(
-      UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE, history, 0, 0, actions,
+      UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE, history, 0, 0, actions, log,
     ).find((entry) => entry.objectiveId === id)!;
   }
 
@@ -130,5 +143,14 @@ describe('Requirement: Hemorrhage objectives are evaluated from the recorded act
     }]);
     expect(result.outcome).toBe('met');
     expect(result.finding).toContain('not definitive hemorrhage replacement');
+  });
+
+  it('does not score refused or malformed fluid requests as treatment', () => {
+    const result = finding('temporize-volume-loss', [
+      { tick: 2700, type: 'fluid', payload: { fluidId: 'unknown', volumeMl: 5000 } },
+      { tick: 2701, type: 'fluid', payload: { fluidId: 'balanced-crystalloid', volumeMl: Infinity } },
+    ]);
+    expect(result.outcome).toBe('not-met');
+    expect(result.finding).toContain('No crystalloid was given');
   });
 });

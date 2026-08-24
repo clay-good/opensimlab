@@ -305,7 +305,11 @@ export function objectiveFindings(
     'recognize-hemorrhage': 'vasodilation-versus-hypovolemia',
     'temporize-volume-loss': 'vasodilation-versus-hypovolemia',
     'avoid-full-dose-induction': 'hysteresis-and-effect-site-lag',
+    'dose-for-the-patient': 'hysteresis-and-effect-site-lag',
     'read-the-mechanism': 'vasodilation-versus-hypovolemia',
+    'limit-attempts': 'airway-assessment-predicts-poorly',
+    'read-the-capnogram': 'capnogram-morphology',
+    'deepen-before-reaching-for-anything-else': 'hysteresis-and-effect-site-lag',
     'preoxygenate-before-induction': 'preoxygenation-and-safe-apnea-time',
     'wait-for-intubating-block': 'train-of-four-and-residual-blockade',
     'protect-the-apnea-margin': 'preoxygenation-and-safe-apnea-time',
@@ -339,6 +343,10 @@ export function objectiveFindings(
     'support-last-airway-and-seizure': 'capnogram-morphology',
     'start-last-lipid': 'vasodilation-versus-hypovolemia',
     'use-reduced-last-epinephrine': 'vasodilation-versus-hypovolemia',
+    'resume-arrest-compressions': 'vasodilation-versus-hypovolemia',
+    'give-arrest-epinephrine': 'vasodilation-versus-hypovolemia',
+    'defibrillate-persistent-vf': 'capnogram-morphology',
+    'avoid-shocking-nonshockable-rhythm': 'capnogram-morphology',
   };
 
   return scenario.metadata.objectives.map((objective) => {
@@ -805,7 +813,7 @@ export function objectiveFindings(
       if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) {
         return { ...base, outcome: 'not-exercised', finding: 'The session ended before rapid blood loss began.' } satisfies ObjectiveFinding;
       }
-      const first = actions.find((action) => action.type === 'fluid' && action.tick >= onset);
+      const first = log.find((entry) => entry.eventId.startsWith('fluid-') && entry.tick >= onset);
       const delaySeconds = first ? (first.tick - onset) / TICKS_PER_SECOND : null;
       const outcome = delaySeconds === null ? 'not-met' : delaySeconds <= 60 ? 'met' : 'partly-met';
       const finding = delaySeconds === null
@@ -818,9 +826,9 @@ export function objectiveFindings(
     if (objective.id === 'temporize-volume-loss' || objective.id === 'read-the-mechanism') {
       const controlTick = scenario.timeline.find((event) => event.id === 'hemorrhage-controlled')?.atTick
         ?? Infinity;
-      const fluidMl = actions
-        .filter((action) => action.type === 'fluid' && action.tick <= controlTick)
-        .reduce((sum, action) => sum + Number(action.payload.volumeMl ?? 0), 0);
+      const fluidMl = log
+        .filter((entry) => entry.eventId.startsWith('fluid-') && entry.tick <= controlTick)
+        .reduce((sum, entry) => sum + Number(entry.data?.volumeMl ?? 0), 0);
       const targetMl = objective.id === 'temporize-volume-loss' ? 1000 : 250;
       return {
         ...base,
@@ -848,6 +856,94 @@ export function objectiveFindings(
         outcome: perKg <= 0.75 ? 'met' : perKg <= 1.25 ? 'partly-met' : 'not-met',
         finding: `The first propofol dose was ${perKg.toFixed(2)} mg/kg.`,
         atTick: first.tick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'dose-for-the-patient') {
+      const first = log.find((entry) => entry.eventId.startsWith('bolus-propofol-'));
+      if (!first) {
+        return { ...base, outcome: 'not-exercised', finding: 'No accepted propofol induction dose was recorded.' } satisfies ObjectiveFinding;
+      }
+      const perKg = Number(first.data?.mass ?? 0) / scenario.patient.weightKg;
+      const doseMet = perKg <= 1.5;
+      return {
+        ...base,
+        outcome: doseMet && stackingCount === 0 ? 'met'
+          : doseMet || stackingCount === 0 ? 'partly-met' : 'not-met',
+        finding: `The first accepted propofol dose was ${perKg.toFixed(2)} mg/kg. `
+          + (stackingCount === 0
+            ? 'No later bolus was given while the effect site was still rising.'
+            : `${stackingCount} later bolus${stackingCount === 1 ? ' was' : 'es were'} given while the effect site was still rising.`),
+        atTick: first.tick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'limit-attempts') {
+      const starts = log.filter((entry) => entry.eventId.startsWith('laryngoscopy-start-'));
+      if (starts.length === 0) {
+        return { ...base, outcome: 'not-exercised', finding: 'No accepted laryngoscopy attempt was recorded.' } satisfies ObjectiveFinding;
+      }
+      const direct = starts.filter((entry) => entry.data?.technique === 'direct');
+      const completed = log.filter((entry) => /^laryngoscopy-\d+$/.test(entry.eventId));
+      const intubated = completed.some((entry) => entry.data?.intubated === true);
+      const changedPlan = intubated
+        || starts.some((entry) => entry.data?.technique === 'video')
+        || log.some((entry) => entry.eventId.startsWith('ventilator-')
+          && entry.tick > (direct.at(-1)?.tick ?? Infinity));
+      return {
+        ...base,
+        outcome: direct.length <= 2 && changedPlan ? 'met'
+          : direct.length <= 2 ? 'partly-met' : 'not-met',
+        finding: `${direct.length} accepted direct-laryngoscopy attempt${direct.length === 1 ? ' was' : 's were'} recorded. `
+          + (changedPlan
+            ? 'The record then shows a secured airway, a change of technique, or a return to assisted ventilation.'
+            : 'No accepted change of technique or return to assisted ventilation followed.'),
+        atTick: starts.at(-1)?.tick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'read-the-capnogram'
+      || objective.id === 'deepen-before-reaching-for-anything-else') {
+      const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;
+      if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) {
+        return { ...base, outcome: 'not-exercised', finding: 'The session ended before bronchospasm began.' } satisfies ObjectiveFinding;
+      }
+      const windowEnd = onset + 120 * TICKS_PER_SECOND;
+      const acceptedBolus = log.find((entry) => entry.eventId.startsWith('bolus-propofol-')
+        && entry.tick >= onset && entry.tick <= windowEnd);
+      const acceptedVentilatorChange = log.find((entry) => entry.eventId.startsWith('ventilator-')
+        && entry.tick >= onset && entry.tick <= windowEnd);
+
+      if (objective.id === 'read-the-capnogram') {
+        const response = acceptedBolus ?? acceptedVentilatorChange;
+        const sample = response
+          ? history.filter((entry) => entry.tick <= response.tick).at(-1)
+          : undefined;
+        const etco2 = sample?.state.etco2MmHg;
+        return {
+          ...base,
+          outcome: response && etco2 !== undefined && etco2 < 55 ? 'met'
+            : response ? 'partly-met' : 'not-met',
+          finding: response
+            ? `The first accepted response was recorded ${((response.tick - onset) / TICKS_PER_SECOND).toFixed(0)} seconds after obstruction began, while end-tidal carbon dioxide was ${Number(etco2 ?? 0).toFixed(0)} mmHg. That timing is a behavioral proxy; it cannot prove whether the waveform, reservoir bag, or number prompted the action.`
+            : 'No accepted propofol or ventilator response was recorded in the first two minutes after obstruction began.',
+          atTick: response?.tick ?? onset,
+        } satisfies ObjectiveFinding;
+      }
+
+      const onsetDepth = history.filter((entry) => entry.tick <= onset).at(-1)?.state.depthIndex;
+      const reachedSurgicalRange = history.find((entry) => entry.tick >= onset
+        && entry.tick <= windowEnd && Number(entry.state.depthIndex ?? Infinity) <= 60);
+      const promptBolus = acceptedBolus !== undefined;
+      return {
+        ...base,
+        outcome: promptBolus || reachedSurgicalRange ? 'met' : 'not-met',
+        finding: promptBolus
+          ? `An accepted propofol bolus was recorded ${((acceptedBolus.tick - onset) / TICKS_PER_SECOND).toFixed(0)} seconds after obstruction began.`
+          : reachedSurgicalRange
+            ? `Predicted depth was already ${Number(onsetDepth ?? reachedSurgicalRange.state.depthIndex).toFixed(0)} at onset and remained at or below 60 in the first two minutes.`
+            : 'No accepted propofol bolus was recorded and predicted depth did not reach 60 or below in the first two minutes.',
+        atTick: acceptedBolus?.tick ?? reachedSurgicalRange?.tick ?? onset,
       } satisfies ObjectiveFinding;
     }
 
