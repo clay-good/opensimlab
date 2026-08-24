@@ -249,6 +249,11 @@ Architecture tests keep tutor rules outside engine and session mutation paths. T
 also rejects any reporting code that reads browser storage, transcripts, reflections, or progress;
 reporting must receive an explicit bounded projection when it is implemented.
 
+The product boundary is executable too: CI rejects standalone calculator, score, classification,
+conversion, lookup, checklist-answer, documentation-generator, diagnosis, treatment-recommendation,
+real-patient input, public compute API, package API, and MCP surfaces. Calculations remain permitted
+inside a fictional scenario only when they drive or explain the simulated patient.
+
 ## Status: alpha, and not yet clinically reviewed
 
 This is worth stating plainly, because everything above describes what the project is *for* and

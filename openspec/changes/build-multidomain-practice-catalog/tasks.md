@@ -14,7 +14,7 @@ credited toward the catalog until every item in the completion contract passes.
   scenarios against it without changing their behavior.
 - [x] Publish machine-readable training-value, authored-defaults, scenario-hazard, and state-space
   verification schemas; require all four before a scenario counts as playable.
-- [ ] Add architecture tests rejecting standalone calculators, scores, classifications,
+- [x] Add architecture tests rejecting standalone calculators, scores, classifications,
   conversions, lookups, checklist answers, documentation generators, real-patient entry, and public
   compute endpoints while permitting calculations internal to fictional patient response.
 - [x] Add architecture tests proving that tutor rules cannot mutate patient state and reporting
