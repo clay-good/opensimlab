@@ -324,3 +324,24 @@ The evidence brief uses the Association of Anaesthetists 2021 monitoring guideli
 minimum capnometer specification. It does not model water traps, kinks, leaks, secretions, sample
 pumps, transport delay, dilution, calibration, analyzer faults, alarm timing, physical examination,
 technical troubleshooting, communication, or sedation technique.
+
+## Slice 22: dilutional-coagulopathy reassessment
+
+The nineteenth authored scenario starts during a neuraxial anesthetic after prior blood loss and
+crystalloid-heavy replacement. Two optional patient-baseline fields declare the current normalized
+factor concentration and fibrinogen concentration. Existing scenarios omit them and preserve the
+1.0 and 3.0 g/L defaults. The earlier resuscitation is stated as history rather than reconstructed
+with an implausibly rapid multi-liter scripted infusion.
+
+Modest blood loss remains active so the existing adult teaching controls are available. The learner
+uses a new diffuse-oozing cue to obtain the immediate PT-ratio/fibrinogen panel, confirms the bounded
+instantaneous product release, selects plasma only after the panel, and repeats the panel. The tray
+keeps the current result visible and changes its action label to “Repeat panel,” making reassessment
+the natural next step. The debrief reads only accepted engine events and compares the pre-plasma and
+post-plasma values.
+
+The evidence brief uses NICE NG24 for abnormal-result and reassessment context and the NHSBT poster
+for unit-volume context, while explicitly refusing to convert either into individualized dosing or
+a major-hemorrhage rule. Laboratory and product delay, compatibility, consumption, platelets,
+cryoprecipitate, reactions, source control, team performance, massive-transfusion protocols, and
+outcome remain outside the model.

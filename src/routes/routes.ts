@@ -219,3 +219,9 @@ export function indexableRoutes(): RouteMetadata[] {
 export function canonicalUrl(path: string): string {
   return `${SITE_ORIGIN}${path === '/' ? '/' : path.replace(/\/$/, '')}`;
 }
+
+/** Social preview generated for one route, shared by prerender and client navigation. */
+export function socialImageUrl(path: string): string {
+  const name = path === '/' ? 'index' : path.replace(/^\//, '').replace(/\//g, '-');
+  return `${SITE_ORIGIN}/og/${name}.svg`;
+}

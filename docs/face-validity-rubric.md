@@ -87,7 +87,8 @@ Reviewers run the routine induction themselves before answering.
 | B33b | Lower-airway obstruction and shark-fin capnogram improve directionally after accepted nebulized salbutamol, without implying diagnosis, circuit delivery, or an individualized response | | |
 | B34 | Quantitative recovery after depth-matched 2/4 mg/kg sugammadex, and neostigmine with an antimuscarinic only during minimal block | | |
 | B35 | Sampling-line obstruction removes only the displayed capnogram and end-tidal number while modeled ventilation, saturation, and plethysmography stay stable; reconnection restores the sample | | |
-| B36 | Overall: does this patient behave like a patient? | | |
+| B36 | In the dilutional-coagulopathy case, four fixed plasma units move PT ratio and fibrinogen in a plausible direction and magnitude, and a repeated panel displays the retained change | | |
+| B37 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -112,8 +113,10 @@ So that reviewers spend their attention on what this review is for:
   or device-specific alarm model, and its cross-check control does not assess physical examination.
 - Balanced crystalloid uses a fixed-retention teaching model. Adult packed red cells use fixed
   300 mL and 60 g hemoglobin units with a two-unit cap. A dilution-only factor/fibrinogen model,
-  immediate teaching panel, and fixed 275 mL plasma units are available only in the hemorrhage
-  case after an instantaneous confirmed blood-bank handoff. Compatibility, reactions, consumption,
+  immediate teaching panel, and fixed 275 mL plasma units are available only while modeled
+  hemorrhage is active after an instantaneous confirmed blood-bank handoff. The dedicated
+  dilutional-coagulopathy case begins from a declared prior-dilution state and requires repeat
+  testing after plasma. Compatibility, reactions, consumption,
   platelets, cryoprecipitate, viscoelastic testing,
   and a massive-transfusion protocol remain absent.
 - Most adult scenarios use propofol and remifentanil; the pediatric case stocks propofol only,

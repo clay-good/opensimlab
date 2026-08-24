@@ -5,7 +5,9 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { ROUTES, SITE_NAME, canonicalUrl, formatTitle, indexableRoutes, routeFor } from '@routes/routes';
+import {
+  ROUTES, SITE_NAME, canonicalUrl, formatTitle, indexableRoutes, routeFor, socialImageUrl,
+} from '@routes/routes';
 import {
   learningResourceJsonLd, organizationJsonLd, softwareApplicationJsonLd, structuredDataFor, websiteJsonLd,
 } from '@platform/docs/structured-data';
@@ -52,6 +54,9 @@ describe('Requirement: Per-Route Metadata', () => {
     expect(canonicalUrl('/anesthesia')).toBe('https://opensimlab.com/anesthesia');
     // A trailing slash resolves to the same canonical.
     expect(canonicalUrl('/anesthesia/')).toBe(canonicalUrl('/anesthesia'));
+    expect(socialImageUrl('/')).toBe('https://opensimlab.com/og/index.svg');
+    expect(socialImageUrl('/anesthesia/scenario/dilutional-coagulopathy'))
+      .toBe('https://opensimlab.com/og/anesthesia-scenario-dilutional-coagulopathy.svg');
   });
 
   it('Scenario: Scenario briefing pages are indexable, sessions are not', () => {
@@ -427,7 +432,7 @@ describe('Requirement: The About Page Describes The Build That Ships', () => {
   const prose = [...inside.paragraphs, ...(inside.list ?? [])].join(' ');
 
   const NUMBER_WORDS: Record<number, string> = {
-    1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five', 6: 'six', 7: 'seven', 8: 'eight', 9: 'nine', 10: 'ten', 11: 'eleven', 12: 'twelve', 13: 'thirteen', 14: 'fourteen', 15: 'fifteen', 16: 'sixteen', 17: 'seventeen', 18: 'eighteen',
+    1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five', 6: 'six', 7: 'seven', 8: 'eight', 9: 'nine', 10: 'ten', 11: 'eleven', 12: 'twelve', 13: 'thirteen', 14: 'fourteen', 15: 'fifteen', 16: 'sixteen', 17: 'seventeen', 18: 'eighteen', 19: 'nineteen',
   };
 
   it('Scenario: the scenario count it claims is the number that ships', () => {

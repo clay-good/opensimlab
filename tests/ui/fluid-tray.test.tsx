@@ -59,6 +59,8 @@ describe('Requirement: The fluids tray performs a real learner action', () => {
       jawThrustCpapSecondsRemaining: 0,
       airwayDevice: 'facemask' as const, supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null,
       muscleRigidityFraction: 0,
+      prothrombinTimeRatio: 1.67,
+      fibrinogenGPerL: 1.8,
       onBolus: () => {},
       onInfusion: () => {},
       onHypnoticLine: () => {},
@@ -100,6 +102,9 @@ describe('Requirement: The fluids tray performs a real learner action', () => {
     expect(onCoagulationLabs).toHaveBeenCalledOnce();
     act(() => root.render(renderCockpit(true, true, true)));
     expect(container.textContent).toContain('Products released');
+    expect(container.textContent).toContain('PT ratio 1.67 × normal');
+    expect(container.textContent).toContain('fibrinogen 1.8 g/L');
+    expect(button('Repeat panel')).toBeDefined();
     expect(container.textContent).toContain('Packed red blood cells');
     act(() => button('1000 mL')!.click());
     expect(onFluid).not.toHaveBeenCalled();

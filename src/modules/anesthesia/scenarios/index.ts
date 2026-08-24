@@ -27,6 +27,7 @@ import { HIGH_SPINAL_AFTER_EPIDURAL_TOP_UP } from './high-spinal-after-epidural-
 import { VENOUS_AIR_EMBOLISM_DURING_LINE_REMOVAL } from './venous-air-embolism-during-line-removal';
 import { REPEATED_LARYNGOSCOPY_HARM } from './repeated-laryngoscopy-harm';
 import { CAPNOGRAPHY_SAMPLING_LINE_OBSTRUCTION } from './capnography-sampling-line-obstruction';
+import { DILUTIONAL_COAGULOPATHY } from './dilutional-coagulopathy';
 
 export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_INDUCTION,
@@ -47,6 +48,7 @@ export const SCENARIOS: readonly Scenario[] = [
   VENOUS_AIR_EMBOLISM_DURING_LINE_REMOVAL,
   REPEATED_LARYNGOSCOPY_HARM,
   CAPNOGRAPHY_SAMPLING_LINE_OBSTRUCTION,
+  DILUTIONAL_COAGULOPATHY,
 ];
 
 /** The scenario a learner meets first. */

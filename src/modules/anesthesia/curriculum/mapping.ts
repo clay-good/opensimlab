@@ -298,6 +298,35 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     objectiveIds: ['recognize-hemorrhage', 'temporize-volume-loss', 'manage-hypotension'],
   },
 
+  // --- Dilutional coagulopathy -------------------------------------------
+  {
+    scenarioId: 'dilutional-coagulopathy',
+    frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: [
+      'identify-dilutional-coagulopathy', 'give-lab-guided-plasma',
+      'reassess-coagulation-response',
+    ],
+  },
+  {
+    scenarioId: 'dilutional-coagulopathy',
+    frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: [
+      'identify-dilutional-coagulopathy', 'give-lab-guided-plasma',
+      'reassess-coagulation-response',
+    ],
+  },
+  {
+    scenarioId: 'dilutional-coagulopathy',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-crisis-management',
+    objectiveIds: [
+      'identify-dilutional-coagulopathy', 'give-lab-guided-plasma',
+      'reassess-coagulation-response',
+    ],
+  },
+
   // --- Rapid-sequence induction ------------------------------------------
   {
     scenarioId: 'rapid-sequence-induction',

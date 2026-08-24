@@ -38,7 +38,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.22';
+export const ENGINE_VERSION = '0.1.0-alpha.23';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -316,6 +316,8 @@ export class AnesthesiaEngine {
       airway: { difficulty: p.airway.difficulty, difficultMaskVentilation: p.airway.difficultMaskVentilation },
       coreTemperatureC: p.baseline.coreTemperatureC,
       ageYears: p.ageYears,
+      initialCoagulationFactorFraction: p.baseline.coagulationFactorFraction,
+      initialFibrinogenGPerL: p.baseline.fibrinogenGPerL,
     };
     this.patient = new VirtualPatient(profile, this.rng.fork('patient'), options.scenario.equipment.ventilator.fio2);
     this.waveforms = new WaveformEngine({ seed: options.seed, tickSeconds: 0.1 });

@@ -50,6 +50,10 @@ export interface PatientBaseline {
   readonly arterialStiffness: number;
   readonly baroreflexGain: number;
   readonly fixedStrokeVolume: boolean;
+  /** Optional normalized starting factor concentration; 1 is the usual default. */
+  readonly coagulationFactorFraction?: number;
+  /** Optional starting fibrinogen concentration; 3 g/L is the usual default. */
+  readonly fibrinogenGPerL?: number;
 }
 
 export interface ScenarioPatient {

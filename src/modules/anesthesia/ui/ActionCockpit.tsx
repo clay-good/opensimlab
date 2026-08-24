@@ -117,6 +117,8 @@ export interface ActionCockpitProps {
   readonly bronchospasmSeverity?: number;
   readonly trainOfFourRatio?: number;
   readonly trainOfFourCount?: number;
+  readonly prothrombinTimeRatio?: number;
+  readonly fibrinogenGPerL?: number;
   readonly onBolus: (drugId: string, amount: number, unit: string) => void;
   readonly onInfusion: (drugId: string, rate: number, unit: string) => void;
   readonly onHypnoticLine: (action: 'inspect' | 'reconnect') => void;
@@ -212,7 +214,7 @@ const CRISIS_TRAY = { id: 'crisis', label: 'Crisis response' } as const;
  */
 export const NOT_IN_THIS_BUILD =
   'Packed red cells use a bounded adult-only 300 mL and 60 g hemoglobin per-unit teaching model. '
-  + 'The hemorrhage case uses a confirmed instantaneous blood-bank handoff, then offers an immediate PT-ratio/fibrinogen teaching panel and fixed-unit plasma response. '
+  + 'The hemorrhage scenarios use a confirmed instantaneous blood-bank handoff, then offer an immediate PT-ratio/fibrinogen teaching panel and fixed-unit plasma response. '
   + 'Compatibility, reactions, infusion rate, platelets, cryoprecipitate, viscoelastic testing, consumption, and a massive-transfusion protocol are not modeled. '
   + 'Crystalloid uses a fixed 25% intravascular retention teaching model. '
   + 'Cardiac-arrest resuscitation actions — compressions, arrest-dose epinephrine, and defibrillation — '
@@ -296,6 +298,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             ageYears={props.scenario.patient.ageYears}
             hemorrhageAvailable={props.resuscitation.hemorrhageActive ?? false}
             coagulationPanelReported={props.resuscitation.coagulationPanelReported ?? false}
+            prothrombinTimeRatio={props.prothrombinTimeRatio}
+            fibrinogenGPerL={props.fibrinogenGPerL}
             bloodProductsReleased={props.resuscitation.bloodProductsReleased ?? false}
             onFluid={props.onFluid}
             onBloodProduct={props.onBloodProduct ?? (() => {})}
@@ -622,6 +626,7 @@ function CardiacArrestTray({
 function FluidTray({
   crystalloidTotalMl, packedRedBloodCellUnits, freshFrozenPlasmaUnits, bloodProductTotalMl,
   ageYears, hemorrhageAvailable, coagulationPanelReported, bloodProductsReleased,
+  prothrombinTimeRatio, fibrinogenGPerL,
   onFluid, onBloodProduct, onBloodBankRequest, onCoagulationLabs,
 }: {
   crystalloidTotalMl: number;
@@ -632,6 +637,8 @@ function FluidTray({
   hemorrhageAvailable: boolean;
   coagulationPanelReported: boolean;
   bloodProductsReleased: boolean;
+  prothrombinTimeRatio?: number;
+  fibrinogenGPerL?: number;
   onFluid: (fluidId: string, volumeMl: number) => void;
   onBloodProduct: (productId: string, units: number) => void;
   onBloodBankRequest: () => void;
@@ -715,6 +722,20 @@ function FluidTray({
           ))}
         </section>
       )}
+      {hemorrhageAvailable && !pediatric && (
+        <section className="syringe">
+          <div className="syringe__name">Coagulation panel</div>
+          <p className="field__hint">Reports immediate PT-ratio and fibrinogen teaching values. Repeat after treatment to reassess.</p>
+          <p className="syringe__remaining" role="status">
+            {coagulationPanelReported
+              ? `Current result: PT ratio ${(prothrombinTimeRatio ?? 1).toFixed(2)} × normal · fibrinogen ${(fibrinogenGPerL ?? 3).toFixed(1)} g/L`
+              : 'No result requested'}
+          </p>
+          <Button compact onClick={onCoagulationLabs}>
+            {coagulationPanelReported ? 'Repeat panel' : 'Request panel'}
+          </Button>
+        </section>
+      )}
       {BLOOD_PRODUCTS.filter((product) => hemorrhageAvailable && bloodProductsReleased
         && (product.kind === 'red-cells' || coagulationPanelReported)).map((product) => (
         <section className="syringe" key={product.id}>
@@ -769,13 +790,6 @@ function FluidTray({
           )}
         </section>
       ))}
-      {hemorrhageAvailable && !pediatric && (
-        <section className="syringe">
-          <div className="syringe__name">Coagulation panel</div>
-          <p className="field__hint">Reports the current PT ratio and fibrinogen teaching values in the event log.</p>
-          <Button compact onClick={onCoagulationLabs}>Request panel</Button>
-        </section>
-      )}
     </div>
   );
 }

@@ -4,7 +4,8 @@
  * The patient begins compensated, then loses volume rapidly when the abdomen is
  * opened. Balanced crystalloid can temporarily improve circulating volume, and
  * a bounded adult packed-red-cell action can restore volume and hemoglobin mass.
- * Compatibility, coagulation, laboratory guidance, and a massive-transfusion
+ * A bounded instantaneous release, coagulation panel, and plasma response are
+ * available but not scored here. Compatibility and a massive-transfusion
  * protocol remain outside this case.
  */
 

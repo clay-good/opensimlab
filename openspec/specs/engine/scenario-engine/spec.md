@@ -185,6 +185,18 @@ The initial release SHALL ship at least twelve complete, openly licensed scenari
 - **AND** accepted treatment reduces modeled obstruction on a deterministic teaching trajectory
   without claiming diagnosis, circuit delivery, advanced-drug management, or individual outcome
 
+#### Scenario: Dilutional coagulopathy has a bounded reassessment pathway
+
+- **WHEN** the dilutional-coagulopathy scenario reports diffuse oozing during modest ongoing blood loss
+- **THEN** its declared starting PT ratio and fibrinogen represent prior dilution without replaying or
+  inventing the earlier fluid sequence; **AND** the learner can request an immediate bounded panel,
+  confirm the instantaneous teaching release, select a listed whole-unit plasma response only after
+  the panel, and repeat the panel after treatment
+- **AND** accepted events, rather than requested interface actions, score recognition, lab-guided
+  plasma, and reassessment; **AND** the briefing excludes laboratory and product delay, compatibility,
+  consumption, platelets, cryoprecipitate, reactions, source control, team performance, a
+  massive-transfusion protocol, and individual outcome
+
 #### Scenario: Rare events are chosen because they are rare
 
 - **WHEN** the rationale for the crisis scenarios is reviewed

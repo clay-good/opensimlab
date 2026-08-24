@@ -11,7 +11,9 @@ import { Landing } from '@landing/Landing';
 import { About } from '@landing/About';
 import { PlannedModuleRoute } from './PlannedModuleRoute';
 import { MODULES } from '@platform/modules/registry';
-import { formatTitle, routeFor } from './routes';
+import {
+  canonicalUrl, formatTitle, routeFor, socialImageUrl, type RouteMetadata,
+} from './routes';
 import { SiteBar } from '@platform/ui';
 import { UpdateNotice } from '@platform/offline/UpdateNotice';
 import { ErrorBoundary } from '@platform/ui/ErrorBoundary';
@@ -47,6 +49,53 @@ function usePath(): string {
   return path.replace(/\/+$/, '') || '/';
 }
 
+function setHeadAttribute(
+  selector: string,
+  tagName: 'link' | 'meta',
+  attribute: 'content' | 'href',
+  value: string,
+  identifyingAttributes: Readonly<Record<string, string>>,
+) {
+  let element = document.head.querySelector(selector);
+  if (!element) {
+    element = document.createElement(tagName);
+    for (const [name, identifyingValue] of Object.entries(identifyingAttributes)) {
+      element.setAttribute(name, identifyingValue);
+    }
+    document.head.append(element);
+  }
+  element.setAttribute(attribute, value);
+}
+
+/** Keep client-side navigation as truthful as the route's prerendered head. */
+export function updateDocumentMetadata(metadata: RouteMetadata) {
+  const canonical = canonicalUrl(metadata.path);
+  const image = socialImageUrl(metadata.path);
+  document.title = metadata.title;
+  setHeadAttribute('meta[name="description"]', 'meta', 'content', metadata.description, { name: 'description' });
+  setHeadAttribute('link[rel="canonical"]', 'link', 'href', canonical, { rel: 'canonical' });
+  setHeadAttribute('link[rel="alternate"][hreflang="en"]', 'link', 'href', canonical, {
+    rel: 'alternate', hreflang: 'en',
+  });
+  setHeadAttribute('link[rel="alternate"][hreflang="x-default"]', 'link', 'href', canonical, {
+    rel: 'alternate', hreflang: 'x-default',
+  });
+  const openGraph: readonly (readonly [string, string])[] = [
+    ['og:title', metadata.title], ['og:description', metadata.description],
+    ['og:url', canonical], ['og:image', image],
+  ];
+  for (const [property, value] of openGraph) {
+    setHeadAttribute(`meta[property="${property}"]`, 'meta', 'content', value, { property });
+  }
+  const twitter: readonly (readonly [string, string])[] = [
+    ['twitter:title', metadata.title], ['twitter:description', metadata.description],
+    ['twitter:image', image],
+  ];
+  for (const [name, value] of twitter) {
+    setHeadAttribute(`meta[name="${name}"]`, 'meta', 'content', value, { name });
+  }
+}
+
 /**
  * The shell. The update offer rides above the router rather than inside each
  * branch, because a learner may be anywhere when a new build lands.
@@ -73,12 +122,14 @@ function CurrentRoute() {
     // there is no such scenario is a small lie, and this site's whole argument
     // is that it does not tell those. The strings match the prerendered 404.
     const metadata = routeFor(path) ?? {
+      path: '/404',
       title: formatTitle('Page not found'),
       description: 'That address does not match a page on Open Sim Lab.',
+      indexable: false,
+      structuredData: [],
+      heading: 'Nothing here',
     };
-    document.title = metadata.title;
-    const description = document.querySelector('meta[name="description"]');
-    if (description) description.setAttribute('content', metadata.description);
+    updateDocumentMetadata(metadata);
   }, [path]);
 
   if (path === '/') return <Landing />;

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 18,
+  "scenarioCount": 19,
   "playableScenarioCount": 0,
   "scenarios": [
     {
@@ -647,6 +647,42 @@
           "status": "missing",
           "evidence": [
             "No version-bound state-space-verification record exists for capnography-sampling-line-obstruction 0.1.0."
+          ]
+        }
+      ],
+      "playable": false
+    },
+    {
+      "scenarioId": "dilutional-coagulopathy",
+      "contentVersion": "0.1.0",
+      "completionComplete": false,
+      "qualityRecords": [
+        {
+          "kind": "training-value",
+          "status": "missing",
+          "evidence": [
+            "No version-bound training-value record exists for dilutional-coagulopathy 0.1.0."
+          ]
+        },
+        {
+          "kind": "authored-defaults",
+          "status": "missing",
+          "evidence": [
+            "No version-bound authored-defaults record exists for dilutional-coagulopathy 0.1.0."
+          ]
+        },
+        {
+          "kind": "scenario-hazard",
+          "status": "missing",
+          "evidence": [
+            "No version-bound scenario-hazard record exists for dilutional-coagulopathy 0.1.0."
+          ]
+        },
+        {
+          "kind": "state-space-verification",
+          "status": "missing",
+          "evidence": [
+            "No version-bound state-space-verification record exists for dilutional-coagulopathy 0.1.0."
           ]
         }
       ],

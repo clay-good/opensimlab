@@ -519,20 +519,28 @@ export const LIMITATIONS: readonly Limitation[] = [
     simplification: 'An adult action adds exactly 300 mL and 60 g hemoglobin per unit on the next '
       + '100 ms tick, with a two-unit cumulative cap. Product variation, delivery time, storage, '
       + 'warming, compatibility, crossmatch, reactions, calcium, and electrolytes are absent. '
-      + 'The control is stocked only while modeled hemorrhage is active. The hemorrhage case models '
+      + 'The control is stocked only while modeled hemorrhage is active. The hemorrhage scenarios model '
       + 'fixed-unit plasma separately; packed red cells themselves do not restore clotting factors.',
     whereItMisleads: 'Choosing, preparing, checking, timing, monitoring, or responding to a real transfusion.',
     correctUnderstanding: 'Real packed-red-cell components vary, require compatibility and bedside '
       + 'checks, are administered over time, and can cause serious reactions including TACO and TRALI.',
-    briefIn: ['unexpected-intraoperative-hemorrhage'],
+    briefIn: ['unexpected-intraoperative-hemorrhage', 'dilutional-coagulopathy'],
   },
   {
     id: 'bounded-dilutional-coagulopathy',
     headline: 'Coagulation is a dilution-only teaching model, not a bleeding or massive-transfusion prediction.',
-    simplification: 'Normal factor and fibrinogen mass are removed proportionally with blood and plasma leak, diluted by retained crystalloid and red-cell volume, and restored toward baseline by fixed 275 mL plasma units. PT ratio is the inverse normalized factor concentration; fibrinogen starts at 3 g/L. Results and plasma effects are instantaneous.',
+    simplification: 'Normal factor and fibrinogen mass are removed proportionally with blood and plasma leak, diluted by retained crystalloid and red-cell volume, and restored toward baseline by fixed 275 mL plasma units. PT ratio is the inverse normalized factor concentration; scenarios default to normal factor concentration and 3 g/L fibrinogen but may declare a bounded starting dilution state. Results and plasma effects are instantaneous.',
     whereItMisleads: 'Consumptive coagulopathy, hyperfibrinolysis, obstetric or trauma-specific targets, anticoagulants, liver disease, hypothermia, acidosis, viscoelastic testing, and protocolized massive transfusion.',
     correctUnderstanding: 'Real major hemorrhage requires source control, repeated laboratory or viscoelastic assessment, local protocol activation, and targeted blood-component support. Plasma dosing and response vary and can cause serious harm.',
-    briefIn: ['unexpected-intraoperative-hemorrhage'],
+    briefIn: ['unexpected-intraoperative-hemorrhage', 'dilutional-coagulopathy'],
+  },
+  {
+    id: 'plasma-panel-is-instantaneous',
+    headline: 'The coagulation panel and plasma response are instantaneous teaching events.',
+    simplification: 'PT ratio and fibrinogen are available immediately, and an accepted whole-unit plasma action changes both on the next 100 ms tick. Sampling, transport, processing, issue, infusion time, and biologic response delay are absent.',
+    whereItMisleads: 'Predicting when a real result or component will be available, how quickly it can be administered, or the response of an individual patient.',
+    correctUnderstanding: 'Real hemorrhage care uses local protocols, repeated clinical assessment, laboratory or viscoelastic testing, product checks, controlled administration, and monitoring for effect and harm.',
+    briefIn: ['dilutional-coagulopathy'],
   },
   {
     id: 'blood-bank-handoff-is-instantaneous',
@@ -540,7 +548,7 @@ export const LIMITATIONS: readonly Limitation[] = [
     simplification: 'One confirmed request immediately releases the bounded adult products while active hemorrhage continues. There is no specimen, patient or unit ABO/RhD type, antibody screen, crossmatch, inventory, delay, emergency-release authorization, bedside check, or issue record.',
     whereItMisleads: 'Choosing a component, estimating availability, bypassing testing, documenting emergency release, or checking a real unit and recipient.',
     correctUnderstanding: 'Real transfusion services identify the recipient, test and select compatible components under local procedures, document any emergency release, and complete bedside identification checks. Urgency changes the authorized workflow; it does not make compatibility irrelevant.',
-    briefIn: ['unexpected-intraoperative-hemorrhage'],
+    briefIn: ['unexpected-intraoperative-hemorrhage', 'dilutional-coagulopathy'],
   },
   {
     id: 'no-coagulopathy',

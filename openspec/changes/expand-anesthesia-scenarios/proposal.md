@@ -118,6 +118,9 @@ response, stopping before dysrhythmia treatment or cardiac arrest.
 - Add an eighteenth scenario that isolates a capnography sampling-line obstruction during stable
   spontaneous ventilation, requires an independent cross-check before confirmed reconnection, and
   never changes canonical respiratory physiology to create the display fault.
+- Add a nineteenth scenario that begins from a declared prior-dilution state during ongoing bleeding,
+  then requires an accepted coagulation panel, bounded lab-guided plasma, and repeat testing without
+  claiming a compatibility or massive-transfusion workflow.
 
 ## Impact
 
@@ -144,3 +147,6 @@ delivery, pre-attempt escalation evidence, and a debrief centered on the cost of
 The twenty-first adds the eighteenth authored scenario and a distinct signal-versus-patient lesson:
 sampled carbon dioxide disappears while canonical ventilation stays stable, with accepted cross-check
 and reconnection evidence but no claim of physical examination or device troubleshooting skill.
+The twenty-second adds the nineteenth authored scenario and turns the existing bounded coagulation
+capability into a distinct assessment-treatment-reassessment lesson without replaying an invented
+earlier resuscitation sequence or overstating the instantaneous blood-product controls.

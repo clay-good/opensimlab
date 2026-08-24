@@ -111,6 +111,9 @@ export function stateSummary(
       readonly bronchodilatorEffectFraction?: number;
       readonly crystalloidTotalMl: number;
       readonly packedRedBloodCellUnits?: number;
+      readonly freshFrozenPlasmaUnits?: number;
+      readonly coagulationPanelReported?: boolean;
+      readonly bloodProductsReleased?: boolean;
       readonly bloodProductTotalMl?: number;
       readonly dantroleneTotalMg?: number;
       readonly dantroleneEffectFraction?: number;
@@ -208,6 +211,15 @@ export function stateSummary(
   }
   if (options.resuscitation && (options.resuscitation.packedRedBloodCellUnits ?? 0) > 0) {
     lines.push(`Accepted packed red cells: ${options.resuscitation.packedRedBloodCellUnits} units, ${(options.resuscitation.bloodProductTotalMl ?? 0).toFixed(0)} millilitres in the bounded teaching model.`);
+  }
+  if (options.resuscitation?.bloodProductsReleased) {
+    lines.push('The bounded blood-product release has been accepted.');
+  }
+  if (options.resuscitation?.coagulationPanelReported) {
+    lines.push(`Current coagulation teaching panel: prothrombin time ratio ${state.prothrombinTimeRatio.toFixed(2)} times normal; fibrinogen ${state.fibrinogenGPerL.toFixed(1)} grams per litre.`);
+  }
+  if ((options.resuscitation?.freshFrozenPlasmaUnits ?? 0) > 0) {
+    lines.push(`Accepted fresh frozen plasma: ${options.resuscitation?.freshFrozenPlasmaUnits} units in the bounded teaching model.`);
   }
   if (options.resuscitation && options.showHighSpinalSupport) {
     lines.push(`High-spinal teaching progression: ${Math.round((options.resuscitation.highSpinalFraction ?? 0) * 100)} percent.`);

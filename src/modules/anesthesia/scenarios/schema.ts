@@ -135,6 +135,8 @@ export const SCENARIO_SCHEMA: SchemaNode = {
             arterialStiffness: NUMBER_FIELD('1.0 is a compliant artery; higher is stiffer.', 0.6, 2.5),
             baroreflexGain: NUMBER_FIELD('1.0 is a healthy reflex.', 0, 1.5),
             fixedStrokeVolume: { type: 'boolean', description: 'True where stroke volume cannot rise, as in severe aortic stenosis.' },
+            coagulationFactorFraction: NUMBER_FIELD('Normalized starting clotting-factor concentration; 1 is normal.', 0.2, 1.5),
+            fibrinogenGPerL: NUMBER_FIELD('Starting fibrinogen concentration.', 0.2, 8),
           },
         },
         airway: {

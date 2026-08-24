@@ -578,6 +578,8 @@ export function Cockpit({
           bronchospasmSeverity={airway.bronchospasmSeverity}
           trainOfFourRatio={session.state?.trainOfFourRatio ?? 1}
           trainOfFourCount={session.state?.trainOfFourCount ?? 4}
+          prothrombinTimeRatio={session.state?.prothrombinTimeRatio}
+          fibrinogenGPerL={session.state?.fibrinogenGPerL}
           onBolus={(drugId, amount, unit) => session.act({ type: 'bolus', payload: { drugId, amount, unit } })}
           onInfusion={(drugId, rate, unit) => session.act({ type: 'infusion', payload: { drugId, rate, unit } })}
           onHypnoticLine={(action) => session.act({ type: 'hypnotic-line', payload: { action } })}

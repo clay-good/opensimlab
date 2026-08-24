@@ -315,3 +315,19 @@
   mappings, limitations, preparation-path coverage, catalog assets, and responsive inspection.
 - [ ] Add water traps, kinks, leaks, secretions, sample pumps, transport delay, dilution, calibration,
   analyzer failures, device-specific alarms, physical examination, or technical troubleshooting.
+
+## Slice 22: authored dilutional-coagulopathy reassessment
+
+- [x] Check in an evidence brief using current NICE NG24 and NHSBT plasma-dose context without
+  turning either source into an individualized or major-hemorrhage dosing rule.
+- [x] Add a nineteenth authored scenario with optional scenario-declared starting factor and
+  fibrinogen values while every existing scenario retains its prior defaults.
+- [x] Reuse the confirmed teaching release, immediate coagulation panel, fixed-unit plasma response,
+  and repeat panel as an ordered assessment-treatment-reassessment loop.
+- [x] Score the first abnormal panel, accepted lab-guided plasma, and post-treatment repeat panel
+  only from accepted engine events.
+- [x] Show the current result and repeat action in the keyboard-operable Fluids tray; add nonvisual
+  status, curriculum mappings, limitations, preparation-path coverage, catalog assets, and SEO.
+- [ ] Add the earlier resuscitation sequence, laboratory or product delay, compatibility, consumption,
+  platelets, cryoprecipitate, viscoelastic testing, reactions, source control, teams, a
+  massive-transfusion protocol, or individual outcome.

@@ -50,9 +50,9 @@ export const PREPARATION_PATHS: readonly PreparationPathDefinition[] = [
     supportedRoles: ['Medical student', 'Resident', 'Nurse anesthesia learner'], limitations: BROWSER_LIMIT,
   },
   {
-    id: 'shock-perfusion', version: '0.1.0', title: 'Shock and perfusion',
-    description: 'Compare vasodilation, blood loss, anaphylaxis, and neuraxial cardiovascular collapse.',
-    scenarioIds: ['hypotension-after-induction', 'unexpected-intraoperative-hemorrhage', 'perioperative-anaphylaxis-after-antibiotic', 'high-spinal-after-epidural-top-up'],
+    id: 'shock-perfusion', version: '0.2.0', title: 'Shock and perfusion',
+    description: 'Compare vasodilation, blood loss, dilutional coagulopathy, anaphylaxis, and neuraxial cardiovascular collapse.',
+    scenarioIds: ['hypotension-after-induction', 'unexpected-intraoperative-hemorrhage', 'dilutional-coagulopathy', 'perioperative-anaphylaxis-after-antibiotic', 'high-spinal-after-epidural-top-up'],
     prerequisites: ['Read heart rate and mean arterial pressure trends.'],
     targetCompetencies: ['Shock-pattern discrimination', 'Perfusion support', 'Response reassessment'],
     supportedRoles: ['Medical student', 'Resident', 'Nurse anesthesia learner'], limitations: BROWSER_LIMIT,

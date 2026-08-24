@@ -223,6 +223,31 @@ describe('Requirement: Screen Reader Access To Live Physiology', () => {
     expect(summary.toLowerCase()).not.toContain('anaphylaxis');
   });
 
+  it('reports the accepted product release, current panel, and plasma nonvisually', () => {
+    const patient = new VirtualPatient({
+      ...PROFILE,
+      initialCoagulationFactorFraction: 0.6,
+      initialFibrinogenGPerL: 1.8,
+    }, createRng(1));
+    const summary = stateSummary(patient.snapshot(), {
+      alarms: [], infusions: [],
+      ventilator: {
+        mode: 'manual', tidalVolumeMl: 500, respiratoryRateBpm: 12,
+        fio2: 0.21, delivering: false,
+      },
+      invalid: new Set(),
+      resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+        crystalloidTotalMl: 0, bloodProductsReleased: true,
+        coagulationPanelReported: true, freshFrozenPlasmaUnits: 4,
+      },
+    });
+    expect(summary).toContain('bounded blood-product release has been accepted');
+    expect(summary).toContain('prothrombin time ratio 1.67 times normal');
+    expect(summary).toContain('fibrinogen 1.8 grams per litre');
+    expect(summary).toContain('Accepted fresh frozen plasma: 4 units');
+  });
+
   it('announces high temperature and summarizes observable support without naming a diagnosis', () => {
     const patient = new VirtualPatient(PROFILE, createRng(1)).snapshot();
     const announcements = announcementsFor(

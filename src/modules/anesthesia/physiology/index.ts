@@ -50,6 +50,8 @@ export interface PatientProfile {
   readonly airway: AirwayAnatomy;
   readonly coreTemperatureC: number;
   readonly ageYears: number;
+  readonly initialCoagulationFactorFraction?: number;
+  readonly initialFibrinogenGPerL?: number;
 }
 
 /** What the pharmacology layer hands the physiology each tick. */
@@ -216,8 +218,10 @@ export class VirtualPatient {
     this.temperatureC = profile.coreTemperatureC;
     this.hemoglobinMassG = profile.hemodynamics.hemoglobinGPerDl
       * (profile.hemodynamics.bloodVolumeMl / 100);
-    this.coagulationFactorMass = profile.hemodynamics.bloodVolumeMl;
-    this.fibrinogenMassG = 3 * profile.hemodynamics.bloodVolumeMl / 1000;
+    this.coagulationFactorMass = (profile.initialCoagulationFactorFraction ?? 1)
+      * profile.hemodynamics.bloodVolumeMl;
+    this.fibrinogenMassG = (profile.initialFibrinogenGPerL ?? 3)
+      * profile.hemodynamics.bloodVolumeMl / 1000;
     this.hemodynamics = {
       heartRateBpm: profile.hemodynamics.baselineHeartRateBpm,
       strokeVolumeMl: profile.hemodynamics.baselineStrokeVolumeMl,

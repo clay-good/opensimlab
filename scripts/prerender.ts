@@ -14,7 +14,9 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { renderToString } from 'react-dom/server';
 import { createElement } from 'react';
-import { ROUTES, SITE_ORIGIN, canonicalUrl, formatTitle, indexableRoutes } from '../src/routes/routes.ts';
+import {
+  ROUTES, SITE_ORIGIN, canonicalUrl, formatTitle, indexableRoutes, socialImageUrl,
+} from '../src/routes/routes.ts';
 import { structuredDataFor } from '../src/platform/docs/structured-data.ts';
 import { PUBLIC_CATALOG_ARTIFACTS } from '../src/platform/catalog/public-artifacts.ts';
 import { PrerenderedBody } from '../src/routes/Prerendered.tsx';
@@ -41,7 +43,6 @@ const escape = (text: string): string =>
 
 function head(route: (typeof ROUTES)[number], styles: string): string {
   const canonical = canonicalUrl(route.path);
-  const ogName = route.path === '/' ? 'index' : route.path.replace(/^\//, '').replace(/\//g, '-');
   const jsonLd = structuredDataFor(route.structuredData, route.path);
   return [
     '<!doctype html>',
@@ -63,11 +64,11 @@ function head(route: (typeof ROUTES)[number], styles: string): string {
     `<meta property="og:title" content="${escape(route.title)}" />`,
     `<meta property="og:description" content="${escape(route.description)}" />`,
     `<meta property="og:url" content="${canonical}" />`,
-    `<meta property="og:image" content="${SITE_ORIGIN}/og/${ogName}.svg" />`,
+    `<meta property="og:image" content="${socialImageUrl(route.path)}" />`,
     '<meta name="twitter:card" content="summary_large_image" />',
     `<meta name="twitter:title" content="${escape(route.title)}" />`,
     `<meta name="twitter:description" content="${escape(route.description)}" />`,
-    `<meta name="twitter:image" content="${SITE_ORIGIN}/og/${ogName}.svg" />`,
+    `<meta name="twitter:image" content="${socialImageUrl(route.path)}" />`,
     ...jsonLd.map((entry) => `<script type="application/ld+json">${JSON.stringify(entry)}</script>`),
     styles,
     '</head>',

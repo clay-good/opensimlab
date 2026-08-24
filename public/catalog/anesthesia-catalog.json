@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 18,
+  "scenarioCount": 19,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -402,6 +402,27 @@
         "Restore the carbon-dioxide sample path and confirm that the waveform returns."
       ],
       "searchText": "capnography-sampling-line-obstruction capnography sampling-line obstruction distal radius fracture wrist fixation under brachial plexus block cross-check the patient and independent signals before treating a flat capnogram as apnea. an accepted ventilation cross-check was recorded within 30 seconds of sampling-line obstruction and before reconnection. preserve the stable respiratory trajectory while diagnosing the isolated monitor failure. before sample-path restoration, spontaneous respiratory rate stayed above zero, saturation stayed at least 94%, and no airway instrumentation or commanded-breath change was recorded. restore the carbon-dioxide sample path and confirm that the waveform returns. an accepted sample-line reconnection followed the cross-check within 60 seconds of obstruction."
+    },
+    {
+      "id": "dilutional-coagulopathy",
+      "path": "/anesthesia/scenario/dilutional-coagulopathy",
+      "title": "Dilutional coagulopathy during ongoing bleeding",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 6,
+      "difficulty": "advanced",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Use the new diffuse oozing to prompt coagulation assessment.",
+        "Use the abnormal panel, not volume loss alone, to guide the bounded plasma response.",
+        "Repeat the panel after plasma rather than assuming correction."
+      ],
+      "searchText": "dilutional-coagulopathy dilutional coagulopathy during ongoing bleeding periprosthetic femoral fracture revision hip arthroplasty under neuraxial anesthesia use the new diffuse oozing to prompt coagulation assessment. an accepted coagulation panel was obtained within 60 seconds of the diffuse-oozing cue and showed a pt ratio above 1.5. use the abnormal panel, not volume loss alone, to guide the bounded plasma response. four units of plasma were accepted after the abnormal panel while modeled bleeding remained active. repeat the panel after plasma rather than assuming correction. a second accepted panel within 60 seconds of plasma showed a lower pt ratio and higher fibrinogen concentration."
     }
   ],
   "preparationPathCount": 10,
@@ -489,12 +510,13 @@
     },
     {
       "id": "shock-perfusion",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Shock and perfusion",
-      "description": "Compare vasodilation, blood loss, anaphylaxis, and neuraxial cardiovascular collapse.",
+      "description": "Compare vasodilation, blood loss, dilutional coagulopathy, anaphylaxis, and neuraxial cardiovascular collapse.",
       "scenarioIds": [
         "hypotension-after-induction",
         "unexpected-intraoperative-hemorrhage",
+        "dilutional-coagulopathy",
         "perioperative-anaphylaxis-after-antibiotic",
         "high-spinal-after-epidural-top-up"
       ],
@@ -512,7 +534,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 37
+      "estimatedMinutes": 43
     },
     {
       "id": "rhythm-resuscitation",

@@ -406,6 +406,9 @@ export function objectiveFindings(
     'recognize-hemorrhage': 'vasodilation-versus-hypovolemia',
     'temporize-volume-loss': 'vasodilation-versus-hypovolemia',
     'avoid-full-dose-induction': 'hysteresis-and-effect-site-lag',
+    'identify-dilutional-coagulopathy': 'vasodilation-versus-hypovolemia',
+    'give-lab-guided-plasma': 'vasodilation-versus-hypovolemia',
+    'reassess-coagulation-response': 'vasodilation-versus-hypovolemia',
     'dose-for-the-patient': 'hysteresis-and-effect-site-lag',
     'read-the-mechanism': 'vasodilation-versus-hypovolemia',
     'limit-attempts': 'airway-assessment-predicts-poorly',
@@ -1255,6 +1258,79 @@ export function objectiveFindings(
         outcome: perKg <= 0.75 ? 'met' : perKg <= 1.25 ? 'partly-met' : 'not-met',
         finding: `The first propofol dose was ${perKg.toFixed(2)} mg/kg.`,
         atTick: first.tick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'identify-dilutional-coagulopathy') {
+      const onset = scenario.timeline.find((event) => event.id === 'diffuse-oozing')?.atTick;
+      if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) {
+        return { ...base, outcome: 'not-exercised', finding: 'The session ended before diffuse oozing was reported.' } satisfies ObjectiveFinding;
+      }
+      const panel = log.find((entry) => entry.tick >= onset
+        && entry.eventId.startsWith('coagulation-labs-'));
+      if (!panel) {
+        return { ...base, outcome: 'not-met', finding: 'No accepted coagulation panel followed the diffuse-oozing cue.' } satisfies ObjectiveFinding;
+      }
+      const delaySeconds = (panel.tick - onset) / TICKS_PER_SECOND;
+      const ratio = Number(panel.data?.prothrombinTimeRatio ?? 0);
+      const fibrinogen = Number(panel.data?.fibrinogenGPerL ?? 0);
+      const abnormal = ratio > 1.5;
+      return {
+        ...base,
+        outcome: abnormal && delaySeconds <= 60 ? 'met' : abnormal ? 'partly-met' : 'not-met',
+        finding: `The first accepted panel followed the cue by ${delaySeconds.toFixed(0)} seconds: `
+          + `PT ratio ${ratio.toFixed(2)} × normal and fibrinogen ${fibrinogen.toFixed(1)} g/L.`,
+        atTick: panel.tick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'give-lab-guided-plasma') {
+      const abnormalPanel = log.find((entry) => entry.eventId.startsWith('coagulation-labs-')
+        && Number(entry.data?.prothrombinTimeRatio ?? 0) > 1.5);
+      const plasma = abnormalPanel && log.find((entry) => entry.tick >= abnormalPanel.tick
+        && entry.eventId.startsWith('blood-product-fresh-frozen-plasma-'));
+      if (!plasma) {
+        return {
+          ...base,
+          outcome: 'not-met',
+          finding: abnormalPanel
+            ? 'No accepted plasma followed the abnormal panel while modeled bleeding was active.'
+            : 'No accepted abnormal panel preceded plasma selection.',
+        } satisfies ObjectiveFinding;
+      }
+      const units = Number(plasma.data?.units ?? 0);
+      return {
+        ...base,
+        outcome: units === 4 ? 'met' : 'partly-met',
+        finding: `${units.toFixed(0)} plasma unit${units === 1 ? '' : 's'} were accepted after the abnormal panel. `
+          + `PT ratio changed from ${Number(plasma.data?.prothrombinTimeRatioBefore ?? 0).toFixed(2)} `
+          + `to ${Number(plasma.data?.prothrombinTimeRatioAfter ?? 0).toFixed(2)} × normal in the instantaneous teaching model.`,
+        atTick: plasma.tick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'reassess-coagulation-response') {
+      const plasma = log.find((entry) => entry.eventId.startsWith('blood-product-fresh-frozen-plasma-'));
+      if (!plasma) {
+        return { ...base, outcome: 'not-exercised', finding: 'No accepted plasma response was available to reassess.' } satisfies ObjectiveFinding;
+      }
+      const beforeRatio = Number(plasma.data?.prothrombinTimeRatioBefore ?? 0);
+      const beforeFibrinogen = Number(plasma.data?.fibrinogenBeforeGPerL ?? 0);
+      const panel = log.find((entry) => entry.tick > plasma.tick
+        && entry.eventId.startsWith('coagulation-labs-'));
+      if (!panel) {
+        return { ...base, outcome: 'not-met', finding: 'No accepted follow-up panel was obtained after plasma.' } satisfies ObjectiveFinding;
+      }
+      const afterRatio = Number(panel.data?.prothrombinTimeRatio ?? 0);
+      const afterFibrinogen = Number(panel.data?.fibrinogenGPerL ?? 0);
+      const delaySeconds = (panel.tick - plasma.tick) / TICKS_PER_SECOND;
+      const improved = afterRatio < beforeRatio && afterFibrinogen > beforeFibrinogen;
+      return {
+        ...base,
+        outcome: improved && delaySeconds <= 60 ? 'met' : improved ? 'partly-met' : 'not-met',
+        finding: `The follow-up panel was obtained ${delaySeconds.toFixed(0)} seconds after plasma: `
+          + `PT ratio ${afterRatio.toFixed(2)} × normal and fibrinogen ${afterFibrinogen.toFixed(1)} g/L.`,
+        atTick: panel.tick,
       } satisfies ObjectiveFinding;
     }
 
