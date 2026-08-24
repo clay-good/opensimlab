@@ -118,8 +118,12 @@ credited toward the catalog until every item in the completion contract passes.
   history, recommendation, and debrief surfaces for browser network primitives. Hostile fixtures
   prove every detector fires, while copy assertions preserve the explicit no-score, no-ranking,
   local-only promises where learner performance and tutor behavior are discussed.
-- [ ] Verify every tutor observation and claimed outcome against deterministic expert, common-error,
+- [x] Verify every tutor observation and claimed outcome against deterministic expert, common-error,
   and recovery transcripts.
+  Fixed-seed routine-induction fixtures now replay prepared, rushed, and corrected courses through
+  the real engine. The matrix covers every current rule and trigger family, proves deterministic
+  hashes, checks each named observation from visible state/actions, requires recovery triggers to
+  turn off, and verifies the oxygen-reserve, effect-site-lag, and saturation-curve claims from traces.
 
 ## 5. Report-a-problem foundation
 

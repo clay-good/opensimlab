@@ -159,6 +159,10 @@ sits above the action dock instead of covering the monitor values.
 A first-run introduction explains the private, local tutor without stopping the clock. It can be
 permanently dismissed on that device, reopened from More options, and each live prompt collapses to
 one labeled control. Unassisted sessions show neither the introduction nor live tutor prompts.
+Deterministic expert, common-error, and recovery transcripts exercise every current rule and all 5
+trigger families. CI verifies the observed oxygen, apnea, recent-dose, and pressure conditions,
+requires each recovery trigger to resolve after visible corrective actions, and checks the tutor's
+oxygen-reserve, effect-site-lag, and saturation-curve claims directly against replayed patient traces.
 
 ### What gets built first
 
