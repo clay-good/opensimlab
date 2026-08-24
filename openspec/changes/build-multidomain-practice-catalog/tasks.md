@@ -31,6 +31,8 @@ credited toward the catalog until every item in the completion contract passes.
 - [x] Add asset-license and evidence-source manifests and fail the build on unclassified assets.
 - [ ] Prove a clean public clone can build and self-host the static simulator without Cloudflare
   credentials or the report service.
+  Automated CI now proves the clean-checkout artifact is complete, credential-free, and portable;
+  anonymous-clone verification remains open until the repository is public.
 
 ## 2. Maturity and governance transition
 

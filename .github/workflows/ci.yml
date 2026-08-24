@@ -45,6 +45,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Static artifact is complete and credential-free
+        run: npm run static-host
+
       - name: Tests
         run: npm run test
 

@@ -16,6 +16,7 @@ import { renderToString } from 'react-dom/server';
 import { createElement } from 'react';
 import { ROUTES, SITE_ORIGIN, canonicalUrl, formatTitle, indexableRoutes } from '../src/routes/routes.ts';
 import { structuredDataFor } from '../src/platform/docs/structured-data.ts';
+import { PUBLIC_CATALOG_ARTIFACTS } from '../src/platform/catalog/public-artifacts.ts';
 import { PrerenderedBody } from '../src/routes/Prerendered.tsx';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
@@ -242,24 +243,13 @@ function main(): void {
     const icons = readdirSync(dist).filter((file) => file.startsWith('icon-'));
     // Every indexable route, so a briefing opens offline too.
     const documents = ROUTES.filter((route) => route.indexable).map((route) => route.path);
-    const machineReadableCatalog = [
-      '/catalog/scenario-completion.schema.json',
-      '/catalog/anesthesia-completion-audit.json',
-      '/catalog/training-value.schema.json',
-      '/catalog/authored-defaults.schema.json',
-      '/catalog/scenario-hazard.schema.json',
-      '/catalog/state-space-verification.schema.json',
-      '/catalog/anesthesia-quality-audit.json',
-      '/catalog/asset-licenses.json',
-      '/catalog/evidence-sources.json',
-    ];
     const precache = [
       '/', '/index.html', '/manifest.webmanifest',
       ...icons.map((icon) => `/${icon}`),
       ...documents.filter((path) => path !== '/'),
       ...new Set(assets),
       ...fonts,
-      ...machineReadableCatalog,
+      ...PUBLIC_CATALOG_ARTIFACTS,
     ];
     const documentPaths = new Set(documents);
     const version = precacheVersion(precache.map((url) => {

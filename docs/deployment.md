@@ -6,6 +6,28 @@ and nothing else. It will deploy unchanged to any static host, which is the
 property the delivery capability requires and the reason a program can self-host
 this without depending on the project staying online.
 
+## Proving the portable artifact
+
+From a clean checkout, with no environment variables or Cloudflare credentials:
+
+```
+npm ci
+npm run build
+npm run static-host
+```
+
+The last command verifies that every application route has prerendered HTML,
+every machine-readable catalog file is present, the solver worker and offline
+files were built, service-worker placeholders were resolved, and no
+credential-shaped file or local Cloudflare state entered `dist/`. CI runs the
+same proof after every build. The artifact can then be served by any static file
+server; `wrangler` is only one deployment option.
+
+The source repository is currently private. This automated proof covers the
+clean-checkout build and the resulting portable artifact, but it does not claim
+that an anonymous public clone is possible yet. That final visibility check must
+be repeated when the repository is made public.
+
 ## Where it is deployed
 
 Cloudflare Workers, as an **assets-only Worker**: Cloudflare serves the files
