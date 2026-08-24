@@ -88,15 +88,18 @@ credited toward the catalog until every item in the completion contract passes.
 - [ ] Preserve identical patient trajectories across Guided, Coached, and Unassisted modes.
 - [ ] Add tutor-collapse, pause, replay decision point, explanation depth, and permanently dismissible
   onboarding controls.
+  The first objective-linked replay-safe decision point, paused deterministic branch, and dismissible
+  branch notice are implemented. Tutor collapse, explanation depth, and onboarding remain.
 - [x] Add the 10 goal-based preparation paths and local next-scenario recommendation logic.
   Recommendations are ordered locally from the selected versioned path, explain the chosen goal,
   carry the scenario's exact maturity link, and accept local completed-scenario evidence. Goal
   context now reaches the debrief and a suggestion may be dismissed locally for exactly 7 days.
   Persisted attempt history remains tracked by the next task.
-- [ ] Add private local practice history, self-comparison, targeted repetition, and export/import.
+- [x] Add private local practice history, self-comparison, targeted repetition, and export/import.
   Bounded exact-version attempt summaries, objective-word self-comparison, goal-path continuation,
-  and atomic export/import/erase are implemented locally. Replay-safe targeted decision-point
-  repetition remains.
+  atomic export/import/erase, and objective-linked replay-safe targeted repetition are implemented
+  locally. A branch reconstructs the authored tick, preserves the original run, and records new
+  actions separately.
 - [ ] Prohibit leaderboards, cross-learner percentiles, streak loss, public performance, points for
   irrelevant speed, and tutor network calls through tests and copy review.
 - [ ] Verify every tutor observation and claimed outcome against deterministic expert, common-error,

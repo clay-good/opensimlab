@@ -24,6 +24,7 @@ import { getFluid, MAX_FLUID_BOLUS_ML } from '@anesthesia/content/fluids';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { MaturityMarker } from '@platform/governance/MaturityMarker';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
+import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
   appendPracticeAttempt,
   loadPracticeHistory,
@@ -43,8 +44,20 @@ export interface DebriefProps {
   readonly onOpenExplainer: (id: string) => void;
   readonly onExportTranscript: () => void;
   readonly onReplayScenario: () => void;
+  readonly onReplayDecisionPoint?: (point: ScenarioReplayPoint) => void;
   readonly nextRecommendation?: GoalRecommendationProps;
   readonly completedAt?: () => string;
+}
+
+export function applicableReplayPoint(
+  scenario: Scenario,
+  findings: readonly ObjectiveFinding[],
+  totalTicks: number,
+): ScenarioReplayPoint | undefined {
+  return scenario.replayPoints?.find((point) => (
+    point.atTick <= totalTicks
+    && findings.some((finding) => finding.objectiveId === point.objectiveId && finding.outcome !== 'met')
+  ));
 }
 
 export function Debrief(props: DebriefProps) {
@@ -108,6 +121,7 @@ export function Debrief(props: DebriefProps) {
     priorAttempts, props.scenario.metadata.id, props.scenario.metadata.version,
   );
   const changes = objectiveChanges(previousAttempt, findings);
+  const replayPoint = applicableReplayPoint(props.scenario, findings, totalTicks);
 
   useEffect(() => {
     if (phase !== 'summary' || historySaved.current) return;
@@ -322,6 +336,19 @@ export function Debrief(props: DebriefProps) {
           </p>
 
           <h2>Where this goes next</h2>
+          {replayPoint && props.onReplayDecisionPoint && (
+            <Panel>
+              <strong>Rehearse one decision</strong>
+              <p>{replayPoint.reason}</p>
+              <Button onClick={() => props.onReplayDecisionPoint?.(replayPoint)}>
+                Practice “{replayPoint.label}” from {formatElapsed(replayPoint.atTick)}
+              </Button>
+              <p className="field__hint">
+                Your original run stays intact. The engine rebuilds its exact state through this
+                point, then records your next actions as a separate rehearsal branch.
+              </p>
+            </Panel>
+          )}
           {props.nextRecommendation && <GoalRecommendation {...props.nextRecommendation} />}
           <div className="phase-nav">
             <Button onClick={props.onReplayScenario}>Run it again and compare with this attempt</Button>

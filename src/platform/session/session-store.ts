@@ -13,7 +13,9 @@ import { EventLog, type Severity } from '@platform/log/event-log';
 import type {
   Attribution, DrugConcentration, EngineAlarm, EngineEvent, EquipmentSnapshot, LearnerAction, StateMessage,
 } from '@platform/kernel/protocol';
-import { TranscriptRecorder, type Transcript, type TranscriptVersions } from '@platform/transcript/transcript';
+import {
+  TranscriptRecorder, type Transcript, type TranscriptDraft, type TranscriptVersions,
+} from '@platform/transcript/transcript';
 import { hashStateTrace } from '@platform/transcript/hash';
 import { SolverClient, type SolverInit } from './solver-client';
 
@@ -25,6 +27,12 @@ export interface HistorySample {
 }
 
 export type GuidanceLevel = 'guided' | 'coached' | 'unassisted';
+
+export interface RehearsalBranch {
+  readonly pointId: string;
+  readonly decisionTick: number;
+  readonly parentTicks: number;
+}
 
 export interface SessionState {
   // --- Lifecycle
@@ -38,6 +46,7 @@ export interface SessionState {
   readonly transport: 'idle' | 'running' | 'paused';
   readonly speed: SpeedMultiplier;
   readonly catchUpNotice: boolean;
+  readonly rehearsalBranch: RehearsalBranch | null;
 
   // --- Latest emission
   readonly state: Readonly<Record<string, number>> | null;
@@ -64,6 +73,7 @@ export interface SessionState {
   readonly singleStep: () => void;
   readonly setSpeed: (speed: SpeedMultiplier) => void;
   readonly resetSession: () => void;
+  readonly rehearseFromDecisionPoint: (pointId: string, decisionTick: number) => void;
   readonly act: (action: Omit<LearnerAction, 'tick'>) => void;
   readonly frame: (elapsedMs: number) => void;
   readonly markLogRead: () => void;
@@ -83,6 +93,8 @@ interface Internals {
   eventLog: EventLog;
   createWorker: (() => Worker) | null;
   init: SolverInit | null;
+  transcriptDraft: TranscriptDraft | null;
+  parentTranscript: Transcript | null;
   /** Every emitted state, for the trace hash. */
   trace: Record<string, number>[];
 }
@@ -94,6 +106,8 @@ const internals: Internals = {
   eventLog: new EventLog(),
   createWorker: null,
   init: null,
+  transcriptDraft: null,
+  parentTranscript: null,
   trace: [],
 };
 
@@ -111,6 +125,7 @@ export const useSession = create<SessionState>((set, get) => ({
   transport: 'idle',
   speed: 1,
   catchUpNotice: false,
+  rehearsalBranch: null,
   state: null,
   concentrations: [],
   attribution: [],
@@ -129,14 +144,16 @@ export const useSession = create<SessionState>((set, get) => ({
     internals.trace = [];
     internals.createWorker = createWorker;
     internals.init = init;
-    internals.recorder = new TranscriptRecorder({
+    internals.transcriptDraft = {
       moduleId,
       scenarioId: init.scenarioId,
       versions,
       practiceRegion: init.practiceRegion,
       seed: init.seed,
       guidanceLevel: get().guidance,
-    });
+    };
+    internals.recorder = new TranscriptRecorder(internals.transcriptDraft);
+    internals.parentTranscript = null;
 
     // The reset happens BEFORE the client starts. A worker can report ready
     // synchronously — an in-process one in a test does — and resetting afterwards
@@ -146,6 +163,7 @@ export const useSession = create<SessionState>((set, get) => ({
       transport: 'idle', history: [], log: [], state: null, alarms: [], warnings: [],
       waveformBlocks: [], concentrations: [], attribution: [], unreadLog: false,
       catchUpNotice: false, equipment: null,
+      rehearsalBranch: null,
     });
 
     const client = new SolverClient<Record<string, number>>(createWorker, {
@@ -195,15 +213,45 @@ export const useSession = create<SessionState>((set, get) => ({
     internals.clock.reset();
     internals.eventLog.clear();
     internals.trace = [];
+    internals.parentTranscript = null;
+    if (internals.transcriptDraft) internals.recorder = new TranscriptRecorder(internals.transcriptDraft);
     set({
       tick: 0, elapsed: '00:00:00', transport: 'idle', phase: 'briefing',
       history: [], log: [], state: null, alarms: [], warnings: [], unreadLog: false,
       waveformBlocks: [], concentrations: [], attribution: [], catchUpNotice: false,
       equipment: null,
+      rehearsalBranch: null,
     });
     if (internals.init && internals.createWorker) {
       internals.client?.start(internals.init);
     }
+  },
+
+  rehearseFromDecisionPoint(pointId, decisionTick) {
+    const recorder = internals.recorder;
+    if (!recorder || !internals.client || !internals.init
+      || !/^[a-z0-9-]+$/.test(pointId)
+      || !Number.isInteger(decisionTick) || decisionTick < 1 || decisionTick > internals.clock.tick) return;
+    const parentTicks = internals.clock.tick;
+    recorder.setTicks(parentTicks);
+    const parent = recorder.build('pending');
+    internals.parentTranscript = parent;
+    internals.recorder = recorder.forkAt(decisionTick);
+    internals.clock.restore(decisionTick);
+    internals.eventLog.clear();
+    internals.trace = [];
+    internals.client.resumeFromTranscript({
+      ...parent,
+      actions: parent.actions.filter((action) => action.tick < decisionTick),
+      ticks: decisionTick,
+    });
+    set({
+      tick: decisionTick, elapsed: internals.clock.snapshot().elapsed,
+      transport: 'paused', phase: 'running', history: [], log: [], state: null,
+      alarms: [], warnings: [], waveformBlocks: [], concentrations: [], attribution: [],
+      unreadLog: false, catchUpNotice: false, equipment: null,
+      rehearsalBranch: { pointId, decisionTick, parentTicks },
+    });
   },
 
   act(action) {

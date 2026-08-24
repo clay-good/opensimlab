@@ -101,6 +101,21 @@ class InProcessWorker implements Partial<Worker> {
         this.emit(state);
         break;
       }
+      case 'replay': {
+        if (!this.engine) return;
+        const transcript = message.transcript as { actions?: { tick: number }[]; ticks?: number };
+        const actions = [...(transcript.actions ?? [])].sort((a, b) => a.tick - b.tick);
+        let next = 0;
+        for (let tick = 0; tick < (transcript.ticks ?? 0); tick += 1) {
+          while (next < actions.length && (actions[next]?.tick ?? Infinity) <= tick) {
+            this.engine.apply(actions[next] as never);
+            next += 1;
+          }
+          this.engine.step();
+        }
+        this.postMessage({ v: WORKER_PROTOCOL_VERSION, type: 'advance', ticks: 1 });
+        break;
+      }
       case 'reset':
         this.engine = null;
         break;
@@ -301,6 +316,35 @@ describe('The worker protocol, the store, and the interface values', () => {
     expect(session.history).toHaveLength(0);
     expect(session.state).toBeNull();
     expect(session.transport).toBe('idle');
+  });
+
+  it('starts a reset transcript clean and preserves a targeted branch parent', async () => {
+    begin();
+    useSession.getState().play();
+    useSession.getState().act({
+      type: 'bolus', payload: { drugId: 'propofol', amount: 50, unit: 'mg' },
+    });
+    runFrames(4);
+    const decisionTick = 20;
+    useSession.getState().act({
+      type: 'ventilator', payload: { delivering: true, mode: 'volume-control', fio2: 0.5 },
+    });
+    const parentTicks = useSession.getState().tick;
+
+    useSession.getState().rehearseFromDecisionPoint('read-the-falling-pressure', decisionTick);
+    const branch = useSession.getState();
+    expect(branch.rehearsalBranch).toEqual({
+      pointId: 'read-the-falling-pressure', decisionTick, parentTicks,
+    });
+    expect(branch.tick).toBe(decisionTick);
+    expect(branch.transport).toBe('paused');
+    expect(sessionInternals().parentTranscript?.actions).toHaveLength(2);
+    const branchTranscript = await branch.exportTranscript();
+    expect(branchTranscript.actions.map((action) => action.type)).toEqual(['bolus']);
+
+    useSession.getState().resetSession();
+    expect((await useSession.getState().exportTranscript()).actions).toEqual([]);
+    expect(useSession.getState().rehearsalBranch).toBeNull();
   });
 
   it('Scenario: Worker failure degrades safely', async () => {

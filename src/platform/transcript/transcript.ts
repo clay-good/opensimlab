@@ -64,7 +64,9 @@ export class TranscriptRecorder {
   private readonly actions: LearnerAction[] = [];
   private ticks = 0;
 
-  constructor(private readonly draft: TranscriptDraft) {}
+  constructor(private readonly draft: TranscriptDraft, initialActions: readonly LearnerAction[] = []) {
+    this.actions.push(...initialActions);
+  }
 
   record(action: LearnerAction): void {
     this.actions.push(action);
@@ -72,6 +74,11 @@ export class TranscriptRecorder {
 
   setTicks(ticks: number): void {
     this.ticks = ticks;
+  }
+
+  /** Create an independent branch containing only actions before the decision tick. */
+  forkAt(tick: number): TranscriptRecorder {
+    return new TranscriptRecorder(this.draft, this.actions.filter((action) => action.tick < tick));
   }
 
   build(stateTraceHash: string): Transcript {

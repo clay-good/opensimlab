@@ -142,6 +142,10 @@ objective outcome words. It can compare those words with the learner's own prior
 exact version and continue the selected path; it never stores reflections, actions, physiology,
 identity, or an overall score. `/privacy` makes that bounded history exportable, importable, and
 independently erasable.
+The hypotension scenario also authors the first replay-safe decision point. When its linked objective
+needs work, debrief can reconstruct the original deterministic state at that exact tick, preserve
+the parent run, and pause in a clearly labeled rehearsal branch for a different response. Scenarios
+without an authored, objective-linked point never offer targeted repetition.
 
 ### What gets built first
 

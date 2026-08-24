@@ -193,6 +193,13 @@ export const HYPOTENSION_AFTER_INDUCTION: Scenario = {
       severity: 'info',
     },
   ],
+  replayPoints: [{
+    id: 'read-the-falling-pressure',
+    label: 'Read the falling pressure',
+    objectiveId: 'read-the-mechanism',
+    atTick: 600,
+    reason: 'Return to the first minute with your original setup intact, then reassess the pressure pattern and choose a different response.',
+  }],
   debrief: {
     rubric: [
       {

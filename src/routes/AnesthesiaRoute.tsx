@@ -255,6 +255,7 @@ export function AnesthesiaRoute({ path }: { path: string }) {
         onOpenExplainer={() => { /* the debrief opens explainers inline */ }}
         onExportTranscript={() => { void exportTranscript(); }}
         onReplayScenario={session.resetSession}
+        onReplayDecisionPoint={(point) => session.rehearseFromDecisionPoint(point.id, point.atTick)}
         {...(nextRecommendation ? { nextRecommendation } : {})}
       />
     );

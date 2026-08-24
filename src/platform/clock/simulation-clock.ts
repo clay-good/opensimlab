@@ -82,6 +82,15 @@ export class SimulationClock {
     this.capped = false;
   }
 
+  /** Restore a deterministic replay point without consulting wall-clock time. */
+  restore(tick: number): void {
+    if (!Number.isInteger(tick) || tick < 0) throw new Error('A replay tick must be a non-negative integer.');
+    this.currentTick = tick;
+    this.simulatedMs = tick * TICK_MS;
+    this.transport = 'paused';
+    this.capped = false;
+  }
+
   /** Advance exactly one simulated second, whatever the transport state. */
   singleStep(): number {
     this.currentTick += SINGLE_STEP_TICKS;

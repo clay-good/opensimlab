@@ -62,6 +62,22 @@ describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
     expect(message?.type).toBe('error');
     expect(message && 'code' in message ? message.code : '').toBe('ProtocolMismatch');
   });
+
+  it('replay emits the recorded endpoint tick', () => {
+    init();
+    emitted.length = 0;
+    deliver({
+      v: WORKER_PROTOCOL_VERSION,
+      type: 'replay',
+      transcript: {
+        ticks: 10,
+        actions: [{ tick: 5, type: 'bolus', payload: { drugId: 'propofol', amount: 50, unit: 'mg' } }],
+      },
+    });
+    const state = lastState();
+    expect(state.tick).toBe(10);
+    expect(state.concentrations.find((entry) => entry.drugId === 'propofol')?.plasma).toBeGreaterThan(0);
+  });
 });
 
 describe('Requirement: A Batched Advance Loses Pixels, Never Signal', () => {

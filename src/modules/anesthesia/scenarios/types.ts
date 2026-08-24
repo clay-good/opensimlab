@@ -128,6 +128,14 @@ export interface RubricItem {
   readonly concept?: string;
 }
 
+export interface ScenarioReplayPoint {
+  readonly id: string;
+  readonly label: string;
+  readonly objectiveId: string;
+  readonly atTick: number;
+  readonly reason: string;
+}
+
 export interface Scenario {
   readonly schemaVersion: number;
   readonly metadata: ScenarioMetadata;
@@ -135,5 +143,6 @@ export interface Scenario {
   readonly equipment: ScenarioEquipment;
   readonly formulary: readonly FormularyEntry[];
   readonly timeline: readonly TimelineEvent[];
+  readonly replayPoints?: readonly ScenarioReplayPoint[];
   readonly debrief: { readonly rubric: readonly RubricItem[] };
 }

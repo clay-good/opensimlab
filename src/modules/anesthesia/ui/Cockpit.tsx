@@ -7,7 +7,9 @@ import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties }
 import './cockpit.css';
 import { Banner, Button, Drawer, Modal, SegmentedControl, Toggle, usePrefersReducedMotion, useLocalPreference } from '@platform/ui';
 import { useSession, sessionInternals } from '@platform/session/session-store';
-import { SPEED_MULTIPLIERS, TICKS_PER_SECOND, type SpeedMultiplier } from '@platform/clock/simulation-clock';
+import {
+  formatElapsed, SPEED_MULTIPLIERS, TICKS_PER_SECOND, type SpeedMultiplier,
+} from '@platform/clock/simulation-clock';
 import { PERSISTENT_MARKER_TEXT } from '@platform/safety/not-for-clinical-use';
 import { LAYOUT } from '@platform/tokens/tokens';
 import { useResizableRegion } from './useResizableRegion';
@@ -123,6 +125,7 @@ export function Cockpit({
   const [explainerId, setExplainerId] = useState<string | null>(null);
   const [drugCardId, setDrugCardId] = useState<string | null>(null);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [branchNoticeOpen, setBranchNoticeOpen] = useState(false);
   const [crisisInjectorOpen, setCrisisInjectorOpen] = useState(false);
   // Sound is OFF until the learner asks for it, and nothing asks them.
   //
@@ -416,6 +419,12 @@ export function Cockpit({
       session.resetSession();
     }
   };
+  const rehearsalPoint = scenario.replayPoints?.find(
+    (point) => point.id === session.rehearsalBranch?.pointId,
+  );
+  useEffect(() => {
+    setBranchNoticeOpen(session.rehearsalBranch !== null);
+  }, [session.rehearsalBranch?.pointId]);
 
   return (
     <div
@@ -446,6 +455,20 @@ export function Cockpit({
           onOverflow={() => setShortcutsOpen(true)}
         />
       </div>
+
+      {branchNoticeOpen && session.rehearsalBranch && rehearsalPoint && (
+        <div className="rehearsal-branch" role="status">
+          <span>
+            <strong>Targeted repetition · {rehearsalPoint.label}</strong>
+            <br />
+            Rebuilt from your original run at {formatElapsed(session.rehearsalBranch.decisionTick)}.
+            New actions form a separate branch.
+          </span>
+          <Button compact variant="ghost" onClick={() => setBranchNoticeOpen(false)}>
+            Dismiss
+          </Button>
+        </div>
+      )}
 
       <div className="cockpit__monitor" id="monitor-region">
         <MonitorRegion

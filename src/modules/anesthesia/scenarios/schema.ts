@@ -229,6 +229,20 @@ export const SCENARIO_SCHEMA: SchemaNode = {
         },
       },
     },
+    replayPoints: {
+      type: 'array', description: 'Authored points whose state may be reconstructed for targeted repetition.', minItems: 1,
+      items: {
+        type: 'object', description: 'One replay-safe decision point.',
+        required: ['id', 'label', 'objectiveId', 'atTick', 'reason'],
+        properties: {
+          id: { type: 'string', description: 'Stable replay-point identifier.', pattern: '^[a-z0-9-]+$' },
+          label: STRING_FIELD('Short learner-facing name for the decision.', 5),
+          objectiveId: { type: 'string', description: 'The objective this repetition targets.', pattern: '^[a-z0-9-]+$' },
+          atTick: { type: 'integer', description: 'The exact deterministic tick to reconstruct.', minimum: 1 },
+          reason: STRING_FIELD('Why rehearsing this decision is useful.', 10),
+        },
+      },
+    },
     debrief: {
       type: 'object', description: 'The debrief rubric.',
       required: ['rubric'],
@@ -373,6 +387,7 @@ export function validateScenarioSemantics(scenario: unknown): ValidationError[] 
   const patient = record.patient as Record<string, unknown> | undefined;
   const respiratory = patient?.respiratory as Record<string, unknown> | undefined;
   const timeline = record.timeline as Record<string, unknown>[] | undefined;
+  const replayPoints = record.replayPoints as Record<string, unknown>[] | undefined;
   const debrief = record.debrief as { rubric?: Record<string, unknown>[] } | undefined;
 
   const objectiveIds = new Set(
@@ -392,6 +407,15 @@ export function validateScenarioSemantics(scenario: unknown): ValidationError[] 
       errors.push({
         pointer: `/debrief/rubric/${index}/objectiveId`, rule: 'reference',
         message: `Rubric item references objective "${String(item.objectiveId)}", which this scenario `
+          + `does not declare. Declared objectives are: ${[...objectiveIds].join(', ')}.`,
+      });
+    }
+  });
+  (replayPoints ?? []).forEach((point, index) => {
+    if (!objectiveIds.has(point.objectiveId as string)) {
+      errors.push({
+        pointer: `/replayPoints/${index}/objectiveId`, rule: 'reference',
+        message: `Replay point references objective "${String(point.objectiveId)}", which this scenario `
           + `does not declare. Declared objectives are: ${[...objectiveIds].join(', ')}.`,
       });
     }

@@ -73,6 +73,14 @@ describe('Requirement: Transport Controls', () => {
     expect(clock.state).toBe('idle');
   });
 
+  it('restores only an exact deterministic replay tick and remains paused', () => {
+    const clock = new SimulationClock();
+    clock.restore(600);
+    expect(clock.snapshot()).toMatchObject({ tick: 600, state: 'paused', elapsed: '00:01:00' });
+    expect(() => clock.restore(1.5)).toThrow('non-negative integer');
+    expect(() => clock.restore(-1)).toThrow('non-negative integer');
+  });
+
   it('loses no time to rounding across many small advances', () => {
     const clock = new SimulationClock();
     clock.play();
