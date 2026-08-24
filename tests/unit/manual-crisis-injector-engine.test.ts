@@ -19,7 +19,7 @@ function inject(subject: AnesthesiaEngine, crisisId: string) {
   return subject.step();
 }
 
-describe('manual crisis-injector foundation', () => {
+describe('complete manual crisis injector', () => {
   it('starts coherent 100 mL/min hemorrhage physiology rather than changing a label only', () => {
     const treated = engine();
     const control = engine();
@@ -102,17 +102,76 @@ describe('manual crisis-injector foundation', () => {
     const repeated = inject(subject, 'bronchospasm');
     expect(repeated.events.some((event) => event.eventId.startsWith('bad-crisis-injection-')))
       .toBe(true);
-    const unknown = inject(subject, 'air-embolism');
+    const unknown = inject(subject, 'not-a-crisis');
     expect(unknown.events.some((event) => event.message.includes('does not implement'))).toBe(true);
     expect(unknown.equipment.lastInjectedCrisis?.crisisId).toBe('bronchospasm');
+  });
+
+  it('injects a progressive high-spinal pattern distinct from pulmonary air embolism', () => {
+    const highSpinal = engine();
+    const highControl = engine();
+    highSpinal.step(); highControl.step();
+    inject(highSpinal, 'high-spinal');
+    const high = advance(highSpinal, 600);
+    const ordinary = advance(highControl, 601);
+    expect(high.equipment.resuscitation.highSpinalFraction).toBeGreaterThan(0.9);
+    expect(high.state.heartRateBpm).toBeLessThan(ordinary.state.heartRateBpm * 0.6);
+    expect(high.state.meanArterialMmHg).toBeLessThan(ordinary.state.meanArterialMmHg * 0.5);
+    expect(high.state.respiratoryRateBpm).toBeLessThan(ordinary.state.respiratoryRateBpm * 0.5);
+    expect(high.state.tidalVolumeMl).toBeLessThan(ordinary.state.tidalVolumeMl * 0.5);
+
+    const ventilatedHighSpinal = engine();
+    const ventilatedControl = engine();
+    for (const subject of [ventilatedHighSpinal, ventilatedControl]) {
+      subject.apply({ tick: 0, type: 'ventilator', payload: {
+        mode: 'volume-control', delivering: true, respiratoryRateBpm: 12, tidalVolumeMl: 500,
+      } });
+      subject.step();
+    }
+    inject(ventilatedHighSpinal, 'high-spinal');
+    const supported = advance(ventilatedHighSpinal, 600);
+    const supportedControl = advance(ventilatedControl, 601);
+    expect(supported.state.respiratoryRateBpm)
+      .toBeCloseTo(supportedControl.state.respiratoryRateBpm, 5);
+    expect(supported.state.tidalVolumeMl).toBeCloseTo(supportedControl.state.tidalVolumeMl, 5);
+
+    const embolism = engine();
+    const embolismControl = engine();
+    embolism.step(); embolismControl.step();
+    inject(embolism, 'air-embolism');
+    const air = advance(embolism, 100);
+    const noAir = advance(embolismControl, 101);
+    expect(air.equipment.resuscitation.venousAirEmbolismFraction).toBeGreaterThan(0.98);
+    expect(air.state.etco2MmHg).toBeLessThan(noAir.state.etco2MmHg * 0.5);
+    expect(air.state.cardiacOutputLPerMin).toBeLessThan(noAir.state.cardiacOutputLPerMin * 0.6);
+    expect(air.state.meanArterialMmHg).toBeLessThan(noAir.state.meanArterialMmHg * 0.6);
+    expect(air.state.spo2Percent).toBeLessThan(noAir.state.spo2Percent - 7);
+    expect(air.state.respiratoryRateBpm).toBeCloseTo(noAir.state.respiratoryRateBpm, 5);
   });
 
   it('replays manual injections deterministically', () => {
     const actions: LearnerAction[] = [
       { tick: 10, type: 'inject-crisis', payload: { crisisId: 'bronchospasm' } },
       { tick: 20, type: 'inject-crisis', payload: { crisisId: 'massive-hemorrhage' } },
+      { tick: 30, type: 'inject-crisis', payload: { crisisId: 'high-spinal' } },
+      { tick: 40, type: 'inject-crisis', payload: { crisisId: 'air-embolism' } },
     ];
     const options = { scenario: ROUTINE_INDUCTION, seed: 91, practiceRegion: 'US', ticks: 500 };
     expect(replay(actions, options)).toEqual(replay(actions, options));
+  });
+
+  it('keeps both new untreated teaching trajectories finite over 30 simulated minutes', () => {
+    for (const crisisId of ['high-spinal', 'air-embolism']) {
+      const subject = engine();
+      subject.step();
+      inject(subject, crisisId);
+      const result = advance(subject, 18_000);
+      for (const value of Object.values(result.state)) {
+        if (typeof value === 'number') expect(Number.isFinite(value), crisisId).toBe(true);
+      }
+      expect(result.state.heartRateBpm).toBeGreaterThanOrEqual(0);
+      expect(result.state.meanArterialMmHg).toBeGreaterThanOrEqual(0);
+      expect(result.state.spo2Percent).toBeGreaterThanOrEqual(0);
+    }
   });
 });

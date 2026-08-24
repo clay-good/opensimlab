@@ -16,16 +16,23 @@ describe('manual crisis-injector author tool', () => {
   const button = (label: string) => [...container.querySelectorAll('button')]
     .find((entry) => entry.textContent?.trim() === label) as HTMLButtonElement | undefined;
 
-  it('exposes exactly the modeled foundation and states the remaining gap', () => {
+  it('exposes exactly the complete modeled crisis set and states its boundaries', () => {
     act(() => root.render(createElement(ManualCrisisInjector, {
       injectedCrisisIds: [], onInject: () => {},
     })));
-    expect(MODELED_CRISIS_INJECTIONS).toHaveLength(9);
+    expect(MODELED_CRISIS_INJECTIONS).toHaveLength(11);
+    expect(MODELED_CRISIS_INJECTIONS.map(({ id }) => id)).toEqual([
+      'massive-hemorrhage', 'anaphylaxis', 'laryngospasm', 'bronchospasm',
+      'malignant-hyperthermia', 'local-anesthetic-systemic-toxicity',
+      'cardiac-arrest-shockable', 'cardiac-arrest-non-shockable',
+      'tiva-line-disconnection-under-paralysis', 'high-spinal', 'air-embolism',
+    ]);
     expect(container.textContent).toContain('Massive hemorrhage');
     expect(container.textContent).toContain('shockable VF');
     expect(container.textContent).toContain('non-shockable asystole');
-    expect(container.textContent).toContain('High spinal and air embolism are not offered');
-    expect(button('Select High spinal')).toBeUndefined();
+    expect(container.textContent).toContain('High spinal');
+    expect(container.textContent).toContain('Venous air embolism');
+    expect(button('Select High spinal')).toBeInstanceOf(HTMLButtonElement);
   });
 
   it('requires confirmation and sends the semantic crisis id', () => {

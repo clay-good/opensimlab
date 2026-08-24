@@ -179,5 +179,18 @@
 - [x] Reject unknown and repeated injection requests without mutating the patient.
 - [x] State that volatile exposure is still required for the injected malignant-hyperthermia
   susceptibility and paralysis is still required for the specified TIVA-awareness pattern.
-- [ ] Add high-spinal and air-embolism injection only after their hemodynamic, respiratory, and
+- [x] Add high-spinal and air-embolism injection only after their hemodynamic, respiratory, and
   observable monitor effects are implemented. Disabled or cosmetic controls do not satisfy this.
+
+## Slice 12: complete manual crisis injector
+
+- [x] Add a progressive high-spinal teaching drive with distinct bradycardia, hypotension,
+  reduced cardiac output, and impaired unassisted breathing.
+- [x] Add a rapid venous-air-embolism teaching drive with distinct end-tidal carbon-dioxide,
+  oxygen-saturation, pressure, and cardiac-output effects without changing respiratory rate.
+- [x] Expose both through the same confirmed, logged, replayable author action and equipment snapshot.
+- [x] Trace the clinical direction to current OAA guidance and peer-reviewed air-embolism evidence.
+- [x] Publish the calibration, diagnosis, gas-volume, block-height, obstetric, treatment, cerebral,
+  and paradoxical-embolism boundaries in the injector, limitations register, and review rubric.
+- [ ] Add patient-specific block spread, gas volume or entry mechanics, diagnostic certainty,
+  individualized outcomes, or treatment pathways. None is implied by this injector slice.

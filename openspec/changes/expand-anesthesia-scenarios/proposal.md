@@ -97,17 +97,18 @@ response, stopping before dysrhythmia treatment or cardiac arrest.
   reversible causes, refractory arrest, individualized outcome, or post-cardiac-arrest care.
 - Add the replayable manual crisis-injector foundation for the 9 entries already backed by engine
   physiology, with two-step confirmation and explicit patient/equipment preconditions.
-- Keep high spinal and air embolism visibly absent until their distinct physiology is implemented;
-  inert or disabled controls do not count as crisis coverage.
+- Complete the injector with distinct high-spinal and venous-air-embolism teaching trajectories;
+  inert or cosmetic controls do not count as crisis coverage.
 
 ## Impact
 
-These eleven slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
-awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. They do not complete the bundled-library,
-neuromuscular-reversal, or crisis-injector requirements. The seventh also closes the bounded
+These twelve slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. They do not complete the neuromuscular-reversal
+requirements. The seventh also closes the bounded
 pediatric-family gap without claiming a general pediatric patient model. The eighth reaches the
 minimum count of 12 scenarios and closes the bounded difficult-airway rescue gap. The ninth closes
 the required bounded local-anesthetic systemic-toxicity family. The tenth closes the required
 resuscitable cardiac-arrest library family through initial modeled ROSC. The eleventh supplies the
-replayable injector foundation for 9 modeled crises; high spinal and air embolism remain required
-before the full manual crisis-injector requirement is complete.
+replayable injector foundation for 9 modeled crises. The twelfth adds distinct high-spinal and
+venous-air-embolism physiology and completes the required 11-entry manual injector without
+claiming diagnosis, treatment, block-height, or gas-volume simulation.

@@ -34,7 +34,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.11';
+export const ENGINE_VERSION = '0.1.0-alpha.12';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -240,6 +240,10 @@ export class AnesthesiaEngine {
   private lastInjectedCrisis: { crisisId: string; tick: number } | null = null;
   private injectedBloodLossMlPerMin = 0;
   private injectedBronchospasmSeverity = 0;
+  private highSpinalSeverity = 0;
+  private highSpinalFraction = 0;
+  private venousAirEmbolismSeverity = 0;
+  private venousAirEmbolismFraction = 0;
   /** A learner fluid bolus waiting to reach the circulation on the next tick. */
   private pendingCrystalloidMl = 0;
   /** Physical delivery state, intentionally separate from the pump's commanded rate. */
@@ -534,7 +538,7 @@ export class AnesthesiaEngine {
           'massive-hemorrhage', 'anaphylaxis', 'laryngospasm', 'bronchospasm',
           'malignant-hyperthermia', 'local-anesthetic-systemic-toxicity',
           'cardiac-arrest-shockable', 'cardiac-arrest-non-shockable',
-          'tiva-line-disconnection-under-paralysis',
+          'tiva-line-disconnection-under-paralysis', 'high-spinal', 'air-embolism',
         ];
         if (!supported.includes(crisisId) || this.injectedCrises.has(crisisId)) {
           this.log('warning', 'crisis-injector', `bad-crisis-injection-${this.currentTick}`,
@@ -587,6 +591,14 @@ export class AnesthesiaEngine {
           case 'tiva-line-disconnection-under-paralysis':
             this.hypnoticLineConnected = false;
             this.hypnoticLineInspected = false;
+            break;
+          case 'high-spinal':
+            this.highSpinalSeverity = 1;
+            this.lastExposure = { agentId: 'manual-high-neuraxial-block', tick: this.currentTick };
+            break;
+          case 'air-embolism':
+            this.venousAirEmbolismSeverity = 1;
+            this.lastExposure = { agentId: 'manual-venous-air-entry', tick: this.currentTick };
             break;
         }
         break;
@@ -1355,6 +1367,13 @@ export class AnesthesiaEngine {
     obstruction = Math.max(obstruction, 0.85 * unopposedAnaphylaxis);
     this.bronchospasmSeverity = obstruction;
     const capillaryLeakMl = unopposedAnaphylaxis * 5 / TICKS_PER_SECOND;
+    // Exact slopes and magnitudes are bounded teaching calibrations. The clinical
+    // direction is sourced; neither drive estimates block height or gas volume.
+    this.highSpinalFraction += (this.highSpinalSeverity - this.highSpinalFraction)
+      * (1 - Math.exp(-0.1 / 20));
+    this.venousAirEmbolismFraction += (
+      this.venousAirEmbolismSeverity - this.venousAirEmbolismFraction
+    ) * (1 - Math.exp(-0.1 / 2));
 
     // --- Physiology ------------------------------------------------------------
     const effectiveVentilator = this.pendingLaryngoscopy || this.pendingSupraglotticInsertion
@@ -1412,8 +1431,43 @@ export class AnesthesiaEngine {
 
     if (!this.cardiacArrestActive) this.reconcileArrest(result.state.cardiacOutputLPerMin ?? 0);
 
+    let crisisState: PatientState = result.state;
+    if (this.highSpinalFraction > 0) {
+      const fraction = this.highSpinalFraction;
+      const heartRateFactor = 1 - 0.55 * fraction;
+      const pressureFactor = 1 - 0.6 * fraction;
+      const breathingFactor = effectiveVentilator.delivering ? 1 : 1 - 0.7 * fraction;
+      crisisState = {
+        ...crisisState,
+        heartRateBpm: crisisState.heartRateBpm * heartRateFactor,
+        strokeVolumeMl: crisisState.strokeVolumeMl * (1 - 0.35 * fraction),
+        cardiacOutputLPerMin: crisisState.cardiacOutputLPerMin
+          * heartRateFactor * (1 - 0.35 * fraction),
+        svrDynSCm5: crisisState.svrDynSCm5 * (1 - 0.45 * fraction),
+        systolicMmHg: crisisState.systolicMmHg * pressureFactor,
+        diastolicMmHg: crisisState.diastolicMmHg * pressureFactor,
+        meanArterialMmHg: crisisState.meanArterialMmHg * pressureFactor,
+        respiratoryRateBpm: crisisState.respiratoryRateBpm * breathingFactor,
+        tidalVolumeMl: crisisState.tidalVolumeMl * breathingFactor,
+      };
+    }
+    if (this.venousAirEmbolismFraction > 0) {
+      const fraction = this.venousAirEmbolismFraction;
+      crisisState = {
+        ...crisisState,
+        heartRateBpm: crisisState.heartRateBpm * (1 + 0.15 * fraction),
+        strokeVolumeMl: crisisState.strokeVolumeMl * (1 - 0.55 * fraction),
+        cardiacOutputLPerMin: crisisState.cardiacOutputLPerMin * (1 - 0.5 * fraction),
+        systolicMmHg: crisisState.systolicMmHg * (1 - 0.45 * fraction),
+        diastolicMmHg: crisisState.diastolicMmHg * (1 - 0.45 * fraction),
+        meanArterialMmHg: crisisState.meanArterialMmHg * (1 - 0.45 * fraction),
+        etco2MmHg: crisisState.etco2MmHg * (1 - 0.6 * fraction),
+        spo2Percent: clamp(crisisState.spo2Percent - 8 * fraction, 0, 100),
+      };
+    }
+
     const state: PatientState = this.cardiacArrestActive ? {
-      ...result.state,
+      ...crisisState,
       heartRateBpm: 0,
       cardiacOutputLPerMin: this.chestCompressionsActive ? 1.2 : 0,
       strokeVolumeMl: 0,
@@ -1422,7 +1476,7 @@ export class AnesthesiaEngine {
       meanArterialMmHg: this.chestCompressionsActive ? 27 : 0,
       perfusionIndex: 0,
       etco2MmHg: this.chestCompressionsActive ? 18 : 0,
-    } : result.state;
+    } : crisisState;
 
     // Preoxygenation is judged on the END-TIDAL fraction, because that is what
     // says the functional residual capacity has actually been denitrogenated. The
@@ -1567,6 +1621,8 @@ export class AnesthesiaEngine {
         defibrillationShockCount: this.defibrillationShockCount,
         lastDefibrillationEnergyJ: this.lastDefibrillationEnergyJ,
         roscAtTick: this.roscAtTick,
+        highSpinalFraction: this.highSpinalFraction,
+        venousAirEmbolismFraction: this.venousAirEmbolismFraction,
       },
       lastExposure: this.lastExposure ? { ...this.lastExposure } : null,
       lastInjectedCrisis: this.lastInjectedCrisis ? { ...this.lastInjectedCrisis } : null,

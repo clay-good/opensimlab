@@ -19,6 +19,8 @@ export const MODELED_CRISIS_INJECTIONS: readonly CrisisInjection[] = [
   { id: 'cardiac-arrest-shockable', label: 'Cardiac arrest · shockable VF', boundary: 'Starts pulseless ventricular fibrillation.' },
   { id: 'cardiac-arrest-non-shockable', label: 'Cardiac arrest · non-shockable asystole', boundary: 'Starts asystole; defibrillation cannot convert it.' },
   { id: 'tiva-line-disconnection-under-paralysis', label: 'TIVA line disconnection', boundary: 'Disconnects delivered propofol; paralysis must already be present to create the specified combined pattern.' },
+  { id: 'high-spinal', label: 'High spinal', boundary: 'Starts a progressive high-neuraxial-block teaching pattern: hypotension, bradycardia, and impaired unassisted breathing.' },
+  { id: 'air-embolism', label: 'Venous air embolism', boundary: 'Starts an abrupt pulmonary-flow obstruction teaching pattern with falling end-tidal carbon dioxide, pressure, output, and oxygen saturation.' },
 ] as const;
 
 export function ManualCrisisInjector({ injectedCrisisIds, onInject }: {
@@ -55,8 +57,8 @@ export function ManualCrisisInjector({ injectedCrisisIds, onInject }: {
         ))}
       </div>
       <p className="field__hint">
-        High spinal and air embolism are not offered until their physiology is implemented. This
-        foundation does not claim the complete minimum injector set yet.
+        High spinal does not estimate block height or obstetric physiology. Venous air embolism
+        does not estimate gas volume, diagnose the cause, or model paradoxical or cerebral embolism.
       </p>
     </div>
   );

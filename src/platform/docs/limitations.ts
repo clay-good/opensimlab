@@ -663,6 +663,32 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['difficult-airway-supraglottic-rescue'],
   },
   {
+    id: 'high-spinal-injector-is-a-teaching-trajectory',
+    headline: 'The injected high-spinal pattern is a calibrated trajectory, not a block-height or obstetric model.',
+    simplification: 'A manual injection ramps one bounded drive that lowers heart rate, vascular '
+      + 'tone, cardiac output, pressure, and unassisted breathing. It does not calculate neuraxial '
+      + 'dose, spread, sensory or motor level, pregnancy physiology, or patient-specific onset.',
+    whereItMisleads: 'Predicting the extent, speed, presentation, or outcome of a real high central '
+      + 'neuraxial block from the displayed values.',
+    correctUnderstanding: 'High central neuraxial block can progress rapidly to hypotension, '
+      + 'bradycardia, breathing difficulty, apnea, and unconsciousness; assess the patient and '
+      + 'support airway, breathing, and circulation using the applicable emergency guidance.',
+    briefIn: [],
+  },
+  {
+    id: 'venous-air-embolism-injector-is-a-teaching-trajectory',
+    headline: 'The injected venous-air-embolism pattern is a calibrated monitor trajectory, not a gas-volume or diagnostic model.',
+    simplification: 'A manual injection rapidly lowers modeled pulmonary-flow observables, '
+      + 'end-tidal carbon dioxide, pressure, cardiac output, and oxygen saturation. It does not '
+      + 'represent gas volume, entry site, embolus location, cerebral or paradoxical embolism, or treatment.',
+    whereItMisleads: 'Using the displayed change to diagnose an air embolism, estimate its size or '
+      + 'location, or predict a particular patient outcome.',
+    correctUnderstanding: 'A sudden end-tidal carbon-dioxide decrease and cardiopulmonary compromise '
+      + 'during a compatible procedure require immediate clinical assessment and management; the '
+      + 'monitor pattern is not specific to one diagnosis.',
+    briefIn: [],
+  },
+  {
     id: 'no-team-or-communication',
     headline: 'There is no team: nobody to ask, nobody to hand over to, and no communication to get wrong.',
     simplification: 'There is no surgeon, no scrub team, no assistant, and no communication of any '

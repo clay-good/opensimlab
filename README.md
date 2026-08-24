@@ -178,8 +178,10 @@ post-cardiac-arrest care.
 Its eleventh slice adds the manual crisis-injector foundation as a scenario-author tool. Nine
 already-modeled entries are two-step, logged, transcripted, and deterministic: hemorrhage,
 anaphylaxis, laryngospasm, bronchospasm, malignant-hyperthermia susceptibility, local-anesthetic
-toxicity, shockable and non-shockable arrest, and TIVA-line disconnection. High spinal and air
-embolism remain visibly unavailable until their physiology is implemented.
+toxicity, shockable and non-shockable arrest, and TIVA-line disconnection. Its twelfth slice
+completes the required 11-entry control with distinct high-spinal and venous-air-embolism teaching
+trajectories. Their exact slopes are calibrations, not block-height, gas-volume, diagnostic,
+treatment, or outcome models.
 
 ## Running it
 
@@ -252,6 +254,8 @@ recognize, rather than to invented conventions:
 | Alarm priority, color, flash rate | IEC 60601-1-8 |
 | Malignant hyperthermia protocol | [MHAUS acute crisis protocol](https://www.mhaus.org/healthcare-professionals/managing-a-crisis/) |
 | Local anesthetic systemic toxicity | ASRA checklist, 2020 version ([PMID 33148630](https://pubmed.ncbi.nlm.nih.gov/33148630/)) |
+| High central neuraxial block | [Obstetric Anaesthetists' Association quick reference](https://www.oaa-anaes.ac.uk/downloads/oaa-qrh/2-7-high-central-neuraxial-block.pdf) |
+| Venous air embolism | McCarthy et al., *Diagnostics* 2017;7:5 ([PMID 28106717](https://pubmed.ncbi.nlm.nih.gov/28106717/)) |
 | Difficult airway | 2022 ASA Practice Guidelines ([PMID 34762729](https://pubmed.ncbi.nlm.nih.gov/34762729/)) |
 | Neuromuscular blockade and reversal | 2023 ASA Practice Guidelines (quantitative monitoring, TOF ratio ≥ 0.9) |
 | Awareness epidemiology | NAP5, *Br J Anaesth* 2014 ([PMID 25204697](https://pubmed.ncbi.nlm.nih.gov/25204697/)) |

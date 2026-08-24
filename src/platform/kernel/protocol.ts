@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 12 reports manual crisis injection. */
-export const WORKER_PROTOCOL_VERSION = 12;
+/** Bumped whenever the message shape changes incompatibly. Version 13 completes manual crisis injection. */
+export const WORKER_PROTOCOL_VERSION = 13;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -223,6 +223,9 @@ export interface EquipmentSnapshot {
     readonly defibrillationShockCount?: number;
     readonly lastDefibrillationEnergyJ?: number | null;
     readonly roscAtTick?: number | null;
+    /** Early high-spinal and venous-air-embolism teaching drives. */
+    readonly highSpinalFraction?: number;
+    readonly venousAirEmbolismFraction?: number;
   };
   /** The most recent modeled trigger exposure, without diagnosing the response. */
   readonly lastExposure: { readonly agentId: string; readonly tick: number } | null;

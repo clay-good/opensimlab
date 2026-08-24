@@ -157,6 +157,16 @@ describe('the entries that were found to be wrong', () => {
     expect(source.usedFor).toContain('120-200 J');
     expect(source.currency?.checkedAt).toBe('2026-08-24');
   });
+
+  it('registers the evidence boundaries for the remaining manual crises', () => {
+    const highSpinal = requireSource('oaa-high-central-neuraxial-block-current');
+    expect(highSpinal.verifiedAgainst).toContain('official');
+    expect(highSpinal.usedFor).toContain('bradycardia');
+
+    const airEmbolism = requireSource('mccarthy-air-embolism-2017');
+    expect(airEmbolism.pmid).toBe('28106717');
+    expect(airEmbolism.usedFor).toContain('end-tidal carbon-dioxide');
+  });
 });
 
 describe('the code agrees with the register', () => {

@@ -552,6 +552,34 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-24',
     currency: { lastAmended: '2025-05-27', checkedAt: '2026-08-24' },
   },
+  {
+    id: 'oaa-high-central-neuraxial-block-current',
+    authors: 'Obstetric Anaesthetists\' Association',
+    title: 'High central neuraxial block',
+    publication: 'OAA Quick Reference Handbook',
+    year: 2026,
+    locator: 'current online guide, section 2-7',
+    unpinned: true,
+    usedFor: 'The direction of the manual high-spinal teaching trajectory: rapidly progressive '
+      + 'hypotension, bradycardia, and impaired breathing after neuraxial local anesthetic. The '
+      + 'model does not estimate block height, obstetric physiology, or treatment response.',
+    verifiedAgainst: 'Obstetric Anaesthetists\' Association current official quick-reference PDF',
+    verifiedOn: '2026-08-24',
+  },
+  {
+    id: 'mccarthy-air-embolism-2017',
+    pmid: '28106717',
+    authors: 'McCarthy CJ, Behravesh S, Naidu SG, Oklu R',
+    title: 'Air Embolism: Diagnosis, Clinical Management and Outcomes',
+    publication: 'Diagnostics (Basel)',
+    year: 2017,
+    locator: '7:5',
+    usedFor: 'The direction of the manual venous-air-embolism teaching trajectory: abrupt '
+      + 'end-tidal carbon-dioxide decline with desaturation and cardiopulmonary compromise. The '
+      + 'model does not infer gas volume, embolus location, diagnosis, or individual outcome.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-24',
+  },
 
   // --- Curriculum frameworks -------------------------------------------------
   //

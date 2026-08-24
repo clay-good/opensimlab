@@ -211,6 +211,23 @@ current equipment still govern the outcome: laryngospasm cannot close a tracheal
 hyperthermia susceptibility does nothing without genuine volatile exposure, and line disconnection
 does not create the specified awareness-under-paralysis pattern unless paralysis is already present.
 
-High spinal and air embolism remain explicitly absent from the control until their distinct
-physiology and monitor consequences exist. This interim slice advances the injector infrastructure
-without turning the remaining names into inert buttons.
+High spinal and air embolism remain explicitly absent from the control in this foundation slice;
+Slice 12 adds them only with distinct physiology and observable monitor consequences.
+
+## Slice 12: complete manual crisis injector
+
+The author tool adds the 2 remaining required entries through the same confirmed, logged, and
+replayable action. High spinal ramps over 20 simulated seconds and produces a bounded teaching
+pattern of bradycardia, loss of vascular tone, reduced cardiac output and pressure, and impaired
+unassisted breathing. Active ventilator delivery remains effective. The drive does not estimate
+neuraxial dose, spread, block height, pregnancy physiology, or patient-specific onset.
+
+Venous air embolism ramps over 2 simulated seconds and produces a distinct abrupt pulmonary-flow
+pattern: end-tidal carbon dioxide, cardiac output, pressure, and oxygen saturation fall while
+respiratory rate is not directly changed. The drive does not estimate gas volume, entry site,
+embolus location, diagnostic certainty, cerebral or paradoxical embolism, treatment, or outcome.
+
+The clinical directions come from current OAA high-central-neuraxial-block guidance and McCarthy
+et al.'s air-embolism review. Exact slopes and magnitudes are declared teaching calibrations. Tests
+compare each injected course with an identical untreated engine, prove the 2 syndromes remain
+physiologically distinct, and include both actions in deterministic replay.
