@@ -200,3 +200,33 @@ endorsement, correction, or D1 status without the defined evidence and review pa
 - **WHEN** a report plausibly identifies an unsafe teaching error
 - **THEN** the content can be withdrawn through the emergency static release path, but a report alone
   cannot silently alter clinical behavior or establish the corrected fact
+
+### Requirement: Reports Are Bound To Immutable Public Scenario Evidence
+
+The Worker SHALL accept only scenario/content/capability versions present in the release report
+catalog and SHALL store the applicable defaults, maturity, source-manifest, and limitation-manifest
+hashes so maintainers can reproduce what the reporter saw after the live catalog changes.
+
+#### Scenario: A stale installed scenario remains reproducible
+
+- **WHEN** a learner reports from an older still-supported offline pack
+- **THEN** the Worker validates that exact public version, stores its manifest hashes, and triage uses
+  that release rather than silently reproducing current main
+
+#### Scenario: An unsupported or tampered pack writes nothing
+
+- **WHEN** submitted versions or manifest hashes do not match a public report-catalog entry
+- **THEN** the request is rejected generically and creates no report/counter row beyond the bounded
+  verified-attempt accounting required for abuse control
+
+### Requirement: Reporting Cannot Become A Clinical Consultation Channel
+
+The report dialog and triage workflow SHALL state that reports concern Open Sim Lab content or
+behavior only and SHALL not solicit, answer, retain, or route questions about a real patient.
+
+#### Scenario: A note appears to contain real-patient information
+
+- **WHEN** automated bounded screening detects likely contact identifiers, medical-record patterns,
+  or phrases explicitly describing a real patient
+- **THEN** client submission is stopped with a local warning when possible; server validation rejects
+  without echoing/storing the note and still never attempts clinical advice

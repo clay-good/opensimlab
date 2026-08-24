@@ -122,3 +122,34 @@ transition, spatial continuity, or user action feedback and SHALL honor reduced 
 - **WHEN** reduced motion is active
 - **THEN** sweeping, interpolation, and celebratory motion is replaced by static or stepped state
   representations carrying the same labels, values, and announcements
+
+### Requirement: Scenario Selection Supports Informed Challenge
+
+Before start, the catalog SHALL disclose prerequisite concepts, estimated active time, new-control
+count, primary signal families, recoverability, potential distressing outcomes, fidelity class,
+region, maturity, and whether unassisted assessment disables pause.
+
+#### Scenario: Difficulty is explained rather than branded
+
+- **WHEN** a learner opens a scenario detail
+- **THEN** difficulty is accompanied by the assumptions and concurrent demands that produce it, not
+  only a label such as beginner, intermediate, or advanced
+
+#### Scenario: Distressing content is disclosed without spoiling discovery
+
+- **WHEN** a scenario may include arrest, death, pregnancy loss, child harm, violence, or another
+  declared sensitive outcome
+- **THEN** a concise content note appears before start, can be expanded for detail, and avoids naming
+  hidden diagnosis or event timing
+
+### Requirement: Catalog Search Quality Is A Versioned Artifact
+
+Aliases, abbreviations, presenting signs, competencies, exclusions, and hidden-diagnosis-safe terms
+SHALL live in a checked-in search fixture for every scenario. Search SHALL not use production query
+logs or inferred popularity.
+
+#### Scenario: A scenario is discoverable without diagnosis knowledge
+
+- **WHEN** a fixture queries its intended novice description or presenting sign
+- **THEN** the scenario appears in the first 5 results while hidden diagnosis terms remain absent
+  from learner-facing snippets before reveal

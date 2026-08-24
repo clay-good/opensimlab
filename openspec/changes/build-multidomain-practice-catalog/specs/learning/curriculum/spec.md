@@ -63,3 +63,36 @@ as optional preview material but SHALL not satisfy reviewed coverage.
 - **WHEN** an educator pins a static release and reviewed-only pack for a course
 - **THEN** every learner link resolves to the same content/capability versions, maturity records,
   sources, and corrections without requiring an account
+
+## ADDED Requirements
+
+### Requirement: Curriculum Coverage Requires Variation And Repetition
+
+A competency SHALL not be represented as broadly evidenced by repeated success in one patient,
+scenario, environment, or identical syndrome. Coverage records SHALL declare population,
+environment, uncertainty, assistance level, and scenario variation.
+
+#### Scenario: One case cannot prove transfer
+
+- **WHEN** a learner demonstrates a behavior in one scenario
+- **THEN** the competency records evidence for that context only; broader evidence requires at least
+  3 separate scenarios spanning at least 2 environments or patient populations as defined by the
+  competency
+
+#### Scenario: Repeated aliases do not pad a map
+
+- **WHEN** two scenarios share the same state, actions, objective evidence, and context variation
+- **THEN** they count once toward competency breadth even if titles/modules differ
+
+### Requirement: Paths Manage Cognitive Load Across Scenarios
+
+Preparation paths SHALL sequence new mechanisms, controls, and concurrent signals so prerequisites
+are taught before combination. Each step SHALL declare what is newly introduced and what is being
+retrieved.
+
+#### Scenario: An advanced case has a decomposable path
+
+- **WHEN** a scenario combines more than 2 primary mechanisms or more than 6 new controls relative to
+  the learner's prior path
+- **THEN** the path offers prerequisite component scenarios and explains which prior behaviors the
+  advanced case will combine without locking direct access

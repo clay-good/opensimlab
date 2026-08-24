@@ -86,6 +86,39 @@ named automated test or documented manual verification.
   configured reporting, and the upstream project receives nothing unless the host explicitly and
   visibly configures an upstream route
 
+## ADDED Requirements
+
+### Requirement: Scenario Authoring Cannot Create A Hidden Data Collection Surface
+
+Scenario schemas, tutor rules, report projections, custom labels, reflections, and proposal tools
+SHALL not declare arbitrary network destinations, analytics events, remote assets, executable code,
+cookies, fingerprint inputs, or fields intended for real-person clinical data.
+
+#### Scenario: Third-party scenario content is inert
+
+- **WHEN** an imported/proposed scenario contains a URL, HTML, script, tracking key, external asset,
+  arbitrary form field, or unknown report-context selector
+- **THEN** validation rejects it before rendering and no network or storage action occurs
+
+#### Scenario: A scenario cannot broaden reporting
+
+- **WHEN** a scenario declares optional report context
+- **THEN** it may select only typed public scenario fields approved by the platform schema and cannot
+  select DOM text, reflections, free text, local storage, prior transcripts, or imported files
+
+### Requirement: Local Learning Records Have Visible Retention Controls
+
+The learner SHALL be able to inspect storage used per domain pack and per record class, delete one
+attempt, one scenario's history, tutor history, imported instructor files, a domain pack, or all
+local learning data, and export before deletion.
+
+#### Scenario: Deletion is complete and local
+
+- **WHEN** the learner deletes all learning data
+- **THEN** transcripts, reflections, progress, tutor history, recommendations, dismissals, imports,
+  cached report drafts, and local assignment labels are removed while static application assets may
+  remain; a fresh session reconstructs none of the deleted state
+
 ## REMOVED Requirements
 
 ### Requirement: No Request To Any Origin Other Than The Application Origin

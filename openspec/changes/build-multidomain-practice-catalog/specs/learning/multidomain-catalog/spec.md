@@ -2,18 +2,21 @@
 
 ## ADDED Requirements
 
-### Requirement: The Public Catalog Contains 240 Complete Scenarios
+### Requirement: The Public Catalog Targets 256 Complete Scenarios
 
-The release catalog SHALL contain exactly 240 playable scenarios distributed across the 16 modules
-and counts defined in the change design. Only a scenario satisfying the complete-scenario contract
-may be included in the playable total.
+The release catalog SHALL target exactly 256 playable scenarios distributed across the 16 modules
+and counts defined in the change design. Only a scenario satisfying the complete-scenario and
+scenario-quality contracts may be included in the playable total. A release SHALL publish a smaller
+honest count rather than waive a gate to reach 256.
 
 #### Scenario: The catalog count is mechanically honest
 
 - **WHEN** the catalog gate runs
-- **THEN** it finds exactly 240 unique playable scenario IDs and the required per-module counts
+- **THEN** the completed target contains exactly 256 unique playable scenario IDs and the required
+  per-module counts
 - **AND** every counted item passes schema, source, objective, action, progression, debrief,
-  limitation, fixture, accessibility, offline, replay, and reporting checks
+  limitation, fixture, defaults, training-value, hazard, state-space, accessibility, offline,
+  replay, and reporting checks
 
 #### Scenario: A placeholder is not a scenario
 
@@ -29,13 +32,20 @@ may be included in the playable total.
   evidence, or debrief focus differs materially
 - **AND** a distinctness test rejects mere retitling of identical state, actions, and objectives
 
+#### Scenario: Quality beats the target date
+
+- **WHEN** fewer than 256 planned scenarios pass every gate at release time
+- **THEN** the catalog reports only the passing playable count, identifies remaining titles as
+  planned, and does not weaken thresholds, copy existing scenarios, or reclassify static content
+
 ### Requirement: Every Scenario Declares A Complete Learning Contract
 
 Every playable scenario SHALL declare stable identity, module, environment, estimated duration,
 difficulty, prerequisites, practice regions, fidelity class, content and capability versions,
 maturity, a bounded fictional patient, 2–5 observable objectives, a deterministic seed policy,
 accepted and refused actions, progression, stop conditions, sources, limitations, tutor behavior,
-debrief behavior, and regression fixtures.
+debrief behavior, regression fixtures, a training-value record, an authored-defaults record, a
+hazard analysis, and a complete state-space verification matrix.
 
 #### Scenario: Objectives can be observed
 
@@ -113,6 +123,19 @@ reassessment, prioritization, or disposition adds educational value beyond stati
 - **THEN** the public scope documentation states why browser simulation does not yet add value or
   which shared capability is missing, rather than representing the catalog as comprehensive medicine
 
+#### Scenario: Runtime utility proposals remain outside the product
+
+- **WHEN** a proposed item is primarily a calculator, score, classification, conversion, reference,
+  lookup, checklist answer, documentation generator, or patient-specific recommendation
+- **THEN** it is rejected without comparing it to an external catalog because it fails Open Sim
+  Lab's intrinsic fictional time-evolving rehearsal boundary
+
+#### Scenario: A formula supports rather than becomes the lesson
+
+- **WHEN** a scenario uses a formula, score, or classification
+- **THEN** the fictional patient supplies its inputs, later state tests interpretation or
+  limitations, the learner still observes/acts/reassesses, and no standalone compute surface exists
+
 ### Requirement: Domain Packs Preserve A Small Local-First Application
 
 The catalog SHALL partition scenario assets into versioned static domain packs with integrity
@@ -155,3 +178,30 @@ risks, copyright boundary, and required reviewer domains.
 - **WHEN** authoritative guidance differs between supported regions
 - **THEN** the evidence brief records the disagreement and the scenario selects a visible regional
   variant or omits the disputed action rather than inventing a universal rule
+
+### Requirement: New Scenario Families Have Capability And Review Preconditions
+
+The 8 newest scenario families defined in the design SHALL not begin implementation
+until their named shared capability, evidence brief, review domains, and negative-transfer boundary
+are declared.
+
+#### Scenario: Equipment failures are not display tricks
+
+- **WHEN** circle-system rebreathing, tube migration, or tracheostomy obstruction is authored
+- **THEN** equipment state changes canonical gas flow or ventilation, downstream physiology follows
+  shared models, assessment evidence precedes treatment, and physical troubleshooting skill is
+  explicitly out of scope
+
+#### Scenario: Rare syndromes preserve diagnostic uncertainty
+
+- **WHEN** aortic syndrome, autonomic dysreflexia, methemoglobinemia, or cytokine-release syndrome is
+  authored
+- **THEN** the early presentation has at least one plausible alternative, confirmatory evidence is
+  not leaked, escalation is bounded to the learner role, and debrief distinguishes recognition from
+  definitive diagnosis
+
+#### Scenario: Neonatal deterioration uses neonatal state
+
+- **WHEN** tension pneumothorax during neonatal respiratory support is authored
+- **THEN** it composes neonatal transition and respiratory-support capabilities rather than scaling
+  an adult profile, and its review domains include neonatology and neonatal resuscitation

@@ -5,12 +5,18 @@ credited toward the catalog until every item in the completion contract passes.
 
 ## 0. Ratify the contract
 
-- [ ] Approve the product position, 240-scenario catalog, fidelity classes, maturity vocabulary,
+- [ ] Approve the product position, 256-scenario target catalog, training-versus-runtime-tool
+  boundary, fidelity classes, maturity vocabulary,
   privacy exception, report retention, and no-hosted-MCP decision.
 - [ ] Resolve every conflict between this change and the master clinical-governance, privacy,
   delivery, module, curriculum, pedagogy, safety, adoption, and sustainability specifications.
 - [x] Publish a machine-readable scenario completion schema and validate all existing anesthesia
   scenarios against it without changing their behavior.
+- [ ] Publish machine-readable training-value, authored-defaults, scenario-hazard, and state-space
+  verification schemas; require all four before a scenario counts as playable.
+- [ ] Add architecture tests rejecting standalone calculators, scores, classifications,
+  conversions, lookups, checklist answers, documentation generators, real-patient entry, and public
+  compute endpoints while permitting calculations internal to fictional patient response.
 - [x] Add architecture tests proving that tutor rules cannot mutate patient state and reporting
   cannot read local progress, reflections, or arbitrary browser storage.
 
@@ -134,16 +140,22 @@ credited toward the catalog until every item in the completion contract passes.
   claiming to simulate team performance.
 - [ ] For every capability: sources, applicability, calibration, invariants, hostile inputs,
   deterministic replay, nonvisual representation, limitations, and cross-scenario regression.
+- [ ] Add equipment-state capabilities for breathing-circuit carbon-dioxide rebreathing,
+  endotracheal-tube position, tracheostomy patency, and neonatal pleural-pressure deterioration;
+  state changes must alter canonical flow/ventilation rather than display text alone.
+- [ ] Add bounded state-transition capabilities for evolving aortic malperfusion, autonomic
+  dysreflexia, methemoglobinemia saturation gap, and cellular-therapy cytokine-release syndrome,
+  each with explicit differential, escalation, and definitive-diagnosis boundaries.
 
 ## 8. Catalog production waves
 
-- [ ] Wave A: migrate and complete 36 anesthesia scenarios.
-- [ ] Wave B: complete 24 emergency-medicine and 20 critical-care scenarios.
-- [ ] Wave C: complete 16 cardiology and 14 respiratory-medicine scenarios.
-- [ ] Wave D: complete 16 pediatric, 14 obstetric, and 10 neonatal scenarios.
-- [ ] Wave E: complete 14 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
-- [ ] Wave F: complete 10 infectious-disease and 14 toxicology scenarios.
-- [ ] Wave G: complete 10 hematology/oncology, 10 surgery/trauma, and 8 medical-surgical-nursing
+- [ ] Wave A: migrate and complete 39 anesthesia scenarios.
+- [ ] Wave B: complete 25 emergency-medicine and 24 critical-care scenarios.
+- [ ] Wave C: complete 17 cardiology and 15 respiratory-medicine scenarios.
+- [ ] Wave D: complete 16 pediatric, 15 obstetric, and 11 neonatal scenarios.
+- [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
+- [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
+- [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.
 - [ ] After every wave, verify the exact cumulative count, distinctness, capability reuse, path and
   competency coverage, sources, maturity labels, domain-pack budget, offline behavior, mobile
@@ -157,6 +169,14 @@ credited toward the catalog until every item in the completion contract passes.
 - [ ] Define 2–5 observable objectives and explicitly mark psychomotor, physical-examination, team,
   and communication claims the browser cannot assess.
 - [ ] Produce expert, common-error, and recovery transcripts before calling the scenario complete.
+- [ ] Document every default, preselection, hidden trait, scripted delay, and randomization range;
+  remove browser/framework defaults from clinical behavior.
+- [ ] Complete the hazard analysis for premature closure, cue leakage, negative transfer,
+  unsupported precision, omitted alternatives, invalid actions, model boundaries, catastrophic
+  outcomes, accessibility misunderstanding, and regional variation.
+- [ ] Pass expert, common-error, recovery, no-action, unsafe/refused, boundary-timing, region,
+  seeded-extrema, guidance, keyboard, screen-reader, reduced-motion, phone, offline, replay, and
+  report-context matrix rows.
 - [ ] Add PEARLS debrief, causal attribution, bounded counterfactual, tutor rules, limitations,
   accessibility summary, and report coverage.
 - [ ] Advance maturity only through independently verified, exact-version records.
@@ -179,7 +199,9 @@ credited toward the catalog until every item in the completion contract passes.
 - [ ] Run full type, lint, architecture, unit, property, golden trace, deterministic replay,
   accessibility, responsive, performance, offline, content, maturity, privacy, report-security,
   source, license, and static-build gates.
-- [ ] Verify exactly 240 complete scenario IDs and zero placeholder cards included in the total.
+- [ ] Verify exactly 256 complete scenario IDs at target completion, zero placeholder cards, zero
+  waived quality gates, and zero scenarios failing the intrinsic training-versus-runtime-tool
+  boundary; earlier releases publish their smaller honest passing count.
 - [ ] Verify a full session makes no API call, then preview and submit one bounded report and inspect
   the D1 row.
 - [ ] Verify all preview, reviewed, endorsed, overdue, and withdrawn labels against public records.

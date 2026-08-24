@@ -3,7 +3,7 @@
 ## Summary
 
 Turn Open Sim Lab from a single-specialty alpha into a free, public, browser-native practice
-laboratory with a 240-scenario catalog across 16 medical domains. The product should feel like a
+laboratory with a 256-scenario catalog across 16 medical domains. The product should feel like a
 private tutor attached to a responsive simulated patient: it orients a novice, watches observable
 decisions, offers progressively smaller hints, explains the resulting physiology, and recommends
 the next rehearsal without creating an account or sending learner activity off the device.
@@ -43,7 +43,7 @@ When this change is complete:
 2. Every scenario uses the same learning loop: orient, assess, act, observe, reflect, explain,
    rehearse.
 3. Guided, coached, and unassisted practice use identical patient behavior; only the tutor changes.
-4. The repository contains exactly 240 registered scenarios across the 16 domains defined in the
+4. The repository contains exactly 256 registered scenarios across the 16 domains defined in the
    design, with no placeholder scenario counted as complete.
 5. Every scenario is source-grounded, bounded, deterministic, accessible, and accompanied by a
    debrief, limitations, provenance, and a report control.
@@ -62,7 +62,7 @@ When this change is complete:
 
 ### Product and catalog
 
-- Add a catalog information architecture for 240 scenarios across anesthesia, emergency medicine,
+- Add a catalog information architecture for 256 scenarios across anesthesia, emergency medicine,
   critical care, cardiology, respiratory medicine, pediatrics, obstetrics, neonatology, neurology,
   endocrine and metabolic medicine, renal and electrolyte medicine, infectious disease, toxicology,
   hematology and oncology, surgery and trauma, and medical-surgical nursing.
@@ -71,6 +71,9 @@ When this change is complete:
   system.
 - Define a scenario maturity, fidelity, source, and capability contract so catalog size never hides
   shallow or unsupported cases.
+- Define an intrinsic product boundary: every playable item is fictional, time-evolving educational
+  rehearsal with observable consequences and debriefing, never a standalone calculator, score,
+  classification lookup, reference table, checklist answer, or tool for executing real work.
 
 ### Private tutor
 
@@ -127,7 +130,8 @@ When this change is complete:
 Measures are obtained from tests, documented moderated sessions, opt-in institutional evaluation,
 and local user-visible counters. The production application contains no telemetry.
 
-- Catalog completeness: 240 registered scenarios, all passing the scenario completion contract.
+- Catalog completeness: 256 registered scenarios, all passing the scenario completion,
+  training-value, and runtime-tool-boundary contracts.
 - Findability: at least 90% of 20 moderated learners can locate one named case and one case matching
   a stated learning need within 30 seconds.
 - First use: median time from module arrival to first meaningful scenario action is at most 45
@@ -150,6 +154,7 @@ and local user-visible counters. The production application contains no telemetr
 | Risk | Mitigation |
 | --- | --- |
 | Breadth produces shallow simulations | Count only scenarios meeting the completion contract; build shared physiological capabilities before scenario volume. |
+| The catalog drifts into runtime utilities | Require an intrinsic training-value record and reject any item whose primary objective is satisfied by a calculator, score, classification, checklist, reference, or static decision output. |
 | Learners mistake preview content for authority | Persistent maturity labels, source/limitations access, no reviewed styling on preview content, and release-level coverage lists. |
 | Organizations treat one signature as blanket approval | Sign-offs bind reviewer, organization, scope, scenario IDs, versions, region, and expiration. |
 | A correction button is mistaken for validation | Reporting is a detection mechanism only; status changes require source verification and named review. |

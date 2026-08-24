@@ -79,3 +79,36 @@ container language and SHALL not reward harm, shame hesitation, or make patient 
 - **WHEN** an improvement is displayed
 - **THEN** it names the learner's own observable behavior and modeled consequence, remains on-device,
   and is not expressed as a leaderboard, percentile, global rank, or arbitrary point total
+
+## ADDED Requirements
+
+### Requirement: Every Scenario Uses Retrieval, Action, Feedback, And Repetition Deliberately
+
+Each scenario SHALL identify what the learner must retrieve before acting, what observable action
+expresses it, when feedback is withheld or delivered, and how the same behavior can be repeated in a
+changed context. Decorative questions and feedback unrelated to an objective SHALL be omitted.
+
+#### Scenario: Predict-then-observe serves a named objective
+
+- **WHEN** a prediction prompt is used
+- **THEN** it targets one declared misconception, is answered before the relevant state change,
+  compares prediction with modeled observation after the event, and appears in debrief without a
+  grade
+
+#### Scenario: Feedback timing preserves assessment
+
+- **WHEN** Unassisted mode or a declared assessment interval is active
+- **THEN** directive correctness feedback waits until reflection/debrief, while interface errors and
+  safety-scope refusals remain immediately understandable
+
+### Requirement: Prebriefs Establish A Fair Mental Model Without Coaching The Case
+
+Every prebrief SHALL orient the environment, fictional role, available instruments, control grammar,
+objectives, assumptions, maturity, limitations, sensitive-content note, and stop/pause behavior. It
+SHALL not reveal hidden diagnosis, event schedule, expert action order, or objective thresholds.
+
+#### Scenario: Control novelty is practiced safely
+
+- **WHEN** a scenario introduces a device/control not used in its prerequisites
+- **THEN** the prebrief offers an optional inert interaction example using no scenario clue and the
+  scenario does not test discovery of application mechanics

@@ -63,7 +63,7 @@ sends reaches the report service.
 
 ### 3.1 Completion contract
 
-A scenario counts toward the 240-scenario catalog only when it has all of the following:
+A scenario counts toward the 256-scenario catalog only when it has all of the following:
 
 1. stable ID, title, module, environment, estimated duration, difficulty, prerequisites, practice
    regions, content version, engine capability version, and maturity;
@@ -86,11 +86,44 @@ A scenario counts toward the 240-scenario catalog only when it has all of the fo
 14. keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, deterministic replay,
     and performance verification;
 15. report-control coverage in briefing, live session, debrief, and provenance views.
+16. a training-value record proving that the learning objective requires a fictional time-evolving
+    state, learner action, consequence, reassessment, and debrief and is not satisfied by a
+    calculator, score, classification, checklist, reference, or static decision output;
+17. an authored-defaults record naming the source and rationale for every starting setting,
+    preselected action, hidden patient trait, time scale, and randomization range;
+18. a scenario hazard analysis covering at least premature closure, cue leakage, unsafe transfer to
+    real care, unsupported precision, invalid/refused actions, catastrophic outcome handling, and
+    model-boundary crossing.
 
 A title card, static vignette, multiple-choice question, prerecorded animation, cosmetic monitor
 change, or unscored script does not satisfy this contract.
 
-### 3.2 Fidelity classes
+### 3.2 Product boundary: rehearsal, not work execution
+
+Open Sim Lab exists to change what a learner notices, understands, and rehearses before supervised
+practice. A playable item must therefore contain all of these elements:
+
+1. a fictional authored patient or scene, never arbitrary real-person input;
+2. meaningful simulated time or ordered state progression;
+3. incomplete information the learner must actively observe or uncover;
+4. at least two plausible action paths whose timing or order creates different consequences;
+5. a need to reassess after acting;
+6. a causal debrief that connects evidence, action, patient response, uncertainty, and transfer to
+   supervised practice.
+
+The product does not ship general-purpose calculators, dosing utilities, risk-score forms,
+classification pickers, unit converters, code lookups, reference tables, patient-specific checklists,
+documentation generators, or decision aids for actual work. A formula, score, classification, or
+guideline step may appear inside a fictional scenario only when it serves the rehearsal loop. Its
+inputs come from the authored patient, its output is contextual teaching evidence, and it is not
+exposed as a standalone route, API, reusable compute endpoint, or answer for a real patient.
+
+The engine may calculate physiology internally because the calculation makes the fictional patient
+respond. The boundary is crossed when a user can supply arbitrary current-work data and receive an
+answer intended to guide that work. Architecture tests enforce the difference independent of any
+other product or catalog.
+
+### 3.3 Fidelity classes
 
 - **Closed-loop physiology:** continuous patient state responds to interventions and time. Used for
   anesthesia, airway, shock, ventilation, rhythms, metabolic crises, and resuscitation.
@@ -104,7 +137,7 @@ change, or unscored script does not satisfy this contract.
 The catalog card names the fidelity class. A scenario cannot visually imply a higher class than its
 engine supports.
 
-### 3.3 Environments
+### 3.4 Environments
 
 The design system composes one shell from shared regions: patient identity, clock, status, primary
 workspace, actions, observations, tutor, log, and debrief. Environments change the workspace and
@@ -121,12 +154,12 @@ available instruments, not the navigation or core interaction grammar.
 | Clinic | history, focused examination, point-of-care results, counseling and disposition |
 | Prehospital | scene state, monitor/defibrillator, oxygen, medications, transport and radio handoff |
 
-### 3.4 Exact release catalog
+### 3.5 Exact release catalog
 
-The release target is exactly 240 complete scenarios. The names below define product scope, not
+The release target is exactly 256 complete scenarios. The names below define product scope, not
 clinical implementation. Each requires its own evidence brief before authoring numerical behavior.
 
-#### Anesthesia: 36
+#### Anesthesia: 39
 
 Routine adult IV induction; routine inhalational maintenance; rapid desaturation with obesity;
 hypotension after induction; bronchospasm after intubation; rapid-sequence induction; difficult
@@ -138,40 +171,49 @@ geriatric induction; obstetric general anesthesia; preeclampsia for urgent deliv
 venous air embolism; pneumothorax under positive pressure; aspiration-risk recognition; emergence
 with residual blockade; quantitative reversal selection; delayed emergence differential; extubation
 readiness; post-extubation obstruction; opioid-induced ventilatory impairment; hypothermia and
-rewarming; perioperative hyperglycemia; pacemaker and cautery planning; postoperative handoff.
+rewarming; perioperative hyperglycemia; pacemaker and cautery planning; postoperative handoff;
+capnography sampling-line obstruction during stable ventilation; arterial-pressure transducer
+misleveling and dynamic-response artifact during otherwise stable anesthesia; circle-system
+rebreathing from exhausted carbon-dioxide absorbent or unidirectional-valve failure.
 
-#### Emergency medicine: 24
+#### Emergency medicine: 25
 
 Undifferentiated shock; septic shock; hemorrhagic shock; obstructive shock from tension
 pneumothorax; cardiac tamponade; anaphylaxis; adult asthma; COPD exacerbation; acute pulmonary edema;
 pulmonary embolism with deterioration; STEMI; unstable narrow-complex tachycardia; unstable
 bradycardia; persistent VF arrest; PEA arrest; status epilepticus; acute ischemic stroke pathway;
 intracranial hemorrhage deterioration; diabetic ketoacidosis; hyperkalemia with ECG change; severe
-hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey.
+hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; acute aortic
+syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
-#### Critical care: 20
+#### Critical care: 24
 
 Septic shock resuscitation; ARDS lung-protective ventilation; escalating hypoxemia; ventilator
 dyssynchrony; auto-PEEP; mucus plugging; unplanned extubation; spontaneous-breathing trial;
 post-intubation hypotension; cardiogenic shock; mixed shock; right-ventricular failure; massive
 pulmonary embolism; upper GI hemorrhage; status epilepticus; targeted temperature management;
 intracranial hypertension; acute kidney injury with fluid overload; severe acidemia; ICU handoff with
-hidden deterioration.
+hidden deterioration; ventilator circuit disconnection with falling oxygen reserve; delayed
+vasopressor delivery from infusion dead space and startup mechanics; pulse-oximeter motion artifact
+requiring cross-check of waveform, perfusion, and another oxygenation signal; endotracheal-tube
+migration after repositioning with unilateral ventilation and progressive gas-exchange change.
 
-#### Cardiology: 16
+#### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute
 decompensated heart failure; cardiogenic shock; atrial fibrillation with rapid response; regular
 narrow-complex tachycardia; wide-complex tachycardia; symptomatic bradycardia; complete heart block;
 torsades de pointes; hyperkalemic conduction disturbance; pericardial tamponade; right-ventricular
-infarction; hypertensive emergency; pacemaker capture failure.
+infarction; hypertensive emergency; pacemaker capture failure; transcutaneous pacing with electrical
+capture but absent mechanical capture.
 
-#### Respiratory medicine: 14
+#### Respiratory medicine: 15
 
 Acute severe asthma; COPD exacerbation; community-acquired pneumonia with hypoxemia; pulmonary
 embolism; acute pulmonary edema; tension pneumothorax; large pleural effusion; mucus plugging;
 opioid-related hypoventilation; neuromuscular respiratory failure; obesity hypoventilation;
-noninvasive-ventilation selection; high-flow oxygen escalation; oxygen-device failure.
+noninvasive-ventilation selection; high-flow oxygen escalation; oxygen-device failure; acute
+tracheostomy obstruction requiring assessment, oxygenation, escalation, and a bounded device pathway.
 
 #### Pediatrics: 16
 
@@ -180,25 +222,29 @@ shock; dehydration with hypovolemia; diabetic ketoacidosis; hypoglycemic seizure
 status epilepticus; anaphylaxis; supraventricular tachycardia; bradycardic arrest; foreign-body airway
 obstruction; nonaccidental-injury escalation boundary.
 
-#### Obstetrics: 14
+#### Obstetrics: 15
 
 Postpartum hemorrhage from atony; concealed hemorrhage; severe preeclampsia; eclampsia; maternal
 sepsis; amniotic-fluid-embolism pattern; maternal cardiac arrest; shoulder-dystocia cognitive
 sequence; umbilical-cord prolapse escalation; uterine rupture recognition; magnesium toxicity;
-high neuraxial block; failed airway in pregnancy; maternal-to-neonatal resuscitation handoff.
+high neuraxial block; failed airway in pregnancy; maternal-to-neonatal resuscitation handoff;
+oxytocin-associated uterine tachysystole with a deteriorating fetal-heart-rate pattern and recovery
+after corrective simulated actions.
 
-#### Neonatology: 10
+#### Neonatology: 11
 
 Term newborn transition; neonatal apnea; ineffective ventilation correction; neonatal bradycardia;
 meconium-stained transition; preterm respiratory distress; neonatal hypoglycemia; neonatal sepsis;
-thermoregulation failure; delivery-room-to-NICU handoff.
+thermoregulation failure; delivery-room-to-NICU handoff; tension pneumothorax during respiratory
+support with asymmetric ventilation and rapid cardiopulmonary deterioration.
 
-#### Neurology: 14
+#### Neurology: 15
 
 Acute ischemic stroke; large-vessel-occlusion escalation; intracranial hemorrhage; subarachnoid
 hemorrhage deterioration; status epilepticus; nonconvulsive status recognition; myasthenic crisis;
 Guillain-Barré respiratory decline; meningitis; encephalitis; raised intracranial pressure;
-herniation pattern; spinal-cord compression; acute delirium with reversible causes.
+herniation pattern; spinal-cord compression; acute delirium with reversible causes; autonomic
+dysreflexia with an authored noxious trigger, severe hypertension, and reflex bradycardia.
 
 #### Endocrine and metabolic medicine: 12
 
@@ -219,18 +265,21 @@ Sepsis without shock; septic shock; meningitis; neutropenic fever; severe commun
 pneumonia; pyelonephritis with deterioration; cellulitis progressing to necrotizing infection;
 endocarditis complication; toxic-shock pattern; source-control reassessment.
 
-#### Toxicology: 14
+#### Toxicology: 15
 
 Opioid poisoning; acetaminophen overdose; salicylate toxicity; tricyclic-antidepressant toxicity;
 beta-blocker toxicity; calcium-channel-blocker toxicity; digoxin toxicity; cholinergic poisoning;
 anticholinergic syndrome; serotonin syndrome; sympathomimetic toxicity; toxic alcohol pattern;
-carbon-monoxide exposure; local-anesthetic systemic toxicity.
+carbon-monoxide exposure; local-anesthetic systemic toxicity; methemoglobinemia with a saturation
+gap, exposure history, chocolate-brown blood observation, and bounded antidote intent.
 
-#### Hematology and oncology: 10
+#### Hematology and oncology: 11
 
 Neutropenic fever; tumor-lysis syndrome; hyperleukocytosis pattern; sickle-cell acute chest syndrome;
 massive hemorrhage and component support; anticoagulant-associated bleeding; transfusion reaction;
-febrile nonhemolytic transfusion event; superior-vena-cava syndrome; spinal-cord compression.
+febrile nonhemolytic transfusion event; superior-vena-cava syndrome; spinal-cord compression;
+cytokine-release syndrome after cellular therapy with fever, hypotension, hypoxemia, and graded
+escalation.
 
 #### Surgery and trauma: 10
 
@@ -238,18 +287,49 @@ Trauma primary survey; hemorrhagic shock; tension pneumothorax; traumatic brain 
 pelvic hemorrhage; postoperative hemorrhage; postoperative sepsis; anastomotic-leak pattern;
 compartment-syndrome escalation; perioperative handoff.
 
-#### Medical-surgical nursing: 8
+#### Medical-surgical nursing: 9
 
 Ward sepsis escalation; opioid-induced respiratory depression; postoperative hemorrhage; insulin
 and hypoglycemia rescue; transfusion reaction; acute delirium and falls risk; deteriorating heart
-failure; structured escalation and handoff.
+failure; structured escalation and handoff; smart-pump weight-unit mismatch intercepted before
+medication delivery.
 
-### 3.5 Reuse without duplication
+### 3.6 Reuse without duplication
 
 Repeated syndromes are intentional when environment, role, prior information, available actions,
 or learning objective differs. Shared physiology and source assertions live once. A catalog gate
 rejects two scenarios with the same patient state, action set, objective evidence, and debrief merely
 retitled for different modules.
+
+### 3.7 Hardening briefs for the 16 newest scenarios
+
+These briefs establish educational shape and safe defaults. Exact numeric behavior, thresholds,
+doses, and action windows remain unset until the scenario evidence brief traces them to current
+primary or authoritative sources. “Stable” means a fully specified fictional baseline, not generic
+normal values supplied by the browser.
+
+| Scenario | Starting state and honest default | Primary rehearsal value | Required capability/source floor | Explicit boundary |
+| --- | --- | --- | --- | --- |
+| Capnography sampling-line obstruction | Stable intubated/ventilated fictional adult; no diagnosis label; capnogram quality/number changes through sampling state while airway pressure, delivered breaths, pleth, and physiology remain independently available | Cross-check a disappearing or distorted carbon-dioxide signal before treating the patient | Separate patient, circuit, sampling, and display state; device/monitoring standards and manufacturer-independent signal behavior | Does not teach physical tubing manipulation, proprietary diagnostics, or that every absent capnogram is obstruction |
+| Arterial transducer misleveling and dynamic-response artifact | Hemodynamically stable anesthetized adult with an arterial line and available cuff; transducer position or response changes display, not true pressure | Verify implausible invasive pressure using waveform quality, leveling/zero intent, and an independent measure | Hydrostatic relation, dynamic-response teaching model, cuff sampling delay, separate sensor/patient state | Does not certify leveling/flushing technique or represent one commercial monitor |
+| Ventilator circuit disconnection | ICU patient stable on established support with declared oxygen reserve; disconnection is not announced by diagnosis; device alarms follow sourced delay/priority behavior | Recognize device/patient discordance, oxygenate, inspect the circuit, restore support, and reassess | Circuit continuity, delivered-versus-commanded breaths, oxygen stores, alarm behavior | Does not teach physical connection security, all ventilator brands, or every leak/disconnection pattern |
+| Delayed vasopressor delivery | Fictional shock patient with a newly commanded infusion, declared tubing/dead-space state, and no immediate concentration effect | Distinguish pump-running intent from drug delivery; trace line/setup state and reassess pressure | Commanded/delivered separation, carrier flow/dead-space transport, effect-site response, pump event log | No bedside infusion calculator, line-priming instruction, universal tubing volume, or real-patient rate recommendation |
+| Pulse-oximeter motion artifact | Patient physiology initially stable; motion/perfusion state degrades pleth quality and displayed saturation while other observations retain declared independence | Evaluate signal quality and corroborate before escalating treatment | Separate oxygenation, perfusion, probe, pleth, numeric display, delay, and alarm state | Does not imply a clean capnogram excludes hypoxemia or that all discordance is artifact |
+| Electrical without mechanical pacing capture | Fictional unstable bradycardia with monitor/pacing equipment available; electrical complexes may follow stimuli while pulse/perfusion does not | Check mechanical perfusion rather than equating electrical appearance with effective circulation | Rhythm, pacing stimulus/electrical response, pulse/mechanical output, discomfort/sedation scope, current resuscitation guidance | No physical pad-placement instruction, brand-specific thresholds, or real-patient pacing prescription |
+| Oxytocin-associated tachysystole | Laboring fictional patient with a declared infusion and initially interpretable uterine/fetal patterns; regional policy is pinned before start | Recognize temporal relationship, stop/adjust the fictional trigger, reposition/support/escalate within scope, and reassess both patterns | Maternal/fetal state, contraction timing, fetal-pattern representation, medication-delivery state, current obstetric guidance | Does not teach fetal-monitor certification, operative delivery technique, universal drug sequence, or definitive fetal diagnosis |
+| Smart-pump weight-unit mismatch near miss | Fictional order, medication record, pump library, weight basis, and units intentionally disagree before delivery; no medication reaches the patient by default | Reconcile sources, identify the mismatch, stop the setup, escalate, and document simulated intent | Typed units, independent order/MAR/pump state, high-consequence confirmation, no-delivery guard | Not a dosing calculator, pump-library validator, or substitute for local medication policy |
+| Circle-system rebreathing | Stable anesthetized/ventilated fictional patient; carbon dioxide rises through declared circuit absorbent/valve state while metabolic production is initially unchanged | Separate inadequate carbon-dioxide elimination/rebreathing from changing metabolism and patient ventilation; inspect/replace fictional equipment and reassess | Inspired/expired carbon dioxide, circuit flow, absorber/valve state, capnogram baseline, gas exchange | No physical machine checkout credential, proprietary circuit replica, or claim that one waveform proves the fault |
+| Acute aortic syndrome with evolving malperfusion | Fictional emergency presentation with incomplete early evidence; pulse, perfusion, pain, and neurologic findings evolve before definitive imaging availability | Avoid premature closure, repeat focused assessment, recognize discordance, escalate and protect the patient from an unsupported default pathway | Branching encounter plus sourced discrete malperfusion transitions, examination/result availability, time-to-escalation | Does not diagnose a real patient, compute a risk score, choose definitive surgery, or model every phenotype |
+| Endotracheal-tube migration after repositioning | Previously stable ventilated ICU patient; position change precedes unilateral ventilation and progressive gas-exchange change without announcing tube depth | Reassess after movement, integrate airway pressure, bilateral observations, capnography, oxygenation, and tube-depth evidence, then perform bounded correction intent | Tube position, lung-side ventilation, airway pressure, gas exchange, examination observations | Does not teach auscultation skill, physical repositioning, radiograph interpretation, or exact depth for a real patient |
+| Acute tracheostomy obstruction | Fictional tracheostomy patient with declared device type/maturity and initially stable ventilation; obstruction develops with independent patient/device evidence | Call for help, oxygenate by the appropriate fictional routes, assess patency/displacement, and follow a bounded current algorithm branch | Tracheostomy/device state, upper-airway applicability, gas flow, oxygenation, capnography, current multidisciplinary emergency guidance | Does not teach physical suction/change technique, apply one pathway to every device, or continue past modeled role/scope |
+| Neonatal tension pneumothorax during support | Fictional neonate on declared respiratory support with neonatal baseline; unilateral ventilation and cardiopulmonary deterioration arise through pleural state | Notice rapid deterioration, verify support/air entry asymmetry, escalate, oxygenate/ventilate, and record bounded decompression intent | Neonatal respiratory mechanics, pleural pressure, asymmetric ventilation, transition circulation, neonatal monitoring | Does not scale an adult model, teach needle placement, select real equipment size, or individualize outcome |
+| Autonomic dysreflexia | Fictional person with a declared spinal lesion and initially stable state; an authored noxious trigger causes evolving hypertension and reflex bradycardia | Recognize the syndrome pattern, seek/remove a fictional trigger within role, position/support/escalate, and reassess | Neurogenic autonomic state transition, trigger library, pressure/heart-rate response, current spinal-injury guidance | Does not accept a real injury level, diagnose every hypertensive episode, teach catheter technique, or prescribe real treatment |
+| Methemoglobinemia with saturation gap | Fictional exposure with discordant pulse oximetry, arterial oxygen evidence, symptoms, and blood observation revealed through ordered assessment | Detect discordance, obtain relevant exposure history/tests, support/escalate, and use bounded antidote intent while respecting contraindication scope | Dyshemoglobin teaching state, co-oximetry result, conventional saturation limitations, exposure transition, authoritative toxicology guidance | No exposure/dose calculator, universal antidote eligibility, real-patient treatment plan, or individual outcome prediction |
+| Cytokine-release syndrome after cellular therapy | Fictional post-therapy patient with fever followed by sourced discrete hypotension/hypoxemia states; infection remains a plausible competing concern | Reassess severity, maintain parallel differential, provide support, notify/escalate, and follow a bounded region/protocol-specific treatment-intent branch | State-transition severity, oxygen/pressure support, infection differential, therapy timing, current specialty consensus guidance | Does not grade or treat a real patient, model immune kinetics as individual prediction, or replace the treating center's protocol |
+
+Each brief must be expanded into the standard evidence, defaults, hazard, tutor, objectives,
+limitations, and verification records before implementation. None of these titles counts as playable
+merely because it is listed here.
 
 ## 4. Tutor design
 
@@ -489,11 +569,17 @@ No scenario number or threshold is copied from another application or unsourced 
 
 ### 8.3 Quality gates
 
-Each scenario must pass schema, source, maturity-label, deterministic replay, expert/common-error/
-recovery fixtures, objective reachability, tutor truthfulness, unsafe-action, limitation, privacy,
+Each scenario must pass schema, source, maturity-label, training-value, authored-defaults, hazard,
+state-space matrix, deterministic replay, expert/common-error/recovery/no-action fixtures, objective
+reachability/missability, tutor truthfulness, invalid/refused-action, limitation, privacy,
 accessibility, responsive-layout, offline, performance, and report-context tests. Module completion
-also requires scenario distinctness, shared-capability reuse, curriculum coverage, and a manually
-documented face-validity session even when the module remains preview.
+also requires scenario distinctness, shared-capability reuse, curriculum variation coverage,
+independent validation anchors, and a manually documented face-validity session even when the module
+remains preview.
+
+Quality gates are not waivable to reach a catalog number or schedule. A waiver may narrow or defer a
+scenario, but it cannot mark an unmet scenario playable. The public catalog always reports the actual
+passing count beside the 256-scenario target.
 
 ## 9. Open source and public operations
 
@@ -511,11 +597,11 @@ project.
 
 A hosted MCP server is not part of this change.
 
-Rough Logic and Sophie Well expose deterministic calculators whose main value can be represented as
-small read-only tool calls. Open Sim Lab's primary value is a time-evolving visual practice session,
-private learner state, reflection, and debrief. Turning that into remote MCP tools would add an
-operational surface, invite real-patient queries and decision-support misuse, weaken the offline/
-privacy story, and let an agent bypass the learning experience without a demonstrated learner need.
+Small deterministic utilities can often be represented well as read-only tool calls. Open Sim Lab's
+primary value is instead a time-evolving visual practice session, private learner state, reflection,
+and debrief. Turning that into remote MCP tools would add an operational surface, invite real-patient
+queries and decision-support misuse, weaken the offline/privacy story, and let an agent bypass the
+learning experience without a demonstrated learner need.
 
 Instead, the static build publishes machine-readable, read-only artifacts:
 
@@ -532,7 +618,7 @@ and the adapter can remain read-only, bounded, local, and derived from the same 
 
 ## 11. Rollout and rollback
 
-Modules ship in capability waves rather than waiting for all 240 scenarios. Catalog totals always
+Modules ship in capability waves rather than waiting for all 256 scenarios. Catalog totals always
 distinguish complete preview, reviewed, endorsed, and planned scenarios; planned titles never appear
 as playable cards.
 
@@ -542,19 +628,12 @@ simulator. A bad domain pack can be removed from the next service-worker manifes
 locally exported transcripts. Review and endorsement badges disappear automatically when their
 exact version is no longer current.
 
-## 12. Reference implementations and authoritative platform behavior
+## 12. Authoritative platform behavior
 
-The reporting design adapts the local repository patterns in:
-
-- Rough Logic commit `cb126008` (`feat(reports): add defensive calculator feedback loop`) and
-  hardening commit `88e7ea7f`;
-- Sophie Well commit `a5d9d6c5` (`feat(reporting): add secure tool problem reports`) and hardening
-  commits `120bacd7`, `c05dd00f`, and `cd052b6a`.
-
-Open Sim Lab deliberately differs where a simulation contains more sensitive learner context: the
-note limit is 500 characters, recent context is off by default, a payload preview is mandatory,
-reflections and prior history are structurally inaccessible, and scenario/version metadata replaces
-a calculator input sweep.
+The reporting design assumes that simulation contains sensitive learner context. The note limit is
+500 characters, recent context is off by default, a payload preview is mandatory, reflections and
+prior history are structurally inaccessible, and captured context comes from a typed scenario
+projection rather than a form or document sweep.
 
 Cloudflare behavior relied on by implementation must be verified again at build time against the
 current official documentation:

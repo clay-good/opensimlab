@@ -95,3 +95,38 @@ only policy. They SHALL contain no learner, roster, transcript, progress, or rep
 - **WHEN** a learner opens reporting from an assigned scenario
 - **THEN** the assignment label and full assignment URL are excluded from required and optional
   context
+
+## ADDED Requirements
+
+### Requirement: Institutional Pilots Evaluate Learning And Operational Fit Honestly
+
+Before an organization endorsement is requested, a pilot SHALL define learner population, scenario
+versions, preparation context, comparison or baseline where feasible, outcomes measured, facilitator
+role, accessibility accommodations, missing modalities, adverse/negative feedback, and analysis plan.
+Production telemetry SHALL not be introduced for the pilot.
+
+#### Scenario: Satisfaction alone is not efficacy
+
+- **WHEN** pilot results are published
+- **THEN** usability/satisfaction, knowledge/behavior evidence, transfer to supervised simulation,
+  and clinical-outcome claims are reported separately and no stronger causal claim is made than the
+  design supports
+
+#### Scenario: Negative results remain visible
+
+- **WHEN** learners are confused, tutor guidance harms discovery, a scenario fails transfer, or a
+  subgroup encounters an accessibility barrier
+- **THEN** the adoption record includes the result, mitigation, and affected versions rather than
+  selecting only favorable findings
+
+### Requirement: Endorsement Does Not Convert Training Into Certification
+
+No adoption pack, organization record, course link, tutor, or progress view SHALL claim that use,
+completion, local evidence, or endorsement certifies competence, satisfies supervised assessment, or
+authorizes clinical work.
+
+#### Scenario: A course requires external assessment
+
+- **WHEN** an institutional path maps to a competency requiring psychomotor, team, examination, or
+  supervised performance
+- **THEN** the pack names the external assessment and Open Sim Lab evidence remains preparatory

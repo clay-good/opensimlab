@@ -128,6 +128,51 @@ MCP or API service.
   limitations, corrections, endorsements, and pack hashes without running JavaScript or contacting a
   private service
 
+## ADDED Requirements
+
+### Requirement: Catalog And Domain Packs Have Enforced Transfer And Storage Budgets
+
+The base catalog/search/path/maturity manifests SHALL total no more than 250 KB compressed. No single
+domain pack's scenario/tutor/source data SHALL exceed 1.5 MB compressed, and the shell plus all 16
+installed domain packs SHALL remain within the master specification's 8 MB compressed full-offline-
+bundle budget, excluding explicitly optional audio that is not installed by default. CI SHALL report
+compressed and uncompressed deltas per pack and for the complete offline bundle.
+
+#### Scenario: One large scenario cannot hide in a module total
+
+- **WHEN** a scenario contributes more than 100 KB compressed to its domain pack
+- **THEN** the budget gate fails and identifies scenario assets by size unless a reviewed exception
+  proves the asset is necessary, optional, lazy-loaded, licensed, and still within the domain cap
+
+#### Scenario: Catalog first interaction remains independent of packs
+
+- **WHEN** a new visitor searches and inspects scenario details
+- **THEN** no domain pack loads until play, demonstration, provenance depth, or explicit offline
+  installation requires it
+
+### Requirement: Scenario Compilation Is Deterministic And Content-Addressed
+
+The same source commit, pinned toolchain, locale inputs, and build configuration SHALL produce
+byte-identical scenario manifests, domain packs, search fixtures, audit artifacts, and hashes.
+
+#### Scenario: Nondeterministic metadata fails the build
+
+- **WHEN** generated artifacts vary because of wall-clock time, file order, random seed, locale,
+  machine path, or dependency drift
+- **THEN** reproducibility verification fails and names the first differing artifact/field
+
+### Requirement: Pack Updates Preserve Transcript Interpretability
+
+Removing or superseding a scenario pack SHALL not make local transcripts unreadable. The shell SHALL
+retain the minimal schema/metadata needed to identify the old version and SHALL offer an explicit
+compatible-pack fetch when online.
+
+#### Scenario: A correction withdraws a cached scenario
+
+- **WHEN** a static withdrawal manifest names a locally cached scenario version
+- **THEN** new starts are blocked with the public reason, existing transcripts remain viewable with
+  the correction notice, and the service worker does not silently execute the withdrawn content
+
 ## REMOVED Requirements
 
 ### Requirement: Release Cannot Publish Until Every Clinical And Face-Validity Sign-Off Passes

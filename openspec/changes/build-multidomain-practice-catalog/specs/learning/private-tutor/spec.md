@@ -170,3 +170,41 @@ change to its scenario, objective, expected action, timing, or explanation.
 - **WHEN** a clinically meaningful tutor rule changes
 - **THEN** its prior review and any derived organizational endorsement no longer cover the new
   content version
+
+### Requirement: Tutor Intervention Is Calibrated Against Help And Harm
+
+Every tutor rule SHALL have test evidence that it improves access to the intended observation or
+recovery without revealing hidden state, forcing one disputed path, increasing control search, or
+interrupting a higher-priority learner action.
+
+#### Scenario: A hint does not become an answer key
+
+- **WHEN** a tutor rule is evaluated across expert, common-error, recovery, and distractor paths
+- **THEN** it names no hidden cause, unavailable result, objective status, or exact expected action
+  before its assistance level and reveal condition permit it
+
+#### Scenario: A tutor message can wait
+
+- **WHEN** the learner is confirming an action, reading a new critical alarm, operating a device, or
+  responding to an urgent condition
+- **THEN** nonurgent tutoring queues until the interaction is complete and preserves its original
+  simulated trigger tick for debrief
+
+#### Scenario: Tutor benefit is tested with novices
+
+- **WHEN** a new preparation path is release-candidate complete
+- **THEN** a documented moderated comparison with at least 8 representative novices confirms that
+  Guided users can identify the primary causal mechanism after debrief without more hidden-state
+  leakage than Unassisted users
+
+### Requirement: Tutor Memory Is Minimal And User-Controlled
+
+The tutor SHALL remember only local objective evidence, scenario/path history, dismissals, selected
+goals, and accessibility/guidance preferences required for recommendations. Every remembered field
+SHALL be viewable, exportable, and erasable by the learner.
+
+#### Scenario: Resetting tutoring leaves no shadow profile
+
+- **WHEN** the learner clears tutor history
+- **THEN** recommendations, evidence, dismissals, and selected goals are deleted locally, scenario
+  content remains installed, and no server or inaccessible cache can restore the history

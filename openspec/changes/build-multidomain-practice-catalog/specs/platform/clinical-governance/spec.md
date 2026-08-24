@@ -148,9 +148,65 @@ corrections without presenting an aggregate alone.
 
 #### Scenario: Catalog size cannot hide review gaps
 
-- **WHEN** the public catalog reports 240 scenarios
+- **WHEN** the public catalog reports a 256-scenario target or any interim playable count
 - **THEN** it also reports exact counts and item lists for preview, source-checked, clinically
   reviewed, institution-endorsed, overdue, and withdrawn content
+
+## ADDED Requirements
+
+### Requirement: Source Hierarchy And Disagreement Are Explicit
+
+Clinical assertions SHALL prefer current issuing-body guidance, primary research, validated models,
+and authoritative standards appropriate to the claim. Secondary summaries MAY aid discovery but SHALL
+not be the sole source for a high-consequence action, threshold, dose intent, device behavior, or
+physiological trajectory when an accessible primary/authoritative source exists.
+
+#### Scenario: Sources disagree materially
+
+- **WHEN** credible current sources differ by region, population, evidence grade, threshold, or
+  action sequence
+- **THEN** the evidence brief records the disagreement, scenario scope selects a supported variant,
+  tutor/debrief avoid false consensus, and reviewers explicitly accept the selected boundary
+
+#### Scenario: Source access is constrained
+
+- **WHEN** the implementation cannot inspect enough of a paywalled or copyrighted source to verify
+  the claimed detail
+- **THEN** the claim remains unverified, uses another authoritative source, or is removed rather than
+  relying on an abstract, snippet, or unsourced secondary quotation
+
+### Requirement: High-Consequence Scenarios Receive Independent Multidisciplinary Review
+
+Scenarios involving resuscitation, airway failure, blood products, pregnancy, neonates, children,
+toxicologic antidotes, device energy, catastrophic deterioration, or medication concentration/unit
+errors SHALL require at least one qualified domain clinician and one simulation educator; no person
+may be the sole author, source checker, and clinical reviewer.
+
+#### Scenario: Review includes behavior rather than prose alone
+
+- **WHEN** reviewers assess a high-consequence scenario
+- **THEN** they inspect evidence brief, defaults, hazard analysis, expert/common-error/recovery/no-
+  action replays, seeded boundaries, tutor interventions, objective evaluator, debrief claims,
+  limitations, and region variants
+
+#### Scenario: Reviewer disagreement remains visible
+
+- **WHEN** qualified reviewers disagree on a material teaching behavior
+- **THEN** the item cannot advance beyond source-checked until scope is narrowed, a visible regional
+  variant is created, or the disagreement and final rationale receive the required independent
+  acceptance
+
+### Requirement: Review Samples The Built Artifact
+
+Clinical sign-off SHALL bind not only source files but also a content-addressed built scenario pack
+and reference replay output. A build change affecting learner-visible behavior SHALL invalidate the
+artifact signature even when authored text is unchanged.
+
+#### Scenario: Build transformation changes meaning
+
+- **WHEN** compilation, unit conversion, localization, token substitution, tree-shaking, or pack
+  generation changes a reviewed value, label, action, source, limitation, or tutor message
+- **THEN** artifact verification fails and reviewed/endorsed status does not ship
 
 ## REMOVED Requirements
 

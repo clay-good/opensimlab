@@ -94,3 +94,27 @@ NOT deploy a hosted MCP server.
   review against real-patient use and clinical decision support
 - **THEN** it may specify a read-only, bounded, local adapter derived from the manifests; until then,
   no MCP deployment or operational surface is included
+
+### Requirement: Public Scenario Evidence Is Reproducible From A Release Tag
+
+Every release tag SHALL contain or content-address every scenario document, compiled manifest,
+defaults record, training-value record, hazard analysis, state-space matrix, source snapshot metadata,
+review record, correction record, tutor rule, and reference transcript needed to audit the release.
+
+#### Scenario: Main changing does not erase the old lesson
+
+- **WHEN** an auditor checks out an earlier release tag
+- **THEN** all machine-readable evidence resolves within that tag or to immutable public source
+  locators with recorded hashes/dates, and no mutable `latest` record is required
+
+### Requirement: Generated Scenario Contributions Disclose Provenance
+
+Scenario authors SHALL identify human and automated contributors, source acquisition method, review
+method, and any generated prose/code/content. Automated generation SHALL not be treated as source
+verification or clinical review.
+
+#### Scenario: An agent-authored scenario gets no quality shortcut
+
+- **WHEN** an automated system drafts one or many scenarios
+- **THEN** each independently passes source, originality, defaults, hazard, fixture, validation,
+  maturity, and human accountability gates and the public record discloses the method
