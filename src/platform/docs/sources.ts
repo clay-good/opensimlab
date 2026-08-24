@@ -467,7 +467,9 @@ export const SOURCES: readonly Source[] = [
       + 'with at least one train-of-four twitch and 4 mg/kg with no twitches but a post-tetanic '
       + 'count of at least one; and restrict neostigmine with antimuscarinic coadministration to '
       + 'minimal blockade. The displayed post-tetanic count is an auto-derived teaching proxy. '
-      + 'Exact reversal dose pharmacology, emergence, and extubation are not modeled.',
+      + 'The dedicated scenario additionally requires a descending recovery-phase signal so an '
+      + 'onset value cannot be treated as recovery. Exact reversal dose pharmacology, emergence, '
+      + 'and extubation are not modeled.',
     verifiedAgainst: NCBI,
     verifiedOn: CHECKED,
   },

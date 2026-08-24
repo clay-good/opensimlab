@@ -167,7 +167,13 @@ describe('engine rocuronium plumbing', () => {
         drugId: 'rocuronium', amount: 0.6, unit: 'mg/kg',
       } });
       let result = subject.step();
-      for (let tick = 1; tick < 30_000 && !predicate(result); tick += 1) result = subject.step();
+      let reachedProfoundBlock = false;
+      for (let tick = 1; tick < 30_000; tick += 1) {
+        result = subject.step();
+        if (result.state.trainOfFourCount === 0
+          && result.equipment.resuscitation.postTetanicCount === 0) reachedProfoundBlock = true;
+        if (reachedProfoundBlock && predicate(result)) break;
+      }
       return { subject, result };
     };
 
@@ -210,10 +216,14 @@ describe('engine rocuronium plumbing', () => {
       drugId: 'rocuronium', amount: 0.6, unit: 'mg/kg',
     } });
     let result = subject.step();
-    for (let tick = 1; tick < 60_000
-      && !(result.state.trainOfFourCount === 4
-        && result.state.trainOfFourRatio >= 0.4 && result.state.trainOfFourRatio < 0.9);
-      tick += 1) result = subject.step();
+    let reachedProfoundBlock = false;
+    for (let tick = 1; tick < 60_000; tick += 1) {
+      result = subject.step();
+      if (result.state.trainOfFourCount === 0
+        && result.equipment.resuscitation.postTetanicCount === 0) reachedProfoundBlock = true;
+      if (reachedProfoundBlock && result.state.trainOfFourCount === 4
+        && result.state.trainOfFourRatio >= 0.4 && result.state.trainOfFourRatio < 0.9) break;
+    }
     expect(result.state.trainOfFourCount).toBe(4);
     expect(result.state.trainOfFourRatio).toBeGreaterThanOrEqual(0.4);
     expect(result.state.trainOfFourRatio).toBeLessThan(0.9);
@@ -223,6 +233,34 @@ describe('engine rocuronium plumbing', () => {
     result = subject.step();
     expect(result.state.trainOfFourRatio).toBeGreaterThanOrEqual(0.9);
     expect(result.equipment.resuscitation.lastNeuromuscularReversal?.agent).toBe('neostigmine');
+  });
+
+  it('refuses reversal while the same measured depth is still developing', () => {
+    const subject = new AnesthesiaEngine({
+      scenario: rocuroniumScenario as never, seed: 11, practiceRegion: 'US',
+    });
+    subject.apply({ tick: 0, type: 'bolus', payload: {
+      drugId: 'rocuronium', amount: 0.6, unit: 'mg/kg',
+    } });
+    let result = subject.step();
+    for (let tick = 1; tick < 100
+      && !(result.state.trainOfFourCount === 4 && result.state.trainOfFourRatio < 0.9);
+      tick += 1) result = subject.step();
+    subject.apply({ tick: subject.tick, type: 'neuromuscular-reversal', payload: {
+      agent: 'neostigmine', route: 'iv', antimuscarinic: true,
+    } });
+    result = subject.step();
+    expect(result.events.some((event) => event.eventId.startsWith('bad-neostigmine-'))).toBe(true);
+    expect(result.equipment.resuscitation.lastNeuromuscularReversal).toBeNull();
+
+    for (let tick = subject.tick; tick < 300
+      && result.state.trainOfFourCount !== 1; tick += 1) result = subject.step();
+    subject.apply({ tick: subject.tick, type: 'neuromuscular-reversal', payload: {
+      agent: 'sugammadex', route: 'iv', doseMgPerKg: 2,
+    } });
+    result = subject.step();
+    expect(result.events.some((event) => event.eventId.startsWith('bad-sugammadex-'))).toBe(true);
+    expect(result.equipment.resuscitation.lastNeuromuscularReversal).toBeNull();
   });
 
   it('rejects hostile sugammadex doses without recording treatment', () => {
@@ -288,14 +326,14 @@ describe('engine rocuronium plumbing', () => {
   it('replays accepted neuromuscular reversal deterministically', () => {
     const actions: LearnerAction[] = [
       { tick: 0, type: 'bolus', payload: { drugId: 'rocuronium', amount: 0.6, unit: 'mg/kg' } },
-      { tick: 100, type: 'neuromuscular-reversal', payload: {
-        agent: 'sugammadex', route: 'iv', doseMgPerKg: 2,
+      { tick: 3000, type: 'neuromuscular-reversal', payload: {
+        agent: 'sugammadex', route: 'iv', doseMgPerKg: 4,
       } },
     ];
-    const options = { scenario: rocuroniumScenario as never, seed: 8, practiceRegion: 'US', ticks: 500 };
+    const options = { scenario: rocuroniumScenario as never, seed: 8, practiceRegion: 'US', ticks: 3500 };
     const first = replay(actions, options);
     expect(first).toEqual(replay(actions, options));
-    expect(first.find((sample) => sample.tick >= 100)?.state.trainOfFourRatio)
+    expect(first.find((sample) => sample.tick >= 3000)?.state.trainOfFourRatio)
       .toBeGreaterThanOrEqual(0.9);
   });
 

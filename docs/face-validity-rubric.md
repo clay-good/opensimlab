@@ -93,7 +93,8 @@ Reviewers run the routine induction themselves before answering.
 | B39 | During routine volatile maintenance, anticipatory modeled opioid delivery plausibly limits the declared stimulus response and reduction after stimulus offset allows pressure and depth to recover together | | |
 | B40 | During the dedicated blood-bank handoff, ordered release and fixed-unit red-cell support produce the declared volume, hemoglobin, calculated oxygen-delivery, and pressure response without presenting the control as a compatibility workflow | | |
 | B41 | During routine geriatric induction, five spaced 20 mg propofol increments produce a plausible delayed depth and pressure trajectory while preoxygenation and 6–8 mL/kg delivered ventilation preserve oxygenation | | |
-| B42 | Overall: does this patient behave like a patient? | | |
+| B42 | After one 0.6 mg/kg rocuronium dose during established anesthesia, the quantitative teaching signal progresses through onset and recovery, rejects onset-phase reversal, and responds directionally to a recovery-depth-matched reversal branch | | |
+| B43 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -108,7 +109,10 @@ Reviewers run the routine induction themselves before answering.
 So that reviewers spend their attention on what this review is for:
 
 - Rocuronium onset and spontaneous recovery use a teaching model. Quantitative reversal is a bounded
-  teaching effect; emergence, extubation, recurrent block, and postoperative outcomes are not modeled.
+  teaching effect; the displayed count, ratio, and post-tetanic count are idealized signals. The
+  engine distinguishes onset from recovery, but it does not model commercial-monitor behavior,
+  stimulation technique, artifact, pharmacokinetics, individual recovery, emergence, extubation,
+  recurrent block, postoperative weakness, or postoperative outcomes.
 - Peripheral train-of-four is observable but does not guarantee conditions at the larynx.
 - The full-stomach case does not model regurgitation, aspiration, or cricoid pressure.
 - Fresh gas flow scales calibrated volatile wash-in/washout and, only in the dedicated exhausted-

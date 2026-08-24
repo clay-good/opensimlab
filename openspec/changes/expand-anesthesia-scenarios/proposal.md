@@ -135,10 +135,13 @@ response, stopping before dysrhythmia treatment or cardiac arrest.
 - Add a twenty-fourth scenario that isolates a stable older-adult intravenous induction, connects
   end-tidal oxygen reserve to small spaced propofol increments and effect-site lag, and preserves
   pressure and ventilation without claiming individual dose prediction or a general frailty model.
+- Add a twenty-fifth scenario during established volatile anesthesia that distinguishes onset from
+  recovery, matches a bounded reversal branch to quantitative block depth, and confirms a ratio of
+  at least 0.9 without claiming emergence, extubation readiness, or individual recovery prediction.
 
 ## Impact
 
-These 27 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+These 28 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
 awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. The seventh also closes the bounded
 pediatric-family gap without claiming a general pediatric patient model. The eighth reaches the
 minimum count of 12 scenarios and closes the bounded difficult-airway rescue gap. The ninth closes
@@ -184,3 +187,9 @@ The twenty-seventh adds the twenty-fourth authored scenario and the catalog's fi
 older-adult induction loop. The labeled range, accepted increments, end-tidal oxygen, effect-site
 trajectory, pressure, and ventilation are inspectable, while injection rate, frailty, cognition,
 delirium, organ dysfunction, polypharmacy, physical airway skill, and individual prediction remain excluded.
+The twenty-eighth adds the twenty-fifth authored scenario and turns the shared quantitative
+neuromuscular controls into a dedicated measurement-decision-reassessment lesson. The engine now
+requires a descending recovery-phase signal before it accepts reversal, so the same count or ratio
+on onset cannot earn credit. The idealized monitor and immediate bounded response do not claim
+electrode technique, commercial-device behavior, pharmacokinetics, emergence, extubation readiness,
+recurrent block, postoperative weakness, or individual recovery time.

@@ -741,6 +741,12 @@ export class AnesthesiaEngine {
         const count = Number(this.lastState.trainOfFourCount ?? 4);
         const ratio = Number(this.lastState.trainOfFourRatio ?? 1);
         const hasRocuronium = this.drugs.has('rocuronium');
+        const rawEffectSite = this.drugs.get('rocuronium')?.solver.effectSite ?? 0;
+        const peakEffectSite = this.lastEffectSitePeak.get('rocuronium') ?? 0;
+        // The same count or ratio can occur briefly while block is developing and later while it
+        // recovers. Depth-matched antagonism in this bounded model applies only on the descending
+        // limb; otherwise an onset value could be mistaken for recovery and credited incorrectly.
+        const recoveryPhase = peakEffectSite > 0 && rawEffectSite < peakEffectSite * 0.999999;
         if (!hasRocuronium || route !== 'iv'
           || (agent !== 'sugammadex' && agent !== 'neostigmine')) {
           this.log('warning', 'drug', `bad-neuromuscular-reversal-${this.currentTick}`,
@@ -749,24 +755,30 @@ export class AnesthesiaEngine {
         }
         if (agent === 'sugammadex') {
           const validDose = Number.isFinite(dose)
-            && ((count >= 1 && dose === 2) || (count === 0 && this.postTetanicCount >= 1 && dose === 4));
+            && recoveryPhase
+            && ((count >= 1 && dose === 2)
+              || (count === 0 && this.postTetanicCount >= 1 && dose === 4));
           if (!validDose || ratio >= 0.9) {
             this.log('warning', 'drug', `bad-sugammadex-${this.currentTick}`,
-              'Sugammadex requires 2 mg/kg with at least one train-of-four twitch, or 4 mg/kg with no twitches and a post-tetanic count of at least one. Nothing was given.');
+              'Sugammadex requires recovering block: 2 mg/kg with at least one train-of-four twitch, or 4 mg/kg with no twitches and a post-tetanic count of at least one. Nothing was given.');
             break;
           }
           this.neuromuscularReversalFraction = Math.max(this.neuromuscularReversalFraction, 0.995);
           this.lastNeuromuscularReversal = { agent, doseMgPerKg: dose, tick: this.currentTick };
           this.log('info', 'drug', `sugammadex-${this.currentTick}`,
             `Sugammadex ${dose} mg/kg IV accepted for the observed block depth. Recovery is a bounded teaching effect; confirm a quantitative train-of-four ratio of at least 0.9.`,
-            { agent, route, doseMgPerKg: dose, trainOfFourCount: count, postTetanicCount: this.postTetanicCount });
+            {
+              agent, route, doseMgPerKg: dose, trainOfFourCount: count,
+              trainOfFourRatio: ratio, postTetanicCount: this.postTetanicCount,
+              recoveryPhase: true,
+            });
           break;
         }
         const antimuscarinic = action.payload.antimuscarinic === true;
-        const minimalBlock = count === 4 && ratio >= 0.4 && ratio < 0.9;
+        const minimalBlock = recoveryPhase && count === 4 && ratio >= 0.4 && ratio < 0.9;
         if (!antimuscarinic || !minimalBlock) {
           this.log('warning', 'drug', `bad-neostigmine-${this.currentTick}`,
-            'Neostigmine requires coadministration with an antimuscarinic and minimal block: four train-of-four twitches with a quantitative ratio from 0.4 to below 0.9. Nothing was given.');
+            'Neostigmine requires coadministration with an antimuscarinic and recovering minimal block: four train-of-four twitches with a quantitative ratio from 0.4 to below 0.9. Nothing was given.');
           break;
         }
         this.neuromuscularReversalFraction = Math.max(
@@ -775,7 +787,10 @@ export class AnesthesiaEngine {
         this.lastNeuromuscularReversal = { agent, doseMgPerKg: null, tick: this.currentTick };
         this.log('info', 'drug', `neostigmine-${this.currentTick}`,
           'Neostigmine with an antimuscarinic IV was accepted during minimal block as an agent-class teaching action. Dose pharmacology is not modeled; quantitative recovery must still reach at least 0.9.',
-          { agent, route, antimuscarinic, trainOfFourCount: count, teachingModel: true });
+          {
+            agent, route, antimuscarinic, trainOfFourCount: count,
+            trainOfFourRatio: ratio, recoveryPhase: true, teachingModel: true,
+          });
         break;
       }
       case 'chest-compressions': {
@@ -1304,6 +1319,10 @@ export class AnesthesiaEngine {
       {
         drugId, mass, unit: drug.model.doseUnit, route: 'intravenous',
         modelId: drug.model.id, implausible, stacking,
+        ...(drugId === 'rocuronium' ? {
+          preDoseTrainOfFourCount: Number(this.lastState.trainOfFourCount ?? 4),
+          preDoseTrainOfFourRatio: Number(this.lastState.trainOfFourRatio ?? 1),
+        } : {}),
       });
 
     // A documented allergy is enforced only after drug actually leaves a

@@ -21,7 +21,7 @@ describe('Requirement: dilutional coagulopathy is a distinct lab-guided scenario
   it('validates, registers, starts from the declared diluted state, and maps every objective', () => {
     expect(validateScenario(SCENARIO)).toEqual([]);
     expect(SCENARIOS).toContain(SCENARIO);
-    expect(SCENARIOS).toHaveLength(24);
+    expect(SCENARIOS).toHaveLength(25);
     const initial = engine().step().state;
     expect(initial.prothrombinTimeRatio).toBeCloseTo(1 / 0.6, 2);
     expect(initial.fibrinogenGPerL).toBeCloseTo(1.8, 1);

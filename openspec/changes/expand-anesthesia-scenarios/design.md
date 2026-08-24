@@ -446,3 +446,25 @@ oxygen reserve before dose, total dose and increment timing, post-dose pressure 
 delivered ventilation, and saturation. The evidence brief and learner-facing limitations exclude
 injection rate, individual dose selection, frailty, cognition, delirium, organ dysfunction,
 polypharmacy, physical airway skill, neuromuscular blockade, intubation, and emergence.
+
+## Slice 28: quantitative neuromuscular reversal during established anesthesia
+
+The twenty-fifth authored scenario starts after airway confirmation with volatile anesthesia and
+delivered ventilation already established. The learner records a quantitative baseline, gives the
+declared 0.6 mg/kg rocuronium bolus, observes onset and recovery, chooses an available reversal
+branch from measured depth, and confirms a train-of-four ratio of at least 0.9 afterward. It ends
+before emergence or extubation.
+
+The shared engine now records the historic peak rocuronium effect site and accepts reversal only on
+the descending recovery phase. This prevents an onset ratio or count from being misread as recovery.
+After the declared bolus, the deterministic teaching course reaches post-tetanic count 1 at about
+274.7 seconds, count 1 at about 1,155.8 seconds, and four twitches with ratio 0.40 at about 2,503.9
+seconds. The expert fixture uses the deep-recovery branch at 330 seconds; these checkpoints are
+calibration evidence, not individual predictions.
+
+The debrief reads the accepted rocuronium and reversal events plus recorded state. It scores the
+pre-dose baseline, exact declared bolus, accepted recovery-phase depth match, post-reversal ratio,
+continued delivered ventilation, saturation, and time in the displayed maintenance-depth range.
+The evidence brief and learner-facing limitations exclude commercial-monitor behavior, stimulation
+technique, electrode placement, artifact, muscle-site differences, reversal pharmacokinetics,
+individual recovery, emergence, extubation readiness, recurrent block, and postoperative weakness.

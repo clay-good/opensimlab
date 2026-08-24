@@ -411,3 +411,19 @@
   large-bolus/replay regressions, responsive browser inspection, and final full-CI evidence.
 - [ ] Add injection-rate effects, individual dose prediction, frailty, cognition, delirium, organ
   dysfunction, polypharmacy, physical airway skill, neuromuscular blockade, intubation, or emergence.
+
+## Slice 28: quantitative neuromuscular reversal during established anesthesia
+
+- [x] Check in an evidence brief covering current quantitative-monitoring and antagonism guidance,
+  teaching-course calibration, exact expert fixture, and unsafe inference boundaries.
+- [x] Add a twenty-fifth authored scenario with established anesthesia and ventilation, a recorded
+  baseline, one declared rocuronium exposure, recovery-depth selection, and quantitative reassessment.
+- [x] Harden the shared engine so reversal requires a descending recovery-phase signal and an
+  onset-phase count or ratio cannot be misread as recovery.
+- [x] Score the pre-dose baseline, exact bolus, accepted depth match, post-reversal ratio, maintained
+  anesthesia, ventilation, and oxygenation from accepted/refused events and recorded state.
+- [x] Add catalog assets, curriculum and preparation-path coverage, route SEO, expert/no-action/
+  onset-phase/wrong-depth/replay regressions, responsive browser inspection, and full-CI evidence.
+- [ ] Add commercial-monitor behavior, stimulation technique, electrode placement, signal artifact,
+  muscle-site equivalence, reversal pharmacokinetics, individual recovery, emergence, extubation,
+  recurrent block, postoperative weakness, or patient-specific dosing.

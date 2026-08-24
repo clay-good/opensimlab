@@ -87,7 +87,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'depression and blunt the baroreflex, which is why volatile hypotension keeps falling '
       + 'until the vaporizer is turned down, and why the elderly and the hypovolaemic tolerate '
       + 'far less agent than a fit young adult.',
-    briefIn: ['routine-inhalational-maintenance'],
+    briefIn: ['routine-inhalational-maintenance', 'quantitative-neuromuscular-reversal'],
   },
   {
     id: 'hypoxic-collapse-is-a-teaching-model',
@@ -623,7 +623,19 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'a prediction for a real patient.',
     correctUnderstanding: 'Rocuronium onset and duration vary with dose, circulation, age, and '
       + 'patient factors. Quantitative monitoring, not elapsed time alone, measures recovery.',
-    briefIn: ['rapid-sequence-induction'],
+    briefIn: ['rapid-sequence-induction', 'quantitative-neuromuscular-reversal'],
+  },
+  {
+    id: 'tof-monitor-is-an-idealized-teaching-signal',
+    headline: 'The train-of-four display is an idealized model signal, not a peripheral-nerve-stimulation procedure or a commercial monitor.',
+    simplification: 'Count, ratio, and post-tetanic count are derived directly from modeled '
+      + 'rocuronium effect. Electrode placement, stimulation site, calibration, signal quality, '
+      + 'movement artifact, device algorithms, and physical technique are absent.',
+    whereItMisleads: 'Treating a clean screen number as proof that a real monitor is configured '
+      + 'correctly, or treating this browser as practice in nerve-stimulator placement and use.',
+    correctUnderstanding: 'Quantitative monitoring requires correct site, setup, calibration, '
+      + 'signal assessment, and interpretation in the full clinical context.',
+    briefIn: ['quantitative-neuromuscular-reversal'],
   },
   {
     id: 'peripheral-tof-does-not-prove-laryngeal-conditions',
@@ -647,7 +659,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'that a real patient is otherwise ready for extubation.',
     correctUnderstanding: 'Current guidance calls for quantitative recovery to a train-of-four '
       + 'ratio of at least 0.9 before extubation and chooses reversal according to block depth.',
-    briefIn: ['rapid-sequence-induction'],
+    briefIn: ['rapid-sequence-induction', 'quantitative-neuromuscular-reversal'],
   },
   {
     id: 'no-aspiration-or-regurgitation',

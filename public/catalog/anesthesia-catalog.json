@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 24,
+  "scenarioCount": 25,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -529,6 +529,28 @@
         "Begin age-appropriate delivered ventilation before oxygen saturation falls."
       ],
       "searchText": "routine-geriatric-induction routine geriatric intravenous induction reducible inguinal hernia elective open inguinal hernia repair establish an oxygen reserve before beginning the modeled older-adult induction. end-tidal oxygen fraction reached at least 0.85 before the first accepted propofol bolus. titrate the labeled older-adult propofol range in increments and watch the modeled effect site catch up. accepted propofol totaled 1–1.5 mg/kg, no bolus exceeded 20 mg, and consecutive boluses were at least 10 seconds apart. preserve perfusion while the incremental hypnotic effect develops. mean arterial pressure never fell below 65 mmhg after the first propofol bolus. begin age-appropriate delivered ventilation before oxygen saturation falls. accepted delivered ventilation at 6–8 ml/kg began after propofol and oxygen saturation remained at least 92% through the case."
+    },
+    {
+      "id": "quantitative-neuromuscular-reversal",
+      "path": "/anesthesia/scenario/quantitative-neuromuscular-reversal",
+      "title": "Quantitative neuromuscular reversal",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 8,
+      "difficulty": "intermediate",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Confirm quantitative neuromuscular monitoring before giving the declared blocking dose.",
+        "Use the measured recovery-phase block depth rather than elapsed time to select reversal.",
+        "Reassess the quantitative response after the accepted reversal.",
+        "Keep hypnosis, ventilation, and oxygenation established while neuromuscular state changes."
+      ],
+      "searchText": "quantitative-neuromuscular-reversal quantitative neuromuscular reversal symptomatic cholelithiasis laparoscopic cholecystectomy confirm quantitative neuromuscular monitoring before giving the declared blocking dose. a recorded train-of-four ratio of at least 0.9 preceded one accepted 0.6 mg/kg rocuronium bolus. use the measured recovery-phase block depth rather than elapsed time to select reversal. the engine accepted a recovery-phase reversal matched to train-of-four count, ratio, and post-tetanic count. reassess the quantitative response after the accepted reversal. a train-of-four ratio of at least 0.9 was recorded after reversal. keep hypnosis, ventilation, and oxygenation established while neuromuscular state changes. predicted depth remained 40–60, oxygen saturation remained at least 92%, and no accepted action stopped delivered ventilation after rocuronium."
     }
   ],
   "preparationPathCount": 10,
@@ -750,14 +772,15 @@
     },
     {
       "id": "medication-infusion-safety",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "title": "Medication and infusion safety",
-      "description": "Rehearse age-bounded titration, effect-site delay, changing maintenance needs, paralysis, delivery failure, and toxicity as distinct medication risks.",
+      "description": "Rehearse age-bounded titration, effect-site delay, depth-matched reversal, changing maintenance needs, paralysis, delivery failure, and toxicity as distinct medication risks.",
       "scenarioIds": [
         "routine-induction",
         "routine-geriatric-induction",
         "routine-inhalational-maintenance",
         "rapid-sequence-induction",
+        "quantitative-neuromuscular-reversal",
         "awareness-under-paralysis",
         "local-anesthetic-systemic-toxicity"
       ],
@@ -775,7 +798,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 57
+      "estimatedMinutes": 65
     },
     {
       "id": "handoff-escalation",

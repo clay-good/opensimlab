@@ -437,6 +437,45 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     frameworkId: 'coa-standards', domainId: 'pharmacology-of-anesthetic-agents',
     objectiveIds: ['titrate-geriatric-propofol', 'protect-geriatric-perfusion'],
   },
+
+  // --- Quantitative neuromuscular reversal --------------------------------
+  {
+    scenarioId: 'quantitative-neuromuscular-reversal',
+    frameworkId: 'nbcrna-nce', domainId: 'basic-principles',
+    objectiveIds: [
+      'establish-quantitative-baseline', 'reverse-recovering-block',
+      'confirm-quantitative-recovery', 'maintain-anesthesia-during-block',
+    ],
+  },
+  {
+    scenarioId: 'quantitative-neuromuscular-reversal',
+    frameworkId: 'coa-standards', domainId: 'pharmacology-of-anesthetic-agents',
+    objectiveIds: [
+      'establish-quantitative-baseline', 'reverse-recovering-block',
+      'confirm-quantitative-recovery',
+    ],
+  },
+  {
+    scenarioId: 'quantitative-neuromuscular-reversal',
+    frameworkId: 'coa-standards', domainId: 'clinical-decision-making',
+    objectiveIds: [
+      'reverse-recovering-block', 'confirm-quantitative-recovery',
+      'maintain-anesthesia-during-block',
+    ],
+  },
+  {
+    scenarioId: 'quantitative-neuromuscular-reversal',
+    frameworkId: 'acgme-anesthesiology-milestones-2', domainId: 'pc-anesthetic-plan-and-conduct',
+    objectiveIds: [
+      'establish-quantitative-baseline', 'reverse-recovering-block',
+      'confirm-quantitative-recovery', 'maintain-anesthesia-during-block',
+    ],
+  },
+  {
+    scenarioId: 'quantitative-neuromuscular-reversal',
+    frameworkId: 'acgme-anesthesiology-milestones-2', domainId: 'pc-pharmacologic-management',
+    objectiveIds: ['reverse-recovering-block', 'confirm-quantitative-recovery'],
+  },
   {
     scenarioId: 'routine-geriatric-induction',
     frameworkId: 'coa-standards', domainId: 'clinical-decision-making',

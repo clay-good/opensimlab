@@ -47,7 +47,7 @@ describe('Requirement: the blood-bank handoff is ordered and bounded', () => {
   it('validates, registers, maps every objective, and starts in established maintenance', () => {
     expect(validateScenario(SCENARIO)).toEqual([]);
     expect(SCENARIOS).toContain(SCENARIO);
-    expect(SCENARIOS).toHaveLength(24);
+    expect(SCENARIOS).toHaveLength(25);
     const subject = engine();
     expect(subject.equipment()).toMatchObject({
       airway: { intubated: true, device: 'tracheal-tube' },

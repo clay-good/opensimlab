@@ -24,7 +24,7 @@ describe('Requirement: invasive pressure display remains separate from patient s
   it('validates, registers, maps every objective, and declares both sensor faults', () => {
     expect(validateScenario(SCENARIO)).toEqual([]);
     expect(SCENARIOS).toContain(SCENARIO);
-    expect(SCENARIOS).toHaveLength(24);
+    expect(SCENARIOS).toHaveLength(25);
     expect(SCENARIO.timeline.filter((event) => event.atTick === ONSET && event.type === 'artifact')
       .map((event) => event.target)).toEqual([
         'arterial-transducer-misleveled', 'arterial-damping',

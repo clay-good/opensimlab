@@ -412,6 +412,10 @@ export function objectiveFindings(
     'titrate-geriatric-propofol': 'hysteresis-and-effect-site-lag',
     'protect-geriatric-perfusion': 'vasodilation-versus-hypovolemia',
     'ventilate-geriatric-induction': 'preoxygenation-and-safe-apnea-time',
+    'establish-quantitative-baseline': 'train-of-four-and-residual-blockade',
+    'reverse-recovering-block': 'train-of-four-and-residual-blockade',
+    'confirm-quantitative-recovery': 'train-of-four-and-residual-blockade',
+    'maintain-anesthesia-during-block': 'depth-monitoring-and-its-limits',
     'recognize-hemorrhage': 'vasodilation-versus-hypovolemia',
     'temporize-volume-loss': 'vasodilation-versus-hypovolemia',
     'avoid-full-dose-induction': 'hysteresis-and-effect-site-lag',
@@ -1923,6 +1927,105 @@ export function objectiveFindings(
           ? `Delivered ventilation resumed with sustained end-tidal carbon dioxide of ${(gasExchange.state.etco2MmHg ?? 0).toFixed(0)} mmHg after airway instrumentation.`
           : 'Airway instrumentation was recorded, but the available trace did not show subsequent delivered ventilation with sustained carbon dioxide.',
         atTick: gasExchange?.tick ?? airway.tick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
+      'establish-quantitative-baseline', 'reverse-recovering-block',
+      'confirm-quantitative-recovery', 'maintain-anesthesia-during-block',
+    ].includes(objective.id)) {
+      const rocuronium = log.find((entry) => entry.eventId.startsWith('bolus-rocuronium-'));
+      if (!rocuronium) {
+        return {
+          ...base,
+          outcome: (history.at(-1)?.tick ?? 0) < 300 ? 'not-exercised' : 'not-met',
+          finding: 'No accepted rocuronium dose established the declared practice course.',
+        } satisfies ObjectiveFinding;
+      }
+
+      if (objective.id === 'establish-quantitative-baseline') {
+        const baseline = history.filter((sample) => sample.tick < rocuronium.tick).at(-1);
+        const eventRatio = Number(rocuronium.data?.preDoseTrainOfFourRatio);
+        const ratio = Number.isFinite(eventRatio)
+          ? eventRatio : Number(baseline?.state.trainOfFourRatio ?? 0);
+        const perKg = Number(rocuronium.data?.mass ?? 0) / scenario.patient.weightKg;
+        return {
+          ...base,
+          outcome: ratio >= 0.9 && Math.abs(perKg - 0.6) < 0.001 ? 'met'
+            : ratio >= 0.9 || Math.abs(perKg - 0.6) < 0.001 ? 'partly-met' : 'not-met',
+          finding: `The last recorded pre-dose train-of-four ratio was ${ratio.toFixed(2)}; the accepted rocuronium dose was ${perKg.toFixed(2)} mg/kg.`,
+          atTick: rocuronium.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      const reversal = log.find((entry) => entry.category === 'drug'
+        && (entry.eventId.startsWith('sugammadex-') || entry.eventId.startsWith('neostigmine-')));
+      const attempted = actions.find((action) => action.type === 'neuromuscular-reversal');
+      if (objective.id === 'reverse-recovering-block') {
+        if (!reversal) {
+          return {
+            ...base,
+            outcome: attempted ? 'not-met' : 'not-exercised',
+            finding: attempted
+              ? 'A reversal was requested, but the engine refused it because the block was still developing or the selected branch did not match the measured recovery depth.'
+              : 'No neuromuscular reversal was recorded.',
+            atTick: attempted?.tick,
+          } satisfies ObjectiveFinding;
+        }
+        const agent = String(reversal.data?.agent ?? 'reversal');
+        const count = Number(reversal.data?.trainOfFourCount ?? 0);
+        const ratio = Number(reversal.data?.trainOfFourRatio ?? 0);
+        const ptc = Number(reversal.data?.postTetanicCount ?? 0);
+        const dose = reversal.data?.doseMgPerKg;
+        return {
+          ...base,
+          outcome: reversal.data?.recoveryPhase === true ? 'met' : 'not-met',
+          finding: `${agent}${dose === undefined ? '' : ` ${Number(dose).toFixed(0)} mg/kg`} was accepted during recovery at TOF count ${count}, ratio ${ratio.toFixed(2)}, and post-tetanic count ${ptc}.`,
+          atTick: reversal.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      if (objective.id === 'confirm-quantitative-recovery') {
+        if (!reversal) {
+          return {
+            ...base, outcome: attempted ? 'not-met' : 'not-exercised',
+            finding: 'No accepted reversal was available for quantitative reassessment.',
+            atTick: attempted?.tick,
+          } satisfies ObjectiveFinding;
+        }
+        const recovery = history.find((sample) => sample.tick >= reversal.tick
+          && Number(sample.state.trainOfFourRatio ?? 0) >= 0.9);
+        return {
+          ...base,
+          outcome: recovery ? 'met' : 'not-met',
+          finding: recovery
+            ? `The quantitative train-of-four ratio reached ${Number(recovery.state.trainOfFourRatio).toFixed(2)} after reversal. That does not establish emergence or extubation readiness.`
+            : 'The recorded trace did not confirm a train-of-four ratio of at least 0.9 after reversal.',
+          atTick: recovery?.tick ?? reversal.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      const afterDose = history.filter((sample) => sample.tick >= rocuronium.tick);
+      if (afterDose.length === 0) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'The session ended before post-dose anesthesia and ventilation could be reassessed.',
+          atTick: rocuronium.tick,
+        } satisfies ObjectiveFinding;
+      }
+      const depthInRange = afterDose.filter((sample) => {
+        const depth = Number(sample.state.depthIndex ?? 100);
+        return depth >= 40 && depth <= 60;
+      }).length / afterDose.length;
+      const minSpo2 = Math.min(...afterDose.map((sample) => Number(sample.state.spo2Percent ?? 100)));
+      const stoppedVentilation = actions.some((action) => action.type === 'ventilator'
+        && action.tick >= rocuronium.tick && action.payload.delivering === false);
+      const met = depthInRange >= 0.8 && minSpo2 >= 92 && !stoppedVentilation;
+      return {
+        ...base,
+        outcome: met ? 'met' : depthInRange >= 0.8 || minSpo2 >= 92 ? 'partly-met' : 'not-met',
+        finding: `Predicted depth was 40–60 for ${(depthInRange * 100).toFixed(0)}% of the post-dose trace, saturation remained at least ${minSpo2.toFixed(1)}%, and delivered ventilation was ${stoppedVentilation ? 'stopped by an accepted action' : 'not stopped by an accepted action'}.`,
+        atTick: afterDose.at(-1)?.tick,
       } satisfies ObjectiveFinding;
     }
 

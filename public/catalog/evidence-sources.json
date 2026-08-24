@@ -422,7 +422,7 @@
       "publication": "Anesthesiology",
       "year": 2023,
       "locator": "138:13-41",
-      "usedFor": "The quantitative train-of-four teaching: monitor at the adductor pollicis and confirm a train-of-four ratio of at least 0.9 before extubation; use 2 mg/kg sugammadex with at least one train-of-four twitch and 4 mg/kg with no twitches but a post-tetanic count of at least one; and restrict neostigmine with antimuscarinic coadministration to minimal blockade. The displayed post-tetanic count is an auto-derived teaching proxy. Exact reversal dose pharmacology, emergence, and extubation are not modeled.",
+      "usedFor": "The quantitative train-of-four teaching: monitor at the adductor pollicis and confirm a train-of-four ratio of at least 0.9 before extubation; use 2 mg/kg sugammadex with at least one train-of-four twitch and 4 mg/kg with no twitches but a post-tetanic count of at least one; and restrict neostigmine with antimuscarinic coadministration to minimal blockade. The displayed post-tetanic count is an auto-derived teaching proxy. The dedicated scenario additionally requires a descending recovery-phase signal so an onset value cannot be treated as recovery. Exact reversal dose pharmacology, emergence, and extubation are not modeled.",
       "verifiedAgainst": "NCBI E-utilities record, field by field",
       "verifiedOn": "2026-08-20",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/36520073/"
