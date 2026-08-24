@@ -254,8 +254,8 @@ describe('the demonstration link', () => {
     const landing = readFileSync(join(process.cwd(), 'src/landing/Landing.tsx'), 'utf8');
     expect(landing).toContain('DEMONSTRATION_HREF');
     expect(landing).toContain('Watch a 90-second demonstration');
-    // And it stays a quiet link: the page is allowed exactly one primary button.
-    expect((landing.match(/variant="primary"/g) ?? []).length).toBe(1);
+    // And it stays a quiet link: the page is allowed exactly one primary action.
+    expect((landing.match(/className="button button--primary"/g) ?? []).length).toBe(1);
   });
 });
 

@@ -36,7 +36,6 @@ const VERDICT_SUMMARY: Record<string, string> = {
  * that are specific to a reader working through the documents are added here.
  */
 const DOCUMENT_EXTRAS: readonly { href: string; label: string }[] = [
-  { href: '/limitations', label: 'Limitations' },
   { href: '/privacy', label: 'Privacy' },
   { href: '/content-review', label: 'Review the content' },
 ];

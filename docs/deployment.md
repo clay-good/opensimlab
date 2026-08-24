@@ -29,7 +29,8 @@ Then, from the repository root:
 npm run deploy
 ```
 
-That runs the build, then the release gate, then `wrangler deploy`. **It will
+That runs an explicitly indexable build, verifies every crawl signal in the
+finished artifact, then runs the release gate and `wrangler deploy`. **It will
 refuse**, and it should: the gate blocks a release while clinical content is
 unsigned, no reviewer covers a content domain, or the face-validity review is
 incomplete. All three are currently true.
@@ -66,13 +67,15 @@ does not serve this yet — worse for the eventual ranking than not being found 
 all. So the build emits `Disallow: /`, an `X-Robots-Tag: noindex, nofollow`
 header, and a `noindex` meta on every page.
 
-When the custom domain is actually serving:
+The deploy commands are only for the custom production domain and always build
+with indexing enabled. To inspect the same artifact locally without deploying:
 
 ```
-SITE_INDEXABLE=true npm run deploy:alpha
+npm run build:indexable
 ```
 
-The robots file, the sitemap reference and the header all come back on together.
+The command fails if `robots.txt`, `_headers`, or any indexable page still carries
+a blocking signal. The robots file, the sitemap reference and the header all come back on together.
 The per-route `indexable` flags are untouched by any of this — the gate is about
 this deployment, not about the routes — so turning it on restores exactly the
 set that was always intended.

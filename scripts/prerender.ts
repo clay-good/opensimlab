@@ -187,9 +187,10 @@ function main(): void {
   ].join('\n');
   writeFileSync(join(dist, '_headers'), headers, 'utf8');
 
-  // The build date comes from the environment rather than a clock read, so a
-  // rebuild of the same commit produces the same bytes.
-  const lastModified = process.env.SOURCE_DATE ?? '2026-08-19';
+  // CI may provide a reproducible source date. A local/deploy build otherwise
+  // uses the day it was produced rather than leaving a stale hard-coded date in
+  // every sitemap entry.
+  const lastModified = process.env.SOURCE_DATE ?? new Date().toISOString().slice(0, 10);
   const indexable = indexableRoutes().map((route) => route.path);
   writeFileSync(join(dist, 'sitemap.xml'), sitemap(indexable, lastModified), 'utf8');
 

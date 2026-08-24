@@ -31,12 +31,19 @@ describe('the site bar', () => {
     expect(hrefs(markup)).toContain('/');
   });
 
+  it('puts a working main-content skip link first', () => {
+    expect(hrefs(markup)[0]).toBe('#main');
+    expect(markup).toContain('class="skip-link"');
+    expect(markup).toContain('Skip to main content');
+  });
+
   it('offers the scenario list and the two pages a sceptic wants', () => {
     const links = hrefs(markup);
     expect(links).toContain('/anesthesia');
     expect(links).toContain('/validation');
     expect(links).toContain('/governance');
     expect(links).toContain('/about');
+    expect(links).toContain('/limitations');
   });
 
   it('marks the page you are on rather than offering it', () => {
@@ -51,12 +58,19 @@ describe('the site bar', () => {
 
   it('appends a surface\'s own destinations after the shared ones', () => {
     const withExtras = renderToStaticMarkup(createElement(SiteBar, {
-      extra: [{ href: '/limitations', label: 'Limitations' }],
+      extra: [{ href: '/privacy', label: 'Privacy' }],
     }));
     const links = hrefs(withExtras);
-    expect(links).toContain('/limitations');
+    expect(links).toContain('/privacy');
     // Shared first, specific after.
-    expect(links.indexOf('/limitations')).toBeGreaterThan(links.indexOf('/validation'));
+    expect(links.indexOf('/privacy')).toBeGreaterThan(links.indexOf('/validation'));
+  });
+
+  it('does not repeat a shared destination supplied as an extra', () => {
+    const withDuplicate = renderToStaticMarkup(createElement(SiteBar, {
+      extra: [{ href: '/limitations', label: 'Limitations' }],
+    }));
+    expect(hrefs(withDuplicate).filter((href) => href === '/limitations')).toHaveLength(1);
   });
 
   it('every destination it offers is a path, not a guess', () => {

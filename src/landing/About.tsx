@@ -21,7 +21,8 @@ import {
 export function About() {
   return (
     <div className="landing">
-      <main className="landing__content reading" id="content">
+      <a className="skip-link" href="#main">Skip to main content</a>
+      <main className="landing__content reading" id="main">
         <p className="landing__breadcrumb"><a href="/">Open Sim Lab</a></p>
         <h1>About Open Sim Lab</h1>
 

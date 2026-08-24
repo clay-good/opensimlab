@@ -11,7 +11,7 @@
 
 import { useEffect, useRef } from 'react';
 import './landing.css';
-import { Button, usePrefersReducedMotion } from '@platform/ui';
+import { usePrefersReducedMotion } from '@platform/ui';
 import { MODULES } from '@platform/modules/registry';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { HONEST_STATUS } from '@platform/governance/status';
@@ -59,7 +59,8 @@ export function Landing() {
 
   return (
     <div className="landing">
-      <main className="landing__front" id="content">
+      <a className="skip-link" href="#main">Skip to main content</a>
+      <main className="landing__front" id="main">
         <h1 className="landing__name">Open Sim Lab</h1>
         <p className="landing__tagline">{ONE_LINE_DESCRIPTION}</p>
 
@@ -77,12 +78,9 @@ export function Landing() {
         </div>
 
         <div className="landing__action">
-          <Button
-            variant="primary"
-            onClick={() => { window.location.href = '/anesthesia'; }}
-          >
+          <a className="button button--primary" href="/anesthesia">
             Open the anesthesia simulator
-          </Button>
+          </a>
           {/* The shortest path to the thing this simulator does that a textbook
               cannot. It used to be four clicks from here — front door, module
               index, scenario, briefing — which is three too many for someone

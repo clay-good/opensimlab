@@ -21,6 +21,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { MODULES, RELEASE_FEED_URL, availableModules, plannedModules, speedsFor } from '@platform/modules/registry';
 import { EDITORIAL_BOARD } from '@platform/governance/records';
 import { isCrawler } from '@platform/offline/register';
+import { PrerenderedBody } from '@routes/Prerendered';
 
 describe('Requirement: Per-Route Metadata', () => {
   it('Scenario: Titles are specific and consistently formed', () => {
@@ -264,13 +265,46 @@ describe('Requirement: Footer Carries The Trust Signals', () => {
 
 describe('Requirement: Crawlability Basics', () => {
   it('Scenario: The sitemap is generated and complete', () => {
-    // The sitemap is generated from this exact set at build time.
     const indexable = indexableRoutes();
     expect(indexable.length).toBeGreaterThan(5);
     expect(indexable.every((route) => route.indexable)).toBe(true);
     expect(indexable.map((route) => route.path)).toContain('/');
     expect(indexable.map((route) => route.path)).toContain('/anesthesia');
     expect(indexable.map((route) => route.path)).not.toContain('/gallery');
+
+    // Assert the finished artifact too. Testing only the route model would not
+    // catch a broken or stale generator that omitted a real route.
+    const sitemap = readFileSync(join(process.cwd(), 'dist/sitemap.xml'), 'utf8');
+    const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]!);
+    expect(locations).toEqual(indexable.map((route) => canonicalUrl(route.path)));
+    const dates = [...sitemap.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)].map((match) => match[1]!);
+    expect(dates).toHaveLength(indexable.length);
+    expect(new Set(dates)).toHaveLength(1);
+    expect(dates[0]).toMatch(/^20\d\d-\d\d-\d\d$/);
+    expect(dates[0]! <= new Date().toISOString().slice(0, 10)).toBe(true);
+  });
+
+  it('Scenario: static scenario pages show navigation, review status, and sources', () => {
+    for (const scenario of SCENARIOS) {
+      const markup = renderToStaticMarkup(createElement(PrerenderedBody, {
+        path: `/anesthesia/scenario/${scenario.metadata.id}`,
+      }));
+      expect(markup).toContain('href="#main"');
+      expect(markup).toContain('aria-label="Site"');
+      expect(markup).toContain('Review and sources');
+      expect(markup).toContain('Not clinically reviewed');
+      for (const source of scenario.metadata.clinicalReview.sources) expect(markup).toContain(source);
+    }
+  });
+
+  it('Scenario: deploys build and verify an indexable artifact', () => {
+    const pkg = JSON.parse(readFileSync(join(process.cwd(), 'package.json'), 'utf8')) as {
+      scripts: Record<string, string>;
+    };
+    expect(pkg.scripts['build:indexable']).toContain('SITE_INDEXABLE=true');
+    expect(pkg.scripts['build:indexable']).toContain('check:indexable');
+    expect(pkg.scripts.deploy).toContain('build:indexable');
+    expect(pkg.scripts['deploy:alpha']).toContain('build:indexable');
   });
 });
 
@@ -306,10 +340,12 @@ describe('Requirement: One Screen, One Action', () => {
   });
 
   it('Scenario: exactly one primary action, naming its destination', () => {
-    const primaries = [...landing.matchAll(/variant="primary"/g)];
+    const primaries = [...landing.matchAll(/className="button button--primary"/g)];
     expect(primaries).toHaveLength(1);
     expect(landing).toContain('Open the anesthesia simulator');
-    expect(landing).toContain("'/anesthesia'");
+    expect(landing).toContain('href="/anesthesia"');
+    const markup = renderToStaticMarkup(createElement(Landing));
+    expect(markup).toContain('class="button button--primary" href="/anesthesia"');
   });
 
   it('Scenario: the front door names every module and promises no date', () => {
@@ -340,7 +376,9 @@ describe('Requirement: A Preview Build Does Not Invite Indexing', () => {
   const robots = readFileSync(join(process.cwd(), 'dist/robots.txt'), 'utf8');
   const headers = readFileSync(join(process.cwd(), 'dist/_headers'), 'utf8');
   const home = readFileSync(join(process.cwd(), 'dist/index.html'), 'utf8');
-  const indexable = process.env.SITE_INDEXABLE === 'true';
+  // Judge the artifact, not the shell running this test. A build may be created
+  // in one process and verified in another with no inherited environment.
+  const indexable = /^Allow: \/$/m.test(robots);
 
   it('Scenario: without the flag, every signal says do not index', () => {
     if (indexable) return;
@@ -355,6 +393,14 @@ describe('Requirement: A Preview Build Does Not Invite Indexing', () => {
     // A future reader has to be able to find the switch without reading the
     // build script.
     expect(robots).toContain('SITE_INDEXABLE=true');
+  });
+
+  it('Scenario: an indexable artifact has no contradictory blocking signal', () => {
+    if (!indexable) return;
+    expect(robots).toContain('Sitemap: https://opensimlab.com/sitemap.xml');
+    expect(robots).not.toMatch(/^Disallow: \/$/m);
+    expect(headers).not.toContain('X-Robots-Tag: noindex');
+    expect(home).not.toContain('content="noindex');
   });
 
   it('Scenario: the route model still knows which routes are indexable', () => {

@@ -25,6 +25,7 @@ export const SITE_BAR_LINKS: readonly SiteBarLink[] = [
   { href: '/about', label: 'About' },
   { href: '/validation', label: 'Validation' },
   { href: '/governance', label: 'Governance' },
+  { href: '/limitations', label: 'Limitations' },
 ];
 
 export interface SiteBarProps {
@@ -35,25 +36,31 @@ export interface SiteBarProps {
 }
 
 export function SiteBar({ current, extra = [] }: SiteBarProps) {
-  const links = [...SITE_BAR_LINKS, ...extra];
+  const links = [
+    ...SITE_BAR_LINKS,
+    ...extra.filter((candidate) => !SITE_BAR_LINKS.some((shared) => shared.href === candidate.href)),
+  ];
   return (
-    <header className="document__bar">
-      <a className="document__home" href="/">Open Sim Lab</a>
-      <nav aria-label="Site">
-        <ul className="document__nav">
-          {links.map((link) => (
-            <li key={link.href}>
-              <a
-                href={link.href}
-                {...(link.href === current ? { 'aria-current': 'page' } : {})}
-                {...(link.href.startsWith('http') ? { rel: 'noreferrer noopener' } : {})}
-              >
-                {link.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </header>
+    <>
+      <a className="skip-link" href="#main">Skip to main content</a>
+      <header className="document__bar">
+        <a className="document__home" href="/">Open Sim Lab</a>
+        <nav aria-label="Site">
+          <ul className="document__nav">
+            {links.map((link) => (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  {...(link.href === current ? { 'aria-current': 'page' } : {})}
+                  {...(link.href.startsWith('http') ? { rel: 'noreferrer noopener' } : {})}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </header>
+    </>
   );
 }

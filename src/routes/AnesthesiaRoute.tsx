@@ -186,6 +186,7 @@ export function AnesthesiaRoute({ path }: { path: string }) {
   if (!acknowledged) {
     return (
       <>
+        <SiteBar />
         {/* The page content is delivered regardless; only interaction is gated. */}
         <main className="reading" id="main">
           <h1>Anesthesia simulator</h1>

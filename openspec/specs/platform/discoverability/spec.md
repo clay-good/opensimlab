@@ -8,12 +8,12 @@ Specifies how a student searching "anesthesia simulator" finds this, and how a s
 
 ### Requirement: The Root Domain Carries The Search Weight
 
-Descriptive content, structured data, and keyword-relevant prose SHALL live at `/` and the other informational routes. The simulator routes under `/anesthesia` SHALL carry only essential metadata.
+Descriptive content, structured data, and keyword-relevant prose SHALL live on the root domain. The front door at `/` SHALL remain a minimal one-screen product entry, while `/about` carries the substantive long-form document. The simulator routes under `/anesthesia` SHALL carry only essential metadata.
 
-#### Scenario: The landing page is the substantive indexable document
+#### Scenario: The front door and substantive document have distinct jobs
 
-- **WHEN** the root document is fetched by a crawler
-- **THEN** it contains the full below-the-fold prose, the module directory, the questions section, and the complete structured data, as static HTML in the initial response
+- **WHEN** `/` and `/about` are fetched by a crawler
+- **THEN** the root contains the product name, plain description, primary simulator link, module directory, and accurate site-level structured data, while `/about` contains the full prose and questions as static HTML in the initial response
 
 #### Scenario: The simulator route stays clean
 
@@ -109,6 +109,11 @@ The site SHALL publish a sitemap and a robots file, and SHALL keep them generate
 
 - **WHEN** the build runs
 - **THEN** `sitemap.xml` is regenerated listing every indexable route with its last-modified date, and an automated test asserts it matches the prerendered route set exactly
+
+#### Scenario: A production deploy cannot silently remain hidden
+
+- **WHEN** either production deployment command builds the artifact
+- **THEN** it explicitly enables indexing and refuses deployment unless `robots.txt`, `_headers`, and every indexable page agree that crawling is allowed
 
 #### Scenario: Robots permits indexing and names the sitemap
 

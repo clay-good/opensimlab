@@ -24,6 +24,7 @@
   font: var(--type-body);
   font-weight: 500;
   cursor: pointer;
+  text-decoration: none;
   transition:
     background var(--motion-micro) var(--ease),
     border-color var(--motion-micro) var(--ease),

@@ -17,6 +17,8 @@ import { DEFAULT_SCENARIO_ID, getScenario, scenariosByDifficulty } from '@anesth
 import { DocumentRoute } from './DocumentRoute';
 import { PlannedModuleRoute } from './PlannedModuleRoute';
 import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
+import { SiteBar } from '@platform/ui';
+import { isUnreviewed } from '@platform/governance/review-gate';
 
 export function PrerenderedBody({ path }: { path: string }) {
   // The landing page, the informational routes and the planned-module pages
@@ -46,19 +48,22 @@ export function PrerenderedBody({ path }: { path: string }) {
 function AnesthesiaMarkup() {
   const anesthesia = MODULES.find((module) => module.id === 'anesthesia');
   return (
-    <main className="reading" id="main">
-      <h1>Anesthesia simulator</h1>
-      <p>{anesthesia?.description}</p>
-      <ul>
-        {scenariosByDifficulty().map((scenario) => (
-          <li key={scenario.metadata.id}>
-            <a href={`/anesthesia/scenario/${scenario.metadata.id}`}>{scenario.metadata.title}</a>
-          </li>
-        ))}
-      </ul>
-      <p><a href="/">What Open Sim Lab is, who it is for, and where its pharmacology comes from</a></p>
-      <p className="landing__disclaimer">{NOT_FOR_CLINICAL_USE}</p>
-    </main>
+    <div className="document">
+      <SiteBar current="/anesthesia" />
+      <main className="reading" id="main">
+        <h1>Anesthesia simulator</h1>
+        <p>{anesthesia?.description}</p>
+        <ul>
+          {scenariosByDifficulty().map((scenario) => (
+            <li key={scenario.metadata.id}>
+              <a href={`/anesthesia/scenario/${scenario.metadata.id}`}>{scenario.metadata.title}</a>
+            </li>
+          ))}
+        </ul>
+        <p><a href="/">What Open Sim Lab is, who it is for, and where its pharmacology comes from</a></p>
+        <p className="landing__disclaimer">{NOT_FOR_CLINICAL_USE}</p>
+      </main>
+    </div>
   );
 }
 
@@ -66,18 +71,33 @@ function ScenarioMarkup({ path }: { path: string }) {
   const id = path.slice('/anesthesia/scenario/'.length).replace(/\/+$/, '');
   const scenario = getScenario(id) ?? getScenario(DEFAULT_SCENARIO_ID)!;
   const { metadata, patient } = scenario;
+  const unreviewed = isUnreviewed(metadata.clinicalReview);
   return (
-    <main className="reading" id="main">
-      <h1>{metadata.title}</h1>
-      <p>
-        {patient.ageYears}-year-old{' '}
-        {patientPersonNoun(patient)} for{' '}
-        {patient.procedure}. About {metadata.estimatedMinutes} simulated minutes.
-      </p>
-      <h2>What you will practise</h2>
-      <ul>{metadata.objectives.map((objective) => <li key={objective.id}>{objective.statement}</li>)}</ul>
-      <p><a href="/anesthesia">Every anesthesia scenario</a></p>
-      <p className="landing__disclaimer">{NOT_FOR_CLINICAL_USE}</p>
-    </main>
+    <div className="document">
+      <SiteBar />
+      <main className="reading" id="main">
+        <h1>{metadata.title}</h1>
+        <p>
+          {patient.ageYears}-year-old{' '}
+          {patientPersonNoun(patient)} for{' '}
+          {patient.procedure}. About {metadata.estimatedMinutes} simulated minutes.
+        </p>
+        <h2>What you will practise</h2>
+        <ul>{metadata.objectives.map((objective) => <li key={objective.id}>{objective.statement}</li>)}</ul>
+        <section aria-labelledby="review-and-sources">
+          <h2 id="review-and-sources">Review and sources</h2>
+          <p>
+            {unreviewed
+              ? 'Not clinically reviewed. No clinician has signed this scenario.'
+              : `Clinically reviewed by ${metadata.clinicalReview.reviewer}, ${metadata.clinicalReview.credential}, on ${metadata.clinicalReview.reviewedOn}.`}
+          </p>
+          <ul>
+            {metadata.clinicalReview.sources.map((source) => <li key={source}>{source}</li>)}
+          </ul>
+        </section>
+        <p><a href="/anesthesia">Every anesthesia scenario</a></p>
+        <p className="landing__disclaimer">{NOT_FOR_CLINICAL_USE}</p>
+      </main>
+    </div>
   );
 }

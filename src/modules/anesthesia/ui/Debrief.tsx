@@ -94,7 +94,9 @@ export function Debrief(props: DebriefProps) {
   const totalTicks = props.history[props.history.length - 1]?.tick ?? 1;
 
   return (
-    <main className="reading" id="main">
+    <>
+      <a className="skip-link" href="#main">Skip to main content</a>
+      <main className="reading" id="main">
       <h1>Debrief</h1>
       <nav className="phase-nav" aria-label="Debrief phases">
         {PEARLS_PHASES.map((entry, index) => (
@@ -268,7 +270,8 @@ export function Debrief(props: DebriefProps) {
           <p className="reading__aside">{NOT_FOR_CLINICAL_USE}</p>
         </section>
       )}
-    </main>
+      </main>
+    </>
   );
 }
 

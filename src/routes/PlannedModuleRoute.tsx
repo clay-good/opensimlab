@@ -5,7 +5,7 @@
  * the module that exists. It is prerendered and indexable, and promises no date.
  */
 
-import { Button, SiteBar } from '@platform/ui';
+import { SiteBar } from '@platform/ui';
 import { RELEASE_FEED_URL, type ModuleDeclaration } from '@platform/modules/registry';
 
 export function PlannedModuleRoute({ module }: { module: ModuleDeclaration }) {
@@ -38,9 +38,9 @@ export function PlannedModuleRoute({ module }: { module: ModuleDeclaration }) {
 
       <h2>What is available today</h2>
       <p>The anesthesia module is built and running.</p>
-      <Button variant="primary" onClick={() => { window.location.href = '/anesthesia'; }}>
+      <a className="button button--primary" href="/anesthesia">
         Open the anesthesia simulator
-      </Button>
+      </a>
       <p><a href="/">Back to the Open Sim Lab front page</a></p>
     </main>
     </>
