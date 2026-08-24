@@ -21,7 +21,7 @@ import { term, type RegionProfile } from '@anesthesia/region/profiles';
 import { StatusBar } from './StatusBar';
 import { MonitorRegion } from './MonitorRegion';
 import { AnalysisRegion } from './AnalysisRegion';
-import { ActionCockpit } from './ActionCockpit';
+import { ActionCockpit, crisisResponseAvailability } from './ActionCockpit';
 import { DemonstrationBar } from './DemonstrationBar';
 import { useDemonstration } from '@anesthesia/demo/useDemonstration';
 import { WhyPanel } from './WhyPanel';
@@ -177,13 +177,10 @@ export function Cockpit({
   const hypnoticLine = equipment?.hypnoticLine ?? DEFAULT_HYPNOTIC_LINE;
   const resuscitation = equipment?.resuscitation ?? DEFAULT_RESUSCITATION;
   const lastExposure = equipment?.lastExposure ?? null;
-  const hasAnaphylaxisResponse = scenario.timeline.some((event) => event.type === 'anaphylaxis');
-  const hasHypermetabolicResponse = scenario.timeline.some(
-    (event) => event.type === 'malignant-hyperthermia',
-  );
-  const hasCardiacArrestResponse = scenario.timeline.some((event) =>
-    event.type === 'rhythm-change'
-      && ['ventricular-fibrillation', 'asystole', 'pea'].includes(event.target ?? ''));
+  const injectedCrises = equipment?.injectedCrisisIds ?? [];
+  const {
+    hasAnaphylaxisResponse, hasHypermetabolicResponse, hasCardiacArrestResponse,
+  } = crisisResponseAvailability(scenario, injectedCrises);
   const rhythm = (equipment?.rhythmId ?? 'sinus') as RhythmId;
   const invalidParameters = useMemo(
     () => new Set(equipment?.invalidParameters ?? []),
@@ -488,6 +485,7 @@ export function Cockpit({
           infusions={infusions}
           hypnoticLine={hypnoticLine}
           resuscitation={resuscitation}
+          injectedCrisisIds={injectedCrises}
           lastExposure={lastExposure}
           syringeRemaining={syringeRemaining}
           ventilator={ventilator}

@@ -230,4 +230,7 @@ embolus location, diagnostic certainty, cerebral or paradoxical embolism, treatm
 The clinical directions come from current OAA high-central-neuraxial-block guidance and McCarthy
 et al.'s air-embolism review. Exact slopes and magnitudes are declared teaching calibrations. Tests
 compare each injected course with an identical untreated engine, prove the 2 syndromes remain
-physiologically distinct, and include both actions in deterministic replay.
+physiologically distinct, and include both actions in deterministic replay. High-spinal breathing
+impairment enters the gas-exchange solver rather than changing display values after the fact.
+Accepted manual injections also activate the matching rescue tray and nonvisual support summary;
+the static scenario timeline is not the only source of control availability.

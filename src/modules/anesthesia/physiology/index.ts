@@ -110,6 +110,8 @@ export interface ScenarioDrive {
   readonly activeCooling?: boolean;
   /** Unopposed local-anesthetic cardiovascular toxicity, 0 to 1. */
   readonly localAnestheticToxicityFraction?: number;
+  /** Remaining spontaneous breathing drive during a high central neuraxial block teaching course. */
+  readonly spontaneousVentilationFraction?: number;
 }
 
 export interface TickResult {
@@ -429,10 +431,13 @@ export class VirtualPatient {
     );
     const opioidDepression = clamp(1.25 * opioid, 0, 1);
     const neuromuscular = neuromuscularState(drugs.rocuroniumCe ?? 0);
+    const spontaneousVentilationFraction = clamp(
+      scenario.spontaneousVentilationFraction ?? 1, 0, 1,
+    );
     const rateDrive = clamp(1 - hypnoticDepression - opioidDepression, 0, 1)
-      * neuromuscular.respiratoryMuscleFraction;
+      * neuromuscular.respiratoryMuscleFraction * spontaneousVentilationFraction;
     const tidalDrive = clamp(1 - hypnoticDepression - 0.2 * opioidDepression, 0, 1)
-      * neuromuscular.respiratoryMuscleFraction;
+      * neuromuscular.respiratoryMuscleFraction * spontaneousVentilationFraction;
     const delivering = ventilator.delivering;
     const commandedTidal = delivering
       ? ventilator.tidalVolumeMl

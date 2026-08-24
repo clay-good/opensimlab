@@ -189,6 +189,8 @@
 - [x] Add a rapid venous-air-embolism teaching drive with distinct end-tidal carbon-dioxide,
   oxygen-saturation, pressure, and cardiac-output effects without changing respiratory rate.
 - [x] Expose both through the same confirmed, logged, replayable author action and equipment snapshot.
+- [x] Make injected respiratory impairment affect gas exchange and expose every matching existing
+  rescue control and nonvisual treatment summary from accepted live injection state.
 - [x] Trace the clinical direction to current OAA guidance and peer-reviewed air-embolism evidence.
 - [x] Publish the calibration, diagnosis, gas-volume, block-height, obstetric, treatment, cerebral,
   and paradoxical-embolism boundaries in the injector, limitations register, and review rubric.

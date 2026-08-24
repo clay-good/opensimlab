@@ -119,6 +119,8 @@ describe('complete manual crisis injector', () => {
     expect(high.state.meanArterialMmHg).toBeLessThan(ordinary.state.meanArterialMmHg * 0.5);
     expect(high.state.respiratoryRateBpm).toBeLessThan(ordinary.state.respiratoryRateBpm * 0.5);
     expect(high.state.tidalVolumeMl).toBeLessThan(ordinary.state.tidalVolumeMl * 0.5);
+    expect(high.state.etco2MmHg).toBeGreaterThan(ordinary.state.etco2MmHg + 2);
+    expect(high.state.spo2Percent).toBeLessThan(ordinary.state.spo2Percent - 5);
 
     const ventilatedHighSpinal = engine();
     const ventilatedControl = engine();
@@ -134,6 +136,7 @@ describe('complete manual crisis injector', () => {
     expect(supported.state.respiratoryRateBpm)
       .toBeCloseTo(supportedControl.state.respiratoryRateBpm, 5);
     expect(supported.state.tidalVolumeMl).toBeCloseTo(supportedControl.state.tidalVolumeMl, 5);
+    expect(supported.state.etco2MmHg).toBeCloseTo(supportedControl.state.etco2MmHg, 5);
 
     const embolism = engine();
     const embolismControl = engine();

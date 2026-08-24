@@ -34,7 +34,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.12';
+export const ENGINE_VERSION = '0.1.0-alpha.13';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -1416,6 +1416,7 @@ export class AnesthesiaEngine {
         hypermetabolicFraction: unopposedHypermetabolism,
         activeCooling: this.activeCooling,
         localAnestheticToxicityFraction: unopposedLocalAnestheticToxicity,
+        spontaneousVentilationFraction: 1 - 0.7 * this.highSpinalFraction,
       },
     );
     if (this.activeCooling && result.state.coreTemperatureC < 38) {
@@ -1436,7 +1437,6 @@ export class AnesthesiaEngine {
       const fraction = this.highSpinalFraction;
       const heartRateFactor = 1 - 0.55 * fraction;
       const pressureFactor = 1 - 0.6 * fraction;
-      const breathingFactor = effectiveVentilator.delivering ? 1 : 1 - 0.7 * fraction;
       crisisState = {
         ...crisisState,
         heartRateBpm: crisisState.heartRateBpm * heartRateFactor,
@@ -1447,8 +1447,6 @@ export class AnesthesiaEngine {
         systolicMmHg: crisisState.systolicMmHg * pressureFactor,
         diastolicMmHg: crisisState.diastolicMmHg * pressureFactor,
         meanArterialMmHg: crisisState.meanArterialMmHg * pressureFactor,
-        respiratoryRateBpm: crisisState.respiratoryRateBpm * breathingFactor,
-        tidalVolumeMl: crisisState.tidalVolumeMl * breathingFactor,
       };
     }
     if (this.venousAirEmbolismFraction > 0) {

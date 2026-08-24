@@ -4,7 +4,9 @@ import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { ActionCockpit, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import {
+  ActionCockpit, crisisResponseAvailability, type ActionCockpitProps,
+} from '@anesthesia/ui/ActionCockpit';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { UNITED_KINGDOM, UNITED_STATES } from '@anesthesia/region/profiles';
 
@@ -43,6 +45,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
   const renderCockpit = (
     region: ActionCockpitProps['region'],
     onEpinephrine = vi.fn(),
+    overrides: Partial<ActionCockpitProps> = {},
   ) => {
     const props: ActionCockpitProps = {
       scenario: CRISIS_SCENARIO,
@@ -79,6 +82,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       onDantrolene: () => {},
       onActiveCooling: () => {},
       onDrugCard: () => {},
+      ...overrides,
     };
     act(() => root.render(createElement(ActionCockpit, props)));
     return onEpinephrine;
@@ -139,6 +143,40 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
     expect(onEpinephrine).toHaveBeenCalledWith(50);
     // Requested actions do not optimistically alter an accepted engine total.
     expect(container.textContent).toContain('Accepted total: 20 µg IV');
+  });
+
+  it('shows every matching rescue control after a manual injection into an ordinary scenario', () => {
+    expect(crisisResponseAvailability(ROUTINE_INDUCTION, [
+      'anaphylaxis', 'malignant-hyperthermia',
+      'local-anesthetic-systemic-toxicity', 'cardiac-arrest-shockable',
+    ])).toEqual({
+      hasAnaphylaxisResponse: true,
+      hasHypermetabolicResponse: true,
+      hasLastResponse: true,
+      hasCardiacArrestResponse: true,
+    });
+    renderCockpit(UNITED_STATES, vi.fn(), {
+      scenario: ROUTINE_INDUCTION,
+      injectedCrisisIds: [
+        'anaphylaxis', 'malignant-hyperthermia',
+        'local-anesthetic-systemic-toxicity', 'cardiac-arrest-shockable',
+      ],
+      resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+        lastEpinephrineTick: null, crystalloidTotalMl: 0,
+        dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
+        lastDantroleneTick: null, activeCooling: false,
+        cardiacArrestActive: true, chestCompressionsActive: false,
+        chestCompressionSeconds: 0, compressionPerfusionFraction: 0,
+        arrestEpinephrineTotalMg: 0, lastArrestEpinephrineTick: null,
+        defibrillationShockCount: 0, lastDefibrillationEnergyJ: null, roscAtTick: null,
+      },
+    });
+    act(() => button('Crisis response')!.click());
+    expect(container.textContent).toContain('Prepare IV benzodiazepine');
+    expect(container.textContent).toContain('Prepare 2.5 mg/kg IV');
+    expect(container.textContent).toContain('Start compressions');
+    expect(container.textContent).toContain('Epinephrine');
   });
 
   it('offers only bounded presets, no hostile free-dose or route field, inside the phone scroll area', () => {

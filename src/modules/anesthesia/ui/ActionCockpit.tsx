@@ -63,6 +63,7 @@ export interface ActionCockpitProps {
     readonly lastDefibrillationEnergyJ?: number | null;
     readonly roscAtTick?: number | null;
   };
+  readonly injectedCrisisIds?: readonly string[];
   readonly lastExposure: { readonly agentId: string; readonly tick: number } | null;
   readonly syringeRemaining: Readonly<Record<string, number>>;
   readonly ventilator: {
@@ -113,6 +114,26 @@ export function formularyForMode(
   return formulary.filter((drug) => drug.deliveryModes?.includes(mode) ?? true);
 }
 
+/** One source of truth for both visible rescue trays and the nonvisual state summary. */
+export function crisisResponseAvailability(
+  scenario: Scenario,
+  injectedCrisisIds: readonly string[] = [],
+) {
+  const injected = new Set(injectedCrisisIds);
+  return {
+    hasAnaphylaxisResponse: injected.has('anaphylaxis')
+      || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
+    hasHypermetabolicResponse: injected.has('malignant-hyperthermia')
+      || scenario.timeline.some((event) => event.type === 'malignant-hyperthermia'),
+    hasLastResponse: injected.has('local-anesthetic-systemic-toxicity')
+      || scenario.timeline.some((event) => event.type === 'local-anesthetic-toxicity'),
+    hasCardiacArrestResponse: injected.has('cardiac-arrest-shockable')
+      || injected.has('cardiac-arrest-non-shockable')
+      || scenario.timeline.some((event) => event.type === 'rhythm-change'
+        && ['ventricular-fibrillation', 'asystole', 'pea'].includes(event.target ?? '')),
+  };
+}
+
 /**
  * Four working trays, not placeholder tabs.
  *
@@ -145,19 +166,12 @@ export const NOT_IN_THIS_BUILD =
 
 export function ActionCockpit(props: ActionCockpitProps) {
   const [tray, setTray] = useState<TrayId>('syringes');
-  const hasAnaphylaxisResponse = props.scenario.timeline.some((event) => event.type === 'anaphylaxis');
-  const hasHypermetabolicResponse = props.scenario.timeline.some(
-    (event) => event.type === 'malignant-hyperthermia',
-  );
+  const {
+    hasAnaphylaxisResponse, hasHypermetabolicResponse, hasLastResponse,
+    hasCardiacArrestResponse,
+  } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
-  );
-  const hasLastResponse = props.scenario.timeline.some(
-    (event) => event.type === 'local-anesthetic-toxicity',
-  );
-  const hasCardiacArrestResponse = props.scenario.timeline.some(
-    (event) => event.type === 'rhythm-change'
-      && ['ventricular-fibrillation', 'asystole', 'pea'].includes(event.target ?? ''),
   );
   const hasEpinephrineResponse = hasAnaphylaxisResponse || hasLastResponse;
   const hasCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse || hasCardiacArrestResponse;
