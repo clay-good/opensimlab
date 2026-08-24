@@ -53,6 +53,15 @@ export interface ActionCockpitProps {
     readonly lipidEmulsionInfusionMlPerMin?: number;
     readonly lipidEmulsionEffectFraction?: number;
     readonly lastLipidEmulsionTick?: number | null;
+    readonly cardiacArrestActive?: boolean;
+    readonly chestCompressionsActive?: boolean;
+    readonly chestCompressionSeconds?: number;
+    readonly compressionPerfusionFraction?: number;
+    readonly arrestEpinephrineTotalMg?: number;
+    readonly lastArrestEpinephrineTick?: number | null;
+    readonly defibrillationShockCount?: number;
+    readonly lastDefibrillationEnergyJ?: number | null;
+    readonly roscAtTick?: number | null;
   };
   readonly lastExposure: { readonly agentId: string; readonly tick: number } | null;
   readonly syringeRemaining: Readonly<Record<string, number>>;
@@ -90,6 +99,9 @@ export interface ActionCockpitProps {
   readonly onActiveCooling: (active: boolean) => void;
   readonly onSeizureSuppression?: () => void;
   readonly onLipidEmulsion?: () => void;
+  readonly onChestCompressions?: (active: boolean) => void;
+  readonly onArrestEpinephrine?: () => void;
+  readonly onDefibrillation?: (energyJ: number) => void;
   readonly onDrugCard: (drugId: string) => void;
 }
 
@@ -123,14 +135,13 @@ const CRISIS_TRAY = { id: 'crisis', label: 'Crisis response' } as const;
 /**
  * Said once, in the place a learner would go looking for the missing thing.
  *
- * Resuscitation matters more than it used to: the engine can now arrest a
- * patient from unrelieved hypoxaemia, so somebody WILL come here looking for
- * chest compressions, and this is where they find out there are none.
+ * The notice distinguishes the bounded scripted arrest response from hypoxic
+ * arrest elsewhere, where resuscitation remains outside the model.
  */
 export const NOT_IN_THIS_BUILD =
-  'Blood products and cardiac-arrest resuscitation are not modelled. Crystalloid uses a fixed 25% intravascular '
-  + 'retention teaching model. A patient who arrests does not '
-  + 'recover, because there are no compressions, no arrest-dose adrenaline or epinephrine, and no defibrillation here.';
+  'Blood products are not modeled. Crystalloid uses a fixed 25% intravascular retention teaching model. '
+  + 'Cardiac-arrest resuscitation actions — compressions, arrest-dose epinephrine, and defibrillation — '
+  + 'are available only in the bounded scripted arrest case; a patient with hypoxic arrest elsewhere does not recover.';
 
 export function ActionCockpit(props: ActionCockpitProps) {
   const [tray, setTray] = useState<TrayId>('syringes');
@@ -144,8 +155,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
   const hasLastResponse = props.scenario.timeline.some(
     (event) => event.type === 'local-anesthetic-toxicity',
   );
+  const hasCardiacArrestResponse = props.scenario.timeline.some(
+    (event) => event.type === 'rhythm-change'
+      && ['ventricular-fibrillation', 'asystole', 'pea'].includes(event.target ?? ''),
+  );
   const hasEpinephrineResponse = hasAnaphylaxisResponse || hasLastResponse;
-  const hasCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse;
+  const hasCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse || hasCardiacArrestResponse;
   const trays = hasCrisisResponse ? [...TRAYS, CRISIS_TRAY] : TRAYS;
 
   return (
@@ -251,6 +266,20 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 onActiveCooling={props.onActiveCooling}
               />
             )}
+            {hasCardiacArrestResponse && (
+              <CardiacArrestTray
+                active={props.resuscitation.cardiacArrestActive ?? false}
+                compressionsActive={props.resuscitation.chestCompressionsActive ?? false}
+                compressionSeconds={props.resuscitation.chestCompressionSeconds ?? 0}
+                epinephrineTotalMg={props.resuscitation.arrestEpinephrineTotalMg ?? 0}
+                shockCount={props.resuscitation.defibrillationShockCount ?? 0}
+                lastEnergyJ={props.resuscitation.lastDefibrillationEnergyJ ?? null}
+                roscAtTick={props.resuscitation.roscAtTick ?? null}
+                onCompressions={props.onChestCompressions ?? (() => {})}
+                onEpinephrine={props.onArrestEpinephrine ?? (() => {})}
+                onDefibrillation={props.onDefibrillation ?? (() => {})}
+              />
+            )}
           </div>
         )}
         {/* Inside the scrolling tray, not as a row of its own.
@@ -263,6 +292,79 @@ export function ActionCockpit(props: ActionCockpitProps) {
           <a href="/limitations">The limitations register says what else.</a>
         </p>
       </div>
+    </div>
+  );
+}
+
+function CardiacArrestTray({
+  active, compressionsActive, compressionSeconds, epinephrineTotalMg, shockCount, lastEnergyJ,
+  roscAtTick, onCompressions, onEpinephrine, onDefibrillation,
+}: {
+  active: boolean;
+  compressionsActive: boolean;
+  compressionSeconds: number;
+  epinephrineTotalMg: number;
+  shockCount: number;
+  lastEnergyJ: number | null;
+  roscAtTick: number | null;
+  onCompressions: (active: boolean) => void;
+  onEpinephrine: () => void;
+  onDefibrillation: (energyJ: number) => void;
+}) {
+  const [pending, setPending] = useState<'epinephrine' | number | null>(null);
+  const energies = [120, 150, 200];
+  return (
+    <div className="tray-grid">
+      <section className="syringe">
+        <div className="syringe__name">Chest compressions</div>
+        <div className="syringe__meta">Fixed 110/min teaching action</div>
+        <Badge kind="teaching">Teaching model</Badge>
+        <p className="syringe__remaining" role="status">
+          {roscAtTick !== null ? 'ROSC recorded'
+            : active ? `${compressionsActive ? 'Running' : 'Stopped'} · ${compressionSeconds.toFixed(0)} s accepted`
+              : 'No scripted arrest active'}
+        </p>
+        <Button variant={compressionsActive ? 'ghost' : 'primary'} disabled={!active}
+          onClick={() => onCompressions(!compressionsActive)}>
+          {compressionsActive ? 'Pause compressions' : 'Start compressions'}
+        </Button>
+        <p className="field__hint">Depth, recoil, interruptions, fatigue, and physical skill are not modeled.</p>
+      </section>
+      <section className="syringe">
+        <div className="syringe__name">Cardiac-arrest epinephrine</div>
+        <div className="syringe__meta">1 mg IV · bounded adult action</div>
+        <p className="syringe__remaining" role="status">Accepted total: {epinephrineTotalMg.toFixed(0)} mg</p>
+        {pending !== 'epinephrine' ? (
+          <Button disabled={!active || epinephrineTotalMg > 0} onClick={() => setPending('epinephrine')}>Prepare 1 mg IV</Button>
+        ) : (
+          <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+            <Button variant="primary" onClick={() => { onEpinephrine(); setPending(null); }}>Give 1 mg IV</Button>
+            <Button variant="ghost" onClick={() => setPending(null)}>Cancel</Button>
+          </div>
+        )}
+        <p className="field__hint">The current AHA adult algorithm repeats epinephrine every 3–5 minutes; this case ends at initial ROSC.</p>
+      </section>
+      <section className="syringe">
+        <div className="syringe__name">Biphasic defibrillation</div>
+        <div className="syringe__meta">Energy-selected teaching action</div>
+        <p className="syringe__remaining" role="status">
+          Shocks: {shockCount}{lastEnergyJ === null ? '' : ` · last ${lastEnergyJ} J`}
+        </p>
+        {typeof pending !== 'number' ? (
+          <div className="syringe__presets">
+            {energies.map((energy) => <Button key={energy} disabled={!active}
+              onClick={() => setPending(energy)}>{energy} J</Button>)}
+          </div>
+        ) : (
+          <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+            <Button variant="primary" onClick={() => { onDefibrillation(pending); setPending(null); }}>
+              Deliver {pending} J
+            </Button>
+            <Button variant="ghost" onClick={() => setPending(null)}>Cancel</Button>
+          </div>
+        )}
+        <p className="field__hint">This declared device converts VF at 200 J under the case conditions. Other devices use manufacturer guidance. Never shock asystole or PEA.</p>
+      </section>
     </div>
   );
 }

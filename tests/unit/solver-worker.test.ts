@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: bounded LAST response truth has protocol version 10', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(10);
+  it('Scenario: cardiac-arrest response truth has protocol version 11', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(11);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

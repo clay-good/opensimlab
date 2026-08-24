@@ -78,7 +78,9 @@ Reviewers run the routine induction themselves before answering.
 | B27 | The timing cost and monitor transition during the fixed 15-second supraglottic insertion | | |
 | B28 | Seizure status, bradycardia, cardiac-output, and pressure trajectory after scripted bupivacaine exposure | | |
 | B29 | Seizure and cardiovascular response after oxygen/ventilation, benzodiazepine suppression, and initial 20% lipid | | |
-| B30 | Overall: does this patient behave like a patient? | | |
+| B30 | Pulseless VF transition and bounded low-flow state while fixed-rate modeled compressions are active | | |
+| B31 | Rhythm and monitor transition after accepted 1 mg IV epinephrine and the declared 200 J biphasic shock | | |
+| B32 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -126,4 +128,9 @@ So that reviewers spend their attention on what this review is for:
   uptake, or plasma concentration. Seizure status and cardiovascular depression are teaching
   trajectories. Benzodiazepine dosing, repeat or doubled lipid, dysrhythmia treatment, arrest care,
   bypass, team actions, transport, and observation are absent.
+- The cardiac-arrest case begins during a third persistent-VF cycle and uses fixed-rate screen
+  actions for compressions, 1 mg IV/IO epinephrine, and energy-selected defibrillation. Conversion
+  at the declared 200 J setting is deterministic and device-specific, not an outcome prediction.
+  Compression quality, pad contact and safety, reversible causes, refractory or recurrent arrest,
+  teams, antiarrhythmics, and post-cardiac-arrest care are absent.
 - Nothing here has been clinically reviewed before — you are the first.

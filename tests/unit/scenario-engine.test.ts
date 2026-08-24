@@ -421,13 +421,19 @@ describe('Requirement: Every Scenario In The Registry Is Valid And Distinct', ()
     }
   });
 
-  it('Scenario: every scenario runs without throwing and produces a live patient', () => {
+  it('Scenario: every scenario runs without throwing and produces its declared patient state', () => {
     for (const scenario of SCENARIOS) {
       const engine = new AnesthesiaEngine({ scenario, seed: 20260819, practiceRegion: 'US' });
       let last = engine.step();
       for (let tick = 0; tick < 600; tick += 1) last = engine.step();
-      expect(last.state.heartRateBpm, scenario.metadata.id).toBeGreaterThan(20);
-      expect(last.state.meanArterialMmHg, scenario.metadata.id).toBeGreaterThan(30);
+      if (scenario.metadata.id === 'persistent-vf-cardiac-arrest') {
+        expect(last.equipment.rhythmId).toBe('ventricular-fibrillation');
+        expect(last.state.cardiacOutputLPerMin).toBe(0);
+        expect(last.equipment.invalidParameters).toContain('meanArterialMmHg');
+      } else {
+        expect(last.state.heartRateBpm, scenario.metadata.id).toBeGreaterThan(20);
+        expect(last.state.meanArterialMmHg, scenario.metadata.id).toBeGreaterThan(30);
+      }
       expect(Number.isFinite(last.state.spo2Percent)).toBe(true);
     }
   });

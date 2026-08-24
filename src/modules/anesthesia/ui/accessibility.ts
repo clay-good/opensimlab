@@ -103,12 +103,21 @@ export function stateSummary(
       readonly dantroleneTotalMg?: number;
       readonly dantroleneEffectFraction?: number;
       readonly activeCooling?: boolean;
+      readonly cardiacArrestActive?: boolean;
+      readonly chestCompressionsActive?: boolean;
+      readonly chestCompressionSeconds?: number;
+      readonly compressionPerfusionFraction?: number;
+      readonly arrestEpinephrineTotalMg?: number;
+      readonly defibrillationShockCount?: number;
+      readonly lastDefibrillationEnergyJ?: number | null;
+      readonly roscAtTick?: number | null;
     };
     readonly epinephrineLabel?: string;
     readonly lastExposure?: { readonly agentId: string; readonly tick: number } | null;
     readonly actualBodyWeightKg?: number;
     readonly showEpinephrineSupport?: boolean;
     readonly showHypermetabolicSupport?: boolean;
+    readonly showCardiacArrestSupport?: boolean;
   },
 ): string {
   const lines: string[] = ['Current state.'];
@@ -164,6 +173,19 @@ export function stateSummary(
       : state.muscleRigidityFraction >= 0.4 ? 'moderate'
         : state.muscleRigidityFraction > 0.05 ? 'mild' : 'none observed';
     lines.push(`Muscle rigidity: ${rigidity}.`);
+  }
+  if (options.resuscitation && options.showCardiacArrestSupport) {
+    const arrest = options.resuscitation;
+    lines.push(arrest.roscAtTick !== null && arrest.roscAtTick !== undefined
+      ? 'Modeled return of spontaneous circulation is recorded.'
+      : arrest.cardiacArrestActive ? 'Scripted cardiac arrest is active.' : 'No scripted cardiac arrest is active.');
+    lines.push(`Chest compressions are ${arrest.chestCompressionsActive ? 'running' : 'stopped'}; `
+      + `${(arrest.chestCompressionSeconds ?? 0).toFixed(0)} accepted seconds, `
+      + `compression perfusion proxy ${(100 * (arrest.compressionPerfusionFraction ?? 0)).toFixed(0)} percent.`);
+    lines.push(`Accepted arrest epinephrine: ${(arrest.arrestEpinephrineTotalMg ?? 0).toFixed(0)} milligrams. `
+      + `Defibrillation shocks: ${(arrest.defibrillationShockCount ?? 0).toFixed(0)}`
+      + (arrest.lastDefibrillationEnergyJ === null || arrest.lastDefibrillationEnergyJ === undefined
+        ? '.' : `; last energy ${arrest.lastDefibrillationEnergyJ.toFixed(0)} joules.`));
   }
   if (options.lastExposure) {
     lines.push(`Most recent modeled trigger exposure: ${options.lastExposure.agentId}.`);
@@ -252,5 +274,8 @@ export const SHORTCUTS: readonly Shortcut[] = [
   { keys: 'G', action: 'Give the focused syringe\'s first preset dose', timeCritical: true },
   { keys: 'V', action: 'Start or stop ventilating', timeCritical: true },
   { keys: 'L', action: 'Perform laryngoscopy', timeCritical: true },
+  { keys: 'C', action: 'Start or stop modeled chest compressions', timeCritical: true },
+  { keys: 'E', action: 'Give 1 mg IV epinephrine in the scripted arrest case', timeCritical: true },
+  { keys: 'D', action: 'Deliver the declared 200 J biphasic shock in the scripted arrest case', timeCritical: true },
   { keys: '?', action: 'Open this shortcut reference', timeCritical: false },
 ];

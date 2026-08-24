@@ -344,6 +344,80 @@ export function objectiveFindings(
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
 
     if ([
+      'resume-arrest-compressions', 'give-arrest-epinephrine',
+      'defibrillate-persistent-vf', 'avoid-shocking-nonshockable-rhythm',
+    ].includes(objective.id)) {
+      const onset = scenario.timeline.find((event) => event.type === 'rhythm-change'
+        && event.target === 'ventricular-fibrillation')?.atTick;
+      if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'The session ended before the scripted ventricular-fibrillation arrest.',
+        } satisfies ObjectiveFinding;
+      }
+      const compressionStarts = log.filter((entry) => entry.eventId.startsWith('chest-compressions-start-'));
+      const compressionStops = log.filter((entry) => entry.eventId.startsWith('chest-compressions-stop-'));
+      const epinephrine = log.find((entry) => entry.eventId.startsWith('cardiac-arrest-epinephrine-'));
+      const shocks = log.filter((entry) => entry.eventId.startsWith('defibrillation-'));
+      const rosc = log.find((entry) => entry.eventId.startsWith('rosc-'));
+
+      if (objective.id === 'resume-arrest-compressions') {
+        const first = compressionStarts.find((entry) => entry.tick >= onset);
+        const delay = first ? (first.tick - onset) / TICKS_PER_SECOND : null;
+        return {
+          ...base,
+          outcome: delay === null ? 'not-met' : delay <= 20 ? 'met' : delay <= 40 ? 'partly-met' : 'not-met',
+          finding: delay === null
+            ? 'No accepted chest-compression start followed the pulseless VF event.'
+            : `Fixed-rate modeled compressions were accepted ${delay.toFixed(0)} seconds after VF appeared. This records screen intent, not physical CPR quality.`,
+          atTick: first?.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      if (objective.id === 'give-arrest-epinephrine') {
+        const activeAtDose = epinephrine !== undefined
+          && compressionStarts.some((start) => start.tick <= epinephrine.tick
+            && !compressionStops.some((stop) => stop.tick >= start.tick && stop.tick <= epinephrine.tick));
+        const exact = epinephrine?.data?.doseMg === 1
+          && (epinephrine.data.route === 'iv' || epinephrine.data.route === 'io');
+        return {
+          ...base,
+          outcome: exact && activeAtDose ? 'met' : epinephrine ? 'partly-met' : 'not-met',
+          finding: epinephrine
+            ? `${Number(epinephrine.data?.doseMg ?? 0).toFixed(0)} mg ${String(epinephrine.data?.route ?? '').toUpperCase()} epinephrine was accepted ${activeAtDose ? 'while modeled compressions were active' : 'without active modeled compressions'}.`
+            : 'No accepted cardiac-arrest epinephrine action was recorded.',
+          atTick: epinephrine?.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      if (objective.id === 'defibrillate-persistent-vf') {
+        const converting = shocks.find((entry) => entry.data?.converted === true);
+        const exact = converting?.data?.energyJ === 200 && rosc !== undefined;
+        return {
+          ...base,
+          outcome: exact ? 'met' : shocks.length > 0 ? 'partly-met' : 'not-met',
+          finding: converting
+            ? `${Number(converting.data?.energyJ).toFixed(0)} J biphasic defibrillation converted the bounded teaching case to an organized rhythm. This deterministic result is not an individual prediction.`
+            : shocks.length > 0
+              ? `${shocks.length} accepted shock${shocks.length === 1 ? '' : 's'} did not meet the declared conversion conditions.`
+              : 'No accepted defibrillation was recorded after VF appeared.',
+          atTick: converting?.tick ?? shocks.at(-1)?.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      const nonShockable = shocks.filter((entry) =>
+        entry.data?.rhythmBefore === 'asystole' || entry.data?.rhythmBefore === 'pea');
+      return {
+        ...base,
+        outcome: nonShockable.length === 0 ? 'met' : 'not-met',
+        finding: nonShockable.length === 0
+          ? 'No accepted shock was delivered to asystole or pulseless electrical activity.'
+          : `${nonShockable.length} accepted shock${nonShockable.length === 1 ? ' was' : 's were'} delivered to a non-shockable rhythm and did not convert it.`,
+        atTick: nonShockable[0]?.tick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
       'recognize-last-pattern', 'support-last-airway-and-seizure',
       'start-last-lipid', 'use-reduced-last-epinephrine',
     ].includes(objective.id)) {

@@ -89,13 +89,20 @@ response, stopping before dysrhythmia treatment or cardiac arrest.
 - Trace initial lipid dosing, the 12 mL/kg cap, and named drug avoidance to the ASRA 2020 checklist.
 - State the ninth boundary plainly: this is not regional-anesthesia, dose-to-toxicity, dysrhythmia,
   arrest, refractory resuscitation, team, transport, or observation simulation.
+- Add a fourteenth scenario beginning at a third persistent-VF cycle after two prior shocks.
+- Record fixed-rate compression intent, exact 1 mg IV/IO epinephrine, and energy-selected biphasic
+  defibrillation; permit bounded modeled ROSC only after the declared 200 J shockable-rhythm path.
+- Preserve the irreversible hypoxic-arrest guard and ensure asystole or PEA never converts after a shock.
+- State the tenth boundary plainly: screen actions do not teach physical CPR, pad safety, teams,
+  reversible causes, refractory arrest, individualized outcome, or post-cardiac-arrest care.
 
 ## Impact
 
-These nine slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+These ten slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
 awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. They do not complete the bundled-library,
 neuromuscular-reversal, or crisis-injector requirements. The seventh also closes the bounded
 pediatric-family gap without claiming a general pediatric patient model. The eighth reaches the
 minimum count of 12 scenarios and closes the bounded difficult-airway rescue gap. The ninth closes
-the required bounded local-anesthetic systemic-toxicity family. Resuscitable cardiac arrest remains
-required library work, and the manual crisis injector remains a separate platform requirement.
+the required bounded local-anesthetic systemic-toxicity family. The tenth closes the required
+resuscitable cardiac-arrest library family through initial modeled ROSC. The manual crisis injector
+remains a separate platform requirement.

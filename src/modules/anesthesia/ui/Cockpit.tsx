@@ -90,6 +90,7 @@ const DEFAULT_RESUSCITATION = {
   lastEpinephrineTick: null, crystalloidTotalMl: 0,
   dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
   lastDantroleneTick: null, activeCooling: false,
+  chestCompressionsActive: false,
 } as const;
 
 export function Cockpit({
@@ -178,6 +179,9 @@ export function Cockpit({
   const hasHypermetabolicResponse = scenario.timeline.some(
     (event) => event.type === 'malignant-hyperthermia',
   );
+  const hasCardiacArrestResponse = scenario.timeline.some((event) =>
+    event.type === 'rhythm-change'
+      && ['ventricular-fibrillation', 'asystole', 'pea'].includes(event.target ?? ''));
   const rhythm = (equipment?.rhythmId ?? 'sinus') as RhythmId;
   const invalidParameters = useMemo(
     () => new Set(equipment?.invalidParameters ?? []),
@@ -295,11 +299,13 @@ export function Cockpit({
       actualBodyWeightKg: scenario.patient.weightKg,
       showEpinephrineSupport: hasAnaphylaxisResponse,
       showHypermetabolicSupport: hasHypermetabolicResponse,
+      showCardiacArrestSupport: hasCardiacArrestResponse,
     }));
   }, [
     session.state, session.alarms, speak, infusions, ventilator, invalidParameters,
     scenario.equipment.monitoring, scenario.patient.weightKg, airway.jawThrustCpapSecondsRemaining,
     resuscitation, region, lastExposure, hasAnaphylaxisResponse, hasHypermetabolicResponse,
+    hasCardiacArrestResponse,
   ]);
 
   const readWaveforms = useCallback(() => {
@@ -339,13 +345,24 @@ export function Cockpit({
         case 'l': case 'L':
           session.act({ type: 'laryngoscopy', payload: { technique: 'direct' } });
           break;
+        case 'c': case 'C':
+          session.act({ type: 'chest-compressions', payload: {
+            active: !(resuscitation.chestCompressionsActive ?? false),
+          } });
+          break;
+        case 'e': case 'E':
+          session.act({ type: 'cardiac-arrest-epinephrine', payload: { route: 'iv', doseMg: 1 } });
+          break;
+        case 'd': case 'D':
+          session.act({ type: 'defibrillation', payload: { energyJ: 200, waveform: 'biphasic' } });
+          break;
         case '?': setShortcutsOpen(true); break;
         default: break;
       }
     };
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
-  }, [session, readSummary, readWaveforms]);
+  }, [session, readSummary, readWaveforms, resuscitation.chestCompressionsActive]);
 
   const timeToPeak = useMemo(() => ({ propofol: 100, remifentanil: 90 }), []);
 
@@ -505,6 +522,15 @@ export function Cockpit({
             type: 'lipid-emulsion', payload: {
               route: 'iv', protocol: 'initial', concentrationPercent: 20,
             },
+          })}
+          onChestCompressions={(active) => session.act({
+            type: 'chest-compressions', payload: { active },
+          })}
+          onArrestEpinephrine={() => session.act({
+            type: 'cardiac-arrest-epinephrine', payload: { route: 'iv', doseMg: 1 },
+          })}
+          onDefibrillation={(energyJ) => session.act({
+            type: 'defibrillation', payload: { energyJ, waveform: 'biphasic' },
           })}
           onDrugCard={setDrugCardId}
         />

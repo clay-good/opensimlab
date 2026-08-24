@@ -175,3 +175,23 @@ response timing, concurrent high oxygen and active breath delivery, accepted sei
 the exact 60 kg lipid calculation, and any accepted epinephrine dose. Repeat or doubled lipid,
 dysrhythmia treatment, arrest care, bypass, teams, transport, observation, and regional anesthesia
 remain outside this slice.
+
+## Slice 10: bounded persistent-VF cardiac-arrest response
+
+The case begins at a third-cycle handoff after two prior unsuccessful biphasic shocks. A scripted
+rhythm event creates ventricular fibrillation with no spontaneous mechanical output while leaving
+the existing irreversible hypoxic-arrest path untouched. The learner resumes a fixed 110/min
+compression proxy, gives exactly 1 mg IV/IO epinephrine, and selects energy on a declared biphasic
+device. Under those accepted conditions a 200 J shock deterministically converts this teaching case
+to an organized rhythm and initial modeled ROSC. The same shock never converts asystole or PEA.
+
+During arrest the observable state reports no spontaneous output and only bounded low-flow support
+while compressions are active. The equipment snapshot records accepted compression time, perfusion
+proxy, arrest-dose epinephrine, shocks, energy, and ROSC. Objective evaluation uses those accepted
+engine events rather than raw action requests, including explicit non-shockable-rhythm errors.
+
+The sequence follows the official AHA 2025 adult cardiac-arrest algorithm. The 200 J value belongs
+only to the declared teaching device; real biphasic energy follows manufacturer guidance. Buttons
+cannot evaluate compression depth, recoil, pauses, pad contact, electrical safety, physical access,
+or teamwork. Reversible causes, refractory drugs, recurrent arrest, post-arrest care, and individual
+outcome remain outside this slice.

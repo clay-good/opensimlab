@@ -537,6 +537,21 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: NCBI,
     verifiedOn: CHECKED,
   },
+  {
+    id: 'aha-adult-cardiac-arrest-2025',
+    authors: 'American Heart Association',
+    title: 'Adult Cardiac Arrest Algorithm',
+    publication: '2025 American Heart Association Guidelines for CPR and ECC',
+    year: 2025,
+    locator: 'Adult VF/pVT/Asystole/PEA algorithm, May 2025',
+    usedFor: 'The bounded persistent-VF sequence: high-quality CPR at 100-120/min, oxygen and '
+      + 'ventilation, 1 mg IV/IO epinephrine every 3-5 minutes, rhythm discrimination, and '
+      + 'biphasic shock energy following manufacturer guidance (for example 120-200 J). The '
+      + 'scenario declares one teaching device at 200 J and does not generalize that setting.',
+    verifiedAgainst: 'American Heart Association official 2025 algorithm PDF and accessible text',
+    verifiedOn: '2026-08-24',
+    currency: { lastAmended: '2025-05-27', checkedAt: '2026-08-24' },
+  },
 
   // --- Curriculum frameworks -------------------------------------------------
   //

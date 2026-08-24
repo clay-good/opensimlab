@@ -165,6 +165,16 @@ an explicit request for airway help, and a fixed-time supraglottic rescue. The
 learning endpoint is restored oxygen delivery and sustained capnography, not tracheal intubation.
 Placement technique, team arrival, repeated supraglottic attempts, aspiration protection, the
 post-rescue airway decision, and cannot-intubate-cannot-oxygenate rescue remain outside the model.
+Its ninth slice adds an awake 60 kg adult with a scripted post-injection local-anesthetic toxicity
+pattern and the bounded initial ASRA 2020 response: oxygen and ventilation, agent-class seizure
+suppression, reduced-dose epinephrine, and weight-banded 20% lipid. It does not model a regional
+block, dose-to-toxicity pharmacokinetics, refractory resuscitation, or follow-up.
+Its tenth slice adds a third-cycle persistent-VF handoff with keyboard-reachable fixed-rate
+compressions, exact 1 mg IV/IO epinephrine, and energy-selected biphasic defibrillation. The
+declared teaching device converts VF at 200 J under accepted case conditions and never converts
+asystole or PEA. It stops at initial modeled ROSC and does not claim physical CPR skill,
+device-independent energy selection, reversible-cause treatment, individual outcome, or
+post-cardiac-arrest care.
 
 ## Running it
 

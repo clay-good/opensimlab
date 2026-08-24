@@ -129,7 +129,7 @@
 - [x] Anaphylaxis with antibiotic exposure and independently tested documented-allergy enforcement.
 - [x] Malignant hyperthermia early recognition and initial response.
 - [x] Local-anesthetic systemic toxicity.
-- [ ] Resuscitable cardiac arrest.
+- [x] Resuscitable cardiac arrest, bounded to a persistent shockable-rhythm cycle and initial modeled ROSC.
 - [x] Pediatric anesthesia with pediatric pharmacokinetics and a bounded respiratory profile.
 - [x] Obstetric presentation: the hemorrhage case is a ruptured ectopic pregnancy.
 - [x] Geriatric presentation: hypotension after induction.
@@ -150,3 +150,20 @@
 - [ ] Add repeat lipid bolus, doubled infusion for instability, dysrhythmia treatment, full arrest
   care, cardiopulmonary bypass, team actions, transport, observation, or a regional-block model.
   None is implied by this initial-response slice.
+
+## Slice 10: bounded persistent-VF cardiac-arrest response
+
+- [x] Add a scripted third-cycle VF handoff after two prior unsuccessful shocks, without changing
+  the irreversible hypoxic-arrest behavior in other scenarios.
+- [x] Add fixed-rate chest-compression, exact 1 mg IV/IO epinephrine, and energy-selected biphasic
+  defibrillation actions with accepted equipment state and deterministic replay.
+- [x] Convert only shockable VF under the declared 200 J teaching-device conditions; never convert
+  asystole or PEA after a shock.
+- [x] Author, register, evaluate, curriculum-map, and make the complete initial response reachable
+  with keyboard-operable controls and a non-visual state summary.
+- [x] Trace the sequence, dose, compression rate, rhythm discrimination, and device-specific energy
+  boundary to the official AHA 2025 adult cardiac-arrest algorithm.
+- [x] Update sources, limitations, landing inventory, protocol fixtures, and discoverability.
+- [ ] Add physical compression quality, pad placement or safety, recurrent or refractory arrest,
+  antiarrhythmics, reversible-cause treatment, individualized outcome, teams, or post-arrest care.
+  None is implied by this initial-ROSC slice.

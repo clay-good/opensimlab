@@ -22,6 +22,7 @@ import { EARLY_MALIGNANT_HYPERTHERMIA_DURING_VOLATILE_ANESTHESIA } from './early
 import { ROUTINE_PEDIATRIC_IV_INDUCTION } from './routine-pediatric-iv-induction';
 import { DIFFICULT_AIRWAY_SUPRAGLOTTIC_RESCUE } from './difficult-airway-supraglottic-rescue';
 import { LOCAL_ANESTHETIC_SYSTEMIC_TOXICITY } from './local-anesthetic-systemic-toxicity';
+import { PERSISTENT_VF_CARDIAC_ARREST } from './persistent-vf-cardiac-arrest';
 
 export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_INDUCTION,
@@ -37,6 +38,7 @@ export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_PEDIATRIC_IV_INDUCTION,
   DIFFICULT_AIRWAY_SUPRAGLOTTIC_RESCUE,
   LOCAL_ANESTHETIC_SYSTEMIC_TOXICITY,
+  PERSISTENT_VF_CARDIAC_ARREST,
 ];
 
 /** The scenario a learner meets first. */

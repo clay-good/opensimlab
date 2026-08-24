@@ -665,6 +665,21 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'pc-crisis-management',
     objectiveIds: ['recognize-last-pattern', 'support-last-airway-and-seizure', 'start-last-lipid', 'use-reduced-last-epinephrine'],
   },
+  {
+    scenarioId: 'persistent-vf-cardiac-arrest', frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['resume-arrest-compressions', 'give-arrest-epinephrine', 'defibrillate-persistent-vf', 'avoid-shocking-nonshockable-rhythm'],
+  },
+  {
+    scenarioId: 'persistent-vf-cardiac-arrest', frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['resume-arrest-compressions', 'give-arrest-epinephrine', 'defibrillate-persistent-vf', 'avoid-shocking-nonshockable-rhythm'],
+  },
+  {
+    scenarioId: 'persistent-vf-cardiac-arrest', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-crisis-management',
+    objectiveIds: ['resume-arrest-compressions', 'give-arrest-epinephrine', 'defibrillate-persistent-vf', 'avoid-shocking-nonshockable-rhythm'],
+  },
 ];
 
 export interface DomainCoverage {

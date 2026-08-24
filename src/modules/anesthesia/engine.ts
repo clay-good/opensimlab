@@ -34,7 +34,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.9';
+export const ENGINE_VERSION = '0.1.0-alpha.10';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -225,6 +225,16 @@ export class AnesthesiaEngine {
   private lipidEmulsionInfusionStartedAtTick: number | null = null;
   private lipidEmulsionEffectFraction = 0;
   private lastLipidEmulsionTick: number | null = null;
+  /** Scripted arrest is isolated from the irreversible hypoxic-arrest guard. */
+  private cardiacArrestActive = false;
+  private chestCompressionsActive = false;
+  private chestCompressionTicks = 0;
+  private lastChestCompressionTick: number | null = null;
+  private arrestEpinephrineTotalMg = 0;
+  private lastArrestEpinephrineTick: number | null = null;
+  private defibrillationShockCount = 0;
+  private lastDefibrillationEnergyJ: number | null = null;
+  private roscAtTick: number | null = null;
   /** A learner fluid bolus waiting to reach the circulation on the next tick. */
   private pendingCrystalloidMl = 0;
   /** Physical delivery state, intentionally separate from the pump's commanded rate. */
@@ -511,6 +521,67 @@ export class AnesthesiaEngine {
           `Epinephrine ${dose} micrograms IV given for perioperative resuscitation. `
           + 'The response is an Open Sim Lab teaching effect, not an individual prediction.',
           { drugId: 'epinephrine', route: 'iv', doseMicrograms: dose, teachingModel: true });
+        break;
+      }
+      case 'chest-compressions': {
+        const active = action.payload.active;
+        if (!this.cardiacArrestActive || typeof active !== 'boolean') {
+          this.log('warning', 'resuscitation', `bad-compressions-${this.currentTick}`,
+            'Chest compressions require an active scripted cardiac arrest and an explicit start or stop request. Nothing changed.');
+          break;
+        }
+        this.chestCompressionsActive = active;
+        if (active) this.lastChestCompressionTick = this.currentTick;
+        this.log('critical', 'resuscitation', `chest-compressions-${active ? 'start' : 'stop'}-${this.currentTick}`,
+          `${active ? 'Started' : 'Stopped'} modeled chest compressions at a fixed 110/min. Depth, recoil, pauses, fatigue, and physical skill are not modeled.`,
+          { active, ratePerMin: 110, teachingModel: true });
+        break;
+      }
+      case 'cardiac-arrest-epinephrine': {
+        const doseMg = AnesthesiaEngine.finiteAmount(action.payload.doseMg);
+        if (!this.cardiacArrestActive || (action.payload.route !== 'iv' && action.payload.route !== 'io')
+          || doseMg !== 1 || this.arrestEpinephrineTotalMg > 0) {
+          this.log('warning', 'drug', `bad-arrest-epinephrine-${this.currentTick}`,
+            'This bounded cardiac-arrest action requires an active scripted arrest, exactly 1 mg by the IV or IO route, and no prior accepted arrest dose. Nothing was given.');
+          break;
+        }
+        this.arrestEpinephrineTotalMg += doseMg;
+        this.lastArrestEpinephrineTick = this.currentTick;
+        this.log('critical', 'drug', `cardiac-arrest-epinephrine-${this.currentTick}`,
+          `Epinephrine ${doseMg} mg ${String(action.payload.route).toUpperCase()} given during modeled cardiac arrest. Drug kinetics and individual outcome are not predicted.`,
+          { drugId: 'epinephrine', route: String(action.payload.route), doseMg, teachingModel: true });
+        break;
+      }
+      case 'defibrillation': {
+        const energyJ = AnesthesiaEngine.finiteAmount(action.payload.energyJ);
+        if (!this.cardiacArrestActive || action.payload.waveform !== 'biphasic'
+          || energyJ === null || energyJ <= 0) {
+          this.log('warning', 'resuscitation', `bad-defibrillation-${this.currentTick}`,
+            'Defibrillation requires an active scripted cardiac arrest, the declared biphasic waveform, and a finite positive energy selection. No shock was delivered.');
+          break;
+        }
+        this.defibrillationShockCount += 1;
+        this.lastDefibrillationEnergyJ = energyJ;
+        const shockable = this.rhythm === 'ventricular-fibrillation';
+        const recentCompressions = this.lastChestCompressionTick !== null
+          && this.currentTick - this.lastChestCompressionTick <= 10 * TICKS_PER_SECOND;
+        const converts = shockable && energyJ === 200 && recentCompressions
+          && this.arrestEpinephrineTotalMg >= 1;
+        this.log(converts ? 'critical' : 'warning', 'resuscitation', `defibrillation-${this.currentTick}`,
+          `Biphasic defibrillation delivered at ${energyJ} J with a modeled brief clearance pause. ${!shockable
+            ? 'The non-shockable rhythm did not convert.'
+            : converts ? 'The bounded teaching case converted to an organized rhythm.'
+              : 'VF persisted; the case requires recent preceding compressions, accepted 1 mg IV/IO epinephrine, and the declared 200 J device setting.'}`,
+          { energyJ, rhythmBefore: this.rhythm, converted: converts, teachingModel: true });
+        if (converts) {
+          this.rhythm = 'sinus';
+          this.cardiacArrestActive = false;
+          this.chestCompressionsActive = false;
+          this.roscAtTick = this.currentTick;
+          this.log('critical', 'rhythm', `rosc-${this.currentTick}`,
+            'An organized rhythm with modeled return of spontaneous circulation is present. Post-arrest care and individual outcome are outside this case.',
+            { rhythm: 'sinus', teachingModel: true });
+        }
         break;
       }
       case 'seizure-suppression': {
@@ -1014,6 +1085,12 @@ export class AnesthesiaEngine {
           return;
         }
         this.rhythm = rhythm as RhythmId;
+        if (this.rhythm === 'ventricular-fibrillation' || this.rhythm === 'asystole'
+          || this.rhythm === 'pea') {
+          this.cardiacArrestActive = true;
+          this.chestCompressionsActive = false;
+          this.chestCompressionTicks = 0;
+        }
         this.log('critical', 'rhythm', `rhythm-${event.id}-${this.currentTick}`,
           `Rhythm changed to ${this.rhythm}`);
         return;
@@ -1122,6 +1199,10 @@ export class AnesthesiaEngine {
       this.fireTimelineEvent(declared);
     }
     this.running = this.running.filter((event) => event.untilTick > this.currentTick);
+    if (this.cardiacArrestActive && this.chestCompressionsActive) {
+      this.chestCompressionTicks += 1;
+      this.lastChestCompressionTick = this.currentTick;
+    }
     for (const event of this.running) {
       if (event.type === 'surgical-stimulus') stimulus = Math.max(stimulus, event.value);
       if (event.type === 'blood-loss') bloodLossMl += event.value / 600;
@@ -1261,7 +1342,19 @@ export class AnesthesiaEngine {
     // Titrated boluses are short acting; this teaching effect decays over roughly 90 seconds.
     this.epinephrineEffect *= Math.exp(-0.1 / 90);
 
-    this.reconcileArrest(result.state.cardiacOutputLPerMin ?? 0);
+    if (!this.cardiacArrestActive) this.reconcileArrest(result.state.cardiacOutputLPerMin ?? 0);
+
+    const state: PatientState = this.cardiacArrestActive ? {
+      ...result.state,
+      heartRateBpm: 0,
+      cardiacOutputLPerMin: this.chestCompressionsActive ? 1.2 : 0,
+      strokeVolumeMl: 0,
+      systolicMmHg: this.chestCompressionsActive ? 45 : 0,
+      diastolicMmHg: this.chestCompressionsActive ? 18 : 0,
+      meanArterialMmHg: this.chestCompressionsActive ? 27 : 0,
+      perfusionIndex: 0,
+      etco2MmHg: this.chestCompressionsActive ? 18 : 0,
+    } : result.state;
 
     // Preoxygenation is judged on the END-TIDAL fraction, because that is what
     // says the functional residual capacity has actually been denitrogenated. The
@@ -1269,25 +1362,25 @@ export class AnesthesiaEngine {
     // a leaking mask reads 1.0 inspired and 0.4 end-tidal, and the safe apnoea
     // time that follows is the one the reservoir bought, not the one the flowmeter
     // promised. 0.9 is the conventional endpoint.
-    if (result.state.endTidalO2Fraction >= PREOXYGENATION_END_TIDAL_TARGET
+    if (state.endTidalO2Fraction >= PREOXYGENATION_END_TIDAL_TARGET
       && !this.patient.airway.intubated) {
       this.preoxygenationTicks += 1;
     }
 
     // --- Waveforms -------------------------------------------------------------
     const waveforms = this.waveforms.tick(restingDrive({
-      heartRateBpm: result.state.heartRateBpm,
+      heartRateBpm: state.heartRateBpm,
       rhythmId: this.rhythm,
-      systolicMmHg: result.state.systolicMmHg,
-      diastolicMmHg: result.state.diastolicMmHg,
-      svrDynSCm5: result.state.svrDynSCm5,
-      strokeVolumeMl: result.state.strokeVolumeMl,
-      perfusionIndex: result.state.perfusionIndex,
-      spo2Percent: result.state.spo2Percent,
-      etco2MmHg: result.state.etco2MmHg,
-      respiratoryRateBpm: Math.max(result.state.respiratoryRateBpm, 1),
+      systolicMmHg: state.systolicMmHg,
+      diastolicMmHg: state.diastolicMmHg,
+      svrDynSCm5: state.svrDynSCm5,
+      strokeVolumeMl: state.strokeVolumeMl,
+      perfusionIndex: state.perfusionIndex,
+      spo2Percent: state.spo2Percent,
+      etco2MmHg: state.etco2MmHg,
+      respiratoryRateBpm: Math.max(state.respiratoryRateBpm, 1),
       bronchospasmSeverity: obstruction,
-      ventilating: result.state.respiratoryRateBpm > 0 && result.state.tidalVolumeMl > 0,
+      ventilating: state.respiratoryRateBpm > 0 && state.tidalVolumeMl > 0,
       anesthesiaDepthFraction: result.anesthesiaDepthFraction,
       hypovolemiaFraction: result.hypovolemiaFraction,
       positivePressure: effectiveVentilator.delivering && effectiveVentilator.mode !== 'manual',
@@ -1296,7 +1389,7 @@ export class AnesthesiaEngine {
 
     // --- Alarms ----------------------------------------------------------------
     const invalid = this.invalidParameters();
-    const alarmResult = this.alarmEngine.evaluate(result.state, this.currentTick, {
+    const alarmResult = this.alarmEngine.evaluate(state, this.currentTick, {
       artifactParameters: this.artifactParameters(),
       invalidParameters: invalid,
     });
@@ -1322,7 +1415,7 @@ export class AnesthesiaEngine {
       });
     }
 
-    this.lastState = result.state;
+    this.lastState = state;
 
     const events = this.pendingEvents;
     this.pendingEvents = [];
@@ -1330,7 +1423,7 @@ export class AnesthesiaEngine {
 
     return {
       tick: this.currentTick - 1,
-      state: result.state,
+      state,
       concentrations,
       attribution: result.attribution,
       alarms: alarmResult.active,
@@ -1397,6 +1490,15 @@ export class AnesthesiaEngine {
         lipidEmulsionInfusionMlPerMin: this.lipidEmulsionInfusionMlPerMin,
         lipidEmulsionEffectFraction: this.lipidEmulsionEffectFraction,
         lastLipidEmulsionTick: this.lastLipidEmulsionTick,
+        cardiacArrestActive: this.cardiacArrestActive,
+        chestCompressionsActive: this.chestCompressionsActive,
+        chestCompressionSeconds: this.chestCompressionTicks / TICKS_PER_SECOND,
+        compressionPerfusionFraction: this.cardiacArrestActive && this.chestCompressionsActive ? 0.25 : 0,
+        arrestEpinephrineTotalMg: this.arrestEpinephrineTotalMg,
+        lastArrestEpinephrineTick: this.lastArrestEpinephrineTick,
+        defibrillationShockCount: this.defibrillationShockCount,
+        lastDefibrillationEnergyJ: this.lastDefibrillationEnergyJ,
+        roscAtTick: this.roscAtTick,
       },
       lastExposure: this.lastExposure ? { ...this.lastExposure } : null,
       drugs: [...this.drugs.values()].map((drug) => ({

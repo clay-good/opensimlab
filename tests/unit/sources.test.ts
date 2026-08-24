@@ -148,6 +148,15 @@ describe('the entries that were found to be wrong', () => {
     expect(last.title).toContain('2020');
     expect(last.usedFor).toContain('2021');
   });
+
+  it('registers the current official adult cardiac-arrest algorithm and device energy boundary', () => {
+    const source = requireSource('aha-adult-cardiac-arrest-2025');
+    expect(source.publication).toContain('2025 American Heart Association');
+    expect(source.usedFor).toContain('1 mg IV/IO epinephrine every 3-5 minutes');
+    expect(source.usedFor).toContain('manufacturer guidance');
+    expect(source.usedFor).toContain('120-200 J');
+    expect(source.currency?.checkedAt).toBe('2026-08-24');
+  });
 });
 
 describe('the code agrees with the register', () => {

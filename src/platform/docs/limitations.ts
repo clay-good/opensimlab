@@ -94,10 +94,10 @@ export const LIMITATIONS: readonly Limitation[] = [
   },
   {
     id: 'no-resuscitation',
-    headline: 'Once the circulation stops, nothing further is simulated — there are no compressions, no adrenaline and no defibrillation.',
-    simplification: 'Once the circulation stops, this module simulates nothing further. There are '
-      + 'no chest compressions, no adrenaline, no defibrillation and no return of spontaneous '
-      + 'circulation. The patient stays arrested however the airway is subsequently managed.',
+    headline: 'Hypoxic arrest outside the scripted VF case remains irreversible and has no resuscitation actions.',
+    simplification: 'A hypoxic arrest reached through the physiology remains terminal in that session. '
+      + 'The bounded VF case has separate scripted compressions, epinephrine, defibrillation, and ROSC; '
+      + 'those actions do not retrofit recovery into other scenarios.',
     whereItMisleads: 'Concluding that restoring oxygen to an arrested patient is what brings them '
       + 'back, or practising anything about cardiac arrest management here. An earlier build did '
       + 'let the circulation return on its own once oxygen was restored, which taught exactly the '
@@ -106,7 +106,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'oxygenation, adrenaline, and treatment of the cause, following a resuscitation algorithm. '
       + 'Correcting the hypoxaemia is necessary and is not by itself sufficient. Learn arrest '
       + 'management where it is actually taught, not here.',
-    briefIn: [],
+    briefIn: ['rapid-desaturation'],
   },
   {
     id: 'respiratory-depression-is-calibrated',
@@ -391,6 +391,42 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use the complete current ASRA checklist, obtain help, reassess continuously, '
       + 'escalate refractory instability, and continue post-event care outside this bounded simulation.',
     briefIn: ['local-anesthetic-systemic-toxicity'],
+  },
+  {
+    id: 'cardiac-arrest-response-is-bounded',
+    headline: 'The arrest case is one deterministic third-cycle VF teaching path, not a complete resuscitation model.',
+    simplification: 'A scripted rhythm event creates pulseless VF after two prior shocks. Accepted '
+      + 'compressions, 1 mg IV/IO epinephrine, and the declared 200 J biphasic setting permit '
+      + 'deterministic conversion. Reversible causes, recurrent or refractory arrest, antiarrhythmics, '
+      + 'device-specific waveforms, and individualized survival are not modeled.',
+    whereItMisleads: 'Treating screen conversion as a prediction of real defibrillation success or '
+      + 'using 200 J without following the actual defibrillator manufacturer recommendation.',
+    correctUnderstanding: 'Follow the current resuscitation algorithm and the actual defibrillator. '
+      + 'Shockable rhythm, CPR quality, minimized pauses, reversible causes, and repeated reassessment '
+      + 'matter; a deterministic screen outcome does not predict survival.',
+    briefIn: ['persistent-vf-cardiac-arrest'],
+  },
+  {
+    id: 'cardiac-arrest-actions-are-screen-proxies',
+    headline: 'Buttons record resuscitation intent; they cannot teach compression quality, pad safety, access, or team performance.',
+    simplification: 'Starting compressions creates a fixed 110/min low-flow proxy. The simulator does '
+      + 'not measure depth, recoil, fraction, pauses, fatigue, ventilation coordination, pad contact, '
+      + 'shock clearance, or physical drug administration.',
+    whereItMisleads: 'Equating successful button use with competent cardiopulmonary resuscitation or safe defibrillation.',
+    correctUnderstanding: 'CPR, defibrillation, and crisis teamwork are psychomotor and team skills. '
+      + 'Use hands-on training with feedback and supervised resuscitation education.',
+    briefIn: ['persistent-vf-cardiac-arrest'],
+  },
+  {
+    id: 'no-post-cardiac-arrest-care',
+    headline: 'The case stops at initial modeled ROSC and does not implement post-cardiac-arrest care.',
+    simplification: 'After rhythm conversion the case records initial ROSC only. It does not model '
+      + 'hemodynamic stabilization, oxygen and ventilation targets, electrocardiography, coronary '
+      + 'intervention, temperature control, seizure management, prognosis, intensive care, or recurrence.',
+    whereItMisleads: 'Treating rhythm conversion as completion of care or as a guarantee of neurologic recovery.',
+    correctUnderstanding: 'ROSC begins a time-critical post-arrest pathway. Continue with the current '
+      + 'post-cardiac-arrest algorithm and individualized critical care.',
+    briefIn: ['persistent-vf-cardiac-arrest'],
   },
   {
     id: 'paedfusor-pk-does-not-validate-pediatric-depth',

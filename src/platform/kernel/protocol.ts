@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 10 reports bounded LAST response state. */
-export const WORKER_PROTOCOL_VERSION = 10;
+/** Bumped whenever the message shape changes incompatibly. Version 11 reports cardiac-arrest response state. */
+export const WORKER_PROTOCOL_VERSION = 11;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -213,6 +213,16 @@ export interface EquipmentSnapshot {
     readonly lipidEmulsionInfusionMlPerMin?: number;
     readonly lipidEmulsionEffectFraction?: number;
     readonly lastLipidEmulsionTick?: number | null;
+    /** Bounded scripted cardiac-arrest response. Optional for older saved snapshots. */
+    readonly cardiacArrestActive?: boolean;
+    readonly chestCompressionsActive?: boolean;
+    readonly chestCompressionSeconds?: number;
+    readonly compressionPerfusionFraction?: number;
+    readonly arrestEpinephrineTotalMg?: number;
+    readonly lastArrestEpinephrineTick?: number | null;
+    readonly defibrillationShockCount?: number;
+    readonly lastDefibrillationEnergyJ?: number | null;
+    readonly roscAtTick?: number | null;
   };
   /** The most recent modeled trigger exposure, without diagnosing the response. */
   readonly lastExposure: { readonly agentId: string; readonly tick: number } | null;

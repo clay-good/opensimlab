@@ -248,6 +248,30 @@ describe('Requirement: Screen Reader Access To Live Physiology', () => {
     expect(summary).not.toContain('epinephrine');
   });
 
+  it('summarizes accepted cardiac-arrest support and initial ROSC non-visually', () => {
+    const patient = new VirtualPatient(PROFILE, createRng(1)).snapshot();
+    const summary = stateSummary(patient, {
+      alarms: [], infusions: [], invalid: new Set(),
+      ventilator: {
+        mode: 'volume-control', tidalVolumeMl: 500, respiratoryRateBpm: 10,
+        fio2: 1, delivering: true,
+      },
+      resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0, crystalloidTotalMl: 0,
+        cardiacArrestActive: false, chestCompressionsActive: false,
+        chestCompressionSeconds: 42, compressionPerfusionFraction: 0,
+        arrestEpinephrineTotalMg: 1, defibrillationShockCount: 1,
+        lastDefibrillationEnergyJ: 200, roscAtTick: 730,
+      },
+      showEpinephrineSupport: false,
+      showCardiacArrestSupport: true,
+    });
+    expect(summary).toContain('Modeled return of spontaneous circulation is recorded');
+    expect(summary).toContain('42 accepted seconds');
+    expect(summary).toContain('Accepted arrest epinephrine: 1 milligrams');
+    expect(summary).toContain('last energy 200 joules');
+  });
+
   it('says the plethysmogram is non-pulsatile in pulseless electrical activity', () => {
     const pea = waveformDescriptions({
       rhythm: 'pea', bronchospasmSeverity: 0, airwayPatencyFraction: 1, perfusionIndex: 0.8,
