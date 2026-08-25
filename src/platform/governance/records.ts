@@ -13,6 +13,7 @@ import { SCENARIOS } from '@anesthesia/scenarios';
 import { REGIONS } from '@anesthesia/region/profiles';
 import { EMERGENCY_MEDICINE_SCENARIOS } from '../../modules/emergency-medicine/scenarios';
 import { CRITICAL_CARE_SCENARIOS } from '../../modules/critical-care/scenarios';
+import { CARDIOLOGY_SCENARIOS } from '../../modules/cardiology/scenarios';
 import type { MaturitySubjectInput } from '@platform/catalog/maturity';
 
 /**
@@ -57,6 +58,12 @@ export function reviewableItems(): ReviewableItem[] {
     items.push({ id: scenario.metadata.id, kind: 'scenario',
       contentVersion: scenario.metadata.version, review: scenario.metadata.clinicalReview,
       domains: ['critical-care'] });
+  }
+
+  for (const scenario of CARDIOLOGY_SCENARIOS) {
+    items.push({ id: scenario.metadata.id, kind: 'scenario',
+      contentVersion: scenario.metadata.version, review: scenario.metadata.clinicalReview,
+      domains: ['cardiology'] });
   }
 
   for (const explainer of EXPLAINERS) {

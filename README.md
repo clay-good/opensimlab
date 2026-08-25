@@ -3,7 +3,7 @@
 An open-source, browser-native clinical simulator for medical students, residents, and
 nurse anesthetists — anywhere in the world, on any device, with or without a network.
 
-**opensimlab.com/anesthesia** is the first complete 39-scenario module. Emergency medicine is complete at `/emergency-medicine` with 25 bounded labs. Critical care is complete at `/critical-care` with 24 bounded labs, from ARDS ventilation through persistent septic-shock resuscitation.
+**opensimlab.com/anesthesia** is the first complete 39-scenario module. Emergency medicine is complete at `/emergency-medicine` with 25 bounded labs. Critical care is complete at `/critical-care` with 24 bounded labs. Cardiology is now playable at `/cardiology`, beginning with a bounded stable chest-pain evaluation lab.
 
 The goal is not a tech demo. It is the best anesthesia education on the internet: the
 thing a student opens the night before their first day in the OR and comes out of
@@ -113,8 +113,8 @@ npm run validate:specs
 drawn by the project's own waveform engine as the only color on the screen, and a single button
 into `/anesthesia`. Below it sits the substantive prose — what the simulator teaches, who it is
 for, where the pharmacology comes from, what it deliberately does not do. The module directory
-lists **Anesthesia**, **Emergency medicine**, and **Critical care** as available and **Cardiology**
-and others as *Planned*, with no dates promised, because the project does not commit to schedules
+lists **Anesthesia**, **Emergency medicine**, **Critical care**, and **Cardiology** as available and
+the remaining modules as *Planned*, with no dates promised, because the project does not commit to schedules
 it cannot keep.
 
 Search weight is concentrated at the root domain on purpose. The simulator itself carries only a
@@ -128,7 +128,7 @@ The `/anesthesia` catalog keeps discovery local and linkable: search covers the 
 procedure, and objectives, while difficulty, duration, and maturity filters are encoded in the URL.
 The unfiltered prerender still contains all 39 current scenarios, so filtering adds no telemetry and
 does not trade away no-script access or scenario-page indexing.
-`/catalog/anesthesia-catalog.json` publishes the same 33 exact-version entries, filters, objectives,
+`/catalog/anesthesia-catalog.json` publishes the same 39 exact-version entries, filters, objectives,
 and normalized search text for static integrations; its schema and data are included in the offline
 bundle and fail the build if they drift from the scenario registry or completion audit.
 The catalog also offers all 10 authored preparation goals from the product design. Each versioned

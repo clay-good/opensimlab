@@ -516,6 +516,11 @@ export class AnesthesiaEngine {
   private septicResuscitationFluidResponseAtTick: number | null = null;
   private septicResuscitationPlanAtTick: number | null = null;
   private septicResuscitationReassessedAtTick: number | null = null;
+  private stableChestPainStabilityAtTick: number | null = null;
+  private stableChestPainPatternAtTick: number | null = null;
+  private stableChestPainLikelihoodAtTick: number | null = null;
+  private stableChestPainTestingAtTick: number | null = null;
+  private stableChestPainSafetyNetAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -4024,6 +4029,49 @@ export class AnesthesiaEngine {
         this.log('critical', 'assessment', `septic-resuscitation-trajectory-reassessed-${this.currentTick}`, 'Fixed 10-minute response: MAP 68 mmHg, HR 110/min, refill 4 seconds, unchanged urine 12 mL/h, lactate not yet repeated, SpO₂ 94% on unchanged FiO₂ 0.35, RR 23/min, EtCO₂ 33 mmHg, and temperature 39.0°C. Persistent hypoperfusion, source control, support needs, alternate causes, organ failure, durability, and outcome remain open.', { lactateRepeated: false, sourceControlPerformedByControl: false, outcomeProven: false });
         break;
       }
+      case 'stable-chest-pain-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'stable-chest-pain-evaluation');
+        const valid = ['verify-stable-chest-pain-trajectory',
+          'characterize-stable-chest-pain-pattern',
+          'estimate-stable-chest-pain-clinical-likelihood',
+          'record-stable-chest-pain-testing-intent',
+          'safety-net-stable-chest-pain-follow-up'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `stable-chest-pain-response-refused-${this.currentTick}`, supported ? 'The stable-chest-pain action was not one of the listed choices. Nothing changed.' : 'The bounded stable-chest-pain choices are available only in the declared lesson.'); break; }
+        if (response === 'verify-stable-chest-pain-trajectory') {
+          if (this.stableChestPainStabilityAtTick !== null) { this.log('warning', 'assessment', `stable-chest-pain-stability-refused-${this.currentTick}`, 'The fixed stability and acute-change screen has already been reviewed.'); break; }
+          this.stableChestPainStabilityAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `stable-chest-pain-stability-verified-${this.currentTick}`, 'Three months of reproducible exertional symptoms resolving with rest, without recent change, rest or prolonged symptoms, syncope, marked dyspnea, or instability, support a stable trajectory in this authored record. Acute-change triggers remain explicit.', { stableTrajectory: true, acuteConcernPresent: false });
+          break;
+        }
+        if (this.stableChestPainStabilityAtTick === null) { this.log('warning', 'assessment', `stable-chest-pain-stability-order-refused-${this.currentTick}`, 'Verify stability and acute-change triggers before characterizing or testing.'); break; }
+        if (response === 'characterize-stable-chest-pain-pattern') {
+          if (this.stableChestPainPatternAtTick !== null) { this.log('warning', 'assessment', `stable-chest-pain-pattern-refused-${this.currentTick}`, 'The fixed symptom and functional pattern has already been characterized.'); break; }
+          this.stableChestPainPatternAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `stable-chest-pain-pattern-characterized-${this.currentTick}`, 'Central pressure begins after about 6 minutes of brisk walking or 2 flights, resolves within 4 minutes of rest, occurs 2 or 3 times weekly, and has not progressed. The pattern is recorded without calling it atypical or assigning a cause.', { causeAssigned: false, atypicalDescriptorUsed: false });
+          break;
+        }
+        if (this.stableChestPainPatternAtTick === null) { this.log('warning', 'assessment', `stable-chest-pain-pattern-order-refused-${this.currentTick}`, 'Characterize the complete stable symptom pattern before estimating clinical likelihood.'); break; }
+        if (response === 'estimate-stable-chest-pain-clinical-likelihood') {
+          if (this.stableChestPainLikelihoodAtTick !== null) { this.log('warning', 'assessment', `stable-chest-pain-likelihood-refused-${this.currentTick}`, 'The fixed risk-factor-weighted likelihood review has already been recorded.'); break; }
+          this.stableChestPainLikelihoodAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `stable-chest-pain-likelihood-reviewed-${this.currentTick}`, 'Age, sex, symptoms, hypertension, current tobacco use, LDL 168 mg/dL, fixed examination claims, and a resting sinus ECG report without ischemic ST-T change were integrated. The authored likelihood is not very low; no exact score or coronary diagnosis was calculated.', { clinicalLikelihood: 'not-very-low', exactScoreCalculated: false, diagnosisAssigned: false });
+          break;
+        }
+        if (this.stableChestPainLikelihoodAtTick === null) { this.log('warning', 'assessment', `stable-chest-pain-likelihood-order-refused-${this.currentTick}`, 'Review the whole clinical likelihood before recording a testing pathway.'); break; }
+        if (response === 'record-stable-chest-pain-testing-intent') {
+          if (this.stableChestPainTestingAtTick !== null) { this.log('warning', 'assessment', `stable-chest-pain-testing-refused-${this.currentTick}`, 'The shared patient-specific testing intent has already been recorded.'); break; }
+          this.stableChestPainTestingAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `stable-chest-pain-testing-recorded-${this.currentTick}`, 'Patient-specific noninvasive-testing intent was recorded through shared decision-making and a local pathway. The clinical question, test strengths and limitations, exercise capacity, ECG interpretability, radiation and contrast, comorbidity, preference, access, expertise, and local quality remain part of selection. No test was ordered or performed.', { sharedDecisionMaking: true, universalTestSelected: false, testPerformed: false });
+          break;
+        }
+        if (this.stableChestPainTestingAtTick === null) { this.log('warning', 'assessment', `stable-chest-pain-testing-order-refused-${this.currentTick}`, 'Record the shared patient-specific testing pathway before follow-up and safety net.'); break; }
+        if (this.stableChestPainSafetyNetAtTick !== null) { this.log('warning', 'assessment', `stable-chest-pain-safety-net-refused-${this.currentTick}`, 'Follow-up and the acute-change safety net have already been recorded.'); break; }
+        this.stableChestPainSafetyNetAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `stable-chest-pain-safety-net-recorded-${this.currentTick}`, 'Follow-up and urgent reassessment for rest or prolonged symptoms, increasing frequency, severity, duration or lower threshold, syncope, marked dyspnea, instability, or another acute concern were recorded. No disposition, diagnosis, treatment, event forecast, or outcome was supplied.', { urgentChangeTriggersExplicit: true, outcomePredicted: false });
+        break;
+      }
       case 'aspiration-risk-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
@@ -6917,6 +6965,12 @@ export class AnesthesiaEngine {
         diastolicMmHg: reassessed ? 56 : 53, meanArterialMmHg: reassessed ? 68 : 64,
         coreTemperatureC: reassessed ? 39 : 39.1 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'stable-chest-pain-evaluation')) {
+      crisisState = { ...crisisState, heartRateBpm: 72, respiratoryRateBpm: 14,
+        spo2Percent: 99, etco2MmHg: 37, systolicMmHg: 126, diastolicMmHg: 75,
+        meanArterialMmHg: 92, coreTemperatureC: 36.8 };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -7527,6 +7581,19 @@ export class AnesthesiaEngine {
               reassessedAtTick: this.septicResuscitationReassessedAtTick,
               passiveLegRaiseStrokeVolumeChangePercent: 2,
               blindRepeatFluidOffered: false,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'stable-chest-pain-evaluation') ? {
+            stableChestPainAssessment: {
+              stabilityAtTick: this.stableChestPainStabilityAtTick,
+              patternAtTick: this.stableChestPainPatternAtTick,
+              likelihoodAtTick: this.stableChestPainLikelihoodAtTick,
+              testingAtTick: this.stableChestPainTestingAtTick,
+              safetyNetAtTick: this.stableChestPainSafetyNetAtTick,
+              clinicalLikelihood: 'not-very-low' as const,
+              exactScoreCalculated: false,
+              testPerformed: false,
             },
           } : {}),
         aspirationRiskAssessment: {

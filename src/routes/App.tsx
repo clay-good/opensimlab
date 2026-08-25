@@ -26,6 +26,7 @@ import { ErrorBoundary } from '@platform/ui/ErrorBoundary';
 const AnesthesiaRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).AnesthesiaRoute }));
 const EmergencyMedicineRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).EmergencyMedicineRoute }));
 const CriticalCareRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).CriticalCareRoute }));
+const CardiologyRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).CardiologyRoute }));
 const GalleryRoute = lazy(async () => ({ default: (await import('./GalleryRoute')).GalleryRoute }));
 const FrameBudgetRoute = lazy(async () => ({ default: (await import('./FrameBudgetRoute')).FrameBudgetRoute }));
 // The informational routes read the validation report and the governance records,
@@ -163,6 +164,13 @@ function CurrentRoute() {
     return (
       <ErrorBoundary surface="simulator">
         <Suspense fallback={<Loading />}><CriticalCareRoute path={path} /></Suspense>
+      </ErrorBoundary>
+    );
+  }
+  if (path === '/cardiology' || path.startsWith('/cardiology/')) {
+    return (
+      <ErrorBoundary surface="simulator">
+        <Suspense fallback={<Loading />}><CardiologyRoute path={path} /></Suspense>
       </ErrorBoundary>
     );
   }

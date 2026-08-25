@@ -71,10 +71,10 @@ export const MODULES: readonly ModuleDeclaration[] = [
     id: 'cardiology',
     route: 'cardiology',
     displayName: 'Cardiology',
-    description: 'Planned.',
-    audience: 'Medical students and residents.',
-    prerequisites: 'Basic cardiovascular physiology.',
-    status: 'planned',
+    description: 'Read symptom trajectories, estimate clinical likelihood before testing, and make each cardiology decision earn its place.',
+    audience: 'Medical students, residents, and clinicians rehearsing structured cardiovascular assessment.',
+    prerequisites: 'Basic cardiovascular physiology and familiarity with focused history-taking.',
+    status: 'available',
     plannedScope:
       'Acute coronary syndromes, arrhythmia recognition and management, and the haemodynamics of '
       + 'heart failure, using the same waveform engine and the same compartment solver.',

@@ -46,11 +46,16 @@ import {
 import {
   CRITICAL_CARE_SCENARIOS, DEFAULT_CRITICAL_CARE_SCENARIO_ID, getCriticalCareScenario,
 } from '../modules/critical-care/scenarios';
+import {
+  CARDIOLOGY_SCENARIOS, DEFAULT_CARDIOLOGY_SCENARIO_ID, getCardiologyScenario,
+} from '../modules/cardiology/scenarios';
 
 interface ClinicalModuleConfig {
-  readonly id: 'anesthesia' | 'emergency-medicine' | 'critical-care';
-  readonly basePath: '/anesthesia' | '/emergency-medicine' | '/critical-care';
+  readonly id: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology';
+  readonly basePath: '/anesthesia' | '/emergency-medicine' | '/critical-care' | '/cardiology';
   readonly heading: string;
+  readonly catalogIntroduction: string;
+  readonly catalogStatus: string;
   readonly scenarios: readonly Scenario[];
   readonly defaultScenarioId: string;
   readonly getScenario: (id: string) => Scenario | undefined;
@@ -58,20 +63,33 @@ interface ClinicalModuleConfig {
 
 const ANESTHESIA_CONFIG: ClinicalModuleConfig = {
   id: 'anesthesia', basePath: '/anesthesia', heading: 'Anesthesia simulator',
+  catalogIntroduction: '', catalogStatus: '',
   scenarios: scenariosByDifficulty(), defaultScenarioId: DEFAULT_SCENARIO_ID, getScenario,
 };
 
 const EMERGENCY_MEDICINE_CONFIG: ClinicalModuleConfig = {
   id: 'emergency-medicine', basePath: '/emergency-medicine',
   heading: 'Emergency medicine simulator', scenarios: EMERGENCY_MEDICINE_SCENARIOS,
+  catalogIntroduction: 'Short, focused emergency-department rehearsals. Start with one uncertain patient, make the next useful decision, then see exactly what your sequence established.',
+  catalogStatus: 'Twenty-five bounded emergency medicine labs are playable.',
   defaultScenarioId: DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID,
   getScenario: getEmergencyMedicineScenario,
 };
 
 const CRITICAL_CARE_CONFIG: ClinicalModuleConfig = {
   id: 'critical-care', basePath: '/critical-care', heading: 'Critical care simulator',
+  catalogIntroduction: 'Quiet ICU rehearsals for the decisions that change organ support. Read the trend, make one purposeful change, then reassess what actually moved.',
+  catalogStatus: 'Twenty-four bounded critical care labs are playable.',
   scenarios: CRITICAL_CARE_SCENARIOS, defaultScenarioId: DEFAULT_CRITICAL_CARE_SCENARIO_ID,
   getScenario: getCriticalCareScenario,
+};
+
+const CARDIOLOGY_CONFIG: ClinicalModuleConfig = {
+  id: 'cardiology', basePath: '/cardiology', heading: 'Cardiology simulator',
+  catalogIntroduction: 'Quiet outpatient cardiology rehearsals. Read the trajectory, estimate before testing, and make each next step earn its place.',
+  catalogStatus: 'One bounded cardiology lab is playable now. The remaining Wave C titles stay visibly planned until their full contracts pass.',
+  scenarios: CARDIOLOGY_SCENARIOS, defaultScenarioId: DEFAULT_CARDIOLOGY_SCENARIO_ID,
+  getScenario: getCardiologyScenario,
 };
 
 /**
@@ -356,6 +374,10 @@ export function CriticalCareRoute({ path }: { path: string }) {
   return <ClinicalModuleRoute path={path} config={CRITICAL_CARE_CONFIG} />;
 }
 
+export function CardiologyRoute({ path }: { path: string }) {
+  return <ClinicalModuleRoute path={path} config={CARDIOLOGY_CONFIG} />;
+}
+
 /**
  * The scenario directory at `/anesthesia`.
  *
@@ -407,8 +429,7 @@ function EmergencyMedicineScenarioIndex({ config }: { config: ClinicalModuleConf
         <p className="catalog-path__eyebrow">Your private practice lab</p>
         <h1>{config.heading}</h1>
         <p>
-          Short, focused emergency-department rehearsals. Start with one uncertain patient,
-          make the next useful decision, then see exactly what your sequence established.
+          {config.catalogIntroduction}
         </p>
         <ul className="scenario-index">
           {config.scenarios.map((entry) => (
@@ -417,8 +438,9 @@ function EmergencyMedicineScenarioIndex({ config }: { config: ClinicalModuleConf
                 {entry.metadata.title}
               </a>
               <p className="scenario-index__patient">
-                {entry.patient.ageYears}-year-old {patientPersonNoun(entry.patient)}, ASA{' '}
-                {entry.patient.asaClass}. About {entry.metadata.estimatedMinutes} simulated minutes.
+                {entry.patient.ageYears}-year-old {patientPersonNoun(entry.patient)}
+                {config.id === 'cardiology' ? '.' : `, ASA ${entry.patient.asaClass}.`}{' '}
+                About {entry.metadata.estimatedMinutes} simulated minutes.
               </p>
               <p className="scenario-index__teaches">{entry.metadata.objectives[0]?.statement}</p>
               <span className="badge">{entry.metadata.difficulty}</span>
@@ -432,7 +454,7 @@ function EmergencyMedicineScenarioIndex({ config }: { config: ClinicalModuleConf
             </li>
           ))}
         </ul>
-        <p className="reading__aside">One case is playable now. The next Wave B scenarios will join this same quiet catalog as they harden.</p>
+        <p className="reading__aside">{config.catalogStatus}</p>
         <p className="reading__aside">{NOT_FOR_CLINICAL_USE}</p>
       </main>
     </>

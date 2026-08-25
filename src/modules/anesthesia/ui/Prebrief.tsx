@@ -29,7 +29,7 @@ export const FICTION_CONTRACT =
 export interface PrebriefProps {
   readonly scenario: Scenario;
   readonly region: RegionProfile;
-  readonly environment?: 'anesthesia' | 'emergency-medicine' | 'critical-care';
+  readonly environment?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology';
   readonly onStart: () => void;
   /**
    * Offered only where the demonstration was authored. A "watch this" control on
@@ -74,14 +74,24 @@ export function Prebrief({ scenario, region, environment = 'anesthesia', onStart
 
       <section>
         <h2>The patient</h2>
-        <ul>
-          <li>{patient.diagnosis}, for {patient.procedure}.</li>
-          <li>Airway: {patient.airway.assessment ?? 'not recorded'}.</li>
-          <li>Baseline {patient.baseline.heartRateBpm} bpm, mean arterial pressure{' '}
-            {patient.baseline.meanArterialMmHg} mmHg, haemoglobin {patient.baseline.hemoglobinGPerDl} g/dL.</li>
-          <li>Fasting: {patient.fasting ?? 'not recorded'}.</li>
-          <li>Allergies: {(patient.allergies ?? []).join(', ') || 'none documented'}.</li>
-        </ul>
+        {environment === 'cardiology' ? (
+          <ul>
+            <li>{patient.diagnosis}.</li>
+            <li>{(patient.comorbidities ?? []).join('; ') || 'No comorbidities recorded'}.</li>
+            <li>Fixed baseline {patient.baseline.heartRateBpm} bpm and mean arterial pressure{' '}
+              {patient.baseline.meanArterialMmHg} mmHg.</li>
+            <li>Allergies: {(patient.allergies ?? []).join(', ') || 'none documented'}.</li>
+          </ul>
+        ) : (
+          <ul>
+            <li>{patient.diagnosis}, for {patient.procedure}.</li>
+            <li>Airway: {patient.airway.assessment ?? 'not recorded'}.</li>
+            <li>Baseline {patient.baseline.heartRateBpm} bpm, mean arterial pressure{' '}
+              {patient.baseline.meanArterialMmHg} mmHg, haemoglobin {patient.baseline.hemoglobinGPerDl} g/dL.</li>
+            <li>Fasting: {patient.fasting ?? 'not recorded'}.</li>
+            <li>Allergies: {(patient.allergies ?? []).join(', ') || 'none documented'}.</li>
+          </ul>
+        )}
       </section>
 
       <section>
@@ -95,6 +105,11 @@ export function Prebrief({ scenario, region, environment = 'anesthesia', onStart
           <p>
             The monitor and patient state stay visible while the focused assessment opens below.
             The clock only runs when you press play, and you can pause at any moment to think.
+          </p>
+        ) : environment === 'cardiology' ? (
+          <p>
+            The fixed history, resting ECG report, and patient context stay visible while the
+            focused evaluation opens below. Pause freely and work through the sequence deliberately.
           </p>
         ) : (
           <>

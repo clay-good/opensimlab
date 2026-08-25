@@ -9,6 +9,7 @@ import {
 } from '@anesthesia/catalog/scenario-completion';
 import { EMERGENCY_MEDICINE_SCENARIOS } from '../src/modules/emergency-medicine/scenarios';
 import { CRITICAL_CARE_SCENARIOS } from '../src/modules/critical-care/scenarios';
+import { CARDIOLOGY_SCENARIOS } from '../src/modules/cardiology/scenarios';
 import { buildScenarioQualityCatalog } from '@platform/catalog/scenario-quality';
 import {
   buildMaturityCatalog, maturityFor, type MaturitySubjectKind,
@@ -59,10 +60,16 @@ function main(): void {
   );
   const criticalCareQuality = buildScenarioQualityCatalog(criticalCareCompletion);
   const criticalCareMaturity = buildMaturityCatalog(criticalCareCompletion, criticalCareQuality);
+  const cardiologyCompletion = buildModuleCompletionCatalog(
+    CARDIOLOGY_SCENARIOS, ENGINE_VERSION, 'cardiology', 'clinic', 'state_transition',
+  );
+  const cardiologyQuality = buildScenarioQualityCatalog(cardiologyCompletion);
+  const cardiologyMaturity = buildMaturityCatalog(cardiologyCompletion, cardiologyQuality);
   const moduleCatalogs = [
     { completion, quality, maturity },
     { completion: emergencyCompletion, quality: emergencyQuality, maturity: emergencyMaturity },
     { completion: criticalCareCompletion, quality: criticalCareQuality, maturity: criticalCareMaturity },
+    { completion: cardiologyCompletion, quality: cardiologyQuality, maturity: cardiologyMaturity },
   ];
   const validation = buildValidationReport();
   const evidenceOptions = {

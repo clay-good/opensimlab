@@ -14,8 +14,9 @@ import { limitationsToBrief, unknownLimitationIds } from '@platform/docs/scenari
 import { SCENARIOS } from '@anesthesia/scenarios';
 import { EMERGENCY_MEDICINE_SCENARIOS } from '../../src/modules/emergency-medicine/scenarios';
 import { CRITICAL_CARE_SCENARIOS } from '../../src/modules/critical-care/scenarios';
+import { CARDIOLOGY_SCENARIOS } from '../../src/modules/cardiology/scenarios';
 
-const ALL_SCENARIOS = [...SCENARIOS, ...EMERGENCY_MEDICINE_SCENARIOS, ...CRITICAL_CARE_SCENARIOS];
+const ALL_SCENARIOS = [...SCENARIOS, ...EMERGENCY_MEDICINE_SCENARIOS, ...CRITICAL_CARE_SCENARIOS, ...CARDIOLOGY_SCENARIOS];
 
 describe('every limitation can be shown to a learner', () => {
   it.each(LIMITATIONS.map((limitation) => [limitation.id, limitation] as const))(

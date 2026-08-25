@@ -2669,6 +2669,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['mixed-shock'],
   },
   {
+    id: 'stable-chest-pain-history-likelihood-and-plan-are-authored',
+    headline: 'The symptom history, risk factors, resting ECG report, likelihood tier, and testing discussion are authored teaching facts.',
+    simplification: 'One outpatient has a fixed stable exertional pattern and a fixed not-very-low risk-factor-weighted clinical-likelihood label without a calculated score.',
+    whereItMisleads: 'Treating the screen as history-taking, examination, ECG interpretation, risk calculation, diagnosis, test selection, or prediction for a real person.',
+    correctUnderstanding: 'Real evaluation integrates the full patient history, examination, ECG, risk factors, preferences, comorbidity, local expertise, access, and serial change.',
+    briefIn: ['stable-chest-pain-evaluation'],
+  },
+  {
+    id: 'stable-chest-pain-controls-record-review-and-shared-plan-intent-only',
+    headline: 'The ordered buttons record review, shared-plan, follow-up, and safety-net intent; they do not deliver cardiovascular care.',
+    simplification: 'Five clicks stand in for clinical assessment, likelihood estimation, shared decision-making, testing discussion, follow-up, and communication.',
+    whereItMisleads: 'Equating button order with history, examination, communication, diagnostic reasoning, test selection, documentation, or cardiology competence.',
+    correctUnderstanding: 'Actual care requires a patient-specific clinical evaluation, meaningful shared decisions, local testing pathways, clear communication, and longitudinal follow-up.',
+    briefIn: ['stable-chest-pain-evaluation'],
+  },
+  {
+    id: 'no-live-cardiac-testing-diagnosis-prescribing-prognosis-or-outcome',
+    headline: 'The lab does not acquire or interpret cardiac tests, calculate a score, diagnose, prescribe, determine disposition, or predict outcome.',
+    simplification: 'No examination, exercise-capacity measurement, ECG acquisition, calcium score, CCTA, stress test, angiography, treatment, event, or outcome is modeled.',
+    whereItMisleads: 'Using the authored likelihood tier as a patient-specific tool, assuming one universal test, or inferring coronary disease, ischemia, safety, prognosis, or treatment benefit.',
+    correctUnderstanding: 'Use current local pathways and qualified clinical judgment to evaluate acute change, estimate likelihood, select or defer testing, manage risk, and arrange follow-up.',
+    briefIn: ['stable-chest-pain-evaluation'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

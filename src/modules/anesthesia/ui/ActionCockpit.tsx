@@ -527,6 +527,16 @@ export interface ActionCockpitProps {
       readonly passiveLegRaiseStrokeVolumeChangePercent: number;
       readonly blindRepeatFluidOffered: false;
     };
+    readonly stableChestPainAssessment?: {
+      readonly stabilityAtTick: number | null;
+      readonly patternAtTick: number | null;
+      readonly likelihoodAtTick: number | null;
+      readonly testingAtTick: number | null;
+      readonly safetyNetAtTick: number | null;
+      readonly clinicalLikelihood: 'not-very-low';
+      readonly exactScoreCalculated: false;
+      readonly testPerformed: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -861,6 +871,11 @@ export interface ActionCockpitProps {
       | 'individualize-septic-shock-support-and-source-control'
       | 'reassess-septic-shock-trajectory',
   ) => void;
+  readonly onStableChestPainResponse?: (
+    action: 'verify-stable-chest-pain-trajectory' | 'characterize-stable-chest-pain-pattern'
+      | 'estimate-stable-chest-pain-clinical-likelihood'
+      | 'record-stable-chest-pain-testing-intent' | 'safety-net-stable-chest-pain-follow-up',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1079,6 +1094,9 @@ export function crisisResponseAvailability(
     hasSepticShockResuscitationResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'septic-shock-resuscitation',
     ),
+    hasStableChestPainResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'stable-chest-pain-evaluation',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1174,6 +1192,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'pulse-oximeter-motion-artifact')
       || (event.type === 'narrative' && event.target === 'endotracheal-tube-migration-after-repositioning')
       || (event.type === 'narrative' && event.target === 'septic-shock-resuscitation')
+      || (event.type === 'narrative' && event.target === 'stable-chest-pain-evaluation')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1209,6 +1228,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasPulseOximeterArtifactResponse,
     hasEndotrachealTubeMigrationResponse,
     hasSepticShockResuscitationResponse,
+    hasStableChestPainResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1265,6 +1285,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse;
+  const hasAnyNonAcuteAssessment = hasStableChestPainResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1294,8 +1315,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasSevereAcidemiaResponse || hasIcuHiddenDeteriorationHandoffResponse
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
-    || hasSepticShockResuscitationResponse;
-  const responseTray = hasSepticShockResuscitationResponse
+    || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
+  const responseTray = hasStableChestPainResponse
+    ? { id: 'crisis', label: 'Chest-pain evaluation' } as const
+    : hasSepticShockResuscitationResponse
     ? { id: 'crisis', label: 'Septic resuscitation' } as const
     : hasEndotrachealTubeMigrationResponse
     ? { id: 'crisis', label: 'Tube position' } as const
@@ -1448,6 +1471,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPulseOximeterArtifactResponse
     || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse
+    || hasStableChestPainResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1950,6 +1974,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <SepticShockResuscitationTray
                 assessment={props.resuscitation.septicShockResuscitationAssessment}
                 onAction={props.onSepticShockResuscitationResponse ?? (() => {})} />
+            )}
+            {hasStableChestPainResponse && (
+              <StableChestPainTray assessment={props.resuscitation.stableChestPainAssessment}
+                onAction={props.onStableChestPainResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -5552,6 +5580,58 @@ function SepticShockResuscitationTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-septic-shock-trajectory')}>Review 10-minute trajectory</Button>
         </div>
         <p className="field__hint">The +2% response and B-lines are case facts, not universal cutoffs. This screen gives no fluid or drug and performs no drainage.</p>
+      </section>
+    </div>
+  );
+}
+
+function StableChestPainTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['stableChestPainAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onStableChestPainResponse']>;
+}) {
+  const stable = assessment?.stabilityAtTick != null;
+  const pattern = assessment?.patternAtTick != null;
+  const likelihood = assessment?.likelihoodAtTick != null;
+  const testing = assessment?.testingAtTick != null;
+  const safetyNet = assessment?.safetyNetAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="stable-chest-pattern-title">
+        <div id="stable-chest-pattern-title" className="syringe__name">Stable is a trajectory, not a synonym for safe.</div>
+        <Badge kind="teaching">time · trigger · relief · change · function · red flags</Badge>
+        <div className="syringe__meta">3 months · exertional · 6 min · resolves with rest · no recent change</div>
+        <p className="syringe__remaining" role="status">
+          {pattern ? 'Complete symptom + functional pattern recorded · cause open'
+            : stable ? 'Stable trajectory verified · characterize without “atypical”'
+              : 'No current symptom · acute-change screen still comes first'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={stable}
+            onClick={() => onAction('verify-stable-chest-pain-trajectory')}>Verify stable vs acute change</Button>
+          <Button className="crisis-drug__action" disabled={!stable || pattern}
+            onClick={() => onAction('characterize-stable-chest-pain-pattern')}>Characterize symptom + function</Button>
+          <Button className="crisis-drug__action" disabled={!pattern || likelihood}
+            onClick={() => onAction('estimate-stable-chest-pain-clinical-likelihood')}>Review clinical likelihood</Button>
+        </div>
+        <p className="field__hint">A calm visit can still need an acute-change safety net. The symptom pattern informs likelihood; it does not announce coronary disease.</p>
+      </section>
+      <section className="syringe" aria-labelledby="stable-chest-test-title">
+        <div id="stable-chest-test-title" className="syringe__name">Estimate before you investigate.</div>
+        <Badge kind="teaching">likelihood · patient · ECG · preference · local quality</Badge>
+        <div className="syringe__meta">Test only when the answer can change care.</div>
+        <p className="syringe__remaining" role="status">
+          {safetyNet ? 'Shared pathway + follow-up + acute-change triggers recorded'
+            : testing ? 'Patient-specific noninvasive pathway recorded · safety net due'
+              : likelihood ? 'Not very low · choose with the patient + local pathway'
+                : 'Likelihood review pending · no universal test shortcut'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!likelihood || testing}
+            onClick={() => onAction('record-stable-chest-pain-testing-intent')}>Share a patient-specific test pathway</Button>
+          <Button className="crisis-drug__action" disabled={!testing || safetyNet}
+            onClick={() => onAction('safety-net-stable-chest-pain-follow-up')}>Record follow-up + acute-change safety net</Button>
+        </div>
+        <p className="field__hint">No exact score or universal modality is supplied. These controls acquire no ECG, order no test, diagnose nothing, and prescribe nothing.</p>
       </section>
     </div>
   );

@@ -214,6 +214,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       hasPulseOximeterArtifactResponse: false,
       hasEndotrachealTubeMigrationResponse: false,
       hasSepticShockResuscitationResponse: false,
+      hasStableChestPainResponse: false,
       hasEmergenceResidualBlockResponse: false,
       hasDelayedEmergenceResponse: false,
       hasExtubationReadinessResponse: false,

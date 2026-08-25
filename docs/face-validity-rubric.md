@@ -157,7 +157,8 @@ Reviewers run the routine induction themselves before answering.
 | B103 | In the pulse-oximeter-motion-artifact lesson, an isolated 82% display and pulse 132/min conflict with ECG 86/min, a poor irregular pleth, stable patient observations, and canonical oxygenation, requiring display-versus-patient recognition, pleth and pulse-rate coherence review, declared probe, motion, temperature, and perfusion review, independent whole-patient and arterial oxygenation corroboration without overreading capnography, and fixed clean-site signal reassessment without implying probe or perfusion examination, monitor validation, arterial sampling, diagnosis, oxygen or treatment delivery, disposition, or outcome competence | | |
 | B104 | In the endotracheal-tube-migration-after-repositioning lesson, a 22-to-25 cm post-turn depth change combines with new unilateral ventilation, lower exhaled volume, higher peak pressure, rising EtCO₂, falling SpO₂, and persistent capnography, requiring immediate support and experienced help, whole airway-position-panel review with alternatives preserved, bounded correction intent, and fixed bilateral multi-signal reassessment without making one depth a universal target or implying examination, auscultation, monitoring or ventilator-data acquisition, equipment inspection, oxygen or ventilation delivery, tube handling or securement, imaging, bronchoscopy, diagnosis, disposition, or outcome competence | | |
 | B105 | In the persistent septic-shock-resuscitation lesson, reported cultures, antimicrobials, 30 mL/kg crystalloid, and running norepinephrine conflict with persistent multi-organ hypoperfusion and rising lactate, requiring delivery-versus-response reconciliation, pressure plus serial tissue-perfusion review, fixed dynamic fluid-response and lung-tolerance assessment that blocks a blind repeat bolus without creating universal cutoffs, individualized hemodynamic-support and urgent source-control intent in parallel, and modest fixed reassessment without implying examination, monitoring or delivery verification, sample or ultrasound acquisition or interpretation, calculation, diagnosis, prescribing, fluid or drug delivery, device adjustment, drainage, disposition, or outcome competence | | |
-| B106 | Overall: does this patient behave like a patient? | | |
+| B106 | In the stable chest-pain evaluation lesson, a fixed 3-month exertional pressure pattern resolves with rest and has no recent change or acute feature, requiring explicit stable-versus-acute verification, complete symptom characterization without “atypical,” risk-factor-weighted clinical-likelihood review before testing, shared patient-specific testing intent, and an acute-change safety net without implying examination, ECG acquisition or interpretation, score calculation, exercise testing, diagnostic testing, diagnosis, prescribing, disposition, prognosis, or outcome competence | | |
+| B107 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -389,4 +390,9 @@ So that reviewers spend their attention on what this review is for:
   verify delivery, acquire or interpret samples or ultrasound, calculate, diagnose, prescribe,
   deliver fluid or drugs, adjust a device, perform drainage, determine disposition, or predict
   outcome. Its fluid response and pressure values are not universal cutoffs.
+- The stable chest-pain evaluation uses a fixed symptom history, risk factors, examination claims,
+  resting ECG report, likelihood tier, testing considerations, and safety net. It does not examine,
+  acquire or interpret an ECG, calculate a score, measure exercise capacity, order or perform a
+  test, diagnose coronary disease or ischemia, prescribe, determine disposition or prognosis, or
+  predict outcome. Its likelihood tier and testing discussion are not a patient-specific tool.
 - Nothing here has been clinically reviewed before — you are the first.

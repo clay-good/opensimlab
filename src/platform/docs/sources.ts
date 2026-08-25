@@ -1472,6 +1472,34 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-25',
   },
   {
+    id: 'gulati-chest-pain-guideline-2021',
+    pmid: '34756653',
+    authors: 'Gulati M, Levy PD, Mukherjee D, et al',
+    title: '2021 AHA/ACC/ASE/CHEST/SAEM/SCCT/SCMR Guideline for the Evaluation and Diagnosis of Chest Pain',
+    publication: 'Circulation',
+    year: 2021,
+    locator: '144:e368-e454; doi:10.1161/CIR.0000000000001029',
+    usedFor: 'The stable chest-pain evaluation boundary: use structured risk assessment, avoid '
+      + 'the descriptor atypical, target testing to people likely to benefit, and include the '
+      + 'patient in decisions about testing benefits, risks, costs, radiation, and alternatives.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-25',
+  },
+  {
+    id: 'vrints-chronic-coronary-syndromes-2024',
+    pmid: '39210710',
+    authors: 'Vrints C, Andreotti F, Koskinas KC, et al',
+    title: '2024 ESC Guidelines for the management of chronic coronary syndromes',
+    publication: 'Eur Heart J',
+    year: 2024,
+    locator: '45:3415-3537; doi:10.1093/eurheartj/ehae177',
+    usedFor: 'The stable chest-pain likelihood boundary: estimate risk-factor-weighted clinical '
+      + 'likelihood before testing, allow deferral at very low likelihood, and choose testing from '
+      + 'likelihood, patient characteristics, local expertise, access, and quality.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-25',
+  },
+  {
     id: 'schwid-2001',
     pmid: '11302037',
     authors: 'Schwid HA, Rooke GA, Michalowski P, Ross BK',

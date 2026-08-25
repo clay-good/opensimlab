@@ -19,6 +19,7 @@ import { heroStaticSvg } from '@landing/hero';
 import { SCENARIOS } from '@anesthesia/scenarios';
 import { EMERGENCY_MEDICINE_SCENARIOS } from '../../src/modules/emergency-medicine/scenarios';
 import { CRITICAL_CARE_SCENARIOS } from '../../src/modules/critical-care/scenarios';
+import { CARDIOLOGY_SCENARIOS } from '../../src/modules/cardiology/scenarios';
 import { Landing } from '@landing/Landing';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -203,8 +204,8 @@ describe('Requirement: The Hero Is The Product Running', () => {
 describe('Requirement: Modules Directory Is Honest About What Exists', () => {
   it('Scenario: Available and planned are visually distinct, with no date', () => {
     expect(availableModules().map((module) => module.id))
-      .toEqual(['anesthesia', 'emergency-medicine', 'critical-care']);
-    expect(plannedModules().length).toBeGreaterThanOrEqual(2);
+      .toEqual(['anesthesia', 'emergency-medicine', 'cardiology', 'critical-care']);
+    expect(plannedModules().length).toBeGreaterThanOrEqual(1);
     for (const module of plannedModules()) {
       expect(module.plannedScope, `${module.id} needs a description of its scope`).toBeTruthy();
       // No launch date, no quarter, no countdown.
@@ -348,6 +349,8 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
       .toMatchObject({ indexable: true, heading: 'Post-turn endotracheal tube migration' });
     expect(routeFor('/critical-care/scenario/septic-shock-resuscitation'))
       .toMatchObject({ indexable: true, heading: 'Persistent septic-shock resuscitation' });
+    expect(routeFor('/cardiology/scenario/stable-chest-pain-evaluation'))
+      .toMatchObject({ indexable: true, heading: 'Stable chest-pain evaluation' });
   });
 
   it('Requirement: Modules Declare Their Own Physiological Timescale', () => {
@@ -444,6 +447,7 @@ describe('Requirement: Crawlability Basics', () => {
         basePath: '/emergency-medicine', scenario,
       })),
       ...CRITICAL_CARE_SCENARIOS.map((scenario) => ({ basePath: '/critical-care', scenario })),
+      ...CARDIOLOGY_SCENARIOS.map((scenario) => ({ basePath: '/cardiology', scenario })),
     ];
     for (const { basePath, scenario } of scenarios) {
       const markup = renderToStaticMarkup(createElement(PrerenderedBody, {

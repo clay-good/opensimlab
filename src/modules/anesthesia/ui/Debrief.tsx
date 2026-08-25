@@ -3990,6 +3990,26 @@ export function objectiveFindings(
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The fixed response showed modest change while hypoperfusion, source, organ failure, durability, and outcome remained open.' : 'Trajectory reassessment was absent or preceded the bounded plan.', atTick: reassessed?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['verify-stable-chest-pain-trajectory', 'characterize-stable-chest-pain-pattern',
+      'estimate-stable-chest-pain-clinical-likelihood',
+      'record-stable-chest-pain-testing-intent',
+      'safety-net-stable-chest-pain-follow-up'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'stable-chest-pain-evaluation');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The stable chest-pain evaluation lesson was not active.' } satisfies ObjectiveFinding;
+      const stability = log.find((event) => /^stable-chest-pain-stability-verified-\d+$/.test(event.eventId));
+      const pattern = log.find((event) => /^stable-chest-pain-pattern-characterized-\d+$/.test(event.eventId));
+      const likelihood = log.find((event) => /^stable-chest-pain-likelihood-reviewed-\d+$/.test(event.eventId));
+      const testing = log.find((event) => /^stable-chest-pain-testing-recorded-\d+$/.test(event.eventId));
+      const safetyNet = log.find((event) => /^stable-chest-pain-safety-net-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'verify-stable-chest-pain-trajectory') return { ...base, outcome: stability ? 'met' : 'not-met', finding: stability ? 'The stable trajectory and acute-change triggers were deliberately separated.' : 'Stability and acute-change triggers were not reviewed.', atTick: stability?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'characterize-stable-chest-pain-pattern') { const ordered = stability && pattern && stability.tick <= pattern.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Symptoms and functional impact were characterized without “atypical” or a causal label.' : 'Symptom characterization was absent or preceded the stability screen.', atTick: pattern?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'estimate-stable-chest-pain-clinical-likelihood') { const ordered = pattern && likelihood && pattern.tick <= likelihood.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Patient, symptom, risk-factor, examination-claim, and ECG context informed likelihood without an exact score or diagnosis.' : 'Clinical-likelihood review was absent or preceded symptom characterization.', atTick: likelihood?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'record-stable-chest-pain-testing-intent') { const ordered = likelihood && testing && likelihood.tick <= testing.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'A shared patient-specific local testing pathway was recorded without selecting one universal modality.' : 'Testing intent was absent or preceded clinical-likelihood review.', atTick: testing?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = testing && safetyNet && testing.tick <= safetyNet.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Follow-up and explicit acute-change triggers closed the bounded evaluation without predicting outcome.' : 'Follow-up and the acute-change safety net were absent or preceded the shared pathway.', atTick: safetyNet?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

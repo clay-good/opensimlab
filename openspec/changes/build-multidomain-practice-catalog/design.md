@@ -982,6 +982,21 @@ torsades de pointes; hyperkalemic conduction disturbance; pericardial tamponade;
 infarction; hypertensive emergency; pacemaker capture failure; transcutaneous pacing with electrical
 capture but absent mechanical capture.
 
+### Wave C cardiology slice 1: stable chest-pain evaluation
+
+The first cardiology slice activates the indexable `/cardiology` catalog with one quiet outpatient
+rehearsal. A fixed 3-month exertional pressure pattern is stable by trajectory but not dismissed as
+safe. Learners verify that boundary, characterize symptoms without the label “atypical,” integrate
+age, sex, risk factors, fixed examination claims, and a resting ECG report into an authored
+not-very-low clinical likelihood, then record patient-specific testing intent and an acute-change
+safety net. The tutor keeps the sequence simple: verify stability, describe the pattern, estimate
+before investigating, and test only when the answer can change care.
+
+The lab does not examine, acquire or interpret an ECG, calculate a score, measure exercise
+capacity, order or perform testing, diagnose coronary disease or ischemia, prescribe medication,
+determine disposition, or predict events or outcome. The remaining 16 cardiology titles remain
+planned until their individual evidence, interaction, test, and debrief contracts pass.
+
 #### Respiratory medicine: 15
 
 Acute severe asthma; COPD exacerbation; community-acquired pneumonia with hypoxemia; pulmonary
