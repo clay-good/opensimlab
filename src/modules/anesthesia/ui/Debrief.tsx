@@ -906,11 +906,11 @@ export function objectiveFindings(
       'defibrillate-persistent-vf', 'avoid-shocking-nonshockable-rhythm',
     ].includes(objective.id)) {
       const onset = scenario.timeline.find((event) => event.type === 'rhythm-change'
-        && event.target === 'ventricular-fibrillation')?.atTick;
+        && ['ventricular-fibrillation', 'asystole', 'pea'].includes(event.target ?? ''))?.atTick;
       if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) {
         return {
           ...base, outcome: 'not-exercised',
-          finding: 'The session ended before the scripted ventricular-fibrillation arrest.',
+          finding: 'The session ended before the scripted cardiac arrest.',
         } satisfies ObjectiveFinding;
       }
       const compressionStarts = log.filter((entry) => entry.eventId.startsWith('chest-compressions-start-'));

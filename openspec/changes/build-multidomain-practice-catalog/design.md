@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with 14 playable, completion-audited scenarios. The remaining
-11 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with 15 playable, completion-audited scenarios. The remaining
+10 planned titles remain descriptive scope only and do not enter playable counts before their full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -388,6 +388,19 @@ The formulary-free case opens directly into one focused arrest surface. Compress
 quality, airway skill, pads, device operation, shock safety, vascular access, medication delivery,
 repeated cycles, antiarrhythmics, reversible-cause treatment, team performance, individual conversion
 probability, termination decisions, and post-cardiac-arrest care remain outside the vignette.
+
+### Wave B slice 15: PEA arrest
+
+The fifteenth emergency-medicine slice adds a witnessed pulseless-electrical-activity arrest using
+the shared bounded arrest engine. Learners distinguish organized electrical activity from a
+mechanical pulse, begin fixed-rate compression intent, record one 1 mg IV/IO epinephrine action
+during active compressions, and keep the patient on the nonshockable pathway while reversible causes
+remain explicitly in view. The authored course remains PEA and does not invent ROSC.
+
+The focused arrest surface removes every energy-selection control for PEA and replaces the generic
+shock card with a calm nonshockable-branch explanation. Compression and ventilation quality,
+pulse-check skill, access, medication delivery, diagnostic acquisition, cause-specific treatment,
+repeated cycles, team performance, termination, ROSC, and post-arrest care remain outside the case.
 
 #### Critical care: 24
 

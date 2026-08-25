@@ -13,6 +13,7 @@ import { STEMI } from './stemi';
 import { UNSTABLE_NARROW_COMPLEX_TACHYCARDIA } from './unstable-narrow-complex-tachycardia';
 import { UNSTABLE_BRADYCARDIA } from './unstable-bradycardia';
 import { PERSISTENT_VF_ARREST } from './persistent-vf-arrest';
+import { PEA_ARREST } from './pea-arrest';
 
 export const EMERGENCY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   UNDIFFERENTIATED_SHOCK,
@@ -29,6 +30,7 @@ export const EMERGENCY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   UNSTABLE_NARROW_COMPLEX_TACHYCARDIA,
   UNSTABLE_BRADYCARDIA,
   PERSISTENT_VF_ARREST,
+  PEA_ARREST,
 ];
 export const DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID = UNDIFFERENTIATED_SHOCK.metadata.id;
 

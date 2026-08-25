@@ -254,6 +254,8 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
       .toMatchObject({ indexable: true, heading: 'Unstable bradycardia' });
     expect(routeFor('/emergency-medicine/scenario/persistent-vf-arrest'))
       .toMatchObject({ indexable: true, heading: 'Persistent VF arrest' });
+    expect(routeFor('/emergency-medicine/scenario/pea-arrest'))
+      .toMatchObject({ indexable: true, heading: 'PEA arrest' });
   });
 
   it('Requirement: Modules Declare Their Own Physiological Timescale', () => {

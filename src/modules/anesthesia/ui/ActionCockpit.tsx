@@ -596,7 +596,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || event.type === 'opioid-ventilatory-impairment',
   ) ? 'airway' : props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'tension-pneumothorax'
-      || (event.type === 'rhythm-change' && event.target === 'ventricular-fibrillation')
+      || (event.type === 'rhythm-change'
+        && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''))
       || event.type === 'sepsis-pattern'
       || event.type === 'hemorrhagic-shock-pattern'
       || event.type === 'cardiac-tamponade'
@@ -654,7 +655,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPneumothoraxResponse || hasBronchospasmResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
-      && event.target === 'ventricular-fibrillation');
+      && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
+  const focusedPeaScenario = props.scenario.formulary.length === 0
+    && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
+      && event.target === 'pea');
   const hasCrisisResponse = hasNonMaternalCrisisResponse || hasPreeclampsiaResponse
     || hasAspirationRiskResponse || hasEmergenceResidualBlockResponse
     || hasDelayedEmergenceResponse || hasExtubationReadinessResponse || hasCiedPlanningResponse
@@ -663,7 +667,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse || hasCopdExacerbationResponse
     || hasAcutePulmonaryEdemaResponse || hasPulmonaryEmbolismResponse || hasStemiResponse
     || hasUnstableNarrowTachycardiaResponse || hasUnstableBradycardiaResponse;
-  const responseTray = focusedArrestScenario
+  const responseTray = focusedPeaScenario
+    ? { id: 'crisis', label: 'PEA arrest' } as const
+    : focusedArrestScenario
     ? { id: 'crisis', label: 'Persistent VF' } as const
     : hasUnstableBradycardiaResponse
     ? { id: 'crisis', label: 'Unstable bradycardia' } as const
@@ -921,6 +927,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 shockCount={props.resuscitation.defibrillationShockCount ?? 0}
                 lastEnergyJ={props.resuscitation.lastDefibrillationEnergyJ ?? null}
                 roscAtTick={props.resuscitation.roscAtTick ?? null}
+                shockable={!focusedPeaScenario}
                 onCompressions={props.onChestCompressions ?? (() => {})}
                 onEpinephrine={props.onArrestEpinephrine ?? (() => {})}
                 onDefibrillation={props.onDefibrillation ?? (() => {})}
@@ -1332,7 +1339,7 @@ export function NeuromuscularReversalTray({
 
 function CardiacArrestTray({
   active, compressionsActive, compressionSeconds, epinephrineTotalMg, shockCount, lastEnergyJ,
-  roscAtTick, onCompressions, onEpinephrine, onDefibrillation,
+  roscAtTick, shockable, onCompressions, onEpinephrine, onDefibrillation,
 }: {
   active: boolean;
   compressionsActive: boolean;
@@ -1341,6 +1348,7 @@ function CardiacArrestTray({
   shockCount: number;
   lastEnergyJ: number | null;
   roscAtTick: number | null;
+  shockable: boolean;
   onCompressions: (active: boolean) => void;
   onEpinephrine: () => void;
   onDefibrillation: (energyJ: number) => void;
@@ -1376,9 +1384,9 @@ function CardiacArrestTray({
             <Button variant="ghost" onClick={() => setPending(null)}>Cancel</Button>
           </div>
         )}
-        <p className="field__hint">The current AHA adult algorithm repeats epinephrine every 3–5 minutes; this case ends at initial ROSC.</p>
+        <p className="field__hint">The current AHA adult algorithm repeats epinephrine every 3–5 minutes; this bounded case accepts one dose.</p>
       </section>
-      <section className="syringe">
+      {shockable ? <section className="syringe">
         <div className="syringe__name">Biphasic defibrillation</div>
         <div className="syringe__meta">Energy-selected teaching action</div>
         <p className="syringe__remaining" role="status">
@@ -1398,7 +1406,13 @@ function CardiacArrestTray({
           </div>
         )}
         <p className="field__hint">This declared device converts VF at 200 J under the case conditions. Other devices use manufacturer guidance. Never shock asystole or PEA.</p>
-      </section>
+      </section> : <section className="syringe">
+        <div className="syringe__name">Rhythm branch</div>
+        <Badge kind="teaching">Nonshockable</Badge>
+        <div className="syringe__meta">Organized electrical activity · no mechanical pulse</div>
+        <p className="syringe__remaining" role="status">PEA · continue CPR + treat reversible causes</p>
+        <p className="field__hint">Defibrillation is not offered for PEA. Continue the nonshockable-arrest pathway and reassess rhythm and pulse at the modeled cycle boundary.</p>
+      </section>}
     </div>
   );
 }
