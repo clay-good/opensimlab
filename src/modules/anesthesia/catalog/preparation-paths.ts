@@ -81,12 +81,12 @@ export const PREPARATION_PATHS: readonly PreparationPathDefinition[] = [
     supportedRoles: ['Medical student', 'Resident', 'Nurse anesthesia learner'], limitations: BROWSER_LIMIT,
   },
   {
-    id: 'pediatric-emergencies', version: '0.1.0', title: 'Pediatric emergencies',
-    description: 'Begin with the current pediatric foundation while the pediatric crisis catalog is built.',
-    scenarioIds: ['routine-pediatric-iv-induction'],
+    id: 'pediatric-emergencies', version: '0.2.0', title: 'Pediatric emergencies',
+    description: 'Build the pediatric foundation through intravenous and inhalational induction before the crisis catalog.',
+    scenarioIds: ['routine-pediatric-iv-induction', 'routine-pediatric-inhalational-induction'],
     prerequisites: ['Basic weight-based unit recognition.'],
-    targetCompetencies: ['Pediatric oxygen reserve', 'Age-bounded induction', 'Ventilation readiness'],
-    supportedRoles: ['Medical student', 'Resident', 'Nurse anesthesia learner'], limitations: `${BROWSER_LIMIT} This development path currently contains one pediatric scenario.`,
+    targetCompetencies: ['Pediatric oxygen reserve', 'Age-bounded induction', 'End-tidal agent interpretation', 'Ventilation readiness'],
+    supportedRoles: ['Medical student', 'Resident', 'Nurse anesthesia learner'], limitations: `${BROWSER_LIMIT} These cases share one healthy 6-year-old teaching profile and do not assess physical airway skill.`,
   },
   {
     id: 'obstetric-emergencies', version: '0.1.0', title: 'Obstetric emergencies',

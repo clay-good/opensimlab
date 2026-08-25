@@ -87,7 +87,10 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'depression and blunt the baroreflex, which is why volatile hypotension keeps falling '
       + 'until the vaporizer is turned down, and why the elderly and the hypovolaemic tolerate '
       + 'far less agent than a fit young adult.',
-    briefIn: ['routine-inhalational-maintenance', 'quantitative-neuromuscular-reversal'],
+    briefIn: [
+      'routine-inhalational-maintenance', 'quantitative-neuromuscular-reversal',
+      'routine-pediatric-inhalational-induction',
+    ],
   },
   {
     id: 'hypoxic-collapse-is-a-teaching-model',
@@ -227,7 +230,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'alongside drug delivery, end-tidal agent where applicable, clinical context, and the patient.',
     briefIn: [
       'awareness-under-paralysis', 'routine-inhalational-maintenance',
-      'routine-geriatric-induction',
+      'routine-geriatric-induction', 'routine-pediatric-inhalational-induction',
     ],
   },
   {
@@ -482,7 +485,7 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Children generally have less oxygen reserve relative to metabolic '
       + 'demand than adults, but the margin varies substantially. Use observed oxygenation, '
       + 'ventilation, and age-appropriate clinical guidance rather than this trace as a timer.',
-    briefIn: ['routine-pediatric-iv-induction'],
+    briefIn: ['routine-pediatric-iv-induction', 'routine-pediatric-inhalational-induction'],
   },
   {
     id: 'pediatric-hemodynamic-maturation-is-not-modeled',
@@ -494,7 +497,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'intervention threshold, or prediction of cardiovascular reserve.',
     correctUnderstanding: 'Pediatric cardiovascular physiology and anesthetic responses vary '
       + 'with developmental stage. This case teaches monitoring and sequence, not a validated hemodynamic trajectory.',
-    briefIn: ['routine-pediatric-iv-induction'],
+    briefIn: ['routine-pediatric-iv-induction', 'routine-pediatric-inhalational-induction'],
   },
   {
     id: 'pediatric-airway-equipment-sizing-is-not-modeled',
@@ -505,7 +508,7 @@ export const LIMITATIONS: readonly Limitation[] = [
     whereItMisleads: 'Treating a successful screen action as practice choosing or placing a real pediatric airway device.',
     correctUnderstanding: 'Select, place, and confirm pediatric airway equipment using the child\'s '
       + 'anatomy, weight, current guidance, and direct clinical evidence.',
-    briefIn: ['routine-pediatric-iv-induction'],
+    briefIn: ['routine-pediatric-iv-induction', 'routine-pediatric-inhalational-induction'],
   },
   {
     id: 'pediatric-case-is-one-bounded-profile',
@@ -516,7 +519,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'or child with cardiac, respiratory, metabolic, or developmental disease.',
     correctUnderstanding: 'Pediatric anesthesia spans changing physiology and pharmacology. '
       + 'Reassess model choice and every setting when the child differs from this bounded profile.',
-    briefIn: ['routine-pediatric-iv-induction'],
+    briefIn: ['routine-pediatric-iv-induction', 'routine-pediatric-inhalational-induction'],
   },
   {
     id: 'pediatric-emergence-is-not-modeled',
@@ -526,7 +529,21 @@ export const LIMITATIONS: readonly Limitation[] = [
     whereItMisleads: 'Treating a stable induction as completion of an anesthetic or evidence of safe recovery.',
     correctUnderstanding: 'Maintenance, emergence, airway removal, and recovery each require a '
       + 'separate pediatric plan and continued observation.',
-    briefIn: ['routine-pediatric-iv-induction'],
+    briefIn: ['routine-pediatric-iv-induction', 'routine-pediatric-inhalational-induction'],
+  },
+  {
+    id: 'pediatric-inhalational-induction-behavior-is-not-modeled',
+    headline: 'The inhalational-induction screen models agent wash-in, not the child, the mask, consciousness, airway reflexes, or respiratory depression.',
+    simplification: 'The vaporizer drives a first-order end-tidal teaching signal and bounded depth '
+      + 'and circulatory responses. Cooperation, distress, parental presence, mask seal, leak, '
+      + 'breath-by-breath technique, excitement, breath-holding, coughing, obstruction, '
+      + 'laryngospasm, apnea, and volatile respiratory depression are absent.',
+    whereItMisleads: 'Treating a smooth trace as a smooth real induction, or using a displayed '
+      + 'depth or MAC threshold as proof of unconsciousness, immobility, airway readiness, or safety.',
+    correctUnderstanding: 'A pediatric inhalational induction requires direct observation of the '
+      + 'child, ventilation, airway patency, mask delivery, physiology, and the full clinical context. '
+      + 'Machine and end-tidal signals support that assessment but cannot replace it.',
+    briefIn: ['routine-pediatric-inhalational-induction'],
   },
   {
     id: 'prbc-fixed-unit-model',
@@ -599,7 +616,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'shape volatile wash-in and washout. Here flow changes one teaching-model time constant only.',
     briefIn: [
       'routine-induction', 'early-malignant-hyperthermia-during-volatile-anesthesia',
-      'routine-inhalational-maintenance',
+      'routine-inhalational-maintenance', 'routine-pediatric-inhalational-induction',
     ],
   },
   {

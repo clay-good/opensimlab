@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 68,
+  "sourceCount": 69,
   "sources": [
     {
       "id": "association-qrh-2023",
@@ -769,9 +769,22 @@
       "publication": "Drugs@FDA",
       "year": 2022,
       "locator": "Dosage and Administration, Maintenance; Table 9, MAC values by age",
-      "usedFor": "The routine inhalational-maintenance boundary: sevoflurane is indicated for adult maintenance; the labeled usual surgical range is 0.5 to 3%; and MAC varies with age. The label does not define an individual target for the fictional patient.",
+      "usedFor": "The inhalational-maintenance and pediatric-induction boundaries: sevoflurane is indicated for adult and pediatric induction and maintenance, is suitable for pediatric mask induction, may be delivered up to 8% for induction, has a usual surgical-maintenance range of 0.5 to 3%, and varies in MAC with age. The label does not define an individual target.",
       "verifiedAgainst": "FDA prescribing information, reference ID 4944925",
       "verifiedOn": "2026-08-24"
+    },
+    {
+      "id": "welborn-pediatric-sevoflurane-1996",
+      "pmid": "7669316",
+      "authors": "Welborn LG, Hannallah RS, Norden JM, Ruttimann UE, Callan CM",
+      "title": "Sevoflurane versus halothane for general anesthesia in pediatric patients: a comparative study of vital signs, induction, and emergence",
+      "publication": "J Clin Anesth",
+      "year": 1996,
+      "locator": "8:283-92",
+      "usedFor": "Clinical context for the bounded pediatric inhalational-induction lesson: the randomized comparison used incremental sevoflurane from 1% to at most 7% and recorded vital signs and end-tidal agent. Its behavioral, airway, timing, and emergence endpoints are explicitly not reproduced by the browser.",
+      "verifiedAgainst": "NCBI E-utilities record, field by field",
+      "verifiedOn": "2026-08-24",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/7669316/"
     },
     {
       "id": "remifentanil-us-label",

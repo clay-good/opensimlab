@@ -1322,9 +1322,19 @@ function SyringeTray({ formulary, remaining, weightKg, onBolus, onDrugCard }: {
   onBolus: (drugId: string, amount: number, unit: string) => void;
   onDrugCard: (drugId: string) => void;
 }) {
+  const boluses = formularyForMode(formulary, 'bolus');
   return (
     <div className="tray-grid">
-      {formularyForMode(formulary, 'bolus').map((drug) => (
+      {boluses.length === 0 && (
+        <section className="syringe" aria-labelledby="no-syringes-title">
+          <div id="no-syringes-title" className="syringe__name">No syringes in this lesson</div>
+          <p className="syringe__remaining">
+            This is a device-only practice window. Use Airway &amp; Vent to prepare oxygen,
+            fresh-gas flow, and volatile delivery.
+          </p>
+        </section>
+      )}
+      {boluses.map((drug) => (
         <Syringe
           key={drug.drugId}
           drug={drug}

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "recordCount": 39,
+  "recordCount": 40,
   "records": [
     {
       "recordId": "scenario:routine-induction@0.1.0",
@@ -276,6 +276,17 @@
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#quantitative-neuromuscular-reversal@0.1.0",
         "/catalog/anesthesia-quality-audit.json#quantitative-neuromuscular-reversal@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:routine-pediatric-inhalational-induction@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "routine-pediatric-inhalational-induction",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#routine-pediatric-inhalational-induction@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#routine-pediatric-inhalational-induction@0.1.0"
       ]
     },
     {

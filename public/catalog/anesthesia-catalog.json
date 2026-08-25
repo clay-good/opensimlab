@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 25,
+  "scenarioCount": 26,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -551,6 +551,27 @@
         "Keep hypnosis, ventilation, and oxygenation established while neuromuscular state changes."
       ],
       "searchText": "quantitative-neuromuscular-reversal quantitative neuromuscular reversal symptomatic cholelithiasis laparoscopic cholecystectomy confirm quantitative neuromuscular monitoring before giving the declared blocking dose. a recorded train-of-four ratio of at least 0.9 preceded one accepted 0.6 mg/kg rocuronium bolus. use the measured recovery-phase block depth rather than elapsed time to select reversal. the engine accepted a recovery-phase reversal matched to train-of-four count, ratio, and post-tetanic count. reassess the quantitative response after the accepted reversal. a train-of-four ratio of at least 0.9 was recorded after reversal. keep hypnosis, ventilation, and oxygenation established while neuromuscular state changes. predicted depth remained 40–60, oxygen saturation remained at least 92%, and no accepted action stopped delivered ventilation after rocuronium."
+    },
+    {
+      "id": "routine-pediatric-inhalational-induction",
+      "path": "/anesthesia/scenario/routine-pediatric-inhalational-induction",
+      "title": "Routine pediatric inhalational induction",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 7,
+      "difficulty": "introductory",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Prepare oxygen and fresh-gas flow before starting volatile delivery.",
+        "Follow end-tidal sevoflurane rather than treating the vaporizer dial as the patient concentration.",
+        "Reduce delivery as end-tidal agent accumulates and reassess the modeled response."
+      ],
+      "searchText": "routine-pediatric-inhalational-induction routine pediatric inhalational induction chronic otitis media with effusion bilateral myringotomy and tympanostomy tubes prepare oxygen and fresh-gas flow before starting volatile delivery. an accepted setting established at least 95% inspired oxygen and 6 l/min fresh-gas flow while the vaporizer remained off. follow end-tidal sevoflurane rather than treating the vaporizer dial as the patient concentration. after circuit preparation, accepted sevoflurane delivery stayed within the labeled 0–8% induction range and the recorded end-tidal concentration rose through 0.8 age-adjusted mac. reduce delivery as end-tidal agent accumulates and reassess the modeled response. after reaching the wash-in target, an accepted reduction to 0.5–3% was followed by 60 seconds with predicted depth 40–60, mean arterial pressure at least 55 mmhg, and oxygen saturation at least 92%."
     }
   ],
   "preparationPathCount": 10,
@@ -724,11 +745,12 @@
     },
     {
       "id": "pediatric-emergencies",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Pediatric emergencies",
-      "description": "Begin with the current pediatric foundation while the pediatric crisis catalog is built.",
+      "description": "Build the pediatric foundation through intravenous and inhalational induction before the crisis catalog.",
       "scenarioIds": [
-        "routine-pediatric-iv-induction"
+        "routine-pediatric-iv-induction",
+        "routine-pediatric-inhalational-induction"
       ],
       "prerequisites": [
         "Basic weight-based unit recognition."
@@ -736,6 +758,7 @@
       "targetCompetencies": [
         "Pediatric oxygen reserve",
         "Age-bounded induction",
+        "End-tidal agent interpretation",
         "Ventilation readiness"
       ],
       "supportedRoles": [
@@ -743,8 +766,8 @@
         "Resident",
         "Nurse anesthesia learner"
       ],
-      "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance. This development path currently contains one pediatric scenario.",
-      "estimatedMinutes": 8
+      "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance. These cases share one healthy 6-year-old teaching profile and do not assess physical airway skill.",
+      "estimatedMinutes": 15
     },
     {
       "id": "obstetric-emergencies",

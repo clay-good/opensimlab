@@ -138,10 +138,13 @@ response, stopping before dysrhythmia treatment or cardiac arrest.
 - Add a twenty-fifth scenario during established volatile anesthesia that distinguishes onset from
   recovery, matches a bounded reversal branch to quantitative block depth, and confirms a ratio of
   at least 0.9 without claiming emergence, extubation readiness, or individual recovery prediction.
+- Add a twenty-sixth scenario for one healthy 6-year-old that separates circuit preparation,
+  vaporizer delivery, end-tidal wash-in, age-adjusted MAC, and bounded response trends without
+  claiming mask technique, consciousness, airway behavior, respiratory depression, or individual timing.
 
 ## Impact
 
-These 28 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+These 29 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
 awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. The seventh also closes the bounded
 pediatric-family gap without claiming a general pediatric patient model. The eighth reaches the
 minimum count of 12 scenarios and closes the bounded difficult-airway rescue gap. The ninth closes
@@ -193,3 +196,8 @@ requires a descending recovery-phase signal before it accepts reversal, so the s
 on onset cannot earn credit. The idealized monitor and immediate bounded response do not claim
 electrode technique, commercial-device behavior, pharmacokinetics, emergence, extubation readiness,
 recurrent block, postoperative weakness, or individual recovery time.
+The twenty-ninth adds the twenty-sixth authored scenario and the second bounded pediatric induction
+path. It makes the vaporizer-to-end-tidal lag, age-adjusted MAC, predicted depth, pressure, and
+saturation inspectable, while an intentional empty syringe tray directs attention to the machine.
+It does not claim cooperation, mask delivery, behavioral endpoints, consciousness, airway reflexes,
+volatile respiratory depression, IV access, physical airway skill, emergence, or individual need.

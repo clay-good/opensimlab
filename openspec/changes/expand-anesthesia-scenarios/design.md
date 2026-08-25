@@ -468,3 +468,24 @@ continued delivered ventilation, saturation, and time in the displayed maintenan
 The evidence brief and learner-facing limitations exclude commercial-monitor behavior, stimulation
 technique, electrode placement, artifact, muscle-site differences, reversal pharmacokinetics,
 individual recovery, emergence, extubation readiness, recurrent block, and postoperative weakness.
+
+## Slice 29: bounded routine pediatric inhalational induction
+
+The twenty-sixth authored scenario reuses the same healthy 6-year-old, 20 kg respiratory profile as
+the intravenous pediatric foundation but creates a distinct device-and-signal lesson. It begins
+with room-air oxygen, 2 L/min fresh-gas flow, and the vaporizer off. The learner prepares at least
+95% oxygen and 6 L/min flow, starts induction-range sevoflurane, watches end-tidal concentration and
+age-adjusted MAC rather than equating them with the dial, then reduces delivery and reassesses.
+
+The expert fixture prepares the circuit at 10 seconds, starts 8% delivery at 20 seconds, and reduces
+to 2.5% at 28 seconds. In seed 929, the first 1-second sample above 0.8 age-adjusted MAC occurs at
+27 seconds with end-tidal sevoflurane 1.954%, predicted depth 50.44, MAP 67.87 mmHg, and saturation
+above 99.98%. The 7-minute trace settles near depth 40.75 and MAP 56.27 mmHg. These values calibrate
+one deterministic teaching model and are not clinical timing or target recommendations.
+
+The scenario intentionally has no syringes. The shared schema now permits device-only lessons, and
+the syringe tray explains where to work instead of rendering blank. The debrief scores ordered
+machine preparation, a valid entered induction setting, observed end-tidal wash-in, a subsequent
+0.5–3% reduction, and 60 seconds of bounded depth, pressure, and saturation. Cooperation, distress,
+parental presence, mask seal, breathing technique, excitement, airway reflexes, volatile respiratory
+depression, consciousness, IV access, airway placement, emergence, and individual need remain absent.

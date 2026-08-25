@@ -185,7 +185,7 @@ export const SCENARIO_SCHEMA: SchemaNode = {
       },
     },
     formulary: {
-      type: 'array', description: 'The drugs available in this scenario.', minItems: 1,
+      type: 'array', description: 'The drugs available in this scenario. Device-only lessons may intentionally stock none.',
       items: {
         type: 'object', description: 'One available drug.',
         required: ['drugId', 'concentration', 'concentrationUnit', 'presets'],

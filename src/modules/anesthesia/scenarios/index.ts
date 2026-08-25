@@ -34,6 +34,7 @@ import { ROUTINE_INHALATIONAL_MAINTENANCE } from './routine-inhalational-mainten
 import { BLOOD_BANK_HANDOFF } from './blood-bank-handoff';
 import { ROUTINE_GERIATRIC_INDUCTION } from './routine-geriatric-induction';
 import { QUANTITATIVE_NEUROMUSCULAR_REVERSAL } from './quantitative-neuromuscular-reversal';
+import { ROUTINE_PEDIATRIC_INHALATIONAL_INDUCTION } from './routine-pediatric-inhalational-induction';
 
 export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_INDUCTION,
@@ -61,6 +62,7 @@ export const SCENARIOS: readonly Scenario[] = [
   BLOOD_BANK_HANDOFF,
   ROUTINE_GERIATRIC_INDUCTION,
   QUANTITATIVE_NEUROMUSCULAR_REVERSAL,
+  ROUTINE_PEDIATRIC_INHALATIONAL_INDUCTION,
 ];
 
 /** The scenario a learner meets first. */

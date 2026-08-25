@@ -427,3 +427,19 @@
 - [ ] Add commercial-monitor behavior, stimulation technique, electrode placement, signal artifact,
   muscle-site equivalence, reversal pharmacokinetics, individual recovery, emergence, extubation,
   recurrent block, postoperative weakness, or patient-specific dosing.
+
+## Slice 29: bounded routine pediatric inhalational induction
+
+- [x] Check in an evidence brief covering the current sevoflurane label, pediatric comparative
+  context, age-adjusted MAC, exact expert fixture, and unsafe inference boundaries.
+- [x] Add a twenty-sixth authored scenario for one healthy 6-year-old with ordered circuit
+  preparation, vaporizer-to-end-tidal wash-in, delivery reduction, and bounded reassessment.
+- [x] Permit intentional device-only formularies and give an empty syringe tray a clear, useful
+  route to the Airway & Vent controls.
+- [x] Score ordered preparation, valid entered induction delivery, measured wash-in, reduction,
+  and a sustained bounded response from accepted actions and recorded state.
+- [x] Add curriculum and preparation-path coverage, catalog assets, route SEO, expert/no-action/
+  unprepared/no-reduction/hostile/replay regressions, responsive browser inspection, and full CI.
+- [ ] Add cooperation, distress, parental presence, premedication, mask technique, seal or leak,
+  excitement, airway reflexes, volatile respiratory depression, consciousness, IV access, airway
+  placement, movement, emergence, recovery, or individual anesthetic need.

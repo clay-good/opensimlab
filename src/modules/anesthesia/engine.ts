@@ -1407,7 +1407,8 @@ export class AnesthesiaEngine {
     this.log('info', 'ventilator', `ventilator-${this.currentTick}`,
       `Ventilator: ${this.ventilator.mode}, FiO₂ ${this.ventilator.fio2.toFixed(2)}, `
       + `${this.ventilator.delivering ? `${this.ventilator.tidalVolumeMl} mL × ${this.ventilator.respiratoryRateBpm}` : 'not delivering'}, `
-      + `fresh gas ${this.ventilator.freshGasFlowLPerMin.toFixed(1)} L/min`);
+      + `fresh gas ${this.ventilator.freshGasFlowLPerMin.toFixed(1)} L/min, `
+      + `sevoflurane ${this.ventilator.sevofluranePercent.toFixed(1)}%`);
     this.reportUnmodelledSettings(settings);
   }
 

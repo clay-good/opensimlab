@@ -61,9 +61,9 @@ describe('Requirement: pediatric controls expose their actual-weight conversions
   const button = (label: string) => [...container.querySelectorAll('button')]
     .find((entry) => entry.textContent?.trim() === label) as HTMLButtonElement | undefined;
 
-  function renderCockpit(onFluid = vi.fn()) {
+  function renderCockpit(onFluid = vi.fn(), scenario = CHILD_SCENARIO) {
     const props: ActionCockpitProps = {
-      scenario: CHILD_SCENARIO,
+      scenario,
       region: UNITED_STATES,
       infusions: [],
       hypnoticLine: { connected: true, inspected: false },
@@ -119,6 +119,12 @@ describe('Requirement: pediatric controls expose their actual-weight conversions
     act(() => button('Fluids')!.click());
     expect(container.textContent).toContain('No pediatric fluid bolus is stocked');
     expect(getComputedStyle(container.querySelector('.actions__tray')!).overflow).toBe('auto');
+  });
+
+  it('makes an intentionally empty syringe tray useful rather than blank', () => {
+    renderCockpit(vi.fn(), { ...CHILD_SCENARIO, formulary: [] });
+    expect(container.textContent).toContain('No syringes in this lesson');
+    expect(container.textContent).toContain('Use Airway & Vent');
   });
 
   it('shows active model identity and opens its bundled source accessibly', () => {

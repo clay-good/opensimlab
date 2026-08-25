@@ -858,6 +858,38 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     objectiveIds: ['dose-pediatric-propofol', 'ventilate-child-by-weight'],
   },
 
+  // --- Routine pediatric inhalational induction --------------------------
+  {
+    scenarioId: 'routine-pediatric-inhalational-induction', frameworkId: 'nbcrna-nce',
+    domainId: 'basic-principles',
+    objectiveIds: ['prepare-pediatric-inhalational-circuit', 'follow-pediatric-end-tidal-wash-in', 'settle-pediatric-volatile-depth'],
+  },
+  {
+    scenarioId: 'routine-pediatric-inhalational-induction', frameworkId: 'nbcrna-nce',
+    domainId: 'equipment-instrumentation-technology',
+    objectiveIds: ['prepare-pediatric-inhalational-circuit', 'follow-pediatric-end-tidal-wash-in'],
+  },
+  {
+    scenarioId: 'routine-pediatric-inhalational-induction', frameworkId: 'coa-standards',
+    domainId: 'pharmacology-of-anesthetic-agents',
+    objectiveIds: ['follow-pediatric-end-tidal-wash-in', 'settle-pediatric-volatile-depth'],
+  },
+  {
+    scenarioId: 'routine-pediatric-inhalational-induction', frameworkId: 'coa-standards',
+    domainId: 'anesthesia-equipment-and-monitoring',
+    objectiveIds: ['prepare-pediatric-inhalational-circuit', 'follow-pediatric-end-tidal-wash-in', 'settle-pediatric-volatile-depth'],
+  },
+  {
+    scenarioId: 'routine-pediatric-inhalational-induction', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-anesthetic-plan-and-conduct',
+    objectiveIds: ['prepare-pediatric-inhalational-circuit', 'follow-pediatric-end-tidal-wash-in', 'settle-pediatric-volatile-depth'],
+  },
+  {
+    scenarioId: 'routine-pediatric-inhalational-induction', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-monitoring-and-equipment',
+    objectiveIds: ['prepare-pediatric-inhalational-circuit', 'follow-pediatric-end-tidal-wash-in', 'settle-pediatric-volatile-depth'],
+  },
+
   // --- Difficult-airway supraglottic rescue --------------------------------
   {
     scenarioId: 'difficult-airway-supraglottic-rescue', frameworkId: 'nbcrna-nce',

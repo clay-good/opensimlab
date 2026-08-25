@@ -416,6 +416,9 @@ export function objectiveFindings(
     'reverse-recovering-block': 'train-of-four-and-residual-blockade',
     'confirm-quantitative-recovery': 'train-of-four-and-residual-blockade',
     'maintain-anesthesia-during-block': 'depth-monitoring-and-its-limits',
+    'prepare-pediatric-inhalational-circuit': 'preoxygenation-and-safe-apnea-time',
+    'follow-pediatric-end-tidal-wash-in': 'depth-monitoring-and-its-limits',
+    'settle-pediatric-volatile-depth': 'depth-monitoring-and-its-limits',
     'recognize-hemorrhage': 'vasodilation-versus-hypovolemia',
     'temporize-volume-loss': 'vasodilation-versus-hypovolemia',
     'avoid-full-dose-induction': 'hysteresis-and-effect-site-lag',
@@ -1347,6 +1350,106 @@ export function objectiveFindings(
           : sustained || oxygenationProtected ? 'partly-met' : 'not-met',
         finding: `${postPlacementDelivery ? 'Explicit assisted ventilation was started after placement.' : 'No explicit post-placement start of assisted ventilation was recorded.'} ${sustained ? 'At least 30 seconds of high-inspired-oxygen delivery and end-tidal carbon dioxide from 25 to 55 mmHg followed.' : 'A full 30 seconds combining high inspired oxygen, active delivery, and end-tidal carbon dioxide from 25 to 55 mmHg was not recorded.'} ${lowest === null ? 'No post-placement saturation trace was available.' : `The lowest post-placement saturation was ${lowest.toFixed(0)}%.`} This confirms modeled gas exchange through a rescue device, not tracheal placement or a complete airway plan.`,
         atTick: afterPlacement.at(-1)?.tick ?? sgaComplete.tick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
+      'prepare-pediatric-inhalational-circuit', 'follow-pediatric-end-tidal-wash-in',
+      'settle-pediatric-volatile-depth',
+    ].includes(objective.id)) {
+      const initial = scenario.equipment.ventilator;
+      const machineActions = actions.filter((action) => action.type === 'ventilator');
+      const settingsAt = (tick: number, exclusive = false) => machineActions
+        .filter((action) => exclusive ? action.tick < tick : action.tick <= tick)
+        .reduce((settings, action) => {
+          const finite = (field: string, fallback: number, min: number, max: number) => {
+            if (action.payload[field] === undefined) return fallback;
+            const value = Number(action.payload[field]);
+            return Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : fallback;
+          };
+          return {
+            fio2: finite('fio2', settings.fio2, 0.21, 1),
+            freshGasFlowLPerMin: finite(
+              'freshGasFlowLPerMin', settings.freshGasFlowLPerMin, 0.5, 15,
+            ),
+            sevofluranePercent: finite(
+              'sevofluranePercent', settings.sevofluranePercent, 0, 8,
+            ),
+          };
+        }, {
+          fio2: initial.fio2,
+          freshGasFlowLPerMin: initial.freshGasFlowLPerMin ?? 1,
+          sevofluranePercent: initial.sevofluranePercent ?? 0,
+        });
+      const firstPositive = machineActions.find((action) => {
+        const value = Number(action.payload.sevofluranePercent);
+        return Number.isFinite(value) && value > 0;
+      });
+      const prepared = firstPositive
+        ? settingsAt(firstPositive.tick, true)
+        : settingsAt(history.at(-1)?.tick ?? 0);
+      const preparationMet = prepared.fio2 >= 0.95
+        && prepared.freshGasFlowLPerMin >= 6 && prepared.sevofluranePercent === 0;
+
+      if (objective.id === 'prepare-pediatric-inhalational-circuit') {
+        return {
+          ...base,
+          outcome: preparationMet ? 'met'
+            : prepared.fio2 >= 0.95 || prepared.freshGasFlowLPerMin >= 6
+              ? 'partly-met' : machineActions.length > 0 ? 'not-met' : 'not-exercised',
+          finding: `Before positive volatile delivery, accepted settings were oxygen ${(prepared.fio2 * 100).toFixed(0)}%, fresh-gas flow ${prepared.freshGasFlowLPerMin.toFixed(1)} L/min, and sevoflurane ${prepared.sevofluranePercent.toFixed(1)}%. This records modeled machine preparation, not circuit priming or mask technique.`,
+          atTick: firstPositive?.tick ?? machineActions.at(-1)?.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      const enteredSevo = Number(firstPositive?.payload.sevofluranePercent);
+      const validEnteredRange = firstPositive !== undefined
+        && Number.isFinite(enteredSevo) && enteredSevo > 0 && enteredSevo <= 8;
+      const target = firstPositive
+        ? history.find((sample) => sample.tick >= firstPositive.tick
+          && Number(sample.state.macFraction ?? 0) >= 0.8)
+        : undefined;
+      if (objective.id === 'follow-pediatric-end-tidal-wash-in') {
+        const peakEndTidal = firstPositive
+          ? Math.max(0, ...history.filter((sample) => sample.tick >= firstPositive.tick)
+            .map((sample) => Number(sample.state.endTidalSevofluranePercent ?? 0))) : 0;
+        return {
+          ...base,
+          outcome: !firstPositive ? 'not-exercised'
+            : !validEnteredRange ? 'not-met'
+              : preparationMet && target ? 'met'
+                : preparationMet || target ? 'partly-met' : 'not-met',
+          finding: firstPositive
+            ? `The first positive vaporizer setting was ${enteredSevo.toFixed(1)}%; peak recorded end-tidal sevoflurane was ${peakEndTidal.toFixed(2)}%, and ${target ? `0.8 age-adjusted MAC was reached at ${(target.tick / TICKS_PER_SECOND).toFixed(1)} seconds` : '0.8 age-adjusted MAC was not reached'}. Machine delivery and end-tidal concentration are not interchangeable.`
+            : 'No positive sevoflurane delivery was recorded, so wash-in was not exercised.',
+          atTick: target?.tick ?? firstPositive?.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      const reduction = target ? machineActions.find((action) => {
+        if (action.tick < target.tick || action.payload.sevofluranePercent === undefined) return false;
+        const value = Number(action.payload.sevofluranePercent);
+        return Number.isFinite(value) && value >= 0.5 && value <= 3;
+      }) : undefined;
+      const window = reduction ? history.filter((sample) => sample.tick >= reduction.tick
+        && sample.tick <= reduction.tick + 60 * TICKS_PER_SECOND) : [];
+      const sustained = window.length > 1
+        && window.at(-1)!.tick - window[0]!.tick >= 59 * TICKS_PER_SECOND
+        && window.every((sample) => {
+          const depth = Number(sample.state.depthIndex ?? 100);
+          return depth >= 40 && depth <= 60
+            && Number(sample.state.meanArterialMmHg ?? 0) >= 55
+            && Number(sample.state.spo2Percent ?? 0) >= 92;
+        });
+      const final = window.at(-1);
+      return {
+        ...base,
+        outcome: sustained ? 'met' : reduction ? 'partly-met'
+          : target ? 'not-met' : firstPositive ? 'not-met' : 'not-exercised',
+        finding: reduction
+          ? `Delivery was reduced to ${Number(reduction.payload.sevofluranePercent).toFixed(1)}%. ${sustained ? 'The next 60 seconds kept' : 'The trace did not sustain 60 seconds with'} predicted depth 40–60, pressure at least 55 mmHg, and saturation at least 92%${final ? `; the last sample was depth ${Number(final.state.depthIndex).toFixed(0)}, MAP ${Number(final.state.meanArterialMmHg).toFixed(0)} mmHg, and saturation ${Number(final.state.spo2Percent).toFixed(1)}%` : ''}. These model signals do not establish consciousness or airway readiness.`
+          : 'No accepted 0.5–3% reduction followed the wash-in target.',
+        atTick: final?.tick ?? reduction?.tick ?? target?.tick,
       } satisfies ObjectiveFinding;
     }
 
