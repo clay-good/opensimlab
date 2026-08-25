@@ -801,6 +801,36 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['obstetric-general-anesthesia'],
   },
   {
+    id: 'preeclampsia-response-is-a-bounded-teaching-trajectory',
+    headline: 'The preeclampsia response is one bounded monitor trajectory, not individualized diagnosis or pharmacology.',
+    simplification: 'The case declares persistent severe-range hypertension, accepts one repeat '
+      + 'pressure, one 20 mg IV labetalol branch, and one 4 g IV magnesium-sulfate branch. Labetalol '
+      + 'reduces pressure and heart rate on a fixed teaching trajectory. Magnesium records seizure '
+      + 'prophylaxis without changing pressure. There is no measurement error, infusion duration, '
+      + 'maintenance regimen, pharmacokinetics, renal adjustment, serum level, reflex examination, '
+      + 'toxicity, seizure, pulmonary edema, laboratory testing, or alternative-agent escalation.',
+    whereItMisleads: 'Predicting an individual response, using the screen to diagnose preeclampsia, '
+      + 'or treating the listed branch as a complete severe-hypertension or magnesium protocol.',
+    correctUnderstanding: 'Persistent severe hypertension in pregnancy is an emergency requiring '
+      + 'prompt protocolized treatment and reassessment. Magnesium is used for seizure prophylaxis, '
+      + 'not as the antihypertensive. Use direct measurements and the current local obstetric protocol.',
+    briefIn: ['preeclampsia-urgent-delivery'],
+  },
+  {
+    id: 'preeclampsia-lesson-stops-before-anesthesia-and-delivery',
+    headline: 'The preeclampsia lesson stops after initial maternal reassessment.',
+    simplification: 'The urgent-delivery decision is already made. There is no diagnostic workup, '
+      + 'platelet count, liver or renal testing, proteinuria assessment, fetal monitoring, fluid '
+      + 'strategy, delivery timing or route, uterine displacement, anesthetic choice, neuraxial '
+      + 'procedure, general anesthesia, surgery, postpartum course, or team workflow.',
+    whereItMisleads: 'Treating completion as rehearsal of preeclampsia diagnosis, anesthetic '
+      + 'planning, cesarean delivery, or postpartum management.',
+    correctUnderstanding: 'Urgent delivery in preeclampsia requires multidisciplinary assessment '
+      + 'and a complete maternal and fetal plan. This screen rehearses only confirmation, one '
+      + 'initial medication branch, and pressure reassessment.',
+    briefIn: ['preeclampsia-urgent-delivery'],
+  },
+  {
     id: 'high-spinal-injector-is-a-teaching-trajectory',
     headline: 'The modeled high-spinal pattern is a calibrated trajectory, not a block-height or obstetric model.',
     simplification: 'A manual injection or authored event ramps one bounded drive that lowers heart rate, vascular '

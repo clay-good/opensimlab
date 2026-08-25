@@ -104,6 +104,18 @@ export interface ActionCockpitProps {
     readonly highSpinalFraction?: number;
     readonly ephedrineTotalMg?: number;
     readonly lastEphedrineTick?: number | null;
+    readonly preeclampsiaBloodPressureChecks?: number;
+    readonly lastPreeclampsiaBloodPressure?: {
+      readonly systolicMmHg: number;
+      readonly diastolicMmHg: number;
+      readonly meanArterialMmHg: number;
+      readonly tick: number;
+    } | null;
+    readonly labetalolTotalMg?: number;
+    readonly lastLabetalolTick?: number | null;
+    readonly labetalolEffectFraction?: number;
+    readonly magnesiumSulfateTotalG?: number;
+    readonly lastMagnesiumSulfateTick?: number | null;
     readonly venousAirEmbolismFraction?: number;
     readonly venousAirEntryControlled?: boolean;
     readonly venousAirEntryControlledAtTick?: number | null;
@@ -161,6 +173,9 @@ export interface ActionCockpitProps {
   readonly onAirwayDevice: (device: 'supraglottic-airway') => void;
   readonly onEpinephrine: (doseMicrograms: number) => void;
   readonly onEphedrine?: (doseMg: number) => void;
+  readonly onPreeclampsiaResponse?: (
+    action: 'repeat-blood-pressure' | 'labetalol-20mg-iv' | 'magnesium-sulfate-4g-iv',
+  ) => void;
   readonly onHighSpinalHelp?: () => void;
   readonly onVenousAirEmbolismHelp?: () => void;
   readonly onControlVenousAirEntry?: () => void;
@@ -210,6 +225,9 @@ export function crisisResponseAvailability(
         && ['ventricular-fibrillation', 'asystole', 'pea'].includes(event.target ?? '')),
     hasHighSpinalResponse: injected.has('high-spinal')
       || scenario.timeline.some((event) => event.type === 'high-spinal'),
+    hasPreeclampsiaResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'persistent-severe-preeclampsia',
+    ),
     hasVenousAirEmbolismResponse: injected.has('air-embolism')
       || scenario.timeline.some((event) => event.type === 'venous-air-embolism'),
     hasBronchospasmResponse: injected.has('bronchospasm')
@@ -252,20 +270,25 @@ export const NOT_IN_THIS_BUILD =
   + 'are available only in the bounded scripted arrest case; a patient with hypoxic arrest elsewhere does not recover.';
 
 export function ActionCockpit(props: ActionCockpitProps) {
-  const [tray, setTray] = useState<TrayId>('syringes');
+  const [tray, setTray] = useState<TrayId>(() => props.scenario.timeline.some(
+    (event) => event.type === 'narrative' && event.target === 'persistent-severe-preeclampsia',
+  ) ? 'crisis' : 'syringes');
   const {
     hasAnaphylaxisResponse, hasHypermetabolicResponse, hasLastResponse,
     hasCardiacArrestResponse, hasHighSpinalResponse, hasVenousAirEmbolismResponse,
-    hasBronchospasmResponse,
+    hasBronchospasmResponse, hasPreeclampsiaResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
   );
   const hasEpinephrineResponse = hasAnaphylaxisResponse || hasLastResponse;
-  const hasCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse
+  const hasNonMaternalCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse
     || hasCardiacArrestResponse || hasHighSpinalResponse || hasVenousAirEmbolismResponse
     || hasBronchospasmResponse;
-  const trays = hasCrisisResponse ? [...TRAYS, CRISIS_TRAY] : TRAYS;
+  const hasCrisisResponse = hasNonMaternalCrisisResponse || hasPreeclampsiaResponse;
+  const responseTray = hasPreeclampsiaResponse && !hasNonMaternalCrisisResponse
+    ? { id: 'crisis', label: 'Maternal response' } as const : CRISIS_TRAY;
+  const trays = hasCrisisResponse ? [...TRAYS, responseTray] : TRAYS;
   const hasRocuronium = props.scenario.formulary.some((entry) => entry.drugId === 'rocuronium');
   const teachesNeuromuscularReversal = props.scenario.metadata.objectives.some((objective) => [
     'reverse-observed-block', 'reverse-recovering-block', 'confirm-quantitative-recovery',
@@ -311,6 +334,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
               weightKg={props.scenario.patient.weightKg}
               onBolus={props.onBolus}
               onDrugCard={props.onDrugCard}
+              focusedTrayLabel={hasPreeclampsiaResponse ? responseTray.label : undefined}
             />
             {hasRocuronium && teachesNeuromuscularReversal && (
               <NeuromuscularReversalTray
@@ -457,6 +481,16 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 helpRequested={props.helpRequestedAtTick !== null}
                 onEphedrine={props.onEphedrine ?? (() => {})}
                 onCallForHelp={props.onHighSpinalHelp ?? (() => {})}
+              />
+            )}
+            {hasPreeclampsiaResponse && (
+              <PreeclampsiaResponseTray
+                checks={props.resuscitation.preeclampsiaBloodPressureChecks ?? 0}
+                lastReading={props.resuscitation.lastPreeclampsiaBloodPressure ?? null}
+                labetalolTotalMg={props.resuscitation.labetalolTotalMg ?? 0}
+                labetalolEffectFraction={props.resuscitation.labetalolEffectFraction ?? 0}
+                magnesiumSulfateTotalG={props.resuscitation.magnesiumSulfateTotalG ?? 0}
+                onAction={props.onPreeclampsiaResponse ?? (() => {})}
               />
             )}
             {hasVenousAirEmbolismResponse && (
@@ -1031,6 +1065,74 @@ function HighSpinalTray({
   );
 }
 
+function PreeclampsiaResponseTray({
+  checks, lastReading, labetalolTotalMg, labetalolEffectFraction,
+  magnesiumSulfateTotalG, onAction,
+}: {
+  checks: number;
+  lastReading: {
+    systolicMmHg: number; diastolicMmHg: number; meanArterialMmHg: number; tick: number;
+  } | null;
+  labetalolTotalMg: number;
+  labetalolEffectFraction: number;
+  magnesiumSulfateTotalG: number;
+  onAction: (action: 'repeat-blood-pressure' | 'labetalol-20mg-iv' | 'magnesium-sulfate-4g-iv') => void;
+}) {
+  const [pending, setPending] = useState<'labetalol-20mg-iv' | 'magnesium-sulfate-4g-iv' | null>(null);
+  const confirmed = checks > 0;
+  const treatmentLabel = pending === 'labetalol-20mg-iv'
+    ? 'Give labetalol 20 mg IV?' : 'Start magnesium sulfate 4 g IV?';
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="maternal-response-title">
+        <div id="maternal-response-title" className="syringe__name">Maternal response</div>
+        <Badge kind="teaching">Focused lesson</Badge>
+        <div className="syringe__meta">Confirm · treat · recheck</div>
+        <p className="syringe__remaining" role="status">
+          {lastReading
+            ? `Last BP ${lastReading.systolicMmHg.toFixed(0)}/${lastReading.diastolicMmHg.toFixed(0)} mmHg · check ${checks}`
+            : 'Persistent severe-range pressure declared · repeat not yet recorded'}
+        </p>
+        <Button onClick={() => onAction('repeat-blood-pressure')}>Repeat blood pressure</Button>
+        <p className="field__hint">
+          Recheck after treatment to observe the modeled response. The cuff result is the canonical
+          simulated pressure, not a measurement-error model.
+        </p>
+      </section>
+      <section className="syringe" aria-labelledby="maternal-medications-title">
+        <div id="maternal-medications-title" className="syringe__name">Initial medications</div>
+        <p className="syringe__remaining" role="status">
+          Labetalol {labetalolTotalMg.toFixed(0)} mg · modeled response {(labetalolEffectFraction * 100).toFixed(0)}%
+          {' · '}magnesium sulfate {magnesiumSulfateTotalG.toFixed(0)} g
+        </p>
+        {pending === null ? (
+          <div className="syringe__presets">
+            <Button compact disabled={!confirmed || labetalolTotalMg > 0}
+              onClick={() => setPending('labetalol-20mg-iv')}>Labetalol 20 mg IV</Button>
+            <Button compact disabled={!confirmed || magnesiumSulfateTotalG > 0}
+              onClick={() => setPending('magnesium-sulfate-4g-iv')}>Magnesium sulfate 4 g IV</Button>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
+            <span className="numeric">{treatmentLabel}</span>
+            <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+              <Button variant="primary" compact onClick={() => {
+                onAction(pending);
+                setPending(null);
+              }}>Confirm</Button>
+              <Button variant="ghost" compact onClick={() => setPending(null)}>Cancel</Button>
+            </div>
+          </div>
+        )}
+        <p className="field__hint">
+          Labetalol follows one bounded pressure trajectory. Magnesium is seizure prophylaxis,
+          not an antihypertensive; infusion timing, maintenance, levels, and toxicity are not modeled.
+        </p>
+      </section>
+    </div>
+  );
+}
+
 function VenousAirEmbolismTray({
   fraction, sourceControlled, sourceControlledAtTick, helpRequested, onCallForHelp, onControlSource,
 }: {
@@ -1318,12 +1420,13 @@ function HypermetabolicCrisisTray({
 
 // --- Syringes ---------------------------------------------------------------
 
-function SyringeTray({ formulary, remaining, weightKg, onBolus, onDrugCard }: {
+function SyringeTray({ formulary, remaining, weightKg, onBolus, onDrugCard, focusedTrayLabel }: {
   formulary: readonly FormularyEntry[];
   remaining: Readonly<Record<string, number>>;
   weightKg: number;
   onBolus: (drugId: string, amount: number, unit: string) => void;
   onDrugCard: (drugId: string) => void;
+  focusedTrayLabel?: string;
 }) {
   const boluses = formularyForMode(formulary, 'bolus');
   return (
@@ -1332,8 +1435,9 @@ function SyringeTray({ formulary, remaining, weightKg, onBolus, onDrugCard }: {
         <section className="syringe" aria-labelledby="no-syringes-title">
           <div id="no-syringes-title" className="syringe__name">No syringes in this lesson</div>
           <p className="syringe__remaining">
-            This is a device-only practice window. Use Airway &amp; Vent to prepare oxygen,
-            fresh-gas flow, and volatile delivery.
+            {focusedTrayLabel
+              ? <>Routine anesthesia syringes are outside this focused lesson. Open {focusedTrayLabel} for the focused controls.</>
+              : <>This is a device-only practice window. Use Airway &amp; Vent to prepare oxygen, fresh-gas flow, and volatile delivery.</>}
           </p>
         </section>
       )}

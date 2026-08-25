@@ -262,6 +262,19 @@ export interface EquipmentSnapshot {
     readonly highSpinalFraction?: number;
     readonly ephedrineTotalMg?: number;
     readonly lastEphedrineTick?: number | null;
+    /** Bounded severe-pregnancy-hypertension response. Optional for older saved snapshots. */
+    readonly preeclampsiaBloodPressureChecks?: number;
+    readonly lastPreeclampsiaBloodPressure?: {
+      readonly systolicMmHg: number;
+      readonly diastolicMmHg: number;
+      readonly meanArterialMmHg: number;
+      readonly tick: number;
+    } | null;
+    readonly labetalolTotalMg?: number;
+    readonly lastLabetalolTick?: number | null;
+    readonly labetalolEffectFraction?: number;
+    readonly magnesiumSulfateTotalG?: number;
+    readonly lastMagnesiumSulfateTick?: number | null;
     readonly venousAirEmbolismFraction?: number;
     readonly venousAirEntryControlled?: boolean;
     readonly venousAirEntryControlledAtTick?: number | null;

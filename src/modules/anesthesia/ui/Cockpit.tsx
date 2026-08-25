@@ -119,6 +119,9 @@ const DEFAULT_RESUSCITATION = {
   salbutamolTotalMg: 0, lastSalbutamolTick: null, bronchodilatorEffectFraction: 0,
   chestCompressionsActive: false,
   highSpinalFraction: 0, ephedrineTotalMg: 0, lastEphedrineTick: null,
+  preeclampsiaBloodPressureChecks: 0, lastPreeclampsiaBloodPressure: null,
+  labetalolTotalMg: 0, lastLabetalolTick: null, labetalolEffectFraction: 0,
+  magnesiumSulfateTotalG: 0, lastMagnesiumSulfateTick: null,
   venousAirEmbolismFraction: 0, venousAirEntryControlled: false,
   venousAirEntryControlledAtTick: null,
 } as const;
@@ -662,6 +665,9 @@ export function Cockpit({
           })}
           onEphedrine={(doseMg) => session.act({
             type: 'ephedrine', payload: { route: 'iv', doseMg },
+          })}
+          onPreeclampsiaResponse={(action) => session.act({
+            type: 'preeclampsia-response', payload: { action },
           })}
           onHighSpinalHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'high-spinal' },

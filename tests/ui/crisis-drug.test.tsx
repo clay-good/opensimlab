@@ -9,6 +9,7 @@ import {
 } from '@anesthesia/ui/ActionCockpit';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { BRONCHOSPASM } from '@anesthesia/scenarios/bronchospasm';
+import { PREECLAMPSIA_URGENT_DELIVERY } from '@anesthesia/scenarios/preeclampsia-urgent-delivery';
 import { UNITED_KINGDOM, UNITED_STATES } from '@anesthesia/region/profiles';
 
 const CRISIS_SCENARIO = {
@@ -156,6 +157,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       hasLastResponse: true,
       hasCardiacArrestResponse: true,
       hasHighSpinalResponse: true,
+      hasPreeclampsiaResponse: false,
       hasVenousAirEmbolismResponse: false,
       hasBronchospasmResponse: false,
     });
@@ -183,6 +185,41 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
     expect(container.textContent).toContain('Start compressions');
     expect(container.textContent).toContain('Epinephrine');
     expect(container.textContent).toContain('High spinal response');
+  });
+
+  it('offers a minimal confirmed maternal-response sequence only in the declared lesson', () => {
+    const onPreeclampsiaResponse = vi.fn();
+    renderCockpit(UNITED_STATES, vi.fn(), {
+      scenario: PREECLAMPSIA_URGENT_DELIVERY,
+      resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+        lastEpinephrineTick: null, crystalloidTotalMl: 0,
+        dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
+        lastDantroleneTick: null, activeCooling: false,
+        preeclampsiaBloodPressureChecks: 1,
+        lastPreeclampsiaBloodPressure: {
+          systolicMmHg: 165, diastolicMmHg: 120, meanArterialMmHg: 135, tick: 10,
+        },
+        labetalolTotalMg: 0, labetalolEffectFraction: 0,
+        magnesiumSulfateTotalG: 0,
+      },
+      onPreeclampsiaResponse,
+    });
+    expect(button('Maternal response')?.getAttribute('aria-selected')).toBe('true');
+    expect(container.textContent).toContain('Confirm · treat · recheck');
+    expect(container.textContent).toContain('Last BP 165/120 mmHg · check 1');
+    expect(container.textContent).toContain('Magnesium is seizure prophylaxis');
+    act(() => button('Syringes')!.click());
+    expect(container.textContent).toContain('Open Maternal response for the focused controls');
+    act(() => button('Maternal response')!.click());
+
+    act(() => button('Labetalol 20 mg IV')!.click());
+    expect(onPreeclampsiaResponse).not.toHaveBeenCalled();
+    expect(container.textContent).toContain('Give labetalol 20 mg IV?');
+    act(() => button('Confirm')!.click());
+    expect(onPreeclampsiaResponse).toHaveBeenCalledWith('labetalol-20mg-iv');
+    act(() => button('Repeat blood pressure')!.click());
+    expect(onPreeclampsiaResponse).toHaveBeenCalledWith('repeat-blood-pressure');
   });
 
   it('uses regional bronchodilator terminology and requires confirmation', () => {

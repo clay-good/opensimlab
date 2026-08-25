@@ -511,3 +511,24 @@ rejects paralysis-before-hypnosis, requires the displayed block signal before in
 does not accept capnography after a failed attempt as proof of tracheal placement. Fetal physiology,
 delivery, aspiration, cricoid pressure, awareness, neonatal effects, hemorrhage, emergence,
 extubation, physical technique, and team performance remain outside the model.
+
+## Slice 31: bounded preeclampsia response before urgent delivery
+
+The twenty-eighth authored scenario begins after the diagnosis and urgent-delivery decision. A
+prior pressure of 168/112 mmHg and persistent headache are declared. The learner repeats the
+canonical simulated pressure, then uses one scenario-declared maternal-response tray for a 20 mg IV
+labetalol branch and a separate 4 g IV magnesium-sulfate seizure-prophylaxis branch. Treatment is
+engine-owned accepted state, not optimistic component state, and a raw request cannot earn credit.
+
+Labetalol applies a fixed 18% pressure endpoint and 8% heart-rate endpoint on a 45-second teaching
+time constant. In seed 31, the first engine sample is 164.63/120.19 mmHg with MAP 135.00 mmHg; 60
+seconds after the accepted labetalol action it is 142.81/104.26 mmHg with MAP 117.11 mmHg. Magnesium
+does not alter pressure or any other patient state. The comparative regression requires an otherwise
+identical run with and without magnesium to produce identical patient state.
+
+The debrief requires an accepted severe-range repeat before treatment, records the accepted
+labetalol and magnesium purposes separately, and credits reassessment only from a later accepted
+pressure below 160/110 mmHg with MAP at least 65 mmHg. Diagnosis, laboratory criteria, serial cuff
+error, alternative or escalating antihypertensives, pharmacokinetics, infusion duration, magnesium
+maintenance or toxicity, eclampsia, pulmonary edema, fetal status, delivery planning, anesthetic
+technique, surgery, postpartum care, and teams remain outside the model.

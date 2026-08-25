@@ -96,6 +96,7 @@ Reviewers run the routine induction themselves before answering.
 | B42 | After one 0.6 mg/kg rocuronium dose during established anesthesia, the quantitative teaching signal progresses through onset and recovery, rejects onset-phase reversal, and responds directionally to a recovery-depth-matched reversal branch | | |
 | B43 | In the pediatric inhalational-induction lesson, high fresh-gas flow produces visible vaporizer-to-end-tidal lag, age-adjusted MAC and predicted depth change together, and reducing delivery settles the bounded pressure and depth trends without changing the healthy-child gas-exchange baseline implausibly | | |
 | B44 | In the obstetric general-anesthesia lesson, the calibrated term-pregnancy reserve fills with preoxygenation, the maternal saturation margin remains plausible through the declared induction and modeled airway interval, and confirmed ventilation restores sustained capnography | | |
+| B45 | In the preeclampsia lesson, the initial pressure is recognizably severe-range, the bounded labetalol branch produces a plausible downward trajectory without hypotension, magnesium does not masquerade as an antihypertensive, and the repeat-pressure workflow is clear | | |
 | B45 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response

@@ -624,6 +624,42 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'pc-airway-management',
     objectiveIds: ['wait-for-intubating-block', 'protect-obstetric-apnea-margin', 'confirm-obstetric-ventilation'],
   },
+  {
+    scenarioId: 'preeclampsia-urgent-delivery',
+    frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: [
+      'confirm-persistent-severe-hypertension', 'treat-severe-pregnancy-hypertension',
+      'start-preeclampsia-seizure-prophylaxis', 'reassess-preeclampsia-response',
+    ],
+  },
+  {
+    scenarioId: 'preeclampsia-urgent-delivery',
+    frameworkId: 'coa-standards',
+    domainId: 'physiology-and-pathophysiology',
+    objectiveIds: ['confirm-persistent-severe-hypertension', 'reassess-preeclampsia-response'],
+  },
+  {
+    scenarioId: 'preeclampsia-urgent-delivery',
+    frameworkId: 'coa-standards',
+    domainId: 'pharmacology-of-anesthetic-agents',
+    objectiveIds: ['treat-severe-pregnancy-hypertension', 'start-preeclampsia-seizure-prophylaxis'],
+  },
+  {
+    scenarioId: 'preeclampsia-urgent-delivery',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-pharmacologic-management',
+    objectiveIds: [
+      'treat-severe-pregnancy-hypertension', 'start-preeclampsia-seizure-prophylaxis',
+      'reassess-preeclampsia-response',
+    ],
+  },
+  {
+    scenarioId: 'preeclampsia-urgent-delivery',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-preanesthetic-evaluation',
+    objectiveIds: ['confirm-persistent-severe-hypertension'],
+  },
 
   // --- Awareness under paralysis -----------------------------------------
   {

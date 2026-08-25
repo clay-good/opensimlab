@@ -457,3 +457,19 @@
 - [x] Complete catalog assets, route SEO, responsive browser inspection, and full CI.
 - [ ] Add fetal monitoring or physiology, delivery, aspiration, cricoid pressure, awareness,
   neonatal effects, hemorrhage, emergence, extubation, physical airway technique, or team performance.
+
+## Slice 31: bounded preeclampsia response before urgent delivery
+
+- [x] Check in an evidence brief covering current ACOG, AIM, and SMFM severe-hypertension
+  guidance, exact deterministic fixtures, and unsafe inference boundaries.
+- [x] Add a twenty-eighth authored scenario that confirms the declared persistent severe-range
+  pressure, accepts one first-line 20 mg IV labetalol branch, and records a distinct 4 g IV
+  magnesium-sulfate seizure-prophylaxis branch.
+- [x] Add a scenario-declared maternal-response tray and engine-owned accepted state; keep
+  magnesium pressure-neutral and require an observed post-treatment repeat for reassessment credit.
+- [x] Add curriculum and obstetric preparation-path coverage, public catalog assets, route SEO,
+  accepted/hostile/out-of-order/duplicate/replay regressions, responsive browser inspection, and
+  full CI.
+- [ ] Add diagnosis, laboratory criteria, fetal monitoring, alternative or escalating
+  antihypertensives, full drug pharmacokinetics, magnesium infusion and toxicity, eclampsia,
+  pulmonary edema, delivery planning, anesthetic technique, surgery, postpartum care, or teams.

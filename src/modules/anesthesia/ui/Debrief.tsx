@@ -422,6 +422,10 @@ export function objectiveFindings(
     'prepare-obstetric-oxygen-reserve': 'preoxygenation-and-safe-apnea-time',
     'protect-obstetric-apnea-margin': 'preoxygenation-and-safe-apnea-time',
     'confirm-obstetric-ventilation': 'capnogram-morphology',
+    'confirm-persistent-severe-hypertension': 'vasodilation-versus-hypovolemia',
+    'treat-severe-pregnancy-hypertension': 'vasodilation-versus-hypovolemia',
+    'start-preeclampsia-seizure-prophylaxis': 'vasodilation-versus-hypovolemia',
+    'reassess-preeclampsia-response': 'vasodilation-versus-hypovolemia',
     'recognize-hemorrhage': 'vasodilation-versus-hypovolemia',
     'temporize-volume-loss': 'vasodilation-versus-hypovolemia',
     'avoid-full-dose-induction': 'hysteresis-and-effect-site-lag',
@@ -1009,6 +1013,81 @@ export function objectiveFindings(
           ? 'No post-event oxygen-saturation trace was available.'
           : `The lowest post-event oxygen saturation was ${lowest.toFixed(0)}%.`,
         atTick: postOnset.at(-1)?.tick ?? onset,
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
+      'confirm-persistent-severe-hypertension', 'treat-severe-pregnancy-hypertension',
+      'start-preeclampsia-seizure-prophylaxis', 'reassess-preeclampsia-response',
+    ].includes(objective.id)) {
+      const firstPressure = log.find((entry) =>
+        entry.eventId.startsWith('preeclampsia-blood-pressure-'));
+      const labetalol = log.find((entry) => entry.eventId.startsWith('labetalol-iv-'));
+      const magnesium = log.find((entry) => entry.eventId.startsWith('magnesium-sulfate-iv-'));
+
+      if (objective.id === 'confirm-persistent-severe-hypertension') {
+        if (!firstPressure) return {
+          ...base, outcome: 'not-met', finding: 'No accepted repeat blood pressure was recorded.',
+        } satisfies ObjectiveFinding;
+        const systolic = Number(firstPressure.data?.systolicMmHg ?? 0);
+        const diastolic = Number(firstPressure.data?.diastolicMmHg ?? 0);
+        const severe = systolic >= 160 || diastolic >= 110;
+        return {
+          ...base, outcome: severe ? 'met' : 'not-met',
+          finding: `The first accepted repeat was ${systolic.toFixed(0)}/${diastolic.toFixed(0)} mmHg${severe ? ', confirming the declared severe-range pattern.' : ', which did not reproduce a severe-range value in this run.'}`,
+          atTick: firstPressure.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      if (objective.id === 'treat-severe-pregnancy-hypertension') {
+        const ordered = firstPressure && labetalol && labetalol.tick >= firstPressure.tick;
+        const delayMinutes = firstPressure && labetalol
+          ? (labetalol.tick - firstPressure.tick) / TICKS_PER_SECOND / 60 : null;
+        return {
+          ...base,
+          outcome: ordered && delayMinutes !== null && delayMinutes <= 60 ? 'met' : 'not-met',
+          finding: !labetalol
+            ? 'No accepted labetalol action was recorded.'
+            : !ordered
+              ? 'Labetalol was accepted before an accepted confirming pressure.'
+              : `Labetalol 20 mg IV was accepted ${delayMinutes!.toFixed(1)} minutes after confirmation, inside the 60-minute emergency-treatment window. The response is a bounded trajectory, not individual pharmacokinetics.`,
+          atTick: labetalol?.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      if (objective.id === 'start-preeclampsia-seizure-prophylaxis') {
+        const ordered = firstPressure && magnesium && magnesium.tick >= firstPressure.tick;
+        const distinguished = magnesium?.data?.antihypertensive === false
+          && magnesium.data?.indication === 'seizure-prophylaxis';
+        return {
+          ...base, outcome: ordered && distinguished ? 'met' : 'not-met',
+          finding: !magnesium
+            ? 'No accepted magnesium-sulfate loading action was recorded.'
+            : ordered && distinguished
+              ? 'Magnesium sulfate 4 g IV was accepted for seizure prophylaxis after confirmation. It produced no antihypertensive effect in the model.'
+              : 'The recorded magnesium action did not follow an accepted confirming pressure.',
+          atTick: magnesium?.tick,
+        } satisfies ObjectiveFinding;
+      }
+
+      if (!labetalol) return {
+        ...base, outcome: 'not-exercised',
+        finding: 'No accepted antihypertensive response was available to reassess.',
+      } satisfies ObjectiveFinding;
+      const followUp = log.find((entry) =>
+        entry.eventId.startsWith('preeclampsia-blood-pressure-') && entry.tick > labetalol.tick);
+      if (!followUp) return {
+        ...base, outcome: 'not-met', finding: 'No accepted follow-up pressure was recorded after labetalol.',
+        atTick: labetalol.tick,
+      } satisfies ObjectiveFinding;
+      const systolic = Number(followUp.data?.systolicMmHg ?? 0);
+      const diastolic = Number(followUp.data?.diastolicMmHg ?? 0);
+      const mean = Number(followUp.data?.meanArterialMmHg ?? 0);
+      const target = systolic < 160 && diastolic < 110 && mean >= 65;
+      return {
+        ...base, outcome: target ? 'met' : mean >= 65 ? 'partly-met' : 'not-met',
+        finding: `The first accepted follow-up was ${systolic.toFixed(0)}/${diastolic.toFixed(0)} mmHg (mean ${mean.toFixed(0)}) after labetalol. ${target ? 'It was below the declared severe-range threshold without modeled hypotension.' : 'It had not yet reached the declared reassessment endpoint.'}`,
+        atTick: followUp.tick,
       } satisfies ObjectiveFinding;
     }
 

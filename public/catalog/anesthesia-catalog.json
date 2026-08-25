@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 27,
+  "scenarioCount": 28,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -594,6 +594,28 @@
         "Resume delivered ventilation and confirm sustained gas exchange."
       ],
       "searchText": "obstetric-general-anesthesia obstetric general anesthesia term pregnancy with persistent fetal bradycardia emergency cesarean delivery under general anesthesia reach an end-tidal oxygen endpoint before the first induction drug. at least 95% inspired oxygen and 10 l/min fresh-gas flow were accepted, and end-tidal oxygen reached at least 0.90 before propofol. give the hypnotic before paralysis, then allow the modeled block to develop. propofol preceded rocuronium, and the train-of-four count reached zero before laryngoscopy. protect the smaller modeled oxygen margin during induction. maternal oxygen saturation remained at or above 95% from the first induction drug until gas exchange returned. resume delivered ventilation and confirm sustained gas exchange. successful modeled tracheal placement was followed by delivered ventilation and sustained capnography."
+    },
+    {
+      "id": "preeclampsia-urgent-delivery",
+      "path": "/anesthesia/scenario/preeclampsia-urgent-delivery",
+      "title": "Preeclampsia before urgent delivery",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 8,
+      "difficulty": "intermediate",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Confirm the persistent severe-range pressure.",
+        "Use the listed first-line antihypertensive branch after confirmation.",
+        "Start the listed magnesium-sulfate loading branch for seizure prophylaxis.",
+        "Repeat the pressure after antihypertensive treatment and interpret the observed response."
+      ],
+      "searchText": "preeclampsia-urgent-delivery preeclampsia before urgent delivery preeclampsia with severe features at 35 weeks; urgent delivery decision made maternal stabilization before urgent cesarean delivery confirm the persistent severe-range pressure. an accepted repeat showed systolic pressure at least 160 mmhg or diastolic pressure at least 110 mmhg before treatment. use the listed first-line antihypertensive branch after confirmation. the bounded 20 mg iv labetalol action was accepted after the confirming pressure and within the 60-minute emergency-treatment window. start the listed magnesium-sulfate loading branch for seizure prophylaxis. the bounded 4 g iv magnesium-sulfate action was accepted after confirmation and was distinguished from antihypertensive treatment. repeat the pressure after antihypertensive treatment and interpret the observed response. a later accepted pressure was below 160/110 mmhg while mean arterial pressure remained at least 65 mmhg."
     }
   ],
   "preparationPathCount": 10,
@@ -793,10 +815,11 @@
     },
     {
       "id": "obstetric-emergencies",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "title": "Obstetric emergencies",
-      "description": "Build a general-anesthesia preparation sequence, then recognize and support rapidly ascending neuraxial block.",
+      "description": "Confirm and treat severe pregnancy hypertension, build a general-anesthesia preparation sequence, then recognize and support rapidly ascending neuraxial block.",
       "scenarioIds": [
+        "preeclampsia-urgent-delivery",
         "obstetric-general-anesthesia",
         "high-spinal-after-epidural-top-up"
       ],
@@ -804,6 +827,7 @@
         "Basic neuraxial-block concepts."
       ],
       "targetCompetencies": [
+        "Severe-hypertension response",
         "Maternal oxygen reserve",
         "Induction sequencing",
         "High-spinal recognition",
@@ -816,7 +840,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance. These bounded cases do not model fetal status, delivery, or a complete obstetric anesthetic.",
-      "estimatedMinutes": 16
+      "estimatedMinutes": 24
     },
     {
       "id": "medication-infusion-safety",

@@ -38,7 +38,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.25';
+export const ENGINE_VERSION = '0.1.0-alpha.26';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -273,6 +273,15 @@ export class AnesthesiaEngine {
   private highSpinalFraction = 0;
   private ephedrineTotalMg = 0;
   private lastEphedrineTick: number | null = null;
+  private preeclampsiaBloodPressureChecks = 0;
+  private lastPreeclampsiaBloodPressure: {
+    systolicMmHg: number; diastolicMmHg: number; meanArterialMmHg: number; tick: number;
+  } | null = null;
+  private labetalolTotalMg = 0;
+  private lastLabetalolTick: number | null = null;
+  private labetalolEffectFraction = 0;
+  private magnesiumSulfateTotalG = 0;
+  private lastMagnesiumSulfateTick: number | null = null;
   private venousAirEmbolismSeverity = 0;
   private venousAirEmbolismFraction = 0;
   private venousAirEntryControlled = false;
@@ -594,6 +603,71 @@ export class AnesthesiaEngine {
           `Ephedrine ${doseMg} mg IV given. The pressure response is a bounded teaching effect, not an individual prediction.`, {
             drugId: 'ephedrine', route: 'iv', doseMg,
             cumulativeDoseMg: this.ephedrineTotalMg, teachingModel: true,
+          });
+        break;
+      }
+      case 'preeclampsia-response': {
+        const supported = this.scenario.timeline.some(
+          (event) => event.type === 'narrative' && event.target === 'persistent-severe-preeclampsia',
+        );
+        const response = action.payload.action;
+        if (!supported || ![
+          'repeat-blood-pressure', 'labetalol-20mg-iv', 'magnesium-sulfate-4g-iv',
+        ].includes(String(response))) {
+          this.log('warning', 'drug', `preeclampsia-response-refused-${this.currentTick}`,
+            supported
+              ? 'The maternal-response action was not one of the three listed actions. No state changed.'
+              : 'The bounded maternal-response actions are available only in the declared severe-preeclampsia lesson.');
+          break;
+        }
+        const observed = Object.keys(this.lastState).length > 0
+          ? this.lastState : this.patient.snapshot();
+        if (response === 'repeat-blood-pressure') {
+          const reading = {
+            systolicMmHg: Number(observed.systolicMmHg),
+            diastolicMmHg: Number(observed.diastolicMmHg),
+            meanArterialMmHg: Number(observed.meanArterialMmHg),
+            tick: this.currentTick,
+          };
+          this.preeclampsiaBloodPressureChecks += 1;
+          this.lastPreeclampsiaBloodPressure = reading;
+          this.log('warning', 'monitor', `preeclampsia-blood-pressure-${this.currentTick}`,
+            `Repeat blood pressure: ${reading.systolicMmHg.toFixed(0)}/${reading.diastolicMmHg.toFixed(0)} mmHg (mean ${reading.meanArterialMmHg.toFixed(0)}).`, {
+              ...reading, checkNumber: this.preeclampsiaBloodPressureChecks,
+              afterLabetalol: this.labetalolTotalMg > 0,
+            });
+          break;
+        }
+        if (this.preeclampsiaBloodPressureChecks === 0) {
+          this.log('warning', 'drug', `preeclampsia-treatment-before-confirmation-${this.currentTick}`,
+            'Repeat the blood pressure to confirm the declared persistent severe-range pattern before using this bounded treatment branch. Nothing was given.');
+          break;
+        }
+        if (response === 'labetalol-20mg-iv') {
+          if (this.labetalolTotalMg > 0) {
+            this.log('warning', 'drug', `labetalol-refused-${this.currentTick}`,
+              'The one-dose labetalol teaching branch has already been used. Escalation and alternative agents are outside this lesson.');
+            break;
+          }
+          this.labetalolTotalMg = 20;
+          this.lastLabetalolTick = this.currentTick;
+          this.log('warning', 'drug', `labetalol-iv-${this.currentTick}`,
+            'Labetalol 20 mg IV given. Pressure now follows a bounded teaching response, not individual pharmacokinetics or a predicted patient result.', {
+              drugId: 'labetalol', route: 'iv', doseMg: 20, teachingModel: true,
+            });
+          break;
+        }
+        if (this.magnesiumSulfateTotalG > 0) {
+          this.log('warning', 'drug', `magnesium-sulfate-refused-${this.currentTick}`,
+            'The one-dose magnesium-sulfate teaching branch has already been used. Maintenance, renal adjustment, serum levels, and toxicity treatment are outside this lesson.');
+          break;
+        }
+        this.magnesiumSulfateTotalG = 4;
+        this.lastMagnesiumSulfateTick = this.currentTick;
+        this.log('warning', 'drug', `magnesium-sulfate-iv-${this.currentTick}`,
+          'Magnesium sulfate 4 g IV loading dose started for seizure prophylaxis. It does not lower pressure in this model and is not an antihypertensive.', {
+            drugId: 'magnesium-sulfate', route: 'iv', doseG: 4,
+            indication: 'seizure-prophylaxis', antihypertensive: false,
           });
         break;
       }
@@ -1937,6 +2011,10 @@ export class AnesthesiaEngine {
     // Titrated boluses are short acting; this teaching effect decays over roughly 90 seconds.
     this.epinephrineEffect *= Math.exp(-0.1 / 90);
     this.bronchodilatorEffectFraction *= Math.exp(-0.1 / 600);
+    if (this.labetalolTotalMg > 0) {
+      this.labetalolEffectFraction += (1 - this.labetalolEffectFraction)
+        * (1 - Math.exp(-0.1 / 45));
+    }
 
     if (!this.cardiacArrestActive) this.reconcileArrest(result.state.cardiacOutputLPerMin ?? 0);
 
@@ -1969,6 +2047,16 @@ export class AnesthesiaEngine {
         meanArterialMmHg: crisisState.meanArterialMmHg * (1 - 0.45 * fraction),
         etco2MmHg: crisisState.etco2MmHg * (1 - 0.6 * fraction),
         spo2Percent: clamp(crisisState.spo2Percent - 8 * fraction, 0, 100),
+      };
+    }
+    if (this.labetalolEffectFraction > 0) {
+      const pressureFactor = 1 - 0.18 * this.labetalolEffectFraction;
+      crisisState = {
+        ...crisisState,
+        heartRateBpm: crisisState.heartRateBpm * (1 - 0.08 * this.labetalolEffectFraction),
+        systolicMmHg: crisisState.systolicMmHg * pressureFactor,
+        diastolicMmHg: crisisState.diastolicMmHg * pressureFactor,
+        meanArterialMmHg: crisisState.meanArterialMmHg * pressureFactor,
       };
     }
 
@@ -2245,6 +2333,14 @@ export class AnesthesiaEngine {
         highSpinalFraction: this.highSpinalFraction,
         ephedrineTotalMg: this.ephedrineTotalMg,
         lastEphedrineTick: this.lastEphedrineTick,
+        preeclampsiaBloodPressureChecks: this.preeclampsiaBloodPressureChecks,
+        lastPreeclampsiaBloodPressure: this.lastPreeclampsiaBloodPressure
+          ? { ...this.lastPreeclampsiaBloodPressure } : null,
+        labetalolTotalMg: this.labetalolTotalMg,
+        lastLabetalolTick: this.lastLabetalolTick,
+        labetalolEffectFraction: this.labetalolEffectFraction,
+        magnesiumSulfateTotalG: this.magnesiumSulfateTotalG,
+        lastMagnesiumSulfateTick: this.lastMagnesiumSulfateTick,
         venousAirEmbolismFraction: this.venousAirEmbolismFraction,
         venousAirEntryControlled: this.venousAirEntryControlled,
         venousAirEntryControlledAtTick: this.venousAirEntryControlledAtTick,

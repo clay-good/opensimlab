@@ -209,3 +209,8 @@ general-anesthesia sequence. One calibrated term-pregnancy reserve makes prepara
 oxygen margin inspectable; accepted induction order, modeled tube placement, and gas-exchange
 confirmation complete the screen. Fetal status, delivery, aspiration, cricoid pressure, awareness,
 neonatal effects, hemorrhage, emergence, and team performance remain excluded.
+The thirty-first adds the twenty-eighth authored scenario and the first focused severe-pregnancy-
+hypertension response. Accepted pressure confirmation, one bounded labetalol branch, a separate
+magnesium seizure-prophylaxis branch, and observed pressure reassessment are inspectable. Diagnosis,
+laboratory criteria, alternative or escalating treatment, full pharmacology, toxicity, fetal status,
+delivery, anesthetic technique, surgery, postpartum care, and team performance remain excluded.

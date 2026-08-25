@@ -125,9 +125,9 @@ holds.
 
 The `/anesthesia` catalog keeps discovery local and linkable: search covers the patient, problem,
 procedure, and objectives, while difficulty, duration, and maturity filters are encoded in the URL.
-The unfiltered prerender still contains all 27 current scenarios, so filtering adds no telemetry and
+The unfiltered prerender still contains all 28 current scenarios, so filtering adds no telemetry and
 does not trade away no-script access or scenario-page indexing.
-`/catalog/anesthesia-catalog.json` publishes the same 27 exact-version entries, filters, objectives,
+`/catalog/anesthesia-catalog.json` publishes the same 28 exact-version entries, filters, objectives,
 and normalized search text for static integrations; its schema and data are included in the offline
 bundle and fail the build if they drift from the scenario registry or completion audit.
 The catalog also offers all 10 authored preparation goals from the product design. Each versioned
@@ -301,6 +301,12 @@ requires end-tidal preoxygenation and high fresh-gas flow before induction, pres
 hypnotic-before-paralytic ordering, and confirms modeled tube placement plus gas exchange. Fetal
 status, delivery, aspiration, cricoid pressure, awareness, neonatal effects, hemorrhage, emergence,
 and team performance remain explicit exclusions.
+Slice 31 adds the twenty-eighth authored scenario, a focused preeclampsia response before urgent
+delivery. The learner confirms persistent severe-range pressure, uses one bounded 20 mg IV
+labetalol branch, starts a 4 g IV magnesium-sulfate loading branch for seizure prophylaxis, and
+rechecks the observed pressure response. It does not diagnose preeclampsia, model alternative or
+escalating treatment, reproduce drug pharmacokinetics or magnesium toxicity, choose an anesthetic,
+or simulate fetal status, delivery, surgery, postpartum care, or team performance.
 
 ## Running it
 
