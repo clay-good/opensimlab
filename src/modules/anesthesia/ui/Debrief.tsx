@@ -181,7 +181,7 @@ export function Debrief(props: DebriefProps) {
             patientHarmed: episodes.length > 0,
             patientDied: false,
             ...(props.moduleId === 'emergency-medicine'
-              ? { activityContext: 'assessing an undifferentiated shock presentation in the emergency department' }
+              ? { activityContext: `assessing ${props.scenario.metadata.title.toLowerCase()} in the emergency department` }
               : {}),
           })}</p>
           <label className="field__label" htmlFor="reactions-account">Your account</label>
@@ -3143,6 +3143,61 @@ export function objectiveFindings(
           ? 'The same perfusion markers were reassessed before escalation of the unresolved shock workup and definitive treatment.'
           : 'Serial perfusion reassessment and escalation were incomplete or out of order.',
         atTick: escalated?.tick ?? reassessed?.tick ?? 0,
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
+      'recognize-probable-sepsis-with-shock',
+      'pair-diagnostics-with-immediate-antimicrobial-intent',
+      'give-initial-sepsis-fluid-and-reassess',
+      'support-persistent-shock-and-escalate-source-control',
+    ].includes(objective.id)) {
+      const supported = scenario.timeline.some(
+        (event) => event.type === 'narrative' && event.target === 'septic-shock',
+      );
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The septic-shock vignette was not active.' } satisfies ObjectiveFinding;
+      const recognition = log.find((event) => event.eventId.startsWith('sepsis-recognition-reviewed-'));
+      const diagnostics = log.find((event) => event.eventId.startsWith('sepsis-diagnostics-recorded-'));
+      const antimicrobial = log.find((event) => event.eventId.startsWith('sepsis-antimicrobial-recorded-'));
+      const fluid = log.find((event) => event.eventId.startsWith('sepsis-fluid-started-'));
+      const reassessed = log.find((event) => event.eventId.startsWith('sepsis-post-fluid-reviewed-'));
+      const norepinephrine = log.find((event) => event.eventId.startsWith('sepsis-norepinephrine-recorded-'));
+      const sourceControl = log.find((event) => event.eventId.startsWith('sepsis-source-control-recorded-'));
+      if (objective.id === 'recognize-probable-sepsis-with-shock') return {
+        ...base, outcome: recognition ? 'met' : 'not-met',
+        finding: recognition
+          ? 'Probable infection, new organ dysfunction, hypotension, and impaired perfusion were deliberately joined without relying on one test.'
+          : 'The fixed infection and organ-dysfunction evidence was not reviewed together.',
+        atTick: recognition?.tick ?? 0,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'pair-diagnostics-with-immediate-antimicrobial-intent') {
+        const ordered = diagnostics && antimicrobial && diagnostics.tick <= antimicrobial.tick;
+        return {
+          ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'Blood-culture and lactate intent preceded immediate empiric antimicrobial intent without waiting for results.'
+            : 'Diagnostic and antimicrobial intents were incomplete or out of order.',
+          atTick: antimicrobial?.tick ?? diagnostics?.tick ?? 0,
+        } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'give-initial-sepsis-fluid-and-reassess') {
+        const ordered = fluid && reassessed && fluid.tick <= reassessed.tick;
+        return {
+          ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'The fixed 30 mL/kg balanced-crystalloid course was followed by serial perfusion reassessment rather than automatic repeat fluid.'
+            : 'Initial crystalloid and post-fluid reassessment were incomplete or out of order.',
+          atTick: reassessed?.tick ?? fluid?.tick ?? 0,
+        } satisfies ObjectiveFinding;
+      }
+      const closed = norepinephrine && sourceControl;
+      return {
+        ...base, outcome: closed ? 'met' : 'not-met',
+        finding: closed
+          ? 'First-line norepinephrine intent for persistent shock and urgent source-control escalation both proceeded without making one wait for the other.'
+          : 'Vasopressor support and source-control escalation were incomplete or out of order.',
+        atTick: sourceControl?.tick ?? norepinephrine?.tick ?? 0,
       } satisfies ObjectiveFinding;
     }
 

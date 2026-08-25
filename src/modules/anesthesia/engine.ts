@@ -41,7 +41,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.38';
+export const ENGINE_VERSION = '0.1.0-alpha.39';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -370,6 +370,14 @@ export class AnesthesiaEngine {
   private shockFluidChallengeAtTick: number | null = null;
   private shockPerfusionReassessedAtTick: number | null = null;
   private shockEscalationAtTick: number | null = null;
+  private septicShockActive = false;
+  private sepsisInfectionAndOrganDysfunctionReviewedAtTick: number | null = null;
+  private sepsisCulturesAndLactateAtTick: number | null = null;
+  private sepsisAntimicrobialIntentAtTick: number | null = null;
+  private sepsisInitialCrystalloidAtTick: number | null = null;
+  private sepsisPostFluidReassessmentAtTick: number | null = null;
+  private sepsisNorepinephrineIntentAtTick: number | null = null;
+  private sepsisSourceControlEscalationAtTick: number | null = null;
   /** Exclusive tick at which the bounded held airway maneuver ends. */
   private jawThrustCpapUntilTick = 0;
   /** Current lower-airway obstruction, retained for truthful equipment/accessibility output. */
@@ -2104,6 +2112,132 @@ export class AnesthesiaEngine {
           'Continued monitored resuscitation, senior help, serial perfusion assessment, and urgent etiologic evaluation were recorded. No real diagnosis, vasopressor, procedure, or disposition is selected here.');
         break;
       }
+      case 'septic-shock-assessment': {
+        const response = String(action.payload.action ?? '');
+        const valid = [
+          'review-infection-and-organ-dysfunction', 'obtain-cultures-and-lactate',
+          'record-immediate-antimicrobial-intent', 'begin-initial-crystalloid',
+          'reassess-after-initial-fluid', 'start-norepinephrine-intent',
+          'escalate-source-control',
+        ].includes(response);
+        if (!this.septicShockActive || !valid) {
+          this.log('warning', 'assessment', `septic-shock-refused-${this.currentTick}`,
+            this.septicShockActive
+              ? 'The septic-shock action was not one of the listed choices. Nothing changed.'
+              : 'The bounded septic-shock choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-infection-and-organ-dysfunction') {
+          if (this.sepsisInfectionAndOrganDysfunctionReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `sepsis-recognition-refused-${this.currentTick}`,
+              'The fixed infection and organ-dysfunction evidence has already been reviewed.');
+            break;
+          }
+          this.sepsisInfectionAndOrganDysfunctionReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `sepsis-recognition-reviewed-${this.currentTick}`,
+            'Fixed evidence: fever, rigors, dysuria and right-flank tenderness accompany new inattention, capillary refill 5 seconds, oliguria, and hypotension. This supports immediate evaluation and treatment for probable sepsis with shock; it is not a diagnostic test.');
+          break;
+        }
+        if (response === 'obtain-cultures-and-lactate') {
+          if (this.sepsisInfectionAndOrganDysfunctionReviewedAtTick === null) {
+            this.log('warning', 'laboratory', `sepsis-diagnostics-order-refused-${this.currentTick}`,
+              'Review the infection and organ-dysfunction evidence before recording diagnostic intent.');
+            break;
+          }
+          if (this.sepsisCulturesAndLactateAtTick !== null) {
+            this.log('warning', 'laboratory', `sepsis-diagnostics-refused-${this.currentTick}`,
+              'Blood-culture and lactate intent has already been recorded.');
+            break;
+          }
+          this.sepsisCulturesAndLactateAtTick = this.currentTick;
+          this.log('critical', 'laboratory', `sepsis-diagnostics-recorded-${this.currentTick}`,
+            'Blood cultures before antimicrobials and venous lactate were recorded without waiting for results. Fixed initial lactate: 5.2 mmol/L. Sampling, contamination, assay behavior, and culture results are not simulated.');
+          break;
+        }
+        if (response === 'record-immediate-antimicrobial-intent') {
+          if (this.sepsisCulturesAndLactateAtTick === null) {
+            this.log('warning', 'drug', `sepsis-antimicrobial-order-refused-${this.currentTick}`,
+              'Record cultures and lactate first, without delaying immediate antimicrobial intent.');
+            break;
+          }
+          if (this.sepsisAntimicrobialIntentAtTick !== null) {
+            this.log('warning', 'drug', `sepsis-antimicrobial-refused-${this.currentTick}`,
+              'Immediate empiric antimicrobial intent has already been recorded.');
+            break;
+          }
+          this.sepsisAntimicrobialIntentAtTick = this.currentTick;
+          this.log('critical', 'drug', `sepsis-antimicrobial-recorded-${this.currentTick}`,
+            'Immediate empiric antimicrobial intent was recorded inside the authored one-hour window. No agent, dose, allergy reconciliation, local resistance pattern, delivery, or effect is simulated.');
+          break;
+        }
+        if (response === 'begin-initial-crystalloid') {
+          if (this.sepsisInfectionAndOrganDysfunctionReviewedAtTick === null) {
+            this.log('warning', 'fluid', `sepsis-fluid-order-refused-${this.currentTick}`,
+              'Review the infection and organ-dysfunction evidence before starting the initial-resuscitation sequence.');
+            break;
+          }
+          if (this.sepsisInitialCrystalloidAtTick !== null) {
+            this.log('warning', 'fluid', `sepsis-fluid-refused-${this.currentTick}`,
+              'The fixed 30 mL/kg initial balanced-crystalloid course has already been started.');
+            break;
+          }
+          this.sepsisInitialCrystalloidAtTick = this.currentTick;
+          this.pendingCrystalloidMl += 2100;
+          this.crystalloidTotalMl += 2100;
+          this.log('advisory', 'fluid', `sepsis-fluid-started-${this.currentTick}`,
+            'A fixed 2,100 mL balanced-crystalloid course (30 mL/kg for this 70 kg vignette) was accepted. The shared teaching model retains 25% intravascularly; frequent reassessment remains required.',
+            { volumeMl: 2100, teachingModel: true });
+          break;
+        }
+        if (response === 'reassess-after-initial-fluid') {
+          if (this.sepsisInitialCrystalloidAtTick === null
+            || this.currentTick <= this.sepsisInitialCrystalloidAtTick) {
+            this.log('warning', 'assessment', `sepsis-reassessment-order-refused-${this.currentTick}`,
+              'Start the fixed initial fluid course and allow the next engine tick before reassessment.');
+            break;
+          }
+          if (this.sepsisPostFluidReassessmentAtTick !== null) {
+            this.log('warning', 'assessment', `sepsis-reassessment-refused-${this.currentTick}`,
+              'The fixed post-fluid reassessment has already been recorded.');
+            break;
+          }
+          this.sepsisPostFluidReassessmentAtTick = this.currentTick;
+          this.log('critical', 'assessment', `sepsis-post-fluid-reviewed-${this.currentTick}`,
+            'Fixed reassessment: hypotension, delayed capillary refill, inattention, and oliguria persist after the declared initial fluid course. Repeat lactate is not yet available. Ongoing fluid is not an automatic next step.');
+          break;
+        }
+        if (response === 'start-norepinephrine-intent') {
+          if (this.sepsisPostFluidReassessmentAtTick === null) {
+            this.log('warning', 'drug', `sepsis-norepinephrine-order-refused-${this.currentTick}`,
+              'Reassess perfusion after the initial fluid course before recording vasopressor intent.');
+            break;
+          }
+          if (this.sepsisNorepinephrineIntentAtTick !== null) {
+            this.log('warning', 'drug', `sepsis-norepinephrine-refused-${this.currentTick}`,
+              'First-line norepinephrine intent has already been recorded.');
+            break;
+          }
+          this.sepsisNorepinephrineIntentAtTick = this.currentTick;
+          this.vasopressorEffect = Math.max(this.vasopressorEffect, 0.55);
+          this.log('critical', 'drug', `sepsis-norepinephrine-recorded-${this.currentTick}`,
+            'First-line norepinephrine intent toward an initial MAP of 65 mmHg was recorded. The directional pressure response is a teaching effect; no concentration, route, pump setup, titration, or patient-specific dose is provided.');
+          break;
+        }
+        if (this.sepsisInfectionAndOrganDysfunctionReviewedAtTick === null) {
+          this.log('warning', 'assessment', `sepsis-source-control-order-refused-${this.currentTick}`,
+            'Review the probable infection and organ-dysfunction evidence before source-control escalation.');
+          break;
+        }
+        if (this.sepsisSourceControlEscalationAtTick !== null) {
+          this.log('warning', 'assessment', `sepsis-source-control-refused-${this.currentTick}`,
+            'Source-control and critical-care escalation has already been recorded.');
+          break;
+        }
+        this.sepsisSourceControlEscalationAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `sepsis-source-control-recorded-${this.currentTick}`,
+          'Urgent evaluation of the suspected obstructed urinary source, senior help, and critical-care escalation were recorded. Imaging, drainage, consultation, disposition, and outcome are not simulated.');
+        break;
+      }
       case 'silence-alarm': {
         this.alarmEngine.silence(String(action.payload.alarmId), this.currentTick, TICKS_PER_SECOND);
         break;
@@ -2609,6 +2743,18 @@ export class AnesthesiaEngine {
         this.undifferentiatedShockActive = true;
         this.log('critical', 'scenario', `undifferentiated-shock-active-${this.currentTick}`,
           'The patient has persistent hypotension and signs of impaired tissue perfusion. The etiology is not named; assess more than one variable and reassess after acting.');
+        return;
+      }
+
+      case 'sepsis-pattern': {
+        if (event.target !== 'probable-urinary-source-with-shock' || event.value !== 1) {
+          this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" must declare the bounded probable-urinary-source-with-shock pattern with value 1, so the event had no effect.`);
+          return;
+        }
+        this.septicShockActive = true;
+        this.log('critical', 'scenario', `septic-shock-active-${this.currentTick}`,
+          'Probable infection, new organ dysfunction, hypotension, and impaired tissue perfusion require immediate parallel evaluation and resuscitation. The source and pathogen remain unconfirmed.');
         return;
       }
 
@@ -3492,6 +3638,16 @@ export class AnesthesiaEngine {
           fluidChallengeAtTick: this.shockFluidChallengeAtTick,
           perfusionReassessedAtTick: this.shockPerfusionReassessedAtTick,
           escalationAtTick: this.shockEscalationAtTick,
+        },
+        septicShockAssessment: {
+          infectionAndOrganDysfunctionReviewedAtTick:
+            this.sepsisInfectionAndOrganDysfunctionReviewedAtTick,
+          culturesAndLactateAtTick: this.sepsisCulturesAndLactateAtTick,
+          antimicrobialIntentAtTick: this.sepsisAntimicrobialIntentAtTick,
+          initialCrystalloidAtTick: this.sepsisInitialCrystalloidAtTick,
+          postFluidReassessmentAtTick: this.sepsisPostFluidReassessmentAtTick,
+          norepinephrineIntentAtTick: this.sepsisNorepinephrineIntentAtTick,
+          sourceControlEscalationAtTick: this.sepsisSourceControlEscalationAtTick,
         },
         neuromuscularReversalFraction: this.neuromuscularReversalFraction,
         postTetanicCount: this.postTetanicCount,

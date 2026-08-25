@@ -724,6 +724,9 @@ export function Cockpit({
           onUndifferentiatedShockAssessment={(action) => session.act({
             type: 'undifferentiated-shock-assessment', payload: { action },
           })}
+          onSepticShockAssessment={(action) => session.act({
+            type: 'septic-shock-assessment', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

@@ -40,7 +40,13 @@ function scenarioDescription(scenario: (typeof SCENARIOS)[number] | (typeof EMER
   // objective used to leave the whole description under the minimum.
   for (const objective of metadata.objectives) {
     const next = `${description} ${objective.statement.replace(/\.$/, '')}.`;
-    if (next.length > 160) break;
+    if (next.length > 160) {
+      // A long first objective must not leave an otherwise useful scenario
+      // description below the search-result minimum. The shared return path
+      // trims this combined sentence to the same 160-character cap.
+      if (description.length < 110) description = next;
+      break;
+    }
     description = next;
     if (description.length >= 110) break;
   }
@@ -99,8 +105,8 @@ export const ROUTES: readonly RouteMetadata[] = [
     path: '/emergency-medicine',
     title: formatTitle('Emergency medicine simulator'),
     description:
-      'Practice focused emergency medicine decisions in short browser-based patient scenarios, '
-      + 'starting with undifferentiated shock. No account or installation.',
+      'Practice focused emergency decisions in short browser-based patient scenarios, starting '
+      + 'with undifferentiated and septic shock. No account or installation.',
     indexable: true,
     structuredData: ['SoftwareApplication'],
     heading: 'Emergency medicine simulator',

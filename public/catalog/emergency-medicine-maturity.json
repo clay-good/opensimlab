@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "emergency-medicine",
-  "recordCount": 1,
+  "recordCount": 2,
   "records": [
     {
       "recordId": "scenario:undifferentiated-shock@0.1.0",
@@ -12,6 +12,17 @@
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#undifferentiated-shock@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#undifferentiated-shock@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:septic-shock@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "septic-shock",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/emergency-medicine-completion-audit.json#septic-shock@0.1.0",
+        "/catalog/emergency-medicine-quality-audit.json#septic-shock@0.1.0"
       ]
     }
   ]

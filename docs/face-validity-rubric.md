@@ -109,7 +109,8 @@ Reviewers run the routine induction themselves before answering.
 | B55 | In the pacemaker-and-cautery-planning lesson, device identity, pacing dependence, magnet response, procedure location, anticipated interference, coordinated asynchronous planning, backup, and restoration are inspectable without implying programming competence or a universal magnet rule | | |
 | B56 | In the postoperative-handoff lesson, shared readiness, patient/course and current-state content, unresolved-risk ownership, receiver synthesis, and acknowledged transfer are inspectable without implying observed communication competence or a real transfer | | |
 | B57 | In the undifferentiated-shock lesson, skin, brain, kidney, pressure, lactate, focused cardiac findings, and a positive dynamic response form a coherent low-preload teaching pattern; one bounded 500 mL challenge produces a plausible directional perfusion response; and reassessment clearly precedes escalation without implying diagnosis, ultrasound competence, or definitive treatment | | |
-| B58 | Overall: does this patient behave like a patient? | | |
+| B58 | In the septic-shock lesson, probable infection, new organ dysfunction, and impaired perfusion form a coherent teaching pattern; diagnostic and antimicrobial intents, initial hemodynamic resuscitation, and source-control escalation proceed in parallel; the fixed crystalloid course is followed by reassessment; and persistent shock leads to directional norepinephrine support without implying drug selection, dosing, procedures, or outcome | | |
+| B59 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -217,4 +218,8 @@ So that reviewers spend their attention on what this review is for:
   passive-leg-raise findings. One 500 mL balanced-crystalloid challenge retains a bounded fraction
   in the shared circulation model. It does not diagnose etiology, teach acquisition technique,
   choose vasopressors or definitive treatment, model liberal repeat fluid, or predict outcome.
+- The septic-shock case uses fixed infection clues, organ dysfunction, lactate, and post-fluid
+  findings. Culture, antimicrobial, norepinephrine, and source-control controls record teaching
+  intent. It does not select a drug or dose, perform diagnostics or procedures, model local
+  resistance, or predict outcome.
 - Nothing here has been clinically reviewed before — you are the first.

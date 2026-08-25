@@ -1315,6 +1315,24 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-24',
   },
   {
+    id: 'ssc-adult-sepsis-2026',
+    currency: {
+      lastAmended: '2026-03-23',
+      checkedAt: '2026-08-24',
+    },
+    authors: 'Surviving Sepsis Campaign',
+    title: 'International Guidelines for Management of Sepsis and Septic Shock 2026',
+    publication: 'Society of Critical Care Medicine and European Society of Intensive Care Medicine',
+    year: 2026,
+    locator: 'Current adult recommendations; released March 23, 2026',
+    usedFor: 'The bounded septic-shock sequence: join infection and organ dysfunction; obtain '
+      + 'cultures and lactate without waiting for results; record immediate antimicrobial intent; '
+      + 'start 30 mL/kg crystalloid with frequent reassessment; use norepinephrine first line '
+      + 'toward an initial MAP of 65 mmHg; and escalate a source requiring urgent control.',
+    verifiedAgainst: 'Current official SCCM adult-guideline recommendation register',
+    verifiedOn: '2026-08-24',
+  },
+  {
     id: 'esicm-circulatory-shock-2025',
     pmid: '41236566',
     currency: {

@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 36 reports bounded shock-assessment state. */
-export const WORKER_PROTOCOL_VERSION = 36;
+/** Bumped whenever the message shape changes incompatibly. Version 37 reports bounded septic-shock state. */
+export const WORKER_PROTOCOL_VERSION = 37;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -368,6 +368,16 @@ export interface EquipmentSnapshot {
       readonly fluidChallengeAtTick: number | null;
       readonly perfusionReassessedAtTick: number | null;
       readonly escalationAtTick: number | null;
+    };
+    /** Ordered recognition and initial-response intents for the fixed septic-shock vignette. */
+    readonly septicShockAssessment?: {
+      readonly infectionAndOrganDysfunctionReviewedAtTick: number | null;
+      readonly culturesAndLactateAtTick: number | null;
+      readonly antimicrobialIntentAtTick: number | null;
+      readonly initialCrystalloidAtTick: number | null;
+      readonly postFluidReassessmentAtTick: number | null;
+      readonly norepinephrineIntentAtTick: number | null;
+      readonly sourceControlEscalationAtTick: number | null;
     };
     /** Accepted quantitative neuromuscular-reversal teaching state. */
     readonly neuromuscularReversalFraction?: number;

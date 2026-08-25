@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with one playable, completion-audited scenario. The remaining
-24 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with two playable, completion-audited scenarios. The remaining
+23 planned titles remain descriptive scope only and do not enter playable counts before their full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -204,6 +204,20 @@ and passive-leg-raise findings; deliver one 500 mL balanced-crystalloid challeng
 same perfusion evidence. The controls do not acquire an examination, ultrasound image, or specimen,
 and the case does not identify or treat a real etiology. Liberal repeat fluid, vasopressors,
 antimicrobials, blood, source control, procedures, and disposition remain outside this slice.
+
+### Wave B slice 2: septic shock initial response
+
+The second emergency-medicine slice adds the first authored infection trajectory. A fixed adult
+presentation combines probable urinary infection with new organ dysfunction and impaired
+perfusion. Learners record cultures and lactate without waiting for results, immediate empiric
+antimicrobial intent, a 30 mL/kg initial balanced-crystalloid course, serial reassessment,
+first-line norepinephrine intent toward an initial MAP of 65 mmHg, and urgent source-control and
+critical-care escalation.
+
+The only numerical patient responses are the shared bounded fluid-retention and generic
+vasopressor teaching effects. The controls do not collect specimens, select an antimicrobial,
+provide a vasopressor dose, perform imaging or drainage, model local resistance or allergies, or
+predict outcome.
 
 #### Critical care: 24
 

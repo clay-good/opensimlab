@@ -1378,6 +1378,39 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['undifferentiated-shock'],
   },
   {
+    id: 'sepsis-findings-and-results-are-authored',
+    headline: 'The infection clues, organ dysfunction, perfusion findings, lactate, and post-fluid state are fixed teaching facts.',
+    simplification: 'Controls reveal one authored presentation and reassessment without examination '
+      + 'technique, diagnostic uncertainty, sampling error, contamination, evolving illness, or competing data.',
+    whereItMisleads: 'Treating the case as a sepsis screen or diagnostic test, assuming one pattern '
+      + 'is typical of every patient, or generalizing its response to a real person.',
+    correctUnderstanding: 'Sepsis is a clinical diagnosis requiring repeated patient-specific '
+      + 'assessment, diagnostic evaluation, source investigation, and revision as evidence changes.',
+    briefIn: ['septic-shock'],
+  },
+  {
+    id: 'sepsis-treatment-controls-record-bounded-intent',
+    headline: 'Cultures, antimicrobials, crystalloid, norepinephrine, and source control are bounded teaching intents.',
+    simplification: 'The vignette records a guideline-shaped sequence and supplies only a generic '
+      + 'fluid and vasopressor teaching response. It does not perform real orders, delivery, or procedures.',
+    whereItMisleads: 'Reading a button as an order, using the interface to select a drug or dose, '
+      + 'or assuming intent proves timely, safe, or effective treatment.',
+    correctUnderstanding: 'Real treatment requires allergy and medication reconciliation, local '
+      + 'microbiology and protocols, appropriate access and monitoring, trained teams, and frequent reassessment.',
+    briefIn: ['septic-shock'],
+  },
+  {
+    id: 'no-sepsis-pathogen-procedure-dose-or-outcome',
+    headline: 'The vignette does not identify a pathogen, choose an antimicrobial, provide a vasopressor dose, perform source control, or predict outcome.',
+    simplification: 'A probable urinary source and persistent shock close at escalation; definitive '
+      + 'diagnosis, imaging, drainage, consultation, adverse effects, deterioration, and disposition are absent.',
+    whereItMisleads: 'Assuming the suspected source is confirmed, copying a treatment value to a '
+      + 'real patient, delaying local escalation, or inferring recovery from a directional monitor response.',
+    correctUnderstanding: 'Resuscitation, antimicrobial stewardship, source diagnosis and control, '
+      + 'organ support, monitoring, and prognosis are patient- and system-specific continuing processes.',
+    briefIn: ['septic-shock'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

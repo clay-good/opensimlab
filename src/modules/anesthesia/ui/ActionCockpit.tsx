@@ -197,6 +197,15 @@ export interface ActionCockpitProps {
       readonly perfusionReassessedAtTick: number | null;
       readonly escalationAtTick: number | null;
     };
+    readonly septicShockAssessment?: {
+      readonly infectionAndOrganDysfunctionReviewedAtTick: number | null;
+      readonly culturesAndLactateAtTick: number | null;
+      readonly antimicrobialIntentAtTick: number | null;
+      readonly initialCrystalloidAtTick: number | null;
+      readonly postFluidReassessmentAtTick: number | null;
+      readonly norepinephrineIntentAtTick: number | null;
+      readonly sourceControlEscalationAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -305,6 +314,12 @@ export interface ActionCockpitProps {
       | 'perform-passive-leg-raise' | 'give-targeted-fluid-challenge'
       | 'reassess-perfusion' | 'escalate-after-reassessment',
   ) => void;
+  readonly onSepticShockAssessment?: (
+    action: 'review-infection-and-organ-dysfunction' | 'obtain-cultures-and-lactate'
+      | 'record-immediate-antimicrobial-intent' | 'begin-initial-crystalloid'
+      | 'reassess-after-initial-fluid' | 'start-norepinephrine-intent'
+      | 'escalate-source-control',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -380,6 +395,9 @@ export function crisisResponseAvailability(
     hasUndifferentiatedShockResponse: scenario.timeline.some(
       (event) => event.type === 'shock-pattern',
     ),
+    hasSepticShockResponse: scenario.timeline.some(
+      (event) => event.type === 'sepsis-pattern',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -428,6 +446,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || event.type === 'opioid-ventilatory-impairment',
   ) ? 'airway' : props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'tension-pneumothorax'
+      || event.type === 'sepsis-pattern'
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -441,7 +460,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasBronchospasmResponse, hasPreeclampsiaResponse, hasPneumothoraxResponse,
     hasAspirationRiskResponse, hasEmergenceResidualBlockResponse, hasDelayedEmergenceResponse,
     hasExtubationReadinessResponse, hasCiedPlanningResponse, hasPostoperativeHandoffResponse,
-    hasUndifferentiatedShockResponse,
+    hasUndifferentiatedShockResponse, hasSepticShockResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -465,8 +484,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
   const hasCrisisResponse = hasNonMaternalCrisisResponse || hasPreeclampsiaResponse
     || hasAspirationRiskResponse || hasEmergenceResidualBlockResponse
     || hasDelayedEmergenceResponse || hasExtubationReadinessResponse || hasCiedPlanningResponse
-    || hasPostoperativeHandoffResponse || hasUndifferentiatedShockResponse;
-  const responseTray = hasUndifferentiatedShockResponse && !hasNonMaternalCrisisResponse
+    || hasPostoperativeHandoffResponse || hasUndifferentiatedShockResponse
+    || hasSepticShockResponse;
+  const responseTray = hasSepticShockResponse && !hasNonMaternalCrisisResponse
+    ? { id: 'crisis', label: 'Sepsis response' } as const
+    : hasUndifferentiatedShockResponse && !hasNonMaternalCrisisResponse
     ? { id: 'crisis', label: 'Shock assessment' } as const
     : hasPostoperativeHandoffResponse && !hasNonMaternalCrisisResponse
     ? { id: 'crisis', label: 'Handoff' } as const
@@ -488,10 +510,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     ? { id: 'crisis', label: 'Aspiration check' } as const
     : hasPreeclampsiaResponse && !hasNonMaternalCrisisResponse
       ? { id: 'crisis', label: 'Maternal response' } as const : CRISIS_TRAY;
-  const focusedShockAssessment = hasUndifferentiatedShockResponse
+  const focusedEmergencyAssessment = (hasUndifferentiatedShockResponse || hasSepticShockResponse)
     && !hasNonMaternalCrisisResponse && props.scenario.formulary.length === 0;
   const trays = hasCrisisResponse
-    ? focusedShockAssessment ? [responseTray]
+    ? focusedEmergencyAssessment ? [responseTray]
       : props.scenario.formulary.length === 0 ? [responseTray, ...TRAYS] : [...TRAYS, responseTray]
     : TRAYS;
   const hasRocuronium = props.scenario.formulary.some((entry) => entry.drugId === 'rocuronium');
@@ -521,7 +543,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       )}
 
       {/* Pinned: running infusions are visible regardless of the selected tray. */}
-      {!focusedShockAssessment && <div className="actions__pinned" role="status" aria-label="Pump settings for running infusions">
+      {!focusedEmergencyAssessment && <div className="actions__pinned" role="status" aria-label="Pump settings for running infusions">
         {props.infusions.length === 0
           ? <span>No infusions running</span>
           : props.infusions.map((infusion) => (
@@ -758,6 +780,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 onAction={props.onUndifferentiatedShockAssessment ?? (() => {})}
               />
             )}
+            {hasSepticShockResponse && (
+              <SepticShockTray
+                assessment={props.resuscitation.septicShockAssessment}
+                onAction={props.onSepticShockAssessment ?? (() => {})}
+              />
+            )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
                 assessment={props.resuscitation.emergenceResidualBlockAssessment}
@@ -797,7 +825,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
             laptop with the demonstration strip up, and the dose buttons went
             below the fold. Here it costs nothing and is still found by anyone
             who scrolls to the end looking for the thing that is missing. */}
-        {!focusedShockAssessment && (tray === 'fluids' || (tray === 'crisis'
+        {!focusedEmergencyAssessment && (tray === 'fluids' || (tray === 'crisis'
           && !hasAspirationRiskResponse && !hasEmergenceResidualBlockResponse
           && !hasDelayedEmergenceResponse && !hasExtubationReadinessResponse)) && (
           <p className="actions__not-modelled field__hint">
@@ -1863,6 +1891,80 @@ function UndifferentiatedShockTray({ assessment, onAction }: {
             onClick={() => onAction('escalate-after-reassessment')}>Escalate ongoing shock workup</Button>
         </div>
         <p className="field__hint">No liberal repeat-fluid shortcut is offered. Etiologic treatment, vasopressors, procedures, and disposition remain outside this first slice.</p>
+      </section>
+    </div>
+  );
+}
+
+function SepticShockTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['septicShockAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onSepticShockAssessment']>;
+}) {
+  const recognized = assessment?.infectionAndOrganDysfunctionReviewedAtTick != null;
+  const diagnostics = assessment?.culturesAndLactateAtTick != null;
+  const antimicrobials = assessment?.antimicrobialIntentAtTick != null;
+  const fluid = assessment?.initialCrystalloidAtTick != null;
+  const reassessed = assessment?.postFluidReassessmentAtTick != null;
+  const norepinephrine = assessment?.norepinephrineIntentAtTick != null;
+  const escalated = assessment?.sourceControlEscalationAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="sepsis-recognition-title">
+        <div id="sepsis-recognition-title" className="syringe__name">Recognize and treat infection</div>
+        <Badge kind="teaching">Fixed ED vignette</Badge>
+        <div className="syringe__meta">Source clues · organ dysfunction · cultures · lactate</div>
+        <p className="syringe__remaining" role="status">
+          {antimicrobials ? 'Immediate empiric antimicrobial intent recorded'
+            : diagnostics ? 'Diagnostics recorded · do not wait for results'
+              : recognized ? 'Probable infection + organ dysfunction recognized'
+                : 'Parallel recognition and treatment pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={recognized}
+            onClick={() => onAction('review-infection-and-organ-dysfunction')}>
+            Review infection + organ dysfunction
+          </Button>
+          <Button className="crisis-drug__action" disabled={!recognized || diagnostics}
+            onClick={() => onAction('obtain-cultures-and-lactate')}>
+            Record cultures + lactate
+          </Button>
+          <Button className="crisis-drug__action" disabled={!diagnostics || antimicrobials}
+            onClick={() => onAction('record-immediate-antimicrobial-intent')}>
+            Record immediate antimicrobial intent
+          </Button>
+        </div>
+        <p className="field__hint">These controls record authored intent. They do not collect a specimen, select a drug, or simulate antimicrobial delivery.</p>
+      </section>
+      <section className="syringe" aria-labelledby="sepsis-resuscitation-title">
+        <div id="sepsis-resuscitation-title" className="syringe__name">Resuscitate, reassess, escalate</div>
+        <div className="syringe__meta">30 mL/kg · persistent shock · MAP 65 · source control</div>
+        <p className="syringe__remaining" role="status">
+          {escalated && norepinephrine ? 'Initial sequence closed · parallel support escalated'
+            : escalated ? 'Source-control escalation active · support shock in parallel'
+            : norepinephrine ? 'First-line vasopressor intent recorded'
+              : reassessed ? 'Persistent shock recognized after initial fluid'
+                : fluid ? 'Initial crystalloid course started · reassess next'
+                  : 'Initial hemodynamic response pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!recognized || fluid}
+            onClick={() => onAction('begin-initial-crystalloid')}>
+            Begin fixed 2,100 mL crystalloid course
+          </Button>
+          <Button className="crisis-drug__action" disabled={!fluid || reassessed}
+            onClick={() => onAction('reassess-after-initial-fluid')}>
+            Reassess after initial fluid
+          </Button>
+          <Button className="crisis-drug__action" disabled={!reassessed || norepinephrine}
+            onClick={() => onAction('start-norepinephrine-intent')}>
+            Record norepinephrine intent · MAP 65
+          </Button>
+          <Button className="crisis-drug__action" disabled={!recognized || escalated}
+            onClick={() => onAction('escalate-source-control')}>
+            Escalate source control + critical care
+          </Button>
+        </div>
+        <p className="field__hint">No antimicrobial choice, vasopressor dose, procedure, liberal repeat-fluid shortcut, or outcome is offered.</p>
       </section>
     </div>
   );
