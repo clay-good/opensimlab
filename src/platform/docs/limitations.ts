@@ -1246,6 +1246,39 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['hypothermia-and-rewarming'],
   },
   {
+    id: 'perioperative-glucose-results-are-fixed-teaching-values',
+    headline: 'The elevated and repeat glucose results are fixed teaching values, not measurements produced by a metabolic model.',
+    simplification: 'One event exposes 238 mg/dL and one eligible repeat records 174 mg/dL after '
+      + '30 simulated minutes.',
+    whereItMisleads: 'Predicting a patient’s glucose trajectory, treatment response, infection '
+      + 'risk, length of stay, or outcome from the displayed values.',
+    correctUnderstanding: 'Perioperative glucose reflects diabetes phenotype, stress, medications, '
+      + 'nutrition, organ function, surgery, sampling, treatment, and time.',
+    briefIn: ['perioperative-hyperglycemia'],
+  },
+  {
+    id: 'insulin-action-is-intent-without-dose-or-delivery',
+    headline: 'The insulin control records institutional-protocol intent; it does not choose, calculate, prepare, or deliver insulin.',
+    simplification: 'An accepted action starts a fixed response clock without a drug, dose, route, '
+      + 'infusion, pump, pharmacokinetic, or hypoglycemia model.',
+    whereItMisleads: 'Treating the button as an insulin order or assuming the fixed repeat value '
+      + 'demonstrates the effect of a real dose.',
+    correctUnderstanding: 'Insulin selection and administration require local protocols, patient '
+      + 'factors, active monitoring, and a plan to prevent and treat hypoglycemia.',
+    briefIn: ['perioperative-hyperglycemia'],
+  },
+  {
+    id: 'no-hyperglycemic-crisis-electrolyte-or-nutrition-model',
+    headline: 'The stable vignette does not assess hyperglycemic crisis, electrolytes, ketones, fluids, nutrition, or medication reconciliation.',
+    simplification: 'The lesson contains an isolated elevated glucose cue and no acid-base, '
+      + 'electrolyte, ketone, osmolar, renal, or nutritional state.',
+    whereItMisleads: 'Assuming an isolated result excludes diabetic ketoacidosis or hyperosmolar '
+      + 'state, or transferring this response to an unstable, fasting, pregnant, pediatric, or critically ill patient.',
+    correctUnderstanding: 'Clinical context determines the differential, investigations, target, '
+      + 'treatment, monitoring interval, and perioperative medication plan.',
+    briefIn: ['perioperative-hyperglycemia'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 32 reports bounded thermal response state. */
-export const WORKER_PROTOCOL_VERSION = 32;
+/** Bumped whenever the message shape changes incompatibly. Version 33 reports bounded glycemic response state. */
+export const WORKER_PROTOCOL_VERSION = 33;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -331,6 +331,15 @@ export interface EquipmentSnapshot {
       readonly coreTemperatureConfirmedAtTick: number | null;
       readonly forcedAirWarmingAtTick: number | null;
       readonly warmedBulkFluidsAtTick: number | null;
+    };
+    /** Bounded perioperative hyperglycemia recognition and response. */
+    readonly glycemicResponse?: {
+      readonly pointOfCareGlucoseMgPerDl: number | null;
+      readonly pointOfCareConfirmedAtTick: number | null;
+      readonly insulinProtocolIntentAtTick: number | null;
+      readonly repeatEligible: boolean;
+      readonly repeatPointOfCareAtTick: number | null;
+      readonly repeatPointOfCareGlucoseMgPerDl: number | null;
     };
     /** Accepted quantitative neuromuscular-reversal teaching state. */
     readonly neuromuscularReversalFraction?: number;

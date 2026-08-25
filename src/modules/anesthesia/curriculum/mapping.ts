@@ -1230,6 +1230,21 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'pc-anesthetic-plan-and-conduct',
     objectiveIds: ['recognize-perioperative-hypothermia', 'start-active-surface-warming', 'warm-bulk-perioperative-fluids', 'reassess-perioperative-rewarming'],
   },
+  {
+    scenarioId: 'perioperative-hyperglycemia', frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['confirm-perioperative-hyperglycemia', 'use-bounded-insulin-protocol', 'reassess-perioperative-glucose'],
+  },
+  {
+    scenarioId: 'perioperative-hyperglycemia', frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['confirm-perioperative-hyperglycemia', 'use-bounded-insulin-protocol', 'reassess-perioperative-glucose'],
+  },
+  {
+    scenarioId: 'perioperative-hyperglycemia', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-anesthetic-plan-and-conduct',
+    objectiveIds: ['confirm-perioperative-hyperglycemia', 'use-bounded-insulin-protocol', 'reassess-perioperative-glucose'],
+  },
 ];
 
 export interface DomainCoverage {

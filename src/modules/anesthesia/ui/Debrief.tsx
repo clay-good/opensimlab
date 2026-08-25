@@ -461,6 +461,9 @@ export function objectiveFindings(
     'start-active-surface-warming': 'vasodilation-versus-hypovolemia',
     'warm-bulk-perioperative-fluids': 'vasodilation-versus-hypovolemia',
     'reassess-perioperative-rewarming': 'depth-monitoring-and-its-limits',
+    'confirm-perioperative-hyperglycemia': 'depth-monitoring-and-its-limits',
+    'use-bounded-insulin-protocol': 'vasodilation-versus-hypovolemia',
+    'reassess-perioperative-glucose': 'depth-monitoring-and-its-limits',
     'recognize-hemorrhage': 'vasodilation-versus-hypovolemia',
     'temporize-volume-loss': 'vasodilation-versus-hypovolemia',
     'avoid-full-dose-induction': 'hysteresis-and-effect-site-lag',
@@ -2936,6 +2939,53 @@ export function objectiveFindings(
           ? `Core temperature reached ${(recovered.state.coreTemperatureC ?? 0).toFixed(1)}°C after active warming. This is a bounded teaching trajectory, not an individual rewarming prediction.`
           : 'Core temperature had not reached the declared 36.5°C reassessment point before the session ended.',
         atTick: recovered?.tick ?? history.at(-1)?.tick ?? onset,
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
+      'confirm-perioperative-hyperglycemia', 'use-bounded-insulin-protocol',
+      'reassess-perioperative-glucose',
+    ].includes(objective.id)) {
+      const onset = scenario.timeline.find(
+        (event) => event.type === 'perioperative-hyperglycemia',
+      )?.atTick;
+      if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) return {
+        ...base, outcome: 'not-exercised',
+        finding: 'The session ended before the fixed perioperative glucose cue appeared.',
+      } satisfies ObjectiveFinding;
+      const confirmed = log.find(
+        (event) => event.eventId.startsWith('point-of-care-glucose-confirmed-'),
+      );
+      const insulinIntent = log.find(
+        (event) => event.eventId.startsWith('insulin-protocol-intent-recorded-'),
+      );
+      const repeat = log.find(
+        (event) => event.eventId.startsWith('repeat-point-of-care-glucose-'),
+      );
+      if (objective.id === 'confirm-perioperative-hyperglycemia') return {
+        ...base, outcome: confirmed ? 'met' : 'not-met',
+        finding: confirmed
+          ? `Point-of-care glucose was deliberately confirmed at ${Number(confirmed.data?.glucoseMgPerDl ?? 0).toFixed(0)} mg/dL. Sampling and device performance are not inferred.`
+          : 'No accepted point-of-care glucose confirmation followed the elevated cue.',
+        atTick: confirmed?.tick ?? onset,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'use-bounded-insulin-protocol') return {
+        ...base, outcome: insulinIntent ? 'met' : 'not-met',
+        finding: insulinIntent
+          ? 'Institutional insulin-protocol intent was recorded after confirmation. No individualized dose or delivery was inferred.'
+          : 'No accepted institutional insulin-protocol response followed confirmation.',
+        atTick: insulinIntent?.tick ?? onset,
+      } satisfies ObjectiveFinding;
+      const repeatValue = Number(repeat?.data?.glucoseMgPerDl);
+      const inTarget = repeat !== undefined && repeatValue >= 100 && repeatValue <= 180;
+      return {
+        ...base, outcome: inTarget ? 'met' : 'not-met',
+        finding: inTarget
+          ? `The 30-minute repeat point-of-care glucose was ${repeatValue.toFixed(0)} mg/dL, within the declared 100–180 mg/dL perioperative target. This fixed response is not an individual prediction.`
+          : repeat
+            ? `The repeat point-of-care glucose was ${repeatValue.toFixed(0)} mg/dL, outside the declared target.`
+            : 'No accepted repeat point-of-care glucose was recorded after the response interval.',
+        atTick: repeat?.tick ?? history.at(-1)?.tick ?? onset,
       } satisfies ObjectiveFinding;
     }
 

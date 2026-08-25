@@ -589,3 +589,19 @@
   inspection, and full CI.
 - [ ] Add device settings, probe-site technique, redistribution compartments, heat-transfer
   calculation, shivering, comfort, complications, medication effects, emergence, or disposition.
+
+## Slice 40: bounded perioperative hyperglycemia
+
+- [x] Check in an evidence brief covering the 100–180 mg/dL perioperative target, point-of-care
+  confirmation, protocolized response, hypoglycemia risk, and unsafe inference boundaries.
+- [x] Add a thirty-seventh authored adult scenario with one fixed elevated glucose cue while
+  ventilation and circulation remain stable.
+- [x] Require point-of-care confirmation before dose-free institutional insulin-protocol intent,
+  then gate a fixed in-target repeat result behind 30 simulated minutes.
+- [x] Show both mg/dL and mmol/L and reject unsupported, duplicate, out-of-order, early, hostile,
+  and inactive response requests.
+- [x] Complete curriculum mapping, preparation path, limitations, catalog, SEO, responsive browser
+  inspection, and full CI.
+- [ ] Add continuous-monitor performance, sampling technique, insulin dose, route, preparation,
+  delivery, pharmacokinetics, hypoglycemia, rescue, electrolytes, ketones, acid-base state,
+  nutrition, medication reconciliation, complications, or outcome.

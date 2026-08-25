@@ -100,14 +100,15 @@ export const PREPARATION_PATHS: readonly PreparationPathDefinition[] = [
     supportedRoles: ['Medical student', 'Resident', 'Nurse anesthesia learner'], limitations: `${BROWSER_LIMIT} These bounded cases do not model fetal status, delivery, or a complete obstetric anesthetic.`,
   },
   {
-    id: 'medication-infusion-safety', version: '0.5.0', title: 'Medication and infusion safety',
-    description: 'Rehearse preprocedure medication-risk recognition, age-bounded titration, effect-site delay, depth-matched reversal, changing maintenance needs, paralysis, delivery failure, and toxicity as distinct medication risks.',
+    id: 'medication-infusion-safety', version: '0.6.0', title: 'Medication and infusion safety',
+    description: 'Rehearse preprocedure medication-risk recognition, age-bounded titration, effect-site delay, depth-matched reversal, changing maintenance needs, glycemic response, paralysis, delivery failure, and toxicity as distinct medication risks.',
     scenarioIds: [
       'aspiration-risk-recognition',
       'routine-induction', 'routine-geriatric-induction',
       'routine-inhalational-maintenance', 'rapid-sequence-induction',
       'quantitative-neuromuscular-reversal', 'emergence-with-residual-blockade',
       'awareness-under-paralysis', 'local-anesthetic-systemic-toxicity',
+      'perioperative-hyperglycemia',
     ],
     prerequisites: ['Read syringe and infusion controls.'],
     targetCompetencies: ['Dose timing', 'Delivery-state inspection', 'Toxicity recognition'],

@@ -45,6 +45,7 @@ import { EXTUBATION_READINESS } from './extubation-readiness';
 import { POST_EXTUBATION_OBSTRUCTION } from './post-extubation-obstruction';
 import { OPIOID_INDUCED_VENTILATORY_IMPAIRMENT } from './opioid-induced-ventilatory-impairment';
 import { HYPOTHERMIA_AND_REWARMING } from './hypothermia-and-rewarming';
+import { PERIOPERATIVE_HYPERGLYCEMIA } from './perioperative-hyperglycemia';
 
 export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_INDUCTION,
@@ -83,6 +84,7 @@ export const SCENARIOS: readonly Scenario[] = [
   POST_EXTUBATION_OBSTRUCTION,
   OPIOID_INDUCED_VENTILATORY_IMPAIRMENT,
   HYPOTHERMIA_AND_REWARMING,
+  PERIOPERATIVE_HYPERGLYCEMIA,
 ];
 
 /** The scenario a learner meets first. */

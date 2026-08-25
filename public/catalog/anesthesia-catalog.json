@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 36,
+  "scenarioCount": 37,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -795,6 +795,27 @@
         "Follow core temperature through rewarming rather than treating the warming action as the endpoint."
       ],
       "searchText": "hypothermia-and-rewarming hypothermia and rewarming right colon adenocarcinoma open right hemicolectomy recognize a falling core-temperature trend before treating one displayed value as an isolated number. core temperature was deliberately confirmed after the fixed cooling course began. restore active surface warming after the modeled interruption. active surface warming was recorded after core temperature confirmation. include the fixed remaining 700 ml crystalloid exposure in the thermal plan. bulk-fluid warming intent was recorded after core temperature confirmation. follow core temperature through rewarming rather than treating the warming action as the endpoint. core temperature subsequently reached at least 36.5°c in the bounded teaching trajectory."
+    },
+    {
+      "id": "perioperative-hyperglycemia",
+      "path": "/anesthesia/scenario/perioperative-hyperglycemia",
+      "title": "Perioperative hyperglycemia",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 8,
+      "difficulty": "introductory",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Confirm the elevated glucose with a point-of-care measurement rather than relying on an unverified cue.",
+        "Record an institutional insulin-protocol response without inventing an individualized dose.",
+        "Repeat the point-of-care glucose after the declared interval and interpret it against the perioperative target."
+      ],
+      "searchText": "perioperative-hyperglycemia perioperative hyperglycemia symptomatic cholelithiasis laparoscopic cholecystectomy confirm the elevated glucose with a point-of-care measurement rather than relying on an unverified cue. the fixed point-of-care glucose was deliberately confirmed after the cue appeared. record an institutional insulin-protocol response without inventing an individualized dose. insulin-protocol intent was recorded after point-of-care confirmation. repeat the point-of-care glucose after the declared interval and interpret it against the perioperative target. the fixed 30-minute repeat glucose was obtained and fell within 100–180 mg/dl."
     }
   ],
   "preparationPathCount": 10,
@@ -1028,9 +1049,9 @@
     },
     {
       "id": "medication-infusion-safety",
-      "version": "0.5.0",
+      "version": "0.6.0",
       "title": "Medication and infusion safety",
-      "description": "Rehearse preprocedure medication-risk recognition, age-bounded titration, effect-site delay, depth-matched reversal, changing maintenance needs, paralysis, delivery failure, and toxicity as distinct medication risks.",
+      "description": "Rehearse preprocedure medication-risk recognition, age-bounded titration, effect-site delay, depth-matched reversal, changing maintenance needs, glycemic response, paralysis, delivery failure, and toxicity as distinct medication risks.",
       "scenarioIds": [
         "aspiration-risk-recognition",
         "routine-induction",
@@ -1040,7 +1061,8 @@
         "quantitative-neuromuscular-reversal",
         "emergence-with-residual-blockade",
         "awareness-under-paralysis",
-        "local-anesthetic-systemic-toxicity"
+        "local-anesthetic-systemic-toxicity",
+        "perioperative-hyperglycemia"
       ],
       "prerequisites": [
         "Read syringe and infusion controls."
@@ -1056,7 +1078,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 76
+      "estimatedMinutes": 84
     },
     {
       "id": "handoff-escalation",

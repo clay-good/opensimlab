@@ -273,3 +273,8 @@ The thirty-ninth adds the thirty-sixth authored scenario and isolates a fixed pe
 course from the existing malignant-hyperthermia model. Core-temperature confirmation, active
 surface warming, bulk-fluid warming intent, and gradual observed recovery are inspectable. Device
 settings, probe technique, heat transfer, complications, and disposition remain excluded.
+The fortieth adds the thirty-seventh authored scenario and isolates a stable perioperative
+hyperglycemia recognition-and-response path. Point-of-care confirmation, dose-free institutional
+insulin-protocol intent, a 30-minute wait, a dual-unit repeat result, and target interpretation are
+inspectable. Sampling, individualized dosing, delivery, hypoglycemia, metabolic crises,
+electrolytes, nutrition, complications, and outcome remain excluded.

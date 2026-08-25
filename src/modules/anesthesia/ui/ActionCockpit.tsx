@@ -164,6 +164,14 @@ export interface ActionCockpitProps {
       readonly forcedAirWarmingAtTick: number | null;
       readonly warmedBulkFluidsAtTick: number | null;
     };
+    readonly glycemicResponse?: {
+      readonly pointOfCareGlucoseMgPerDl: number | null;
+      readonly pointOfCareConfirmedAtTick: number | null;
+      readonly insulinProtocolIntentAtTick: number | null;
+      readonly repeatEligible: boolean;
+      readonly repeatPointOfCareAtTick: number | null;
+      readonly repeatPointOfCareGlucoseMgPerDl: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -252,6 +260,10 @@ export interface ActionCockpitProps {
   readonly onThermalResponse?: (
     response: 'confirm-core-temperature' | 'start-forced-air-warming'
       | 'record-warmed-bulk-fluids',
+  ) => void;
+  readonly onGlycemicResponse?: (
+    response: 'confirm-point-of-care-glucose' | 'record-insulin-protocol-intent'
+      | 'repeat-point-of-care-glucose',
   ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
@@ -360,7 +372,8 @@ export const NOT_IN_THIS_BUILD =
 
 export function ActionCockpit(props: ActionCockpitProps) {
   const [tray, setTray] = useState<TrayId>(() => props.scenario.timeline.some(
-    (event) => event.type === 'perioperative-hypothermia',
+    (event) => event.type === 'perioperative-hypothermia'
+      || event.type === 'perioperative-hyperglycemia',
   ) ? 'fluids' : props.scenario.timeline.some(
     (event) => event.type === 'upper-airway-obstruction'
       || event.type === 'opioid-ventilatory-impairment',
@@ -390,6 +403,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
   );
   const hasThermalResponse = props.scenario.timeline.some(
     (event) => event.type === 'perioperative-hypothermia',
+  );
+  const hasGlycemicResponse = props.scenario.timeline.some(
+    (event) => event.type === 'perioperative-hyperglycemia',
   );
   const hasEpinephrineResponse = hasAnaphylaxisResponse || hasLastResponse;
   const hasNonMaternalCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse
@@ -487,8 +503,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
         )}
         {tray === 'fluids' && (
           <FluidTray
-            showStandardFluids={!hasThermalResponse}
-            thermalResponse={props.resuscitation.thermalResponse}
+            showStandardFluids={!hasThermalResponse && !hasGlycemicResponse}
+            thermalResponse={hasThermalResponse ? props.resuscitation.thermalResponse : undefined}
+            glycemicResponse={hasGlycemicResponse ? props.resuscitation.glycemicResponse : undefined}
             crystalloidTotalMl={props.resuscitation.crystalloidTotalMl}
             packedRedBloodCellUnits={props.resuscitation.packedRedBloodCellUnits ?? 0}
             freshFrozenPlasmaUnits={props.resuscitation.freshFrozenPlasmaUnits ?? 0}
@@ -505,6 +522,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
             onBloodBankRequest={props.onBloodBankRequest ?? (() => {})}
             onCoagulationLabs={props.onCoagulationLabs ?? (() => {})}
             onThermalResponse={props.onThermalResponse ?? (() => {})}
+            onGlycemicResponse={props.onGlycemicResponse ?? (() => {})}
           />
         )}
         {tray === 'airway' && (
@@ -1006,14 +1024,16 @@ function CardiacArrestTray({
 }
 
 function FluidTray({
-  showStandardFluids, thermalResponse,
+  showStandardFluids, thermalResponse, glycemicResponse,
   crystalloidTotalMl, packedRedBloodCellUnits, freshFrozenPlasmaUnits, bloodProductTotalMl,
   ageYears, hemorrhageAvailable, coagulationAvailable, coagulationPanelReported, bloodProductsReleased,
   prothrombinTimeRatio, fibrinogenGPerL,
   onFluid, onBloodProduct, onBloodBankRequest, onCoagulationLabs, onThermalResponse,
+  onGlycemicResponse,
 }: {
   showStandardFluids: boolean;
   thermalResponse: ActionCockpitProps['resuscitation']['thermalResponse'];
+  glycemicResponse: ActionCockpitProps['resuscitation']['glycemicResponse'];
   crystalloidTotalMl: number;
   packedRedBloodCellUnits: number;
   freshFrozenPlasmaUnits: number;
@@ -1030,6 +1050,7 @@ function FluidTray({
   onBloodBankRequest: () => void;
   onCoagulationLabs: () => void;
   onThermalResponse: NonNullable<ActionCockpitProps['onThermalResponse']>;
+  onGlycemicResponse: NonNullable<ActionCockpitProps['onGlycemicResponse']>;
 }) {
   const pediatric = ageYears < 18;
   const [pending, setPending] = useState<{ fluidId: string; volumeMl: number } | null>(null);
@@ -1073,6 +1094,43 @@ function FluidTray({
           <p className="field__hint">
             This records intent only. Device settings, probe technique, fluid delivery, heat
             transfer, complications, and individual rewarming time are not modeled.
+          </p>
+        </section>
+      )}
+      {glycemicResponse && (
+        <section className="syringe" aria-labelledby="glycemic-response-title">
+          <div id="glycemic-response-title" className="syringe__name">Glucose care</div>
+          <div className="syringe__meta">Confirm · respond · recheck</div>
+          <p className="syringe__remaining numeric" role="status">
+            {glycemicResponse.repeatPointOfCareGlucoseMgPerDl != null
+              ? `Repeat ${glycemicResponse.repeatPointOfCareGlucoseMgPerDl} mg/dL · ${(glycemicResponse.repeatPointOfCareGlucoseMgPerDl / 18.016).toFixed(1)} mmol/L`
+              : glycemicResponse.pointOfCareGlucoseMgPerDl != null
+                ? `Point-of-care cue ${glycemicResponse.pointOfCareGlucoseMgPerDl} mg/dL · ${(glycemicResponse.pointOfCareGlucoseMgPerDl / 18.016).toFixed(1)} mmol/L`
+                : 'No active modeled glucose course'}
+          </p>
+          <div className="syringe__presets">
+            <Button className="glycemic-response__action"
+              disabled={glycemicResponse.pointOfCareGlucoseMgPerDl === null
+                || glycemicResponse.pointOfCareConfirmedAtTick != null}
+              onClick={() => onGlycemicResponse('confirm-point-of-care-glucose')}>
+              Confirm point-of-care glucose
+            </Button>
+            <Button className="glycemic-response__action"
+              disabled={glycemicResponse.pointOfCareConfirmedAtTick == null
+                || glycemicResponse.insulinProtocolIntentAtTick != null}
+              onClick={() => onGlycemicResponse('record-insulin-protocol-intent')}>
+              Use institutional insulin protocol
+            </Button>
+            <Button className="glycemic-response__action"
+              disabled={!glycemicResponse.repeatEligible
+                || glycemicResponse.repeatPointOfCareAtTick != null}
+              onClick={() => onGlycemicResponse('repeat-point-of-care-glucose')}>
+              Repeat glucose at 30 min
+            </Button>
+          </div>
+          <p className="field__hint">
+            Target 100–180 mg/dL. This records protocol intent only; dose selection, delivery,
+            electrolytes, ketones, nutrition, and hypoglycemia rescue are not modeled.
           </p>
         </section>
       )}

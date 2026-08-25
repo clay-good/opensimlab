@@ -703,6 +703,9 @@ export function Cockpit({
           onThermalResponse={(response) => session.act({
             type: 'thermal-response', payload: { response },
           })}
+          onGlycemicResponse={(response) => session.act({
+            type: 'glycemic-response', payload: { response },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

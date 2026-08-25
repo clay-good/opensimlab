@@ -105,6 +105,7 @@ Reviewers run the routine induction themselves before answering.
 | B51 | In the post-extubation-obstruction lesson, soft-tissue collapse is visibly distinct from laryngospasm and bronchospasm; help, oxygen, continuous positive pressure, a held jaw thrust, and recovery are inspectable without implying a complete rescue algorithm or individual response time | | |
 | B52 | In the opioid-induced-ventilatory-impairment lesson, advancing sedation and a slow-rate/preserved-breath pattern appear before hypoxemia; help, ventilatory support, an opioid hold, dose-free naloxone intent, and spontaneous reassessment are inspectable without implying complete reversal or safe disposition | | |
 | B53 | In the hypothermia-and-rewarming lesson, a falling core-temperature trend, the below-36°C signal, active surface warming, bulk-fluid warming intent, and gradual recovery are inspectable without implying device competence, heat-transfer calculation, or individual timing | | |
+| B54 | In the perioperative-hyperglycemia lesson, point-of-care confirmation, dose-free institutional response intent, the 30-minute wait, dual-unit values, and in-target repeat are inspectable without implying an insulin order or individual response | | |
 | B45 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response

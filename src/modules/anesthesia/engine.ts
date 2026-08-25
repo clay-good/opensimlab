@@ -41,7 +41,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.34';
+export const ENGINE_VERSION = '0.1.0-alpha.35';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -345,6 +345,11 @@ export class AnesthesiaEngine {
   private coreTemperatureConfirmedAtTick: number | null = null;
   private forcedAirWarmingAtTick: number | null = null;
   private warmedBulkFluidsAtTick: number | null = null;
+  private hyperglycemicGlucoseMgPerDl: number | null = null;
+  private pointOfCareGlucoseConfirmedAtTick: number | null = null;
+  private insulinProtocolIntentAtTick: number | null = null;
+  private repeatPointOfCareAtTick: number | null = null;
+  private repeatPointOfCareGlucoseMgPerDl: number | null = null;
   /** Exclusive tick at which the bounded held airway maneuver ends. */
   private jawThrustCpapUntilTick = 0;
   /** Current lower-airway obstruction, retained for truthful equipment/accessibility output. */
@@ -1720,6 +1725,67 @@ export class AnesthesiaEngine {
           'The fixed 700 mL remaining crystalloid exposure will use a fluid warmer. Delivery mechanics and heat transfer are not modeled.');
         break;
       }
+      case 'glycemic-response': {
+        const response = action.payload.response;
+        if (this.hyperglycemicGlucoseMgPerDl === null
+          || !['confirm-point-of-care-glucose', 'record-insulin-protocol-intent',
+            'repeat-point-of-care-glucose'].includes(String(response))) {
+          this.log('warning', 'equipment', `glycemic-response-refused-${this.currentTick}`,
+            this.hyperglycemicGlucoseMgPerDl === null
+              ? 'No active modeled perioperative hyperglycemic course is available for this response.'
+              : 'The glycemic response was not one of the listed choices. Nothing changed.');
+          break;
+        }
+        if (response === 'confirm-point-of-care-glucose') {
+          if (this.pointOfCareGlucoseConfirmedAtTick !== null) {
+            this.log('warning', 'equipment', `glucose-confirmation-refused-${this.currentTick}`,
+              'The point-of-care glucose has already been confirmed.');
+            break;
+          }
+          this.pointOfCareGlucoseConfirmedAtTick = this.currentTick;
+          this.log('warning', 'equipment', `point-of-care-glucose-confirmed-${this.currentTick}`,
+            `Point-of-care glucose confirmed at ${this.hyperglycemicGlucoseMgPerDl.toFixed(0)} mg/dL. Sampling and device performance are not simulated.`,
+            { glucoseMgPerDl: this.hyperglycemicGlucoseMgPerDl });
+          break;
+        }
+        if (this.pointOfCareGlucoseConfirmedAtTick === null) {
+          this.log('warning', 'equipment', `glycemic-order-refused-${this.currentTick}`,
+            'Confirm the point-of-care glucose before recording the institutional insulin response.');
+          break;
+        }
+        if (response === 'record-insulin-protocol-intent') {
+          if (this.insulinProtocolIntentAtTick !== null) {
+            this.log('warning', 'equipment', `insulin-protocol-refused-${this.currentTick}`,
+              'Institutional insulin-protocol intent has already been recorded.');
+            break;
+          }
+          this.insulinProtocolIntentAtTick = this.currentTick;
+          this.log('warning', 'equipment', `insulin-protocol-intent-recorded-${this.currentTick}`,
+            'Institutional insulin-protocol intent recorded with a 100–180 mg/dL perioperative target. Dose selection, delivery, electrolytes, and hypoglycemia rescue are not modeled.');
+          break;
+        }
+        if (this.insulinProtocolIntentAtTick === null) {
+          this.log('warning', 'equipment', `glycemic-reassessment-refused-${this.currentTick}`,
+            'Record the institutional insulin response before the repeat point-of-care check.');
+          break;
+        }
+        if (this.repeatPointOfCareAtTick !== null) {
+          this.log('warning', 'equipment', `repeat-glucose-refused-${this.currentTick}`,
+            'The bounded repeat point-of-care glucose has already been recorded.');
+          break;
+        }
+        if (this.currentTick - this.insulinProtocolIntentAtTick < 18_000) {
+          this.log('warning', 'equipment', `repeat-glucose-too-early-${this.currentTick}`,
+            'The bounded repeat point-of-care check is not available until 30 simulated minutes after insulin-protocol intent.');
+          break;
+        }
+        this.repeatPointOfCareAtTick = this.currentTick;
+        this.repeatPointOfCareGlucoseMgPerDl = 174;
+        this.log('warning', 'equipment', `repeat-point-of-care-glucose-${this.currentTick}`,
+          'Repeat point-of-care glucose recorded at 174 mg/dL. This fixed response does not predict an individual insulin effect.',
+          { glucoseMgPerDl: 174 });
+        break;
+      }
       case 'silence-alarm': {
         this.alarmEngine.silence(String(action.payload.alarmId), this.currentTick, TICKS_PER_SECOND);
         break;
@@ -2201,6 +2267,18 @@ export class AnesthesiaEngine {
           return;
         }
         this.perioperativeTemperatureTargetC = target;
+        return;
+      }
+
+      case 'perioperative-hyperglycemia': {
+        const glucose = event.value;
+        if (typeof glucose !== 'number' || !Number.isFinite(glucose)
+          || glucose <= 180 || glucose > 400) {
+          this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" has an invalid hyperglycemic point-of-care result. It must be above 180 and at most 400 mg/dL, so the event had no effect.`);
+          return;
+        }
+        this.hyperglycemicGlucoseMgPerDl = glucose;
         return;
       }
 
@@ -3051,6 +3129,15 @@ export class AnesthesiaEngine {
           coreTemperatureConfirmedAtTick: this.coreTemperatureConfirmedAtTick,
           forcedAirWarmingAtTick: this.forcedAirWarmingAtTick,
           warmedBulkFluidsAtTick: this.warmedBulkFluidsAtTick,
+        },
+        glycemicResponse: {
+          pointOfCareGlucoseMgPerDl: this.hyperglycemicGlucoseMgPerDl,
+          pointOfCareConfirmedAtTick: this.pointOfCareGlucoseConfirmedAtTick,
+          insulinProtocolIntentAtTick: this.insulinProtocolIntentAtTick,
+          repeatEligible: this.insulinProtocolIntentAtTick !== null
+            && this.currentTick - this.insulinProtocolIntentAtTick >= 18_000,
+          repeatPointOfCareAtTick: this.repeatPointOfCareAtTick,
+          repeatPointOfCareGlucoseMgPerDl: this.repeatPointOfCareGlucoseMgPerDl,
         },
         neuromuscularReversalFraction: this.neuromuscularReversalFraction,
         postTetanicCount: this.postTetanicCount,

@@ -80,5 +80,6 @@ describe('Requirement: thermal care is focused, ordered, and device-agnostic', (
     expect(button('Warm remaining 700 mL crystalloid')!.disabled).toBe(false);
     expect(button('Start active surface warming')!.classList).toContain('thermal-response__action');
     expect(container.textContent).toContain('Device settings, probe technique');
+    expect(container.textContent).not.toContain('Glucose care');
   });
 });

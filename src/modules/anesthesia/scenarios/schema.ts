@@ -475,6 +475,14 @@ export function validateScenarioSemantics(scenario: unknown): ValidationError[] 
         message: `Timeline event "${String(event.id)}" must declare a finite hypothermic target from 34°C up to but not including 36°C.`,
       });
     }
+    if (event.type === 'perioperative-hyperglycemia'
+      && (typeof event.value !== 'number' || !Number.isFinite(event.value)
+        || event.value <= 180 || event.value > 400)) {
+      errors.push({
+        pointer: `/timeline/${index}/value`, rule: 'range',
+        message: `Timeline event "${String(event.id)}" must declare a finite hyperglycemic point-of-care result above 180 and at most 400 mg/dL.`,
+      });
+    }
     if (event.type === 'anaphylaxis'
       && (typeof event.value !== 'number' || !Number.isFinite(event.value)
         || event.value < 0 || event.value > 1)) {

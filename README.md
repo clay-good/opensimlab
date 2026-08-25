@@ -125,7 +125,7 @@ holds.
 
 The `/anesthesia` catalog keeps discovery local and linkable: search covers the patient, problem,
 procedure, and objectives, while difficulty, duration, and maturity filters are encoded in the URL.
-The unfiltered prerender still contains all 33 current scenarios, so filtering adds no telemetry and
+The unfiltered prerender still contains all 37 current scenarios, so filtering adds no telemetry and
 does not trade away no-script access or scenario-page indexing.
 `/catalog/anesthesia-catalog.json` publishes the same 33 exact-version entries, filters, objectives,
 and normalized search text for static integrations; its schema and data are included in the offline
@@ -351,6 +351,11 @@ intraoperative maintenance, a fixed cooling course lowers core temperature while
 ventilation remain observable. The learner confirms the trend, restores active surface warming,
 records warming intent for a fixed 700 mL crystalloid exposure, and follows gradual recovery.
 Device setup, probe technique, heat transfer, complications, comfort, and disposition are absent.
+Slice 40 adds the thirty-seventh authored scenario, perioperative hyperglycemia. A fixed elevated
+glucose cue opens an ordered point-of-care confirmation, dose-free institutional insulin-protocol
+intent, 30-minute simulated wait, and repeat result within the declared 100–180 mg/dL target.
+Sampling, individualized dosing, delivery, hypoglycemia, electrolytes, ketones, nutrition,
+complications, and outcome are absent.
 
 ## Running it
 

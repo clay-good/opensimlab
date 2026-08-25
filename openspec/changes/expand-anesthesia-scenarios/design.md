@@ -653,3 +653,15 @@ stable. The learner confirms core temperature, restores active surface warming, 
 The cooling and warming curves are deterministic teaching targets, not a redistribution or
 energy-balance model. Device settings, probe technique, skin contact, fluid-delivery heat transfer,
 shivering, comfort, complications, medication effects, emergence, and disposition remain excluded.
+
+## Slice 40: bounded perioperative hyperglycemia
+
+The thirty-seventh authored scenario isolates one perioperative glucose cue while modeled
+ventilation and circulation stay stable. The learner confirms the fixed 238 mg/dL result, records
+institutional insulin-protocol intent without choosing a dose, waits 30 simulated minutes, and
+obtains a fixed 174 mg/dL repeat inside the declared 100–180 mg/dL target.
+
+The two glucose values and response interval are deterministic teaching fixtures, not a metabolic
+or insulin model. Sampling, continuous-monitor performance, dose, route, preparation, delivery,
+pharmacokinetics, hypoglycemia, rescue, electrolytes, ketones, acid-base state, nutrition,
+medication reconciliation, complications, and outcome remain excluded.

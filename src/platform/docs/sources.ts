@@ -1221,6 +1221,36 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-24',
   },
   {
+    id: 'ada-hospital-care-2026',
+    currency: {
+      lastAmended: '2026',
+      checkedAt: 'https://diabetesjournals.org/care/article/49/Supplement_1/S339/163925/16-Diabetes-Care-in-the-Hospital-Standards-of-Care',
+    },
+    authors: 'American Diabetes Association Professional Practice Committee',
+    title: 'Diabetes Care in the Hospital: Standards of Care in Diabetes—2026',
+    publication: 'Diabetes Care',
+    year: 2026,
+    locator: '49(Suppl 1):S339-S355',
+    usedFor: 'The perioperative glucose lesson: monitor blood glucose before, during, and after '
+      + 'surgery; use a 100–180 mg/dL target; do not use continuous glucose monitoring alone '
+      + 'during surgery; and avoid stricter targets that increase hypoglycemia risk.',
+    verifiedAgainst: 'Current Diabetes Care Standards of Care 2026 article',
+    verifiedOn: '2026-08-24',
+  },
+  {
+    id: 'endocrine-society-inpatient-hyperglycemia-2022',
+    pmid: '35709363',
+    authors: 'Korytkowski MT, Muniyappa R, Antinori-Lent K, et al',
+    title: 'Management of Hyperglycemia in Hospitalized Adult Patients in Non-Critical Care Settings: An Endocrine Society Clinical Practice Guideline',
+    publication: 'J Clin Endocrinol Metab',
+    year: 2022,
+    locator: '107:2101-28',
+    usedFor: 'The safe scope boundary for inpatient hyperglycemia: treatment and monitoring are '
+      + 'protocolized and individualized, so this lesson records intent without supplying a dose.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-24',
+  },
+  {
     id: 'schwid-2001',
     pmid: '11302037',
     authors: 'Schwid HA, Rooke GA, Michalowski P, Ross BK',

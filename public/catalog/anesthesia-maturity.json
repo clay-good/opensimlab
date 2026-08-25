@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "recordCount": 51,
+  "recordCount": 52,
   "records": [
     {
       "recordId": "scenario:routine-induction@0.1.0",
@@ -397,6 +397,17 @@
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#hypothermia-and-rewarming@0.1.0",
         "/catalog/anesthesia-quality-audit.json#hypothermia-and-rewarming@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:perioperative-hyperglycemia@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "perioperative-hyperglycemia",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#perioperative-hyperglycemia@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#perioperative-hyperglycemia@0.1.0"
       ]
     },
     {

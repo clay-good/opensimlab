@@ -48,7 +48,7 @@ describe('Requirement: delayed emergence uses an ordered differential', () => {
   it('validates, registers, maps every objective, and starts with supported physiology', () => {
     expect(validateScenario(SCENARIO)).toEqual([]);
     expect(SCENARIOS).toContain(SCENARIO);
-    expect(SCENARIOS).toHaveLength(36);
+    expect(SCENARIOS).toHaveLength(37);
     const subject = engine();
     expect(subject.step().state.trainOfFourRatio).toBeCloseTo(0.95, 6);
     expect(subject.equipment()).toMatchObject({

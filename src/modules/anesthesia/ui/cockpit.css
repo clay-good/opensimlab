@@ -278,6 +278,7 @@
 .airway-rescue__action { min-block-size: 44px; }
 .opioid-response__action { min-block-size: 44px; }
 .thermal-response__action { min-block-size: 44px; }
+.glycemic-response__action { min-block-size: 44px; }
 .model-detail__action { min-block-size: 44px; }
 .model-detail__identity { overflow-wrap: anywhere; }
 
