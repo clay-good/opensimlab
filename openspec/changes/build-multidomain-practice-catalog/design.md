@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with 19 playable, completion-audited scenarios. The remaining
-6 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with 20 playable, completion-audited scenarios. The remaining
+5 planned titles remain descriptive scope only and do not enter playable counts before their full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -458,6 +458,20 @@ The two-card surface turns the core lesson into “three signals name the crisis
 ketones, not just the glucose.” It does not examine or sample the patient, calculate deficits or
 doses, select or deliver fluids, electrolytes, insulin, or dextrose, operate pumps, model laboratory
 kinetics or complications, or predict disposition, recurrence, and outcome.
+
+### Wave B slice 20: hyperkalemia with ECG change
+
+The twentieth emergency-medicine slice adds confirmed severe hyperkalemia with bradycardia, peaked
+T waves, P-wave flattening, and QRS widening in an adult with CKD, dehydration, and medication
+drivers. Learners review the fixed potassium and ECG; record immediate local-protocol calcium-salt
+intent; record insulin-glucose with glucose surveillance and adjunct beta-2 agonist intent; stop
+contributors; activate renal expertise, potassium removal, and dialysis contingency; then reassess
+a fixed ECG, potassium, glucose, and rebound-risk panel.
+
+The focused surface makes the temporal logic unmistakable: protect the heart, shift now, remove
+next, and watch for return. It does not acquire a specimen or ECG, select or deliver a dose, model
+potassium kinetics or hypoglycemia, choose a removal strategy, perform dialysis, or predict later
+rebound, disposition, recurrence, and outcome.
 
 #### Critical care: 24
 

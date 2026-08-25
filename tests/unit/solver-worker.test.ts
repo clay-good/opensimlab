@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: diabetic ketoacidosis state has protocol version 52', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(52);
+  it('Scenario: hyperkalemia state has protocol version 53', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(53);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

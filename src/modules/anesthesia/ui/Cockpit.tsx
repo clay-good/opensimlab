@@ -769,6 +769,9 @@ export function Cockpit({
           onDiabeticKetoacidosisResponse={(action) => session.act({
             type: 'diabetic-ketoacidosis-response', payload: { action },
           })}
+          onHyperkalemiaResponse={(action) => session.act({
+            type: 'hyperkalemia-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

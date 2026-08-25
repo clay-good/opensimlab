@@ -362,6 +362,12 @@ export class AnesthesiaEngine {
   private dkaInsulinAtTick: number | null = null;
   private dkaDextroseAtTick: number | null = null;
   private dkaTransitionAtTick: number | null = null;
+  private hyperkalemiaPatternReviewedAtTick: number | null = null;
+  private hyperkalemiaCalciumAtTick: number | null = null;
+  private hyperkalemiaInsulinGlucoseAtTick: number | null = null;
+  private hyperkalemiaBetaAgonistAtTick: number | null = null;
+  private hyperkalemiaRemovalAtTick: number | null = null;
+  private hyperkalemiaReassessedAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2087,6 +2093,109 @@ export class AnesthesiaEngine {
         this.dkaTransitionAtTick = this.currentTick;
         this.log('advisory', 'assessment', `dka-transition-${this.currentTick}`,
           'Fixed resolution panel: glucose 186 mg/dL, β-hydroxybutyrate 0.4 mmol/L, venous pH 7.32, bicarbonate 19 mmol/L, and potassium 4.0 mmol/L. Plasma ketone plus pH or bicarbonate criteria are met; anion gap and urine ketones were not used alone. Protocol-guided subcutaneous insulin overlap, replacement of the failed infusion set, sick-day education, supply access, and follow-up were recorded for handoff. Dosing, delivery, device testing, disposition, recurrence, and outcome are not simulated.', { intentOnly: true, glucoseMgPerDl: 186, betaHydroxybutyrateMmolPerL: 0.4, venousPh: 7.32, bicarbonateMmolPerL: 19, potassiumMmolPerL: 4.0 });
+        break;
+      }
+      case 'hyperkalemia-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'hyperkalemia-with-ecg-change');
+        const valid = ['review-hyperkalemia-pattern', 'record-hyperkalemia-calcium-intent',
+          'record-hyperkalemia-insulin-glucose', 'record-hyperkalemia-beta-agonist',
+          'record-hyperkalemia-removal-and-cause-control', 'reassess-hyperkalemia'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `hyperkalemia-response-refused-${this.currentTick}`,
+            supported ? 'The hyperkalemia action was not one of the listed choices. Nothing changed.'
+              : 'The bounded hyperkalemia choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-hyperkalemia-pattern') {
+          if (this.hyperkalemiaPatternReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `hyperkalemia-review-refused-${this.currentTick}`,
+              'The fixed hyperkalemia pattern has already been reviewed.');
+            break;
+          }
+          this.hyperkalemiaPatternReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `hyperkalemia-reviewed-${this.currentTick}`,
+            'Fixed review: a nonhemolyzed repeat potassium is 7.1 mmol/L with bradycardia, peaked T waves, P-wave flattening, and QRS 140 ms. The patient has stage 4 CKD, dehydration, lisinopril exposure, and a new trimethoprim course. Glucose is 108 mg/dL; no arrest is authored. This screen does not acquire labs or interpret a real ECG.');
+          break;
+        }
+        if (this.hyperkalemiaPatternReviewedAtTick === null) {
+          this.log('warning', 'assessment', `hyperkalemia-order-refused-${this.currentTick}`,
+            'Review ABCDE, the confirmed potassium, ECG toxicity, glucose, renal function, and drivers first.');
+          break;
+        }
+        if (response === 'record-hyperkalemia-calcium-intent') {
+          if (this.hyperkalemiaCalciumAtTick !== null) {
+            this.log('warning', 'drug', `hyperkalemia-calcium-refused-${this.currentTick}`,
+              'The bounded calcium-salt intent has already been recorded.');
+            break;
+          }
+          this.hyperkalemiaCalciumAtTick = this.currentTick;
+          this.log('critical', 'drug', `hyperkalemia-calcium-${this.currentTick}`,
+            'Immediate local-protocol IV calcium-salt intent was recorded for ECG toxicity. Fixed repeat ECG shows HR 62/min, visible P waves, narrower QRS 104 ms, and less prominent T waves; potassium remains authored at 7.1 mmol/L because calcium stabilizes the myocardium but does not remove or shift potassium. Salt selection, dose, access, delivery, repeat dosing, and individual response are not simulated.', { intentOnly: true, potassiumMmolPerL: 7.1, repeatQrsMs: 104 });
+          break;
+        }
+        if (this.hyperkalemiaCalciumAtTick === null) {
+          this.log('warning', 'assessment', `hyperkalemia-calcium-order-refused-${this.currentTick}`,
+            'Protect the myocardium for the authored ECG toxicity before recording potassium-shifting intent.');
+          break;
+        }
+        if (response === 'record-hyperkalemia-insulin-glucose') {
+          if (this.hyperkalemiaInsulinGlucoseAtTick !== null) {
+            this.log('warning', 'drug', `hyperkalemia-insulin-refused-${this.currentTick}`,
+              'The bounded insulin-glucose intent has already been recorded.');
+            break;
+          }
+          this.hyperkalemiaInsulinGlucoseAtTick = this.currentTick;
+          this.log('critical', 'drug', `hyperkalemia-insulin-glucose-${this.currentTick}`,
+            'Local-protocol IV insulin-glucose intent was recorded with baseline and structured post-treatment glucose surveillance. Dose, glucose formulation, infusion, potassium shift, hypoglycemia, and rescue are not simulated.', { intentOnly: true, baselineGlucoseMgPerDl: 108 });
+          break;
+        }
+        if (this.hyperkalemiaInsulinGlucoseAtTick === null) {
+          this.log('warning', 'assessment', `hyperkalemia-shift-order-refused-${this.currentTick}`,
+            'Record insulin-glucose and its glucose-surveillance boundary before the adjunct shifting path.');
+          break;
+        }
+        if (response === 'record-hyperkalemia-beta-agonist') {
+          if (this.hyperkalemiaBetaAgonistAtTick !== null) {
+            this.log('warning', 'drug', `hyperkalemia-beta-agonist-refused-${this.currentTick}`,
+              'The bounded beta-2 agonist intent has already been recorded.');
+            break;
+          }
+          this.hyperkalemiaBetaAgonistAtTick = this.currentTick;
+          this.log('critical', 'drug', `hyperkalemia-beta-agonist-${this.currentTick}`,
+            'Adjunct nebulized beta-2 agonist intent was recorded alongside insulin-glucose, not as sole therapy. Agent, dose, delivery, response variability, and adverse effects are not simulated.', { intentOnly: true });
+          break;
+        }
+        if (this.hyperkalemiaBetaAgonistAtTick === null) {
+          this.log('warning', 'assessment', `hyperkalemia-removal-order-refused-${this.currentTick}`,
+            'Complete the bounded temporary shifting path before definitive removal and cause control.');
+          break;
+        }
+        if (response === 'record-hyperkalemia-removal-and-cause-control') {
+          if (this.hyperkalemiaRemovalAtTick !== null) {
+            this.log('warning', 'assessment', `hyperkalemia-removal-refused-${this.currentTick}`,
+              'The potassium-removal and cause-control plan has already been recorded.');
+            break;
+          }
+          this.hyperkalemiaRemovalAtTick = this.currentTick;
+          this.log('critical', 'assessment', `hyperkalemia-removal-${this.currentTick}`,
+            'Lisinopril and trimethoprim were held; dehydration and kidney injury evaluation, renal consultation, local potassium-removal strategy, and urgent dialysis contingency for refractory severe hyperkalemia were recorded. Binder, diuretic, fluid, and dialysis selection or delivery are not simulated.', { intentOnly: true });
+          break;
+        }
+        if (this.hyperkalemiaRemovalAtTick === null) {
+          this.log('warning', 'assessment', `hyperkalemia-reassessment-order-refused-${this.currentTick}`,
+            'Record definitive potassium removal, driver control, and dialysis contingency before reassessment.');
+          break;
+        }
+        if (this.hyperkalemiaReassessedAtTick !== null) {
+          this.log('warning', 'assessment', `hyperkalemia-reassessment-refused-${this.currentTick}`,
+            'The fixed hyperkalemia reassessment has already been recorded.');
+          break;
+        }
+        this.hyperkalemiaReassessedAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `hyperkalemia-reassessed-${this.currentTick}`,
+          'Fixed 1-hour reassessment: potassium 5.8 mmol/L, glucose 92 mg/dL, HR 68/min, visible P waves, QRS 98 ms, and no new instability. Severe toxicity improved, but CKD and temporary shifting create rebound risk. Continued ECG, potassium, glucose, renal, removal, and recurrence surveillance were handed off; dialysis, later course, disposition, and outcome are outside this lesson.', { potassiumMmolPerL: 5.8, glucoseMgPerDl: 92, qrsMs: 98 });
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -5194,6 +5303,14 @@ export class AnesthesiaEngine {
           insulinAtTick: this.dkaInsulinAtTick,
           dextroseAtTick: this.dkaDextroseAtTick,
           transitionAtTick: this.dkaTransitionAtTick,
+        },
+        hyperkalemiaAssessment: {
+          patternReviewedAtTick: this.hyperkalemiaPatternReviewedAtTick,
+          calciumAtTick: this.hyperkalemiaCalciumAtTick,
+          insulinGlucoseAtTick: this.hyperkalemiaInsulinGlucoseAtTick,
+          betaAgonistAtTick: this.hyperkalemiaBetaAgonistAtTick,
+          removalAtTick: this.hyperkalemiaRemovalAtTick,
+          reassessedAtTick: this.hyperkalemiaReassessedAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

@@ -308,6 +308,14 @@ export interface ActionCockpitProps {
       readonly dextroseAtTick: number | null;
       readonly transitionAtTick: number | null;
     };
+    readonly hyperkalemiaAssessment?: {
+      readonly patternReviewedAtTick: number | null;
+      readonly calciumAtTick: number | null;
+      readonly insulinGlucoseAtTick: number | null;
+      readonly betaAgonistAtTick: number | null;
+      readonly removalAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -488,6 +496,11 @@ export interface ActionCockpitProps {
       | 'record-dka-potassium-replacement' | 'record-dka-insulin-intent'
       | 'add-dextrose-and-continue-insulin' | 'confirm-dka-resolution-and-transition',
   ) => void;
+  readonly onHyperkalemiaResponse?: (
+    action: 'review-hyperkalemia-pattern' | 'record-hyperkalemia-calcium-intent'
+      | 'record-hyperkalemia-insulin-glucose' | 'record-hyperkalemia-beta-agonist'
+      | 'record-hyperkalemia-removal-and-cause-control' | 'reassess-hyperkalemia',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -610,6 +623,9 @@ export function crisisResponseAvailability(
     hasDiabeticKetoacidosisResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'diabetic-ketoacidosis',
     ),
+    hasHyperkalemiaResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'hyperkalemia-with-ecg-change',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -675,6 +691,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'acute-ischemic-stroke')
       || (event.type === 'narrative' && event.target === 'intracranial-hemorrhage-deterioration')
       || (event.type === 'narrative' && event.target === 'diabetic-ketoacidosis')
+      || (event.type === 'narrative' && event.target === 'hyperkalemia-with-ecg-change')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -698,6 +715,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasAcuteIschemicStrokeResponse,
     hasIntracranialHemorrhageResponse,
     hasDiabeticKetoacidosisResponse,
+    hasHyperkalemiaResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -724,7 +742,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasCardiacArrestResponse || hasHighSpinalResponse || hasVenousAirEmbolismResponse
     || hasPneumothoraxResponse || hasBronchospasmResponse || hasStatusEpilepticusResponse
     || hasAcuteIschemicStrokeResponse || hasIntracranialHemorrhageResponse
-    || hasDiabeticKetoacidosisResponse;
+    || hasDiabeticKetoacidosisResponse || hasHyperkalemiaResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -740,8 +758,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasAcutePulmonaryEdemaResponse || hasPulmonaryEmbolismResponse || hasStemiResponse
     || hasUnstableNarrowTachycardiaResponse || hasUnstableBradycardiaResponse
     || hasStatusEpilepticusResponse || hasAcuteIschemicStrokeResponse
-    || hasIntracranialHemorrhageResponse || hasDiabeticKetoacidosisResponse;
-  const responseTray = hasDiabeticKetoacidosisResponse
+    || hasIntracranialHemorrhageResponse || hasDiabeticKetoacidosisResponse
+    || hasHyperkalemiaResponse;
+  const responseTray = hasHyperkalemiaResponse
+    ? { id: 'crisis', label: 'Severe hyperkalemia' } as const
+    : hasDiabeticKetoacidosisResponse
     ? { id: 'crisis', label: 'DKA pathway' } as const
     : hasIntracranialHemorrhageResponse
     ? { id: 'crisis', label: 'ICH deterioration' } as const
@@ -804,6 +825,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasAcuteIschemicStrokeResponse
     || hasIntracranialHemorrhageResponse
     || hasDiabeticKetoacidosisResponse
+    || hasHyperkalemiaResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1169,6 +1191,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <DiabeticKetoacidosisTray
                 assessment={props.resuscitation.diabeticKetoacidosisAssessment}
                 onAction={props.onDiabeticKetoacidosisResponse ?? (() => {})} />
+            )}
+            {hasHyperkalemiaResponse && (
+              <HyperkalemiaTray assessment={props.resuscitation.hyperkalemiaAssessment}
+                onAction={props.onHyperkalemiaResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -3202,6 +3228,61 @@ function DiabeticKetoacidosisTray({ assessment, onAction }: {
             onClick={() => onAction('confirm-dka-resolution-and-transition')}>Confirm resolution + transition safely</Button>
         </div>
         <p className="field__hint">Resolution uses plasma ketone plus pH or bicarbonate, not anion gap or urine ketones alone. No infusion, lab kinetics, complication, disposition, or outcome is simulated.</p>
+      </section>
+    </div>
+  );
+}
+
+function HyperkalemiaTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['hyperkalemiaAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onHyperkalemiaResponse']>;
+}) {
+  const reviewed = assessment?.patternReviewedAtTick != null;
+  const calcium = assessment?.calciumAtTick != null;
+  const insulin = assessment?.insulinGlucoseAtTick != null;
+  const betaAgonist = assessment?.betaAgonistAtTick != null;
+  const removal = assessment?.removalAtTick != null;
+  const reassessed = assessment?.reassessedAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="hyperkalemia-heart-title">
+        <div id="hyperkalemia-heart-title" className="syringe__name">Protect the heart first.</div>
+        <Badge kind="teaching">K 7.1 · ECG toxicity · no arrest</Badge>
+        <div className="syringe__meta">HR 48 · peaked T · flat P · QRS 140 ms</div>
+        <p className="syringe__remaining" role="status">
+          {calcium ? 'ECG stabilized · QRS 104 ms · K still 7.1'
+            : reviewed ? 'Severe toxicity recognized · calcium intent next'
+              : 'Confirmed K + ECG + driver review pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={reviewed}
+            onClick={() => onAction('review-hyperkalemia-pattern')}>Review K + ECG + drivers</Button>
+          <Button className="crisis-drug__action" disabled={!reviewed || calcium}
+            onClick={() => onAction('record-hyperkalemia-calcium-intent')}>Record IV calcium-salt intent</Button>
+        </div>
+        <p className="field__hint">Calcium protects the myocardium; it does not lower potassium. Salt, dose, access, delivery, and repeat dosing follow local protocol and are not simulated.</p>
+      </section>
+      <section className="syringe" aria-labelledby="hyperkalemia-potassium-title">
+        <div id="hyperkalemia-potassium-title" className="syringe__name">Shift now. Remove next. Watch for return.</div>
+        <div className="syringe__meta">Insulin-glucose · adjunct shift · removal · rebound</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? '1-hour K 5.8 · glucose 92 · QRS 98 ms · keep watching'
+            : removal ? 'Removal + cause control active · reassess next'
+              : betaAgonist ? 'Temporary shifting complete · remove K next'
+                : insulin ? 'Insulin-glucose recorded · adjunct available'
+                  : calcium ? 'Myocardium protected · shifting available' : 'Calcium intent pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!calcium || insulin}
+            onClick={() => onAction('record-hyperkalemia-insulin-glucose')}>Record insulin-glucose + surveillance</Button>
+          <Button className="crisis-drug__action" disabled={!insulin || betaAgonist}
+            onClick={() => onAction('record-hyperkalemia-beta-agonist')}>Record adjunct beta-2 shift</Button>
+          <Button className="crisis-drug__action" disabled={!betaAgonist || removal}
+            onClick={() => onAction('record-hyperkalemia-removal-and-cause-control')}>Remove K + stop drivers + renal help</Button>
+          <Button className="crisis-drug__action" disabled={!removal || reassessed}
+            onClick={() => onAction('reassess-hyperkalemia')}>Recheck ECG + K + glucose</Button>
+        </div>
+        <p className="field__hint">No ECG reading, dose, delivery, potassium kinetics, glucose complication, binder, diuresis, dialysis, recurrence, disposition, or outcome is simulated.</p>
       </section>
     </div>
   );

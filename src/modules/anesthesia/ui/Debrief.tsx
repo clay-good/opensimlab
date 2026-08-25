@@ -2857,6 +2857,49 @@ export function objectiveFindings(
         atTick: transition?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-severe-hyperkalemia-toxicity', 'protect-heart-in-hyperkalemia',
+      'shift-potassium-and-protect-glucose', 'remove-potassium-and-control-cause',
+      'reassess-hyperkalemia-and-rebound'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'hyperkalemia-with-ecg-change');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The hyperkalemia-with-ECG-change vignette was not active.' } satisfies ObjectiveFinding;
+      const reviewed = log.find((event) => event.eventId.startsWith('hyperkalemia-reviewed-'));
+      const calcium = log.find((event) => /^hyperkalemia-calcium-\d+$/.test(event.eventId));
+      const insulin = log.find((event) => /^hyperkalemia-insulin-glucose-\d+$/.test(event.eventId));
+      const betaAgonist = log.find((event) => /^hyperkalemia-beta-agonist-\d+$/.test(event.eventId));
+      const removal = log.find((event) => /^hyperkalemia-removal-\d+$/.test(event.eventId));
+      const reassessed = log.find((event) => /^hyperkalemia-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'recognize-severe-hyperkalemia-toxicity') return {
+        ...base, outcome: reviewed ? 'met' : 'not-met',
+        finding: reviewed ? 'Confirmed severe potassium elevation and ECG toxicity were integrated with glucose, CKD, dehydration, and medication drivers.'
+          : 'The fixed severe hyperkalemia pattern and drivers were not reviewed.',
+        atTick: reviewed?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'protect-heart-in-hyperkalemia') {
+        const ordered = reviewed && calcium && reviewed.tick <= calcium.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered ? 'Calcium-salt intent followed ECG-toxicity recognition and improved the authored ECG without claiming potassium reduction.'
+            : 'Myocardial-protection intent was absent or out of order.', atTick: calcium?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'shift-potassium-and-protect-glucose') {
+        const ordered = calcium && insulin && betaAgonist
+          && calcium.tick <= insulin.tick && insulin.tick <= betaAgonist.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered ? 'Insulin-glucose with glucose surveillance and an adjunct beta-2 agonist followed myocardial protection.'
+            : 'The bounded shifting and glucose-surveillance sequence was incomplete or out of order.', atTick: betaAgonist?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'remove-potassium-and-control-cause') {
+        const ordered = betaAgonist && removal && betaAgonist.tick <= removal.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered ? 'Contributors were held and renal removal plus dialysis contingency followed temporary shifting.'
+            : 'Definitive removal and cause control were absent or out of order.', atTick: removal?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = removal && reassessed && removal.tick <= reassessed.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met',
+        finding: ordered ? 'ECG, potassium, glucose, kidney function, removal, and rebound risk were reassessed without claiming resolution.'
+          : 'Serial reassessment and rebound surveillance were incomplete or out of order.', atTick: reassessed?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

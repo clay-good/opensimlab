@@ -18,6 +18,7 @@ import { STATUS_EPILEPTICUS } from './status-epilepticus';
 import { ACUTE_ISCHEMIC_STROKE } from './acute-ischemic-stroke';
 import { INTRACRANIAL_HEMORRHAGE_DETERIORATION } from './intracranial-hemorrhage-deterioration';
 import { DIABETIC_KETOACIDOSIS } from './diabetic-ketoacidosis';
+import { HYPERKALEMIA_WITH_ECG_CHANGE } from './hyperkalemia-with-ecg-change';
 
 export const EMERGENCY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   UNDIFFERENTIATED_SHOCK,
@@ -39,6 +40,7 @@ export const EMERGENCY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   ACUTE_ISCHEMIC_STROKE,
   INTRACRANIAL_HEMORRHAGE_DETERIORATION,
   DIABETIC_KETOACIDOSIS,
+  HYPERKALEMIA_WITH_ECG_CHANGE,
 ];
 export const DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID = UNDIFFERENTIATED_SHOCK.metadata.id;
 

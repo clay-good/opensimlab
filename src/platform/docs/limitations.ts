@@ -1850,6 +1850,40 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['diabetic-ketoacidosis'],
   },
   {
+    id: 'hyperkalemia-potassium-ecg-and-response-are-authored',
+    headline: 'The potassium, ECG pattern, glucose, kidney findings, drivers, and treatment response are authored facts, not acquired measurements or predictions.',
+    simplification: 'One fixed adult has confirmed potassium 7.1 mmol/L, authored ECG toxicity, '
+      + 'CKD, dehydration, medication drivers, fixed ECG stabilization, and a fixed 1-hour panel.',
+    whereItMisleads: 'Treating the screen as specimen validation, laboratory or ECG interpretation, '
+      + 'cause diagnosis, arrhythmia assessment, or prediction of calcium or shifting response.',
+    correctUnderstanding: 'Real severe hyperkalemia requires immediate whole-patient assessment, '
+      + 'verified potassium and glucose, 12-lead ECG, continuous rhythm monitoring, renal data, and serial reassessment.',
+    briefIn: ['hyperkalemia-with-ecg-change'],
+  },
+  {
+    id: 'hyperkalemia-calcium-shift-removal-and-monitoring-controls-are-proxies',
+    headline: 'Calcium, shifting, removal, cause-control, glucose-monitoring, and reassessment buttons record intents; they do not prescribe or deliver treatment.',
+    simplification: 'The interface enforces protect, shift, remove, monitor, and prevent steps without '
+      + 'choosing calcium salt or dose, insulin-glucose formulation, beta-agonist dose, binder, diuresis, or dialysis.',
+    whereItMisleads: 'Equating ordered buttons with competent IV access, prescribing, delivery, ECG '
+      + 'reassessment, hypoglycemia prevention, renal replacement selection, or team performance.',
+    correctUnderstanding: 'Use current local protocols, trained teams, verified access and equipment, '
+      + 'continuous monitoring, renal expertise, and frequent potassium and glucose checks.',
+    briefIn: ['hyperkalemia-with-ecg-change'],
+  },
+  {
+    id: 'no-live-hyperkalemia-ecg-labs-dosing-dialysis-rebound-or-outcome',
+    headline: 'The case does not read ECGs, run labs, select doses, deliver drugs, model potassium movement, perform dialysis, or predict rebound or outcome.',
+    simplification: 'Pseudohyperkalemia workup, alternate ECG patterns, arrest, acidosis treatment, '
+      + 'fluid and urine response, hypoglycemia, repeat calcium, binders, diuretics, dialysis access, '
+      + 'later potassium, recurrence, disposition, and prognosis are absent.',
+    whereItMisleads: 'Assuming calcium lowers potassium, treating a temporary shift as removal, '
+      + 'stopping surveillance after one improved panel, or transferring fixed responses to another patient.',
+    correctUnderstanding: 'Membrane protection is temporary and does not lower potassium. Shifting '
+      + 'must be paired with removal, driver control, serial ECG, potassium and glucose monitoring, and rebound planning.',
+    briefIn: ['hyperkalemia-with-ecg-change'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '
