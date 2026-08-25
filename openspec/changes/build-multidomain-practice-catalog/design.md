@@ -1371,6 +1371,25 @@ prognosis, pathogen, treatment response, or outcome. This remains distinct from 
 intubated oxygen-delivery troubleshooting and ARDS ventilation labs and preserves later respiratory
 device-selection and Infectious Disease antimicrobial-management slices.
 
+### Wave C respiratory-medicine slice 4: persistent dyspnea after pulmonary embolism
+
+The fourth respiratory-medicine slice begins 4 months after objectively confirmed acute pulmonary
+embolism and verified therapeutic anticoagulation. A previously active patient now stops after
+about 150 m; a fixed supervised walk documents marked limitation and exertional desaturation while
+resting pressure, perfusion, and oxygenation remain stable. Fixed echo and V/Q SPECT reports raise
+concern for chronic thromboembolic pulmonary disease without establishing CTEPD or CTEPH.
+
+Learners reconcile the longitudinal course, review function and current recurrence and bleeding
+warnings, integrate fixed cardiac, perfusion, and exercise evidence while preserving alternative
+causes, coordinate pulmonary-vascular expert evaluation and continued anticoagulation ownership,
+then complete a strictly elapsed unresolved-work handoff. The lesson does not examine; acquire or
+interpret testing; categorize acute PE severity; select, dose, stop, switch, or set duration for
+anticoagulation; adjudicate bleeding; prescribe oxygen or rehabilitation; select pulmonary-
+hypertension therapy, surgery, balloon angioplasty, or another treatment; perform a procedure;
+diagnose CTEPD or CTEPH; decide operability, disposition, prognosis, recovery, recurrence, or
+outcome. This longitudinal respiratory niche is distinct from Emergency Medicine's acute C3R-to-E1
+deterioration and Critical Care's E2R shock and ECMO bridge.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

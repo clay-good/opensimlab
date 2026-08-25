@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "respiratory-medicine",
-  "recordCount": 3,
+  "recordCount": 4,
   "records": [
     {
       "recordId": "scenario:acute-severe-asthma@0.1.0",
@@ -34,6 +34,17 @@
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#community-acquired-pneumonia-hypoxemia-reassessment@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#community-acquired-pneumonia-hypoxemia-reassessment@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:post-pulmonary-embolism-persistent-dyspnea@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "post-pulmonary-embolism-persistent-dyspnea",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/respiratory-medicine-completion-audit.json#post-pulmonary-embolism-persistent-dyspnea@0.1.0",
+        "/catalog/respiratory-medicine-quality-audit.json#post-pulmonary-embolism-persistent-dyspnea@0.1.0"
       ]
     }
   ]

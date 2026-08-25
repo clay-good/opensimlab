@@ -4322,6 +4322,23 @@ export function objectiveFindings(
       const ordered = treatment && handoff && treatment.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved the oxygen requirement, respiratory effort, severity features, alternatives, testing, treatment ownership, and deterioration triggers without inventing response or outcome.' : 'The active-care handoff was absent or did not follow treatment ownership after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-post-pe-symptoms-and-anticoagulation-course',
+      'review-post-pe-functional-limitation-and-current-safety',
+      'review-post-pe-ctepd-evidence-and-alternatives',
+      'activate-post-pe-pulmonary-vascular-referral',
+      'handoff-post-pe-persistent-dyspnea-reassessment'].includes(objective.id)) {
+      const trajectory = log.find((event) => /^post-pe-dyspnea-trajectory-reconciled-\d+$/.test(event.eventId));
+      const safety = log.find((event) => /^post-pe-dyspnea-safety-reviewed-\d+$/.test(event.eventId));
+      const evidence = log.find((event) => /^post-pe-dyspnea-evidence-reviewed-\d+$/.test(event.eventId));
+      const referral = log.find((event) => /^post-pe-dyspnea-referral-activated-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^post-pe-dyspnea-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-post-pe-symptoms-and-anticoagulation-course') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'The confirmed PE, verified anticoagulation record, prior function, and persistent symptom trajectory were reconciled without claiming treatment or resolution.' : 'The post-acute course and symptom trajectory were not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-post-pe-functional-limitation-and-current-safety') { const ordered = trajectory && safety && trajectory.tick <= safety.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Resting stability, exertional limitation, oxygenation change, and current recurrence and bleeding warnings were reviewed without permanently excluding risk.' : 'Current safety review was absent or preceded trajectory reconciliation.', atTick: safety?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-post-pe-ctepd-evidence-and-alternatives') { const ordered = safety && evidence && safety.tick <= evidence.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Fixed cardiac, perfusion, and exercise evidence raised CTEPD concern while diagnosis and alternative causes remained open.' : 'Evidence review was absent or preceded current-safety review.', atTick: evidence?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-post-pe-pulmonary-vascular-referral') { const ordered = evidence && referral && evidence.tick <= referral.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Pulmonary-vascular evaluation and continued anticoagulation ownership were coordinated without choosing therapy or procedure.' : 'Expert-pathway coordination was absent or preceded evidence review.', atTick: referral?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = referral && handoff && referral.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved symptoms, function, evidence, anticoagulation and bleeding review, causes, triggers, and owners without inventing diagnosis or outcome.' : 'The unresolved-work handoff was absent or did not follow referral after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

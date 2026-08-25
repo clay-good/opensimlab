@@ -74,6 +74,7 @@ const TRANSCUTANEOUS_PACING_CAPTURE_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENC
 const ACUTE_SEVERE_ASTHMA_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 const COPD_TRANSITION_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 const CAP_HYPOXEMIA_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
+const POST_PE_DYSPNEA_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -644,6 +645,11 @@ export class AnesthesiaEngine {
   private capHypoxemiaSeverityAtTick: number | null = null;
   private capHypoxemiaTreatmentIntentAtTick: number | null = null;
   private capHypoxemiaHandoffAtTick: number | null = null;
+  private postPeDyspneaTrajectoryAtTick: number | null = null;
+  private postPeDyspneaSafetyAtTick: number | null = null;
+  private postPeDyspneaEvidenceAtTick: number | null = null;
+  private postPeDyspneaReferralAtTick: number | null = null;
+  private postPeDyspneaHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -920,6 +926,14 @@ export class AnesthesiaEngine {
     if (capHypoxemia && CAP_HYPOXEMIA_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `cap-hypoxemia-generic-action-refused-${this.currentTick}`,
         'This reassessment-only pneumonia lesson does not expose generic testing, treatment, oxygen, airway, ventilator, procedure, rhythm, artifact, or crisis-injection actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const postPeDyspnea = this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'post-pulmonary-embolism-persistent-dyspnea-reassessment');
+    if (postPeDyspnea && POST_PE_DYSPNEA_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `post-pe-dyspnea-generic-action-refused-${this.currentTick}`,
+        'This reassessment-only post-PE lesson does not expose generic testing, treatment, oxygen, airway, ventilator, procedure, rhythm, artifact, or crisis-injection actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -5061,6 +5075,45 @@ export class AnesthesiaEngine {
         this.capHypoxemiaHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `cap-hypoxemia-handoff-recorded-${this.currentTick}`, 'The ongoing oxygen requirement, respiratory effort, authored severe-CAP features, open alternatives and complications, microbiology, empiric-treatment ownership, deterioration triggers, and higher-acuity review were handed off. No treatment response, ICU disposition, ARDS progression, pathogen, prognosis, or outcome was reported.', { oxygenDeliveredByLearner: false, antimicrobialSelected: false, dispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'post-pulmonary-embolism-persistent-dyspnea-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'post-pulmonary-embolism-persistent-dyspnea-reassessment');
+        const valid = ['reconcile-post-pe-symptoms-and-anticoagulation-course',
+          'review-post-pe-functional-limitation-and-current-safety',
+          'review-post-pe-ctepd-evidence-and-alternatives',
+          'activate-post-pe-pulmonary-vascular-referral',
+          'handoff-post-pe-persistent-dyspnea-reassessment'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `post-pe-dyspnea-response-refused-${this.currentTick}`, supported ? 'The post-PE dyspnea action was not one of the listed choices. Nothing changed.' : 'These post-PE dyspnea choices are available only in the declared Respiratory Medicine lesson.'); break; }
+        if (response === 'reconcile-post-pe-symptoms-and-anticoagulation-course') {
+          if (this.postPeDyspneaTrajectoryAtTick !== null) { this.log('warning', 'assessment', `post-pe-dyspnea-trajectory-refused-${this.currentTick}`, 'The post-acute course and symptom trajectory were already reconciled.'); break; }
+          this.postPeDyspneaTrajectoryAtTick = this.currentTick;
+          this.log('warning', 'assessment', `post-pe-dyspnea-trajectory-reconciled-${this.currentTick}`, 'The confirmed acute PE, 4 months of experienced-team therapeutic anticoagulation, prior 2-mile and 2-flight function, and current limitation at about 150 m or 1 flight were reconciled. The record does not grant prescribing or adherence-verification skill and does not prove PE resolution.', { acutePeConfirmedAuthored: true, anticoagulationDeliveredByLearner: false, adherenceVerifiedByLearner: false, resolutionEstablished: false }); break;
+        }
+        if (this.postPeDyspneaTrajectoryAtTick === null) { this.log('warning', 'assessment', `post-pe-dyspnea-trajectory-order-refused-${this.currentTick}`, 'Reconcile the post-acute course and symptom trajectory before reviewing current safety.'); break; }
+        if (response === 'review-post-pe-functional-limitation-and-current-safety') {
+          if (this.postPeDyspneaSafetyAtTick !== null) { this.log('warning', 'assessment', `post-pe-dyspnea-safety-refused-${this.currentTick}`, 'The functional limitation and current safety review was already recorded.'); break; }
+          this.postPeDyspneaSafetyAtTick = this.currentTick;
+          this.log('warning', 'assessment', `post-pe-dyspnea-safety-reviewed-${this.currentTick}`, 'Resting stability was reviewed beside the fixed 280 m walk, exertional SpO₂ change from 96% to 91%, HR change from 88 to 116/min, and limiting dyspnea. Current snapshots report no syncope, chest pain, hypotension, rest hypoxemia, hemoptysis, new unilateral swelling, or major bleeding, but do not permanently exclude recurrence or another cause.', { testAcquiredByLearner: false, recurrenceExcluded: false, bleedingRiskAdjudicated: false, oxygenDeliveredByLearner: false }); break;
+        }
+        if (this.postPeDyspneaSafetyAtTick === null) { this.log('warning', 'assessment', `post-pe-dyspnea-safety-order-refused-${this.currentTick}`, 'Review current safety and functional limitation before opening the CTEPD evidence lane.'); break; }
+        if (response === 'review-post-pe-ctepd-evidence-and-alternatives') {
+          if (this.postPeDyspneaEvidenceAtTick !== null) { this.log('warning', 'assessment', `post-pe-dyspnea-evidence-refused-${this.currentTick}`, 'The fixed CTEPD evidence and alternative-cause review was already completed.'); break; }
+          this.postPeDyspneaEvidenceAtTick = this.currentTick;
+          this.log('warning', 'assessment', `post-pe-dyspnea-evidence-reviewed-${this.currentTick}`, 'Fixed echo findings and multiple bilateral segmental mismatched perfusion defects raise CTEPD concern in this persistently symptomatic patient. They do not diagnose CTEPD or CTEPH; recurrent PE, left-heart disease, parenchymal lung disease, anemia, deconditioning, and other causes remain open pending qualified evaluation.', { testAcquiredByLearner: false, imagingInterpretedByLearner: false, ctepdDiagnosed: false, ctephDiagnosed: false, alternativesClosed: false }); break;
+        }
+        if (this.postPeDyspneaEvidenceAtTick === null) { this.log('warning', 'assessment', `post-pe-dyspnea-evidence-order-refused-${this.currentTick}`, 'Review the fixed evidence and alternative causes before activating the expert pathway.'); break; }
+        if (response === 'activate-post-pe-pulmonary-vascular-referral') {
+          if (this.postPeDyspneaReferralAtTick !== null) { this.log('warning', 'assessment', `post-pe-dyspnea-referral-refused-${this.currentTick}`, 'Pulmonary-vascular referral and anticoagulation ownership were already coordinated.'); break; }
+          this.postPeDyspneaReferralAtTick = this.currentTick;
+          this.log('warning', 'assessment', `post-pe-dyspnea-referral-activated-${this.currentTick}`, 'Pulmonary-vascular and CTEPD expert evaluation, result ownership, and continued anticoagulation ownership pending evaluation were coordinated. No anticoagulant, dose, duration, test, oxygen, rehabilitation, pulmonary-hypertension therapy, procedure, operability decision, or treatment was selected.', { referralActivated: true, anticoagulationDeliveredByLearner: false, agentSelected: false, doseSelected: false, durationSelected: false, treatmentSelected: false, procedurePerformedByLearner: false }); break;
+        }
+        if (this.postPeDyspneaReferralAtTick === null) { this.log('warning', 'assessment', `post-pe-dyspnea-handoff-order-refused-${this.currentTick}`, 'Coordinate expert evaluation and anticoagulation ownership before handoff.'); break; }
+        if (this.currentTick <= this.postPeDyspneaReferralAtTick) { this.log('warning', 'assessment', `post-pe-dyspnea-handoff-time-refused-${this.currentTick}`, 'Allow a later simulated tick before handing off the unresolved post-PE evaluation.'); break; }
+        if (this.postPeDyspneaHandoffAtTick !== null) { this.log('warning', 'assessment', `post-pe-dyspnea-handoff-refused-${this.currentTick}`, 'The post-PE persistent-dyspnea handoff was already recorded.'); break; }
+        this.postPeDyspneaHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `post-pe-dyspnea-handoff-recorded-${this.currentTick}`, 'Persistent symptom burden, functional limitation, fixed cardiac and perfusion evidence, anticoagulation and bleeding review, unresolved CTEPD question, alternative causes, urgent deterioration triggers, and pulmonary-vascular and longitudinal owners were handed off. No diagnosis, therapy, operability, disposition, prognosis, recovery, recurrence, or outcome was determined.', { ctepdDiagnosed: false, treatmentSelected: false, dispositionDetermined: false, recurrencePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -7784,6 +7837,12 @@ export class AnesthesiaEngine {
         spo2Percent: 85, systolicMmHg: 116, diastolicMmHg: 70,
         meanArterialMmHg: 85, coreTemperatureC: 38.6 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'post-pulmonary-embolism-persistent-dyspnea-reassessment')) {
+      crisisState = { ...crisisState, heartRateBpm: 88, respiratoryRateBpm: 18,
+        spo2Percent: 96, systolicMmHg: 122, diastolicMmHg: 76,
+        meanArterialMmHg: 91, coreTemperatureC: 36.8 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -9043,6 +9102,24 @@ export class AnesthesiaEngine {
               supportDeviceSelected: false as const,
               antimicrobialSelected: false as const,
               testAcquiredByLearner: false as const,
+              dispositionDetermined: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'post-pulmonary-embolism-persistent-dyspnea-reassessment') ? {
+            postPeDyspneaAssessment: {
+              trajectoryAtTick: this.postPeDyspneaTrajectoryAtTick,
+              safetyAtTick: this.postPeDyspneaSafetyAtTick,
+              evidenceAtTick: this.postPeDyspneaEvidenceAtTick,
+              referralAtTick: this.postPeDyspneaReferralAtTick,
+              handoffAtTick: this.postPeDyspneaHandoffAtTick,
+              acutePeConfirmedAuthored: true as const,
+              anticoagulationDeliveredByLearner: false as const,
+              testAcquiredByLearner: false as const,
+              ctepdDiagnosed: false as const,
+              treatmentSelected: false as const,
+              procedurePerformedByLearner: false as const,
               dispositionDetermined: false as const,
               outcomePredicted: false as const,
             },

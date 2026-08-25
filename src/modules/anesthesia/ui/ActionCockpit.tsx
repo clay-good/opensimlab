@@ -783,6 +783,21 @@ export interface ActionCockpitProps {
       readonly dispositionDetermined: false;
       readonly outcomePredicted: false;
     };
+    readonly postPeDyspneaAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly safetyAtTick: number | null;
+      readonly evidenceAtTick: number | null;
+      readonly referralAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly acutePeConfirmedAuthored: true;
+      readonly anticoagulationDeliveredByLearner: false;
+      readonly testAcquiredByLearner: false;
+      readonly ctepdDiagnosed: false;
+      readonly treatmentSelected: false;
+      readonly procedurePerformedByLearner: false;
+      readonly dispositionDetermined: false;
+      readonly outcomePredicted: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1246,6 +1261,13 @@ export interface ActionCockpitProps {
       | 'record-cap-testing-and-empiric-treatment-intent'
       | 'handoff-cap-hypoxemia-reassessment',
   ) => void;
+  readonly onPostPeDyspneaResponse?: (
+    action: 'reconcile-post-pe-symptoms-and-anticoagulation-course'
+      | 'review-post-pe-functional-limitation-and-current-safety'
+      | 'review-post-pe-ctepd-evidence-and-alternatives'
+      | 'activate-post-pe-pulmonary-vascular-referral'
+      | 'handoff-post-pe-persistent-dyspnea-reassessment',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1539,6 +1561,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'community-acquired-pneumonia-hypoxemia-reassessment',
     ),
+    hasPostPeDyspneaResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'post-pulmonary-embolism-persistent-dyspnea-reassessment',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1658,6 +1684,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'copd-exacerbation-transition-reassessment')
       || (event.type === 'narrative'
         && event.target === 'community-acquired-pneumonia-hypoxemia-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'post-pulmonary-embolism-persistent-dyspnea-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1711,7 +1739,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasPacemakerCaptureFailureResponse,
     hasTranscutaneousPacingCaptureResponse,
     hasAcuteSevereAsthmaResponse,
-    hasCopdTransitionResponse, hasCapHypoxemiaResponse,
+    hasCopdTransitionResponse, hasCapHypoxemiaResponse, hasPostPeDyspneaResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1776,7 +1804,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasHyperkalemicConductionResponse || hasPericardialTamponadeResponse
     || hasRightVentricularInfarctionResponse || hasHypertensiveEmergencyResponse
     || hasPacemakerCaptureFailureResponse || hasTranscutaneousPacingCaptureResponse
-    || hasAcuteSevereAsthmaResponse || hasCopdTransitionResponse || hasCapHypoxemiaResponse;
+    || hasAcuteSevereAsthmaResponse || hasCopdTransitionResponse || hasCapHypoxemiaResponse
+    || hasPostPeDyspneaResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1807,7 +1836,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasCapHypoxemiaResponse
+  const responseTray = hasPostPeDyspneaResponse
+    ? { id: 'crisis', label: 'Post-PE breathlessness' } as const
+    : hasCapHypoxemiaResponse
     ? { id: 'crisis', label: 'Pneumonia + hypoxemia' } as const
     : hasCopdTransitionResponse
     ? { id: 'crisis', label: 'Recovery + readiness' } as const
@@ -2020,6 +2051,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasAcuteSevereAsthmaResponse
     || hasCopdTransitionResponse
     || hasCapHypoxemiaResponse
+    || hasPostPeDyspneaResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2612,6 +2644,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasCapHypoxemiaResponse && (
               <CapHypoxemiaTray assessment={props.resuscitation.capHypoxemiaAssessment}
                 onAction={props.onCapHypoxemiaResponse ?? (() => {})} />
+            )}
+            {hasPostPeDyspneaResponse && (
+              <PostPeDyspneaTray assessment={props.resuscitation.postPeDyspneaAssessment}
+                onAction={props.onPostPeDyspneaResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -6861,6 +6897,42 @@ function CapHypoxemiaTray({ assessment, onAction }: {
         <Button className="crisis-drug__action" disabled={!treatment || handoff} onClick={() => onAction('handoff-cap-hypoxemia-reassessment')}>Reassess + hand off active care</Button>
       </div>
       <p className="field__hint">No antibiotic, dose, oxygen device, flow, support setting, procedure, treatment response, disposition, pathogen, prognosis, or outcome is chosen here.</p>
+    </section>
+  </div>;
+}
+
+function PostPeDyspneaTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['postPeDyspneaAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onPostPeDyspneaResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const safety = assessment?.safetyAtTick != null;
+  const evidence = assessment?.evidenceAtTick != null;
+  const referral = assessment?.referralAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="post-pe-dyspnea-trajectory-title">
+      <div id="post-pe-dyspnea-trajectory-title" className="syringe__name">Recovery deserves a real comparison.</div>
+      <Badge kind="teaching">4 months · 2 miles before · 150 m now</Badge>
+      <div className="syringe__meta">course · anticoagulation · rest · exertion · warnings</div>
+      <p className="syringe__remaining" role="status">{evidence ? 'Persistent limitation + fixed evidence reviewed' : safety ? 'Current safety held · review what may explain the limit' : trajectory ? 'Trajectory reconciled · review function + warning signs' : 'Start with life before and after the embolism'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={trajectory} onClick={() => onAction('reconcile-post-pe-symptoms-and-anticoagulation-course')}>Reconcile course + symptoms</Button>
+        <Button className="crisis-drug__action" disabled={!trajectory || safety} onClick={() => onAction('review-post-pe-functional-limitation-and-current-safety')}>Review function + current safety</Button>
+        <Button className="crisis-drug__action" disabled={!safety || evidence} onClick={() => onAction('review-post-pe-ctepd-evidence-and-alternatives')}>Review evidence + open causes</Button>
+      </div>
+      <p className="field__hint">The treatment record, walk, echo, and perfusion reports are authored. Persistent symptoms justify evaluation; no single report makes a CTEPD or CTEPH diagnosis.</p>
+    </section>
+    <section className="syringe" aria-labelledby="post-pe-dyspnea-ownership-title">
+      <div id="post-pe-dyspnea-ownership-title" className="syringe__name">Make the unresolved work feel held.</div>
+      <Badge kind="teaching">pulmonary vascular review · treatment owner · safety net</Badge>
+      <div className="syringe__meta">named results · open diagnosis · urgent triggers</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Persistent symptoms + unresolved evaluation handed off' : referral ? 'Expert pathway active · advance time before handoff' : evidence ? 'Concern is clear · connect the expert pathway' : 'Complete the symptom and evidence review first'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={!evidence || referral} onClick={() => onAction('activate-post-pe-pulmonary-vascular-referral')}>Coordinate expert evaluation</Button>
+        <Button className="crisis-drug__action" disabled={!referral || handoff} onClick={() => onAction('handoff-post-pe-persistent-dyspnea-reassessment')}>Hand off unresolved post-PE work</Button>
+      </div>
+      <p className="field__hint">No anticoagulant, dose, duration, oxygen, rehabilitation, pulmonary-hypertension therapy, surgery, balloon procedure, operability decision, disposition, prognosis, or outcome is chosen.</p>
     </section>
   </div>;
 }

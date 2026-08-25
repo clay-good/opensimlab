@@ -1869,6 +1869,17 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'https://www.idsociety.org/practice-guideline/community-acquired-pneumonia-cap-in-adults and official ATS implementation tools',
     verifiedOn: '2026-08-25',
   },
+  {
+    id: 'aha-acc-acute-pulmonary-embolism-2026',
+    authors: 'Creager MA, Barnes GD, Giri J, et al',
+    title: '2026 Guideline for the Evaluation and Management of Acute Pulmonary Embolism in Adults',
+    publication: 'Circulation',
+    year: 2026,
+    locator: '153:e977-e1051; doi:10.1161/CIR.0000000000001415; sections 5.1.1 and 6.1',
+    usedFor: 'The post-PE persistent-symptom boundary: structured follow-up by 3 months, evaluation after at least 3 months of therapeutic anticoagulation, echo plus lung-perfusion context, continued anticoagulation ownership during evaluation, and qualified CTEPD referral without browser diagnosis or treatment selection.',
+    verifiedAgainst: 'https://professional.heart.org/en/guidelines-statements/2026-ahaaccaccpchestscaishmsirsvmsvn-guideline-for-the-evaluation-andcir0000000000001415 and official Circulation guideline PDF',
+    verifiedOn: '2026-08-25',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

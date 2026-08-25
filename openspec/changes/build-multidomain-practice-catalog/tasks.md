@@ -231,10 +231,10 @@ credited toward the catalog until every item in the completion contract passes.
   symptomatic bradycardia, complete heart block, torsades de pointes, hyperkalemic conduction
   disturbance, pericardial tamponade, right-ventricular infarction, hypertensive emergency, and
   pacemaker capture failure, and transcutaneous pacing mechanical-capture reassessment. Respiratory
-  medicine is live with 3 of 15 scenarios: acute severe asthma reassessment after documented initial
-  therapy, COPD exacerbation recovery-versus-readiness transition reassessment, and hypoxemic
-  community-acquired pneumonia reassessment with bounded severity, escalation, treatment ownership,
-  and active-care handoff.
+  medicine is live with 4 of 15 scenarios: acute severe asthma reassessment after documented initial
+  therapy, COPD exacerbation recovery-versus-readiness transition reassessment, hypoxemic
+  community-acquired pneumonia reassessment, and persistent dyspnea after pulmonary embolism with
+  bounded CTEPD evidence review, expert referral, and unresolved-work handoff.
 - [ ] Wave D: complete 16 pediatric, 15 obstetric, and 11 neonatal scenarios.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.

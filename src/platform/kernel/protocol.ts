@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 103 reports COPD transition reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 104;
+export const WORKER_PROTOCOL_VERSION = 105;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -871,6 +871,21 @@ export interface EquipmentSnapshot {
       readonly supportDeviceSelected: false;
       readonly antimicrobialSelected: false;
       readonly testAcquiredByLearner: false;
+      readonly dispositionDetermined: false;
+      readonly outcomePredicted: false;
+    };
+    readonly postPeDyspneaAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly safetyAtTick: number | null;
+      readonly evidenceAtTick: number | null;
+      readonly referralAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly acutePeConfirmedAuthored: true;
+      readonly anticoagulationDeliveredByLearner: false;
+      readonly testAcquiredByLearner: false;
+      readonly ctepdDiagnosed: false;
+      readonly treatmentSelected: false;
+      readonly procedurePerformedByLearner: false;
       readonly dispositionDetermined: false;
       readonly outcomePredicted: false;
     };

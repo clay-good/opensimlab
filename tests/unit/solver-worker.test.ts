@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: hypoxemic community-acquired pneumonia has protocol version 104', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(104);
+  it('Scenario: persistent dyspnea after PE has protocol version 105', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(105);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

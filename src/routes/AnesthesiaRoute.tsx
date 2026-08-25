@@ -103,7 +103,7 @@ const RESPIRATORY_MEDICINE_CONFIG: ClinicalModuleConfig = {
   id: 'respiratory-medicine', basePath: '/respiratory-medicine',
   heading: 'Respiratory medicine simulator',
   catalogIntroduction: 'Calm respiratory reassessment labs for the moment a familiar pattern changes. Read the trajectory, act on danger early, and leave the next team a clear map.',
-  catalogStatus: 'Two bounded respiratory medicine labs are playable.',
+  catalogStatus: `${RESPIRATORY_MEDICINE_SCENARIOS.length} bounded respiratory medicine labs are playable.`,
   scenarios: RESPIRATORY_MEDICINE_SCENARIOS,
   defaultScenarioId: DEFAULT_RESPIRATORY_MEDICINE_SCENARIO_ID,
   getScenario: getRespiratoryMedicineScenario,

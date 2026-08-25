@@ -3167,6 +3167,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, current CAP and oxygen guidance, local resistance data, device instructions, qualified teams, and patient-specific reassessment.',
     briefIn: ['community-acquired-pneumonia-hypoxemia-reassessment'],
   },
+  {
+    id: 'post-pe-course-function-and-evaluation-reports-are-authored',
+    headline: 'The acute event, anticoagulation course, function, walk, oximetry, echo, and perfusion findings are authored.',
+    simplification: 'One fixed record stands in for longitudinal history, adherence and bleeding review, examination, exercise assessment, monitoring, imaging, and multidisciplinary communication.',
+    whereItMisleads: 'Treating persistent symptoms or one abnormal report as diagnostic proof, treating negative snapshots as permanent exclusions, or treating the record as learner-acquired skill.',
+    correctUnderstanding: 'Real post-PE assessment requires verified longitudinal data, patient-centered function, repeated safety review, qualified testing, and pulmonary-vascular expertise.',
+    briefIn: ['post-pulmonary-embolism-persistent-dyspnea'],
+  },
+  {
+    id: 'post-pe-controls-record-review-referral-ownership-and-handoff-only',
+    headline: 'The controls record trajectory, safety, evidence, referral, ownership, and handoff; they do not diagnose or treat.',
+    simplification: 'Five clicks stand in for longitudinal assessment, multidisciplinary diagnostic work, shared planning, and communication.',
+    whereItMisleads: 'Equating button order with examination, testing, imaging interpretation, anticoagulation management, diagnosis, or pulmonary-vascular competence.',
+    correctUnderstanding: 'Actual care requires qualified teams, current pathways, patient participation, verified treatment safety, and longitudinal reassessment.',
+    briefIn: ['post-pulmonary-embolism-persistent-dyspnea'],
+  },
+  {
+    id: 'no-live-post-pe-testing-diagnosis-treatment-procedure-or-outcome',
+    headline: 'The lab does not test, diagnose CTEPD or CTEPH, select treatment or a procedure, determine disposition, or predict outcome.',
+    simplification: 'No live walk, oximetry, ECG, laboratory, echo, V/Q, CT, CPET, catheterization, anticoagulant, dose, duration, oxygen, rehabilitation, pulmonary-hypertension therapy, surgery, balloon procedure, operability decision, disposition, prognosis, recurrence, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values as a diagnostic or treatment rule or using completion as evidence of clinical, imaging, prescribing, procedural, disposition, or prognostic competence.',
+    correctUnderstanding: 'Use verified patient data, current PE and pulmonary-hypertension guidance, qualified pulmonary-vascular teams, local pathways, and patient-specific judgment.',
+    briefIn: ['post-pulmonary-embolism-persistent-dyspnea'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {
