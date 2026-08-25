@@ -4199,6 +4199,24 @@ export function objectiveFindings(
         && etiology.tick < handoff.tick && surveillance.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Elapsed reassessment preserved pending cause, residual effusion, recurrence, catheter, deterioration, and named ownership without determining removal, disposition, or outcome.' : 'The final handoff was absent, premature, or bypassed a parallel review lane.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-right-ventricular-infarction',
+      'review-right-ventricular-infarction-phenotype',
+      'preserve-right-ventricular-infarction-reperfusion',
+      'record-right-ventricular-infarction-support',
+      'handoff-right-ventricular-infarction'].includes(objective.id)) {
+      const reconciled = log.find((event) => /^right-ventricular-infarction-reconciled-\d+$/.test(event.eventId));
+      const phenotype = log.find((event) => /^right-ventricular-infarction-phenotype-reviewed-\d+$/.test(event.eventId));
+      const reperfusion = log.find((event) => /^right-ventricular-infarction-reperfusion-preserved-\d+$/.test(event.eventId));
+      const support = log.find((event) => /^right-ventricular-infarction-support-recorded-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^right-ventricular-infarction-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-right-ventricular-infarction') return { ...base, outcome: reconciled ? 'met' : 'not-met', finding: reconciled ? 'The acute ischemic and hemodynamic trajectory was reconciled without using pressure, JVP, or clear lungs alone or declaring multi-organ shock.' : 'The whole-patient RV-infarction trajectory was not reconciled.', atTick: reconciled?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-right-ventricular-infarction-phenotype') { const ordered = reconciled && phenotype && reconciled.tick <= phenotype.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Fixed right-sided ECG and echo reports supported the authored acute ischemic RV phenotype without live acquisition, universal cutoffs, or closed alternatives.' : 'The fixed RV phenotype was absent or preceded whole-patient reconciliation.', atTick: phenotype?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'preserve-right-ventricular-infarction-reperfusion') { const ordered = reconciled && reperfusion && reconciled.tick <= reperfusion.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Active reperfusion and rhythm-conduction readiness continued without waiting for RV review or claiming PCI or reperfusion completion.' : 'Reperfusion readiness was absent or preceded whole-patient reconciliation.', atTick: reperfusion?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'record-right-ventricular-infarction-support') { const ordered = phenotype && support && phenotype.tick <= support.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Individualized RV-support guardrails avoided nitrate, reflex diuresis, blind or fixed-volume fluid, universal targets, and learner treatment.' : 'Support guardrails were absent or preceded phenotype review.', atTick: support?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = reperfusion && support && handoff
+        && reperfusion.tick < handoff.tick && support.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Elapsed handoff preserved unresolved ischemia, perfusion, rhythm, conduction, mechanical, reperfusion, and treatment work without claiming resolution or outcome.' : 'The final handoff was absent, premature, or bypassed a parallel review lane.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

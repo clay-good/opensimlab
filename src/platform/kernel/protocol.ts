@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 97 reports pericardial-tamponade state. */
-export const WORKER_PROTOCOL_VERSION = 97;
+/** Bumped whenever the message shape changes incompatibly. Version 98 reports right-ventricular-infarction state. */
+export const WORKER_PROTOCOL_VERSION = 98;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -752,6 +752,27 @@ export interface EquipmentSnapshot {
       readonly imageAcquiredByLearner: false;
       readonly procedurePerformedByLearner: false;
       readonly catheterManipulatedByLearner: false;
+    };
+    readonly rightVentricularInfarctionAssessment?: {
+      readonly reconciledAtTick: number | null;
+      readonly phenotypeAtTick: number | null;
+      readonly reperfusionAtTick: number | null;
+      readonly supportAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true;
+      readonly treatmentDeliveredByLearner: false;
+      readonly medicationDeliveredByLearner: false;
+      readonly reperfusionPerformedByLearner: false;
+      readonly deviceSelected: false;
+      readonly liveEcgInterpreted: false;
+      readonly imageAcquired: false;
+      readonly nitrateSelected: false;
+      readonly diureticSelected: false;
+      readonly blindFluidLoading: false;
+      readonly fixedFluidVolumeSelected: false;
+      readonly treatmentDelivered: false;
+      readonly pciPerformed: false;
+      readonly reperfusionCompleted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

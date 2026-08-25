@@ -587,6 +587,11 @@ export class AnesthesiaEngine {
   private pericardialTamponadeEtiologyAtTick: number | null = null;
   private pericardialTamponadeSurveillanceAtTick: number | null = null;
   private pericardialTamponadeHandoffAtTick: number | null = null;
+  private rightVentricularInfarctionReconciledAtTick: number | null = null;
+  private rightVentricularInfarctionPhenotypeAtTick: number | null = null;
+  private rightVentricularInfarctionReperfusionAtTick: number | null = null;
+  private rightVentricularInfarctionSupportAtTick: number | null = null;
+  private rightVentricularInfarctionHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -4751,6 +4756,46 @@ export class AnesthesiaEngine {
         this.pericardialTamponadeHandoffAtTick = this.currentTick;
         this.log('advisory', 'assessment', `pericardial-tamponade-handoff-recorded-${this.currentTick}`, 'Fixed later report: HR 90/min, BP 114/70 mmHg, RR 18/min, SpO₂ 97% on room air, alert warm perfusion, 55 mL additional reported catheter output, and 9 mm residual effusion without chamber collapse. Studies remain pending. Cause, reaccumulation, bleeding, catheter, rhythm, respiratory, decompression, effusive-constrictive, deterioration, result, Cardiology, and oncology ownership were handed off without determining catheter removal, disposition, prognosis, recurrence, or outcome.', { treatmentDeliveredByLearner: false, catheterManipulatedByLearner: false, durableResolutionProven: false, outcomePredicted: false }); break;
       }
+      case 'right-ventricular-infarction-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'right-ventricular-infarction');
+        const valid = ['reconcile-right-ventricular-infarction',
+          'review-right-ventricular-infarction-phenotype',
+          'preserve-right-ventricular-infarction-reperfusion',
+          'record-right-ventricular-infarction-support',
+          'handoff-right-ventricular-infarction'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `right-ventricular-infarction-response-refused-${this.currentTick}`, supported ? 'The right-ventricular-infarction action was not one of the listed choices. Nothing changed.' : 'These right-ventricular-infarction choices are available only in the declared Cardiology lesson.'); break; }
+        if (response === 'reconcile-right-ventricular-infarction') {
+          if (this.rightVentricularInfarctionReconciledAtTick !== null) { this.log('warning', 'assessment', `right-ventricular-infarction-reconciliation-refused-${this.currentTick}`, 'The acute ischemic, pressure, perfusion, rhythm, oxygenation, and congestion trajectory was already reconciled.'); break; }
+          this.rightVentricularInfarctionReconciledAtTick = this.currentTick;
+          this.log('critical', 'assessment', `right-ventricular-infarction-reconciled-${this.currentTick}`, 'Ongoing inferior-STEMI symptoms, HR 54/min, BP 86/60 mmHg, normal room-air oxygenation, alert warm perfusion, elevated JVP, clear lungs, and the absence of an authored multi-organ shock trajectory were reconciled. Pressure, JVP, or clear lungs alone did not establish the phenotype.', { pressureAloneUsed: false, shockDeclared: false, routineOxygenSelected: false, liveEcgInterpreted: false, treatmentDelivered: false }); break;
+        }
+        if (this.rightVentricularInfarctionReconciledAtTick === null) { this.log('warning', 'assessment', `right-ventricular-infarction-order-refused-${this.currentTick}`, 'Reconcile the whole ischemic and hemodynamic trajectory before reviewing the fixed RV phenotype or support.'); break; }
+        if (response === 'review-right-ventricular-infarction-phenotype') {
+          if (this.rightVentricularInfarctionPhenotypeAtTick !== null) { this.log('warning', 'assessment', `right-ventricular-infarction-phenotype-refused-${this.currentTick}`, 'The fixed right-sided ECG and echo phenotype was already reviewed.'); break; }
+          this.rightVentricularInfarctionPhenotypeAtTick = this.currentTick;
+          this.log('critical', 'assessment', `right-ventricular-infarction-phenotype-reviewed-${this.currentTick}`, 'Fixed reports of inferior ST elevation, 1.5 mm ST elevation in V4R, moderate RV dilation and dysfunction, and a small underfilled LV support acute RV involvement in this authored case. They were not acquired or interpreted here, do not create a universal cutoff, and do not permanently exclude pulmonary embolism, mechanical disease, rhythm or conduction disease, bleeding, medication effects, or another contributor.', { authoredRvInfarction: true, liveEcgInterpreted: false, imageAcquired: false, universalCutoffUsed: false, alternativesClosed: false }); break;
+        }
+        if (response === 'preserve-right-ventricular-infarction-reperfusion') {
+          if (this.rightVentricularInfarctionReperfusionAtTick !== null) { this.log('warning', 'assessment', `right-ventricular-infarction-reperfusion-refused-${this.currentTick}`, 'The active reperfusion and rhythm-conduction readiness lane was already preserved.'); break; }
+          this.rightVentricularInfarctionReperfusionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `right-ventricular-infarction-reperfusion-preserved-${this.currentTick}`, 'The already activated primary-PCI pathway remained time-sensitive while continuous rhythm, bradyarrhythmia, atrioventricular-block, and defibrillation readiness were preserved. RV-focused review did not delay reperfusion, perform PCI, or establish reperfusion completion.', { reperfusionDelayedForRvReview: false, pciPerformed: false, reperfusionCompleted: false, treatmentDelivered: false }); break;
+        }
+        if (this.rightVentricularInfarctionPhenotypeAtTick === null) { this.log('warning', 'assessment', `right-ventricular-infarction-phenotype-order-refused-${this.currentTick}`, 'Review the fixed right-sided ECG and echo phenotype before opening individualized support. The active reperfusion pathway remains available now.'); break; }
+        if (response === 'record-right-ventricular-infarction-support') {
+          if (this.rightVentricularInfarctionSupportAtTick !== null) { this.log('warning', 'assessment', `right-ventricular-infarction-support-refused-${this.currentTick}`, 'The individualized RV-support guardrails were already recorded.'); break; }
+          this.rightVentricularInfarctionSupportAtTick = this.currentTick;
+          this.log('critical', 'assessment', `right-ventricular-infarction-support-recorded-${this.currentTick}`, 'Support guardrails linked preload, systemic perfusion, congestion, rhythm, conduction, oxygenation, and serial response. In this hypotensive authored presentation no nitrate or reflex diuretic was selected. No fixed fluid volume, blind fluid load, universal pressure target, agent, dose, access, pump, or treatment delivery was supplied.', { nitrateSelected: false, diureticSelected: false, blindFluidLoading: false, fixedFluidVolumeSelected: false, universalTargetSelected: false, treatmentDelivered: false }); break;
+        }
+        if (this.rightVentricularInfarctionReperfusionAtTick === null
+          || this.rightVentricularInfarctionSupportAtTick === null) { this.log('warning', 'assessment', `right-ventricular-infarction-handoff-order-refused-${this.currentTick}`, 'Complete both the reperfusion-readiness and individualized-support lanes before the later reassessment handoff.'); break; }
+        if (this.currentTick <= Math.max(this.rightVentricularInfarctionReperfusionAtTick,
+          this.rightVentricularInfarctionSupportAtTick)) { this.log('warning', 'assessment', `right-ventricular-infarction-handoff-time-refused-${this.currentTick}`, 'Allow a later simulated tick before handing off the unresolved RV-infarction trajectory.'); break; }
+        if (this.rightVentricularInfarctionHandoffAtTick !== null) { this.log('warning', 'assessment', `right-ventricular-infarction-handoff-refused-${this.currentTick}`, 'The elapsed reassessment and open-work handoff was already recorded.'); break; }
+        this.rightVentricularInfarctionHandoffAtTick = this.currentTick;
+        this.log('critical', 'assessment', `right-ventricular-infarction-handoff-recorded-${this.currentTick}`, 'Fixed later report: chest pressure persists, HR 52/min in sinus rhythm, BP 88/62 mmHg, RR 18/min, SpO₂ 96% on room air, alert warm perfusion, elevated JVP, and clear lungs. Ischemia, reperfusion, perfusion, preload, congestion, rhythm, conduction, mechanical alternatives, treatment selection, owners, and change triggers were handed off without claiming treatment response, completed PCI, resolution, disposition, prognosis, or outcome.', { treatmentDelivered: false, pciPerformed: false, reperfusionCompleted: false, outcomePredicted: false }); break;
+      }
       case 'emergence-residual-block-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative'
@@ -5379,6 +5424,12 @@ export class AnesthesiaEngine {
         break;
       }
       case 'fluid': {
+        if (this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'right-ventricular-infarction')) {
+          this.log('warning', 'fluid', `right-ventricular-infarction-fluid-refused-${this.currentTick}`,
+            'This focused lesson does not offer a blind or fixed fluid bolus. No fluid was given.');
+          break;
+        }
         const fluidId = String(action.payload.fluidId ?? '');
         const fluid = getFluid(fluidId);
         const volumeMl = AnesthesiaEngine.finiteAmount(action.payload.volumeMl);
@@ -7404,6 +7455,12 @@ export class AnesthesiaEngine {
         meanArterialMmHg: 93, coreTemperatureC: 36.7 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'right-ventricular-infarction')) {
+      crisisState = { ...crisisState, heartRateBpm: 54, respiratoryRateBpm: 18,
+        spo2Percent: 96, etco2MmHg: 36, systolicMmHg: 86, diastolicMmHg: 60,
+        meanArterialMmHg: 69, coreTemperatureC: 36.6 };
+    }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'post-infarction-cardiogenic-shock-escalation')) {
       const reassessed = this.postInfarctionShockHandoffAtTick !== null;
       crisisState = { ...crisisState, heartRateBpm: reassessed ? 104 : 108,
@@ -8455,6 +8512,26 @@ export class AnesthesiaEngine {
               imageAcquiredByLearner: false as const,
               procedurePerformedByLearner: false as const,
               catheterManipulatedByLearner: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'right-ventricular-infarction') ? {
+            rightVentricularInfarctionAssessment: {
+              reconciledAtTick: this.rightVentricularInfarctionReconciledAtTick,
+              phenotypeAtTick: this.rightVentricularInfarctionPhenotypeAtTick,
+              reperfusionAtTick: this.rightVentricularInfarctionReperfusionAtTick,
+              supportAtTick: this.rightVentricularInfarctionSupportAtTick,
+              handoffAtTick: this.rightVentricularInfarctionHandoffAtTick,
+              initialPulsePresent: true as const,
+              treatmentDeliveredByLearner: false as const,
+              medicationDeliveredByLearner: false as const,
+              reperfusionPerformedByLearner: false as const,
+              deviceSelected: false as const,
+              liveEcgInterpreted: false as const, imageAcquired: false as const,
+              nitrateSelected: false as const, diureticSelected: false as const,
+              blindFluidLoading: false as const, fixedFluidVolumeSelected: false as const,
+              treatmentDelivered: false as const, pciPerformed: false as const,
+              reperfusionCompleted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 125,
+  "sourceCount": 126,
   "sources": [
     {
       "id": "association-qrh-2023",
@@ -1356,10 +1356,21 @@
       "publication": "Circulation",
       "year": 2025,
       "locator": "151:e771-e862; doi:10.1161/CIR.0000000000001309",
-      "usedFor": "The STEMI and NSTEMI boundaries: STEMI activates a time-sensitive regional reperfusion pathway without biomarker delay, while NSTE-ACS invasive timing follows current risk, bleeding, patient, regional, and system context.",
+      "usedFor": "The STEMI and NSTEMI boundaries: STEMI activates a time-sensitive regional reperfusion pathway without biomarker delay, while NSTE-ACS invasive timing follows current risk, bleeding, patient, regional, and system context. The RV-infarction lesson keeps reperfusion active while its complication-specific hemodynamic review proceeds.",
       "verifiedAgainst": "NCBI E-utilities record, field by field",
       "verifiedOn": "2026-08-25",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/40014670/"
+    },
+    {
+      "id": "konstam-right-sided-heart-failure-2018",
+      "authors": "Konstam MA, Kiernan MS, Bernstein D, et al",
+      "title": "Evaluation and Management of Right-Sided Heart Failure: A Scientific Statement From the American Heart Association",
+      "publication": "Circulation",
+      "year": 2018,
+      "locator": "137:e578-e622; doi:10.1161/CIR.0000000000000560",
+      "usedFor": "The acute right-ventricular infarction boundary: interpret preload and systemic perfusion in the whole clinical context, avoid indiscriminate volume loading, preserve rhythm and RV perfusion, and treat ischemic cause without turning one pressure or imaging value into a universal recipe.",
+      "verifiedAgainst": "https://www.ahajournals.org/doi/10.1161/CIR.0000000000000560",
+      "verifiedOn": "2026-08-25"
     },
     {
       "id": "jacobs-stemi-systems-of-care-2021",

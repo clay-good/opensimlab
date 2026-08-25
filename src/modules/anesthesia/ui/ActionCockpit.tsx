@@ -671,6 +671,18 @@ export interface ActionCockpitProps {
       readonly procedurePerformedByLearner: false;
       readonly catheterManipulatedByLearner: false;
     };
+    readonly rightVentricularInfarctionAssessment?: {
+      readonly reconciledAtTick: number | null;
+      readonly phenotypeAtTick: number | null;
+      readonly supportAtTick: number | null;
+      readonly reperfusionAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true;
+      readonly treatmentDeliveredByLearner: false;
+      readonly medicationDeliveredByLearner: false;
+      readonly reperfusionPerformedByLearner: false;
+      readonly deviceSelected: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1084,6 +1096,13 @@ export interface ActionCockpitProps {
       | 'review-pericardial-tamponade-surveillance'
       | 'handoff-pericardial-tamponade-reassessment',
   ) => void;
+  readonly onRightVentricularInfarctionResponse?: (
+    action: 'reconcile-right-ventricular-infarction'
+      | 'review-right-ventricular-infarction-phenotype'
+      | 'preserve-right-ventricular-infarction-reperfusion'
+      | 'record-right-ventricular-infarction-support'
+      | 'handoff-right-ventricular-infarction',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1349,6 +1368,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'pericardial-tamponade-reassessment',
     ),
+    hasRightVentricularInfarctionResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'right-ventricular-infarction',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1458,6 +1481,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'torsades-de-pointes')
       || (event.type === 'narrative' && event.target === 'hyperkalemic-conduction-disturbance')
       || (event.type === 'narrative' && event.target === 'pericardial-tamponade-reassessment')
+      || (event.type === 'narrative' && event.target === 'right-ventricular-infarction')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1506,6 +1530,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasTorsadesResponse,
     hasHyperkalemicConductionResponse,
     hasPericardialTamponadeResponse,
+    hasRightVentricularInfarctionResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1567,7 +1592,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasHeartFailureResponse || hasAfRvrResponse || hasPostInfarctionShockResponse
     || hasStableNarrowTachycardiaResponse || hasStableWideTachycardiaResponse
     || hasSymptomaticBradycardiaResponse || hasCompleteHeartBlockResponse || hasTorsadesResponse
-    || hasHyperkalemicConductionResponse || hasPericardialTamponadeResponse;
+    || hasHyperkalemicConductionResponse || hasPericardialTamponadeResponse
+    || hasRightVentricularInfarctionResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1598,7 +1624,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasPericardialTamponadeResponse
+  const responseTray = hasRightVentricularInfarctionResponse
+    ? { id: 'crisis', label: 'RV infarction review' } as const
+    : hasPericardialTamponadeResponse
     ? { id: 'crisis', label: 'Tamponade reassessment' } as const
     : hasHyperkalemicConductionResponse
     ? { id: 'crisis', label: 'Potassium rhythm review' } as const
@@ -1790,6 +1818,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasTorsadesResponse
     || hasHyperkalemicConductionResponse
     || hasPericardialTamponadeResponse
+    || hasRightVentricularInfarctionResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2349,6 +2378,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <PericardialTamponadeTray
                 assessment={props.resuscitation.pericardialTamponadeAssessment}
                 onAction={props.onPericardialTamponadeResponse ?? (() => {})} />
+            )}
+            {hasRightVentricularInfarctionResponse && (
+              <RightVentricularInfarctionTray
+                assessment={props.resuscitation.rightVentricularInfarctionAssessment}
+                onAction={props.onRightVentricularInfarctionResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -6344,6 +6378,42 @@ function PericardialTamponadeTray({ assessment, onAction }: {
         <Button className="crisis-drug__action" disabled={!etiology || !surveillance || handoff} onClick={() => onAction('handoff-pericardial-tamponade-reassessment')}>Hand off open risks</Button>
       </div>
       <p className="field__hint">No fluid or vasoactive recipe, image acquisition, drainage route, catheter manipulation, device choice, technical success, disposition, or outcome is supplied.</p>
+    </section>
+  </div>;
+}
+
+function RightVentricularInfarctionTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['rightVentricularInfarctionAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onRightVentricularInfarctionResponse']>;
+}) {
+  const pattern = assessment?.reconciledAtTick != null;
+  const phenotype = assessment?.phenotypeAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const reperfusion = assessment?.reperfusionAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="right-ventricular-infarction-pattern-title">
+      <div id="right-ventricular-infarction-pattern-title" className="syringe__name">The right side changes the bridge.</div>
+      <Badge kind="teaching">inferior infarction · RV pattern · pulse present</Badge>
+      <div className="syringe__meta">right-sided ECG · authored echo · preload + medication harms · perfusion</div>
+      <p className="syringe__remaining" role="status">{phenotype ? 'RV phenotype + bridge hazards reconciled' : pattern ? 'RV pattern reconciled · phenotype review ready' : 'Read the RV pattern beside the whole circulation'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={pattern} onClick={() => onAction('reconcile-right-ventricular-infarction')}>Reconcile RV trajectory</Button>
+        <Button className="crisis-drug__action" disabled={!pattern || phenotype} onClick={() => onAction('review-right-ventricular-infarction-phenotype')}>Review RV phenotype + harms</Button>
+      </div>
+      <p className="field__hint">The ECG and echo are authored reports, not acquired skills. In this hypotensive, preload-sensitive case no nitrate or reflex diuretic is selected; no universal prohibition is taught.</p>
+    </section>
+    <section className="syringe" aria-labelledby="right-ventricular-infarction-support-title">
+      <div id="right-ventricular-infarction-support-title" className="syringe__name">Support gently. Reperfuse early.</div>
+      <Badge kind="teaching">cautious bridge · reperfusion owner · serial perfusion</Badge>
+      <div className="syringe__meta">pressure + brain + skin + kidney · rhythm + conduction · congestion</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Later perfusion + owners handed off · RV risk remains' : support && reperfusion ? 'Team + bridge aligned · allow a later handoff' : reperfusion ? 'Reperfusion stays active · cautious support remains' : support ? 'Support intent recorded · active reperfusion remains' : phenotype ? 'Reperfusion + support lanes are open' : pattern ? 'Keep reperfusion moving while RV review continues' : 'Reconcile the whole-patient trajectory first'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={!phenotype || support} onClick={() => onAction('record-right-ventricular-infarction-support')}>Record cautious support intent</Button>
+        <Button className="crisis-drug__action" disabled={!pattern || reperfusion} onClick={() => onAction('preserve-right-ventricular-infarction-reperfusion')}>Keep reperfusion moving</Button>
+        <Button className="crisis-drug__action" disabled={!support || !reperfusion || handoff} onClick={() => onAction('handoff-right-ventricular-infarction')}>Hand off later trajectory</Button>
+      </div>
+      <p className="field__hint">No bolus volume, drug, dose, medication delivery, PCI, device, shock-center transfer, disposition, prognosis, or outcome is selected. New compromise or pulse loss opens acute rescue.</p>
     </section>
   </div>;
 }

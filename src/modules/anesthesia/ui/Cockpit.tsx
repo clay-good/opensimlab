@@ -906,6 +906,9 @@ export function Cockpit({
           onPericardialTamponadeResponse={(action) => session.act({
             type: 'pericardial-tamponade-response', payload: { action },
           })}
+          onRightVentricularInfarctionResponse={(action) => session.act({
+            type: 'right-ventricular-infarction-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

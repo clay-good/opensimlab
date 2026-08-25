@@ -12,6 +12,7 @@ import { COMPLETE_HEART_BLOCK } from './complete-heart-block';
 import { TORSADES_DE_POINTES } from './torsades-de-pointes';
 import { HYPERKALEMIC_CONDUCTION_DISTURBANCE } from './hyperkalemic-conduction-disturbance';
 import { PERICARDIAL_TAMPONADE } from './pericardial-tamponade';
+import { RIGHT_VENTRICULAR_INFARCTION } from './right-ventricular-infarction';
 
 export const CARDIOLOGY_SCENARIOS: readonly Scenario[] = [
   STABLE_CHEST_PAIN_EVALUATION,
@@ -27,6 +28,7 @@ export const CARDIOLOGY_SCENARIOS: readonly Scenario[] = [
   TORSADES_DE_POINTES,
   HYPERKALEMIC_CONDUCTION_DISTURBANCE,
   PERICARDIAL_TAMPONADE,
+  RIGHT_VENTRICULAR_INFARCTION,
 ];
 export const DEFAULT_CARDIOLOGY_SCENARIO_ID = STABLE_CHEST_PAIN_EVALUATION.metadata.id;
 

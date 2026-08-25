@@ -1216,6 +1216,27 @@ echo, catheter, output, or specimens; diagnose etiology; select or deliver fluid
 drainage, surgery, or another treatment; manipulate or remove a catheter; manage complications;
 determine disposition or prognosis; or predict recurrence or outcome.
 
+### Wave C cardiology slice 14: right-ventricular infarction
+
+The fourteenth cardiology slice starts in a PCI-capable cardiac unit with an activated primary-PCI
+pathway for ongoing inferior STEMI. Fixed 12-lead, right-sided-lead, and focused-echo reports support
+acute right-ventricular involvement while the patient remains pulse-present, alert, warm, modestly
+hypotensive, bradycardic, and normally oxygenated on room air, with elevated JVP and clear lungs.
+No single lead, pressure, venous-pressure, lung, or echo finding becomes a universal diagnostic or
+treatment rule, and the supplied reports do not teach acquisition or interpretation.
+
+Learners reconcile the whole trajectory and fixed RV phenotype, then preserve the already active
+reperfusion and rhythm-conduction pathway while recording individualized support guardrails in
+parallel. The case-specific hypotension makes nitrate and reflex diuresis inappropriate choices,
+but the lab supplies no universal prohibition, blind fluid load, fixed bolus, pressure target, drug,
+or dose. A strictly later handoff keeps ischemia, perfusion, preload, congestion, bradyarrhythmia,
+atrioventricular block, mechanical alternatives, reperfusion, treatment selection, owners, and
+change triggers open. This is distinct from first-contact STEMI activation, persistent post-PCI
+shock escalation, and chronic pressure-loaded RV failure. The lab does not examine; acquire or
+interpret ECG, echo, monitoring, or laboratory data; diagnose a real patient; prescribe or deliver
+fluid, oxygen, medication, pacing, or another treatment; perform PCI or another procedure; select a
+device; determine disposition or prognosis; or predict resolution or outcome.
+
 #### Respiratory medicine: 15
 
 Acute severe asthma; COPD exacerbation; community-acquired pneumonia with hypoxemia; pulmonary

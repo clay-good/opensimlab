@@ -2999,6 +2999,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use current specialty guidance, verified patient data, qualified multidisciplinary judgment, local pathways, explicit deterioration triggers, and continued reassessment.',
     briefIn: ['pericardial-tamponade'],
   },
+  {
+    id: 'right-ventricular-infarction-findings-are-authored',
+    headline: 'The right-sided ECG, echo, pressure, perfusion, rhythm, congestion, and later findings are authored reports.',
+    simplification: 'One fixed record stands in for serial history, examination, ECG, imaging, monitoring, laboratory review, and team communication.',
+    whereItMisleads: 'Treating V4R, clear lungs, JVP, one pressure, or one echo snapshot as universal diagnostic proof, a fluid target, or evidence of acquired interpretation skill.',
+    correctUnderstanding: 'Real RV-infarction assessment integrates acute ischemia, whole-patient perfusion and congestion, serial verified ECG and imaging, dangerous alternatives, and current reperfusion pathways.',
+    briefIn: ['right-ventricular-infarction'],
+  },
+  {
+    id: 'right-ventricular-infarction-controls-record-review-and-handoff-only',
+    headline: 'The controls record review, guardrails, reperfusion readiness, and handoff; they do not deliver care.',
+    simplification: 'Five clicks stand in for multidisciplinary acute coronary care, repeated assessment, treatment selection, monitoring, consultation, and handoff.',
+    whereItMisleads: 'Equating button order with ECG or echo interpretation, medication judgment, fluid responsiveness, PCI, rhythm rescue, or treatment competence.',
+    correctUnderstanding: 'Actual care requires qualified teams, verified findings, continuous reassessment, patient-specific hemodynamic decisions, and uninterrupted time-sensitive reperfusion work.',
+    briefIn: ['right-ventricular-infarction'],
+  },
+  {
+    id: 'no-live-right-ventricular-infarction-testing-treatment-reperfusion-or-outcome',
+    headline: 'The lab does not acquire tests, deliver fluid or medication, perform reperfusion, select a device, or predict outcome.',
+    simplification: 'No live examination, ECG, imaging, laboratory, catheter, fluid, nitrate, diuretic, vasoactive, antithrombotic, oxygen, PCI, pacing, device, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Using completion as evidence of diagnostic, imaging, prescribing, fluid-management, reperfusion, device, rescue, disposition, or prognostic competence.',
+    correctUnderstanding: 'Use current acute-coronary guidance, local protocols, verified patient data, qualified multidisciplinary judgment, and explicit rhythm, conduction, shock, mechanical, and pulse-loss rescue pathways.',
+    briefIn: ['right-ventricular-infarction'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

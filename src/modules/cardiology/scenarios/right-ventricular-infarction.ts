@@ -1,0 +1,60 @@
+/** Acute right-ventricular infarction reasoning without learner treatment delivery. */
+
+import type { Scenario } from '@anesthesia/scenarios/types';
+
+export const RIGHT_VENTRICULAR_INFARCTION: Scenario = {
+  schemaVersion: 1,
+  metadata: {
+    id: 'right-ventricular-infarction', version: '0.1.0', maturity: 'draft',
+    title: 'Right-ventricular infarction', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
+    estimatedMinutes: 8, difficulty: 'advanced', objectives: [
+      { id: 'reconcile-right-ventricular-infarction', statement: 'Reconcile the acute inferior-STEMI trajectory with current pressure, perfusion, oxygenation, rhythm, and congestion before choosing a hemodynamic frame.', measure: 'The learner separated preload-sensitive hypotension from declared multi-organ shock and kept dangerous alternatives open.' },
+      { id: 'review-right-ventricular-infarction-phenotype', statement: 'Review the fixed right-sided ECG and echocardiographic reports as an acute ischemic RV phenotype without claiming test acquisition or one-sign diagnostic certainty.', measure: 'The fixed V4R, RV-function, LV, lung, and alternative-cause findings were integrated without delaying reperfusion.' },
+      { id: 'preserve-right-ventricular-infarction-reperfusion', statement: 'Keep the activated primary-PCI pathway and rhythm, conduction, and defibrillation readiness active while the RV phenotype is reviewed.', measure: 'RV-focused review did not replace or delay time-sensitive reperfusion and did not claim PCI completion.' },
+      { id: 'record-right-ventricular-infarction-support', statement: 'Record patient-specific RV-support guardrails without a nitrate, diuretic, fixed-fluid, universal-target, or drug-delivery recipe.', measure: 'Preload, perfusion, congestion, rhythm, conduction, oxygenation, and response remained individualized.' },
+      { id: 'handoff-right-ventricular-infarction', statement: 'After elapsed reassessment, hand off unresolved ischemia, perfusion, rhythm, conduction, mechanical, reperfusion, and treatment-selection work.', measure: 'The authored stable interval did not become a claim of treatment response, completed reperfusion, durable resolution, or outcome.' },
+    ],
+    clinicalReview: { reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED',
+      competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01',
+      contentVersion: '0.1.0', sources: [
+        'Rao SV, O’Donoghue ML, Ruel M, et al. 2025 ACC/AHA/ACEP/NAEMSP/SCAI Guideline for the Management of Patients With Acute Coronary Syndromes. Circulation. 2025;151:e771-e862. PMID:40014670. doi:10.1161/CIR.0000000000001309.',
+        'Konstam MA, Kiernan MS, Bernstein D, et al. Evaluation and Management of Right-Sided Heart Failure: A Scientific Statement From the American Heart Association. Circulation. 2018;137:e578-e622. doi:10.1161/CIR.0000000000000560.',
+      ] },
+    limitations: ['right-ventricular-infarction-findings-are-authored',
+      'right-ventricular-infarction-controls-record-review-and-handoff-only',
+      'no-live-right-ventricular-infarction-testing-treatment-reperfusion-or-outcome'],
+  },
+  patient: { ageYears: 66, sex: 'male', heightCm: 178, weightKg: 82, asaClass: 4,
+    diagnosis: 'Authored acute inferior STEMI with right-ventricular involvement',
+    procedure: 'RV-infarction reassessment in a PCI-capable cardiac unit',
+    comorbidities: ['Hypertension', 'Hyperlipidemia'], medications: ['Home medicines under reconciliation'],
+    allergies: ['No known drug allergies'], fasting: 'Acute cardiac admission; fasting state not represented',
+    baseline: { heartRateBpm: 54, meanArterialMmHg: 69, strokeVolumeMl: 54,
+      hemoglobinGPerDl: 13.8, bloodVolumeMl: 5000, coreTemperatureC: 36.6,
+      arterialStiffness: 1.15, baroreflexGain: 0.85, fixedStrokeVolume: false },
+    airway: { difficulty: 0.1, difficultMaskVentilation: false,
+      assessment: 'Alert, speaking complete sentences, and protecting the airway' },
+    respiratory: { profile: 'healthy' } },
+  equipment: { monitoring: ['ecg', 'nibp', 'pulse-oximetry', 'temperature'],
+    airwayDevice: 'facemask', ventilator: { mode: 'manual', fio2: 0.21,
+      tidalVolumeMl: 500, respiratoryRateBpm: 18, freshGasFlowLPerMin: 10, delivering: false } },
+  formulary: [],
+  timeline: [
+    { id: 'right-ventricular-infarction-presentation', type: 'narrative',
+      target: 'right-ventricular-infarction', atTick: 0, severity: 'critical',
+      message: 'In a PCI-capable cardiac unit, a 66-year-old man has 55 minutes of ongoing chest pressure with an activated primary-PCI pathway. Fixed 12-lead and right-sided-lead reports describe inferior ST elevation with reciprocal lateral depression and 1.5 mm ST elevation in V4R. HR is 54/min in sinus rhythm, BP 86/60 mmHg, RR 18/min, SpO₂ 96% on room air, and he remains alert with warm extremities and capillary refill 2 seconds. JVP is reported elevated and the lungs clear. Urine output and lactate do not establish multi-organ shock. These findings are authored; one sign, lead, pressure, or lung finding is not a universal diagnostic or treatment rule.' },
+    { id: 'right-ventricular-infarction-phenotype', type: 'narrative',
+      target: 'right-ventricular-infarction', atTick: 0, severity: 'warning',
+      message: 'A fixed focused-echo report describes moderate RV dilation and reduced RV systolic function, a small underfilled LV with preserved LV systolic function, no pericardial effusion, and no reported acute severe valve lesion or ventricular-septal defect. The acute inferior ischemic and right-sided ECG reports plus this snapshot support right-ventricular involvement in the authored case. Pulmonary embolism, evolving mechanical disease, bradyarrhythmia or atrioventricular block, bleeding, medication effects, and other contributors remain active clinical questions rather than permanently excluded diagnoses.' },
+    { id: 'right-ventricular-infarction-boundary', type: 'narrative',
+      target: 'right-ventricular-infarction-boundary', atTick: 0, severity: 'warning',
+      message: 'Reconcile the whole trajectory, then review the fixed RV phenotype. Preserve the already activated reperfusion pathway while recording individualized support guardrails in parallel; RV review must not delay reperfusion. In this hypotensive, preload-sensitive authored presentation, no nitrate or reflex diuretic is selected. No fixed fluid volume, blind fluid loading, universal pressure target, or universal prohibition is supplied: real preload decisions require verified congestion, filling, perfusion, and serial response. After a later engine tick, hand off exact symptoms, ECG reports, pressure, perfusion, rhythm, conduction, congestion, alternatives, reperfusion status, open treatment choices, and change triggers. The controls do not examine; acquire or interpret ECG, echo, monitoring, laboratory, or catheter data; diagnose a real patient; prescribe or deliver fluid, nitrate, diuretic, vasopressor, inotrope, antithrombotic, oxygen, or another treatment; perform PCI or another procedure; determine disposition or prognosis; or predict outcome.' },
+  ],
+  debrief: { rubric: [
+    { id: 'right-ventricular-infarction-reconciliation', objectiveId: 'reconcile-right-ventricular-infarction', question: 'Which ischemic, pressure, perfusion, rhythm, oxygenation, and congestion facts defined the current trajectory without declaring shock from pressure alone?' },
+    { id: 'right-ventricular-infarction-phenotype', objectiveId: 'review-right-ventricular-infarction-phenotype', question: 'How did the fixed right-sided ECG and echo reports support the authored RV phenotype while alternatives and test limitations remained open?' },
+    { id: 'right-ventricular-infarction-reperfusion', objectiveId: 'preserve-right-ventricular-infarction-reperfusion', question: 'Why did active reperfusion and rhythm-conduction readiness continue during RV-focused review?' },
+    { id: 'right-ventricular-infarction-support', objectiveId: 'record-right-ventricular-infarction-support', question: 'Why did the support frame avoid nitrate, reflex diuresis, blind fluid, a fixed bolus, and universal targets?' },
+    { id: 'right-ventricular-infarction-handoff', objectiveId: 'handoff-right-ventricular-infarction', question: 'Which unresolved ischemic, hemodynamic, rhythm, conduction, mechanical, reperfusion, and treatment questions remained after elapsed reassessment?' },
+  ] },
+};
