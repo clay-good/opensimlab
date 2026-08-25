@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 33 reports bounded glycemic response state. */
-export const WORKER_PROTOCOL_VERSION = 33;
+/** Bumped whenever the message shape changes incompatibly. Version 34 reports bounded CIED-planning state. */
+export const WORKER_PROTOCOL_VERSION = 34;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -340,6 +340,15 @@ export interface EquipmentSnapshot {
       readonly repeatEligible: boolean;
       readonly repeatPointOfCareAtTick: number | null;
       readonly repeatPointOfCareGlucoseMgPerDl: number | null;
+    };
+    /** Bounded pacemaker and electrosurgery planning vignette. */
+    readonly ciedPlanningAssessment?: {
+      readonly deviceRecordReviewedAtTick: number | null;
+      readonly procedureRiskReviewedAtTick: number | null;
+      readonly plan: 'coordinate-asynchronous-pacing' | 'apply-unverified-magnet'
+        | 'proceed-no-change' | null;
+      readonly planAtTick: number | null;
+      readonly backupAndRestorationDocumentedAtTick: number | null;
     };
     /** Accepted quantitative neuromuscular-reversal teaching state. */
     readonly neuromuscularReversalFraction?: number;

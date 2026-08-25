@@ -605,3 +605,18 @@
 - [ ] Add continuous-monitor performance, sampling technique, insulin dose, route, preparation,
   delivery, pharmacokinetics, hypoglycemia, rescue, electrolytes, ketones, acid-base state,
   nutrition, medication reconciliation, complications, or outcome.
+
+## Slice 41: bounded pacemaker and cautery planning
+
+- [x] Check in an evidence brief covering device identification, pacing dependence, procedure
+  location, electrosurgery interference, magnet uncertainty, backup, and restoration boundaries.
+- [x] Add a thirty-eighth authored adult preoperative scenario with a fixed transvenous pacemaker
+  record and fixed above-umbilicus monopolar-electrosurgery plan.
+- [x] Require both record reviews before one device plan, then require backup, monitoring, and
+  restoration documentation after the plan.
+- [x] Reject unsupported, duplicate, out-of-order, hostile, and inactive assessment requests.
+- [x] Complete curriculum mapping, preparation path, limitations, catalog, SEO, responsive browser
+  inspection, and full CI.
+- [ ] Add interrogation, programming, magnet application or response, pacing or sensing,
+  electrosurgery technique, current-path calculation, malfunction, emergency response, or team
+  performance.

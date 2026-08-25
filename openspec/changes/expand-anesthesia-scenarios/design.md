@@ -665,3 +665,16 @@ The two glucose values and response interval are deterministic teaching fixtures
 or insulin model. Sampling, continuous-monitor performance, dose, route, preparation, delivery,
 pharmacokinetics, hypoglycemia, rescue, electrolytes, ketones, acid-base state, nutrition,
 medication reconciliation, complications, and outcome remain excluded.
+
+## Slice 41: bounded pacemaker and cautery planning
+
+The thirty-eighth authored scenario is a stable preoperative decision vignette. Independent review
+of the fixed pacemaker record and fixed above-umbilicus monopolar-electrosurgery pattern precedes
+one plan. The expert branch coordinates asynchronous pacing with the CIED team, then documents
+external pacing/defibrillation availability, continuous monitoring, and restoration before leaving
+monitored care.
+
+The screen records planning evidence only. It does not interrogate, program, pace, sense, apply a
+magnet, reproduce device-specific magnet response, calculate a current path, place a dispersive
+electrode, deliver electrosurgery, model malfunction, teach emergency response, or assess team
+performance.

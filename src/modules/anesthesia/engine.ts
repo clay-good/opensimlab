@@ -41,7 +41,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.35';
+export const ENGINE_VERSION = '0.1.0-alpha.36';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -350,6 +350,12 @@ export class AnesthesiaEngine {
   private insulinProtocolIntentAtTick: number | null = null;
   private repeatPointOfCareAtTick: number | null = null;
   private repeatPointOfCareGlucoseMgPerDl: number | null = null;
+  private ciedDeviceRecordReviewedAtTick: number | null = null;
+  private ciedProcedureRiskReviewedAtTick: number | null = null;
+  private ciedPlan: 'coordinate-asynchronous-pacing' | 'apply-unverified-magnet'
+    | 'proceed-no-change' | null = null;
+  private ciedPlanAtTick: number | null = null;
+  private ciedBackupAndRestorationDocumentedAtTick: number | null = null;
   /** Exclusive tick at which the bounded held airway maneuver ends. */
   private jawThrustCpapUntilTick = 0;
   /** Current lower-airway obstruction, retained for truthful equipment/accessibility output. */
@@ -1786,6 +1792,84 @@ export class AnesthesiaEngine {
           { glucoseMgPerDl: 174 });
         break;
       }
+      case 'cied-planning-assessment': {
+        const supported = this.scenario.timeline.some(
+          (event) => event.type === 'narrative' && event.target === 'cied-cautery-planning',
+        );
+        const response = String(action.payload.action ?? '');
+        const valid = [
+          'review-device-record', 'review-procedure-emi', 'coordinate-asynchronous-pacing',
+          'apply-unverified-magnet', 'proceed-no-change', 'document-backup-and-restoration',
+        ].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `cied-planning-refused-${this.currentTick}`,
+            supported
+              ? 'The CIED-planning action was not one of the listed choices. No decision was recorded.'
+              : 'The bounded CIED-planning choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-device-record') {
+          if (this.ciedDeviceRecordReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `cied-device-review-refused-${this.currentTick}`,
+              'The fixed device record has already been reviewed.');
+            break;
+          }
+          this.ciedDeviceRecordReviewedAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `cied-device-record-reviewed-${this.currentTick}`,
+            'Fixed record: left-pectoral transvenous dual-chamber pacemaker for complete atrioventricular block; pacing dependent; recent interrogation documents normal function and a manufacturer-specific asynchronous magnet response. No live interrogation is simulated.');
+          break;
+        }
+        if (response === 'review-procedure-emi') {
+          if (this.ciedProcedureRiskReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `cied-procedure-review-refused-${this.currentTick}`,
+              'The fixed procedure and electromagnetic-interference pattern has already been reviewed.');
+            break;
+          }
+          this.ciedProcedureRiskReviewedAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `cied-procedure-risk-reviewed-${this.currentTick}`,
+            'Fixed procedure: right shoulder surgery above the umbilicus with anticipated monopolar electrosurgery. The current path and generator access require a patient-specific plan; technique and dispersive-electrode placement are not simulated.');
+          break;
+        }
+        if (response === 'document-backup-and-restoration') {
+          if (this.ciedPlan === null) {
+            this.log('warning', 'assessment', `cied-restoration-order-refused-${this.currentTick}`,
+              'Choose the coordinated device plan before documenting backup and restoration.');
+            break;
+          }
+          if (this.ciedBackupAndRestorationDocumentedAtTick !== null) {
+            this.log('warning', 'assessment', `cied-restoration-refused-${this.currentTick}`,
+              'Backup and post-procedure restoration have already been documented.');
+            break;
+          }
+          this.ciedBackupAndRestorationDocumentedAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `cied-backup-restoration-documented-${this.currentTick}`,
+            'External pacing/defibrillation availability, continuous monitoring, and explicit restoration of preprocedure device settings before leaving monitored care were documented. Pad placement and device programming are not simulated.');
+          break;
+        }
+        if (this.ciedDeviceRecordReviewedAtTick === null
+          || this.ciedProcedureRiskReviewedAtTick === null) {
+          this.log('warning', 'assessment', `cied-plan-order-refused-${this.currentTick}`,
+            'Review both the device record and procedure electromagnetic-interference pattern before choosing a plan.');
+          break;
+        }
+        if (this.ciedPlan !== null) {
+          this.log('warning', 'assessment', `cied-plan-refused-${this.currentTick}`,
+            'A CIED plan has already been recorded for this attempt.');
+          break;
+        }
+        this.ciedPlan = response === 'coordinate-asynchronous-pacing'
+          ? 'coordinate-asynchronous-pacing'
+          : response === 'apply-unverified-magnet'
+            ? 'apply-unverified-magnet' : 'proceed-no-change';
+        this.ciedPlanAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `cied-plan-${response}-${this.currentTick}`,
+          response === 'coordinate-asynchronous-pacing'
+            ? 'Coordinated asynchronous pacing plan recorded with the CIED team before above-umbilicus electromagnetic interference. This does not perform programming or prescribe universal magnet use.'
+            : response === 'apply-unverified-magnet'
+              ? 'Unverified magnet use recorded. Magnet response is device specific and cannot replace record review and coordinated planning.'
+              : 'No-change plan recorded despite pacing dependence and anticipated above-umbilicus electromagnetic interference.');
+        break;
+      }
       case 'silence-alarm': {
         this.alarmEngine.silence(String(action.payload.alarmId), this.currentTick, TICKS_PER_SECOND);
         break;
@@ -3138,6 +3222,13 @@ export class AnesthesiaEngine {
             && this.currentTick - this.insulinProtocolIntentAtTick >= 18_000,
           repeatPointOfCareAtTick: this.repeatPointOfCareAtTick,
           repeatPointOfCareGlucoseMgPerDl: this.repeatPointOfCareGlucoseMgPerDl,
+        },
+        ciedPlanningAssessment: {
+          deviceRecordReviewedAtTick: this.ciedDeviceRecordReviewedAtTick,
+          procedureRiskReviewedAtTick: this.ciedProcedureRiskReviewedAtTick,
+          plan: this.ciedPlan,
+          planAtTick: this.ciedPlanAtTick,
+          backupAndRestorationDocumentedAtTick: this.ciedBackupAndRestorationDocumentedAtTick,
         },
         neuromuscularReversalFraction: this.neuromuscularReversalFraction,
         postTetanicCount: this.postTetanicCount,

@@ -172,6 +172,14 @@ export interface ActionCockpitProps {
       readonly repeatPointOfCareAtTick: number | null;
       readonly repeatPointOfCareGlucoseMgPerDl: number | null;
     };
+    readonly ciedPlanningAssessment?: {
+      readonly deviceRecordReviewedAtTick: number | null;
+      readonly procedureRiskReviewedAtTick: number | null;
+      readonly plan: 'coordinate-asynchronous-pacing' | 'apply-unverified-magnet'
+        | 'proceed-no-change' | null;
+      readonly planAtTick: number | null;
+      readonly backupAndRestorationDocumentedAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -265,6 +273,11 @@ export interface ActionCockpitProps {
     response: 'confirm-point-of-care-glucose' | 'record-insulin-protocol-intent'
       | 'repeat-point-of-care-glucose',
   ) => void;
+  readonly onCiedPlanningAssessment?: (
+    action: 'review-device-record' | 'review-procedure-emi'
+      | 'coordinate-asynchronous-pacing' | 'apply-unverified-magnet'
+      | 'proceed-no-change' | 'document-backup-and-restoration',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -331,6 +344,9 @@ export function crisisResponseAvailability(
     hasExtubationReadinessResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'extubation-readiness',
     ),
+    hasCiedPlanningResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'cied-cautery-planning',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -382,7 +398,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
-        'extubation-readiness',
+        'extubation-readiness', 'cied-cautery-planning',
       ].includes(event.target ?? '')))
     ? 'crisis' : 'syringes');
   const {
@@ -390,7 +406,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasCardiacArrestResponse, hasHighSpinalResponse, hasVenousAirEmbolismResponse,
     hasBronchospasmResponse, hasPreeclampsiaResponse, hasPneumothoraxResponse,
     hasAspirationRiskResponse, hasEmergenceResidualBlockResponse, hasDelayedEmergenceResponse,
-    hasExtubationReadinessResponse,
+    hasExtubationReadinessResponse, hasCiedPlanningResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -413,8 +429,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPneumothoraxResponse || hasBronchospasmResponse;
   const hasCrisisResponse = hasNonMaternalCrisisResponse || hasPreeclampsiaResponse
     || hasAspirationRiskResponse || hasEmergenceResidualBlockResponse
-    || hasDelayedEmergenceResponse || hasExtubationReadinessResponse;
-  const responseTray = hasExtubationReadinessResponse && !hasNonMaternalCrisisResponse
+    || hasDelayedEmergenceResponse || hasExtubationReadinessResponse || hasCiedPlanningResponse;
+  const responseTray = hasCiedPlanningResponse && !hasNonMaternalCrisisResponse
+    ? { id: 'crisis', label: 'Device plan' } as const
+    : hasExtubationReadinessResponse && !hasNonMaternalCrisisResponse
     && !hasPreeclampsiaResponse && !hasAspirationRiskResponse
     && !hasEmergenceResidualBlockResponse && !hasDelayedEmergenceResponse
     ? { id: 'crisis', label: 'Extubation readiness' } as const
@@ -675,6 +693,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <AspirationRiskTray
                 assessment={props.resuscitation.aspirationRiskAssessment}
                 onAction={props.onAspirationRiskAssessment ?? (() => {})}
+              />
+            )}
+            {hasCiedPlanningResponse && (
+              <CiedPlanningTray
+                assessment={props.resuscitation.ciedPlanningAssessment}
+                onAction={props.onCiedPlanningAssessment ?? (() => {})}
               />
             )}
             {hasEmergenceResidualBlockResponse && (
@@ -1619,6 +1643,57 @@ function AspirationRiskTray({
           The patient-specific choice is not a universal GLP-1 medication rule. Shared decision-making,
           future preparation, gastric assessment, and anesthetic technique remain outside this screen.
         </p>
+      </section>
+    </div>
+  );
+}
+
+function CiedPlanningTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['ciedPlanningAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onCiedPlanningAssessment']>;
+}) {
+  const deviceReviewed = assessment?.deviceRecordReviewedAtTick != null;
+  const procedureReviewed = assessment?.procedureRiskReviewedAtTick != null;
+  const plan = assessment?.plan ?? null;
+  const restoration = assessment?.backupAndRestorationDocumentedAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="cied-facts-title">
+        <div id="cied-facts-title" className="syringe__name">Build the device picture</div>
+        <Badge kind="teaching">Focused vignette</Badge>
+        <div className="syringe__meta">Device · dependence · procedure · interference</div>
+        <p className="syringe__remaining" role="status">
+          {!deviceReviewed ? 'Device-record review pending'
+            : !procedureReviewed ? 'Dual-chamber pacemaker · pacing dependent · documented magnet response'
+              : 'Right shoulder · above umbilicus · anticipated monopolar electrosurgery'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={deviceReviewed}
+            onClick={() => onAction('review-device-record')}>Review device record</Button>
+          <Button className="crisis-drug__action" disabled={procedureReviewed}
+            onClick={() => onAction('review-procedure-emi')}>Review procedure + EMI</Button>
+        </div>
+        <p className="field__hint">No interrogation, programming, magnet effect, cautery technique, or current-path calculation is simulated.</p>
+      </section>
+      <section className="syringe" aria-labelledby="cied-plan-title">
+        <div id="cied-plan-title" className="syringe__name">Coordinate the whole plan</div>
+        <div className="syringe__meta">Pacing strategy · backup · restoration</div>
+        <p className="syringe__remaining" role="status">
+          {restoration ? 'Backup, monitoring, and restoration documented'
+            : plan === 'coordinate-asynchronous-pacing' ? 'Coordinated asynchronous pacing plan recorded'
+              : plan ? 'Unsafe shortcut recorded for debrief' : 'Plan pending both reviews'}
+        </p>
+        {plan === null && <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!deviceReviewed || !procedureReviewed}
+            onClick={() => onAction('coordinate-asynchronous-pacing')}>Coordinate asynchronous pacing</Button>
+          <Button className="crisis-drug__action" disabled={!deviceReviewed || !procedureReviewed}
+            onClick={() => onAction('apply-unverified-magnet')}>Apply magnet without confirmation</Button>
+          <Button className="crisis-drug__action" disabled={!deviceReviewed || !procedureReviewed}
+            onClick={() => onAction('proceed-no-change')}>Proceed with no device change</Button>
+        </div>}
+        <Button className="crisis-drug__action" disabled={plan === null || restoration}
+          onClick={() => onAction('document-backup-and-restoration')}>Document backup + restoration</Button>
+        <p className="field__hint">This case supports a patient-specific team plan, never a universal magnet rule or device order.</p>
       </section>
     </div>
   );

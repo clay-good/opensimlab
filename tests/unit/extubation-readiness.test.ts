@@ -48,7 +48,7 @@ describe('Requirement: extubation readiness integrates more than train-of-four r
   it('validates, registers, maps every objective, and preserves the secured airway', () => {
     expect(validateScenario(SCENARIO)).toEqual([]);
     expect(SCENARIOS).toContain(SCENARIO);
-    expect(SCENARIOS).toHaveLength(37);
+    expect(SCENARIOS).toHaveLength(38);
     const subject = engine();
     expect(subject.step().state.trainOfFourRatio).toBeCloseTo(0.93, 6);
     expect(subject.equipment()).toMatchObject({

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 37,
+  "scenarioCount": 38,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -816,6 +816,28 @@
         "Repeat the point-of-care glucose after the declared interval and interpret it against the perioperative target."
       ],
       "searchText": "perioperative-hyperglycemia perioperative hyperglycemia symptomatic cholelithiasis laparoscopic cholecystectomy confirm the elevated glucose with a point-of-care measurement rather than relying on an unverified cue. the fixed point-of-care glucose was deliberately confirmed after the cue appeared. record an institutional insulin-protocol response without inventing an individualized dose. insulin-protocol intent was recorded after point-of-care confirmation. repeat the point-of-care glucose after the declared interval and interpret it against the perioperative target. the fixed 30-minute repeat glucose was obtained and fell within 100–180 mg/dl."
+    },
+    {
+      "id": "pacemaker-and-cautery-planning",
+      "path": "/anesthesia/scenario/pacemaker-and-cautery-planning",
+      "title": "Pacemaker and cautery planning",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 8,
+      "difficulty": "intermediate",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Review device type, pacing dependence, recent function, and documented magnet response.",
+        "Join procedure location and anticipated electrosurgery with the device-specific risk pattern.",
+        "Choose coordinated asynchronous pacing for this pacing-dependent case without inventing a universal magnet rule.",
+        "Include external backup, monitoring, and explicit post-procedure restoration in the plan."
+      ],
+      "searchText": "pacemaker-and-cautery-planning pacemaker and cautery planning right rotator cuff tear elective right shoulder arthroplasty review device type, pacing dependence, recent function, and documented magnet response. the fixed cied record was deliberately reviewed. join procedure location and anticipated electrosurgery with the device-specific risk pattern. the fixed above-umbilicus monopolar-electrosurgery pattern was reviewed. choose coordinated asynchronous pacing for this pacing-dependent case without inventing a universal magnet rule. the correct coordinated plan followed both reviews. include external backup, monitoring, and explicit post-procedure restoration in the plan. backup and restoration were documented after the device plan."
     }
   ],
   "preparationPathCount": 10,
@@ -1082,10 +1104,11 @@
     },
     {
       "id": "handoff-escalation",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "title": "Handoff and escalation",
-      "description": "Practice recognizing when the simulated problem exceeds solo management, ordering a bounded handoff, and making help part of the response.",
+      "description": "Practice recognizing when the simulated problem exceeds solo management, coordinating a device-specific plan, ordering a bounded handoff, and making help part of the response.",
       "scenarioIds": [
+        "pacemaker-and-cautery-planning",
         "unexpected-intraoperative-hemorrhage",
         "blood-bank-handoff",
         "bronchospasm",
@@ -1109,7 +1132,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 67
+      "estimatedMinutes": 75
     }
   ]
 }

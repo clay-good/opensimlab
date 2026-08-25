@@ -1279,6 +1279,39 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['perioperative-hyperglycemia'],
   },
   {
+    id: 'cied-record-and-procedure-are-fixed-vignette-facts',
+    headline: 'The pacemaker record, pacing dependence, magnet response, and procedure details are fixed teaching facts.',
+    simplification: 'Two review actions reveal one complete device record and one anticipated '
+      + 'electrosurgery pattern without obtaining or validating live data.',
+    whereItMisleads: 'Treating the displayed record as an interrogation, assuming the same response '
+      + 'for another device, or transferring the plan to another procedure or position.',
+    correctUnderstanding: 'CIED planning requires the actual device, indication, recent function, '
+      + 'pacing dependence, magnet behavior, procedure, position, interference source, and local team.',
+    briefIn: ['pacemaker-and-cautery-planning'],
+  },
+  {
+    id: 'no-device-programming-magnet-or-electrosurgery-model',
+    headline: 'The plan records intent; no programming, magnet effect, pacing, sensing, current path, or electrosurgery is simulated.',
+    simplification: 'Buttons record reviews and a coordinated plan while physiology and device '
+      + 'function remain unchanged.',
+    whereItMisleads: 'Reading a click as a device order, programming competence, confirmed magnet '
+      + 'capture, safe dispersive-electrode placement, or proof that interference cannot occur.',
+    correctUnderstanding: 'Device changes and electrosurgery mitigation require trained personnel, '
+      + 'manufacturer-specific knowledge, appropriate equipment, monitoring, and verification.',
+    briefIn: ['pacemaker-and-cautery-planning'],
+  },
+  {
+    id: 'no-cied-malfunction-emergency-or-team-performance',
+    headline: 'The stable preoperative vignette does not model pacing inhibition, inappropriate therapy, device damage, emergency response, or team performance.',
+    simplification: 'The lesson ends after documentation of backup and restoration intent; no '
+      + 'intraoperative electromagnetic-interference event occurs.',
+    whereItMisleads: 'Assuming planning guarantees an uncomplicated course or demonstrates response '
+      + 'to loss of capture, bradycardia, tachytherapy, hemodynamic instability, or failed restoration.',
+    correctUnderstanding: 'Real care needs continuous patient monitoring, immediately available '
+      + 'backup, explicit roles, response protocols, and verified restoration before monitored care ends.',
+    briefIn: ['pacemaker-and-cautery-planning'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

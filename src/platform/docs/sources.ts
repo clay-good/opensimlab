@@ -1251,6 +1251,36 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-24',
   },
   {
+    id: 'aha-acc-perioperative-cied-2024',
+    currency: {
+      lastAmended: '2024',
+      checkedAt: 'https://www.ahajournals.org/doi/full/10.1161/CIR.0000000000001285',
+    },
+    authors: 'Thompson A, et al',
+    title: '2024 AHA/ACC Guideline for Perioperative Cardiovascular Management for Noncardiac Surgery',
+    publication: 'Circulation',
+    year: 2024,
+    locator: '150:e351-e442',
+    usedFor: 'The CIED-planning lesson: identify the device and pacing dependence, characterize '
+      + 'anticipated electromagnetic interference, confirm rather than assume magnet behavior, '
+      + 'coordinate asynchronous pacing when indicated, and restore altered functions.',
+    verifiedAgainst: 'Current AHA/ACC perioperative guideline',
+    verifiedOn: '2026-08-24',
+  },
+  {
+    id: 'aha-cied-scientific-statement-2024',
+    authors: 'Wan EY, Rogers AJ, Lavelle M, et al',
+    title: 'Periprocedural Management and Multidisciplinary Care Pathways for Patients With Cardiac Implantable Electronic Devices',
+    publication: 'Circulation',
+    year: 2024,
+    locator: '150:e183-e196',
+    usedFor: 'The patient-specific planning boundary: device type, pacing dependence, procedure '
+      + 'site, electrosurgery, current path, magnet accessibility and response, external backup, '
+      + 'monitoring, multidisciplinary coordination, and post-procedure restoration.',
+    verifiedAgainst: 'AHA scientific statement DOI 10.1161/CIR.0000000000001264',
+    verifiedOn: '2026-08-24',
+  },
+  {
     id: 'schwid-2001',
     pmid: '11302037',
     authors: 'Schwid HA, Rooke GA, Michalowski P, Ross BK',

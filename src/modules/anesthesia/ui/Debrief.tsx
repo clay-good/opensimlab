@@ -464,6 +464,10 @@ export function objectiveFindings(
     'confirm-perioperative-hyperglycemia': 'depth-monitoring-and-its-limits',
     'use-bounded-insulin-protocol': 'vasodilation-versus-hypovolemia',
     'reassess-perioperative-glucose': 'depth-monitoring-and-its-limits',
+    'review-cied-device-record': 'depth-monitoring-and-its-limits',
+    'review-cied-procedure-risk': 'depth-monitoring-and-its-limits',
+    'choose-coordinated-cied-plan': 'depth-monitoring-and-its-limits',
+    'document-cied-backup-and-restoration': 'depth-monitoring-and-its-limits',
     'recognize-hemorrhage': 'vasodilation-versus-hypovolemia',
     'temporize-volume-loss': 'vasodilation-versus-hypovolemia',
     'avoid-full-dose-induction': 'hysteresis-and-effect-site-lag',
@@ -2986,6 +2990,56 @@ export function objectiveFindings(
             ? `The repeat point-of-care glucose was ${repeatValue.toFixed(0)} mg/dL, outside the declared target.`
             : 'No accepted repeat point-of-care glucose was recorded after the response interval.',
         atTick: repeat?.tick ?? history.at(-1)?.tick ?? onset,
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
+      'review-cied-device-record', 'review-cied-procedure-risk',
+      'choose-coordinated-cied-plan', 'document-cied-backup-and-restoration',
+    ].includes(objective.id)) {
+      const supported = scenario.timeline.some(
+        (event) => event.type === 'narrative' && event.target === 'cied-cautery-planning',
+      );
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The CIED-planning vignette was not active.' } satisfies ObjectiveFinding;
+      const device = log.find((event) => event.eventId.startsWith('cied-device-record-reviewed-'));
+      const procedure = log.find((event) => event.eventId.startsWith('cied-procedure-risk-reviewed-'));
+      const correctPlan = log.find(
+        (event) => event.eventId.startsWith('cied-plan-coordinate-asynchronous-pacing-'),
+      );
+      const anyPlan = log.find((event) => event.eventId.startsWith('cied-plan-'));
+      const restoration = log.find(
+        (event) => event.eventId.startsWith('cied-backup-restoration-documented-'),
+      );
+      if (objective.id === 'review-cied-device-record') return {
+        ...base, outcome: device ? 'met' : 'not-met',
+        finding: device
+          ? 'The fixed pacemaker type, indication, pacing dependence, recent function, and documented magnet response were reviewed.'
+          : 'The device record was not reviewed before the session ended.',
+        atTick: device?.tick ?? 0,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'review-cied-procedure-risk') return {
+        ...base, outcome: procedure ? 'met' : 'not-met',
+        finding: procedure
+          ? 'The above-umbilicus surgical site and anticipated monopolar electrosurgery were joined to the device-specific interference question.'
+          : 'The procedure and electromagnetic-interference pattern was not reviewed.',
+        atTick: procedure?.tick ?? 0,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'choose-coordinated-cied-plan') return {
+        ...base, outcome: correctPlan ? 'met' : 'not-met',
+        finding: correctPlan
+          ? 'A coordinated asynchronous pacing plan followed both reviews without claiming universal magnet behavior.'
+          : anyPlan
+            ? 'A device-plan shortcut was recorded instead of the coordinated asynchronous plan supported by the fixed facts.'
+            : 'No CIED plan was recorded.',
+        atTick: correctPlan?.tick ?? anyPlan?.tick ?? 0,
+      } satisfies ObjectiveFinding;
+      return {
+        ...base, outcome: restoration && correctPlan ? 'met' : 'not-met',
+        finding: restoration && correctPlan
+          ? 'External backup, monitoring, and explicit restoration before leaving monitored care were documented after the coordinated plan.'
+          : 'Backup and post-procedure restoration were not completed after the coordinated plan.',
+        atTick: restoration?.tick ?? anyPlan?.tick ?? 0,
       } satisfies ObjectiveFinding;
     }
 

@@ -49,7 +49,7 @@ describe('Requirement: routine inhalational maintenance is bounded and changing'
   it('validates, registers, maps every objective, and starts alarm-safe established maintenance', () => {
     expect(validateScenario(SCENARIO)).toEqual([]);
     expect(SCENARIOS).toContain(SCENARIO);
-    expect(SCENARIOS).toHaveLength(37);
+    expect(SCENARIOS).toHaveLength(38);
     const subject = engine();
     expect(subject.equipment()).toMatchObject({
       airway: { intubated: true, device: 'tracheal-tube' },

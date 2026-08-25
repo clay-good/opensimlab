@@ -278,3 +278,8 @@ hyperglycemia recognition-and-response path. Point-of-care confirmation, dose-fr
 insulin-protocol intent, a 30-minute wait, a dual-unit repeat result, and target interpretation are
 inspectable. Sampling, individualized dosing, delivery, hypoglycemia, metabolic crises,
 electrolytes, nutrition, complications, and outcome remain excluded.
+The forty-first adds the thirty-eighth authored scenario and isolates preoperative pacemaker and
+electrosurgery planning. Device-record review, pacing dependence, procedure and interference
+review, a coordinated asynchronous-pacing plan, external backup, monitoring, and restoration are
+inspectable. Interrogation, programming, magnet effects, electrosurgery technique, malfunction,
+emergency response, and team performance remain excluded.

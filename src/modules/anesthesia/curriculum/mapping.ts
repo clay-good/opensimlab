@@ -1245,6 +1245,21 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'pc-anesthetic-plan-and-conduct',
     objectiveIds: ['confirm-perioperative-hyperglycemia', 'use-bounded-insulin-protocol', 'reassess-perioperative-glucose'],
   },
+  {
+    scenarioId: 'pacemaker-and-cautery-planning', frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['review-cied-device-record', 'review-cied-procedure-risk', 'choose-coordinated-cied-plan', 'document-cied-backup-and-restoration'],
+  },
+  {
+    scenarioId: 'pacemaker-and-cautery-planning', frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['review-cied-device-record', 'review-cied-procedure-risk', 'choose-coordinated-cied-plan', 'document-cied-backup-and-restoration'],
+  },
+  {
+    scenarioId: 'pacemaker-and-cautery-planning', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-anesthetic-plan-and-conduct',
+    objectiveIds: ['review-cied-device-record', 'review-cied-procedure-risk', 'choose-coordinated-cied-plan', 'document-cied-backup-and-restoration'],
+  },
 ];
 
 export interface DomainCoverage {

@@ -706,6 +706,9 @@ export function Cockpit({
           onGlycemicResponse={(response) => session.act({
             type: 'glycemic-response', payload: { response },
           })}
+          onCiedPlanningAssessment={(action) => session.act({
+            type: 'cied-planning-assessment', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

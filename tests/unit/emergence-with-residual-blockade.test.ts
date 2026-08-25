@@ -45,7 +45,7 @@ describe('Requirement: emergence residual blockade uses quantitative recovery', 
   it('validates, registers, maps every objective, and starts with a truthful residual pattern', () => {
     expect(validateScenario(SCENARIO)).toEqual([]);
     expect(SCENARIOS).toContain(SCENARIO);
-    expect(SCENARIOS).toHaveLength(37);
+    expect(SCENARIOS).toHaveLength(38);
     const subject = engine();
     const initial = subject.step();
     expect(initial.state.trainOfFourCount).toBe(4);
