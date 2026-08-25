@@ -258,6 +258,8 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
       .toMatchObject({ indexable: true, heading: 'PEA arrest' });
     expect(routeFor('/emergency-medicine/scenario/status-epilepticus'))
       .toMatchObject({ indexable: true, heading: 'Status epilepticus' });
+    expect(routeFor('/emergency-medicine/scenario/acute-ischemic-stroke'))
+      .toMatchObject({ indexable: true, heading: 'Acute ischemic stroke' });
   });
 
   it('Requirement: Modules Declare Their Own Physiological Timescale', () => {

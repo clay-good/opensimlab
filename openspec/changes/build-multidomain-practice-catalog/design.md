@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with 16 playable, completion-audited scenarios. The remaining
-9 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with 17 playable, completion-audited scenarios. The remaining
+8 planned titles remain descriptive scope only and do not enter playable counts before their full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -415,6 +415,21 @@ The formulary-free case opens into a single two-card surface built around the cl
 the interface keeps persistent-or-recurrent seizure escalation explicit. Physical care, medication
 preparation or delivery, repeat or alternate benzodiazepine, second-line antiseizure loading, EEG,
 airway procedures, causal diagnosis, recurrence, disposition, and outcome remain outside the case.
+
+### Wave B slice 17: acute ischemic stroke pathway
+
+The seventeenth emergency-medicine slice adds a fixed disabling anterior-circulation stroke within
+the 4.5-hour thrombolysis window. Learners integrate the witnessed deficit, 70-minute
+last-known-well clock, glucose, pressure, airway, and breathing; activate the stroke system; review
+authored noncontrast CT without hemorrhage and CTA with a left M1 occlusion; record one fixed
+local-protocol 20 mg IV tenecteplase intent for the 80 kg patient; and activate thrombectomy transfer
+without waiting for a simulated response.
+
+The formulary-free two-card surface keeps both reperfusion tracks on one clock and closes with
+focused surveillance plus a clock-explicit handoff. The case does not acquire an examination,
+calculate a stroke score, interpret imaging, adjudicate eligibility, deliver medication, lower blood
+pressure, arrange real transport, perform thrombectomy, model reperfusion or complications, or
+predict disposition and outcome. No neurologic improvement is authored after treatment intent.
 
 #### Critical care: 24
 

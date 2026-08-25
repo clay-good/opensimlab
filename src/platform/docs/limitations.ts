@@ -1741,6 +1741,44 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['status-epilepticus'],
   },
   {
+    id: 'acute-ischemic-stroke-findings-and-eligibility-are-authored',
+    headline: 'The deficit, last-known-well time, glucose, blood pressure, imaging, and eligibility findings are authored facts, not acquired or adjudicated clinical data.',
+    simplification: 'One fixed adult has disabling aphasia and right weakness, a 70-minute clock, '
+      + 'glucose 112 mg/dL, BP 168/94 mmHg, no hemorrhage on authored CT, a left M1 occlusion on '
+      + 'authored CTA, and no authored thrombolysis contraindication.',
+    whereItMisleads: 'Treating the vignette as neurologic examination, stroke scoring, image '
+      + 'interpretation, blood-pressure management, or proof that a real patient is eligible for reperfusion.',
+    correctUnderstanding: 'Real eligibility requires a rapid expert history and examination, '
+      + 'verified timing, glucose and pressure assessment, appropriate imaging, contraindication '
+      + 'review, and local stroke-system judgment.',
+    briefIn: ['acute-ischemic-stroke'],
+  },
+  {
+    id: 'acute-ischemic-stroke-controls-are-screen-proxies',
+    headline: 'Stroke-system, thrombolysis, transfer, surveillance, and handoff buttons record teaching intents; they do not perform care.',
+    simplification: 'The interface records parallel workflow and one fixed local-protocol 20 mg IV '
+      + 'tenecteplase intent for an authored 80 kg patient without activating a real team, acquiring '
+      + 'access or imaging, preparing medication, arranging transport, or assessing execution.',
+    whereItMisleads: 'Equating an ordered button sequence with competent examination, medication '
+      + 'safety, team coordination, transport, procedure selection, or handoff performance.',
+    correctUnderstanding: 'These tasks require trained teams, local protocols, functioning systems, '
+      + 'real-time communication, supervised procedural skill, and continuous bedside reassessment.',
+    briefIn: ['acute-ischemic-stroke'],
+  },
+  {
+    id: 'no-live-stroke-score-imaging-drug-procedure-reperfusion-complication-or-outcome',
+    headline: 'The case does not calculate a live stroke score, interpret imaging, deliver a drug, perform thrombectomy, model reperfusion, or predict complications or outcome.',
+    simplification: 'Deficits remain authored after the treatment intent. No alteplase branch, '
+      + 'extended-window selection, blood-pressure intervention, hemorrhage, angioedema, infarct '
+      + 'evolution, vessel recanalization, procedure, post-reperfusion care, disposition, or prognosis is modeled.',
+    whereItMisleads: 'Assuming the fixed dose is universally preferred, waiting for a modeled '
+      + 'response before thrombectomy transfer, or inferring improvement, safety, reperfusion, or outcome.',
+    correctUnderstanding: 'Agent choice and reperfusion pathways follow current guidelines and '
+      + 'local protocols. Eligible large-vessel-occlusion care proceeds urgently, with surveillance '
+      + 'and definitive treatment continuing beyond this vignette.',
+    briefIn: ['acute-ischemic-stroke'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

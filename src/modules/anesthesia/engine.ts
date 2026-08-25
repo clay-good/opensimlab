@@ -344,6 +344,12 @@ export class AnesthesiaEngine {
   private statusEpilepticusSupportedAtTick: number | null = null;
   private statusEpilepticusLorazepamAtTick: number | null = null;
   private statusEpilepticusReassessedAtTick: number | null = null;
+  private acuteStrokePresentationReviewedAtTick: number | null = null;
+  private acuteStrokeSystemActivatedAtTick: number | null = null;
+  private acuteStrokeImagingReviewedAtTick: number | null = null;
+  private acuteStrokeTenecteplaseAtTick: number | null = null;
+  private acuteStrokeThrombectomyActivatedAtTick: number | null = null;
+  private acuteStrokeReassessedAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1756,6 +1762,111 @@ export class AnesthesiaEngine {
         this.statusEpilepticusReassessedAtTick = this.currentTick;
         this.log('advisory', 'assessment', `status-epilepticus-reassessed-${this.currentTick}`,
           'Fixed reassessment: visible generalized convulsions have stopped, spontaneous ventilation and a pulse remain present, and oxygen saturation is 96% with support. Airway and ventilation surveillance continues. Persistent or recurrent seizure would require prompt second-line antiseizure therapy; EEG, causal evaluation, repeat or alternate medication, airway procedures, recurrence, disposition, and outcome are outside this lesson.');
+        break;
+      }
+      case 'acute-ischemic-stroke-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some(
+          (event) => event.type === 'narrative' && event.target === 'acute-ischemic-stroke',
+        );
+        const valid = ['review-stroke-presentation', 'activate-stroke-system',
+          'review-stroke-imaging-and-eligibility', 'record-tenecteplase-20-mg-intent',
+          'activate-thrombectomy-transfer', 'reassess-and-handoff-stroke'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `acute-stroke-refused-${this.currentTick}`,
+            supported ? 'The acute-stroke action was not one of the listed choices. Nothing changed.'
+              : 'The bounded acute-stroke choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-stroke-presentation') {
+          if (this.acuteStrokePresentationReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `acute-stroke-review-refused-${this.currentTick}`,
+              'The fixed acute-stroke presentation has already been reviewed.');
+            break;
+          }
+          this.acuteStrokePresentationReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `acute-stroke-reviewed-${this.currentTick}`,
+            'Fixed presentation: witnessed sudden aphasia, right facial weakness, and right arm weakness are disabling; last known well was 70 minutes ago. Glucose is 112 mg/dL, BP is 168/94 mmHg, the airway is protected, and breathing is spontaneous. This screen does not perform an examination or score severity.');
+          break;
+        }
+        if (this.acuteStrokePresentationReviewedAtTick === null) {
+          this.log('warning', 'assessment', `acute-stroke-order-refused-${this.currentTick}`,
+            'Review the disabling deficit, last-known-well time, glucose, pressure, airway, and breathing first.');
+          break;
+        }
+        if (response === 'activate-stroke-system') {
+          if (this.acuteStrokeSystemActivatedAtTick !== null) {
+            this.log('warning', 'assessment', `acute-stroke-activation-refused-${this.currentTick}`,
+              'The stroke system has already been activated.');
+            break;
+          }
+          this.acuteStrokeSystemActivatedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `acute-stroke-system-activated-${this.currentTick}`,
+            'Stroke-system activation, monitoring, vascular access, laboratory workflow, and parallel noncontrast CT plus CTA workflow were recorded. Team performance, access, specimen collection, transport, and imaging acquisition are not simulated.', { intentOnly: true, lastKnownWellMinutes: 70 });
+          break;
+        }
+        if (this.acuteStrokeSystemActivatedAtTick === null) {
+          this.log('warning', 'assessment', `acute-stroke-activation-order-refused-${this.currentTick}`,
+            'Activate the stroke system before reviewing the authored imaging and eligibility screen.');
+          break;
+        }
+        if (response === 'review-stroke-imaging-and-eligibility') {
+          if (this.acuteStrokeImagingReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `acute-stroke-imaging-refused-${this.currentTick}`,
+              'The authored imaging and eligibility findings have already been reviewed.');
+            break;
+          }
+          this.acuteStrokeImagingReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `acute-stroke-imaging-reviewed-${this.currentTick}`,
+            'Authored findings: noncontrast CT shows no intracranial hemorrhage; CTA shows a left M1 large-vessel occlusion. BP is 168/94 mmHg and no thrombolysis contraindication is authored. This fixed screen does not interpret images or adjudicate real eligibility.');
+          break;
+        }
+        if (this.acuteStrokeImagingReviewedAtTick === null) {
+          this.log('warning', 'assessment', `acute-stroke-imaging-order-refused-${this.currentTick}`,
+            'Review the authored CT, CTA, pressure, and contraindication findings before reperfusion intent.');
+          break;
+        }
+        if (response === 'record-tenecteplase-20-mg-intent') {
+          if (this.acuteStrokeTenecteplaseAtTick !== null) {
+            this.log('warning', 'drug', `acute-stroke-tenecteplase-refused-${this.currentTick}`,
+              'The fixed tenecteplase intent has already been recorded.');
+            break;
+          }
+          this.acuteStrokeTenecteplaseAtTick = this.currentTick;
+          this.log('critical', 'drug', `acute-stroke-tenecteplase-${this.currentTick}`,
+            'A fixed local-protocol tenecteplase 20 mg IV intent was recorded for this 80 kg patient within 4.5 hours. The 0.25 mg/kg teaching calculation is capped at 25 mg. Preparation, physical delivery, contraindication adjudication, pharmacology, and treatment response are not simulated.',
+            { intentOnly: true, drugId: 'tenecteplase', route: 'iv', doseMg: 20, doseMgPerKg: 0.25, weightKg: 80 });
+          break;
+        }
+        if (this.acuteStrokeTenecteplaseAtTick === null) {
+          this.log('warning', 'assessment', `acute-stroke-thrombectomy-order-refused-${this.currentTick}`,
+            'Record the eligible thrombolysis intent before closing the parallel thrombectomy pathway.');
+          break;
+        }
+        if (response === 'activate-thrombectomy-transfer') {
+          if (this.acuteStrokeThrombectomyActivatedAtTick !== null) {
+            this.log('warning', 'assessment', `acute-stroke-thrombectomy-refused-${this.currentTick}`,
+              'The thrombectomy transfer pathway has already been activated.');
+            break;
+          }
+          this.acuteStrokeThrombectomyActivatedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `acute-stroke-thrombectomy-activated-${this.currentTick}`,
+            'The endovascular pathway and immediate thrombectomy-capable-center transfer were activated for the authored left M1 occlusion without waiting for thrombolysis response. Transfer, procedure selection, thrombectomy, and reperfusion are not simulated.', { intentOnly: true, occlusion: 'left-m1' });
+          break;
+        }
+        if (this.acuteStrokeThrombectomyActivatedAtTick === null) {
+          this.log('warning', 'assessment', `acute-stroke-reassessment-order-refused-${this.currentTick}`,
+            'Activate the parallel thrombectomy transfer pathway before reassessment and handoff.');
+          break;
+        }
+        if (this.acuteStrokeReassessedAtTick !== null) {
+          this.log('warning', 'assessment', `acute-stroke-reassessment-refused-${this.currentTick}`,
+            'The fixed acute-stroke reassessment has already been recorded.');
+          break;
+        }
+        this.acuteStrokeReassessedAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `acute-stroke-reassessed-${this.currentTick}`,
+          'Fixed surveillance and handoff: airway remains protected, breathing remains spontaneous, BP is 168/94 mmHg, and no overt bleeding is authored. Deficits are not re-scored and no treatment response is claimed. Last-known-well, activation, imaging, thrombolysis-intent, and transfer clocks accompany the thrombectomy handoff.');
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -4839,6 +4950,14 @@ export class AnesthesiaEngine {
           supportedAtTick: this.statusEpilepticusSupportedAtTick,
           lorazepamAtTick: this.statusEpilepticusLorazepamAtTick,
           reassessedAtTick: this.statusEpilepticusReassessedAtTick,
+        },
+        acuteIschemicStrokeAssessment: {
+          presentationReviewedAtTick: this.acuteStrokePresentationReviewedAtTick,
+          systemActivatedAtTick: this.acuteStrokeSystemActivatedAtTick,
+          imagingReviewedAtTick: this.acuteStrokeImagingReviewedAtTick,
+          tenecteplaseAtTick: this.acuteStrokeTenecteplaseAtTick,
+          thrombectomyActivatedAtTick: this.acuteStrokeThrombectomyActivatedAtTick,
+          reassessedAtTick: this.acuteStrokeReassessedAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

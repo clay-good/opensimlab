@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "emergency-medicine",
-  "recordCount": 16,
+  "recordCount": 17,
   "records": [
     {
       "recordId": "scenario:undifferentiated-shock@0.1.0",
@@ -177,6 +177,17 @@
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#status-epilepticus@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#status-epilepticus@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:acute-ischemic-stroke@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "acute-ischemic-stroke",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/emergency-medicine-completion-audit.json#acute-ischemic-stroke@0.1.0",
+        "/catalog/emergency-medicine-quality-audit.json#acute-ischemic-stroke@0.1.0"
       ]
     }
   ]

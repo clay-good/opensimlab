@@ -2702,6 +2702,60 @@ export function objectiveFindings(
         atTick: reassessed?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-and-activate-acute-stroke', 'review-stroke-imaging-and-eligibility',
+      'record-stroke-thrombolysis-intent', 'activate-stroke-thrombectomy-pathway',
+      'reassess-and-handoff-acute-stroke'].includes(objective.id)) {
+      const supported = scenario.timeline.some(
+        (event) => event.type === 'narrative' && event.target === 'acute-ischemic-stroke',
+      );
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The acute-ischemic-stroke vignette was not active.' } satisfies ObjectiveFinding;
+      const reviewed = log.find((event) => event.eventId.startsWith('acute-stroke-reviewed-'));
+      const activated = log.find((event) => event.eventId.startsWith('acute-stroke-system-activated-'));
+      const imaging = log.find((event) => event.eventId.startsWith('acute-stroke-imaging-reviewed-'));
+      const tenecteplase = log.find((event) => /^acute-stroke-tenecteplase-\d+$/.test(event.eventId));
+      const thrombectomy = log.find((event) => event.eventId.startsWith('acute-stroke-thrombectomy-activated-'));
+      const reassessed = log.find((event) => event.eventId.startsWith('acute-stroke-reassessed-'));
+      if (objective.id === 'recognize-and-activate-acute-stroke') {
+        const ordered = reviewed && activated && reviewed.tick <= activated.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'The disabling deficit, 70-minute clock, glucose, pressure, airway, and breathing findings led to immediate stroke-system activation.'
+            : 'The acute-stroke presentation was not reviewed and activated in order.',
+          atTick: activated?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'review-stroke-imaging-and-eligibility') {
+        const ordered = activated && imaging && activated.tick <= imaging.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'The authored no-hemorrhage CT, left M1 occlusion, pressure, and contraindication screen were integrated after activation.'
+            : 'The authored imaging and eligibility screen was absent or out of order.',
+          atTick: imaging?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'record-stroke-thrombolysis-intent') {
+        const ordered = imaging && tenecteplase && imaging.tick <= tenecteplase.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'The fixed 20 mg IV tenecteplase intent followed eligibility review without claiming delivery or response.'
+            : 'Tenecteplase intent was absent or preceded eligibility review.',
+          atTick: tenecteplase?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'activate-stroke-thrombectomy-pathway') {
+        const ordered = tenecteplase && thrombectomy && tenecteplase.tick <= thrombectomy.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'The thrombectomy transfer pathway followed thrombolysis intent without waiting for a simulated response.'
+            : 'The endovascular pathway was absent or out of order.',
+          atTick: thrombectomy?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = thrombectomy && reassessed && thrombectomy.tick <= reassessed.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met',
+        finding: ordered
+          ? 'Airway, breathing, pressure, bleeding surveillance, persistent deficits, and all treatment clocks were handed off without claiming reperfusion.'
+          : 'Post-treatment surveillance and thrombectomy handoff were incomplete or out of order.',
+        atTick: reassessed?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

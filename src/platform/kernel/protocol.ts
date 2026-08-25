@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 49 reports bounded status-epilepticus state. */
-export const WORKER_PROTOCOL_VERSION = 49;
+/** Bumped whenever the message shape changes incompatibly. Version 50 reports bounded acute-stroke state. */
+export const WORKER_PROTOCOL_VERSION = 50;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -351,6 +351,14 @@ export interface EquipmentSnapshot {
       readonly reviewedAtTick: number | null;
       readonly supportedAtTick: number | null;
       readonly lorazepamAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+    };
+    readonly acuteIschemicStrokeAssessment?: {
+      readonly presentationReviewedAtTick: number | null;
+      readonly systemActivatedAtTick: number | null;
+      readonly imagingReviewedAtTick: number | null;
+      readonly tenecteplaseAtTick: number | null;
+      readonly thrombectomyActivatedAtTick: number | null;
       readonly reassessedAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
