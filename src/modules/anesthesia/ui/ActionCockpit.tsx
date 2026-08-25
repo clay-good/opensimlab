@@ -300,6 +300,14 @@ export interface ActionCockpitProps {
       readonly pressureControlAtTick: number | null;
       readonly escalatedAtTick: number | null;
     };
+    readonly diabeticKetoacidosisAssessment?: {
+      readonly presentationReviewedAtTick: number | null;
+      readonly fluidsAtTick: number | null;
+      readonly potassiumAtTick: number | null;
+      readonly insulinAtTick: number | null;
+      readonly dextroseAtTick: number | null;
+      readonly transitionAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -475,6 +483,11 @@ export interface ActionCockpitProps {
       | 'review-ich-findings-and-coagulopathy' | 'record-warfarin-reversal-intent'
       | 'record-smooth-ich-pressure-control' | 'escalate-ich-neurocritical-care',
   ) => void;
+  readonly onDiabeticKetoacidosisResponse?: (
+    action: 'review-dka-presentation' | 'record-dka-fluids-and-monitoring'
+      | 'record-dka-potassium-replacement' | 'record-dka-insulin-intent'
+      | 'add-dextrose-and-continue-insulin' | 'confirm-dka-resolution-and-transition',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -594,6 +607,9 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'intracranial-hemorrhage-deterioration',
     ),
+    hasDiabeticKetoacidosisResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'diabetic-ketoacidosis',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -658,6 +674,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'unstable-bradycardia')
       || (event.type === 'narrative' && event.target === 'acute-ischemic-stroke')
       || (event.type === 'narrative' && event.target === 'intracranial-hemorrhage-deterioration')
+      || (event.type === 'narrative' && event.target === 'diabetic-ketoacidosis')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -680,6 +697,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasStatusEpilepticusResponse,
     hasAcuteIschemicStrokeResponse,
     hasIntracranialHemorrhageResponse,
+    hasDiabeticKetoacidosisResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -705,7 +723,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
   const hasNonMaternalCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse
     || hasCardiacArrestResponse || hasHighSpinalResponse || hasVenousAirEmbolismResponse
     || hasPneumothoraxResponse || hasBronchospasmResponse || hasStatusEpilepticusResponse
-    || hasAcuteIschemicStrokeResponse || hasIntracranialHemorrhageResponse;
+    || hasAcuteIschemicStrokeResponse || hasIntracranialHemorrhageResponse
+    || hasDiabeticKetoacidosisResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -721,8 +740,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasAcutePulmonaryEdemaResponse || hasPulmonaryEmbolismResponse || hasStemiResponse
     || hasUnstableNarrowTachycardiaResponse || hasUnstableBradycardiaResponse
     || hasStatusEpilepticusResponse || hasAcuteIschemicStrokeResponse
-    || hasIntracranialHemorrhageResponse;
-  const responseTray = hasIntracranialHemorrhageResponse
+    || hasIntracranialHemorrhageResponse || hasDiabeticKetoacidosisResponse;
+  const responseTray = hasDiabeticKetoacidosisResponse
+    ? { id: 'crisis', label: 'DKA pathway' } as const
+    : hasIntracranialHemorrhageResponse
     ? { id: 'crisis', label: 'ICH deterioration' } as const
     : hasAcuteIschemicStrokeResponse
     ? { id: 'crisis', label: 'Acute stroke' } as const
@@ -782,6 +803,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     && (focusedArrestScenario || focusedPleuralEmergency || hasStatusEpilepticusResponse
     || hasAcuteIschemicStrokeResponse
     || hasIntracranialHemorrhageResponse
+    || hasDiabeticKetoacidosisResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1142,6 +1164,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <IntracranialHemorrhageTray
                 assessment={props.resuscitation.intracranialHemorrhageAssessment}
                 onAction={props.onIntracranialHemorrhageResponse ?? (() => {})} />
+            )}
+            {hasDiabeticKetoacidosisResponse && (
+              <DiabeticKetoacidosisTray
+                assessment={props.resuscitation.diabeticKetoacidosisAssessment}
+                onAction={props.onDiabeticKetoacidosisResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -3120,6 +3147,61 @@ function IntracranialHemorrhageTray({ assessment, onAction }: {
             onClick={() => onAction('escalate-ich-neurocritical-care')}>Escalate + hand off serial findings</Button>
         </div>
         <p className="field__hint">No dose, drug delivery, pressure response, hematoma expansion, airway procedure, ventricular drain, evacuation, complication, disposition, or outcome is simulated.</p>
+      </section>
+    </div>
+  );
+}
+
+function DiabeticKetoacidosisTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['diabeticKetoacidosisAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onDiabeticKetoacidosisResponse']>;
+}) {
+  const reviewed = assessment?.presentationReviewedAtTick != null;
+  const fluids = assessment?.fluidsAtTick != null;
+  const potassium = assessment?.potassiumAtTick != null;
+  const insulin = assessment?.insulinAtTick != null;
+  const dextrose = assessment?.dextroseAtTick != null;
+  const transitioned = assessment?.transitionAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="dka-foundation-title">
+        <div id="dka-foundation-title" className="syringe__name">Three signals name the crisis.</div>
+        <Badge kind="teaching">Glucose + ketones + acidosis</Badge>
+        <div className="syringe__meta">486 · β-OHB 5.4 · pH 7.16 · HCO₃ 11 · K 3.2</div>
+        <p className="syringe__remaining" role="status">
+          {potassium ? 'Fixed repeat K 3.7 · insulin gate open'
+            : fluids ? 'Fluids + serial panels active · correct K first'
+              : reviewed ? 'Moderate DKA recognized · support next'
+                : 'Triad + severity + precipitant review pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={reviewed}
+            onClick={() => onAction('review-dka-presentation')}>Review DKA triad + cause</Button>
+          <Button className="crisis-drug__action" disabled={!reviewed || fluids}
+            onClick={() => onAction('record-dka-fluids-and-monitoring')}>Record fluids + serial monitoring</Button>
+          <Button className="crisis-drug__action" disabled={!fluids || potassium}
+            onClick={() => onAction('record-dka-potassium-replacement')}>Replace K + recheck before insulin</Button>
+        </div>
+        <p className="field__hint">Potassium 3.2 mmol/L keeps insulin locked. The screen does not examine, sample, choose a fluid or electrolyte dose, or deliver treatment.</p>
+      </section>
+      <section className="syringe" aria-labelledby="dka-clearance-title">
+        <div id="dka-clearance-title" className="syringe__name">Treat the ketones, not just the glucose.</div>
+        <div className="syringe__meta">Insulin after K · dextrose before resolution · safe overlap</div>
+        <p className="syringe__remaining" role="status">
+          {transitioned ? 'Resolved · β-OHB 0.4 · pH 7.32 · HCO₃ 19'
+            : dextrose ? 'Glucose 238 · ketoacidosis persists · continue insulin'
+              : insulin ? 'Insulin intent active · interval panel ready'
+                : potassium ? 'K gate cleared · insulin intent available' : 'Potassium gate pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!potassium || insulin}
+            onClick={() => onAction('record-dka-insulin-intent')}>Record IV insulin protocol intent</Button>
+          <Button className="crisis-drug__action" disabled={!insulin || dextrose}
+            onClick={() => onAction('add-dextrose-and-continue-insulin')}>Add dextrose + continue insulin</Button>
+          <Button className="crisis-drug__action" disabled={!dextrose || transitioned}
+            onClick={() => onAction('confirm-dka-resolution-and-transition')}>Confirm resolution + transition safely</Button>
+        </div>
+        <p className="field__hint">Resolution uses plasma ketone plus pH or bicarbonate, not anion gap or urine ketones alone. No infusion, lab kinetics, complication, disposition, or outcome is simulated.</p>
       </section>
     </div>
   );

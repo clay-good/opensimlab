@@ -2809,6 +2809,54 @@ export function objectiveFindings(
         atTick: escalated?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-moderate-dka', 'begin-dka-fluid-and-monitoring-path',
+      'correct-dka-potassium-before-insulin', 'continue-insulin-with-dextrose-until-dka-resolves',
+      'confirm-dka-resolution-and-transition'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'diabetic-ketoacidosis');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The diabetic-ketoacidosis vignette was not active.' } satisfies ObjectiveFinding;
+      const reviewed = log.find((event) => event.eventId.startsWith('dka-reviewed-'));
+      const fluids = log.find((event) => /^dka-fluids-\d+$/.test(event.eventId));
+      const potassium = log.find((event) => /^dka-potassium-\d+$/.test(event.eventId));
+      const insulin = log.find((event) => /^dka-insulin-\d+$/.test(event.eventId));
+      const dextrose = log.find((event) => /^dka-dextrose-\d+$/.test(event.eventId));
+      const transition = log.find((event) => /^dka-transition-\d+$/.test(event.eventId));
+      if (objective.id === 'recognize-moderate-dka') return {
+        ...base, outcome: reviewed ? 'met' : 'not-met',
+        finding: reviewed
+          ? 'Hyperglycemia or diabetes, ketonemia, and acidosis were integrated with volume status, potassium, mental status, and the failed infusion set.'
+          : 'The fixed DKA triad, severity, potassium, and precipitant were not reviewed.',
+        atTick: reviewed?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'begin-dka-fluid-and-monitoring-path') {
+        const ordered = reviewed && fluids && reviewed.tick <= fluids.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered ? 'Initial isotonic-fluid and serial-monitoring intents followed recognition.'
+            : 'Initial fluid and monitoring intent was absent or out of order.',
+          atTick: fluids?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'correct-dka-potassium-before-insulin') {
+        const ordered = fluids && potassium && fluids.tick <= potassium.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered ? 'Insulin remained withheld at potassium 3.2 mmol/L until the authored replacement step reached 3.7 mmol/L.'
+            : 'The potassium gate was absent or out of order.',
+          atTick: potassium?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'continue-insulin-with-dextrose-until-dka-resolves') {
+        const ordered = potassium && insulin && dextrose
+          && potassium.tick <= insulin.tick && insulin.tick <= dextrose.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered ? 'Insulin followed potassium correction, and dextrose joined continued insulin when glucose improved before ketoacidosis.'
+            : 'The potassium-gated insulin and dextrose continuation sequence was incomplete or out of order.',
+          atTick: dextrose?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = dextrose && transition && dextrose.tick <= transition.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met',
+        finding: ordered ? 'Plasma ketone plus pH or bicarbonate confirmed resolution before overlap, device replacement, education, and handoff.'
+          : 'Resolution confirmation and safe transition were incomplete or out of order.',
+        atTick: transition?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

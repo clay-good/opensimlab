@@ -766,6 +766,9 @@ export function Cockpit({
           onIntracranialHemorrhageResponse={(action) => session.act({
             type: 'intracranial-hemorrhage-response', payload: { action },
           })}
+          onDiabeticKetoacidosisResponse={(action) => session.act({
+            type: 'diabetic-ketoacidosis-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

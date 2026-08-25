@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "emergency-medicine",
-  "scenarioCount": 18,
+  "scenarioCount": 19,
   "playableScenarioCount": 0,
   "scenarios": [
     {
@@ -647,6 +647,42 @@
           "status": "missing",
           "evidence": [
             "No version-bound state-space-verification record exists for intracranial-hemorrhage-deterioration 0.1.0."
+          ]
+        }
+      ],
+      "playable": false
+    },
+    {
+      "scenarioId": "diabetic-ketoacidosis",
+      "contentVersion": "0.1.0",
+      "completionComplete": false,
+      "qualityRecords": [
+        {
+          "kind": "training-value",
+          "status": "missing",
+          "evidence": [
+            "No version-bound training-value record exists for diabetic-ketoacidosis 0.1.0."
+          ]
+        },
+        {
+          "kind": "authored-defaults",
+          "status": "missing",
+          "evidence": [
+            "No version-bound authored-defaults record exists for diabetic-ketoacidosis 0.1.0."
+          ]
+        },
+        {
+          "kind": "scenario-hazard",
+          "status": "missing",
+          "evidence": [
+            "No version-bound scenario-hazard record exists for diabetic-ketoacidosis 0.1.0."
+          ]
+        },
+        {
+          "kind": "state-space-verification",
+          "status": "missing",
+          "evidence": [
+            "No version-bound state-space-verification record exists for diabetic-ketoacidosis 0.1.0."
           ]
         }
       ],

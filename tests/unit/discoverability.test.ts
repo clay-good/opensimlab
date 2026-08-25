@@ -262,6 +262,8 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
       .toMatchObject({ indexable: true, heading: 'Acute ischemic stroke' });
     expect(routeFor('/emergency-medicine/scenario/intracranial-hemorrhage-deterioration'))
       .toMatchObject({ indexable: true, heading: 'Intracranial hemorrhage deterioration' });
+    expect(routeFor('/emergency-medicine/scenario/diabetic-ketoacidosis'))
+      .toMatchObject({ indexable: true, heading: 'Diabetic ketoacidosis' });
   });
 
   it('Requirement: Modules Declare Their Own Physiological Timescale', () => {

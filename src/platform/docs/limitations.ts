@@ -1816,6 +1816,40 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['intracranial-hemorrhage-deterioration'],
   },
   {
+    id: 'dka-diagnosis-panels-and-response-are-authored',
+    headline: 'The DKA symptoms, volume status, biochemical panels, precipitant, and treatment course are authored facts, not acquired measurements or individual predictions.',
+    simplification: 'One fixed adult has moderate DKA, hypokalemia, dehydration, and a kinked '
+      + 'insulin set, followed by fixed potassium, unresolved-treatment, and resolution panels.',
+    whereItMisleads: 'Treating the screen as examination, glucose or ketone testing, blood-gas or '
+      + 'electrolyte interpretation, severity assignment, precipitant diagnosis, or response prediction.',
+    correctUnderstanding: 'Real DKA requires repeated whole-patient assessment, direct plasma '
+      + 'ketone and venous acid-base testing, electrolytes, renal function, glucose, and precipitant evaluation.',
+    briefIn: ['diabetic-ketoacidosis'],
+  },
+  {
+    id: 'dka-fluid-potassium-insulin-dextrose-and-transition-controls-are-proxies',
+    headline: 'Fluid, potassium, insulin, dextrose, monitoring, and transition buttons record teaching intents; they do not prescribe or deliver treatment.',
+    simplification: 'The interface enforces a guideline-shaped order without choosing patient-specific '
+      + 'fluid volumes, electrolyte doses, insulin rates, dextrose concentration, access, pumps, or overlap timing.',
+    whereItMisleads: 'Equating ordered buttons with competent prescribing, compounding, infusion '
+      + 'management, laboratory surveillance, device repair, education, or handoff performance.',
+    correctUnderstanding: 'Use current local protocols, trained teams, functioning equipment, '
+      + 'frequent verified measurements, bedside reassessment, and supervised medication skills.',
+    briefIn: ['diabetic-ketoacidosis'],
+  },
+  {
+    id: 'no-live-dka-labs-infusion-electrolyte-fluid-complication-or-outcome',
+    headline: 'The case does not run live labs, calculate fluid or electrolyte deficits, deliver infusions, model clearance, manage complications, or predict outcome.',
+    simplification: 'Mixed DKA-HHS, euglycemic DKA, pregnancy, kidney or heart failure, infection, '
+      + 'bicarbonate and phosphate branches, hypoglycemia, arrhythmia, edema, thrombosis, acute kidney '
+      + 'injury, disposition, recurrence, and prognosis are absent.',
+    whereItMisleads: 'Copying the fixed values to another patient, using anion gap or urine ketones '
+      + 'alone for resolution, stopping insulin at glucose improvement, or assuming transition is complete.',
+    correctUnderstanding: 'DKA treatment is patient- and protocol-specific. Continue serial potassium, '
+      + 'glucose, plasma ketone, acid-base, renal, fluid, and precipitant management through safe transition.',
+    briefIn: ['diabetic-ketoacidosis'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

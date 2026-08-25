@@ -17,6 +17,7 @@ import { PEA_ARREST } from './pea-arrest';
 import { STATUS_EPILEPTICUS } from './status-epilepticus';
 import { ACUTE_ISCHEMIC_STROKE } from './acute-ischemic-stroke';
 import { INTRACRANIAL_HEMORRHAGE_DETERIORATION } from './intracranial-hemorrhage-deterioration';
+import { DIABETIC_KETOACIDOSIS } from './diabetic-ketoacidosis';
 
 export const EMERGENCY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   UNDIFFERENTIATED_SHOCK,
@@ -37,6 +38,7 @@ export const EMERGENCY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   STATUS_EPILEPTICUS,
   ACUTE_ISCHEMIC_STROKE,
   INTRACRANIAL_HEMORRHAGE_DETERIORATION,
+  DIABETIC_KETOACIDOSIS,
 ];
 export const DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID = UNDIFFERENTIATED_SHOCK.metadata.id;
 

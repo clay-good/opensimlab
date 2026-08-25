@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 51 reports bounded ICH state. */
-export const WORKER_PROTOCOL_VERSION = 51;
+/** Bumped whenever the message shape changes incompatibly. Version 52 reports bounded DKA state. */
+export const WORKER_PROTOCOL_VERSION = 52;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -368,6 +368,14 @@ export interface EquipmentSnapshot {
       readonly reversalAtTick: number | null;
       readonly pressureControlAtTick: number | null;
       readonly escalatedAtTick: number | null;
+    };
+    readonly diabeticKetoacidosisAssessment?: {
+      readonly presentationReviewedAtTick: number | null;
+      readonly fluidsAtTick: number | null;
+      readonly potassiumAtTick: number | null;
+      readonly insulinAtTick: number | null;
+      readonly dextroseAtTick: number | null;
+      readonly transitionAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

@@ -356,6 +356,12 @@ export class AnesthesiaEngine {
   private ichReversalAtTick: number | null = null;
   private ichPressureControlAtTick: number | null = null;
   private ichEscalatedAtTick: number | null = null;
+  private dkaPresentationReviewedAtTick: number | null = null;
+  private dkaFluidsAtTick: number | null = null;
+  private dkaPotassiumAtTick: number | null = null;
+  private dkaInsulinAtTick: number | null = null;
+  private dkaDextroseAtTick: number | null = null;
+  private dkaTransitionAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1978,6 +1984,109 @@ export class AnesthesiaEngine {
         this.ichEscalatedAtTick = this.currentTick;
         this.log('advisory', 'assessment', `ich-escalated-${this.currentTick}`,
           'Immediate transfer to neurocritical and neurosurgical capability was activated for worsening alertness, intraventricular extension, and early hydrocephalus. Fixed handoff includes symptom onset, 15-minute deterioration, airway surveillance, CT, warfarin timing, INR, reversal intent, and pressure plan. Airway intervention, ventricular drainage, surgery, expansion, complications, disposition, and outcome remain outside this lesson.', { intentOnly: true });
+        break;
+      }
+      case 'diabetic-ketoacidosis-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'diabetic-ketoacidosis');
+        const valid = ['review-dka-presentation', 'record-dka-fluids-and-monitoring',
+          'record-dka-potassium-replacement', 'record-dka-insulin-intent',
+          'add-dextrose-and-continue-insulin', 'confirm-dka-resolution-and-transition'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `dka-response-refused-${this.currentTick}`,
+            supported ? 'The DKA action was not one of the listed choices. Nothing changed.'
+              : 'The bounded DKA choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-dka-presentation') {
+          if (this.dkaPresentationReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `dka-review-refused-${this.currentTick}`,
+              'The fixed DKA presentation has already been reviewed.');
+            break;
+          }
+          this.dkaPresentationReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `dka-reviewed-${this.currentTick}`,
+            'Fixed assessment: type 1 diabetes and glucose 486 mg/dL, β-hydroxybutyrate 5.4 mmol/L, venous pH 7.16, and bicarbonate 11 mmol/L establish moderate DKA. The patient is alert, dehydrated, and breathing deeply. Potassium is 3.2 mmol/L, and a kinked infusion set is the authored precipitant. No infection or mixed HHS is authored.');
+          break;
+        }
+        if (this.dkaPresentationReviewedAtTick === null) {
+          this.log('warning', 'assessment', `dka-order-refused-${this.currentTick}`,
+            'Review diabetes or hyperglycemia, ketones, acidosis, severity, potassium, volume status, and precipitants first.');
+          break;
+        }
+        if (response === 'record-dka-fluids-and-monitoring') {
+          if (this.dkaFluidsAtTick !== null) {
+            this.log('warning', 'equipment', `dka-fluids-refused-${this.currentTick}`,
+              'The initial DKA fluid and monitoring intent has already been recorded.');
+            break;
+          }
+          this.dkaFluidsAtTick = this.currentTick;
+          this.log('critical', 'equipment', `dka-fluids-${this.currentTick}`,
+            'Initial isotonic crystalloid, cardiac and vital-sign monitoring, access, urine-output observation, hourly glucose, and 4-hour electrolyte, creatinine, β-hydroxybutyrate, and venous-pH panels were recorded. Fluid selection, volume, rate, physical delivery, specimens, devices, and patient response are not simulated.', { intentOnly: true });
+          break;
+        }
+        if (this.dkaFluidsAtTick === null) {
+          this.log('warning', 'assessment', `dka-fluids-order-refused-${this.currentTick}`,
+            'Record initial fluid resuscitation and serial monitoring before electrolyte and insulin intent.');
+          break;
+        }
+        if (response === 'record-dka-potassium-replacement') {
+          if (this.dkaPotassiumAtTick !== null) {
+            this.log('warning', 'drug', `dka-potassium-refused-${this.currentTick}`,
+              'The bounded potassium-replacement step has already been recorded.');
+            break;
+          }
+          this.dkaPotassiumAtTick = this.currentTick;
+          this.log('critical', 'drug', `dka-potassium-${this.currentTick}`,
+            'Potassium replacement and repeat monitoring were recorded while insulin remained withheld at 3.2 mmol/L. Fixed repeat potassium is 3.7 mmol/L, so the insulin gate is now open. Product, dose, concentration, access, infusion rate, physical delivery, ECG response, and individual kinetics are not simulated.', { intentOnly: true, initialPotassiumMmolPerL: 3.2, repeatPotassiumMmolPerL: 3.7 });
+          break;
+        }
+        if (this.dkaPotassiumAtTick === null) {
+          this.log('warning', 'assessment', `dka-potassium-order-refused-${this.currentTick}`,
+            'Potassium is 3.2 mmol/L. Record replacement and a repeat above 3.5 mmol/L before insulin intent.');
+          break;
+        }
+        if (response === 'record-dka-insulin-intent') {
+          if (this.dkaInsulinAtTick !== null) {
+            this.log('warning', 'drug', `dka-insulin-refused-${this.currentTick}`,
+              'The bounded IV insulin intent has already been recorded.');
+            break;
+          }
+          this.dkaInsulinAtTick = this.currentTick;
+          this.log('critical', 'drug', `dka-insulin-${this.currentTick}`,
+            'A local-protocol short-acting IV insulin infusion intent was recorded after potassium reached the authored 3.7 mmol/L. Dose selection, preparation, pump programming, delivery, glucose fall, ketone clearance, and potassium shift are not simulated.', { intentOnly: true, route: 'iv', medicationClass: 'short-acting-insulin' });
+          break;
+        }
+        if (this.dkaInsulinAtTick === null) {
+          this.log('warning', 'assessment', `dka-dextrose-order-refused-${this.currentTick}`,
+            'Record insulin intent only after the potassium gate before reviewing the fixed treatment panel.');
+          break;
+        }
+        if (response === 'add-dextrose-and-continue-insulin') {
+          if (this.dkaDextroseAtTick !== null) {
+            this.log('warning', 'drug', `dka-dextrose-refused-${this.currentTick}`,
+              'The bounded dextrose-plus-insulin continuation has already been recorded.');
+            break;
+          }
+          this.dkaDextroseAtTick = this.currentTick;
+          this.log('critical', 'drug', `dka-dextrose-${this.currentTick}`,
+            'Fixed interval panel: glucose 238 mg/dL, β-hydroxybutyrate 2.2 mmol/L, venous pH 7.24, bicarbonate 15 mmol/L, and potassium 4.1 mmol/L. Dextrose-containing fluid and continued protocol-guided insulin intent were recorded because glucose improved before ketoacidosis resolved. Fluid concentration, insulin rate, delivery, and kinetics are not simulated.', { intentOnly: true, glucoseMgPerDl: 238, betaHydroxybutyrateMmolPerL: 2.2, venousPh: 7.24, bicarbonateMmolPerL: 15, potassiumMmolPerL: 4.1 });
+          break;
+        }
+        if (this.dkaDextroseAtTick === null) {
+          this.log('warning', 'assessment', `dka-transition-order-refused-${this.currentTick}`,
+            'Add dextrose and continue insulin through the unresolved fixed panel before transition.');
+          break;
+        }
+        if (this.dkaTransitionAtTick !== null) {
+          this.log('warning', 'assessment', `dka-transition-refused-${this.currentTick}`,
+            'The fixed DKA resolution and transition have already been reviewed.');
+          break;
+        }
+        this.dkaTransitionAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `dka-transition-${this.currentTick}`,
+          'Fixed resolution panel: glucose 186 mg/dL, β-hydroxybutyrate 0.4 mmol/L, venous pH 7.32, bicarbonate 19 mmol/L, and potassium 4.0 mmol/L. Plasma ketone plus pH or bicarbonate criteria are met; anion gap and urine ketones were not used alone. Protocol-guided subcutaneous insulin overlap, replacement of the failed infusion set, sick-day education, supply access, and follow-up were recorded for handoff. Dosing, delivery, device testing, disposition, recurrence, and outcome are not simulated.', { intentOnly: true, glucoseMgPerDl: 186, betaHydroxybutyrateMmolPerL: 0.4, venousPh: 7.32, bicarbonateMmolPerL: 19, potassiumMmolPerL: 4.0 });
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -5077,6 +5186,14 @@ export class AnesthesiaEngine {
           reversalAtTick: this.ichReversalAtTick,
           pressureControlAtTick: this.ichPressureControlAtTick,
           escalatedAtTick: this.ichEscalatedAtTick,
+        },
+        diabeticKetoacidosisAssessment: {
+          presentationReviewedAtTick: this.dkaPresentationReviewedAtTick,
+          fluidsAtTick: this.dkaFluidsAtTick,
+          potassiumAtTick: this.dkaPotassiumAtTick,
+          insulinAtTick: this.dkaInsulinAtTick,
+          dextroseAtTick: this.dkaDextroseAtTick,
+          transitionAtTick: this.dkaTransitionAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

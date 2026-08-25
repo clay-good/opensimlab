@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with 18 playable, completion-audited scenarios. The remaining
-7 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with 19 playable, completion-audited scenarios. The remaining
+6 planned titles remain descriptive scope only and do not enter playable counts before their full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -444,6 +444,20 @@ The two-card surface pairs “notice the change” with “reverse the driver”
 surveillance and hydrocephalus escalation visible. The case does not examine or score the patient,
 interpret imaging, select a reversal dose, deliver a drug, titrate an infusion, perform an airway or
 neurosurgical procedure, model expansion or response, or predict complications or outcome.
+
+### Wave B slice 19: diabetic ketoacidosis
+
+The nineteenth emergency-medicine slice adds a moderate adult DKA pathway with fixed hyperglycemia,
+ketonemia, acidosis, dehydration, hypokalemia, and an insulin-infusion-set precipitant. Learners
+integrate the diagnostic triad and severity; record initial fluid and serial monitoring intent;
+replace potassium and withhold insulin until an authored repeat exceeds 3.5 mmol/L; record IV
+insulin intent; add dextrose while continuing insulin when glucose reaches 238 mg/dL before
+ketoacidosis resolves; and confirm a plasma-ketone plus acid-base resolution panel before transition.
+
+The two-card surface turns the core lesson into “three signals name the crisis” and “treat the
+ketones, not just the glucose.” It does not examine or sample the patient, calculate deficits or
+doses, select or deliver fluids, electrolytes, insulin, or dextrose, operate pumps, model laboratory
+kinetics or complications, or predict disposition, recurrence, and outcome.
 
 #### Critical care: 24
 
