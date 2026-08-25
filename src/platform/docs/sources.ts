@@ -1858,6 +1858,17 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'https://www.ahajournals.org/doi/10.1161/HYP.0000000000000238',
     verifiedOn: '2026-08-25',
   },
+  {
+    id: 'ats-idsa-community-acquired-pneumonia-2019',
+    authors: 'Metlay JP, Waterer GW, Long AC, et al',
+    title: 'Diagnosis and Treatment of Adults with Community-acquired Pneumonia',
+    publication: 'American Journal of Respiratory and Critical Care Medicine',
+    year: 2019,
+    locator: '200:e45-e67; doi:10.1164/rccm.201908-1581ST; severe-CAP criteria and inpatient testing and treatment sections',
+    usedFor: 'The hypoxemic-CAP boundary: integrate 1 major or at least 3 minor severe-CAP criteria with clinical judgment, prompt empiric-treatment ownership, indication-sensitive testing, and resistant-pathogen risk review without turning a checklist into an automatic disposition or browser regimen.',
+    verifiedAgainst: 'https://www.idsociety.org/practice-guideline/community-acquired-pneumonia-cap-in-adults and official ATS implementation tools',
+    verifiedOn: '2026-08-25',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

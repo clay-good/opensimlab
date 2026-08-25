@@ -1349,6 +1349,28 @@ home; determine discharge, disposition, prognosis, readmission risk, recovery, o
 distinct from Emergency Medicine's first-contact COPD treatment lab and Critical Care's intubated
 auto-PEEP mechanics lab.
 
+### Wave C respiratory-medicine slice 3: hypoxemic community-acquired pneumonia reassessment
+
+The third respiratory-medicine slice presents a spontaneously breathing 62-year-old woman with a
+radiographically supported community-acquired pneumonia pattern, pulse-coherent room-air SpO₂ 85%,
+RR 32/min with accessory-muscle use, PaO₂ 51 mmHg, preserved mentation and perfusion, and fixed
+right middle- and lower-lobe consolidation. RR at least 30/min, PaO₂/FiO₂ no greater than 250, and
+multilobar infiltrates supply 3 authored ATS/IDSA minor severe-CAP features, while major criteria,
+shock, invasive ventilation, and a proven pathogen remain absent.
+
+Learners corroborate hypoxemia and record immediate support and experienced-help intent, reconcile
+the pneumonia evidence while preserving dangerous alternatives and complications, use whole-patient
+severity to activate higher-acuity review without turning a criteria count into automatic
+disposition, record guideline-bounded testing and empiric-treatment ownership, and complete a
+strictly elapsed active-care handoff. The lesson does not examine; acquire or interpret monitoring,
+blood gas, imaging, ECG, culture, viral, or laboratory data; calculate a patient-care score; select
+or deliver oxygen, a device, flow, FiO₂, high-flow therapy, noninvasive or invasive ventilation,
+fluid, antibiotic, corticosteroid, vasopressor, or other treatment; select a drug, combination,
+dose, duration, route, or resistant-pathogen regimen; perform a procedure; determine disposition,
+prognosis, pathogen, treatment response, or outcome. This remains distinct from Critical Care's
+intubated oxygen-delivery troubleshooting and ARDS ventilation labs and preserves later respiratory
+device-selection and Infectious Disease antimicrobial-management slices.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

@@ -10,6 +10,7 @@ const root = process.cwd();
 const moduleId = 'respiratory-medicine';
 const scenarioId = 'acute-severe-asthma';
 const transitionScenarioId = 'copd-exacerbation-transition-reassessment';
+const capScenarioId = 'community-acquired-pneumonia-hypoxemia-reassessment';
 const modulePath = `/${moduleId}`;
 const scenarioPath = `${modulePath}/scenario/${scenarioId}`;
 
@@ -22,7 +23,7 @@ function json(path: string): unknown {
 }
 
 describe('respiratory medicine module foundation', () => {
-  it('registers one available specialty module and two honest scenarios', () => {
+  it('registers one available specialty module and three honest scenarios', () => {
     const module = MODULES.find((entry) => entry.id === moduleId);
     expect(module).toMatchObject({
       id: moduleId,
@@ -43,6 +44,7 @@ describe('respiratory medicine module foundation', () => {
     expect(index).toContain('getRespiratoryMedicineScenario');
     expect(index).toContain('ACUTE_SEVERE_ASTHMA');
     expect(index).toContain('COPD_EXACERBATION_TRANSITION_REASSESSMENT');
+    expect(index).toContain('COMMUNITY_ACQUIRED_PNEUMONIA_HYPOXEMIA_REASSESSMENT');
   });
 
   it('publishes distinct, canonical, indexable module and scenario routes', () => {
@@ -60,7 +62,7 @@ describe('respiratory medicine module foundation', () => {
     expect(canonicalUrl(scenarioPath))
       .toBe('https://opensimlab.com/respiratory-medicine/scenario/acute-severe-asthma');
     expect(ROUTES.filter((route) => route.path.startsWith(`${modulePath}/scenario/`)))
-      .toHaveLength(2);
+      .toHaveLength(3);
     expect(new Set(ROUTES.map((route) => route.path)).size).toBe(ROUTES.length);
     expect(new Set(ROUTES.map((route) => route.title)).size).toBe(ROUTES.length);
   });
@@ -100,9 +102,12 @@ describe('respiratory medicine module foundation', () => {
         scenarioId,
         contentVersion: '0.1.0',
       }));
-      expect(catalog.scenarios.filter((entry) => entry.moduleId === moduleId)).toHaveLength(2);
+      expect(catalog.scenarios.filter((entry) => entry.moduleId === moduleId)).toHaveLength(3);
       expect(catalog.scenarios).toContainEqual(expect.objectContaining({
         moduleId, scenarioId: transitionScenarioId, contentVersion: '0.1.0',
+      }));
+      expect(catalog.scenarios).toContainEqual(expect.objectContaining({
+        moduleId, scenarioId: capScenarioId, contentVersion: '0.1.0',
       }));
     }
   });
@@ -122,26 +127,30 @@ describe('respiratory medicine module foundation', () => {
       moduleId: string; scenarioCount: number;
       scenarios: Array<{ scenarioId: string; moduleId: string }>;
     };
-    expect(completion).toMatchObject({ moduleId, scenarioCount: 2 });
+    expect(completion).toMatchObject({ moduleId, scenarioCount: 3 });
     expect(completion.scenarios).toEqual(expect.arrayContaining([
       expect.objectContaining({ scenarioId, moduleId }),
       expect.objectContaining({ scenarioId: transitionScenarioId, moduleId }),
+      expect.objectContaining({ scenarioId: capScenarioId, moduleId }),
     ]));
 
     const quality = json('public/catalog/respiratory-medicine-quality-audit.json') as {
       moduleId: string; scenarioCount: number;
     };
-    expect(quality).toMatchObject({ moduleId, scenarioCount: 2 });
+    expect(quality).toMatchObject({ moduleId, scenarioCount: 3 });
     const maturity = json('public/catalog/respiratory-medicine-maturity.json') as {
       moduleId: string; recordCount: number;
       records: Array<{ subjectKind: string; subjectId: string; status: string }>;
     };
-    expect(maturity).toMatchObject({ moduleId, recordCount: 2 });
+    expect(maturity).toMatchObject({ moduleId, recordCount: 3 });
     expect(maturity.records).toContainEqual(expect.objectContaining({
       subjectKind: 'scenario', subjectId: scenarioId, status: 'draft',
     }));
     expect(maturity.records).toContainEqual(expect.objectContaining({
       subjectKind: 'scenario', subjectId: transitionScenarioId, status: 'draft',
+    }));
+    expect(maturity.records).toContainEqual(expect.objectContaining({
+      subjectKind: 'scenario', subjectId: capScenarioId, status: 'draft',
     }));
   });
 

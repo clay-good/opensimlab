@@ -4305,6 +4305,23 @@ export function objectiveFindings(
       const ordered = coordination && handoff && coordination.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved respiratory, functional, medication, rehabilitation, and follow-up uncertainties without declaring discharge or outcome.' : 'The transition handoff was absent or did not follow coordination after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['corroborate-and-support-cap-hypoxemia',
+      'reconcile-cap-evidence-and-dangerous-alternatives',
+      'classify-cap-severity-and-escalation-needs',
+      'record-cap-testing-and-empiric-treatment-intent',
+      'handoff-cap-hypoxemia-reassessment'].includes(objective.id)) {
+      const support = log.find((event) => /^cap-hypoxemia-support-recorded-\d+$/.test(event.eventId));
+      const evidence = log.find((event) => /^cap-hypoxemia-evidence-reconciled-\d+$/.test(event.eventId));
+      const severity = log.find((event) => /^cap-hypoxemia-severity-reviewed-\d+$/.test(event.eventId));
+      const treatment = log.find((event) => /^cap-hypoxemia-treatment-recorded-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^cap-hypoxemia-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'corroborate-and-support-cap-hypoxemia') return { ...base, outcome: support ? 'met' : 'not-met', finding: support ? 'Corroborated hypoxemia, work, mentation, and perfusion prompted immediate support and experienced-help intent without learner-delivered oxygen.' : 'Hypoxemia and immediate support intent were not reconciled.', atTick: support?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'reconcile-cap-evidence-and-dangerous-alternatives') { const ordered = support && evidence && support.tick <= evidence.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The authored pneumonia pattern was reconciled while pathogen uncertainty, alternatives, and complications remained open.' : 'Evidence review was absent or preceded hypoxemia support.', atTick: evidence?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'classify-cap-severity-and-escalation-needs') { const ordered = evidence && severity && evidence.tick <= severity.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Three authored minor severe-CAP features informed higher-acuity escalation without becoming an automatic disposition rule.' : 'Severity review was absent or preceded evidence reconciliation.', atTick: severity?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'record-cap-testing-and-empiric-treatment-intent') { const ordered = severity && treatment && severity.tick <= treatment.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Testing and prompt empiric-treatment ownership were recorded without selecting a regimen.' : 'Treatment and testing ownership was absent or preceded severity review.', atTick: treatment?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = treatment && handoff && treatment.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved the oxygen requirement, respiratory effort, severity features, alternatives, testing, treatment ownership, and deterioration triggers without inventing response or outcome.' : 'The active-care handoff was absent or did not follow treatment ownership after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

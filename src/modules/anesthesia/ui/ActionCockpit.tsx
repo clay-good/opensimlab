@@ -768,6 +768,21 @@ export interface ActionCockpitProps {
       readonly dispositionDetermined: false;
       readonly outcomePredicted: false;
     };
+    readonly capHypoxemiaAssessment?: {
+      readonly supportAtTick: number | null;
+      readonly evidenceAtTick: number | null;
+      readonly severityAtTick: number | null;
+      readonly treatmentIntentAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly hypoxemiaAuthored: true;
+      readonly pneumoniaPatternAuthored: true;
+      readonly oxygenDeliveredByLearner: false;
+      readonly supportDeviceSelected: false;
+      readonly antimicrobialSelected: false;
+      readonly testAcquiredByLearner: false;
+      readonly dispositionDetermined: false;
+      readonly outcomePredicted: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1224,6 +1239,13 @@ export interface ActionCockpitProps {
       | 'coordinate-copd-exacerbation-rehabilitation-self-management-and-follow-up'
       | 'handoff-copd-exacerbation-transition-reassessment',
   ) => void;
+  readonly onCapHypoxemiaResponse?: (
+    action: 'corroborate-and-support-cap-hypoxemia'
+      | 'reconcile-cap-evidence-and-dangerous-alternatives'
+      | 'classify-cap-severity-and-escalation-needs'
+      | 'record-cap-testing-and-empiric-treatment-intent'
+      | 'handoff-cap-hypoxemia-reassessment',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1513,6 +1535,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'copd-exacerbation-transition-reassessment',
     ),
+    hasCapHypoxemiaResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'community-acquired-pneumonia-hypoxemia-reassessment',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1630,6 +1656,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'acute-severe-asthma-reassessment')
       || (event.type === 'narrative'
         && event.target === 'copd-exacerbation-transition-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'community-acquired-pneumonia-hypoxemia-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1683,7 +1711,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasPacemakerCaptureFailureResponse,
     hasTranscutaneousPacingCaptureResponse,
     hasAcuteSevereAsthmaResponse,
-    hasCopdTransitionResponse,
+    hasCopdTransitionResponse, hasCapHypoxemiaResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1748,7 +1776,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasHyperkalemicConductionResponse || hasPericardialTamponadeResponse
     || hasRightVentricularInfarctionResponse || hasHypertensiveEmergencyResponse
     || hasPacemakerCaptureFailureResponse || hasTranscutaneousPacingCaptureResponse
-    || hasAcuteSevereAsthmaResponse || hasCopdTransitionResponse;
+    || hasAcuteSevereAsthmaResponse || hasCopdTransitionResponse || hasCapHypoxemiaResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1779,7 +1807,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasCopdTransitionResponse
+  const responseTray = hasCapHypoxemiaResponse
+    ? { id: 'crisis', label: 'Pneumonia + hypoxemia' } as const
+    : hasCopdTransitionResponse
     ? { id: 'crisis', label: 'Recovery + readiness' } as const
     : hasAcuteSevereAsthmaResponse
     ? { id: 'crisis', label: 'Breathing-failure response' } as const
@@ -1989,6 +2019,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasTranscutaneousPacingCaptureResponse
     || hasAcuteSevereAsthmaResponse
     || hasCopdTransitionResponse
+    || hasCapHypoxemiaResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2577,6 +2608,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasCopdTransitionResponse && (
               <CopdTransitionTray assessment={props.resuscitation.copdTransitionAssessment}
                 onAction={props.onCopdTransitionResponse ?? (() => {})} />
+            )}
+            {hasCapHypoxemiaResponse && (
+              <CapHypoxemiaTray assessment={props.resuscitation.capHypoxemiaAssessment}
+                onAction={props.onCapHypoxemiaResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -6790,6 +6825,42 @@ function CopdTransitionTray({ assessment, onAction }: {
         <Button className="crisis-drug__action" disabled={!coordination || handoff} onClick={() => onAction('handoff-copd-exacerbation-transition-reassessment')}>Hand off unresolved transition work</Button>
       </div>
       <p className="field__hint">No oxygen prescription, inhaler selection, treatment delivery, technique grading, rehabilitation enrollment, guaranteed appointment, discharge, prognosis, or outcome is chosen here.</p>
+    </section>
+  </div>;
+}
+
+function CapHypoxemiaTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['capHypoxemiaAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onCapHypoxemiaResponse']>;
+}) {
+  const support = assessment?.supportAtTick != null;
+  const evidence = assessment?.evidenceAtTick != null;
+  const severity = assessment?.severityAtTick != null;
+  const treatment = assessment?.treatmentIntentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="cap-hypoxemia-first-title">
+      <div id="cap-hypoxemia-first-title" className="syringe__name">Low oxygen, clear next steps.</div>
+      <Badge kind="teaching">SpO₂ 85% room air · RR 32 · focal opacity</Badge>
+      <div className="syringe__meta">signal · work · mentation · perfusion · pattern</div>
+      <p className="syringe__remaining" role="status">{severity ? 'Whole-patient severity reviewed · higher-acuity help active' : evidence ? 'Pattern supported · review severity + escalation' : support ? 'Support intent recorded · reconcile the pattern' : 'Oxygenation + whole-patient review pending'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={support} onClick={() => onAction('corroborate-and-support-cap-hypoxemia')}>Corroborate hypoxemia + whole patient</Button>
+        <Button className="crisis-drug__action" disabled={!support || evidence} onClick={() => onAction('reconcile-cap-evidence-and-dangerous-alternatives')}>Review pneumonia pattern + alternatives</Button>
+        <Button className="crisis-drug__action" disabled={!evidence || severity} onClick={() => onAction('classify-cap-severity-and-escalation-needs')}>Review severity + activate help</Button>
+      </div>
+      <p className="field__hint">The pulse, room-air gas, imaging, and laboratory reports are authored. Three minor features support urgent judgment; they do not automatically choose a location of care.</p>
+    </section>
+    <section className="syringe" aria-labelledby="cap-hypoxemia-ownership-title">
+      <div id="cap-hypoxemia-ownership-title" className="syringe__name">Plan the treatment. Watch the trajectory.</div>
+      <Badge kind="teaching">empiric plan · indicated tests · complications · response</Badge>
+      <div className="syringe__meta">named owners · active oxygen need · open cause</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Active pneumonia care handed off' : treatment ? 'Ownership recorded · advance time before handoff' : severity ? 'Support intent recorded · assign treatment + testing ownership' : 'Pattern review + support intent come first'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={!severity || treatment} onClick={() => onAction('record-cap-testing-and-empiric-treatment-intent')}>Record treatment + indicated tests</Button>
+        <Button className="crisis-drug__action" disabled={!treatment || handoff} onClick={() => onAction('handoff-cap-hypoxemia-reassessment')}>Reassess + hand off active care</Button>
+      </div>
+      <p className="field__hint">No antibiotic, dose, oxygen device, flow, support setting, procedure, treatment response, disposition, pathogen, prognosis, or outcome is chosen here.</p>
     </section>
   </div>;
 }

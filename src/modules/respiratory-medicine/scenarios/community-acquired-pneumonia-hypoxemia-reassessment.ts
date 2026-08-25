@@ -1,0 +1,63 @@
+/** Hypoxemic community-acquired pneumonia reassessment. */
+
+import type { Scenario } from '@anesthesia/scenarios/types';
+
+export const COMMUNITY_ACQUIRED_PNEUMONIA_HYPOXEMIA_REASSESSMENT: Scenario = {
+  schemaVersion: 1,
+  metadata: {
+    id: 'community-acquired-pneumonia-hypoxemia-reassessment', version: '0.1.0', maturity: 'draft',
+    title: 'Hypoxemic community-acquired pneumonia', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
+    estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
+      { id: 'corroborate-and-support-cap-hypoxemia', statement: 'Corroborate the authored hypoxemia beside work of breathing, mentation, and perfusion, then record immediate support and experienced-help intent.', measure: 'Support intent did not wait for pathogen certainty and was not represented as learner-delivered oxygen or a device prescription.' },
+      { id: 'reconcile-cap-evidence-and-dangerous-alternatives', statement: 'Reconcile the authored pneumonia pattern while preserving dangerous alternatives and complications.', measure: 'Symptoms, imaging, examination, and laboratory reports supported the working pattern without proving a pathogen or closing unsupported alternatives.' },
+      { id: 'classify-cap-severity-and-escalation-needs', statement: 'Integrate the 3 authored minor severe-CAP features with the absence of major criteria, shock, or invasive ventilation.', measure: 'Higher-acuity review was activated without using a criteria count as an automatic disposition rule.' },
+      { id: 'record-cap-testing-and-empiric-treatment-intent', statement: 'Record guideline-bounded microbiology and prompt empiric-treatment ownership without selecting a regimen.', measure: 'Testing and treatment intent remained individualized, with no agent, dose, route, duration, or resistant-pathogen regimen selected.' },
+      { id: 'handoff-cap-hypoxemia-reassessment', statement: 'After elapsed time, hand off the oxygen requirement, respiratory effort, severity features, open alternatives, testing, treatment ownership, and deterioration triggers.', measure: 'The handoff preserved active care without inventing response, disposition, prognosis, pathogen, or outcome.' },
+    ],
+    clinicalReview: { reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED',
+      competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01',
+      contentVersion: '0.1.0', sources: [
+        'Metlay JP, Waterer GW, Long AC, et al. Diagnosis and Treatment of Adults with Community-acquired Pneumonia. Am J Respir Crit Care Med. 2019;200:e45-e67.',
+        'Jones BE, Ramirez JA, Oren E, et al. Diagnosis and Management of Community-acquired Pneumonia: An Official ATS Clinical Practice Guideline. Am J Respir Crit Care Med. 2026.',
+      ] },
+    limitations: ['cap-hypoxemia-presentation-imaging-gas-and-laboratory-reports-are-authored',
+      'cap-controls-record-review-support-testing-treatment-intent-and-handoff-only',
+      'no-live-cap-testing-treatment-device-selection-disposition-or-outcome'],
+  },
+  patient: { ageYears: 62, sex: 'female', heightCm: 165, weightKg: 70, asaClass: 3,
+    diagnosis: 'Authored community-acquired pneumonia pattern with corroborated hypoxemia',
+    procedure: 'Acute hypoxemic community-acquired pneumonia reassessment',
+    comorbidities: ['Hypertension'], medications: ['Amlodipine'],
+    allergies: ['No known drug allergies'], fasting: 'Not relevant to this respiratory reassessment',
+    baseline: { heartRateBpm: 112, meanArterialMmHg: 85, strokeVolumeMl: 62,
+      hemoglobinGPerDl: 13.2, bloodVolumeMl: 4700, coreTemperatureC: 38.6,
+      arterialStiffness: 1.1, baroreflexGain: 0.9, fixedStrokeVolume: false },
+    airway: { difficulty: 0.1, difficultMaskVentilation: false,
+      assessment: 'Alert, oriented, speaking short sentences, and using accessory muscles' },
+    respiratory: { profile: 'moderately-ill' } },
+  equipment: { monitoring: ['ecg', 'nibp', 'pulse-oximetry', 'temperature'],
+    ventilator: { mode: 'manual', fio2: 0.21, tidalVolumeMl: 430,
+      respiratoryRateBpm: 32, freshGasFlowLPerMin: 0.5, delivering: false } },
+  formulary: [],
+  timeline: [
+    { id: 'cap-hypoxemia-presentation', type: 'narrative',
+      target: 'community-acquired-pneumonia-hypoxemia-reassessment', atTick: 0, severity: 'critical',
+      message: 'A 62-year-old woman with hypertension, no chronic lung disease or immunocompromising condition, and no recent hospitalization reports 3 days of fever, productive cough, right-sided pleuritic discomfort, and worsening dyspnea. She is alert and oriented, speaks short sentences, and has accessory-muscle use, temperature 38.6°C, HR 112/min in sinus rhythm, RR 32/min, BP 116/70 mmHg (MAP 85), warm extremities, capillary refill 2 seconds, and room-air SpO₂ 85% with a regular pulse-coherent pleth. A fixed room-air blood gas reports pH 7.45, PaCO₂ 34 mmHg, and PaO₂ 51 mmHg; the authored PaO₂/FiO₂ ratio is approximately 243.' },
+    { id: 'cap-hypoxemia-evidence', type: 'narrative',
+      target: 'community-acquired-pneumonia-hypoxemia-reassessment', atTick: 0, severity: 'warning',
+      message: 'A fixed chest-radiograph report shows right middle- and lower-lobe air-space consolidation without pneumothorax, pulmonary-edema pattern, or pleural effusion large enough to explain the physiology. WBC is 14.8 K/µL, BUN 18 mg/dL, creatinine 1.0 mg/dL, platelets 210 K/µL, and lactate 1.8 mmol/L. Viral and bacterial causes remain unresolved. There is no previous respiratory isolation of MRSA or Pseudomonas aeruginosa and no hospitalization with parenteral antibiotics in the previous 90 days.' },
+    { id: 'cap-hypoxemia-severity', type: 'narrative',
+      target: 'community-acquired-pneumonia-hypoxemia-reassessment', atTick: 0, severity: 'warning',
+      message: 'The authored presentation supplies 3 ATS/IDSA minor severe-CAP features: RR at least 30/min, PaO₂/FiO₂ no greater than 250, and multilobar infiltrates. No major criterion, confusion, vasopressor-requiring hypotension, mechanical ventilation, leukopenia, thrombocytopenia, hypothermia, or uremia is present. The criteria support urgent higher-acuity judgment; they do not independently determine a location of care.' },
+    { id: 'cap-hypoxemia-boundary', type: 'narrative',
+      target: 'community-acquired-pneumonia-hypoxemia-reassessment-boundary', atTick: 0, severity: 'advisory',
+      message: 'Corroborate the fixed hypoxemia and record immediate support and experienced-help intent; reconcile pneumonia evidence, alternatives, complications, and whole-patient severity; activate higher-acuity review; record testing and empiric-treatment ownership; then, after a strictly later engine tick, hand off active care. The controls do not examine; acquire or interpret oximetry, blood gas, imaging, ECG, culture, viral, or laboratory data; calculate a patient-care score; select or deliver oxygen, device, flow, FiO₂, high-flow therapy, noninvasive or invasive ventilation, fluid, antibiotic, corticosteroid, vasopressor, or other treatment; select an antimicrobial agent, combination, dose, duration, route, or resistant-pathogen regimen; perform a procedure; determine disposition, prognosis, pathogen, treatment response, or outcome.' },
+  ],
+  debrief: { rubric: [
+    { id: 'cap-hypoxemia-support', objectiveId: 'corroborate-and-support-cap-hypoxemia', question: 'Which oxygenation, work, mentation, and perfusion findings established urgency before pathogen certainty?' },
+    { id: 'cap-hypoxemia-pattern', objectiveId: 'reconcile-cap-evidence-and-dangerous-alternatives', question: 'Which findings supported the pneumonia pattern, and which alternatives or complications remained open?' },
+    { id: 'cap-hypoxemia-severity-review', objectiveId: 'classify-cap-severity-and-escalation-needs', question: 'How did the 3 minor features and absent major features inform, but not replace, higher-acuity judgment?' },
+    { id: 'cap-hypoxemia-treatment', objectiveId: 'record-cap-testing-and-empiric-treatment-intent', question: 'Which testing and empiric-treatment decisions needed ownership without choosing a regimen?' },
+    { id: 'cap-hypoxemia-handoff', objectiveId: 'handoff-cap-hypoxemia-reassessment', question: 'Which active respiratory, diagnostic, treatment, and escalation questions remained at handoff?' },
+  ] },
+};

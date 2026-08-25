@@ -3143,6 +3143,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use current COPD guidance, verified patient data, device instructions, local qualification and rehabilitation pathways, qualified respiratory teams, and patient-specific follow-up.',
     briefIn: ['copd-exacerbation-transition-reassessment'],
   },
+  {
+    id: 'cap-hypoxemia-presentation-imaging-gas-and-laboratory-reports-are-authored',
+    headline: 'The symptoms, observations, oximetry, blood gas, imaging, laboratory reports, and criteria are authored teaching data.',
+    simplification: 'One fixed record stands in for history, examination, signal validation, sampling, imaging, laboratory review, and multidisciplinary communication.',
+    whereItMisleads: 'Treating the fixed pattern as diagnostic skill, a pathogen diagnosis, or a universal threshold for support or location of care.',
+    correctUnderstanding: 'Real assessment requires verified patient data, repeated whole-patient review, current guidance, qualified teams, and local escalation pathways.',
+    briefIn: ['community-acquired-pneumonia-hypoxemia-reassessment'],
+  },
+  {
+    id: 'cap-controls-record-review-support-testing-treatment-intent-and-handoff-only',
+    headline: 'The controls record review, support intent, escalation, testing and treatment ownership, and handoff only.',
+    simplification: 'Five clicks stand in for urgent respiratory teamwork, clinical judgment, stewardship, reassessment, and communication.',
+    whereItMisleads: 'Equating button order with examination, test interpretation, diagnosis, prescribing, oxygen delivery, airway management, or team competence.',
+    correctUnderstanding: 'Actual care requires continuous bedside reassessment, qualified respiratory and critical-care teams, local protocols, and individualized treatment.',
+    briefIn: ['community-acquired-pneumonia-hypoxemia-reassessment'],
+  },
+  {
+    id: 'no-live-cap-testing-treatment-device-selection-disposition-or-outcome',
+    headline: 'The lab does not test, prescribe or deliver treatment, select respiratory support, determine disposition, or predict outcome.',
+    simplification: 'No live test, score, oxygen device, flow, FiO₂, ventilation, fluid, antibiotic, steroid, vasopressor, procedure, treatment response, disposition, prognosis, pathogen, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values as a treatment or disposition rule or using completion as evidence of diagnostic, prescribing, respiratory-support, procedural, or prognostic competence.',
+    correctUnderstanding: 'Use verified patient data, current CAP and oxygen guidance, local resistance data, device instructions, qualified teams, and patient-specific reassessment.',
+    briefIn: ['community-acquired-pneumonia-hypoxemia-reassessment'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

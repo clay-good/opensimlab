@@ -73,6 +73,7 @@ const PACEMAKER_CAPTURE_FAILURE_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BL
 const TRANSCUTANEOUS_PACING_CAPTURE_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 const ACUTE_SEVERE_ASTHMA_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 const COPD_TRANSITION_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
+const CAP_HYPOXEMIA_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -638,6 +639,11 @@ export class AnesthesiaEngine {
   private copdTransitionMedicationAtTick: number | null = null;
   private copdTransitionCoordinationAtTick: number | null = null;
   private copdTransitionHandoffAtTick: number | null = null;
+  private capHypoxemiaSupportAtTick: number | null = null;
+  private capHypoxemiaEvidenceAtTick: number | null = null;
+  private capHypoxemiaSeverityAtTick: number | null = null;
+  private capHypoxemiaTreatmentIntentAtTick: number | null = null;
+  private capHypoxemiaHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -906,6 +912,14 @@ export class AnesthesiaEngine {
     if (copdTransition && COPD_TRANSITION_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `copd-transition-generic-action-refused-${this.currentTick}`,
         'This transition-review lesson does not expose generic testing, treatment, oxygen, airway, ventilator, procedure, rhythm, artifact, or crisis-injection actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const capHypoxemia = this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'community-acquired-pneumonia-hypoxemia-reassessment');
+    if (capHypoxemia && CAP_HYPOXEMIA_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `cap-hypoxemia-generic-action-refused-${this.currentTick}`,
+        'This reassessment-only pneumonia lesson does not expose generic testing, treatment, oxygen, airway, ventilator, procedure, rhythm, artifact, or crisis-injection actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -5008,6 +5022,45 @@ export class AnesthesiaEngine {
         this.copdTransitionHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `copd-transition-handoff-recorded-${this.currentTick}`, 'Residual respiratory and oxygen reassessment, functional recovery, maintenance and acute medication review, technique correction, rehabilitation, self-management, comorbidity review, and follow-up were handed off with named owners. No discharge readiness, disposition, prognosis, readmission risk, recovery, or outcome was determined.', { dispositionDetermined: false, readinessDetermined: false, outcomePredicted: false }); break;
       }
+      case 'community-acquired-pneumonia-hypoxemia-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'community-acquired-pneumonia-hypoxemia-reassessment');
+        const valid = ['corroborate-and-support-cap-hypoxemia',
+          'reconcile-cap-evidence-and-dangerous-alternatives',
+          'classify-cap-severity-and-escalation-needs',
+          'record-cap-testing-and-empiric-treatment-intent',
+          'handoff-cap-hypoxemia-reassessment'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `cap-hypoxemia-response-refused-${this.currentTick}`, supported ? 'The pneumonia-hypoxemia action was not one of the listed choices. Nothing changed.' : 'These pneumonia-hypoxemia choices are available only in the declared Respiratory Medicine lesson.'); break; }
+        if (response === 'corroborate-and-support-cap-hypoxemia') {
+          if (this.capHypoxemiaSupportAtTick !== null) { this.log('warning', 'assessment', `cap-hypoxemia-support-refused-${this.currentTick}`, 'Hypoxemia and immediate support intent were already reconciled.'); break; }
+          this.capHypoxemiaSupportAtTick = this.currentTick;
+          this.log('critical', 'assessment', `cap-hypoxemia-support-recorded-${this.currentTick}`, 'Room-air SpO₂ 85% with a pulse-coherent pleth, PaO₂ 51 mmHg, RR 32/min, accessory-muscle use, short sentences, preserved mentation, and warm perfusion were reconciled. Immediate oxygen-support and experienced-help intent were recorded without waiting for pathogen certainty. No oxygen, device, flow, FiO₂, airway intervention, or treatment was selected or learner-delivered.', { hypoxemiaAuthored: true, oxygenDeliveredByLearner: false, supportDeviceSelected: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.capHypoxemiaSupportAtTick === null) { this.log('warning', 'assessment', `cap-hypoxemia-support-order-refused-${this.currentTick}`, 'Corroborate hypoxemia and record immediate support intent before the broader evidence review.'); break; }
+        if (response === 'reconcile-cap-evidence-and-dangerous-alternatives') {
+          if (this.capHypoxemiaEvidenceAtTick !== null) { this.log('warning', 'assessment', `cap-hypoxemia-evidence-refused-${this.currentTick}`, 'The pneumonia pattern and open alternatives were already reconciled.'); break; }
+          this.capHypoxemiaEvidenceAtTick = this.currentTick;
+          this.log('warning', 'assessment', `cap-hypoxemia-evidence-reconciled-${this.currentTick}`, 'Fever, productive cough, pleuritic discomfort, leukocytosis, and fixed right middle- and lower-lobe consolidation support the authored community-acquired pneumonia pattern. Viral and bacterial causes remain unresolved; pulmonary embolism, edema, aspiration, viral disease, an obstructing lesion, effusion, pneumothorax, and other infection remain open where the record does not exclude them. No test was acquired or diagnosis made by the learner.', { pneumoniaPatternAuthored: true, pathogenDetermined: false, testAcquiredByLearner: false, diagnosisMadeByLearner: false }); break;
+        }
+        if (this.capHypoxemiaEvidenceAtTick === null) { this.log('warning', 'assessment', `cap-hypoxemia-evidence-order-refused-${this.currentTick}`, 'Reconcile the pneumonia evidence and dangerous alternatives before classifying severity.'); break; }
+        if (response === 'classify-cap-severity-and-escalation-needs') {
+          if (this.capHypoxemiaSeverityAtTick !== null) { this.log('warning', 'assessment', `cap-hypoxemia-severity-refused-${this.currentTick}`, 'The whole-patient severity and escalation review was already recorded.'); break; }
+          this.capHypoxemiaSeverityAtTick = this.currentTick;
+          this.log('critical', 'assessment', `cap-hypoxemia-severity-reviewed-${this.currentTick}`, 'RR at least 30/min, PaO₂/FiO₂ no greater than 250, and multilobar infiltrates provide 3 authored ATS/IDSA minor severe-CAP features. No major criterion, shock, or invasive ventilation is present. Respiratory and critical-care evaluation was activated, while the criteria count remained one input to judgment rather than an automatic disposition rule.', { criteriaCountAuthored: 3, scoreCalculatedByLearner: false, higherAcuityReviewActivated: true, dispositionDetermined: false }); break;
+        }
+        if (this.capHypoxemiaSeverityAtTick === null) { this.log('warning', 'assessment', `cap-hypoxemia-severity-order-refused-${this.currentTick}`, 'Complete the whole-patient severity and escalation review before treatment and testing ownership.'); break; }
+        if (response === 'record-cap-testing-and-empiric-treatment-intent') {
+          if (this.capHypoxemiaTreatmentIntentAtTick !== null) { this.log('warning', 'assessment', `cap-hypoxemia-treatment-refused-${this.currentTick}`, 'Testing and empiric-treatment ownership were already recorded.'); break; }
+          this.capHypoxemiaTreatmentIntentAtTick = this.currentTick;
+          this.log('warning', 'assessment', `cap-hypoxemia-treatment-recorded-${this.currentTick}`, 'Guideline-bounded microbiology and prompt empiric-antimicrobial intent received named ownership. Local resistance data, allergy history, organ function, recent exposures, viral results, and patient-specific contraindications remain part of the treating team’s decision. No specimen, antimicrobial agent, combination, dose, route, duration, or resistant-pathogen regimen was selected or learner-delivered.', { testAcquiredByLearner: false, antimicrobialSelected: false, doseSelected: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.capHypoxemiaTreatmentIntentAtTick === null) { this.log('warning', 'assessment', `cap-hypoxemia-handoff-order-refused-${this.currentTick}`, 'Record testing and empiric-treatment ownership before handoff.'); break; }
+        if (this.currentTick <= this.capHypoxemiaTreatmentIntentAtTick) { this.log('warning', 'assessment', `cap-hypoxemia-handoff-time-refused-${this.currentTick}`, 'Allow a later simulated tick before handing off active pneumonia care.'); break; }
+        if (this.capHypoxemiaHandoffAtTick !== null) { this.log('warning', 'assessment', `cap-hypoxemia-handoff-refused-${this.currentTick}`, 'The pneumonia-hypoxemia handoff was already recorded.'); break; }
+        this.capHypoxemiaHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `cap-hypoxemia-handoff-recorded-${this.currentTick}`, 'The ongoing oxygen requirement, respiratory effort, authored severe-CAP features, open alternatives and complications, microbiology, empiric-treatment ownership, deterioration triggers, and higher-acuity review were handed off. No treatment response, ICU disposition, ARDS progression, pathogen, prognosis, or outcome was reported.', { oxygenDeliveredByLearner: false, antimicrobialSelected: false, dispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -7725,6 +7778,12 @@ export class AnesthesiaEngine {
         spo2Percent: 91, systolicMmHg: 126, diastolicMmHg: 74,
         meanArterialMmHg: 91, coreTemperatureC: 36.8 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'community-acquired-pneumonia-hypoxemia-reassessment')) {
+      crisisState = { ...crisisState, heartRateBpm: 112, respiratoryRateBpm: 32,
+        spo2Percent: 85, systolicMmHg: 116, diastolicMmHg: 70,
+        meanArterialMmHg: 85, coreTemperatureC: 38.6 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -8966,6 +9025,24 @@ export class AnesthesiaEngine {
               techniquePerformedByLearner: false as const,
               rehabilitationEnrolled: false as const,
               appointmentGuaranteed: false as const,
+              dispositionDetermined: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'community-acquired-pneumonia-hypoxemia-reassessment') ? {
+            capHypoxemiaAssessment: {
+              supportAtTick: this.capHypoxemiaSupportAtTick,
+              evidenceAtTick: this.capHypoxemiaEvidenceAtTick,
+              severityAtTick: this.capHypoxemiaSeverityAtTick,
+              treatmentIntentAtTick: this.capHypoxemiaTreatmentIntentAtTick,
+              handoffAtTick: this.capHypoxemiaHandoffAtTick,
+              hypoxemiaAuthored: true as const,
+              pneumoniaPatternAuthored: true as const,
+              oxygenDeliveredByLearner: false as const,
+              supportDeviceSelected: false as const,
+              antimicrobialSelected: false as const,
+              testAcquiredByLearner: false as const,
               dispositionDetermined: false as const,
               outcomePredicted: false as const,
             },

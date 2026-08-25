@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "respiratory-medicine",
-  "recordCount": 2,
+  "recordCount": 3,
   "records": [
     {
       "recordId": "scenario:acute-severe-asthma@0.1.0",
@@ -23,6 +23,17 @@
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#copd-exacerbation-transition-reassessment@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#copd-exacerbation-transition-reassessment@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:community-acquired-pneumonia-hypoxemia-reassessment@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "community-acquired-pneumonia-hypoxemia-reassessment",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/respiratory-medicine-completion-audit.json#community-acquired-pneumonia-hypoxemia-reassessment@0.1.0",
+        "/catalog/respiratory-medicine-quality-audit.json#community-acquired-pneumonia-hypoxemia-reassessment@0.1.0"
       ]
     }
   ]
