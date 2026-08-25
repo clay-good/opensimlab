@@ -703,6 +703,24 @@ export interface ActionCockpitProps {
       readonly dispositionDetermined: false;
       readonly outcomePredicted: false;
     };
+    readonly pacemakerCaptureFailureAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly rescueAtTick: number | null;
+      readonly deviceSystemAtTick: number | null;
+      readonly causesAtTick: number | null;
+      readonly laterPanelAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true;
+      readonly electricalCaptureFailureAuthored: true;
+      readonly pacingDeliveredByLearner: false;
+      readonly captureAssessedByLearner: false;
+      readonly deviceInterrogatedByLearner: false;
+      readonly deviceProgrammedByLearner: false;
+      readonly outputSelectedByLearner: false;
+      readonly leadManipulatedByLearner: false;
+      readonly treatmentDeliveredByLearner: false;
+      readonly outcomePredicted: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1131,6 +1149,14 @@ export interface ActionCockpitProps {
       | 'review-hypertensive-emergency-later-panel'
       | 'handoff-hypertensive-emergency-reassessment',
   ) => void;
+  readonly onPacemakerCaptureFailureResponse?: (
+    action: 'reconcile-pacemaker-capture-failure-pulse-and-pattern'
+      | 'activate-pacemaker-capture-failure-rescue-pathway'
+      | 'review-pacemaker-capture-failure-device-system'
+      | 'review-pacemaker-capture-failure-causes'
+      | 'review-pacemaker-capture-failure-later-panel'
+      | 'handoff-pacemaker-capture-failure-reassessment',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1404,6 +1430,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'hypertensive-emergency-reassessment',
     ),
+    hasPacemakerCaptureFailureResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'pacemaker-capture-failure-reassessment',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1515,6 +1545,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'pericardial-tamponade-reassessment')
       || (event.type === 'narrative' && event.target === 'right-ventricular-infarction')
       || (event.type === 'narrative' && event.target === 'hypertensive-emergency-reassessment')
+      || (event.type === 'narrative' && event.target === 'pacemaker-capture-failure-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1565,6 +1596,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasPericardialTamponadeResponse,
     hasRightVentricularInfarctionResponse,
     hasHypertensiveEmergencyResponse,
+    hasPacemakerCaptureFailureResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1627,7 +1659,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasStableNarrowTachycardiaResponse || hasStableWideTachycardiaResponse
     || hasSymptomaticBradycardiaResponse || hasCompleteHeartBlockResponse || hasTorsadesResponse
     || hasHyperkalemicConductionResponse || hasPericardialTamponadeResponse
-    || hasRightVentricularInfarctionResponse || hasHypertensiveEmergencyResponse;
+    || hasRightVentricularInfarctionResponse || hasHypertensiveEmergencyResponse
+    || hasPacemakerCaptureFailureResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1658,7 +1691,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasHypertensiveEmergencyResponse
+  const responseTray = hasPacemakerCaptureFailureResponse
+    ? { id: 'crisis', label: 'Capture-failure response' } as const
+    : hasHypertensiveEmergencyResponse
     ? { id: 'crisis', label: 'Pressure + organ review' } as const
     : hasRightVentricularInfarctionResponse
     ? { id: 'crisis', label: 'RV infarction review' } as const
@@ -1856,6 +1891,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPericardialTamponadeResponse
     || hasRightVentricularInfarctionResponse
     || hasHypertensiveEmergencyResponse
+    || hasPacemakerCaptureFailureResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2425,6 +2461,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <HypertensiveEmergencyTray
                 assessment={props.resuscitation.hypertensiveEmergencyAssessment}
                 onAction={props.onHypertensiveEmergencyResponse ?? (() => {})} />
+            )}
+            {hasPacemakerCaptureFailureResponse && (
+              <PacemakerCaptureFailureTray
+                assessment={props.resuscitation.pacemakerCaptureFailureAssessment}
+                onAction={props.onPacemakerCaptureFailureResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -6494,6 +6535,44 @@ function HypertensiveEmergencyTray({ assessment, onAction }: {
         <Button className="crisis-drug__action" disabled={!laterPanel || handoff} onClick={() => onAction('handoff-hypertensive-emergency-reassessment')}>Hand off causes + owners</Button>
       </div>
       <p className="field__hint">No agent, dose, infusion, numeric goal, access, device, delivery, home regimen, disposition, prognosis, or outcome is selected. New organ-specific deterioration opens acute rescue.</p>
+    </section>
+  </div>;
+}
+
+function PacemakerCaptureFailureTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['pacemakerCaptureFailureAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onPacemakerCaptureFailureResponse']>;
+}) {
+  const recognized = assessment?.recognitionAtTick != null;
+  const rescue = assessment?.rescueAtTick != null;
+  const deviceSystem = assessment?.deviceSystemAtTick != null;
+  const causes = assessment?.causesAtTick != null;
+  const laterPanel = assessment?.laterPanelAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="pacemaker-capture-failure-pattern-title">
+      <div id="pacemaker-capture-failure-pattern-title" className="syringe__name">A spike is not a heartbeat.</div>
+      <Badge kind="teaching">electrical noncapture · intrinsic pulse · device dependent</Badge>
+      <div className="syringe__meta">artifact → QRS · pulse + perfusion · lead + generator trends</div>
+      <p className="syringe__remaining" role="status">{deviceSystem && causes ? 'Device system + contributors reviewed' : deviceSystem ? 'Device trends reviewed · contributor screen remains' : causes ? 'Contributors reviewed · device trends remain' : recognized ? 'Rescue and two review lanes are open' : 'Match pacing artifacts to QRS complexes and pulse'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={recognized} onClick={() => onAction('reconcile-pacemaker-capture-failure-pulse-and-pattern')}>Reconcile pulse + capture pattern</Button>
+        <Button className="crisis-drug__action" disabled={!recognized || deviceSystem} onClick={() => onAction('review-pacemaker-capture-failure-device-system')}>Review device + lead system</Button>
+        <Button className="crisis-drug__action" disabled={!recognized || causes} onClick={() => onAction('review-pacemaker-capture-failure-causes')}>Review reversible causes</Button>
+      </div>
+      <p className="field__hint">The fixed report includes pacing artifacts not followed by QRS complexes; intrinsic escape and captured complexes still produce a pulse. The live trace does not simulate initial pacemaker noncapture or a learner-performed capture test.</p>
+    </section>
+    <section className="syringe" aria-labelledby="pacemaker-capture-failure-rescue-title">
+      <div id="pacemaker-capture-failure-rescue-title" className="syringe__name">Protect perfusion. Bring a bridge.</div>
+      <Badge kind="teaching">symptomatic hypotension · device expertise · backup ready</Badge>
+      <div className="syringe__meta">pulse-loss trigger · experienced-team response · durable work open</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Capture interval + unresolved device work handed off' : laterPanel ? 'Experienced-team response reviewed · later handoff due' : rescue && deviceSystem && causes ? 'Rescue + review lanes complete · allow the later panel' : rescue ? 'Rescue active · device and cause review continue' : recognized ? 'Activate pacing-capable rescue now' : 'Reconcile pulse and pattern first'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={!recognized || rescue} onClick={() => onAction('activate-pacemaker-capture-failure-rescue-pathway')}>Activate pacing-capable rescue</Button>
+        <Button className="crisis-drug__action" disabled={!rescue || !deviceSystem || !causes || laterPanel} onClick={() => onAction('review-pacemaker-capture-failure-later-panel')}>Review later capture panel</Button>
+        <Button className="crisis-drug__action" disabled={!laterPanel || handoff} onClick={() => onAction('handoff-pacemaker-capture-failure-reassessment')}>Hand off capture-failure plan</Button>
+      </div>
+      <p className="field__hint">No magnet, drug, pad placement, rate, output, pulse width, mode, sedation, access, pacing delivery, interrogation, programming, lead procedure, repair, disposition, prognosis, or outcome is selected.</p>
     </section>
   </div>;
 }

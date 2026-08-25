@@ -4237,6 +4237,26 @@ export function objectiveFindings(
       const ordered = later && handoff && later.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed 3-hour handoff preserved renal-retinal injury, symptoms, pressure, cause, treatment, ownership, and change-trigger work without determining disposition or outcome.' : 'The final handoff was absent or did not follow the later panel after another elapsed interval.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-pacemaker-capture-failure-pulse-and-pattern',
+      'activate-pacemaker-capture-failure-rescue-pathway',
+      'review-pacemaker-capture-failure-device-system',
+      'review-pacemaker-capture-failure-causes',
+      'review-pacemaker-capture-failure-later-panel',
+      'handoff-pacemaker-capture-failure-reassessment'].includes(objective.id)) {
+      const recognition = log.find((event) => /^pacemaker-capture-failure-recognized-\d+$/.test(event.eventId));
+      const rescue = log.find((event) => /^pacemaker-capture-failure-rescue-activated-\d+$/.test(event.eventId));
+      const deviceSystem = log.find((event) => /^pacemaker-capture-failure-device-system-reviewed-\d+$/.test(event.eventId));
+      const causes = log.find((event) => /^pacemaker-capture-failure-causes-reviewed-\d+$/.test(event.eventId));
+      const later = log.find((event) => /^pacemaker-capture-failure-later-panel-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^pacemaker-capture-failure-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-pacemaker-capture-failure-pulse-and-pattern') return { ...base, outcome: recognition ? 'met' : 'not-met', finding: recognition ? 'The fixed pacing-artifact, QRS, intrinsic pulse, symptom, pressure, and perfusion pattern was reconciled as authored electrical noncapture without a learner capture test.' : 'The authored pulse and electrical-noncapture pattern was not reconciled.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'activate-pacemaker-capture-failure-rescue-pathway') { const ordered = recognition && rescue && recognition.tick <= rescue.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Pacing-capable rescue, device expertise, surveillance, backup readiness, and the pulse-loss contingency were activated without learner treatment or device operation.' : 'Rescue activation was absent or preceded recognition.', atTick: rescue?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pacemaker-capture-failure-device-system') { const ordered = recognition && deviceSystem && recognition.tick <= deviceSystem.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The fixed battery, threshold, impedance, electrogram, and lead-system trends were reviewed without learner interrogation, programming, a universal cutoff, or a declared repair.' : 'Device-system review was absent or preceded recognition.', atTick: deviceSystem?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pacemaker-capture-failure-causes') { const ordered = recognition && causes && recognition.tick <= causes.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Fixed metabolic, ischemic, imaging, pocket, procedure, and medication snapshots were reviewed while device and biologic causes stayed open and no magnet shortcut was selected.' : 'Cause review was absent or preceded recognition.', atTick: causes?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pacemaker-capture-failure-later-panel') { const latestPrior = Math.max(rescue?.tick ?? Infinity, deviceSystem?.tick ?? Infinity, causes?.tick ?? Infinity); const ordered = rescue && deviceSystem && causes && later && latestPrior < later.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The strictly later experienced-team capture and perfusion report followed rescue and both review lanes without becoming learner programming, pacing, durable repair, or outcome.' : 'The later panel was absent, premature, or bypassed rescue or a review lane.', atTick: later?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = later && handoff && later.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The next-interval handoff preserved lead and generator integrity, cause, recurrence, durable strategy, ownership, and deterioration-trigger work without learner repair, disposition, or outcome.' : 'The final handoff was absent or did not follow the later panel after another elapsed interval.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

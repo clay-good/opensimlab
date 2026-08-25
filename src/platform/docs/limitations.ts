@@ -3047,6 +3047,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use current guidance, syndrome-specific pathways, verified measurements and organ findings, qualified multidisciplinary judgment, local treatment protocols, and continuous reassessment.',
     briefIn: ['hypertensive-emergency'],
   },
+  {
+    id: 'pacemaker-capture-failure-findings-are-authored',
+    headline: 'The pulse, perfusion, ECG, device-system, cause, and later-capture findings are authored teaching reports.',
+    simplification: 'One fixed record stands in for examination, pulse confirmation, ECG and monitoring review, device interrogation, imaging, laboratory testing, and team communication.',
+    whereItMisleads: 'Treating pacing artifacts as proof of capture, one output, threshold, impedance, or pacing percentage as a universal cutoff, or the later report as proof of a durable repair.',
+    correctUnderstanding: 'Real capture assessment joins electrical activity to pulse or arterial waveform, patient perfusion, device-specific interrogation, serial trends, likely dependency, reversible causes, and expert reassessment.',
+    briefIn: ['pacemaker-capture-failure'],
+  },
+  {
+    id: 'pacemaker-capture-failure-controls-record-review-and-handoff-only',
+    headline: 'The controls record recognition, rescue activation, authored review, elapsed reassessment, and handoff; they do not operate a device.',
+    simplification: 'Six clicks stand in for acute bradycardia rescue, device and electrophysiology teamwork, interrogation, cause review, temporary stabilization, and definitive planning.',
+    whereItMisleads: 'Equating button order with pulse assessment, capture testing, device interrogation or programming, backup pacing, lead management, or emergency-care competence.',
+    correctUnderstanding: 'Actual care requires immediate perfusion support, qualified device expertise, manufacturer- and lead-specific data, backup pacing capability, continuous capture confirmation, and patient-specific definitive planning.',
+    briefIn: ['pacemaker-capture-failure'],
+  },
+  {
+    id: 'no-live-pacemaker-capture-testing-programming-pacing-procedure-or-outcome',
+    headline: 'The lab does not test capture, interrogate or program a device, deliver pacing, manipulate a lead, perform a procedure, or predict outcome.',
+    simplification: 'No live examination, pulse palpation, ECG, monitoring, imaging, laboratory, interrogation, magnet use, output or mode selection, transcutaneous or transvenous pacing, drug, lead revision or extraction, generator replacement, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional settings as a recipe or using completion as evidence of diagnostic, resuscitation, device, programming, procedural, lead-management, disposition, or prognostic competence.',
+    correctUnderstanding: 'Use current resuscitation and pacing guidance, verified mechanical capture, device-specific expertise, local rescue pathways, continuous reassessment, and shared definitive lead and system decisions.',
+    briefIn: ['pacemaker-capture-failure'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

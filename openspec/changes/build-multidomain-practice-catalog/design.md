@@ -1256,6 +1256,28 @@ perform fundoscopy; acquire or interpret ECG, imaging, monitoring, urine, or lab
 diagnose a real patient; select, titrate, prescribe, or deliver drugs, fluid, oxygen, ventilation, or
 another treatment; perform a procedure; determine disposition or prognosis; or predict outcome.
 
+### Wave C cardiology slice 16: pacemaker capture failure
+
+The sixteenth cardiology slice is an acute, pulsed pacemaker capture-failure reassessment. A
+76-year-old pacemaker-dependent patient develops presyncope, mechanical pulse 32/min, and BP
+84/52 mmHg while a fixed report shows ventricular pacing artifacts that intermittently lack a
+following paced QRS. Pulse and pleth follow actual QRS complexes rather than isolated artifacts, so
+electrical artifacts do not become proof of mechanical capture.
+
+Learners reconcile pulse, perfusion, and the authored pacing pattern first. Acute bradycardia rescue,
+backup pacing readiness, and device expertise open immediately; device-system and cause review run
+in parallel and do not delay rescue. Fixed interrogation, trend, ECG, imaging, laboratory, pocket,
+and medication-context reports support concern without assigning one mechanism or converting an
+output, threshold, impedance, or pacing percentage into a universal cutoff. After all three lanes
+and elapsed time, an experienced team reports restored electrical and mechanical capture at 70/min
+and BP 114/68 mmHg without exposing a setting or implying learner programming. A second elapsed
+handoff keeps capture surveillance, rescue triggers, system integrity, definitive lead or generator
+choices, and electrophysiology ownership open. The lab does not examine; palpate a pulse; acquire or
+interpret ECG, monitoring, imaging, laboratory, or interrogation data; apply a magnet; test,
+interrogate, or program a device; select output, mode, drug, temporary pacing, lead revision,
+extraction, or generator replacement; deliver pacing or treatment; determine disposition or
+prognosis; or predict durable capture, repair, or outcome.
+
 #### Respiratory medicine: 15
 
 Acute severe asthma; COPD exacerbation; community-acquired pneumonia with hypoxemia; pulmonary

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "cardiology",
-  "recordCount": 15,
+  "recordCount": 16,
   "records": [
     {
       "recordId": "scenario:stable-chest-pain-evaluation@0.1.0",
@@ -166,6 +166,17 @@
       "evidence": [
         "/catalog/cardiology-completion-audit.json#hypertensive-emergency@0.1.0",
         "/catalog/cardiology-quality-audit.json#hypertensive-emergency@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:pacemaker-capture-failure@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "pacemaker-capture-failure",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/cardiology-completion-audit.json#pacemaker-capture-failure@0.1.0",
+        "/catalog/cardiology-quality-audit.json#pacemaker-capture-failure@0.1.0"
       ]
     }
   ]

@@ -69,6 +69,7 @@ const HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES = new Set([
   'tension-pneumothorax', 'thermal-response', 'upper-airway-obstruction',
   'venous-air-embolism',
 ]);
+const PACEMAKER_CAPTURE_FAILURE_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -614,6 +615,12 @@ export class AnesthesiaEngine {
   private hypertensiveEmergencyReductionIntentAtTick: number | null = null;
   private hypertensiveEmergencyLaterPanelAtTick: number | null = null;
   private hypertensiveEmergencyHandoffAtTick: number | null = null;
+  private pacemakerCaptureFailureRecognitionAtTick: number | null = null;
+  private pacemakerCaptureFailureRescueAtTick: number | null = null;
+  private pacemakerCaptureFailureDeviceSystemAtTick: number | null = null;
+  private pacemakerCaptureFailureCausesAtTick: number | null = null;
+  private pacemakerCaptureFailureLaterPanelAtTick: number | null = null;
+  private pacemakerCaptureFailureHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -848,6 +855,14 @@ export class AnesthesiaEngine {
     if (hypertensiveEmergency && HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `hypertensive-emergency-generic-action-refused-${this.currentTick}`,
         'This intent-only hypertensive-emergency lesson does not expose generic treatment, procedure, device, rhythm, artifact, or crisis-injection actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const pacemakerCaptureFailure = this.scenario.timeline.some((event) =>
+      event.type === 'narrative' && event.target === 'pacemaker-capture-failure-reassessment');
+    if (pacemakerCaptureFailure && PACEMAKER_CAPTURE_FAILURE_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `pacemaker-capture-failure-generic-action-refused-${this.currentTick}`,
+        'This review-only pacemaker-capture-failure lesson does not expose generic treatment, pacing, device, procedure, rhythm, artifact, or crisis-injection actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -4872,6 +4887,56 @@ export class AnesthesiaEngine {
         this.hypertensiveEmergencyHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `hypertensive-emergency-handoff-recorded-${this.currentTick}`, 'Fixed 3-hour report: BP 188/106 mmHg, HR 80/min, headache improved, vision not worse, alert nonfocal mentation, clear lungs, urine output 38 mL/h, and creatinine 2.1 mg/dL. Renal-retinal injury, visual symptoms, causes, treatment selection and delivery, owners, and change triggers remain open without determining disposition, prognosis, resolution, or outcome.', { treatmentDeliveredByLearner: false, testAcquiredByLearner: false, procedurePerformed: false, dispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'pacemaker-capture-failure-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pacemaker-capture-failure-reassessment');
+        const valid = ['reconcile-pacemaker-capture-failure-pulse-and-pattern',
+          'activate-pacemaker-capture-failure-rescue-pathway',
+          'review-pacemaker-capture-failure-device-system',
+          'review-pacemaker-capture-failure-causes',
+          'review-pacemaker-capture-failure-later-panel',
+          'handoff-pacemaker-capture-failure-reassessment'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `pacemaker-capture-failure-response-refused-${this.currentTick}`, supported ? 'The pacemaker-capture-failure action was not one of the listed choices. Nothing changed.' : 'These pacemaker-capture-failure choices are available only in the declared Cardiology lesson.'); break; }
+        if (response === 'reconcile-pacemaker-capture-failure-pulse-and-pattern') {
+          if (this.pacemakerCaptureFailureRecognitionAtTick !== null) { this.log('warning', 'assessment', `pacemaker-capture-failure-recognition-refused-${this.currentTick}`, 'The authored pulse, perfusion, and electrical-noncapture pattern was already reconciled.'); break; }
+          this.pacemakerCaptureFailureRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pacemaker-capture-failure-recognized-${this.currentTick}`, 'Fixed telemetry and 12-lead reports show ventricular pacing artifacts at the programmed lower rate with 6 of 10 ventricular stimuli not followed by a paced QRS. Captured and intrinsic escape complexes produce the effective ventricular rate and palpable pulse of 32/min; isolated pacing artifacts do not. BP is 84/52 mmHg with abrupt presyncope, weakness, and cool skin, while the patient remains awake, oriented, and without chest pain, acute heart failure, or pulse loss. This authored electrical failure to capture is not a learner-performed ECG interpretation or capture assessment.', { initialPulsePresent: true, electricalCaptureFailureAuthored: true, captureAssessedByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.pacemakerCaptureFailureRecognitionAtTick === null) { this.log('warning', 'assessment', `pacemaker-capture-failure-order-refused-${this.currentTick}`, 'Reconcile the authored pulse, perfusion, and electrical-noncapture pattern before rescue or device review.'); break; }
+        if (response === 'activate-pacemaker-capture-failure-rescue-pathway') {
+          if (this.pacemakerCaptureFailureRescueAtTick !== null) { this.log('warning', 'assessment', `pacemaker-capture-failure-rescue-refused-${this.currentTick}`, 'The acute bradycardia, device-expertise, and backup-pacing pathway was already activated.'); break; }
+          this.pacemakerCaptureFailureRescueAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pacemaker-capture-failure-rescue-activated-${this.currentTick}`, 'Symptomatic hypotension with a pulse activated continuous rhythm, pulse, pressure, perfusion, and oxygenation surveillance; urgent resuscitation and electrophysiology/device expertise; backup pacing readiness; and a pulse-loss arrest contingency. No oxygen, drug, infusion, pad placement, pacing mode, rate, output, pulse width, sedation, access, pacing delivery, capture test, or procedure was selected or performed.', { pacingDeliveredByLearner: false, outputSelectedByLearner: false, captureAssessedByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (response === 'review-pacemaker-capture-failure-device-system') {
+          if (this.pacemakerCaptureFailureDeviceSystemAtTick !== null) { this.log('warning', 'assessment', `pacemaker-capture-failure-device-system-refused-${this.currentTick}`, 'The fixed device-system report and trends were already reviewed.'); break; }
+          this.pacemakerCaptureFailureDeviceSystemAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pacemaker-capture-failure-device-system-reviewed-${this.currentTick}`, 'Fixed experienced-team interrogation report: a dual-chamber pacemaker was implanted 3 years earlier for complete AV block, prior ventricular pacing was 99.8%, prior RV threshold 0.75 V at 0.4 ms, and prior impedance 520 ohms. The battery is not at elective replacement and estimated longevity is 6.1 years. Current reported RV threshold is 3.5 V at 0.4 ms, impedance rose abruptly to 1,860 ohms, and stored ventricular electrograms show intermittent nonphysiologic noise; atrial-lead values remain stable. These combined authored trends raise a lead/system-integrity concern without proving fracture, connection failure, one cutoff, or a repair.', { deviceInterrogatedByLearner: false, deviceProgrammedByLearner: false, leadManipulatedByLearner: false, universalCutoffUsed: false }); break;
+        }
+        if (response === 'review-pacemaker-capture-failure-causes') {
+          if (this.pacemakerCaptureFailureCausesAtTick !== null) { this.log('warning', 'assessment', `pacemaker-capture-failure-causes-refused-${this.currentTick}`, 'The fixed contributor screen and open cause set were already reviewed.'); break; }
+          this.pacemakerCaptureFailureCausesAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pacemaker-capture-failure-causes-reviewed-${this.currentTick}`, 'Fixed reports give potassium 4.2 mmol/L, magnesium 2.0 mg/dL, pH 7.39, normal oxygenation, no acute STEMI pattern, and no gross lead displacement, pneumothorax, obvious fracture, pocket inflammation, or recent procedure. Microdislodgment, fracture or connection problems, lead-myocardial interface change, ischemia or inflammation, metabolic or medication effects, generator behavior, sensing or output behavior, and measurement or interrogation error remain open. A magnet is not treated as a generic remedy.', { causeAssigned: false, alternativesPermanentlyExcluded: false, testAcquiredByLearner: false, magnetSelected: false }); break;
+        }
+        if (response === 'review-pacemaker-capture-failure-later-panel') {
+          if (this.pacemakerCaptureFailureRescueAtTick === null
+            || this.pacemakerCaptureFailureDeviceSystemAtTick === null
+            || this.pacemakerCaptureFailureCausesAtTick === null) { this.log('warning', 'assessment', `pacemaker-capture-failure-later-panel-order-refused-${this.currentTick}`, 'Activate rescue and complete both device-system and cause-review lanes before reviewing the later panel.'); break; }
+          if (this.currentTick <= Math.max(this.pacemakerCaptureFailureRescueAtTick,
+            this.pacemakerCaptureFailureDeviceSystemAtTick,
+            this.pacemakerCaptureFailureCausesAtTick)) { this.log('warning', 'assessment', `pacemaker-capture-failure-later-panel-time-refused-${this.currentTick}`, 'Allow a later simulated tick before reviewing the authored experienced-team response.'); break; }
+          if (this.pacemakerCaptureFailureLaterPanelAtTick !== null) { this.log('warning', 'assessment', `pacemaker-capture-failure-later-panel-refused-${this.currentTick}`, 'The authored experienced-team response was already reviewed.'); break; }
+          this.pacemakerCaptureFailureLaterPanelAtTick = this.currentTick;
+          this.rhythm = 'paced';
+          this.log('warning', 'assessment', `pacemaker-capture-failure-later-panel-reviewed-${this.currentTick}`, 'Fixed experienced-team report: a manufacturer- and lead-specific temporary programming change restored consistent reported electrical and mechanical capture while backup pacing readiness remained. The paced rate is 70/min, each reported ventricular artifact is followed by a paced QRS and mechanical pulse or arterial waveform, BP is 114/68 mmHg, presyncope has resolved, and perfusion is warm. This is prior experienced-team care, not learner interrogation, programming, pacing, or a durable repair or outcome.', { treatmentDeliveredByLearner: false, pacingDeliveredByLearner: false, deviceInterrogatedByLearner: false, deviceProgrammedByLearner: false, captureAssessedByLearner: false, durableResolutionEstablished: false, outcomePredicted: false }); break;
+        }
+        if (this.pacemakerCaptureFailureLaterPanelAtTick === null) { this.log('warning', 'assessment', `pacemaker-capture-failure-handoff-order-refused-${this.currentTick}`, 'Review the authored experienced-team response before the later reassessment handoff.'); break; }
+        if (this.currentTick <= this.pacemakerCaptureFailureLaterPanelAtTick) { this.log('warning', 'assessment', `pacemaker-capture-failure-handoff-time-refused-${this.currentTick}`, 'Allow another later simulated tick before handing off the unresolved device-system trajectory.'); break; }
+        if (this.pacemakerCaptureFailureHandoffAtTick !== null) { this.log('warning', 'assessment', `pacemaker-capture-failure-handoff-refused-${this.currentTick}`, 'The later reassessment and unresolved-work handoff was already recorded.'); break; }
+        this.pacemakerCaptureFailureHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `pacemaker-capture-failure-handoff-recorded-${this.currentTick}`, 'Fixed later report: paced rate 70/min, BP 114/68 mmHg, alert warm perfusion, no recurrent presyncope, and consistent reported electrical and mechanical capture during this interval. Lead and generator integrity, the cause of threshold and impedance change, recurrence surveillance, durable device strategy, owners, and deterioration or pulse-loss triggers remain open without learner programming, lead manipulation, definitive repair, disposition, prognosis, or outcome.', { treatmentDeliveredByLearner: false, deviceProgrammedByLearner: false, leadManipulatedByLearner: false, dispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'emergence-residual-block-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative'
@@ -7548,6 +7613,14 @@ export class AnesthesiaEngine {
         coreTemperatureC: 36.8 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'pacemaker-capture-failure-reassessment')) {
+      const restored = this.pacemakerCaptureFailureLaterPanelAtTick !== null;
+      crisisState = { ...crisisState, heartRateBpm: restored ? 70 : 32,
+        respiratoryRateBpm: 18, spo2Percent: 97, etco2MmHg: restored ? 37 : 34,
+        systolicMmHg: restored ? 114 : 84, diastolicMmHg: restored ? 68 : 52,
+        meanArterialMmHg: restored ? 83 : 63, coreTemperatureC: 36.7 };
+    }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'post-infarction-cardiogenic-shock-escalation')) {
       const reassessed = this.postInfarctionShockHandoffAtTick !== null;
       crisisState = { ...crisisState, heartRateBpm: reassessed ? 104 : 108,
@@ -8636,6 +8709,27 @@ export class AnesthesiaEngine {
               universalTargetSelected: false as const, rapidNormalizationSelected: false as const,
               testAcquiredByLearner: false as const, procedurePerformed: false as const,
               dispositionDetermined: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pacemaker-capture-failure-reassessment') ? {
+            pacemakerCaptureFailureAssessment: {
+              recognitionAtTick: this.pacemakerCaptureFailureRecognitionAtTick,
+              rescueAtTick: this.pacemakerCaptureFailureRescueAtTick,
+              deviceSystemAtTick: this.pacemakerCaptureFailureDeviceSystemAtTick,
+              causesAtTick: this.pacemakerCaptureFailureCausesAtTick,
+              laterPanelAtTick: this.pacemakerCaptureFailureLaterPanelAtTick,
+              handoffAtTick: this.pacemakerCaptureFailureHandoffAtTick,
+              initialPulsePresent: true as const,
+              electricalCaptureFailureAuthored: true as const,
+              pacingDeliveredByLearner: false as const,
+              captureAssessedByLearner: false as const,
+              deviceInterrogatedByLearner: false as const,
+              deviceProgrammedByLearner: false as const,
+              outputSelectedByLearner: false as const,
+              leadManipulatedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

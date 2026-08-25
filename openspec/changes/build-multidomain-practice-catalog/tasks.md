@@ -225,12 +225,12 @@ credited toward the catalog until every item in the completion contract passes.
   session, monitor, transcript, action, and debrief frame and are completion-audited, prerendered,
   available offline, and explicitly bounded.
 - [ ] Wave C: complete 17 cardiology and 15 respiratory-medicine scenarios. Cardiology is live with
-  15 of 17 scenarios: stable chest-pain evaluation, STEMI recognition and first actions, NSTEMI risk
+  16 of 17 scenarios: stable chest-pain evaluation, STEMI recognition and first actions, NSTEMI risk
   reassessment, acute decompensated heart failure, post-infarction cardiogenic-shock escalation,
   atrial fibrillation with rapid response, regular narrow-complex tachycardia, wide-complex tachycardia,
   symptomatic bradycardia, complete heart block, torsades de pointes, hyperkalemic conduction
-  disturbance, pericardial tamponade, right-ventricular infarction, and hypertensive emergency. Respiratory
-  medicine remains at 0 of 15.
+  disturbance, pericardial tamponade, right-ventricular infarction, hypertensive emergency, and
+  pacemaker capture failure. Respiratory medicine remains at 0 of 15.
 - [ ] Wave D: complete 16 pediatric, 15 obstetric, and 11 neonatal scenarios.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.

@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 99 reports hypertensive-emergency state. */
-export const WORKER_PROTOCOL_VERSION = 99;
+/** Bumped whenever the message shape changes incompatibly. Version 100 reports pacemaker-capture-failure state. */
+export const WORKER_PROTOCOL_VERSION = 100;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -792,6 +792,24 @@ export interface EquipmentSnapshot {
       readonly testAcquiredByLearner: false;
       readonly procedurePerformed: false;
       readonly dispositionDetermined: false;
+      readonly outcomePredicted: false;
+    };
+    readonly pacemakerCaptureFailureAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly rescueAtTick: number | null;
+      readonly deviceSystemAtTick: number | null;
+      readonly causesAtTick: number | null;
+      readonly laterPanelAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true;
+      readonly electricalCaptureFailureAuthored: true;
+      readonly pacingDeliveredByLearner: false;
+      readonly captureAssessedByLearner: false;
+      readonly deviceInterrogatedByLearner: false;
+      readonly deviceProgrammedByLearner: false;
+      readonly outputSelectedByLearner: false;
+      readonly leadManipulatedByLearner: false;
+      readonly treatmentDeliveredByLearner: false;
       readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
