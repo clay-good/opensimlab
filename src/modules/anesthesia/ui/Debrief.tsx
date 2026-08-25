@@ -3025,6 +3025,49 @@ export function objectiveFindings(
           : 'The multiorgan surveillance and inappropriate-drug boundary were incomplete or out of order.', atTick: surveillance?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['activate-structured-trauma-response', 'control-catastrophic-trauma-hemorrhage',
+      'assess-trauma-airway-and-breathing', 'manage-trauma-circulation',
+      'complete-and-repeat-trauma-survey'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'trauma-primary-survey');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The trauma-primary-survey vignette was not active.' } satisfies ObjectiveFinding;
+      const activated = log.find((event) => /^trauma-activated-\d+$/.test(event.eventId));
+      const hemorrhage = log.find((event) => /^trauma-hemorrhage-controlled-\d+$/.test(event.eventId));
+      const airwayBreathing = log.find((event) => /^trauma-airway-breathing-reviewed-\d+$/.test(event.eventId));
+      const circulation = log.find((event) => /^trauma-circulation-\d+$/.test(event.eventId));
+      const disabilityExposure = log.find((event) => /^trauma-disability-exposure-reviewed-\d+$/.test(event.eventId));
+      const repeated = log.find((event) => /^trauma-repeated-\d+$/.test(event.eventId));
+      if (objective.id === 'activate-structured-trauma-response') return {
+        ...base, outcome: activated ? 'met' : 'not-met',
+        finding: activated ? 'Mechanism, time, suspected injuries, signs, prior treatment, team activation, and a repeated <C>ABCDE plan were integrated.'
+          : 'The structured trauma handoff, response activation, and survey order were not recorded.',
+        atTick: activated?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'control-catastrophic-trauma-hemorrhage') {
+        const ordered = activated && hemorrhage && activated.tick <= hemorrhage.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered ? 'Tourniquet intent with recorded time followed failed direct pressure and preceded the remaining survey.'
+            : 'Catastrophic hemorrhage control was absent or out of order.', atTick: hemorrhage?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'assess-trauma-airway-and-breathing') {
+        const ordered = hemorrhage && airwayBreathing && hemorrhage.tick <= airwayBreathing.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered ? 'Airway with spinal-motion precautions and bilateral breathing were reviewed after catastrophic hemorrhage control.'
+            : 'The A and B review was absent or out of order.', atTick: airwayBreathing?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'manage-trauma-circulation') {
+        const ordered = airwayBreathing && circulation && airwayBreathing.tick <= circulation.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered ? 'Persistent shock triggered pelvic stabilization, blood-based resuscitation, early antifibrinolytic intent, minimal directing imaging, and definitive-control escalation.'
+            : 'The circulation and definitive-control path was absent or out of order.', atTick: circulation?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = circulation && disabilityExposure && repeated
+        && circulation.tick <= disabilityExposure.tick && disabilityExposure.tick <= repeated.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met',
+        finding: ordered ? 'Disability, glucose, exposure, posterior surfaces, and heat-loss prevention were followed by a complete repeated survey and trend handoff.'
+          : 'D, E, heat-loss prevention, repeated <C>ABCDE, or trend handoff was incomplete or out of order.', atTick: repeated?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

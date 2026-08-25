@@ -2003,6 +2003,46 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['exertional-heat-stroke'],
   },
   {
+    id: 'trauma-findings-interventions-and-reassessment-are-authored',
+    headline: 'The mechanism, injuries, examination findings, vital signs, imaging statement, intervention effects, and repeated survey are authored facts, not acquired findings or predictions.',
+    simplification: 'One fixed adult has a catastrophic limb bleed after failed pressure, patent '
+      + 'airway, bilateral breathing, shock, unstable-pelvis pattern, confusion, and hypothermia, '
+      + 'followed by fixed intervention and repeated-survey panels.',
+    whereItMisleads: 'Treating the screen as trauma examination, spinal assessment, pulse or pressure '
+      + 'confirmation, bleeding-source diagnosis, FAST interpretation, or prediction of response or injury.',
+    correctUnderstanding: 'Real major trauma requires rapid repeated whole-patient examination, '
+      + 'verified monitoring, immediate threat treatment, senior trauma leadership, and direct '
+      + 'definitive-control planning as findings evolve.',
+    briefIn: ['trauma-primary-survey'],
+  },
+  {
+    id: 'trauma-survey-hemorrhage-airway-pelvis-imaging-and-handoff-controls-are-proxies',
+    headline: 'Survey, hemorrhage, airway, breathing, pelvis, blood, imaging, warming, repeat, and handoff buttons record intents; they do not perform care.',
+    simplification: 'The interface enforces a <C>ABCDE sequence without applying pressure or a '
+      + 'tourniquet, stabilizing the spine, examining or supporting an airway or chest, obtaining '
+      + 'access, delivering blood or drugs, binding a pelvis, imaging, warming, or transferring.',
+    whereItMisleads: 'Equating ordered buttons with competent examination, procedure, resuscitation, '
+      + 'imaging, team leadership, communication, transfer, or definitive-control performance.',
+    correctUnderstanding: 'Use current regional trauma and hemorrhage protocols, trained teams, '
+      + 'working equipment, repeated bedside assessment, explicit intervention times and trends, '
+      + 'and direct surgical or interventional coordination.',
+    briefIn: ['trauma-primary-survey'],
+  },
+  {
+    id: 'no-live-trauma-exam-procedure-blood-imaging-definitive-control-transfer-or-outcome',
+    headline: 'The case does not examine, stabilize, control bleeding, ventilate, deliver blood or drugs, image, operate, transfer, or predict outcome.',
+    simplification: 'Alternate mechanisms, airway loss, tension pneumothorax, tamponade, traumatic '
+      + 'brain or spinal injury, solid-organ injury, fractures, anticoagulation, pregnancy, arrest, '
+      + 'coagulopathy, massive-transfusion complications, secondary survey, disposition, and prognosis are absent.',
+    whereItMisleads: 'Fixating on the visible limb, skipping a currently stable A or B, treating FAST '
+      + 'as exclusion, delaying control for whole-body CT, continuing survey instead of treating a '
+      + 'new threat, or assuming one improved panel closes hemorrhage risk.',
+    correctUnderstanding: 'Treat immediate threats as they are found, complete and repeat <C>ABCDE, '
+      + 'minimize heat loss and nonessential delay, use imaging to direct rather than postpone '
+      + 'intervention in instability, and move rapidly to definitive hemorrhage control.',
+    briefIn: ['trauma-primary-survey'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

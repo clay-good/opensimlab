@@ -338,6 +338,14 @@ export interface ActionCockpitProps {
       readonly targetAtTick: number | null;
       readonly surveillanceAtTick: number | null;
     };
+    readonly traumaPrimarySurveyAssessment?: {
+      readonly activatedAtTick: number | null;
+      readonly catastrophicHemorrhageAtTick: number | null;
+      readonly airwayBreathingAtTick: number | null;
+      readonly circulationAtTick: number | null;
+      readonly disabilityExposureAtTick: number | null;
+      readonly repeatedAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -538,6 +546,11 @@ export interface ActionCockpitProps {
       | 'record-cold-water-immersion' | 'reassess-heat-stroke-cooling-target'
       | 'record-heat-stroke-organ-surveillance',
   ) => void;
+  readonly onTraumaPrimarySurveyResponse?: (
+    action: 'activate-trauma-primary-survey' | 'control-trauma-catastrophic-hemorrhage'
+      | 'review-trauma-airway-and-breathing' | 'record-trauma-circulation-response'
+      | 'review-trauma-disability-and-exposure' | 'repeat-trauma-primary-survey',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -672,6 +685,9 @@ export function crisisResponseAvailability(
     hasHeatStrokeResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'exertional-heat-stroke',
     ),
+    hasTraumaPrimarySurveyResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'trauma-primary-survey',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -741,6 +757,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'severe-hyponatremia-with-seizure')
       || (event.type === 'narrative' && event.target === 'opioid-toxicity')
       || (event.type === 'narrative' && event.target === 'exertional-heat-stroke')
+      || (event.type === 'narrative' && event.target === 'trauma-primary-survey')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -768,6 +785,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasSevereHyponatremiaResponse,
     hasOpioidToxicityResponse,
     hasHeatStrokeResponse,
+    hasTraumaPrimarySurveyResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -795,7 +813,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPneumothoraxResponse || hasBronchospasmResponse || hasStatusEpilepticusResponse
     || hasAcuteIschemicStrokeResponse || hasIntracranialHemorrhageResponse
     || hasDiabeticKetoacidosisResponse || hasHyperkalemiaResponse
-    || hasSevereHyponatremiaResponse || hasOpioidToxicityResponse || hasHeatStrokeResponse;
+    || hasSevereHyponatremiaResponse || hasOpioidToxicityResponse || hasHeatStrokeResponse
+    || hasTraumaPrimarySurveyResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -813,8 +832,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasStatusEpilepticusResponse || hasAcuteIschemicStrokeResponse
     || hasIntracranialHemorrhageResponse || hasDiabeticKetoacidosisResponse
     || hasHyperkalemiaResponse || hasSevereHyponatremiaResponse || hasOpioidToxicityResponse
-    || hasHeatStrokeResponse;
-  const responseTray = hasHeatStrokeResponse
+    || hasHeatStrokeResponse || hasTraumaPrimarySurveyResponse;
+  const responseTray = hasTraumaPrimarySurveyResponse
+    ? { id: 'crisis', label: 'Trauma primary survey' } as const
+    : hasHeatStrokeResponse
     ? { id: 'crisis', label: 'Exertional heat stroke' } as const
     : hasOpioidToxicityResponse
     ? { id: 'crisis', label: 'Opioid toxicity' } as const
@@ -889,6 +910,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasSevereHyponatremiaResponse
     || hasOpioidToxicityResponse
     || hasHeatStrokeResponse
+    || hasTraumaPrimarySurveyResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1270,6 +1292,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasHeatStrokeResponse && (
               <HeatStrokeTray assessment={props.resuscitation.heatStrokeAssessment}
                 onAction={props.onHeatStrokeResponse ?? (() => {})} />
+            )}
+            {hasTraumaPrimarySurveyResponse && (
+              <TraumaPrimarySurveyTray assessment={props.resuscitation.traumaPrimarySurveyAssessment}
+                onAction={props.onTraumaPrimarySurveyResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -3518,6 +3544,62 @@ function HeatStrokeTray({ assessment, onAction }: {
             onClick={() => onAction('record-heat-stroke-organ-surveillance')}>Watch kidney + liver + clotting + muscle</Button>
         </div>
         <p className="field__hint">Temperature recovery does not exclude delayed injury. Antipyretics and dantrolene do not treat heat stroke and are outside this path.</p>
+      </section>
+    </div>
+  );
+}
+
+function TraumaPrimarySurveyTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['traumaPrimarySurveyAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onTraumaPrimarySurveyResponse']>;
+}) {
+  const activated = assessment?.activatedAtTick != null;
+  const hemorrhage = assessment?.catastrophicHemorrhageAtTick != null;
+  const airwayBreathing = assessment?.airwayBreathingAtTick != null;
+  const circulation = assessment?.circulationAtTick != null;
+  const disabilityExposure = assessment?.disabilityExposureAtTick != null;
+  const repeated = assessment?.repeatedAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="trauma-sweep-title">
+        <div id="trauma-sweep-title" className="syringe__name">Stop the leak. Keep the sweep moving.</div>
+        <Badge kind="teaching">&lt;C&gt; · A · B</Badge>
+        <div className="syringe__meta">35 min · failed pressure · pulse 128 · BP 86/54</div>
+        <p className="syringe__remaining" role="status">
+          {airwayBreathing ? 'Bleed controlled · airway patent · bilateral breathing present'
+            : hemorrhage ? 'No visible limb flow · continue A + B'
+              : activated ? 'Team ready · catastrophic hemorrhage first'
+                : 'Mechanism + injuries + signs + treatment handoff pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={activated}
+            onClick={() => onAction('activate-trauma-primary-survey')}>Receive handoff + activate + declare sweep</Button>
+          <Button className="crisis-drug__action" disabled={!activated || hemorrhage}
+            onClick={() => onAction('control-trauma-catastrophic-hemorrhage')}>Control limb bleed + record time</Button>
+          <Button className="crisis-drug__action" disabled={!hemorrhage || airwayBreathing}
+            onClick={() => onAction('review-trauma-airway-and-breathing')}>Review airway + spine + breathing</Button>
+        </div>
+        <p className="field__hint">Catastrophic hemorrhage comes first. A currently patent airway and bilateral breathing are findings to recheck, not permission to skip A or B.</p>
+      </section>
+      <section className="syringe" aria-labelledby="trauma-repeat-title">
+        <div id="trauma-repeat-title" className="syringe__name">Every intervention earns another survey.</div>
+        <Badge kind="teaching">C · D · E · repeat</Badge>
+        <div className="syringe__meta">Pelvis · blood · brain · back · warmth · trends</div>
+        <p className="syringe__remaining" role="status">
+          {repeated ? 'Repeat complete · trends + uncertainty handed to definitive control'
+            : disabilityExposure ? 'D + E complete · repeat &lt;C&gt;ABCDE now'
+              : circulation ? 'Hemorrhage path active · complete D + E'
+                : airwayBreathing ? 'Persistent shock · circulation next' : 'A + B pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!airwayBreathing || circulation}
+            onClick={() => onAction('record-trauma-circulation-response')}>Pelvis + blood + TXA + control</Button>
+          <Button className="crisis-drug__action" disabled={!circulation || disabilityExposure}
+            onClick={() => onAction('review-trauma-disability-and-exposure')}>Review brain + glucose + back + warmth</Button>
+          <Button className="crisis-drug__action" disabled={!disabilityExposure || repeated}
+            onClick={() => onAction('repeat-trauma-primary-survey')}>Repeat sweep + hand off change</Button>
+        </div>
+        <p className="field__hint">Use only imaging that directs intervention in persistent instability. A negative FAST would not exclude bleeding; the authored positive statement does not replace definitive control.</p>
       </section>
     </div>
   );

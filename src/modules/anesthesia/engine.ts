@@ -384,6 +384,12 @@ export class AnesthesiaEngine {
   private heatStrokeCoolingAtTick: number | null = null;
   private heatStrokeTargetAtTick: number | null = null;
   private heatStrokeSurveillanceAtTick: number | null = null;
+  private traumaActivatedAtTick: number | null = null;
+  private traumaCatastrophicHemorrhageAtTick: number | null = null;
+  private traumaAirwayBreathingAtTick: number | null = null;
+  private traumaCirculationAtTick: number | null = null;
+  private traumaDisabilityExposureAtTick: number | null = null;
+  private traumaRepeatedAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2489,6 +2495,109 @@ export class AnesthesiaEngine {
         this.heatStrokeSurveillanceAtTick = this.currentTick;
         this.log('critical', 'assessment', `heat-stroke-surveillance-${this.currentTick}`,
           'Critical-care handoff recorded serial neurologic, renal, hepatic, coagulation, creatine-kinase, electrolyte, glucose, urine-output, and temperature surveillance with supportive complication management. Antipyretics and dantrolene were explicitly excluded because heat stroke is hyperthermia, not a raised hypothalamic set point or malignant hyperthermia. Tests, fluids, procedures, later injury, disposition, recovery, and outcome are outside this lesson.', { intentOnly: true });
+        break;
+      }
+      case 'trauma-primary-survey-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'trauma-primary-survey');
+        const valid = ['activate-trauma-primary-survey', 'control-trauma-catastrophic-hemorrhage',
+          'review-trauma-airway-and-breathing', 'record-trauma-circulation-response',
+          'review-trauma-disability-and-exposure', 'repeat-trauma-primary-survey'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `trauma-primary-survey-response-refused-${this.currentTick}`,
+            supported ? 'The trauma-primary-survey action was not one of the listed choices. Nothing changed.'
+              : 'The bounded trauma-primary-survey choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'activate-trauma-primary-survey') {
+          if (this.traumaActivatedAtTick !== null) {
+            this.log('warning', 'assessment', `trauma-activation-refused-${this.currentTick}`,
+              'The structured trauma handoff and response have already been activated.');
+            break;
+          }
+          this.traumaActivatedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `trauma-activated-${this.currentTick}`,
+            'The 35-minute high-energy mechanism, suspected injuries, vital signs, failed direct pressure, treatment so far, and arrival needs were received. Trauma and major-hemorrhage responses were activated with an explicit <C>ABCDE sequence and repeat-survey plan. Team activation, leadership, communication, and handoff performance are not simulated.', { intentOnly: true });
+          break;
+        }
+        if (this.traumaActivatedAtTick === null) {
+          this.log('warning', 'assessment', `trauma-activation-order-refused-${this.currentTick}`,
+            'Receive the structured handoff, activate the trauma response, and declare the survey order first.');
+          break;
+        }
+        if (response === 'control-trauma-catastrophic-hemorrhage') {
+          if (this.traumaCatastrophicHemorrhageAtTick !== null) {
+            this.log('warning', 'assessment', `trauma-hemorrhage-refused-${this.currentTick}`,
+              'The bounded catastrophic-hemorrhage control intent has already been recorded.');
+            break;
+          }
+          this.traumaCatastrophicHemorrhageAtTick = this.currentTick;
+          this.log('critical', 'assessment', `trauma-hemorrhage-controlled-${this.currentTick}`,
+            'After failed direct pressure, local-protocol tourniquet intent proximal to the life-threatening left lower-leg hemorrhage was recorded with application time and distal-limb handoff. Fixed review reports no ongoing visible external flow. Pressure, placement, tightening, device selection, limb assessment, pain, and tissue outcome are not simulated.', { intentOnly: true });
+          break;
+        }
+        if (this.traumaCatastrophicHemorrhageAtTick === null) {
+          this.log('warning', 'assessment', `trauma-hemorrhage-order-refused-${this.currentTick}`,
+            'Control the authored catastrophic external hemorrhage before continuing the survey.');
+          break;
+        }
+        if (response === 'review-trauma-airway-and-breathing') {
+          if (this.traumaAirwayBreathingAtTick !== null) {
+            this.log('warning', 'assessment', `trauma-airway-breathing-refused-${this.currentTick}`,
+              'The fixed trauma airway-and-breathing panel has already been reviewed.');
+            break;
+          }
+          this.traumaAirwayBreathingAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `trauma-airway-breathing-reviewed-${this.currentTick}`,
+            'Fixed A and B review: the patient still speaks coherently with a currently patent airway under in-line spinal-motion precautions; RR 26/min, SpO₂ 96% with oxygen, bilateral breath sounds and chest movement remain present, and no severe respiratory compromise or tension pattern is authored. Examination, spinal protection, oxygen delivery, and airway or chest procedures are not simulated.', { spo2Percent: 96, respiratoryRatePerMin: 26 });
+          break;
+        }
+        if (this.traumaAirwayBreathingAtTick === null) {
+          this.log('warning', 'assessment', `trauma-airway-breathing-order-refused-${this.currentTick}`,
+            'Review airway with spinal-motion precautions and breathing before the circulation path.');
+          break;
+        }
+        if (response === 'record-trauma-circulation-response') {
+          if (this.traumaCirculationAtTick !== null) {
+            this.log('warning', 'assessment', `trauma-circulation-refused-${this.currentTick}`,
+              'The bounded trauma-circulation response has already been recorded.');
+            break;
+          }
+          this.traumaCirculationAtTick = this.currentTick;
+          this.log('critical', 'assessment', `trauma-circulation-${this.currentTick}`,
+            'Persistent HR 124/min and BP 88/56 mmHg after external-flow control plus the authored unstable pelvis triggered purpose-made pelvic-binder, warmed blood-component major-hemorrhage, early local-protocol tranexamic-acid, calcium and coagulation surveillance, and immediate definitive-control intent. A fixed minimal eFAST statement shows free fluid in the right upper quadrant; it directs rather than delays surgery or interventional planning and does not exclude other bleeding. Examination, access, product or dose selection, delivery, binder placement, imaging, procedures, and response are not simulated.', { intentOnly: true, heartRatePerMin: 124, systolicBpMmHg: 88 });
+          break;
+        }
+        if (this.traumaCirculationAtTick === null) {
+          this.log('warning', 'assessment', `trauma-circulation-order-refused-${this.currentTick}`,
+            'Complete the bounded circulation, hemorrhage, and definitive-control path before D and E.');
+          break;
+        }
+        if (response === 'review-trauma-disability-and-exposure') {
+          if (this.traumaDisabilityExposureAtTick !== null) {
+            this.log('warning', 'assessment', `trauma-disability-exposure-refused-${this.currentTick}`,
+              'The fixed disability-and-exposure panel has already been reviewed.');
+            break;
+          }
+          this.traumaDisabilityExposureAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `trauma-disability-exposure-reviewed-${this.currentTick}`,
+            'Fixed D and E review: the patient is confused but follows commands, pupils are equal, glucose is 118 mg/dL, and no lateralizing deficit is authored. Full exposure and a coordinated posterior-surface review found no second catastrophic external bleed; core temperature remains 35.6°C. Warm environment, blankets, warmed resuscitation, and immediate re-covering were recorded. Examination, log-roll, spinal protection, warming, and occult-injury exclusion are not simulated.', { glucoseMgPerDl: 118, coreTemperatureC: 35.6 });
+          break;
+        }
+        if (this.traumaDisabilityExposureAtTick === null) {
+          this.log('warning', 'assessment', `trauma-repeat-order-refused-${this.currentTick}`,
+            'Complete disability, glucose, exposure, posterior review, and heat-loss prevention before repeating the survey.');
+          break;
+        }
+        if (this.traumaRepeatedAtTick !== null) {
+          this.log('warning', 'assessment', `trauma-repeat-refused-${this.currentTick}`,
+            'The fixed repeated trauma survey has already been recorded.');
+          break;
+        }
+        this.traumaRepeatedAtTick = this.currentTick;
+        this.log('critical', 'assessment', `trauma-repeated-${this.currentTick}`,
+          'Repeated <C>ABCDE: no visible limb rebleeding; airway remains patent with coherent speech; bilateral breathing remains present with SpO₂ 97% on oxygen; HR is 112/min and BP 100/62 mmHg after the authored bounded response; commands are followed; temperature is 35.8°C after heat-loss measures. Persistent abdominal and pelvic concern plus positive eFAST were handed directly to the definitive-control team with times, trends, interventions, and remaining uncertainties. No procedure, transport, later deterioration, disposition, or outcome is simulated.', { heartRatePerMin: 112, systolicBpMmHg: 100, spo2Percent: 97, coreTemperatureC: 35.8 });
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -5626,6 +5735,14 @@ export class AnesthesiaEngine {
           coolingAtTick: this.heatStrokeCoolingAtTick,
           targetAtTick: this.heatStrokeTargetAtTick,
           surveillanceAtTick: this.heatStrokeSurveillanceAtTick,
+        },
+        traumaPrimarySurveyAssessment: {
+          activatedAtTick: this.traumaActivatedAtTick,
+          catastrophicHemorrhageAtTick: this.traumaCatastrophicHemorrhageAtTick,
+          airwayBreathingAtTick: this.traumaAirwayBreathingAtTick,
+          circulationAtTick: this.traumaCirculationAtTick,
+          disabilityExposureAtTick: this.traumaDisabilityExposureAtTick,
+          repeatedAtTick: this.traumaRepeatedAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

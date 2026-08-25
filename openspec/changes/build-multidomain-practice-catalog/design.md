@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with 23 playable, completion-audited scenarios. The remaining
-2 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with 24 playable, completion-audited scenarios. The remaining
+1 planned title remains descriptive scope only and does not enter playable counts before its full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -514,6 +514,21 @@ fixed 14-minute panel reaches 38.9°C and stops active cooling, after which dela
 hepatic, coagulation, muscle, electrolyte, glucose, urine, and temperature surveillance continues.
 The case does not examine, measure, immerse, cool, transport, give fluids, run labs, treat organ
 injury, or predict outcome, and it explicitly excludes antipyretics and dantrolene.
+
+### Wave B slice 24: trauma primary survey
+
+The twenty-fourth emergency-medicine slice adds a high-energy motorcycle collision with failed
+direct pressure on catastrophic limb hemorrhage, a currently patent airway under spinal-motion
+precautions, no immediate chest threat, persistent shock, an authored unstable pelvis, confusion,
+and early hypothermia. Learners receive a structured handoff, activate trauma and major-hemorrhage
+responses, control catastrophic bleeding first, then continue a complete `<C>ABCDE` sweep.
+
+The circulation path pairs pelvic stabilization and blood-based resuscitation with early
+antifibrinolytic and definitive-control intent while limiting imaging to what directs intervention.
+The learner then completes D and E, prevents heat loss, repeats the entire survey, and hands off
+times, trends, interventions, and uncertainty. The case does not examine, stabilize, apply pressure
+or a tourniquet, ventilate, deliver blood or drugs, bind a pelvis, image, operate, transport, or
+predict outcome.
 
 #### Critical care: 24
 

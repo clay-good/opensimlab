@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 56 reports bounded heat-stroke state. */
-export const WORKER_PROTOCOL_VERSION = 56;
+/** Bumped whenever the message shape changes incompatibly. Version 57 reports bounded trauma-survey state. */
+export const WORKER_PROTOCOL_VERSION = 57;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -406,6 +406,14 @@ export interface EquipmentSnapshot {
       readonly coolingAtTick: number | null;
       readonly targetAtTick: number | null;
       readonly surveillanceAtTick: number | null;
+    };
+    readonly traumaPrimarySurveyAssessment?: {
+      readonly activatedAtTick: number | null;
+      readonly catastrophicHemorrhageAtTick: number | null;
+      readonly airwayBreathingAtTick: number | null;
+      readonly circulationAtTick: number | null;
+      readonly disabilityExposureAtTick: number | null;
+      readonly repeatedAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {
