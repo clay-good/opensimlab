@@ -280,6 +280,8 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
       .toMatchObject({ indexable: true, heading: 'Acute aortic syndrome' });
     expect(routeFor('/critical-care/scenario/ards-lung-protective-ventilation'))
       .toMatchObject({ indexable: true, heading: 'ARDS lung-protective ventilation' });
+    expect(routeFor('/critical-care/scenario/escalating-hypoxemia'))
+      .toMatchObject({ indexable: true, heading: 'Escalating hypoxemia' });
   });
 
   it('Requirement: Modules Declare Their Own Physiological Timescale', () => {

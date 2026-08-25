@@ -790,6 +790,9 @@ export function Cockpit({
           onArdsLungProtectiveResponse={(action) => session.act({
             type: 'ards-lung-protective-response', payload: { action },
           })}
+          onEscalatingHypoxemiaResponse={(action) => session.act({
+            type: 'escalating-hypoxemia-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

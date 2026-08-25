@@ -361,6 +361,13 @@ export interface ActionCockpitProps {
       readonly reassessmentAtTick: number | null;
       readonly escalationAtTick: number | null;
     };
+    readonly escalatingHypoxemiaAssessment?: {
+      readonly signalAtTick: number | null;
+      readonly supportAtTick: number | null;
+      readonly deliveryPathAtTick: number | null;
+      readonly bedsidePatternAtTick: number | null;
+      readonly escalationAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -575,6 +582,11 @@ export interface ActionCockpitProps {
     action: 'review-ards-baseline' | 'calculate-ards-pbw' | 'record-ards-protective-settings'
       | 'reassess-ards-protection' | 'record-ards-peep-prone-escalation',
   ) => void;
+  readonly onEscalatingHypoxemiaResponse?: (
+    action: 'validate-hypoxemia-signal' | 'support-hypoxemia-and-call-help'
+      | 'trace-hypoxemia-delivery-path' | 'integrate-hypoxemia-bedside-pattern'
+      | 'escalate-and-reassess-hypoxemia',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -718,6 +730,9 @@ export function crisisResponseAvailability(
     hasArdsLungProtectiveResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'ards-lung-protective-ventilation',
     ),
+    hasEscalatingHypoxemiaResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'escalating-hypoxemia',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -790,6 +805,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'trauma-primary-survey')
       || (event.type === 'narrative' && event.target === 'acute-aortic-syndrome')
       || (event.type === 'narrative' && event.target === 'ards-lung-protective-ventilation')
+      || (event.type === 'narrative' && event.target === 'escalating-hypoxemia')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -820,6 +836,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasTraumaPrimarySurveyResponse,
     hasAcuteAorticSyndromeResponse,
     hasArdsLungProtectiveResponse,
+    hasEscalatingHypoxemiaResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -848,7 +865,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasAcuteIschemicStrokeResponse || hasIntracranialHemorrhageResponse
     || hasDiabeticKetoacidosisResponse || hasHyperkalemiaResponse
     || hasSevereHyponatremiaResponse || hasOpioidToxicityResponse || hasHeatStrokeResponse
-    || hasTraumaPrimarySurveyResponse || hasAcuteAorticSyndromeResponse || hasArdsLungProtectiveResponse;
+    || hasTraumaPrimarySurveyResponse || hasAcuteAorticSyndromeResponse || hasArdsLungProtectiveResponse
+    || hasEscalatingHypoxemiaResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -867,8 +885,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasIntracranialHemorrhageResponse || hasDiabeticKetoacidosisResponse
     || hasHyperkalemiaResponse || hasSevereHyponatremiaResponse || hasOpioidToxicityResponse
     || hasHeatStrokeResponse || hasTraumaPrimarySurveyResponse || hasAcuteAorticSyndromeResponse
-    || hasArdsLungProtectiveResponse;
-  const responseTray = hasArdsLungProtectiveResponse
+    || hasArdsLungProtectiveResponse || hasEscalatingHypoxemiaResponse;
+  const responseTray = hasEscalatingHypoxemiaResponse
+    ? { id: 'crisis', label: 'Escalating hypoxemia' } as const
+    : hasArdsLungProtectiveResponse
     ? { id: 'crisis', label: 'ARDS ventilation' } as const
     : hasAcuteAorticSyndromeResponse
     ? { id: 'crisis', label: 'Acute aortic syndrome' } as const
@@ -952,6 +972,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasTraumaPrimarySurveyResponse
     || hasAcuteAorticSyndromeResponse
     || hasArdsLungProtectiveResponse
+    || hasEscalatingHypoxemiaResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1345,6 +1366,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasArdsLungProtectiveResponse && (
               <ArdsLungProtectiveTray assessment={props.resuscitation.ardsLungProtectiveAssessment}
                 onAction={props.onArdsLungProtectiveResponse ?? (() => {})} />
+            )}
+            {hasEscalatingHypoxemiaResponse && (
+              <EscalatingHypoxemiaTray
+                assessment={props.resuscitation.escalatingHypoxemiaAssessment}
+                onAction={props.onEscalatingHypoxemiaResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -3756,6 +3782,58 @@ function ArdsLungProtectiveTray({ assessment, onAction }: {
             onClick={() => onAction('record-ards-peep-prone-escalation')}>PEEP/FiO₂ + prolonged prone team</Button>
         </div>
         <p className="field__hint">Accept bounded hypercapnia only with serial pH and whole-patient review. Proning is a trained-team procedure, not a button skill.</p>
+      </section>
+    </div>
+  );
+}
+
+function EscalatingHypoxemiaTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['escalatingHypoxemiaAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onEscalatingHypoxemiaResponse']>;
+}) {
+  const signal = assessment?.signalAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const deliveryPath = assessment?.deliveryPathAtTick != null;
+  const bedsidePattern = assessment?.bedsidePatternAtTick != null;
+  const escalation = assessment?.escalationAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="hypoxemia-signal-title">
+        <div id="hypoxemia-signal-title" className="syringe__name">Believe the drop. Verify the signal.</div>
+        <Badge kind="teaching">pleth · trend · patient · arterial panel</Badge>
+        <div className="syringe__meta">94% → 84% in 6 min · strong pleth · PaO₂ 51</div>
+        <p className="syringe__remaining" role="status">
+          {support ? 'Oxygen support + ICU and respiratory help active'
+            : signal ? 'Credible hypoxemia · support while you troubleshoot'
+              : 'Signal and whole-patient trend pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={signal}
+            onClick={() => onAction('validate-hypoxemia-signal')}>Corroborate the decline</Button>
+          <Button className="crisis-drug__action" disabled={!signal || support}
+            onClick={() => onAction('support-hypoxemia-and-call-help')}>Support oxygenation + call help</Button>
+        </div>
+        <p className="field__hint">A good pleth earns attention, not certainty. Treat urgency and verify the story in parallel.</p>
+      </section>
+      <section className="syringe" aria-labelledby="hypoxemia-path-title">
+        <div id="hypoxemia-path-title" className="syringe__name">Trace oxygen from wall to alveolus.</div>
+        <Badge kind="teaching">source · circuit · tube · chest · circulation</Badge>
+        <div className="syringe__meta">tube 23 cm · suction path passes · peak 36 · plateau 29</div>
+        <p className="syringe__remaining" role="status">
+          {escalation ? '15-min response · SpO₂ 92% · PaO₂ 68 · MAP 72'
+            : bedsidePattern ? 'Bilateral parenchymal pattern · escalate without overclaiming'
+              : deliveryPath ? 'Delivery path reviewed · integrate chest + pressure + flow'
+                : support ? 'Outside-in delivery-path review due' : 'Immediate support pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!support || deliveryPath}
+            onClick={() => onAction('trace-hypoxemia-delivery-path')}>Trace source → circuit → tube</Button>
+          <Button className="crisis-drug__action" disabled={!deliveryPath || bedsidePattern}
+            onClick={() => onAction('integrate-hypoxemia-bedside-pattern')}>Integrate chest + pressure + flow</Button>
+          <Button className="crisis-drug__action" disabled={!bedsidePattern || escalation}
+            onClick={() => onAction('escalate-and-reassess-hypoxemia')}>Escalate + review 15-min response</Button>
+        </div>
+        <p className="field__hint">A passed check narrows the field; it never makes tube, pleural, embolic, or equipment danger impossible.</p>
       </section>
     </div>
   );

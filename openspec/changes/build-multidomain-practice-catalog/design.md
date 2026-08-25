@@ -569,6 +569,21 @@ while bounded hypercapnia remains a monitored tradeoff rather than a universal t
 not diagnose, sample blood, program a ventilator, manage sedation or paralysis, prone, recruit,
 select ECMO, liberate support, or predict outcome.
 
+### Wave B critical-care slice 2: escalating hypoxemia
+
+The second critical-care slice begins with an intubated adult whose saturation falls from 94% to 84%
+on unchanged support. A coherent pleth and matching arterial panel make the decline credible.
+Learners support oxygenation while tracing the system from source and circuit through tracheal tube,
+lungs, pressures, capnography, and circulation. The fixed bedside panel excludes neither every cause
+nor the need for imaging, but it makes immediate disconnection, tube obstruction or migration,
+tension physiology, and pure signal artifact less likely.
+
+The focused tutor pairs “believe the drop; verify the signal” with “trace oxygen from wall to
+alveolus.” Unresolved bilateral parenchymal hypoxemia triggers senior and respiratory-therapy help,
+urgent gas and imaging intent, protocolized lung-protective support, and a fixed whole-patient
+reassessment. The case does not examine, manipulate equipment, sample blood, image, diagnose,
+program a ventilator, perform airway or rescue procedures, or predict outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute

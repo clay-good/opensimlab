@@ -2106,6 +2106,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['ards-lung-protective-ventilation'],
   },
   {
+    id: 'escalating-hypoxemia-findings-and-response-are-authored',
+    headline: 'The saturation trend, gas, equipment, airway, chest, pressure, circulation, and response panels are authored facts.',
+    simplification: 'One fixed ventilated adult progresses through a reproducible decline, structured bedside panel, and 15-minute reassessment.',
+    whereItMisleads: 'Treating the screen as signal validation, examination, measurement, diagnosis, or an individualized response prediction.',
+    correctUnderstanding: 'Real deterioration requires immediate support, verified signals and equipment, direct examination, serial data, and expert reassessment.',
+    briefIn: ['escalating-hypoxemia'],
+  },
+  {
+    id: 'escalating-hypoxemia-equipment-airway-and-examination-controls-are-proxies',
+    headline: 'Source, circuit, capnography, tube, suction-path, chest, and support buttons record intents; they do not perform ICU care.',
+    simplification: 'The interface enforces an outside-in reasoning sequence without touching equipment, passing a catheter, examining the chest, or delivering oxygen.',
+    whereItMisleads: 'Equating ordered buttons with respiratory-therapy, airway, ventilator, examination, troubleshooting, rescue, or team competence.',
+    correctUnderstanding: 'Use trained teams, continuous monitoring, verified backup oxygenation, equipment-specific checks, and direct airway and chest assessment.',
+    briefIn: ['escalating-hypoxemia'],
+  },
+  {
+    id: 'no-live-hypoxemia-diagnosis-ventilator-management-procedure-or-outcome',
+    headline: 'The case does not diagnose hypoxemia, manage a ventilator, perform rescue procedures, or predict outcome.',
+    simplification: 'Tube and circuit intermittency, pneumothorax, embolism, edema, atelectasis, infection, bronchospasm, shunt severity, recruitment, and advanced rescue remain unresolved.',
+    whereItMisleads: 'Assuming a passed check excludes danger, copying the fixed response, or delaying imaging, direct reassessment, or escalation.',
+    correctUnderstanding: 'Support oxygenation, search systematically, keep dangerous alternatives open, obtain indicated tests, and individualize support with the ICU team.',
+    briefIn: ['escalating-hypoxemia'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

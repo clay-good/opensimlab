@@ -3151,6 +3151,46 @@ export function objectiveFindings(
         : 'Moderate-severe ARDS escalation was absent or preceded reassessment.', atTick: escalation?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['validate-hypoxemia-signal', 'support-hypoxemia-and-call-help',
+      'trace-oxygen-delivery-path', 'integrate-hypoxemia-bedside-pattern',
+      'escalate-and-reassess-hypoxemia'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'escalating-hypoxemia');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The escalating-hypoxemia vignette was not active.' } satisfies ObjectiveFinding;
+      const signal = log.find((event) => /^hypoxemia-signal-validated-\d+$/.test(event.eventId));
+      const support = log.find((event) => /^hypoxemia-support-recorded-\d+$/.test(event.eventId));
+      const path = log.find((event) => /^hypoxemia-delivery-path-reviewed-\d+$/.test(event.eventId));
+      const pattern = log.find((event) => /^hypoxemia-bedside-pattern-reviewed-\d+$/.test(event.eventId));
+      const escalation = log.find((event) => /^hypoxemia-escalation-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'validate-hypoxemia-signal') return { ...base,
+        outcome: signal ? 'met' : 'not-met', finding: signal
+          ? 'Pleth quality, saturation trend, and the fixed arterial panel established a credible decline.'
+          : 'The saturation decline was not corroborated.', atTick: signal?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'support-hypoxemia-and-call-help') {
+        const ordered = signal && support && signal.tick <= support.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Immediate oxygen-support intent and experienced ICU plus respiratory-therapy help followed recognition.'
+          : 'Immediate support and help were absent or preceded signal review.', atTick: support?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'trace-oxygen-delivery-path') {
+        const ordered = support && path && support.tick <= path.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Oxygen source, circuit, capnography, tube depth, and suction path were traced outside in.'
+          : 'The delivery-path check was absent or out of order.', atTick: path?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'integrate-hypoxemia-bedside-pattern') {
+        const ordered = path && pattern && path.tick <= pattern.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Chest symmetry, airway pressures, capnography, and circulation narrowed immediate threats without claiming exclusion.'
+          : 'The bedside pattern was absent or interpreted before the delivery path.', atTick: pattern?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = pattern && escalation && pattern.tick <= escalation.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+        ? 'Urgent gas and imaging intent, protocolized support, and a fixed whole-patient response followed the structured review.'
+        : 'Escalation and reassessment were absent or preceded the structured review.', atTick: escalation?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: ARDS state has protocol version 59', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(59);
+  it('Scenario: escalating-hypoxemia state has protocol version 60', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(60);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

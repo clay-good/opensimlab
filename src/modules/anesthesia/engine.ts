@@ -401,6 +401,11 @@ export class AnesthesiaEngine {
   private ardsProtectionAtTick: number | null = null;
   private ardsReassessmentAtTick: number | null = null;
   private ardsEscalationAtTick: number | null = null;
+  private hypoxemiaSignalAtTick: number | null = null;
+  private hypoxemiaSupportAtTick: number | null = null;
+  private hypoxemiaDeliveryPathAtTick: number | null = null;
+  private hypoxemiaBedsidePatternAtTick: number | null = null;
+  private hypoxemiaEscalationAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2762,6 +2767,57 @@ export class AnesthesiaEngine {
         this.ardsEscalationAtTick = this.currentTick;
         this.log('critical', 'assessment', `ards-escalation-recorded-${this.currentTick}`,
           'Persistent moderate-severe hypoxemia triggered local protocolized PEEP/FiO₂ adjustment with pressure, oxygen-toxicity, barotrauma, and hemodynamic surveillance plus an experienced-team prolonged prone-positioning intent for more than 12 hours daily. Recruitment maneuvers, sedation, paralysis, physical turning, complications, ECMO, later course, and outcome are outside this lesson.', { intentOnly: true, proneHoursPerDayGreaterThan: 12 });
+        break;
+      }
+      case 'escalating-hypoxemia-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'escalating-hypoxemia');
+        const valid = ['validate-hypoxemia-signal', 'support-hypoxemia-and-call-help',
+          'trace-hypoxemia-delivery-path', 'integrate-hypoxemia-bedside-pattern',
+          'escalate-and-reassess-hypoxemia'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `escalating-hypoxemia-response-refused-${this.currentTick}`,
+            supported ? 'The hypoxemia action was not one of the listed choices. Nothing changed.'
+              : 'The bounded hypoxemia choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'validate-hypoxemia-signal') {
+          if (this.hypoxemiaSignalAtTick !== null) { this.log('warning', 'assessment', `hypoxemia-signal-refused-${this.currentTick}`, 'The fixed signal panel has already been reviewed.'); break; }
+          this.hypoxemiaSignalAtTick = this.currentTick;
+          this.log('critical', 'assessment', `hypoxemia-signal-validated-${this.currentTick}`,
+            'The decline is credible: SpO₂ fell from 94% to 84% over 6 minutes, the pleth remains strong and regular, and fixed PaO₂ is 51 mmHg. Signal inspection and arterial sampling are not simulated, and concordance does not diagnose the cause.', { spo2Percent: 84, pao2MmHg: 51, declineMinutes: 6 });
+          break;
+        }
+        if (this.hypoxemiaSignalAtTick === null) { this.log('warning', 'assessment', `hypoxemia-signal-order-refused-${this.currentTick}`, 'Corroborate the urgent saturation decline before narrowing the problem.'); break; }
+        if (response === 'support-hypoxemia-and-call-help') {
+          if (this.hypoxemiaSupportAtTick !== null) { this.log('warning', 'assessment', `hypoxemia-support-refused-${this.currentTick}`, 'Immediate support and help have already been recorded.'); break; }
+          this.hypoxemiaSupportAtTick = this.currentTick;
+          this.log('critical', 'assessment', `hypoxemia-support-recorded-${this.currentTick}`,
+            'Immediate higher oxygen intent, continuous monitoring, and senior ICU plus respiratory-therapy help were recorded while troubleshooting proceeds. Backup oxygenation equipment is requested if the ventilator or circuit proves unreliable. Oxygen delivery, hand ventilation, and team performance are not simulated.', { intentOnly: true, seniorHelp: true, respiratoryTherapyHelp: true });
+          break;
+        }
+        if (this.hypoxemiaSupportAtTick === null) { this.log('warning', 'assessment', `hypoxemia-support-order-refused-${this.currentTick}`, 'Support oxygenation and call experienced help while troubleshooting proceeds.'); break; }
+        if (response === 'trace-hypoxemia-delivery-path') {
+          if (this.hypoxemiaDeliveryPathAtTick !== null) { this.log('warning', 'assessment', `hypoxemia-delivery-path-refused-${this.currentTick}`, 'The fixed delivery-path panel has already been reviewed.'); break; }
+          this.hypoxemiaDeliveryPathAtTick = this.currentTick;
+          this.log('critical', 'assessment', `hypoxemia-delivery-path-reviewed-${this.currentTick}`,
+            'Fixed outside-in check: oxygen source and circuit are connected, delivered FiO₂ matches the command, a continuous capnogram persists, tube depth remains 23 cm at the teeth, cuff state is unchanged, and the authored suction-path check passes. These proxy controls do not manipulate equipment, prove position, or exclude intermittent failure.', { oxygenSourceConnected: true, circuitConnected: true, tubeDepthCm: 23, suctionPathPasses: true });
+          break;
+        }
+        if (this.hypoxemiaDeliveryPathAtTick === null) { this.log('warning', 'assessment', `hypoxemia-delivery-path-order-refused-${this.currentTick}`, 'Trace the oxygen source, circuit, tube, capnography, and suction path before narrowing the differential.'); break; }
+        if (response === 'integrate-hypoxemia-bedside-pattern') {
+          if (this.hypoxemiaBedsidePatternAtTick !== null) { this.log('warning', 'assessment', `hypoxemia-bedside-pattern-refused-${this.currentTick}`, 'The fixed bedside pattern has already been integrated.'); break; }
+          this.hypoxemiaBedsidePatternAtTick = this.currentTick;
+          this.log('critical', 'assessment', `hypoxemia-bedside-pattern-reviewed-${this.currentTick}`,
+            'Fixed bedside panel: bilateral but coarse air entry, symmetric chest movement, peak pressure rising from 31 to 36 cm H₂O, plateau pressure 29 cm H₂O, persistent capnogram with ETCO₂ 43 mmHg, HR 108/min, and MAP 73 mmHg without a new unilateral or obstructive-shock pattern. Findings support unresolved bilateral parenchymal hypoxemia but do not exclude pneumothorax, embolism, atelectasis, infection, edema, or tube and equipment problems.', { peakPressureCmH2O: 36, plateauPressureCmH2O: 29, etco2MmHg: 43, mapMmHg: 73 });
+          break;
+        }
+        if (this.hypoxemiaBedsidePatternAtTick === null) { this.log('warning', 'assessment', `hypoxemia-bedside-pattern-order-refused-${this.currentTick}`, 'Integrate chest, pressure, capnography, and circulation findings before escalation.'); break; }
+        if (this.hypoxemiaEscalationAtTick !== null) { this.log('warning', 'assessment', `hypoxemia-escalation-refused-${this.currentTick}`, 'The bounded escalation and reassessment have already been recorded.'); break; }
+        this.hypoxemiaEscalationAtTick = this.currentTick;
+        this.log('critical', 'assessment', `hypoxemia-escalation-reassessed-${this.currentTick}`,
+          'Urgent repeat gas and bedside imaging intent, protocolized lung-protective FiO₂/PEEP escalation, and ongoing pressure and hemodynamic surveillance were recorded with senior and respiratory-therapy review. Fixed reassessment after 15 minutes: SpO₂ 92%, PaO₂ 68 mmHg, plateau pressure 29 cm H₂O, ETCO₂ 44 mmHg, and MAP 72 mmHg. Imaging result, diagnosis, individualized settings, procedures, later course, and outcome remain outside this lesson.', { intentOnly: true, reassessmentMinutes: 15, spo2Percent: 92, pao2MmHg: 68, plateauPressureCmH2O: 29, mapMmHg: 72 });
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -5922,6 +5978,13 @@ export class AnesthesiaEngine {
           protectionAtTick: this.ardsProtectionAtTick,
           reassessmentAtTick: this.ardsReassessmentAtTick,
           escalationAtTick: this.ardsEscalationAtTick,
+        },
+        escalatingHypoxemiaAssessment: {
+          signalAtTick: this.hypoxemiaSignalAtTick,
+          supportAtTick: this.hypoxemiaSupportAtTick,
+          deliveryPathAtTick: this.hypoxemiaDeliveryPathAtTick,
+          bedsidePatternAtTick: this.hypoxemiaBedsidePatternAtTick,
+          escalationAtTick: this.hypoxemiaEscalationAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,
