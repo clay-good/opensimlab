@@ -2154,6 +2154,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['ventilator-dyssynchrony'],
   },
   {
+    id: 'auto-peep-flow-mechanics-and-response-are-authored',
+    headline: 'The flow, timing, pressure, hold, gas, circulation, and response panels are authored facts.',
+    simplification: 'One fixed adult has reproducible obstructive dynamic hyperinflation, a valid passive hold, and a fixed 10-minute response.',
+    whereItMisleads: 'Treating the screen as physical assessment, waveform or mechanics acquisition, diagnosis, or individualized response prediction.',
+    correctUnderstanding: 'Real auto-PEEP assessment combines the patient, real-time graphics, valid mechanics, airway and equipment checks, gas exchange, and serial hemodynamics.',
+    briefIn: ['auto-peep'],
+  },
+  {
+    id: 'auto-peep-expiratory-hold-airway-and-ventilator-controls-are-proxies',
+    headline: 'Flow review, expiratory hold, obstruction treatment, ventilator adjustment, and reassessment buttons record intents; they do not perform care.',
+    simplification: 'The interface enforces a reasoning sequence without examining the patient, acquiring a waveform, occluding flow, manipulating equipment, or delivering treatment.',
+    whereItMisleads: 'Equating ordered controls with respiratory-therapy, mechanics, airway, ventilator, prescribing, procedural, or team competence.',
+    correctUnderstanding: 'Use trained bedside teams, equipment-specific graphics and mechanics, valid passive measurements, cause-directed care, and immediate reassessment.',
+    briefIn: ['auto-peep'],
+  },
+  {
+    id: 'no-live-auto-peep-diagnosis-ventilator-prescribing-procedure-or-outcome',
+    headline: 'The case does not diagnose auto-PEEP, prescribe drugs, program a ventilator, perform procedures, or predict outcome.',
+    simplification: 'Heterogeneous time constants, airway closure, active effort, alternate obstruction, pneumothorax, equipment faults, emergencies, and external-PEEP responses are incomplete.',
+    whereItMisleads: 'Assuming one graphic or hold proves the mechanism, copying fixed settings, or applying external PEEP without checking flow limitation and response.',
+    correctUnderstanding: 'Treat the cause, preserve expiratory time and lung protection, individualize support with the ICU team, and recheck the patient, graphics, mechanics, gas, and circulation.',
+    briefIn: ['auto-peep'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

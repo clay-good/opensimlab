@@ -59,6 +59,9 @@ describe('exact-version maturity records', () => {
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'ventilator-dyssynchrony', '0.1.0',
     )?.status).toBe('draft');
+    expect(maturityFor(
+      criticalCareCatalog, 'scenario', 'auto-peep', '0.1.0',
+    )?.status).toBe('draft');
   });
 
   it('never applies a record to a different content version', () => {

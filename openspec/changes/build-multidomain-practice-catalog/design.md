@@ -604,6 +604,22 @@ response. The case does not examine, acquire waveforms, diagnose, program a vent
 deliver drugs, paralyze, or assess airway, respiratory-therapy, procedural, disposition, or outcome
 competence.
 
+### Wave B critical-care slice 4: auto-PEEP and dynamic hyperinflation
+
+The fourth critical-care slice presents an intubated adult with COPD, a 28/min commanded rate,
+expiratory flow that has not returned to zero before the next breath, peak pressure 35 cm H₂O with
+passive plateau pressure 22 cm H₂O, failed trigger efforts, hypercapnia, and low pressure. Learners
+integrate the patient and expiratory-flow pattern, then use a valid authored passive expiratory-hold
+panel to separate set PEEP 5, total PEEP 16, and intrinsic PEEP 11 cm H₂O.
+
+The focused tutor pairs “watch the breath leave” with “make room for the next breath.” Learners
+classify the bounded obstructive dynamic-hyperinflation pattern, record senior and respiratory-
+therapy intent to treat resistance and preserve more expiratory time without inventing universal
+settings, then review a fixed 10-minute response. External PEEP remains individualized because its
+effect depends on effort and expiratory flow limitation. The case does not examine, acquire
+graphics or mechanics, perform a hold, diagnose, manipulate an airway or ventilator, prescribe or
+deliver drugs, sedate, paralyze, perform emergency procedures, or predict outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute

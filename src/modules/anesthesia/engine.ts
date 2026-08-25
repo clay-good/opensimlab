@@ -411,6 +411,11 @@ export class AnesthesiaEngine {
   private dyssynchronyClassificationAtTick: number | null = null;
   private dyssynchronyCorrectionAtTick: number | null = null;
   private dyssynchronyReassessmentAtTick: number | null = null;
+  private autoPeepFlowAtTick: number | null = null;
+  private autoPeepMeasurementAtTick: number | null = null;
+  private autoPeepClassificationAtTick: number | null = null;
+  private autoPeepCorrectionAtTick: number | null = null;
+  private autoPeepReassessmentAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2874,6 +2879,57 @@ export class AnesthesiaEngine {
         this.dyssynchronyReassessmentAtTick = this.currentTick;
         this.log('critical', 'assessment', `dyssynchrony-response-reassessed-${this.currentTick}`,
           'Fixed response after 10 minutes: pain report 3/10, less visible effort, pressure scooping resolved in the observed panel, 1 double trigger in 20 breaths, delivered tidal volumes 420–450 mL, peak pressure 27 cm H₂O, plateau pressure 22 cm H₂O, SpO₂ 94%, ETCO₂ 42 mmHg, and MAP 76 mmHg. This is an authored response, not a prescription, waveform interpretation credential, or outcome prediction.', { reassessmentMinutes: 10, painScore: 3, doubleTriggers: 1, maximumTidalVolumeMl: 450, plateauPressureCmH2O: 22 });
+        break;
+      }
+      case 'auto-peep-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'auto-peep');
+        const valid = ['review-auto-peep-patient-and-flow', 'measure-auto-peep',
+          'classify-auto-peep-pattern', 'record-auto-peep-correction-intent',
+          'reassess-auto-peep-response'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `auto-peep-response-refused-${this.currentTick}`,
+            supported ? 'The auto-PEEP action was not one of the listed choices. Nothing changed.'
+              : 'The bounded auto-PEEP choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-auto-peep-patient-and-flow') {
+          if (this.autoPeepFlowAtTick !== null) { this.log('warning', 'assessment', `auto-peep-flow-refused-${this.currentTick}`, 'The fixed patient and expiratory-flow panel has already been reviewed.'); break; }
+          this.autoPeepFlowAtTick = this.currentTick;
+          this.log('critical', 'assessment', `auto-peep-flow-reviewed-${this.currentTick}`,
+            'Fixed whole-patient panel: expiratory flow remains below zero when the next breath begins at 28/min, peak pressure is 35 cm H₂O, passive plateau is 22 cm H₂O, several efforts fail to trigger, SpO₂ is 92%, pH 7.24, PaCO₂ 64 mmHg, HR 112/min, and MAP 62 mmHg. This raises concern for incomplete exhalation but does not by itself quantify intrinsic PEEP or diagnose its cause.', { respiratoryRateBpm: 28, peakPressureCmH2O: 35, plateauPressureCmH2O: 22, expiratoryFlowReachesZero: false, mapMmHg: 62 });
+          break;
+        }
+        if (this.autoPeepFlowAtTick === null) { this.log('warning', 'assessment', `auto-peep-flow-order-refused-${this.currentTick}`, 'Review the patient, expiratory flow, timing, pressures, gas exchange, and circulation first.'); break; }
+        if (response === 'measure-auto-peep') {
+          if (this.autoPeepMeasurementAtTick !== null) { this.log('warning', 'assessment', `auto-peep-measurement-refused-${this.currentTick}`, 'The fixed passive expiratory-hold panel has already been reviewed.'); break; }
+          this.autoPeepMeasurementAtTick = this.currentTick;
+          this.log('critical', 'assessment', `auto-peep-measured-${this.currentTick}`,
+            'During the authored passive window, the expiratory-hold proxy reports total PEEP 16 cm H₂O with set PEEP 5 cm H₂O: intrinsic PEEP is therefore 11 cm H₂O. A real hold can be invalidated or underestimate trapping when effort, expiratory-muscle activity, airway closure, or heterogeneous emptying is present.', { passiveWindow: true, setPeepCmH2O: 5, totalPeepCmH2O: 16, intrinsicPeepCmH2O: 11 });
+          break;
+        }
+        if (this.autoPeepMeasurementAtTick === null) { this.log('warning', 'assessment', `auto-peep-measurement-order-refused-${this.currentTick}`, 'Review the valid passive expiratory-hold panel before classifying the pattern.'); break; }
+        if (response === 'classify-auto-peep-pattern') {
+          if (this.autoPeepClassificationAtTick !== null) { this.log('warning', 'assessment', `auto-peep-classification-refused-${this.currentTick}`, 'The bounded dynamic-hyperinflation pattern has already been classified.'); break; }
+          this.autoPeepClassificationAtTick = this.currentTick;
+          this.log('critical', 'assessment', `auto-peep-pattern-classified-${this.currentTick}`,
+            'The authored pattern is classified as obstructive dynamic hyperinflation with auto-PEEP: prolonged emptying plus a short expiratory interval traps gas, adds an inspiratory threshold load, and plausibly contributes to failed triggering and low pressure. It does not prove the distribution of trapped gas, exclude pneumothorax or equipment problems, or establish one universal treatment.', { dynamicHyperinflation: true, intrinsicPeepCmH2O: 11, failedTriggering: true, hemodynamicConcern: true });
+          break;
+        }
+        if (this.autoPeepClassificationAtTick === null) { this.log('warning', 'assessment', `auto-peep-classification-order-refused-${this.currentTick}`, 'Classify the observed and measured pattern before recording a correction.'); break; }
+        if (response === 'record-auto-peep-correction-intent') {
+          if (this.autoPeepCorrectionAtTick !== null) { this.log('warning', 'assessment', `auto-peep-correction-refused-${this.currentTick}`, 'The bounded correction intent has already been recorded.'); break; }
+          this.autoPeepCorrectionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `auto-peep-correction-recorded-${this.currentTick}`,
+            'Senior ICU and respiratory-therapy review, obstruction-treatment intent, lower minute-ventilation demand, and more expiratory time were recorded while retaining predicted-body-weight volume, plateau-pressure, gas-exchange, and hemodynamic guardrails. External PEEP requires individualized assessment of effort and expiratory flow limitation; no drug, dose, mode, rate, flow, inspiratory time, trigger, PEEP value, sedation, or paralysis is selected or delivered.', { intentOnly: true, seniorHelp: true, respiratoryTherapyHelp: true, treatObstruction: true, preserveExpiratoryTime: true, preserveLungProtection: true });
+          break;
+        }
+        if (this.autoPeepCorrectionAtTick === null) { this.log('warning', 'assessment', `auto-peep-correction-order-refused-${this.currentTick}`, 'Record cause-directed correction intent before reassessment.'); break; }
+        if (this.autoPeepReassessmentAtTick !== null) { this.log('warning', 'assessment', `auto-peep-reassessment-refused-${this.currentTick}`, 'The fixed post-adjustment panel has already been reviewed.'); break; }
+        this.autoPeepReassessmentAtTick = this.currentTick;
+        this.log('critical', 'assessment', `auto-peep-response-reassessed-${this.currentTick}`,
+          'Fixed response after 10 minutes: expiratory flow reaches zero before the next breath, total PEEP is 9 cm H₂O with set PEEP 5 cm H₂O and intrinsic PEEP 4 cm H₂O, peak pressure is 30 cm H₂O, plateau pressure remains 22 cm H₂O, all observed efforts trigger, SpO₂ is 93%, pH 7.27, PaCO₂ 58 mmHg, HR 98/min, and MAP 72 mmHg. The bounded hypercapnia remains under protocolized review; this is an authored response, not a setting prescription or outcome prediction.', { reassessmentMinutes: 10, expiratoryFlowReachesZero: true, totalPeepCmH2O: 9, intrinsicPeepCmH2O: 4, peakPressureCmH2O: 30, plateauPressureCmH2O: 22, mapMmHg: 72 });
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -6048,6 +6104,13 @@ export class AnesthesiaEngine {
           classificationAtTick: this.dyssynchronyClassificationAtTick,
           correctionAtTick: this.dyssynchronyCorrectionAtTick,
           reassessmentAtTick: this.dyssynchronyReassessmentAtTick,
+        },
+        autoPeepAssessment: {
+          flowAtTick: this.autoPeepFlowAtTick,
+          measurementAtTick: this.autoPeepMeasurementAtTick,
+          classificationAtTick: this.autoPeepClassificationAtTick,
+          correctionAtTick: this.autoPeepCorrectionAtTick,
+          reassessmentAtTick: this.autoPeepReassessmentAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

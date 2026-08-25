@@ -3231,6 +3231,46 @@ export function objectiveFindings(
         : 'Whole-patient reassessment was absent or preceded correction.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['review-auto-peep-patient-and-flow', 'measure-auto-peep',
+      'classify-auto-peep-pattern', 'record-auto-peep-correction-intent',
+      'reassess-auto-peep-response'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'auto-peep');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The auto-PEEP vignette was not active.' } satisfies ObjectiveFinding;
+      const flow = log.find((event) => /^auto-peep-flow-reviewed-\d+$/.test(event.eventId));
+      const measurement = log.find((event) => /^auto-peep-measured-\d+$/.test(event.eventId));
+      const classification = log.find((event) => /^auto-peep-pattern-classified-\d+$/.test(event.eventId));
+      const correction = log.find((event) => /^auto-peep-correction-recorded-\d+$/.test(event.eventId));
+      const reassessment = log.find((event) => /^auto-peep-response-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'review-auto-peep-patient-and-flow') return { ...base,
+        outcome: flow ? 'met' : 'not-met', finding: flow
+          ? 'Patient status, expiratory flow, timing, pressures, gas exchange, and circulation were integrated.'
+          : 'The whole-patient expiratory-flow panel was not reviewed.', atTick: flow?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'measure-auto-peep') {
+        const ordered = flow && measurement && flow.tick <= measurement.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'A valid passive hold separated set PEEP 5, total PEEP 16, and intrinsic PEEP 11 cm H₂O.'
+          : 'The passive measurement was absent or preceded the flow review.', atTick: measurement?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'classify-auto-peep-pattern') {
+        const ordered = measurement && classification && measurement.tick <= classification.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'The bounded dynamic-hyperinflation pattern and its trigger and hemodynamic consequences followed valid measurement.'
+          : 'The pattern was absent or classified before valid measurement.', atTick: classification?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'record-auto-peep-correction-intent') {
+        const ordered = classification && correction && classification.tick <= correction.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Obstruction treatment and more-expiratory-time intent preserved lung-protective and hemodynamic guardrails.'
+          : 'Cause-directed correction was absent or preceded classification.', atTick: correction?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = correction && reassessment && correction.tick <= reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+        ? 'Flow, intrinsic PEEP, peak pressure, triggering, gas exchange, and circulation improved on the fixed 10-minute panel.'
+        : 'Whole-patient reassessment was absent or preceded correction.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

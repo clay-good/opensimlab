@@ -375,6 +375,13 @@ export interface ActionCockpitProps {
       readonly correctionAtTick: number | null;
       readonly reassessmentAtTick: number | null;
     };
+    readonly autoPeepAssessment?: {
+      readonly flowAtTick: number | null;
+      readonly measurementAtTick: number | null;
+      readonly classificationAtTick: number | null;
+      readonly correctionAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -599,6 +606,11 @@ export interface ActionCockpitProps {
       | 'classify-dyssynchrony-pattern' | 'record-dyssynchrony-correction-intent'
       | 'reassess-dyssynchrony-response',
   ) => void;
+  readonly onAutoPeepResponse?: (
+    action: 'review-auto-peep-patient-and-flow' | 'measure-auto-peep'
+      | 'classify-auto-peep-pattern' | 'record-auto-peep-correction-intent'
+      | 'reassess-auto-peep-response',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -748,6 +760,9 @@ export function crisisResponseAvailability(
     hasVentilatorDyssynchronyResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'ventilator-dyssynchrony',
     ),
+    hasAutoPeepResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'auto-peep',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -822,6 +837,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'ards-lung-protective-ventilation')
       || (event.type === 'narrative' && event.target === 'escalating-hypoxemia')
       || (event.type === 'narrative' && event.target === 'ventilator-dyssynchrony')
+      || (event.type === 'narrative' && event.target === 'auto-peep')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -837,7 +853,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasExtubationReadinessResponse, hasCiedPlanningResponse, hasPostoperativeHandoffResponse,
     hasUndifferentiatedShockResponse, hasSepticShockResponse, hasHemorrhagicShockResponse,
     hasCardiacTamponadeResponse, hasEmergencyAnaphylaxisResponse, hasAdultAsthmaResponse,
-    hasCopdExacerbationResponse,
+    hasCopdExacerbationResponse, hasAutoPeepResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -883,7 +899,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasDiabeticKetoacidosisResponse || hasHyperkalemiaResponse
     || hasSevereHyponatremiaResponse || hasOpioidToxicityResponse || hasHeatStrokeResponse
     || hasTraumaPrimarySurveyResponse || hasAcuteAorticSyndromeResponse || hasArdsLungProtectiveResponse
-    || hasEscalatingHypoxemiaResponse || hasVentilatorDyssynchronyResponse;
+    || hasEscalatingHypoxemiaResponse || hasVentilatorDyssynchronyResponse || hasAutoPeepResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -903,8 +919,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasHyperkalemiaResponse || hasSevereHyponatremiaResponse || hasOpioidToxicityResponse
     || hasHeatStrokeResponse || hasTraumaPrimarySurveyResponse || hasAcuteAorticSyndromeResponse
     || hasArdsLungProtectiveResponse || hasEscalatingHypoxemiaResponse
-    || hasVentilatorDyssynchronyResponse;
-  const responseTray = hasVentilatorDyssynchronyResponse
+    || hasVentilatorDyssynchronyResponse || hasAutoPeepResponse;
+  const responseTray = hasAutoPeepResponse
+    ? { id: 'crisis', label: 'Auto-PEEP' } as const
+    : hasVentilatorDyssynchronyResponse
     ? { id: 'crisis', label: 'Ventilator dyssynchrony' } as const
     : hasEscalatingHypoxemiaResponse
     ? { id: 'crisis', label: 'Escalating hypoxemia' } as const
@@ -994,6 +1012,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasArdsLungProtectiveResponse
     || hasEscalatingHypoxemiaResponse
     || hasVentilatorDyssynchronyResponse
+    || hasAutoPeepResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1397,6 +1416,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <VentilatorDyssynchronyTray
                 assessment={props.resuscitation.ventilatorDyssynchronyAssessment}
                 onAction={props.onVentilatorDyssynchronyResponse ?? (() => {})} />
+            )}
+            {hasAutoPeepResponse && (
+              <AutoPeepTray assessment={props.resuscitation.autoPeepAssessment}
+                onAction={props.onAutoPeepResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -3911,6 +3934,57 @@ function VentilatorDyssynchronyTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-dyssynchrony-response')}>Review 10-minute response</Button>
         </div>
         <p className="field__hint">A quieter waveform is not enough. Recheck comfort, effort, delivered volume, pressure, gas, and circulation.</p>
+      </section>
+    </div>
+  );
+}
+
+function AutoPeepTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['autoPeepAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onAutoPeepResponse']>;
+}) {
+  const flow = assessment?.flowAtTick != null;
+  const measurement = assessment?.measurementAtTick != null;
+  const classification = assessment?.classificationAtTick != null;
+  const correction = assessment?.correctionAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="auto-peep-watch-title">
+        <div id="auto-peep-watch-title" className="syringe__name">Watch the breath leave.</div>
+        <Badge kind="teaching">flow · time · total PEEP · pressure</Badge>
+        <div className="syringe__meta">flow never reaches zero · set 5 · total 16 · intrinsic 11</div>
+        <p className="syringe__remaining" role="status">
+          {classification ? 'Dynamic hyperinflation · bounded obstructive pattern'
+            : measurement ? 'Intrinsic PEEP measured · connect the consequences'
+              : flow ? 'Incomplete exhalation seen · validate the hold' : 'Whole-patient flow review pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={flow}
+            onClick={() => onAction('review-auto-peep-patient-and-flow')}>Review patient + expiratory flow</Button>
+          <Button className="crisis-drug__action" disabled={!flow || measurement}
+            onClick={() => onAction('measure-auto-peep')}>Review passive expiratory hold</Button>
+          <Button className="crisis-drug__action" disabled={!measurement || classification}
+            onClick={() => onAction('classify-auto-peep-pattern')}>Classify the bounded pattern</Button>
+        </div>
+        <p className="field__hint">Flow that misses zero is a clue. Effort, airway closure, and uneven emptying can make one hold value incomplete.</p>
+      </section>
+      <section className="syringe" aria-labelledby="auto-peep-room-title">
+        <div id="auto-peep-room-title" className="syringe__name">Make room for the next breath.</div>
+        <Badge kind="teaching">drive · rate · flow · resistance</Badge>
+        <div className="syringe__meta">treat obstruction · preserve expiration · keep pressure guardrails</div>
+        <p className="syringe__remaining" role="status">
+          {reassessment ? '10 min · intrinsic 4 · flow reaches zero · MAP 72'
+            : correction ? 'Correction intent recorded · response due'
+              : classification ? 'Create time without inventing a universal setting' : 'Classification pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!classification || correction}
+            onClick={() => onAction('record-auto-peep-correction-intent')}>Treat resistance + preserve exhalation</Button>
+          <Button className="crisis-drug__action" disabled={!correction || reassessment}
+            onClick={() => onAction('reassess-auto-peep-response')}>Review 10-minute response</Button>
+        </div>
+        <p className="field__hint">External PEEP is individualized. Recheck flow, mechanics, triggering, gas exchange, and circulation after any change.</p>
       </section>
     </div>
   );

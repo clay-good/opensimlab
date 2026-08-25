@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "critical-care",
-  "recordCount": 3,
+  "recordCount": 4,
   "records": [
     {
       "recordId": "scenario:ards-lung-protective-ventilation@0.1.0",
@@ -34,6 +34,17 @@
       "evidence": [
         "/catalog/critical-care-completion-audit.json#ventilator-dyssynchrony@0.1.0",
         "/catalog/critical-care-quality-audit.json#ventilator-dyssynchrony@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:auto-peep@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "auto-peep",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/critical-care-completion-audit.json#auto-peep@0.1.0",
+        "/catalog/critical-care-quality-audit.json#auto-peep@0.1.0"
       ]
     }
   ]

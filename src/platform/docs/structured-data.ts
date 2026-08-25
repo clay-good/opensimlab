@@ -12,6 +12,8 @@
 import { EDITORIAL_BOARD } from '@platform/governance/records';
 import { MODULES } from '@platform/modules/registry';
 import { DEFAULT_SCENARIO_ID, getScenario } from '@anesthesia/scenarios';
+import { getEmergencyMedicineScenario } from '../../modules/emergency-medicine/scenarios';
+import { getCriticalCareScenario } from '../../modules/critical-care/scenarios';
 import { ONE_LINE_DESCRIPTION } from '@landing/content';
 import { SITE_NAME, SITE_ORIGIN, canonicalUrl } from '@routes/routes';
 
@@ -49,16 +51,18 @@ export function organizationJsonLd(): JsonLd {
   return organization;
 }
 
-export function softwareApplicationJsonLd(): JsonLd {
-  const anesthesia = MODULES.find((module) => module.id === 'anesthesia');
+export function softwareApplicationJsonLd(path = '/anesthesia'): JsonLd {
+  const route = path.replace(/^\//, '').split('/')[0] || 'anesthesia';
+  const module = MODULES.find((entry) => entry.route === route)
+    ?? MODULES.find((entry) => entry.id === 'anesthesia');
   return {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    name: 'Open Sim Lab Anesthesia',
-    url: canonicalUrl('/anesthesia'),
+    name: `${SITE_NAME} ${module?.displayName ?? 'Anesthesia'}`,
+    url: canonicalUrl(`/${module?.route ?? 'anesthesia'}`),
     applicationCategory: 'EducationalApplication',
     operatingSystem: 'Any browser',
-    description: anesthesia?.description ?? '',
+    description: module?.description ?? '',
     isAccessibleForFree: true,
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
     inLanguage: 'en',
@@ -70,14 +74,23 @@ export function softwareApplicationJsonLd(): JsonLd {
  * because emitting the same description on every briefing route would be a claim
  * the site does not make.
  */
-export function learningResourceJsonLd(scenarioId: string = DEFAULT_SCENARIO_ID): JsonLd {
-  const scenario = getScenario(scenarioId) ?? getScenario(DEFAULT_SCENARIO_ID);
+type ScenarioModuleRoute = 'anesthesia' | 'emergency-medicine' | 'critical-care';
+
+export function learningResourceJsonLd(
+  scenarioId: string = DEFAULT_SCENARIO_ID,
+  moduleRoute: ScenarioModuleRoute = 'anesthesia',
+): JsonLd {
+  const scenario = moduleRoute === 'emergency-medicine'
+    ? getEmergencyMedicineScenario(scenarioId)
+    : moduleRoute === 'critical-care'
+      ? getCriticalCareScenario(scenarioId)
+      : getScenario(scenarioId);
   if (!scenario) throw new Error(`No scenario with id ${scenarioId}`);
   return {
     '@context': 'https://schema.org',
     '@type': 'LearningResource',
     name: scenario.metadata.title,
-    url: canonicalUrl(`/anesthesia/scenario/${scenario.metadata.id}`),
+    url: canonicalUrl(`/${moduleRoute}/scenario/${scenario.metadata.id}`),
     learningResourceType: 'Simulation',
     educationalLevel: 'Undergraduate medical education, postgraduate year 1',
     teaches: scenario.metadata.objectives.map((objective) => objective.statement),
@@ -91,14 +104,16 @@ export function learningResourceJsonLd(scenarioId: string = DEFAULT_SCENARIO_ID)
 /** The structured data for a route, or an empty list where it declares none. */
 export function structuredDataFor(types: readonly string[], path?: string): JsonLd[] {
   const out: JsonLd[] = [];
-  const scenarioId = path?.startsWith('/anesthesia/scenario/')
-    ? path.slice('/anesthesia/scenario/'.length)
-    : undefined;
+  const scenarioMatch = path?.match(
+    /^\/(anesthesia|emergency-medicine|critical-care)\/scenario\/([^/]+)$/,
+  );
+  const moduleRoute = scenarioMatch?.[1] as ScenarioModuleRoute | undefined;
+  const scenarioId = scenarioMatch?.[2];
   for (const type of types) {
     if (type === 'WebSite') out.push(websiteJsonLd());
     if (type === 'Organization') out.push(organizationJsonLd());
-    if (type === 'SoftwareApplication') out.push(softwareApplicationJsonLd());
-    if (type === 'LearningResource') out.push(learningResourceJsonLd(scenarioId));
+    if (type === 'SoftwareApplication') out.push(softwareApplicationJsonLd(path));
+    if (type === 'LearningResource') out.push(learningResourceJsonLd(scenarioId, moduleRoute));
   }
   return out;
 }

@@ -132,6 +132,28 @@ describe('Requirement: Structured Data That Is Accurate', () => {
     expect(structuredDataFor([])).toHaveLength(0);
     expect(structuredDataFor(['WebSite', 'Organization'])).toHaveLength(2);
   });
+
+  it('describes each module and scenario at its own canonical route', () => {
+    expect(softwareApplicationJsonLd('/critical-care')).toMatchObject({
+      name: 'Open Sim Lab Critical care',
+      url: 'https://opensimlab.com/critical-care',
+    });
+    const modules = [
+      { basePath: '/anesthesia', scenarios: SCENARIOS },
+      { basePath: '/emergency-medicine', scenarios: EMERGENCY_MEDICINE_SCENARIOS },
+      { basePath: '/critical-care', scenarios: CRITICAL_CARE_SCENARIOS },
+    ] as const;
+    for (const { basePath, scenarios } of modules) {
+      for (const scenario of scenarios) {
+        const path = `${basePath}/scenario/${scenario.metadata.id}`;
+        expect(structuredDataFor(['LearningResource'], path)[0]).toMatchObject({
+          name: scenario.metadata.title,
+          url: canonicalUrl(path),
+          teaches: scenario.metadata.objectives.map((objective) => objective.statement),
+        });
+      }
+    }
+  });
 });
 
 describe('Requirement: One Screen, One Action', () => {
@@ -284,6 +306,8 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
       .toMatchObject({ indexable: true, heading: 'Escalating hypoxemia' });
     expect(routeFor('/critical-care/scenario/ventilator-dyssynchrony'))
       .toMatchObject({ indexable: true, heading: 'Ventilator dyssynchrony' });
+    expect(routeFor('/critical-care/scenario/auto-peep'))
+      .toMatchObject({ indexable: true, heading: 'Auto-PEEP and dynamic hyperinflation' });
   });
 
   it('Requirement: Modules Declare Their Own Physiological Timescale', () => {
@@ -391,6 +415,19 @@ describe('Requirement: Crawlability Basics', () => {
       expect(markup).toContain('Not clinically reviewed');
       for (const source of scenario.metadata.clinicalReview.sources) expect(markup).toContain(source);
     }
+  });
+
+  it('Scenario: built scenario JSON-LD describes the page being viewed', () => {
+    const page = readFileSync(join(
+      process.cwd(), 'dist/critical-care/scenario/auto-peep/index.html',
+    ), 'utf8');
+    const script = page.match(/<script type="application\/ld\+json">([^<]+)<\/script>/)?.[1];
+    expect(script).toBeDefined();
+    expect(JSON.parse(script!)).toMatchObject({
+      '@type': 'LearningResource',
+      name: 'Auto-PEEP and dynamic hyperinflation',
+      url: 'https://opensimlab.com/critical-care/scenario/auto-peep',
+    });
   });
 
   it('Scenario: deploys build and verify an indexable artifact', () => {

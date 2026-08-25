@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: ventilator-dyssynchrony state has protocol version 61', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(61);
+  it('Scenario: auto-PEEP state has protocol version 62', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(62);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 61 reports dyssynchrony state. */
-export const WORKER_PROTOCOL_VERSION = 61;
+/** Bumped whenever the message shape changes incompatibly. Version 62 reports auto-PEEP state. */
+export const WORKER_PROTOCOL_VERSION = 62;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -440,6 +440,13 @@ export interface EquipmentSnapshot {
     readonly ventilatorDyssynchronyAssessment?: {
       readonly graphicsAtTick: number | null;
       readonly driversAtTick: number | null;
+      readonly classificationAtTick: number | null;
+      readonly correctionAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+    };
+    readonly autoPeepAssessment?: {
+      readonly flowAtTick: number | null;
+      readonly measurementAtTick: number | null;
       readonly classificationAtTick: number | null;
       readonly correctionAtTick: number | null;
       readonly reassessmentAtTick: number | null;

@@ -136,7 +136,8 @@ Reviewers run the routine induction themselves before answering.
 | B82 | In the ARDS-lung-protective-ventilation lesson, a 170 cm woman with authored moderate-severe ARDS, 500 mL tidal volume, plateau pressure 32 cm H₂O, and persistent hypoxemia leads to a 61.5 kg predicted-body-weight calculation, 370 mL protective intent, plateau-pressure limit, fixed mechanics/gas/circulation reassessment, bounded hypercapnia, and protocolized PEEP/FiO₂ plus prolonged-prone-team escalation without implying diagnosis, gas sampling, ventilator programming, sedation, paralysis, proning, recruitment, ECMO, liberation, disposition, or outcome competence | | |
 | B83 | In the escalating-hypoxemia lesson, a credible saturation fall with a strong pleth and matching arterial panel leads to immediate oxygen-support intent and experienced help, an outside-in source/circuit/capnography/tube/suction-path check, integration of bilateral chest, pressure, capnography, and circulation findings, and protocolized support plus 15-minute reassessment without implying examination, signal or equipment verification, sampling, imaging, diagnosis, ventilator programming, airway or rescue procedure, disposition, or outcome competence | | |
 | B84 | In the ventilator-dyssynchrony lesson, visible effort, pressure scooping, premature cycling, 8 double triggers in 20 breaths, and 760 mL stacked volume lead to a patient/graphics review, reversible-driver panel, bounded flow-starvation and premature-cycling classification, analgesia-first plus respiratory-therapy adjustment intent, retained lung-protection guardrails, and 10-minute whole-patient reassessment without implying examination, waveform acquisition, diagnosis, ventilator programming, prescribing, drug delivery, paralysis, respiratory-therapy skill, disposition, or outcome competence | | |
-| B85 | Overall: does this patient behave like a patient? | | |
+| B85 | In the auto-PEEP lesson, expiratory flow that misses zero, high peak-to-plateau pressure separation, failed triggers, hypercapnia, and low pressure lead to a whole-patient review, a clearly passive authored hold separating set, total, and intrinsic PEEP, a bounded dynamic-hyperinflation classification, obstruction-treatment and more-expiratory-time intent with no universal setting or external-PEEP claim, and 10-minute flow, mechanics, gas, and circulation reassessment without implying examination, waveform or mechanics acquisition, airway or ventilator manipulation, prescribing, drug delivery, procedure, respiratory-therapy skill, disposition, or outcome competence | | |
+| B86 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -280,4 +281,7 @@ So that reviewers spend their attention on what this review is for:
   vasodilator, and reassessment controls are bounded. Examination, test acquisition, device setup,
   drug selection or titration, organ response, precipitant treatment, shock care, disposition,
   chronic therapy, and outcome are absent.
+- The auto-PEEP case uses fixed flow, timing, pressure, passive-hold, gas, circulation, and response
+  panels. It does not acquire graphics or mechanics, perform a hold, diagnose obstruction, program
+  a ventilator, titrate external PEEP, deliver drugs, manage an emergency, or predict outcome.
 - Nothing here has been clinically reviewed before — you are the first.
