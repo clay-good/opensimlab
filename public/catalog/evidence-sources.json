@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 126,
+  "sourceCount": 128,
   "sources": [
     {
       "id": "association-qrh-2023",
@@ -1637,6 +1637,28 @@
       "verifiedAgainst": "NCBI E-utilities record, field by field",
       "verifiedOn": "2026-08-20",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/11302037/"
+    },
+    {
+      "id": "aha-acc-high-blood-pressure-guideline-2025",
+      "authors": "Jones DW, Ferdinand KC, Taler SJ, et al",
+      "title": "2025 AHA/ACC/AANP/AAPA/ABC/ACCP/ACPM/AGS/AMA/ASPC/NMA/PCNA/SGIM Guideline for the Prevention, Detection, Evaluation and Management of High Blood Pressure in Adults",
+      "publication": "Circulation",
+      "year": 2025,
+      "locator": "doi:10.1161/CIR.0000000000001356; severe hypertension and hypertensive emergency",
+      "usedFor": "The hypertensive-emergency boundary: diagnosis requires acute target-organ damage rather than marked pressure alone, and treatment is monitored and syndrome specific rather than rapid normalization to one universal browser target.",
+      "verifiedAgainst": "https://www.ahajournals.org/doi/10.1161/CIR.0000000000001356",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "aha-acute-care-blood-pressure-statement-2024",
+      "authors": "Bress AP, Anderson TS, Flack JM, et al",
+      "title": "The Management of Elevated Blood Pressure in the Acute Care Setting: A Scientific Statement From the American Heart Association",
+      "publication": "Hypertension",
+      "year": 2024,
+      "locator": "81:e94-e106; doi:10.1161/HYP.0000000000000238",
+      "usedFor": "The acute-care measurement and reassessment boundary: confirm measurement quality, distinguish asymptomatic pressure from acute target-organ injury, and preserve patient-specific evaluation and longitudinal follow-up.",
+      "verifiedAgainst": "https://www.ahajournals.org/doi/10.1161/HYP.0000000000000238",
+      "verifiedOn": "2026-08-25"
     }
   ]
 }

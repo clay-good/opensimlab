@@ -3023,6 +3023,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use current acute-coronary guidance, local protocols, verified patient data, qualified multidisciplinary judgment, and explicit rhythm, conduction, shock, mechanical, and pulse-loss rescue pathways.',
     briefIn: ['right-ventricular-infarction'],
   },
+  {
+    id: 'hypertensive-emergency-findings-and-panels-are-authored',
+    headline: 'The pressure, measurement conditions, examination, fundoscopy, laboratory, ECG, echo, and later panels are authored teaching facts.',
+    simplification: 'One fixed record stands in for repeated measurement, serial history and examination, monitoring, fundoscopy, specimen collection, ECG, imaging, and team communication.',
+    whereItMisleads: 'Treating marked pressure alone as emergency, interpreting a fictional test as a learned skill, or treating the 45-minute and 3-hour snapshots as a universal response trajectory.',
+    correctUnderstanding: 'Real hypertensive emergency requires verified measurement plus acute target-organ damage, current syndrome assessment, qualified teams, and serial patient-specific reassessment.',
+    briefIn: ['hypertensive-emergency'],
+  },
+  {
+    id: 'hypertensive-emergency-controls-record-review-and-intent-only',
+    headline: 'The controls record review, controlled-reduction intent, elapsed panels, and handoff; they do not deliver care.',
+    simplification: 'Six clicks stand in for monitored acute care, repeated assessment, treatment selection and titration, specialty consultation, communication, and handoff.',
+    whereItMisleads: 'Equating button order with examination, diagnosis, prescribing, pressure targets, treatment delivery, monitoring, or emergency-care competence.',
+    correctUnderstanding: 'Actual care uses the current organ-injury syndrome, verified patient data, local protocols, qualified judgment, appropriate monitoring, and explicit deterioration pathways.',
+    briefIn: ['hypertensive-emergency'],
+  },
+  {
+    id: 'no-live-hypertensive-emergency-testing-treatment-procedure-disposition-or-outcome',
+    headline: 'The lab does not acquire tests, select or deliver treatment, perform a procedure, determine disposition, or predict outcome.',
+    simplification: 'No live examination, pressure measurement, monitoring, ECG, fundoscopy, laboratory, imaging, drug, dose, infusion, oxygen, fluid, ventilation, procedure, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values as a drug or target recipe, rapidly normalizing pressure, or using completion as evidence of diagnostic, prescribing, treatment, disposition, or prognostic competence.',
+    correctUnderstanding: 'Use current guidance, syndrome-specific pathways, verified measurements and organ findings, qualified multidisciplinary judgment, local treatment protocols, and continuous reassessment.',
+    briefIn: ['hypertensive-emergency'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

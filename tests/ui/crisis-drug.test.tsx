@@ -213,6 +213,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       hasCompleteHeartBlockResponse: false,
       hasTorsadesResponse: false,
       hasHyperkalemicConductionResponse: false,
+      hasHypertensiveEmergencyResponse: false,
       hasPericardialTamponadeResponse: false,
       hasIntracranialHypertensionResponse: false,
       hasAkiFluidOverloadResponse: false,

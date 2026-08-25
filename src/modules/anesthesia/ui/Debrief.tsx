@@ -4217,6 +4217,26 @@ export function objectiveFindings(
         && reperfusion.tick < handoff.tick && support.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Elapsed handoff preserved unresolved ischemia, perfusion, rhythm, conduction, mechanical, reperfusion, and treatment work without claiming resolution or outcome.' : 'The final handoff was absent, premature, or bypassed a parallel review lane.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-hypertensive-emergency-measurement-and-trajectory',
+      'review-hypertensive-emergency-organ-injury',
+      'review-hypertensive-emergency-phenotype-and-causes',
+      'record-hypertensive-emergency-controlled-reduction-intent',
+      'review-hypertensive-emergency-later-panel',
+      'handoff-hypertensive-emergency-reassessment'].includes(objective.id)) {
+      const measurement = log.find((event) => /^hypertensive-emergency-measurement-reconciled-\d+$/.test(event.eventId));
+      const organ = log.find((event) => /^hypertensive-emergency-organ-injury-reviewed-\d+$/.test(event.eventId));
+      const phenotype = log.find((event) => /^hypertensive-emergency-phenotype-causes-reviewed-\d+$/.test(event.eventId));
+      const reduction = log.find((event) => /^hypertensive-emergency-reduction-intent-recorded-\d+$/.test(event.eventId));
+      const later = log.find((event) => /^hypertensive-emergency-later-panel-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^hypertensive-emergency-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-hypertensive-emergency-measurement-and-trajectory') return { ...base, outcome: measurement ? 'met' : 'not-met', finding: measurement ? 'Authored cuff conditions, bilateral repeated pressures, symptoms, access interruption, and whole-patient trajectory were reconciled without using marked pressure alone.' : 'The authored measurement conditions and whole-patient pressure trajectory were not reconciled.', atTick: measurement?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-hypertensive-emergency-organ-injury') { const ordered = measurement && organ && measurement.tick <= organ.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Fixed retinal and renal findings established acute target-organ injury in this authored case without learner examination or test acquisition.' : 'Target-organ injury review was absent or preceded measurement reconciliation.', atTick: organ?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-hypertensive-emergency-phenotype-and-causes') { const ordered = organ && phenotype && organ.tick <= phenotype.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The renal-retinal phenotype remained distinct from current pulmonary-edema, ACS, aortic, neurologic, and pregnancy snapshots while causes and change triggers stayed open.' : 'Phenotype and cause review was absent or preceded acute-organ-injury review.', atTick: phenotype?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'record-hypertensive-emergency-controlled-reduction-intent') { const ordered = organ && reduction && organ.tick <= reduction.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Prompt monitored syndrome-specific controlled-reduction intent avoided a drug, dose, infusion rate, universal target, rapid normalization, treatment, or outcome claim.' : 'Controlled-reduction intent was absent or preceded acute-organ-injury review.', atTick: reduction?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-hypertensive-emergency-later-panel') { const ordered = phenotype && reduction && later && phenotype.tick < later.tick && reduction.tick < later.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed 45-minute pressure, symptom, perfusion, and neurologic panel was reviewed without turning directional change into learner treatment response or resolution.' : 'The 45-minute panel was absent, premature, or bypassed a parallel lane.', atTick: later?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = later && handoff && later.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed 3-hour handoff preserved renal-retinal injury, symptoms, pressure, cause, treatment, ownership, and change-trigger work without determining disposition or outcome.' : 'The final handoff was absent or did not follow the later panel after another elapsed interval.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

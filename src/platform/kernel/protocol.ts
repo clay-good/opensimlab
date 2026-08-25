@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 98 reports right-ventricular-infarction state. */
-export const WORKER_PROTOCOL_VERSION = 98;
+/** Bumped whenever the message shape changes incompatibly. Version 99 reports hypertensive-emergency state. */
+export const WORKER_PROTOCOL_VERSION = 99;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -773,6 +773,26 @@ export interface EquipmentSnapshot {
       readonly treatmentDelivered: false;
       readonly pciPerformed: false;
       readonly reperfusionCompleted: false;
+    };
+    readonly hypertensiveEmergencyAssessment?: {
+      readonly measurementAtTick: number | null;
+      readonly organInjuryAtTick: number | null;
+      readonly phenotypeAtTick: number | null;
+      readonly reductionIntentAtTick: number | null;
+      readonly laterPanelAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true;
+      readonly acuteTargetOrganDamage: true;
+      readonly treatmentDeliveredByLearner: false;
+      readonly drugSelected: false;
+      readonly doseSelected: false;
+      readonly infusionRateSelected: false;
+      readonly universalTargetSelected: false;
+      readonly rapidNormalizationSelected: false;
+      readonly testAcquiredByLearner: false;
+      readonly procedurePerformed: false;
+      readonly dispositionDetermined: false;
+      readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

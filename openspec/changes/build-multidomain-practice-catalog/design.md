@@ -1237,6 +1237,25 @@ interpret ECG, echo, monitoring, or laboratory data; diagnose a real patient; pr
 fluid, oxygen, medication, pacing, or another treatment; perform PCI or another procedure; select a
 device; determine disposition or prognosis; or predict resolution or outcome.
 
+### Wave C cardiology slice 15: hypertensive emergency
+
+The fifteenth cardiology slice is a monitored renal-retinal hypertensive-emergency consultation.
+A 3-week medication-access interruption and 3 days of headache and blurred vision accompany
+correctly repeated pressures near 236/132 mmHg, but the number is not the diagnosis. Fixed bilateral
+retinal hemorrhage, cotton-wool-spot, optic-disc-edema, creatinine, proteinuria, and hematuria reports
+establish acute target-organ injury in this authored case. Current supplied findings do not establish
+pulmonary edema, ACS, acute aortic syndrome, stroke, ICH, pregnancy, or another compelling phenotype;
+those snapshots remain change triggers rather than permanent exclusions.
+
+Learners reconcile measurement and trajectory, review acute organ injury, then review phenotype and
+open causes while recording prompt monitored controlled-reduction intent in parallel. No agent,
+dose, infusion rate, fixed percentage, universal pressure target, or rapid normalization is selected.
+Strictly later 45-minute and 3-hour reports show directional pressure and symptom improvement while
+visual symptoms and kidney injury remain unresolved. The lab does not measure pressure; examine;
+perform fundoscopy; acquire or interpret ECG, imaging, monitoring, urine, or laboratory data;
+diagnose a real patient; select, titrate, prescribe, or deliver drugs, fluid, oxygen, ventilation, or
+another treatment; perform a procedure; determine disposition or prognosis; or predict outcome.
+
 #### Respiratory medicine: 15
 
 Acute severe asthma; COPD exacerbation; community-acquired pneumonia with hypoxemia; pulmonary

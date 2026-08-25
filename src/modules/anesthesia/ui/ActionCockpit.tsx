@@ -683,6 +683,26 @@ export interface ActionCockpitProps {
       readonly reperfusionPerformedByLearner: false;
       readonly deviceSelected: false;
     };
+    readonly hypertensiveEmergencyAssessment?: {
+      readonly measurementAtTick: number | null;
+      readonly organInjuryAtTick: number | null;
+      readonly phenotypeAtTick: number | null;
+      readonly reductionIntentAtTick: number | null;
+      readonly laterPanelAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true;
+      readonly acuteTargetOrganDamage: true;
+      readonly treatmentDeliveredByLearner: false;
+      readonly drugSelected: false;
+      readonly doseSelected: false;
+      readonly infusionRateSelected: false;
+      readonly universalTargetSelected: false;
+      readonly rapidNormalizationSelected: false;
+      readonly testAcquiredByLearner: false;
+      readonly procedurePerformed: false;
+      readonly dispositionDetermined: false;
+      readonly outcomePredicted: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1103,6 +1123,14 @@ export interface ActionCockpitProps {
       | 'record-right-ventricular-infarction-support'
       | 'handoff-right-ventricular-infarction',
   ) => void;
+  readonly onHypertensiveEmergencyResponse?: (
+    action: 'reconcile-hypertensive-emergency-measurement-and-trajectory'
+      | 'review-hypertensive-emergency-organ-injury'
+      | 'review-hypertensive-emergency-phenotype-and-causes'
+      | 'record-hypertensive-emergency-controlled-reduction-intent'
+      | 'review-hypertensive-emergency-later-panel'
+      | 'handoff-hypertensive-emergency-reassessment',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1372,6 +1400,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'right-ventricular-infarction',
     ),
+    hasHypertensiveEmergencyResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'hypertensive-emergency-reassessment',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1482,6 +1514,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'hyperkalemic-conduction-disturbance')
       || (event.type === 'narrative' && event.target === 'pericardial-tamponade-reassessment')
       || (event.type === 'narrative' && event.target === 'right-ventricular-infarction')
+      || (event.type === 'narrative' && event.target === 'hypertensive-emergency-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1531,6 +1564,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasHyperkalemicConductionResponse,
     hasPericardialTamponadeResponse,
     hasRightVentricularInfarctionResponse,
+    hasHypertensiveEmergencyResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1593,7 +1627,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasStableNarrowTachycardiaResponse || hasStableWideTachycardiaResponse
     || hasSymptomaticBradycardiaResponse || hasCompleteHeartBlockResponse || hasTorsadesResponse
     || hasHyperkalemicConductionResponse || hasPericardialTamponadeResponse
-    || hasRightVentricularInfarctionResponse;
+    || hasRightVentricularInfarctionResponse || hasHypertensiveEmergencyResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1624,7 +1658,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasRightVentricularInfarctionResponse
+  const responseTray = hasHypertensiveEmergencyResponse
+    ? { id: 'crisis', label: 'Pressure + organ review' } as const
+    : hasRightVentricularInfarctionResponse
     ? { id: 'crisis', label: 'RV infarction review' } as const
     : hasPericardialTamponadeResponse
     ? { id: 'crisis', label: 'Tamponade reassessment' } as const
@@ -1819,6 +1855,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasHyperkalemicConductionResponse
     || hasPericardialTamponadeResponse
     || hasRightVentricularInfarctionResponse
+    || hasHypertensiveEmergencyResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2383,6 +2420,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <RightVentricularInfarctionTray
                 assessment={props.resuscitation.rightVentricularInfarctionAssessment}
                 onAction={props.onRightVentricularInfarctionResponse ?? (() => {})} />
+            )}
+            {hasHypertensiveEmergencyResponse && (
+              <HypertensiveEmergencyTray
+                assessment={props.resuscitation.hypertensiveEmergencyAssessment}
+                onAction={props.onHypertensiveEmergencyResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -6414,6 +6456,44 @@ function RightVentricularInfarctionTray({ assessment, onAction }: {
         <Button className="crisis-drug__action" disabled={!support || !reperfusion || handoff} onClick={() => onAction('handoff-right-ventricular-infarction')}>Hand off later trajectory</Button>
       </div>
       <p className="field__hint">No bolus volume, drug, dose, medication delivery, PCI, device, shock-center transfer, disposition, prognosis, or outcome is selected. New compromise or pulse loss opens acute rescue.</p>
+    </section>
+  </div>;
+}
+
+function HypertensiveEmergencyTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['hypertensiveEmergencyAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onHypertensiveEmergencyResponse']>;
+}) {
+  const measurement = assessment?.measurementAtTick != null;
+  const organInjury = assessment?.organInjuryAtTick != null;
+  const phenotype = assessment?.phenotypeAtTick != null;
+  const reduction = assessment?.reductionIntentAtTick != null;
+  const laterPanel = assessment?.laterPanelAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="hypertensive-emergency-context-title">
+      <div id="hypertensive-emergency-context-title" className="syringe__name">The number needs context.</div>
+      <Badge kind="teaching">verified pressure · acute organ injury · pulse present</Badge>
+      <div className="syringe__meta">serial readings · symptoms · brain + heart + kidney · dangerous alternatives</div>
+      <p className="syringe__remaining" role="status">{phenotype && reduction ? 'Parallel review lanes complete · later panel ready' : phenotype ? 'Phenotype + causes reviewed · reduction intent remains' : reduction ? 'Reduction intent recorded · phenotype + causes remain' : organInjury ? 'Organ injury reconciled · two review lanes are open' : measurement ? 'Measurement + trajectory reconciled · organ injury review ready' : 'Verify the pressure and read its trajectory'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={measurement} onClick={() => onAction('reconcile-hypertensive-emergency-measurement-and-trajectory')}>Reconcile pressure trajectory</Button>
+        <Button className="crisis-drug__action" disabled={!measurement || organInjury} onClick={() => onAction('review-hypertensive-emergency-organ-injury')}>Review acute organ injury</Button>
+        <Button className="crisis-drug__action" disabled={!organInjury || phenotype} onClick={() => onAction('review-hypertensive-emergency-phenotype-and-causes')}>Review phenotype + causes</Button>
+      </div>
+      <p className="field__hint">Readings, examination, laboratory, ECG, and imaging statements are authored. Pressure magnitude alone does not distinguish emergency from severe hypertension without acute organ injury.</p>
+    </section>
+    <section className="syringe" aria-labelledby="hypertensive-emergency-reassessment-title">
+      <div id="hypertensive-emergency-reassessment-title" className="syringe__name">Lower carefully. Protect perfusion.</div>
+      <Badge kind="teaching">monitored intent · symptoms · organ perfusion · serial pressure</Badge>
+      <div className="syringe__meta">controlled trajectory · no normalization race · cause work stays open</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Trajectory, pending causes, and owners handed off' : laterPanel ? 'Pressure + organ-perfusion panel reviewed · handoff due' : phenotype && reduction ? 'Phenotype + reduction intent aligned · allow the later panel' : phenotype ? 'Phenotype reviewed · controlled-reduction intent remains' : reduction ? 'Reduction intent recorded · phenotype + causes remain' : organInjury ? 'Phenotype and reduction lanes can proceed in parallel' : 'Complete the organ-injury review first'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={!organInjury || reduction} onClick={() => onAction('record-hypertensive-emergency-controlled-reduction-intent')}>Record controlled-reduction intent</Button>
+        <Button className="crisis-drug__action" disabled={!phenotype || !reduction || laterPanel} onClick={() => onAction('review-hypertensive-emergency-later-panel')}>Review later organ panel</Button>
+        <Button className="crisis-drug__action" disabled={!laterPanel || handoff} onClick={() => onAction('handoff-hypertensive-emergency-reassessment')}>Hand off causes + owners</Button>
+      </div>
+      <p className="field__hint">No agent, dose, infusion, numeric goal, access, device, delivery, home regimen, disposition, prognosis, or outcome is selected. New organ-specific deterioration opens acute rescue.</p>
     </section>
   </div>;
 }

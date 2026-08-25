@@ -53,6 +53,22 @@ export const NIBP_CYCLE_SECONDS = 20;
 /** Blood-column approximation: 10 cm of vertical error changes pressure by about 7.5 mmHg. */
 export const ARTERIAL_HYDROSTATIC_MMHG_PER_CM = 0.75;
 export const ARTERIAL_MISLEVELING_CM = 20;
+const HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES = new Set([
+  'bolus', 'infusion', 'ventilator', 'call-for-help', 'airway-device', 'laryngoscopy',
+  'vasopressor', 'ephedrine', 'inhaled-bronchodilator', 'epinephrine', 'inject-crisis',
+  'neuromuscular-reversal', 'chest-compressions', 'cardiac-arrest-epinephrine',
+  'defibrillation', 'seizure-suppression', 'lipid-emulsion', 'dantrolene',
+  'active-cooling', 'fluid', 'blood-bank-request', 'blood-product', 'coagulation-labs',
+  'hypnotic-line', 'airway-maneuver', 'silence-alarm', 'artifact', 'arterial-line',
+  'capnography-line', 'breathing-circuit', 'rhythm',
+  'anaphylaxis', 'blood-loss', 'cardiac-tamponade', 'crystalloid', 'difficult-airway',
+  'equipment-failure', 'high-spinal', 'laryngospasm', 'local-anesthetic-toxicity',
+  'malignant-hyperthermia', 'obstruction', 'opioid-ventilatory-impairment',
+  'perioperative-hyperglycemia', 'perioperative-hypothermia', 'rhythm-change',
+  'sepsis-pattern', 'shock-pattern', 'status-epilepticus', 'surgical-stimulus',
+  'tension-pneumothorax', 'thermal-response', 'upper-airway-obstruction',
+  'venous-air-embolism',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -592,6 +608,12 @@ export class AnesthesiaEngine {
   private rightVentricularInfarctionReperfusionAtTick: number | null = null;
   private rightVentricularInfarctionSupportAtTick: number | null = null;
   private rightVentricularInfarctionHandoffAtTick: number | null = null;
+  private hypertensiveEmergencyMeasurementAtTick: number | null = null;
+  private hypertensiveEmergencyOrganInjuryAtTick: number | null = null;
+  private hypertensiveEmergencyPhenotypeAtTick: number | null = null;
+  private hypertensiveEmergencyReductionIntentAtTick: number | null = null;
+  private hypertensiveEmergencyLaterPanelAtTick: number | null = null;
+  private hypertensiveEmergencyHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -821,6 +843,14 @@ export class AnesthesiaEngine {
   }
 
   apply(action: LearnerAction): void {
+    const hypertensiveEmergency = this.scenario.timeline.some((event) =>
+      event.type === 'narrative' && event.target === 'hypertensive-emergency-reassessment');
+    if (hypertensiveEmergency && HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `hypertensive-emergency-generic-action-refused-${this.currentTick}`,
+        'This intent-only hypertensive-emergency lesson does not expose generic treatment, procedure, device, rhythm, artifact, or crisis-injection actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
     switch (action.type) {
       case 'bolus': {
         const amount = AnesthesiaEngine.finiteAmount(action.payload.amount);
@@ -4796,6 +4826,52 @@ export class AnesthesiaEngine {
         this.rightVentricularInfarctionHandoffAtTick = this.currentTick;
         this.log('critical', 'assessment', `right-ventricular-infarction-handoff-recorded-${this.currentTick}`, 'Fixed later report: chest pressure persists, HR 52/min in sinus rhythm, BP 88/62 mmHg, RR 18/min, SpO₂ 96% on room air, alert warm perfusion, elevated JVP, and clear lungs. Ischemia, reperfusion, perfusion, preload, congestion, rhythm, conduction, mechanical alternatives, treatment selection, owners, and change triggers were handed off without claiming treatment response, completed PCI, resolution, disposition, prognosis, or outcome.', { treatmentDelivered: false, pciPerformed: false, reperfusionCompleted: false, outcomePredicted: false }); break;
       }
+      case 'hypertensive-emergency-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'hypertensive-emergency-reassessment');
+        const valid = ['reconcile-hypertensive-emergency-measurement-and-trajectory',
+          'review-hypertensive-emergency-organ-injury',
+          'review-hypertensive-emergency-phenotype-and-causes',
+          'record-hypertensive-emergency-controlled-reduction-intent',
+          'review-hypertensive-emergency-later-panel',
+          'handoff-hypertensive-emergency-reassessment'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `hypertensive-emergency-response-refused-${this.currentTick}`, supported ? 'The hypertensive-emergency action was not one of the listed choices. Nothing changed.' : 'These hypertensive-emergency choices are available only in the declared Cardiology lesson.'); break; }
+        if (response === 'reconcile-hypertensive-emergency-measurement-and-trajectory') {
+          if (this.hypertensiveEmergencyMeasurementAtTick !== null) { this.log('warning', 'assessment', `hypertensive-emergency-measurement-refused-${this.currentTick}`, 'The authored measurement conditions and pressure trajectory were already reconciled.'); break; }
+          this.hypertensiveEmergencyMeasurementAtTick = this.currentTick;
+          this.log('critical', 'assessment', `hypertensive-emergency-measurement-reconciled-${this.currentTick}`, 'Documented rest, correct positioning, and a correctly sized cuff preceded repeated right-arm 236/132 and left-arm 232/130 mmHg readings after an initial 238/134 mmHg. Three days of headache and bilateral blurred vision followed a 3-week refill interruption. HR 86/min in sinus rhythm, RR 16/min, SpO₂ 98% on room air, temperature 36.8°C, alert coherent nonfocal mentation, and warm perfusion were reconciled without using marked pressure alone to establish emergency.', { measurementConditionsAuthored: true, pressureAloneUsed: false, testAcquiredByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.hypertensiveEmergencyMeasurementAtTick === null) { this.log('warning', 'assessment', `hypertensive-emergency-order-refused-${this.currentTick}`, 'Reconcile the authored measurement conditions and whole-patient pressure trajectory before reviewing organ injury.'); break; }
+        if (response === 'review-hypertensive-emergency-organ-injury') {
+          if (this.hypertensiveEmergencyOrganInjuryAtTick !== null) { this.log('warning', 'assessment', `hypertensive-emergency-organ-injury-refused-${this.currentTick}`, 'The authored acute target-organ injury was already reviewed.'); break; }
+          this.hypertensiveEmergencyOrganInjuryAtTick = this.currentTick;
+          this.log('critical', 'assessment', `hypertensive-emergency-organ-injury-reviewed-${this.currentTick}`, 'Fixed bilateral flame hemorrhages, cotton-wool spots, optic-disc edema, creatinine 2.1 mg/dL from 0.9 mg/dL 6 months earlier, 2+ protein, and microscopic hematuria establish acute renal-retinal target-organ injury in this authored case. Platelets are 214,000/µL and hemoglobin 12.6 g/dL. The learner did not perform fundoscopy, collect a specimen, acquire a test, or diagnose a real patient.', { acuteTargetOrganDamage: true, testAcquiredByLearner: false, procedurePerformed: false }); break;
+        }
+        if (this.hypertensiveEmergencyOrganInjuryAtTick === null) { this.log('warning', 'assessment', `hypertensive-emergency-organ-injury-order-refused-${this.currentTick}`, 'Review the authored acute target-organ injury before opening phenotype, causes, or controlled-reduction intent.'); break; }
+        if (response === 'review-hypertensive-emergency-phenotype-and-causes') {
+          if (this.hypertensiveEmergencyPhenotypeAtTick !== null) { this.log('warning', 'assessment', `hypertensive-emergency-phenotype-refused-${this.currentTick}`, 'The renal-retinal phenotype, current exclusions, change triggers, and open causes were already reviewed.'); break; }
+          this.hypertensiveEmergencyPhenotypeAtTick = this.currentTick;
+          this.log('critical', 'assessment', `hypertensive-emergency-phenotype-causes-reviewed-${this.currentTick}`, 'The fixed ECG shows sinus rhythm, LVH, and no acute ischemia; lungs are clear and fixed echo shows LVEF 60%, concentric LVH, no acute failure, and no effusion. No chest or back pain, dyspnea, pregnancy, pulmonary edema, ACS trajectory, asymmetry, focal deficit, seizure, altered mentation, or aortic pattern is authored now. These remain change triggers, while medication access, kidney disease, substances, interactions, and primary or secondary contributors remain open rather than assigning the refill gap as the sole cause.', { alternativesPermanentlyExcluded: false, causeAssigned: false, testAcquiredByLearner: false }); break;
+        }
+        if (response === 'record-hypertensive-emergency-controlled-reduction-intent') {
+          if (this.hypertensiveEmergencyReductionIntentAtTick !== null) { this.log('warning', 'assessment', `hypertensive-emergency-reduction-intent-refused-${this.currentTick}`, 'The prompt monitored, syndrome-specific controlled-reduction intent was already recorded.'); break; }
+          this.hypertensiveEmergencyReductionIntentAtTick = this.currentTick;
+          this.log('critical', 'assessment', `hypertensive-emergency-reduction-intent-recorded-${this.currentTick}`, 'Prompt monitored, syndrome-specific controlled pressure reduction was recorded while preserving perfusion and organ-specific pathways. No drug, dose, infusion rate, fixed percentage, universal target, rapid normalization, disposition, treatment delivery, or outcome was selected.', { treatmentDeliveredByLearner: false, drugSelected: false, doseSelected: false, infusionRateSelected: false, universalTargetSelected: false, rapidNormalizationSelected: false, dispositionDetermined: false, outcomePredicted: false }); break;
+        }
+        if (response === 'review-hypertensive-emergency-later-panel') {
+          if (this.hypertensiveEmergencyPhenotypeAtTick === null || this.hypertensiveEmergencyReductionIntentAtTick === null) { this.log('warning', 'assessment', `hypertensive-emergency-later-panel-order-refused-${this.currentTick}`, 'Complete both the phenotype-and-causes and controlled-reduction-intent lanes before reviewing the later panel.'); break; }
+          if (this.currentTick <= Math.max(this.hypertensiveEmergencyPhenotypeAtTick, this.hypertensiveEmergencyReductionIntentAtTick)) { this.log('warning', 'assessment', `hypertensive-emergency-later-panel-time-refused-${this.currentTick}`, 'Allow a later simulated tick before reviewing the authored 45-minute panel.'); break; }
+          if (this.hypertensiveEmergencyLaterPanelAtTick !== null) { this.log('warning', 'assessment', `hypertensive-emergency-later-panel-refused-${this.currentTick}`, 'The authored 45-minute panel was already reviewed.'); break; }
+          this.hypertensiveEmergencyLaterPanelAtTick = this.currentTick;
+          this.log('warning', 'assessment', `hypertensive-emergency-later-panel-reviewed-${this.currentTick}`, 'Fixed 45-minute report: BP 212/122 mmHg, HR 82/min, alert nonfocal mentation, easing headache, persistent visual symptoms, warm perfusion, and no chest or back pain or dyspnea. This directional change does not establish learner treatment, a drug effect, resolution, disposition, prognosis, or outcome.', { treatmentDeliveredByLearner: false, drugSelected: false, resolutionEstablished: false, outcomePredicted: false }); break;
+        }
+        if (this.hypertensiveEmergencyLaterPanelAtTick === null) { this.log('warning', 'assessment', `hypertensive-emergency-handoff-order-refused-${this.currentTick}`, 'Review the authored 45-minute panel before the later reassessment handoff.'); break; }
+        if (this.currentTick <= this.hypertensiveEmergencyLaterPanelAtTick) { this.log('warning', 'assessment', `hypertensive-emergency-handoff-time-refused-${this.currentTick}`, 'Allow another later simulated tick before the 3-hour reassessment handoff.'); break; }
+        if (this.hypertensiveEmergencyHandoffAtTick !== null) { this.log('warning', 'assessment', `hypertensive-emergency-handoff-refused-${this.currentTick}`, 'The authored 3-hour reassessment and open-work handoff was already recorded.'); break; }
+        this.hypertensiveEmergencyHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `hypertensive-emergency-handoff-recorded-${this.currentTick}`, 'Fixed 3-hour report: BP 188/106 mmHg, HR 80/min, headache improved, vision not worse, alert nonfocal mentation, clear lungs, urine output 38 mL/h, and creatinine 2.1 mg/dL. Renal-retinal injury, visual symptoms, causes, treatment selection and delivery, owners, and change triggers remain open without determining disposition, prognosis, resolution, or outcome.', { treatmentDeliveredByLearner: false, testAcquiredByLearner: false, procedurePerformed: false, dispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'emergence-residual-block-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative'
@@ -7461,6 +7537,17 @@ export class AnesthesiaEngine {
         meanArterialMmHg: 69, coreTemperatureC: 36.6 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'hypertensive-emergency-reassessment')) {
+      const later = this.hypertensiveEmergencyLaterPanelAtTick !== null;
+      const handoff = this.hypertensiveEmergencyHandoffAtTick !== null;
+      crisisState = { ...crisisState, heartRateBpm: handoff ? 80 : later ? 82 : 86,
+        respiratoryRateBpm: 16, spo2Percent: 98,
+        systolicMmHg: handoff ? 188 : later ? 212 : 236,
+        diastolicMmHg: handoff ? 106 : later ? 122 : 132,
+        meanArterialMmHg: handoff ? 133 : later ? 152 : 167,
+        coreTemperatureC: 36.8 };
+    }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'post-infarction-cardiogenic-shock-escalation')) {
       const reassessed = this.postInfarctionShockHandoffAtTick !== null;
       crisisState = { ...crisisState, heartRateBpm: reassessed ? 104 : 108,
@@ -8532,6 +8619,23 @@ export class AnesthesiaEngine {
               blindFluidLoading: false as const, fixedFluidVolumeSelected: false as const,
               treatmentDelivered: false as const, pciPerformed: false as const,
               reperfusionCompleted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'hypertensive-emergency-reassessment') ? {
+            hypertensiveEmergencyAssessment: {
+              measurementAtTick: this.hypertensiveEmergencyMeasurementAtTick,
+              organInjuryAtTick: this.hypertensiveEmergencyOrganInjuryAtTick,
+              phenotypeAtTick: this.hypertensiveEmergencyPhenotypeAtTick,
+              reductionIntentAtTick: this.hypertensiveEmergencyReductionIntentAtTick,
+              laterPanelAtTick: this.hypertensiveEmergencyLaterPanelAtTick,
+              handoffAtTick: this.hypertensiveEmergencyHandoffAtTick,
+              initialPulsePresent: true as const, acuteTargetOrganDamage: true as const,
+              treatmentDeliveredByLearner: false as const, drugSelected: false as const,
+              doseSelected: false as const, infusionRateSelected: false as const,
+              universalTargetSelected: false as const, rapidNormalizationSelected: false as const,
+              testAcquiredByLearner: false as const, procedurePerformed: false as const,
+              dispositionDetermined: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {
