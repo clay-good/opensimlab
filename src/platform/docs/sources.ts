@@ -1667,6 +1667,17 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-25',
   },
   {
+    id: 'kusumoto-bradycardia-guideline-2018',
+    authors: 'Kusumoto FM, Schoenfeld MH, Barrett C, et al',
+    title: '2018 ACC/AHA/HRS Guideline on the Evaluation and Management of Patients With Bradycardia and Cardiac Conduction Delay',
+    publication: 'Circulation',
+    year: 2019,
+    locator: '140:e382-e482; doi:10.1161/CIR.0000000000000628',
+    usedFor: 'The stable symptomatic sinus-bradycardia boundary: no minimum rate or pause alone mandates pacing; temporal symptom correlation and reversible-cause review matter; pacing evaluation and device choices use shared decision-making.',
+    verifiedAgainst: 'https://www.acc.org/~/media/Non-Clinical/Files-PDFs-Excel-MS-Word-etc/Guidelines/2018/Guidelines_Made_Simple_2018_Bradycardia.pdf',
+    verifiedOn: '2026-08-25',
+  },
+  {
     id: 'schwid-2001',
     pmid: '11302037',
     authors: 'Schwid HA, Rooke GA, Michalowski P, Ross BK',

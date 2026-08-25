@@ -1119,6 +1119,22 @@ sinus report. The lab excludes irregular or polymorphic WCT, torsades, pulseless
 test interpretation, definitive diagnosis, device operation, energy or sedation selection,
 cardioversion performance, ablation, ICD decisions, disposition, recurrence, prognosis, and outcome.
 
+### Wave C cardiology slice 9: symptomatic bradycardia
+
+The ninth cardiology slice is a stable return rhythm visit, not another acute bradycardia
+resuscitation. A fixed sinus rate of 44/min coexists with a palpable pulse, preserved pressure,
+mentation, perfusion, and oxygenation, plus 3 weeks of fatigue and exertional lightheadedness without
+syncope or acute compromise. Learners separate chronic symptom burden from instability, then review
+reversible and physiologic context alongside a pre-authored completed patch and symptom diary.
+
+The two diagnostic lanes may occur in either order. Both precede shared cardiology/electrophysiology
+pacing-evaluation intent, symptom tracking, acute-change triggers, ownership, and follow-up. No heart
+rate or pause threshold alone establishes a pacing indication, no ordinary engine tick impersonates
+days of monitoring, and referral does not change the canonical rhythm. The lab excludes examination;
+live ECG, monitor, laboratory, or imaging acquisition or interpretation; definitive diagnosis;
+medication change; atropine, oxygen, infusion, or rescue pacing; pacemaker eligibility, selection,
+implantation, or programming; disposition, prognosis, recurrence, benefit, or outcome.
+
 #### Respiratory medicine: 15
 
 Acute severe asthma; COPD exacerbation; community-acquired pneumonia with hypoxemia; pulmonary

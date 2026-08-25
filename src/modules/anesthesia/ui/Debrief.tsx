@@ -2658,7 +2658,7 @@ export function objectiveFindings(
             : 'Atropine intent was absent or preceded immediate support.',
           atTick: atropine?.tick ?? 0 } satisfies ObjectiveFinding;
       }
-      const ordered = atropine && reassessed && atropine.tick <= reassessed.tick;
+      const ordered = atropine && reassessed && atropine.tick < reassessed.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met',
         finding: ordered
           ? 'Rate, rhythm, pressure, mentation, ischemic discomfort, perfusion, and ongoing cause/escalation needs were reassessed.'
@@ -4107,6 +4107,22 @@ export function objectiveFindings(
       if (objective.id === 'record-wide-complex-cardioversion-intent') { const ordered = nonresponse && cardioversion && nonresponse.tick <= cardioversion.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Synchronized-cardioversion intent followed the authored medication nonresponse without device or energy claims.' : 'Cardioversion intent was absent or preceded response review.', atTick: cardioversion?.tick ?? 0 } satisfies ObjectiveFinding; }
       const ordered = cardioversion && reassessment && cardioversion.tick < reassessment.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Elapsed reassessment preserved mechanism uncertainty, cause and recurrence work, triggers, and follow-up ownership.' : 'Final reassessment was absent or did not follow cardioversion intent after elapsed time.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+    if (['reconcile-symptomatic-bradycardia-stability', 'review-symptomatic-bradycardia-context',
+      'correlate-symptomatic-bradycardia-record',
+      'record-symptomatic-bradycardia-pacing-evaluation',
+      'handoff-symptomatic-bradycardia-plan'].includes(objective.id)) {
+      const stability = log.find((event) => /^symptomatic-bradycardia-stability-reconciled-\d+$/.test(event.eventId));
+      const context = log.find((event) => /^symptomatic-bradycardia-context-reviewed-\d+$/.test(event.eventId));
+      const correlation = log.find((event) => /^symptomatic-bradycardia-correlation-reviewed-\d+$/.test(event.eventId));
+      const pacing = log.find((event) => /^symptomatic-bradycardia-pacing-evaluation-recorded-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^symptomatic-bradycardia-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-symptomatic-bradycardia-stability') return { ...base, outcome: stability ? 'met' : 'not-met', finding: stability ? 'Rate, pulse, chronic symptoms, and current stability were reconciled without using rate alone.' : 'Current pulse and stability were not reconciled.', atTick: stability?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-symptomatic-bradycardia-context') { const ordered = stability && context && stability.tick <= context.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Medication, reversible, structural, and physiologic context remained open without a reflex medication change.' : 'Context review was absent or preceded stability.', atTick: context?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'correlate-symptomatic-bradycardia-record') { const ordered = stability && correlation && stability.tick <= correlation.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The pre-authored symptom-rhythm record was correlated without a threshold shortcut or mechanism claim.' : 'Correlation review was absent or preceded stability.', atTick: correlation?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'record-symptomatic-bradycardia-pacing-evaluation') { const ordered = context && correlation && pacing && context.tick <= pacing.tick && correlation.tick <= pacing.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Shared pacing-evaluation intent followed both diagnostic lanes without selecting a device or promising benefit.' : 'Pacing evaluation was absent or bypassed context or correlation review.', atTick: pacing?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = pacing && handoff && pacing.tick <= handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Symptoms, acute-change triggers, unresolved questions, owner, and follow-up remained visible while the rhythm stayed unchanged.' : 'The longitudinal handoff was absent or preceded pacing evaluation.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',

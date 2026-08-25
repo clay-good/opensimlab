@@ -1056,6 +1056,17 @@
         "GB"
       ],
       "fidelityClass": "state_transition"
+    },
+    {
+      "scenarioId": "symptomatic-sinus-bradycardia-reassessment",
+      "contentVersion": "0.1.0",
+      "moduleId": "cardiology",
+      "maturity": "draft",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition"
     }
   ]
 }

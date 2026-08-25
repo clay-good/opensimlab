@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 118,
+  "sourceCount": 119,
   "sources": [
     {
       "id": "association-qrh-2023",
@@ -1533,6 +1533,17 @@
       "locator": "138:e272-e391; doi:10.1161/CIR.0000000000000549",
       "usedFor": "The stable wide-complex boundary: preserve diagnostic uncertainty, avoid verapamil and diltiazem in WCT of unknown origin, use monitored expert-guided therapy, and escalate persistent monomorphic VT while keeping longer-term structural, ischemic, recurrence, and sudden-death work open.",
       "verifiedAgainst": "https://www.acc.org/Guidelines/Guidelines/2017/10/30/10/45/Ventricular-Arrhythmias-and-the-Prevention-of-Sudden-Cardiac-Death",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "kusumoto-bradycardia-guideline-2018",
+      "authors": "Kusumoto FM, Schoenfeld MH, Barrett C, et al",
+      "title": "2018 ACC/AHA/HRS Guideline on the Evaluation and Management of Patients With Bradycardia and Cardiac Conduction Delay",
+      "publication": "Circulation",
+      "year": 2019,
+      "locator": "140:e382-e482; doi:10.1161/CIR.0000000000000628",
+      "usedFor": "The stable symptomatic sinus-bradycardia boundary: no minimum rate or pause alone mandates pacing; temporal symptom correlation and reversible-cause review matter; pacing evaluation and device choices use shared decision-making.",
+      "verifiedAgainst": "https://www.acc.org/~/media/Non-Clinical/Files-PDFs-Excel-MS-Word-etc/Guidelines/2018/Guidelines_Made_Simple_2018_Bradycardia.pdf",
       "verifiedOn": "2026-08-25"
     },
     {

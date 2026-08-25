@@ -2871,6 +2871,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use current resuscitation guidance, local protocols, qualified judgment, expert consultation, and longitudinal cardiology care for real WCT.',
     briefIn: ['wide-complex-tachycardia'],
   },
+  {
+    id: 'symptomatic-sinus-bradycardia-record-context-and-correlation-are-authored',
+    headline: 'The sinus rhythm, stable physiology, symptom diary, monitor report, contributor context, and correlation are authored teaching facts.',
+    simplification: 'One return-visit record supplies fixed rhythm, pressure, symptoms, ECG, patch, laboratory, medication, and exclusion snapshots.',
+    whereItMisleads: 'Treating the teaching trace as diagnostic, calling a low rate unstable, or reading correlation as proof of one cause, pacing eligibility, benefit, or prognosis.',
+    correctUnderstanding: 'Real care verifies symptoms and rhythm over time and integrates acute stability, alternative causes, reversible context, patient goals, and evolving evidence.',
+    briefIn: ['symptomatic-sinus-bradycardia-reassessment'],
+  },
+  {
+    id: 'symptomatic-sinus-bradycardia-controls-record-review-referral-and-handoff-only',
+    headline: 'The controls record stability, two parallel review lanes, shared pacing evaluation, and handoff; they do not deliver care.',
+    simplification: 'Five clicks stand in for history, examination, diagnostic review, counseling, shared decisions, communication, and follow-up.',
+    whereItMisleads: 'Equating button order with examination, ECG or monitor interpretation, medication management, counseling quality, device selection, or cardiology competence.',
+    correctUnderstanding: 'Actual care requires qualified assessment, verified longitudinal evidence, individualized reversible-cause work, shared decisions, and repeated follow-up.',
+    briefIn: ['symptomatic-sinus-bradycardia-reassessment'],
+  },
+  {
+    id: 'no-live-bradycardia-diagnosis-medication-change-pacing-procedure-or-outcome',
+    headline: 'The lab does not diagnose sinus-node dysfunction, change medication, pace, choose or implant a device, or predict outcome.',
+    simplification: 'No live exam, ECG, monitor, test, medication change, oxygen, atropine, infusion, pacing, device, procedure, disposition, recurrence, prognosis, benefit, or outcome is modeled.',
+    whereItMisleads: 'Using one rate or pause cutoff, stopping necessary therapy, treating chronic symptoms as acute compromise, or applying this SND pathway to high-grade AV block.',
+    correctUnderstanding: 'Use current specialty and acute-care guidance, qualified judgment, patient preferences, and explicit pathway switching for real bradycardia.',
+    briefIn: ['symptomatic-sinus-bradycardia-reassessment'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

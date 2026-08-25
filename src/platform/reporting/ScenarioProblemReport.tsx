@@ -79,8 +79,10 @@ export function ScenarioProblemReport({ context, onOpen, onClose }: {
 
   return (
     <div className="problem-report">
-      <Button compact variant="ghost" onClick={() => { setOpen(true); onOpen?.(); }}>
-        Report a problem
+      <Button compact variant="ghost" aria-label="Report a problem"
+        onClick={() => { setOpen(true); onOpen?.(); }}>
+        <span className="problem-report__label-long">Report a problem</span>
+        <span className="problem-report__label-short" aria-hidden="true">Report</span>
       </Button>
       <Modal
         open={open}

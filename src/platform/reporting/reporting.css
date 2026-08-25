@@ -9,6 +9,7 @@
   background: color-mix(in srgb, var(--surface-1) 92%, transparent);
 }
 .problem-report__form { display: grid; gap: var(--space-4); }
+.problem-report__label-short { display: none; }
 .problem-report__count { justify-self: end; }
 .problem-report__preview {
   padding: var(--space-3);
@@ -23,11 +24,15 @@
 .problem-report__preview dd { min-inline-size: 0; overflow-wrap: anywhere; }
 .problem-report__turnstile { min-block-size: 65px; }
 
-@media (max-width: 480px) {
+/* The simulator's Analysis and Actions controls occupy the bottom-right corner
+   below 768 px (and on short landscape screens). Keep reporting in the same
+   reserved strip, on the opposite side, so neither control intercepts the
+   other. */
+@media (max-width: 767px), (max-height: 499px) and (orientation: landscape) {
   .problem-report {
-    inset-inline-start: auto;
-    inset-inline-end: var(--space-3);
-    inset-block-end: calc(72px + var(--space-3));
+    inset-inline-start: var(--space-3);
+    inset-inline-end: auto;
+    inset-block-end: var(--space-4);
   }
   .problem-report > .button {
     min-block-size: 36px;
@@ -36,4 +41,16 @@
   }
   .problem-report .modal { padding: var(--space-4); }
   .problem-report__form { gap: var(--space-3); }
+}
+
+/* Three full labels do not fit side by side at the narrowest phone width. The
+   accessible name stays "Report a problem" while the visible label compacts. */
+@media (max-width: 400px) {
+  .problem-report {
+    inset-inline-start: var(--space-3);
+    inset-inline-end: auto;
+    inset-block-end: var(--space-4);
+  }
+  .problem-report__label-long { display: none; }
+  .problem-report__label-short { display: inline; }
 }

@@ -1,5 +1,7 @@
 /** @vitest-environment jsdom */
 import { act } from 'react';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ScenarioProblemReport } from '@platform/reporting/ScenarioProblemReport';
@@ -11,6 +13,7 @@ const context: ScenarioReportContext = {
   fidelityClass: 'closed_loop_physiology', surface: 'prebrief', simulatedTick: 0,
   canonicalUrl: 'https://opensimlab.com/anesthesia/scenario/routine-induction',
 };
+const reportingCss = readFileSync(join(process.cwd(), 'src/platform/reporting/reporting.css'), 'utf8');
 
 describe('shared problem report dialog', () => {
   let container: HTMLDivElement;
@@ -45,6 +48,7 @@ describe('shared problem report dialog', () => {
     const onOpen = vi.fn();
     await act(async () => { root.render(<ScenarioProblemReport context={context} onOpen={onOpen} />); });
     expect(fetchMock).not.toHaveBeenCalled();
+    expect(container.querySelector('button')?.getAttribute('aria-label')).toBe('Report a problem');
     await act(async () => {
       (container.querySelector('button') as HTMLButtonElement).click();
       await Promise.resolve();
@@ -56,6 +60,15 @@ describe('shared problem report dialog', () => {
     expect(container.textContent).toContain('0 / 160');
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledWith('/api/reports/config', expect.objectContaining({ credentials: 'omit' }));
+  });
+
+  it('keeps the report trigger clear of simulator controls on phones', () => {
+    expect(reportingCss).toContain(
+      '@media (max-width: 767px), (max-height: 499px) and (orientation: landscape)',
+    );
+    expect(reportingCss).toMatch(/\.problem-report\s*\{[^}]*inset-inline-start:\s*var\(--space-3\)/s);
+    expect(reportingCss).toContain('@media (max-width: 400px)');
+    expect(reportingCss).toContain('.problem-report__label-short { display: inline; }');
   });
 
   it('sends no report when canceled and restores the invoking control', async () => {

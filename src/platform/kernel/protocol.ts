@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 89 reports stable narrow-tachycardia state. */
-export const WORKER_PROTOCOL_VERSION = 90;
+export const WORKER_PROTOCOL_VERSION = 91;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -695,6 +695,16 @@ export interface EquipmentSnapshot {
       readonly hemodynamicallyStable: true;
       readonly mechanismProven: false;
       readonly learnerTreatmentDelivered: false;
+    };
+    readonly symptomaticBradycardiaAssessment?: {
+      readonly stabilityAtTick: number | null;
+      readonly contextAtTick: number | null;
+      readonly correlationAtTick: number | null;
+      readonly pacingEvaluationAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly hemodynamicallyStable: true;
+      readonly mechanismProven: false;
+      readonly treatmentDelivered: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

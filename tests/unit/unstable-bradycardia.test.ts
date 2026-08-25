@@ -62,4 +62,16 @@ describe('unstable bradycardia foundation', () => {
     expect(objectiveFindings(SCENARIO, history, 0, 0, actions, log)
       .map((finding) => finding.outcome)).toEqual(['met', 'met', 'met', 'met']);
   });
+
+  it('does not credit reassessment forged at the atropine tick', () => {
+    const history = [{ tick: 0, state: {}, concentrations: [] }] as never;
+    const event = (eventId: string, tick: number): EngineEvent => ({
+      eventId, tick, category: 'assessment', severity: 'warning', message: eventId,
+    });
+    const log = [event('unstable-bradycardia-reviewed-10', 10),
+      event('unstable-bradycardia-supported-20', 20),
+      event('unstable-bradycardia-atropine-30', 30),
+      event('unstable-bradycardia-reassessed-forged', 30)];
+    expect(objectiveFindings(SCENARIO, history, 0, 0, [], log).at(-1)?.outcome).toBe('not-met');
+  });
 });

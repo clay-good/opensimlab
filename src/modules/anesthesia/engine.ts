@@ -559,6 +559,11 @@ export class AnesthesiaEngine {
   private stableWideNonresponseAtTick: number | null = null;
   private stableWideCardioversionAtTick: number | null = null;
   private stableWideReassessmentAtTick: number | null = null;
+  private symptomaticBradycardiaStabilityAtTick: number | null = null;
+  private symptomaticBradycardiaContextAtTick: number | null = null;
+  private symptomaticBradycardiaCorrelationAtTick: number | null = null;
+  private symptomaticBradycardiaPacingEvaluationAtTick: number | null = null;
+  private symptomaticBradycardiaHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -4494,6 +4499,42 @@ export class AnesthesiaEngine {
           });
         break;
       }
+      case 'symptomatic-bradycardia-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'symptomatic-sinus-bradycardia-reassessment');
+        const valid = ['reconcile-symptomatic-bradycardia-stability',
+          'review-symptomatic-bradycardia-context', 'correlate-symptomatic-bradycardia-record',
+          'record-symptomatic-bradycardia-pacing-evaluation',
+          'handoff-symptomatic-bradycardia-plan'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `symptomatic-bradycardia-response-refused-${this.currentTick}`, supported ? 'The symptomatic-bradycardia action was not one of the listed choices. Nothing changed.' : 'These longitudinal bradycardia choices are available only in the declared lesson.'); break; }
+        if (response === 'reconcile-symptomatic-bradycardia-stability') {
+          if (this.symptomaticBradycardiaStabilityAtTick !== null) { this.log('warning', 'assessment', `symptomatic-bradycardia-stability-refused-${this.currentTick}`, 'The rate, symptoms, pulse, and stability were already reconciled.'); break; }
+          this.symptomaticBradycardiaStabilityAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `symptomatic-bradycardia-stability-reconciled-${this.currentTick}`, 'Fixed sinus bradycardia is 44/min with a palpable pulse, BP 134/72 mmHg, alert mentation, warm perfusion, SpO2 98% on room air, and no authored hypotension, shock, ischemic discomfort, acute heart failure, or syncope. Chronic fatigue and exertional lightheadedness matter, but do not equal acute instability.', { hemodynamicallyStable: true, symptomaticMeansUnstable: false }); break;
+        }
+        if (this.symptomaticBradycardiaStabilityAtTick === null) { this.log('warning', 'assessment', `symptomatic-bradycardia-order-refused-${this.currentTick}`, 'Reconcile rate, pulse, symptoms, and current stability before longitudinal review.'); break; }
+        if (response === 'review-symptomatic-bradycardia-context') {
+          if (this.symptomaticBradycardiaContextAtTick !== null) { this.log('warning', 'assessment', `symptomatic-bradycardia-context-refused-${this.currentTick}`, 'The reversible and physiologic context was already reviewed.'); break; }
+          this.symptomaticBradycardiaContextAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `symptomatic-bradycardia-context-reviewed-${this.currentTick}`, 'Medication indication, necessity and adherence; thyroid, electrolyte, temperature, hemoglobin, infection, hypoxemia, sleep, ischemic, structural, exercise and physiologic context were reviewed. No cause was declared and no beta blocker or other medication was reflexively stopped.', { causeProven: false, medicationChanged: false }); break;
+        }
+        if (response === 'correlate-symptomatic-bradycardia-record') {
+          if (this.symptomaticBradycardiaCorrelationAtTick !== null) { this.log('warning', 'assessment', `symptomatic-bradycardia-correlation-refused-${this.currentTick}`, 'The fixed ambulatory record and diary were already correlated.'); break; }
+          this.symptomaticBradycardiaCorrelationAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `symptomatic-bradycardia-correlation-reviewed-${this.currentTick}`, 'The pre-authored completed patch and diary repeatedly align typical exertional lightheadedness with sinus 38-44/min. No high-grade AV block, long pause, atrial fibrillation, or ventricular arrhythmia is reported. Correlation supports evaluation without making one heart-rate or pause cutoff diagnostic or proving sinus-node dysfunction.', { temporalCorrelationPresent: true, highGradeAvBlockPresent: false, mechanismProven: false, thresholdUsed: false }); break;
+        }
+        if (this.symptomaticBradycardiaContextAtTick === null || this.symptomaticBradycardiaCorrelationAtTick === null) { this.log('warning', 'assessment', `symptomatic-bradycardia-pacing-order-refused-${this.currentTick}`, 'Complete both reversible-context and symptom-rhythm correlation review before pacing evaluation.'); break; }
+        if (response === 'record-symptomatic-bradycardia-pacing-evaluation') {
+          if (this.symptomaticBradycardiaPacingEvaluationAtTick !== null) { this.log('warning', 'assessment', `symptomatic-bradycardia-pacing-refused-${this.currentTick}`, 'Shared pacing-evaluation intent was already recorded.'); break; }
+          this.symptomaticBradycardiaPacingEvaluationAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `symptomatic-bradycardia-pacing-evaluation-recorded-${this.currentTick}`, 'Individualized cardiology/electrophysiology pacing evaluation and shared-decision intent were recorded around symptom burden, goals, preferences, alternatives, expected quality-of-life aim, and procedural and long-term device tradeoffs. No eligibility conclusion, device, mode, lead, date, procedure, guaranteed benefit, or mortality claim was supplied.', { intentOnly: true, deviceSelected: false, outcomePredicted: false }); break;
+        }
+        if (this.symptomaticBradycardiaPacingEvaluationAtTick === null) { this.log('warning', 'assessment', `symptomatic-bradycardia-handoff-order-refused-${this.currentTick}`, 'Record the shared pacing evaluation before closing the longitudinal plan.'); break; }
+        if (this.symptomaticBradycardiaHandoffAtTick !== null) { this.log('warning', 'assessment', `symptomatic-bradycardia-handoff-refused-${this.currentTick}`, 'The symptom safety net, owner, and follow-up were already recorded.'); break; }
+        this.symptomaticBradycardiaHandoffAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `symptomatic-bradycardia-handoff-recorded-${this.currentTick}`, 'Symptom tracking, locally determined reassessment, a named owner, and urgent triggers for syncope, hypotension, confusion, shock, ischemic discomfort, dyspnea or acute heart failure, worsening hypoxemia, poor perfusion, or pulse loss were recorded. The current rhythm remains sinus bradycardia; symptom, cause, medication, preference, device, and outcome questions remain open.', { ownerNamed: true, rhythmChanged: false, treatmentDelivered: false }); break;
+      }
       case 'emergence-residual-block-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative'
@@ -7180,6 +7221,12 @@ export class AnesthesiaEngine {
         meanArterialMmHg: converted ? 89 : nonresponse ? 85 : 87, coreTemperatureC: 36.8 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'symptomatic-sinus-bradycardia-reassessment')) {
+      crisisState = { ...crisisState, heartRateBpm: 44, respiratoryRateBpm: 16,
+        spo2Percent: 98, etco2MmHg: 36, systolicMmHg: 134, diastolicMmHg: 72,
+        meanArterialMmHg: 93, coreTemperatureC: 36.7 };
+    }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'unstable-narrow-complex-tachycardia')) {
       const cardioverted = this.unstableNarrowTachycardiaCardiovertedAtTick !== null;
       crisisState = { ...crisisState, heartRateBpm: cardioverted ? 92 : 188,
@@ -8094,6 +8141,18 @@ export class AnesthesiaEngine {
               reassessmentAtTick: this.stableWideReassessmentAtTick,
               hemodynamicallyStable: true as const, mechanismProven: false as const,
               learnerTreatmentDelivered: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'symptomatic-sinus-bradycardia-reassessment') ? {
+            symptomaticBradycardiaAssessment: {
+              stabilityAtTick: this.symptomaticBradycardiaStabilityAtTick,
+              contextAtTick: this.symptomaticBradycardiaContextAtTick,
+              correlationAtTick: this.symptomaticBradycardiaCorrelationAtTick,
+              pacingEvaluationAtTick: this.symptomaticBradycardiaPacingEvaluationAtTick,
+              handoffAtTick: this.symptomaticBradycardiaHandoffAtTick,
+              hemodynamicallyStable: true as const, mechanismProven: false as const,
+              treatmentDelivered: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {
