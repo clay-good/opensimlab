@@ -326,6 +326,11 @@ export class AnesthesiaEngine {
   private pulmonaryEmbolismAnticoagulationAtTick: number | null = null;
   private pulmonaryEmbolismDeteriorationAtTick: number | null = null;
   private pulmonaryEmbolismEscalationAtTick: number | null = null;
+  private stemiPatternReviewedAtTick: number | null = null;
+  private stemiPathwayActivatedAtTick: number | null = null;
+  private stemiAspirinAtTick: number | null = null;
+  private stemiAdditionalAntithromboticsAtTick: number | null = null;
+  private stemiReassessedAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1440,6 +1445,86 @@ export class AnesthesiaEngine {
         this.pulmonaryEmbolismEscalationAtTick = this.currentTick;
         this.log('critical', 'assessment', `pulmonary-embolism-escalation-${this.currentTick}`,
           'Immediate pulmonary embolism response-team activation and urgent reperfusion-strategy intent were recorded for Category E1 deterioration. Systemic thrombolysis, catheter therapy, mechanical thrombectomy, and surgical embolectomy require real contraindication review, local expertise, and individualized selection; none is performed or preferred here.', { intentOnly: true, category: 'E1' });
+        break;
+      }
+      case 'stemi-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) =>
+          event.type === 'narrative' && event.target === 'stemi');
+        const valid = ['review-stemi-pattern', 'activate-stemi-pathway',
+          'record-aspirin-load', 'record-p2y12-anticoagulation-intent',
+          'reassess-and-handoff'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `stemi-refused-${this.currentTick}`,
+            supported ? 'The STEMI action was not one of the listed choices. Nothing changed.'
+              : 'The bounded STEMI choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-stemi-pattern') {
+          if (this.stemiPatternReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `stemi-pattern-refused-${this.currentTick}`,
+              'The fixed STEMI pattern has already been reviewed.');
+            break;
+          }
+          this.stemiPatternReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `stemi-pattern-reviewed-${this.currentTick}`,
+            'Fixed assessment: 45 minutes of ongoing central pressure radiating to the left arm with diaphoresis and nausea; HR 104/min, BP 146/92 mmHg, RR 20/min, SpO₂ 95%, warm perfusion, and no heart failure or shock. Authored 12-lead ECG shows ST elevation in V2-V5 with reciprocal inferior ST depression. The bedside lead-II monitor is not the diagnostic 12-lead. No tearing pain, pulse asymmetry, neurologic deficit, pericarditic pattern, pneumothorax pattern, or recent PDE5-inhibitor exposure is authored.');
+          break;
+        }
+        if (this.stemiPatternReviewedAtTick === null) {
+          this.log('warning', 'assessment', `stemi-order-refused-${this.currentTick}`,
+            'Review symptom timing, the fixed 12-lead ECG, hemodynamics, oxygenation, and immediate alternatives first.');
+          break;
+        }
+        if (response === 'activate-stemi-pathway') {
+          if (this.stemiPathwayActivatedAtTick !== null) {
+            this.log('warning', 'assessment', `stemi-pathway-refused-${this.currentTick}`,
+              'The STEMI pathway and primary-PCI intent have already been activated.');
+            break;
+          }
+          this.stemiPathwayActivatedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `stemi-pathway-activated-${this.currentTick}`,
+            'The STEMI pathway, interventional team, and immediate primary-PCI intent were activated without waiting for biomarker results in this declared PCI-capable setting. Transport logistics, angiography, access, lesion anatomy, PCI technique, stent choice, and actual reperfusion are not simulated.', { intentOnly: true, strategy: 'primary-pci' });
+          break;
+        }
+        if (response === 'record-aspirin-load') {
+          if (this.stemiAspirinAtTick !== null) {
+            this.log('warning', 'drug', `stemi-aspirin-refused-${this.currentTick}`,
+              'The initial aspirin loading intent has already been recorded.');
+            break;
+          }
+          this.stemiAspirinAtTick = this.currentTick;
+          this.log('critical', 'drug', `stemi-aspirin-${this.currentTick}`,
+            'An initial oral aspirin loading intent of 162-325 mg was recorded after the authored absence of allergy or absolute contraindication. Formulation, exact dose within the guideline range, administration, absorption, bleeding, and maintenance therapy are outside this vignette.', { intentOnly: true, loadingDoseMinimumMg: 162, loadingDoseMaximumMg: 325 });
+          break;
+        }
+        if (response === 'record-p2y12-anticoagulation-intent') {
+          if (this.stemiAdditionalAntithromboticsAtTick !== null) {
+            this.log('warning', 'drug', `stemi-antithrombotics-refused-${this.currentTick}`,
+              'P2Y12-inhibitor and parenteral-anticoagulation intents have already been recorded.');
+            break;
+          }
+          this.stemiAdditionalAntithromboticsAtTick = this.currentTick;
+          this.log('critical', 'drug', `stemi-antithrombotics-${this.currentTick}`,
+            'P2Y12-inhibitor loading and parenteral-anticoagulation intents were recorded for the authored primary-PCI pathway. Agent selection, dose, contraindications, renal adjustment, prior therapy, laboratory monitoring, bleeding risk, and cath-lab protocol are outside this vignette.', { intentOnly: true });
+          break;
+        }
+        if (this.stemiPathwayActivatedAtTick === null || this.stemiAspirinAtTick === null
+          || this.stemiAdditionalAntithromboticsAtTick === null
+          || this.currentTick <= Math.max(this.stemiPathwayActivatedAtTick,
+            this.stemiAspirinAtTick, this.stemiAdditionalAntithromboticsAtTick)) {
+          this.log('warning', 'assessment', `stemi-reassessment-order-refused-${this.currentTick}`,
+            'Activate the reperfusion pathway and record both antithrombotic intents, then allow the next engine tick before reassessment.');
+          break;
+        }
+        if (this.stemiReassessedAtTick !== null) {
+          this.log('warning', 'assessment', `stemi-reassessment-refused-${this.currentTick}`,
+            'The fixed pre-reperfusion reassessment and handoff have already been recorded.');
+          break;
+        }
+        this.stemiReassessedAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `stemi-reassessed-${this.currentTick}`,
+          'Pre-reperfusion reassessment: ongoing pain, HR 104/min, BP 146/92 mmHg, SpO₂ 95% on room air, warm perfusion, sinus rhythm, and no authored ventricular arrhythmia, heart failure, shock, or mechanical complication. Routine oxygen remains unselected because saturation is at least 90%. A time-stamped handoff to the activated reperfusion team was recorded; procedure and outcome remain outside this lesson.');
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -4138,6 +4223,11 @@ export class AnesthesiaEngine {
         diastolicMmHg: deteriorated ? 50 : 70,
         meanArterialMmHg: deteriorated ? 59 : 84 };
     }
+    if (this.scenario.timeline.some((event) =>
+      event.type === 'narrative' && event.target === 'stemi')) {
+      crisisState = { ...crisisState, heartRateBpm: 104, respiratoryRateBpm: 20,
+        spo2Percent: 95, systolicMmHg: 146, diastolicMmHg: 92, meanArterialMmHg: 110 };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -4454,6 +4544,13 @@ export class AnesthesiaEngine {
           anticoagulationAtTick: this.pulmonaryEmbolismAnticoagulationAtTick,
           deteriorationAtTick: this.pulmonaryEmbolismDeteriorationAtTick,
           escalationAtTick: this.pulmonaryEmbolismEscalationAtTick,
+        },
+        stemiAssessment: {
+          patternReviewedAtTick: this.stemiPatternReviewedAtTick,
+          pathwayActivatedAtTick: this.stemiPathwayActivatedAtTick,
+          aspirinAtTick: this.stemiAspirinAtTick,
+          additionalAntithromboticsAtTick: this.stemiAdditionalAntithromboticsAtTick,
+          reassessedAtTick: this.stemiReassessedAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

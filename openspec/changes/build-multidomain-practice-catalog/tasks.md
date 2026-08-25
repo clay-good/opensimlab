@@ -201,12 +201,12 @@ credited toward the catalog until every item in the completion contract passes.
 - [x] Wave A: migrate and complete 39 anesthesia scenarios — all 39 are authored, registered,
   completion-audited, prerendered, available offline, and verified at 320 px.
 - [ ] Wave B: complete 25 emergency-medicine and 24 critical-care scenarios.
-  Emergency Medicine is available with 10 of 25 scenarios. These first 10 — undifferentiated,
+  Emergency Medicine is available with 11 of 25 scenarios. These first 11 — undifferentiated,
   septic, hemorrhagic,
   tension-pneumothorax, cardiac-tamponade, community anaphylaxis, adult asthma, COPD exacerbation,
-  acute pulmonary edema, and pulmonary embolism with deterioration reuse the shared deterministic
-  session, monitor, transcript, action, and debrief frame; all 10 are completion-audited,
-  prerendered, available offline, and explicitly bounded. The remaining 15
+  acute pulmonary edema, pulmonary embolism with deterioration, and STEMI reuse the shared
+  deterministic session, monitor, transcript, action, and debrief frame; all 11 are
+  completion-audited, prerendered, available offline, and explicitly bounded. The remaining 14
   titles are scope only.
 - [ ] Wave C: complete 17 cardiology and 15 respiratory-medicine scenarios.
 - [ ] Wave D: complete 16 pediatric, 15 obstetric, and 11 neonatal scenarios.

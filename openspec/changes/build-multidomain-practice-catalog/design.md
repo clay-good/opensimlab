@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with 10 playable, completion-audited scenarios. The remaining
-15 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with 11 playable, completion-audited scenarios. The remaining
+14 planned titles remain descriptive scope only and do not enter playable counts before their full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -328,6 +328,22 @@ records urgent reperfusion-strategy intent without selecting a modality. Imaging
 laboratory acquisition, complete risk scoring, drug selection or dosing, bleeding and reperfusion
 contraindication adjudication, airway technique, thrombolysis, thrombectomy or embolectomy skill,
 transfer, disposition, local protocol, complications, and outcome remain outside the vignette.
+
+### Wave B slice 11: STEMI
+
+The eleventh emergency-medicine slice adds a hemodynamically stable, time-critical anterior-STEMI
+presentation in a declared PCI-capable hospital. Learners integrate 45 minutes of ongoing ischemic
+symptoms, a fixed diagnostic 12-lead ECG, pressure, perfusion, oxygenation, and immediate mimics;
+activate the STEMI system and primary-PCI intent without waiting for biomarkers; record the current
+guideline aspirin loading range plus dose-free P2Y12-inhibitor and parenteral-anticoagulation intents;
+then reassess symptoms, circulation, rhythm, oxygenation, and complications before handoff.
+
+The focused tray explicitly keeps routine oxygen out when the authored SpO2 is 95% and distinguishes
+the diagnostic 12-lead statement from the bedside lead-II monitor. Test acquisition, live ECG
+interpretation, complete contraindication and bleeding-risk review, individualized drug selection,
+nitrate or opioid decisions, non-PCI-capable reperfusion strategy, PCI technique, reperfusion,
+arrhythmia, shock, mechanical complications, transfer, disposition, secondary prevention, local
+protocol, and outcome remain outside the vignette.
 
 #### Critical care: 24
 

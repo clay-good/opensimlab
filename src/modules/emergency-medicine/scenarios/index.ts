@@ -9,6 +9,7 @@ import { ADULT_ASTHMA } from './adult-asthma';
 import { COPD_EXACERBATION } from './copd-exacerbation';
 import { ACUTE_PULMONARY_EDEMA } from './acute-pulmonary-edema';
 import { PULMONARY_EMBOLISM_DETERIORATION } from './pulmonary-embolism-deterioration';
+import { STEMI } from './stemi';
 
 export const EMERGENCY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   UNDIFFERENTIATED_SHOCK,
@@ -21,6 +22,7 @@ export const EMERGENCY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   COPD_EXACERBATION,
   ACUTE_PULMONARY_EDEMA,
   PULMONARY_EMBOLISM_DETERIORATION,
+  STEMI,
 ];
 export const DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID = UNDIFFERENTIATED_SHOCK.metadata.id;
 

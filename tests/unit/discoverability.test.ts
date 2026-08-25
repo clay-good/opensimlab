@@ -245,6 +245,9 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
     });
     expect(routeFor('/emergency-medicine/scenario/pulmonary-embolism-deterioration'))
       .toMatchObject({ indexable: true, heading: 'Pulmonary embolism with deterioration' });
+    expect(routeFor('/emergency-medicine/scenario/stemi')).toMatchObject({
+      indexable: true, heading: 'STEMI',
+    });
   });
 
   it('Requirement: Modules Declare Their Own Physiological Timescale', () => {

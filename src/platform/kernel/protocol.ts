@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 45 reports bounded deteriorating-PE state. */
-export const WORKER_PROTOCOL_VERSION = 45;
+/** Bumped whenever the message shape changes incompatibly. Version 46 reports bounded STEMI state. */
+export const WORKER_PROTOCOL_VERSION = 46;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -327,6 +327,13 @@ export interface EquipmentSnapshot {
       readonly anticoagulationAtTick: number | null;
       readonly deteriorationAtTick: number | null;
       readonly escalationAtTick: number | null;
+    };
+    readonly stemiAssessment?: {
+      readonly patternReviewedAtTick: number | null;
+      readonly pathwayActivatedAtTick: number | null;
+      readonly aspirinAtTick: number | null;
+      readonly additionalAntithromboticsAtTick: number | null;
+      readonly reassessedAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

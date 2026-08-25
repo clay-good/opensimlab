@@ -2537,6 +2537,49 @@ export function objectiveFindings(
         atTick: escalation?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-stemi-pattern', 'activate-stemi-reperfusion',
+      'record-stemi-antithrombotic-intent', 'reassess-and-handoff-stemi'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) =>
+        event.type === 'narrative' && event.target === 'stemi');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The STEMI vignette was not active.' } satisfies ObjectiveFinding;
+      const pattern = log.find((event) => event.eventId.startsWith('stemi-pattern-reviewed-'));
+      const pathway = log.find((event) => event.eventId.startsWith('stemi-pathway-activated-'));
+      const aspirin = log.find((event) => event.eventId.startsWith('stemi-aspirin-'));
+      const antithrombotics = log.find((event) => event.eventId.startsWith('stemi-antithrombotics-'));
+      const reassessment = log.find((event) => event.eventId.startsWith('stemi-reassessed-'));
+      if (objective.id === 'recognize-stemi-pattern') return {
+        ...base, outcome: pattern ? 'met' : 'not-met',
+        finding: pattern
+          ? 'Symptoms, timing, fixed 12-lead ECG, hemodynamics, oxygenation, and immediate alternatives were reviewed together.'
+          : 'The fixed time-critical STEMI pattern was not reviewed.',
+        atTick: pattern?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'activate-stemi-reperfusion') {
+        const ordered = pattern && pathway && pattern.tick <= pathway.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'The STEMI system and primary-PCI intent were activated after pattern review without waiting for biomarkers.'
+            : 'Reperfusion-system activation was absent or preceded pattern review.',
+          atTick: pathway?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'record-stemi-antithrombotic-intent') {
+        const complete = pattern && aspirin && antithrombotics
+          && pattern.tick <= Math.min(aspirin.tick, antithrombotics.tick);
+        return { ...base, outcome: complete ? 'met' : 'not-met',
+          finding: complete
+            ? 'The aspirin loading range and dose-free P2Y12/anticoagulation intents followed pattern review without inventing individualized selections.'
+            : 'The bounded antithrombotic sequence was incomplete or out of order.',
+          atTick: Math.max(aspirin?.tick ?? 0, antithrombotics?.tick ?? 0) } satisfies ObjectiveFinding;
+      }
+      const ordered = pathway && aspirin && antithrombotics && reassessment
+        && Math.max(pathway.tick, aspirin.tick, antithrombotics.tick) <= reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met',
+        finding: ordered
+          ? 'Symptoms, pressure, perfusion, rhythm, oxygenation, and complications were reassessed before the declared reperfusion handoff.'
+          : 'Pathway preparation and serial pre-reperfusion reassessment were incomplete or out of order.',
+        atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

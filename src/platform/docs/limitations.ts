@@ -459,6 +459,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['pulmonary-embolism-deterioration'],
   },
   {
+    id: 'stemi-findings-are-authored',
+    headline: 'The symptom history, diagnostic 12-lead ECG, pressure, oxygenation, mimics, and PCI-capable setting are fixed teaching facts.',
+    simplification: 'One authored presentation supplies the ECG and clinical pattern without test acquisition, lead-placement error, live interpretation, evolving ischemia, biomarkers, imaging, diagnostic uncertainty, or competing data.',
+    whereItMisleads: 'Treating the bedside lead-II waveform as a diagnostic 12-lead, using the case as proof of STEMI, or assuming all occlusion patterns and mimics look this way.',
+    correctUnderstanding: 'Acquire and interpret a real 12-lead promptly, integrate the entire clinical picture, repeat testing when needed, and pursue urgent reperfusion for an eligible STEMI pattern.',
+    briefIn: ['stemi'],
+  },
+  {
+    id: 'stemi-reperfusion-and-antithrombotics-are-intent-controls',
+    headline: 'Pathway activation, primary PCI, aspirin, P2Y12 inhibition, and anticoagulation are bounded intents, not orders or treatment selectors.',
+    simplification: 'The vignette records a guideline aspirin loading range and otherwise dose-free intents. It does not activate a real team, deliver medication, select agents, assess bleeding risk, perform transport, or open an artery.',
+    whereItMisleads: 'Reading a click as treatment delivery, copying the range without checking contraindications and prior therapy, or assuming activation guarantees timely reperfusion.',
+    correctUnderstanding: 'Real STEMI care requires immediate local system activation, verified medication delivery, individualized antithrombotic choices, continuous monitoring, and measured treatment times.',
+    briefIn: ['stemi'],
+  },
+  {
+    id: 'no-stemi-procedure-complication-disposition-or-outcome',
+    headline: 'The lesson ends at pre-reperfusion handoff and does not model PCI, fibrinolysis, complications, disposition, secondary prevention, or outcome.',
+    simplification: 'Angiography, access, lesion anatomy, stents, reperfusion, infarct size, arrhythmia, shock, heart failure, mechanical complications, transfer, admission, rehabilitation, and longitudinal care are absent.',
+    whereItMisleads: 'Assuming stable authored vital signs guarantee an uncomplicated course, that handoff completes treatment, or that this PCI-capable pathway applies unchanged when timely PCI is unavailable.',
+    correctUnderstanding: 'STEMI remains time-critical through reperfusion and subsequent monitored care; strategy and rescue depend on patient factors, timing, contraindications, and regional capability.',
+    briefIn: ['stemi'],
+  },
+  {
     id: 'malignant-hyperthermia-is-a-teaching-model',
     headline: 'The hypermetabolic carbon-dioxide, heart-rate, rigidity, and heat trajectories are bounded teaching models, not individualized predictions or a diagnostic test.',
     simplification: 'One latent severity drives excess carbon-dioxide production, tachycardia, '

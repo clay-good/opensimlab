@@ -259,6 +259,13 @@ export interface ActionCockpitProps {
       readonly deteriorationAtTick: number | null;
       readonly escalationAtTick: number | null;
     };
+    readonly stemiAssessment?: {
+      readonly patternReviewedAtTick: number | null;
+      readonly pathwayActivatedAtTick: number | null;
+      readonly aspirinAtTick: number | null;
+      readonly additionalAntithromboticsAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -408,6 +415,10 @@ export interface ActionCockpitProps {
       | 'record-therapeutic-anticoagulation-intent' | 'reassess-for-deterioration'
       | 'activate-pert-and-record-reperfusion-intent',
   ) => void;
+  readonly onStemiResponse?: (
+    action: 'review-stemi-pattern' | 'activate-stemi-pathway' | 'record-aspirin-load'
+      | 'record-p2y12-anticoagulation-intent' | 'reassess-and-handoff',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -507,6 +518,9 @@ export function crisisResponseAvailability(
     hasPulmonaryEmbolismResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'pulmonary-embolism-deterioration',
     ),
+    hasStemiResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'stemi',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -563,6 +577,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'copd-exacerbation')
       || (event.type === 'narrative' && event.target === 'acute-pulmonary-edema')
       || (event.type === 'narrative' && event.target === 'pulmonary-embolism-deterioration')
+      || (event.type === 'narrative' && event.target === 'stemi')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -579,7 +594,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasUndifferentiatedShockResponse, hasSepticShockResponse, hasHemorrhagicShockResponse,
     hasCardiacTamponadeResponse, hasEmergencyAnaphylaxisResponse, hasAdultAsthmaResponse,
     hasCopdExacerbationResponse,
-    hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse,
+    hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -611,8 +626,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPostoperativeHandoffResponse || hasUndifferentiatedShockResponse
     || hasSepticShockResponse || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
     || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse || hasCopdExacerbationResponse
-    || hasAcutePulmonaryEdemaResponse || hasPulmonaryEmbolismResponse;
-  const responseTray = hasPulmonaryEmbolismResponse
+    || hasAcutePulmonaryEdemaResponse || hasPulmonaryEmbolismResponse || hasStemiResponse;
+  const responseTray = hasStemiResponse
+    ? { id: 'crisis', label: 'STEMI pathway' } as const
+    : hasPulmonaryEmbolismResponse
     ? { id: 'crisis', label: 'PE deterioration' } as const
     : hasAcutePulmonaryEdemaResponse
     ? { id: 'crisis', label: 'Pulmonary edema' } as const
@@ -657,10 +674,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
       || hasCopdExacerbationResponse || hasAcutePulmonaryEdemaResponse
-      || hasPulmonaryEmbolismResponse)
+      || hasPulmonaryEmbolismResponse || hasStemiResponse)
       && (!hasNonMaternalCrisisResponse || hasEmergencyAnaphylaxisResponse
         || hasAdultAsthmaResponse || hasCopdExacerbationResponse
-        || hasAcutePulmonaryEdemaResponse || hasPulmonaryEmbolismResponse)));
+        || hasAcutePulmonaryEdemaResponse || hasPulmonaryEmbolismResponse
+        || hasStemiResponse)));
   const trays = hasCrisisResponse
     ? focusedEmergencyAssessment ? [responseTray]
       : props.scenario.formulary.length === 0 ? [responseTray, ...TRAYS] : [...TRAYS, responseTray]
@@ -980,6 +998,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 assessment={props.resuscitation.pulmonaryEmbolismAssessment}
                 onAction={props.onPulmonaryEmbolismResponse ?? (() => {})}
               />
+            )}
+            {hasStemiResponse && (
+              <StemiTray assessment={props.resuscitation.stemiAssessment}
+                onAction={props.onStemiResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -2614,6 +2636,67 @@ function PulmonaryEmbolismTray({ assessment, onAction }: {
           </Button>
         </div>
         <p className="field__hint">No anticoagulant or reperfusion dose, contraindication decision, airway technique, procedure selection, transfer, disposition, or outcome is offered.</p>
+      </section>
+    </div>
+  );
+}
+
+function StemiTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['stemiAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onStemiResponse']>;
+}) {
+  const reviewed = assessment?.patternReviewedAtTick != null;
+  const activated = assessment?.pathwayActivatedAtTick != null;
+  const aspirin = assessment?.aspirinAtTick != null;
+  const antithrombotics = assessment?.additionalAntithromboticsAtTick != null;
+  const reassessed = assessment?.reassessedAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="stemi-pattern-title">
+        <div id="stemi-pattern-title" className="syringe__name">See the pattern, start the clock</div>
+        <Badge kind="teaching">Fixed PCI-capable ED</Badge>
+        <div className="syringe__meta">45 min · fixed 12-lead · pressure · perfusion · mimics</div>
+        <p className="syringe__remaining" role="status">
+          {activated ? 'STEMI pathway + primary PCI intent active'
+            : reviewed ? 'Anterior STEMI pattern reviewed · pathway open'
+              : 'Time-critical pattern review pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={reviewed}
+            onClick={() => onAction('review-stemi-pattern')}>
+            Review symptoms + fixed 12-lead
+          </Button>
+          <Button className="crisis-drug__action" disabled={!reviewed || activated}
+            onClick={() => onAction('activate-stemi-pathway')}>
+            Activate STEMI pathway + primary PCI
+          </Button>
+        </div>
+        <p className="field__hint">The diagnostic 12-lead and PCI-capable setting are authored. The bedside lead-II monitor is not a live 12-lead interpreter.</p>
+      </section>
+      <section className="syringe" aria-labelledby="stemi-treatment-title">
+        <div id="stemi-treatment-title" className="syringe__name">Protect the pathway, then hand off clearly</div>
+        <div className="syringe__meta">Aspirin · P2Y12 · anticoagulation · serial complications</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'Reassessed + reperfusion handoff recorded · BP 146/92'
+            : activated && aspirin && antithrombotics ? 'Immediate sequence complete · reassess now'
+              : 'Parallel pathway preparation pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!reviewed || aspirin}
+            onClick={() => onAction('record-aspirin-load')}>
+            Record aspirin load · 162–325 mg
+          </Button>
+          <Button className="crisis-drug__action" disabled={!reviewed || antithrombotics}
+            onClick={() => onAction('record-p2y12-anticoagulation-intent')}>
+            Record P2Y12 + anticoagulation intent
+          </Button>
+          <Button className="crisis-drug__action"
+            disabled={!activated || !aspirin || !antithrombotics || reassessed}
+            onClick={() => onAction('reassess-and-handoff')}>
+            Reassess + hand off for reperfusion
+          </Button>
+        </div>
+        <p className="field__hint">SpO₂ is 95%, so routine oxygen is not selected. No agent selection, individualized dose, nitrate or opioid pathway, PCI technique, complication treatment, disposition, or outcome is offered.</p>
       </section>
     </div>
   );

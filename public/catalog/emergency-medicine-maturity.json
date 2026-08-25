@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "emergency-medicine",
-  "recordCount": 10,
+  "recordCount": 11,
   "records": [
     {
       "recordId": "scenario:undifferentiated-shock@0.1.0",
@@ -111,6 +111,17 @@
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#pulmonary-embolism-deterioration@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#pulmonary-embolism-deterioration@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:stemi@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "stemi",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/emergency-medicine-completion-audit.json#stemi@0.1.0",
+        "/catalog/emergency-medicine-quality-audit.json#stemi@0.1.0"
       ]
     }
   ]
