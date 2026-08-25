@@ -14,6 +14,7 @@ import { PNEUMOTHORAX_UNDER_POSITIVE_PRESSURE } from '@anesthesia/scenarios/pneu
 import { ASPIRATION_RISK_RECOGNITION } from '@anesthesia/scenarios/aspiration-risk-recognition';
 import { EMERGENCE_WITH_RESIDUAL_BLOCKADE } from '@anesthesia/scenarios/emergence-with-residual-blockade';
 import { DELAYED_EMERGENCE_DIFFERENTIAL } from '@anesthesia/scenarios/delayed-emergence-differential';
+import { EXTUBATION_READINESS } from '@anesthesia/scenarios/extubation-readiness';
 import { UNITED_KINGDOM, UNITED_STATES } from '@anesthesia/region/profiles';
 
 const CRISIS_SCENARIO = {
@@ -167,6 +168,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       hasAspirationRiskResponse: false,
       hasEmergenceResidualBlockResponse: false,
       hasDelayedEmergenceResponse: false,
+      hasExtubationReadinessResponse: false,
       hasBronchospasmResponse: false,
     });
     renderCockpit(UNITED_STATES, vi.fn(), {
@@ -556,6 +558,68 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
     act(() => button('Confirm choice')!.click());
     expect(onDelayedEmergenceAssessment)
       .toHaveBeenLastCalledWith('urgent-neurologic-evaluation');
+  });
+
+  it('integrates extubation checkpoints before confirming awake readiness', () => {
+    const onExtubationReadinessAssessment = vi.fn();
+    const base = { scenario: EXTUBATION_READINESS, onExtubationReadinessAssessment };
+    const assessment = (values: Partial<NonNullable<
+      ActionCockpitProps['resuscitation']['extubationReadinessAssessment']
+    >> = {}) => ({
+      quantitativeRecoveryReviewedAtTick: null, awakeAirwayReviewedAtTick: null,
+      gasExchangeReviewedAtTick: null, airwayPlanReviewedAtTick: null,
+      decision: null, decidedAtTick: null, ...values,
+    } as const);
+    const renderAssessment = (values = assessment()) => renderCockpit(
+      UNITED_STATES, vi.fn(), {
+        ...base,
+        resuscitation: {
+          epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+          lastEpinephrineTick: null, crystalloidTotalMl: 0,
+          dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
+          lastDantroleneTick: null, activeCooling: false,
+          extubationReadinessAssessment: values,
+        },
+      },
+    );
+
+    renderAssessment();
+    expect(button('Extubation readiness')?.getAttribute('aria-selected')).toBe('true');
+    expect(button('Review awake airway')?.disabled).toBe(true);
+    act(() => button('Review quantitative recovery')!.click());
+    expect(onExtubationReadinessAssessment).toHaveBeenCalledWith('review-quantitative-recovery');
+
+    renderAssessment(assessment({ quantitativeRecoveryReviewedAtTick: 1 }));
+    expect(container.textContent).toContain('TOF ratio 0.93 · necessary, not sufficient');
+    act(() => button('Review awake airway')!.click());
+    renderAssessment(assessment({
+      quantitativeRecoveryReviewedAtTick: 1, awakeAirwayReviewedAtTick: 2,
+    }));
+    expect(container.textContent).toContain(
+      'Eyes open · follows commands · strong cough · secretions cleared',
+    );
+    act(() => button('Review gas exchange')!.click());
+    renderAssessment(assessment({
+      quantitativeRecoveryReviewedAtTick: 1, awakeAirwayReviewedAtTick: 2,
+      gasExchangeReviewedAtTick: 3,
+    }));
+    expect(container.textContent).toContain(
+      'Spontaneous 14/min · 420 mL · EtCO₂ 39 · SpO₂ 98% on FiO₂ 0.40',
+    );
+    act(() => button('Review airway risk + rescue')!.click());
+    renderAssessment(assessment({
+      quantitativeRecoveryReviewedAtTick: 1, awakeAirwayReviewedAtTick: 2,
+      gasExchangeReviewedAtTick: 3, airwayPlanReviewedAtTick: 4,
+    }));
+    expect(container.textContent).toContain(
+      'Low risk · skilled help + oxygen + monitoring + reintubation plan available',
+    );
+    expect(container.textContent).not.toContain('Packed red cells use a bounded adult-only');
+    act(() => button('Ready for planned awake extubation')!.click());
+    expect(container.textContent).toContain('Record readiness after all declared checkpoints?');
+    act(() => button('Confirm choice')!.click());
+    expect(onExtubationReadinessAssessment)
+      .toHaveBeenLastCalledWith('ready-for-planned-awake-extubation');
   });
 
   it('offers only bounded presets, no hostile free-dose or route field, inside the phone scroll area', () => {

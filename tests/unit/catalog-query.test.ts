@@ -51,6 +51,7 @@ describe('scenario catalog query', () => {
     expect(matches.map((scenario) => scenario.metadata.id)).toEqual([
       'routine-induction', 'rapid-desaturation', 'laryngospasm-after-airway-stimulation',
       'difficult-airway-supraglottic-rescue', 'repeated-laryngoscopy-harm',
+      'extubation-readiness',
     ]);
   });
 });

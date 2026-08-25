@@ -39,7 +39,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.30';
+export const ENGINE_VERSION = '0.1.0-alpha.31';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -307,6 +307,13 @@ export class AnesthesiaEngine {
   private delayedEmergenceNeurologicExamAtTick: number | null = null;
   private delayedEmergenceEscalation: 'urgent-neurologic-evaluation' | 'continue-routine-recovery' | null = null;
   private delayedEmergenceEscalatedAtTick: number | null = null;
+  private extubationQuantitativeRecoveryReviewedAtTick: number | null = null;
+  private extubationAwakeAirwayReviewedAtTick: number | null = null;
+  private extubationGasExchangeReviewedAtTick: number | null = null;
+  private extubationAirwayPlanReviewedAtTick: number | null = null;
+  private extubationReadinessDecision: 'ready-for-planned-awake-extubation'
+    | 'continue-support-and-reassess' | null = null;
+  private extubationReadinessDecidedAtTick: number | null = null;
   /** Static starting snapshot for the bounded emergence decision vignette. */
   private readonly configuredResidualRocuroniumCe: number;
   /** Bounded teaching opposition to the current rocuronium effect-site concentration. */
@@ -1028,6 +1035,117 @@ export class AnesthesiaEngine {
             escalation: this.delayedEmergenceEscalation,
             airwayRemainedIntubated: this.patient.airway.intubated,
             ventilationRemainedDelivered: this.ventilator.delivering,
+          });
+        break;
+      }
+      case 'extubation-readiness-assessment': {
+        const supported = this.scenario.timeline.some(
+          (event) => event.type === 'narrative' && event.target === 'extubation-readiness',
+        );
+        const response = String(action.payload.action ?? '');
+        const valid = [
+          'review-quantitative-recovery', 'review-awake-airway-protection',
+          'review-spontaneous-gas-exchange', 'review-airway-risk-and-rescue',
+          'ready-for-planned-awake-extubation', 'continue-support-and-reassess',
+        ].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `extubation-readiness-refused-${this.currentTick}`,
+            supported
+              ? 'The extubation-readiness action was not one of the listed choices. Nothing changed.'
+              : 'The bounded extubation-readiness assessment is available only in its declared lesson.');
+          break;
+        }
+        if (response === 'review-quantitative-recovery') {
+          if (this.extubationQuantitativeRecoveryReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `extubation-recovery-refused-${this.currentTick}`,
+              'Quantitative neuromuscular recovery has already been reviewed.');
+            break;
+          }
+          this.extubationQuantitativeRecoveryReviewedAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `extubation-recovery-reviewed-${this.currentTick}`,
+            'Quantitative review: train-of-four ratio 0.93 with four twitches. This clears the neuromuscular checkpoint but does not establish complete extubation readiness.', {
+              trainOfFourRatio: 0.93, trainOfFourCount: 4,
+            });
+          break;
+        }
+        if (this.extubationQuantitativeRecoveryReviewedAtTick === null) {
+          this.log('warning', 'assessment', `extubation-readiness-order-refused-${this.currentTick}`,
+            'Review quantitative neuromuscular recovery before the broader readiness assessment.');
+          break;
+        }
+        if (response === 'review-awake-airway-protection') {
+          if (this.extubationAwakeAirwayReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `extubation-awake-airway-refused-${this.currentTick}`,
+              'Awake response and airway-protection findings have already been reviewed.');
+            break;
+          }
+          this.extubationAwakeAirwayReviewedAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `extubation-awake-airway-reviewed-${this.currentTick}`,
+            'Awake-airway review: sustained eye opening and command following are present, cough is strong, and oropharyngeal secretions have been cleared.', {
+              sustainedEyeOpening: true, followsCommands: true,
+              strongCough: true, secretionsCleared: true,
+            });
+          break;
+        }
+        if (response === 'review-spontaneous-gas-exchange') {
+          if (this.extubationAwakeAirwayReviewedAtTick === null) {
+            this.log('warning', 'assessment', `extubation-gas-exchange-order-refused-${this.currentTick}`,
+              'Review awake response and airway protection before gas-exchange readiness.');
+            break;
+          }
+          if (this.extubationGasExchangeReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `extubation-gas-exchange-refused-${this.currentTick}`,
+              'The bounded spontaneous-breathing and gas-exchange findings have already been reviewed.');
+            break;
+          }
+          this.extubationGasExchangeReviewedAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `extubation-gas-exchange-reviewed-${this.currentTick}`,
+            'Bounded readiness findings: regular spontaneous breathing at 14/min, average tidal volume 420 mL, end-tidal carbon dioxide 39 mmHg, and oxygen saturation 98% on inspired oxygen 0.40.', {
+              spontaneousRespiratoryRateBpm: 14, averageTidalVolumeMl: 420,
+              endTidalCarbonDioxideMmHg: 39, spo2Percent: 98, fio2: 0.4,
+            });
+          break;
+        }
+        if (response === 'review-airway-risk-and-rescue') {
+          if (this.extubationGasExchangeReviewedAtTick === null) {
+            this.log('warning', 'assessment', `extubation-airway-plan-order-refused-${this.currentTick}`,
+              'Review awake-airway and gas-exchange readiness before final airway risk and rescue planning.');
+            break;
+          }
+          if (this.extubationAirwayPlanReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `extubation-airway-plan-refused-${this.currentTick}`,
+              'Airway risk and the rescue plan have already been reviewed.');
+            break;
+          }
+          this.extubationAirwayPlanReviewedAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `extubation-airway-plan-reviewed-${this.currentTick}`,
+            'Low-risk plan review: mask ventilation and intubation were uncomplicated; no airway surgery, edema, bleeding, or distortion is declared; oxygen, monitoring, skilled help, and a reintubation plan are available.', {
+              lowRisk: true, airwayChangeDeclared: false,
+              skilledHelpAvailable: true, reintubationPlanReviewed: true,
+            });
+          break;
+        }
+        if (this.extubationAirwayPlanReviewedAtTick === null) {
+          this.log('warning', 'assessment', `extubation-decision-order-refused-${this.currentTick}`,
+            'Complete the quantitative, awake-airway, gas-exchange, and airway-plan reviews before deciding.');
+          break;
+        }
+        if (this.extubationReadinessDecision !== null) {
+          this.log('warning', 'assessment', `extubation-decision-refused-${this.currentTick}`,
+            'An extubation-readiness decision has already been recorded for this attempt.');
+          break;
+        }
+        this.extubationReadinessDecision = response === 'ready-for-planned-awake-extubation'
+          ? 'ready-for-planned-awake-extubation' : 'continue-support-and-reassess';
+        this.extubationReadinessDecidedAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `extubation-decision-${this.extubationReadinessDecision}-${this.currentTick}`,
+          this.extubationReadinessDecision === 'ready-for-planned-awake-extubation'
+            ? 'Readiness for a planned awake extubation recorded after all declared checkpoints. The tube remains in place because removal and post-extubation outcome are not simulated.'
+            : 'Continued support and reassessment recorded despite all declared low-risk awake-extubation checkpoints being present.', {
+            decision: this.extubationReadinessDecision,
+            airwayRemainedIntubated: this.patient.airway.intubated,
+            ventilationRemainedDelivered: this.ventilator.delivering,
+            tubeRemovalSimulated: false,
           });
         break;
       }
@@ -2745,6 +2863,15 @@ export class AnesthesiaEngine {
           neurologicExamAtTick: this.delayedEmergenceNeurologicExamAtTick,
           escalation: this.delayedEmergenceEscalation,
           escalatedAtTick: this.delayedEmergenceEscalatedAtTick,
+        },
+        extubationReadinessAssessment: {
+          quantitativeRecoveryReviewedAtTick:
+            this.extubationQuantitativeRecoveryReviewedAtTick,
+          awakeAirwayReviewedAtTick: this.extubationAwakeAirwayReviewedAtTick,
+          gasExchangeReviewedAtTick: this.extubationGasExchangeReviewedAtTick,
+          airwayPlanReviewedAtTick: this.extubationAirwayPlanReviewedAtTick,
+          decision: this.extubationReadinessDecision,
+          decidedAtTick: this.extubationReadinessDecidedAtTick,
         },
         neuromuscularReversalFraction: this.neuromuscularReversalFraction,
         postTetanicCount: this.postTetanicCount,

@@ -26,7 +26,7 @@ describe('Requirement: capnography sampling-line obstruction is a distinct bound
   it('validates, registers, maps every objective, and declares the display-only boundary', () => {
     expect(validateScenario(SCENARIO)).toEqual([]);
     expect(SCENARIOS).toContain(SCENARIO);
-    expect(SCENARIOS).toHaveLength(32);
+    expect(SCENARIOS).toHaveLength(33);
     expect(SCENARIO.timeline).toContainEqual(expect.objectContaining({
       type: 'artifact', target: 'sampling-line-obstruction', atTick: ONSET,
     }));

@@ -41,6 +41,7 @@ import { PNEUMOTHORAX_UNDER_POSITIVE_PRESSURE } from './pneumothorax-under-posit
 import { ASPIRATION_RISK_RECOGNITION } from './aspiration-risk-recognition';
 import { EMERGENCE_WITH_RESIDUAL_BLOCKADE } from './emergence-with-residual-blockade';
 import { DELAYED_EMERGENCE_DIFFERENTIAL } from './delayed-emergence-differential';
+import { EXTUBATION_READINESS } from './extubation-readiness';
 
 export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_INDUCTION,
@@ -75,6 +76,7 @@ export const SCENARIOS: readonly Scenario[] = [
   ASPIRATION_RISK_RECOGNITION,
   EMERGENCE_WITH_RESIDUAL_BLOCKADE,
   DELAYED_EMERGENCE_DIFFERENTIAL,
+  EXTUBATION_READINESS,
 ];
 
 /** The scenario a learner meets first. */

@@ -125,9 +125,9 @@ holds.
 
 The `/anesthesia` catalog keeps discovery local and linkable: search covers the patient, problem,
 procedure, and objectives, while difficulty, duration, and maturity filters are encoded in the URL.
-The unfiltered prerender still contains all 32 current scenarios, so filtering adds no telemetry and
+The unfiltered prerender still contains all 33 current scenarios, so filtering adds no telemetry and
 does not trade away no-script access or scenario-page indexing.
-`/catalog/anesthesia-catalog.json` publishes the same 32 exact-version entries, filters, objectives,
+`/catalog/anesthesia-catalog.json` publishes the same 33 exact-version entries, filters, objectives,
 and normalized search text for static integrations; its schema and data are included in the offline
 bundle and fail the build if they drift from the scenario registry or completion audit.
 The catalog also offers all 10 authored preparation goals from the product design. Each versioned
@@ -330,6 +330,10 @@ learner preserves the airway and ventilation, reviews common recorded pharmacolo
 categories in order, finds a new lateralizing examination pattern, and escalates urgently. The
 fixed findings do not simulate testing, establish a neurologic diagnosis, teach treatment, or
 predict outcome.
+Slice 36 adds the thirty-third authored scenario, extubation readiness. A static quantitative ratio
+of 0.93 opens, but cannot complete, an ordered awake-airway, spontaneous-gas-exchange, airway-risk,
+and rescue-plan review. The expert path records readiness for a planned awake extubation while the
+tube and delivered ventilation remain in place; removal, technique, rescue, and outcome are absent.
 
 ## Running it
 

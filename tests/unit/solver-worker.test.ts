@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: delayed-emergence state has protocol version 28', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(28);
+  it('Scenario: extubation-readiness state has protocol version 29', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(29);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

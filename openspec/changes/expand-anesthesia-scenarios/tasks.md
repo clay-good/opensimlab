@@ -532,3 +532,17 @@
   inspection, and full CI.
 - [ ] Add consciousness measurement, drug concentrations, reversal dosing, test acquisition,
   imaging, diagnostic certainty, treatment, team workflow, transfer, complications, or outcome.
+
+## Slice 36: bounded extubation readiness
+
+- [x] Check in an evidence brief covering quantitative recovery, awake response, spontaneous
+  ventilation, airway risk stratification, rescue planning, and unsafe inference boundaries.
+- [x] Add a thirty-third authored low-risk adult scenario with a static ratio above 0.90 and fixed
+  awake-airway, gas-exchange, airway-risk, and resource findings.
+- [x] Require ordered review of all four domains before a confirmed awake-extubation readiness decision.
+- [x] Keep the tube and delivered ventilation in place, score accepted events only, and reject
+  unsupported, out-of-order, duplicate, and unknown requests.
+- [x] Complete curriculum mapping, preparation path, limitations, catalog, SEO, responsive browser
+  inspection, and full CI.
+- [ ] Add measured examination, tube removal, extubation technique, deep or at-risk strategies,
+  rescue devices, reintubation, communication, post-extubation monitoring, complications, or outcome.

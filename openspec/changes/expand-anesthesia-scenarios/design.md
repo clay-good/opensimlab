@@ -602,3 +602,16 @@ and use outside the declared lesson are refused; debrief credit comes only from 
 The values and examination are authored fixtures. The slice does not measure consciousness,
 simulate laboratory acquisition or drug concentrations, establish a diagnosis, choose imaging or
 treatment, reproduce team workflow, or model outcome.
+
+## Slice 36: bounded extubation readiness
+
+The thirty-third authored scenario integrates the checkpoints deliberately separated by the prior
+quantitative-reversal, residual-blockade, and delayed-emergence lessons. A static train-of-four ratio
+of 0.93 is reviewed first, followed by fixed awake-airway, spontaneous-gas-exchange, airway-risk,
+and rescue-plan findings. Only the completed ordered review permits readiness for a planned awake
+extubation to be recorded.
+
+The accepted decision does not remove the tube or stop delivered ventilation. The scenario covers
+one declared low-risk adult only and does not measure its findings, teach extubation technique,
+simulate deep or at-risk strategies, reproduce reintubation, or model post-extubation monitoring,
+complications, and outcome.

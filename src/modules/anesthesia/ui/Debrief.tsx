@@ -444,6 +444,11 @@ export function objectiveFindings(
     'check-delayed-emergence-metabolic-causes': 'capnogram-morphology',
     'find-delayed-emergence-lateralizing-sign': 'depth-monitoring-and-its-limits',
     'escalate-delayed-emergence-neurologic-pattern': 'depth-monitoring-and-its-limits',
+    'confirm-extubation-quantitative-recovery': 'train-of-four-and-residual-blockade',
+    'assess-awake-airway-protection': 'depth-monitoring-and-its-limits',
+    'assess-extubation-gas-exchange': 'capnogram-morphology',
+    'plan-extubation-risk-and-rescue': 'airway-assessment-predicts-poorly',
+    'integrate-awake-extubation-readiness': 'train-of-four-and-residual-blockade',
     'recognize-hemorrhage': 'vasodilation-versus-hypovolemia',
     'temporize-volume-loss': 'vasodilation-versus-hypovolemia',
     'avoid-full-dose-induction': 'hysteresis-and-effect-site-lag',
@@ -1486,6 +1491,71 @@ export function objectiveFindings(
             ? 'You continued routine recovery observation despite the new lateralizing examination finding.'
             : 'No accepted escalation decision was recorded.',
         atTick: urgent?.tick ?? routine?.tick ?? history.at(-1)?.tick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
+      'confirm-extubation-quantitative-recovery', 'assess-awake-airway-protection',
+      'assess-extubation-gas-exchange', 'plan-extubation-risk-and-rescue',
+      'integrate-awake-extubation-readiness',
+    ].includes(objective.id)) {
+      const recovery = log.find(
+        (entry) => entry.eventId.startsWith('extubation-recovery-reviewed-'),
+      );
+      const awakeAirway = log.find(
+        (entry) => entry.eventId.startsWith('extubation-awake-airway-reviewed-'),
+      );
+      const gasExchange = log.find(
+        (entry) => entry.eventId.startsWith('extubation-gas-exchange-reviewed-'),
+      );
+      const airwayPlan = log.find(
+        (entry) => entry.eventId.startsWith('extubation-airway-plan-reviewed-'),
+      );
+      const ready = log.find((entry) => entry.eventId.startsWith(
+        'extubation-decision-ready-for-planned-awake-extubation-',
+      ));
+      const continueSupport = log.find((entry) => entry.eventId.startsWith(
+        'extubation-decision-continue-support-and-reassess-',
+      ));
+      if (objective.id === 'confirm-extubation-quantitative-recovery') return {
+        ...base, outcome: recovery ? 'met' : 'not-met',
+        finding: recovery
+          ? 'You confirmed a quantitative ratio above 0.90 and kept it as one checkpoint rather than the whole extubation decision.'
+          : 'No accepted quantitative recovery review was recorded.',
+        atTick: recovery?.tick ?? history.at(-1)?.tick,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'assess-awake-airway-protection') return {
+        ...base, outcome: awakeAirway ? 'met' : 'not-met',
+        finding: awakeAirway
+          ? 'You reviewed sustained eye opening, command following, cough, and cleared secretions together.'
+          : 'No accepted awake-response and airway-protection review was recorded.',
+        atTick: awakeAirway?.tick ?? history.at(-1)?.tick,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'assess-extubation-gas-exchange') return {
+        ...base, outcome: gasExchange ? 'met' : 'not-met',
+        finding: gasExchange
+          ? 'You reviewed the bounded spontaneous rate, tidal volume, end-tidal carbon dioxide, oxygen saturation, and inspired oxygen together.'
+          : 'No accepted spontaneous-breathing and gas-exchange review was recorded.',
+        atTick: gasExchange?.tick ?? history.at(-1)?.tick,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'plan-extubation-risk-and-rescue') return {
+        ...base, outcome: airwayPlan ? 'met' : 'not-met',
+        finding: airwayPlan
+          ? 'You checked for airway change and confirmed oxygen, monitoring, skilled help, and a reintubation plan before deciding.'
+          : 'No accepted airway-risk and rescue-plan review was recorded.',
+        atTick: airwayPlan?.tick ?? history.at(-1)?.tick,
+      } satisfies ObjectiveFinding;
+      const integrated = Boolean(recovery && awakeAirway && gasExchange && airwayPlan && ready
+        && ready.data?.tubeRemovalSimulated === false
+        && ready.data?.airwayRemainedIntubated === true);
+      return {
+        ...base, outcome: integrated ? 'met' : 'not-met',
+        finding: integrated
+          ? 'You integrated every declared checkpoint into readiness for a planned awake extubation without treating the browser as tube-removal practice.'
+          : continueSupport
+            ? 'You continued support despite every declared low-risk awake-extubation checkpoint being present.'
+            : 'No complete accepted awake-extubation readiness decision was recorded.',
+        atTick: ready?.tick ?? continueSupport?.tick ?? history.at(-1)?.tick,
       } satisfies ObjectiveFinding;
     }
 

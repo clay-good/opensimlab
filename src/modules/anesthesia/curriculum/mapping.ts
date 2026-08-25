@@ -1170,6 +1170,21 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'pc-crisis-management',
     objectiveIds: ['support-delayed-emergence-patient', 'reconcile-delayed-emergence-exposures', 'check-delayed-emergence-metabolic-causes', 'find-delayed-emergence-lateralizing-sign', 'escalate-delayed-emergence-neurologic-pattern'],
   },
+  {
+    scenarioId: 'extubation-readiness', frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['confirm-extubation-quantitative-recovery', 'assess-awake-airway-protection', 'assess-extubation-gas-exchange', 'plan-extubation-risk-and-rescue', 'integrate-awake-extubation-readiness'],
+  },
+  {
+    scenarioId: 'extubation-readiness', frameworkId: 'coa-standards',
+    domainId: 'airway-management',
+    objectiveIds: ['confirm-extubation-quantitative-recovery', 'assess-awake-airway-protection', 'assess-extubation-gas-exchange', 'plan-extubation-risk-and-rescue', 'integrate-awake-extubation-readiness'],
+  },
+  {
+    scenarioId: 'extubation-readiness', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-airway-management',
+    objectiveIds: ['confirm-extubation-quantitative-recovery', 'assess-awake-airway-protection', 'assess-extubation-gas-exchange', 'plan-extubation-risk-and-rescue', 'integrate-awake-extubation-readiness'],
+  },
 ];
 
 export interface DomainCoverage {

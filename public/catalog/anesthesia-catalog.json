@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 32,
+  "scenarioCount": 33,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -706,6 +706,29 @@
         "Escalate the new lateralizing pattern urgently while continuing airway support."
       ],
       "searchText": "delayed-emergence-differential delayed emergence differential colon cancer laparoscopic right hemicolectomy preserve the airway and review ventilation, oxygenation, circulation, and temperature first. the immediate support review was accepted before cause investigation. reconcile anesthetic, opioid, benzodiazepine, and neuromuscular-blockade evidence without anchoring on one category. the medication record and quantitative recovery review was accepted after immediate support. check glucose, ventilation, sodium, and temperature as bounded reversible categories. the fixed bedside metabolic findings were reviewed after exposure reconciliation. perform a focused neurologic examination when common recorded causes do not explain the pattern. the accepted examination recorded a new asymmetric motor response and gaze preference. escalate the new lateralizing pattern urgently while continuing airway support. urgent neurologic evaluation was accepted after the focused examination."
+    },
+    {
+      "id": "extubation-readiness",
+      "path": "/anesthesia/scenario/extubation-readiness",
+      "title": "Extubation readiness",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 5,
+      "difficulty": "intermediate",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Confirm quantitative neuromuscular recovery without treating it as the whole decision.",
+        "Review awake response, command following, cough, and secretion management.",
+        "Review spontaneous breathing, ventilation, and oxygenation together.",
+        "Classify the airway as low risk only after checking airway change, resources, and a rescue plan.",
+        "Integrate every declared checkpoint into a planned awake-extubation readiness decision."
+      ],
+      "searchText": "extubation-readiness extubation readiness symptomatic cholelithiasis laparoscopic cholecystectomy confirm quantitative neuromuscular recovery without treating it as the whole decision. a train-of-four ratio of 0.93 was reviewed before the broader readiness assessment. review awake response, command following, cough, and secretion management. the fixed awake-airway findings were accepted after quantitative recovery. review spontaneous breathing, ventilation, and oxygenation together. the bounded breathing and gas-exchange findings were accepted after awake-airway review. classify the airway as low risk only after checking airway change, resources, and a rescue plan. the fixed airway-risk and reintubation-plan review was accepted before the decision. integrate every declared checkpoint into a planned awake-extubation readiness decision. readiness was accepted after all four reviews without simulating tube removal."
     }
   ],
   "preparationPathCount": 10,
@@ -776,7 +799,8 @@
         "rapid-desaturation",
         "laryngospasm-after-airway-stimulation",
         "difficult-airway-supraglottic-rescue",
-        "repeated-laryngoscopy-harm"
+        "repeated-laryngoscopy-harm",
+        "extubation-readiness"
       ],
       "prerequisites": [
         "Basic induction controls."
@@ -792,7 +816,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 49
+      "estimatedMinutes": 54
     },
     {
       "id": "shock-perfusion",

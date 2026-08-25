@@ -33,6 +33,8 @@ airway removal, or a complete extubation-readiness model.
 The thirty-fifth adds an ordered delayed-emergence differential with immediate support, common
 recorded cause review, a fixed lateralizing examination finding, and urgent escalation without
 simulating testing, diagnosis, treatment, or outcome.
+The thirty-sixth adds low-risk awake-extubation readiness as an integration decision without tube
+removal, procedural technique, advanced at-risk strategies, rescue performance, or outcome.
 
 ## What changes
 
@@ -247,3 +249,7 @@ The thirty-fifth adds the thirty-second authored scenario and turns delayed emer
 ordered diagnostic-reasoning vignette. Immediate support, anesthetic and block evidence, fixed
 metabolic findings, a focused neurologic examination, and urgent escalation are inspectable, while
 test acquisition, diagnostic certainty, imaging, treatment, team workflow, and outcome remain excluded.
+The thirty-sixth adds the thirty-third authored scenario and makes quantitative recovery one of
+several inspectable extubation checkpoints. Awake response, airway protection, bounded spontaneous
+gas exchange, airway-risk review, and rescue planning precede readiness, while the tube and delivered
+ventilation remain in place and all procedural and post-extubation behavior stays excluded.

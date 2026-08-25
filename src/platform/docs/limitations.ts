@@ -1114,6 +1114,39 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['delayed-emergence-differential'],
   },
   {
+    id: 'extubation-readiness-findings-are-fixed',
+    headline: 'Every extubation-readiness finding is authored and immediate; the browser does not measure consciousness, breathing, reflexes, or airway condition.',
+    simplification: 'Command following, cough, secretion clearance, spontaneous breathing, gas '
+      + 'exchange, airway condition, and resource availability are fixed results revealed in order.',
+    whereItMisleads: 'Treating a clicked review as physical examination, accepting one displayed '
+      + 'threshold as sufficient, or transferring the exact values to an individual patient.',
+    correctUnderstanding: 'Extubation readiness requires direct, repeated assessment of the whole '
+      + 'patient and airway. Each finding must be interpreted in its clinical context.',
+    briefIn: ['extubation-readiness'],
+  },
+  {
+    id: 'low-risk-awake-extubation-only',
+    headline: 'This vignette covers one declared low-risk awake-extubation decision, not deep extubation or an at-risk airway strategy.',
+    simplification: 'The fictional airway was uncomplicated and has no declared edema, bleeding, '
+      + 'distortion, airway surgery, or other new concern. Skilled help and a reintubation plan are available.',
+    whereItMisleads: 'Generalizing the low-risk path to a difficult, changed, pediatric, critical-care, '
+      + 'deep-extubation, aspiration-risk, or otherwise at-risk situation.',
+    correctUnderstanding: 'Risk stratification and a patient-specific strategy precede extubation. '
+      + 'At-risk and advanced techniques require expertise and capabilities absent from this browser.',
+    briefIn: ['extubation-readiness'],
+  },
+  {
+    id: 'no-airway-removal-or-postextubation-outcome',
+    headline: 'The accepted decision records readiness only; tube removal, airway technique, rescue, monitoring, and post-extubation outcome are not simulated.',
+    simplification: 'The tracheal tube and delivered ventilation remain in engine state after the '
+      + 'learner records readiness. No cuff, suction, position, oxygen-delivery, removal, or recovery action follows.',
+    whereItMisleads: 'Treating the control as procedural rehearsal, assuming extubation succeeded, '
+      + 'or inferring that post-extubation airway patency and breathing were confirmed.',
+    correctUnderstanding: 'Extubation is a planned procedure with continuous oxygen delivery, '
+      + 'monitoring, skilled assistance, rescue readiness, and post-extubation reassessment.',
+    briefIn: ['extubation-readiness'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

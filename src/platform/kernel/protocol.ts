@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 28 reports delayed-emergence assessment. */
-export const WORKER_PROTOCOL_VERSION = 28;
+/** Bumped whenever the message shape changes incompatibly. Version 29 reports extubation readiness. */
+export const WORKER_PROTOCOL_VERSION = 29;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -306,6 +306,16 @@ export interface EquipmentSnapshot {
       readonly neurologicExamAtTick: number | null;
       readonly escalation: 'urgent-neurologic-evaluation' | 'continue-routine-recovery' | null;
       readonly escalatedAtTick: number | null;
+    };
+    /** Ordered low-risk awake-extubation readiness vignette. */
+    readonly extubationReadinessAssessment?: {
+      readonly quantitativeRecoveryReviewedAtTick: number | null;
+      readonly awakeAirwayReviewedAtTick: number | null;
+      readonly gasExchangeReviewedAtTick: number | null;
+      readonly airwayPlanReviewedAtTick: number | null;
+      readonly decision: 'ready-for-planned-awake-extubation'
+        | 'continue-support-and-reassess' | null;
+      readonly decidedAtTick: number | null;
     };
     /** Accepted quantitative neuromuscular-reversal teaching state. */
     readonly neuromuscularReversalFraction?: number;
