@@ -23,8 +23,9 @@ urgent system escalation only and does not translate either source into procedur
 - Whole-patient review reveals an authored compatible mechanism and perfusion pattern. The next
   control reveals fixed pericardial fluid with right-sided chamber collapse.
 - POCUS acquisition, views, artifacts, interpretation uncertainty, and differential findings are absent.
-- Accepted definitive-control intent stops the active drive. Residual effects clear over a fixed
-  teaching interval so reassessment is visible; recovery does not prove technical success.
+- Accepted definitive-control intent is state-neutral. The obstructive drive remains active and the
+  later review shows unresolved physiology because no drainage, surgery, transport, or team action
+  is simulated.
 
 ## Deliberate exclusions
 

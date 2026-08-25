@@ -15,7 +15,7 @@ function act(subject: AnesthesiaEngine, action: string) {
 }
 
 describe('cardiac tamponade foundation', () => {
-  it('creates isolated obstructive circulation and recovers only after accepted control intent', () => {
+  it('keeps unresolved obstructive circulation active after intent-only escalation', () => {
     const subject = new AnesthesiaEngine({ scenario: SCENARIO, seed: 42, practiceRegion: 'US' });
     const baseline = subject.step();
     const affected = advance(subject, 200);
@@ -24,16 +24,20 @@ describe('cardiac tamponade foundation', () => {
     expect(affected.state.etco2MmHg).toBeLessThan(baseline.state.etco2MmHg);
     expect(affected.state.spo2Percent).toBeGreaterThan(90);
     act(subject, 'review-context-and-perfusion');
-    act(subject, 'review-fixed-pocus');
-    act(subject, 'record-definitive-control-intent');
+    const beforeIntent = act(subject, 'review-fixed-pocus');
+    const intent = act(subject, 'record-definitive-control-intent');
+    expect(intent.events.find((entry) => entry.eventId.startsWith('tamponade-control-recorded-'))?.data)
+      .toMatchObject({ intentOnly: true, treatmentDelivered: false });
+    expect(intent.equipment.resuscitation.cardiacTamponadeFraction)
+      .toBeGreaterThanOrEqual(beforeIntent.equipment.resuscitation.cardiacTamponadeFraction ?? 0);
     const reassessed = act(subject, 'reassess-perfusion');
     expect(reassessed.equipment.resuscitation.cardiacTamponadeAssessment).toMatchObject({
       contextReviewedAtTick: expect.any(Number), pocusReviewedAtTick: expect.any(Number),
       definitiveControlAtTick: expect.any(Number), reassessedAtTick: expect.any(Number),
     });
-    const recovered = advance(subject, 800);
-    expect(recovered.equipment.resuscitation.cardiacTamponadeFraction).toBeLessThan(0.03);
-    expect(recovered.state.meanArterialMmHg).toBeGreaterThan(65);
+    const unresolved = advance(subject, 800);
+    expect(unresolved.equipment.resuscitation.cardiacTamponadeFraction).toBeGreaterThan(0.8);
+    expect(unresolved.state.meanArterialMmHg).toBeLessThan(65);
   });
 
   it('rejects hostile, inactive, duplicate, and premature actions', () => {
@@ -60,5 +64,10 @@ describe('cardiac tamponade foundation', () => {
     const findings = objectiveFindings(SCENARIO, history, 0, 0, actions, log);
     expect(findings.map((finding) => finding.outcome)).toEqual(['met', 'met', 'met', 'met']);
     expect(findings.every((finding) => finding.concept === undefined)).toBe(true);
+    const forged = objectiveFindings(SCENARIO, history, 0, 0, actions, [
+      event('tamponade-context-reviewed-10', 10), event('tamponade-pocus-reviewed-20', 20),
+      event('tamponade-control-recorded-30', 30), event('tamponade-perfusion-reassessed-30', 30),
+    ]);
+    expect(forged.at(-1)?.outcome).toBe('not-met');
   });
 });

@@ -3625,8 +3625,8 @@ function CardiacTamponadeTray({ fraction, assessment, onAction }: {
         <div id="tamponade-control-title" className="syringe__name">Escalate definitive control</div>
         <div className="syringe__meta">Immediate team transfer · intent only · reassess</div>
         <p className="syringe__remaining" role="status">
-          {reassessed ? 'Post-intent perfusion reassessed'
-            : control ? 'Definitive-control intent recorded · reassess next'
+          {reassessed ? 'Unresolved perfusion reassessed · definitive care remains urgent'
+            : control ? 'Control team mobilized · physiology remains active'
               : 'Obstructive shock continues'}
         </p>
         <div className="syringe__presets">
@@ -3636,10 +3636,10 @@ function CardiacTamponadeTray({ fraction, assessment, onAction }: {
           </Button>
           <Button className="crisis-drug__action" disabled={!control || reassessed}
             onClick={() => onAction('reassess-perfusion')}>
-            Reassess perfusion
+            Reassess unresolved perfusion
           </Button>
         </div>
-        <p className="field__hint">No pericardiocentesis or thoracotomy technique, equipment, transport, technical success, complication, or outcome is offered.</p>
+        <p className="field__hint">The click mobilizes care; it does not relieve tamponade. No pericardiocentesis or thoracotomy technique, equipment, transport, technical success, complication, or outcome is offered.</p>
       </section>
     </div>
   );

@@ -5142,10 +5142,10 @@ export function objectiveFindings(
       const supported = scenario.timeline.some((event) => event.type === 'cardiac-tamponade');
       if (!supported) return { ...base, outcome: 'not-exercised',
         finding: 'The traumatic cardiac-tamponade vignette was not active.' } satisfies ObjectiveFinding;
-      const context = log.find((event) => event.eventId.startsWith('tamponade-context-reviewed-'));
-      const pocus = log.find((event) => event.eventId.startsWith('tamponade-pocus-reviewed-'));
-      const control = log.find((event) => event.eventId.startsWith('tamponade-control-recorded-'));
-      const reassessment = log.find((event) => event.eventId.startsWith('tamponade-perfusion-reassessed-'));
+      const context = log.find((event) => /^tamponade-context-reviewed-\d+$/.test(event.eventId));
+      const pocus = log.find((event) => /^tamponade-pocus-reviewed-\d+$/.test(event.eventId));
+      const control = log.find((event) => /^tamponade-control-recorded-\d+$/.test(event.eventId));
+      const reassessment = log.find((event) => /^tamponade-perfusion-reassessed-\d+$/.test(event.eventId));
       if (objective.id === 'recognize-traumatic-tamponade-pattern') return {
         ...base, outcome: context ? 'met' : 'not-met',
         finding: context
@@ -5169,10 +5169,10 @@ export function objectiveFindings(
             : 'The fixed focused finding and definitive-control escalation were incomplete or out of order.',
           atTick: control?.tick ?? pocus?.tick ?? 0 } satisfies ObjectiveFinding;
       }
-      const ordered = control && reassessment && control.tick <= reassessment.tick;
+      const ordered = control && reassessment && control.tick < reassessment.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met',
         finding: ordered
-          ? 'Canonical perfusion was reassessed after accepted control intent without treating monitor recovery as procedural proof.'
+          ? 'Unresolved canonical perfusion was reassessed after accepted control intent without inventing treatment delivery or recovery.'
           : 'Definitive-control intent and serial perfusion reassessment were incomplete or out of order.',
         atTick: reassessment?.tick ?? control?.tick ?? 0 } satisfies ObjectiveFinding;
     }

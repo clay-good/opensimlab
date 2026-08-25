@@ -38,6 +38,7 @@ describe('Requirement: cardiac tamponade is a focused intent-only lab', () => {
     act(() => button('Review context + perfusion').click());
     expect(onAction).toHaveBeenCalledWith('review-context-and-perfusion');
     expect(container.textContent).toContain('does not acquire images');
+    expect(container.textContent).toContain('it does not relieve tamponade');
     expect(container.textContent).toContain('No pericardiocentesis or thoracotomy technique');
   });
 });

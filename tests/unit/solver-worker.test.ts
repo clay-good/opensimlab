@@ -46,7 +46,7 @@ const lastState = () => {
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
   it('Scenario: delayed vasopressor delivery has protocol version 79', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(95);
+    expect(WORKER_PROTOCOL_VERSION).toBe(96);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

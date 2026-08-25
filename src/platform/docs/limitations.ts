@@ -1187,7 +1187,7 @@ export const LIMITATIONS: readonly Limitation[] = [
     id: 'tamponade-physiology-is-a-teaching-trajectory',
     headline: 'The tamponade drive is a bounded obstructive-circulation trajectory, not a pericardial pressure or injury model.',
     simplification: 'One authored drive lowers stroke volume, cardiac output, pressure, and end-tidal '
-      + 'carbon dioxide, then clears on fixed time constants after accepted control intent.',
+      + 'carbon dioxide and remains active after escalation intent because treatment is not simulated.',
     whereItMisleads: 'Using displayed values to estimate pericardial blood, pressure, injury severity, '
       + 'time to arrest, technical success, or an individual response.',
     correctUnderstanding: 'Tamponade physiology and response vary with accumulation rate, volume status, '
@@ -1211,7 +1211,7 @@ export const LIMITATIONS: readonly Limitation[] = [
     simplification: 'The fixed case closes at escalation and serial monitor review; pleural injury, hemorrhage, '
       + 'aortic injury, pulmonary embolism, arrest, recurrence, disposition, and prognosis are absent.',
     whereItMisleads: 'Assuming the fixed cause is proven, delaying care for a fuller browser sequence, '
-      + 'ignoring concurrent threats, or inferring survival from directional recovery.',
+      + 'ignoring concurrent threats, or inferring survival from the bounded monitor trajectory.',
     correctUnderstanding: 'Real trauma resuscitation addresses concurrent reversible causes in parallel and '
       + 'continues through definitive repair, complication surveillance, and critical care.',
     briefIn: ['cardiac-tamponade'],

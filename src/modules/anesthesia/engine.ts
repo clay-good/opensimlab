@@ -1117,8 +1117,10 @@ export class AnesthesiaEngine {
       }
       case 'cardiac-tamponade-assessment': {
         const response = String(action.payload.action ?? '');
-        const active = this.cardiacTamponadeSeverity > 0 || this.cardiacTamponadeFraction > 0.05
-          || this.tamponadeDefinitiveControlAtTick !== null;
+        const supported = this.scenario.timeline.some((event) => event.type === 'cardiac-tamponade'
+          && event.target === 'traumatic-pericardial-pressure');
+        const active = supported && (this.cardiacTamponadeSeverity > 0
+          || this.cardiacTamponadeFraction > 0.05);
         const valid = [
           'review-context-and-perfusion', 'review-fixed-pocus',
           'record-definitive-control-intent', 'reassess-perfusion',
@@ -1169,9 +1171,9 @@ export class AnesthesiaEngine {
             break;
           }
           this.tamponadeDefinitiveControlAtTick = this.currentTick;
-          this.cardiacTamponadeSeverity = 0;
           this.log('critical', 'assessment', `tamponade-control-recorded-${this.currentTick}`,
-            'Immediate trauma, surgical, and resuscitation-team transfer for definitive tamponade control was recorded. Pericardiocentesis, thoracotomy, access, equipment, transport, technical success, complications, and outcome are not simulated.');
+            'Immediate trauma, surgical, and resuscitation-team transfer for definitive tamponade control was recorded. The obstructive physiology remains active because no procedure or treatment is simulated.',
+            { intentOnly: true, treatmentDelivered: false });
           break;
         }
         if (this.tamponadeDefinitiveControlAtTick === null
@@ -1187,7 +1189,9 @@ export class AnesthesiaEngine {
         }
         this.tamponadeReassessedAtTick = this.currentTick;
         this.log('advisory', 'assessment', `tamponade-perfusion-reassessed-${this.currentTick}`,
-          'The canonical monitor response was reviewed after accepted definitive-control intent. Residual physiology clears on a teaching trajectory and does not prove technical success or predict outcome.');
+          'The canonical monitor remains compatible with unresolved obstructive shock after accepted definitive-control intent. Continued deterioration requires live definitive care; no response, technical success, or outcome is simulated.',
+          { definitiveControlIntentRecorded: true, treatmentDelivered: false,
+            physiologyResolved: false });
         break;
       }
       case 'emergency-anaphylaxis-response': {

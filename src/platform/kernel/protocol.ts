@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 93 reports torsades state. */
-export const WORKER_PROTOCOL_VERSION = 95;
+export const WORKER_PROTOCOL_VERSION = 96;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
