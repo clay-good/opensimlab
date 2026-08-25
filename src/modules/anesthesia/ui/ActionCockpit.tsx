@@ -396,6 +396,13 @@ export interface ActionCockpitProps {
       readonly airwayPlanAtTick: number | null;
       readonly reassessmentAtTick: number | null;
     };
+    readonly spontaneousBreathingTrialAssessment?: {
+      readonly readinessAtTick: number | null;
+      readonly startedAtTick: number | null;
+      readonly failureAtTick: number | null;
+      readonly recoveryAtTick: number | null;
+      readonly planAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -635,6 +642,10 @@ export interface ActionCockpitProps {
       | 'assess-unplanned-extubation-tolerance' | 'classify-unplanned-extubation-failure'
       | 'record-unplanned-extubation-airway-plan' | 'reassess-unplanned-extubation-response',
   ) => void;
+  readonly onSpontaneousBreathingTrialResponse?: (
+    action: 'review-sbt-readiness' | 'start-bounded-sbt' | 'recognize-sbt-failure'
+      | 'stop-failed-sbt-and-recover' | 'plan-after-failed-sbt',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -793,6 +804,9 @@ export function crisisResponseAvailability(
     hasUnplannedExtubationResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'unplanned-extubation',
     ),
+    hasSpontaneousBreathingTrialResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'spontaneous-breathing-trial',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -870,6 +884,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'auto-peep')
       || (event.type === 'narrative' && event.target === 'mucus-plugging')
       || (event.type === 'narrative' && event.target === 'unplanned-extubation')
+      || (event.type === 'narrative' && event.target === 'spontaneous-breathing-trial')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -887,6 +902,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasCardiacTamponadeResponse, hasEmergencyAnaphylaxisResponse, hasAdultAsthmaResponse,
     hasCopdExacerbationResponse, hasAutoPeepResponse, hasMucusPluggingResponse,
     hasUnplannedExtubationResponse,
+    hasSpontaneousBreathingTrialResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -933,7 +949,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasSevereHyponatremiaResponse || hasOpioidToxicityResponse || hasHeatStrokeResponse
     || hasTraumaPrimarySurveyResponse || hasAcuteAorticSyndromeResponse || hasArdsLungProtectiveResponse
     || hasEscalatingHypoxemiaResponse || hasVentilatorDyssynchronyResponse || hasAutoPeepResponse
-    || hasMucusPluggingResponse || hasUnplannedExtubationResponse;
+    || hasMucusPluggingResponse || hasUnplannedExtubationResponse
+    || hasSpontaneousBreathingTrialResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -954,8 +971,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasHeatStrokeResponse || hasTraumaPrimarySurveyResponse || hasAcuteAorticSyndromeResponse
     || hasArdsLungProtectiveResponse || hasEscalatingHypoxemiaResponse
     || hasVentilatorDyssynchronyResponse || hasAutoPeepResponse || hasMucusPluggingResponse
-    || hasUnplannedExtubationResponse;
-  const responseTray = hasUnplannedExtubationResponse
+    || hasUnplannedExtubationResponse || hasSpontaneousBreathingTrialResponse;
+  const responseTray = hasSpontaneousBreathingTrialResponse
+    ? { id: 'crisis', label: 'Breathing trial' } as const
+    : hasUnplannedExtubationResponse
     ? { id: 'crisis', label: 'Unplanned extubation' } as const
     : hasMucusPluggingResponse
     ? { id: 'crisis', label: 'Mucus plugging' } as const
@@ -1054,6 +1073,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasAutoPeepResponse
     || hasMucusPluggingResponse
     || hasUnplannedExtubationResponse
+    || hasSpontaneousBreathingTrialResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1470,6 +1490,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <UnplannedExtubationTray
                 assessment={props.resuscitation.unplannedExtubationAssessment}
                 onAction={props.onUnplannedExtubationResponse ?? (() => {})} />
+            )}
+            {hasSpontaneousBreathingTrialResponse && (
+              <SpontaneousBreathingTrialTray
+                assessment={props.resuscitation.spontaneousBreathingTrialAssessment}
+                onAction={props.onSpontaneousBreathingTrialResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -4138,6 +4163,57 @@ function UnplannedExtubationTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-unplanned-extubation-response')}>Prove placement + hand off learning</Button>
         </div>
         <p className="field__hint">Noninvasive support must not delay this failing airway. The controls record intent and reported response, never airway performance.</p>
+      </section>
+    </div>
+  );
+}
+
+function SpontaneousBreathingTrialTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['spontaneousBreathingTrialAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onSpontaneousBreathingTrialResponse']>;
+}) {
+  const ready = assessment?.readinessAtTick != null;
+  const started = assessment?.startedAtTick != null;
+  const failed = assessment?.failureAtTick != null;
+  const recovered = assessment?.recoveryAtTick != null;
+  const planned = assessment?.planAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="sbt-earn-title">
+        <div id="sbt-earn-title" className="syringe__name">Earn the trial, not a number.</div>
+        <Badge kind="teaching">cause · oxygen · circulation · wakefulness · effort</Badge>
+        <div className="syringe__meta">FiO₂ 0.35 · PEEP 5 · awake · stable · RSBI not required</div>
+        <p className="syringe__remaining" role="status">
+          {failed ? 'Convergent intolerance · stop the trial'
+            : started ? '30-minute trial active · read the whole patient'
+              : ready ? 'Readiness reviewed · standardized trial due' : 'Daily readiness review due'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={ready}
+            onClick={() => onAction('review-sbt-readiness')}>Review readiness without RSBI</Button>
+          <Button className="crisis-drug__action" disabled={!ready || started}
+            onClick={() => onAction('start-bounded-sbt')}>Start SBT · keep FiO₂ unchanged</Button>
+          <Button className="crisis-drug__action" disabled={!started || failed}
+            onClick={() => onAction('recognize-sbt-failure')}>Review 30-minute tolerance</Button>
+        </div>
+        <p className="field__hint">Supported and unsupported SBT methods can be valid. Standardize the local method and watch the patient, not one index.</p>
+      </section>
+      <section className="syringe" aria-labelledby="sbt-not-yet-title">
+        <div id="sbt-not-yet-title" className="syringe__name">A trial can say “not yet.”</div>
+        <Badge kind="teaching">stop · restore · recover · learn · retry</Badge>
+        <div className="syringe__meta">RR 36 · Vt 220 · SpO₂ 88% · distress · tachycardia</div>
+        <p className="syringe__remaining" role="status">
+          {planned ? 'Drivers handed off · another standardized assessment planned'
+            : recovered ? 'Prior support restored · recovery proved'
+              : 'Failure recognition pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!failed || recovered}
+            onClick={() => onAction('stop-failed-sbt-and-recover')}>Stop trial + restore prior support</Button>
+          <Button className="crisis-drug__action" disabled={!recovered || planned}
+            onClick={() => onAction('plan-after-failed-sbt')}>Review drivers + plan reassessment</Button>
+        </div>
+        <p className="field__hint">Do not push through failure. Even a future successful SBT still owes you a separate extubation-readiness decision.</p>
       </section>
     </div>
   );

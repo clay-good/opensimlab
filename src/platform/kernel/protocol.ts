@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 64 reports unplanned-extubation state. */
-export const WORKER_PROTOCOL_VERSION = 64;
+/** Bumped whenever the message shape changes incompatibly. Version 65 reports spontaneous-breathing-trial state. */
+export const WORKER_PROTOCOL_VERSION = 65;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -464,6 +464,13 @@ export interface EquipmentSnapshot {
       readonly failureAtTick: number | null;
       readonly airwayPlanAtTick: number | null;
       readonly reassessmentAtTick: number | null;
+    };
+    readonly spontaneousBreathingTrialAssessment?: {
+      readonly readinessAtTick: number | null;
+      readonly startedAtTick: number | null;
+      readonly failureAtTick: number | null;
+      readonly recoveryAtTick: number | null;
+      readonly planAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

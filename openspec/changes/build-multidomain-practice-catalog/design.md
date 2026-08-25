@@ -655,6 +655,24 @@ observation, and communication review. The case does not examine, acquire monito
 deliver oxygen, ventilate, select drugs or equipment, intubate, confirm placement, investigate,
 assign fault, determine disposition, or predict outcome.
 
+### Wave B critical-care slice 7: spontaneous-breathing trial
+
+The seventh critical-care slice begins with improving pneumonia, an awake patient who initiates
+breaths, manageable secretions, SpO₂ 95% on FiO₂ 0.35 and PEEP 5 cm H₂O, and stable circulation.
+Learners review the improving cause, oxygenation, circulation, wakefulness, spontaneous effort,
+airway protection, and secretions without requiring a rapid shallow breathing index, then record a
+local 30-minute pressure-support-5 cm H₂O SBT without increasing FiO₂. The lesson explicitly notes
+that supported and unsupported SBT methods can both be valid.
+
+The focused tutor pairs “earn the trial, not a number” with “a trial can say ‘not yet.’” At 30
+minutes the fixed patient has respiratory rate 36/min, tidal volume 220 mL, accessory use,
+diaphoresis, distress, SpO₂ 88%, tachycardia, and lower pressure. Learners recognize convergent
+intolerance, stop the trial, restore prior support, prove a fixed 10-minute recovery, and hand off a
+reversible-driver review before another standardized assessment. SBT success remains distinct from
+extubation readiness. The case does not examine, program a ventilator, acquire monitoring, sample,
+change sedation, treat, extubate, select post-extubation support, determine disposition, or predict
+outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute

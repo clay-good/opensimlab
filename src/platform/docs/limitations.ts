@@ -2226,6 +2226,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['unplanned-extubation'],
   },
   {
+    id: 'sbt-readiness-trial-failure-and-recovery-are-authored',
+    headline: 'The readiness, trial, intolerance, recovery, and reversible-driver panels are authored facts.',
+    simplification: 'One fixed adult appears ready for a trial, develops convergent intolerance at 30 minutes, and recovers after reported restoration of prior support.',
+    whereItMisleads: 'Treating the screen as examination, monitoring acquisition, ventilator measurement, gas sampling, diagnosis, or response prediction.',
+    correctUnderstanding: 'Real SBT assessment integrates the improving cause, patient, airway, breathing pattern, work, gas exchange, circulation, comfort, and trajectory.',
+    briefIn: ['spontaneous-breathing-trial'],
+  },
+  {
+    id: 'sbt-ventilator-assessment-and-support-controls-are-proxies',
+    headline: 'Readiness, trial, support-restoration, and reassessment buttons record intents; they do not perform care.',
+    simplification: 'The interface enforces an ordered cognitive rehearsal without programming a ventilator, changing oxygen, measuring, treating, or extubating.',
+    whereItMisleads: 'Equating button order with respiratory-therapy, ventilator, airway, liberation, assessment, or team competence.',
+    correctUnderstanding: 'Use a standardized local protocol, trained teams, continuous observation, explicit stop criteria, safe support restoration, and serial reassessment.',
+    briefIn: ['spontaneous-breathing-trial'],
+  },
+  {
+    id: 'no-live-sbt-prescribing-extubation-or-outcome',
+    headline: 'The case does not prescribe an SBT method, decide extubation, treat failure, or predict outcome.',
+    simplification: 'Alternative trial methods, durations, thresholds, disease trajectories, airway risk, secretion burden, neurologic limits, goals of care, and post-extubation support are incomplete.',
+    whereItMisleads: 'Requiring RSBI, increasing FiO₂ to mask intolerance, pushing through failure, copying one threshold, or treating SBT success as extubation permission.',
+    correctUnderstanding: 'Standardize readiness and method locally, keep FiO₂ visible, stop when intolerance converges, correct contributors, repeat assessment, and make a separate extubation decision.',
+    briefIn: ['spontaneous-breathing-trial'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

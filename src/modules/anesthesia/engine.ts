@@ -426,6 +426,11 @@ export class AnesthesiaEngine {
   private unplannedExtubationFailureAtTick: number | null = null;
   private unplannedExtubationAirwayPlanAtTick: number | null = null;
   private unplannedExtubationReassessmentAtTick: number | null = null;
+  private sbtReadinessAtTick: number | null = null;
+  private sbtStartedAtTick: number | null = null;
+  private sbtFailureAtTick: number | null = null;
+  private sbtRecoveryAtTick: number | null = null;
+  private sbtPlanAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -3043,6 +3048,56 @@ export class AnesthesiaEngine {
         this.unplannedExtubationReassessmentAtTick = this.currentTick;
         this.log('critical', 'assessment', `unplanned-extubation-response-reassessed-${this.currentTick}`,
           'Fixed reported response: continuous exhaled-carbon-dioxide waveform is present, bilateral ventilation is reported, tube depth and cuff state are documented, SpO₂ is 95%, ETCO₂ is 43 mmHg, peak pressure is 28 cm H₂O, HR is 104/min, MAP is 75 mmHg, and alertness is improving. A non-punitive handoff requests review of securement, sedation and delirium, mobility, staffing, observation, and communication around the repositioning event.', { continuousCapnogram: true, bilateralVentilation: true, tubeDepthDocumented: true, cuffStateDocumented: true, spo2Percent: 95, etCo2MmHg: 43, incidentReview: true });
+        break;
+      }
+      case 'spontaneous-breathing-trial-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'spontaneous-breathing-trial');
+        const valid = ['review-sbt-readiness', 'start-bounded-sbt', 'recognize-sbt-failure',
+          'stop-failed-sbt-and-recover', 'plan-after-failed-sbt'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `sbt-response-refused-${this.currentTick}`,
+            supported ? 'The spontaneous-breathing-trial action was not one of the listed choices. Nothing changed.'
+              : 'The bounded spontaneous-breathing-trial choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-sbt-readiness') {
+          if (this.sbtReadinessAtTick !== null) { this.log('warning', 'assessment', `sbt-readiness-refused-${this.currentTick}`, 'The fixed readiness panel has already been reviewed.'); break; }
+          this.sbtReadinessAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `sbt-readiness-reviewed-${this.currentTick}`,
+            'Fixed readiness panel: the pneumonia is improving; the patient is awake, follows commands, and initiates breaths; SpO₂ is 95% on FiO₂ 0.35 and PEEP 5 cm H₂O; HR is 94/min and MAP 73 mmHg without escalating vasopressor support; cough is moderate and secretions are manageable. An RSBI is not required to offer a standardized trial.', { improvingCause: true, awake: true, spontaneousEffort: true, fio2: 0.35, peepCmH2O: 5, stableCirculation: true, rsbiRequired: false });
+          break;
+        }
+        if (this.sbtReadinessAtTick === null) { this.log('warning', 'assessment', `sbt-readiness-order-refused-${this.currentTick}`, 'Review standardized readiness before starting a trial.'); break; }
+        if (response === 'start-bounded-sbt') {
+          if (this.sbtStartedAtTick !== null) { this.log('warning', 'assessment', `sbt-start-refused-${this.currentTick}`, 'The bounded trial has already been recorded.'); break; }
+          this.sbtStartedAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `sbt-started-${this.currentTick}`,
+            'A local 30-minute SBT using pressure support 5 cm H₂O was recorded with FiO₂ unchanged at 0.35 and continuous patient-centered monitoring. SBTs may be conducted with or without pressure support; no ventilator is programmed and no universal method is prescribed.', { intentOnly: true, durationMinutes: 30, pressureSupportCmH2O: 5, fio2: 0.35, fio2Increased: false });
+          break;
+        }
+        if (this.sbtStartedAtTick === null) { this.log('warning', 'assessment', `sbt-start-order-refused-${this.currentTick}`, 'Start the bounded trial before reviewing its tolerance panel.'); break; }
+        if (response === 'recognize-sbt-failure') {
+          if (this.sbtFailureAtTick !== null) { this.log('warning', 'assessment', `sbt-failure-refused-${this.currentTick}`, 'Trial intolerance has already been recorded.'); break; }
+          this.sbtFailureAtTick = this.currentTick;
+          this.log('critical', 'assessment', `sbt-failure-recognized-${this.currentTick}`,
+            'Fixed 30-minute panel: respiratory rate 36/min, tidal volume 220 mL, accessory-muscle use, diaphoresis, visible distress, SpO₂ 88%, HR 124/min, and MAP 68 mmHg. The convergent work, breathing pattern, oxygenation, circulation, comfort, and trajectory establish authored trial failure; no one threshold is universal.', { respiratoryRateBpm: 36, tidalVolumeMl: 220, accessoryUse: true, diaphoresis: true, distress: true, spo2Percent: 88, heartRateBpm: 124, mapMmHg: 68, classification: 'failed' });
+          break;
+        }
+        if (this.sbtFailureAtTick === null) { this.log('warning', 'assessment', `sbt-failure-order-refused-${this.currentTick}`, 'Recognize the convergent intolerance pattern before stopping the trial.'); break; }
+        if (response === 'stop-failed-sbt-and-recover') {
+          if (this.sbtRecoveryAtTick !== null) { this.log('warning', 'assessment', `sbt-recovery-refused-${this.currentTick}`, 'Prior support and the fixed recovery panel have already been recorded.'); break; }
+          this.sbtRecoveryAtTick = this.currentTick;
+          this.log('critical', 'assessment', `sbt-recovery-reviewed-${this.currentTick}`,
+            'The failed trial was stopped and prior support was restored. Fixed response after 10 minutes: respiratory rate 20/min, commanded tidal volume 420 mL, accessory use and distress resolve, SpO₂ is 95% on FiO₂ 0.35, HR is 101/min, and MAP is 72 mmHg. This is an authored recovery, not ventilator programming or outcome prediction.', { intentOnly: true, priorSupportRestored: true, reassessmentMinutes: 10, respiratoryRateBpm: 20, tidalVolumeMl: 420, spo2Percent: 95, heartRateBpm: 101, mapMmHg: 72 });
+          break;
+        }
+        if (this.sbtRecoveryAtTick === null) { this.log('warning', 'assessment', `sbt-recovery-order-refused-${this.currentTick}`, 'Stop the failed trial and review recovery before planning another assessment.'); break; }
+        if (this.sbtPlanAtTick !== null) { this.log('warning', 'assessment', `sbt-plan-refused-${this.currentTick}`, 'The reversible-cause and reassessment plan has already been recorded.'); break; }
+        this.sbtPlanAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `sbt-plan-recorded-${this.currentTick}`,
+          'Respiratory load, weakness, fluid and cardiac load, pain, anxiety, sedation, nutrition, electrolytes, sleep, and secretions were handed off for review before another standardized daily assessment. Extubation was not recorded: even a successful SBT would require separate airway-protection, secretion, neurologic, risk, goals-of-care, and post-extubation-support decisions.', { reversibleDriversReview: true, repeatStandardizedAssessment: true, extubation: false, sbtSuccessEqualsExtubationReadiness: false });
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -6238,6 +6293,13 @@ export class AnesthesiaEngine {
           failureAtTick: this.unplannedExtubationFailureAtTick,
           airwayPlanAtTick: this.unplannedExtubationAirwayPlanAtTick,
           reassessmentAtTick: this.unplannedExtubationReassessmentAtTick,
+        },
+        spontaneousBreathingTrialAssessment: {
+          readinessAtTick: this.sbtReadinessAtTick,
+          startedAtTick: this.sbtStartedAtTick,
+          failureAtTick: this.sbtFailureAtTick,
+          recoveryAtTick: this.sbtRecoveryAtTick,
+          planAtTick: this.sbtPlanAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

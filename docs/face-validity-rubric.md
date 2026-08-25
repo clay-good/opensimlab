@@ -139,7 +139,8 @@ Reviewers run the routine induction themselves before answering.
 | B85 | In the auto-PEEP lesson, expiratory flow that misses zero, high peak-to-plateau pressure separation, failed triggers, hypercapnia, and low pressure lead to a whole-patient review, a clearly passive authored hold separating set, total, and intrinsic PEEP, a bounded dynamic-hyperinflation classification, obstruction-treatment and more-expiratory-time intent with no universal setting or external-PEEP claim, and 10-minute flow, mechanics, gas, and circulation reassessment without implying examination, waveform or mechanics acquisition, airway or ventilator manipulation, prescribing, drug delivery, procedure, respiratory-therapy skill, disposition, or outcome competence | | |
 | B86 | In the mucus-plugging lesson, coarse central sounds, visible tracheal-tube secretion, a sawtooth flow graphic, high peak-to-plateau pressure separation, focal reduced air entry, and hypoxemia lead to support and help, convergent indication review, preoxygenated as-needed shallow-first suction intent without routine saline, a partial fixed response, and escalation of persistent focal physiology without making bronchoscopy routine or implying examination, equipment, suction, imaging, bronchoscopy, respiratory-therapy, procedural, disposition, or outcome competence | | |
 | B87 | In the unplanned-extubation lesson, visible tube displacement, severe work, weak airway protection, hypoxemia, respiratory acidemia, and declining alertness lead to immediate oxygen support and experienced help, a whole-patient tolerance assessment, case-specific failure classification, prompt skilled reintubation intent without noninvasive-support delay, reported placement and response confirmation, and non-punitive prevention handoff without implying examination, monitoring, oxygenation, ventilation, prescribing, airway, investigation, disposition, or outcome competence | | |
-| B88 | Overall: does this patient behave like a patient? | | |
+| B88 | In the spontaneous-breathing-trial lesson, an improving cause, low oxygen support, stable circulation, wakefulness, spontaneous effort, cough, and manageable secretions lead to a standardized readiness review without requiring RSBI, an authored pressure-supported trial without increasing FiO₂, convergent intolerance recognition, prompt restoration of prior support, fixed recovery reassessment, and reversible-driver planning without equating SBT success with extubation readiness or implying examination, monitoring, ventilator, prescribing, treatment, airway, disposition, or outcome competence | | |
+| B89 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -292,4 +293,7 @@ So that reviewers spend their attention on what this review is for:
 - The unplanned-extubation case uses fixed event, tolerance, failure, airway, response, and handoff
   panels. It does not examine, sample, oxygenate, ventilate, select drugs or equipment, intubate,
   confirm placement, investigate, assign fault, determine disposition, or predict outcome.
+- The spontaneous-breathing-trial case uses fixed readiness, trial, intolerance, recovery, and
+  planning panels. It does not examine, program a ventilator, acquire data, sample, treat, extubate,
+  select post-extubation support, determine disposition, or predict outcome.
 - Nothing here has been clinically reviewed before — you are the first.

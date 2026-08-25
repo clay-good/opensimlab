@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: unplanned-extubation state has protocol version 64', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(64);
+  it('Scenario: spontaneous-breathing-trial state has protocol version 65', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(65);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

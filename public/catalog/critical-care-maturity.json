@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "critical-care",
-  "recordCount": 6,
+  "recordCount": 7,
   "records": [
     {
       "recordId": "scenario:ards-lung-protective-ventilation@0.1.0",
@@ -67,6 +67,17 @@
       "evidence": [
         "/catalog/critical-care-completion-audit.json#unplanned-extubation@0.1.0",
         "/catalog/critical-care-quality-audit.json#unplanned-extubation@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:spontaneous-breathing-trial@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "spontaneous-breathing-trial",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/critical-care-completion-audit.json#spontaneous-breathing-trial@0.1.0",
+        "/catalog/critical-care-quality-audit.json#spontaneous-breathing-trial@0.1.0"
       ]
     }
   ]

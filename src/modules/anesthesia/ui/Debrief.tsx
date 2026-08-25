@@ -3351,6 +3351,45 @@ export function objectiveFindings(
         : 'Placement and whole-patient reassessment were absent or preceded the airway plan.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['review-sbt-readiness', 'start-bounded-sbt', 'recognize-sbt-failure',
+      'stop-failed-sbt-and-recover', 'plan-after-failed-sbt'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'spontaneous-breathing-trial');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The spontaneous-breathing-trial vignette was not active.' } satisfies ObjectiveFinding;
+      const readiness = log.find((event) => /^sbt-readiness-reviewed-\d+$/.test(event.eventId));
+      const started = log.find((event) => /^sbt-started-\d+$/.test(event.eventId));
+      const failure = log.find((event) => /^sbt-failure-recognized-\d+$/.test(event.eventId));
+      const recovery = log.find((event) => /^sbt-recovery-reviewed-\d+$/.test(event.eventId));
+      const plan = log.find((event) => /^sbt-plan-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'review-sbt-readiness') return { ...base,
+        outcome: readiness ? 'met' : 'not-met', finding: readiness
+          ? 'Cause, oxygenation, circulation, wakefulness, effort, cough, and secretions were reviewed without requiring RSBI.'
+          : 'The standardized readiness review was absent.', atTick: readiness?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'start-bounded-sbt') {
+        const ordered = readiness && started && readiness.tick <= started.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'A bounded local SBT followed readiness with FiO₂ unchanged.'
+          : 'The trial was absent or preceded readiness.', atTick: started?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'recognize-sbt-failure') {
+        const ordered = started && failure && started.tick <= failure.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Work, pattern, oxygenation, circulation, comfort, and trajectory established intolerance.'
+          : 'Failure recognition was absent or preceded the trial.', atTick: failure?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'stop-failed-sbt-and-recover') {
+        const ordered = failure && recovery && failure.tick <= recovery.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'The trial stopped, prior support returned, and whole-patient recovery was reviewed.'
+          : 'Recovery was absent or preceded failure recognition.', atTick: recovery?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = recovery && plan && recovery.tick <= plan.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+        ? 'Reversible contributors and repeat assessment were handed off without equating SBT success with extubation readiness.'
+        : 'The next-step plan was absent or preceded recovery.', atTick: plan?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

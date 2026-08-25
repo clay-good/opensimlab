@@ -5,6 +5,7 @@ import { VENTILATOR_DYSSYNCHRONY } from './ventilator-dyssynchrony';
 import { AUTO_PEEP } from './auto-peep';
 import { MUCUS_PLUGGING } from './mucus-plugging';
 import { UNPLANNED_EXTUBATION } from './unplanned-extubation';
+import { SPONTANEOUS_BREATHING_TRIAL } from './spontaneous-breathing-trial';
 
 export const CRITICAL_CARE_SCENARIOS: readonly Scenario[] = [
   ARDS_LUNG_PROTECTIVE_VENTILATION,
@@ -13,6 +14,7 @@ export const CRITICAL_CARE_SCENARIOS: readonly Scenario[] = [
   AUTO_PEEP,
   MUCUS_PLUGGING,
   UNPLANNED_EXTUBATION,
+  SPONTANEOUS_BREATHING_TRIAL,
 ];
 export const DEFAULT_CRITICAL_CARE_SCENARIO_ID = ARDS_LUNG_PROTECTIVE_VENTILATION.metadata.id;
 
