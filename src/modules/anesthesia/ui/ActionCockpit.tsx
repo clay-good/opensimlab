@@ -903,6 +903,25 @@ export interface ActionCockpitProps {
       readonly treatmentDeliveredByLearner: false; readonly diagnosisDetermined: false;
       readonly dispositionDetermined: false; readonly outcomePredicted: false;
     };
+    readonly obesityHypoventilationAssessment?: {
+      readonly phenotypeAtTick: number | null; readonly awakeEvidenceAtTick: number | null;
+      readonly sleepEvidenceAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly coordinatedPlanAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true; readonly spontaneousBreathingAuthored: true;
+      readonly obesityAuthored: true; readonly daytimeHypercapniaAuthored: true;
+      readonly sleepDisorderedBreathingAuthored: true; readonly acuteRespiratoryFailureAuthored: false;
+      readonly examinationPerformedByLearner: false; readonly bmiCalculatedByLearner: false;
+      readonly serumBicarbonateAcquiredByLearner: false;
+      readonly bloodGasAcquiredByLearner: false; readonly sleepStudyAcquiredByLearner: false;
+      readonly sleepStudyScoredByLearner: false; readonly sleepStudyInterpretedByLearner: false;
+      readonly testInterpretedByLearner: false; readonly otherCausesExcludedByLearner: false;
+      readonly diagnosisDeterminedByLearner: false; readonly obesityCausalityProven: false;
+      readonly oxygenSelectedByLearner: false; readonly supportDeviceSelectedByLearner: false;
+      readonly deviceOperatedByLearner: false; readonly drugSelectedByLearner: false;
+      readonly weightInterventionSelectedByLearner: false;
+      readonly treatmentDeliveredByLearner: false; readonly patientPreferenceInferred: false;
+      readonly dispositionDetermined: false; readonly outcomePredicted: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1418,6 +1437,14 @@ export interface ActionCockpitProps {
       | 'coordinate-neuromuscular-respiratory-failure-goals-and-ownership'
       | 'handoff-neuromuscular-respiratory-failure-reassessment',
   ) => void;
+  readonly onObesityHypoventilationResponse?: (
+    action: 'reconcile-obesity-hypoventilation-phenotype-and-trajectory'
+      | 'review-obesity-hypoventilation-awake-evidence'
+      | 'review-obesity-hypoventilation-sleep-evidence-and-open-causes'
+      | 'recognize-obesity-hypoventilation-working-pattern'
+      | 'coordinate-obesity-hypoventilation-shared-plan'
+      | 'handoff-obesity-hypoventilation-reassessment',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1739,6 +1766,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'neuromuscular-respiratory-failure-reassessment',
     ),
+    hasObesityHypoventilationResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'obesity-hypoventilation-reassessment',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1872,6 +1903,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'chronic-opioid-related-hypoventilation-reassessment')
       || (event.type === 'narrative'
         && event.target === 'neuromuscular-respiratory-failure-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'obesity-hypoventilation-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1928,7 +1961,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasCopdTransitionResponse, hasCapHypoxemiaResponse, hasPostPeDyspneaResponse,
     hasApeSupportResponse, hasPostTensionPneumothoraxResponse, hasLargePleuralEffusionResponse,
     hasBronchiectasisMucusPluggingResponse, hasChronicOpioidHypoventilationResponse,
-    hasNeuromuscularRespiratoryFailureResponse,
+    hasNeuromuscularRespiratoryFailureResponse, hasObesityHypoventilationResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1996,7 +2029,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasAcuteSevereAsthmaResponse || hasCopdTransitionResponse || hasCapHypoxemiaResponse
     || hasPostPeDyspneaResponse || hasApeSupportResponse || hasPostTensionPneumothoraxResponse
     || hasLargePleuralEffusionResponse || hasBronchiectasisMucusPluggingResponse
-    || hasChronicOpioidHypoventilationResponse || hasNeuromuscularRespiratoryFailureResponse;
+    || hasChronicOpioidHypoventilationResponse || hasNeuromuscularRespiratoryFailureResponse
+    || hasObesityHypoventilationResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2027,7 +2061,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasNeuromuscularRespiratoryFailureResponse
+  const responseTray = hasObesityHypoventilationResponse
+    ? { id: 'crisis', label: 'Awake + sleep review' } as const
+    : hasNeuromuscularRespiratoryFailureResponse
     ? { id: 'crisis', label: 'Muscle + breathing review' } as const
     : hasChronicOpioidHypoventilationResponse
     ? { id: 'crisis', label: 'Sleep + breathing review' } as const
@@ -2261,6 +2297,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasBronchiectasisMucusPluggingResponse
     || hasChronicOpioidHypoventilationResponse
     || hasNeuromuscularRespiratoryFailureResponse
+    || hasObesityHypoventilationResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2885,6 +2922,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <NeuromuscularRespiratoryFailureTray
                 assessment={props.resuscitation.neuromuscularRespiratoryFailureAssessment}
                 onAction={props.onNeuromuscularRespiratoryFailureResponse ?? (() => {})} />
+            )}
+            {hasObesityHypoventilationResponse && (
+              <ObesityHypoventilationTray
+                assessment={props.resuscitation.obesityHypoventilationAssessment}
+                onAction={props.onObesityHypoventilationResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -7392,6 +7434,44 @@ function NeuromuscularRespiratoryFailureTray({ assessment, onAction }: {
         <Button className="crisis-drug__action" disabled={!ownership || handoff} onClick={() => onAction('handoff-neuromuscular-respiratory-failure-reassessment')}>Hand off active risk + open work</Button>
       </div>
       <p className="field__hint">No FVC, SNIP, cough, swallow, or neurologic test; oxygen, NIV, mode, pressure, backup rate, cough-assist setting, suction, intubation, tracheostomy, nutrition, drug, treatment, disposition, prognosis, or outcome is performed or chosen.</p>
+    </section>
+  </div>;
+}
+
+function ObesityHypoventilationTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['obesityHypoventilationAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onObesityHypoventilationResponse']>;
+}) {
+  const phenotype = assessment?.phenotypeAtTick != null;
+  const awake = assessment?.awakeEvidenceAtTick != null;
+  const sleep = assessment?.sleepEvidenceAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const plan = assessment?.coordinatedPlanAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="obesity-hypoventilation-evidence-title">
+      <div id="obesity-hypoventilation-evidence-title" className="syringe__name">Awake carbon dioxide completes the sleep story.</div>
+      <Badge kind="teaching">symptoms · awake PaCO₂ · bicarbonate · sleep breathing · exclusions</Badge>
+      <div className="syringe__meta">daytime function · current safety · fixed awake + sleep evidence</div>
+      <p className="syringe__remaining" role="status">{recognition ? 'Daytime + sleep evidence align · bounded pattern recorded' : awake && sleep ? 'Both evidence lanes held · record the whole pattern' : phenotype ? 'Daytime story held · awake and sleep reviews are open' : 'Start with symptoms and daytime function, not body size'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={phenotype} onClick={() => onAction('reconcile-obesity-hypoventilation-phenotype-and-trajectory')}>Review symptoms + daytime state</Button>
+        <Button className="crisis-drug__action" disabled={!phenotype || awake} onClick={() => onAction('review-obesity-hypoventilation-awake-evidence')}>Review awake CO₂ + bicarbonate</Button>
+        <Button className="crisis-drug__action" disabled={!phenotype || sleep} onClick={() => onAction('review-obesity-hypoventilation-sleep-evidence-and-open-causes')}>Review sleep evidence + open causes</Button>
+      </div>
+      <p className="field__hint">Bicarbonate can prompt PaCO₂ measurement in the right screening context; it does not diagnose OHS. Awake saturation, BMI, PaCO₂, and AHI also do not stand alone.</p>
+    </section>
+    <section className="syringe" aria-labelledby="obesity-hypoventilation-ownership-title">
+      <div id="obesity-hypoventilation-ownership-title" className="syringe__name">A clear pattern deserves a joined-up plan.</div>
+      <Badge kind="teaching">respiratory · sleep · primary care · weight health · patient goals</Badge>
+      <div className="syringe__meta">preferences · access · cardiometabolic health · follow-through</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Evidence + unresolved work handed off' : plan ? 'Owners connected · advance time before handoff' : recognition ? 'Pattern recorded · connect respectful shared ownership' : 'Bring both evidence lanes together before planning'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={!awake || !sleep || recognition} onClick={() => onAction('recognize-obesity-hypoventilation-working-pattern')}>Recognize convergent OHS pattern</Button>
+        <Button className="crisis-drug__action" disabled={!recognition || plan} onClick={() => onAction('coordinate-obesity-hypoventilation-shared-plan')}>Connect respiratory + sleep + weight-health owners</Button>
+        <Button className="crisis-drug__action" disabled={!plan || handoff} onClick={() => onAction('handoff-obesity-hypoventilation-reassessment')}>Hand off evidence + open work</Button>
+      </div>
+      <p className="field__hint">No PAP, interface, pressure, backup rate, oxygen, medication, procedure, weight intervention, disposition, response, or outcome is selected.</p>
     </section>
   </div>;
 }

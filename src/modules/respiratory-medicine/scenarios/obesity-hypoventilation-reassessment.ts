@@ -1,0 +1,63 @@
+/** Stable obesity-hypoventilation reassessment with authored awake and sleep evidence. */
+
+import type { Scenario } from '@anesthesia/scenarios/types';
+
+export const OBESITY_HYPOVENTILATION_REASSESSMENT: Scenario = {
+  schemaVersion: 1,
+  metadata: {
+    id: 'obesity-hypoventilation-reassessment', version: '0.1.0', maturity: 'draft',
+    title: 'Obesity hypoventilation reassessment', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
+    estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
+      { id: 'reconcile-obesity-hypoventilation-phenotype-and-trajectory', statement: 'Reconcile the authored symptoms, daytime function, breathing, oxygenation, perfusion, and current safety without reducing the person to body size.', measure: 'The quiet clinic state and longitudinal concern were separated from acute respiratory failure without granting examination or diagnosis skill.' },
+      { id: 'review-obesity-hypoventilation-awake-evidence', statement: 'Review the fixed serum bicarbonate and awake blood-gas evidence, separating a contextual screening clue from confirmation of awake hypercapnia.', measure: 'Bicarbonate, pH, PaCO₂, PaO₂, and compensation were kept in context without using one number as a universal diagnostic rule.' },
+      { id: 'review-obesity-hypoventilation-sleep-evidence-and-open-causes', statement: 'Review the fixed attended sleep evidence and open pulmonary, cardiac, neurologic, neuromuscular, chest-wall, endocrine, metabolic, medication, central, and technical contributors.', measure: 'Sleep-disordered breathing and sustained sleep hypoventilation were integrated while important alternatives stayed open.' },
+      { id: 'recognize-obesity-hypoventilation-working-pattern', statement: 'Recognize the convergent authored obesity-hypoventilation working pattern without diagnosing from BMI, bicarbonate, saturation, PaCO₂, or AHI alone.', measure: 'Obesity, awake hypercapnia, sleep-disordered breathing, and exclusion work were connected as a whole pattern.' },
+      { id: 'coordinate-obesity-hypoventilation-shared-plan', statement: 'Coordinate patient-centered respiratory, sleep, primary-care, cardiometabolic, and weight-health ownership.', measure: 'Preferences, access, diagnostic completion, safety, comorbidity review, and follow-up were preserved without choosing PAP, oxygen, a weight intervention, or treatment.' },
+      { id: 'handoff-obesity-hypoventilation-reassessment', statement: 'After elapsed time, hand off the evidence, working pattern, open causes, patient priorities, pending work, triggers, and named owners.', measure: 'The handoff preserved uncertainty and continuity without inventing treatment response, disposition, prognosis, or outcome.' },
+    ],
+    clinicalReview: { reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED',
+      competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01',
+      contentVersion: '0.1.0', sources: [
+        'Mokhlesi B, Masa JF, Brozek JL, et al. Evaluation and Management of Obesity Hypoventilation Syndrome: An Official American Thoracic Society Clinical Practice Guideline. Am J Respir Crit Care Med. 2019;200:e6-e24.',
+        'National Institute for Health and Care Excellence. Obstructive sleep apnoea/hypopnoea syndrome and obesity hypoventilation syndrome in over 16s. NICE guideline NG202. 2021.',
+        'Kapur VK, Auckley DH, Chowdhuri S, et al. Clinical Practice Guideline for Diagnostic Testing for Adult Obstructive Sleep Apnea. J Clin Sleep Med. 2017;13:479-504.',
+      ] },
+    limitations: ['obesity-hypoventilation-presentation-and-evidence-are-authored',
+      'obesity-hypoventilation-controls-review-recognize-coordinate-and-handoff-only',
+      'no-live-bmi-gas-sleep-test-diagnosis-pap-weight-intervention-treatment-or-outcome'],
+  },
+  patient: { ageYears: 54, sex: 'female', heightCm: 165, weightKg: 118, asaClass: 3,
+    diagnosis: 'Authored obesity-hypoventilation working pattern requiring qualified confirmation and exclusion review',
+    procedure: 'Obesity hypoventilation reassessment',
+    comorbidities: ['Severe obesity', 'Hypertension', 'Type 2 diabetes'],
+    medications: ['Usual antihypertensive and diabetes regimens not represented'], allergies: ['No known drug allergies'],
+    fasting: 'Not relevant to this stable respiratory and sleep reassessment',
+    baseline: { heartRateBpm: 82, meanArterialMmHg: 96, strokeVolumeMl: 67,
+      hemoglobinGPerDl: 13.2, bloodVolumeMl: 5000, coreTemperatureC: 36.8,
+      arterialStiffness: 1.05, baroreflexGain: 0.95, fixedStrokeVolume: false },
+    airway: { difficulty: 0.1, difficultMaskVentilation: false,
+      assessment: 'Alert, full-sentence speech, no acute upper-airway obstruction or artificial airway claim' },
+    respiratory: { profile: 'moderately-ill' } },
+  equipment: { monitoring: ['ecg', 'nibp', 'pulse-oximetry', 'temperature'],
+    ventilator: { mode: 'manual', fio2: 0.21, tidalVolumeMl: 420,
+      respiratoryRateBpm: 18, freshGasFlowLPerMin: 0.5, delivering: false } },
+  formulary: [],
+  timeline: [
+    { id: 'obesity-hypoventilation-presentation', type: 'narrative', target: 'obesity-hypoventilation-reassessment', atTick: 0, severity: 'advisory',
+      message: 'A 54-year-old woman is seen in respiratory and sleep clinic after 12 months of loud snoring, witnessed obstructive pauses, unrefreshing sleep, morning headaches, daytime sleepiness, impaired concentration, and gradually reduced walking tolerance. She is 165 cm tall and weighs 118 kg; the authored BMI is 43.3 kg/m². She is alert, comfortable at rest, and speaks full sentences with HR 82/min, RR 18/min, BP 132/78 mmHg (MAP 96), pulse-coherent room-air SpO₂ 91%, warm extremities, and no acute distress, fever, confusion, shock, recent hospitalization, anesthesia, or rescue context. Start with symptoms and daytime function, not body size.' },
+    { id: 'obesity-hypoventilation-awake-evidence', type: 'narrative', target: 'obesity-hypoventilation-reassessment', atTick: 0, severity: 'warning',
+      message: 'Fixed experienced-team reports show serum total CO₂ 31 mmol/L and an awake room-air arterial blood gas with pH 7.38, PaCO₂ 52 mmHg, PaO₂ 64 mmHg, and bicarbonate 30 mmol/L. The blood gas establishes authored compensated awake hypercapnia in this case. Bicarbonate can be a contextual screening clue, but it does not diagnose obesity hypoventilation; awake SpO₂ alone is also insufficient. The learner does not order, acquire, calculate, or interpret these values.' },
+    { id: 'obesity-hypoventilation-sleep-and-alternatives', type: 'narrative', target: 'obesity-hypoventilation-reassessment', atTick: 0, severity: 'advisory',
+      message: 'A fixed attended sleep report records predominantly obstructive events with AHI 48/hour, transcutaneous CO₂ rising from an awake low-50s baseline to 64 mmHg during sleep, and associated desaturation. Qualified sleep staff report severe obstructive sleep apnea plus sustained sleep hypoventilation; the learner does not acquire, score, calculate, or interpret the study. Fixed office spirometry reports FEV₁/FVC 0.82 without obstruction, chest imaging reports low volumes without focal opacity, edema, effusion, or pneumothorax, TSH is 2.1 mIU/L, and an experienced neurologic report describes no focal or generalized weakness or chest-wall deformity. There is no authored opioid, sedative, alcohol-excess, or other respiratory-depressant exposure. These snapshots narrow but do not permanently exclude lung, cardiac, pulmonary-vascular, neurologic, neuromuscular, chest-wall, endocrine, metabolic, medication, substance, central-control, technical, or other contributors.' },
+    { id: 'obesity-hypoventilation-boundary', type: 'narrative', target: 'obesity-hypoventilation-reassessment-boundary', atTick: 0, severity: 'advisory',
+      message: 'Reconcile the person’s symptoms, daytime function, physiology, and current safety. Review the fixed awake gas and the fixed sleep-plus-open-cause evidence in either order, then record the convergent authored working pattern without diagnosing from BMI, bicarbonate, saturation, PaCO₂, or AHI alone. Coordinate respectful respiratory, sleep, primary-care, cardiometabolic, and weight-health ownership around preferences, access, diagnostic completion, comorbidity review, safety, and follow-up. After a strictly later engine tick, hand off evidence and unresolved work. The controls do not examine; calculate BMI or AHI; acquire, perform, score, or interpret bicarbonate, blood gas, oximetry, capnography, spirometry, imaging, polygraphy, polysomnography, or another test; diagnose OHS, OSA, or a cause; select or deliver oxygen, CPAP, NIV, an interface, mode, pressure, backup rate, drug, weight target, nutrition plan, bariatric procedure, or treatment; counsel driving, perform a procedure, change body weight, determine disposition or prognosis, or predict response or outcome.' },
+  ],
+  debrief: { rubric: [
+    { id: 'obesity-hypoventilation-trajectory', objectiveId: 'reconcile-obesity-hypoventilation-phenotype-and-trajectory', question: 'Which symptom, function, breathing, oxygenation, perfusion, and safety facts defined the longitudinal concern without reducing the person to body size?' },
+    { id: 'obesity-hypoventilation-awake', objectiveId: 'review-obesity-hypoventilation-awake-evidence', question: 'How did the fixed awake gas differ from a bicarbonate screening clue or one saturation value?' },
+    { id: 'obesity-hypoventilation-sleep', objectiveId: 'review-obesity-hypoventilation-sleep-evidence-and-open-causes', question: 'Which fixed sleep findings and alternate contributors remained part of the pattern?' },
+    { id: 'obesity-hypoventilation-recognition', objectiveId: 'recognize-obesity-hypoventilation-working-pattern', question: 'Why did the convergent working pattern require obesity, awake hypercapnia, sleep-disordered breathing, and exclusion work rather than one cutoff?' },
+    { id: 'obesity-hypoventilation-plan', objectiveId: 'coordinate-obesity-hypoventilation-shared-plan', question: 'How did shared ownership preserve preferences, access, cardiometabolic health, diagnostic completion, and follow-up without choosing treatment?' },
+    { id: 'obesity-hypoventilation-handoff', objectiveId: 'handoff-obesity-hypoventilation-reassessment', question: 'Which evidence, open causes, priorities, pending work, triggers, and owners remained active?' },
+  ] },
+};

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "respiratory-medicine",
-  "recordCount": 10,
+  "recordCount": 11,
   "records": [
     {
       "recordId": "scenario:acute-severe-asthma@0.1.0",
@@ -111,6 +111,17 @@
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#neuromuscular-respiratory-failure-reassessment@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#neuromuscular-respiratory-failure-reassessment@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:obesity-hypoventilation-reassessment@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "obesity-hypoventilation-reassessment",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/respiratory-medicine-completion-audit.json#obesity-hypoventilation-reassessment@0.1.0",
+        "/catalog/respiratory-medicine-quality-audit.json#obesity-hypoventilation-reassessment@0.1.0"
       ]
     }
   ]

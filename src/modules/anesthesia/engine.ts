@@ -89,6 +89,10 @@ const NEUROMUSCULAR_RESPIRATORY_FAILURE_BLOCKED_ACTION_TYPES = new Set([
   ...HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES, 'mucus-plugging-response',
   'opioid-ventilatory-response', 'opioid-toxicity-response',
 ]);
+const OBESITY_HYPOVENTILATION_BLOCKED_ACTION_TYPES = new Set([
+  ...HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES, 'mucus-plugging-response',
+  'opioid-ventilatory-response', 'opioid-toxicity-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -697,6 +701,12 @@ export class AnesthesiaEngine {
   private neuromuscularRespiratoryFailureReviewAtTick: number | null = null;
   private neuromuscularRespiratoryFailureOwnershipAtTick: number | null = null;
   private neuromuscularRespiratoryFailureHandoffAtTick: number | null = null;
+  private obesityHypoventilationPhenotypeAtTick: number | null = null;
+  private obesityHypoventilationAwakeEvidenceAtTick: number | null = null;
+  private obesityHypoventilationSleepEvidenceAtTick: number | null = null;
+  private obesityHypoventilationRecognitionAtTick: number | null = null;
+  private obesityHypoventilationPlanAtTick: number | null = null;
+  private obesityHypoventilationHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1037,6 +1047,14 @@ export class AnesthesiaEngine {
       this.log('warning', 'assessment',
         `neuromuscular-respiratory-failure-generic-action-refused-${this.currentTick}`,
         'This reassessment-only neuromuscular lesson does not expose generic testing, neuromuscular-reversal, medication, oxygen, airway-clearance, suction, airway, ventilator, procedure, rhythm, artifact, opioid, or crisis actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const obesityHypoventilation = this.scenario.timeline.some((event) =>
+      event.type === 'narrative' && event.target === 'obesity-hypoventilation-reassessment');
+    if (obesityHypoventilation && OBESITY_HYPOVENTILATION_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `obesity-hypoventilation-generic-action-refused-${this.currentTick}`,
+        'This stable reassessment does not expose generic testing, medication, oxygen, PAP, airway, ventilator, procedure, rhythm, artifact, opioid, or crisis actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -5473,6 +5491,51 @@ export class AnesthesiaEngine {
         this.neuromuscularRespiratoryFailureHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `neuromuscular-respiratory-failure-handoff-recorded-${this.currentTick}`, 'The serial trajectory, current mechanics and gas evidence, active ventilation, cough, secretion and bulbar risks, open causes, documented patient priorities, pending work, deterioration triggers, and named owners were handed off. No diagnosis, support selection, procedure, treatment, response, disposition, prognosis, or outcome was determined.', { diagnosisDetermined: false, supportDeviceSelectedByLearner: false, airwayProcedurePerformedByLearner: false, treatmentDeliveredByLearner: false, dispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'obesity-hypoventilation-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'obesity-hypoventilation-reassessment');
+        const valid = ['reconcile-obesity-hypoventilation-phenotype-and-trajectory',
+          'review-obesity-hypoventilation-awake-evidence',
+          'review-obesity-hypoventilation-sleep-evidence-and-open-causes',
+          'recognize-obesity-hypoventilation-working-pattern',
+          'coordinate-obesity-hypoventilation-shared-plan',
+          'handoff-obesity-hypoventilation-reassessment'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `obesity-hypoventilation-response-refused-${this.currentTick}`, supported ? 'The obesity-hypoventilation action was not one of the listed choices. Nothing changed.' : 'These obesity-hypoventilation choices are available only in the declared Respiratory Medicine lesson.'); break; }
+        if (response === 'reconcile-obesity-hypoventilation-phenotype-and-trajectory') {
+          if (this.obesityHypoventilationPhenotypeAtTick !== null) { this.log('warning', 'assessment', `obesity-hypoventilation-phenotype-refused-${this.currentTick}`, 'The symptom, function, breathing, oxygenation, perfusion, and current-safety pattern was already reconciled.'); break; }
+          this.obesityHypoventilationPhenotypeAtTick = this.currentTick;
+          this.log('warning', 'assessment', `obesity-hypoventilation-phenotype-reconciled-${this.currentTick}`, 'The longitudinal sleep, daytime-function, breathing, oxygenation, perfusion, and current-safety pattern was reconciled without reducing the person to body size or inventing acute failure. No examination, BMI calculation, diagnosis, or treatment occurred.', { initialPulsePresent: true, spontaneousBreathingAuthored: true, obesityAuthored: true, acuteRespiratoryFailureAuthored: false, examinationPerformedByLearner: false, bmiCalculatedByLearner: false }); break;
+        }
+        if (this.obesityHypoventilationPhenotypeAtTick === null) { this.log('warning', 'assessment', `obesity-hypoventilation-phenotype-order-refused-${this.currentTick}`, 'Review the person’s symptoms, daytime function, physiology, and current safety before the evidence lanes.'); break; }
+        if (response === 'review-obesity-hypoventilation-awake-evidence') {
+          if (this.obesityHypoventilationAwakeEvidenceAtTick !== null) { this.log('warning', 'assessment', `obesity-hypoventilation-awake-evidence-refused-${this.currentTick}`, 'The fixed bicarbonate and awake blood-gas evidence was already reviewed.'); break; }
+          this.obesityHypoventilationAwakeEvidenceAtTick = this.currentTick;
+          this.log('warning', 'assessment', `obesity-hypoventilation-awake-evidence-reviewed-${this.currentTick}`, 'The fixed bicarbonate screening clue was separated from the authored awake blood-gas confirmation of compensated hypercapnia. Neither bicarbonate nor awake saturation was treated as a diagnosis or universal cutoff, and the learner acquired or interpreted no test.', { daytimeHypercapniaAuthored: true, serumBicarbonateAcquiredByLearner: false, bloodGasAcquiredByLearner: false, testInterpretedByLearner: false, diagnosisDetermined: false }); break;
+        }
+        if (response === 'review-obesity-hypoventilation-sleep-evidence-and-open-causes') {
+          if (this.obesityHypoventilationSleepEvidenceAtTick !== null) { this.log('warning', 'assessment', `obesity-hypoventilation-sleep-evidence-refused-${this.currentTick}`, 'The fixed sleep evidence and open-cause review was already recorded.'); break; }
+          this.obesityHypoventilationSleepEvidenceAtTick = this.currentTick;
+          this.log('warning', 'assessment', `obesity-hypoventilation-sleep-evidence-reviewed-${this.currentTick}`, 'Fixed attended sleep evidence was connected with open lung, cardiac, pulmonary-vascular, neurologic, neuromuscular, chest-wall, endocrine, metabolic, medication, substance, central, and technical contributors. No study was acquired, scored, calculated, or interpreted, and no cause was permanently excluded.', { sleepDisorderedBreathingAuthored: true, sleepStudyAcquiredByLearner: false, sleepStudyScoredByLearner: false, sleepStudyInterpretedByLearner: false, otherCausesExcludedByLearner: false }); break;
+        }
+        if (response === 'recognize-obesity-hypoventilation-working-pattern') {
+          if (this.obesityHypoventilationAwakeEvidenceAtTick === null || this.obesityHypoventilationSleepEvidenceAtTick === null) { this.log('warning', 'assessment', `obesity-hypoventilation-recognition-order-refused-${this.currentTick}`, 'Review both the fixed awake evidence and the sleep-plus-open-cause evidence before recording the bounded working pattern.'); break; }
+          if (this.obesityHypoventilationRecognitionAtTick !== null) { this.log('warning', 'assessment', `obesity-hypoventilation-recognition-refused-${this.currentTick}`, 'The convergent authored obesity-hypoventilation working pattern was already recorded.'); break; }
+          this.obesityHypoventilationRecognitionAtTick = this.currentTick;
+          this.log('warning', 'assessment', `obesity-hypoventilation-pattern-recognized-${this.currentTick}`, 'Obesity, awake hypercapnia, sleep-disordered breathing, and explicit exclusion work were connected as one authored working pattern. BMI, bicarbonate, saturation, PaCO₂, and AHI were not used alone, and the learner did not determine a diagnosis.', { obesityHypoventilationWorkingPatternAuthored: true, diagnosisDeterminedByLearner: false, obesityCausalityProven: false }); break;
+        }
+        if (response === 'coordinate-obesity-hypoventilation-shared-plan') {
+          if (this.obesityHypoventilationRecognitionAtTick === null) { this.log('warning', 'assessment', `obesity-hypoventilation-plan-order-refused-${this.currentTick}`, 'Record the bounded working pattern before coordinating shared ownership.'); break; }
+          if (this.obesityHypoventilationPlanAtTick !== null) { this.log('warning', 'assessment', `obesity-hypoventilation-plan-refused-${this.currentTick}`, 'Respiratory, sleep, primary-care, cardiometabolic, and weight-health ownership was already coordinated.'); break; }
+          this.obesityHypoventilationPlanAtTick = this.currentTick;
+          this.log('warning', 'assessment', `obesity-hypoventilation-plan-coordinated-${this.currentTick}`, 'Respectful respiratory, sleep, primary-care, cardiometabolic, and weight-health ownership was connected around preferences, access, diagnostic completion, safety, comorbidity review, and follow-up. No PAP, interface, mode, pressure, oxygen, drug, weight target, nutrition plan, bariatric procedure, or treatment was selected.', { patientPreferenceInferred: false, supportDeviceSelectedByLearner: false, oxygenSelectedByLearner: false, drugSelectedByLearner: false, weightInterventionSelectedByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.obesityHypoventilationPlanAtTick === null) { this.log('warning', 'assessment', `obesity-hypoventilation-handoff-order-refused-${this.currentTick}`, 'Coordinate respectful multidisciplinary ownership before handoff.'); break; }
+        if (this.currentTick <= this.obesityHypoventilationPlanAtTick) { this.log('warning', 'assessment', `obesity-hypoventilation-handoff-time-refused-${this.currentTick}`, 'Allow a later simulated tick before handing off the unresolved outpatient work.'); break; }
+        if (this.obesityHypoventilationHandoffAtTick !== null) { this.log('warning', 'assessment', `obesity-hypoventilation-handoff-refused-${this.currentTick}`, 'The obesity-hypoventilation handoff was already recorded.'); break; }
+        this.obesityHypoventilationHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `obesity-hypoventilation-handoff-recorded-${this.currentTick}`, 'The symptom and function trajectory, awake and sleep evidence, working pattern, open causes, documented priorities, diagnostic and follow-up work, change triggers, and named owners were handed off. No diagnosis, support selection, weight intervention, treatment, response, disposition, prognosis, or outcome was determined.', { diagnosisDeterminedByLearner: false, supportDeviceSelectedByLearner: false, weightInterventionSelectedByLearner: false, treatmentDeliveredByLearner: false, dispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -8242,6 +8305,12 @@ export class AnesthesiaEngine {
         spo2Percent: 94, etco2MmHg: 44, systolicMmHg: 122, diastolicMmHg: 76,
         meanArterialMmHg: 91, coreTemperatureC: 36.8 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'obesity-hypoventilation-reassessment')) {
+      crisisState = { ...crisisState, heartRateBpm: 82, respiratoryRateBpm: 18,
+        spo2Percent: 91, etco2MmHg: 46, systolicMmHg: 132, diastolicMmHg: 78,
+        meanArterialMmHg: 96, coreTemperatureC: 36.8 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -9660,6 +9729,32 @@ export class AnesthesiaEngine {
               patientPreferenceInferred: false as const,
               nutritionSelectedByLearner: false as const,
               treatmentDeliveredByLearner: false as const, diagnosisDetermined: false as const,
+              dispositionDetermined: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'obesity-hypoventilation-reassessment') ? {
+            obesityHypoventilationAssessment: {
+              phenotypeAtTick: this.obesityHypoventilationPhenotypeAtTick,
+              awakeEvidenceAtTick: this.obesityHypoventilationAwakeEvidenceAtTick,
+              sleepEvidenceAtTick: this.obesityHypoventilationSleepEvidenceAtTick,
+              recognitionAtTick: this.obesityHypoventilationRecognitionAtTick,
+              coordinatedPlanAtTick: this.obesityHypoventilationPlanAtTick,
+              handoffAtTick: this.obesityHypoventilationHandoffAtTick,
+              initialPulsePresent: true as const, spontaneousBreathingAuthored: true as const,
+              obesityAuthored: true as const, daytimeHypercapniaAuthored: true as const,
+              sleepDisorderedBreathingAuthored: true as const,
+              acuteRespiratoryFailureAuthored: false as const,
+              examinationPerformedByLearner: false as const, bmiCalculatedByLearner: false as const,
+              serumBicarbonateAcquiredByLearner: false as const,
+              bloodGasAcquiredByLearner: false as const, sleepStudyAcquiredByLearner: false as const,
+              sleepStudyScoredByLearner: false as const, sleepStudyInterpretedByLearner: false as const,
+              testInterpretedByLearner: false as const, otherCausesExcludedByLearner: false as const,
+              diagnosisDeterminedByLearner: false as const, obesityCausalityProven: false as const,
+              oxygenSelectedByLearner: false as const, supportDeviceSelectedByLearner: false as const,
+              deviceOperatedByLearner: false as const, drugSelectedByLearner: false as const,
+              weightInterventionSelectedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const, patientPreferenceInferred: false as const,
               dispositionDetermined: false as const, outcomePredicted: false as const,
             },
           } : {}),

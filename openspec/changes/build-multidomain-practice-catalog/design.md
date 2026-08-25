@@ -1515,6 +1515,26 @@ testing; diagnose; select or deliver oxygen, ventilation, interfaces, settings, 
 airway clearance, suction, medication, nutrition, or treatment; perform an airway procedure;
 determine disposition or prognosis; or predict response or outcome.
 
+### Wave C respiratory-medicine slice 11: obesity hypoventilation
+
+The eleventh respiratory-medicine slice is a stable respiratory and sleep-clinic reassessment, not
+acute-on-chronic ventilatory failure and not the later PAP/NIV-selection lab. A 54-year-old woman has
+12 months of snoring, witnessed obstructive events, unrefreshing sleep, morning headache, daytime
+sleepiness, impaired concentration, and declining walking tolerance. She remains alert and
+comfortable at rest. Fixed qualified reports provide an authored BMI of 43.3 kg/m², bicarbonate
+31 mmol/L, a compensated awake room-air gas with PaCO₂ 52 mmHg, and attended sleep evidence of
+predominantly obstructive events plus sustained sleep hypoventilation.
+
+Learners first reconcile symptoms, daytime function, physiology, and current safety without reducing
+the person to body size. Fixed awake evidence and fixed sleep-plus-open-cause evidence may then be
+reviewed in either order. Only after both lanes may learners record the convergent authored working
+pattern without diagnosing from BMI, bicarbonate, saturation, PaCO₂, or AHI alone, coordinate
+respectful respiratory, sleep, primary-care, cardiometabolic, and weight-health ownership, and
+complete a strictly elapsed unresolved-work handoff. The lesson does not examine; calculate BMI or
+AHI; acquire, score, or interpret testing; diagnose; select PAP, oxygen, an interface, mode, setting,
+drug, nutrition plan, weight target, bariatric procedure, or treatment; counsel driving; determine
+disposition or prognosis; or predict response or outcome.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

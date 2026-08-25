@@ -2015,6 +2015,28 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'https://www.nice.org.uk/guidance/ng42/chapter/Recommendations',
     verifiedOn: '2026-08-25',
   },
+  {
+    id: 'ats-obesity-hypoventilation-guideline-2019',
+    authors: 'Mokhlesi B, Masa JF, Brozek JL, et al',
+    title: 'Evaluation and Management of Obesity Hypoventilation Syndrome: An Official American Thoracic Society Clinical Practice Guideline',
+    publication: 'American Journal of Respiratory and Critical Care Medicine',
+    year: 2019,
+    locator: '200:e6-e24; doi:10.1164/rccm.201905-1071ST; Recommendations 1A and 1B',
+    usedFor: 'The obesity-hypoventilation evidence boundary: integrate obesity, sleep-disordered breathing, awake hypercapnia, and exclusion of other causes; use bicarbonate only as a context-dependent screen and measure PaCO₂ directly when suspicion is high.',
+    verifiedAgainst: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6680300/',
+    verifiedOn: '2026-08-25',
+  },
+  {
+    id: 'nice-ohs-ng202',
+    authors: 'National Institute for Health and Care Excellence',
+    title: 'Obstructive sleep apnoea/hypopnoea syndrome and obesity hypoventilation syndrome in over 16s',
+    publication: 'NICE guideline NG202',
+    year: 2021,
+    locator: 'Chapter 2, obesity hypoventilation syndrome; recognition, assessment, and diagnostic tests',
+    usedFor: 'The awake-and-sleep testing boundary: use awake arterial or arterialized-capillary blood gas and respiratory polygraphy with possible transcutaneous carbon-dioxide monitoring; do not diagnose OHS from oximetry alone; involve the person in care.',
+    verifiedAgainst: 'https://www.nice.org.uk/guidance/ng202/chapter/2-Obesity-hypoventilation-syndrome',
+    verifiedOn: '2026-08-25',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

@@ -3335,6 +3335,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, current neuromuscular guidance, qualified teams, local pathways, the patient’s priorities, and repeated patient-specific review.',
     briefIn: ['neuromuscular-respiratory-failure-reassessment'],
   },
+  {
+    id: 'obesity-hypoventilation-presentation-and-evidence-are-authored',
+    headline: 'The symptoms, function, BMI, bicarbonate, awake gas, sleep study, imaging, spirometry, thyroid, and examination claims are authored.',
+    simplification: 'Fixed reports stand in for longitudinal history, examination, body measurement, chemistry, blood-gas sampling, attended sleep testing and scoring, oximetry and carbon-dioxide monitoring, imaging, spirometry, neurologic review, medication reconciliation, and multidisciplinary reassessment.',
+    whereItMisleads: 'Treating BMI, bicarbonate, awake saturation, PaCO₂, or AHI alone as diagnostic, or treating fixed qualified reports as learner-acquired testing or interpretation.',
+    correctUnderstanding: 'Real evaluation integrates verified obesity, awake hypercapnia, sleep-disordered breathing, test quality, and exclusion of other causes through qualified patient-specific assessment.',
+    briefIn: ['obesity-hypoventilation-reassessment'],
+  },
+  {
+    id: 'obesity-hypoventilation-controls-review-recognize-coordinate-and-handoff-only',
+    headline: 'The controls record person-centered review, 2 evidence lanes, bounded pattern recognition, shared ownership, and handoff only.',
+    simplification: 'Six clicks stand in for history, current-safety review, awake and sleep evidence review, exclusion work, multidisciplinary planning, and communication.',
+    whereItMisleads: 'Equating button order with examination, test acquisition or interpretation, diagnosis, PAP or oxygen choice, weight-health treatment, counseling, or multidisciplinary competence.',
+    correctUnderstanding: 'Actual care requires the person, qualified respiratory, sleep, primary-care, cardiometabolic, and weight-health teams, current guidance, local resources, preferences, access, and repeated review.',
+    briefIn: ['obesity-hypoventilation-reassessment'],
+  },
+  {
+    id: 'no-live-bmi-gas-sleep-test-diagnosis-pap-weight-intervention-treatment-or-outcome',
+    headline: 'The lab does not calculate BMI or AHI, perform or interpret testing, diagnose, select PAP or a weight intervention, deliver treatment, or predict outcome.',
+    simplification: 'No live examination, body measurement, bicarbonate, blood gas, oximetry, capnography, spirometry, imaging, polygraphy, polysomnography, diagnosis, oxygen, CPAP, NIV, interface, mode, pressure, backup rate, drug, nutrition plan, weight target, bariatric procedure, driving advice, treatment, disposition, prognosis, response, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values as universal screening, diagnostic, or treatment thresholds or using completion as evidence of clinical, testing, sleep, device, prescribing, weight-health, treatment, disposition, or prognostic competence.',
+    correctUnderstanding: 'Use verified patient data, current OHS guidance, qualified teams, local pathways, respectful shared decisions, and patient-specific follow-through.',
+    briefIn: ['obesity-hypoventilation-reassessment'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

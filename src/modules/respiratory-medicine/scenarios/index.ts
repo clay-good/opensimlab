@@ -9,6 +9,7 @@ import { LARGE_UNILATERAL_PLEURAL_EFFUSION_REASSESSMENT } from './large-unilater
 import { BRONCHIECTASIS_MUCUS_PLUGGING_REASSESSMENT } from './bronchiectasis-mucus-plugging-reassessment';
 import { CHRONIC_OPIOID_RELATED_HYPOVENTILATION_REASSESSMENT } from './chronic-opioid-related-hypoventilation-reassessment';
 import { NEUROMUSCULAR_RESPIRATORY_FAILURE_REASSESSMENT } from './neuromuscular-respiratory-failure-reassessment';
+import { OBESITY_HYPOVENTILATION_REASSESSMENT } from './obesity-hypoventilation-reassessment';
 
 export const RESPIRATORY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   ACUTE_SEVERE_ASTHMA,
@@ -21,6 +22,7 @@ export const RESPIRATORY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   BRONCHIECTASIS_MUCUS_PLUGGING_REASSESSMENT,
   CHRONIC_OPIOID_RELATED_HYPOVENTILATION_REASSESSMENT,
   NEUROMUSCULAR_RESPIRATORY_FAILURE_REASSESSMENT,
+  OBESITY_HYPOVENTILATION_REASSESSMENT,
 ];
 export const DEFAULT_RESPIRATORY_MEDICINE_SCENARIO_ID = ACUTE_SEVERE_ASTHMA.metadata.id;
 

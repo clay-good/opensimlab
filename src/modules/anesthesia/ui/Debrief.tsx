@@ -4451,6 +4451,26 @@ export function objectiveFindings(
       const ordered = ownership && handoff && ownership.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved the serial trajectory, active risks, open causes, documented priorities, pending work, triggers, and owners without inventing response or outcome.' : 'The active-risk handoff was absent or did not follow shared ownership after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-obesity-hypoventilation-phenotype-and-trajectory',
+      'review-obesity-hypoventilation-awake-evidence',
+      'review-obesity-hypoventilation-sleep-evidence-and-open-causes',
+      'recognize-obesity-hypoventilation-working-pattern',
+      'coordinate-obesity-hypoventilation-shared-plan',
+      'handoff-obesity-hypoventilation-reassessment'].includes(objective.id)) {
+      const phenotype = log.find((event) => /^obesity-hypoventilation-phenotype-reconciled-\d+$/.test(event.eventId));
+      const awake = log.find((event) => /^obesity-hypoventilation-awake-evidence-reviewed-\d+$/.test(event.eventId));
+      const sleep = log.find((event) => /^obesity-hypoventilation-sleep-evidence-reviewed-\d+$/.test(event.eventId));
+      const recognition = log.find((event) => /^obesity-hypoventilation-pattern-recognized-\d+$/.test(event.eventId));
+      const plan = log.find((event) => /^obesity-hypoventilation-plan-coordinated-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^obesity-hypoventilation-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-obesity-hypoventilation-phenotype-and-trajectory') return { ...base, outcome: phenotype ? 'met' : 'not-met', finding: phenotype ? 'Symptoms, daytime function, breathing, oxygenation, perfusion, and current safety were reconciled without reducing the person to body size or inventing acute failure.' : 'The person-centered longitudinal pattern was not reconciled.', atTick: phenotype?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-obesity-hypoventilation-awake-evidence') { const ordered = phenotype && awake && phenotype.tick <= awake.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The fixed awake gas established authored hypercapnia while bicarbonate and saturation remained contextual clues rather than diagnostic shortcuts.' : 'Awake-evidence review was absent or preceded the whole-person review.', atTick: awake?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-obesity-hypoventilation-sleep-evidence-and-open-causes') { const ordered = phenotype && sleep && phenotype.tick <= sleep.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Fixed attended sleep evidence was integrated while pulmonary, cardiac, neurologic, neuromuscular, chest-wall, endocrine, metabolic, medication, central, technical, and other causes stayed open.' : 'Sleep-and-open-cause review was absent or preceded the whole-person review.', atTick: sleep?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'recognize-obesity-hypoventilation-working-pattern') { const ordered = awake && sleep && recognition && awake.tick <= recognition.tick && sleep.tick <= recognition.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Obesity, awake hypercapnia, sleep-disordered breathing, and exclusion work formed one bounded authored pattern without diagnosis from a single cutoff.' : 'Pattern recognition was absent or bypassed an evidence lane.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'coordinate-obesity-hypoventilation-shared-plan') { const ordered = recognition && plan && recognition.tick <= plan.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Respectful respiratory, sleep, primary-care, cardiometabolic, and weight-health ownership preserved preferences, access, diagnostic work, and follow-up without choosing treatment.' : 'Shared ownership was absent or preceded bounded pattern recognition.', atTick: plan?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = plan && handoff && plan.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved evidence, open causes, documented priorities, pending work, triggers, and owners without inventing treatment response or outcome.' : 'The unresolved-work handoff was absent or did not follow shared ownership after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

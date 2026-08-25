@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: neuromuscular respiratory failure reassessment has protocol version 111', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(111);
+  it('Scenario: obesity hypoventilation reassessment has protocol version 112', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(112);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

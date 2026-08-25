@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 111 reports neuromuscular respiratory-failure reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 111;
+/** Bumped whenever the message shape changes incompatibly. Version 112 reports obesity-hypoventilation reassessment state. */
+export const WORKER_PROTOCOL_VERSION = 112;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -992,6 +992,25 @@ export interface EquipmentSnapshot {
       readonly airwayProcedurePerformedByLearner: false;
       readonly patientPreferenceInferred: false; readonly nutritionSelectedByLearner: false;
       readonly treatmentDeliveredByLearner: false; readonly diagnosisDetermined: false;
+      readonly dispositionDetermined: false; readonly outcomePredicted: false;
+    };
+    readonly obesityHypoventilationAssessment?: {
+      readonly phenotypeAtTick: number | null; readonly awakeEvidenceAtTick: number | null;
+      readonly sleepEvidenceAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly coordinatedPlanAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true; readonly spontaneousBreathingAuthored: true;
+      readonly obesityAuthored: true; readonly daytimeHypercapniaAuthored: true;
+      readonly sleepDisorderedBreathingAuthored: true; readonly acuteRespiratoryFailureAuthored: false;
+      readonly examinationPerformedByLearner: false; readonly bmiCalculatedByLearner: false;
+      readonly serumBicarbonateAcquiredByLearner: false;
+      readonly bloodGasAcquiredByLearner: false; readonly sleepStudyAcquiredByLearner: false;
+      readonly sleepStudyScoredByLearner: false; readonly sleepStudyInterpretedByLearner: false;
+      readonly testInterpretedByLearner: false; readonly otherCausesExcludedByLearner: false;
+      readonly diagnosisDeterminedByLearner: false; readonly obesityCausalityProven: false;
+      readonly oxygenSelectedByLearner: false; readonly supportDeviceSelectedByLearner: false;
+      readonly deviceOperatedByLearner: false; readonly drugSelectedByLearner: false;
+      readonly weightInterventionSelectedByLearner: false;
+      readonly treatmentDeliveredByLearner: false; readonly patientPreferenceInferred: false;
       readonly dispositionDetermined: false; readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
