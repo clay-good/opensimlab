@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 109 reports bronchiectasis mucus-plugging reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 109;
+/** Bumped whenever the message shape changes incompatibly. Version 110 reports chronic opioid hypoventilation reassessment state. */
+export const WORKER_PROTOCOL_VERSION = 110;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -954,6 +954,22 @@ export interface EquipmentSnapshot {
       readonly sputumAssessedByLearner: false; readonly airwayClearancePerformedByLearner: false;
       readonly suctionPerformedByLearner: false; readonly bronchoscopyPerformedByLearner: false;
       readonly deviceOrTechniqueSelected: false; readonly oxygenDeliveredByLearner: false;
+      readonly treatmentDeliveredByLearner: false; readonly diagnosisDetermined: false;
+      readonly dispositionDetermined: false; readonly outcomePredicted: false;
+    };
+    readonly chronicOpioidHypoventilationAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly alternativesAtTick: number | null; readonly coordinatedPlanAtTick: number | null;
+      readonly handoffAtTick: number | null; readonly initialPulsePresent: true;
+      readonly chronicOpioidExposureAuthored: true; readonly spontaneouslyBreathingAuthored: true;
+      readonly acuteOpioidOverdoseAuthored: false; readonly postoperativeRecoveryAuthored: false;
+      readonly sleepRelatedHypoventilationPatternAuthored: true;
+      readonly opioidCausalityProven: false; readonly examinationPerformedByLearner: false;
+      readonly bloodGasAcquiredByLearner: false; readonly sleepStudyAcquiredByLearner: false;
+      readonly sleepStudyInterpretedByLearner: false; readonly drugOrDoseSelected: false;
+      readonly taperSelected: false; readonly opioidChangedByLearner: false;
+      readonly naloxoneSelectedByLearner: false; readonly naloxoneDeliveredByLearner: false;
+      readonly oxygenDeliveredByLearner: false; readonly supportDeviceSelectedByLearner: false;
       readonly treatmentDeliveredByLearner: false; readonly diagnosisDetermined: false;
       readonly dispositionDetermined: false; readonly outcomePredicted: false;
     };

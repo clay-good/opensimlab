@@ -944,6 +944,9 @@ export function Cockpit({
           onBronchiectasisMucusPluggingResponse={(action) => session.act({
             type: 'bronchiectasis-mucus-plugging-response', payload: { action },
           })}
+          onChronicOpioidHypoventilationResponse={(action) => session.act({
+            type: 'chronic-opioid-related-hypoventilation-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

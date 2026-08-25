@@ -866,6 +866,22 @@ export interface ActionCockpitProps {
       readonly treatmentDeliveredByLearner: false; readonly diagnosisDetermined: false;
       readonly dispositionDetermined: false; readonly outcomePredicted: false;
     };
+    readonly chronicOpioidHypoventilationAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly alternativesAtTick: number | null; readonly coordinatedPlanAtTick: number | null;
+      readonly handoffAtTick: number | null; readonly initialPulsePresent: true;
+      readonly chronicOpioidExposureAuthored: true; readonly spontaneouslyBreathingAuthored: true;
+      readonly acuteOpioidOverdoseAuthored: false; readonly postoperativeRecoveryAuthored: false;
+      readonly sleepRelatedHypoventilationPatternAuthored: true;
+      readonly opioidCausalityProven: false; readonly examinationPerformedByLearner: false;
+      readonly bloodGasAcquiredByLearner: false; readonly sleepStudyAcquiredByLearner: false;
+      readonly sleepStudyInterpretedByLearner: false; readonly drugOrDoseSelected: false;
+      readonly taperSelected: false; readonly opioidChangedByLearner: false;
+      readonly naloxoneSelectedByLearner: false; readonly naloxoneDeliveredByLearner: false;
+      readonly oxygenDeliveredByLearner: false; readonly supportDeviceSelectedByLearner: false;
+      readonly treatmentDeliveredByLearner: false; readonly diagnosisDetermined: false;
+      readonly dispositionDetermined: false; readonly outcomePredicted: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1366,6 +1382,13 @@ export interface ActionCockpitProps {
       | 'escalate-bronchiectasis-mucus-plugging-persistent-collapse'
       | 'handoff-bronchiectasis-mucus-plugging-reassessment',
   ) => void;
+  readonly onChronicOpioidHypoventilationResponse?: (
+    action: 'reconcile-chronic-opioid-related-hypoventilation-exposure-and-trajectory'
+      | 'review-chronic-opioid-related-hypoventilation-awake-and-sleep-evidence'
+      | 'review-chronic-opioid-related-hypoventilation-contributors-and-alternatives'
+      | 'coordinate-chronic-opioid-related-hypoventilation-prescriber-sleep-and-respiratory-plan'
+      | 'handoff-chronic-opioid-related-hypoventilation-reassessment',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1679,6 +1702,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'bronchiectasis-mucus-plugging-reassessment',
     ),
+    hasChronicOpioidHypoventilationResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'chronic-opioid-related-hypoventilation-reassessment',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1808,6 +1835,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'large-unilateral-pleural-effusion-reassessment')
       || (event.type === 'narrative'
         && event.target === 'bronchiectasis-mucus-plugging-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'chronic-opioid-related-hypoventilation-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1863,7 +1892,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasAcuteSevereAsthmaResponse,
     hasCopdTransitionResponse, hasCapHypoxemiaResponse, hasPostPeDyspneaResponse,
     hasApeSupportResponse, hasPostTensionPneumothoraxResponse, hasLargePleuralEffusionResponse,
-    hasBronchiectasisMucusPluggingResponse,
+    hasBronchiectasisMucusPluggingResponse, hasChronicOpioidHypoventilationResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1930,7 +1959,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPacemakerCaptureFailureResponse || hasTranscutaneousPacingCaptureResponse
     || hasAcuteSevereAsthmaResponse || hasCopdTransitionResponse || hasCapHypoxemiaResponse
     || hasPostPeDyspneaResponse || hasApeSupportResponse || hasPostTensionPneumothoraxResponse
-    || hasLargePleuralEffusionResponse || hasBronchiectasisMucusPluggingResponse;
+    || hasLargePleuralEffusionResponse || hasBronchiectasisMucusPluggingResponse
+    || hasChronicOpioidHypoventilationResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1961,7 +1991,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasBronchiectasisMucusPluggingResponse
+  const responseTray = hasChronicOpioidHypoventilationResponse
+    ? { id: 'crisis', label: 'Sleep + breathing review' } as const
+    : hasBronchiectasisMucusPluggingResponse
     ? { id: 'crisis', label: 'Mucus + focal collapse' } as const
     : hasLargePleuralEffusionResponse
     ? { id: 'crisis', label: 'Pleural effusion review' } as const
@@ -2189,6 +2221,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPostTensionPneumothoraxResponse
     || hasLargePleuralEffusionResponse
     || hasBronchiectasisMucusPluggingResponse
+    || hasChronicOpioidHypoventilationResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2803,6 +2836,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <BronchiectasisMucusPluggingTray
                 assessment={props.resuscitation.bronchiectasisMucusPluggingAssessment}
                 onAction={props.onBronchiectasisMucusPluggingResponse ?? (() => {})} />
+            )}
+            {hasChronicOpioidHypoventilationResponse && (
+              <ChronicOpioidHypoventilationTray
+                assessment={props.resuscitation.chronicOpioidHypoventilationAssessment}
+                onAction={props.onChronicOpioidHypoventilationResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -7236,6 +7274,42 @@ function BronchiectasisMucusPluggingTray({ assessment, onAction }: {
         <Button className="crisis-drug__action" disabled={!escalation || handoff} onClick={() => onAction('handoff-bronchiectasis-mucus-plugging-reassessment')}>Hand off unresolved focal work</Button>
       </div>
       <p className="field__hint">No sputum test, clearance maneuver, suction, bronchoscopy, plug removal, biopsy, treatment, diagnosis, disposition, recurrence, or outcome is performed or chosen.</p>
+    </section>
+  </div>;
+}
+
+function ChronicOpioidHypoventilationTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['chronicOpioidHypoventilationAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onChronicOpioidHypoventilationResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const evidence = assessment?.evidenceAtTick != null;
+  const alternatives = assessment?.alternativesAtTick != null;
+  const plan = assessment?.coordinatedPlanAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="chronic-opioid-hypoventilation-pattern-title">
+      <div id="chronic-opioid-hypoventilation-pattern-title" className="syringe__name">Daytime can look quiet. Sleep can tell the fuller story.</div>
+      <Badge kind="teaching">longitudinal symptoms · awake snapshot · attended sleep evidence</Badge>
+      <div className="syringe__meta">exposure · sleep · function · CO₂ pattern · open contributors</div>
+      <p className="syringe__remaining" role="status">{evidence && alternatives ? 'Both evidence lanes reviewed · connect shared ownership' : trajectory ? 'Trajectory held · review both evidence lanes' : 'Begin with the person, not one number'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={trajectory} onClick={() => onAction('reconcile-chronic-opioid-related-hypoventilation-exposure-and-trajectory')}>Review exposure + sleep trajectory</Button>
+        <Button className="crisis-drug__action" disabled={!trajectory || evidence} onClick={() => onAction('review-chronic-opioid-related-hypoventilation-awake-and-sleep-evidence')}>Review awake + sleep evidence</Button>
+        <Button className="crisis-drug__action" disabled={!trajectory || alternatives} onClick={() => onAction('review-chronic-opioid-related-hypoventilation-contributors-and-alternatives')}>Review contributors + alternatives</Button>
+      </div>
+      <p className="field__hint">One awake SpO₂ cannot exclude sleep-related hypoventilation. The blood gas and attended study are fixed specialist reports, not learner-acquired or learner-interpreted tests.</p>
+    </section>
+    <section className="syringe" aria-labelledby="chronic-opioid-hypoventilation-plan-title">
+      <div id="chronic-opioid-hypoventilation-plan-title" className="syringe__name">One breathing pattern can need more than one thoughtful owner.</div>
+      <Badge kind="teaching">pain goals · respiratory safety · shared follow-through</Badge>
+      <div className="syringe__meta">prescriber · sleep · respiratory · pharmacy · primary care</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Evidence + open work handed off' : plan ? 'Shared plan connected · advance time before handoff' : evidence && alternatives ? 'The whole pattern is ready for shared ownership' : 'Complete both reviews before planning'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={!evidence || !alternatives || plan} onClick={() => onAction('coordinate-chronic-opioid-related-hypoventilation-prescriber-sleep-and-respiratory-plan')}>Connect shared safety + pain plan</Button>
+        <Button className="crisis-drug__action" disabled={!plan || handoff} onClick={() => onAction('handoff-chronic-opioid-related-hypoventilation-reassessment')}>Hand off evidence + open work</Button>
+      </div>
+      <p className="field__hint">No diagnosis, morphine-equivalent threshold, abrupt stop, taper, naloxone intervention, oxygen, PAP mode or setting, treatment, disposition, response, or outcome is selected.</p>
     </section>
   </div>;
 }

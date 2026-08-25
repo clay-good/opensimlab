@@ -81,6 +81,10 @@ const LARGE_PLEURAL_EFFUSION_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCK
 const BRONCHIECTASIS_MUCUS_BLOCKED_ACTION_TYPES = new Set([
   ...HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES, 'mucus-plugging-response',
 ]);
+const CHRONIC_OPIOID_HYPOVENTILATION_BLOCKED_ACTION_TYPES = new Set([
+  ...HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES, 'opioid-ventilatory-response',
+  'opioid-toxicity-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -678,6 +682,11 @@ export class AnesthesiaEngine {
   private bronchiectasisMucusResponseAtTick: number | null = null;
   private bronchiectasisMucusEscalationAtTick: number | null = null;
   private bronchiectasisMucusHandoffAtTick: number | null = null;
+  private chronicOpioidHypoventilationTrajectoryAtTick: number | null = null;
+  private chronicOpioidHypoventilationEvidenceAtTick: number | null = null;
+  private chronicOpioidHypoventilationAlternativesAtTick: number | null = null;
+  private chronicOpioidHypoventilationPlanAtTick: number | null = null;
+  private chronicOpioidHypoventilationHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -996,6 +1005,17 @@ export class AnesthesiaEngine {
     if (bronchiectasisMucus && BRONCHIECTASIS_MUCUS_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `bronchiectasis-mucus-generic-action-refused-${this.currentTick}`,
         'This review-only bronchiectasis lesson does not expose generic testing, oxygen, medication, airway-clearance, suction, airway, ventilator, rhythm, artifact, procedure, or crisis actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const chronicOpioidHypoventilation = this.scenario.timeline.some((event) =>
+      event.type === 'narrative'
+        && event.target === 'chronic-opioid-related-hypoventilation-reassessment');
+    if (chronicOpioidHypoventilation
+      && CHRONIC_OPIOID_HYPOVENTILATION_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment',
+        `chronic-opioid-hypoventilation-generic-action-refused-${this.currentTick}`,
+        'This longitudinal sleep-breathing lesson does not expose generic testing, opioid or naloxone actions, oxygen, positive-pressure support, airway, ventilator, procedure, rhythm, artifact, or crisis actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -5349,6 +5369,44 @@ export class AnesthesiaEngine {
         this.bronchiectasisMucusHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `bronchiectasis-mucus-handoff-recorded-${this.currentTick}`, 'The baseline and acute trajectory, fixed imaging, partial response, residual collapse, open causes, deterioration triggers, pending work, and named respiratory and airway-capable owners were handed off. No diagnosis, procedure, treatment, disposition, prognosis, resolution, recurrence, or outcome was determined.', { diagnosisDetermined: false, procedurePerformedByLearner: false, treatmentDeliveredByLearner: false, dispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'chronic-opioid-related-hypoventilation-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'chronic-opioid-related-hypoventilation-reassessment');
+        const valid = ['reconcile-chronic-opioid-related-hypoventilation-exposure-and-trajectory',
+          'review-chronic-opioid-related-hypoventilation-awake-and-sleep-evidence',
+          'review-chronic-opioid-related-hypoventilation-contributors-and-alternatives',
+          'coordinate-chronic-opioid-related-hypoventilation-prescriber-sleep-and-respiratory-plan',
+          'handoff-chronic-opioid-related-hypoventilation-reassessment'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `chronic-opioid-hypoventilation-response-refused-${this.currentTick}`, supported ? 'The chronic opioid hypoventilation action was not one of the listed choices. Nothing changed.' : 'These chronic opioid hypoventilation choices are available only in the declared Respiratory Medicine lesson.'); break; }
+        if (response === 'reconcile-chronic-opioid-related-hypoventilation-exposure-and-trajectory') {
+          if (this.chronicOpioidHypoventilationTrajectoryAtTick !== null) { this.log('warning', 'assessment', `chronic-opioid-hypoventilation-trajectory-refused-${this.currentTick}`, 'The exposure, sleep, daytime-function, breathing, oxygenation, and perfusion trajectory was already reconciled.'); break; }
+          this.chronicOpioidHypoventilationTrajectoryAtTick = this.currentTick;
+          this.log('warning', 'assessment', `chronic-opioid-hypoventilation-trajectory-reconciled-${this.currentTick}`, 'The chronic prescribed-opioid exposure, 6-month sleep and daytime-function change, quiet awake breathing, oxygenation, and stable perfusion were reconciled without creating an acute overdose or proving opioid-only causality.', { initialPulsePresent: true, chronicOpioidExposureAuthored: true, spontaneouslyBreathingAuthored: true, acuteOpioidOverdoseAuthored: false, postoperativeRecoveryAuthored: false, opioidCausalityProven: false, examinationPerformedByLearner: false }); break;
+        }
+        if (this.chronicOpioidHypoventilationTrajectoryAtTick === null) { this.log('warning', 'assessment', `chronic-opioid-hypoventilation-trajectory-order-refused-${this.currentTick}`, 'Reconcile the longitudinal exposure and whole-patient trajectory before reviewing the fixed evidence or open contributors.'); break; }
+        if (response === 'review-chronic-opioid-related-hypoventilation-awake-and-sleep-evidence') {
+          if (this.chronicOpioidHypoventilationEvidenceAtTick !== null) { this.log('warning', 'assessment', `chronic-opioid-hypoventilation-evidence-refused-${this.currentTick}`, 'The fixed awake and attended sleep evidence was already reviewed.'); break; }
+          this.chronicOpioidHypoventilationEvidenceAtTick = this.currentTick;
+          this.log('warning', 'assessment', `chronic-opioid-hypoventilation-evidence-reviewed-${this.currentTick}`, 'The authored awake gas and specialist-reported attended polysomnogram with carbon-dioxide monitoring were reviewed. Sustained sleep-related hypoventilation was not excluded by one awake SpO₂; no test was acquired, scored, or interpreted and no diagnosis was made.', { sleepRelatedHypoventilationPatternAuthored: true, bloodGasAcquiredByLearner: false, sleepStudyAcquiredByLearner: false, sleepStudyInterpretedByLearner: false, diagnosisDetermined: false }); break;
+        }
+        if (response === 'review-chronic-opioid-related-hypoventilation-contributors-and-alternatives') {
+          if (this.chronicOpioidHypoventilationAlternativesAtTick !== null) { this.log('warning', 'assessment', `chronic-opioid-hypoventilation-alternatives-refused-${this.currentTick}`, 'The medication, sleep, pulmonary, neurologic, chest-wall, cardiac, endocrine, and other contributors were already reviewed.'); break; }
+          this.chronicOpioidHypoventilationAlternativesAtTick = this.currentTick;
+          this.log('warning', 'assessment', `chronic-opioid-hypoventilation-alternatives-reviewed-${this.currentTick}`, 'Medication and substance co-exposures, obstructive and central events, pulmonary, neurologic, chest-wall, cardiac, endocrine, and other contributors stayed open. Chronic opioid exposure remained important without proving a single cause.', { opioidCausalityProven: false, medicationChangedByLearner: false, diagnosisDetermined: false }); break;
+        }
+        if (response === 'coordinate-chronic-opioid-related-hypoventilation-prescriber-sleep-and-respiratory-plan') {
+          if (this.chronicOpioidHypoventilationEvidenceAtTick === null || this.chronicOpioidHypoventilationAlternativesAtTick === null) { this.log('warning', 'assessment', `chronic-opioid-hypoventilation-plan-order-refused-${this.currentTick}`, 'Review both the fixed awake-and-sleep evidence and the open contributors before coordinating shared ownership.'); break; }
+          if (this.chronicOpioidHypoventilationPlanAtTick !== null) { this.log('warning', 'assessment', `chronic-opioid-hypoventilation-plan-refused-${this.currentTick}`, 'The prescriber, sleep, respiratory, pharmacy, and primary-care plan was already coordinated.'); break; }
+          this.chronicOpioidHypoventilationPlanAtTick = this.currentTick;
+          this.log('warning', 'assessment', `chronic-opioid-hypoventilation-plan-coordinated-${this.currentTick}`, 'Prescriber, sleep, respiratory, pharmacy, and primary-care ownership was connected around pain goals, medication safety, education, diagnostic work, and reassessment. No drug, dose, morphine-equivalent threshold, taper, naloxone intervention, oxygen, positive-pressure mode or setting, or treatment was selected or delivered.', { drugOrDoseSelected: false, taperSelected: false, opioidChangedByLearner: false, naloxoneSelectedByLearner: false, naloxoneDeliveredByLearner: false, supportDeviceSelectedByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.chronicOpioidHypoventilationPlanAtTick === null) { this.log('warning', 'assessment', `chronic-opioid-hypoventilation-handoff-order-refused-${this.currentTick}`, 'Coordinate shared prescriber, sleep, respiratory, pharmacy, and primary-care ownership before handoff.'); break; }
+        if (this.currentTick <= this.chronicOpioidHypoventilationPlanAtTick) { this.log('warning', 'assessment', `chronic-opioid-hypoventilation-handoff-time-refused-${this.currentTick}`, 'Allow a later simulated tick before handing off the unresolved longitudinal work.'); break; }
+        if (this.chronicOpioidHypoventilationHandoffAtTick !== null) { this.log('warning', 'assessment', `chronic-opioid-hypoventilation-handoff-refused-${this.currentTick}`, 'The chronic opioid hypoventilation handoff was already recorded.'); break; }
+        this.chronicOpioidHypoventilationHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `chronic-opioid-hypoventilation-handoff-recorded-${this.currentTick}`, 'The fixed awake and sleep evidence, open contributors, safety concerns, pain goals, diagnostic and reassessment work, and named prescriber, sleep, respiratory, pharmacy, and primary-care owners were handed off. No diagnosis, medication change, support selection, treatment, disposition, prognosis, response, or outcome was determined.', { diagnosisDetermined: false, opioidChangedByLearner: false, treatmentDeliveredByLearner: false, dispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -8106,6 +8164,12 @@ export class AnesthesiaEngine {
         systolicMmHg: reviewed ? 116 : 118, diastolicMmHg: reviewed ? 70 : 72,
         meanArterialMmHg: reviewed ? 85 : 87, coreTemperatureC: 37.4 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'chronic-opioid-related-hypoventilation-reassessment')) {
+      crisisState = { ...crisisState, heartRateBpm: 76, respiratoryRateBpm: 10,
+        spo2Percent: 94, systolicMmHg: 124, diastolicMmHg: 74,
+        meanArterialMmHg: 91, coreTemperatureC: 36.7 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -9469,6 +9533,29 @@ export class AnesthesiaEngine {
               sputumAssessedByLearner: false as const, airwayClearancePerformedByLearner: false as const,
               suctionPerformedByLearner: false as const, bronchoscopyPerformedByLearner: false as const,
               deviceOrTechniqueSelected: false as const, oxygenDeliveredByLearner: false as const,
+              treatmentDeliveredByLearner: false as const, diagnosisDetermined: false as const,
+              dispositionDetermined: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'chronic-opioid-related-hypoventilation-reassessment') ? {
+            chronicOpioidHypoventilationAssessment: {
+              trajectoryAtTick: this.chronicOpioidHypoventilationTrajectoryAtTick,
+              evidenceAtTick: this.chronicOpioidHypoventilationEvidenceAtTick,
+              alternativesAtTick: this.chronicOpioidHypoventilationAlternativesAtTick,
+              coordinatedPlanAtTick: this.chronicOpioidHypoventilationPlanAtTick,
+              handoffAtTick: this.chronicOpioidHypoventilationHandoffAtTick,
+              initialPulsePresent: true as const, chronicOpioidExposureAuthored: true as const,
+              spontaneouslyBreathingAuthored: true as const,
+              acuteOpioidOverdoseAuthored: false as const, postoperativeRecoveryAuthored: false as const,
+              sleepRelatedHypoventilationPatternAuthored: true as const,
+              opioidCausalityProven: false as const, examinationPerformedByLearner: false as const,
+              bloodGasAcquiredByLearner: false as const, sleepStudyAcquiredByLearner: false as const,
+              sleepStudyInterpretedByLearner: false as const,
+              drugOrDoseSelected: false as const, taperSelected: false as const,
+              opioidChangedByLearner: false as const, naloxoneSelectedByLearner: false as const,
+              naloxoneDeliveredByLearner: false as const, oxygenDeliveredByLearner: false as const,
+              supportDeviceSelectedByLearner: false as const,
               treatmentDeliveredByLearner: false as const, diagnosisDetermined: false as const,
               dispositionDetermined: false as const, outcomePredicted: false as const,
             },

@@ -7,6 +7,7 @@ import { POST_PULMONARY_EMBOLISM_PERSISTENT_DYSPNEA } from './post-pulmonary-emb
 import { SPONTANEOUS_TENSION_PNEUMOTHORAX_POST_DRAINAGE_REASSESSMENT } from './spontaneous-tension-pneumothorax-post-drainage-reassessment';
 import { LARGE_UNILATERAL_PLEURAL_EFFUSION_REASSESSMENT } from './large-unilateral-pleural-effusion-reassessment';
 import { BRONCHIECTASIS_MUCUS_PLUGGING_REASSESSMENT } from './bronchiectasis-mucus-plugging-reassessment';
+import { CHRONIC_OPIOID_RELATED_HYPOVENTILATION_REASSESSMENT } from './chronic-opioid-related-hypoventilation-reassessment';
 
 export const RESPIRATORY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   ACUTE_SEVERE_ASTHMA,
@@ -17,6 +18,7 @@ export const RESPIRATORY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   SPONTANEOUS_TENSION_PNEUMOTHORAX_POST_DRAINAGE_REASSESSMENT,
   LARGE_UNILATERAL_PLEURAL_EFFUSION_REASSESSMENT,
   BRONCHIECTASIS_MUCUS_PLUGGING_REASSESSMENT,
+  CHRONIC_OPIOID_RELATED_HYPOVENTILATION_REASSESSMENT,
 ];
 export const DEFAULT_RESPIRATORY_MEDICINE_SCENARIO_ID = ACUTE_SEVERE_ASTHMA.metadata.id;
 

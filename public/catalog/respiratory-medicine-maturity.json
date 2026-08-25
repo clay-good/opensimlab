@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "respiratory-medicine",
-  "recordCount": 8,
+  "recordCount": 9,
   "records": [
     {
       "recordId": "scenario:acute-severe-asthma@0.1.0",
@@ -89,6 +89,17 @@
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#bronchiectasis-mucus-plugging-reassessment@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#bronchiectasis-mucus-plugging-reassessment@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:chronic-opioid-related-hypoventilation-reassessment@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "chronic-opioid-related-hypoventilation-reassessment",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/respiratory-medicine-completion-audit.json#chronic-opioid-related-hypoventilation-reassessment@0.1.0",
+        "/catalog/respiratory-medicine-quality-audit.json#chronic-opioid-related-hypoventilation-reassessment@0.1.0"
       ]
     }
   ]

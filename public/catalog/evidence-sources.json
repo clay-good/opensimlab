@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 143,
+  "sourceCount": 146,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -1825,6 +1825,39 @@
       "locator": "74(Suppl 1):1-69; physiotherapy, deterioration, and localized-disease evaluation sections",
       "usedFor": "The persistent focal-collapse boundary: reassess airway-clearance needs during deterioration and preserve experienced airway evaluation when localized disease leaves an obstructing lesion or foreign body possible, without making bronchoscopy routine.",
       "verifiedAgainst": "https://thorax.bmj.com/content/74/Suppl_1/1",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "aasm-chronic-opioid-therapy-and-sleep-2019",
+      "authors": "Rosen IM, Aurora RN, Kirsch DB, et al",
+      "title": "Chronic Opioid Therapy and Sleep: An American Academy of Sleep Medicine Position Statement",
+      "publication": "Journal of Clinical Sleep Medicine",
+      "year": 2019,
+      "locator": "15:1671-1673; doi:10.5664/jcsm.8062",
+      "usedFor": "The longitudinal opioid-and-sleep boundary: chronic opioid therapy is associated with sleep-related hypoventilation, central sleep apnea, and obstructive sleep apnea; appropriate testing and collaboration among prescribers, pain, and sleep clinicians are important.",
+      "verifiedAgainst": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6853382/",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "aasm-adult-osa-diagnostic-testing-2017",
+      "authors": "Kapur VK, Auckley DH, Chowdhuri S, et al",
+      "title": "Clinical Practice Guideline for Diagnostic Testing for Adult Obstructive Sleep Apnea",
+      "publication": "Journal of Clinical Sleep Medicine",
+      "year": 2017,
+      "locator": "13:479-504; doi:10.5664/jcsm.6506; recommendation 4",
+      "usedFor": "The attended-testing boundary: polysomnography rather than home sleep apnea testing is recommended when chronic opioid use, awake hypoventilation, or suspected sleep-related hypoventilation is present.",
+      "verifiedAgainst": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5337595/",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "cdc-opioid-prescribing-guideline-2022",
+      "authors": "Dowell D, Ragan KR, Jones CM, Baldwin GT, Chou R",
+      "title": "CDC Clinical Practice Guideline for Prescribing Opioids for Pain — United States, 2022",
+      "publication": "MMWR Recommendations and Reports",
+      "year": 2022,
+      "locator": "71:1-95; doi:10.15585/mmwr.rr7103a1",
+      "usedFor": "The patient-centered medication-safety boundary: reassess risk, account for sleep-disordered breathing and co-exposures, collaborate on changes, and avoid abrupt or noncollaborative discontinuation except for a life-threatening issue.",
+      "verifiedAgainst": "https://www.cdc.gov/mmwr/volumes/71/rr/rr7103a1.htm",
       "verifiedOn": "2026-08-25"
     }
   ]

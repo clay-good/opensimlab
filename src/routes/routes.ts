@@ -137,7 +137,7 @@ export const ROUTES: readonly RouteMetadata[] = [
   {
     path: '/respiratory-medicine',
     title: formatTitle('Respiratory medicine simulator'),
-    description: 'Practice calm respiratory medicine labs for severe asthma, COPD recovery, hypoxemic pneumonia, post-PE symptoms, and pulmonary edema support failure.',
+    description: 'Practice calm respiratory medicine labs for acute breathing failure, recovery, pleural disease, airway clearance, and sleep-related hypoventilation.',
     indexable: true,
     structuredData: ['SoftwareApplication'],
     heading: 'Respiratory medicine simulator',

@@ -4414,6 +4414,23 @@ export function objectiveFindings(
       const ordered = escalation && handoff && escalation.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved partial response, residual collapse, open causes, triggers, pending work, and owners without inventing diagnosis or outcome.' : 'The unresolved-work handoff was absent or did not follow escalation after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-chronic-opioid-related-hypoventilation-exposure-and-trajectory',
+      'review-chronic-opioid-related-hypoventilation-awake-and-sleep-evidence',
+      'review-chronic-opioid-related-hypoventilation-contributors-and-alternatives',
+      'coordinate-chronic-opioid-related-hypoventilation-prescriber-sleep-and-respiratory-plan',
+      'handoff-chronic-opioid-related-hypoventilation-reassessment'].includes(objective.id)) {
+      const trajectory = log.find((event) => /^chronic-opioid-hypoventilation-trajectory-reconciled-\d+$/.test(event.eventId));
+      const evidence = log.find((event) => /^chronic-opioid-hypoventilation-evidence-reviewed-\d+$/.test(event.eventId));
+      const alternatives = log.find((event) => /^chronic-opioid-hypoventilation-alternatives-reviewed-\d+$/.test(event.eventId));
+      const plan = log.find((event) => /^chronic-opioid-hypoventilation-plan-coordinated-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^chronic-opioid-hypoventilation-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-chronic-opioid-related-hypoventilation-exposure-and-trajectory') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'Chronic prescribed-opioid exposure and the longitudinal sleep, daytime-function, breathing, oxygenation, and perfusion pattern were reconciled without inventing acute overdose or sole causality.' : 'The longitudinal exposure and whole-patient trajectory was not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-chronic-opioid-related-hypoventilation-awake-and-sleep-evidence') { const ordered = trajectory && evidence && trajectory.tick <= evidence.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Fixed awake and attended sleep reports revealed sustained nocturnal hypoventilation that one daytime SpO₂ could not exclude, without learner testing or interpretation.' : 'The fixed awake-and-sleep evidence review was absent or preceded trajectory review.', atTick: evidence?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-chronic-opioid-related-hypoventilation-contributors-and-alternatives') { const ordered = trajectory && alternatives && trajectory.tick <= alternatives.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Medication, sleep, pulmonary, neurologic, chest-wall, cardiac, endocrine, and other contributors stayed open without proving opioid-only causality.' : 'Contributor review was absent or preceded trajectory review.', atTick: alternatives?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'coordinate-chronic-opioid-related-hypoventilation-prescriber-sleep-and-respiratory-plan') { const ordered = evidence && alternatives && plan && evidence.tick <= plan.tick && alternatives.tick <= plan.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Prescriber, sleep, respiratory, pharmacy, and primary-care ownership protected pain goals and respiratory safety without selecting a drug change, reversal, device, or treatment.' : 'Shared ownership was absent or bypassed one evidence lane.', atTick: plan?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = plan && handoff && plan.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved fixed evidence, open contributors, safety concerns, pain goals, pending work, and named owners without inventing diagnosis, response, or outcome.' : 'The unresolved-work handoff was absent or did not follow the coordinated plan after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

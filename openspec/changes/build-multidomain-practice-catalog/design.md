@@ -1473,6 +1473,27 @@ oxygen, suction, medication, or treatment; select or perform bronchoscopy or ano
 determine disposition or prognosis; or predict resolution, recurrence, durable benefit, or outcome.
 It is distinct from Critical Care's intubated artificial-airway suction and ventilator-mechanics lab.
 
+### Wave C respiratory-medicine slice 9: chronic opioid-related hypoventilation
+
+The ninth respiratory-medicine slice is a longitudinal respiratory and sleep-clinic reassessment,
+not an acute overdose or postoperative rescue. A 61-year-old woman with 8 years of prescribed
+opioid exposure has 6 months of shallow irregular sleep breathing, morning headaches, unrefreshing
+sleep, and daytime sleepiness. Her awake room-air SpO₂ is 94% with stable perfusion and a fixed
+near-normal awake blood gas. An attended polysomnogram with carbon-dioxide monitoring reports a
+sustained rise from 46 to 58 mmHg during sleep plus separately reported central and obstructive
+events. The learner does not acquire, score, or interpret either test.
+
+Learners first reconcile the longitudinal exposure and whole-patient trajectory, then review fixed
+awake-and-sleep evidence and open medication, sleep, pulmonary, neurologic, chest-wall, cardiac,
+endocrine, and other contributors in parallel. Only after both lanes may they coordinate
+prescriber, sleep, respiratory, pharmacy, and primary-care ownership around pain goals, medication
+safety, education, diagnostic work, and reassessment, followed by a strictly elapsed handoff. The
+lesson does not diagnose; calculate morphine equivalents; select, stop, substitute, or taper a drug;
+select or deliver naloxone, oxygen, PAP mode or settings, ventilation, or treatment; determine
+disposition or prognosis; or predict response or outcome. It is distinct from Anesthesia's PACU
+opioid ventilatory-impairment rescue, Emergency Medicine's fentanyl-toxicity rescue and recurrence,
+and the later obesity-hypoventilation and NIV-selection labs.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

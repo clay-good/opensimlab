@@ -3287,6 +3287,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, current bronchiectasis guidance, qualified respiratory physiotherapy and airway teams, local pathways, and patient-specific judgment.',
     briefIn: ['bronchiectasis-mucus-plugging-reassessment'],
   },
+  {
+    id: 'chronic-opioid-hypoventilation-exposure-and-sleep-reports-are-authored',
+    headline: 'The opioid exposure, symptoms, awake findings, blood gas, sleep study, carbon-dioxide pattern, and specialist interpretation are authored.',
+    simplification: 'Fixed reports stand in for longitudinal history, medication and substance reconciliation, examination, blood-gas sampling, attended polysomnography, carbon-dioxide monitoring, scoring, interpretation, and multidisciplinary reassessment.',
+    whereItMisleads: 'Treating one awake saturation as proof of adequate sleep ventilation, the fixed pattern as learner interpretation, or chronic opioid exposure as proof of a single cause.',
+    correctUnderstanding: 'Real evaluation requires verified patient and medication data, qualified attended testing when indicated, specialist interpretation, competing-cause review, and patient-specific reassessment.',
+    briefIn: ['chronic-opioid-related-hypoventilation-reassessment'],
+  },
+  {
+    id: 'chronic-opioid-hypoventilation-controls-review-and-coordinate-only',
+    headline: 'The controls record longitudinal review, 2 evidence lanes, shared ownership, and handoff only.',
+    simplification: 'Five clicks stand in for careful history, testing review, medication and alternate-cause assessment, shared decisions, safety education, follow-up planning, and communication.',
+    whereItMisleads: 'Equating button order with examination, study scoring or interpretation, diagnosis, prescribing, tapering, reversal, device selection, treatment, or multidisciplinary competence.',
+    correctUnderstanding: 'Actual care requires the patient, current guidance, qualified prescriber, sleep, respiratory, pharmacy, pain, and primary-care teams, and locally supported follow-through.',
+    briefIn: ['chronic-opioid-related-hypoventilation-reassessment'],
+  },
+  {
+    id: 'no-live-study-interpretation-diagnosis-opioid-change-pap-selection-treatment-or-outcome',
+    headline: 'The lab does not interpret a study, diagnose, change opioids, select positive-pressure support, deliver treatment, determine disposition, or predict outcome.',
+    simplification: 'No live examination, blood gas, sleep study, oximetry, capnography, spirometry, scoring, diagnosis, morphine-equivalent calculation, medication selection, abrupt stop, taper, naloxone intervention, oxygen, PAP mode or setting, ventilation, treatment, disposition, prognosis, response, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values as diagnostic or treatment thresholds or using completion as evidence of clinical, sleep-study, prescribing, device, treatment, disposition, or prognostic competence.',
+    correctUnderstanding: 'Use verified patient data, current sleep and opioid guidance, qualified teams, local pathways, patient goals, and repeated patient-specific review.',
+    briefIn: ['chronic-opioid-related-hypoventilation-reassessment'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {
