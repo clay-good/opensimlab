@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 79 reports delayed-delivery state. */
-export const WORKER_PROTOCOL_VERSION = 84;
+/** Bumped whenever the message shape changes incompatibly. Version 85 reports heart-failure reassessment state. */
+export const WORKER_PROTOCOL_VERSION = 85;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -629,6 +629,17 @@ export interface EquipmentSnapshot {
       readonly currentVeryHighRisk: false;
       readonly exactScoreCalculated: false;
       readonly procedurePerformed: false;
+    };
+    readonly heartFailureAssessment?: {
+      readonly statusAtTick: number | null;
+      readonly responseAtTick: number | null;
+      readonly toleranceAtTick: number | null;
+      readonly transitionAtTick: number | null;
+      readonly readinessAtTick: number | null;
+      readonly residualCongestion: true;
+      readonly dischargeReady: false;
+      readonly doseCalculated: false;
+      readonly treatmentDelivered: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

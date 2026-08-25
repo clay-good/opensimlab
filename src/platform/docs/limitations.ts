@@ -2717,6 +2717,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['nstemi-risk-reassessment'],
   },
   {
+    id: 'heart-failure-status-response-and-precipitant-are-authored',
+    headline: 'The congestion, perfusion, treatment report, serial response, laboratory values, and precipitant context are authored teaching facts.',
+    simplification: 'One inpatient has fixed HFrEF, partial decongestion after reported treatment, warm perfusion, a small creatinine change, and residual congestion.',
+    whereItMisleads: 'Treating the screen as history, examination, monitoring, fluid-balance verification, laboratory or imaging interpretation, diagnosis, treatment-response measurement, or prognosis for a real person.',
+    correctUnderstanding: 'Real assessment verifies treatment delivery and integrates serial symptoms, examination, weight, intake and output, urine output, oxygenation, hemodynamics, kidney function, electrolytes, imaging context, and precipitants.',
+    briefIn: ['acute-decompensated-heart-failure'],
+  },
+  {
+    id: 'heart-failure-controls-record-review-and-transition-intent-only',
+    headline: 'The ordered controls record status, response, tolerance, transition, readiness, and ownership intent; they do not deliver heart-failure care.',
+    simplification: 'Five clicks stand in for multidisciplinary inpatient assessment, individualized decongestion, medication review, education, transition planning, and follow-up.',
+    whereItMisleads: 'Equating button order with examination, fluid management, prescribing, medication reconciliation, nursing, pharmacy, dietitian, education, discharge, or cardiology competence.',
+    correctUnderstanding: 'Actual care requires qualified teams, verified measurements and treatment delivery, patient-specific decisions, medication reconciliation, education, communication, and repeated bedside reassessment.',
+    briefIn: ['acute-decompensated-heart-failure'],
+  },
+  {
+    id: 'no-live-heart-failure-exam-testing-dosing-treatment-disposition-prognosis-or-outcome',
+    headline: 'The lab does not examine, acquire tests, calculate targets or doses, prescribe, deliver treatment, select a regimen, determine disposition, or predict outcome.',
+    simplification: 'No live examination, weight, balance, urine output, laboratory test, imaging, medication, dose, fluid target, dry weight, response, discharge, readmission, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Copying a fictional value as a target, using creatinine or fluid balance alone, assuming clinic weight equals euvolemia, selecting a universal regimen, or inferring readiness or benefit from partial improvement.',
+    correctUnderstanding: 'Use current local pathways and qualified multidisciplinary judgment to verify response, individualize decongestion and guideline-directed therapy, correct precipitants, establish readiness, and arrange longitudinal care.',
+    briefIn: ['acute-decompensated-heart-failure'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

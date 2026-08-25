@@ -548,6 +548,17 @@ export interface ActionCockpitProps {
       readonly exactScoreCalculated: false;
       readonly procedurePerformed: false;
     };
+    readonly heartFailureAssessment?: {
+      readonly statusAtTick: number | null;
+      readonly responseAtTick: number | null;
+      readonly toleranceAtTick: number | null;
+      readonly transitionAtTick: number | null;
+      readonly readinessAtTick: number | null;
+      readonly residualCongestion: true;
+      readonly dischargeReady: false;
+      readonly doseCalculated: false;
+      readonly treatmentDelivered: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -892,6 +903,13 @@ export interface ActionCockpitProps {
       | 'screen-nstemi-very-high-risk-features' | 'record-nstemi-invasive-strategy'
       | 'record-nstemi-monitoring-and-handoff',
   ) => void;
+  readonly onHeartFailureResponse?: (
+    action: 'reconcile-heart-failure-congestion-and-perfusion'
+      | 'review-heart-failure-diuretic-response'
+      | 'review-heart-failure-tolerance-and-precipitant'
+      | 'record-heart-failure-transition-intent'
+      | 'reassess-heart-failure-discharge-readiness',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1116,6 +1134,10 @@ export function crisisResponseAvailability(
     hasNstemiRiskResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'nstemi-risk-reassessment',
     ),
+    hasHeartFailureResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'acute-decompensated-heart-failure',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1213,6 +1235,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'septic-shock-resuscitation')
       || (event.type === 'narrative' && event.target === 'stable-chest-pain-evaluation')
       || (event.type === 'narrative' && event.target === 'nstemi-risk-reassessment')
+      || (event.type === 'narrative' && event.target === 'acute-decompensated-heart-failure')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1250,6 +1273,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasSepticShockResuscitationResponse,
     hasStableChestPainResponse,
     hasNstemiRiskResponse,
+    hasHeartFailureResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1306,7 +1330,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse;
-  const hasAnyNonAcuteAssessment = hasStableChestPainResponse || hasNstemiRiskResponse;
+  const hasAnyNonAcuteAssessment = hasStableChestPainResponse || hasNstemiRiskResponse
+    || hasHeartFailureResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1337,7 +1362,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasNstemiRiskResponse
+  const responseTray = hasHeartFailureResponse
+    ? { id: 'crisis', label: 'Heart-failure review' } as const
+    : hasNstemiRiskResponse
     ? { id: 'crisis', label: 'NSTEMI reassessment' } as const
     : hasStableChestPainResponse
     ? { id: 'crisis', label: 'Chest-pain evaluation' } as const
@@ -1496,6 +1523,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasSepticShockResuscitationResponse
     || hasStableChestPainResponse
     || hasNstemiRiskResponse
+    || hasHeartFailureResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2006,6 +2034,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNstemiRiskResponse && (
               <NstemiRiskTray assessment={props.resuscitation.nstemiRiskAssessment}
                 onAction={props.onNstemiRiskResponse ?? (() => {})} />
+            )}
+            {hasHeartFailureResponse && (
+              <HeartFailureTray assessment={props.resuscitation.heartFailureAssessment}
+                onAction={props.onHeartFailureResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -5661,6 +5693,58 @@ function NstemiRiskTray({ assessment, onAction }: {
             onClick={() => onAction('record-nstemi-monitoring-and-handoff')}>Record triggers + owner + reassessment</Button>
         </div>
         <p className="field__hint">No score, medication, angiography, or procedure is supplied. The applicable local pathway resolves exact timing as risk evolves.</p>
+      </section>
+    </div>
+  );
+}
+
+function HeartFailureTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['heartFailureAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onHeartFailureResponse']>;
+}) {
+  const status = assessment?.statusAtTick != null;
+  const response = assessment?.responseAtTick != null;
+  const tolerance = assessment?.toleranceAtTick != null;
+  const transition = assessment?.transitionAtTick != null;
+  const readiness = assessment?.readinessAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="heart-failure-trajectory-title">
+        <div id="heart-failure-trajectory-title" className="syringe__name">Decongestion is a trajectory.</div>
+        <Badge kind="teaching">symptoms · weight · balance · output · congestion · perfusion</Badge>
+        <div className="syringe__meta">77.2 → 75.8 kg · net −1.6 L · still orthopneic</div>
+        <p className="syringe__remaining" role="status">
+          {response ? 'Partial response · residual congestion remains'
+            : status ? 'Warm + congested · review reported response'
+              : 'Improved is not the same as decongested'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={status}
+            onClick={() => onAction('reconcile-heart-failure-congestion-and-perfusion')}>Reconcile congestion + perfusion</Button>
+          <Button className="crisis-drug__action" disabled={!status || response}
+            onClick={() => onAction('review-heart-failure-diuretic-response')}>Review serial decongestion response</Button>
+          <Button className="crisis-drug__action" disabled={!response || tolerance}
+            onClick={() => onAction('review-heart-failure-tolerance-and-precipitant')}>Review tolerance + precipitant</Button>
+        </div>
+        <p className="field__hint">A creatinine change needs context. No single weight, balance, urine-output, or laboratory value proves euvolemia or treatment failure.</p>
+      </section>
+      <section className="syringe" aria-labelledby="heart-failure-transition-title">
+        <div id="heart-failure-transition-title" className="syringe__name">Warm is not the same as ready.</div>
+        <Badge kind="teaching">residual congestion · oral transition · GDMT · owner · follow-up</Badge>
+        <div className="syringe__meta">Orthopnea · JVP · crackles · edema · 3.8 kg above clinic weight</div>
+        <p className="syringe__remaining" role="status">
+          {readiness ? 'Not discharge-ready · owner + next review recorded'
+            : transition ? 'Transition intent recorded · reassess readiness'
+              : tolerance ? 'Whole trajectory reviewed · transition plan due'
+                : 'Tolerance + precipitant review pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!tolerance || transition}
+            onClick={() => onAction('record-heart-failure-transition-intent')}>Record decongestion + transition intent</Button>
+          <Button className="crisis-drug__action" disabled={!transition || readiness}
+            onClick={() => onAction('reassess-heart-failure-discharge-readiness')}>Reassess readiness + ownership</Button>
+        </div>
+        <p className="field__hint">No drug, dose, target, order, regimen, disposition, or outcome is supplied. The next reassessment stays owned while congestion remains.</p>
       </section>
     </div>
   );

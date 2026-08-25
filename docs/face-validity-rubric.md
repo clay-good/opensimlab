@@ -159,7 +159,8 @@ Reviewers run the routine induction themselves before answering.
 | B105 | In the persistent septic-shock-resuscitation lesson, reported cultures, antimicrobials, 30 mL/kg crystalloid, and running norepinephrine conflict with persistent multi-organ hypoperfusion and rising lactate, requiring delivery-versus-response reconciliation, pressure plus serial tissue-perfusion review, fixed dynamic fluid-response and lung-tolerance assessment that blocks a blind repeat bolus without creating universal cutoffs, individualized hemodynamic-support and urgent source-control intent in parallel, and modest fixed reassessment without implying examination, monitoring or delivery verification, sample or ultrasound acquisition or interpretation, calculation, diagnosis, prescribing, fluid or drug delivery, device adjustment, drainage, disposition, or outcome competence | | |
 | B106 | In the stable chest-pain evaluation lesson, a fixed 3-month exertional pressure pattern resolves with rest and has no recent change or acute feature, requiring explicit stable-versus-acute verification, complete symptom characterization without “atypical,” risk-factor-weighted clinical-likelihood review before testing, shared patient-specific testing intent, and an acute-change safety net without implying examination, ECG acquisition or interpretation, score calculation, exercise testing, diagnostic testing, diagnosis, prescribing, disposition, prognosis, or outcome competence | | |
 | B107 | In the NSTEMI risk-reassessment lesson, a resolved symptom episode is reconciled with a fixed assay-bounded troponin rise and changing ECG reports, requiring authored-diagnosis verification with alternate myocardial injury preserved, a fresh very-high-risk screen, ischemic and bleeding risk review before region-specific inpatient invasive intent, and explicit monitoring, triggers, ownership, and reassessment without implying examination, test acquisition or interpretation, scoring, diagnosis, prescribing, treatment, procedure, universal timing, disposition, prognosis, or outcome competence | | |
-| B108 | Overall: does this patient behave like a patient? | | |
+| B108 | In the acute decompensated heart-failure lesson, a patient 24 hours after reported IV loop-diuretic treatment has improved dyspnea, lower weight, negative recorded balance, and substantial urine output but persistent orthopnea, JVP elevation, crackles, edema, and weight above a documented clinic value, requiring whole-state congestion and perfusion reconciliation, serial response review, kidney, electrolyte, hemodynamic, and precipitant context, individualized decongestion and transition intent, and a not-discharge-ready reassessment with ownership and follow-up without implying examination, administration verification, monitoring or test acquisition or interpretation, calculation, diagnosis, prescribing, treatment delivery, regimen selection, disposition, prognosis, or outcome competence | | |
+| B109 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -401,4 +402,11 @@ So that reviewers spend their attention on what this review is for:
   examine, acquire or interpret tests, calculate scores, diagnose, prescribe or deliver treatment,
   choose or perform a procedure, set universal timing, determine disposition or prognosis, or
   predict outcome. Its values, risk tier, and timing discussion are not patient-specific tools.
+- The acute decompensated heart-failure case uses fixed congestion and perfusion findings, a
+  reported treatment history, serial weight and fluid records, kidney and electrolyte values,
+  precipitant context, and residual congestion. It does not examine, verify administration,
+  acquire or interpret measurements or tests, calculate targets or doses, diagnose, prescribe or
+  deliver treatment, select a regimen, determine disposition or prognosis, or predict outcome.
+  Its documented clinic weight, balance, urine output, and creatinine change are not universal
+  targets or patient-specific tools.
 - Nothing here has been clinically reviewed before — you are the first.

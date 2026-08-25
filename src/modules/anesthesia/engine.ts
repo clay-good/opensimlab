@@ -526,6 +526,11 @@ export class AnesthesiaEngine {
   private nstemiVeryHighRiskAtTick: number | null = null;
   private nstemiStrategyAtTick: number | null = null;
   private nstemiHandoffAtTick: number | null = null;
+  private heartFailureStatusAtTick: number | null = null;
+  private heartFailureResponseAtTick: number | null = null;
+  private heartFailureToleranceAtTick: number | null = null;
+  private heartFailureTransitionAtTick: number | null = null;
+  private heartFailureReadinessAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -4118,6 +4123,48 @@ export class AnesthesiaEngine {
         this.log('warning', 'assessment', `nstemi-risk-handoff-recorded-${this.currentTick}`, 'Serial symptoms, ECG, rhythm, pressure, perfusion, oxygenation, heart failure, bleeding, and renal context remain monitored. Recurrent or refractory pain, instability, heart failure, life-threatening arrhythmia, arrest, mechanical concern, or recurrent dynamic ECG change trigger immediate escalation. Ownership and next reassessment were recorded without determining disposition or outcome.', { ownerNamed: true, changeTriggersExplicit: true, outcomePredicted: false });
         break;
       }
+      case 'heart-failure-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'acute-decompensated-heart-failure');
+        const valid = ['reconcile-heart-failure-congestion-and-perfusion',
+          'review-heart-failure-diuretic-response', 'review-heart-failure-tolerance-and-precipitant',
+          'record-heart-failure-transition-intent',
+          'reassess-heart-failure-discharge-readiness'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `heart-failure-response-refused-${this.currentTick}`, supported ? 'The heart-failure reassessment action was not one of the listed choices. Nothing changed.' : 'The bounded heart-failure reassessment choices are available only in the declared lesson.'); break; }
+        if (response === 'reconcile-heart-failure-congestion-and-perfusion') {
+          if (this.heartFailureStatusAtTick !== null) { this.log('warning', 'assessment', `heart-failure-status-refused-${this.currentTick}`, 'The fixed congestion and perfusion status has already been reconciled.'); break; }
+          this.heartFailureStatusAtTick = this.currentTick;
+          this.log('warning', 'assessment', `heart-failure-status-reconciled-${this.currentTick}`, 'Dyspnea has improved, but orthopnea, elevated JVP, bibasal crackles, edema, and weight above the documented clinic value show residual congestion. HR 84/min, BP 118/73 mmHg, SpO₂ 94% on room air, and warm extremities do not suggest authored shock or respiratory failure.', { residualCongestion: true, hypoperfusionAuthored: false });
+          break;
+        }
+        if (this.heartFailureStatusAtTick === null) { this.log('warning', 'assessment', `heart-failure-order-refused-${this.currentTick}`, 'Reconcile current congestion and perfusion before judging response or transition.'); break; }
+        if (response === 'review-heart-failure-diuretic-response') {
+          if (this.heartFailureResponseAtTick !== null) { this.log('warning', 'assessment', `heart-failure-diuretic-response-refused-${this.currentTick}`, 'The reported decongestion response has already been reviewed.'); break; }
+          this.heartFailureResponseAtTick = this.currentTick;
+          this.log('warning', 'assessment', `heart-failure-diuretic-response-reviewed-${this.currentTick}`, 'After reported IV loop-diuretic treatment, weight changed from 77.2 to 75.8 kg, recorded net balance is −1.6 L, urine output is 2.4 L, and dyspnea improved. Persistent orthopnea, JVP elevation, crackles, edema, and weight above the documented clinic value show only partial decongestion. No dose or target was calculated and no treatment was delivered.', { partialResponse: true, residualCongestion: true, doseCalculated: false, treatmentDelivered: false });
+          break;
+        }
+        if (this.heartFailureResponseAtTick === null) { this.log('warning', 'assessment', `heart-failure-response-order-refused-${this.currentTick}`, 'Review the reported decongestion response before tolerance and precipitant context.'); break; }
+        if (response === 'review-heart-failure-tolerance-and-precipitant') {
+          if (this.heartFailureToleranceAtTick !== null) { this.log('warning', 'assessment', `heart-failure-tolerance-refused-${this.currentTick}`, 'Kidney, electrolyte, hemodynamic, and precipitant context has already been reviewed.'); break; }
+          this.heartFailureToleranceAtTick = this.currentTick;
+          this.log('warning', 'assessment', `heart-failure-tolerance-reviewed-${this.currentTick}`, 'Creatinine changed from 1.1 to 1.3 mg/dL with sodium 137 mmol/L, potassium 3.7 mmol/L, magnesium 1.9 mg/dL, BP 118/73 mmHg, and warm perfusion. The change was reviewed in the whole clinical trajectory rather than used alone to stop or intensify therapy. Missed medications and high sodium exposure are authored context; other precipitants remain part of real evaluation.', { isolatedCreatinineUsed: false, precipitantReviewExplicit: true });
+          break;
+        }
+        if (this.heartFailureToleranceAtTick === null) { this.log('warning', 'assessment', `heart-failure-tolerance-order-refused-${this.currentTick}`, 'Review tolerance and precipitant context before recording transition intent.'); break; }
+        if (response === 'record-heart-failure-transition-intent') {
+          if (this.heartFailureTransitionAtTick !== null) { this.log('warning', 'assessment', `heart-failure-transition-refused-${this.currentTick}`, 'The bounded decongestion and transition intent has already been recorded.'); break; }
+          this.heartFailureTransitionAtTick = this.currentTick;
+          this.log('warning', 'assessment', `heart-failure-transition-recorded-${this.currentTick}`, 'Individualized continued-decongestion, oral-transition, and guideline-directed-therapy review intent was recorded with kidney function, electrolytes, pressure, symptoms, contraindications, adherence, access, preference, education, and follow-up preserved. No medication, dose, regimen, order, or treatment was supplied.', { individualizedIntent: true, doseCalculated: false, treatmentDelivered: false });
+          break;
+        }
+        if (this.heartFailureTransitionAtTick === null) { this.log('warning', 'assessment', `heart-failure-transition-order-refused-${this.currentTick}`, 'Record the individualized transition intent before discharge-readiness reassessment.'); break; }
+        if (this.heartFailureReadinessAtTick !== null) { this.log('warning', 'assessment', `heart-failure-readiness-refused-${this.currentTick}`, 'Discharge readiness and ownership have already been reassessed.'); break; }
+        this.heartFailureReadinessAtTick = this.currentTick;
+        this.log('warning', 'assessment', `heart-failure-readiness-reassessed-${this.currentTick}`, 'Persistent orthopnea, JVP elevation, crackles, edema, and weight above the documented clinic value mean this authored snapshot is not discharge-ready. Medication and monitoring ownership, self-management education, change triggers, early follow-up, and the next reassessment were recorded without determining disposition, prognosis, or outcome.', { residualCongestion: true, dischargeReady: false, ownerNamed: true, outcomePredicted: false });
+        break;
+      }
       case 'aspiration-risk-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
@@ -7023,6 +7070,12 @@ export class AnesthesiaEngine {
         spo2Percent: 99, etco2MmHg: 37, systolicMmHg: 126, diastolicMmHg: 75,
         meanArterialMmHg: 92, coreTemperatureC: 36.8 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'acute-decompensated-heart-failure')) {
+      crisisState = { ...crisisState, heartRateBpm: 84, respiratoryRateBpm: 18,
+        spo2Percent: 94, etco2MmHg: 36, systolicMmHg: 118, diastolicMmHg: 73,
+        meanArterialMmHg: 88, coreTemperatureC: 36.8 };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -7660,6 +7713,20 @@ export class AnesthesiaEngine {
               currentVeryHighRisk: false,
               exactScoreCalculated: false,
               procedurePerformed: false,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'acute-decompensated-heart-failure') ? {
+            heartFailureAssessment: {
+              statusAtTick: this.heartFailureStatusAtTick,
+              responseAtTick: this.heartFailureResponseAtTick,
+              toleranceAtTick: this.heartFailureToleranceAtTick,
+              transitionAtTick: this.heartFailureTransitionAtTick,
+              readinessAtTick: this.heartFailureReadinessAtTick,
+              residualCongestion: true,
+              dischargeReady: false,
+              doseCalculated: false,
+              treatmentDelivered: false,
             },
           } : {}),
         aspirationRiskAssessment: {

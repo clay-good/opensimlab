@@ -1013,6 +1013,23 @@ It does not examine; acquire or interpret an ECG, troponin, imaging, or another 
 score; diagnose; prescribe or deliver treatment; choose or perform angiography, PCI, or surgery;
 determine transfer, disposition, prognosis, complications, or outcome.
 
+### Wave C cardiology slice 3: acute decompensated heart failure
+
+The third cardiology slice follows a patient 24 hours into admission after reported loop-diuretic
+treatment. The learner reconciles current congestion and perfusion, judges the serial response
+across symptoms, weight, recorded balance, urine output, and fixed examination claims, then reviews
+kidney, electrolyte, hemodynamic, and precipitant context without letting one creatinine change
+decide the trajectory. Individualized continued-decongestion, oral-transition, and
+guideline-directed-therapy review intent precede a discharge-readiness reassessment. Residual
+orthopnea, JVP elevation, crackles, edema, and weight above a documented clinic value keep the
+authored snapshot explicitly not discharge-ready, with ownership and early follow-up still visible.
+
+This longitudinal inpatient lesson is distinct from the emergency-medicine acute-pulmonary-edema
+lab, which rehearses initial respiratory support and hypertensive rescue. It does not examine;
+verify administration; acquire or interpret weight, balance, urine output, laboratory tests, ECG,
+ultrasound, or imaging; calculate dry weight, fluid targets, doses, or scores; diagnose; prescribe
+or deliver treatment; select a regimen; determine disposition or prognosis; or predict outcome.
+
 #### Respiratory medicine: 15
 
 Acute severe asthma; COPD exacerbation; community-acquired pneumonia with hypoxemia; pulmonary

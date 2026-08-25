@@ -1514,6 +1514,34 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-25',
   },
   {
+    id: 'heidenreich-heart-failure-guideline-2022',
+    pmid: '35363499',
+    authors: 'Heidenreich PA, Bozkurt B, Aguilar D, et al',
+    title: '2022 AHA/ACC/HFSA Guideline for the Management of Heart Failure',
+    publication: 'Circulation',
+    year: 2022,
+    locator: '145:e895-e1032; doi:10.1161/CIR.0000000000001063',
+    usedFor: 'The inpatient heart-failure boundary: assess congestion and perfusion, promptly treat '
+      + 'fluid overload, titrate decongestion to resolve signs and symptoms, preserve a discharge '
+      + 'diuretic-adjustment plan, and address precipitating factors and transition of care.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-25',
+  },
+  {
+    id: 'mcdonagh-heart-failure-guideline-2021',
+    pmid: '34447992',
+    authors: 'McDonagh TA, Metra M, Adamo M, et al',
+    title: '2021 ESC Guidelines for the diagnosis and treatment of acute and chronic heart failure',
+    publication: 'Eur Heart J',
+    year: 2021,
+    locator: '42:3599-3726; doi:10.1093/eurheartj/ehab368',
+    usedFor: 'The acute heart-failure transition boundary: diuretics address congestion, patients '
+      + 'should be checked for persistent congestion before discharge, and oral treatment should '
+      + 'be optimized before discharge with early follow-up after hospitalization.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-25',
+  },
+  {
     id: 'vrints-chronic-coronary-syndromes-2024',
     pmid: '39210710',
     authors: 'Vrints C, Andreotti F, Koskinas KC, et al',

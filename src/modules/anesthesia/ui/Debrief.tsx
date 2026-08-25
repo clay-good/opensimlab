@@ -182,6 +182,8 @@ export function Debrief(props: DebriefProps) {
             patientDied: false,
             ...(props.moduleId === 'emergency-medicine'
               ? { activityContext: `assessing ${sentenceCaseTitle(props.scenario.metadata.title)} in the emergency department` }
+              : props.moduleId === 'cardiology'
+                ? { activityContext: `reassessing ${sentenceCaseTitle(props.scenario.metadata.title)} in cardiology` }
               : {}),
           })}</p>
           <label className="field__label" htmlFor="reactions-account">Your account</label>
@@ -386,6 +388,8 @@ export function Debrief(props: DebriefProps) {
 function hardestThing(episodes: readonly Episode[], moduleId?: string): string {
   if (episodes.length === 0) return moduleId === 'emergency-medicine'
     ? 'working through uncertainty without skipping reassessment'
+    : moduleId === 'cardiology'
+      ? 'reading the full trajectory without letting one result close the case'
     : 'keeping a normal patient normal, which is harder than it looks';
   return episodes[0]!.label.toLowerCase();
 }
@@ -4027,6 +4031,27 @@ export function objectiveFindings(
       if (objective.id === 'classify-nstemi-invasive-strategy') { const ordered = danger && strategy && danger.tick <= strategy.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'A high-risk inpatient invasive intent integrated bleeding risk and regional pathway without a universal clock.' : 'Invasive-strategy intent was absent or preceded the current danger screen.', atTick: strategy?.tick ?? 0 } satisfies ObjectiveFinding; }
       const ordered = strategy && handoff && strategy.tick <= handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Monitoring, change triggers, ownership, and the next reassessment closed the bounded plan.' : 'Handoff ownership was absent or preceded strategy.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
+    if (['reconcile-heart-failure-congestion-and-perfusion',
+      'review-heart-failure-diuretic-response',
+      'review-heart-failure-tolerance-and-precipitant',
+      'record-heart-failure-transition-intent',
+      'reassess-heart-failure-discharge-readiness'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'acute-decompensated-heart-failure');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The acute decompensated heart-failure lesson was not active.' } satisfies ObjectiveFinding;
+      const status = log.find((event) => /^heart-failure-status-reconciled-\d+$/.test(event.eventId));
+      const response = log.find((event) => /^heart-failure-diuretic-response-reviewed-\d+$/.test(event.eventId));
+      const tolerance = log.find((event) => /^heart-failure-tolerance-reviewed-\d+$/.test(event.eventId));
+      const transition = log.find((event) => /^heart-failure-transition-recorded-\d+$/.test(event.eventId));
+      const readiness = log.find((event) => /^heart-failure-readiness-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-heart-failure-congestion-and-perfusion') return { ...base, outcome: status ? 'met' : 'not-met', finding: status ? 'Congestion, oxygenation, pressure, and perfusion were reconciled as one current state.' : 'Current congestion and perfusion were not reconciled.', atTick: status?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-heart-failure-diuretic-response') { const ordered = status && response && status.tick <= response.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The reported response was read across symptoms, weight, balance, output, and residual congestion without calculating treatment.' : 'Response review was absent or preceded current status.', atTick: response?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-heart-failure-tolerance-and-precipitant') { const ordered = response && tolerance && response.tick <= tolerance.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Kidney, electrolyte, hemodynamic, and precipitant context followed response review without relying on creatinine alone.' : 'Tolerance and precipitant review was absent or out of order.', atTick: tolerance?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'record-heart-failure-transition-intent') { const ordered = tolerance && transition && tolerance.tick <= transition.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Individualized decongestion, oral-transition, and guideline-directed-therapy review intent was recorded without prescribing.' : 'Transition intent was absent or preceded tolerance review.', atTick: transition?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = transition && readiness && transition.tick <= readiness.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Residual congestion prevented a discharge-ready declaration while ownership and follow-up stayed explicit.' : 'Readiness and ownership were absent or preceded transition intent.', atTick: readiness?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
     if (objective.id === 'read-the-capnogram'

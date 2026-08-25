@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "cardiology",
-  "recordCount": 2,
+  "recordCount": 3,
   "records": [
     {
       "recordId": "scenario:stable-chest-pain-evaluation@0.1.0",
@@ -23,6 +23,17 @@
       "evidence": [
         "/catalog/cardiology-completion-audit.json#nstemi-risk-reassessment@0.1.0",
         "/catalog/cardiology-quality-audit.json#nstemi-risk-reassessment@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:acute-decompensated-heart-failure@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "acute-decompensated-heart-failure",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/cardiology-completion-audit.json#acute-decompensated-heart-failure@0.1.0",
+        "/catalog/cardiology-quality-audit.json#acute-decompensated-heart-failure@0.1.0"
       ]
     }
   ]

@@ -108,7 +108,7 @@ export function Prebrief({ scenario, region, environment = 'anesthesia', onStart
           </p>
         ) : environment === 'cardiology' ? (
           <p>
-            The fixed history, ECG reports, and patient context stay visible while the
+            The fixed clinical record and patient context stay visible while the
             focused evaluation opens below. Pause freely and work through the sequence deliberately.
           </p>
         ) : (
