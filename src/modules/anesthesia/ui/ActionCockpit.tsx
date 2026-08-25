@@ -496,6 +496,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
   const hasGlycemicResponse = props.scenario.timeline.some(
     (event) => event.type === 'perioperative-hyperglycemia',
   );
+  const focusedPleuralEmergency = hasPneumothoraxResponse && props.scenario.timeline.some(
+    (event) => event.type === 'narrative'
+      && event.target === 'obstructive-shock-tension-pneumothorax',
+  );
   const hasEpinephrineResponse = hasAnaphylaxisResponse || hasLastResponse;
   const hasNonMaternalCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse
     || hasCardiacArrestResponse || hasHighSpinalResponse || hasVenousAirEmbolismResponse
@@ -505,7 +509,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasDelayedEmergenceResponse || hasExtubationReadinessResponse || hasCiedPlanningResponse
     || hasPostoperativeHandoffResponse || hasUndifferentiatedShockResponse
     || hasSepticShockResponse || hasHemorrhagicShockResponse;
-  const responseTray = hasHemorrhagicShockResponse && !hasNonMaternalCrisisResponse
+  const responseTray = focusedPleuralEmergency
+    ? { id: 'crisis', label: 'Obstructive shock' } as const
+    : hasHemorrhagicShockResponse && !hasNonMaternalCrisisResponse
     ? { id: 'crisis', label: 'Trauma hemorrhage' } as const
     : hasSepticShockResponse && !hasNonMaternalCrisisResponse
     ? { id: 'crisis', label: 'Sepsis response' } as const
@@ -531,9 +537,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     ? { id: 'crisis', label: 'Aspiration check' } as const
     : hasPreeclampsiaResponse && !hasNonMaternalCrisisResponse
       ? { id: 'crisis', label: 'Maternal response' } as const : CRISIS_TRAY;
-  const focusedEmergencyAssessment = (hasUndifferentiatedShockResponse || hasSepticShockResponse
-    || hasHemorrhagicShockResponse)
-    && !hasNonMaternalCrisisResponse && props.scenario.formulary.length === 0;
+  const focusedEmergencyAssessment = props.scenario.formulary.length === 0
+    && (focusedPleuralEmergency || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
+      || hasHemorrhagicShockResponse) && !hasNonMaternalCrisisResponse));
   const trays = hasCrisisResponse
     ? focusedEmergencyAssessment ? [responseTray]
       : props.scenario.formulary.length === 0 ? [responseTray, ...TRAYS] : [...TRAYS, responseTray]
@@ -774,8 +780,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 decompressed={props.resuscitation.pneumothoraxDecompressedAtTick !== null
                   && props.resuscitation.pneumothoraxDecompressedAtTick !== undefined}
                 helpRequested={props.helpRequestedAtTick !== null}
+                focusedEmergency={focusedPleuralEmergency}
+                oxygenReady={props.ventilator.fio2 >= 0.99}
                 onCallForHelp={props.onPneumothoraxHelp ?? (() => {})}
                 onAction={props.onPneumothoraxResponse ?? (() => {})}
+                onOxygen={() => props.onVentilator({ fio2: 1 })}
               />
             )}
             {hasAspirationRiskResponse && (
@@ -1608,14 +1617,18 @@ function VenousAirEmbolismTray({
 }
 
 function PneumothoraxResponseTray({
-  fraction, assessed, decompressed, helpRequested, onCallForHelp, onAction,
+  fraction, assessed, decompressed, helpRequested, focusedEmergency, oxygenReady,
+  onCallForHelp, onAction, onOxygen,
 }: {
   fraction: number;
   assessed: boolean;
   decompressed: boolean;
   helpRequested: boolean;
+  focusedEmergency: boolean;
+  oxygenReady: boolean;
   onCallForHelp: () => void;
   onAction: (action: 'assess-bilateral-ventilation' | 'decompress-left-chest') => void;
+  onOxygen: () => void;
 }) {
   const [confirmingDecompression, setConfirmingDecompression] = useState(false);
   const active = fraction > 0.05 || decompressed;
@@ -1633,10 +1646,15 @@ function PneumothoraxResponseTray({
             onClick={() => onAction('assess-bilateral-ventilation')}>Check bilateral ventilation</Button>
           <Button className="crisis-drug__action" disabled={!active || helpRequested}
             onClick={onCallForHelp}>Call for help</Button>
+          {focusedEmergency && <Button className="crisis-drug__action"
+            disabled={!active || oxygenReady} onClick={onOxygen}>
+            Give high-concentration oxygen
+          </Button>}
         </div>
         <p className="field__hint">
-          Use Airway &amp; Vent for 100% oxygen. The pressure alarm is declared because airway
-          pressure and compliance are not numerical engine states yet.
+          {focusedEmergency
+            ? 'Oxygen support does not relieve obstructed venous return or replace immediate pleural treatment.'
+            : 'Use Airway & Vent for 100% oxygen. The pressure alarm is declared because airway pressure and compliance are not numerical engine states yet.'}
         </p>
       </section>
       <section className="syringe" aria-labelledby="pleural-decompression-title">

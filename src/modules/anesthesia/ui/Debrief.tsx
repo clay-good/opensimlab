@@ -1245,6 +1245,9 @@ export function objectiveFindings(
       'assess-pneumothorax-pattern', 'escalate-pneumothorax-pattern',
       'support-pneumothorax-oxygenation', 'decompress-pneumothorax',
       'reassess-pneumothorax-recovery',
+      'assess-obstructive-pleural-shock', 'escalate-obstructive-pleural-shock',
+      'support-obstructive-pleural-oxygenation', 'decompress-obstructive-pleural-shock',
+      'reassess-obstructive-pleural-recovery',
     ].includes(objective.id)) {
       const onset = scenario.timeline.find(
         (event) => event.type === 'tension-pneumothorax',
@@ -1259,7 +1262,7 @@ export function objectiveFindings(
       const decompression = log.find(
         (entry) => entry.eventId.startsWith('pneumothorax-decompressed-'),
       );
-      if (objective.id === 'assess-pneumothorax-pattern') {
+      if (['assess-pneumothorax-pattern', 'assess-obstructive-pleural-shock'].includes(objective.id)) {
         const delay = assessment ? (assessment.tick - onset) / TICKS_PER_SECOND : null;
         return {
           ...base,
@@ -1270,7 +1273,7 @@ export function objectiveFindings(
           atTick: assessment?.tick ?? onset,
         } satisfies ObjectiveFinding;
       }
-      if (objective.id === 'escalate-pneumothorax-pattern') {
+      if (['escalate-pneumothorax-pattern', 'escalate-obstructive-pleural-shock'].includes(objective.id)) {
         const delay = help ? (help.tick - onset) / TICKS_PER_SECOND : null;
         return {
           ...base,
@@ -1281,7 +1284,7 @@ export function objectiveFindings(
           atTick: help?.tick ?? onset,
         } satisfies ObjectiveFinding;
       }
-      if (objective.id === 'support-pneumothorax-oxygenation') {
+      if (['support-pneumothorax-oxygenation', 'support-obstructive-pleural-oxygenation'].includes(objective.id)) {
         const windowEnd = onset + 60 * TICKS_PER_SECOND;
         let fio2 = scenario.equipment.ventilator.fio2;
         let delivering = scenario.equipment.ventilator.delivering;
@@ -1299,18 +1302,19 @@ export function objectiveFindings(
           tidalVolumeMl = finite(action.payload.tidalVolumeMl, tidalVolumeMl, 0, 1500);
           respiratoryRateBpm = finite(action.payload.respiratoryRateBpm, respiratoryRateBpm, 0, 60);
           if (typeof action.payload.delivering === 'boolean') delivering = action.payload.delivering;
-          if (achievedAt === null && fio2 >= 1 && delivering
-            && tidalVolumeMl > 0 && respiratoryRateBpm > 0) achievedAt = action.tick;
+          const oxygenDelivered = scenario.equipment.airwayDevice === 'facemask'
+            ? fio2 >= 1 : fio2 >= 1 && delivering && tidalVolumeMl > 0 && respiratoryRateBpm > 0;
+          if (achievedAt === null && oxygenDelivered) achievedAt = action.tick;
         }
         return {
           ...base, outcome: achievedAt === null ? 'not-met' : 'met',
           finding: achievedAt === null
-            ? '100% inspired oxygen and active breath delivery were not both in effect within 60 seconds.'
-            : `100% inspired oxygen with active breath delivery was established ${((achievedAt - onset) / TICKS_PER_SECOND).toFixed(0)} seconds after the modeled event.`,
+            ? 'High-concentration oxygen was not established within 60 seconds.'
+            : `High-concentration oxygen was established ${((achievedAt - onset) / TICKS_PER_SECOND).toFixed(0)} seconds after the modeled event.`,
           atTick: achievedAt ?? windowEnd,
         } satisfies ObjectiveFinding;
       }
-      if (objective.id === 'decompress-pneumothorax') {
+      if (['decompress-pneumothorax', 'decompress-obstructive-pleural-shock'].includes(objective.id)) {
         const delay = decompression ? (decompression.tick - onset) / TICKS_PER_SECOND : null;
         return {
           ...base,

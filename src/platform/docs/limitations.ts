@@ -896,9 +896,9 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'barotrauma, or an individual clinical course.',
     whereItMisleads: 'Using the displayed values to diagnose pneumothorax, estimate severity, or '
       + 'predict a real patient’s deterioration or recovery.',
-    correctUnderstanding: 'A combined breathing and circulation deterioration during positive-pressure '
-      + 'ventilation requires immediate systematic assessment and cause-directed management.',
-    briefIn: ['pneumothorax-under-positive-pressure'],
+    correctUnderstanding: 'A combined breathing and circulation deterioration in a compatible '
+      + 'context requires immediate systematic assessment and cause-directed management.',
+    briefIn: ['pneumothorax-under-positive-pressure', 'obstructive-shock-tension-pneumothorax'],
   },
   {
     id: 'no-airway-pressure-or-compliance-model',
@@ -913,6 +913,28 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['pneumothorax-under-positive-pressure'],
   },
   {
+    id: 'obstructive-pleural-findings-are-authored',
+    headline: 'The trauma history, unilateral breathing findings, hypoxia, and shock are fixed teaching facts.',
+    simplification: 'A click reveals one authored bilateral assessment without examination '
+      + 'technique, POCUS acquisition, imaging, diagnostic uncertainty, or competing injuries.',
+    whereItMisleads: 'Treating the case as a diagnostic test, assuming every tension pneumothorax '
+      + 'has this presentation, or generalizing its findings to an individual patient.',
+    correctUnderstanding: 'Unstable traumatic chest disease requires immediate repeated clinical '
+      + 'assessment, integration of mechanism and physiology, and skilled cause-directed treatment.',
+    briefIn: ['obstructive-shock-tension-pneumothorax'],
+  },
+  {
+    id: 'no-obstructive-shock-differential-or-outcome',
+    headline: 'The vignette does not simulate the full obstructive-shock differential, later pleural care, recurrence, or outcome.',
+    simplification: 'The authored left-sided pattern clears after one intent action; tamponade, '
+      + 'pulmonary embolism, hemorrhage, airway causes, drainage, recurrence, and disposition are absent.',
+    whereItMisleads: 'Assuming the fixed cause is proven, skipping competing threats, treating '
+      + 'monitor improvement as procedural success, or inferring recovery and safe disposition.',
+    correctUnderstanding: 'Real care requires continued reassessment, definitive pleural management, '
+      + 'evaluation for concurrent threats, monitoring for recurrence, and trauma-system escalation.',
+    briefIn: ['obstructive-shock-tension-pneumothorax'],
+  },
+  {
     id: 'no-procedure-or-equipment-selection',
     headline: 'Decompression is an intent control, not a procedural trainer.',
     simplification: 'One confirmed action records immediate left-chest decompression intent. There '
@@ -921,7 +943,7 @@ export const LIMITATIONS: readonly Limitation[] = [
     whereItMisleads: 'Treating a successful browser action as evidence of procedural knowledge or skill.',
     correctUnderstanding: 'Chest decompression requires current local guidance, appropriate expertise, '
       + 'equipment, and supervised hands-on procedural training.',
-    briefIn: ['pneumothorax-under-positive-pressure'],
+    briefIn: ['pneumothorax-under-positive-pressure', 'obstructive-shock-tension-pneumothorax'],
   },
   {
     id: 'aspiration-risk-choice-is-a-bounded-vignette',

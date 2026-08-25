@@ -1029,6 +1029,24 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-24',
   },
   {
+    id: 'wses-aast-thoracic-trauma-2025',
+    pmid: '41094688',
+    currency: {
+      lastAmended: '2025-10-15',
+      checkedAt: 'https://link.springer.com/article/10.1186/s13017-025-00651-1',
+    },
+    authors: 'Coccolini F, Cremonini C, Moore EE, et al',
+    title: 'Thoracic trauma WSES-AAST guidelines',
+    publication: 'World J Emerg Surg',
+    year: 2025,
+    locator: '20:78; doi:10.1186/s13017-025-00651-1',
+    usedFor: 'The traumatic tension-pneumothorax boundary: a life-threatening pleural injury '
+      + 'requires immediate recognition and treatment; respiratory or hemodynamic impairment '
+      + 'requires drainage, while technique and equipment remain outside this screen-based lab.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-25',
+  },
+  {
     id: 'association-anaesthetists-qrh-2023',
     currency: { lastAmended: '2023-06-23', checkedAt: '2026-08-24' },
     authors: 'Association of Anaesthetists',

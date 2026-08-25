@@ -41,7 +41,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.40';
+export const ENGINE_VERSION = '0.1.0-alpha.41';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -805,10 +805,11 @@ export class AnesthesiaEngine {
             break;
           }
           this.pneumothoraxAssessedAtTick = this.currentTick;
+          const hasTrachealTube = this.patient.airway.intubated;
           this.log('critical', 'crisis', `pneumothorax-assessed-${this.currentTick}`,
-            'Bilateral check: left chest movement and air entry are markedly reduced; right air entry is present. The tracheal tube remains at its documented depth. This finding supports, but does not by itself prove, the suspected pleural cause.', {
+            `Bilateral check: left chest movement and air entry are markedly reduced; right air entry is present. ${hasTrachealTube ? 'The tracheal tube remains at its documented depth.' : 'No tracheal tube is present in this fixed vignette.'} This finding supports, but does not by itself prove, the suspected pleural cause.`, {
               side: 'left', leftAirEntry: 'markedly-reduced', rightAirEntry: 'present',
-              tubeDepthUnchanged: true,
+              tubeDepthUnchanged: hasTrachealTube,
             });
           break;
         }

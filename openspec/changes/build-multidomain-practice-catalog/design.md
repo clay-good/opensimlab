@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with three playable, completion-audited scenarios. The remaining
-22 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with four playable, completion-audited scenarios. The remaining
+21 planned titles remain descriptive scope only and do not enter playable counts before their full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -230,6 +230,18 @@ red-cell bridge; review coagulation and temperature; and reassess perfusion.
 Bleeding-control escalation proceeds in parallel with resuscitation and never waits for the blood
 bridge. The controls do not teach placement technique, TXA, calcium, component ratios, warming
 delivery, imaging, procedures, local activation workflow, repeat transfusion, or outcome.
+
+### Wave B slice 4: obstructive shock from tension pneumothorax
+
+The fourth emergency-medicine slice reuses the bounded pleural-pressure trajectory in a distinct
+spontaneously breathing penetrating-chest-trauma presentation. Learners integrate unilateral
+breathing findings, hypoxia, and severe hemodynamic compromise; escalate; record high-concentration
+oxygen; confirm immediate left-chest decompression intent without waiting for imaging; and reassess
+the canonical oxygenation and circulation response.
+
+The bilateral findings are authored and decompression remains an intent control. The case does not
+teach examination or POCUS acquisition, technique, site or equipment selection, later chest
+drainage, recurrence, the full obstructive-shock differential, local protocol, or outcome.
 
 #### Critical care: 24
 

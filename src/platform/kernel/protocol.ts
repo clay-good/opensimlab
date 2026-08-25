@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 38 reports bounded traumatic-hemorrhage state. */
-export const WORKER_PROTOCOL_VERSION = 38;
+export const WORKER_PROTOCOL_VERSION = 39;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
