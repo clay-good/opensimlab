@@ -38,7 +38,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.26';
+export const ENGINE_VERSION = '0.1.0-alpha.27';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -286,6 +286,10 @@ export class AnesthesiaEngine {
   private venousAirEmbolismFraction = 0;
   private venousAirEntryControlled = false;
   private venousAirEntryControlledAtTick: number | null = null;
+  private tensionPneumothoraxSeverity = 0;
+  private tensionPneumothoraxFraction = 0;
+  private pneumothoraxAssessedAtTick: number | null = null;
+  private pneumothoraxDecompressedAtTick: number | null = null;
   /** Bounded teaching opposition to the current rocuronium effect-site concentration. */
   private neuromuscularReversalFraction = 0;
   private postTetanicCount = 0;
@@ -493,11 +497,17 @@ export class AnesthesiaEngine {
       case 'call-for-help': {
         const context = action.payload.context;
         const supported = context === 'airway' || context === 'high-spinal'
-          || context === 'venous-air-embolism' || context === 'bronchospasm';
-        if (!supported || this.helpRequestedAtTick !== null) {
+          || context === 'venous-air-embolism' || context === 'bronchospasm'
+          || context === 'tension-pneumothorax';
+        const inactivePneumothorax = context === 'tension-pneumothorax'
+          && this.tensionPneumothoraxSeverity <= 0
+          && this.tensionPneumothoraxFraction <= 0.05;
+        if (!supported || inactivePneumothorax || this.helpRequestedAtTick !== null) {
           this.log('warning', 'airway', `airway-help-refused-${this.currentTick}`,
             !supported
               ? 'Help requires a supported airway or modeled crisis context. No request was recorded.'
+              : inactivePneumothorax
+                ? 'No active modeled pleural event is available for this help request.'
               : 'Help has already been requested. No duplicate request was recorded.');
           break;
         }
@@ -507,6 +517,8 @@ export class AnesthesiaEngine {
             ? 'High-spinal help requested. Team arrival, communication, and provider actions are not modeled.'
             : context === 'venous-air-embolism'
               ? 'Help requested for the abrupt cardiopulmonary change. Team arrival, communication, and provider actions are not modeled.'
+              : context === 'tension-pneumothorax'
+                ? 'Help requested for the combined breathing and circulation change. Team arrival, examination, and provider actions are not modeled.'
               : context === 'bronchospasm'
                 ? 'Help requested for the lower-airway obstruction pattern. Team arrival, examination, and provider actions are not modeled.'
                 : 'Additional airway help requested. Team arrival and provider skill are not modeled.',
@@ -688,6 +700,45 @@ export class AnesthesiaEngine {
         this.log('critical', 'crisis', `venous-air-entry-controlled-${this.currentTick}`,
           'Intent to stop further venous air entry accepted. The residual monitor pattern now clears on a bounded teaching trajectory; finding or physically controlling a source is not simulated.', {
             method: 'stop-entry', teachingModel: true,
+          });
+        break;
+      }
+      case 'pneumothorax-response': {
+        const response = action.payload.action;
+        const active = this.tensionPneumothoraxSeverity > 0
+          || this.tensionPneumothoraxFraction > 0.05;
+        if (!active || !['assess-bilateral-ventilation', 'decompress-left-chest']
+          .includes(String(response))) {
+          this.log('warning', 'crisis', `pneumothorax-response-refused-${this.currentTick}`,
+            !active
+              ? 'No active modeled pleural event is available for this bounded response.'
+              : 'The pleural-response action was not one of the listed actions. No state changed.');
+          break;
+        }
+        if (response === 'assess-bilateral-ventilation') {
+          if (this.pneumothoraxAssessedAtTick !== null) {
+            this.log('warning', 'crisis', `pneumothorax-assessment-refused-${this.currentTick}`,
+              'Bilateral ventilation has already been assessed. No duplicate assessment was recorded.');
+            break;
+          }
+          this.pneumothoraxAssessedAtTick = this.currentTick;
+          this.log('critical', 'crisis', `pneumothorax-assessed-${this.currentTick}`,
+            'Bilateral check: left chest movement and air entry are markedly reduced; right air entry is present. The tracheal tube remains at its documented depth. This finding supports, but does not by itself prove, the suspected pleural cause.', {
+              side: 'left', leftAirEntry: 'markedly-reduced', rightAirEntry: 'present',
+              tubeDepthUnchanged: true,
+            });
+          break;
+        }
+        if (this.pneumothoraxDecompressedAtTick !== null) {
+          this.log('warning', 'crisis', `pneumothorax-decompression-refused-${this.currentTick}`,
+            'Left-chest decompression intent has already been accepted. No duplicate action was recorded.');
+          break;
+        }
+        this.pneumothoraxDecompressedAtTick = this.currentTick;
+        this.tensionPneumothoraxSeverity = 0;
+        this.log('critical', 'crisis', `pneumothorax-decompressed-${this.currentTick}`,
+          'Immediate left-chest decompression intent accepted. The monitor pattern now clears on a bounded teaching trajectory; technique, site, equipment, and procedural complications are not simulated.', {
+            side: 'left', action: 'decompression-intent', teachingModel: true,
           });
         break;
       }
@@ -1675,6 +1726,21 @@ export class AnesthesiaEngine {
         return;
       }
 
+      case 'tension-pneumothorax': {
+        const severity = event.value;
+        if (event.target !== 'left-pleural-space' || typeof severity !== 'number'
+          || !Number.isFinite(severity) || severity < 0 || severity > 1) {
+          this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" must identify the left pleural space and a finite severity from 0 to 1, so the event had no effect.`);
+          return;
+        }
+        this.tensionPneumothoraxSeverity = Math.max(this.tensionPneumothoraxSeverity, severity);
+        this.pneumothoraxAssessedAtTick = null;
+        this.pneumothoraxDecompressedAtTick = null;
+        this.lastExposure = { agentId: 'left-pleural-space', tick: this.currentTick };
+        return;
+      }
+
       case 'difficult-airway': {
         const deliveryFraction = event.value;
         if (event.target !== 'failed-intubation-with-marginal-mask'
@@ -1947,6 +2013,11 @@ export class AnesthesiaEngine {
     this.venousAirEmbolismFraction += (
       this.venousAirEmbolismSeverity - this.venousAirEmbolismFraction
     ) * (1 - Math.exp(-0.1 / venousAirTimeConstantSeconds));
+    const pneumothoraxTimeConstantSeconds = this.tensionPneumothoraxSeverity
+      >= this.tensionPneumothoraxFraction ? 4 : 12;
+    this.tensionPneumothoraxFraction += (
+      this.tensionPneumothoraxSeverity - this.tensionPneumothoraxFraction
+    ) * (1 - Math.exp(-0.1 / pneumothoraxTimeConstantSeconds));
 
     // --- Physiology ------------------------------------------------------------
     const effectiveVentilator = this.pendingLaryngoscopy || this.pendingSupraglotticInsertion
@@ -2047,6 +2118,20 @@ export class AnesthesiaEngine {
         meanArterialMmHg: crisisState.meanArterialMmHg * (1 - 0.45 * fraction),
         etco2MmHg: crisisState.etco2MmHg * (1 - 0.6 * fraction),
         spo2Percent: clamp(crisisState.spo2Percent - 8 * fraction, 0, 100),
+      };
+    }
+    if (this.tensionPneumothoraxFraction > 0) {
+      const fraction = this.tensionPneumothoraxFraction;
+      crisisState = {
+        ...crisisState,
+        heartRateBpm: crisisState.heartRateBpm * (1 + 0.2 * fraction),
+        strokeVolumeMl: crisisState.strokeVolumeMl * (1 - 0.6 * fraction),
+        cardiacOutputLPerMin: crisisState.cardiacOutputLPerMin * (1 - 0.55 * fraction),
+        systolicMmHg: crisisState.systolicMmHg * (1 - 0.55 * fraction),
+        diastolicMmHg: crisisState.diastolicMmHg * (1 - 0.55 * fraction),
+        meanArterialMmHg: crisisState.meanArterialMmHg * (1 - 0.55 * fraction),
+        etco2MmHg: crisisState.etco2MmHg * (1 - 0.35 * fraction),
+        spo2Percent: clamp(crisisState.spo2Percent - 18 * fraction, 0, 100),
       };
     }
     if (this.labetalolEffectFraction > 0) {
@@ -2344,6 +2429,9 @@ export class AnesthesiaEngine {
         venousAirEmbolismFraction: this.venousAirEmbolismFraction,
         venousAirEntryControlled: this.venousAirEntryControlled,
         venousAirEntryControlledAtTick: this.venousAirEntryControlledAtTick,
+        tensionPneumothoraxFraction: this.tensionPneumothoraxFraction,
+        pneumothoraxAssessedAtTick: this.pneumothoraxAssessedAtTick,
+        pneumothoraxDecompressedAtTick: this.pneumothoraxDecompressedAtTick,
         neuromuscularReversalFraction: this.neuromuscularReversalFraction,
         postTetanicCount: this.postTetanicCount,
         lastNeuromuscularReversal: this.lastNeuromuscularReversal

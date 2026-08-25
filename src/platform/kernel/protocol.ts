@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 23 reports the arterial pressure system. */
-export const WORKER_PROTOCOL_VERSION = 24;
+/** Bumped whenever the message shape changes incompatibly. Version 25 reports the pleural-response state. */
+export const WORKER_PROTOCOL_VERSION = 25;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -278,6 +278,10 @@ export interface EquipmentSnapshot {
     readonly venousAirEmbolismFraction?: number;
     readonly venousAirEntryControlled?: boolean;
     readonly venousAirEntryControlledAtTick?: number | null;
+    /** Bounded positive-pressure pneumothorax response. Optional for older saved snapshots. */
+    readonly tensionPneumothoraxFraction?: number;
+    readonly pneumothoraxAssessedAtTick?: number | null;
+    readonly pneumothoraxDecompressedAtTick?: number | null;
     /** Accepted quantitative neuromuscular-reversal teaching state. */
     readonly neuromuscularReversalFraction?: number;
     readonly postTetanicCount?: number;

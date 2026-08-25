@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "recordCount": 42,
+  "recordCount": 43,
   "records": [
     {
       "recordId": "scenario:routine-induction@0.1.0",
@@ -309,6 +309,17 @@
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#preeclampsia-urgent-delivery@0.1.0",
         "/catalog/anesthesia-quality-audit.json#preeclampsia-urgent-delivery@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:pneumothorax-under-positive-pressure@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "pneumothorax-under-positive-pressure",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#pneumothorax-under-positive-pressure@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#pneumothorax-under-positive-pressure@0.1.0"
       ]
     },
     {

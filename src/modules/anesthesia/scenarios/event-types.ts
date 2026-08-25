@@ -14,6 +14,7 @@ export const EVENT_TYPES = [
   'malignant-hyperthermia', 'local-anesthetic-toxicity',
   'high-spinal',
   'venous-air-embolism',
+  'tension-pneumothorax',
   'difficult-airway',
   'narrative', 'rhythm-change', 'artifact', 'equipment-failure',
 ] as const;

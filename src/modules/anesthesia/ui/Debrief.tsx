@@ -426,6 +426,11 @@ export function objectiveFindings(
     'treat-severe-pregnancy-hypertension': 'vasodilation-versus-hypovolemia',
     'start-preeclampsia-seizure-prophylaxis': 'vasodilation-versus-hypovolemia',
     'reassess-preeclampsia-response': 'vasodilation-versus-hypovolemia',
+    'assess-pneumothorax-pattern': 'capnogram-morphology',
+    'escalate-pneumothorax-pattern': 'vasodilation-versus-hypovolemia',
+    'support-pneumothorax-oxygenation': 'capnogram-morphology',
+    'decompress-pneumothorax': 'vasodilation-versus-hypovolemia',
+    'reassess-pneumothorax-recovery': 'vasodilation-versus-hypovolemia',
     'recognize-hemorrhage': 'vasodilation-versus-hypovolemia',
     'temporize-volume-loss': 'vasodilation-versus-hypovolemia',
     'avoid-full-dose-induction': 'hysteresis-and-effect-site-lag',
@@ -1188,6 +1193,103 @@ export function objectiveFindings(
         finding: recovered
           ? `End-tidal carbon dioxide recovered to ${(recovered.state.etco2MmHg ?? 0).toFixed(0)} mmHg after accepted source control. This is a teaching trajectory, not diagnostic confirmation or an individual prognosis.`
           : 'End-tidal carbon dioxide had not recovered to 28 mmHg after accepted source control before the session ended.',
+        atTick: recovered?.tick ?? history.at(-1)?.tick ?? onset,
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
+      'assess-pneumothorax-pattern', 'escalate-pneumothorax-pattern',
+      'support-pneumothorax-oxygenation', 'decompress-pneumothorax',
+      'reassess-pneumothorax-recovery',
+    ].includes(objective.id)) {
+      const onset = scenario.timeline.find(
+        (event) => event.type === 'tension-pneumothorax',
+      )?.atTick;
+      if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) return {
+        ...base, outcome: 'not-exercised',
+        finding: 'The session ended before the modeled pleural event.',
+      } satisfies ObjectiveFinding;
+      const assessment = log.find((entry) => entry.eventId.startsWith('pneumothorax-assessed-'));
+      const help = log.find((entry) => entry.eventId.startsWith('airway-help-requested-')
+        && entry.data?.context === 'tension-pneumothorax');
+      const decompression = log.find(
+        (entry) => entry.eventId.startsWith('pneumothorax-decompressed-'),
+      );
+      if (objective.id === 'assess-pneumothorax-pattern') {
+        const delay = assessment ? (assessment.tick - onset) / TICKS_PER_SECOND : null;
+        return {
+          ...base,
+          outcome: delay === null ? 'not-met' : delay <= 30 ? 'met' : delay <= 60 ? 'partly-met' : 'not-met',
+          finding: delay === null
+            ? 'No accepted bilateral-ventilation assessment was recorded.'
+            : `Bilateral ventilation was assessed ${delay.toFixed(0)} seconds after the modeled event; left air entry was markedly reduced while right air entry remained present.`,
+          atTick: assessment?.tick ?? onset,
+        } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'escalate-pneumothorax-pattern') {
+        const delay = help ? (help.tick - onset) / TICKS_PER_SECOND : null;
+        return {
+          ...base,
+          outcome: delay === null ? 'not-met' : delay <= 30 ? 'met' : delay <= 60 ? 'partly-met' : 'not-met',
+          finding: delay === null
+            ? 'No accepted help request for the combined breathing and circulation change was recorded.'
+            : `Help was requested ${delay.toFixed(0)} seconds after the modeled event. Team arrival and performance are not simulated.`,
+          atTick: help?.tick ?? onset,
+        } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'support-pneumothorax-oxygenation') {
+        const windowEnd = onset + 60 * TICKS_PER_SECOND;
+        let fio2 = scenario.equipment.ventilator.fio2;
+        let delivering = scenario.equipment.ventilator.delivering;
+        let tidalVolumeMl = scenario.equipment.ventilator.tidalVolumeMl;
+        let respiratoryRateBpm = scenario.equipment.ventilator.respiratoryRateBpm;
+        let achievedAt: number | null = null;
+        for (const action of actions.filter((entry) => entry.type === 'ventilator'
+          && entry.tick >= onset && entry.tick <= windowEnd).sort((a, b) => a.tick - b.tick)) {
+          const finite = (value: unknown, current: number, min: number, max: number) => {
+            const requested = Number(value);
+            return value === undefined || !Number.isFinite(requested)
+              ? current : Math.min(max, Math.max(min, requested));
+          };
+          fio2 = finite(action.payload.fio2, fio2, 0.21, 1);
+          tidalVolumeMl = finite(action.payload.tidalVolumeMl, tidalVolumeMl, 0, 1500);
+          respiratoryRateBpm = finite(action.payload.respiratoryRateBpm, respiratoryRateBpm, 0, 60);
+          if (typeof action.payload.delivering === 'boolean') delivering = action.payload.delivering;
+          if (achievedAt === null && fio2 >= 1 && delivering
+            && tidalVolumeMl > 0 && respiratoryRateBpm > 0) achievedAt = action.tick;
+        }
+        return {
+          ...base, outcome: achievedAt === null ? 'not-met' : 'met',
+          finding: achievedAt === null
+            ? '100% inspired oxygen and active breath delivery were not both in effect within 60 seconds.'
+            : `100% inspired oxygen with active breath delivery was established ${((achievedAt - onset) / TICKS_PER_SECOND).toFixed(0)} seconds after the modeled event.`,
+          atTick: achievedAt ?? windowEnd,
+        } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'decompress-pneumothorax') {
+        const delay = decompression ? (decompression.tick - onset) / TICKS_PER_SECOND : null;
+        return {
+          ...base,
+          outcome: delay === null ? 'not-met' : delay <= 60 ? 'met' : delay <= 120 ? 'partly-met' : 'not-met',
+          finding: delay === null
+            ? 'No accepted left-chest decompression intent was recorded.'
+            : `Left-chest decompression intent was accepted ${delay.toFixed(0)} seconds after the modeled event. Technique, site, equipment, and complications are not simulated.`,
+          atTick: decompression?.tick ?? onset,
+        } satisfies ObjectiveFinding;
+      }
+      if (!decompression) return {
+        ...base, outcome: 'not-met',
+        finding: 'Recovery was not credited because no accepted decompression intent preceded it.',
+        atTick: history.at(-1)?.tick ?? onset,
+      } satisfies ObjectiveFinding;
+      const recovered = history.find((entry) => entry.tick >= decompression.tick
+        && (entry.state.spo2Percent ?? 0) >= 94
+        && (entry.state.meanArterialMmHg ?? 0) >= 65);
+      return {
+        ...base, outcome: recovered ? 'met' : 'not-met',
+        finding: recovered
+          ? `Oxygen saturation recovered to ${(recovered.state.spo2Percent ?? 0).toFixed(0)}% and mean arterial pressure to ${(recovered.state.meanArterialMmHg ?? 0).toFixed(0)} mmHg after accepted decompression intent. This is a teaching trajectory, not an individual prognosis.`
+          : 'Oxygen saturation and mean arterial pressure had not both reached the declared reassessment endpoint before the session ended.',
         atTick: recovered?.tick ?? history.at(-1)?.tick ?? onset,
       } satisfies ObjectiveFinding;
     }

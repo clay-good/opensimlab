@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 28,
+  "scenarioCount": 29,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -616,6 +616,29 @@
         "Repeat the pressure after antihypertensive treatment and interpret the observed response."
       ],
       "searchText": "preeclampsia-urgent-delivery preeclampsia before urgent delivery preeclampsia with severe features at 35 weeks; urgent delivery decision made maternal stabilization before urgent cesarean delivery confirm the persistent severe-range pressure. an accepted repeat showed systolic pressure at least 160 mmhg or diastolic pressure at least 110 mmhg before treatment. use the listed first-line antihypertensive branch after confirmation. the bounded 20 mg iv labetalol action was accepted after the confirming pressure and within the 60-minute emergency-treatment window. start the listed magnesium-sulfate loading branch for seizure prophylaxis. the bounded 4 g iv magnesium-sulfate action was accepted after confirmation and was distinguished from antihypertensive treatment. repeat the pressure after antihypertensive treatment and interpret the observed response. a later accepted pressure was below 160/110 mmhg while mean arterial pressure remained at least 65 mmhg."
+    },
+    {
+      "id": "pneumothorax-under-positive-pressure",
+      "path": "/anesthesia/scenario/pneumothorax-under-positive-pressure",
+      "title": "Pneumothorax under positive pressure",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 8,
+      "difficulty": "advanced",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Check bilateral ventilation when airway pressure, oxygenation, and circulation deteriorate together.",
+        "Call for help when the combined breathing and circulation pattern appears.",
+        "Deliver 100% oxygen while the cause is addressed.",
+        "Record immediate left-chest decompression intent for severe tension physiology.",
+        "Reassess oxygenation and pressure after accepted decompression intent."
+      ],
+      "searchText": "pneumothorax-under-positive-pressure pneumothorax under positive pressure colon cancer after left subclavian central-line placement open right hemicolectomy check bilateral ventilation when airway pressure, oxygenation, and circulation deteriorate together. a bilateral-ventilation assessment was accepted within 30 seconds of the modeled event. call for help when the combined breathing and circulation pattern appears. a pneumothorax-context help request was accepted within 30 seconds of the modeled event. deliver 100% oxygen while the cause is addressed. inspired oxygen fraction 1.0 with active breath delivery was in effect within 60 seconds. record immediate left-chest decompression intent for severe tension physiology. the bounded decompression-intent action was accepted within 60 seconds of the modeled event. reassess oxygenation and pressure after accepted decompression intent. oxygen saturation recovered to at least 94% and mean arterial pressure to at least 65 mmhg after accepted decompression."
     }
   ],
   "preparationPathCount": 10,
@@ -760,7 +783,7 @@
     },
     {
       "id": "ventilation-respiratory-failure",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "title": "Ventilation and respiratory failure",
       "description": "Use saturation, capnography, and airway state together rather than chasing one number.",
       "scenarioIds": [
@@ -769,7 +792,8 @@
         "rapid-desaturation",
         "bronchospasm",
         "laryngospasm-after-airway-stimulation",
-        "venous-air-embolism-during-line-removal"
+        "venous-air-embolism-during-line-removal",
+        "pneumothorax-under-positive-pressure"
       ],
       "prerequisites": [
         "Basic monitor orientation."
@@ -785,7 +809,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 51
+      "estimatedMinutes": 59
     },
     {
       "id": "pediatric-emergencies",
@@ -874,7 +898,7 @@
     },
     {
       "id": "handoff-escalation",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "title": "Handoff and escalation",
       "description": "Practice recognizing when the simulated problem exceeds solo management, ordering a bounded handoff, and making help part of the response.",
       "scenarioIds": [
@@ -883,7 +907,8 @@
         "bronchospasm",
         "perioperative-anaphylaxis-after-antibiotic",
         "early-malignant-hyperthermia-during-volatile-anesthesia",
-        "venous-air-embolism-during-line-removal"
+        "venous-air-embolism-during-line-removal",
+        "pneumothorax-under-positive-pressure"
       ],
       "prerequisites": [
         "Basic monitor orientation."
@@ -899,7 +924,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 53
+      "estimatedMinutes": 61
     }
   ]
 }

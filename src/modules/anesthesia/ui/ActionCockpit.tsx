@@ -119,6 +119,9 @@ export interface ActionCockpitProps {
     readonly venousAirEmbolismFraction?: number;
     readonly venousAirEntryControlled?: boolean;
     readonly venousAirEntryControlledAtTick?: number | null;
+    readonly tensionPneumothoraxFraction?: number;
+    readonly pneumothoraxAssessedAtTick?: number | null;
+    readonly pneumothoraxDecompressedAtTick?: number | null;
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -179,6 +182,10 @@ export interface ActionCockpitProps {
   readonly onHighSpinalHelp?: () => void;
   readonly onVenousAirEmbolismHelp?: () => void;
   readonly onControlVenousAirEntry?: () => void;
+  readonly onPneumothoraxHelp?: () => void;
+  readonly onPneumothoraxResponse?: (
+    action: 'assess-bilateral-ventilation' | 'decompress-left-chest',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -230,6 +237,9 @@ export function crisisResponseAvailability(
     ),
     hasVenousAirEmbolismResponse: injected.has('air-embolism')
       || scenario.timeline.some((event) => event.type === 'venous-air-embolism'),
+    hasPneumothoraxResponse: scenario.timeline.some(
+      (event) => event.type === 'tension-pneumothorax',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -270,13 +280,14 @@ export const NOT_IN_THIS_BUILD =
   + 'are available only in the bounded scripted arrest case; a patient with hypoxic arrest elsewhere does not recover.';
 
 export function ActionCockpit(props: ActionCockpitProps) {
-  const [tray, setTray] = useState<TrayId>(() => props.scenario.timeline.some(
-    (event) => event.type === 'narrative' && event.target === 'persistent-severe-preeclampsia',
-  ) ? 'crisis' : 'syringes');
+  const [tray, setTray] = useState<TrayId>(() => props.scenario.formulary.length === 0
+    && props.scenario.timeline.some((event) => event.type === 'tension-pneumothorax'
+      || (event.type === 'narrative' && event.target === 'persistent-severe-preeclampsia'))
+    ? 'crisis' : 'syringes');
   const {
     hasAnaphylaxisResponse, hasHypermetabolicResponse, hasLastResponse,
     hasCardiacArrestResponse, hasHighSpinalResponse, hasVenousAirEmbolismResponse,
-    hasBronchospasmResponse, hasPreeclampsiaResponse,
+    hasBronchospasmResponse, hasPreeclampsiaResponse, hasPneumothoraxResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -284,7 +295,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
   const hasEpinephrineResponse = hasAnaphylaxisResponse || hasLastResponse;
   const hasNonMaternalCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse
     || hasCardiacArrestResponse || hasHighSpinalResponse || hasVenousAirEmbolismResponse
-    || hasBronchospasmResponse;
+    || hasPneumothoraxResponse || hasBronchospasmResponse;
   const hasCrisisResponse = hasNonMaternalCrisisResponse || hasPreeclampsiaResponse;
   const responseTray = hasPreeclampsiaResponse && !hasNonMaternalCrisisResponse
     ? { id: 'crisis', label: 'Maternal response' } as const : CRISIS_TRAY;
@@ -501,6 +512,18 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 helpRequested={props.helpRequestedAtTick !== null}
                 onCallForHelp={props.onVenousAirEmbolismHelp ?? (() => {})}
                 onControlSource={props.onControlVenousAirEntry ?? (() => {})}
+              />
+            )}
+            {hasPneumothoraxResponse && (
+              <PneumothoraxResponseTray
+                fraction={props.resuscitation.tensionPneumothoraxFraction ?? 0}
+                assessed={props.resuscitation.pneumothoraxAssessedAtTick !== null
+                  && props.resuscitation.pneumothoraxAssessedAtTick !== undefined}
+                decompressed={props.resuscitation.pneumothoraxDecompressedAtTick !== null
+                  && props.resuscitation.pneumothoraxDecompressedAtTick !== undefined}
+                helpRequested={props.helpRequestedAtTick !== null}
+                onCallForHelp={props.onPneumothoraxHelp ?? (() => {})}
+                onAction={props.onPneumothoraxResponse ?? (() => {})}
               />
             )}
             {hasBronchospasmResponse && (
@@ -1185,6 +1208,72 @@ function VenousAirEmbolismTray({
         )}
         <p className="field__hint">
           The accepted action stops new entry only. Residual physiology clears gradually and does not predict an individual outcome.
+        </p>
+      </section>
+    </div>
+  );
+}
+
+function PneumothoraxResponseTray({
+  fraction, assessed, decompressed, helpRequested, onCallForHelp, onAction,
+}: {
+  fraction: number;
+  assessed: boolean;
+  decompressed: boolean;
+  helpRequested: boolean;
+  onCallForHelp: () => void;
+  onAction: (action: 'assess-bilateral-ventilation' | 'decompress-left-chest') => void;
+}) {
+  const [confirmingDecompression, setConfirmingDecompression] = useState(false);
+  const active = fraction > 0.05 || decompressed;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="pleural-pattern-title">
+        <div id="pleural-pattern-title" className="syringe__name">Breathing + circulation</div>
+        <Badge kind="teaching">Focused crisis</Badge>
+        <div className="syringe__meta">Check both sides · escalate · oxygenate</div>
+        <p className="syringe__remaining" role="status">
+          Modeled burden {(fraction * 100).toFixed(0)}% · {assessed ? 'bilateral check recorded' : 'bilateral check pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!active || assessed || decompressed}
+            onClick={() => onAction('assess-bilateral-ventilation')}>Check bilateral ventilation</Button>
+          <Button className="crisis-drug__action" disabled={!active || helpRequested}
+            onClick={onCallForHelp}>Call for help</Button>
+        </div>
+        <p className="field__hint">
+          Use Airway &amp; Vent for 100% oxygen. The pressure alarm is declared because airway
+          pressure and compliance are not numerical engine states yet.
+        </p>
+      </section>
+      <section className="syringe" aria-labelledby="pleural-decompression-title">
+        <div id="pleural-decompression-title" className="syringe__name">Immediate decompression</div>
+        <div className="syringe__meta">Intent action · no procedural instruction</div>
+        <p className="syringe__remaining" role="status">
+          {decompressed ? 'Decompression intent accepted · pattern clearing'
+            : active ? 'Severe tension physiology continues' : 'Awaiting an observable change'}
+        </p>
+        {!confirmingDecompression ? (
+          <Button className="crisis-drug__action" disabled={!active || decompressed}
+            onClick={() => setConfirmingDecompression(true)}>
+            Decompress left chest
+          </Button>
+        ) : (
+          <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
+            <span>Record immediate left-chest decompression intent?</span>
+            <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+              <Button variant="primary" className="crisis-drug__action" onClick={() => {
+                onAction('decompress-left-chest');
+                setConfirmingDecompression(false);
+              }}>Confirm decompression intent</Button>
+              <Button variant="ghost" className="crisis-drug__action"
+                onClick={() => setConfirmingDecompression(false)}>Cancel</Button>
+            </div>
+          </div>
+        )}
+        <p className="field__hint">
+          Site selection, needle or thoracostomy technique, equipment, imaging, and complications
+          stay outside this lab. Reassess the live monitor after the accepted action.
         </p>
       </section>
     </div>

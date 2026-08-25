@@ -1099,6 +1099,21 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'pc-crisis-management',
     objectiveIds: ['escalate-venous-air-pattern', 'control-venous-air-entry', 'support-venous-air-oxygenation', 'reassess-venous-air-recovery'],
   },
+  {
+    scenarioId: 'pneumothorax-under-positive-pressure', frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['assess-pneumothorax-pattern', 'escalate-pneumothorax-pattern', 'support-pneumothorax-oxygenation', 'decompress-pneumothorax', 'reassess-pneumothorax-recovery'],
+  },
+  {
+    scenarioId: 'pneumothorax-under-positive-pressure', frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['assess-pneumothorax-pattern', 'escalate-pneumothorax-pattern', 'support-pneumothorax-oxygenation', 'decompress-pneumothorax', 'reassess-pneumothorax-recovery'],
+  },
+  {
+    scenarioId: 'pneumothorax-under-positive-pressure', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-crisis-management',
+    objectiveIds: ['assess-pneumothorax-pattern', 'escalate-pneumothorax-pattern', 'support-pneumothorax-oxygenation', 'decompress-pneumothorax', 'reassess-pneumothorax-recovery'],
+  },
 ];
 
 export interface DomainCoverage {

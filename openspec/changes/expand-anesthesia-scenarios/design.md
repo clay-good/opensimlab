@@ -532,3 +532,22 @@ pressure below 160/110 mmHg with MAP at least 65 mmHg. Diagnosis, laboratory cri
 error, alternative or escalating antihypertensives, pharmacokinetics, infusion duration, magnesium
 maintenance or toxicity, eclampsia, pulmonary edema, fetal status, delivery planning, anesthetic
 technique, surgery, postpartum care, and teams remain outside the model.
+
+## Slice 32: bounded pneumothorax under positive-pressure ventilation
+
+The twenty-ninth authored scenario begins during stable volume-controlled ventilation after a
+declared left subclavian central-line placement. At 60 simulated seconds, a left pleural teaching
+drive produces a declared airway-pressure alarm with falling saturation, end-tidal carbon dioxide,
+cardiac output, and arterial pressure. The engine does not claim a numerical pressure or compliance
+model and the observable pattern remains a differential until assessed in context.
+
+The focused crisis tray puts “check bilateral ventilation” beside “call for help,” links the learner
+to 100% oxygen in the existing ventilator tray, and requires confirmation before recording immediate
+left-chest decompression intent. The assessment returns markedly reduced left air entry, preserved
+right air entry, and unchanged documented tube depth. The decompression control deliberately does
+not expose site, needle, thoracostomy, drain, or equipment choices.
+
+The crisis drive rises on a fixed 4-second teaching time constant and clears on a fixed 12-second
+time constant after accepted decompression intent. Debrief credit comes from accepted engine events,
+accepted ventilator actions, and observed recovery to saturation at least 94% with mean arterial
+pressure at least 65 mmHg. The trajectory is deterministic and cannot predict a patient outcome.

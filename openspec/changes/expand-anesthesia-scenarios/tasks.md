@@ -473,3 +473,19 @@
 - [ ] Add diagnosis, laboratory criteria, fetal monitoring, alternative or escalating
   antihypertensives, full drug pharmacokinetics, magnesium infusion and toxicity, eclampsia,
   pulmonary edema, delivery planning, anesthetic technique, surgery, postpartum care, or teams.
+
+## Slice 32: bounded pneumothorax under positive-pressure ventilation
+
+- [x] Check in an evidence brief covering current anesthesia-crisis and resuscitation guidance,
+  exact deterministic fixtures, and unsafe inference boundaries.
+- [x] Add a twenty-ninth authored scenario with a declared airway-pressure alarm and a bounded
+  combined oxygenation, carbon-dioxide, and obstructive-shock teaching trajectory.
+- [x] Add scenario-declared bilateral-assessment, help, oxygen, and confirmed decompression-intent
+  controls backed by engine-owned accepted state and deterministic replay.
+- [x] Score the response only from accepted events, accepted ventilator settings, and observed
+  post-response state; reject pre-event, unsupported, and duplicate actions.
+- [x] Add curriculum and preparation-path coverage, public catalog assets, route SEO, and focused
+  engine, debrief, hostile-input, replay, and responsive UI regressions.
+- [ ] Add a numerical airway-pressure or compliance model, pleural gas volume or pressure,
+  barotrauma, differential diagnosis, ultrasound or radiography, arrest, later chest drainage,
+  procedural site or equipment selection, psychomotor technique, complications, or teams.

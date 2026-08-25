@@ -37,6 +37,7 @@ import { QUANTITATIVE_NEUROMUSCULAR_REVERSAL } from './quantitative-neuromuscula
 import { ROUTINE_PEDIATRIC_INHALATIONAL_INDUCTION } from './routine-pediatric-inhalational-induction';
 import { OBSTETRIC_GENERAL_ANESTHESIA } from './obstetric-general-anesthesia';
 import { PREECLAMPSIA_URGENT_DELIVERY } from './preeclampsia-urgent-delivery';
+import { PNEUMOTHORAX_UNDER_POSITIVE_PRESSURE } from './pneumothorax-under-positive-pressure';
 
 export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_INDUCTION,
@@ -67,6 +68,7 @@ export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_PEDIATRIC_INHALATIONAL_INDUCTION,
   OBSTETRIC_GENERAL_ANESTHESIA,
   PREECLAMPSIA_URGENT_DELIVERY,
+  PNEUMOTHORAX_UNDER_POSITIVE_PRESSURE,
 ];
 
 /** The scenario a learner meets first. */

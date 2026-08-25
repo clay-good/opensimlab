@@ -862,6 +862,42 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['venous-air-embolism-during-line-removal'],
   },
   {
+    id: 'pneumothorax-response-is-a-teaching-trajectory',
+    headline: 'The pleural crisis is one bounded monitor trajectory, not a gas-volume or diagnostic model.',
+    simplification: 'One authored drive lowers modeled cardiac output, pressure, end-tidal carbon '
+      + 'dioxide, and saturation, then clears on fixed teaching time constants after accepted '
+      + 'decompression intent. It does not calculate pleural gas volume, pressure, lung injury, '
+      + 'barotrauma, or an individual clinical course.',
+    whereItMisleads: 'Using the displayed values to diagnose pneumothorax, estimate severity, or '
+      + 'predict a real patient’s deterioration or recovery.',
+    correctUnderstanding: 'A combined breathing and circulation deterioration during positive-pressure '
+      + 'ventilation requires immediate systematic assessment and cause-directed management.',
+    briefIn: ['pneumothorax-under-positive-pressure'],
+  },
+  {
+    id: 'no-airway-pressure-or-compliance-model',
+    headline: 'The pressure alarm is declared; airway pressure and lung compliance are not numerical engine states.',
+    simplification: 'The timeline declares a rising airway-pressure alarm while the engine models '
+      + 'the associated oxygenation and circulation trajectory. It cannot reproduce a pressure '
+      + 'waveform, delivered-volume change, manual bag feel, resistance, or compliance.',
+    whereItMisleads: 'Reading the screen as a ventilator mechanics model or using it to distinguish '
+      + 'pneumothorax from tube, circuit, bronchospasm, gas-trapping, or surgical causes.',
+    correctUnderstanding: 'Increased airway pressure requires direct patient, airway, breathing-system, '
+      + 'and ventilator assessment using the real equipment and clinical context.',
+    briefIn: ['pneumothorax-under-positive-pressure'],
+  },
+  {
+    id: 'no-procedure-or-equipment-selection',
+    headline: 'Decompression is an intent control, not a procedural trainer.',
+    simplification: 'One confirmed action records immediate left-chest decompression intent. There '
+      + 'is no site choice, imaging, needle, thoracostomy, drain, equipment, anatomy, sterility, '
+      + 'technical success, complication, or local protocol.',
+    whereItMisleads: 'Treating a successful browser action as evidence of procedural knowledge or skill.',
+    correctUnderstanding: 'Chest decompression requires current local guidance, appropriate expertise, '
+      + 'equipment, and supervised hands-on procedural training.',
+    briefIn: ['pneumothorax-under-positive-pressure'],
+  },
+  {
     id: 'capnography-sampling-line-obstruction-is-display-only',
     headline: 'The obstructed sampling line changes the capnography display, not patient ventilation.',
     simplification: 'One fixed artifact flattens the sampled waveform and removes the displayed '
@@ -983,7 +1019,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'called, when, and what you said.',
     correctUnderstanding: 'Crisis resource management is a team skill. This simulator cannot teach '
       + 'it and mannequin-based simulation remains necessary for it.',
-    briefIn: ['unexpected-intraoperative-hemorrhage', 'blood-bank-handoff', 'obstetric-general-anesthesia'],
+    briefIn: ['unexpected-intraoperative-hemorrhage', 'blood-bank-handoff', 'obstetric-general-anesthesia', 'pneumothorax-under-positive-pressure'],
   },
   {
     id: 'parameters-unverified',

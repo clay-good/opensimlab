@@ -307,6 +307,12 @@ labetalol branch, starts a 4 g IV magnesium-sulfate loading branch for seizure p
 rechecks the observed pressure response. It does not diagnose preeclampsia, model alternative or
 escalating treatment, reproduce drug pharmacokinetics or magnesium toxicity, choose an anesthetic,
 or simulate fetal status, delivery, surgery, postpartum care, or team performance.
+Slice 32 adds the twenty-ninth authored scenario, pneumothorax under positive-pressure ventilation.
+The learner responds to a combined pressure-alarm, oxygenation, carbon-dioxide, and circulation
+change by checking bilateral ventilation, escalating, delivering 100% oxygen, recording immediate
+left-chest decompression intent, and observing recovery. It does not model airway pressure, lung
+compliance, pleural gas volume, diagnostic imaging, procedural technique, equipment selection,
+complications, or team performance.
 
 ## Running it
 
@@ -429,6 +435,7 @@ recognize, rather than to invented conventions:
 | Local anesthetic systemic toxicity | ASRA checklist, 2020 version ([PMID 33148630](https://pubmed.ncbi.nlm.nih.gov/33148630/)) |
 | High central neuraxial block | [Obstetric Anaesthetists' Association quick reference](https://www.oaa-anaes.ac.uk/downloads/oaa-qrh/2-7-high-central-neuraxial-block.pdf) |
 | Venous air embolism | McCarthy et al., *Diagnostics* 2017;7:5 ([PMID 28106717](https://pubmed.ncbi.nlm.nih.gov/28106717/)) |
+| Pneumothorax under positive pressure | Association of Anaesthetists QRH, June 2023; Resuscitation Council UK special circumstances, 2025 |
 | Difficult airway | 2022 ASA Practice Guidelines ([PMID 34762729](https://pubmed.ncbi.nlm.nih.gov/34762729/)) |
 | Neuromuscular blockade and reversal | 2023 ASA Practice Guidelines (quantitative monitoring, TOF ratio ≥ 0.9) |
 | Awareness epidemiology | NAP5, *Br J Anaesth* 2014 ([PMID 25204697](https://pubmed.ncbi.nlm.nih.gov/25204697/)) |

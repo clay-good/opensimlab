@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 75,
+  "sourceCount": 78,
   "sources": [
     {
       "id": "association-qrh-2023",
@@ -906,6 +906,47 @@
       "locator": "reaffirmed 2025",
       "usedFor": "The emergency-treatment window of 30 to 60 minutes after confirmed severe hypertension.",
       "verifiedAgainst": "Society for Maternal-Fetal Medicine official publication page",
+      "verifiedOn": "2026-08-24"
+    },
+    {
+      "id": "association-anaesthetists-qrh-2023",
+      "currency": {
+        "lastAmended": "2023-06-23",
+        "checkedAt": "2026-08-24"
+      },
+      "authors": "Association of Anaesthetists",
+      "title": "Quick Reference Handbook: Guidelines for crises in anaesthesia",
+      "publication": "Association of Anaesthetists",
+      "year": 2023,
+      "locator": "June 2023 edition; sections 2-2, 2-3, and 2-4",
+      "usedFor": "The pneumothorax lesson’s 100% oxygen response, bilateral chest and breath-sound assessment, increased-airway-pressure differential, and connection between pneumothorax, high intrathoracic pressure, and hypotension.",
+      "verifiedAgainst": "Association of Anaesthetists official June 2023 complete QRH PDF",
+      "verifiedOn": "2026-08-24"
+    },
+    {
+      "id": "rcuk-special-circumstances-2025",
+      "currency": {
+        "lastAmended": "2025-10-27",
+        "checkedAt": "2026-08-24"
+      },
+      "authors": "Resuscitation Council UK",
+      "title": "Special circumstances guidelines",
+      "publication": "Resuscitation Council UK",
+      "year": 2025,
+      "locator": "Published October 27, 2025; tension pneumothorax section",
+      "usedFor": "The immediate decompression-intent objective when suspected tension pneumothorax coexists with severe hypotension, and the boundary that diagnosis during instability is based on clinical examination or point-of-care ultrasound.",
+      "verifiedAgainst": "Resuscitation Council UK official 2025 guideline page and PDF",
+      "verifiedOn": "2026-08-24"
+    },
+    {
+      "id": "erc-special-circumstances-2025",
+      "authors": "Lott C, Karageorgos V, Abelairas-Gomez C, Alfonzo A, Bierens J, Cantellow S, et al.",
+      "title": "European Resuscitation Council Guidelines 2025: Special Circumstances in Resuscitation",
+      "publication": "Resuscitation",
+      "year": 2025,
+      "locator": "215(Suppl 1):110753",
+      "usedFor": "Primary guideline context for current special-circumstances management of tension pneumothorax and prioritization of reversible-cause treatment.",
+      "verifiedAgainst": "Resuscitation Council UK official guideline reference and DOI record",
       "verifiedOn": "2026-08-24"
     },
     {

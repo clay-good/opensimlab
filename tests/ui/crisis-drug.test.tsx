@@ -10,6 +10,7 @@ import {
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { BRONCHOSPASM } from '@anesthesia/scenarios/bronchospasm';
 import { PREECLAMPSIA_URGENT_DELIVERY } from '@anesthesia/scenarios/preeclampsia-urgent-delivery';
+import { PNEUMOTHORAX_UNDER_POSITIVE_PRESSURE } from '@anesthesia/scenarios/pneumothorax-under-positive-pressure';
 import { UNITED_KINGDOM, UNITED_STATES } from '@anesthesia/region/profiles';
 
 const CRISIS_SCENARIO = {
@@ -159,6 +160,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       hasHighSpinalResponse: true,
       hasPreeclampsiaResponse: false,
       hasVenousAirEmbolismResponse: false,
+      hasPneumothoraxResponse: false,
       hasBronchospasmResponse: false,
     });
     renderCockpit(UNITED_STATES, vi.fn(), {
@@ -314,6 +316,54 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
     expect(container.textContent).toContain('Record intent to stop further air entry?');
     act(() => button('Confirm source control')!.click());
     expect(onControlVenousAirEntry).toHaveBeenCalledOnce();
+  });
+
+  it('opens the focused pleural response and confirms decompression intent', () => {
+    const onPneumothoraxHelp = vi.fn();
+    const onPneumothoraxResponse = vi.fn();
+    renderCockpit(UNITED_STATES, vi.fn(), {
+      scenario: PNEUMOTHORAX_UNDER_POSITIVE_PRESSURE,
+      resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+        lastEpinephrineTick: null, crystalloidTotalMl: 0,
+        dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
+        lastDantroleneTick: null, activeCooling: false,
+        tensionPneumothoraxFraction: 0.7,
+        pneumothoraxAssessedAtTick: null, pneumothoraxDecompressedAtTick: null,
+      },
+      onPneumothoraxHelp,
+      onPneumothoraxResponse,
+    });
+    expect(button('Crisis response')?.getAttribute('aria-selected')).toBe('true');
+    expect(container.textContent).toContain('Check both sides · escalate · oxygenate');
+    expect(container.textContent).toContain('Modeled burden 70%');
+    act(() => button('Check bilateral ventilation')!.click());
+    expect(onPneumothoraxResponse).toHaveBeenCalledWith('assess-bilateral-ventilation');
+    act(() => button('Call for help')!.click());
+    expect(onPneumothoraxHelp).toHaveBeenCalledOnce();
+    act(() => button('Decompress left chest')!.click());
+    expect(onPneumothoraxResponse).toHaveBeenCalledTimes(1);
+    expect(container.textContent).toContain('Record immediate left-chest decompression intent?');
+    act(() => button('Confirm decompression intent')!.click());
+    expect(onPneumothoraxResponse).toHaveBeenLastCalledWith('decompress-left-chest');
+  });
+
+  it('keeps pleural crisis actions quiet until the observable pattern begins', () => {
+    renderCockpit(UNITED_STATES, vi.fn(), {
+      scenario: PNEUMOTHORAX_UNDER_POSITIVE_PRESSURE,
+      resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+        lastEpinephrineTick: null, crystalloidTotalMl: 0,
+        dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
+        lastDantroleneTick: null, activeCooling: false,
+        tensionPneumothoraxFraction: 0,
+        pneumothoraxAssessedAtTick: null, pneumothoraxDecompressedAtTick: null,
+      },
+    });
+    expect(container.textContent).toContain('Awaiting an observable change');
+    expect(button('Check bilateral ventilation')?.disabled).toBe(true);
+    expect(button('Call for help')?.disabled).toBe(true);
+    expect(button('Decompress left chest')?.disabled).toBe(true);
   });
 
   it('offers only bounded presets, no hostile free-dose or route field, inside the phone scroll area', () => {

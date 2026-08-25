@@ -24,6 +24,9 @@ The eighth adds a failed-intubation course with early help escalation and suprag
 bounded to restoration and confirmation of oxygenation rather than the complete airway algorithm.
 The ninth adds one bounded local-anesthetic systemic-toxicity pattern and the initial ASRA 2020
 response, stopping before dysrhythmia treatment or cardiac arrest.
+The thirty-second adds pneumothorax under positive-pressure ventilation, bounded to recognition,
+escalation, oxygen support, decompression intent, and observable initial recovery without teaching
+the physical procedure.
 
 ## What changes
 
@@ -144,10 +147,16 @@ response, stopping before dysrhythmia treatment or cardiac arrest.
 - Add a twenty-seventh scenario for emergency cesarean delivery that connects a calibrated
   term-pregnancy oxygen reserve, end-tidal preoxygenation, hypnotic-before-paralytic sequencing,
   modeled tube placement, and confirmed ventilation without claiming a complete obstetric anesthetic.
+- Add a twenty-eighth scenario for a focused severe-pregnancy-hypertension response with accepted
+  pressure confirmation, one bounded labetalol branch, magnesium seizure prophylaxis, and observed
+  reassessment without claiming diagnosis, delivery, or a complete treatment protocol.
+- Add a twenty-ninth scenario for pneumothorax under positive-pressure ventilation with a declared
+  pressure alarm, bilateral ventilation assessment, help, 100% oxygen, decompression intent, and
+  observed recovery without claiming diagnostic certainty or procedural instruction.
 
 ## Impact
 
-These 30 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+These 32 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
 awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. The seventh also closes the bounded
 pediatric-family gap without claiming a general pediatric patient model. The eighth reaches the
 minimum count of 12 scenarios and closes the bounded difficult-airway rescue gap. The ninth closes
@@ -214,3 +223,7 @@ hypertension response. Accepted pressure confirmation, one bounded labetalol bra
 magnesium seizure-prophylaxis branch, and observed pressure reassessment are inspectable. Diagnosis,
 laboratory criteria, alternative or escalating treatment, full pharmacology, toxicity, fetal status,
 delivery, anesthetic technique, surgery, postpartum care, and team performance remain excluded.
+The thirty-second adds the twenty-ninth authored scenario and a combined breathing-circulation
+response under positive-pressure ventilation. Accepted bilateral assessment, help, oxygen, and
+decompression intent are inspectable, while pressure and compliance mechanics, diagnostic imaging,
+procedural technique, equipment selection, complications, and team performance remain excluded.

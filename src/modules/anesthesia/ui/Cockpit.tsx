@@ -678,6 +678,12 @@ export function Cockpit({
           onControlVenousAirEntry={() => session.act({
             type: 'control-venous-air-entry', payload: { method: 'stop-entry' },
           })}
+          onPneumothoraxHelp={() => session.act({
+            type: 'call-for-help', payload: { context: 'tension-pneumothorax' },
+          })}
+          onPneumothoraxResponse={(action) => session.act({
+            type: 'pneumothorax-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

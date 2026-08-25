@@ -51,7 +51,7 @@ describe('Requirement: bounded routine pediatric inhalational induction', () => 
     expect(validateScenario(SCENARIO)).toEqual([]);
     expect(SCENARIO.formulary).toEqual([]);
     expect(SCENARIOS).toContain(SCENARIO);
-    expect(SCENARIOS).toHaveLength(28);
+    expect(SCENARIOS).toHaveLength(29);
     const mappings = SCENARIO_MAPPINGS.filter((entry) => entry.scenarioId === SCENARIO.metadata.id);
     expect(new Set(mappings.map((entry) => entry.frameworkId))).toEqual(new Set([
       'nbcrna-nce', 'coa-standards', 'acgme-anesthesiology-milestones-2',
