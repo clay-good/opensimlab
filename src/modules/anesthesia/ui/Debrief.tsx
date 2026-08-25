@@ -4339,6 +4339,23 @@ export function objectiveFindings(
       const ordered = referral && handoff && referral.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved symptoms, function, evidence, anticoagulation and bleeding review, causes, triggers, and owners without inventing diagnosis or outcome.' : 'The unresolved-work handoff was absent or did not follow referral after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-ape-initial-care-and-trajectory',
+      'review-ape-progressive-respiratory-failure',
+      'review-ape-pressure-perfusion-congestion-and-causes',
+      'activate-ape-airway-capable-escalation',
+      'handoff-ape-respiratory-support-reassessment'].includes(objective.id)) {
+      const trajectory = log.find((event) => /^ape-support-trajectory-reconciled-\d+$/.test(event.eventId));
+      const failure = log.find((event) => /^ape-support-failure-reviewed-\d+$/.test(event.eventId));
+      const wholePatient = log.find((event) => /^ape-support-whole-patient-reviewed-\d+$/.test(event.eventId));
+      const escalation = log.find((event) => /^ape-support-escalation-activated-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^ape-support-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-ape-initial-care-and-trajectory') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'Arrival, experienced-team initial support and treatment, and current physiology were reconciled without claiming learner-delivered care.' : 'Initial care and the serial trajectory were not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-ape-progressive-respiratory-failure') { const ordered = trajectory && failure && trajectory.tick <= failure.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Mentation, effort, oxygenation, ventilation, and acid-base evidence identified progressive failure without one automatic threshold.' : 'Respiratory-failure review was absent or preceded trajectory reconciliation.', atTick: failure?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-ape-pressure-perfusion-congestion-and-causes') { const ordered = failure && wholePatient && failure.tick <= wholePatient.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Pressure, perfusion, congestion, dangerous alternatives, and open precipitants remained coupled to respiratory escalation.' : 'Whole-patient review was absent or preceded failure recognition.', atTick: wholePatient?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-ape-airway-capable-escalation') { const ordered = wholePatient && escalation && wholePatient.tick <= escalation.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Airway-capable experienced help and rescue readiness were activated without selecting settings, drugs, or a procedure.' : 'Airway-capable escalation was absent or preceded whole-patient review.', atTick: escalation?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = escalation && handoff && escalation.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved active failure, support context, hemodynamics, congestion, causes, triggers, and owners without inventing response or outcome.' : 'The active-failure handoff was absent or did not follow escalation after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

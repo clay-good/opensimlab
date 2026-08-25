@@ -75,6 +75,7 @@ const ACUTE_SEVERE_ASTHMA_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_
 const COPD_TRANSITION_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 const CAP_HYPOXEMIA_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 const POST_PE_DYSPNEA_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
+const APE_SUPPORT_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -650,6 +651,11 @@ export class AnesthesiaEngine {
   private postPeDyspneaEvidenceAtTick: number | null = null;
   private postPeDyspneaReferralAtTick: number | null = null;
   private postPeDyspneaHandoffAtTick: number | null = null;
+  private apeSupportTrajectoryAtTick: number | null = null;
+  private apeSupportFailureAtTick: number | null = null;
+  private apeSupportWholePatientAtTick: number | null = null;
+  private apeSupportEscalationAtTick: number | null = null;
+  private apeSupportHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -934,6 +940,14 @@ export class AnesthesiaEngine {
     if (postPeDyspnea && POST_PE_DYSPNEA_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `post-pe-dyspnea-generic-action-refused-${this.currentTick}`,
         'This reassessment-only post-PE lesson does not expose generic testing, treatment, oxygen, airway, ventilator, procedure, rhythm, artifact, or crisis-injection actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const apeSupport = this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'acute-pulmonary-edema-respiratory-support-reassessment');
+    if (apeSupport && APE_SUPPORT_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `ape-support-generic-action-refused-${this.currentTick}`,
+        'This reassessment-only pulmonary edema lesson does not expose generic testing, treatment, oxygen, airway, ventilator, procedure, rhythm, artifact, or crisis-injection actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -5114,6 +5128,45 @@ export class AnesthesiaEngine {
         this.postPeDyspneaHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `post-pe-dyspnea-handoff-recorded-${this.currentTick}`, 'Persistent symptom burden, functional limitation, fixed cardiac and perfusion evidence, anticoagulation and bleeding review, unresolved CTEPD question, alternative causes, urgent deterioration triggers, and pulmonary-vascular and longitudinal owners were handed off. No diagnosis, therapy, operability, disposition, prognosis, recovery, recurrence, or outcome was determined.', { ctepdDiagnosed: false, treatmentSelected: false, dispositionDetermined: false, recurrencePredicted: false, outcomePredicted: false }); break;
       }
+      case 'acute-pulmonary-edema-respiratory-support-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'acute-pulmonary-edema-respiratory-support-reassessment');
+        const valid = ['reconcile-ape-initial-care-and-trajectory',
+          'review-ape-progressive-respiratory-failure',
+          'review-ape-pressure-perfusion-congestion-and-causes',
+          'activate-ape-airway-capable-escalation',
+          'handoff-ape-respiratory-support-reassessment'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `ape-support-response-refused-${this.currentTick}`, supported ? 'The pulmonary edema support action was not one of the listed choices. Nothing changed.' : 'These pulmonary edema support choices are available only in the declared Respiratory Medicine lesson.'); break; }
+        if (response === 'reconcile-ape-initial-care-and-trajectory') {
+          if (this.apeSupportTrajectoryAtTick !== null) { this.log('warning', 'assessment', `ape-support-trajectory-refused-${this.currentTick}`, 'The initial care and respiratory trajectory were already reconciled.'); break; }
+          this.apeSupportTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment', `ape-support-trajectory-reconciled-${this.currentTick}`, 'Arrival distress, reported experienced-team NIV with titrated oxygen and syndrome treatment, and the current worsening respiratory trajectory were reconciled. No examination, support, oxygen, medication, or treatment was learner-delivered.', { pulmonaryEdemaAuthored: true, supportAlreadyActiveAuthored: true, oxygenDeliveredByLearner: false, nivStartedByLearner: false, medicationDeliveredByLearner: false }); break;
+        }
+        if (this.apeSupportTrajectoryAtTick === null) { this.log('warning', 'assessment', `ape-support-trajectory-order-refused-${this.currentTick}`, 'Reconcile initial care and the serial trajectory before reviewing respiratory failure.'); break; }
+        if (response === 'review-ape-progressive-respiratory-failure') {
+          if (this.apeSupportFailureAtTick !== null) { this.log('warning', 'assessment', `ape-support-failure-refused-${this.currentTick}`, 'Progressive respiratory failure was already reviewed.'); break; }
+          this.apeSupportFailureAtTick = this.currentTick;
+          this.log('critical', 'assessment', `ape-support-failure-reviewed-${this.currentTick}`, 'Drowsiness, shallow effort, RR 12/min, SpO₂ 86% on reported support, pH 7.18, PaCO₂ 68 mmHg, and PaO₂ 58 mmHg show progressive respiratory failure despite NIV. The falling rate is fatigue, not improvement; no one value creates an automatic airway decision.', { testAcquiredByLearner: false, supportSettingSelected: false, airwayProcedurePerformedByLearner: false }); break;
+        }
+        if (this.apeSupportFailureAtTick === null) { this.log('warning', 'assessment', `ape-support-failure-order-refused-${this.currentTick}`, 'Review the progressive respiratory-failure evidence before the whole-patient lane.'); break; }
+        if (response === 'review-ape-pressure-perfusion-congestion-and-causes') {
+          if (this.apeSupportWholePatientAtTick !== null) { this.log('warning', 'assessment', `ape-support-whole-patient-refused-${this.currentTick}`, 'Pressure, perfusion, congestion, alternatives, and precipitants were already reviewed.'); break; }
+          this.apeSupportWholePatientAtTick = this.currentTick;
+          this.log('critical', 'assessment', `ape-support-whole-patient-reviewed-${this.currentTick}`, 'BP 108/68 mmHg, MAP 81 mmHg, a present pulse, central warmth, 2-second refill, and persistent congestion were reviewed beside open ischemic, rhythm, mechanical, infectious, embolic, treatment, renal, medication, and other causes. Shock, arrest, and dangerous alternatives remain change triggers rather than permanently excluded diagnoses.', { testAcquiredByLearner: false, causeAssigned: false, alternativesClosed: false, dispositionDetermined: false }); break;
+        }
+        if (this.apeSupportWholePatientAtTick === null) { this.log('warning', 'assessment', `ape-support-whole-patient-order-refused-${this.currentTick}`, 'Review pressure, perfusion, congestion, and open causes before activating escalation.'); break; }
+        if (response === 'activate-ape-airway-capable-escalation') {
+          if (this.apeSupportEscalationAtTick !== null) { this.log('warning', 'assessment', `ape-support-escalation-refused-${this.currentTick}`, 'Airway-capable escalation was already activated.'); break; }
+          this.apeSupportEscalationAtTick = this.currentTick;
+          this.log('critical', 'assessment', `ape-support-escalation-activated-${this.currentTick}`, 'Respiratory, critical-care, nursing, pharmacy, and airway-capable experienced help were activated for progressive failure despite noninvasive support. Rescue readiness and continued cause work received owners; no device, setting, drug, dose, airway procedure, or treatment was selected or delivered.', { escalationActivated: true, supportSettingSelected: false, drugSelected: false, doseSelected: false, airwayProcedurePerformedByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.apeSupportEscalationAtTick === null) { this.log('warning', 'assessment', `ape-support-handoff-order-refused-${this.currentTick}`, 'Activate airway-capable escalation before handoff.'); break; }
+        if (this.currentTick <= this.apeSupportEscalationAtTick) { this.log('warning', 'assessment', `ape-support-handoff-time-refused-${this.currentTick}`, 'Allow a later simulated tick before handing off active respiratory failure.'); break; }
+        if (this.apeSupportHandoffAtTick !== null) { this.log('warning', 'assessment', `ape-support-handoff-refused-${this.currentTick}`, 'The pulmonary edema support handoff was already recorded.'); break; }
+        this.apeSupportHandoffAtTick = this.currentTick;
+        this.log('critical', 'assessment', `ape-support-handoff-recorded-${this.currentTick}`, 'Active respiratory failure, reported NIV and oxygen context, current hemodynamics and perfusion, persistent congestion, open causes, deterioration triggers, rescue readiness, and named experienced owners were handed off. No later response, intubation, disposition, prognosis, resolution, or outcome was invented.', { airwayProcedurePerformedByLearner: false, treatmentDeliveredByLearner: false, dispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -7843,6 +7896,12 @@ export class AnesthesiaEngine {
         spo2Percent: 96, systolicMmHg: 122, diastolicMmHg: 76,
         meanArterialMmHg: 91, coreTemperatureC: 36.8 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'acute-pulmonary-edema-respiratory-support-reassessment')) {
+      crisisState = { ...crisisState, heartRateBpm: 104, respiratoryRateBpm: 12,
+        spo2Percent: 86, etco2MmHg: 60, systolicMmHg: 108, diastolicMmHg: 68,
+        meanArterialMmHg: 81, coreTemperatureC: 36.8 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -9120,6 +9179,27 @@ export class AnesthesiaEngine {
               ctepdDiagnosed: false as const,
               treatmentSelected: false as const,
               procedurePerformedByLearner: false as const,
+              dispositionDetermined: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'acute-pulmonary-edema-respiratory-support-reassessment') ? {
+            apeSupportAssessment: {
+              trajectoryAtTick: this.apeSupportTrajectoryAtTick,
+              failureAtTick: this.apeSupportFailureAtTick,
+              wholePatientAtTick: this.apeSupportWholePatientAtTick,
+              escalationAtTick: this.apeSupportEscalationAtTick,
+              handoffAtTick: this.apeSupportHandoffAtTick,
+              pulmonaryEdemaAuthored: true as const,
+              supportAlreadyActiveAuthored: true as const,
+              oxygenDeliveredByLearner: false as const,
+              nivStartedByLearner: false as const,
+              supportSettingSelected: false as const,
+              medicationDeliveredByLearner: false as const,
+              testAcquiredByLearner: false as const,
+              airwayProcedurePerformedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
               dispositionDetermined: false as const,
               outcomePredicted: false as const,
             },

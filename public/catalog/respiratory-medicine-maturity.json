@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "respiratory-medicine",
-  "recordCount": 4,
+  "recordCount": 5,
   "records": [
     {
       "recordId": "scenario:acute-severe-asthma@0.1.0",
@@ -45,6 +45,17 @@
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#post-pulmonary-embolism-persistent-dyspnea@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#post-pulmonary-embolism-persistent-dyspnea@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:acute-pulmonary-edema-respiratory-support-reassessment@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "acute-pulmonary-edema-respiratory-support-reassessment",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/respiratory-medicine-completion-audit.json#acute-pulmonary-edema-respiratory-support-reassessment@0.1.0",
+        "/catalog/respiratory-medicine-quality-audit.json#acute-pulmonary-edema-respiratory-support-reassessment@0.1.0"
       ]
     }
   ]

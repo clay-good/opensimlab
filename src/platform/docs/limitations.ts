@@ -3191,6 +3191,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, current PE and pulmonary-hypertension guidance, qualified pulmonary-vascular teams, local pathways, and patient-specific judgment.',
     briefIn: ['post-pulmonary-embolism-persistent-dyspnea'],
   },
+  {
+    id: 'ape-support-course-and-failure-evidence-are-authored',
+    headline: 'The pulmonary edema course, delivered care, support, examination, monitoring, blood gas, and imaging reports are authored.',
+    simplification: 'One fixed record stands in for serial bedside assessment, treatment verification, respiratory-support review, sampling, testing, and multidisciplinary communication.',
+    whereItMisleads: 'Treating one rate, saturation, gas, pressure, or negative snapshot as a universal failure rule, diagnosis, permanent exclusion, or learner-acquired skill.',
+    correctUnderstanding: 'Real support reassessment requires continuous whole-patient review, verified device delivery, qualified testing, hemodynamic monitoring, and current local pathways.',
+    briefIn: ['acute-pulmonary-edema-respiratory-support-reassessment'],
+  },
+  {
+    id: 'ape-support-controls-record-review-escalation-and-handoff-only',
+    headline: 'The controls record trajectory review, failure recognition, whole-patient review, escalation, and handoff only.',
+    simplification: 'Five clicks stand in for urgent respiratory, critical-care, airway, nursing, pharmacy, and cause-focused teamwork.',
+    whereItMisleads: 'Equating button order with examination, device operation, test interpretation, diagnosis, prescribing, airway management, or team competence.',
+    correctUnderstanding: 'Actual care requires qualified bedside teams, real-time rescue capability, verified support, patient-specific decisions, and repeated reassessment.',
+    briefIn: ['acute-pulmonary-edema-respiratory-support-reassessment'],
+  },
+  {
+    id: 'no-live-ape-testing-device-treatment-airway-procedure-or-outcome',
+    headline: 'The lab does not test, operate support, prescribe or deliver treatment, perform an airway procedure, determine disposition, or predict outcome.',
+    simplification: 'No live monitor, blood gas, ECG, imaging, ultrasound, oxygen, interface, flow, FiO₂, pressure, PEEP, mode, drug, dose, ventilation, intubation, procedure, response, disposition, prognosis, resolution, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values as device or airway instructions or using completion as evidence of clinical, respiratory-support, prescribing, procedural, disposition, or prognostic competence.',
+    correctUnderstanding: 'Use verified patient data, current heart-failure and ventilation guidance, device instructions, qualified respiratory and airway teams, and patient-specific judgment.',
+    briefIn: ['acute-pulmonary-edema-respiratory-support-reassessment'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

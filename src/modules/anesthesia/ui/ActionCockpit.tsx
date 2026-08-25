@@ -798,6 +798,24 @@ export interface ActionCockpitProps {
       readonly dispositionDetermined: false;
       readonly outcomePredicted: false;
     };
+    readonly apeSupportAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly failureAtTick: number | null;
+      readonly wholePatientAtTick: number | null;
+      readonly escalationAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly pulmonaryEdemaAuthored: true;
+      readonly supportAlreadyActiveAuthored: true;
+      readonly oxygenDeliveredByLearner: false;
+      readonly nivStartedByLearner: false;
+      readonly supportSettingSelected: false;
+      readonly medicationDeliveredByLearner: false;
+      readonly testAcquiredByLearner: false;
+      readonly airwayProcedurePerformedByLearner: false;
+      readonly treatmentDeliveredByLearner: false;
+      readonly dispositionDetermined: false;
+      readonly outcomePredicted: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1268,6 +1286,13 @@ export interface ActionCockpitProps {
       | 'activate-post-pe-pulmonary-vascular-referral'
       | 'handoff-post-pe-persistent-dyspnea-reassessment',
   ) => void;
+  readonly onApeSupportResponse?: (
+    action: 'reconcile-ape-initial-care-and-trajectory'
+      | 'review-ape-progressive-respiratory-failure'
+      | 'review-ape-pressure-perfusion-congestion-and-causes'
+      | 'activate-ape-airway-capable-escalation'
+      | 'handoff-ape-respiratory-support-reassessment',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1565,6 +1590,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'post-pulmonary-embolism-persistent-dyspnea-reassessment',
     ),
+    hasApeSupportResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'acute-pulmonary-edema-respiratory-support-reassessment',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1686,6 +1715,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'community-acquired-pneumonia-hypoxemia-reassessment')
       || (event.type === 'narrative'
         && event.target === 'post-pulmonary-embolism-persistent-dyspnea-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'acute-pulmonary-edema-respiratory-support-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1740,6 +1771,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasTranscutaneousPacingCaptureResponse,
     hasAcuteSevereAsthmaResponse,
     hasCopdTransitionResponse, hasCapHypoxemiaResponse, hasPostPeDyspneaResponse,
+    hasApeSupportResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1805,7 +1837,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasRightVentricularInfarctionResponse || hasHypertensiveEmergencyResponse
     || hasPacemakerCaptureFailureResponse || hasTranscutaneousPacingCaptureResponse
     || hasAcuteSevereAsthmaResponse || hasCopdTransitionResponse || hasCapHypoxemiaResponse
-    || hasPostPeDyspneaResponse;
+    || hasPostPeDyspneaResponse || hasApeSupportResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1836,7 +1868,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasPostPeDyspneaResponse
+  const responseTray = hasApeSupportResponse
+    ? { id: 'crisis', label: 'Pulmonary edema reassessment' } as const
+    : hasPostPeDyspneaResponse
     ? { id: 'crisis', label: 'Post-PE breathlessness' } as const
     : hasCapHypoxemiaResponse
     ? { id: 'crisis', label: 'Pneumonia + hypoxemia' } as const
@@ -2052,6 +2086,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasCopdTransitionResponse
     || hasCapHypoxemiaResponse
     || hasPostPeDyspneaResponse
+    || hasApeSupportResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2648,6 +2683,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasPostPeDyspneaResponse && (
               <PostPeDyspneaTray assessment={props.resuscitation.postPeDyspneaAssessment}
                 onAction={props.onPostPeDyspneaResponse ?? (() => {})} />
+            )}
+            {hasApeSupportResponse && (
+              <ApeSupportTray assessment={props.resuscitation.apeSupportAssessment}
+                onAction={props.onApeSupportResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -6933,6 +6972,42 @@ function PostPeDyspneaTray({ assessment, onAction }: {
         <Button className="crisis-drug__action" disabled={!referral || handoff} onClick={() => onAction('handoff-post-pe-persistent-dyspnea-reassessment')}>Hand off unresolved post-PE work</Button>
       </div>
       <p className="field__hint">No anticoagulant, dose, duration, oxygen, rehabilitation, pulmonary-hypertension therapy, surgery, balloon procedure, operability decision, disposition, prognosis, or outcome is chosen.</p>
+    </section>
+  </div>;
+}
+
+function ApeSupportTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['apeSupportAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onApeSupportResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const failure = assessment?.failureAtTick != null;
+  const wholePatient = assessment?.wholePatientAtTick != null;
+  const escalation = assessment?.escalationAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="ape-support-failure-title">
+      <div id="ape-support-failure-title" className="syringe__name">A quieter breath can be the warning.</div>
+      <Badge kind="teaching">30 min after rescue · NIV already active</Badge>
+      <div className="syringe__meta">trajectory · mentation · work · oxygenation · ventilation</div>
+      <p className="syringe__remaining" role="status">{wholePatient ? 'Failure recognized · whole patient held together' : failure ? 'Fatigue recognized · review pressure, perfusion + causes' : trajectory ? 'Reported care reconciled · read the current breathing pattern' : 'Start with what changed after initial rescue'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={trajectory} onClick={() => onAction('reconcile-ape-initial-care-and-trajectory')}>Reconcile initial care + trajectory</Button>
+        <Button className="crisis-drug__action" disabled={!trajectory || failure} onClick={() => onAction('review-ape-progressive-respiratory-failure')}>Review progressive respiratory failure</Button>
+        <Button className="crisis-drug__action" disabled={!failure || wholePatient} onClick={() => onAction('review-ape-pressure-perfusion-congestion-and-causes')}>Review perfusion + congestion + causes</Button>
+      </div>
+      <p className="field__hint">The support, pulse oximetry, blood gas, imaging, and examination claims are authored. RR 12/min is fatigue in this fixed trajectory, not improvement or a universal threshold.</p>
+    </section>
+    <section className="syringe" aria-labelledby="ape-support-escalation-title">
+      <div id="ape-support-escalation-title" className="syringe__name">Bring the rescue team close before the margin closes.</div>
+      <Badge kind="teaching">respiratory · critical care · airway · nursing · pharmacy</Badge>
+      <div className="syringe__meta">rescue ready · causes open · named owners</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Active failure + rescue readiness handed off' : escalation ? 'Experienced help active · advance time before handoff' : wholePatient ? 'Progressive failure is clear · activate airway-capable help' : 'Complete the whole-patient review first'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={!wholePatient || escalation} onClick={() => onAction('activate-ape-airway-capable-escalation')}>Activate airway-capable escalation</Button>
+        <Button className="crisis-drug__action" disabled={!escalation || handoff} onClick={() => onAction('handoff-ape-respiratory-support-reassessment')}>Hand off active respiratory failure</Button>
+      </div>
+      <p className="field__hint">No interface, oxygen, pressure, PEEP, ventilator setting, drug, dose, airway procedure, later response, disposition, prognosis, resolution, or outcome is chosen here.</p>
     </section>
   </div>;
 }

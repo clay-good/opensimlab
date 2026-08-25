@@ -1,4 +1,5 @@
 import type { Scenario } from '@anesthesia/scenarios/types';
+import { ACUTE_PULMONARY_EDEMA_RESPIRATORY_SUPPORT_REASSESSMENT } from './acute-pulmonary-edema-respiratory-support-reassessment';
 import { ACUTE_SEVERE_ASTHMA } from './acute-severe-asthma';
 import { COPD_EXACERBATION_TRANSITION_REASSESSMENT } from './copd-exacerbation-transition-reassessment';
 import { COMMUNITY_ACQUIRED_PNEUMONIA_HYPOXEMIA_REASSESSMENT } from './community-acquired-pneumonia-hypoxemia-reassessment';
@@ -9,6 +10,7 @@ export const RESPIRATORY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   COPD_EXACERBATION_TRANSITION_REASSESSMENT,
   COMMUNITY_ACQUIRED_PNEUMONIA_HYPOXEMIA_REASSESSMENT,
   POST_PULMONARY_EMBOLISM_PERSISTENT_DYSPNEA,
+  ACUTE_PULMONARY_EDEMA_RESPIRATORY_SUPPORT_REASSESSMENT,
 ];
 export const DEFAULT_RESPIRATORY_MEDICINE_SCENARIO_ID = ACUTE_SEVERE_ASTHMA.metadata.id;
 

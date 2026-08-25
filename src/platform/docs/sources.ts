@@ -1635,10 +1635,24 @@ export const SOURCES: readonly Source[] = [
     publication: 'Eur Heart J',
     year: 2021,
     locator: '42:3599-3726; doi:10.1093/eurheartj/ehab368',
-    usedFor: 'The acute heart-failure transition boundary: diuretics address congestion, patients '
-      + 'should be checked for persistent congestion before discharge, and oral treatment should '
-      + 'be optimized before discharge with early follow-up after hospitalization.',
+    usedFor: 'The acute heart-failure boundaries: early noninvasive support for pulmonary edema '
+      + 'with respiratory distress, escalation for progressive failure despite oxygen or NIV, '
+      + 'pressure monitoring during positive pressure, and serial congestion review before transition.',
     verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-25',
+  },
+  {
+    id: 'rochwerg-ers-ats-niv-guideline-2017',
+    pmid: '28860265',
+    authors: 'Rochwerg B, Brochard L, Elliott MW, et al',
+    title: 'Official ERS/ATS clinical practice guidelines: noninvasive ventilation for acute respiratory failure',
+    publication: 'Eur Respir J',
+    year: 2017,
+    locator: '50:1602426; doi:10.1183/13993003.02426-2016',
+    usedFor: 'The noninvasive-support boundary: CPAP or bilevel NIV is supported for acute '
+      + 'respiratory failure due to cardiogenic pulmonary edema, while patient-specific monitoring '
+      + 'and rapid escalation remain necessary when support is failing.',
+    verifiedAgainst: 'https://www.thoracic.org/statements/resources/cc/niv-guidelines.pdf',
     verifiedOn: '2026-08-25',
   },
   {

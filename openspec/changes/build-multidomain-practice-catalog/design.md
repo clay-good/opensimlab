@@ -1301,7 +1301,7 @@ choose disposition or outcome.
 #### Respiratory medicine: 15
 
 Acute severe asthma; COPD exacerbation; community-acquired pneumonia with hypoxemia; pulmonary
-embolism; acute pulmonary edema; tension pneumothorax; large pleural effusion; mucus plugging;
+embolism; acute pulmonary edema respiratory-support reassessment; tension pneumothorax; large pleural effusion; mucus plugging;
 opioid-related hypoventilation; neuromuscular respiratory failure; obesity hypoventilation;
 noninvasive-ventilation selection; high-flow oxygen escalation; oxygen-device failure; acute
 tracheostomy obstruction requiring assessment, oxygenation, escalation, and a bounded device pathway.
@@ -1389,6 +1389,25 @@ hypertension therapy, surgery, balloon angioplasty, or another treatment; perfor
 diagnose CTEPD or CTEPH; decide operability, disposition, prognosis, recovery, recurrence, or
 outcome. This longitudinal respiratory niche is distinct from Emergency Medicine's acute C3R-to-E1
 deterioration and Critical Care's E2R shock and ECMO bridge.
+
+### Wave C respiratory-medicine slice 5: acute pulmonary edema respiratory-support reassessment
+
+The fifth respiratory-medicine slice begins 30 minutes after an experienced team has started
+noninvasive positive-pressure support with titrated oxygen and delivered syndrome treatment for a
+fixed hypertensive acute pulmonary edema presentation. Instead of the improvement authored in the
+Emergency Medicine lab, the patient is now drowsy with shallow RR 12/min, SpO₂ 86% during reported
+support, and fixed pH 7.18, PaCO₂ 68 mmHg, and PaO₂ 58 mmHg. Pressure and central perfusion remain
+present while congestion persists; the lower rate is fatigue rather than improvement.
+
+Learners reconcile initial care and trajectory, recognize progressive respiratory failure from the
+whole mentation, effort, oxygenation, ventilation, and acid-base pattern, review pressure, perfusion,
+congestion, alternatives, and precipitants, activate respiratory, critical-care, and airway-capable
+experienced help, then complete a strictly elapsed active-failure handoff. The lesson does not
+examine; acquire or interpret tests; select or operate an oxygen or ventilation device; choose an
+interface, flow, FiO₂, mode, pressure, PEEP, drug, dose, or treatment; intubate or perform an airway
+procedure; determine disposition or prognosis; or predict response, resolution, or outcome. This is
+distinct from Emergency Medicine's first-contact rescue, Cardiology's 24-hour decongestion and
+transition review, and the later Respiratory Medicine NIV-selection lab.
 
 #### Pediatrics: 16
 

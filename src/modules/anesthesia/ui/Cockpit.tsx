@@ -932,6 +932,9 @@ export function Cockpit({
           onPostPeDyspneaResponse={(action) => session.act({
             type: 'post-pulmonary-embolism-persistent-dyspnea-response', payload: { action },
           })}
+          onApeSupportResponse={(action) => session.act({
+            type: 'acute-pulmonary-edema-respiratory-support-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}
