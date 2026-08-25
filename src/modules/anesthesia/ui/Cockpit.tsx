@@ -757,6 +757,9 @@ export function Cockpit({
           onUnstableBradycardiaResponse={(action) => session.act({
             type: 'unstable-bradycardia-response', payload: { action },
           })}
+          onStatusEpilepticusResponse={(action) => session.act({
+            type: 'status-epilepticus-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

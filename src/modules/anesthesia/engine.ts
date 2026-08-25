@@ -249,6 +249,7 @@ export class AnesthesiaEngine {
   private anaphylaxisSeverity = 0;
   /** Persistent toxicity after the scenario's modeled intravascular exposure. */
   private localAnestheticToxicitySeverity = 0;
+  private statusEpilepticusSeverity = 0;
   private seizureSuppressed = false;
   private seizureActivityFraction = 0;
   private lipidEmulsionTotalMl = 0;
@@ -339,6 +340,10 @@ export class AnesthesiaEngine {
   private unstableBradycardiaSupportedAtTick: number | null = null;
   private unstableBradycardiaAtropineAtTick: number | null = null;
   private unstableBradycardiaReassessedAtTick: number | null = null;
+  private statusEpilepticusReviewedAtTick: number | null = null;
+  private statusEpilepticusSupportedAtTick: number | null = null;
+  private statusEpilepticusLorazepamAtTick: number | null = null;
+  private statusEpilepticusReassessedAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1680,6 +1685,79 @@ export class AnesthesiaEngine {
           'Fixed reassessment: regular sinus rhythm 68/min, BP 112/70 mmHg, SpO₂ 96%, alert mentation, resolving ischemic discomfort, warm extremities, and improved capillary refill. Reversible-cause evaluation and escalation remain necessary. Repeated atropine, pacing, adrenergic infusions, definitive diagnosis, recurrence, disposition, and outcome remain outside this lesson.');
         break;
       }
+      case 'status-epilepticus-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'status-epilepticus');
+        const valid = ['review-convulsive-status', 'record-status-stabilization',
+          'give-lorazepam-4-mg-iv', 'reassess-after-lorazepam'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `status-epilepticus-refused-${this.currentTick}`,
+            supported ? 'The status-epilepticus action was not one of the listed choices. Nothing changed.'
+              : 'The bounded status-epilepticus choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-convulsive-status') {
+          if (this.statusEpilepticusReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `status-epilepticus-review-refused-${this.currentTick}`,
+              'The fixed convulsive-status pattern has already been reviewed.');
+            break;
+          }
+          this.statusEpilepticusReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `status-epilepticus-reviewed-${this.currentTick}`,
+            'Fixed assessment: generalized bilateral convulsive activity has continued for 6 minutes 20 seconds without recovery. The airway is patent between convulsive movements, breathing is spontaneous, SpO₂ is 92% on room air, a pulse is present, and bedside glucose is not yet known. This meets the operational treatment threshold for generalized convulsive status epilepticus; cause is not diagnosed.');
+          break;
+        }
+        if (this.statusEpilepticusReviewedAtTick === null) {
+          this.log('warning', 'assessment', `status-epilepticus-order-refused-${this.currentTick}`,
+            'Review seizure type, duration, recovery, airway, breathing, circulation, and glucose status first.');
+          break;
+        }
+        if (response === 'record-status-stabilization') {
+          if (this.statusEpilepticusSupportedAtTick !== null) {
+            this.log('warning', 'equipment', `status-epilepticus-support-refused-${this.currentTick}`,
+              'The immediate status-epilepticus stabilization bundle has already been recorded.');
+            break;
+          }
+          this.statusEpilepticusSupportedAtTick = this.currentTick;
+          this.log('critical', 'equipment', `status-epilepticus-supported-${this.currentTick}`,
+            'Airway positioning, suction readiness, titrated oxygen, cardiorespiratory monitoring, blood pressure, vascular access, help, and a point-of-care glucose of 118 mg/dL were recorded in parallel. The patient was protected from injury without restraint. Physical care, specimen acquisition, and equipment operation are not simulated.',
+            { intentOnly: true, pointOfCareGlucoseMgPerDl: 118 });
+          break;
+        }
+        if (response === 'give-lorazepam-4-mg-iv') {
+          if (this.statusEpilepticusSupportedAtTick === null) {
+            this.log('warning', 'assessment', `status-epilepticus-lorazepam-order-refused-${this.currentTick}`,
+              'Record immediate stabilization and point-of-care glucose before the medication action.');
+            break;
+          }
+          if (this.statusEpilepticusLorazepamAtTick !== null) {
+            this.log('warning', 'drug', `status-epilepticus-lorazepam-refused-${this.currentTick}`,
+              'The bounded 4 mg IV lorazepam action has already been accepted.');
+            break;
+          }
+          this.statusEpilepticusLorazepamAtTick = this.currentTick;
+          this.seizureSuppressed = true;
+          this.log('critical', 'drug', `status-epilepticus-lorazepam-${this.currentTick}`,
+            'Lorazepam 4 mg IV was accepted as the fixed first-line benzodiazepine action. The modeled convulsions stop on the next physiology update. Preparation, physical delivery, pharmacokinetics, contraindication assessment, and individual treatment response are not predicted.',
+            { drugId: 'lorazepam', route: 'iv', doseMg: 4, teachingModel: true });
+          break;
+        }
+        if (this.statusEpilepticusLorazepamAtTick === null
+          || this.currentTick <= this.statusEpilepticusLorazepamAtTick) {
+          this.log('warning', 'assessment', `status-epilepticus-reassessment-order-refused-${this.currentTick}`,
+            'Give the bounded lorazepam action, then allow the next engine tick before reassessment.');
+          break;
+        }
+        if (this.statusEpilepticusReassessedAtTick !== null) {
+          this.log('warning', 'assessment', `status-epilepticus-reassessment-refused-${this.currentTick}`,
+            'The fixed post-lorazepam reassessment has already been recorded.');
+          break;
+        }
+        this.statusEpilepticusReassessedAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `status-epilepticus-reassessed-${this.currentTick}`,
+          'Fixed reassessment: visible generalized convulsions have stopped, spontaneous ventilation and a pulse remain present, and oxygen saturation is 96% with support. Airway and ventilation surveillance continues. Persistent or recurrent seizure would require prompt second-line antiseizure therapy; EEG, causal evaluation, repeat or alternate medication, airway procedures, recurrence, disposition, and outcome are outside this lesson.');
+        break;
+      }
       case 'aspiration-risk-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
@@ -2295,9 +2373,9 @@ export class AnesthesiaEngine {
       }
       case 'seizure-suppression': {
         if (action.payload.route !== 'iv' || action.payload.medicationClass !== 'benzodiazepine'
-          || this.seizureActivityFraction <= 0) {
+          || this.localAnestheticToxicitySeverity <= 0 || this.seizureActivityFraction <= 0) {
           this.log('warning', 'drug', `bad-seizure-suppression-${this.currentTick}`,
-            'This bounded action requires active modeled seizure activity and an IV benzodiazepine. No treatment was given.');
+            'This bounded LAST action requires active modeled local-anesthetic seizure activity and an IV benzodiazepine. No treatment was given.');
           break;
         }
         this.seizureSuppressed = true;
@@ -3803,6 +3881,20 @@ export class AnesthesiaEngine {
         return;
       }
 
+      case 'status-epilepticus': {
+        const severity = event.value;
+        if (event.target !== 'generalized-convulsive' || typeof severity !== 'number'
+          || !Number.isFinite(severity) || severity < 0 || severity > 1) {
+          this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" must identify generalized-convulsive status and a finite severity from 0 to 1, so the event had no effect.`);
+          return;
+        }
+        this.statusEpilepticusSeverity = Math.max(this.statusEpilepticusSeverity, severity);
+        this.log('critical', 'scenario', `status-epilepticus-active-${this.currentTick}`,
+          'Generalized bilateral convulsive activity is ongoing beyond 5 minutes without recovery. The bounded seizure signal does not diagnose an etiology or measure physical movement, EEG activity, consciousness, or neurologic injury.');
+        return;
+      }
+
       case 'high-spinal': {
         const severity = event.value;
         if (event.target !== 'neuraxial-local-anesthetic' || typeof severity !== 'number'
@@ -4123,7 +4215,10 @@ export class AnesthesiaEngine {
     const unopposedLocalAnestheticToxicity = this.localAnestheticToxicitySeverity
       * (1 - 0.8 * this.lipidEmulsionEffectFraction);
     this.seizureActivityFraction = this.seizureSuppressed
-      ? 0 : clamp((unopposedLocalAnestheticToxicity - 0.2) / 0.6, 0, 1);
+      ? 0 : Math.max(
+        clamp((unopposedLocalAnestheticToxicity - 0.2) / 0.6, 0, 1),
+        this.statusEpilepticusSeverity,
+      );
     obstruction = Math.max(obstruction, 0.85 * unopposedAnaphylaxis);
     obstruction *= 1 - 0.8 * this.bronchodilatorEffectFraction;
     this.bronchospasmSeverity = obstruction;
@@ -4396,6 +4491,12 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: treated ? 18 : 20, spo2Percent: treated ? 96 : 91,
         systolicMmHg: treated ? 112 : 78, diastolicMmHg: treated ? 70 : 46,
         meanArterialMmHg: treated ? 84 : 57 };
+    }
+    if (this.scenario.timeline.some((event) => event.type === 'status-epilepticus')) {
+      const supported = this.statusEpilepticusSupportedAtTick !== null;
+      const treated = this.statusEpilepticusLorazepamAtTick !== null;
+      crisisState = { ...crisisState, heartRateBpm: treated ? 98 : 118,
+        respiratoryRateBpm: treated ? 18 : 24, spo2Percent: supported ? 96 : 92 };
     }
 
     const state: PatientState = this.cardiacArrestActive ? {
@@ -4732,6 +4833,12 @@ export class AnesthesiaEngine {
           supportedAtTick: this.unstableBradycardiaSupportedAtTick,
           atropineAtTick: this.unstableBradycardiaAtropineAtTick,
           reassessedAtTick: this.unstableBradycardiaReassessedAtTick,
+        },
+        statusEpilepticusAssessment: {
+          reviewedAtTick: this.statusEpilepticusReviewedAtTick,
+          supportedAtTick: this.statusEpilepticusSupportedAtTick,
+          lorazepamAtTick: this.statusEpilepticusLorazepamAtTick,
+          reassessedAtTick: this.statusEpilepticusReassessedAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

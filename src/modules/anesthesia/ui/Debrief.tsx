@@ -2662,6 +2662,46 @@ export function objectiveFindings(
         atTick: reassessed?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-convulsive-status-epilepticus', 'stabilize-convulsive-status-epilepticus',
+      'give-first-line-status-benzodiazepine', 'reassess-status-after-benzodiazepine']
+      .includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'status-epilepticus');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The status-epilepticus vignette was not active.' } satisfies ObjectiveFinding;
+      const reviewed = log.find((event) => event.eventId.startsWith('status-epilepticus-reviewed-'));
+      const stabilized = log.find((event) => event.eventId.startsWith('status-epilepticus-supported-'));
+      const lorazepam = log.find((event) => /^status-epilepticus-lorazepam-\d+$/.test(event.eventId));
+      const reassessed = log.find((event) => event.eventId.startsWith('status-epilepticus-reassessed-'));
+      if (objective.id === 'recognize-convulsive-status-epilepticus') return {
+        ...base, outcome: reviewed ? 'met' : 'not-met',
+        finding: reviewed
+          ? 'Generalized convulsions beyond 5 minutes without recovery were integrated with airway, breathing, circulation, and unknown glucose status.'
+          : 'Seizure type, duration, absent recovery, and whole-patient status were not reviewed.',
+        atTick: reviewed?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'stabilize-convulsive-status-epilepticus') {
+        const ordered = reviewed && stabilized && reviewed.tick <= stabilized.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'Injury protection, airway and oxygen support, suction readiness, monitoring, help, access, and glucose followed recognition in parallel.'
+            : 'The bounded stabilization and glucose bundle was absent or out of order.',
+          atTick: stabilized?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'give-first-line-status-benzodiazepine') {
+        const ordered = stabilized && lorazepam && stabilized.tick <= lorazepam.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'The fixed 4 mg IV lorazepam action followed stabilization without claiming physical delivery, pharmacokinetics, or universal response.'
+            : 'The first-line lorazepam action was absent or preceded stabilization.',
+          atTick: lorazepam?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = lorazepam && reassessed && lorazepam.tick <= reassessed.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met',
+        finding: ordered
+          ? 'Visible seizure activity, airway, ventilation, oxygenation, and the persistent-or-recurrent seizure escalation boundary were reassessed.'
+          : 'Post-benzodiazepine seizure and airway reassessment was incomplete or out of order.',
+        atTick: reassessed?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

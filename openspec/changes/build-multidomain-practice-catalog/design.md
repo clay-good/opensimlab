@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with 15 playable, completion-audited scenarios. The remaining
-10 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with 16 playable, completion-audited scenarios. The remaining
+9 planned titles remain descriptive scope only and do not enter playable counts before their full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -401,6 +401,20 @@ The focused arrest surface removes every energy-selection control for PEA and re
 shock card with a calm nonshockable-branch explanation. Compression and ventilation quality,
 pulse-check skill, access, medication delivery, diagnostic acquisition, cause-specific treatment,
 repeated cycles, team performance, termination, ROSC, and post-arrest care remain outside the case.
+
+### Wave B slice 16: status epilepticus
+
+The sixteenth emergency-medicine slice adds an adult generalized-convulsive status lesson already
+beyond the 5-minute treatment threshold. Learners integrate seizure type, elapsed time, absent
+recovery, airway, breathing, circulation, and glucose status; record injury protection, suction
+readiness, titrated oxygen, monitoring, help, vascular access, and point-of-care glucose in parallel;
+give one fixed 4 mg IV lorazepam action; then reassess the visible seizure signal and airway support.
+
+The formulary-free case opens into a single two-card surface built around the clock and the sequence
+“stop it, then prove it stopped.” The modeled convulsions stop after the fixed first-line action, but
+the interface keeps persistent-or-recurrent seizure escalation explicit. Physical care, medication
+preparation or delivery, repeat or alternate benzodiazepine, second-line antiseizure loading, EEG,
+airway procedures, causal diagnosis, recurrence, disposition, and outcome remain outside the case.
 
 #### Critical care: 24
 

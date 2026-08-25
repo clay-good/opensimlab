@@ -18,7 +18,7 @@ export const EVENT_TYPES = [
   'shock-pattern',
   'sepsis-pattern',
   'hemorrhagic-shock-pattern',
-  'malignant-hyperthermia', 'local-anesthetic-toxicity',
+  'malignant-hyperthermia', 'local-anesthetic-toxicity', 'status-epilepticus',
   'high-spinal',
   'venous-air-embolism',
   'tension-pneumothorax',

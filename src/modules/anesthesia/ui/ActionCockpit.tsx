@@ -278,6 +278,12 @@ export interface ActionCockpitProps {
       readonly atropineAtTick: number | null;
       readonly reassessedAtTick: number | null;
     };
+    readonly statusEpilepticusAssessment?: {
+      readonly reviewedAtTick: number | null;
+      readonly supportedAtTick: number | null;
+      readonly lorazepamAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -439,6 +445,10 @@ export interface ActionCockpitProps {
     action: 'review-bradycardia-and-compromise' | 'record-bradycardia-support'
       | 'record-atropine-intent' | 'reassess-bradycardia-response',
   ) => void;
+  readonly onStatusEpilepticusResponse?: (
+    action: 'review-convulsive-status' | 'record-status-stabilization'
+      | 'give-lorazepam-4-mg-iv' | 'reassess-after-lorazepam',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -548,6 +558,9 @@ export function crisisResponseAvailability(
     hasUnstableBradycardiaResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'unstable-bradycardia',
     ),
+    hasStatusEpilepticusResponse: scenario.timeline.some(
+      (event) => event.type === 'status-epilepticus',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -601,6 +614,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || event.type === 'sepsis-pattern'
       || event.type === 'hemorrhagic-shock-pattern'
       || event.type === 'cardiac-tamponade'
+      || event.type === 'status-epilepticus'
       || (event.type === 'narrative' && event.target === 'emergency-anaphylaxis')
       || (event.type === 'narrative' && event.target === 'adult-asthma')
       || (event.type === 'narrative' && event.target === 'copd-exacerbation')
@@ -628,6 +642,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
+    hasStatusEpilepticusResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -652,7 +667,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasLastResponse;
   const hasNonMaternalCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse
     || hasCardiacArrestResponse || hasHighSpinalResponse || hasVenousAirEmbolismResponse
-    || hasPneumothoraxResponse || hasBronchospasmResponse;
+    || hasPneumothoraxResponse || hasBronchospasmResponse || hasStatusEpilepticusResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -666,8 +681,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasSepticShockResponse || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
     || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse || hasCopdExacerbationResponse
     || hasAcutePulmonaryEdemaResponse || hasPulmonaryEmbolismResponse || hasStemiResponse
-    || hasUnstableNarrowTachycardiaResponse || hasUnstableBradycardiaResponse;
-  const responseTray = focusedPeaScenario
+    || hasUnstableNarrowTachycardiaResponse || hasUnstableBradycardiaResponse
+    || hasStatusEpilepticusResponse;
+  const responseTray = hasStatusEpilepticusResponse
+    ? { id: 'crisis', label: 'Status epilepticus' } as const
+    : focusedPeaScenario
     ? { id: 'crisis', label: 'PEA arrest' } as const
     : focusedArrestScenario
     ? { id: 'crisis', label: 'Persistent VF' } as const
@@ -718,7 +736,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     : hasPreeclampsiaResponse && !hasNonMaternalCrisisResponse
       ? { id: 'crisis', label: 'Maternal response' } as const : CRISIS_TRAY;
   const focusedEmergencyAssessment = props.scenario.formulary.length === 0
-    && (focusedArrestScenario || focusedPleuralEmergency
+    && (focusedArrestScenario || focusedPleuralEmergency || hasStatusEpilepticusResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1063,6 +1081,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasUnstableBradycardiaResponse && (
               <UnstableBradycardiaTray assessment={props.resuscitation.unstableBradycardiaAssessment}
                 onAction={props.onUnstableBradycardiaResponse ?? (() => {})} />
+            )}
+            {hasStatusEpilepticusResponse && (
+              <StatusEpilepticusTray
+                assessment={props.resuscitation.statusEpilepticusAssessment}
+                seizureActivityFraction={props.resuscitation.seizureActivityFraction ?? 0}
+                onAction={props.onStatusEpilepticusResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -2875,6 +2899,62 @@ function UnstableBradycardiaTray({ assessment, onAction }: {
           </Button>
         </div>
         <p className="field__hint">No medication delivery, repeat dose, pacing, capture, adrenergic infusion, definitive cause, procedure, recurrence, disposition, or outcome is offered.</p>
+      </section>
+    </div>
+  );
+}
+
+function StatusEpilepticusTray({ assessment, seizureActivityFraction, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['statusEpilepticusAssessment']>;
+  seizureActivityFraction: number;
+  onAction: NonNullable<ActionCockpitProps['onStatusEpilepticusResponse']>;
+}) {
+  const reviewed = assessment?.reviewedAtTick != null;
+  const supported = assessment?.supportedAtTick != null;
+  const lorazepam = assessment?.lorazepamAtTick != null;
+  const reassessed = assessment?.reassessedAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="status-epilepticus-recognition-title">
+        <div id="status-epilepticus-recognition-title" className="syringe__name">Five minutes changes the name</div>
+        <Badge kind="teaching">Generalized convulsive status</Badge>
+        <div className="syringe__meta">6:20 elapsed · no recovery · airway + breathing + pulse</div>
+        <p className="syringe__remaining" role="status">
+          {supported ? 'Stabilized · glucose 118 mg/dL · IV access ready'
+            : reviewed ? 'Status recognized · stabilize in parallel'
+              : 'Seizure type + time + recovery review pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={reviewed}
+            onClick={() => onAction('review-convulsive-status')}>
+            Review seizure + clock
+          </Button>
+          <Button className="crisis-drug__action" disabled={!reviewed || supported}
+            onClick={() => onAction('record-status-stabilization')}>
+            Stabilize + check glucose
+          </Button>
+        </div>
+        <p className="field__hint">Protect from injury without restraint. Position the airway, prepare suction, titrate oxygen, monitor, obtain access, call for help, and check glucose without delaying first-line treatment.</p>
+      </section>
+      <section className="syringe" aria-labelledby="status-epilepticus-treatment-title">
+        <div id="status-epilepticus-treatment-title" className="syringe__name">Stop it, then prove it stopped</div>
+        <div className="syringe__meta">Fixed adult first-line action · lorazepam 4 mg IV</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'Convulsions stopped · airway + ventilation reassessed'
+            : lorazepam ? 'Lorazepam accepted · reassess next'
+              : supported ? 'First-line treatment ready' : 'Stabilization pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!supported || lorazepam}
+            onClick={() => onAction('give-lorazepam-4-mg-iv')}>
+            Give lorazepam 4 mg IV
+          </Button>
+          <Button className="crisis-drug__action" disabled={!lorazepam || reassessed}
+            onClick={() => onAction('reassess-after-lorazepam')}>
+            Reassess seizure + airway
+          </Button>
+        </div>
+        <p className="field__hint">Visible seizure signal: {seizureActivityFraction > 0 ? 'active' : 'stopped'}. Persistent or recurrent seizure needs prompt second-line therapy. No repeat dose, alternate route, second-line loading, EEG, airway procedure, cause, recurrence, disposition, or outcome is offered.</p>
       </section>
     </div>
   );

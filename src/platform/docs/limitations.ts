@@ -1702,6 +1702,45 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['hemorrhagic-shock'],
   },
   {
+    id: 'status-epilepticus-pattern-and-response-are-bounded',
+    headline: 'Seizure duration, visible convulsions, vital signs, glucose, and treatment response are fixed teaching facts, not diagnostic measurements or individual predictions.',
+    simplification: 'One authored adult has generalized convulsive activity beyond 5 minutes, fixed '
+      + 'heart-rate, respiratory-rate, oxygen-saturation, and glucose observations, and cessation '
+      + 'of the visible seizure signal after one fixed lorazepam action. Consciousness, EEG '
+      + 'activity, neurologic injury, and drug kinetics are absent.',
+    whereItMisleads: 'Treating the screen as seizure recognition, EEG interpretation, a guarantee '
+      + 'of benzodiazepine response, or evidence that convulsive cessation ends the emergency.',
+    correctUnderstanding: 'Status epilepticus is time-critical and patient-specific. Reassess '
+      + 'airway, ventilation, circulation, glucose, visible and electrographic seizure activity, '
+      + 'treatment response, and etiology continuously.',
+    briefIn: ['status-epilepticus'],
+  },
+  {
+    id: 'status-epilepticus-controls-are-screen-proxies',
+    headline: 'Buttons record stabilization and medication actions; they cannot teach physical seizure care, airway skill, access, glucose testing, or drug delivery.',
+    simplification: 'The interface records injury protection, positioning, suction readiness, '
+      + 'oxygen, monitoring, access, help, glucose, and a fixed 4 mg IV lorazepam action without '
+      + 'performing or assessing any physical task.',
+    whereItMisleads: 'Equating ordered button use with competent resuscitation, medication safety, '
+      + 'airway management, or team performance.',
+    correctUnderstanding: 'These are psychomotor, medication, and team skills requiring local '
+      + 'protocols, trained people, functioning equipment, supervised practice, and bedside reassessment.',
+    briefIn: ['status-epilepticus'],
+  },
+  {
+    id: 'no-status-second-line-eeg-cause-airway-recurrence-or-outcome',
+    headline: 'The case stops after first-line treatment and reassessment; second-line therapy, EEG, airway procedures, etiology, recurrence, disposition, and outcome are outside it.',
+    simplification: 'The lesson names the persistent-or-recurrent seizure escalation boundary but '
+      + 'does not stock alternate benzodiazepines, repeat doses, fosphenytoin, levetiracetam, '
+      + 'valproate, anesthetic infusions, or diagnostic and critical-care pathways.',
+    whereItMisleads: 'Delaying second-line treatment, assuming visible seizure cessation proves '
+      + 'electrographic resolution, or treating initial response as completion of care.',
+    correctUnderstanding: 'Persistent or recurrent status requires prompt protocol-based '
+      + 'escalation, continued airway and physiologic support, EEG when indicated, etiologic '
+      + 'evaluation and treatment, and appropriate critical care.',
+    briefIn: ['status-epilepticus'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '
