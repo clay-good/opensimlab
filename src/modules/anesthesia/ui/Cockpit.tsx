@@ -823,6 +823,9 @@ export function Cockpit({
           onMassivePulmonaryEmbolismResponse={(action) => session.act({
             type: 'massive-pulmonary-embolism-response', payload: { action },
           })}
+          onUpperGiHemorrhageResponse={(action) => session.act({
+            type: 'upper-gi-hemorrhage-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

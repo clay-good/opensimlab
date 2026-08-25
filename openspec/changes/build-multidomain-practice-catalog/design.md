@@ -757,6 +757,23 @@ its benefit on VA-ECMO is not established. The case does not examine, acquire or
 diagnose, deliver oxygen, ventilation, anticoagulation, fluid, or drugs, prescribe, perform CPR,
 cannulate, initiate or manage ECMO, remove clot, transfer, determine disposition, or predict outcome.
 
+### Wave B critical-care slice 13: upper GI hemorrhage
+
+The thirteenth critical-care slice presents recurrent nonvariceal bleeding after prior endoscopic
+hemostasis for a duodenal ulcer. New hematemesis and melena accompany worsening pressure, refill,
+urine output, lactate, and hemoglobin. Learners activate GI, hemorrhage, critical-care, and blood-bank
+help, then integrate the fixed source, airway, perfusion, medication, comorbidity, and alternate-source
+context without treating hemoglobin as a stand-alone perfusion measure.
+
+The focused tutor pairs “the trend spoke before the pressure fell” with “resuscitate the patient;
+reopen hemostasis.” Learners record individualized hemodynamic, access, laboratory, blood-bank, and
+restrictive-transfusion review without turning 7 g/dL into a universal trigger, activate repeat
+endoscopy for recurrent ulcer bleeding, and preserve embolization and surgical pathways after
+failure. A fixed immediate response improves pressure and perfusion but does not prove hemostasis.
+The case does not examine, acquire monitoring or tests, diagnose, deliver oxygen, fluid, blood
+products, or drugs, manage an airway, prescribe, perform endoscopy, embolization, or surgery,
+transfer, determine disposition, or predict outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute

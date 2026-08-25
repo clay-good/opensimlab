@@ -456,6 +456,11 @@ export class AnesthesiaEngine {
   private massivePeSupportAtTick: number | null = null;
   private massivePeEcmoAtTick: number | null = null;
   private massivePeReassessmentAtTick: number | null = null;
+  private upperGiHemorrhageRecognitionAtTick: number | null = null;
+  private upperGiHemorrhagePatternAtTick: number | null = null;
+  private upperGiHemorrhageResuscitationAtTick: number | null = null;
+  private upperGiHemorrhageHemostasisAtTick: number | null = null;
+  private upperGiHemorrhageReassessmentAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -3382,6 +3387,58 @@ export class AnesthesiaEngine {
           'Fixed response after specialist bridge initiation: MAP is 68 mmHg, HR 112/min, capillary refill 3 seconds, SpO₂ 94%, and mentation cannot yet be assessed. Severe RV dysfunction and the embolic burden remain; urine and lactate response are too early to declare. Additional thrombolysis, catheter, thrombectomy, or surgical therapy remains individualized because benefit on VA-ECMO is not established.', { mapMmHg: 68, heartRateBpm: 112, capillaryRefillSeconds: 3, spo2Percent: 94, severeRvDysfunctionPersists: true, thrombusPersists: true, urineResponseKnown: false, lactateResponseKnown: false, adjunctiveReperfusionBenefitEstablished: false });
         break;
       }
+      case 'upper-gi-hemorrhage-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'upper-gi-hemorrhage');
+        const valid = ['recognize-recurrent-upper-gi-hemorrhage',
+          'review-upper-gi-hemorrhage-pattern', 'record-upper-gi-hemorrhage-resuscitation',
+          'activate-repeat-endoscopy-pathway',
+          'reassess-upper-gi-hemorrhage-trajectory'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `upper-gi-hemorrhage-response-refused-${this.currentTick}`,
+            supported ? 'The upper-GI-hemorrhage action was not one of the listed choices. Nothing changed.'
+              : 'The bounded upper-GI-hemorrhage choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'recognize-recurrent-upper-gi-hemorrhage') {
+          if (this.upperGiHemorrhageRecognitionAtTick !== null) { this.log('warning', 'assessment', `upper-gi-hemorrhage-recognition-refused-${this.currentTick}`, 'Recurrent hemorrhage recognition and experienced-team activation have already been recorded.'); break; }
+          this.upperGiHemorrhageRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `upper-gi-hemorrhage-recognized-${this.currentTick}`,
+            'New hematemesis and melena accompany MAP 55 mmHg, HR 122/min, 5-second refill, cool extremities, oliguria, lactate rising from 2.1 to 4.6 mmol/L, and hemoglobin falling from 8.4 to 6.8 g/dL. Recurrent upper-GI hemorrhage triggered GI, hemorrhage, critical-care, and blood-bank activation.', { mapMmHg: 55, heartRateBpm: 122, capillaryRefillSeconds: 5, urineOutputMlPerHour: 10, lactateFromMmolPerL: 2.1, lactateToMmolPerL: 4.6, hemoglobinFromGPerDl: 8.4, hemoglobinToGPerDl: 6.8, giTeamActivated: true, hemorrhageTeamActivated: true, bloodBankActivated: true });
+          break;
+        }
+        if (this.upperGiHemorrhageRecognitionAtTick === null) { this.log('warning', 'assessment', `upper-gi-hemorrhage-recognition-order-refused-${this.currentTick}`, 'Recognize the recurrent bleeding and impaired-perfusion trajectory and activate experienced help first.'); break; }
+        if (response === 'review-upper-gi-hemorrhage-pattern') {
+          if (this.upperGiHemorrhagePatternAtTick !== null) { this.log('warning', 'assessment', `upper-gi-hemorrhage-pattern-refused-${this.currentTick}`, 'The fixed bleeding, perfusion, airway, medication, and alternate-source panel has already been reviewed.'); break; }
+          this.upperGiHemorrhagePatternAtTick = this.currentTick;
+          this.log('critical', 'assessment', `upper-gi-hemorrhage-pattern-reviewed-${this.currentTick}`,
+            'Fixed review reports recurrent hematemesis and melena after prior duodenal-ulcer hemostasis, a soft nontender abdomen, no cirrhosis or known varices, no external bleeding, and no chest-pain or focal-neurologic pattern. Airway protection, medications, coagulation, comorbidity, and other bleeding sources remain under review; hemoglobin is one part of the trajectory, not a stand-alone perfusion measure.', { recurrentHematemesis: true, melena: true, priorDuodenalUlcerHemostasis: true, cirrhosisReported: false, knownVarices: false, externalBleeding: false, airwayReviewOpen: true, alternateSourceReviewOpen: true, hemoglobinStandalonePerfusionMeasure: false });
+          break;
+        }
+        if (this.upperGiHemorrhagePatternAtTick === null) { this.log('warning', 'assessment', `upper-gi-hemorrhage-pattern-order-refused-${this.currentTick}`, 'Review the fixed bleeding, perfusion, airway, medication, and alternate-source context before recording resuscitation.'); break; }
+        if (response === 'record-upper-gi-hemorrhage-resuscitation') {
+          if (this.upperGiHemorrhageResuscitationAtTick !== null) { this.log('warning', 'assessment', `upper-gi-hemorrhage-resuscitation-refused-${this.currentTick}`, 'The individualized resuscitation and transfusion review has already been recorded.'); break; }
+          this.upperGiHemorrhageResuscitationAtTick = this.currentTick;
+          this.log('critical', 'assessment', `upper-gi-hemorrhage-resuscitation-recorded-${this.currentTick}`,
+            'Hemodynamic support, large-bore access, serial blood count, coagulation, fibrinogen, chemistry, lactate, type and crossmatch, medication, comorbidity, and blood-bank review were recorded. Restrictive red-cell transfusion intent was individualized to active bleeding and the whole patient; 7 g/dL was not treated as a universal trigger. No access, specimen, fluid, blood product, oxygen, or drug was delivered.', { hemodynamicSupportReview: true, largeBoreAccessReview: true, serialLaboratoryReview: true, typeAndCrossmatchReview: true, bloodBankReview: true, restrictiveTransfusionIntent: true, universalHemoglobinTrigger: false, productDelivered: false, intentOnly: true });
+          break;
+        }
+        if (this.upperGiHemorrhageResuscitationAtTick === null) { this.log('warning', 'assessment', `upper-gi-hemorrhage-resuscitation-order-refused-${this.currentTick}`, 'Record individualized resuscitation and transfusion review before definitive-hemostasis escalation.'); break; }
+        if (response === 'activate-repeat-endoscopy-pathway') {
+          if (this.upperGiHemorrhageHemostasisAtTick !== null) { this.log('warning', 'assessment', `upper-gi-hemorrhage-hemostasis-refused-${this.currentTick}`, 'The repeat-endoscopy and failure-escalation pathways have already been activated.'); break; }
+          this.upperGiHemorrhageHemostasisAtTick = this.currentTick;
+          this.log('critical', 'assessment', `upper-gi-hemorrhage-hemostasis-activated-${this.currentTick}`,
+            'Repeat endoscopy was activated for recurrent ulcer bleeding while resuscitation continued. Transcatheter angiographic embolization remained the next pathway after failed repeat endoscopic hemostasis, with surgery preserved when embolization is unavailable or fails. No endoscopy, embolization, surgery, or hemostasis is simulated.', { repeatEndoscopyActivated: true, embolizationAfterEndoscopicFailure: true, surgeryAfterUnavailableOrFailedEmbolization: true, proceedsAlongsideResuscitation: true, procedureDelivered: false });
+          break;
+        }
+        if (this.upperGiHemorrhageHemostasisAtTick === null) { this.log('warning', 'assessment', `upper-gi-hemorrhage-hemostasis-order-refused-${this.currentTick}`, 'Activate repeat endoscopy and preserve failure pathways before reviewing the fixed response.'); break; }
+        if (this.upperGiHemorrhageReassessmentAtTick !== null) { this.log('warning', 'assessment', `upper-gi-hemorrhage-reassessment-refused-${this.currentTick}`, 'The fixed post-bridge trajectory has already been reviewed.'); break; }
+        this.upperGiHemorrhageReassessmentAtTick = this.currentTick;
+        this.log('critical', 'assessment', `upper-gi-hemorrhage-trajectory-reassessed-${this.currentTick}`,
+          'Fixed response after the authored resuscitation bridge: MAP is 68 mmHg, HR 104/min, capillary refill is 3 seconds, and mentation is clearer. No further hematemesis occurs during this brief window, but hemostasis is not proven; repeat endoscopy, serial hemoglobin, lactate, urine output, medication decisions, organ trajectory, and failure pathways remain open.', { mapMmHg: 68, heartRateBpm: 104, capillaryRefillSeconds: 3, mentationClearer: true, hematemesisDuringBriefWindow: false, hemostasisProven: false, hemoglobinResponseKnown: false, lactateResponseKnown: false, urineResponseKnown: false });
+        break;
+      }
       case 'aspiration-risk-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
@@ -6144,6 +6201,17 @@ export class AnesthesiaEngine {
         diastolicMmHg: reassessed ? 54 : 38,
         meanArterialMmHg: reassessed ? 68 : 50 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'upper-gi-hemorrhage')) {
+      const reassessed = this.upperGiHemorrhageReassessmentAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: reassessed ? 104 : 122,
+        respiratoryRateBpm: 24,
+        spo2Percent: 96,
+        systolicMmHg: reassessed ? 94 : 78,
+        diastolicMmHg: reassessed ? 55 : 43,
+        meanArterialMmHg: reassessed ? 68 : 55 };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -6639,6 +6707,13 @@ export class AnesthesiaEngine {
           supportAtTick: this.massivePeSupportAtTick,
           ecmoAtTick: this.massivePeEcmoAtTick,
           reassessmentAtTick: this.massivePeReassessmentAtTick,
+        },
+        upperGiHemorrhageAssessment: {
+          recognitionAtTick: this.upperGiHemorrhageRecognitionAtTick,
+          patternAtTick: this.upperGiHemorrhagePatternAtTick,
+          resuscitationAtTick: this.upperGiHemorrhageResuscitationAtTick,
+          hemostasisAtTick: this.upperGiHemorrhageHemostasisAtTick,
+          reassessmentAtTick: this.upperGiHemorrhageReassessmentAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

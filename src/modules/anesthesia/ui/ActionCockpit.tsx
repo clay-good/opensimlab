@@ -438,6 +438,13 @@ export interface ActionCockpitProps {
       readonly ecmoAtTick: number | null;
       readonly reassessmentAtTick: number | null;
     };
+    readonly upperGiHemorrhageAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly patternAtTick: number | null;
+      readonly resuscitationAtTick: number | null;
+      readonly hemostasisAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -706,6 +713,11 @@ export interface ActionCockpitProps {
       | 'record-refractory-pe-support' | 'activate-pe-ecmo-bridge'
       | 'reassess-pe-ecmo-trajectory',
   ) => void;
+  readonly onUpperGiHemorrhageResponse?: (
+    action: 'recognize-recurrent-upper-gi-hemorrhage' | 'review-upper-gi-hemorrhage-pattern'
+      | 'record-upper-gi-hemorrhage-resuscitation' | 'activate-repeat-endoscopy-pathway'
+      | 'reassess-upper-gi-hemorrhage-trajectory',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -882,6 +894,9 @@ export function crisisResponseAvailability(
     hasMassivePulmonaryEmbolismResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'massive-pulmonary-embolism',
     ),
+    hasUpperGiHemorrhageResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'upper-gi-hemorrhage',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -965,6 +980,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'mixed-shock')
       || (event.type === 'narrative' && event.target === 'right-ventricular-failure')
       || (event.type === 'narrative' && event.target === 'massive-pulmonary-embolism')
+      || (event.type === 'narrative' && event.target === 'upper-gi-hemorrhage')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -988,6 +1004,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasMixedShockResponse,
     hasRightVentricularFailureResponse,
     hasMassivePulmonaryEmbolismResponse,
+    hasUpperGiHemorrhageResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1037,7 +1054,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasMucusPluggingResponse || hasUnplannedExtubationResponse
     || hasSpontaneousBreathingTrialResponse || hasPostIntubationHypotensionResponse
     || hasCardiogenicShockResponse || hasMixedShockResponse || hasRightVentricularFailureResponse
-    || hasMassivePulmonaryEmbolismResponse;
+    || hasMassivePulmonaryEmbolismResponse || hasUpperGiHemorrhageResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1061,8 +1078,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasUnplannedExtubationResponse || hasSpontaneousBreathingTrialResponse
     || hasPostIntubationHypotensionResponse || hasCardiogenicShockResponse
     || hasMixedShockResponse || hasRightVentricularFailureResponse
-    || hasMassivePulmonaryEmbolismResponse;
-  const responseTray = hasMassivePulmonaryEmbolismResponse
+    || hasMassivePulmonaryEmbolismResponse || hasUpperGiHemorrhageResponse;
+  const responseTray = hasUpperGiHemorrhageResponse
+    ? { id: 'crisis', label: 'Upper GI bleed' } as const
+    : hasMassivePulmonaryEmbolismResponse
     ? { id: 'crisis', label: 'Massive PE' } as const
     : hasRightVentricularFailureResponse
     ? { id: 'crisis', label: 'RV failure' } as const
@@ -1179,6 +1198,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasMixedShockResponse
     || hasRightVentricularFailureResponse
     || hasMassivePulmonaryEmbolismResponse
+    || hasUpperGiHemorrhageResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1623,6 +1643,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <MassivePulmonaryEmbolismTray
                 assessment={props.resuscitation.massivePulmonaryEmbolismAssessment}
                 onAction={props.onMassivePulmonaryEmbolismResponse ?? (() => {})} />
+            )}
+            {hasUpperGiHemorrhageResponse && (
+              <UpperGiHemorrhageTray
+                assessment={props.resuscitation.upperGiHemorrhageAssessment}
+                onAction={props.onUpperGiHemorrhageResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -4601,6 +4626,58 @@ function MassivePulmonaryEmbolismTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-pe-ecmo-trajectory')}>Review bridge + clot strategy</Button>
         </div>
         <p className="field__hint">VA-ECMO can restore perfusion and oxygenation. It does not remove clot, prove candidacy, or make adjunctive reperfusion automatically beneficial.</p>
+      </section>
+    </div>
+  );
+}
+
+function UpperGiHemorrhageTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['upperGiHemorrhageAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onUpperGiHemorrhageResponse']>;
+}) {
+  const recognized = assessment?.recognitionAtTick != null;
+  const pattern = assessment?.patternAtTick != null;
+  const resuscitation = assessment?.resuscitationAtTick != null;
+  const hemostasis = assessment?.hemostasisAtTick != null;
+  const reassessed = assessment?.reassessmentAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="upper-gi-hemorrhage-pattern-title">
+        <div id="upper-gi-hemorrhage-pattern-title" className="syringe__name">The trend spoke before the pressure fell.</div>
+        <Badge kind="teaching">recurrent hematemesis · melena · falling flow · prior ulcer hemostasis</Badge>
+        <div className="syringe__meta">MAP 55 · HR 122 · Hb 6.8 · lactate 4.6 · refill 5 sec</div>
+        <p className="syringe__remaining" role="status">
+          {pattern ? 'Recurrent nonvariceal bleed · airway + alternate sources stay visible'
+            : recognized ? 'Hemorrhage response active · whole-pattern review due'
+              : 'New blood. Worse perfusion. Reopen the pathway.'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={recognized}
+            onClick={() => onAction('recognize-recurrent-upper-gi-hemorrhage')}>Recognize recurrence + activate help</Button>
+          <Button className="crisis-drug__action" disabled={!recognized || pattern}
+            onClick={() => onAction('review-upper-gi-hemorrhage-pattern')}>Review bleed + perfusion context</Button>
+        </div>
+        <p className="field__hint">Hemoglobin belongs in the trajectory. It is not the perfusion exam and not the only reason to act.</p>
+      </section>
+      <section className="syringe" aria-labelledby="upper-gi-hemorrhage-control-title">
+        <div id="upper-gi-hemorrhage-control-title" className="syringe__name">Resuscitate the patient. Reopen hemostasis.</div>
+        <Badge kind="teaching">individualize the bridge · repeat endoscopy · preserve failure pathways</Badge>
+        <div className="syringe__meta">restrictive ≠ rigid · resuscitation ∥ source control</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'Perfusion improved · hemostasis still unproven'
+            : hemostasis ? 'Repeat-hemostasis pathway active · response review due'
+              : resuscitation ? 'Individualized bridge recorded · definitive control due'
+                : 'Resuscitation + hemostasis pathways pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!pattern || resuscitation}
+            onClick={() => onAction('record-upper-gi-hemorrhage-resuscitation')}>Record individualized resuscitation</Button>
+          <Button className="crisis-drug__action" disabled={!resuscitation || hemostasis}
+            onClick={() => onAction('activate-repeat-endoscopy-pathway')}>Activate repeat endoscopy pathway</Button>
+          <Button className="crisis-drug__action" disabled={!hemostasis || reassessed}
+            onClick={() => onAction('reassess-upper-gi-hemorrhage-trajectory')}>Review bridge + bleeding trajectory</Button>
+        </div>
+        <p className="field__hint">A better pressure is a bridge signal, not proof that the ulcer stopped bleeding.</p>
       </section>
     </div>
   );

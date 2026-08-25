@@ -3592,6 +3592,46 @@ export function objectiveFindings(
         : 'Post-bridge reassessment was absent or preceded bridge activation.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-recurrent-upper-gi-hemorrhage', 'review-upper-gi-hemorrhage-pattern',
+      'record-upper-gi-hemorrhage-resuscitation', 'activate-repeat-endoscopy-pathway',
+      'reassess-upper-gi-hemorrhage-trajectory'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'upper-gi-hemorrhage');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The upper-GI-hemorrhage vignette was not active.' } satisfies ObjectiveFinding;
+      const recognition = log.find((event) => /^upper-gi-hemorrhage-recognized-\d+$/.test(event.eventId));
+      const pattern = log.find((event) => /^upper-gi-hemorrhage-pattern-reviewed-\d+$/.test(event.eventId));
+      const resuscitation = log.find((event) => /^upper-gi-hemorrhage-resuscitation-recorded-\d+$/.test(event.eventId));
+      const hemostasis = log.find((event) => /^upper-gi-hemorrhage-hemostasis-activated-\d+$/.test(event.eventId));
+      const reassessment = log.find((event) => /^upper-gi-hemorrhage-trajectory-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'recognize-recurrent-upper-gi-hemorrhage') return { ...base,
+        outcome: recognition ? 'met' : 'not-met', finding: recognition
+          ? 'Recurrent hematemesis, melena, and worsening perfusion triggered GI, hemorrhage, critical-care, and blood-bank activation.'
+          : 'Recurrent hemorrhage recognition or experienced-team activation was absent.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-upper-gi-hemorrhage-pattern') {
+        const ordered = recognition && pattern && recognition.tick <= pattern.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'The fixed source, perfusion, airway, medication, and alternate-source context was integrated without using hemoglobin alone.'
+          : 'Whole-pattern review was absent or preceded recognition.', atTick: pattern?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'record-upper-gi-hemorrhage-resuscitation') {
+        const ordered = pattern && resuscitation && pattern.tick <= resuscitation.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Hemodynamic, access, laboratory, blood-bank, and restrictive-transfusion review was individualized to the whole trajectory.'
+          : 'Individualized resuscitation review was absent or preceded pattern review.', atTick: resuscitation?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'activate-repeat-endoscopy-pathway') {
+        const ordered = resuscitation && hemostasis && resuscitation.tick <= hemostasis.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Repeat endoscopy was activated alongside resuscitation, with embolization and surgery preserved after pathway failure.'
+          : 'Definitive-hemostasis escalation was absent or preceded resuscitation review.', atTick: hemostasis?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = hemostasis && reassessment && hemostasis.tick <= reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+        ? 'Immediate perfusion improved while hemostasis, recurrent bleeding, laboratory, organ, and failure-pathway trajectories remained open.'
+        : 'Post-bridge reassessment was absent or preceded hemostasis escalation.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

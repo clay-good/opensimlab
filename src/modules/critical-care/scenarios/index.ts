@@ -11,6 +11,7 @@ import { CARDIOGENIC_SHOCK } from './cardiogenic-shock';
 import { MIXED_SHOCK } from './mixed-shock';
 import { RIGHT_VENTRICULAR_FAILURE } from './right-ventricular-failure';
 import { MASSIVE_PULMONARY_EMBOLISM } from './massive-pulmonary-embolism';
+import { UPPER_GI_HEMORRHAGE } from './upper-gi-hemorrhage';
 
 export const CRITICAL_CARE_SCENARIOS: readonly Scenario[] = [
   ARDS_LUNG_PROTECTIVE_VENTILATION,
@@ -25,6 +26,7 @@ export const CRITICAL_CARE_SCENARIOS: readonly Scenario[] = [
   MIXED_SHOCK,
   RIGHT_VENTRICULAR_FAILURE,
   MASSIVE_PULMONARY_EMBOLISM,
+  UPPER_GI_HEMORRHAGE,
 ];
 export const DEFAULT_CRITICAL_CARE_SCENARIO_ID = ARDS_LUNG_PROTECTIVE_VENTILATION.metadata.id;
 

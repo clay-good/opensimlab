@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 70 reports massive-PE state. */
-export const WORKER_PROTOCOL_VERSION = 70;
+/** Bumped whenever the message shape changes incompatibly. Version 71 reports upper-GI-bleed state. */
+export const WORKER_PROTOCOL_VERSION = 71;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -505,6 +505,13 @@ export interface EquipmentSnapshot {
       readonly patternAtTick: number | null;
       readonly supportAtTick: number | null;
       readonly ecmoAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+    };
+    readonly upperGiHemorrhageAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly patternAtTick: number | null;
+      readonly resuscitationAtTick: number | null;
+      readonly hemostasisAtTick: number | null;
       readonly reassessmentAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */

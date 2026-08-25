@@ -324,6 +324,8 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
       .toMatchObject({ indexable: true, heading: 'Right ventricular failure' });
     expect(routeFor('/critical-care/scenario/massive-pulmonary-embolism'))
       .toMatchObject({ indexable: true, heading: 'Massive pulmonary embolism' });
+    expect(routeFor('/critical-care/scenario/upper-gi-hemorrhage'))
+      .toMatchObject({ indexable: true, heading: 'Upper GI hemorrhage' });
   });
 
   it('Requirement: Modules Declare Their Own Physiological Timescale', () => {
