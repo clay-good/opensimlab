@@ -2900,6 +2900,47 @@ export function objectiveFindings(
           : 'Serial reassessment and rebound surveillance were incomplete or out of order.', atTick: reassessed?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-severe-symptomatic-hyponatremia', 'stabilize-severe-hyponatremia',
+      'record-hypertonic-saline-intent', 'reassess-early-sodium-and-neurologic-response',
+      'prevent-hyponatremia-overcorrection'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'severe-hyponatremia-with-seizure');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The severe-hyponatremia-with-seizure vignette was not active.' } satisfies ObjectiveFinding;
+      const reviewed = log.find((event) => /^hyponatremia-reviewed-\d+$/.test(event.eventId));
+      const stabilized = log.find((event) => /^hyponatremia-stabilized-\d+$/.test(event.eventId));
+      const hypertonic = log.find((event) => /^hyponatremia-hypertonic-\d+$/.test(event.eventId));
+      const reassessed = log.find((event) => /^hyponatremia-reassessed-\d+$/.test(event.eventId));
+      const guardrails = log.find((event) => /^hyponatremia-guardrails-\d+$/.test(event.eventId));
+      if (objective.id === 'recognize-severe-symptomatic-hyponatremia') return {
+        ...base, outcome: reviewed ? 'met' : 'not-met',
+        finding: reviewed ? 'The seizure, persistent somnolence, sodium 112 mmol/L, normal glucose, and hypotonicity were integrated as a severe symptom-led emergency.'
+          : 'The fixed neurologic and hypotonic-hyponatremia pattern was not reviewed.',
+        atTick: reviewed?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'stabilize-severe-hyponatremia') {
+        const ordered = reviewed && stabilized && reviewed.tick <= stabilized.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered ? 'Injury protection, airway and breathing support, monitoring, access, glucose review, and expert escalation followed recognition in parallel.'
+            : 'The bounded stabilization and escalation bundle was absent or out of order.', atTick: stabilized?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'record-hypertonic-saline-intent') {
+        const ordered = stabilized && hypertonic && stabilized.tick <= hypertonic.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered ? 'Immediate local-protocol intermittent hypertonic-saline intent followed stabilization without waiting for full cause classification.'
+            : 'Symptom-led hypertonic-saline intent was absent or out of order.', atTick: hypertonic?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'reassess-early-sodium-and-neurologic-response') {
+        const ordered = hypertonic && reassessed && hypertonic.tick <= reassessed.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered ? 'The authored +5 mmol/L first-hour rise, improved alertness, and rising urine output were reviewed before rescue closure.'
+            : 'The first-hour neurologic, sodium, and urine-output reassessment was absent or out of order.', atTick: reassessed?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = reassessed && guardrails && reassessed.tick <= guardrails.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met',
+        finding: ordered ? 'Hypertonic rescue stopped at the immediate target; correction ceilings, serial surveillance, cause control, and specialist overcorrection planning were handed off.'
+          : 'The stop, correction ceiling, cause evaluation, or overcorrection safety plan was incomplete or out of order.', atTick: guardrails?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

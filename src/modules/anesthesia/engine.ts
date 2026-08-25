@@ -368,6 +368,11 @@ export class AnesthesiaEngine {
   private hyperkalemiaBetaAgonistAtTick: number | null = null;
   private hyperkalemiaRemovalAtTick: number | null = null;
   private hyperkalemiaReassessedAtTick: number | null = null;
+  private hyponatremiaPatternReviewedAtTick: number | null = null;
+  private hyponatremiaStabilizedAtTick: number | null = null;
+  private hyponatremiaHypertonicAtTick: number | null = null;
+  private hyponatremiaReassessedAtTick: number | null = null;
+  private hyponatremiaGuardrailsAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2196,6 +2201,93 @@ export class AnesthesiaEngine {
         this.hyperkalemiaReassessedAtTick = this.currentTick;
         this.log('advisory', 'assessment', `hyperkalemia-reassessed-${this.currentTick}`,
           'Fixed 1-hour reassessment: potassium 5.8 mmol/L, glucose 92 mg/dL, HR 68/min, visible P waves, QRS 98 ms, and no new instability. Severe toxicity improved, but CKD and temporary shifting create rebound risk. Continued ECG, potassium, glucose, renal, removal, and recurrence surveillance were handed off; dialysis, later course, disposition, and outcome are outside this lesson.', { potassiumMmolPerL: 5.8, glucoseMgPerDl: 92, qrsMs: 98 });
+        break;
+      }
+      case 'hyponatremia-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'severe-hyponatremia-with-seizure');
+        const valid = ['review-hyponatremia-pattern', 'record-hyponatremia-stabilization',
+          'record-hypertonic-saline-intent', 'reassess-hyponatremia-first-hour',
+          'record-hyponatremia-guardrails-and-cause-plan'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `hyponatremia-response-refused-${this.currentTick}`,
+            supported ? 'The hyponatremia action was not one of the listed choices. Nothing changed.'
+              : 'The bounded hyponatremia choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-hyponatremia-pattern') {
+          if (this.hyponatremiaPatternReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `hyponatremia-review-refused-${this.currentTick}`,
+              'The fixed severe symptomatic hyponatremia pattern has already been reviewed.');
+            break;
+          }
+          this.hyponatremiaPatternReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `hyponatremia-reviewed-${this.currentTick}`,
+            'Fixed review: a witnessed generalized seizure has stopped, but deep somnolence persists with repeat sodium 112 mmol/L, glucose 96 mg/dL, and measured serum osmolality 238 mOsm/kg. No ongoing convulsion, trauma, hyperglycemia, or exogenous osmole is authored. This screen does not examine the patient, validate samples, or interpret real laboratory data.');
+          break;
+        }
+        if (this.hyponatremiaPatternReviewedAtTick === null) {
+          this.log('warning', 'assessment', `hyponatremia-order-refused-${this.currentTick}`,
+            'Review the fixed neurologic state, sodium, glucose, osmolality, and immediate exclusions first.');
+          break;
+        }
+        if (response === 'record-hyponatremia-stabilization') {
+          if (this.hyponatremiaStabilizedAtTick !== null) {
+            this.log('warning', 'assessment', `hyponatremia-stabilization-refused-${this.currentTick}`,
+              'The bounded stabilization and escalation bundle has already been recorded.');
+            break;
+          }
+          this.hyponatremiaStabilizedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `hyponatremia-stabilized-${this.currentTick}`,
+            'Injury protection, airway and breathing support, oxygen and suction readiness, continuous monitoring, vascular access, point-of-care glucose review, and critical-care plus endocrine or renal help were recorded in parallel. Examination, equipment use, access, testing, airway care, and team performance are not simulated.', { intentOnly: true });
+          break;
+        }
+        if (this.hyponatremiaStabilizedAtTick === null) {
+          this.log('warning', 'assessment', `hyponatremia-stabilization-order-refused-${this.currentTick}`,
+            'Record parallel stabilization, monitoring, access, glucose review, and expert escalation before sodium-directed intent.');
+          break;
+        }
+        if (response === 'record-hypertonic-saline-intent') {
+          if (this.hyponatremiaHypertonicAtTick !== null) {
+            this.log('warning', 'drug', `hyponatremia-hypertonic-refused-${this.currentTick}`,
+              'The bounded hypertonic-saline intent has already been recorded.');
+            break;
+          }
+          this.hyponatremiaHypertonicAtTick = this.currentTick;
+          this.log('critical', 'drug', `hyponatremia-hypertonic-${this.currentTick}`,
+            'Immediate local-protocol intermittent hypertonic-saline bolus intent was recorded in a close-monitoring environment, with a first-hour 5 mmol/L rise target and repeat neurologic and sodium review. Concentration, bolus volume, access, preparation, delivery, sodium kinetics, and individual response are not simulated.', { intentOnly: true, initialSodiumMmolPerL: 112, firstHourTargetRiseMmolPerL: 5 });
+          break;
+        }
+        if (this.hyponatremiaHypertonicAtTick === null) {
+          this.log('warning', 'assessment', `hyponatremia-hypertonic-order-refused-${this.currentTick}`,
+            'Record immediate symptom-led hypertonic-saline intent before the authored first-hour reassessment.');
+          break;
+        }
+        if (response === 'reassess-hyponatremia-first-hour') {
+          if (this.hyponatremiaReassessedAtTick !== null) {
+            this.log('warning', 'assessment', `hyponatremia-reassessment-refused-${this.currentTick}`,
+              'The fixed first-hour hyponatremia reassessment has already been reviewed.');
+            break;
+          }
+          this.hyponatremiaReassessedAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `hyponatremia-reassessed-${this.currentTick}`,
+            'Fixed first-hour panel: sodium 117 mmol/L, a 5 mmol/L rise; the patient opens her eyes, answers simple questions with residual confusion, breathes spontaneously, and has no recurrent seizure. Urine output has risen from 35 to 180 mL/h, a warning that correction could accelerate. These are authored findings, not a predicted response.', { sodiumMmolPerL: 117, sodiumRiseMmolPerL: 5, urineOutputMlPerHour: 180 });
+          break;
+        }
+        if (this.hyponatremiaReassessedAtTick === null) {
+          this.log('warning', 'assessment', `hyponatremia-guardrails-order-refused-${this.currentTick}`,
+            'Review the fixed first-hour neurologic, sodium, and urine-output response before closing the rescue phase.');
+          break;
+        }
+        if (this.hyponatremiaGuardrailsAtTick !== null) {
+          this.log('warning', 'assessment', `hyponatremia-guardrails-refused-${this.currentTick}`,
+            'The correction guardrails and cause plan have already been recorded.');
+          break;
+        }
+        this.hyponatremiaGuardrailsAtTick = this.currentTick;
+        this.log('critical', 'assessment', `hyponatremia-guardrails-${this.currentTick}`,
+          'Hypertonic-saline intent was stopped after neurologic improvement and a 5 mmol/L rise. A maximum total rise of 10 mmol/L in the first 24 hours and 8 mmol/L per 24 hours thereafter, serial sodium and urine-output review, chlorthalidone hold, paired serum and urine cause evaluation, thyroid and adrenal review, and a specialist plan to halt or reverse overcorrection were handed off. Testing, diagnosis, fluid selection, desmopressin or free-water treatment, later course, disposition, and outcome are outside this lesson.', { intentOnly: true, firstDayMaximumRiseMmolPerL: 10, laterDailyMaximumRiseMmolPerL: 8 });
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -5311,6 +5403,13 @@ export class AnesthesiaEngine {
           betaAgonistAtTick: this.hyperkalemiaBetaAgonistAtTick,
           removalAtTick: this.hyperkalemiaRemovalAtTick,
           reassessedAtTick: this.hyperkalemiaReassessedAtTick,
+        },
+        hyponatremiaAssessment: {
+          patternReviewedAtTick: this.hyponatremiaPatternReviewedAtTick,
+          stabilizedAtTick: this.hyponatremiaStabilizedAtTick,
+          hypertonicAtTick: this.hyponatremiaHypertonicAtTick,
+          reassessedAtTick: this.hyponatremiaReassessedAtTick,
+          guardrailsAtTick: this.hyponatremiaGuardrailsAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

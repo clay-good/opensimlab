@@ -1884,6 +1884,45 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['hyperkalemia-with-ecg-change'],
   },
   {
+    id: 'hyponatremia-neurologic-laboratory-and-response-panels-are-authored',
+    headline: 'The seizure, alertness, sodium, glucose, osmolality, urine output, contributors, and first-hour response are authored facts, not acquired findings or predictions.',
+    simplification: 'One fixed adult has a witnessed seizure, persistent somnolence, sodium 112 '
+      + 'mmol/L, glucose 96 mg/dL, measured osmolality 238 mOsm/kg, chlorthalidone exposure, and a '
+      + 'fixed first-hour sodium 117 mmol/L panel with improved alertness and rising urine output.',
+    whereItMisleads: 'Treating the screen as neurologic examination, specimen validation, laboratory '
+      + 'interpretation, volume assessment, etiologic diagnosis, or prediction of hypertonic-saline response.',
+    correctUnderstanding: 'Real severe symptomatic hyponatremia requires repeated whole-patient '
+      + 'assessment, verified serum sodium, glucose and tonicity, close neurologic observation, urine '
+      + 'monitoring, serial labs, and urgent exclusion and treatment of concurrent emergencies.',
+    briefIn: ['severe-hyponatremia-with-seizure'],
+  },
+  {
+    id: 'hyponatremia-stabilization-hypertonic-monitoring-and-cause-controls-are-proxies',
+    headline: 'Stabilization, hypertonic-saline, monitoring, cause-control, and overcorrection buttons record teaching intents; they do not prescribe or deliver care.',
+    simplification: 'The interface enforces a symptom-led rescue and surveillance order without '
+      + 'choosing a regional saline concentration or bolus, obtaining access, delivering fluid, '
+      + 'performing an airway intervention, treating seizure, or managing a water diuresis.',
+    whereItMisleads: 'Equating ordered buttons with competent examination, access, prescribing, '
+      + 'infusion, airway or seizure care, serial testing, volume classification, consultation, or rescue skill.',
+    correctUnderstanding: 'Use current local protocols, trained teams, a close-monitoring setting, '
+      + 'verified measurements, specialist support, and repeated bedside assessment throughout rescue and correction.',
+    briefIn: ['severe-hyponatremia-with-seizure'],
+  },
+  {
+    id: 'no-live-hyponatremia-exam-labs-dosing-correction-cause-rescue-or-outcome',
+    headline: 'The case does not examine the patient, run labs, select or deliver a bolus, model sodium correction, diagnose the cause, reverse overcorrection, or predict outcome.',
+    simplification: 'Alternate acute and chronic causes, pseudohyponatremia, hyperosmolar states, '
+      + 'adrenal or thyroid emergencies, hypokalemia, alcohol use, malnutrition, liver disease, '
+      + 'osmotic demyelination, airway deterioration, recurrent seizure, disposition, and prognosis are absent.',
+    whereItMisleads: 'Copying fixed values or ceilings without the patient and regional protocol, '
+      + 'chasing a normal sodium, assuming one improved panel ends risk, or waiting for the simulator '
+      + 'instead of acting on recurrent symptoms or accelerating correction.',
+    correctUnderstanding: 'The immediate goal is relief of dangerous cerebral edema with a small '
+      + 'controlled rise, followed by patient-specific correction limits, cause treatment, serial '
+      + 'sodium and urine monitoring, and prompt specialist action if correction accelerates.',
+    briefIn: ['severe-hyponatremia-with-seizure'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with 20 playable, completion-audited scenarios. The remaining
-5 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with 21 playable, completion-audited scenarios. The remaining
+4 planned titles remain descriptive scope only and do not enter playable counts before their full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -472,6 +472,20 @@ The focused surface makes the temporal logic unmistakable: protect the heart, sh
 next, and watch for return. It does not acquire a specimen or ECG, select or deliver a dose, model
 potassium kinetics or hypoglycemia, choose a removal strategy, perform dialysis, or predict later
 rebound, disposition, recurrence, and outcome.
+
+### Wave B slice 21: severe hyponatremia with seizure
+
+The twenty-first emergency-medicine slice adds severe symptomatic hypotonic hyponatremia after a
+witnessed generalized seizure. Learners integrate the authored seizure, persistent somnolence,
+sodium 112 mmol/L, normal glucose, and low measured osmolality; record parallel stabilization and
+expert escalation; record immediate local-protocol intermittent hypertonic-saline intent; then
+review a fixed first-hour sodium 117 mmol/L panel with improved alertness and rising urine output.
+
+The focused surface turns the safety tension into “treat the brain, not the number” and “aim small,
+guard the next 24 hours.” It stops rescue at the fixed +5 mmol/L response, makes correction ceilings,
+cause control, serial sodium and urine surveillance, and an overcorrection contingency explicit,
+and does not examine or sample the patient, select or deliver a regional bolus, treat a seizure or
+airway, model sodium kinetics, adjudicate cause, perform relowering treatment, or predict outcome.
 
 #### Critical care: 24
 

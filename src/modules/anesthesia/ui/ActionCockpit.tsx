@@ -316,6 +316,13 @@ export interface ActionCockpitProps {
       readonly removalAtTick: number | null;
       readonly reassessedAtTick: number | null;
     };
+    readonly hyponatremiaAssessment?: {
+      readonly patternReviewedAtTick: number | null;
+      readonly stabilizedAtTick: number | null;
+      readonly hypertonicAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+      readonly guardrailsAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -501,6 +508,11 @@ export interface ActionCockpitProps {
       | 'record-hyperkalemia-insulin-glucose' | 'record-hyperkalemia-beta-agonist'
       | 'record-hyperkalemia-removal-and-cause-control' | 'reassess-hyperkalemia',
   ) => void;
+  readonly onHyponatremiaResponse?: (
+    action: 'review-hyponatremia-pattern' | 'record-hyponatremia-stabilization'
+      | 'record-hypertonic-saline-intent' | 'reassess-hyponatremia-first-hour'
+      | 'record-hyponatremia-guardrails-and-cause-plan',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -626,6 +638,9 @@ export function crisisResponseAvailability(
     hasHyperkalemiaResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'hyperkalemia-with-ecg-change',
     ),
+    hasSevereHyponatremiaResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'severe-hyponatremia-with-seizure',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -692,6 +707,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'intracranial-hemorrhage-deterioration')
       || (event.type === 'narrative' && event.target === 'diabetic-ketoacidosis')
       || (event.type === 'narrative' && event.target === 'hyperkalemia-with-ecg-change')
+      || (event.type === 'narrative' && event.target === 'severe-hyponatremia-with-seizure')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -716,6 +732,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasIntracranialHemorrhageResponse,
     hasDiabeticKetoacidosisResponse,
     hasHyperkalemiaResponse,
+    hasSevereHyponatremiaResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -742,7 +759,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasCardiacArrestResponse || hasHighSpinalResponse || hasVenousAirEmbolismResponse
     || hasPneumothoraxResponse || hasBronchospasmResponse || hasStatusEpilepticusResponse
     || hasAcuteIschemicStrokeResponse || hasIntracranialHemorrhageResponse
-    || hasDiabeticKetoacidosisResponse || hasHyperkalemiaResponse;
+    || hasDiabeticKetoacidosisResponse || hasHyperkalemiaResponse
+    || hasSevereHyponatremiaResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -759,8 +777,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasUnstableNarrowTachycardiaResponse || hasUnstableBradycardiaResponse
     || hasStatusEpilepticusResponse || hasAcuteIschemicStrokeResponse
     || hasIntracranialHemorrhageResponse || hasDiabeticKetoacidosisResponse
-    || hasHyperkalemiaResponse;
-  const responseTray = hasHyperkalemiaResponse
+    || hasHyperkalemiaResponse || hasSevereHyponatremiaResponse;
+  const responseTray = hasSevereHyponatremiaResponse
+    ? { id: 'crisis', label: 'Severe hyponatremia' } as const
+    : hasHyperkalemiaResponse
     ? { id: 'crisis', label: 'Severe hyperkalemia' } as const
     : hasDiabeticKetoacidosisResponse
     ? { id: 'crisis', label: 'DKA pathway' } as const
@@ -826,6 +846,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasIntracranialHemorrhageResponse
     || hasDiabeticKetoacidosisResponse
     || hasHyperkalemiaResponse
+    || hasSevereHyponatremiaResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1195,6 +1216,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasHyperkalemiaResponse && (
               <HyperkalemiaTray assessment={props.resuscitation.hyperkalemiaAssessment}
                 onAction={props.onHyperkalemiaResponse ?? (() => {})} />
+            )}
+            {hasSevereHyponatremiaResponse && (
+              <HyponatremiaTray assessment={props.resuscitation.hyponatremiaAssessment}
+                onAction={props.onHyponatremiaResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -3283,6 +3308,58 @@ function HyperkalemiaTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-hyperkalemia')}>Recheck ECG + K + glucose</Button>
         </div>
         <p className="field__hint">No ECG reading, dose, delivery, potassium kinetics, glucose complication, binder, diuresis, dialysis, recurrence, disposition, or outcome is simulated.</p>
+      </section>
+    </div>
+  );
+}
+
+function HyponatremiaTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['hyponatremiaAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onHyponatremiaResponse']>;
+}) {
+  const reviewed = assessment?.patternReviewedAtTick != null;
+  const stabilized = assessment?.stabilizedAtTick != null;
+  const hypertonic = assessment?.hypertonicAtTick != null;
+  const reassessed = assessment?.reassessedAtTick != null;
+  const guardrails = assessment?.guardrailsAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="hyponatremia-brain-title">
+        <div id="hyponatremia-brain-title" className="syringe__name">Treat the brain, not the number.</div>
+        <Badge kind="teaching">Seizure ended · Na 112 · deeply somnolent</Badge>
+        <div className="syringe__meta">Glucose 96 · measured osmolality 238 · no ongoing convulsion</div>
+        <p className="syringe__remaining" role="status">
+          {hypertonic ? 'Symptom-led rescue recorded · first-hour review next'
+            : stabilized ? 'Support active · hypertonic intent next'
+              : reviewed ? 'Severe symptoms recognized · stabilize in parallel'
+                : 'Neurologic + sodium + glucose + osmolality review pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={reviewed}
+            onClick={() => onAction('review-hyponatremia-pattern')}>Review seizure + Na + exclusions</Button>
+          <Button className="crisis-drug__action" disabled={!reviewed || stabilized}
+            onClick={() => onAction('record-hyponatremia-stabilization')}>Protect + support + monitor + call</Button>
+          <Button className="crisis-drug__action" disabled={!stabilized || hypertonic}
+            onClick={() => onAction('record-hypertonic-saline-intent')}>Record hypertonic bolus + 5 target</Button>
+        </div>
+        <p className="field__hint">Treat severe symptoms before the full cause is settled. Concentration, bolus volume, access, preparation, and delivery follow local protocol and are not simulated.</p>
+      </section>
+      <section className="syringe" aria-labelledby="hyponatremia-ceiling-title">
+        <div id="hyponatremia-ceiling-title" className="syringe__name">Aim small. Guard the next 24 hours.</div>
+        <div className="syringe__meta">Early relief · hard ceiling · sodium + urine surveillance</div>
+        <p className="syringe__remaining" role="status">
+          {guardrails ? 'Rescue stopped · ceilings + cause + overcorrection plan handed off'
+            : reassessed ? 'Na 117 (+5) · more alert · urine 180 mL/h · stop and guard'
+              : hypertonic ? 'First-hour neurologic + sodium review available'
+                : 'Hypertonic intent pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!hypertonic || reassessed}
+            onClick={() => onAction('reassess-hyponatremia-first-hour')}>Review first-hour brain + Na + urine</Button>
+          <Button className="crisis-drug__action" disabled={!reassessed || guardrails}
+            onClick={() => onAction('record-hyponatremia-guardrails-and-cause-plan')}>Stop rescue + set ceiling + find cause</Button>
+        </div>
+        <p className="field__hint">This authored path stops after +5 mmol/L improvement, caps total rise at 10 mmol/L in the first 24 hours and 8 mmol/L per day after, and keeps a specialist overcorrection plan visible.</p>
       </section>
     </div>
   );

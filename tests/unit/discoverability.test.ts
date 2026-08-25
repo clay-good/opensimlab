@@ -266,6 +266,8 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
       .toMatchObject({ indexable: true, heading: 'Diabetic ketoacidosis' });
     expect(routeFor('/emergency-medicine/scenario/hyperkalemia-with-ecg-change'))
       .toMatchObject({ indexable: true, heading: 'Hyperkalemia with ECG change' });
+    expect(routeFor('/emergency-medicine/scenario/severe-hyponatremia-with-seizure'))
+      .toMatchObject({ indexable: true, heading: 'Severe hyponatremia with seizure' });
   });
 
   it('Requirement: Modules Declare Their Own Physiological Timescale', () => {

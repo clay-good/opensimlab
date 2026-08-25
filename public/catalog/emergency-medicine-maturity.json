@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "emergency-medicine",
-  "recordCount": 20,
+  "recordCount": 21,
   "records": [
     {
       "recordId": "scenario:undifferentiated-shock@0.1.0",
@@ -221,6 +221,17 @@
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#hyperkalemia-with-ecg-change@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#hyperkalemia-with-ecg-change@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:severe-hyponatremia-with-seizure@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "severe-hyponatremia-with-seizure",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/emergency-medicine-completion-audit.json#severe-hyponatremia-with-seizure@0.1.0",
+        "/catalog/emergency-medicine-quality-audit.json#severe-hyponatremia-with-seizure@0.1.0"
       ]
     }
   ]

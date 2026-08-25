@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 53 reports bounded hyperkalemia state. */
-export const WORKER_PROTOCOL_VERSION = 53;
+/** Bumped whenever the message shape changes incompatibly. Version 54 reports bounded hyponatremia state. */
+export const WORKER_PROTOCOL_VERSION = 54;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -384,6 +384,13 @@ export interface EquipmentSnapshot {
       readonly betaAgonistAtTick: number | null;
       readonly removalAtTick: number | null;
       readonly reassessedAtTick: number | null;
+    };
+    readonly hyponatremiaAssessment?: {
+      readonly patternReviewedAtTick: number | null;
+      readonly stabilizedAtTick: number | null;
+      readonly hypertonicAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+      readonly guardrailsAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {
