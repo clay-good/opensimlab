@@ -2967,6 +2967,38 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use current protocols, serial verified findings, qualified judgment, and explicit reassessment of reversible and persistent conduction disturbance.',
     briefIn: ['hyperkalemic-conduction-disturbance'],
   },
+  {
+    id: 'pericardial-tamponade-findings-and-response-are-authored',
+    headline: 'The pretreatment tamponade findings, reported drainage, and serial response are fixed teaching facts.',
+    simplification: 'One record supplies fixed symptoms, perfusion, pressure, examination claims, echo findings, prior drainage, catheter output, and short-interval reassessment without acquiring any of them.',
+    whereItMisleads: 'Treating one sign, effusion size, echo finding, drainage volume, or directional response as a universal diagnostic rule or proof of imaging competence, procedure success, or cure.',
+    correctUnderstanding: 'Real tamponade is a clinical diagnosis integrating the patient trajectory with verified findings and imaging; response and risk vary with etiology, accumulation, physiology, and treatment.',
+    briefIn: ['pericardial-tamponade'],
+  },
+  {
+    id: 'pericardial-tamponade-drainage-is-prior-care',
+    headline: 'Pericardiocentesis and catheter care are reported prior care, not learner-delivered procedures.',
+    simplification: 'Controls review a fixed prior-care report and surveillance plan without selecting an approach, handling equipment, draining fluid, manipulating a catheter, assessing technical success, or applying a removal threshold.',
+    whereItMisleads: 'Equating button order with pericardiocentesis, catheter-management, complication-recognition, imaging-guidance, or procedural competence.',
+    correctUnderstanding: 'Drainage and catheter decisions require experienced operators, verified imaging and physiology, appropriate equipment, local protocols, and supervised procedural training.',
+    briefIn: ['pericardial-tamponade'],
+  },
+  {
+    id: 'pericardial-tamponade-etiology-and-recurrence-remain-open',
+    headline: 'Active cancer, serosanguineous fluid, improvement, and one stable interval do not prove etiology or freedom from recurrence.',
+    simplification: 'Selected fluid studies remain pending, alternate causes stay open, and the case ends after one fixed short-interval reassessment without a durable recurrence trajectory.',
+    whereItMisleads: 'Labeling the effusion malignant or idiopathic from context or appearance, treating improvement as cure, or using the fictional interval to predict recurrence or prognosis.',
+    correctUnderstanding: 'Etiology-directed testing, serial clinical and imaging reassessment, complication surveillance, and patient-specific follow-up remain necessary after drainage.',
+    briefIn: ['pericardial-tamponade'],
+  },
+  {
+    id: 'no-pericardial-testing-procedure-treatment-disposition-prognosis-or-outcome',
+    headline: 'The lab does not diagnose cause, acquire tests, perform drainage, deliver treatment, manage a catheter, determine disposition, or predict outcome.',
+    simplification: 'No live examination, ECG, monitoring, imaging, sampling, fluid or drug delivery, pericardiocentesis, surgery, catheter action, complication management, disposition, prognosis, recurrence, or outcome is modeled.',
+    whereItMisleads: 'Using completion as evidence of diagnostic, imaging, procedural, catheter-care, treatment, oncology, disposition, or prognostic competence.',
+    correctUnderstanding: 'Use current specialty guidance, verified patient data, qualified multidisciplinary judgment, local pathways, explicit deterioration triggers, and continued reassessment.',
+    briefIn: ['pericardial-tamponade'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

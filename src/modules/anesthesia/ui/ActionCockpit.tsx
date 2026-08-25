@@ -659,6 +659,18 @@ export interface ActionCockpitProps {
       readonly captureAssessed: false;
       readonly permanentDeviceSelected: false;
     };
+    readonly pericardialTamponadeAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly drainageResponseAtTick: number | null;
+      readonly etiologyAtTick: number | null;
+      readonly surveillanceAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true;
+      readonly treatmentDeliveredByLearner: false;
+      readonly imageAcquiredByLearner: false;
+      readonly procedurePerformedByLearner: false;
+      readonly catheterManipulatedByLearner: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1065,6 +1077,13 @@ export interface ActionCockpitProps {
       | 'review-hyperkalemic-conduction-later-panel'
       | 'handoff-hyperkalemic-conduction-reassessment',
   ) => void;
+  readonly onPericardialTamponadeResponse?: (
+    action: 'reconcile-pericardial-tamponade-trajectory'
+      | 'review-pericardial-tamponade-drainage-response'
+      | 'review-pericardial-tamponade-etiology'
+      | 'review-pericardial-tamponade-surveillance'
+      | 'handoff-pericardial-tamponade-reassessment',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1326,6 +1345,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'hyperkalemic-conduction-disturbance',
     ),
+    hasPericardialTamponadeResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'pericardial-tamponade-reassessment',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1434,6 +1457,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'complete-heart-block')
       || (event.type === 'narrative' && event.target === 'torsades-de-pointes')
       || (event.type === 'narrative' && event.target === 'hyperkalemic-conduction-disturbance')
+      || (event.type === 'narrative' && event.target === 'pericardial-tamponade-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1481,6 +1505,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasCompleteHeartBlockResponse,
     hasTorsadesResponse,
     hasHyperkalemicConductionResponse,
+    hasPericardialTamponadeResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1542,7 +1567,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasHeartFailureResponse || hasAfRvrResponse || hasPostInfarctionShockResponse
     || hasStableNarrowTachycardiaResponse || hasStableWideTachycardiaResponse
     || hasSymptomaticBradycardiaResponse || hasCompleteHeartBlockResponse || hasTorsadesResponse
-    || hasHyperkalemicConductionResponse;
+    || hasHyperkalemicConductionResponse || hasPericardialTamponadeResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1573,7 +1598,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasHyperkalemicConductionResponse
+  const responseTray = hasPericardialTamponadeResponse
+    ? { id: 'crisis', label: 'Tamponade reassessment' } as const
+    : hasHyperkalemicConductionResponse
     ? { id: 'crisis', label: 'Potassium rhythm review' } as const
     : hasTorsadesResponse
     ? { id: 'crisis', label: 'Torsades response' } as const
@@ -1762,6 +1789,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasCompleteHeartBlockResponse
     || hasTorsadesResponse
     || hasHyperkalemicConductionResponse
+    || hasPericardialTamponadeResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2316,6 +2344,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <HyperkalemicConductionTray
                 assessment={props.resuscitation.hyperkalemicConductionAssessment}
                 onAction={props.onHyperkalemicConductionResponse ?? (() => {})} />
+            )}
+            {hasPericardialTamponadeResponse && (
+              <PericardialTamponadeTray
+                assessment={props.resuscitation.pericardialTamponadeAssessment}
+                onAction={props.onPericardialTamponadeResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -6275,6 +6308,42 @@ function HyperkalemicConductionTray({ assessment, onAction }: {
         <Button className="crisis-drug__action" disabled={!laterPanel || handoff} onClick={() => onAction('handoff-hyperkalemic-conduction-reassessment')}>Hand off rhythm + rebound plan</Button>
       </div>
       <p className="field__hint">Pacing does not treat hyperkalemia. No drug, dialysis, pacing, or device is delivered or selected. Improvement does not prove one exclusive cause or permanent resolution.</p>
+    </section>
+  </div>;
+}
+
+function PericardialTamponadeTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['pericardialTamponadeAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onPericardialTamponadeResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const drainage = assessment?.drainageResponseAtTick != null;
+  const etiology = assessment?.etiologyAtTick != null;
+  const surveillance = assessment?.surveillanceAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="pericardial-tamponade-response-title">
+      <div id="pericardial-tamponade-response-title" className="syringe__name">Drainage changed the curve.</div>
+      <Badge kind="teaching">reported drainage · serial circulation</Badge>
+      <div className="syringe__meta">pulse + pressure · perfusion + symptoms · authored echo</div>
+      <p className="syringe__remaining" role="status">{drainage ? 'Immediate response reviewed · two follow-up lanes are open' : trajectory ? 'Serial circulation reconciled · reported drainage response ready' : 'Begin with the pre- and post-drainage circulation'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={trajectory} onClick={() => onAction('reconcile-pericardial-tamponade-trajectory')}>Reconcile serial circulation</Button>
+        <Button className="crisis-drug__action" disabled={!trajectory || drainage} onClick={() => onAction('review-pericardial-tamponade-drainage-response')}>Review reported drainage response</Button>
+      </div>
+      <p className="field__hint">The drainage and echo statements are authored team reports. Response supports the working physiology without proving exclusive cause, imaging skill, procedural skill, or durable resolution.</p>
+    </section>
+    <section className="syringe" aria-labelledby="pericardial-tamponade-follow-up-title">
+      <div id="pericardial-tamponade-follow-up-title" className="syringe__name">Explain. Watch. Hand off.</div>
+      <Badge kind="teaching">etiology · recurrence · surveillance · owner</Badge>
+      <div className="syringe__meta">medications + bleeding · pathology · serial examination + echo</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Cause, recurrence risk, and owners handed off' : etiology && surveillance ? 'Both follow-up lanes complete · handoff ready' : etiology ? 'Etiology reviewed · surveillance remains' : surveillance ? 'Surveillance reviewed · etiology remains' : drainage ? 'Etiology and surveillance can proceed in parallel' : 'Review the reported drainage response first'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={!drainage || etiology} onClick={() => onAction('review-pericardial-tamponade-etiology')}>Review etiology + contributors</Button>
+        <Button className="crisis-drug__action" disabled={!drainage || surveillance} onClick={() => onAction('review-pericardial-tamponade-surveillance')}>Review recurrence surveillance</Button>
+        <Button className="crisis-drug__action" disabled={!etiology || !surveillance || handoff} onClick={() => onAction('handoff-pericardial-tamponade-reassessment')}>Hand off open risks</Button>
+      </div>
+      <p className="field__hint">No fluid or vasoactive recipe, image acquisition, drainage route, catheter manipulation, device choice, technical success, disposition, or outcome is supplied.</p>
     </section>
   </div>;
 }

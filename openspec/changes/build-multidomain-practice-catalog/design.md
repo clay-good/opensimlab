@@ -1193,6 +1193,29 @@ diagnose cause; select or deliver calcium, insulin, glucose, beta agonist, potas
 dialysis, pacing, or a device; model live kinetics; assess capture; determine disposition or
 prognosis; or predict recurrence, benefit, or outcome.
 
+### Wave C cardiology slice 13: pericardial tamponade
+
+The thirteenth cardiology slice begins 2 hours after reported urgent image-guided drainage for
+medical pericardial tamponade. A fixed pretreatment record combines progressive dyspnea and
+orthopnea, impaired perfusion, BP 88/64 mmHg, pulsus paradoxus 16 mmHg, and a formal echo report
+with a 30 mm circumferential effusion, right-atrial systolic and right-ventricular early-diastolic
+collapse, and a plethoric IVC. The combination establishes tamponade only in this authored case;
+one sign, effusion dimension, or echo feature is not a universal diagnostic rule.
+
+The treating team reports 420 mL image-guided drainage and a retained pericardial catheter. Current
+fixed findings show improved dyspnea, HR 88/min, BP 116/72 mmHg, warm perfusion, and an 8 mm residual
+effusion without chamber collapse. Learners reconcile the trajectory and reported response, then
+review etiology and recurrence surveillance in parallel. Active lung adenocarcinoma and
+serosanguineous fluid raise concern but do not prove malignant involvement; selected studies remain
+pending. A strictly later fixed report preserves brief stability, 55 mL additional reported output,
+and a 9 mm residual effusion without chamber collapse before pending results, reaccumulation,
+bleeding, catheter, respiratory, rhythm, complication, deterioration, Cardiology, and oncology work
+is handed off. This is distinct from Emergency Medicine's penetrating-trauma collapse and immediate
+trauma/surgical-control intent. The lab does not examine; acquire or interpret monitoring, ECG,
+echo, catheter, output, or specimens; diagnose etiology; select or deliver fluid, medication,
+drainage, surgery, or another treatment; manipulate or remove a catheter; manage complications;
+determine disposition or prognosis; or predict recurrence or outcome.
+
 #### Respiratory medicine: 15
 
 Acute severe asthma; COPD exacerbation; community-acquired pneumonia with hypoxemia; pulmonary

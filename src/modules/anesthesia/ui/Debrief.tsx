@@ -4181,6 +4181,24 @@ export function objectiveFindings(
       const ordered = panel && handoff && panel.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Elapsed handoff preserved serial metabolic, conduction, removal, rebound, compromise, and ownership work without choosing a device or outcome.' : 'The final handoff was absent or did not follow the later panel after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-pericardial-tamponade-trajectory',
+      'review-pericardial-tamponade-drainage-response',
+      'review-pericardial-tamponade-etiology',
+      'review-pericardial-tamponade-surveillance',
+      'handoff-pericardial-tamponade-reassessment'].includes(objective.id)) {
+      const trajectory = log.find((event) => /^pericardial-tamponade-trajectory-reconciled-\d+$/.test(event.eventId));
+      const drainage = log.find((event) => /^pericardial-tamponade-drainage-response-reviewed-\d+$/.test(event.eventId));
+      const etiology = log.find((event) => /^pericardial-tamponade-etiology-reviewed-\d+$/.test(event.eventId));
+      const surveillance = log.find((event) => /^pericardial-tamponade-surveillance-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^pericardial-tamponade-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-pericardial-tamponade-trajectory') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'The pretreatment clinical, hemodynamic, and fixed echo pattern was reconciled with the current post-drain state without using effusion size alone.' : 'The pretreatment tamponade and current circulation trajectory was not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-pericardial-tamponade-drainage-response') { const ordered = trajectory && drainage && trajectory.tick <= drainage.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Reported specialist drainage, residual effusion, and current improvement were reviewed without claiming learner procedure or imaging skill, cause, or cure.' : 'Drainage-response review was absent or bypassed trajectory reconciliation.', atTick: drainage?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pericardial-tamponade-etiology') { const ordered = drainage && etiology && drainage.tick <= etiology.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Malignant, infectious, inflammatory, renal, iatrogenic, and other causes remained open with pending-result ownership.' : 'Etiology review was absent or preceded the reported drainage response.', atTick: etiology?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pericardial-tamponade-surveillance') { const ordered = drainage && surveillance && drainage.tick <= surveillance.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Post-drain circulation, respiratory, rhythm, catheter, echo, reaccumulation, decompression, and constrictive surveillance remained explicit without a catheter action.' : 'Recurrence surveillance was absent or preceded the reported drainage response.', atTick: surveillance?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = etiology && surveillance && handoff
+        && etiology.tick < handoff.tick && surveillance.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Elapsed reassessment preserved pending cause, residual effusion, recurrence, catheter, deterioration, and named ownership without determining removal, disposition, or outcome.' : 'The final handoff was absent, premature, or bypassed a parallel review lane.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

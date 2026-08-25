@@ -582,6 +582,11 @@ export class AnesthesiaEngine {
   private hyperkalemicConductionRemovalDeviceAtTick: number | null = null;
   private hyperkalemicConductionLaterPanelAtTick: number | null = null;
   private hyperkalemicConductionHandoffAtTick: number | null = null;
+  private pericardialTamponadeTrajectoryAtTick: number | null = null;
+  private pericardialTamponadeDrainageResponseAtTick: number | null = null;
+  private pericardialTamponadeEtiologyAtTick: number | null = null;
+  private pericardialTamponadeSurveillanceAtTick: number | null = null;
+  private pericardialTamponadeHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -4706,6 +4711,46 @@ export class AnesthesiaEngine {
         this.hyperkalemicConductionHandoffAtTick = this.currentTick;
         this.log('advisory', 'assessment', `hyperkalemic-conduction-handoff-recorded-${this.currentTick}`, 'Serial potassium, glucose, ECG, kidney function, removal progress, rebound risk, medication and illness contributors, compromise and pulse-loss triggers, renal and Cardiology owners, and persistent-conduction reevaluation were handed off. No pacing eligibility, device, capture, disposition, prognosis, recurrence, or outcome was supplied.', { permanentDeviceSelected: false, pacingDelivered: false, captureAssessed: false, outcomePredicted: false }); break;
       }
+      case 'pericardial-tamponade-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pericardial-tamponade-reassessment');
+        const valid = ['reconcile-pericardial-tamponade-trajectory',
+          'review-pericardial-tamponade-drainage-response',
+          'review-pericardial-tamponade-etiology',
+          'review-pericardial-tamponade-surveillance',
+          'handoff-pericardial-tamponade-reassessment'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `pericardial-tamponade-response-refused-${this.currentTick}`, supported ? 'The pericardial-tamponade action was not one of the listed choices. Nothing changed.' : 'These pericardial-tamponade choices are available only in the declared Cardiology lesson.'); break; }
+        if (response === 'reconcile-pericardial-tamponade-trajectory') {
+          if (this.pericardialTamponadeTrajectoryAtTick !== null) { this.log('warning', 'assessment', `pericardial-tamponade-trajectory-refused-${this.currentTick}`, 'The pretreatment tamponade and current circulation trajectory was already reconciled.'); break; }
+          this.pericardialTamponadeTrajectoryAtTick = this.currentTick;
+          this.log('warning', 'assessment', `pericardial-tamponade-trajectory-reconciled-${this.currentTick}`, 'The authored pretreatment record combines progressive dyspnea and orthopnea, HR 116/min, BP 88/64 mmHg, cool perfusion, elevated JVP, pulsus paradoxus 16 mmHg, and echo evidence of hemodynamic pericardial constraint. The current warm, alert state follows reported drainage by an experienced team. No single sign, effusion dimension, or response establishes tamponade universally.', { initialPulsePresent: true, diagnosisFromEffusionSizeAlone: false, imageAcquiredByLearner: false }); break;
+        }
+        if (this.pericardialTamponadeTrajectoryAtTick === null) { this.log('warning', 'assessment', `pericardial-tamponade-order-refused-${this.currentTick}`, 'Reconcile the clinical, hemodynamic, and fixed echo trajectory before reviewing drainage, cause, or surveillance.'); break; }
+        if (response === 'review-pericardial-tamponade-drainage-response') {
+          if (this.pericardialTamponadeDrainageResponseAtTick !== null) { this.log('warning', 'assessment', `pericardial-tamponade-drainage-refused-${this.currentTick}`, 'The reported drainage and current response was already reviewed.'); break; }
+          this.pericardialTamponadeDrainageResponseAtTick = this.currentTick;
+          this.log('warning', 'assessment', `pericardial-tamponade-drainage-response-reviewed-${this.currentTick}`, 'The treating team reports urgent image-guided drainage of 420 mL serosanguineous fluid and a retained pericardial catheter. Current HR 88/min, BP 116/72 mmHg, improved dyspnea, warm perfusion, and a fixed repeat echo with 8 mm residual circumferential effusion and no right-sided chamber collapse are authored reports. They do not grant procedure or image-acquisition skill, prove cause, or establish durable resolution.', { priorDrainageReported: true, treatmentDeliveredByLearner: false, imageAcquiredByLearner: false, procedurePerformedByLearner: false, catheterManipulatedByLearner: false }); break;
+        }
+        if (this.pericardialTamponadeDrainageResponseAtTick === null) { this.log('warning', 'assessment', `pericardial-tamponade-review-order-refused-${this.currentTick}`, 'Review the reported drainage and current response before opening cause and recurrence-surveillance work.'); break; }
+        if (response === 'review-pericardial-tamponade-etiology') {
+          if (this.pericardialTamponadeEtiologyAtTick !== null) { this.log('warning', 'assessment', `pericardial-tamponade-etiology-refused-${this.currentTick}`, 'The open etiology and pending-study lane was already reviewed.'); break; }
+          this.pericardialTamponadeEtiologyAtTick = this.currentTick;
+          this.log('warning', 'assessment', `pericardial-tamponade-etiology-reviewed-${this.currentTick}`, 'Active lung adenocarcinoma makes neoplastic pericardial disease important, but serosanguineous appearance and short-term response do not prove it. Cytology and microbiology remain pending; bacterial and tuberculosis risk by epidemiology, inflammatory or systemic disease, kidney disease, iatrogenic causes, and other etiologies remain open with named result ownership.', { malignantCauseProven: false, pendingStudiesOwned: true, diagnosisMadeByLearner: false }); break;
+        }
+        if (response === 'review-pericardial-tamponade-surveillance') {
+          if (this.pericardialTamponadeSurveillanceAtTick !== null) { this.log('warning', 'assessment', `pericardial-tamponade-surveillance-refused-${this.currentTick}`, 'The post-drain circulation and recurrence-surveillance lane was already reviewed.'); break; }
+          this.pericardialTamponadeSurveillanceAtTick = this.currentTick;
+          this.log('warning', 'assessment', `pericardial-tamponade-surveillance-reviewed-${this.currentTick}`, 'Serial pulse, pressure, perfusion, mentation, respiratory state, rhythm, catheter output and site, repeat echo, reaccumulation, decompression-syndrome concern, and effusive-constrictive concern were reviewed. No catheter manipulation, removal threshold, imaging acquisition, treatment, or complication management was supplied.', { catheterManipulatedByLearner: false, removalThresholdSelected: false, imageAcquiredByLearner: false }); break;
+        }
+        if (this.pericardialTamponadeEtiologyAtTick === null
+          || this.pericardialTamponadeSurveillanceAtTick === null) { this.log('warning', 'assessment', `pericardial-tamponade-handoff-order-refused-${this.currentTick}`, 'Complete both the etiology and recurrence-surveillance lanes before the later reassessment handoff.'); break; }
+        if (this.currentTick <= Math.max(this.pericardialTamponadeEtiologyAtTick,
+          this.pericardialTamponadeSurveillanceAtTick)) { this.log('warning', 'assessment', `pericardial-tamponade-handoff-time-refused-${this.currentTick}`, 'Allow a later simulated tick before reviewing the authored follow-up and handing off open work.'); break; }
+        if (this.pericardialTamponadeHandoffAtTick !== null) { this.log('warning', 'assessment', `pericardial-tamponade-handoff-refused-${this.currentTick}`, 'The later reassessment and open-risk handoff was already recorded.'); break; }
+        this.pericardialTamponadeHandoffAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `pericardial-tamponade-handoff-recorded-${this.currentTick}`, 'Fixed later report: HR 90/min, BP 114/70 mmHg, RR 18/min, SpO₂ 97% on room air, alert warm perfusion, 55 mL additional reported catheter output, and 9 mm residual effusion without chamber collapse. Studies remain pending. Cause, reaccumulation, bleeding, catheter, rhythm, respiratory, decompression, effusive-constrictive, deterioration, result, Cardiology, and oncology ownership were handed off without determining catheter removal, disposition, prognosis, recurrence, or outcome.', { treatmentDeliveredByLearner: false, catheterManipulatedByLearner: false, durableResolutionProven: false, outcomePredicted: false }); break;
+      }
       case 'emergence-residual-block-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative'
@@ -7421,6 +7466,14 @@ export class AnesthesiaEngine {
         meanArterialMmHg: improved ? 89 : 86, coreTemperatureC: 36.7 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'pericardial-tamponade-reassessment')) {
+      const later = this.pericardialTamponadeHandoffAtTick !== null;
+      crisisState = { ...crisisState, heartRateBpm: later ? 90 : 88,
+        respiratoryRateBpm: 18, spo2Percent: 97, etco2MmHg: 36,
+        systolicMmHg: later ? 114 : 116, diastolicMmHg: later ? 70 : 72,
+        meanArterialMmHg: later ? 85 : 87, coreTemperatureC: 36.7 };
+    }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'unstable-narrow-complex-tachycardia')) {
       const cardioverted = this.unstableNarrowTachycardiaCardiovertedAtTick !== null;
       crisisState = { ...crisisState, heartRateBpm: cardioverted ? 92 : 188,
@@ -8387,6 +8440,21 @@ export class AnesthesiaEngine {
               initialPulsePresent: true as const, treatmentDeliveredByLearner: false as const,
               pacingDelivered: false as const, captureAssessed: false as const,
               permanentDeviceSelected: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pericardial-tamponade-reassessment') ? {
+            pericardialTamponadeAssessment: {
+              trajectoryAtTick: this.pericardialTamponadeTrajectoryAtTick,
+              drainageResponseAtTick: this.pericardialTamponadeDrainageResponseAtTick,
+              etiologyAtTick: this.pericardialTamponadeEtiologyAtTick,
+              surveillanceAtTick: this.pericardialTamponadeSurveillanceAtTick,
+              handoffAtTick: this.pericardialTamponadeHandoffAtTick,
+              initialPulsePresent: true as const,
+              treatmentDeliveredByLearner: false as const,
+              imageAcquiredByLearner: false as const,
+              procedurePerformedByLearner: false as const,
+              catheterManipulatedByLearner: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

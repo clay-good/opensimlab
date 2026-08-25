@@ -1,0 +1,63 @@
+/** Post-drainage medical pericardial-tamponade reassessment without learner procedure delivery. */
+
+import type { Scenario } from '@anesthesia/scenarios/types';
+
+export const PERICARDIAL_TAMPONADE: Scenario = {
+  schemaVersion: 1,
+  metadata: {
+    id: 'pericardial-tamponade', version: '0.1.0', maturity: 'draft',
+    title: 'Pericardial tamponade', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
+    estimatedMinutes: 8, difficulty: 'advanced', objectives: [
+      { id: 'reconcile-pericardial-tamponade-trajectory', statement: 'Reconcile the authored pre-drainage clinical and echocardiographic tamponade pattern with the current stable whole-patient state.', measure: 'Symptoms, perfusion, pressure, examination claims, imaging, drainage, and timing were kept in order without turning one finding into a universal diagnostic rule.' },
+      { id: 'review-pericardial-tamponade-drainage-response', statement: 'Review the reported urgent drainage and immediate response without inferring procedure skill, sole causation, or durable resolution.', measure: 'The prior-care report and current improvement remained authored facts rather than learner-delivered treatment or proof of cure.' },
+      { id: 'review-pericardial-tamponade-etiology', statement: 'Review malignant, infectious, inflammatory, systemic, renal, iatrogenic, and other etiologies while the selected fluid studies remain pending.', measure: 'Active cancer and serosanguineous fluid increased concern but did not become proof of malignant involvement or close epidemiology-dependent alternatives.' },
+      { id: 'review-pericardial-tamponade-surveillance', statement: 'Review serial perfusion, respiratory, rhythm, catheter, output, imaging, recurrence, and complication surveillance without manipulating or removing the drain.', measure: 'Surveillance and escalation triggers were recorded without applying one output, effusion size, or brief stable interval as a universal threshold.' },
+      { id: 'handoff-pericardial-tamponade-reassessment', statement: 'After elapsed reassessment, hand off pending results, recurrence and deterioration triggers, and named Cardiology and oncology ownership.', measure: 'The later report and unresolved work were handed off without selecting treatment, catheter removal, disposition, prognosis, or outcome.' },
+    ],
+    clinicalReview: { reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED',
+      competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01',
+      contentVersion: '0.1.0', sources: [
+        'Schulz-Menger J, Collini V, et al. 2025 ESC Guidelines for the management of myocarditis and pericarditis. Eur Heart J. 2025;46:3952-4041. doi:10.1093/eurheartj/ehaf192.',
+        'Wang TKM, Klein AL, Cremer PC, et al. 2025 Concise Clinical Guidance: An ACC Expert Consensus Statement on the Diagnosis and Management of Pericarditis. J Am Coll Cardiol. 2025;86:2691-2719. doi:10.1016/j.jacc.2025.05.023.',
+      ] },
+    limitations: ['pericardial-tamponade-findings-and-response-are-authored',
+      'pericardial-tamponade-drainage-is-prior-care',
+      'pericardial-tamponade-etiology-and-recurrence-remain-open',
+      'no-pericardial-testing-procedure-treatment-disposition-prognosis-or-outcome'],
+  },
+  patient: { ageYears: 64, sex: 'female', heightCm: 165, weightKg: 66, asaClass: 4,
+    diagnosis: 'Authored medical pericardial tamponade after reported urgent drainage; etiology remains open',
+    procedure: 'Post-drainage pericardial tamponade reassessment after urgent image-guided pericardiocentesis',
+    comorbidities: ['Active lung adenocarcinoma'],
+    medications: ['Medication and cancer-treatment reconciliation are not represented'],
+    allergies: ['No known drug allergies'],
+    fasting: 'Monitored post-drainage consultation; not relevant to this lesson',
+    baseline: { heartRateBpm: 88, meanArterialMmHg: 87, strokeVolumeMl: 62,
+      hemoglobinGPerDl: 11.6, bloodVolumeMl: 4500, coreTemperatureC: 36.8,
+      arterialStiffness: 1.15, baroreflexGain: 0.88, fixedStrokeVolume: false },
+    airway: { difficulty: 0.1, difficultMaskVentilation: false,
+      assessment: 'Alert, speaking comfortably, warm, and improved after reported drainage' },
+    respiratory: { profile: 'healthy' } },
+  equipment: { monitoring: ['ecg', 'nibp', 'pulse-oximetry', 'temperature'],
+    ventilator: { mode: 'manual', fio2: 0.21, tidalVolumeMl: 440,
+      respiratoryRateBpm: 18, delivering: false } },
+  formulary: [],
+  timeline: [
+    { id: 'pericardial-tamponade-presentation', type: 'narrative',
+      target: 'pericardial-tamponade-reassessment', atTick: 0, severity: 'warning',
+      message: 'Cardiology reviews a 64-year-old woman with active lung adenocarcinoma 2 hours after an experienced team performed reported urgent image-guided pericardiocentesis. The fixed pretreatment record described 10 days of progressive dyspnea and orthopnea, HR 116/min, BP 88/64 mmHg, RR 24/min, SpO₂ 96% on room air, alert mentation, cool extremities, elevated JVP, and pulsus paradoxus 16 mmHg. A fixed echo report described a 30 mm circumferential effusion, right-atrial systolic and right-ventricular early-diastolic collapse, and a plethoric IVC. In this authored case the combined clinical and imaging record established tamponade; no single sign or value is a universal diagnostic threshold.' },
+    { id: 'pericardial-tamponade-current-state', type: 'narrative',
+      target: 'pericardial-tamponade-reassessment', atTick: 0, severity: 'advisory',
+      message: 'The prior team reports draining 420 mL of serosanguineous fluid and leaving a pericardial catheter. Current fixed findings are improved dyspnea, HR 88/min, BP 116/72 mmHg, RR 18/min, SpO₂ 97% on room air, alert mentation, and warm perfusion. Repeat echo reports an 8 mm residual circumferential effusion without right-atrial or right-ventricular collapse. Cytology and selected microbiology remain pending. Active cancer and fluid appearance do not prove malignant pericardial involvement, and improvement does not prove exclusive cause, durable resolution, or outcome.' },
+    { id: 'pericardial-tamponade-boundary', type: 'narrative',
+      target: 'pericardial-tamponade-reassessment-boundary', atTick: 0, severity: 'advisory',
+      message: 'Reconcile the pretreatment and current clinical, echo, drainage, and perfusion record; review the reported drainage response; then review etiology and surveillance in parallel. After real elapsed time, a fixed later report gives HR 90/min, BP 114/70 mmHg, RR 18/min, SpO₂ 97% on room air, alert mentation, warm perfusion, 55 mL additional reported catheter output, and a 9 mm residual effusion without chamber collapse. There is no authored new arrhythmia or respiratory deterioration, and selected fluid studies remain pending. The brief interval does not establish durable resolution or a catheter-removal, recurrence, disposition, prognosis, or outcome conclusion. The controls do not examine; acquire or interpret ECG, monitoring, imaging, catheter, output, or specimens; diagnose etiology; select or deliver fluid, medication, drainage, surgery, or another treatment; manipulate or remove a catheter; manage a complication; determine disposition or prognosis; or predict outcome.' },
+  ],
+  debrief: { rubric: [
+    { id: 'pericardial-tamponade-trajectory', objectiveId: 'reconcile-pericardial-tamponade-trajectory', question: 'How did the pretreatment symptoms, perfusion, pressure, examination claims, echo, drainage, and current state fit together?' },
+    { id: 'pericardial-tamponade-drainage-response', objectiveId: 'review-pericardial-tamponade-drainage-response', question: 'What changed after reported drainage, and why did that not prove learner procedure skill, sole causation, or durable resolution?' },
+    { id: 'pericardial-tamponade-etiology', objectiveId: 'review-pericardial-tamponade-etiology', question: 'Which etiologies and pending results remained open despite active cancer and serosanguineous fluid?' },
+    { id: 'pericardial-tamponade-surveillance', objectiveId: 'review-pericardial-tamponade-surveillance', question: 'Which serial patient, catheter, imaging, recurrence, and complication signals required surveillance without a removal decision?' },
+    { id: 'pericardial-tamponade-handoff', objectiveId: 'handoff-pericardial-tamponade-reassessment', question: 'Which later findings, pending results, change triggers, and named owners belonged in handoff?' },
+  ] },
+};

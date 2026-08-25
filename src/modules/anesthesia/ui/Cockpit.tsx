@@ -903,6 +903,9 @@ export function Cockpit({
           onHyperkalemicConductionResponse={(action) => session.act({
             type: 'hyperkalemic-conduction-response', payload: { action },
           })}
+          onPericardialTamponadeResponse={(action) => session.act({
+            type: 'pericardial-tamponade-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

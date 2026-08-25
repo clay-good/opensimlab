@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 93 reports torsades state. */
-export const WORKER_PROTOCOL_VERSION = 96;
+/** Bumped whenever the message shape changes incompatibly. Version 97 reports pericardial-tamponade state. */
+export const WORKER_PROTOCOL_VERSION = 97;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -740,6 +740,18 @@ export interface EquipmentSnapshot {
       readonly pacingDelivered: false;
       readonly captureAssessed: false;
       readonly permanentDeviceSelected: false;
+    };
+    readonly pericardialTamponadeAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly drainageResponseAtTick: number | null;
+      readonly etiologyAtTick: number | null;
+      readonly surveillanceAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true;
+      readonly treatmentDeliveredByLearner: false;
+      readonly imageAcquiredByLearner: false;
+      readonly procedurePerformedByLearner: false;
+      readonly catheterManipulatedByLearner: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {
