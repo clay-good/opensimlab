@@ -12,22 +12,12 @@ import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
 import { EMERGENCY_MEDICINE_SCENARIOS } from '../modules/emergency-medicine/scenarios';
 import { CRITICAL_CARE_SCENARIOS } from '../modules/critical-care/scenarios';
 import type { Scenario } from '@anesthesia/scenarios/types';
-
-export const SITE_ORIGIN = 'https://opensimlab.com';
-export const SITE_NAME = 'Open Sim Lab';
-
-export interface RouteMetadata {
-  readonly path: string;
-  /** Under 60 characters, unique, ending in the site name. */
-  readonly title: string;
-  /** Between 110 and 160 characters, specific to this page. */
-  readonly description: string;
-  readonly indexable: boolean;
-  /** Structured data types this route declares. */
-  readonly structuredData: readonly ('WebSite' | 'Organization' | 'SoftwareApplication' | 'LearningResource')[];
-  /** The heading the prerendered document leads with. */
-  readonly heading: string;
-}
+import { ROOT_ROUTE, formatTitle } from './site-metadata';
+import type { RouteMetadata } from './site-metadata';
+export {
+  SITE_NAME, SITE_ORIGIN, canonicalUrl, formatTitle, socialImageUrl,
+} from './site-metadata';
+export type { RouteMetadata } from './site-metadata';
 
 /**
  * A briefing's description: the patient, the procedure, and what it teaches. Kept
@@ -55,22 +45,8 @@ function scenarioDescription(scenario: Scenario): string {
   return description.length <= 160 ? description : `${description.slice(0, 157)}...`;
 }
 
-/** The one title pattern, used by every route. */
-export function formatTitle(subject: string): string {
-  return `${subject} · ${SITE_NAME}`;
-}
-
 export const ROUTES: readonly RouteMetadata[] = [
-  {
-    path: '/',
-    title: formatTitle('Free clinical simulator'),
-    description:
-      'A free, browser-based clinical simulator for medical students, residents and nurse '
-      + 'anesthetists. No account, works offline, pharmacology with citations.',
-    indexable: true,
-    structuredData: ['WebSite', 'Organization'],
-    heading: 'Open Sim Lab',
-  },
+  ROOT_ROUTE,
   {
     path: '/about',
     title: formatTitle('About'),
@@ -259,14 +235,4 @@ export function routeFor(path: string): RouteMetadata | undefined {
 
 export function indexableRoutes(): RouteMetadata[] {
   return ROUTES.filter((route) => route.indexable);
-}
-
-export function canonicalUrl(path: string): string {
-  return `${SITE_ORIGIN}${path === '/' ? '/' : path.replace(/\/$/, '')}`;
-}
-
-/** Social preview generated for one route, shared by prerender and client navigation. */
-export function socialImageUrl(path: string): string {
-  const name = path === '/' ? 'index' : path.replace(/^\//, '').replace(/\//g, '-');
-  return `${SITE_ORIGIN}/og/${name}.svg`;
 }

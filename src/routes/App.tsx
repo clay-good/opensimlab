@@ -12,8 +12,8 @@ import { About } from '@landing/About';
 import { PlannedModuleRoute } from './PlannedModuleRoute';
 import { MODULES } from '@platform/modules/registry';
 import {
-  canonicalUrl, formatTitle, routeFor, socialImageUrl, type RouteMetadata,
-} from './routes';
+  ROOT_ROUTE, canonicalUrl, formatTitle, socialImageUrl, type RouteMetadata,
+} from './site-metadata';
 import { SiteBar } from '@platform/ui';
 import { UpdateNotice } from '@platform/offline/UpdateNotice';
 import { ErrorBoundary } from '@platform/ui/ErrorBoundary';
@@ -123,15 +123,24 @@ function CurrentRoute() {
     // previous page set. A tab reading "Routine induction" over a page that says
     // there is no such scenario is a small lie, and this site's whole argument
     // is that it does not tell those. The strings match the prerendered 404.
-    const metadata = routeFor(path) ?? {
-      path: '/404',
-      title: formatTitle('Page not found'),
-      description: 'That address does not match a page on Open Sim Lab.',
-      indexable: false,
-      structuredData: [],
-      heading: 'Nothing here',
-    };
-    updateDocumentMetadata(metadata);
+    if (path === '/') {
+      updateDocumentMetadata(ROOT_ROUTE);
+      return undefined;
+    }
+    let active = true;
+    void import('./routes').then(({ routeFor }) => {
+      if (!active) return;
+      const metadata = routeFor(path) ?? {
+        path: '/404',
+        title: formatTitle('Page not found'),
+        description: 'That address does not match a page on Open Sim Lab.',
+        indexable: false,
+        structuredData: [],
+        heading: 'Nothing here',
+      };
+      updateDocumentMetadata(metadata);
+    });
+    return () => { active = false; };
   }, [path]);
 
   if (path === '/') return <Landing />;

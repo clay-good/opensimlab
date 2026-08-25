@@ -78,6 +78,8 @@ credited toward the catalog until every item in the completion contract passes.
   and prehospital frames from one interaction grammar.
 - [ ] Add static domain-pack loading with integrity, version compatibility, atomic offline caching,
   storage budgeting, and safe pack rollback.
+- [x] Keep the complete scenario route catalog out of the initial landing shell while retaining
+  synchronous prerendering, canonical metadata, social previews, sitemap coverage, and offline routes.
 - [ ] Ensure planned titles are distinct from playable scenarios and excluded from complete counts.
 
 ## 4. Private tutor

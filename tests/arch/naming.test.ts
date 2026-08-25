@@ -68,7 +68,8 @@ describe('The product name', () => {
     };
     expect(webmanifest.name).toBe('Open Sim Lab');
     expect(webmanifest.short_name).toBe('Open Sim Lab');
-    expect(readFileSync(join(root, 'src/routes/routes.ts'), 'utf8')).toContain("SITE_ORIGIN = 'https://opensimlab.com'");
-    expect(readFileSync(join(root, 'src/routes/routes.ts'), 'utf8')).toContain("SITE_NAME = 'Open Sim Lab'");
+    const siteMetadata = readFileSync(join(root, 'src/routes/site-metadata.ts'), 'utf8');
+    expect(siteMetadata).toContain("SITE_ORIGIN = 'https://opensimlab.com'");
+    expect(siteMetadata).toContain("SITE_NAME = 'Open Sim Lab'");
   });
 });

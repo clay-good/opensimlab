@@ -55,6 +55,11 @@ Static asset requests do not enter the report Worker. The report Worker has no a
 `workers.dev` route, preview URL, public read route, or broad `/api/*` route. If the report service is
 missing, exhausted, or disabled, only report submission is unavailable.
 
+The client shell keeps site and document-head helpers separate from the complete scenario route
+catalog. The front door uses its tiny local metadata record and loads the full route table only after
+navigation away from `/`; prerendering still consumes the synchronous complete table. This prevents
+catalog growth from silently spending the independently enforced 150 KB landing-route budget.
+
 This architecture deliberately revises the old absolute statement that the project has “no server.”
 The accurate promise becomes: simulation and tutoring are local; only a report the user explicitly
 sends reaches the report service.

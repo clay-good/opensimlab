@@ -7,6 +7,8 @@
  * the whole class to the wrong case without one of them being told.
  */
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { DEFAULT_SCENARIO_ID, SCENARIOS, getScenario } from '@anesthesia/scenarios';
 import { ROUTES, canonicalUrl, routeFor } from '@routes/routes';
 
@@ -30,6 +32,12 @@ describe('resolving a scenario id', () => {
 });
 
 describe('the route table', () => {
+  it('keeps the full scenario route catalog out of the initial app shell', () => {
+    const app = readFileSync(join(process.cwd(), 'src/routes/App.tsx'), 'utf8');
+    expect(app).not.toMatch(/from ['"]\.\/routes['"]/);
+    expect(app).toContain("import('./routes')");
+  });
+
   it('lists a route for every scenario, at the path the index links to', () => {
     for (const scenario of SCENARIOS) {
       const path = `/anesthesia/scenario/${scenario.metadata.id}`;
