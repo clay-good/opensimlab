@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 69 reports RV-failure state. */
-export const WORKER_PROTOCOL_VERSION = 69;
+/** Bumped whenever the message shape changes incompatibly. Version 70 reports massive-PE state. */
+export const WORKER_PROTOCOL_VERSION = 70;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -498,6 +498,13 @@ export interface EquipmentSnapshot {
       readonly phenotypeAtTick: number | null;
       readonly supportAtTick: number | null;
       readonly triggersAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+    };
+    readonly massivePulmonaryEmbolismAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly patternAtTick: number | null;
+      readonly supportAtTick: number | null;
+      readonly ecmoAtTick: number | null;
       readonly reassessmentAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */

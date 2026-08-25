@@ -10,6 +10,7 @@ import { POST_INTUBATION_HYPOTENSION } from './post-intubation-hypotension';
 import { CARDIOGENIC_SHOCK } from './cardiogenic-shock';
 import { MIXED_SHOCK } from './mixed-shock';
 import { RIGHT_VENTRICULAR_FAILURE } from './right-ventricular-failure';
+import { MASSIVE_PULMONARY_EMBOLISM } from './massive-pulmonary-embolism';
 
 export const CRITICAL_CARE_SCENARIOS: readonly Scenario[] = [
   ARDS_LUNG_PROTECTIVE_VENTILATION,
@@ -23,6 +24,7 @@ export const CRITICAL_CARE_SCENARIOS: readonly Scenario[] = [
   CARDIOGENIC_SHOCK,
   MIXED_SHOCK,
   RIGHT_VENTRICULAR_FAILURE,
+  MASSIVE_PULMONARY_EMBOLISM,
 ];
 export const DEFAULT_CRITICAL_CARE_SCENARIO_ID = ARDS_LUNG_PROTECTIVE_VENTILATION.metadata.id;
 

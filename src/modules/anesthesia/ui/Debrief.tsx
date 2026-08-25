@@ -3552,6 +3552,46 @@ export function objectiveFindings(
         : 'Whole-trajectory reassessment was absent or preceded trigger review.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-refractory-pe-shock', 'review-refractory-pe-pattern',
+      'record-refractory-pe-support', 'activate-pe-ecmo-bridge',
+      'reassess-pe-ecmo-trajectory'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'massive-pulmonary-embolism');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The massive-pulmonary-embolism vignette was not active.' } satisfies ObjectiveFinding;
+      const recognition = log.find((event) => /^massive-pe-shock-recognized-\d+$/.test(event.eventId));
+      const pattern = log.find((event) => /^massive-pe-pattern-reviewed-\d+$/.test(event.eventId));
+      const support = log.find((event) => /^massive-pe-support-recorded-\d+$/.test(event.eventId));
+      const ecmo = log.find((event) => /^massive-pe-ecmo-activated-\d+$/.test(event.eventId));
+      const reassessment = log.find((event) => /^massive-pe-trajectory-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'recognize-refractory-pe-shock') return { ...base,
+        outcome: recognition ? 'met' : 'not-met', finding: recognition
+          ? 'Confirmed PE with refractory shock and ventilatory failure triggered Category E2R PERT and ECMO-capable rescue activation.'
+          : 'Category E2R recognition or multidisciplinary rescue activation was absent.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-refractory-pe-pattern') {
+        const ordered = recognition && pattern && recognition.tick <= pattern.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'The fixed PE, RV, ventilation, perfusion, bleeding, and alternate-cause panel supported acute obstructive RV failure.'
+          : 'The rescue-context review was absent or preceded recognition.', atTick: pattern?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'record-refractory-pe-support') {
+        const ordered = pattern && support && pattern.tick <= support.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Systemic perfusion, oxygenation, ventilatory pressure, rhythm, and anticoagulation were reviewed without blind fluid loading.'
+          : 'RV-sensitive support was absent or preceded the pattern review.', atTick: support?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'activate-pe-ecmo-bridge') {
+        const ordered = support && ecmo && support.tick <= ecmo.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Resource- and candidacy-dependent VA-ECMO was activated as temporary perfusion and oxygenation support, not clot treatment.'
+          : 'The rescue bridge was absent or preceded support review.', atTick: ecmo?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = ecmo && reassessment && ecmo.tick <= reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+        ? 'Immediate flow and oxygenation improved while RV failure, embolic burden, organ trajectory, and individualized adjunctive reperfusion stayed open.'
+        : 'Post-bridge reassessment was absent or preceded bridge activation.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

@@ -431,6 +431,13 @@ export interface ActionCockpitProps {
       readonly triggersAtTick: number | null;
       readonly reassessmentAtTick: number | null;
     };
+    readonly massivePulmonaryEmbolismAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly patternAtTick: number | null;
+      readonly supportAtTick: number | null;
+      readonly ecmoAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -694,6 +701,11 @@ export interface ActionCockpitProps {
       | 'record-rv-failure-support' | 'address-rv-failure-triggers'
       | 'reassess-rv-failure-trajectory',
   ) => void;
+  readonly onMassivePulmonaryEmbolismResponse?: (
+    action: 'recognize-refractory-pe-shock' | 'review-refractory-pe-pattern'
+      | 'record-refractory-pe-support' | 'activate-pe-ecmo-bridge'
+      | 'reassess-pe-ecmo-trajectory',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -867,6 +879,9 @@ export function crisisResponseAvailability(
     hasRightVentricularFailureResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'right-ventricular-failure',
     ),
+    hasMassivePulmonaryEmbolismResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'massive-pulmonary-embolism',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -949,6 +964,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'cardiogenic-shock')
       || (event.type === 'narrative' && event.target === 'mixed-shock')
       || (event.type === 'narrative' && event.target === 'right-ventricular-failure')
+      || (event.type === 'narrative' && event.target === 'massive-pulmonary-embolism')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -971,6 +987,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasCardiogenicShockResponse,
     hasMixedShockResponse,
     hasRightVentricularFailureResponse,
+    hasMassivePulmonaryEmbolismResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1019,7 +1036,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasEscalatingHypoxemiaResponse || hasVentilatorDyssynchronyResponse || hasAutoPeepResponse
     || hasMucusPluggingResponse || hasUnplannedExtubationResponse
     || hasSpontaneousBreathingTrialResponse || hasPostIntubationHypotensionResponse
-    || hasCardiogenicShockResponse || hasMixedShockResponse || hasRightVentricularFailureResponse;
+    || hasCardiogenicShockResponse || hasMixedShockResponse || hasRightVentricularFailureResponse
+    || hasMassivePulmonaryEmbolismResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1042,8 +1060,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorDyssynchronyResponse || hasAutoPeepResponse || hasMucusPluggingResponse
     || hasUnplannedExtubationResponse || hasSpontaneousBreathingTrialResponse
     || hasPostIntubationHypotensionResponse || hasCardiogenicShockResponse
-    || hasMixedShockResponse || hasRightVentricularFailureResponse;
-  const responseTray = hasRightVentricularFailureResponse
+    || hasMixedShockResponse || hasRightVentricularFailureResponse
+    || hasMassivePulmonaryEmbolismResponse;
+  const responseTray = hasMassivePulmonaryEmbolismResponse
+    ? { id: 'crisis', label: 'Massive PE' } as const
+    : hasRightVentricularFailureResponse
     ? { id: 'crisis', label: 'RV failure' } as const
     : hasMixedShockResponse
     ? { id: 'crisis', label: 'Mixed shock' } as const
@@ -1157,6 +1178,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasCardiogenicShockResponse
     || hasMixedShockResponse
     || hasRightVentricularFailureResponse
+    || hasMassivePulmonaryEmbolismResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1596,6 +1618,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <RightVentricularFailureTray
                 assessment={props.resuscitation.rightVentricularFailureAssessment}
                 onAction={props.onRightVentricularFailureResponse ?? (() => {})} />
+            )}
+            {hasMassivePulmonaryEmbolismResponse && (
+              <MassivePulmonaryEmbolismTray
+                assessment={props.resuscitation.massivePulmonaryEmbolismAssessment}
+                onAction={props.onMassivePulmonaryEmbolismResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -4522,6 +4549,58 @@ function RightVentricularFailureTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-rv-failure-trajectory')}>Review 10-minute trajectory</Button>
         </div>
         <p className="field__hint">Support is a moving balance, not a recipe. Specialist therapy, ventilation, diuresis, inotropy, and temporary support remain cause and trajectory dependent.</p>
+      </section>
+    </div>
+  );
+}
+
+function MassivePulmonaryEmbolismTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['massivePulmonaryEmbolismAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onMassivePulmonaryEmbolismResponse']>;
+}) {
+  const recognized = assessment?.recognitionAtTick != null;
+  const pattern = assessment?.patternAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const ecmo = assessment?.ecmoAtTick != null;
+  const reassessed = assessment?.reassessmentAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="massive-pe-pattern-title">
+        <div id="massive-pe-pattern-title" className="syringe__name">This is the failure state. Mobilize the system.</div>
+        <Badge kind="teaching">confirmed PE · refractory shock · ventilatory failure · Category E2R</Badge>
+        <div className="syringe__meta">MAP 50 · lactate 8.1 · SpO₂ 82% · weak dilated RV · small LV</div>
+        <p className="syringe__remaining" role="status">
+          {pattern ? 'Acute obstructive RV failure · rescue cannot wait'
+            : recognized ? 'Category E2R recognized · fixed pattern review due'
+              : 'Three infusions. Falling flow. No reserve.'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={recognized}
+            onClick={() => onAction('recognize-refractory-pe-shock')}>Recognize E2R + activate rescue</Button>
+          <Button className="crisis-drug__action" disabled={!recognized || pattern}
+            onClick={() => onAction('review-refractory-pe-pattern')}>Review PE + RV rescue context</Button>
+        </div>
+        <p className="field__hint">The diagnosis is already confirmed. Recheck the physiology and dangerous alternatives without making rescue wait for another diagnostic lap.</p>
+      </section>
+      <section className="syringe" aria-labelledby="massive-pe-bridge-title">
+        <div id="massive-pe-bridge-title" className="syringe__name">Bridge the circulation. Keep the clot decision open.</div>
+        <Badge kind="teaching">RV-sensitive support · no blind fluid · VA-ECMO pathway · reassess</Badge>
+        <div className="syringe__meta">resource + candidacy dependent · support ≠ thrombus treatment</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'Flow + oxygenation improved · RV + embolus work remain'
+            : ecmo ? 'Specialist bridge activated · response review due'
+              : support ? 'RV-sensitive support recorded · rescue bridge due'
+                : 'Perfusion bridge pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!pattern || support}
+            onClick={() => onAction('record-refractory-pe-support')}>Record RV-sensitive support</Button>
+          <Button className="crisis-drug__action" disabled={!support || ecmo}
+            onClick={() => onAction('activate-pe-ecmo-bridge')}>Activate resource-ready VA-ECMO</Button>
+          <Button className="crisis-drug__action" disabled={!ecmo || reassessed}
+            onClick={() => onAction('reassess-pe-ecmo-trajectory')}>Review bridge + clot strategy</Button>
+        </div>
+        <p className="field__hint">VA-ECMO can restore perfusion and oxygenation. It does not remove clot, prove candidacy, or make adjunctive reperfusion automatically beneficial.</p>
       </section>
     </div>
   );

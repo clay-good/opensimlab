@@ -741,6 +741,22 @@ does not examine, acquire or interpret tests, calculate or diagnose, change oxyg
 deliver fluid, diuresis, or drugs, prescribe, perform procedures, place support, transfer, determine
 disposition, or predict outcome.
 
+### Wave B critical-care slice 12: massive pulmonary embolism
+
+The twelfth critical-care slice begins where the emergency-department PE lab ends: confirmed acute
+PE has progressed beyond Category E1 into Category E2R refractory cardiogenic shock and ventilatory
+failure. Learners activate PERT, shock, resuscitation, perfusion, and ECMO-capable teams, then review
+the fixed central-PE, severe-RV-failure, ventilation, perfusion, bleeding, and alternate-cause
+context without delaying rescue for repeated diagnosis.
+
+The focused tutor pairs “this is the failure state; mobilize the system” with “bridge the
+circulation; keep the clot decision open.” Learners record RV-sensitive support without blind fluid
+loading, activate resource- and candidacy-dependent VA-ECMO as temporary perfusion and oxygenation
+support, and reassess a fixed response while keeping adjunctive reperfusion individualized because
+its benefit on VA-ECMO is not established. The case does not examine, acquire or interpret tests,
+diagnose, deliver oxygen, ventilation, anticoagulation, fluid, or drugs, prescribe, perform CPR,
+cannulate, initiate or manage ECMO, remove clot, transfer, determine disposition, or predict outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute

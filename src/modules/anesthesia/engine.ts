@@ -451,6 +451,11 @@ export class AnesthesiaEngine {
   private rvFailureSupportAtTick: number | null = null;
   private rvFailureTriggersAtTick: number | null = null;
   private rvFailureReassessmentAtTick: number | null = null;
+  private massivePeRecognitionAtTick: number | null = null;
+  private massivePePatternAtTick: number | null = null;
+  private massivePeSupportAtTick: number | null = null;
+  private massivePeEcmoAtTick: number | null = null;
+  private massivePeReassessmentAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -3326,6 +3331,57 @@ export class AnesthesiaEngine {
           'Fixed response after 10 minutes: MAP is 66 mmHg, HR 108/min in sinus rhythm, capillary refill is 3 seconds, mentation is clearer, SpO₂ is 94%, CVP is 17 mmHg, and cardiac index is 2.0 L/min/m². Edema and JVP elevation persist; urine and lactate response remain too early to declare. Serial RV, congestion, perfusion, oxygenation, trigger, and organ trajectories remain open.', { reassessmentMinutes: 10, mapMmHg: 66, heartRateBpm: 108, sinusRhythm: true, capillaryRefillSeconds: 3, spo2Percent: 94, cvpMmHg: 17, cardiacIndexLPerMinM2: 2, systemicCongestionPersists: true, urineResponseKnown: false, lactateResponseKnown: false });
         break;
       }
+      case 'massive-pulmonary-embolism-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'massive-pulmonary-embolism');
+        const valid = ['recognize-refractory-pe-shock', 'review-refractory-pe-pattern',
+          'record-refractory-pe-support', 'activate-pe-ecmo-bridge',
+          'reassess-pe-ecmo-trajectory'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `massive-pe-response-refused-${this.currentTick}`,
+            supported ? 'The massive-pulmonary-embolism action was not one of the listed choices. Nothing changed.'
+              : 'The bounded massive-pulmonary-embolism choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'recognize-refractory-pe-shock') {
+          if (this.massivePeRecognitionAtTick !== null) { this.log('warning', 'assessment', `massive-pe-recognition-refused-${this.currentTick}`, 'Category E2R recognition and rescue-team activation have already been recorded.'); break; }
+          this.massivePeRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `massive-pe-shock-recognized-${this.currentTick}`,
+            'Confirmed acute PE accompanies MAP 50 mmHg despite 3 reported vasoactive infusions, lactate rising from 5.2 to 8.1 mmol/L, 6-second refill, mottling, oliguria, altered mentation, and SpO₂ 82% on invasive ventilation. Category E2R refractory cardiopulmonary failure triggered PERT, shock, resuscitation, perfusion, and ECMO-capable team activation.', { category: 'E2R', mapMmHg: 50, vasoactiveInfusionsReported: 3, lactateFromMmolPerL: 5.2, lactateToMmolPerL: 8.1, capillaryRefillSeconds: 6, urineOutputMlPerHour: 5, spo2Percent: 82, pertActivated: true, ecmoCapableTeamActivated: true });
+          break;
+        }
+        if (this.massivePeRecognitionAtTick === null) { this.log('warning', 'assessment', `massive-pe-recognition-order-refused-${this.currentTick}`, 'Recognize refractory PE cardiopulmonary failure and activate rescue teams first.'); break; }
+        if (response === 'review-refractory-pe-pattern') {
+          if (this.massivePePatternAtTick !== null) { this.log('warning', 'assessment', `massive-pe-pattern-refused-${this.currentTick}`, 'The fixed obstructive-shock panel has already been reviewed.'); break; }
+          this.massivePePatternAtTick = this.currentTick;
+          this.log('critical', 'assessment', `massive-pe-pattern-reviewed-${this.currentTick}`,
+            'Fixed CT confirms acute central PE; echo reports severe RV dilation and hypokinesis, septal flattening, a small LV, and no effusion. Continuous capnography and bilateral ventilation are reported, with no tension-pneumothorax or active external bleeding pattern. This supports acute obstructive RV failure without closing bleeding or coexisting-cause review.', { acuteCentralPeConfirmed: true, severeRvDilation: true, severeRvHypokinesis: true, septalFlattening: true, smallLv: true, pericardialEffusion: false, bilateralVentilationReported: true, tensionPneumothoraxPattern: false, activeExternalBleedingPattern: false });
+          break;
+        }
+        if (this.massivePePatternAtTick === null) { this.log('warning', 'assessment', `massive-pe-pattern-order-refused-${this.currentTick}`, 'Review the fixed PE, RV, ventilation, perfusion, bleeding, and alternate-cause context before support.'); break; }
+        if (response === 'record-refractory-pe-support') {
+          if (this.massivePeSupportAtTick !== null) { this.log('warning', 'assessment', `massive-pe-support-refused-${this.currentTick}`, 'The bounded RV-sensitive support review has already been recorded.'); break; }
+          this.massivePeSupportAtTick = this.currentTick;
+          this.log('critical', 'assessment', `massive-pe-support-recorded-${this.currentTick}`,
+            'RV-sensitive systemic-perfusion, oxygenation, ventilatory-pressure, rhythm, and anticoagulation review was recorded while avoiding blind fluid loading. No universal target, fluid plan, agent, access, dose, oxygen or ventilator change, anticoagulation, or drug delivery is simulated.', { systemicPerfusionReview: true, oxygenationReview: true, ventilatoryPressureReview: true, rhythmReview: true, anticoagulationReview: true, blindFluidLoading: false, intentOnly: true });
+          break;
+        }
+        if (this.massivePeSupportAtTick === null) { this.log('warning', 'assessment', `massive-pe-support-order-refused-${this.currentTick}`, 'Record RV-sensitive support review before activating the rescue bridge.'); break; }
+        if (response === 'activate-pe-ecmo-bridge') {
+          if (this.massivePeEcmoAtTick !== null) { this.log('warning', 'assessment', `massive-pe-ecmo-refused-${this.currentTick}`, 'The resource-dependent VA-ECMO bridge pathway has already been activated.'); break; }
+          this.massivePeEcmoAtTick = this.currentTick;
+          this.log('critical', 'assessment', `massive-pe-ecmo-activated-${this.currentTick}`,
+            'VA-ECMO candidacy, perfusion, and cannulation pathways were activated as resource-dependent temporary support for Category E2 refractory PE shock. The bridge supports perfusion and oxygenation; it does not remove thrombus, guarantee candidacy, or establish one universal device strategy. Cannulation and ECMO delivery are not simulated.', { category: 'E2', vaEcmoPathwayActivated: true, resourceDependent: true, candidacyRequired: true, temporarySupport: true, thrombusTreatment: false, deviceDelivered: false });
+          break;
+        }
+        if (this.massivePeEcmoAtTick === null) { this.log('warning', 'assessment', `massive-pe-ecmo-order-refused-${this.currentTick}`, 'Activate the resource-ready rescue bridge before reviewing the fixed response.'); break; }
+        if (this.massivePeReassessmentAtTick !== null) { this.log('warning', 'assessment', `massive-pe-reassessment-refused-${this.currentTick}`, 'The fixed post-bridge trajectory has already been reviewed.'); break; }
+        this.massivePeReassessmentAtTick = this.currentTick;
+        this.log('critical', 'assessment', `massive-pe-trajectory-reassessed-${this.currentTick}`,
+          'Fixed response after specialist bridge initiation: MAP is 68 mmHg, HR 112/min, capillary refill 3 seconds, SpO₂ 94%, and mentation cannot yet be assessed. Severe RV dysfunction and the embolic burden remain; urine and lactate response are too early to declare. Additional thrombolysis, catheter, thrombectomy, or surgical therapy remains individualized because benefit on VA-ECMO is not established.', { mapMmHg: 68, heartRateBpm: 112, capillaryRefillSeconds: 3, spo2Percent: 94, severeRvDysfunctionPersists: true, thrombusPersists: true, urineResponseKnown: false, lactateResponseKnown: false, adjunctiveReperfusionBenefitEstablished: false });
+        break;
+      }
       case 'aspiration-risk-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
@@ -6077,6 +6133,17 @@ export class AnesthesiaEngine {
         diastolicMmHg: reassessed ? 52 : 46,
         meanArterialMmHg: reassessed ? 66 : 58 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'massive-pulmonary-embolism')) {
+      const reassessed = this.massivePeReassessmentAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: reassessed ? 112 : 132,
+        respiratoryRateBpm: 26,
+        spo2Percent: reassessed ? 94 : 82,
+        systolicMmHg: reassessed ? 96 : 72,
+        diastolicMmHg: reassessed ? 54 : 38,
+        meanArterialMmHg: reassessed ? 68 : 50 };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -6565,6 +6632,13 @@ export class AnesthesiaEngine {
           supportAtTick: this.rvFailureSupportAtTick,
           triggersAtTick: this.rvFailureTriggersAtTick,
           reassessmentAtTick: this.rvFailureReassessmentAtTick,
+        },
+        massivePulmonaryEmbolismAssessment: {
+          recognitionAtTick: this.massivePeRecognitionAtTick,
+          patternAtTick: this.massivePePatternAtTick,
+          supportAtTick: this.massivePeSupportAtTick,
+          ecmoAtTick: this.massivePeEcmoAtTick,
+          reassessmentAtTick: this.massivePeReassessmentAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,
