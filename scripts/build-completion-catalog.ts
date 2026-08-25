@@ -42,7 +42,10 @@ const criticalCareCompletion = buildModuleCompletionCatalog(
 );
 const criticalCareQuality = buildScenarioQualityCatalog(criticalCareCompletion);
 const cardiologyCompletion = buildModuleCompletionCatalog(
-  CARDIOLOGY_SCENARIOS, ENGINE_VERSION, 'cardiology', 'clinic', 'state_transition',
+  CARDIOLOGY_SCENARIOS, ENGINE_VERSION, 'cardiology',
+  (scenario) => scenario.metadata.id === 'post-infarction-cardiogenic-shock-escalation'
+    ? 'icu' : 'clinic',
+  'state_transition',
 );
 const cardiologyQuality = buildScenarioQualityCatalog(cardiologyCompletion);
 const reportCatalog = {

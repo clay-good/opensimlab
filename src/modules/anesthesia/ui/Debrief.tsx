@@ -4073,6 +4073,21 @@ export function objectiveFindings(
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Residual congestion prevented a discharge-ready declaration while ownership and follow-up stayed explicit.' : 'Readiness and ownership were absent or preceded transition intent.', atTick: readiness?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
+      'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
+      'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {
+      const trajectory = log.find((event) => /^post-infarction-shock-trajectory-reconciled-\d+$/.test(event.eventId));
+      const causes = log.find((event) => /^post-infarction-shock-causes-reopened-\d+$/.test(event.eventId));
+      const transfer = log.find((event) => /^post-infarction-shock-center-contacted-\d+$/.test(event.eventId));
+      const bridge = log.find((event) => /^post-infarction-shock-bridge-recorded-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^post-infarction-shock-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-post-infarction-shock-trajectory') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'Failure to improve was recognized from multi-organ perfusion despite the higher pressure.' : 'The post-support perfusion trajectory was not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'reopen-post-infarction-shock-causes') { const ordered = trajectory && causes && trajectory.tick <= causes.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Reported care and fixed post-PCI findings were reconciled while dangerous contributors stayed open.' : 'Cause review was absent or preceded trajectory recognition.', atTick: causes?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'contact-post-infarction-shock-center') { const ordered = trajectory && transfer && trajectory.tick <= transfer.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The local shock team and regional advanced center were contacted without claiming transfer completion.' : 'Regional consultation was absent or preceded trajectory recognition.', atTick: transfer?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'record-post-infarction-shock-bridge') { const ordered = causes && transfer && bridge && causes.tick <= bridge.tick && transfer.tick <= bridge.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The potential-transport bridge followed both open-cause review and regional consultation without a routine device.' : 'The bridge was absent or bypassed cause review or consultation.', atTick: bridge?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = bridge && handoff && bridge.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Elapsed reassessment preserved unresolved shock, owners, triggers, and open work in handoff.' : 'Handoff was absent or did not follow the bridge after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-af-rvr-rhythm-and-stability', 'review-af-rvr-context-and-triggers',
       'record-af-rvr-rate-control-intent', 'record-af-rvr-stroke-prevention-intent',
       'reassess-af-rvr-trajectory-and-follow-up'].includes(objective.id)) {

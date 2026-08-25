@@ -1065,6 +1065,26 @@ preparation. It does not examine; acquire or interpret an ECG or test; diagnose 
 prescribe or deliver a drug; choose P2Y12 inhibition, anticoagulation, fibrinolysis, or PCI; perform
 a procedure; determine disposition; or predict complications or outcome.
 
+### Wave C cardiology slice 6: post-infarction cardiogenic-shock escalation
+
+The sixth cardiology slice begins 6 hours after reported culprit-vessel PCI with immediate
+post-procedure patency and verified initial vasoactive support at a hospital without advanced shock
+capability. MAP has risen, but brain, skin, kidney, lactate, and congestion findings worsen. Learners
+recognize failure to improve from the multi-organ trajectory rather than pressure alone, reopen
+ischemic, mechanical, right-heart, rhythm, bleeding, vasodilated, and obstructive contributors, and
+activate the local shock team while contacting a regional advanced shock center for consultation
+and potential-transfer evaluation. These two lanes proceed without waiting for a device decision.
+
+An individualized potential-transport bridge follows both cause review and consultation. It supplies
+no blind fluid load, universal target, fixed drug or dose, or routine mechanical-support device.
+After elapsed simulated time, a modest pressure change coexists with unresolved hypoperfusion and
+congestion; the learner hands off open causes, support adequacy, organ risk, transport readiness,
+owners, and change triggers. This is distinct from the Critical Care cardiogenic-shock lab, which
+starts before revascularization and rehearses initial support plus culprit-PCI prioritization. It
+does not examine; acquire or interpret monitoring, tests, imaging, angiography, or hemodynamics;
+diagnose; prescribe or deliver treatment; select or place a device; perform PCI or surgery;
+authorize or perform transfer; determine disposition or prognosis; or predict outcome.
+
 #### Respiratory medicine: 15
 
 Acute severe asthma; COPD exacerbation; community-acquired pneumonia with hypoxemia; pulmonary

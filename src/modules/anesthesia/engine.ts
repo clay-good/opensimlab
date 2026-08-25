@@ -541,6 +541,11 @@ export class AnesthesiaEngine {
   private clinicStemiTransferAtTick: number | null = null;
   private clinicStemiBridgeAtTick: number | null = null;
   private clinicStemiHandoffAtTick: number | null = null;
+  private postInfarctionShockTrajectoryAtTick: number | null = null;
+  private postInfarctionShockCausesAtTick: number | null = null;
+  private postInfarctionShockTransferAtTick: number | null = null;
+  private postInfarctionShockBridgeAtTick: number | null = null;
+  private postInfarctionShockHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -4262,6 +4267,47 @@ export class AnesthesiaEngine {
         this.log('warning', 'assessment', `af-rvr-trajectory-reassessed-${this.currentTick}`, 'Fixed reassessment: the rhythm remains atrial fibrillation with ventricular rate 96/min, BP 120/72 mmHg, improved palpitations, alert mentation, warm perfusion, and no authored ischemia or acute heart failure. Monitoring, instability triggers, owner, rhythm follow-up, risk-factor review, and the next reassessment were recorded. Better rate did not erase AF or stroke-prevention questions.', { rhythmRemainsAf: true, heartRateBpm: 96, ownerNamed: true, outcomePredicted: false });
         break;
       }
+      case 'post-infarction-shock-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'post-infarction-cardiogenic-shock-escalation');
+        const valid = ['reconcile-post-infarction-shock-trajectory',
+          'reopen-post-infarction-shock-causes', 'contact-post-infarction-shock-center',
+          'record-post-infarction-shock-bridge', 'handoff-post-infarction-shock-trajectory']
+          .includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `post-infarction-shock-response-refused-${this.currentTick}`, supported ? 'The post-infarction shock action was not one of the listed choices. Nothing changed.' : 'These post-infarction shock choices are available only in the declared lesson.'); break; }
+        if (response === 'reconcile-post-infarction-shock-trajectory') {
+          if (this.postInfarctionShockTrajectoryAtTick !== null) { this.log('warning', 'assessment', `post-infarction-shock-trajectory-refused-${this.currentTick}`, 'The serial perfusion trajectory has already been reconciled.'); break; }
+          this.postInfarctionShockTrajectoryAtTick = this.currentTick;
+          this.log('warning', 'assessment', `post-infarction-shock-trajectory-reconciled-${this.currentTick}`, 'Verified initial support raised MAP from 57 to 64 mmHg, but worsening attention, cool mottling, refill 5 seconds, urine 8 mL/h, rising lactate, and persistent congestion establish inadequate response and ongoing multi-organ hypoperfusion. Agent, dose, target, and continued adequacy remain unmodeled.', { pressureAloneUsed: false, shockResolved: false, initialSupportDelivered: true, responseAdequate: false });
+          break;
+        }
+        if (this.postInfarctionShockTrajectoryAtTick === null) { this.log('warning', 'assessment', `post-infarction-shock-order-refused-${this.currentTick}`, 'Reconcile the serial perfusion trajectory before cause review or escalation.'); break; }
+        if (response === 'reopen-post-infarction-shock-causes') {
+          if (this.postInfarctionShockCausesAtTick !== null) { this.log('warning', 'assessment', `post-infarction-shock-causes-refused-${this.currentTick}`, 'The reported care, fixed findings, and open causes have already been reviewed.'); break; }
+          this.postInfarctionShockCausesAtTick = this.currentTick;
+          this.log('warning', 'assessment', `post-infarction-shock-causes-reopened-${this.currentTick}`, 'Reported culprit-vessel PCI, infusion delivery and effect, ECG, LV and RV function, mechanical complications, rhythm, congestion, hemoglobin, access-site bleeding, infection or vasodilation, PE, tamponade, and medication or device problems were reconciled. Fixed negatives are snapshots, not permanent exclusions.', { causeClosed: false, mechanicalCausesRemainOpen: true });
+          break;
+        }
+        if (response === 'contact-post-infarction-shock-center') {
+          if (this.postInfarctionShockTransferAtTick !== null) { this.log('warning', 'assessment', `post-infarction-shock-transfer-refused-${this.currentTick}`, 'The shock-team and advanced-center transfer pathway has already been activated.'); break; }
+          this.postInfarctionShockTransferAtTick = this.currentTick;
+          this.log('warning', 'assessment', `post-infarction-shock-center-contacted-${this.currentTick}`, 'The local multidisciplinary shock team was activated and the regional advanced shock center was contacted for consultation and potential-transfer evaluation. Stability, contraindications, preferences, accepting-center selection, and whether or when transfer occurs remain open.', { regionalCenterContacted: true, transferCompleted: false, routineDeviceSelected: false });
+          break;
+        }
+        if (this.postInfarctionShockCausesAtTick === null || this.postInfarctionShockTransferAtTick === null) { this.log('warning', 'assessment', `post-infarction-shock-bridge-order-refused-${this.currentTick}`, 'Reopen causes and activate the shock/transfer pathway before recording the transport bridge.'); break; }
+        if (response === 'record-post-infarction-shock-bridge') {
+          if (this.postInfarctionShockBridgeAtTick !== null) { this.log('warning', 'assessment', `post-infarction-shock-bridge-refused-${this.currentTick}`, 'The individualized transport bridge has already been recorded.'); break; }
+          this.postInfarctionShockBridgeAtTick = this.currentTick;
+          this.log('warning', 'assessment', `post-infarction-shock-bridge-recorded-${this.currentTick}`, 'An expert, phenotype- and trajectory-dependent transport bridge was recorded across perfusion, congestion, oxygenation, rhythm, access, organ injury, candidacy, risk, and available resources. No blind fluid load, universal target, fixed drug or dose, or routine device was selected or delivered.', { blindFluidLoading: false, universalTargetSelected: false, routineDeviceSelected: false, treatmentDelivered: false });
+          break;
+        }
+        if (this.postInfarctionShockBridgeAtTick === null || this.currentTick <= this.postInfarctionShockBridgeAtTick) { this.log('warning', 'assessment', `post-infarction-shock-handoff-order-refused-${this.currentTick}`, 'Record the bridge, allow reassessment time to pass, then hand off the unresolved trajectory.'); break; }
+        if (this.postInfarctionShockHandoffAtTick !== null) { this.log('warning', 'assessment', `post-infarction-shock-handoff-refused-${this.currentTick}`, 'The elapsed reassessment and transfer handoff has already been recorded.'); break; }
+        this.postInfarctionShockHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `post-infarction-shock-handoff-recorded-${this.currentTick}`, 'Elapsed fixed reassessment shows MAP 67 mmHg, but drowsiness, mottling, oliguria, lactate 5.1 mmol/L, and congestion persist. Shock is not resolved. Perfusion, open causes, support adequacy, organ risk, transport readiness, owners, and change triggers were handed off.', { shockResolved: false, ownerNamed: true, outcomePredicted: false });
+        break;
+      }
       case 'aspiration-risk-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
@@ -6987,6 +7033,15 @@ export class AnesthesiaEngine {
         meanArterialMmHg: 93, coreTemperatureC: 36.7 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'post-infarction-cardiogenic-shock-escalation')) {
+      const reassessed = this.postInfarctionShockHandoffAtTick !== null;
+      crisisState = { ...crisisState, heartRateBpm: reassessed ? 104 : 108,
+        respiratoryRateBpm: reassessed ? 24 : 26, spo2Percent: reassessed ? 94 : 93,
+        etco2MmHg: reassessed ? 32 : 31, systolicMmHg: reassessed ? 88 : 84,
+        diastolicMmHg: reassessed ? 57 : 54, meanArterialMmHg: reassessed ? 67 : 64,
+        coreTemperatureC: 36.3 };
+    }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'nstemi-risk-reassessment')) {
       crisisState = { ...crisisState, heartRateBpm: 88, respiratoryRateBpm: 16,
         spo2Percent: 97, systolicMmHg: 132, diastolicMmHg: 78,
@@ -7866,6 +7921,19 @@ export class AnesthesiaEngine {
               biomarkerDelayUsed: false,
               downstreamTherapySelected: false,
               treatmentDelivered: false,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'post-infarction-cardiogenic-shock-escalation') ? {
+            postInfarctionShockAssessment: {
+              trajectoryAtTick: this.postInfarctionShockTrajectoryAtTick,
+              causesAtTick: this.postInfarctionShockCausesAtTick,
+              transferAtTick: this.postInfarctionShockTransferAtTick,
+              bridgeAtTick: this.postInfarctionShockBridgeAtTick,
+              handoffAtTick: this.postInfarctionShockHandoffAtTick,
+              pressureAloneUsed: false as const,
+              routineDeviceSelected: false as const,
+              treatmentDelivered: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

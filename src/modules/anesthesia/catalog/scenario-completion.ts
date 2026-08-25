@@ -110,11 +110,13 @@ export function buildModuleCompletionCatalog(
   scenarios: readonly Scenario[],
   capabilityVersion: string,
   moduleId: string,
-  environment: ScenarioEnvironment,
+  environment: ScenarioEnvironment | ((scenario: Scenario) => ScenarioEnvironment),
   fidelityClass: FidelityClass = 'closed_loop_physiology',
 ): ScenarioCompletionCatalog {
   const records = scenarios.map((scenario) => auditClinicalScenario(
-    scenario, capabilityVersion, moduleId, environment, fidelityClass,
+    scenario, capabilityVersion, moduleId,
+    typeof environment === 'function' ? environment(scenario) : environment,
+    fidelityClass,
   ));
   return {
     schemaVersion: COMPLETION_SCHEMA_VERSION,

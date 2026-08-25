@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 113,
+  "sourceCount": 115,
   "sources": [
     {
       "id": "association-qrh-2023",
@@ -1477,6 +1477,30 @@
       "verifiedAgainst": "NCBI E-utilities record, field by field",
       "verifiedOn": "2026-08-25",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/39210710/"
+    },
+    {
+      "id": "sinha-cardiogenic-shock-guidance-2025",
+      "pmid": "40100174",
+      "authors": "Sinha SS, Morrow DA, Kapur NK, Kataria R, Roswell RO",
+      "title": "2025 Concise Clinical Guidance: An ACC Expert Consensus Statement on the Evaluation and Management of Cardiogenic Shock",
+      "publication": "J Am Coll Cardiol",
+      "year": 2025,
+      "locator": "85:1618-1641; doi:10.1016/j.jacc.2025.02.018",
+      "usedFor": "The post-infarction shock escalation boundary: shock is a dynamic tissue-perfusion syndrome regardless of pressure; serial reassessment, shock-team activation, higher-level consultation, reversible-cause care, and selective support follow phenotype, trajectory, candidacy, risk, and resources.",
+      "verifiedAgainst": "NCBI E-utilities record, field by field",
+      "verifiedOn": "2026-08-25",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/40100174/"
+    },
+    {
+      "id": "sinha-critical-care-cardiology-2025",
+      "authors": "Sinha SS, Geller BJ, Katz JN, et al",
+      "title": "Evolution of Critical Care Cardiology: An Update on Structure, Care Delivery, Training, and Research Paradigms",
+      "publication": "Circulation",
+      "year": 2025,
+      "locator": "151:e687-e707; doi:10.1161/CIR.0000000000001300",
+      "usedFor": "The regional-care boundary: cardiac critical-care systems use protocolized escalation and transfer pathways, with higher-level care considered for selected deteriorating shock and multisystem organ dysfunction.",
+      "verifiedAgainst": "https://www.jacc.org/doi/10.1016/j.jacc.2025.02.002",
+      "verifiedOn": "2026-08-25"
     },
     {
       "id": "schwid-2001",

@@ -2789,6 +2789,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['atrial-fibrillation-with-rapid-response'],
   },
   {
+    id: 'post-infarction-shock-findings-support-and-response-are-authored',
+    headline: 'The post-PCI findings, verified initial support, worsening perfusion trajectory, consultation context, and later response are authored teaching facts.',
+    simplification: 'One non-advanced-center record supplies fixed treatment, pressure, brain, skin, kidney, lactate, congestion, ECG, echo, rhythm, and bleeding snapshots.',
+    whereItMisleads: 'Treating the screen as live examination, monitoring, test interpretation, diagnosis, durable culprit-vessel patency, or proof of one shock cause.',
+    correctUnderstanding: 'Real care verifies evolving findings and repeatedly reopens ischemic, mechanical, right-heart, rhythm, bleeding, vasodilated, obstructive, treatment, and device contributors.',
+    briefIn: ['post-infarction-cardiogenic-shock-escalation'],
+  },
+  {
+    id: 'post-infarction-shock-controls-record-consultation-bridge-and-handoff-intent-only',
+    headline: 'The controls record trajectory review, cause review, consultation, bridge, and handoff intent; they do not deliver shock care or authorize transfer.',
+    simplification: 'Five clicks stand in for multidisciplinary assessment, regional consultation, potential-transfer evaluation, individualized stabilization planning, communication, and reassessment.',
+    whereItMisleads: 'Equating button order with examination, treatment, device selection, transfer acceptance, transport, communication, documentation, or cardiology competence.',
+    correctUnderstanding: 'Actual care requires qualified teams, verified real-time data, patient-specific support, candidacy and risk review, accepting-center decisions, safe transport planning, and repeated reassessment.',
+    briefIn: ['post-infarction-cardiogenic-shock-escalation'],
+  },
+  {
+    id: 'no-live-post-infarction-shock-testing-treatment-device-transfer-or-outcome',
+    headline: 'The lab does not acquire tests, diagnose, prescribe, deliver treatment, select or place a device, perform a procedure or transfer, or predict outcome.',
+    simplification: 'No live monitoring, laboratory test, ECG, echo, angiography, hemodynamics, drug, fluid, target, device, PCI, surgery, transport, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Copying a fictional value, assuming a higher pressure resolves shock, selecting routine support, or treating regional consultation as transfer authorization.',
+    correctUnderstanding: 'Use current guidance, local pathways, qualified multidisciplinary judgment, regional consultation, shared decisions, and serial assessment for real cardiogenic-shock care.',
+    briefIn: ['post-infarction-cardiogenic-shock-escalation'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

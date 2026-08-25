@@ -581,6 +581,16 @@ export interface ActionCockpitProps {
       readonly downstreamTherapySelected: false;
       readonly treatmentDelivered: false;
     };
+    readonly postInfarctionShockAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly causesAtTick: number | null;
+      readonly transferAtTick: number | null;
+      readonly bridgeAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly pressureAloneUsed: false;
+      readonly routineDeviceSelected: false;
+      readonly treatmentDelivered: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -942,6 +952,11 @@ export interface ActionCockpitProps {
       | 'record-af-rvr-rate-control-intent' | 'record-af-rvr-stroke-prevention-intent'
       | 'reassess-af-rvr-trajectory-and-follow-up',
   ) => void;
+  readonly onPostInfarctionShockResponse?: (
+    action: 'reconcile-post-infarction-shock-trajectory'
+      | 'reopen-post-infarction-shock-causes' | 'contact-post-infarction-shock-center'
+      | 'record-post-infarction-shock-bridge' | 'handoff-post-infarction-shock-trajectory',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1178,6 +1193,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'atrial-fibrillation-with-rapid-response',
     ),
+    hasPostInfarctionShockResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'post-infarction-cardiogenic-shock-escalation',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1278,6 +1297,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'stemi-recognition-and-first-actions')
       || (event.type === 'narrative' && event.target === 'acute-decompensated-heart-failure')
       || (event.type === 'narrative' && event.target === 'atrial-fibrillation-with-rapid-response')
+      || (event.type === 'narrative' && event.target === 'post-infarction-cardiogenic-shock-escalation')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1318,6 +1338,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasClinicStemiResponse,
     hasHeartFailureResponse,
     hasAfRvrResponse,
+    hasPostInfarctionShockResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1376,7 +1397,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasSepticShockResuscitationResponse;
   const hasAnyNonAcuteAssessment = hasStableChestPainResponse || hasNstemiRiskResponse
     || hasClinicStemiResponse
-    || hasHeartFailureResponse || hasAfRvrResponse;
+    || hasHeartFailureResponse || hasAfRvrResponse || hasPostInfarctionShockResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1407,7 +1428,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasClinicStemiResponse
+  const responseTray = hasPostInfarctionShockResponse
+    ? { id: 'crisis', label: 'Shock escalation' } as const
+    : hasClinicStemiResponse
     ? { id: 'crisis', label: 'STEMI first actions' } as const
     : hasAfRvrResponse
     ? { id: 'crisis', label: 'AF reassessment' } as const
@@ -1575,6 +1598,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasClinicStemiResponse
     || hasHeartFailureResponse
     || hasAfRvrResponse
+    || hasPostInfarctionShockResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2097,6 +2121,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasAfRvrResponse && (
               <AfRvrTray assessment={props.resuscitation.afRvrAssessment}
                 onAction={props.onAfRvrResponse ?? (() => {})} />
+            )}
+            {hasPostInfarctionShockResponse && (
+              <PostInfarctionShockTray assessment={props.resuscitation.postInfarctionShockAssessment}
+                onAction={props.onPostInfarctionShockResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -5806,6 +5834,58 @@ function NstemiRiskTray({ assessment, onAction }: {
             onClick={() => onAction('record-nstemi-monitoring-and-handoff')}>Record triggers + owner + reassessment</Button>
         </div>
         <p className="field__hint">No score, medication, angiography, or procedure is supplied. The applicable local pathway resolves exact timing as risk evolves.</p>
+      </section>
+    </div>
+  );
+}
+
+function PostInfarctionShockTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['postInfarctionShockAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onPostInfarctionShockResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const causes = assessment?.causesAtTick != null;
+  const transfer = assessment?.transferAtTick != null;
+  const bridge = assessment?.bridgeAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="post-infarction-shock-trajectory-title">
+        <div id="post-infarction-shock-trajectory-title" className="syringe__name">Pressure moved. Perfusion did not.</div>
+        <Badge kind="teaching">brain · skin · kidney · lactate · congestion · pressure</Badge>
+        <div className="syringe__meta">MAP 57 → 64 · urine 8 mL/h · lactate 4.2 → 5.1</div>
+        <p className="syringe__remaining" role="status">
+          {causes && transfer ? 'Causes open · regional shock center contacted'
+            : trajectory ? 'Inadequate response · reopen causes and contact help in parallel'
+              : 'A better MAP is not shock resolution'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={trajectory}
+            onClick={() => onAction('reconcile-post-infarction-shock-trajectory')}>Reconcile failure to improve</Button>
+          <Button className="crisis-drug__action" disabled={!trajectory || causes}
+            onClick={() => onAction('reopen-post-infarction-shock-causes')}>Reopen causes + reported care</Button>
+          <Button className="crisis-drug__action" disabled={!trajectory || transfer}
+            onClick={() => onAction('contact-post-infarction-shock-center')}>Contact local + regional shock teams</Button>
+        </div>
+        <p className="field__hint">Immediate post-PCI findings are snapshots. Recurrent ischemia, mechanical, RV, rhythm, bleeding, vasodilated, and obstructive causes remain open.</p>
+      </section>
+      <section className="syringe" aria-labelledby="post-infarction-shock-bridge-title">
+        <div id="post-infarction-shock-bridge-title" className="syringe__name">Build the bridge. Keep the exit open.</div>
+        <Badge kind="teaching">perfusion · congestion · oxygenation · rhythm · candidacy · transport</Badge>
+        <div className="syringe__meta">No blind fluid · no universal target · no routine device</div>
+        <p className="syringe__remaining" role="status">
+          {handoff ? 'Shock unresolved · owners + triggers handed off'
+            : bridge ? 'Bridge recorded · allow reassessment time'
+              : causes && transfer ? 'Consultation active · individualized bridge due'
+                : 'Cause review + regional consultation pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!causes || !transfer || bridge}
+            onClick={() => onAction('record-post-infarction-shock-bridge')}>Record individualized potential-transport bridge</Button>
+          <Button className="crisis-drug__action" disabled={!bridge || handoff}
+            onClick={() => onAction('handoff-post-infarction-shock-trajectory')}>Reassess + hand off unresolved work</Button>
+        </div>
+        <p className="field__hint">Consultation is not transfer authorization. Stability, contraindications, preferences, accepting-center selection, support, transport, disposition, and outcome remain expert work.</p>
       </section>
     </div>
   );

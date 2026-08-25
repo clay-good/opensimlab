@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "cardiology",
-  "recordCount": 5,
+  "recordCount": 6,
   "records": [
     {
       "recordId": "scenario:stable-chest-pain-evaluation@0.1.0",
@@ -45,6 +45,17 @@
       "evidence": [
         "/catalog/cardiology-completion-audit.json#acute-decompensated-heart-failure@0.1.0",
         "/catalog/cardiology-quality-audit.json#acute-decompensated-heart-failure@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:post-infarction-cardiogenic-shock-escalation@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "post-infarction-cardiogenic-shock-escalation",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/cardiology-completion-audit.json#post-infarction-cardiogenic-shock-escalation@0.1.0",
+        "/catalog/cardiology-quality-audit.json#post-infarction-cardiogenic-shock-escalation@0.1.0"
       ]
     },
     {

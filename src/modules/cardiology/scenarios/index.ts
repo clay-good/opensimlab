@@ -4,12 +4,14 @@ import { NSTEMI_RISK_REASSESSMENT } from './nstemi-risk-reassessment';
 import { ACUTE_DECOMPENSATED_HEART_FAILURE } from './acute-decompensated-heart-failure';
 import { ATRIAL_FIBRILLATION_WITH_RAPID_RESPONSE } from './atrial-fibrillation-with-rapid-response';
 import { STEMI_RECOGNITION_AND_FIRST_ACTIONS } from './stemi-recognition-and-first-actions';
+import { POST_INFARCTION_CARDIOGENIC_SHOCK_ESCALATION } from './post-infarction-cardiogenic-shock-escalation';
 
 export const CARDIOLOGY_SCENARIOS: readonly Scenario[] = [
   STABLE_CHEST_PAIN_EVALUATION,
   STEMI_RECOGNITION_AND_FIRST_ACTIONS,
   NSTEMI_RISK_REASSESSMENT,
   ACUTE_DECOMPENSATED_HEART_FAILURE,
+  POST_INFARCTION_CARDIOGENIC_SHOCK_ESCALATION,
   ATRIAL_FIBRILLATION_WITH_RAPID_RESPONSE,
 ];
 export const DEFAULT_CARDIOLOGY_SCENARIO_ID = STABLE_CHEST_PAIN_EVALUATION.metadata.id;

@@ -882,6 +882,9 @@ export function Cockpit({
           onAfRvrResponse={(action) => session.act({
             type: 'af-rvr-response', payload: { action },
           })}
+          onPostInfarctionShockResponse={(action) => session.act({
+            type: 'post-infarction-shock-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

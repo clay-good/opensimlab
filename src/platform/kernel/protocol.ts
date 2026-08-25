@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 87 reports clinic STEMI state. */
-export const WORKER_PROTOCOL_VERSION = 87;
+/** Bumped whenever the message shape changes incompatibly. Version 88 reports post-PCI shock escalation. */
+export const WORKER_PROTOCOL_VERSION = 88;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -661,6 +661,16 @@ export interface EquipmentSnapshot {
       readonly pciCapableSetting: false;
       readonly biomarkerDelayUsed: false;
       readonly downstreamTherapySelected: false;
+      readonly treatmentDelivered: false;
+    };
+    readonly postInfarctionShockAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly causesAtTick: number | null;
+      readonly transferAtTick: number | null;
+      readonly bridgeAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly pressureAloneUsed: false;
+      readonly routineDeviceSelected: false;
       readonly treatmentDelivered: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
