@@ -521,6 +521,11 @@ export class AnesthesiaEngine {
   private stableChestPainLikelihoodAtTick: number | null = null;
   private stableChestPainTestingAtTick: number | null = null;
   private stableChestPainSafetyNetAtTick: number | null = null;
+  private nstemiTrajectoryAtTick: number | null = null;
+  private nstemiVerificationAtTick: number | null = null;
+  private nstemiVeryHighRiskAtTick: number | null = null;
+  private nstemiStrategyAtTick: number | null = null;
+  private nstemiHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -4072,6 +4077,47 @@ export class AnesthesiaEngine {
         this.log('advisory', 'assessment', `stable-chest-pain-safety-net-recorded-${this.currentTick}`, 'Follow-up and urgent reassessment for rest or prolonged symptoms, increasing frequency, severity, duration or lower threshold, syncope, marked dyspnea, instability, or another acute concern were recorded. No disposition, diagnosis, treatment, event forecast, or outcome was supplied.', { urgentChangeTriggersExplicit: true, outcomePredicted: false });
         break;
       }
+      case 'nstemi-risk-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'nstemi-risk-reassessment');
+        const valid = ['reconcile-nstemi-serial-trajectory', 'verify-nstemi-and-alternatives',
+          'screen-nstemi-very-high-risk-features', 'record-nstemi-invasive-strategy',
+          'record-nstemi-monitoring-and-handoff'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `nstemi-risk-response-refused-${this.currentTick}`, supported ? 'The NSTEMI risk-reassessment action was not one of the listed choices. Nothing changed.' : 'The bounded NSTEMI risk-reassessment choices are available only in the declared lesson.'); break; }
+        if (response === 'reconcile-nstemi-serial-trajectory') {
+          if (this.nstemiTrajectoryAtTick !== null) { this.log('warning', 'assessment', `nstemi-risk-trajectory-refused-${this.currentTick}`, 'The serial symptom, ECG-report, and troponin trajectory has already been reconciled.'); break; }
+          this.nstemiTrajectoryAtTick = this.currentTick;
+          this.log('warning', 'assessment', `nstemi-risk-trajectory-reconciled-${this.currentTick}`, 'Five hours after 25 minutes of central pressure, the patient is pain-free. Fixed high-sensitivity troponin rises from 18 to 146 ng/L above the assay-specific 99th percentile; fixed ECG reports change from horizontal ST depression in V4-V6 to lateral T-wave inversion. One isolated value was not used.', { serialEvidence: true, isolatedValueUsed: false });
+          break;
+        }
+        if (this.nstemiTrajectoryAtTick === null) { this.log('warning', 'assessment', `nstemi-risk-order-refused-${this.currentTick}`, 'Reconcile the complete serial trajectory before classifying risk or strategy.'); break; }
+        if (response === 'verify-nstemi-and-alternatives') {
+          if (this.nstemiVerificationAtTick !== null) { this.log('warning', 'assessment', `nstemi-risk-verification-refused-${this.currentTick}`, 'The authored NSTEMI conclusion and myocardial-injury alternatives have already been reviewed.'); break; }
+          this.nstemiVerificationAtTick = this.currentTick;
+          this.log('warning', 'assessment', `nstemi-risk-verification-recorded-${this.currentTick}`, 'The authored case integrates ischemic symptoms, dynamic ECG reports, and an assay-bounded troponin rise as confirmed NSTEMI. Alternate ischemic and nonischemic causes of myocardial injury remain part of real assessment; no live diagnosis or test interpretation occurred.', { authoredDiagnosis: 'nstemi', liveDiagnosisMade: false });
+          break;
+        }
+        if (this.nstemiVerificationAtTick === null) { this.log('warning', 'assessment', `nstemi-risk-verification-order-refused-${this.currentTick}`, 'Verify the authored conclusion and preserve myocardial-injury alternatives before screening current danger.'); break; }
+        if (response === 'screen-nstemi-very-high-risk-features') {
+          if (this.nstemiVeryHighRiskAtTick !== null) { this.log('warning', 'assessment', `nstemi-risk-danger-refused-${this.currentTick}`, 'Current very-high-risk features have already been screened.'); break; }
+          this.nstemiVeryHighRiskAtTick = this.currentTick;
+          this.log('warning', 'assessment', `nstemi-risk-danger-screened-${this.currentTick}`, 'Current screen: pain-free, BP 132/78 mmHg, warm perfusion, no acute heart failure, life-threatening arrhythmia, arrest, mechanical complication, or recurrent dynamic ST change. No current very-high-risk feature is authored. Stability is reassessed, not inherited.', { currentVeryHighRisk: false, immediateEscalationTriggerPresent: false });
+          break;
+        }
+        if (this.nstemiVeryHighRiskAtTick === null) { this.log('warning', 'assessment', `nstemi-risk-danger-order-refused-${this.currentTick}`, 'Re-screen current very-high-risk features before recording invasive strategy.'); break; }
+        if (response === 'record-nstemi-invasive-strategy') {
+          if (this.nstemiStrategyAtTick !== null) { this.log('warning', 'assessment', `nstemi-risk-strategy-refused-${this.currentTick}`, 'The risk-bounded invasive-strategy intent has already been recorded.'); break; }
+          this.nstemiStrategyAtTick = this.currentTick;
+          this.log('warning', 'assessment', `nstemi-risk-strategy-recorded-${this.currentTick}`, 'High ischemic risk, bleeding risk, kidney function, comorbidity, preference, and local capability were reviewed before recording inpatient invasive-strategy intent. Exact timing follows the applicable regional pathway and evolving risk; no universal clock, exact score, medication, angiography, or procedure was supplied.', { ischemicRisk: 'high', exactScoreCalculated: false, universalTimingSelected: false, procedurePerformed: false });
+          break;
+        }
+        if (this.nstemiStrategyAtTick === null) { this.log('warning', 'assessment', `nstemi-risk-strategy-order-refused-${this.currentTick}`, 'Record risk- and region-bounded invasive strategy before handoff ownership.'); break; }
+        if (this.nstemiHandoffAtTick !== null) { this.log('warning', 'assessment', `nstemi-risk-handoff-refused-${this.currentTick}`, 'Monitoring, change triggers, ownership, and the next reassessment have already been recorded.'); break; }
+        this.nstemiHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `nstemi-risk-handoff-recorded-${this.currentTick}`, 'Serial symptoms, ECG, rhythm, pressure, perfusion, oxygenation, heart failure, bleeding, and renal context remain monitored. Recurrent or refractory pain, instability, heart failure, life-threatening arrhythmia, arrest, mechanical concern, or recurrent dynamic ECG change trigger immediate escalation. Ownership and next reassessment were recorded without determining disposition or outcome.', { ownerNamed: true, changeTriggersExplicit: true, outcomePredicted: false });
+        break;
+      }
       case 'aspiration-risk-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
@@ -6791,6 +6837,12 @@ export class AnesthesiaEngine {
         spo2Percent: 95, systolicMmHg: 146, diastolicMmHg: 92, meanArterialMmHg: 110 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'nstemi-risk-reassessment')) {
+      crisisState = { ...crisisState, heartRateBpm: 88, respiratoryRateBpm: 16,
+        spo2Percent: 97, systolicMmHg: 132, diastolicMmHg: 78,
+        meanArterialMmHg: 96, coreTemperatureC: 36.7 };
+    }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'unstable-narrow-complex-tachycardia')) {
       const cardioverted = this.unstableNarrowTachycardiaCardiovertedAtTick !== null;
       crisisState = { ...crisisState, heartRateBpm: cardioverted ? 92 : 188,
@@ -7594,6 +7646,20 @@ export class AnesthesiaEngine {
               clinicalLikelihood: 'not-very-low' as const,
               exactScoreCalculated: false,
               testPerformed: false,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'nstemi-risk-reassessment') ? {
+            nstemiRiskAssessment: {
+              trajectoryAtTick: this.nstemiTrajectoryAtTick,
+              verificationAtTick: this.nstemiVerificationAtTick,
+              veryHighRiskAtTick: this.nstemiVeryHighRiskAtTick,
+              strategyAtTick: this.nstemiStrategyAtTick,
+              handoffAtTick: this.nstemiHandoffAtTick,
+              ischemicRisk: 'high' as const,
+              currentVeryHighRisk: false,
+              exactScoreCalculated: false,
+              procedurePerformed: false,
             },
           } : {}),
         aspirationRiskAssessment: {

@@ -4010,6 +4010,25 @@ export function objectiveFindings(
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Follow-up and explicit acute-change triggers closed the bounded evaluation without predicting outcome.' : 'Follow-up and the acute-change safety net were absent or preceded the shared pathway.', atTick: safetyNet?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['reconcile-nstemi-serial-trajectory', 'verify-nstemi-and-alternatives',
+      'screen-nstemi-very-high-risk-features', 'classify-nstemi-invasive-strategy',
+      'record-nstemi-monitoring-and-handoff'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'nstemi-risk-reassessment');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The NSTEMI risk-reassessment lesson was not active.' } satisfies ObjectiveFinding;
+      const trajectory = log.find((event) => /^nstemi-risk-trajectory-reconciled-\d+$/.test(event.eventId));
+      const verification = log.find((event) => /^nstemi-risk-verification-recorded-\d+$/.test(event.eventId));
+      const danger = log.find((event) => /^nstemi-risk-danger-screened-\d+$/.test(event.eventId));
+      const strategy = log.find((event) => /^nstemi-risk-strategy-recorded-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^nstemi-risk-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-nstemi-serial-trajectory') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'Symptoms, serial ECG reports, and assay-bounded troponin change were reconciled as one trajectory.' : 'The serial trajectory was not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'verify-nstemi-and-alternatives') { const ordered = trajectory && verification && trajectory.tick <= verification.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The authored NSTEMI conclusion was verified while alternate myocardial injury remained open.' : 'Verification was absent or preceded serial reconciliation.', atTick: verification?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'screen-nstemi-very-high-risk-features') { const ordered = verification && danger && verification.tick <= danger.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Current very-high-risk features were re-screened rather than inferred from prior stability.' : 'The current danger screen was absent or out of order.', atTick: danger?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'classify-nstemi-invasive-strategy') { const ordered = danger && strategy && danger.tick <= strategy.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'A high-risk inpatient invasive intent integrated bleeding risk and regional pathway without a universal clock.' : 'Invasive-strategy intent was absent or preceded the current danger screen.', atTick: strategy?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = strategy && handoff && strategy.tick <= handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Monitoring, change triggers, ownership, and the next reassessment closed the bounded plan.' : 'Handoff ownership was absent or preceded strategy.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

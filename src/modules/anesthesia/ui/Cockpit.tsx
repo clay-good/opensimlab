@@ -870,6 +870,9 @@ export function Cockpit({
           onStableChestPainResponse={(action) => session.act({
             type: 'stable-chest-pain-response', payload: { action },
           })}
+          onNstemiRiskResponse={(action) => session.act({
+            type: 'nstemi-risk-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

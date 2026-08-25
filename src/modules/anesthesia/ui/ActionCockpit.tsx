@@ -537,6 +537,17 @@ export interface ActionCockpitProps {
       readonly exactScoreCalculated: false;
       readonly testPerformed: false;
     };
+    readonly nstemiRiskAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly verificationAtTick: number | null;
+      readonly veryHighRiskAtTick: number | null;
+      readonly strategyAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly ischemicRisk: 'high';
+      readonly currentVeryHighRisk: false;
+      readonly exactScoreCalculated: false;
+      readonly procedurePerformed: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -876,6 +887,11 @@ export interface ActionCockpitProps {
       | 'estimate-stable-chest-pain-clinical-likelihood'
       | 'record-stable-chest-pain-testing-intent' | 'safety-net-stable-chest-pain-follow-up',
   ) => void;
+  readonly onNstemiRiskResponse?: (
+    action: 'reconcile-nstemi-serial-trajectory' | 'verify-nstemi-and-alternatives'
+      | 'screen-nstemi-very-high-risk-features' | 'record-nstemi-invasive-strategy'
+      | 'record-nstemi-monitoring-and-handoff',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1097,6 +1113,9 @@ export function crisisResponseAvailability(
     hasStableChestPainResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'stable-chest-pain-evaluation',
     ),
+    hasNstemiRiskResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'nstemi-risk-reassessment',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1193,6 +1212,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'endotracheal-tube-migration-after-repositioning')
       || (event.type === 'narrative' && event.target === 'septic-shock-resuscitation')
       || (event.type === 'narrative' && event.target === 'stable-chest-pain-evaluation')
+      || (event.type === 'narrative' && event.target === 'nstemi-risk-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1229,6 +1249,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasEndotrachealTubeMigrationResponse,
     hasSepticShockResuscitationResponse,
     hasStableChestPainResponse,
+    hasNstemiRiskResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1285,7 +1306,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse;
-  const hasAnyNonAcuteAssessment = hasStableChestPainResponse;
+  const hasAnyNonAcuteAssessment = hasStableChestPainResponse || hasNstemiRiskResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1316,7 +1337,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasStableChestPainResponse
+  const responseTray = hasNstemiRiskResponse
+    ? { id: 'crisis', label: 'NSTEMI reassessment' } as const
+    : hasStableChestPainResponse
     ? { id: 'crisis', label: 'Chest-pain evaluation' } as const
     : hasSepticShockResuscitationResponse
     ? { id: 'crisis', label: 'Septic resuscitation' } as const
@@ -1472,6 +1495,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse
     || hasStableChestPainResponse
+    || hasNstemiRiskResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1978,6 +2002,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasStableChestPainResponse && (
               <StableChestPainTray assessment={props.resuscitation.stableChestPainAssessment}
                 onAction={props.onStableChestPainResponse ?? (() => {})} />
+            )}
+            {hasNstemiRiskResponse && (
+              <NstemiRiskTray assessment={props.resuscitation.nstemiRiskAssessment}
+                onAction={props.onNstemiRiskResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -5580,6 +5608,59 @@ function SepticShockResuscitationTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-septic-shock-trajectory')}>Review 10-minute trajectory</Button>
         </div>
         <p className="field__hint">The +2% response and B-lines are case facts, not universal cutoffs. This screen gives no fluid or drug and performs no drainage.</p>
+      </section>
+    </div>
+  );
+}
+
+function NstemiRiskTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['nstemiRiskAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNstemiRiskResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const verification = assessment?.verificationAtTick != null;
+  const danger = assessment?.veryHighRiskAtTick != null;
+  const strategy = assessment?.strategyAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="nstemi-trajectory-title">
+        <div id="nstemi-trajectory-title" className="syringe__name">Risk is a moving picture.</div>
+        <Badge kind="teaching">symptoms · serial ECG · serial troponin · current danger</Badge>
+        <div className="syringe__meta">18 → 146 ng/L · ST depression → T-wave inversion · pain-free now</div>
+        <p className="syringe__remaining" role="status">
+          {danger ? 'No current very-high-risk feature · keep re-screening'
+            : verification ? 'Authored NSTEMI verified · re-screen danger now'
+              : trajectory ? 'Serial change reconciled · preserve injury alternatives'
+                : 'One isolated result is not the trajectory'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={trajectory}
+            onClick={() => onAction('reconcile-nstemi-serial-trajectory')}>Reconcile the serial trajectory</Button>
+          <Button className="crisis-drug__action" disabled={!trajectory || verification}
+            onClick={() => onAction('verify-nstemi-and-alternatives')}>Verify NSTEMI + preserve alternatives</Button>
+          <Button className="crisis-drug__action" disabled={!verification || danger}
+            onClick={() => onAction('screen-nstemi-very-high-risk-features')}>Re-screen very-high-risk features</Button>
+        </div>
+        <p className="field__hint">Stable now does not erase high risk. Recurrent pain, instability, heart failure, dangerous rhythm, arrest, mechanical concern, or dynamic ECG change alters urgency.</p>
+      </section>
+      <section className="syringe" aria-labelledby="nstemi-strategy-title">
+        <div id="nstemi-strategy-title" className="syringe__name">Timing follows risk, patient, region, and system.</div>
+        <Badge kind="teaching">ischemia · bleeding · kidney · preference · capability</Badge>
+        <div className="syringe__meta">High risk · inpatient invasive intent · no universal clock</div>
+        <p className="syringe__remaining" role="status">
+          {handoff ? 'Strategy + triggers + owner + next reassessment recorded'
+            : strategy ? 'Risk-bounded inpatient strategy recorded · ownership due'
+              : danger ? 'Current danger screened · review ischemic + bleeding risk'
+                : 'Current very-high-risk screen pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!danger || strategy}
+            onClick={() => onAction('record-nstemi-invasive-strategy')}>Record region-bounded invasive intent</Button>
+          <Button className="crisis-drug__action" disabled={!strategy || handoff}
+            onClick={() => onAction('record-nstemi-monitoring-and-handoff')}>Record triggers + owner + reassessment</Button>
+        </div>
+        <p className="field__hint">No score, medication, angiography, or procedure is supplied. The applicable local pathway resolves exact timing as risk evolves.</p>
       </section>
     </div>
   );

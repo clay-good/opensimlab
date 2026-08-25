@@ -2693,6 +2693,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['stable-chest-pain-evaluation'],
   },
   {
+    id: 'nstemi-serial-findings-and-risk-tier-are-authored',
+    headline: 'The symptom course, serial ECG reports, troponin values, NSTEMI conclusion, and high-risk tier are authored teaching facts.',
+    simplification: 'One inpatient has a fixed resolved symptom episode, dynamic ECG reports, assay-bounded troponin rise, and no current very-high-risk feature without live acquisition or calculation.',
+    whereItMisleads: 'Treating the bedside trace as a diagnostic 12-lead, the troponin values as transferable between assays, or the authored risk tier as a patient-specific score or diagnosis.',
+    correctUnderstanding: 'Real assessment integrates current symptoms, examination, serial diagnostic ECGs, assay-specific troponin change, competing injury causes, comorbidity, and repeated risk assessment.',
+    briefIn: ['nstemi-risk-reassessment'],
+  },
+  {
+    id: 'nstemi-controls-record-reassessment-and-plan-intent-only',
+    headline: 'The ordered controls record serial review, danger screening, strategy, monitoring, and ownership intent; they do not deliver ACS care.',
+    simplification: 'Five clicks stand in for multidisciplinary assessment, communication, regional pathway use, bleeding-risk review, monitoring, and handoff.',
+    whereItMisleads: 'Equating the sequence with examination, ECG or laboratory interpretation, risk calculation, prescribing, communication, angiography planning, or cardiology competence.',
+    correctUnderstanding: 'Actual care requires qualified teams, real-time assessment, verified test results, local ACS pathways, patient-specific treatment, communication, and repeated response review.',
+    briefIn: ['nstemi-risk-reassessment'],
+  },
+  {
+    id: 'no-live-nstemi-testing-scoring-treatment-procedure-prognosis-or-outcome',
+    headline: 'The lab does not acquire tests, calculate scores, prescribe, perform angiography or revascularization, determine universal timing, or predict outcome.',
+    simplification: 'No live ECG, troponin, imaging, GRACE or bleeding score, medication, transfer, angiography, PCI, surgery, infarct trajectory, complication, or outcome is modeled.',
+    whereItMisleads: 'Copying a fictional value or timing, using one regional strategy everywhere, assuming pain resolution lowers risk, or inferring procedural benefit, prognosis, or safety.',
+    correctUnderstanding: 'Use current regional guidance and local pathways to integrate evolving ischemic and bleeding risk, patient preferences, capability, treatment, invasive timing, and longitudinal care.',
+    briefIn: ['nstemi-risk-reassessment'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

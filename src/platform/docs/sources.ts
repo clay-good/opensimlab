@@ -1472,6 +1472,34 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-25',
   },
   {
+    id: 'rao-acute-coronary-syndromes-2025',
+    pmid: '40014670',
+    authors: "Rao SV, O'Donoghue ML, Ruel M, et al",
+    title: '2025 ACC/AHA/ACEP/NAEMSP/SCAI Guideline for the Management of Patients With Acute Coronary Syndromes',
+    publication: 'Circulation',
+    year: 2025,
+    locator: '151:e771-e862; doi:10.1161/CIR.0000000000001309',
+    usedFor: 'The NSTEMI risk-reassessment boundary: intermediate- or high-risk NSTE-ACS supports '
+      + 'an invasive approach during hospitalization, while lower ischemic risk requires further '
+      + 'risk stratification rather than automatic invasive treatment.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-25',
+  },
+  {
+    id: 'byrne-acute-coronary-syndromes-2023',
+    pmid: '37622654',
+    authors: 'Byrne RA, Rossello X, Coughlan JJ, et al',
+    title: '2023 ESC Guidelines for the management of acute coronary syndromes',
+    publication: 'Eur Heart J',
+    year: 2023,
+    locator: '44:3720-3826; doi:10.1093/eurheartj/ehad191',
+    usedFor: 'The NSTEMI serial-risk boundary: use clinical state, serial ECG, high-sensitivity '
+      + 'troponin, very-high-risk features, ischemic risk, and bleeding risk to determine whether '
+      + 'invasive management is immediate, early, or otherwise inpatient and pathway-specific.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-25',
+  },
+  {
     id: 'gulati-chest-pain-guideline-2021',
     pmid: '34756653',
     authors: 'Gulati M, Levy PD, Mukherjee D, et al',

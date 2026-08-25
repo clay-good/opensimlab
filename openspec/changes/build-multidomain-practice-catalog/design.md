@@ -997,6 +997,22 @@ capacity, order or perform testing, diagnose coronary disease or ischemia, presc
 determine disposition, or predict events or outcome. The remaining 16 cardiology titles remain
 planned until their individual evidence, interaction, test, and debrief contracts pass.
 
+### Wave C cardiology slice 2: NSTEMI risk reassessment
+
+The second cardiology slice follows a resolved 25-minute pressure episode with a fixed
+high-sensitivity-troponin rise and changing 12-lead reports. The learner reconciles the serial
+trajectory, verifies the authored NSTEMI conclusion while preserving alternate causes of
+myocardial injury, and re-screens for very-high-risk features rather than inheriting stability from
+an earlier observation. Ischemic risk, bleeding risk, kidney function, comorbidity, preference, and
+local capability then inform inpatient invasive-strategy intent, followed by explicit monitoring,
+change triggers, ownership, and the next reassessment.
+
+US and European guidance phrase invasive timing differently. The lab teaches their shared risk
+structure and preserves the applicable regional pathway instead of presenting one universal clock.
+It does not examine; acquire or interpret an ECG, troponin, imaging, or another test; calculate a
+score; diagnose; prescribe or deliver treatment; choose or perform angiography, PCI, or surgery;
+determine transfer, disposition, prognosis, complications, or outcome.
+
 #### Respiratory medicine: 15
 
 Acute severe asthma; COPD exacerbation; community-acquired pneumonia with hypoxemia; pulmonary

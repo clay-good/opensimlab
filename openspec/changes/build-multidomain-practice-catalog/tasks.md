@@ -225,7 +225,8 @@ credited toward the catalog until every item in the completion contract passes.
   session, monitor, transcript, action, and debrief frame and are completion-audited, prerendered,
   available offline, and explicitly bounded.
 - [ ] Wave C: complete 17 cardiology and 15 respiratory-medicine scenarios. Cardiology is live with
-  1 of 17 scenarios: stable chest-pain evaluation. Respiratory medicine remains at 0 of 15.
+  2 of 17 scenarios: stable chest-pain evaluation and NSTEMI risk reassessment. Respiratory
+  medicine remains at 0 of 15.
 - [ ] Wave D: complete 16 pediatric, 15 obstetric, and 11 neonatal scenarios.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.

@@ -158,7 +158,8 @@ Reviewers run the routine induction themselves before answering.
 | B104 | In the endotracheal-tube-migration-after-repositioning lesson, a 22-to-25 cm post-turn depth change combines with new unilateral ventilation, lower exhaled volume, higher peak pressure, rising EtCO₂, falling SpO₂, and persistent capnography, requiring immediate support and experienced help, whole airway-position-panel review with alternatives preserved, bounded correction intent, and fixed bilateral multi-signal reassessment without making one depth a universal target or implying examination, auscultation, monitoring or ventilator-data acquisition, equipment inspection, oxygen or ventilation delivery, tube handling or securement, imaging, bronchoscopy, diagnosis, disposition, or outcome competence | | |
 | B105 | In the persistent septic-shock-resuscitation lesson, reported cultures, antimicrobials, 30 mL/kg crystalloid, and running norepinephrine conflict with persistent multi-organ hypoperfusion and rising lactate, requiring delivery-versus-response reconciliation, pressure plus serial tissue-perfusion review, fixed dynamic fluid-response and lung-tolerance assessment that blocks a blind repeat bolus without creating universal cutoffs, individualized hemodynamic-support and urgent source-control intent in parallel, and modest fixed reassessment without implying examination, monitoring or delivery verification, sample or ultrasound acquisition or interpretation, calculation, diagnosis, prescribing, fluid or drug delivery, device adjustment, drainage, disposition, or outcome competence | | |
 | B106 | In the stable chest-pain evaluation lesson, a fixed 3-month exertional pressure pattern resolves with rest and has no recent change or acute feature, requiring explicit stable-versus-acute verification, complete symptom characterization without “atypical,” risk-factor-weighted clinical-likelihood review before testing, shared patient-specific testing intent, and an acute-change safety net without implying examination, ECG acquisition or interpretation, score calculation, exercise testing, diagnostic testing, diagnosis, prescribing, disposition, prognosis, or outcome competence | | |
-| B107 | Overall: does this patient behave like a patient? | | |
+| B107 | In the NSTEMI risk-reassessment lesson, a resolved symptom episode is reconciled with a fixed assay-bounded troponin rise and changing ECG reports, requiring authored-diagnosis verification with alternate myocardial injury preserved, a fresh very-high-risk screen, ischemic and bleeding risk review before region-specific inpatient invasive intent, and explicit monitoring, triggers, ownership, and reassessment without implying examination, test acquisition or interpretation, scoring, diagnosis, prescribing, treatment, procedure, universal timing, disposition, prognosis, or outcome competence | | |
+| B108 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -395,4 +396,9 @@ So that reviewers spend their attention on what this review is for:
   acquire or interpret an ECG, calculate a score, measure exercise capacity, order or perform a
   test, diagnose coronary disease or ischemia, prescribe, determine disposition or prognosis, or
   predict outcome. Its likelihood tier and testing discussion are not a patient-specific tool.
+- The NSTEMI risk-reassessment case uses fixed symptoms, serial ECG reports, assay-bounded
+  troponin values, an authored diagnosis, risk tier, and invasive-strategy discussion. It does not
+  examine, acquire or interpret tests, calculate scores, diagnose, prescribe or deliver treatment,
+  choose or perform a procedure, set universal timing, determine disposition or prognosis, or
+  predict outcome. Its values, risk tier, and timing discussion are not patient-specific tools.
 - Nothing here has been clinically reviewed before — you are the first.
