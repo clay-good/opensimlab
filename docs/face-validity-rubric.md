@@ -116,7 +116,8 @@ Reviewers run the routine induction themselves before answering.
 | B62 | In the emergency-anaphylaxis lesson, a community food exposure, lip and tongue swelling, widespread wheeze, hypoxemia, hypotension, and impaired perfusion form a coherent multisystem pattern; whole-patient review precedes positioning and help, fixed adult IM epinephrine, parallel oxygen and crystalloid support, and serial reassessment without implying diagnostic proof, dose calculation, injection or airway skill, refractory-care competence, or outcome | | |
 | B63 | In the adult-asthma lesson, words-only speech, accessory-muscle use, expiratory wheeze, room-air hypoxemia, and reduced peak flow form a coherent severe presentation; whole-patient review precedes controlled oxygen, a conservative fixed inhaled bronchodilator bundle, early anti-inflammatory intent, and serial reassessment without implying diagnostic proof, examination or spirometry acquisition, inhaler technique, individualized dosing, advanced-support competence, disposition, or outcome | | |
 | B64 | In the COPD-exacerbation lesson, increased dyspnea, short-phrase speech, tachypnea, room-air hypoxemia, purulent sputum, and compensated hypercapnia form a coherent moderate presentation; whole-patient and mimic review precedes controlled oxygen, air-driven short-acting bronchodilator intent, short-course systemic-corticosteroid intent, an antibiotic indication, and repeat blood-gas review without implying diagnostic proof, examination or test acquisition, device technique, individualized treatment, ventilatory-support competence, disposition, or outcome | | |
-| B65 | Overall: does this patient behave like a patient? | | |
+| B65 | In the acute-pulmonary-edema lesson, severe dyspnea, orthopnea, diffuse congestion findings, room-air hypoxemia, marked hypertension, preserved perfusion, and fixed focused tests form a coherent presentation; whole-patient review precedes early positive-pressure support, titrated oxygen, parallel decongestive and vasodilator intents, and serial reassessment without implying diagnostic proof, examination or test acquisition, NIV technique, individualized drug selection or titration, precipitant-treatment competence, disposition, or outcome | | |
+| B66 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -255,4 +256,9 @@ So that reviewers spend their attention on what this review is for:
   bronchodilator, corticosteroid, antibiotic-indication, and reassessment controls are bounded.
   Examination, testing, technique, individualized or repeat treatment, ventilatory-support setup,
   disposition, maintenance planning, prevention, and outcome are absent.
+- The acute-pulmonary-edema case uses fixed respiratory, congestion, pressure, perfusion, ECG,
+  radiograph, and focused-ultrasound findings plus authored monitor anchors. NIV, oxygen, diuretic,
+  vasodilator, and reassessment controls are bounded. Examination, test acquisition, device setup,
+  drug selection or titration, organ response, precipitant treatment, shock care, disposition,
+  chronic therapy, and outcome are absent.
 - Nothing here has been clinically reviewed before — you are the first.

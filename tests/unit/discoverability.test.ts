@@ -206,7 +206,7 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
     }
   });
 
-  it('publishes the first eight emergency medicine rehearsals without overstating the wave', () => {
+  it('publishes the first nine emergency medicine rehearsals without overstating the wave', () => {
     const emergency = MODULES.find((module) => module.id === 'emergency-medicine');
     expect(emergency).toMatchObject({
       route: 'emergency-medicine', displayName: 'Emergency medicine', status: 'available',
@@ -239,6 +239,9 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
     });
     expect(routeFor('/emergency-medicine/scenario/copd-exacerbation')).toMatchObject({
       indexable: true, heading: 'COPD exacerbation',
+    });
+    expect(routeFor('/emergency-medicine/scenario/acute-pulmonary-edema')).toMatchObject({
+      indexable: true, heading: 'Acute pulmonary edema',
     });
   });
 

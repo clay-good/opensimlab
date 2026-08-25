@@ -245,6 +245,13 @@ export interface ActionCockpitProps {
       readonly antibioticIntentAtTick: number | null;
       readonly reassessedAtTick: number | null;
     };
+    readonly acutePulmonaryEdemaAssessment?: {
+      readonly patternReviewedAtTick: number | null;
+      readonly nivAtTick: number | null;
+      readonly diureticIntentAtTick: number | null;
+      readonly vasodilatorIntentAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -384,6 +391,11 @@ export interface ActionCockpitProps {
       | 'give-air-driven-bronchodilators' | 'record-five-day-corticosteroid-intent'
       | 'record-antibiotic-indication' | 'reassess-and-review-ventilatory-support',
   ) => void;
+  readonly onAcutePulmonaryEdemaResponse?: (
+    action: 'review-pattern-mimics-and-precipitants' | 'record-niv-and-titrated-oxygen'
+      | 'record-loop-diuretic-intent' | 'record-vasodilator-intent'
+      | 'reassess-breathing-pressure-and-perfusion',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -477,6 +489,9 @@ export function crisisResponseAvailability(
     hasCopdExacerbationResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     ),
+    hasAcutePulmonaryEdemaResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'acute-pulmonary-edema',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -531,6 +546,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'emergency-anaphylaxis')
       || (event.type === 'narrative' && event.target === 'adult-asthma')
       || (event.type === 'narrative' && event.target === 'copd-exacerbation')
+      || (event.type === 'narrative' && event.target === 'acute-pulmonary-edema')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -547,6 +563,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasUndifferentiatedShockResponse, hasSepticShockResponse, hasHemorrhagicShockResponse,
     hasCardiacTamponadeResponse, hasEmergencyAnaphylaxisResponse, hasAdultAsthmaResponse,
     hasCopdExacerbationResponse,
+    hasAcutePulmonaryEdemaResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -577,8 +594,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasDelayedEmergenceResponse || hasExtubationReadinessResponse || hasCiedPlanningResponse
     || hasPostoperativeHandoffResponse || hasUndifferentiatedShockResponse
     || hasSepticShockResponse || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
-    || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse || hasCopdExacerbationResponse;
-  const responseTray = hasCopdExacerbationResponse
+    || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse || hasCopdExacerbationResponse
+    || hasAcutePulmonaryEdemaResponse;
+  const responseTray = hasAcutePulmonaryEdemaResponse
+    ? { id: 'crisis', label: 'Pulmonary edema' } as const
+    : hasCopdExacerbationResponse
     ? { id: 'crisis', label: 'COPD response' } as const
     : hasAdultAsthmaResponse
     ? { id: 'crisis', label: 'Asthma response' } as const
@@ -618,9 +638,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     && (focusedPleuralEmergency || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
-      || hasCopdExacerbationResponse)
+      || hasCopdExacerbationResponse || hasAcutePulmonaryEdemaResponse)
       && (!hasNonMaternalCrisisResponse || hasEmergencyAnaphylaxisResponse
-        || hasAdultAsthmaResponse || hasCopdExacerbationResponse)));
+        || hasAdultAsthmaResponse || hasCopdExacerbationResponse
+        || hasAcutePulmonaryEdemaResponse)));
   const trays = hasCrisisResponse
     ? focusedEmergencyAssessment ? [responseTray]
       : props.scenario.formulary.length === 0 ? [responseTray, ...TRAYS] : [...TRAYS, responseTray]
@@ -927,6 +948,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <CopdExacerbationTray
                 assessment={props.resuscitation.copdExacerbationAssessment}
                 onAction={props.onCopdExacerbationResponse ?? (() => {})}
+              />
+            )}
+            {hasAcutePulmonaryEdemaResponse && (
+              <AcutePulmonaryEdemaTray
+                assessment={props.resuscitation.acutePulmonaryEdemaAssessment}
+                onAction={props.onAcutePulmonaryEdemaResponse ?? (() => {})}
               />
             )}
             {hasEmergenceResidualBlockResponse && (
@@ -2440,6 +2467,67 @@ function CopdExacerbationTray({ assessment, onAction }: {
           </Button>
         </div>
         <p className="field__hint">No device technique, individualized or repeat dose, toxicity, antibiotic selection, NIV setup, disposition, maintenance plan, or outcome is offered.</p>
+      </section>
+    </div>
+  );
+}
+
+function AcutePulmonaryEdemaTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['acutePulmonaryEdemaAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onAcutePulmonaryEdemaResponse']>;
+}) {
+  const reviewed = assessment?.patternReviewedAtTick != null;
+  const niv = assessment?.nivAtTick != null;
+  const diuretic = assessment?.diureticIntentAtTick != null;
+  const vasodilator = assessment?.vasodilatorIntentAtTick != null;
+  const reassessed = assessment?.reassessedAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="pulmonary-edema-pattern-title">
+        <div id="pulmonary-edema-pattern-title" className="syringe__name">See lungs, pressure, and perfusion together</div>
+        <Badge kind="teaching">Fixed ED vignette</Badge>
+        <div className="syringe__meta">Work · SpO₂ · congestion · BP · perfusion · mimics</div>
+        <p className="syringe__remaining" role="status">
+          {niv ? 'Early positive-pressure support recorded'
+            : reviewed ? 'Pulmonary-edema pattern reviewed · support open'
+              : 'Whole-patient pattern review pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={reviewed}
+            onClick={() => onAction('review-pattern-mimics-and-precipitants')}>
+            Review pattern + mimics + precipitants
+          </Button>
+          <Button className="crisis-drug__action" disabled={!reviewed || niv}
+            onClick={() => onAction('record-niv-and-titrated-oxygen')}>
+            Start NIV + titrated oxygen intent
+          </Button>
+        </div>
+        <p className="field__hint">Findings, ECG, radiograph, and focused ultrasound are authored. The screen does not acquire an examination, test, image, or diagnosis.</p>
+      </section>
+      <section className="syringe" aria-labelledby="pulmonary-edema-treatment-title">
+        <div id="pulmonary-edema-treatment-title" className="syringe__name">Unload, decongest, then re-read the patient</div>
+        <div className="syringe__meta">Congestion intent · pressure-safe vasodilation · serial response</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'Initial response reassessed · BP 146/86'
+            : diuretic && vasodilator ? 'Initial treatment recorded · reassess next'
+              : reviewed ? 'Parallel initial treatment open' : 'Pattern review pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!reviewed || diuretic}
+            onClick={() => onAction('record-loop-diuretic-intent')}>
+            Record IV loop-diuretic intent
+          </Button>
+          <Button className="crisis-drug__action" disabled={!reviewed || vasodilator}
+            onClick={() => onAction('record-vasodilator-intent')}>
+            Record IV vasodilator intent · SBP &gt;110
+          </Button>
+          <Button className="crisis-drug__action"
+            disabled={!niv || !diuretic || !vasodilator || reassessed}
+            onClick={() => onAction('reassess-breathing-pressure-and-perfusion')}>
+            Reassess breathing + BP + perfusion
+          </Button>
+        </div>
+        <p className="field__hint">No NIV technique, drug dose or titration, urine output, precipitant treatment, intubation, shock pathway, disposition, or outcome is offered.</p>
       </section>
     </div>
   );

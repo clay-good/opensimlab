@@ -316,6 +316,11 @@ export class AnesthesiaEngine {
   private copdCorticosteroidIntentAtTick: number | null = null;
   private copdAntibioticIntentAtTick: number | null = null;
   private copdReassessedAtTick: number | null = null;
+  private pulmonaryEdemaPatternReviewedAtTick: number | null = null;
+  private pulmonaryEdemaNivAtTick: number | null = null;
+  private pulmonaryEdemaDiureticIntentAtTick: number | null = null;
+  private pulmonaryEdemaVasodilatorIntentAtTick: number | null = null;
+  private pulmonaryEdemaReassessedAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1251,6 +1256,98 @@ export class AnesthesiaEngine {
             repeatPh: 7.38, repeatPaco2MmHg: 48,
             immediateNoninvasiveVentilationSelected: false, teachingModel: true,
           });
+        break;
+      }
+      case 'acute-pulmonary-edema-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some(
+          (event) => event.type === 'narrative' && event.target === 'acute-pulmonary-edema',
+        );
+        const valid = [
+          'review-pattern-mimics-and-precipitants', 'record-niv-and-titrated-oxygen',
+          'record-loop-diuretic-intent', 'record-vasodilator-intent',
+          'reassess-breathing-pressure-and-perfusion',
+        ].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `acute-pulmonary-edema-refused-${this.currentTick}`,
+            supported
+              ? 'The acute-pulmonary-edema action was not one of the listed choices. Nothing changed.'
+              : 'The bounded acute-pulmonary-edema choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-pattern-mimics-and-precipitants') {
+          if (this.pulmonaryEdemaPatternReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `acute-pulmonary-edema-pattern-refused-${this.currentTick}`,
+              'The fixed pattern, mimic, and precipitant review has already been recorded.');
+            break;
+          }
+          this.pulmonaryEdemaPatternReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `acute-pulmonary-edema-pattern-reviewed-${this.currentTick}`,
+            'Fixed assessment: abrupt severe dyspnea and orthopnea, short-phrase speech, respiratory rate 32/min, SpO₂ 90%, blood pressure 188/112 mmHg, diffuse crackles, elevated jugular venous pressure, and cool but perfused extremities. Authored ECG shows sinus tachycardia without ST elevation; chest radiograph shows bilateral perihilar interstitial-alveolar opacity; focused ultrasound shows diffuse bilateral B-lines with preserved LV systolic contraction. No fever, focal consolidation, unilateral ventilation loss, abrupt pleuritic onset, or unstable arrhythmia is authored. ACS, ischemia, medication lapse, renal dysfunction, valve disease, and other precipitants still require real evaluation.');
+          break;
+        }
+        if (this.pulmonaryEdemaPatternReviewedAtTick === null) {
+          this.log('warning', 'assessment', `acute-pulmonary-edema-order-refused-${this.currentTick}`,
+            'Review the whole pattern, immediate mimics, and precipitants before treatment.');
+          break;
+        }
+        if (response === 'record-niv-and-titrated-oxygen') {
+          if (this.pulmonaryEdemaNivAtTick !== null) {
+            this.log('warning', 'equipment', `acute-pulmonary-edema-niv-refused-${this.currentTick}`,
+              'NIV and titrated-oxygen intent has already been recorded.');
+            break;
+          }
+          this.pulmonaryEdemaNivAtTick = this.currentTick;
+          this.ventilator = {
+            ...this.ventilator, mode: 'pressure-control', fio2: 0.4, peep: 8,
+            respiratoryRateBpm: 22, delivering: true,
+          };
+          this.log('critical', 'equipment', `acute-pulmonary-edema-niv-${this.currentTick}`,
+            'Early noninvasive positive-pressure support with titrated oxygen was recorded for severe work of breathing, respiratory rate above 25/min, and SpO₂ at 90%. A bounded FiO₂ 0.40 and PEEP 8 cmH₂O teaching setting is displayed; interface choice, fit, pressure titration, synchrony, contraindications, and airway rescue are not simulated.', {
+              intentOnly: true, fio2: 0.4, peepCmH2o: 8, teachingModel: true,
+            });
+          break;
+        }
+        if (response === 'record-loop-diuretic-intent') {
+          if (this.pulmonaryEdemaDiureticIntentAtTick !== null) {
+            this.log('warning', 'drug', `acute-pulmonary-edema-diuretic-refused-${this.currentTick}`,
+              'Loop-diuretic intent has already been recorded.');
+            break;
+          }
+          this.pulmonaryEdemaDiureticIntentAtTick = this.currentTick;
+          this.log('critical', 'drug', `acute-pulmonary-edema-diuretic-${this.currentTick}`,
+            'IV loop-diuretic intent was recorded for authored fluid overload and congestion. Agent, prior-dose adjustment, dose, delivery, urine output, renal function, electrolytes, resistance, and individual response are outside this vignette.', { intentOnly: true });
+          break;
+        }
+        if (response === 'record-vasodilator-intent') {
+          if (this.pulmonaryEdemaVasodilatorIntentAtTick !== null) {
+            this.log('warning', 'drug', `acute-pulmonary-edema-vasodilator-refused-${this.currentTick}`,
+              'Vasodilator intent has already been recorded.');
+            break;
+          }
+          this.pulmonaryEdemaVasodilatorIntentAtTick = this.currentTick;
+          this.log('critical', 'drug', `acute-pulmonary-edema-vasodilator-${this.currentTick}`,
+            'IV vasodilator intent was recorded because systolic pressure is safely above 110 mmHg in this hypertensive pulmonary-edema vignette. Agent, dose, delivery, titration, contraindications, ischemia evaluation, and individual response are not simulated.', { intentOnly: true, qualifyingSystolicMmHg: 188 });
+          break;
+        }
+        if (this.pulmonaryEdemaNivAtTick === null
+          || this.pulmonaryEdemaDiureticIntentAtTick === null
+          || this.pulmonaryEdemaVasodilatorIntentAtTick === null
+          || this.currentTick <= Math.max(this.pulmonaryEdemaNivAtTick,
+            this.pulmonaryEdemaDiureticIntentAtTick,
+            this.pulmonaryEdemaVasodilatorIntentAtTick)) {
+          this.log('warning', 'assessment', `acute-pulmonary-edema-reassessment-order-refused-${this.currentTick}`,
+            'Record NIV with titrated oxygen, loop-diuretic intent, and vasodilator intent, then allow the next engine tick before reassessment.');
+          break;
+        }
+        if (this.pulmonaryEdemaReassessedAtTick !== null) {
+          this.log('warning', 'assessment', `acute-pulmonary-edema-reassessment-refused-${this.currentTick}`,
+            'The fixed post-treatment reassessment has already been recorded.');
+          break;
+        }
+        this.pulmonaryEdemaReassessedAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `acute-pulmonary-edema-reassessed-${this.currentTick}`,
+          'Work of breathing, respiratory rate, oxygenation, blood pressure, mental status, and peripheral perfusion were reassessed. The bounded monitor now shows RR 22/min, SpO₂ 96%, and blood pressure 146/86 mmHg. Congestion, urine output, renal function, electrolytes, precipitant evaluation, support weaning, disposition, and outcome remain outside this initial-response vignette.');
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -3925,6 +4022,19 @@ export class AnesthesiaEngine {
         spo2Percent: this.copdControlledOxygenAtTick === null ? 90 : 91,
       };
     }
+    if (this.scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'acute-pulmonary-edema',
+    )) {
+      const treated = this.pulmonaryEdemaVasodilatorIntentAtTick !== null;
+      crisisState = {
+        ...crisisState,
+        respiratoryRateBpm: this.pulmonaryEdemaNivAtTick === null ? 32 : 22,
+        spo2Percent: this.pulmonaryEdemaNivAtTick === null ? 90 : 96,
+        systolicMmHg: treated ? 146 : 188,
+        diastolicMmHg: treated ? 86 : 112,
+        meanArterialMmHg: treated ? 106 : 137,
+      };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -4227,6 +4337,13 @@ export class AnesthesiaEngine {
           corticosteroidIntentAtTick: this.copdCorticosteroidIntentAtTick,
           antibioticIntentAtTick: this.copdAntibioticIntentAtTick,
           reassessedAtTick: this.copdReassessedAtTick,
+        },
+        acutePulmonaryEdemaAssessment: {
+          patternReviewedAtTick: this.pulmonaryEdemaPatternReviewedAtTick,
+          nivAtTick: this.pulmonaryEdemaNivAtTick,
+          diureticIntentAtTick: this.pulmonaryEdemaDiureticIntentAtTick,
+          vasodilatorIntentAtTick: this.pulmonaryEdemaVasodilatorIntentAtTick,
+          reassessedAtTick: this.pulmonaryEdemaReassessedAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

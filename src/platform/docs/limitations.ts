@@ -411,6 +411,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['copd-exacerbation'],
   },
   {
+    id: 'acute-pulmonary-edema-findings-are-authored',
+    headline: 'The pulmonary-edema examination, ECG, radiograph, ultrasound, mimic, and precipitant findings are authored, not acquired tests or diagnosis.',
+    simplification: 'One fixed hypertensive presentation supplies respiratory, congestion, pressure, perfusion, ECG, radiograph, and focused-ultrasound statements. Examination and test acquisition, biomarkers, renal and electrolyte results, and broader differential workup are absent.',
+    whereItMisleads: 'Treating crackles, B-lines, opacity, preserved systolic contraction, or the bounded response as diagnostic proof or exclusion of ACS, pulmonary embolism, infection, valve disease, or another cause.',
+    correctUnderstanding: 'Assess the whole acute-heart-failure pattern, investigate dangerous alternatives and precipitants, and obtain real tests without delaying urgent respiratory support.',
+    briefIn: ['acute-pulmonary-edema'],
+  },
+  {
+    id: 'pulmonary-edema-support-and-treatment-are-intent-controls',
+    headline: 'The pulmonary-edema controls are bounded support and treatment intents, not an NIV, oxygen, diuretic, vasodilator, or prescription calculator.',
+    simplification: 'The screen displays one fixed positive-pressure and oxygen setting, records dose-free loop-diuretic and vasodilator intents, and applies authored respiratory and pressure anchors. It does not assess interface fit, synchrony, drug choice, dose, delivery, titration, contraindications, urine output, renal function, electrolytes, or individual response.',
+    whereItMisleads: 'Copying the displayed support setting or treatment intents into a different pressure, perfusion, right-heart, valve, renal, or respiratory context.',
+    correctUnderstanding: 'Select, monitor, and titrate support and treatment to the real patient, contraindications, hemodynamics, response, current guidance, and local expertise.',
+    briefIn: ['acute-pulmonary-edema'],
+  },
+  {
+    id: 'no-pulmonary-edema-precipitant-disposition-or-outcome',
+    headline: 'Precipitant treatment, serial decongestion, invasive ventilation, shock, disposition, chronic therapy, and outcome are outside this initial-response vignette.',
+    simplification: 'The case ends after one support setting, two treatment intents, and reassessment. It has no ACS or arrhythmia treatment, mechanical-emergency pathway, diuresis trajectory, resistant congestion, NIV failure, intubation, cardiogenic-shock response, admission decision, chronic-therapy optimization, or follow-up workflow.',
+    whereItMisleads: 'Assuming early improvement completes acute care or that pressure and oxygenation response establishes the precipitant or safe disposition.',
+    correctUnderstanding: 'Continue monitoring, investigate and treat the precipitant, measure decongestion and organ response, escalate failed support, and determine appropriate admission and longitudinal care.',
+    briefIn: ['acute-pulmonary-edema'],
+  },
+  {
     id: 'malignant-hyperthermia-is-a-teaching-model',
     headline: 'The hypermetabolic carbon-dioxide, heart-rate, rigidity, and heat trajectories are bounded teaching models, not individualized predictions or a diagnostic test.',
     simplification: 'One latent severity drives excess carbon-dioxide production, tachycardia, '

@@ -2449,6 +2449,51 @@ export function objectiveFindings(
         atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if ([
+      'recognize-acute-pulmonary-edema-pattern', 'support-pulmonary-edema-gas-exchange',
+      'treat-hypertensive-pulmonary-edema', 'reassess-pulmonary-edema-response',
+    ].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) =>
+        event.type === 'narrative' && event.target === 'acute-pulmonary-edema');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The acute-pulmonary-edema vignette was not active.' } satisfies ObjectiveFinding;
+      const pattern = log.find((event) => event.eventId.startsWith('acute-pulmonary-edema-pattern-reviewed-'));
+      const niv = log.find((event) => event.eventId.startsWith('acute-pulmonary-edema-niv-'));
+      const diuretic = log.find((event) => event.eventId.startsWith('acute-pulmonary-edema-diuretic-'));
+      const vasodilator = log.find((event) => event.eventId.startsWith('acute-pulmonary-edema-vasodilator-'));
+      const reassessment = log.find((event) => event.eventId.startsWith('acute-pulmonary-edema-reassessed-'));
+      if (objective.id === 'recognize-acute-pulmonary-edema-pattern') return {
+        ...base, outcome: pattern ? 'met' : 'not-met',
+        finding: pattern
+          ? 'Respiratory distress, congestion, hypertension, perfusion, fixed focused tests, immediate mimics, and precipitants were reviewed together.'
+          : 'The fixed whole-patient pattern, mimic, and precipitant review was not recorded.',
+        atTick: pattern?.tick ?? 0,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'support-pulmonary-edema-gas-exchange') {
+        const ordered = pattern && niv && pattern.tick <= niv.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'Early noninvasive positive-pressure and titrated-oxygen intent followed whole-patient review without implying interface skill.'
+            : 'Pattern review and early respiratory support were incomplete or out of order.',
+          atTick: niv?.tick ?? pattern?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'treat-hypertensive-pulmonary-edema') {
+        const complete = diuretic && vasodilator;
+        return { ...base, outcome: complete ? 'met' : 'not-met',
+          finding: complete
+            ? 'Loop-diuretic intent addressed congestion while vasodilator intent used the safely elevated systolic pressure without inventing doses or titration.'
+            : 'Decongestive and pressure-safe vasodilator intents were incomplete.',
+          atTick: Math.max(diuretic?.tick ?? 0, vasodilator?.tick ?? 0) } satisfies ObjectiveFinding;
+      }
+      const ordered = niv && diuretic && vasodilator && reassessment
+        && Math.max(niv.tick, diuretic.tick, vasodilator.tick) <= reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met',
+        finding: ordered
+          ? 'Breathing, oxygenation, blood pressure, mental status, and perfusion were reassessed after the bounded initial response.'
+          : 'Initial support, treatment intents, and serial whole-patient reassessment were incomplete or out of order.',
+        atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

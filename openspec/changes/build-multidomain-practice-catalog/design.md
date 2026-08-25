@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with eight playable, completion-audited scenarios. The remaining
-17 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with nine playable, completion-audited scenarios. The remaining
+16 planned titles remain descriptive scope only and do not enter playable counts before their full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -296,6 +296,23 @@ findings and gives the fixed bronchodilator intent a bounded directional obstruc
 Examination, sampling, blood-gas analysis, imaging, ECG, microbiology, inhaler or nebulizer technique,
 individualized or repeat treatment, antibiotic selection, noninvasive-ventilation setup, disposition,
 maintenance treatment, prevention planning, local protocol, and outcome remain outside the vignette.
+
+### Wave B slice 9: acute pulmonary edema
+
+The ninth emergency-medicine slice adds a fixed hypertensive acute-heart-failure presentation with
+severe respiratory distress, congestion, preserved peripheral perfusion, and systolic pressure well
+above the vasodilator threshold. Learners integrate respiratory, congestion, pressure, perfusion,
+fixed ECG, radiograph, and focused-ultrasound findings while checking immediate mimics and
+precipitants; record early noninvasive positive pressure with titrated oxygen; pair loop-diuretic
+intent with pressure-safe IV vasodilator intent; then reassess breathing, oxygenation, pressure,
+mental status, and perfusion.
+
+The live monitor uses explicit authored respiratory and hemodynamic anchors so it agrees with the
+fixed ED findings and shows one bounded directional response. The focused controls do not expose a
+generic drug calculator or routine opioid action. Examination, test acquisition, NIV setup, drug
+selection, dosing or titration, urine output, renal and electrolyte response, precipitant treatment,
+intubation, shock care, disposition, chronic therapy, local protocol, and outcome remain outside the
+vignette.
 
 #### Critical care: 24
 
