@@ -335,6 +335,10 @@ export class AnesthesiaEngine {
   private unstableNarrowTachycardiaPreparedAtTick: number | null = null;
   private unstableNarrowTachycardiaCardiovertedAtTick: number | null = null;
   private unstableNarrowTachycardiaReassessedAtTick: number | null = null;
+  private unstableBradycardiaReviewedAtTick: number | null = null;
+  private unstableBradycardiaSupportedAtTick: number | null = null;
+  private unstableBradycardiaAtropineAtTick: number | null = null;
+  private unstableBradycardiaReassessedAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1602,6 +1606,78 @@ export class AnesthesiaEngine {
         this.unstableNarrowTachycardiaReassessedAtTick = this.currentTick;
         this.log('advisory', 'assessment', `unstable-narrow-tachycardia-reassessed-${this.currentTick}`,
           'Fixed post-cardioversion reassessment: regular sinus rhythm 92/min, BP 118/72 mmHg, alert mentation, resolving ischemic discomfort, warm extremities, and improved capillary refill. Refractory or recurrent tachycardia, causal investigation, medication therapy, anticoagulation questions, disposition, and outcome remain outside this vignette.');
+        break;
+      }
+      case 'unstable-bradycardia-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'unstable-bradycardia');
+        const valid = ['review-bradycardia-and-compromise', 'record-bradycardia-support',
+          'record-atropine-intent', 'reassess-bradycardia-response'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `unstable-bradycardia-refused-${this.currentTick}`,
+            supported ? 'The unstable-bradycardia action was not one of the listed choices. Nothing changed.'
+              : 'The bounded unstable-bradycardia choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-bradycardia-and-compromise') {
+          if (this.unstableBradycardiaReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `unstable-bradycardia-review-refused-${this.currentTick}`,
+              'The fixed bradycardia and compromise review has already been recorded.');
+            break;
+          }
+          this.unstableBradycardiaReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `unstable-bradycardia-reviewed-${this.currentTick}`,
+            'Fixed assessment: regular sinus bradycardia at 38/min with a palpable pulse. BP is 78/46 mmHg with drowsiness, ischemic chest discomfort, cool mottled extremities, and delayed capillary refill. SpO₂ is 91% on room air, the airway is patent, and breathing is spontaneous. The bradycardia is authored as clinically inappropriate and associated with cardiopulmonary compromise; definitive cause is not diagnosed.');
+          break;
+        }
+        if (this.unstableBradycardiaReviewedAtTick === null) {
+          this.log('warning', 'assessment', `unstable-bradycardia-order-refused-${this.currentTick}`,
+            'Review the rate, rhythm, pulse, and cardiopulmonary compromise before treatment.');
+          break;
+        }
+        if (response === 'record-bradycardia-support') {
+          if (this.unstableBradycardiaSupportedAtTick !== null) {
+            this.log('warning', 'equipment', `unstable-bradycardia-support-refused-${this.currentTick}`,
+              'The immediate bradycardia support bundle has already been recorded.');
+            break;
+          }
+          this.unstableBradycardiaSupportedAtTick = this.currentTick;
+          this.log('critical', 'equipment', `unstable-bradycardia-supported-${this.currentTick}`,
+            'Patent airway and spontaneous breathing were confirmed; oxygen, help, continuous cardiorespiratory monitoring, pulse monitoring, and vascular access were recorded. Positive-pressure ventilation was not selected because breathing remained adequate. Actual oxygen delivery, access, and equipment operation are not simulated.', { intentOnly: true, oxygenSelected: true, positivePressureVentilationSelected: false });
+          break;
+        }
+        if (response === 'record-atropine-intent') {
+          if (this.unstableBradycardiaSupportedAtTick === null) {
+            this.log('warning', 'assessment', `unstable-bradycardia-atropine-order-refused-${this.currentTick}`,
+              'Record immediate assessment and support before atropine intent.');
+            break;
+          }
+          if (this.unstableBradycardiaAtropineAtTick !== null) {
+            this.log('warning', 'equipment', `unstable-bradycardia-atropine-refused-${this.currentTick}`,
+              'The fixed atropine intent has already been recorded.');
+            break;
+          }
+          this.unstableBradycardiaAtropineAtTick = this.currentTick;
+          this.rhythm = 'sinus';
+          this.log('critical', 'equipment', `unstable-bradycardia-atropine-${this.currentTick}`,
+            'A fixed 1 mg IV atropine intent was recorded for persistent bradycardia with cardiopulmonary compromise. Medication preparation and delivery, repeat dosing, contraindication assessment, and individual response prediction are outside this vignette.', { intentOnly: true, doseMg: 1, route: 'iv' });
+          break;
+        }
+        if (this.unstableBradycardiaAtropineAtTick === null
+          || this.currentTick <= this.unstableBradycardiaAtropineAtTick) {
+          this.log('warning', 'assessment', `unstable-bradycardia-reassessment-order-refused-${this.currentTick}`,
+            'Record atropine intent, then allow the next engine tick before reassessment.');
+          break;
+        }
+        if (this.unstableBradycardiaReassessedAtTick !== null) {
+          this.log('warning', 'assessment', `unstable-bradycardia-reassessment-refused-${this.currentTick}`,
+            'The fixed post-atropine reassessment has already been recorded.');
+          break;
+        }
+        this.unstableBradycardiaReassessedAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `unstable-bradycardia-reassessed-${this.currentTick}`,
+          'Fixed reassessment: regular sinus rhythm 68/min, BP 112/70 mmHg, SpO₂ 96%, alert mentation, resolving ischemic discomfort, warm extremities, and improved capillary refill. Reversible-cause evaluation and escalation remain necessary. Repeated atropine, pacing, adrenergic infusions, definitive diagnosis, recurrence, disposition, and outcome remain outside this lesson.');
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -4313,6 +4389,14 @@ export class AnesthesiaEngine {
         systolicMmHg: cardioverted ? 118 : 76, diastolicMmHg: cardioverted ? 72 : 48,
         meanArterialMmHg: cardioverted ? 87 : 57 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'unstable-bradycardia')) {
+      const treated = this.unstableBradycardiaAtropineAtTick !== null;
+      crisisState = { ...crisisState, heartRateBpm: treated ? 68 : 38,
+        respiratoryRateBpm: treated ? 18 : 20, spo2Percent: treated ? 96 : 91,
+        systolicMmHg: treated ? 112 : 78, diastolicMmHg: treated ? 70 : 46,
+        meanArterialMmHg: treated ? 84 : 57 };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -4642,6 +4726,12 @@ export class AnesthesiaEngine {
           preparedAtTick: this.unstableNarrowTachycardiaPreparedAtTick,
           cardiovertedAtTick: this.unstableNarrowTachycardiaCardiovertedAtTick,
           reassessedAtTick: this.unstableNarrowTachycardiaReassessedAtTick,
+        },
+        unstableBradycardiaAssessment: {
+          reviewedAtTick: this.unstableBradycardiaReviewedAtTick,
+          supportedAtTick: this.unstableBradycardiaSupportedAtTick,
+          atropineAtTick: this.unstableBradycardiaAtropineAtTick,
+          reassessedAtTick: this.unstableBradycardiaReassessedAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

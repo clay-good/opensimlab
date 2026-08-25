@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with 12 playable, completion-audited scenarios. The remaining
-13 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with 13 playable, completion-audited scenarios. The remaining
+12 planned titles remain descriptive scope only and do not enter playable counts before their full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -360,6 +360,21 @@ atrial mechanism. ECG acquisition, causal diagnosis, device operation, synchroni
 energy selection, sedation choice or delivery, cardioversion technique, adenosine or other drug
 therapy, refractory treatment, recurrence, anticoagulation questions, disposition, local protocol,
 and outcome remain outside the vignette.
+
+### Wave B slice 13: unstable bradycardia
+
+The thirteenth emergency-medicine slice adds a fixed sinus bradycardia with a palpable pulse,
+hypotension, altered mentation, ischemic discomfort, shock signs, and room-air hypoxemia. Learners
+judge the rate through the whole patient; record airway and breathing assessment, oxygen, continuous
+cardiorespiratory and pulse monitoring, help, and vascular access; record one fixed 1 mg IV atropine
+intent after persistent compromise; then reassess rate, rhythm, pressure, mentation, discomfort,
+perfusion, reversible-cause work, and escalation needs after one bounded response.
+
+The focused tray distinguishes medication intent from delivery and never offers a patient-specific
+calculation. ECG acquisition, definitive conduction or causal diagnosis, actual oxygen or vascular
+access, medication preparation or delivery, repeated atropine, transcutaneous or transvenous pacing,
+electrical or mechanical capture, sedation, dopamine or epinephrine infusion, recurrence,
+disposition, local protocol, and outcome remain outside the vignette.
 
 #### Critical care: 24
 

@@ -11,6 +11,7 @@ import { ACUTE_PULMONARY_EDEMA } from './acute-pulmonary-edema';
 import { PULMONARY_EMBOLISM_DETERIORATION } from './pulmonary-embolism-deterioration';
 import { STEMI } from './stemi';
 import { UNSTABLE_NARROW_COMPLEX_TACHYCARDIA } from './unstable-narrow-complex-tachycardia';
+import { UNSTABLE_BRADYCARDIA } from './unstable-bradycardia';
 
 export const EMERGENCY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   UNDIFFERENTIATED_SHOCK,
@@ -25,6 +26,7 @@ export const EMERGENCY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   PULMONARY_EMBOLISM_DETERIORATION,
   STEMI,
   UNSTABLE_NARROW_COMPLEX_TACHYCARDIA,
+  UNSTABLE_BRADYCARDIA,
 ];
 export const DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID = UNDIFFERENTIATED_SHOCK.metadata.id;
 

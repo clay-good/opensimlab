@@ -2621,6 +2621,47 @@ export function objectiveFindings(
         atTick: reassessed?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-unstable-bradycardia', 'support-unstable-bradycardia',
+      'give-atropine-for-unstable-bradycardia', 'reassess-unstable-bradycardia']
+      .includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'unstable-bradycardia');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The unstable bradycardia vignette was not active.' } satisfies ObjectiveFinding;
+      const reviewed = log.find((event) => event.eventId.startsWith('unstable-bradycardia-reviewed-'));
+      const support = log.find((event) => event.eventId.startsWith('unstable-bradycardia-supported-'));
+      const atropine = log.find((event) => event.eventId.startsWith('unstable-bradycardia-atropine-'));
+      const reassessed = log.find((event) => event.eventId.startsWith('unstable-bradycardia-reassessed-'));
+      if (objective.id === 'recognize-unstable-bradycardia') return {
+        ...base, outcome: reviewed ? 'met' : 'not-met',
+        finding: reviewed
+          ? 'Clinically inappropriate sinus bradycardia was integrated with a palpable pulse, hypotension, altered mentation, ischemic discomfort, and shock signs.'
+          : 'The fixed rate, rhythm, pulse, and compromise pattern was not reviewed.',
+        atTick: reviewed?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'support-unstable-bradycardia') {
+        const ordered = reviewed && support && reviewed.tick <= support.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'Airway, breathing, oxygen, monitoring, pulse checks, help, and vascular access followed recognition of compromise.'
+            : 'Immediate bradycardia support was absent or out of order.',
+          atTick: support?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'give-atropine-for-unstable-bradycardia') {
+        const ordered = support && atropine && support.tick <= atropine.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'The fixed 1 mg IV atropine intent followed support without claiming medication delivery or universal response.'
+            : 'Atropine intent was absent or preceded immediate support.',
+          atTick: atropine?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = atropine && reassessed && atropine.tick <= reassessed.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met',
+        finding: ordered
+          ? 'Rate, rhythm, pressure, mentation, ischemic discomfort, perfusion, and ongoing cause/escalation needs were reassessed.'
+          : 'Post-atropine whole-patient reassessment was incomplete or out of order.',
+        atTick: reassessed?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

@@ -507,6 +507,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['unstable-narrow-complex-tachycardia'],
   },
   {
+    id: 'unstable-bradycardia-rhythm-and-compromise-are-authored',
+    headline: 'The sinus bradycardia, palpable pulse, and cardiopulmonary compromise are fixed teaching facts, not a live diagnosis.',
+    simplification: 'A fixed monitor rhythm and whole-patient findings create one unstable bradycardia pattern. No ECG acquisition, artifact, conduction diagnosis, evolving rhythm, or causal test is modeled.',
+    whereItMisleads: 'Assuming every rate below 50/min is unstable, treating the bedside trace as a complete diagnosis, or attributing compromise to bradycardia without evaluating the patient and reversible causes.',
+    correctUnderstanding: 'Judge whether the rate is appropriate for the clinical condition and integrate rhythm with pulse, pressure, mental status, ischemic discomfort, heart failure, perfusion, and cause assessment.',
+    briefIn: ['unstable-bradycardia'],
+  },
+  {
+    id: 'bradycardia-support-and-atropine-are-intent-controls',
+    headline: 'Support and the fixed atropine action record intent; they do not deliver oxygen, establish access, or administer medication.',
+    simplification: 'The lesson records a support bundle and one 1 mg IV atropine intent, then applies an authored response. It does not verify oxygen flow, obtain access, prepare medication, deliver a bolus, or assess contraindications.',
+    whereItMisleads: 'Reading a click as completed treatment, copying the fixed dose without using a current local process, or assuming atropine reliably corrects every unstable bradycardia.',
+    correctUnderstanding: 'Verify each intervention, monitor the pulse and whole patient continuously, use current local medication safeguards, and be ready to escalate if compromise persists.',
+    briefIn: ['unstable-bradycardia'],
+  },
+  {
+    id: 'no-bradycardia-pacing-infusions-cause-procedure-recurrence-or-outcome',
+    headline: 'Repeated atropine, pacing, adrenergic infusions, causal treatment, recurrence, disposition, and outcome are outside the vignette.',
+    simplification: 'The case ends after one authored response. It has no transcutaneous or transvenous pacing, electrical or mechanical capture, sedation, dopamine or epinephrine infusion, repeated medication, definitive cause, admission, or follow-up.',
+    whereItMisleads: 'Assuming the fixed response predicts success, that one reassessment completes care, or that sinus bradycardia and high-degree block share the same response.',
+    correctUnderstanding: 'Continue reversible-cause evaluation and prepare for pacing, rate-accelerating infusion, expert consultation, and transvenous pacing when indicated by persistent compromise and rhythm context.',
+    briefIn: ['unstable-bradycardia'],
+  },
+  {
     id: 'malignant-hyperthermia-is-a-teaching-model',
     headline: 'The hypermetabolic carbon-dioxide, heart-rate, rigidity, and heat trajectories are bounded teaching models, not individualized predictions or a diagnostic test.',
     simplification: 'One latent severity drives excess carbon-dioxide production, tachycardia, '

@@ -250,6 +250,8 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
     });
     expect(routeFor('/emergency-medicine/scenario/unstable-narrow-complex-tachycardia'))
       .toMatchObject({ indexable: true, heading: 'Unstable narrow-complex tachycardia' });
+    expect(routeFor('/emergency-medicine/scenario/unstable-bradycardia'))
+      .toMatchObject({ indexable: true, heading: 'Unstable bradycardia' });
   });
 
   it('Requirement: Modules Declare Their Own Physiological Timescale', () => {
