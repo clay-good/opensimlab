@@ -678,3 +678,15 @@ The screen records planning evidence only. It does not interrogate, program, pac
 magnet, reproduce device-specific magnet response, calculate a current path, place a dispersive
 electrode, deliver electrosurgery, model malfunction, teach emergency response, or assess team
 performance.
+
+## Slice 42: bounded postoperative handoff
+
+The thirty-ninth authored scenario is a stable transfer-to-PACU vignette. Receiver and monitoring
+readiness precede two independent critical-content blocks. Unresolved risks, required actions,
+timing, ownership, and escalation unlock only after both blocks; receiver synthesis then precedes
+explicit acceptance of responsibility.
+
+Each event reveals fixed text and records order only. The lesson does not measure voice, language,
+accuracy within the blocks, nonverbal behavior, interruptions, staffing, workload, hierarchy,
+bedside examination, documentation, EHR use, patient participation, real acknowledgment, clinical
+actions, deterioration, or outcome.

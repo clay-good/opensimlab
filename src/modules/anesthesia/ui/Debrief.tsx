@@ -3044,6 +3044,52 @@ export function objectiveFindings(
     }
 
     if ([
+      'confirm-handoff-readiness', 'share-handoff-critical-content',
+      'assign-handoff-risks-and-ownership', 'close-loop-and-accept-transfer',
+    ].includes(objective.id)) {
+      const supported = scenario.timeline.some(
+        (event) => event.type === 'narrative' && event.target === 'postoperative-handoff',
+      );
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The postoperative-handoff vignette was not active.' } satisfies ObjectiveFinding;
+      const ready = log.find((event) => event.eventId.startsWith('handoff-receiver-ready-'));
+      const course = log.find((event) => event.eventId.startsWith('handoff-patient-course-shared-'));
+      const current = log.find((event) => event.eventId.startsWith('handoff-current-state-shared-'));
+      const risks = log.find((event) => event.eventId.startsWith('handoff-risks-actions-ownership-shared-'));
+      const readback = log.find((event) => event.eventId.startsWith('handoff-receiver-readback-'));
+      const accepted = log.find((event) => event.eventId.startsWith('handoff-transfer-accepted-'));
+      if (objective.id === 'confirm-handoff-readiness') return {
+        ...base, outcome: ready ? 'met' : 'not-met',
+        finding: ready
+          ? 'Receiver identity, monitoring readiness, shared attention, and an opportunity for questions were explicitly established.'
+          : 'The handoff began without an accepted receiver-readiness event.',
+        atTick: ready?.tick ?? 0,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'share-handoff-critical-content') return {
+        ...base, outcome: course && current ? 'met' : 'not-met',
+        finding: course && current
+          ? 'The patient and perioperative course were shared separately from the current clinical state.'
+          : 'The fixed patient/course and current-state content blocks were not both completed.',
+        atTick: Math.max(course?.tick ?? 0, current?.tick ?? 0),
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'assign-handoff-risks-and-ownership') return {
+        ...base, outcome: risks ? 'met' : 'not-met',
+        finding: risks
+          ? 'Unresolved respiratory and bleeding risks, timed reassessment, task ownership, and escalation were made explicit.'
+          : 'Unresolved risks, actions, timing, and ownership were not accepted after the core content.',
+        atTick: risks?.tick ?? 0,
+      } satisfies ObjectiveFinding;
+      const closed = readback && accepted && accepted.tick >= readback.tick;
+      return {
+        ...base, outcome: closed ? 'met' : 'not-met',
+        finding: closed
+          ? 'Receiver synthesis preceded explicit acknowledgment and acceptance of responsibility.'
+          : 'Responsibility was not credited because receiver synthesis and accepted transfer were incomplete or out of order.',
+        atTick: accepted?.tick ?? readback?.tick ?? 0,
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
       'recognize-post-extubation-obstruction', 'support-post-extubation-airway',
       'confirm-post-extubation-recovery',
     ].includes(objective.id)) {

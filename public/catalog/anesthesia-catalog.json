@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 38,
+  "scenarioCount": 39,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -838,6 +838,28 @@
         "Include external backup, monitoring, and explicit post-procedure restoration in the plan."
       ],
       "searchText": "pacemaker-and-cautery-planning pacemaker and cautery planning right rotator cuff tear elective right shoulder arthroplasty review device type, pacing dependence, recent function, and documented magnet response. the fixed cied record was deliberately reviewed. join procedure location and anticipated electrosurgery with the device-specific risk pattern. the fixed above-umbilicus monopolar-electrosurgery pattern was reviewed. choose coordinated asynchronous pacing for this pacing-dependent case without inventing a universal magnet rule. the correct coordinated plan followed both reviews. include external backup, monitoring, and explicit post-procedure restoration in the plan. backup and restoration were documented after the device plan."
+    },
+    {
+      "id": "postoperative-handoff",
+      "path": "/anesthesia/scenario/postoperative-handoff",
+      "title": "Postoperative handoff",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 7,
+      "difficulty": "introductory",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Confirm the receiver and monitoring are ready before beginning.",
+        "Share the patient, perioperative course, and current state as distinct critical content.",
+        "Name unresolved risks, required actions, timing, ownership, and escalation.",
+        "Require receiver synthesis and acknowledged acceptance before responsibility changes."
+      ],
+      "searchText": "postoperative-handoff postoperative handoff right colon adenocarcinoma open right hemicolectomy confirm the receiver and monitoring are ready before beginning. receiver readiness was explicitly confirmed. share the patient, perioperative course, and current state as distinct critical content. both fixed content blocks were accepted. name unresolved risks, required actions, timing, ownership, and escalation. the fixed risk-and-ownership block followed the core content. require receiver synthesis and acknowledged acceptance before responsibility changes. read-back preceded accepted transfer."
     }
   ],
   "preparationPathCount": 10,
@@ -1104,10 +1126,11 @@
     },
     {
       "id": "handoff-escalation",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "title": "Handoff and escalation",
-      "description": "Practice recognizing when the simulated problem exceeds solo management, coordinating a device-specific plan, ordering a bounded handoff, and making help part of the response.",
+      "description": "Practice recognizing when care exceeds solo management, coordinating device and escalation plans, and completing an acknowledged postoperative transfer.",
       "scenarioIds": [
+        "postoperative-handoff",
         "pacemaker-and-cautery-planning",
         "unexpected-intraoperative-hemorrhage",
         "blood-bank-handoff",
@@ -1132,7 +1155,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 75
+      "estimatedMinutes": 82
     }
   ]
 }

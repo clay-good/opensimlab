@@ -1281,6 +1281,40 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-24',
   },
   {
+    id: 'ahrq-teamstepps-handoff',
+    currency: {
+      lastAmended: '2026',
+      checkedAt: 'https://www.ahrq.gov/teamstepps-program/curriculum/communication/teach/two-day.html',
+    },
+    authors: 'Agency for Healthcare Research and Quality',
+    title: 'TeamSTEPPS 3.0 Communication Module: Handoff and I-PASS',
+    publication: 'AHRQ',
+    year: 2023,
+    locator: 'TeamSTEPPS 3.0 communication module, handoff and I-PASS teaching content',
+    usedFor: 'The postoperative handoff structure: transfer information with authority and '
+      + 'responsibility; establish clear verbal receipt; include action list, timing, ownership, '
+      + 'contingencies, receiver synthesis, questions, clarification, and acknowledgment.',
+    verifiedAgainst: 'Current AHRQ TeamSTEPPS web curriculum',
+    verifiedOn: '2026-08-24',
+  },
+  {
+    id: 'joint-commission-handoff-alert-58',
+    currency: {
+      lastAmended: '2017',
+      checkedAt: 'https://www.jointcommission.org/en-us/knowledge-library/newsletters/sentinel-event-alert/issue-58',
+    },
+    authors: 'The Joint Commission',
+    title: 'Sentinel Event Alert 58: Inadequate hand-off communication',
+    publication: 'The Joint Commission',
+    year: 2017,
+    locator: 'Issue 58',
+    usedFor: 'The standardized-transfer boundary: critical content, receiver participation, '
+      + 'questions and clarification, explicit roles, and organizational workflow matter; a '
+      + 'button sequence cannot establish real communication quality.',
+    verifiedAgainst: 'Current Joint Commission alert page and PDF',
+    verifiedOn: '2026-08-24',
+  },
+  {
     id: 'schwid-2001',
     pmid: '11302037',
     authors: 'Schwid HA, Rooke GA, Michalowski P, Ross BK',

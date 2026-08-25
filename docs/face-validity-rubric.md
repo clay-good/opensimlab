@@ -107,7 +107,8 @@ Reviewers run the routine induction themselves before answering.
 | B53 | In the hypothermia-and-rewarming lesson, a falling core-temperature trend, the below-36°C signal, active surface warming, bulk-fluid warming intent, and gradual recovery are inspectable without implying device competence, heat-transfer calculation, or individual timing | | |
 | B54 | In the perioperative-hyperglycemia lesson, point-of-care confirmation, dose-free institutional response intent, the 30-minute wait, dual-unit values, and in-target repeat are inspectable without implying an insulin order or individual response | | |
 | B55 | In the pacemaker-and-cautery-planning lesson, device identity, pacing dependence, magnet response, procedure location, anticipated interference, coordinated asynchronous planning, backup, and restoration are inspectable without implying programming competence or a universal magnet rule | | |
-| B56 | Overall: does this patient behave like a patient? | | |
+| B56 | In the postoperative-handoff lesson, shared readiness, patient/course and current-state content, unresolved-risk ownership, receiver synthesis, and acknowledged transfer are inspectable without implying observed communication competence or a real transfer | | |
+| B57 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 

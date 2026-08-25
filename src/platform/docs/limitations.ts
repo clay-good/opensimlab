@@ -1312,6 +1312,39 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['pacemaker-and-cautery-planning'],
   },
   {
+    id: 'postoperative-handoff-content-is-a-fixed-vignette',
+    headline: 'Every patient, course, current-state, risk, action, timing, and ownership detail is fixed teaching content.',
+    simplification: 'Six accepted buttons reveal and order prewritten blocks; the learner cannot '
+      + 'omit, distort, prioritize, or add information inside them.',
+    whereItMisleads: 'Treating completion as proof that a learner selected accurate, concise, '
+      + 'relevant content or adapted it to a real patient and receiving team.',
+    correctUnderstanding: 'Real handoffs require verified patient-specific information, judgment '
+      + 'about salience and uncertainty, and adaptation to local tools and the receiver’s needs.',
+    briefIn: ['postoperative-handoff'],
+  },
+  {
+    id: 'handoff-controls-record-events-not-communication-quality',
+    headline: 'The controls record an ordered transcript; they do not measure whether communication was heard, understood, respectful, concise, or complete.',
+    simplification: 'Receiver readiness, questions, synthesis, and acknowledgment are boolean '
+      + 'teaching events without voice, language, interruption, or behavioral evidence.',
+    whereItMisleads: 'Reading a completed sequence as competence in closed-loop communication, '
+      + 'teamwork, situational awareness, advocacy, or speaking up across hierarchy.',
+    correctUnderstanding: 'Communication performance requires observation, feedback, and practice '
+      + 'with people in realistic workflow, including ambiguity, distraction, and questions.',
+    briefIn: ['postoperative-handoff'],
+  },
+  {
+    id: 'no-bedside-transfer-staffing-documentation-or-outcome',
+    headline: 'The vignette does not model bedside setup, examination, staffing, workload, documentation, clinical action, deterioration, or outcome.',
+    simplification: 'Responsibility changes only in simulator state after acknowledgment; no real '
+      + 'person, record, monitor, medication, task, or care setting changes.',
+    whereItMisleads: 'Assuming the interface completes institutional transfer requirements, proves '
+      + 'readiness, assigns real liability, or ensures that pending actions occur.',
+    correctUnderstanding: 'Local policy, appropriate staffing, connected monitoring, bedside '
+      + 'assessment, documentation, task completion, escalation, and ongoing care remain essential.',
+    briefIn: ['postoperative-handoff'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

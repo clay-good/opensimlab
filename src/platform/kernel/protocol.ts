@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 34 reports bounded CIED-planning state. */
-export const WORKER_PROTOCOL_VERSION = 34;
+/** Bumped whenever the message shape changes incompatibly. Version 35 reports bounded postoperative-handoff state. */
+export const WORKER_PROTOCOL_VERSION = 35;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -349,6 +349,15 @@ export interface EquipmentSnapshot {
         | 'proceed-no-change' | null;
       readonly planAtTick: number | null;
       readonly backupAndRestorationDocumentedAtTick: number | null;
+    };
+    /** Bounded postoperative transfer-of-care vignette. */
+    readonly postoperativeHandoffAssessment?: {
+      readonly receiverReadyAtTick: number | null;
+      readonly patientAndCourseAtTick: number | null;
+      readonly currentStateAtTick: number | null;
+      readonly risksActionsOwnershipAtTick: number | null;
+      readonly receiverReadbackAtTick: number | null;
+      readonly transferAcceptedAtTick: number | null;
     };
     /** Accepted quantitative neuromuscular-reversal teaching state. */
     readonly neuromuscularReversalFraction?: number;

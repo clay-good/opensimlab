@@ -49,7 +49,7 @@ describe('Requirement: quantitative reversal uses a measured recovery phase', ()
   it('validates, registers, maps every objective, and starts in stable established anesthesia', () => {
     expect(validateScenario(SCENARIO)).toEqual([]);
     expect(SCENARIOS).toContain(SCENARIO);
-    expect(SCENARIOS).toHaveLength(38);
+    expect(SCENARIOS).toHaveLength(39);
     const subject = engine();
     expect(subject.equipment()).toMatchObject({
       airway: { intubated: true, device: 'tracheal-tube' },

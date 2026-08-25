@@ -283,3 +283,7 @@ electrosurgery planning. Device-record review, pacing dependence, procedure and 
 review, a coordinated asynchronous-pacing plan, external backup, monitoring, and restoration are
 inspectable. Interrogation, programming, magnet effects, electrosurgery technique, malfunction,
 emergency response, and team performance remain excluded.
+The forty-second adds the thirty-ninth authored scenario and isolates a whole-patient postoperative
+handoff. Receiver readiness, standardized critical content, unresolved-risk timing and ownership,
+receiver synthesis, and acknowledged responsibility transfer are inspectable. Communication
+quality, staffing, bedside assessment, documentation, clinical action, and outcome remain excluded.

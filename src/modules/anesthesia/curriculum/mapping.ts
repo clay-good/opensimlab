@@ -1260,6 +1260,21 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'pc-anesthetic-plan-and-conduct',
     objectiveIds: ['review-cied-device-record', 'review-cied-procedure-risk', 'choose-coordinated-cied-plan', 'document-cied-backup-and-restoration'],
   },
+  {
+    scenarioId: 'postoperative-handoff', frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['confirm-handoff-readiness', 'share-handoff-critical-content', 'assign-handoff-risks-and-ownership', 'close-loop-and-accept-transfer'],
+  },
+  {
+    scenarioId: 'postoperative-handoff', frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['confirm-handoff-readiness', 'share-handoff-critical-content', 'assign-handoff-risks-and-ownership', 'close-loop-and-accept-transfer'],
+  },
+  {
+    scenarioId: 'postoperative-handoff', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-anesthetic-plan-and-conduct',
+    objectiveIds: ['confirm-handoff-readiness', 'share-handoff-critical-content', 'assign-handoff-risks-and-ownership', 'close-loop-and-accept-transfer'],
+  },
 ];
 
 export interface DomainCoverage {

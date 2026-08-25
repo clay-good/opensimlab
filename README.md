@@ -125,7 +125,7 @@ holds.
 
 The `/anesthesia` catalog keeps discovery local and linkable: search covers the patient, problem,
 procedure, and objectives, while difficulty, duration, and maturity filters are encoded in the URL.
-The unfiltered prerender still contains all 38 current scenarios, so filtering adds no telemetry and
+The unfiltered prerender still contains all 39 current scenarios, so filtering adds no telemetry and
 does not trade away no-script access or scenario-page indexing.
 `/catalog/anesthesia-catalog.json` publishes the same 33 exact-version entries, filters, objectives,
 and normalized search text for static integrations; its schema and data are included in the offline
@@ -360,6 +360,10 @@ Slice 41 adds the thirty-eighth authored scenario, pacemaker and cautery plannin
 device record and procedure review lead to a coordinated asynchronous-pacing plan, external backup,
 continuous monitoring, and explicit post-procedure restoration. Interrogation, programming, magnet
 effects, electrosurgery technique, malfunction, emergency response, and team performance are absent.
+Slice 42 adds the thirty-ninth authored scenario, postoperative handoff. Receiver readiness opens
+separate patient/course and current-state blocks, followed by unresolved risks with timing and
+ownership, receiver synthesis, and acknowledged acceptance. Voice, behavior, staffing, bedside
+assessment, documentation, real clinical action, and outcomes are absent.
 
 ## Running it
 

@@ -43,7 +43,7 @@ describe('Requirement: repeated-laryngoscopy harm is a distinct bounded scenario
   it('validates, registers, maps every objective, and declares the known-airway boundary', () => {
     expect(validateScenario(SCENARIO)).toEqual([]);
     expect(SCENARIOS).toContain(SCENARIO);
-    expect(SCENARIOS).toHaveLength(38);
+    expect(SCENARIOS).toHaveLength(39);
     expect(SCENARIO.timeline).toContainEqual(expect.objectContaining({
       type: 'difficult-airway', target: 'failed-intubation-with-marginal-mask', value: 1,
     }));

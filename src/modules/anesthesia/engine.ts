@@ -41,7 +41,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.36';
+export const ENGINE_VERSION = '0.1.0-alpha.37';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -356,6 +356,12 @@ export class AnesthesiaEngine {
     | 'proceed-no-change' | null = null;
   private ciedPlanAtTick: number | null = null;
   private ciedBackupAndRestorationDocumentedAtTick: number | null = null;
+  private postoperativeReceiverReadyAtTick: number | null = null;
+  private postoperativePatientAndCourseAtTick: number | null = null;
+  private postoperativeCurrentStateAtTick: number | null = null;
+  private postoperativeRisksActionsOwnershipAtTick: number | null = null;
+  private postoperativeReceiverReadbackAtTick: number | null = null;
+  private postoperativeTransferAcceptedAtTick: number | null = null;
   /** Exclusive tick at which the bounded held airway maneuver ends. */
   private jawThrustCpapUntilTick = 0;
   /** Current lower-airway obstruction, retained for truthful equipment/accessibility output. */
@@ -1870,6 +1876,108 @@ export class AnesthesiaEngine {
               : 'No-change plan recorded despite pacing dependence and anticipated above-umbilicus electromagnetic interference.');
         break;
       }
+      case 'postoperative-handoff-assessment': {
+        const supported = this.scenario.timeline.some(
+          (event) => event.type === 'narrative' && event.target === 'postoperative-handoff',
+        );
+        const response = String(action.payload.action ?? '');
+        const valid = [
+          'confirm-receiver-readiness', 'share-patient-and-course', 'share-current-state',
+          'share-risks-actions-ownership', 'receiver-readback', 'accept-transfer',
+        ].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `postoperative-handoff-refused-${this.currentTick}`,
+            supported
+              ? 'The postoperative-handoff action was not one of the listed choices. Nothing changed.'
+              : 'The bounded postoperative-handoff choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'confirm-receiver-readiness') {
+          if (this.postoperativeReceiverReadyAtTick !== null) {
+            this.log('warning', 'assessment', `handoff-readiness-refused-${this.currentTick}`,
+              'Receiver readiness has already been confirmed.');
+            break;
+          }
+          this.postoperativeReceiverReadyAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `handoff-receiver-ready-${this.currentTick}`,
+            'The receiving clinician is identified, monitoring is connected, immediate tasks are paused, and questions are invited. Staffing, workload, interruptions, and bedside setup are not simulated.');
+          break;
+        }
+        if (this.postoperativeReceiverReadyAtTick === null) {
+          this.log('warning', 'assessment', `handoff-order-refused-${this.currentTick}`,
+            'Confirm receiver readiness before delivering or accepting the handoff.');
+          break;
+        }
+        if (response === 'share-patient-and-course') {
+          if (this.postoperativePatientAndCourseAtTick !== null) {
+            this.log('warning', 'assessment', `handoff-course-refused-${this.currentTick}`,
+              'The fixed patient and perioperative course have already been shared.');
+            break;
+          }
+          this.postoperativePatientAndCourseAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `handoff-patient-course-shared-${this.currentTick}`,
+            'Patient and course: 64-year-old after open right hemicolectomy; video laryngoscopy after one unsuccessful direct attempt; estimated blood loss 750 mL; 1,800 mL crystalloid; no blood products; cefazolin given; no recorded allergy.');
+          break;
+        }
+        if (response === 'share-current-state') {
+          if (this.postoperativeCurrentStateAtTick !== null) {
+            this.log('warning', 'assessment', `handoff-current-state-refused-${this.currentTick}`,
+              'The fixed current state has already been shared.');
+            break;
+          }
+          this.postoperativeCurrentStateAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `handoff-current-state-shared-${this.currentTick}`,
+            'Current state: awake to voice, airway patent, spontaneous breathing on 3 L/min nasal oxygen, stable circulation, temperature 36.6°C, pain 4/10, mild nausea, abdominal dressing dry, and two peripheral IVs patent. These are fixed findings.');
+          break;
+        }
+        if (response === 'share-risks-actions-ownership') {
+          if (this.postoperativePatientAndCourseAtTick === null
+            || this.postoperativeCurrentStateAtTick === null) {
+            this.log('warning', 'assessment', `handoff-risk-order-refused-${this.currentTick}`,
+              'Share both the patient/course and current state before unresolved risks, actions, timing, and ownership.');
+            break;
+          }
+          if (this.postoperativeRisksActionsOwnershipAtTick !== null) {
+            this.log('warning', 'assessment', `handoff-risk-refused-${this.currentTick}`,
+              'Risks, actions, timing, and ownership have already been shared.');
+            break;
+          }
+          this.postoperativeRisksActionsOwnershipAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `handoff-risks-actions-ownership-shared-${this.currentTick}`,
+            'Risks and ownership: obstructive sleep apnea plus recent opioid exposure require continued respiratory observation; repeat hemoglobin is due in 30 minutes; nausea and pain need reassessment; the PACU clinician owns those tasks after accepted transfer, with anesthesia immediately available for escalation.');
+          break;
+        }
+        if (response === 'receiver-readback') {
+          if (this.postoperativeRisksActionsOwnershipAtTick === null) {
+            this.log('warning', 'assessment', `handoff-readback-order-refused-${this.currentTick}`,
+              'Complete the critical content and ownership before receiver synthesis.');
+            break;
+          }
+          if (this.postoperativeReceiverReadbackAtTick !== null) {
+            this.log('warning', 'assessment', `handoff-readback-refused-${this.currentTick}`,
+              'Receiver synthesis has already been recorded.');
+            break;
+          }
+          this.postoperativeReceiverReadbackAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `handoff-receiver-readback-${this.currentTick}`,
+            'Receiver synthesis recorded: airway difficulty, respiratory risk, 30-minute hemoglobin, symptom reassessment, task ownership, and escalation route were repeated back; questions were invited. Communication quality is not inferred.');
+          break;
+        }
+        if (this.postoperativeReceiverReadbackAtTick === null) {
+          this.log('warning', 'assessment', `handoff-acceptance-order-refused-${this.currentTick}`,
+            'Receiver read-back is required before responsibility can be accepted.');
+          break;
+        }
+        if (this.postoperativeTransferAcceptedAtTick !== null) {
+          this.log('warning', 'assessment', `handoff-acceptance-refused-${this.currentTick}`,
+            'Transfer of responsibility has already been accepted.');
+          break;
+        }
+        this.postoperativeTransferAcceptedAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `handoff-transfer-accepted-${this.currentTick}`,
+          'The receiver acknowledged and accepted responsibility. This records a teaching-state transition, not real staffing, documentation, or clinical transfer.');
+        break;
+      }
       case 'silence-alarm': {
         this.alarmEngine.silence(String(action.payload.alarmId), this.currentTick, TICKS_PER_SECOND);
         break;
@@ -3229,6 +3337,14 @@ export class AnesthesiaEngine {
           plan: this.ciedPlan,
           planAtTick: this.ciedPlanAtTick,
           backupAndRestorationDocumentedAtTick: this.ciedBackupAndRestorationDocumentedAtTick,
+        },
+        postoperativeHandoffAssessment: {
+          receiverReadyAtTick: this.postoperativeReceiverReadyAtTick,
+          patientAndCourseAtTick: this.postoperativePatientAndCourseAtTick,
+          currentStateAtTick: this.postoperativeCurrentStateAtTick,
+          risksActionsOwnershipAtTick: this.postoperativeRisksActionsOwnershipAtTick,
+          receiverReadbackAtTick: this.postoperativeReceiverReadbackAtTick,
+          transferAcceptedAtTick: this.postoperativeTransferAcceptedAtTick,
         },
         neuromuscularReversalFraction: this.neuromuscularReversalFraction,
         postTetanicCount: this.postTetanicCount,

@@ -47,6 +47,7 @@ import { OPIOID_INDUCED_VENTILATORY_IMPAIRMENT } from './opioid-induced-ventilat
 import { HYPOTHERMIA_AND_REWARMING } from './hypothermia-and-rewarming';
 import { PERIOPERATIVE_HYPERGLYCEMIA } from './perioperative-hyperglycemia';
 import { PACEMAKER_AND_CAUTERY_PLANNING } from './pacemaker-and-cautery-planning';
+import { POSTOPERATIVE_HANDOFF } from './postoperative-handoff';
 
 export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_INDUCTION,
@@ -87,6 +88,7 @@ export const SCENARIOS: readonly Scenario[] = [
   HYPOTHERMIA_AND_REWARMING,
   PERIOPERATIVE_HYPERGLYCEMIA,
   PACEMAKER_AND_CAUTERY_PLANNING,
+  POSTOPERATIVE_HANDOFF,
 ];
 
 /** The scenario a learner meets first. */

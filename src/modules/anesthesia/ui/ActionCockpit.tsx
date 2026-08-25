@@ -180,6 +180,14 @@ export interface ActionCockpitProps {
       readonly planAtTick: number | null;
       readonly backupAndRestorationDocumentedAtTick: number | null;
     };
+    readonly postoperativeHandoffAssessment?: {
+      readonly receiverReadyAtTick: number | null;
+      readonly patientAndCourseAtTick: number | null;
+      readonly currentStateAtTick: number | null;
+      readonly risksActionsOwnershipAtTick: number | null;
+      readonly receiverReadbackAtTick: number | null;
+      readonly transferAcceptedAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -278,6 +286,11 @@ export interface ActionCockpitProps {
       | 'coordinate-asynchronous-pacing' | 'apply-unverified-magnet'
       | 'proceed-no-change' | 'document-backup-and-restoration',
   ) => void;
+  readonly onPostoperativeHandoffAssessment?: (
+    action: 'confirm-receiver-readiness' | 'share-patient-and-course'
+      | 'share-current-state' | 'share-risks-actions-ownership'
+      | 'receiver-readback' | 'accept-transfer',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -347,6 +360,9 @@ export function crisisResponseAvailability(
     hasCiedPlanningResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'cied-cautery-planning',
     ),
+    hasPostoperativeHandoffResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'postoperative-handoff',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -398,7 +414,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
-        'extubation-readiness', 'cied-cautery-planning',
+        'extubation-readiness', 'cied-cautery-planning', 'postoperative-handoff',
       ].includes(event.target ?? '')))
     ? 'crisis' : 'syringes');
   const {
@@ -406,7 +422,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasCardiacArrestResponse, hasHighSpinalResponse, hasVenousAirEmbolismResponse,
     hasBronchospasmResponse, hasPreeclampsiaResponse, hasPneumothoraxResponse,
     hasAspirationRiskResponse, hasEmergenceResidualBlockResponse, hasDelayedEmergenceResponse,
-    hasExtubationReadinessResponse, hasCiedPlanningResponse,
+    hasExtubationReadinessResponse, hasCiedPlanningResponse, hasPostoperativeHandoffResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -429,8 +445,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPneumothoraxResponse || hasBronchospasmResponse;
   const hasCrisisResponse = hasNonMaternalCrisisResponse || hasPreeclampsiaResponse
     || hasAspirationRiskResponse || hasEmergenceResidualBlockResponse
-    || hasDelayedEmergenceResponse || hasExtubationReadinessResponse || hasCiedPlanningResponse;
-  const responseTray = hasCiedPlanningResponse && !hasNonMaternalCrisisResponse
+    || hasDelayedEmergenceResponse || hasExtubationReadinessResponse || hasCiedPlanningResponse
+    || hasPostoperativeHandoffResponse;
+  const responseTray = hasPostoperativeHandoffResponse && !hasNonMaternalCrisisResponse
+    ? { id: 'crisis', label: 'Handoff' } as const
+    : hasCiedPlanningResponse && !hasNonMaternalCrisisResponse
     ? { id: 'crisis', label: 'Device plan' } as const
     : hasExtubationReadinessResponse && !hasNonMaternalCrisisResponse
     && !hasPreeclampsiaResponse && !hasAspirationRiskResponse
@@ -699,6 +718,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <CiedPlanningTray
                 assessment={props.resuscitation.ciedPlanningAssessment}
                 onAction={props.onCiedPlanningAssessment ?? (() => {})}
+              />
+            )}
+            {hasPostoperativeHandoffResponse && (
+              <PostoperativeHandoffTray
+                assessment={props.resuscitation.postoperativeHandoffAssessment}
+                onAction={props.onPostoperativeHandoffAssessment ?? (() => {})}
               />
             )}
             {hasEmergenceResidualBlockResponse && (
@@ -1694,6 +1719,60 @@ function CiedPlanningTray({ assessment, onAction }: {
         <Button className="crisis-drug__action" disabled={plan === null || restoration}
           onClick={() => onAction('document-backup-and-restoration')}>Document backup + restoration</Button>
         <p className="field__hint">This case supports a patient-specific team plan, never a universal magnet rule or device order.</p>
+      </section>
+    </div>
+  );
+}
+
+function PostoperativeHandoffTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['postoperativeHandoffAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onPostoperativeHandoffAssessment']>;
+}) {
+  const ready = assessment?.receiverReadyAtTick != null;
+  const course = assessment?.patientAndCourseAtTick != null;
+  const current = assessment?.currentStateAtTick != null;
+  const risks = assessment?.risksActionsOwnershipAtTick != null;
+  const readback = assessment?.receiverReadbackAtTick != null;
+  const accepted = assessment?.transferAcceptedAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="handoff-content-title">
+        <div id="handoff-content-title" className="syringe__name">Create shared attention</div>
+        <Badge kind="teaching">Focused vignette</Badge>
+        <div className="syringe__meta">Ready · course · current state</div>
+        <p className="syringe__remaining" role="status">
+          {!ready ? 'Receiver and monitoring readiness pending'
+            : !course || !current ? 'Receiver ready · critical content incomplete'
+              : 'Patient, perioperative course, and current state shared'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={ready}
+            onClick={() => onAction('confirm-receiver-readiness')}>Confirm receiver readiness</Button>
+          <Button className="crisis-drug__action" disabled={!ready || course}
+            onClick={() => onAction('share-patient-and-course')}>Share patient + course</Button>
+          <Button className="crisis-drug__action" disabled={!ready || current}
+            onClick={() => onAction('share-current-state')}>Share current state</Button>
+        </div>
+        <p className="field__hint">The content blocks are fixed. Voice, interruptions, nonverbal behavior, workload, and bedside examination are not scored.</p>
+      </section>
+      <section className="syringe" aria-labelledby="handoff-closure-title">
+        <div id="handoff-closure-title" className="syringe__name">Close the loop</div>
+        <div className="syringe__meta">Risk · timing · ownership · synthesis</div>
+        <p className="syringe__remaining" role="status">
+          {accepted ? 'Transfer acknowledged + accepted'
+            : readback ? 'Receiver synthesis recorded · acceptance pending'
+              : risks ? 'Risks, actions, timing, and ownership shared'
+                : 'Unresolved-risk ownership pending core content'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!course || !current || risks}
+            onClick={() => onAction('share-risks-actions-ownership')}>Share risks + ownership</Button>
+          <Button className="crisis-drug__action" disabled={!risks || readback}
+            onClick={() => onAction('receiver-readback')}>Record receiver synthesis</Button>
+          <Button className="crisis-drug__action" disabled={!readback || accepted}
+            onClick={() => onAction('accept-transfer')}>Acknowledge + accept transfer</Button>
+        </div>
+        <p className="field__hint">Responsibility changes only after explicit acknowledgment here. This is a teaching-state transition, not a real clinical transfer.</p>
       </section>
     </div>
   );

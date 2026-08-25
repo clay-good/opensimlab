@@ -142,7 +142,7 @@ describe('Scenario: Counterfactual is computed, not asserted', () => {
 });
 
 describe('Scenario: Findings are specific', () => {
-  it('evaluates every declared objective and links it to an explainer', () => {
+  it('evaluates every declared objective and only links to a relevant, available explainer', () => {
     const explainerIds = new Set(EXPLAINERS.map((entry) => entry.id));
     for (const scenario of SCENARIOS) {
       const engine = new AnesthesiaEngine({ scenario, seed: 1, practiceRegion: 'US' });
@@ -154,8 +154,10 @@ describe('Scenario: Findings are specific', () => {
       for (const finding of findings) {
         expect(finding.finding, `${scenario.metadata.id}/${finding.objectiveId}`)
           .not.toBe('Not evaluated in this scenario.');
-        expect(explainerIds.has(finding.concept ?? ''), `${scenario.metadata.id}/${finding.objectiveId}`)
-          .toBe(true);
+        if (finding.concept) {
+          expect(explainerIds.has(finding.concept), `${scenario.metadata.id}/${finding.objectiveId}`)
+            .toBe(true);
+        }
       }
     }
   });

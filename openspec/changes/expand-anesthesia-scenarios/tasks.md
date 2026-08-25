@@ -620,3 +620,17 @@
 - [ ] Add interrogation, programming, magnet application or response, pacing or sensing,
   electrosurgery technique, current-path calculation, malfunction, emergency response, or team
   performance.
+
+## Slice 42: bounded postoperative handoff
+
+- [x] Check in an evidence brief covering shared readiness, standardized critical content,
+  questions, timing, ownership, receiver synthesis, and acknowledged transfer boundaries.
+- [x] Add a thirty-ninth authored transfer-to-PACU scenario with fixed patient/course, current-state,
+  and unresolved-risk content blocks.
+- [x] Require readiness before content, both content blocks before risk ownership, receiver synthesis
+  before acceptance, and explicit acceptance before responsibility changes.
+- [x] Reject unsupported, duplicate, out-of-order, hostile, and inactive assessment requests.
+- [x] Complete curriculum mapping, preparation path, limitations, catalog, SEO, responsive browser
+  inspection, and full CI.
+- [ ] Add free communication, voice or behavior scoring, interruptions, staffing, bedside assessment,
+  documentation, real task execution, deterioration, or team performance.
