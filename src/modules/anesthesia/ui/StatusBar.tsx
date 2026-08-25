@@ -24,10 +24,12 @@ export interface StatusBarProps {
   readonly onReset: () => void;
   readonly onSpeed: (speed: SpeedMultiplier) => void;
   readonly onOverflow: () => void;
+  readonly moduleId?: string;
 }
 
 export function StatusBar({
   scenario, elapsed, transport, speed, onPlay, onPause, onStep, onReset, onSpeed, onOverflow,
+  moduleId = 'anesthesia',
 }: StatusBarProps) {
   const patient = scenario.patient;
   const summary = `${patient.ageYears} y ${patient.sex === 'male' ? 'M' : 'F'} · `
@@ -55,6 +57,7 @@ export function StatusBar({
         subjectKind="scenario"
         subjectId={scenario.metadata.id}
         contentVersion={scenario.metadata.version}
+        moduleId={moduleId}
       />
 
       <span className="status-bar__clock numeric" aria-label={`Elapsed simulated time ${elapsed}`}>

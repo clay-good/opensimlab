@@ -1315,6 +1315,37 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-24',
   },
   {
+    id: 'esicm-circulatory-shock-2025',
+    pmid: '41236566',
+    currency: {
+      lastAmended: '2025',
+      checkedAt: 'https://www.esicm.org/esicm-guideline-circulatory-shock-haemodynamic-monitoring/',
+    },
+    authors: 'Monnet X, Messina A, Greco M, et al',
+    title: 'ESICM guidelines on circulatory shock and hemodynamic monitoring 2025',
+    publication: 'Intensive Care Med',
+    year: 2025,
+    locator: '51:1971-2012; doi:10.1007/s00134-025-08137-z',
+    usedFor: 'The undifferentiated-shock sequence: assess tissue perfusion serially, use focused '
+      + 'echocardiography to characterize shock, test dynamic fluid responsiveness, give fluid '
+      + 'with a defined target rather than liberally, then reassess and escalate unresolved shock.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-24',
+  },
+  {
+    id: 'esicm-fluid-therapy-2024',
+    pmid: '38771364',
+    authors: 'Arabi YM, Belley-Cote E, Carsetti A, et al',
+    title: 'ESICM clinical practice guideline on fluid therapy in adult critically ill patients. Part 1: the choice of resuscitation fluids',
+    publication: 'Intensive Care Med',
+    year: 2024,
+    locator: '50:813-831; doi:10.1007/s00134-024-07369-9',
+    usedFor: 'The narrow fluid boundary in the undifferentiated-shock vignette: one balanced '
+      + 'crystalloid challenge is an authored teaching action, not a universal fluid prescription.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-24',
+  },
+  {
     id: 'schwid-2001',
     pmid: '11302037',
     authors: 'Schwid HA, Rooke GA, Michalowski P, Ross BK',

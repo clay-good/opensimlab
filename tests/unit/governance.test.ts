@@ -104,7 +104,7 @@ describe('Requirement: Governance Is Auditable From Outside', () => {
     // A board member with the right scope covers their domain.
     const covered = uncoveredDomains(items, [{
       name: 'A Clinician', credential: 'MBBS FRCA', institution: 'A Hospital',
-      scope: ['adult-general-anaesthesia', 'pharmacology', 'practice-variation'],
+      scope: ['adult-general-anaesthesia', 'emergency-medicine', 'pharmacology', 'practice-variation'],
       joined: '2026-01-01', competingInterests: 'None declared',
     }]);
     expect(covered).toHaveLength(0);

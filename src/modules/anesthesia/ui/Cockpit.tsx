@@ -56,6 +56,7 @@ export interface CockpitProps {
   /** Hand the session back to the learner, wherever the demonstration got to. */
   readonly onTakeControls?: (() => void) | undefined;
   readonly onEnd: () => void;
+  readonly moduleId?: 'anesthesia' | 'emergency-medicine';
 }
 
 export function depthConfidenceFor(
@@ -129,6 +130,7 @@ const DEFAULT_RESUSCITATION = {
 
 export function Cockpit({
   scenario, region, audio, demonstrating = false, onTakeControls, onEnd,
+  moduleId = 'anesthesia',
 }: CockpitProps) {
   const session = useSession();
   const reducedMotion = usePrefersReducedMotion();
@@ -150,7 +152,7 @@ export function Cockpit({
   // Sound is OFF until the learner asks for it, and nothing asks them.
   //
   // The pulse tone is genuinely useful — its pitch falls with saturation, which
-  // is how an anaesthetist tracks saturation while looking at the airway, and it
+  // is how a clinician tracks saturation while looking at the patient, and it
   // is the strongest channel a low-vision learner has here. But an unsolicited
   // box on arrival is an interruption, and "nothing interrupts arrival" is a
   // rule this project holds elsewhere. It lives in the overflow menu instead.
@@ -442,20 +444,25 @@ export function Cockpit({
           break;
         }
         case 'v': case 'V':
+          if (moduleId !== 'anesthesia') break;
           session.act({ type: 'ventilator', payload: { delivering: true, mode: 'volume-control' } });
           break;
         case 'l': case 'L':
+          if (moduleId !== 'anesthesia') break;
           session.act({ type: 'laryngoscopy', payload: { technique: 'direct' } });
           break;
         case 'c': case 'C':
+          if (moduleId !== 'anesthesia') break;
           session.act({ type: 'chest-compressions', payload: {
             active: !(resuscitation.chestCompressionsActive ?? false),
           } });
           break;
         case 'e': case 'E':
+          if (moduleId !== 'anesthesia') break;
           session.act({ type: 'cardiac-arrest-epinephrine', payload: { route: 'iv', doseMg: 1 } });
           break;
         case 'd': case 'D':
+          if (moduleId !== 'anesthesia') break;
           session.act({ type: 'defibrillation', payload: { energyJ: 200, waveform: 'biphasic' } });
           break;
         case '?': setShortcutsOpen(true); break;
@@ -464,7 +471,7 @@ export function Cockpit({
     };
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
-  }, [session, readSummary, readWaveforms, resuscitation.chestCompressionsActive]);
+  }, [session, readSummary, readWaveforms, resuscitation.chestCompressionsActive, moduleId]);
 
   const timeToPeak = useMemo(() => ({ propofol: 100, remifentanil: 90 }), []);
 
@@ -534,6 +541,7 @@ export function Cockpit({
           onReset={resetScenario}
           onSpeed={(speed: SpeedMultiplier) => session.setSpeed(speed)}
           onOverflow={() => setShortcutsOpen(true)}
+          moduleId={moduleId}
         />
       </div>
 
@@ -576,6 +584,7 @@ export function Cockpit({
           onWhy={setWhyField}
           modelConfidence={depthModelConfidence}
           showTrainOfFour={scenario.equipment.monitoring.includes('train-of-four')}
+          showDepth={moduleId === 'anesthesia'}
           {...(neuromuscularConfidence ? { neuromuscularConfidence } : {})}
         />
       </div>
@@ -712,6 +721,9 @@ export function Cockpit({
           onPostoperativeHandoffAssessment={(action) => session.act({
             type: 'postoperative-handoff-assessment', payload: { action },
           })}
+          onUndifferentiatedShockAssessment={(action) => session.act({
+            type: 'undifferentiated-shock-assessment', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}
@@ -753,7 +765,9 @@ export function Cockpit({
 
       {/* Small screens: the Analysis region and the Action Cockpit open as overlays. */}
       <div className="mobile-actions">
-        <Button onClick={() => setAnalysisOpen((open) => !open)}>Analysis</Button>
+        <Button onClick={() => setAnalysisOpen((open) => !open)}>
+          {moduleId === 'emergency-medicine' ? 'Review' : 'Analysis'}
+        </Button>
         <Button variant="primary" onClick={() => setActionsOpen((open) => !open)}>Actions</Button>
       </div>
 
@@ -861,7 +875,7 @@ export function Cockpit({
             label={soundOn ? 'Sound on' : 'Sound off'}
           />
           <p className="field__hint">
-            The pulse tone falls in pitch as saturation falls, which is how anaesthetists track
+            The pulse tone falls in pitch as saturation falls, which is how clinicians track
             saturation while looking somewhere else. Sound is never the only channel: every alarm
             and cue is also shown.
           </p>
@@ -874,17 +888,21 @@ export function Cockpit({
         </Button>
         <h3>Keyboard shortcuts</h3>
         <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 'var(--space-2) var(--space-4)' }}>
-          {SHORTCUTS.map((shortcut) => (
+          {SHORTCUTS.filter((shortcut) => moduleId === 'anesthesia'
+            || !['G', 'V', 'L', 'C', 'E', 'D'].includes(shortcut.keys)).map((shortcut) => (
             <div key={shortcut.keys} style={{ display: 'contents' }}>
               <dt><kbd>{shortcut.keys}</kbd></dt>
-              <dd>{shortcut.action}</dd>
+              <dd>{moduleId === 'emergency-medicine'
+                ? shortcut.action.replace('Analysis', 'Review') : shortcut.action}</dd>
             </div>
           ))}
         </dl>
         <Button onClick={onEnd}>End the session and open the debrief</Button>
-        <Button onClick={() => { setShortcutsOpen(false); setCrisisInjectorOpen(true); }}>
-          Open manual crisis injector
-        </Button>
+        {moduleId === 'anesthesia' && (
+          <Button onClick={() => { setShortcutsOpen(false); setCrisisInjectorOpen(true); }}>
+            Open manual crisis injector
+          </Button>
+        )}
       </Modal>
 
       <Drawer open={crisisInjectorOpen} title="Manual crisis injector"

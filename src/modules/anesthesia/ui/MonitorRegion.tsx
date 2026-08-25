@@ -34,6 +34,7 @@ export interface MonitorRegionProps {
   readonly showLimits: boolean;
   readonly primaryTracesOnly: boolean;
   readonly showTrainOfFour?: boolean;
+  readonly showDepth?: boolean;
   readonly neuromuscularConfidence?: { label: string; kind: 'default' | 'out-of-range' | 'teaching' };
   /**
    * A pixel height, or `fill` to take whatever height the region has. `fill` is
@@ -76,7 +77,9 @@ export function MonitorRegion(props: MonitorRegionProps) {
   };
 
   const visibleTracks = new Set(tracks.map((track) => track.id));
-  const tiles = tilesFor(props.showTrainOfFour ?? false);
+  const tiles = tilesFor(props.showTrainOfFour ?? false).filter(
+    (tile) => props.showDepth !== false || tile.field !== 'depthIndex',
+  );
 
   return (
     <div className="monitor">

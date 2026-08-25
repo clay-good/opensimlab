@@ -55,15 +55,17 @@ export const MODULES: readonly ModuleDeclaration[] = [
     id: 'emergency-medicine',
     route: 'emergency-medicine',
     displayName: 'Emergency medicine',
-    description: 'Planned.',
+    description:
+      'Assess an undifferentiated emergency patient, test the next useful hypothesis, and '
+      + 'reassess the response in short, focused rehearsals.',
     audience: 'Medical students, emergency medicine residents, and acute-care trainees.',
     prerequisites: 'Basic cardiovascular and respiratory physiology and initial assessment of an acutely ill adult.',
-    status: 'planned',
+    status: 'available',
     plannedScope:
       'Twenty-five bounded emergency-department rehearsals spanning undifferentiated shock, '
       + 'respiratory failure, rhythm emergencies, neurologic deterioration, metabolic crises, '
       + 'toxicology, and trauma, beginning with assessment and reassessment of shock.',
-    timescale: { unit: 'minutes', stepSeconds: 1, speeds: [1, 5, 30, 120] },
+    timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
     id: 'cardiology',

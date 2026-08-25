@@ -1345,6 +1345,39 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['postoperative-handoff'],
   },
   {
+    id: 'shock-findings-are-a-fixed-vignette',
+    headline: 'The skin, mentation, urine output, pressure, lactate, and response findings are fixed teaching facts.',
+    simplification: 'Assessment controls reveal one authored presentation and one authored '
+      + 'post-challenge state without measurement error, evolving disease, or competing observations.',
+    whereItMisleads: 'Treating completion as a bedside examination, assuming the displayed pattern '
+      + 'is typical of every shock state, or predicting how a real patient will respond.',
+    correctUnderstanding: 'Shock assessment is serial and patient-specific. Findings, trajectory, '
+      + 'measurement quality, comorbidity, and treatment response must be integrated at the bedside.',
+    briefIn: ['undifferentiated-shock'],
+  },
+  {
+    id: 'shock-ultrasound-and-plr-are-authored-results',
+    headline: 'Focused cardiac ultrasound and passive-leg-raise results are authored findings, not acquired skills or simulated measurements.',
+    simplification: 'A click reveals fixed ventricular, pericardial, preload, and dynamic-response '
+      + 'statements without image acquisition, windows, artifacts, operator error, or stroke-volume measurement.',
+    whereItMisleads: 'Reading the interface as proof of ultrasound or passive-leg-raise competence, '
+      + 'or treating a fixed positive response as diagnostic of the cause of shock.',
+    correctUnderstanding: 'Focused ultrasound and dynamic tests require correct acquisition, '
+      + 'interpretation in context, and awareness of technical and physiologic limitations.',
+    briefIn: ['undifferentiated-shock'],
+  },
+  {
+    id: 'no-shock-etiology-definitive-treatment-or-outcome',
+    headline: 'The vignette does not diagnose the cause of shock or model definitive treatment, vasopressors, procedures, deterioration, or outcome.',
+    simplification: 'The lesson ends after one bounded fluid response and explicit escalation; '
+      + 'the unresolved etiology and all subsequent care remain outside the state transition.',
+    whereItMisleads: 'Treating the fluid response as proof of diagnosis, continuing fluid without '
+      + 'a target, delaying source control or other definitive care, or assuming improvement means recovery.',
+    correctUnderstanding: 'Resuscitation and etiologic workup proceed together. Real care requires '
+      + 'repeated perfusion assessment, targeted support, timely definitive treatment, and escalation.',
+    briefIn: ['undifferentiated-shock'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

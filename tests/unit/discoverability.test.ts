@@ -17,6 +17,7 @@ import {
 } from '@landing/content';
 import { heroStaticSvg } from '@landing/hero';
 import { SCENARIOS } from '@anesthesia/scenarios';
+import { EMERGENCY_MEDICINE_SCENARIOS } from '../../src/modules/emergency-medicine/scenarios';
 import { Landing } from '@landing/Landing';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -178,7 +179,7 @@ describe('Requirement: The Hero Is The Product Running', () => {
 
 describe('Requirement: Modules Directory Is Honest About What Exists', () => {
   it('Scenario: Available and planned are visually distinct, with no date', () => {
-    expect(availableModules().map((module) => module.id)).toEqual(['anesthesia']);
+    expect(availableModules().map((module) => module.id)).toEqual(['anesthesia', 'emergency-medicine']);
     expect(plannedModules().length).toBeGreaterThanOrEqual(2);
     for (const module of plannedModules()) {
       expect(module.plannedScope, `${module.id} needs a description of its scope`).toBeTruthy();
@@ -205,14 +206,17 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
     }
   });
 
-  it('publishes the next exact catalog wave as planned without implying playable cases', () => {
+  it('publishes the first emergency medicine rehearsal without overstating the wave', () => {
     const emergency = MODULES.find((module) => module.id === 'emergency-medicine');
     expect(emergency).toMatchObject({
-      route: 'emergency-medicine', displayName: 'Emergency medicine', status: 'planned',
+      route: 'emergency-medicine', displayName: 'Emergency medicine', status: 'available',
     });
     expect(emergency?.plannedScope).toContain('Twenty-five');
     expect(routeFor('/emergency-medicine')).toMatchObject({
-      indexable: true, heading: 'Emergency medicine — planned',
+      indexable: true, heading: 'Emergency medicine simulator',
+    });
+    expect(routeFor('/emergency-medicine/scenario/undifferentiated-shock')).toMatchObject({
+      indexable: true, heading: 'Undifferentiated shock',
     });
   });
 
@@ -301,9 +305,15 @@ describe('Requirement: Crawlability Basics', () => {
   });
 
   it('Scenario: static scenario pages show navigation, review status, and sources', () => {
-    for (const scenario of SCENARIOS) {
+    const scenarios = [
+      ...SCENARIOS.map((scenario) => ({ basePath: '/anesthesia', scenario })),
+      ...EMERGENCY_MEDICINE_SCENARIOS.map((scenario) => ({
+        basePath: '/emergency-medicine', scenario,
+      })),
+    ];
+    for (const { basePath, scenario } of scenarios) {
       const markup = renderToStaticMarkup(createElement(PrerenderedBody, {
-        path: `/anesthesia/scenario/${scenario.metadata.id}`,
+        path: `${basePath}/scenario/${scenario.metadata.id}`,
       }));
       expect(markup).toContain('href="#main"');
       expect(markup).toContain('aria-label="Site"');

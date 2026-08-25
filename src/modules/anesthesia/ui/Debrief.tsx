@@ -47,6 +47,7 @@ export interface DebriefProps {
   readonly onReplayDecisionPoint?: (point: ScenarioReplayPoint) => void;
   readonly nextRecommendation?: GoalRecommendationProps;
   readonly completedAt?: () => string;
+  readonly moduleId?: string;
 }
 
 export function applicableReplayPoint(
@@ -155,6 +156,7 @@ export function Debrief(props: DebriefProps) {
         subjectKind="scenario"
         subjectId={props.scenario.metadata.id}
         contentVersion={props.scenario.metadata.version}
+        moduleId={props.moduleId}
       />
       <nav className="phase-nav" aria-label="Debrief phases">
         {PEARLS_PHASES.map((entry, index) => (
@@ -175,9 +177,12 @@ export function Debrief(props: DebriefProps) {
         <section>
           <p>{safeContainerOpening({
             procedure: props.scenario.patient.procedure,
-            hardestThing: hardestThing(episodes),
+            hardestThing: hardestThing(episodes, props.moduleId),
             patientHarmed: episodes.length > 0,
             patientDied: false,
+            ...(props.moduleId === 'emergency-medicine'
+              ? { activityContext: 'assessing an undifferentiated shock presentation in the emergency department' }
+              : {}),
           })}</p>
           <label className="field__label" htmlFor="reactions-account">Your account</label>
           <textarea
@@ -378,8 +383,10 @@ export function Debrief(props: DebriefProps) {
   );
 }
 
-function hardestThing(episodes: readonly Episode[]): string {
-  if (episodes.length === 0) return 'keeping a normal patient normal, which is harder than it looks';
+function hardestThing(episodes: readonly Episode[], moduleId?: string): string {
+  if (episodes.length === 0) return moduleId === 'emergency-medicine'
+    ? 'working through uncertainty without skipping reassessment'
+    : 'keeping a normal patient normal, which is harder than it looks';
   return episodes[0]!.label.toLowerCase();
 }
 
@@ -3086,6 +3093,56 @@ export function objectiveFindings(
           ? 'Receiver synthesis preceded explicit acknowledgment and acceptance of responsibility.'
           : 'Responsibility was not credited because receiver synthesis and accepted transfer were incomplete or out of order.',
         atTick: accepted?.tick ?? readback?.tick ?? 0,
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
+      'recognize-shock-from-perfusion', 'assess-shock-phenotype',
+      'test-fluid-responsiveness', 'reassess-and-escalate-shock',
+    ].includes(objective.id)) {
+      const supported = scenario.timeline.some(
+        (event) => event.type === 'narrative' && event.target === 'undifferentiated-shock',
+      );
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The undifferentiated-shock vignette was not active.' } satisfies ObjectiveFinding;
+      const perfusion = log.find((event) => event.eventId.startsWith('shock-perfusion-reviewed-'));
+      const lactate = log.find((event) => event.eventId.startsWith('shock-lactate-reviewed-'));
+      const echo = log.find((event) => event.eventId.startsWith('shock-echo-reviewed-'));
+      const passiveLegRaise = log.find((event) => event.eventId.startsWith('shock-plr-positive-'));
+      const fluid = log.find((event) => event.eventId.startsWith('shock-fluid-challenge-'));
+      const reassessed = log.find((event) => event.eventId.startsWith('shock-perfusion-reassessed-'));
+      const escalated = log.find((event) => event.eventId.startsWith('shock-escalation-recorded-'));
+      if (objective.id === 'recognize-shock-from-perfusion') return {
+        ...base, outcome: perfusion && lactate ? 'met' : 'not-met',
+        finding: perfusion && lactate
+          ? 'Skin, brain, kidney, pressure, and the fixed lactate were deliberately joined as tissue-perfusion evidence without assigning a cause.'
+          : 'Whole-patient perfusion findings and the fixed lactate were not both reviewed.',
+        atTick: Math.max(perfusion?.tick ?? 0, lactate?.tick ?? 0),
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'assess-shock-phenotype') return {
+        ...base, outcome: echo ? 'met' : 'not-met',
+        finding: echo
+          ? 'The fixed focused cardiac findings were reviewed after whole-patient assessment to narrow the shock phenotype without claiming a definitive diagnosis.'
+          : 'Focused cardiac findings were not reviewed after the whole-patient perfusion assessment.',
+        atTick: echo?.tick ?? Math.max(perfusion?.tick ?? 0, lactate?.tick ?? 0),
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'test-fluid-responsiveness') {
+        const ordered = passiveLegRaise && fluid && passiveLegRaise.tick <= fluid.tick;
+        return {
+          ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'A positive fixed passive-leg-raise response preceded one bounded 500 mL balanced-crystalloid challenge.'
+            : 'The fixed dynamic response and bounded fluid challenge were incomplete or out of order.',
+          atTick: fluid?.tick ?? passiveLegRaise?.tick ?? 0,
+        } satisfies ObjectiveFinding;
+      }
+      const closed = reassessed && escalated && reassessed.tick <= escalated.tick;
+      return {
+        ...base, outcome: closed ? 'met' : 'not-met',
+        finding: closed
+          ? 'The same perfusion markers were reassessed before escalation of the unresolved shock workup and definitive treatment.'
+          : 'Serial perfusion reassessment and escalation were incomplete or out of order.',
+        atTick: escalated?.tick ?? reassessed?.tick ?? 0,
       } satisfies ObjectiveFinding;
     }
 

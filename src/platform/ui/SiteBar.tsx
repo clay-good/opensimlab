@@ -21,7 +21,8 @@ export interface SiteBarLink {
 
 /** The destinations every page offers, in the order they are worth offering. */
 export const SITE_BAR_LINKS: readonly SiteBarLink[] = [
-  { href: '/anesthesia', label: 'Scenarios' },
+  { href: '/anesthesia', label: 'Anesthesia' },
+  { href: '/emergency-medicine', label: 'Emergency' },
   { href: '/about', label: 'About' },
   { href: '/validation', label: 'Validation' },
   { href: '/governance', label: 'Governance' },

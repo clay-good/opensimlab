@@ -186,9 +186,24 @@ intracranial hemorrhage deterioration; diabetic ketoacidosis; hyperkalemia with 
 hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; acute aortic
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
-Wave A is complete at 39 registered anesthesia scenarios. Wave B begins from the planned,
-indexable `/emergency-medicine` module boundary; planned titles remain descriptive scope only and
-do not enter playable or completion counts before their full scenario contracts pass.
+Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
+`/emergency-medicine` module boundary with one playable, completion-audited scenario. The remaining
+24 planned titles remain descriptive scope only and do not enter playable counts before their full
+scenario contracts pass.
+
+### Wave B slice 1: undifferentiated shock and the emergency-department frame
+
+The first emergency-medicine slice reuses the deterministic session, monitor, transcript, tutor,
+and debrief grammar rather than copying the anesthesia application. The module owns its route,
+catalog, scenario registry, and environment copy; the existing circulation, fluid, waveform, alarm,
+and worker capabilities remain shared.
+
+The authored adult vignette is a bounded fluid-responsive low-preload pattern. Learners must review
+serial skin, brain, kidney, pressure, and lactate evidence; inspect fixed focused-cardiac-ultrasound
+and passive-leg-raise findings; deliver one 500 mL balanced-crystalloid challenge; and reassess the
+same perfusion evidence. The controls do not acquire an examination, ultrasound image, or specimen,
+and the case does not identify or treat a real etiology. Liberal repeat fluid, vasopressors,
+antimicrobials, blood, source control, procedures, and disposition remain outside this slice.
 
 #### Critical care: 24
 

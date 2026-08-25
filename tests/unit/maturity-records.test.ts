@@ -3,7 +3,10 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { ENGINE_VERSION } from '@anesthesia/engine';
 import { SCENARIOS } from '@anesthesia/scenarios';
-import { buildAnesthesiaCompletionCatalog } from '@anesthesia/catalog/scenario-completion';
+import {
+  buildAnesthesiaCompletionCatalog, buildModuleCompletionCatalog,
+} from '@anesthesia/catalog/scenario-completion';
+import { EMERGENCY_MEDICINE_SCENARIOS } from '../../src/modules/emergency-medicine/scenarios';
 import { buildScenarioQualityCatalog } from '@platform/catalog/scenario-quality';
 import {
   buildMaturityCatalog, MATURITY_RECORD_SCHEMA, MATURITY_STATUSES,
@@ -14,6 +17,13 @@ import { additionalMaturitySubjects, reviewableItems } from '@platform/governanc
 const completion = buildAnesthesiaCompletionCatalog(SCENARIOS, ENGINE_VERSION);
 const quality = buildScenarioQualityCatalog(completion);
 const catalog = buildMaturityCatalog(completion, quality, additionalMaturitySubjects());
+const emergencyCompletion = buildModuleCompletionCatalog(
+  EMERGENCY_MEDICINE_SCENARIOS, ENGINE_VERSION, 'emergency-medicine',
+  'emergency-department', 'state_transition',
+);
+const emergencyCatalog = buildMaturityCatalog(
+  emergencyCompletion, buildScenarioQualityCatalog(emergencyCompletion),
+);
 
 describe('exact-version maturity records', () => {
   it('supports the complete public vocabulary and records every clinical item honestly', () => {
@@ -22,13 +32,16 @@ describe('exact-version maturity records', () => {
       'institution_endorsed', 'withdrawn',
     ]);
     expect(validateMaturityCatalog(catalog)).toEqual([]);
-    expect(catalog.recordCount).toBe(reviewableItems().length);
+    expect(catalog.recordCount + emergencyCatalog.recordCount).toBe(reviewableItems().length);
     expect(catalog.recordCount).toBe(54);
     expect(catalog.records.every((record) => record.status === 'draft')).toBe(true);
     expect(maturityFor(catalog, 'explanation', 'hysteresis-and-effect-site-lag', '0.1.0'))
       .toBeDefined();
     expect(maturityFor(catalog, 'drug-card', 'propofol', '0.1.0')).toBeDefined();
     expect(maturityFor(catalog, 'practice-region', 'US', '0.1.0')).toBeDefined();
+    expect(maturityFor(
+      emergencyCatalog, 'scenario', 'undifferentiated-shock', '0.1.0',
+    )?.status).toBe('draft');
   });
 
   it('never applies a record to a different content version', () => {
@@ -69,5 +82,7 @@ describe('exact-version maturity records', () => {
       .toEqual(MATURITY_RECORD_SCHEMA);
     expect(JSON.parse(readFileSync(join(publicCatalog, 'anesthesia-maturity.json'), 'utf8')))
       .toEqual(catalog);
+    expect(JSON.parse(readFileSync(join(publicCatalog, 'emergency-medicine-maturity.json'), 'utf8')))
+      .toEqual(emergencyCatalog);
   });
 });

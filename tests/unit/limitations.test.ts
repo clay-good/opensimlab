@@ -12,6 +12,9 @@ import { describe, expect, it } from 'vitest';
 import { LIMITATIONS } from '@platform/docs/limitations';
 import { limitationsToBrief, unknownLimitationIds } from '@platform/docs/scenario-limitations';
 import { SCENARIOS } from '@anesthesia/scenarios';
+import { EMERGENCY_MEDICINE_SCENARIOS } from '../../src/modules/emergency-medicine/scenarios';
+
+const ALL_SCENARIOS = [...SCENARIOS, ...EMERGENCY_MEDICINE_SCENARIOS];
 
 describe('every limitation can be shown to a learner', () => {
   it.each(LIMITATIONS.map((limitation) => [limitation.id, limitation] as const))(
@@ -36,7 +39,7 @@ describe('every limitation can be shown to a learner', () => {
 describe('what a scenario briefing names', () => {
   it('never shows a learner an identifier', () => {
     // The bug, in one assertion. Every bullet is a sentence.
-    for (const scenario of SCENARIOS) {
+    for (const scenario of ALL_SCENARIOS) {
       for (const limitation of limitationsToBrief(scenario)) {
         expect(limitation.headline, scenario.metadata.id).toMatch(/\s/);
         expect(limitation.headline).not.toMatch(/^[a-z0-9-]+$/);
@@ -47,7 +50,7 @@ describe('what a scenario briefing names', () => {
   it('names every limitation that nominated this scenario', () => {
     // `briefIn` is the register saying where a limitation bites. It was
     // declared on three limitations and honoured by none.
-    for (const scenario of SCENARIOS) {
+    for (const scenario of ALL_SCENARIOS) {
       const named = new Set(limitationsToBrief(scenario).map((l) => l.id));
       for (const limitation of LIMITATIONS) {
         if (!limitation.briefIn.includes(scenario.metadata.id)) continue;
@@ -58,7 +61,7 @@ describe('what a scenario briefing names', () => {
   });
 
   it('names every limitation the scenario itself declared', () => {
-    for (const scenario of SCENARIOS) {
+    for (const scenario of ALL_SCENARIOS) {
       const named = new Set(limitationsToBrief(scenario).map((l) => l.id));
       for (const id of scenario.metadata.limitations ?? []) {
         expect(named, `${scenario.metadata.id} declared ${id} and does not name it`).toContain(id);
@@ -69,7 +72,7 @@ describe('what a scenario briefing names', () => {
   it('declares no id the register does not carry', () => {
     // Routine induction stored SENTENCES here rather than ids, so all three of
     // its entries matched nothing and could not be linked to the register.
-    for (const scenario of SCENARIOS) {
+    for (const scenario of ALL_SCENARIOS) {
       expect(unknownLimitationIds(scenario), scenario.metadata.id).toEqual([]);
     }
   });
@@ -77,13 +80,13 @@ describe('what a scenario briefing names', () => {
   it('gives every scenario something to say', () => {
     // A scenario that names no limitation is either perfect or has not been
     // thought about.
-    for (const scenario of SCENARIOS) {
+    for (const scenario of ALL_SCENARIOS) {
       expect(limitationsToBrief(scenario).length, scenario.metadata.id).toBeGreaterThan(0);
     }
   });
 
   it('says each one once, however many sources asked for it', () => {
-    for (const scenario of SCENARIOS) {
+    for (const scenario of ALL_SCENARIOS) {
       const named = limitationsToBrief(scenario).map((l) => l.id);
       expect(new Set(named).size).toBe(named.length);
     }

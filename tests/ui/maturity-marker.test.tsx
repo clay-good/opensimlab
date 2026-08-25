@@ -51,6 +51,21 @@ describe('maturity marker', () => {
     expect(markup).toContain('aria-label="Draft — development build. View exact maturity record in a new tab."');
   });
 
+  it('links a scenario to its owning module catalog', () => {
+    const markup = renderToStaticMarkup(
+      <MaturityMarker
+        status="draft"
+        subjectKind="scenario"
+        subjectId="undifferentiated-shock"
+        contentVersion="0.1.0"
+        moduleId="emergency-medicine"
+      />,
+    );
+    expect(markup).toContain(
+      '/catalog/emergency-medicine-maturity.json#scenario:undifferentiated-shock@0.1.0',
+    );
+  });
+
   it('resolves every current badge to an exact record in the offline catalog', () => {
     const completion = buildAnesthesiaCompletionCatalog(SCENARIOS, ENGINE_VERSION);
     const catalog = buildMaturityCatalog(

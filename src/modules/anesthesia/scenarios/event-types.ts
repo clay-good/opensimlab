@@ -15,6 +15,7 @@ export const EVENT_TYPES = [
   'opioid-ventilatory-impairment',
   'perioperative-hypothermia',
   'perioperative-hyperglycemia',
+  'shock-pattern',
   'malignant-hyperthermia', 'local-anesthetic-toxicity',
   'high-spinal',
   'venous-air-embolism',

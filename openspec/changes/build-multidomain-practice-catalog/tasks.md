@@ -199,9 +199,11 @@ credited toward the catalog until every item in the completion contract passes.
 ## 8. Catalog production waves
 
 - [x] Wave A: migrate and complete 39 anesthesia scenarios — all 39 are authored, registered,
-  completion-audited, prerendered, available offline, and verified at 320 px. Emergency medicine is
-  registered as the next planned module without counting a placeholder as playable.
+  completion-audited, prerendered, available offline, and verified at 320 px.
 - [ ] Wave B: complete 25 emergency-medicine and 24 critical-care scenarios.
+  Emergency Medicine is available with 1 of 25 scenarios: undifferentiated shock reuses the shared
+  deterministic session, monitor, transcript, action, and debrief frame; it is completion-audited,
+  prerendered, available offline, and explicitly bounded. The remaining 24 titles are scope only.
 - [ ] Wave C: complete 17 cardiology and 15 respiratory-medicine scenarios.
 - [ ] Wave D: complete 16 pediatric, 15 obstetric, and 11 neonatal scenarios.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.

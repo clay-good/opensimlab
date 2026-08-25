@@ -20,6 +20,12 @@ import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
 import { MaturityMarker } from '@platform/governance/MaturityMarker';
 import { SiteBar } from '@platform/ui';
 import { isUnreviewed } from '@platform/governance/review-gate';
+import {
+  DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID,
+  EMERGENCY_MEDICINE_SCENARIOS,
+  getEmergencyMedicineScenario,
+} from '../modules/emergency-medicine/scenarios';
+import type { Scenario } from '@anesthesia/scenarios/types';
 
 export function PrerenderedBody({ path }: { path: string }) {
   // The landing page, the informational routes and the planned-module pages
@@ -35,6 +41,22 @@ export function PrerenderedBody({ path }: { path: string }) {
   if (planned) return <PlannedModuleRoute module={planned} />;
   if (path === '/anesthesia') return <AnesthesiaMarkup />;
   if (path.startsWith('/anesthesia/scenario/')) return <ScenarioMarkup path={path} />;
+  if (path === '/emergency-medicine') return (
+    <ModuleMarkup
+      moduleId="emergency-medicine"
+      basePath="/emergency-medicine"
+      heading="Emergency medicine simulator"
+      scenarios={EMERGENCY_MEDICINE_SCENARIOS}
+    />
+  );
+  if (path.startsWith('/emergency-medicine/scenario/')) return (
+    <ScenarioMarkup
+      path={path}
+      basePath="/emergency-medicine"
+      defaultScenarioId={DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID}
+      getScenario={getEmergencyMedicineScenario}
+    />
+  );
   // The simulator route deliberately renders something different on the client —
   // the acknowledgement gate — so its prerendered markup is the crawler's copy
   // and the client mounts fresh over it rather than hydrating.
@@ -47,17 +69,33 @@ export function PrerenderedBody({ path }: { path: string }) {
  * copy. What is here is what a crawler needs to know the page exists and what it is.
  */
 function AnesthesiaMarkup() {
-  const anesthesia = MODULES.find((module) => module.id === 'anesthesia');
+  return (
+    <ModuleMarkup
+      moduleId="anesthesia"
+      basePath="/anesthesia"
+      heading="Anesthesia simulator"
+      scenarios={scenariosByDifficulty()}
+    />
+  );
+}
+
+function ModuleMarkup({ moduleId, basePath, heading, scenarios }: {
+  moduleId: string;
+  basePath: string;
+  heading: string;
+  scenarios: readonly Scenario[];
+}) {
+  const module = MODULES.find((entry) => entry.id === moduleId);
   return (
     <div className="document">
-      <SiteBar current="/anesthesia" />
+      <SiteBar current={basePath} />
       <main className="reading" id="main">
-        <h1>Anesthesia simulator</h1>
-        <p>{anesthesia?.description}</p>
+        <h1>{heading}</h1>
+        <p>{module?.description}</p>
         <ul>
-          {scenariosByDifficulty().map((scenario) => (
+          {scenarios.map((scenario) => (
             <li key={scenario.metadata.id}>
-              <a href={`/anesthesia/scenario/${scenario.metadata.id}`}>{scenario.metadata.title}</a>
+              <a href={`${basePath}/scenario/${scenario.metadata.id}`}>{scenario.metadata.title}</a>
             </li>
           ))}
         </ul>
@@ -68,9 +106,19 @@ function AnesthesiaMarkup() {
   );
 }
 
-function ScenarioMarkup({ path }: { path: string }) {
-  const id = path.slice('/anesthesia/scenario/'.length).replace(/\/+$/, '');
-  const scenario = getScenario(id) ?? getScenario(DEFAULT_SCENARIO_ID)!;
+function ScenarioMarkup({
+  path,
+  basePath = '/anesthesia',
+  defaultScenarioId = DEFAULT_SCENARIO_ID,
+  getScenario: findScenario = getScenario,
+}: {
+  path: string;
+  basePath?: string;
+  defaultScenarioId?: string;
+  getScenario?: (id: string) => Scenario | undefined;
+}) {
+  const id = path.slice(`${basePath}/scenario/`.length).replace(/\/+$/, '');
+  const scenario = findScenario(id) ?? findScenario(defaultScenarioId)!;
   const { metadata, patient } = scenario;
   const unreviewed = isUnreviewed(metadata.clinicalReview);
   return (
@@ -83,6 +131,7 @@ function ScenarioMarkup({ path }: { path: string }) {
           subjectKind="scenario"
           subjectId={metadata.id}
           contentVersion={metadata.version}
+          moduleId={basePath.slice(1)}
         />
         <p>
           {patient.ageYears}-year-old{' '}
@@ -102,7 +151,7 @@ function ScenarioMarkup({ path }: { path: string }) {
             {metadata.clinicalReview.sources.map((source) => <li key={source}>{source}</li>)}
           </ul>
         </section>
-        <p><a href="/anesthesia">Every anesthesia scenario</a></p>
+        <p><a href={basePath}>Every scenario in this module</a></p>
         <p className="landing__disclaimer">{NOT_FOR_CLINICAL_USE}</p>
       </main>
     </div>

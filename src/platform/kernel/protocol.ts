@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 35 reports bounded postoperative-handoff state. */
-export const WORKER_PROTOCOL_VERSION = 35;
+/** Bumped whenever the message shape changes incompatibly. Version 36 reports bounded shock-assessment state. */
+export const WORKER_PROTOCOL_VERSION = 36;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -358,6 +358,16 @@ export interface EquipmentSnapshot {
       readonly risksActionsOwnershipAtTick: number | null;
       readonly receiverReadbackAtTick: number | null;
       readonly transferAcceptedAtTick: number | null;
+    };
+    /** Ordered fixed-vignette assessment and reassessment of undifferentiated shock. */
+    readonly undifferentiatedShockAssessment?: {
+      readonly perfusionReviewedAtTick: number | null;
+      readonly lactateReviewedAtTick: number | null;
+      readonly focusedEchoReviewedAtTick: number | null;
+      readonly passiveLegRaiseAtTick: number | null;
+      readonly fluidChallengeAtTick: number | null;
+      readonly perfusionReassessedAtTick: number | null;
+      readonly escalationAtTick: number | null;
     };
     /** Accepted quantitative neuromuscular-reversal teaching state. */
     readonly neuromuscularReversalFraction?: number;

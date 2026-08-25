@@ -91,8 +91,8 @@ export function buildMaturityCatalog(
       subjectKind: 'scenario', subjectId: scenario.scenarioId,
       contentVersion: scenario.contentVersion, status: scenario.maturity,
       evidence: [
-        `/catalog/anesthesia-completion-audit.json#${scenario.scenarioId}@${scenario.contentVersion}`,
-        `/catalog/anesthesia-quality-audit.json#${scenario.scenarioId}@${scenario.contentVersion}`,
+        `/catalog/${completion.moduleId}-completion-audit.json#${scenario.scenarioId}@${scenario.contentVersion}`,
+        `/catalog/${completion.moduleId}-quality-audit.json#${scenario.scenarioId}@${scenario.contentVersion}`,
       ],
     };
   });

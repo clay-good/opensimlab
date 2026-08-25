@@ -21,14 +21,15 @@ export interface MaturityMarkerProps {
   readonly subjectId: string;
   readonly contentVersion: string;
   readonly compact?: boolean;
+  readonly moduleId?: string;
 }
 
 /** A quiet status link that always resolves to the exact public evidence record. */
 export function MaturityMarker({
-  status, subjectKind, subjectId, contentVersion, compact = false,
+  status, subjectKind, subjectId, contentVersion, compact = false, moduleId = 'anesthesia',
 }: MaturityMarkerProps) {
   const label = MATURITY_LABELS[status];
-  const href = `/catalog/anesthesia-maturity.json#${maturityRecordId(subjectKind, subjectId, contentVersion)}`;
+  const href = `/catalog/${moduleId}-maturity.json#${maturityRecordId(subjectKind, subjectId, contentVersion)}`;
   return (
     <a
       className={`maturity-marker${compact ? ' maturity-marker--compact' : ''}`}

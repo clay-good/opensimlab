@@ -41,7 +41,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.37';
+export const ENGINE_VERSION = '0.1.0-alpha.38';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -362,6 +362,14 @@ export class AnesthesiaEngine {
   private postoperativeRisksActionsOwnershipAtTick: number | null = null;
   private postoperativeReceiverReadbackAtTick: number | null = null;
   private postoperativeTransferAcceptedAtTick: number | null = null;
+  private undifferentiatedShockActive = false;
+  private shockPerfusionReviewedAtTick: number | null = null;
+  private shockLactateReviewedAtTick: number | null = null;
+  private shockFocusedEchoReviewedAtTick: number | null = null;
+  private shockPassiveLegRaiseAtTick: number | null = null;
+  private shockFluidChallengeAtTick: number | null = null;
+  private shockPerfusionReassessedAtTick: number | null = null;
+  private shockEscalationAtTick: number | null = null;
   /** Exclusive tick at which the bounded held airway maneuver ends. */
   private jawThrustCpapUntilTick = 0;
   /** Current lower-airway obstruction, retained for truthful equipment/accessibility output. */
@@ -1978,6 +1986,124 @@ export class AnesthesiaEngine {
           'The receiver acknowledged and accepted responsibility. This records a teaching-state transition, not real staffing, documentation, or clinical transfer.');
         break;
       }
+      case 'undifferentiated-shock-assessment': {
+        const response = String(action.payload.action ?? '');
+        const valid = [
+          'review-perfusion', 'review-lactate', 'review-focused-echo',
+          'perform-passive-leg-raise', 'give-targeted-fluid-challenge',
+          'reassess-perfusion', 'escalate-after-reassessment',
+        ].includes(response);
+        if (!this.undifferentiatedShockActive || !valid) {
+          this.log('warning', 'assessment', `undifferentiated-shock-refused-${this.currentTick}`,
+            this.undifferentiatedShockActive
+              ? 'The shock-assessment action was not one of the listed choices. Nothing changed.'
+              : 'The bounded shock-assessment choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-perfusion') {
+          if (this.shockPerfusionReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `shock-perfusion-refused-${this.currentTick}`,
+              'The fixed perfusion examination has already been reviewed.');
+            break;
+          }
+          this.shockPerfusionReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `shock-perfusion-reviewed-${this.currentTick}`,
+            'Fixed perfusion findings: capillary refill 5 seconds, cool mottled knees, new inattention, and 15 mL urine in the prior hour. Technique and measurement error are not simulated.');
+          break;
+        }
+        if (response === 'review-lactate') {
+          if (this.shockLactateReviewedAtTick !== null) {
+            this.log('warning', 'laboratory', `shock-lactate-refused-${this.currentTick}`,
+              'The fixed lactate result has already been reviewed.');
+            break;
+          }
+          this.shockLactateReviewedAtTick = this.currentTick;
+          this.log('critical', 'laboratory', `shock-lactate-reviewed-${this.currentTick}`,
+            'Fixed venous lactate: 4.6 mmol/L. Sampling, assay performance, acid-base state, and alternative causes are not simulated.');
+          break;
+        }
+        if (response === 'review-focused-echo') {
+          if (this.shockPerfusionReviewedAtTick === null || this.shockLactateReviewedAtTick === null) {
+            this.log('warning', 'assessment', `shock-echo-order-refused-${this.currentTick}`,
+              'Review the fixed whole-patient perfusion findings and lactate before focused cardiac imaging.');
+            break;
+          }
+          if (this.shockFocusedEchoReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `shock-echo-refused-${this.currentTick}`,
+              'The fixed focused cardiac-ultrasound findings have already been reviewed.');
+            break;
+          }
+          this.shockFocusedEchoReviewedAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `shock-echo-reviewed-${this.currentTick}`,
+            'Fixed focused cardiac-ultrasound findings: small ventricular filling, preserved left- and right-ventricular systolic appearance, and no pericardial effusion. Image acquisition and interpretation are not simulated.');
+          break;
+        }
+        if (response === 'perform-passive-leg-raise') {
+          if (this.shockFocusedEchoReviewedAtTick === null) {
+            this.log('warning', 'assessment', `shock-plr-order-refused-${this.currentTick}`,
+              'Review the fixed focused cardiac-ultrasound findings before the passive-leg-raise response.');
+            break;
+          }
+          if (this.shockPassiveLegRaiseAtTick !== null) {
+            this.log('warning', 'assessment', `shock-plr-refused-${this.currentTick}`,
+              'The fixed passive-leg-raise response has already been reviewed.');
+            break;
+          }
+          this.shockPassiveLegRaiseAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `shock-plr-positive-${this.currentTick}`,
+            'Fixed passive-leg-raise response: the authored measured stroke-volume estimate rises by 14%. This is not the canonical monitor state and does not predict an individual patient response.');
+          break;
+        }
+        if (response === 'give-targeted-fluid-challenge') {
+          if (this.shockPassiveLegRaiseAtTick === null) {
+            this.log('warning', 'fluid', `shock-fluid-order-refused-${this.currentTick}`,
+              'Review the fixed dynamic fluid-responsiveness response before the bounded challenge.');
+            break;
+          }
+          if (this.shockFluidChallengeAtTick !== null) {
+            this.log('warning', 'fluid', `shock-fluid-refused-${this.currentTick}`,
+              'The bounded 500 mL fluid challenge has already been delivered.');
+            break;
+          }
+          this.shockFluidChallengeAtTick = this.currentTick;
+          this.pendingCrystalloidMl += 500;
+          this.crystalloidTotalMl += 500;
+          this.log('advisory', 'fluid', `shock-fluid-challenge-${this.currentTick}`,
+            'A fixed 500 mL balanced-crystalloid challenge was accepted. The shared teaching model retains 25% intravascularly; reassess rather than infer success from delivery.',
+            { volumeMl: 500, teachingModel: true });
+          break;
+        }
+        if (response === 'reassess-perfusion') {
+          if (this.shockFluidChallengeAtTick === null || this.currentTick <= this.shockFluidChallengeAtTick) {
+            this.log('warning', 'assessment', `shock-reassessment-order-refused-${this.currentTick}`,
+              'Deliver the bounded challenge and allow the next engine tick before serial reassessment.');
+            break;
+          }
+          if (this.shockPerfusionReassessedAtTick !== null) {
+            this.log('warning', 'assessment', `shock-reassessment-refused-${this.currentTick}`,
+              'The fixed post-challenge perfusion reassessment has already been recorded.');
+            break;
+          }
+          this.shockPerfusionReassessedAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `shock-perfusion-reassessed-${this.currentTick}`,
+            'Fixed serial reassessment: capillary refill shortens to 3 seconds and attention improves; urine output and repeat lactate are not available in this brief window. Ongoing shock still requires escalation and etiologic workup.');
+          break;
+        }
+        if (this.shockPerfusionReassessedAtTick === null) {
+          this.log('warning', 'assessment', `shock-escalation-order-refused-${this.currentTick}`,
+            'Reassess the same perfusion markers before recording escalation.');
+          break;
+        }
+        if (this.shockEscalationAtTick !== null) {
+          this.log('warning', 'assessment', `shock-escalation-refused-${this.currentTick}`,
+            'Ongoing shock escalation has already been recorded.');
+          break;
+        }
+        this.shockEscalationAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `shock-escalation-recorded-${this.currentTick}`,
+          'Continued monitored resuscitation, senior help, serial perfusion assessment, and urgent etiologic evaluation were recorded. No real diagnosis, vasopressor, procedure, or disposition is selected here.');
+        break;
+      }
       case 'silence-alarm': {
         this.alarmEngine.silence(String(action.payload.alarmId), this.currentTick, TICKS_PER_SECOND);
         break;
@@ -2471,6 +2597,18 @@ export class AnesthesiaEngine {
           return;
         }
         this.hyperglycemicGlucoseMgPerDl = glucose;
+        return;
+      }
+
+      case 'shock-pattern': {
+        if (event.target !== 'fluid-responsive-low-preload' || event.value !== 1) {
+          this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" must declare the bounded fluid-responsive-low-preload pattern with value 1, so the event had no effect.`);
+          return;
+        }
+        this.undifferentiatedShockActive = true;
+        this.log('critical', 'scenario', `undifferentiated-shock-active-${this.currentTick}`,
+          'The patient has persistent hypotension and signs of impaired tissue perfusion. The etiology is not named; assess more than one variable and reassess after acting.');
         return;
       }
 
@@ -3345,6 +3483,15 @@ export class AnesthesiaEngine {
           risksActionsOwnershipAtTick: this.postoperativeRisksActionsOwnershipAtTick,
           receiverReadbackAtTick: this.postoperativeReceiverReadbackAtTick,
           transferAcceptedAtTick: this.postoperativeTransferAcceptedAtTick,
+        },
+        undifferentiatedShockAssessment: {
+          perfusionReviewedAtTick: this.shockPerfusionReviewedAtTick,
+          lactateReviewedAtTick: this.shockLactateReviewedAtTick,
+          focusedEchoReviewedAtTick: this.shockFocusedEchoReviewedAtTick,
+          passiveLegRaiseAtTick: this.shockPassiveLegRaiseAtTick,
+          fluidChallengeAtTick: this.shockFluidChallengeAtTick,
+          perfusionReassessedAtTick: this.shockPerfusionReassessedAtTick,
+          escalationAtTick: this.shockEscalationAtTick,
         },
         neuromuscularReversalFraction: this.neuromuscularReversalFraction,
         postTetanicCount: this.postTetanicCount,

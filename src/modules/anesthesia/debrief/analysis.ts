@@ -300,6 +300,7 @@ export function safeContainerOpening(options: {
   readonly hardestThing: string;
   readonly patientHarmed: boolean;
   readonly patientDied: boolean;
+  readonly activityContext?: string;
 }): string {
   if (options.patientDied) {
     return 'This scenario ended in the patient\'s death. That is affecting even in simulation, and '
@@ -310,6 +311,6 @@ export function safeContainerOpening(options: {
     ? ' The patient came to harm along the way, and the debrief will look at why without treating '
       + 'it as a verdict on you.'
     : '';
-  return `You were anaesthetising a patient for ${options.procedure}. The hardest part of that was `
+  return `You were ${options.activityContext ?? `anaesthetising a patient for ${options.procedure}`}. The hardest part of that was `
     + `${options.hardestThing}.${harm} Before anything else: what stood out to you?`;
 }

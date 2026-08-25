@@ -24,6 +24,7 @@ import { ErrorBoundary } from '@platform/ui/ErrorBoundary';
  * these three are behind a dynamic import rather than a static one.
  */
 const AnesthesiaRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).AnesthesiaRoute }));
+const EmergencyMedicineRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).EmergencyMedicineRoute }));
 const GalleryRoute = lazy(async () => ({ default: (await import('./GalleryRoute')).GalleryRoute }));
 const FrameBudgetRoute = lazy(async () => ({ default: (await import('./FrameBudgetRoute')).FrameBudgetRoute }));
 // The informational routes read the validation report and the governance records,
@@ -138,6 +139,13 @@ function CurrentRoute() {
     return (
       <ErrorBoundary surface="simulator">
         <Suspense fallback={<Loading />}><AnesthesiaRoute path={path} /></Suspense>
+      </ErrorBoundary>
+    );
+  }
+  if (path === '/emergency-medicine' || path.startsWith('/emergency-medicine/')) {
+    return (
+      <ErrorBoundary surface="simulator">
+        <Suspense fallback={<Loading />}><EmergencyMedicineRoute path={path} /></Suspense>
       </ErrorBoundary>
     );
   }

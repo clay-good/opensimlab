@@ -108,7 +108,8 @@ Reviewers run the routine induction themselves before answering.
 | B54 | In the perioperative-hyperglycemia lesson, point-of-care confirmation, dose-free institutional response intent, the 30-minute wait, dual-unit values, and in-target repeat are inspectable without implying an insulin order or individual response | | |
 | B55 | In the pacemaker-and-cautery-planning lesson, device identity, pacing dependence, magnet response, procedure location, anticipated interference, coordinated asynchronous planning, backup, and restoration are inspectable without implying programming competence or a universal magnet rule | | |
 | B56 | In the postoperative-handoff lesson, shared readiness, patient/course and current-state content, unresolved-risk ownership, receiver synthesis, and acknowledged transfer are inspectable without implying observed communication competence or a real transfer | | |
-| B57 | Overall: does this patient behave like a patient? | | |
+| B57 | In the undifferentiated-shock lesson, skin, brain, kidney, pressure, lactate, focused cardiac findings, and a positive dynamic response form a coherent low-preload teaching pattern; one bounded 500 mL challenge produces a plausible directional perfusion response; and reassessment clearly precedes escalation without implying diagnosis, ultrasound competence, or definitive treatment | | |
+| B58 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -212,4 +213,8 @@ So that reviewers spend their attention on what this review is for:
 - The hypothermia case uses fixed cooling and warming targets rather than redistribution or energy
   balance. Surface and fluid warming are intent controls, not device, probe, delivery, or heat-transfer
   simulations. Shivering, comfort, complications, medication effects, emergence, and disposition are absent.
+- The undifferentiated-shock case uses fixed examination, lactate, focused-ultrasound, and
+  passive-leg-raise findings. One 500 mL balanced-crystalloid challenge retains a bounded fraction
+  in the shared circulation model. It does not diagnose etiology, teach acquisition technique,
+  choose vasopressors or definitive treatment, model liberal repeat fluid, or predict outcome.
 - Nothing here has been clinically reviewed before — you are the first.

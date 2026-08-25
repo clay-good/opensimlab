@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: opioid-induced-ventilatory-impairment state has protocol version 31', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(35);
+  it('Scenario: undifferentiated-shock state has protocol version 36', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(36);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

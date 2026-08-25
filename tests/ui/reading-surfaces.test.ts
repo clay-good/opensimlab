@@ -86,5 +86,7 @@ describe('Requirement: A Field In Prose Reads As A Field', () => {
 describe('Requirement: A Prose Page Primary Action Is Easy To Tap', () => {
   it('keeps the primary link at the comfortable touch-target minimum', () => {
     expect(componentsCss).toMatch(/\.button--primary \{[^}]*min-block-size: 44px/s);
+    expect(componentsCss).toMatch(/\.button \{[^}]*min-block-size: 44px/s);
+    expect(componentsCss).toMatch(/\.button--compact \{[^}]*min-block-size: 40px/s);
   });
 });

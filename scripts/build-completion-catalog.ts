@@ -3,7 +3,11 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ENGINE_VERSION } from '@anesthesia/engine';
 import { SCENARIOS } from '@anesthesia/scenarios';
-import { buildAnesthesiaCompletionCatalog } from '@anesthesia/catalog/scenario-completion';
+import {
+  buildAnesthesiaCompletionCatalog,
+  buildModuleCompletionCatalog,
+} from '@anesthesia/catalog/scenario-completion';
+import { EMERGENCY_MEDICINE_SCENARIOS } from '../src/modules/emergency-medicine/scenarios';
 import { SCENARIO_COMPLETION_SCHEMA } from '@platform/catalog/scenario-completion';
 import { buildScenarioQualityCatalog, QUALITY_SCHEMAS } from '@platform/catalog/scenario-quality';
 import { buildMaturityCatalog, MATURITY_RECORD_SCHEMA } from '@platform/catalog/maturity';
@@ -21,6 +25,14 @@ mkdirSync(target, { recursive: true });
 
 const completion = buildAnesthesiaCompletionCatalog(SCENARIOS, ENGINE_VERSION);
 const quality = buildScenarioQualityCatalog(completion);
+const emergencyCompletion = buildModuleCompletionCatalog(
+  EMERGENCY_MEDICINE_SCENARIOS,
+  ENGINE_VERSION,
+  'emergency-medicine',
+  'emergency-department',
+  'state_transition',
+);
+const emergencyQuality = buildScenarioQualityCatalog(emergencyCompletion);
 writeFileSync(
   join(target, 'scenario-catalog.schema.json'),
   `${JSON.stringify(SCENARIO_CATALOG_SCHEMA, null, 2)}\n`,
@@ -50,6 +62,16 @@ writeFileSync(
   'utf8',
 );
 writeFileSync(
+  join(target, 'emergency-medicine-completion-audit.json'),
+  `${JSON.stringify(emergencyCompletion, null, 2)}\n`,
+  'utf8',
+);
+writeFileSync(
+  join(target, 'emergency-medicine-quality-audit.json'),
+  `${JSON.stringify(emergencyQuality, null, 2)}\n`,
+  'utf8',
+);
+writeFileSync(
   join(target, 'maturity-record.schema.json'),
   `${JSON.stringify(MATURITY_RECORD_SCHEMA, null, 2)}\n`,
   'utf8',
@@ -59,7 +81,14 @@ writeFileSync(
   `${JSON.stringify(buildMaturityCatalog(completion, quality, additionalMaturitySubjects()), null, 2)}\n`,
   'utf8',
 );
+writeFileSync(
+  join(target, 'emergency-medicine-maturity.json'),
+  `${JSON.stringify(buildMaturityCatalog(emergencyCompletion, emergencyQuality), null, 2)}\n`,
+  'utf8',
+);
 writeFileSync(join(target, 'asset-licenses.json'), `${JSON.stringify(ASSET_LICENSE_MANIFEST, null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'evidence-sources.json'), `${JSON.stringify(buildEvidenceSourceManifest(SOURCES), null, 2)}\n`, 'utf8');
 
-process.stdout.write(`catalog: audited ${SCENARIOS.length} anesthesia scenarios\n`);
+process.stdout.write(
+  `catalog: audited ${SCENARIOS.length} anesthesia and ${EMERGENCY_MEDICINE_SCENARIOS.length} emergency medicine scenarios\n`,
+);

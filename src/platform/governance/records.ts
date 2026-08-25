@@ -11,6 +11,7 @@ import { EXPLAINERS } from '@anesthesia/content/explainers';
 import { DRUG_CARDS } from '@anesthesia/content/drug-cards';
 import { SCENARIOS } from '@anesthesia/scenarios';
 import { REGIONS } from '@anesthesia/region/profiles';
+import { EMERGENCY_MEDICINE_SCENARIOS } from '../../modules/emergency-medicine/scenarios';
 import type { MaturitySubjectInput } from '@platform/catalog/maturity';
 
 /**
@@ -38,6 +39,16 @@ export function reviewableItems(): ReviewableItem[] {
       contentVersion: scenario.metadata.version,
       review: scenario.metadata.clinicalReview,
       domains: ['adult-general-anaesthesia'],
+    });
+  }
+
+  for (const scenario of EMERGENCY_MEDICINE_SCENARIOS) {
+    items.push({
+      id: scenario.metadata.id,
+      kind: 'scenario',
+      contentVersion: scenario.metadata.version,
+      review: scenario.metadata.clinicalReview,
+      domains: ['emergency-medicine'],
     });
   }
 

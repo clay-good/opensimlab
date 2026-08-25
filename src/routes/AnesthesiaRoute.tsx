@@ -38,6 +38,32 @@ import {
   recommendNextScenario,
 } from '@anesthesia/catalog/preparation-paths';
 import { completedScenarioIds, loadPracticeHistory } from '@anesthesia/catalog/practice-history';
+import {
+  DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID,
+  EMERGENCY_MEDICINE_SCENARIOS,
+  getEmergencyMedicineScenario,
+} from '../modules/emergency-medicine/scenarios';
+
+interface ClinicalModuleConfig {
+  readonly id: 'anesthesia' | 'emergency-medicine';
+  readonly basePath: '/anesthesia' | '/emergency-medicine';
+  readonly heading: string;
+  readonly scenarios: readonly Scenario[];
+  readonly defaultScenarioId: string;
+  readonly getScenario: (id: string) => Scenario | undefined;
+}
+
+const ANESTHESIA_CONFIG: ClinicalModuleConfig = {
+  id: 'anesthesia', basePath: '/anesthesia', heading: 'Anesthesia simulator',
+  scenarios: scenariosByDifficulty(), defaultScenarioId: DEFAULT_SCENARIO_ID, getScenario,
+};
+
+const EMERGENCY_MEDICINE_CONFIG: ClinicalModuleConfig = {
+  id: 'emergency-medicine', basePath: '/emergency-medicine',
+  heading: 'Emergency medicine simulator', scenarios: EMERGENCY_MEDICINE_SCENARIOS,
+  defaultScenarioId: DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID,
+  getScenario: getEmergencyMedicineScenario,
+};
 
 /**
  * The scenario a path names.
@@ -49,12 +75,15 @@ import { completedScenarioIds, loadPracticeHistory } from '@anesthesia/catalog/p
  * cohort link would have sent thirty students to the wrong case without one of
  * them being told.
  */
-function scenarioForPath(path: string): { scenario: Scenario; missingId: string | null } {
-  const fallback = getScenario(DEFAULT_SCENARIO_ID)!;
-  const prefix = '/anesthesia/scenario/';
+function scenarioForPath(
+  path: string,
+  config: ClinicalModuleConfig,
+): { scenario: Scenario; missingId: string | null } {
+  const fallback = config.getScenario(config.defaultScenarioId)!;
+  const prefix = `${config.basePath}/scenario/`;
   if (!path.startsWith(prefix)) return { scenario: fallback, missingId: null };
   const id = path.slice(prefix.length).replace(/\/+$/, '');
-  const found = getScenario(id);
+  const found = config.getScenario(id);
   if (found) return { scenario: found, missingId: null };
   // The id is shown back to whoever followed the link, bounded, because it came
   // from a URL and a URL can carry anything.
@@ -99,9 +128,9 @@ export function readAssignment(search: string): Assignment {
   };
 }
 
-export function AnesthesiaRoute({ path }: { path: string }) {
+function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalModuleConfig }) {
   const session = useSession();
-  const { scenario, missingId } = useMemo(() => scenarioForPath(path), [path]);
+  const { scenario, missingId } = useMemo(() => scenarioForPath(path, config), [path, config]);
   const assignment = useMemo(
     () => readAssignment(typeof location === 'undefined' ? '' : location.search),
     [],
@@ -113,7 +142,7 @@ export function AnesthesiaRoute({ path }: { path: string }) {
   const contentVersion = scenario.metadata.version;
   // The index at /anesthesia lists what there is to do rather than dropping the
   // learner into whichever scenario happened to be first.
-  const isIndex = !path.startsWith('/anesthesia/scenario/');
+  const isIndex = !path.startsWith(`${config.basePath}/scenario/`);
   const [acknowledged, setAcknowledged] = useState(() => hasAcknowledged());
   // Whether the scripted demonstration is driving this session. Deliberately not
   // in the URL: a demonstration is something you start, not somewhere you are.
@@ -155,7 +184,7 @@ export function AnesthesiaRoute({ path }: { path: string }) {
   }, [assignment.guidance, session]);
 
   useEffect(() => {
-    if (!acknowledged || session.phase !== 'idle') return;
+    if (isIndex || !acknowledged || session.phase !== 'idle') return;
     session.begin(
       {
         scenarioId: scenario.metadata.id,
@@ -172,9 +201,9 @@ export function AnesthesiaRoute({ path }: { path: string }) {
         engine: ENGINE_VERSION, content: contentVersion,
         modelSet: MODEL_SET_REVISION, scenario: scenario.metadata.version,
       },
-      'anesthesia',
+      config.id,
     );
-  }, [acknowledged, session, region.id]);
+  }, [acknowledged, session, region.id, config.id, isIndex]);
 
   // `?demo=1`: skip the briefing and start watching. Fires once, only for the
   // scenario the script was authored against, and only once the session is
@@ -183,7 +212,7 @@ export function AnesthesiaRoute({ path }: { path: string }) {
     if (!autoDemo.current) return;
     if (session.phase !== 'briefing' && session.phase !== 'idle') return;
     if (!session.ready) return;
-    if (scenario.metadata.id !== DEMONSTRATION_SCENARIO_ID) return;
+    if (config.id !== 'anesthesia' || scenario.metadata.id !== DEMONSTRATION_SCENARIO_ID) return;
     autoDemo.current = false;
     setDemonstrating(true);
     session.setSpeed(5);
@@ -203,13 +232,19 @@ export function AnesthesiaRoute({ path }: { path: string }) {
     URL.revokeObjectURL(url);
   }, [session]);
 
+  // Browsing the catalog is not simulator interaction. Let a learner understand
+  // what exists before asking for the safety acknowledgement.
+  if (isIndex) return config.id === 'anesthesia'
+    ? <ScenarioIndex />
+    : <EmergencyMedicineScenarioIndex config={config} />;
+
   if (!acknowledged) {
     return (
       <>
         <SiteBar />
         {/* The page content is delivered regardless; only interaction is gated. */}
         <main className="reading" id="main">
-          <h1>Anesthesia simulator</h1>
+          <h1>{config.heading}</h1>
           <p>{isIndex ? 'Choose a scenario.' : scenario.metadata.title}</p>
         </main>
         <NotForClinicalUseGate
@@ -222,14 +257,11 @@ export function AnesthesiaRoute({ path }: { path: string }) {
 
   // A link to a scenario that does not exist says so, rather than quietly
   // opening a different patient.
-  if (missingId !== null) return <UnknownScenario id={missingId} />;
-
-  // The index: what there is to do, in the order it is worth doing.
-  if (isIndex) return <ScenarioIndex />;
+  if (missingId !== null) return <UnknownScenario id={missingId} config={config} />;
 
   if (session.phase === 'ended') {
     const internals = sessionInternals();
-    const nextRecommendation = selectedGoal === 'all' ? undefined : (() => {
+    const nextRecommendation = config.id !== 'anesthesia' || selectedGoal === 'all' ? undefined : (() => {
       const goal = preparationPath(selectedGoal);
       const completed = completedScenarioIds(loadPracticeHistory());
       completed.add(scenario.metadata.id);
@@ -252,6 +284,7 @@ export function AnesthesiaRoute({ path }: { path: string }) {
           practiceRegion: region.id, ticks: session.tick || 1,
         }}
         preoxygenationSeconds={session.equipment?.preoxygenationSeconds ?? 0}
+        moduleId={config.id}
         onOpenExplainer={() => { /* the debrief opens explainers inline */ }}
         onExportTranscript={() => { void exportTranscript(); }}
         onReplayScenario={session.resetSession}
@@ -267,10 +300,11 @@ export function AnesthesiaRoute({ path }: { path: string }) {
         <Prebrief
           scenario={scenario}
           region={region}
+          environment={config.id}
           guidance={session.guidance}
           onGuidance={session.setGuidance}
           onStart={() => { setDemonstrating(false); session.play(); }}
-          {...(scenario.metadata.id === DEMONSTRATION_SCENARIO_ID
+          {...(config.id === 'anesthesia' && scenario.metadata.id === DEMONSTRATION_SCENARIO_ID
             ? { onWatch: () => { setDemonstrating(true); session.setSpeed(5); session.play(); } }
             : {})}
           {...(assignment.label ? { assignmentLabel: assignment.label } : {})}
@@ -296,8 +330,17 @@ export function AnesthesiaRoute({ path }: { path: string }) {
       demonstrating={demonstrating}
       onTakeControls={() => { setDemonstrating(false); session.setSpeed(1); }}
       onEnd={session.end}
+      moduleId={config.id}
     />
   );
+}
+
+export function AnesthesiaRoute({ path }: { path: string }) {
+  return <ClinicalModuleRoute path={path} config={ANESTHESIA_CONFIG} />;
+}
+
+export function EmergencyMedicineRoute({ path }: { path: string }) {
+  return <ClinicalModuleRoute path={path} config={EMERGENCY_MEDICINE_CONFIG} />;
 }
 
 /**
@@ -313,7 +356,7 @@ export function AnesthesiaRoute({ path }: { path: string }) {
  * It names the id rather than saying "not found", because the person reading it
  * is usually the one who wrote the link, and the id is the thing they got wrong.
  */
-function UnknownScenario({ id }: { id: string }) {
+function UnknownScenario({ id, config }: { id: string; config: ClinicalModuleConfig }) {
   return (
     <>
       <SiteBar />
@@ -328,16 +371,56 @@ function UnknownScenario({ id }: { id: string }) {
         all the scenarios there are:
       </p>
       <ul className="scenario-index">
-        {scenariosByDifficulty().map((entry) => (
+        {config.scenarios.map((entry) => (
           <li key={entry.metadata.id} className="scenario-index__item">
-            <a className="scenario-index__title" href={`/anesthesia/scenario/${entry.metadata.id}`}>
+            <a className="scenario-index__title" href={`${config.basePath}/scenario/${entry.metadata.id}`}>
               {entry.metadata.title}
             </a>
             <p className="scenario-index__patient"><code>{entry.metadata.id}</code></p>
           </li>
         ))}
       </ul>
-      <p><a href="/anesthesia">Back to the scenario list</a></p>
+      <p><a href={config.basePath}>Back to the scenario list</a></p>
+      </main>
+    </>
+  );
+}
+
+function EmergencyMedicineScenarioIndex({ config }: { config: ClinicalModuleConfig }) {
+  return (
+    <>
+      <SiteBar current={config.basePath} />
+      <main className="reading" id="main">
+        <p className="catalog-path__eyebrow">Your private practice lab</p>
+        <h1>{config.heading}</h1>
+        <p>
+          Short, focused emergency-department rehearsals. Start with one uncertain patient,
+          make the next useful decision, then see exactly what your sequence established.
+        </p>
+        <ul className="scenario-index">
+          {config.scenarios.map((entry) => (
+            <li key={entry.metadata.id} className="scenario-index__item">
+              <a className="scenario-index__title" href={`${config.basePath}/scenario/${entry.metadata.id}`}>
+                {entry.metadata.title}
+              </a>
+              <p className="scenario-index__patient">
+                {entry.patient.ageYears}-year-old {patientPersonNoun(entry.patient)}, ASA{' '}
+                {entry.patient.asaClass}. About {entry.metadata.estimatedMinutes} simulated minutes.
+              </p>
+              <p className="scenario-index__teaches">{entry.metadata.objectives[0]?.statement}</p>
+              <span className="badge">{entry.metadata.difficulty}</span>
+              <MaturityMarker
+                status={entry.metadata.maturity}
+                subjectKind="scenario"
+                subjectId={entry.metadata.id}
+                contentVersion={entry.metadata.version}
+                moduleId={config.id}
+              />
+            </li>
+          ))}
+        </ul>
+        <p className="reading__aside">One case is playable now. The next Wave B scenarios will join this same quiet catalog as they harden.</p>
+        <p className="reading__aside">{NOT_FOR_CLINICAL_USE}</p>
       </main>
     </>
   );

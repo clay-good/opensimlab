@@ -29,6 +29,7 @@ export const FICTION_CONTRACT =
 export interface PrebriefProps {
   readonly scenario: Scenario;
   readonly region: RegionProfile;
+  readonly environment?: 'anesthesia' | 'emergency-medicine';
   readonly onStart: () => void;
   /**
    * Offered only where the demonstration was authored. A "watch this" control on
@@ -41,7 +42,7 @@ export interface PrebriefProps {
   readonly onGuidance: (level: 'guided' | 'coached' | 'unassisted') => void;
 }
 
-export function Prebrief({ scenario, region, onStart, onWatch, guidance, onGuidance, assignmentLabel }: PrebriefProps) {
+export function Prebrief({ scenario, region, environment = 'anesthesia', onStart, onWatch, guidance, onGuidance, assignmentLabel }: PrebriefProps) {
   const patient = scenario.patient;
   return (
     <>
@@ -85,24 +86,33 @@ export function Prebrief({ scenario, region, onStart, onWatch, guidance, onGuida
 
       <section>
         <h2>The environment</h2>
-        <p>
-          The monitor is on the right, the concentration plot and the log on the left, and your
-          drugs, the ventilator and the airway are along the bottom. The clock only runs when you
-          press play, and you can pause at any moment to look at anything.
-        </p>
-        <p>
-          Practice region: <strong>{region.name}</strong>.{' '}
-          {region.targetControlledInfusion.routine
-            ? 'Target-controlled infusion is a first-class control here.'
-            : 'Manual weight-based infusion is the default here.'}
-        </p>
-        <MaturityMarker
-          compact
-          status={region.maturity}
-          subjectKind="practice-region"
-          subjectId={region.id}
-          contentVersion={region.version}
-        />
+        {environment === 'emergency-medicine' ? (
+          <p>
+            The monitor and patient state stay visible while the focused assessment opens below.
+            The clock only runs when you press play, and you can pause at any moment to think.
+          </p>
+        ) : (
+          <>
+            <p>
+              The monitor is on the right, the concentration plot and the log on the left, and your
+              drugs, the ventilator and the airway are along the bottom. The clock only runs when you
+              press play, and you can pause at any moment to look at anything.
+            </p>
+            <p>
+              Practice region: <strong>{region.name}</strong>.{' '}
+              {region.targetControlledInfusion.routine
+                ? 'Target-controlled infusion is a first-class control here.'
+                : 'Manual weight-based infusion is the default here.'}
+            </p>
+            <MaturityMarker
+              compact
+              status={region.maturity}
+              subjectKind="practice-region"
+              subjectId={region.id}
+              contentVersion={region.version}
+            />
+          </>
+        )}
       </section>
 
       {/* Sentences from the register, not the ids the scenario stores. This
@@ -153,6 +163,7 @@ export function Prebrief({ scenario, region, onStart, onWatch, guidance, onGuida
         subjectKind="scenario"
         subjectId={scenario.metadata.id}
         contentVersion={scenario.metadata.version}
+        moduleId={environment}
       />
 
       {/* The scenario's own review record, before the learner starts, not after. */}

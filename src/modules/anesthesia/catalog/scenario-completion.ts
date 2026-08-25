@@ -5,6 +5,8 @@ import {
   type CompletionRequirementAudit,
   type CompletionRequirementId,
   type CompletionStatus,
+  type FidelityClass,
+  type ScenarioEnvironment,
   type ScenarioCompletionAudit,
   type ScenarioCompletionCatalog,
 } from '@platform/catalog/scenario-completion';
@@ -16,9 +18,12 @@ const requirement = (
 ): CompletionRequirementAudit => ({ id, status, evidence });
 
 /** Audit one legacy scenario without changing or embellishing its behavior. */
-export function auditAnesthesiaScenario(
+export function auditClinicalScenario(
   scenario: Scenario,
   capabilityVersion: string,
+  moduleId: string,
+  environment: ScenarioEnvironment,
+  fidelityClass: FidelityClass = 'closed_loop_physiology',
 ): ScenarioCompletionAudit {
   const objectiveIds = new Set(scenario.metadata.objectives.map((objective) => objective.id));
   const rubricIds = new Set(scenario.debrief.rubric.map((item) => item.objectiveId));
@@ -77,13 +82,13 @@ export function auditAnesthesiaScenario(
   return {
     scenarioId: scenario.metadata.id,
     title: scenario.metadata.title,
-    moduleId: 'anesthesia',
-    environment: 'operating-room',
+    moduleId,
+    environment,
     estimatedMinutes: scenario.metadata.estimatedMinutes,
     difficulty: scenario.metadata.difficulty,
     prerequisites: [],
     practiceRegions: ['US', 'GB'],
-    fidelityClass: 'closed_loop_physiology',
+    fidelityClass,
     contentVersion: scenario.metadata.version,
     capabilityVersion,
     maturity: scenario.metadata.maturity,
@@ -92,17 +97,40 @@ export function auditAnesthesiaScenario(
   };
 }
 
-export function buildAnesthesiaCompletionCatalog(
+export function auditAnesthesiaScenario(
+  scenario: Scenario,
+  capabilityVersion: string,
+): ScenarioCompletionAudit {
+  return auditClinicalScenario(
+    scenario, capabilityVersion, 'anesthesia', 'operating-room', 'closed_loop_physiology',
+  );
+}
+
+export function buildModuleCompletionCatalog(
   scenarios: readonly Scenario[],
   capabilityVersion: string,
+  moduleId: string,
+  environment: ScenarioEnvironment,
+  fidelityClass: FidelityClass = 'closed_loop_physiology',
 ): ScenarioCompletionCatalog {
-  const records = scenarios.map((scenario) => auditAnesthesiaScenario(scenario, capabilityVersion));
+  const records = scenarios.map((scenario) => auditClinicalScenario(
+    scenario, capabilityVersion, moduleId, environment, fidelityClass,
+  ));
   return {
     schemaVersion: COMPLETION_SCHEMA_VERSION,
-    moduleId: 'anesthesia',
+    moduleId,
     capabilityVersion,
     scenarioCount: records.length,
     completeScenarioCount: records.filter((record) => record.complete).length,
     scenarios: records,
   };
+}
+
+export function buildAnesthesiaCompletionCatalog(
+  scenarios: readonly Scenario[],
+  capabilityVersion: string,
+): ScenarioCompletionCatalog {
+  return buildModuleCompletionCatalog(
+    scenarios, capabilityVersion, 'anesthesia', 'operating-room', 'closed_loop_physiology',
+  );
 }

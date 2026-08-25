@@ -9,6 +9,7 @@
 import { MODULES } from '@platform/modules/registry';
 import { SCENARIOS } from '@anesthesia/scenarios';
 import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
+import { EMERGENCY_MEDICINE_SCENARIOS } from '../modules/emergency-medicine/scenarios';
 
 export const SITE_ORIGIN = 'https://opensimlab.com';
 export const SITE_NAME = 'Open Sim Lab';
@@ -30,7 +31,7 @@ export interface RouteMetadata {
  * A briefing's description: the patient, the procedure, and what it teaches. Kept
  * between 110 and 160 characters, which the discoverability tests assert.
  */
-function scenarioDescription(scenario: (typeof SCENARIOS)[number]): string {
+function scenarioDescription(scenario: (typeof SCENARIOS)[number] | (typeof EMERGENCY_MEDICINE_SCENARIOS)[number]): string {
   const { patient, metadata } = scenario;
   const who = `${patient.ageYears}-year-old ${patientPersonNoun(patient)}`;
   let description = `A ${who} for ${patient.procedure.toLowerCase()}.`;
@@ -86,6 +87,26 @@ export const ROUTES: readonly RouteMetadata[] = [
   // scenario cannot leave it unroutable or unlisted.
   ...SCENARIOS.map((scenario) => ({
     path: `/anesthesia/scenario/${scenario.metadata.id}`,
+    title: formatTitle(scenario.metadata.title.length > 40
+      ? `${scenario.metadata.title.slice(0, 37)}…`
+      : scenario.metadata.title),
+    description: scenarioDescription(scenario),
+    indexable: true,
+    structuredData: ['LearningResource'] as const,
+    heading: scenario.metadata.title,
+  })),
+  {
+    path: '/emergency-medicine',
+    title: formatTitle('Emergency medicine simulator'),
+    description:
+      'Practice focused emergency medicine decisions in short browser-based patient scenarios, '
+      + 'starting with undifferentiated shock. No account or installation.',
+    indexable: true,
+    structuredData: ['SoftwareApplication'],
+    heading: 'Emergency medicine simulator',
+  },
+  ...EMERGENCY_MEDICINE_SCENARIOS.map((scenario) => ({
+    path: `/emergency-medicine/scenario/${scenario.metadata.id}`,
     title: formatTitle(scenario.metadata.title.length > 40
       ? `${scenario.metadata.title.slice(0, 37)}…`
       : scenario.metadata.title),

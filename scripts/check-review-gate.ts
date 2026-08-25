@@ -4,7 +4,10 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ENGINE_VERSION } from '@anesthesia/engine';
 import { SCENARIOS } from '@anesthesia/scenarios';
-import { buildAnesthesiaCompletionCatalog } from '@anesthesia/catalog/scenario-completion';
+import {
+  buildAnesthesiaCompletionCatalog, buildModuleCompletionCatalog,
+} from '@anesthesia/catalog/scenario-completion';
+import { EMERGENCY_MEDICINE_SCENARIOS } from '../src/modules/emergency-medicine/scenarios';
 import { buildScenarioQualityCatalog } from '@platform/catalog/scenario-quality';
 import {
   buildMaturityCatalog, maturityFor, type MaturitySubjectKind,
@@ -43,6 +46,16 @@ function main(): void {
   const completion = buildAnesthesiaCompletionCatalog(SCENARIOS, ENGINE_VERSION);
   const quality = buildScenarioQualityCatalog(completion);
   const maturity = buildMaturityCatalog(completion, quality, additionalMaturitySubjects());
+  const emergencyCompletion = buildModuleCompletionCatalog(
+    EMERGENCY_MEDICINE_SCENARIOS, ENGINE_VERSION, 'emergency-medicine',
+    'emergency-department', 'state_transition',
+  );
+  const emergencyQuality = buildScenarioQualityCatalog(emergencyCompletion);
+  const emergencyMaturity = buildMaturityCatalog(emergencyCompletion, emergencyQuality);
+  const moduleCatalogs = [
+    { completion, quality, maturity },
+    { completion: emergencyCompletion, quality: emergencyQuality, maturity: emergencyMaturity },
+  ];
   const validation = buildValidationReport();
   const evidenceOptions = {
     validationReportPresent: true,
@@ -50,23 +63,31 @@ function main(): void {
   };
   const blocking: string[] = [];
 
-  for (const scenario of completion.scenarios) {
-    const qualityRecord = quality.scenarios.find((entry) => entry.scenarioId === scenario.scenarioId
-      && entry.contentVersion === scenario.contentVersion)!;
-    const record = maturityFor(maturity, 'scenario', scenario.scenarioId, scenario.contentVersion)!;
-    const verdict = previewPublication(
-      record,
-      scenarioPreviewEvidence(scenario, qualityRecord, evidenceOptions),
-    );
-    if (verdict.status === 'blocked') {
-      blocking.push(`scenario "${scenario.scenarioId}" ${verdict.reasons.join('; ')}`);
+  for (const moduleCatalog of moduleCatalogs) {
+    for (const scenario of moduleCatalog.completion.scenarios) {
+      const qualityRecord = moduleCatalog.quality.scenarios.find(
+        (entry) => entry.scenarioId === scenario.scenarioId
+          && entry.contentVersion === scenario.contentVersion,
+      )!;
+      const record = maturityFor(
+        moduleCatalog.maturity, 'scenario', scenario.scenarioId, scenario.contentVersion,
+      )!;
+      const verdict = previewPublication(
+        record,
+        scenarioPreviewEvidence(scenario, qualityRecord, evidenceOptions),
+      );
+      if (verdict.status === 'blocked') {
+        blocking.push(`scenario "${scenario.scenarioId}" ${verdict.reasons.join('; ')}`);
+      }
     }
   }
 
   const items = reviewableItems();
   const reviewCoverage = reportCoverage(items, today);
   for (const item of items) {
-    const record = maturityFor(maturity, subjectKind(item.kind), item.id, item.contentVersion);
+    const record = moduleCatalogs.map((catalog) => maturityFor(
+      catalog.maturity, subjectKind(item.kind), item.id, item.contentVersion,
+    )).find((candidate) => candidate !== undefined);
     if (!record) {
       blocking.push(`${item.kind} "${item.id}" has no exact-version maturity record`);
       continue;
@@ -111,7 +132,9 @@ function main(): void {
   }
 
   process.stdout.write(
-    `publication gate: ${channel} channel; ${maturity.recordCount} clinical maturity records; `
+    `publication gate: ${channel} channel; ${moduleCatalogs.reduce(
+      (sum, catalog) => sum + catalog.maturity.recordCount, 0,
+    )} clinical maturity records; `
     + `${reviewCoverage.current} of ${reviewCoverage.total} clinical items under current review\n`,
   );
   for (const reason of blocking) process.stdout.write(`  - ${reason}\n`);

@@ -189,7 +189,10 @@ describe('Requirement: every indexable route has real content without scripting'
   });
 
   it('carries the not-for-clinical-use statement on the pages that need it', () => {
-    for (const path of ['/', '/anesthesia', '/anesthesia/scenario/routine-induction']) {
+    for (const path of [
+      '/', '/anesthesia', '/anesthesia/scenario/routine-induction',
+      '/emergency-medicine', '/emergency-medicine/scenario/undifferentiated-shock',
+    ]) {
       const html = renderToStaticMarkup(createElement(PrerenderedBody, { path }));
       expect(html, `${path} omits the statement`).toContain('educational simulator');
     }

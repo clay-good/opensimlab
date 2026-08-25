@@ -188,6 +188,15 @@ export interface ActionCockpitProps {
       readonly receiverReadbackAtTick: number | null;
       readonly transferAcceptedAtTick: number | null;
     };
+    readonly undifferentiatedShockAssessment?: {
+      readonly perfusionReviewedAtTick: number | null;
+      readonly lactateReviewedAtTick: number | null;
+      readonly focusedEchoReviewedAtTick: number | null;
+      readonly passiveLegRaiseAtTick: number | null;
+      readonly fluidChallengeAtTick: number | null;
+      readonly perfusionReassessedAtTick: number | null;
+      readonly escalationAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -291,6 +300,11 @@ export interface ActionCockpitProps {
       | 'share-current-state' | 'share-risks-actions-ownership'
       | 'receiver-readback' | 'accept-transfer',
   ) => void;
+  readonly onUndifferentiatedShockAssessment?: (
+    action: 'review-perfusion' | 'review-lactate' | 'review-focused-echo'
+      | 'perform-passive-leg-raise' | 'give-targeted-fluid-challenge'
+      | 'reassess-perfusion' | 'escalate-after-reassessment',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -363,6 +377,9 @@ export function crisisResponseAvailability(
     hasPostoperativeHandoffResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'postoperative-handoff',
     ),
+    hasUndifferentiatedShockResponse: scenario.timeline.some(
+      (event) => event.type === 'shock-pattern',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -415,6 +432,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
         'extubation-readiness', 'cied-cautery-planning', 'postoperative-handoff',
+        'undifferentiated-shock',
       ].includes(event.target ?? '')))
     ? 'crisis' : 'syringes');
   const {
@@ -423,6 +441,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasBronchospasmResponse, hasPreeclampsiaResponse, hasPneumothoraxResponse,
     hasAspirationRiskResponse, hasEmergenceResidualBlockResponse, hasDelayedEmergenceResponse,
     hasExtubationReadinessResponse, hasCiedPlanningResponse, hasPostoperativeHandoffResponse,
+    hasUndifferentiatedShockResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -446,8 +465,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
   const hasCrisisResponse = hasNonMaternalCrisisResponse || hasPreeclampsiaResponse
     || hasAspirationRiskResponse || hasEmergenceResidualBlockResponse
     || hasDelayedEmergenceResponse || hasExtubationReadinessResponse || hasCiedPlanningResponse
-    || hasPostoperativeHandoffResponse;
-  const responseTray = hasPostoperativeHandoffResponse && !hasNonMaternalCrisisResponse
+    || hasPostoperativeHandoffResponse || hasUndifferentiatedShockResponse;
+  const responseTray = hasUndifferentiatedShockResponse && !hasNonMaternalCrisisResponse
+    ? { id: 'crisis', label: 'Shock assessment' } as const
+    : hasPostoperativeHandoffResponse && !hasNonMaternalCrisisResponse
     ? { id: 'crisis', label: 'Handoff' } as const
     : hasCiedPlanningResponse && !hasNonMaternalCrisisResponse
     ? { id: 'crisis', label: 'Device plan' } as const
@@ -467,8 +488,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     ? { id: 'crisis', label: 'Aspiration check' } as const
     : hasPreeclampsiaResponse && !hasNonMaternalCrisisResponse
       ? { id: 'crisis', label: 'Maternal response' } as const : CRISIS_TRAY;
+  const focusedShockAssessment = hasUndifferentiatedShockResponse
+    && !hasNonMaternalCrisisResponse && props.scenario.formulary.length === 0;
   const trays = hasCrisisResponse
-    ? props.scenario.formulary.length === 0 ? [responseTray, ...TRAYS] : [...TRAYS, responseTray]
+    ? focusedShockAssessment ? [responseTray]
+      : props.scenario.formulary.length === 0 ? [responseTray, ...TRAYS] : [...TRAYS, responseTray]
     : TRAYS;
   const hasRocuronium = props.scenario.formulary.some((entry) => entry.drugId === 'rocuronium');
   const teachesNeuromuscularReversal = props.scenario.metadata.objectives.some((objective) => [
@@ -487,15 +511,17 @@ export function ActionCockpit(props: ActionCockpitProps) {
 
   return (
     <div className="actions">
-      <Tabs
-        label="Action trays"
-        tabs={visibleTrays}
-        active={tray}
-        onSelect={(id) => setTray(id as TrayId)}
-      />
+      {visibleTrays.length > 1 && (
+        <Tabs
+          label="Action trays"
+          tabs={visibleTrays}
+          active={tray}
+          onSelect={(id) => setTray(id as TrayId)}
+        />
+      )}
 
       {/* Pinned: running infusions are visible regardless of the selected tray. */}
-      <div className="actions__pinned" role="status" aria-label="Pump settings for running infusions">
+      {!focusedShockAssessment && <div className="actions__pinned" role="status" aria-label="Pump settings for running infusions">
         {props.infusions.length === 0
           ? <span>No infusions running</span>
           : props.infusions.map((infusion) => (
@@ -504,7 +530,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
               {Math.floor(infusion.elapsedSeconds / 60)}m {Math.floor(infusion.elapsedSeconds % 60)}s
             </span>
           ))}
-      </div>
+      </div>}
 
       <div className="actions__tray">
         {tray === 'syringes' && (
@@ -726,6 +752,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 onAction={props.onPostoperativeHandoffAssessment ?? (() => {})}
               />
             )}
+            {hasUndifferentiatedShockResponse && (
+              <UndifferentiatedShockTray
+                assessment={props.resuscitation.undifferentiatedShockAssessment}
+                onAction={props.onUndifferentiatedShockAssessment ?? (() => {})}
+              />
+            )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
                 assessment={props.resuscitation.emergenceResidualBlockAssessment}
@@ -765,7 +797,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
             laptop with the demonstration strip up, and the dose buttons went
             below the fold. Here it costs nothing and is still found by anyone
             who scrolls to the end looking for the thing that is missing. */}
-        {(tray === 'fluids' || (tray === 'crisis'
+        {!focusedShockAssessment && (tray === 'fluids' || (tray === 'crisis'
           && !hasAspirationRiskResponse && !hasEmergenceResidualBlockResponse
           && !hasDelayedEmergenceResponse && !hasExtubationReadinessResponse)) && (
           <p className="actions__not-modelled field__hint">
@@ -1773,6 +1805,64 @@ function PostoperativeHandoffTray({ assessment, onAction }: {
             onClick={() => onAction('accept-transfer')}>Acknowledge + accept transfer</Button>
         </div>
         <p className="field__hint">Responsibility changes only after explicit acknowledgment here. This is a teaching-state transition, not a real clinical transfer.</p>
+      </section>
+    </div>
+  );
+}
+
+function UndifferentiatedShockTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['undifferentiatedShockAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onUndifferentiatedShockAssessment']>;
+}) {
+  const perfusion = assessment?.perfusionReviewedAtTick != null;
+  const lactate = assessment?.lactateReviewedAtTick != null;
+  const echo = assessment?.focusedEchoReviewedAtTick != null;
+  const plr = assessment?.passiveLegRaiseAtTick != null;
+  const fluid = assessment?.fluidChallengeAtTick != null;
+  const reassessed = assessment?.perfusionReassessedAtTick != null;
+  const escalated = assessment?.escalationAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="shock-evidence-title">
+        <div id="shock-evidence-title" className="syringe__name">Build the perfusion picture</div>
+        <Badge kind="teaching">Fixed ED vignette</Badge>
+        <div className="syringe__meta">Skin · brain · kidney · lactate · heart</div>
+        <p className="syringe__remaining" role="status">
+          {echo ? 'Whole-patient evidence + focused cardiac phenotype reviewed'
+            : perfusion && lactate ? 'Perfusion and lactate reviewed · cardiac phenotype pending'
+              : 'Serial tissue-perfusion evidence pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={perfusion}
+            onClick={() => onAction('review-perfusion')}>Review tissue perfusion</Button>
+          <Button className="crisis-drug__action" disabled={lactate}
+            onClick={() => onAction('review-lactate')}>Review fixed lactate</Button>
+          <Button className="crisis-drug__action" disabled={!perfusion || !lactate || echo}
+            onClick={() => onAction('review-focused-echo')}>Review focused cardiac findings</Button>
+        </div>
+        <p className="field__hint">These are authored findings. The screen does not perform an examination, acquire ultrasound, draw blood, or diagnose the shock cause.</p>
+      </section>
+      <section className="syringe" aria-labelledby="shock-response-title">
+        <div id="shock-response-title" className="syringe__name">Test, act, reassess</div>
+        <div className="syringe__meta">Dynamic response · 500 mL · same markers</div>
+        <p className="syringe__remaining" role="status">
+          {escalated ? 'Serial reassessment complete · ongoing shock escalated'
+            : reassessed ? 'Perfusion reassessed · escalation pending'
+              : fluid ? 'Bounded challenge delivered · reassessment pending'
+                : plr ? 'Positive authored dynamic response reviewed'
+                  : 'Dynamic fluid-responsiveness evidence pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!echo || plr}
+            onClick={() => onAction('perform-passive-leg-raise')}>Review passive-leg-raise response</Button>
+          <Button className="crisis-drug__action" disabled={!plr || fluid}
+            onClick={() => onAction('give-targeted-fluid-challenge')}>Give bounded 500 mL challenge</Button>
+          <Button className="crisis-drug__action" disabled={!fluid || reassessed}
+            onClick={() => onAction('reassess-perfusion')}>Reassess tissue perfusion</Button>
+          <Button className="crisis-drug__action" disabled={!reassessed || escalated}
+            onClick={() => onAction('escalate-after-reassessment')}>Escalate ongoing shock workup</Button>
+        </div>
+        <p className="field__hint">No liberal repeat-fluid shortcut is offered. Etiologic treatment, vasopressors, procedures, and disposition remain outside this first slice.</p>
       </section>
     </div>
   );
