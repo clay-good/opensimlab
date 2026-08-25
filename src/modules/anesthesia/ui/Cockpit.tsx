@@ -947,6 +947,9 @@ export function Cockpit({
           onChronicOpioidHypoventilationResponse={(action) => session.act({
             type: 'chronic-opioid-related-hypoventilation-response', payload: { action },
           })}
+          onNeuromuscularRespiratoryFailureResponse={(action) => session.act({
+            type: 'neuromuscular-respiratory-failure-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

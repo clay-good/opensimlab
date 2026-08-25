@@ -85,6 +85,10 @@ const CHRONIC_OPIOID_HYPOVENTILATION_BLOCKED_ACTION_TYPES = new Set([
   ...HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES, 'opioid-ventilatory-response',
   'opioid-toxicity-response',
 ]);
+const NEUROMUSCULAR_RESPIRATORY_FAILURE_BLOCKED_ACTION_TYPES = new Set([
+  ...HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES, 'mucus-plugging-response',
+  'opioid-ventilatory-response', 'opioid-toxicity-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -687,6 +691,12 @@ export class AnesthesiaEngine {
   private chronicOpioidHypoventilationAlternativesAtTick: number | null = null;
   private chronicOpioidHypoventilationPlanAtTick: number | null = null;
   private chronicOpioidHypoventilationHandoffAtTick: number | null = null;
+  private neuromuscularRespiratoryFailureTrajectoryAtTick: number | null = null;
+  private neuromuscularRespiratoryFailureRecognitionAtTick: number | null = null;
+  private neuromuscularRespiratoryFailureEscalationAtTick: number | null = null;
+  private neuromuscularRespiratoryFailureReviewAtTick: number | null = null;
+  private neuromuscularRespiratoryFailureOwnershipAtTick: number | null = null;
+  private neuromuscularRespiratoryFailureHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1016,6 +1026,17 @@ export class AnesthesiaEngine {
       this.log('warning', 'assessment',
         `chronic-opioid-hypoventilation-generic-action-refused-${this.currentTick}`,
         'This longitudinal sleep-breathing lesson does not expose generic testing, opioid or naloxone actions, oxygen, positive-pressure support, airway, ventilator, procedure, rhythm, artifact, or crisis actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const neuromuscularRespiratoryFailure = this.scenario.timeline.some((event) =>
+      event.type === 'narrative'
+        && event.target === 'neuromuscular-respiratory-failure-reassessment');
+    if (neuromuscularRespiratoryFailure
+      && NEUROMUSCULAR_RESPIRATORY_FAILURE_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment',
+        `neuromuscular-respiratory-failure-generic-action-refused-${this.currentTick}`,
+        'This reassessment-only neuromuscular lesson does not expose generic testing, neuromuscular-reversal, medication, oxygen, airway-clearance, suction, airway, ventilator, procedure, rhythm, artifact, opioid, or crisis actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -5407,6 +5428,51 @@ export class AnesthesiaEngine {
         this.chronicOpioidHypoventilationHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `chronic-opioid-hypoventilation-handoff-recorded-${this.currentTick}`, 'The fixed awake and sleep evidence, open contributors, safety concerns, pain goals, diagnostic and reassessment work, and named prescriber, sleep, respiratory, pharmacy, and primary-care owners were handed off. No diagnosis, medication change, support selection, treatment, disposition, prognosis, response, or outcome was determined.', { diagnosisDetermined: false, opioidChangedByLearner: false, treatmentDeliveredByLearner: false, dispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'neuromuscular-respiratory-failure-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'neuromuscular-respiratory-failure-reassessment');
+        const valid = ['reconcile-neuromuscular-respiratory-failure-trajectory',
+          'recognize-neuromuscular-respiratory-failure',
+          'activate-neuromuscular-respiratory-failure-escalation',
+          'review-neuromuscular-respiratory-failure-bulbar-cough-and-alternatives',
+          'coordinate-neuromuscular-respiratory-failure-goals-and-ownership',
+          'handoff-neuromuscular-respiratory-failure-reassessment'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `neuromuscular-respiratory-failure-response-refused-${this.currentTick}`, supported ? 'The neuromuscular respiratory-failure action was not one of the listed choices. Nothing changed.' : 'These neuromuscular respiratory-failure choices are available only in the declared Respiratory Medicine lesson.'); break; }
+        if (response === 'reconcile-neuromuscular-respiratory-failure-trajectory') {
+          if (this.neuromuscularRespiratoryFailureTrajectoryAtTick !== null) { this.log('warning', 'assessment', `neuromuscular-respiratory-failure-trajectory-refused-${this.currentTick}`, 'The functional, symptom, breathing, cough, bulbar, gas-exchange, and perfusion trajectory was already reconciled.'); break; }
+          this.neuromuscularRespiratoryFailureTrajectoryAtTick = this.currentTick;
+          this.log('warning', 'assessment', `neuromuscular-respiratory-failure-trajectory-reconciled-${this.currentTick}`, 'The 3-month functional and cough decline, 2-week respiratory symptom progression, current shallow breathing, mild bulbar claims, preserved awake saturation, and stable perfusion were reconciled. No examination, respiratory test, cough test, diagnosis, or treatment occurred.', { initialPulsePresent: true, spontaneousBreathingAuthored: true, establishedMotorNeuronDiseaseAuthored: true, examinationPerformedByLearner: false, respiratoryStrengthMeasuredByLearner: false }); break;
+        }
+        if (this.neuromuscularRespiratoryFailureTrajectoryAtTick === null) { this.log('warning', 'assessment', `neuromuscular-respiratory-failure-trajectory-order-refused-${this.currentTick}`, 'Reconcile the serial whole-patient trajectory before recognizing the authored ventilatory-failure pattern.'); break; }
+        if (response === 'recognize-neuromuscular-respiratory-failure') {
+          if (this.neuromuscularRespiratoryFailureRecognitionAtTick !== null) { this.log('warning', 'assessment', `neuromuscular-respiratory-failure-recognition-refused-${this.currentTick}`, 'The progressive neuromuscular ventilatory-failure pattern was already recognized.'); break; }
+          this.neuromuscularRespiratoryFailureRecognitionAtTick = this.currentTick;
+          this.log('warning', 'assessment', `neuromuscular-respiratory-failure-recognized-${this.currentTick}`, 'Orthopnea, sleep and daytime symptoms, shallow breathing, supine paradox, hypercapnia, weak cough, and convergent serial FVC, SNIP, and peak-cough-flow decline established the authored progressive neuromuscular ventilatory-failure pattern. No isolated oxygen or mechanics threshold, learner interpretation, or new diagnosis was used.', { neuromuscularRespiratoryFailureAuthored: true, respiratoryMeasurementsAuthored: true, daytimeHypercapniaAuthored: true, bloodGasAcquiredByLearner: false, testInterpretedByLearner: false, diagnosisDetermined: false }); break;
+        }
+        if (this.neuromuscularRespiratoryFailureRecognitionAtTick === null) { this.log('warning', 'assessment', `neuromuscular-respiratory-failure-recognition-order-refused-${this.currentTick}`, 'Recognize the convergent ventilatory-failure pattern before escalation or the parallel safety review.'); break; }
+        if (response === 'activate-neuromuscular-respiratory-failure-escalation') {
+          if (this.neuromuscularRespiratoryFailureEscalationAtTick !== null) { this.log('warning', 'assessment', `neuromuscular-respiratory-failure-escalation-refused-${this.currentTick}`, 'Experienced respiratory-ventilation, critical-care, and airway-capable evaluation was already activated.'); break; }
+          this.neuromuscularRespiratoryFailureEscalationAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neuromuscular-respiratory-failure-escalation-activated-${this.currentTick}`, 'Experienced respiratory-ventilation, critical-care, and airway-capable evaluation was activated for persistent ventilation, cough, secretion, and bulbar risk without waiting for complete cause review. No oxygen, support device, interface, mode, setting, cough assistance, airway procedure, drug, or treatment was selected or delivered.', { ventilationDeliveredByLearner: false, oxygenDeliveredByLearner: false, supportDeviceSelectedByLearner: false, coughAssistDeliveredByLearner: false, airwayProcedurePerformedByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (response === 'review-neuromuscular-respiratory-failure-bulbar-cough-and-alternatives') {
+          if (this.neuromuscularRespiratoryFailureReviewAtTick !== null) { this.log('warning', 'assessment', `neuromuscular-respiratory-failure-review-refused-${this.currentTick}`, 'The cough, secretion, bulbar, test-quality, trigger, and alternate-cause review was already recorded.'); break; }
+          this.neuromuscularRespiratoryFailureReviewAtTick = this.currentTick;
+          this.log('warning', 'assessment', `neuromuscular-respiratory-failure-review-recorded-${this.currentTick}`, 'Cough, secretion, bulbar and swallowing safety, communication, test quality, rapid-deterioration triggers, aspiration, infection, pulmonary, cardiac, metabolic, medication, central, and other neuromuscular contributors were reviewed without excluding change or proving a single cause. No examination, test, suction, airway clearance, diagnosis, or treatment occurred.', { airwayAssessedByLearner: false, coughAssessedByLearner: false, secretionProcedurePerformedByLearner: false, imagingAcquiredByLearner: false, diagnosisDetermined: false }); break;
+        }
+        if (response === 'coordinate-neuromuscular-respiratory-failure-goals-and-ownership') {
+          if (this.neuromuscularRespiratoryFailureEscalationAtTick === null || this.neuromuscularRespiratoryFailureReviewAtTick === null) { this.log('warning', 'assessment', `neuromuscular-respiratory-failure-ownership-order-refused-${this.currentTick}`, 'Connect urgent experienced evaluation and complete the parallel safety review before coordinating shared ownership.'); break; }
+          if (this.neuromuscularRespiratoryFailureOwnershipAtTick !== null) { this.log('warning', 'assessment', `neuromuscular-respiratory-failure-ownership-refused-${this.currentTick}`, 'Patient-centered multidisciplinary ownership was already coordinated.'); break; }
+          this.neuromuscularRespiratoryFailureOwnershipAtTick = this.currentTick;
+          this.log('warning', 'assessment', `neuromuscular-respiratory-failure-ownership-coordinated-${this.currentTick}`, 'Respiratory, neurology, speech and swallowing, nutrition, physiotherapy, nursing, primary-care, and caregiver ownership was coordinated around communication, documented preferences, symptom goals, respiratory-support and secretion-management evaluation, and follow-up. No preference was inferred and no device, technique, procedure, nutrition plan, treatment, disposition, prognosis, or outcome was chosen.', { patientPreferenceInferred: false, supportDeviceSelectedByLearner: false, coughAssistDeliveredByLearner: false, nutritionSelectedByLearner: false, treatmentDeliveredByLearner: false, dispositionDetermined: false, outcomePredicted: false }); break;
+        }
+        if (this.neuromuscularRespiratoryFailureOwnershipAtTick === null) { this.log('warning', 'assessment', `neuromuscular-respiratory-failure-handoff-order-refused-${this.currentTick}`, 'Coordinate patient-centered multidisciplinary ownership before handoff.'); break; }
+        if (this.currentTick <= this.neuromuscularRespiratoryFailureOwnershipAtTick) { this.log('warning', 'assessment', `neuromuscular-respiratory-failure-handoff-time-refused-${this.currentTick}`, 'Allow a later simulated tick before handing off the active respiratory-failure work.'); break; }
+        if (this.neuromuscularRespiratoryFailureHandoffAtTick !== null) { this.log('warning', 'assessment', `neuromuscular-respiratory-failure-handoff-refused-${this.currentTick}`, 'The neuromuscular respiratory-failure handoff was already recorded.'); break; }
+        this.neuromuscularRespiratoryFailureHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `neuromuscular-respiratory-failure-handoff-recorded-${this.currentTick}`, 'The serial trajectory, current mechanics and gas evidence, active ventilation, cough, secretion and bulbar risks, open causes, documented patient priorities, pending work, deterioration triggers, and named owners were handed off. No diagnosis, support selection, procedure, treatment, response, disposition, prognosis, or outcome was determined.', { diagnosisDetermined: false, supportDeviceSelectedByLearner: false, airwayProcedurePerformedByLearner: false, treatmentDeliveredByLearner: false, dispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -8170,6 +8236,12 @@ export class AnesthesiaEngine {
         spo2Percent: 94, systolicMmHg: 124, diastolicMmHg: 74,
         meanArterialMmHg: 91, coreTemperatureC: 36.7 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'neuromuscular-respiratory-failure-reassessment')) {
+      crisisState = { ...crisisState, heartRateBpm: 96, respiratoryRateBpm: 24,
+        spo2Percent: 94, etco2MmHg: 44, systolicMmHg: 122, diastolicMmHg: 76,
+        meanArterialMmHg: 91, coreTemperatureC: 36.8 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -9556,6 +9628,37 @@ export class AnesthesiaEngine {
               opioidChangedByLearner: false as const, naloxoneSelectedByLearner: false as const,
               naloxoneDeliveredByLearner: false as const, oxygenDeliveredByLearner: false as const,
               supportDeviceSelectedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const, diagnosisDetermined: false as const,
+              dispositionDetermined: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'neuromuscular-respiratory-failure-reassessment') ? {
+            neuromuscularRespiratoryFailureAssessment: {
+              trajectoryAtTick: this.neuromuscularRespiratoryFailureTrajectoryAtTick,
+              failureAtTick: this.neuromuscularRespiratoryFailureRecognitionAtTick,
+              escalationAtTick: this.neuromuscularRespiratoryFailureEscalationAtTick,
+              reviewAtTick: this.neuromuscularRespiratoryFailureReviewAtTick,
+              ownershipAtTick: this.neuromuscularRespiratoryFailureOwnershipAtTick,
+              handoffAtTick: this.neuromuscularRespiratoryFailureHandoffAtTick,
+              initialPulsePresent: true as const, spontaneousBreathingAuthored: true as const,
+              establishedMotorNeuronDiseaseAuthored: true as const,
+              neuromuscularRespiratoryFailureAuthored: true as const,
+              respiratoryMeasurementsAuthored: true as const,
+              daytimeHypercapniaAuthored: true as const,
+              examinationPerformedByLearner: false as const,
+              respiratoryStrengthMeasuredByLearner: false as const,
+              bloodGasAcquiredByLearner: false as const, testInterpretedByLearner: false as const,
+              imagingAcquiredByLearner: false as const, airwayAssessedByLearner: false as const,
+              coughAssessedByLearner: false as const,
+              ventilationDeliveredByLearner: false as const,
+              oxygenDeliveredByLearner: false as const,
+              supportDeviceSelectedByLearner: false as const,
+              coughAssistDeliveredByLearner: false as const,
+              secretionProcedurePerformedByLearner: false as const,
+              airwayProcedurePerformedByLearner: false as const,
+              patientPreferenceInferred: false as const,
+              nutritionSelectedByLearner: false as const,
               treatmentDeliveredByLearner: false as const, diagnosisDetermined: false as const,
               dispositionDetermined: false as const, outcomePredicted: false as const,
             },

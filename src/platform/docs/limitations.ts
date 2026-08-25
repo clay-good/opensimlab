@@ -3311,6 +3311,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, current sleep and opioid guidance, qualified teams, local pathways, patient goals, and repeated patient-specific review.',
     briefIn: ['chronic-opioid-related-hypoventilation-reassessment'],
   },
+  {
+    id: 'neuromuscular-respiratory-failure-presentation-tests-and-trends-are-authored',
+    headline: 'The ALS history, examination claims, mechanics, cough flow, blood gas, imaging, and serial trends are authored.',
+    simplification: 'Fixed reports stand in for longitudinal history, examination, spirometry, respiratory-muscle and cough testing, blood-gas sampling, imaging, neurologic and bulbar assessment, test-quality review, and multidisciplinary reassessment.',
+    whereItMisleads: 'Treating preserved awake saturation as adequate ventilation, one mechanics value as a universal rule, the fixed pattern as learner interpretation, or ALS as proof that no other cause matters.',
+    correctUnderstanding: 'Real evaluation requires verified whole-patient and longitudinal data, qualified testing and interpretation, active alternative-cause review, and patient-specific reassessment.',
+    briefIn: ['neuromuscular-respiratory-failure-reassessment'],
+  },
+  {
+    id: 'neuromuscular-respiratory-failure-controls-review-escalate-coordinate-and-handoff-only',
+    headline: 'The controls record trajectory review, recognition, parallel escalation and cause review, shared ownership, and handoff only.',
+    simplification: 'Six clicks stand in for repeated assessment, respiratory-physiology review, urgent specialist connection, cough and bulbar review, patient-centered planning, and communication.',
+    whereItMisleads: 'Equating button order with examination, test performance or interpretation, diagnosis, support or airway selection, secretion management, treatment, or multidisciplinary competence.',
+    correctUnderstanding: 'Actual care requires the patient and caregivers, qualified respiratory, neurology, critical-care, airway, speech, nutrition, physiotherapy, nursing, and longitudinal teams, current guidance, local resources, and repeated review.',
+    briefIn: ['neuromuscular-respiratory-failure-reassessment'],
+  },
+  {
+    id: 'no-live-mechanics-bulbar-cough-testing-device-selection-treatment-procedure-or-outcome',
+    headline: 'The lab does not perform respiratory, cough, bulbar, or sleep testing; choose support; deliver treatment; perform a procedure; or predict outcome.',
+    simplification: 'No live examination, mechanics, oximetry, capnography, blood gas, imaging, swallowing, cough, secretion, neurologic or sleep testing, diagnosis, oxygen, ventilation interface or settings, airway-clearance or cough-assistance technique, suction, drug, nutrition, intubation, tracheostomy, disposition, prognosis, response, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values as universal diagnostic or treatment thresholds or using completion as evidence of clinical, testing, respiratory-support, airway, procedural, treatment, disposition, or prognostic competence.',
+    correctUnderstanding: 'Use verified patient data, current neuromuscular guidance, qualified teams, local pathways, the patient’s priorities, and repeated patient-specific review.',
+    briefIn: ['neuromuscular-respiratory-failure-reassessment'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

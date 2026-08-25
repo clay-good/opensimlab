@@ -1494,6 +1494,27 @@ disposition or prognosis; or predict response or outcome. It is distinct from An
 opioid ventilatory-impairment rescue, Emergency Medicine's fentanyl-toxicity rescue and recurrence,
 and the later obesity-hypoventilation and NIV-selection labs.
 
+### Wave C respiratory-medicine slice 10: neuromuscular respiratory failure
+
+The tenth respiratory-medicine slice is progressive ventilatory and cough failure in established
+ALS, not acute myasthenic crisis, Guillain-Barré respiratory decline, postoperative residual
+neuromuscular blockade, or a support-device selection exercise. A 58-year-old man has 3 months of
+declining endurance and cough plus 2 weeks of orthopnea, sleep disruption, morning headache,
+daytime sleepiness, short-phrase speech, and difficulty clearing saliva. Fixed qualified reports
+provide mild bulbar weakness, supine abdominal paradox, serial seated and supine FVC, SNIP, peak
+cough flow, and hypercapnia despite a quiet awake room-air SpO₂ of 94%.
+
+Learners reconcile the longitudinal whole-patient trajectory and recognize the convergent authored
+failure pattern without relying on saturation or one universal mechanics cutoff. Experienced
+respiratory-ventilation, critical-care, and airway-capable escalation proceeds in parallel with
+cough, secretion, bulbar, test-quality, trigger, and alternative-cause review. Only after both lanes
+may learners coordinate patient-centered respiratory, neurology, speech, nutrition, physiotherapy,
+nursing, primary-care, caregiver, communication, preference, and follow-up ownership, followed by a
+strictly elapsed unresolved-work handoff. The lesson does not examine; acquire, perform, or interpret
+testing; diagnose; select or deliver oxygen, ventilation, interfaces, settings, cough assistance,
+airway clearance, suction, medication, nutrition, or treatment; perform an airway procedure;
+determine disposition or prognosis; or predict response or outcome.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

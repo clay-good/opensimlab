@@ -882,6 +882,27 @@ export interface ActionCockpitProps {
       readonly treatmentDeliveredByLearner: false; readonly diagnosisDetermined: false;
       readonly dispositionDetermined: false; readonly outcomePredicted: false;
     };
+    readonly neuromuscularRespiratoryFailureAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly failureAtTick: number | null;
+      readonly escalationAtTick: number | null; readonly reviewAtTick: number | null;
+      readonly ownershipAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true; readonly spontaneousBreathingAuthored: true;
+      readonly establishedMotorNeuronDiseaseAuthored: true;
+      readonly neuromuscularRespiratoryFailureAuthored: true;
+      readonly respiratoryMeasurementsAuthored: true; readonly daytimeHypercapniaAuthored: true;
+      readonly examinationPerformedByLearner: false;
+      readonly respiratoryStrengthMeasuredByLearner: false;
+      readonly bloodGasAcquiredByLearner: false; readonly testInterpretedByLearner: false;
+      readonly imagingAcquiredByLearner: false; readonly airwayAssessedByLearner: false;
+      readonly coughAssessedByLearner: false; readonly ventilationDeliveredByLearner: false;
+      readonly oxygenDeliveredByLearner: false; readonly supportDeviceSelectedByLearner: false;
+      readonly coughAssistDeliveredByLearner: false;
+      readonly secretionProcedurePerformedByLearner: false;
+      readonly airwayProcedurePerformedByLearner: false;
+      readonly patientPreferenceInferred: false; readonly nutritionSelectedByLearner: false;
+      readonly treatmentDeliveredByLearner: false; readonly diagnosisDetermined: false;
+      readonly dispositionDetermined: false; readonly outcomePredicted: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1389,6 +1410,14 @@ export interface ActionCockpitProps {
       | 'coordinate-chronic-opioid-related-hypoventilation-prescriber-sleep-and-respiratory-plan'
       | 'handoff-chronic-opioid-related-hypoventilation-reassessment',
   ) => void;
+  readonly onNeuromuscularRespiratoryFailureResponse?: (
+    action: 'reconcile-neuromuscular-respiratory-failure-trajectory'
+      | 'recognize-neuromuscular-respiratory-failure'
+      | 'activate-neuromuscular-respiratory-failure-escalation'
+      | 'review-neuromuscular-respiratory-failure-bulbar-cough-and-alternatives'
+      | 'coordinate-neuromuscular-respiratory-failure-goals-and-ownership'
+      | 'handoff-neuromuscular-respiratory-failure-reassessment',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1706,6 +1735,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'chronic-opioid-related-hypoventilation-reassessment',
     ),
+    hasNeuromuscularRespiratoryFailureResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'neuromuscular-respiratory-failure-reassessment',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1837,6 +1870,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'bronchiectasis-mucus-plugging-reassessment')
       || (event.type === 'narrative'
         && event.target === 'chronic-opioid-related-hypoventilation-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'neuromuscular-respiratory-failure-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1893,6 +1928,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasCopdTransitionResponse, hasCapHypoxemiaResponse, hasPostPeDyspneaResponse,
     hasApeSupportResponse, hasPostTensionPneumothoraxResponse, hasLargePleuralEffusionResponse,
     hasBronchiectasisMucusPluggingResponse, hasChronicOpioidHypoventilationResponse,
+    hasNeuromuscularRespiratoryFailureResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1960,7 +1996,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasAcuteSevereAsthmaResponse || hasCopdTransitionResponse || hasCapHypoxemiaResponse
     || hasPostPeDyspneaResponse || hasApeSupportResponse || hasPostTensionPneumothoraxResponse
     || hasLargePleuralEffusionResponse || hasBronchiectasisMucusPluggingResponse
-    || hasChronicOpioidHypoventilationResponse;
+    || hasChronicOpioidHypoventilationResponse || hasNeuromuscularRespiratoryFailureResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1991,7 +2027,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasChronicOpioidHypoventilationResponse
+  const responseTray = hasNeuromuscularRespiratoryFailureResponse
+    ? { id: 'crisis', label: 'Muscle + breathing review' } as const
+    : hasChronicOpioidHypoventilationResponse
     ? { id: 'crisis', label: 'Sleep + breathing review' } as const
     : hasBronchiectasisMucusPluggingResponse
     ? { id: 'crisis', label: 'Mucus + focal collapse' } as const
@@ -2222,6 +2260,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasLargePleuralEffusionResponse
     || hasBronchiectasisMucusPluggingResponse
     || hasChronicOpioidHypoventilationResponse
+    || hasNeuromuscularRespiratoryFailureResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2841,6 +2880,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <ChronicOpioidHypoventilationTray
                 assessment={props.resuscitation.chronicOpioidHypoventilationAssessment}
                 onAction={props.onChronicOpioidHypoventilationResponse ?? (() => {})} />
+            )}
+            {hasNeuromuscularRespiratoryFailureResponse && (
+              <NeuromuscularRespiratoryFailureTray
+                assessment={props.resuscitation.neuromuscularRespiratoryFailureAssessment}
+                onAction={props.onNeuromuscularRespiratoryFailureResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -7310,6 +7354,44 @@ function ChronicOpioidHypoventilationTray({ assessment, onAction }: {
         <Button className="crisis-drug__action" disabled={!plan || handoff} onClick={() => onAction('handoff-chronic-opioid-related-hypoventilation-reassessment')}>Hand off evidence + open work</Button>
       </div>
       <p className="field__hint">No diagnosis, morphine-equivalent threshold, abrupt stop, taper, naloxone intervention, oxygen, PAP mode or setting, treatment, disposition, response, or outcome is selected.</p>
+    </section>
+  </div>;
+}
+
+function NeuromuscularRespiratoryFailureTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['neuromuscularRespiratoryFailureAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNeuromuscularRespiratoryFailureResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const failure = assessment?.failureAtTick != null;
+  const escalation = assessment?.escalationAtTick != null;
+  const review = assessment?.reviewAtTick != null;
+  const ownership = assessment?.ownershipAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="neuromuscular-respiratory-failure-pattern-title">
+      <div id="neuromuscular-respiratory-failure-pattern-title" className="syringe__name">Muscle strength can fade before saturation tells the story.</div>
+      <Badge kind="teaching">serial change · shallow breathing · hypercapnia · pulse present</Badge>
+      <div className="syringe__meta">function · orthopnea · sleep · FVC · SNIP · cough flow</div>
+      <p className="syringe__remaining" role="status">{escalation ? 'Urgent experienced evaluation connected' : failure ? 'Failure pattern held · connect owners while review continues' : trajectory ? 'Whole trajectory reconciled · name the pattern' : 'Begin with the person and the trend'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={trajectory} onClick={() => onAction('reconcile-neuromuscular-respiratory-failure-trajectory')}>Review breathing + weakness trajectory</Button>
+        <Button className="crisis-drug__action" disabled={!trajectory || failure} onClick={() => onAction('recognize-neuromuscular-respiratory-failure')}>Recognize convergent failure pattern</Button>
+        <Button className="crisis-drug__action" disabled={!failure || escalation} onClick={() => onAction('activate-neuromuscular-respiratory-failure-escalation')}>Connect ventilation + airway-ready owners</Button>
+      </div>
+      <p className="field__hint">Symptoms, supine change, serial muscle and cough measures, carbon dioxide, bulbar function, and test quality travel together. No oxygen saturation or mechanics value is a universal isolated cutoff.</p>
+    </section>
+    <section className="syringe" aria-labelledby="neuromuscular-respiratory-failure-ownership-title">
+      <div id="neuromuscular-respiratory-failure-ownership-title" className="syringe__name">Preparation can be urgent and still remain deeply personal.</div>
+      <Badge kind="teaching">cough + bulbar safety · open causes · documented preferences</Badge>
+      <div className="syringe__meta">respiratory · neurology · swallowing · nutrition · caregivers</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Active risk + unresolved work handed off' : ownership ? 'Shared ownership connected · advance time before handoff' : escalation && review ? 'Both urgent lanes connected · coordinate the whole team' : failure ? 'Escalation and safety review are open in parallel' : 'Recognize the pattern before planning'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={!failure || review} onClick={() => onAction('review-neuromuscular-respiratory-failure-bulbar-cough-and-alternatives')}>Review cough + bulbar + open causes</Button>
+        <Button className="crisis-drug__action" disabled={!escalation || !review || ownership} onClick={() => onAction('coordinate-neuromuscular-respiratory-failure-goals-and-ownership')}>Coordinate priorities + shared owners</Button>
+        <Button className="crisis-drug__action" disabled={!ownership || handoff} onClick={() => onAction('handoff-neuromuscular-respiratory-failure-reassessment')}>Hand off active risk + open work</Button>
+      </div>
+      <p className="field__hint">No FVC, SNIP, cough, swallow, or neurologic test; oxygen, NIV, mode, pressure, backup rate, cough-assist setting, suction, intubation, tracheostomy, nutrition, drug, treatment, disposition, prognosis, or outcome is performed or chosen.</p>
     </section>
   </div>;
 }

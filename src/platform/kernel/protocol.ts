@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 110 reports chronic opioid hypoventilation reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 110;
+/** Bumped whenever the message shape changes incompatibly. Version 111 reports neuromuscular respiratory-failure reassessment state. */
+export const WORKER_PROTOCOL_VERSION = 111;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -970,6 +970,27 @@ export interface EquipmentSnapshot {
       readonly taperSelected: false; readonly opioidChangedByLearner: false;
       readonly naloxoneSelectedByLearner: false; readonly naloxoneDeliveredByLearner: false;
       readonly oxygenDeliveredByLearner: false; readonly supportDeviceSelectedByLearner: false;
+      readonly treatmentDeliveredByLearner: false; readonly diagnosisDetermined: false;
+      readonly dispositionDetermined: false; readonly outcomePredicted: false;
+    };
+    readonly neuromuscularRespiratoryFailureAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly failureAtTick: number | null;
+      readonly escalationAtTick: number | null; readonly reviewAtTick: number | null;
+      readonly ownershipAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true; readonly spontaneousBreathingAuthored: true;
+      readonly establishedMotorNeuronDiseaseAuthored: true;
+      readonly neuromuscularRespiratoryFailureAuthored: true;
+      readonly respiratoryMeasurementsAuthored: true; readonly daytimeHypercapniaAuthored: true;
+      readonly examinationPerformedByLearner: false;
+      readonly respiratoryStrengthMeasuredByLearner: false;
+      readonly bloodGasAcquiredByLearner: false; readonly testInterpretedByLearner: false;
+      readonly imagingAcquiredByLearner: false; readonly airwayAssessedByLearner: false;
+      readonly coughAssessedByLearner: false; readonly ventilationDeliveredByLearner: false;
+      readonly oxygenDeliveredByLearner: false; readonly supportDeviceSelectedByLearner: false;
+      readonly coughAssistDeliveredByLearner: false;
+      readonly secretionProcedurePerformedByLearner: false;
+      readonly airwayProcedurePerformedByLearner: false;
+      readonly patientPreferenceInferred: false; readonly nutritionSelectedByLearner: false;
       readonly treatmentDeliveredByLearner: false; readonly diagnosisDetermined: false;
       readonly dispositionDetermined: false; readonly outcomePredicted: false;
     };

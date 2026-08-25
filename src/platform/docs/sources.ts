@@ -1993,6 +1993,28 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'https://www.cdc.gov/mmwr/volumes/71/rr/rr7103a1.htm',
     verifiedOn: '2026-08-25',
   },
+  {
+    id: 'chest-neuromuscular-weakness-respiratory-management-2023',
+    authors: 'Khan A, Frazer-Green L, Amin R, et al',
+    title: 'Respiratory Management of Patients With Neuromuscular Weakness: An American College of Chest Physicians Clinical Practice Guideline and Expert Panel Report',
+    publication: 'Chest',
+    year: 2023,
+    locator: '164:394-413; doi:10.1016/j.chest.2023.03.011',
+    usedFor: 'The neuromuscular respiratory-reassessment boundary: serial spirometry and respiratory-muscle testing, cough effectiveness, secretion clearance, bulbar function, and individualized support evaluation belong in an integrated disease-specific trajectory rather than a single universal cutoff.',
+    verifiedAgainst: 'https://journal.chestnet.org/article/S0012-3692(23)00353-7/fulltext',
+    verifiedOn: '2026-08-25',
+  },
+  {
+    id: 'nice-motor-neurone-disease-ng42',
+    authors: 'National Institute for Health and Care Excellence',
+    title: 'Motor neurone disease: assessment and management',
+    publication: 'NICE guideline NG42',
+    year: 2019,
+    locator: 'Recommendations 1.15.1-1.15.24, respiratory function and non-invasive ventilation',
+    usedFor: 'The ALS symptom-and-ownership boundary: ask about orthopnea, sleep disruption, morning headache, daytime sleepiness, weak cough and breathlessness; repeat respiratory-function assessment; involve a specialist ventilation service; and align discussion with the person and family.',
+    verifiedAgainst: 'https://www.nice.org.uk/guidance/ng42/chapter/Recommendations',
+    verifiedOn: '2026-08-25',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

@@ -4431,6 +4431,26 @@ export function objectiveFindings(
       const ordered = plan && handoff && plan.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved fixed evidence, open contributors, safety concerns, pain goals, pending work, and named owners without inventing diagnosis, response, or outcome.' : 'The unresolved-work handoff was absent or did not follow the coordinated plan after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-neuromuscular-respiratory-failure-trajectory',
+      'recognize-neuromuscular-respiratory-failure',
+      'activate-neuromuscular-respiratory-failure-escalation',
+      'review-neuromuscular-respiratory-failure-bulbar-cough-and-alternatives',
+      'coordinate-neuromuscular-respiratory-failure-goals-and-ownership',
+      'handoff-neuromuscular-respiratory-failure-reassessment'].includes(objective.id)) {
+      const trajectory = log.find((event) => /^neuromuscular-respiratory-failure-trajectory-reconciled-\d+$/.test(event.eventId));
+      const failure = log.find((event) => /^neuromuscular-respiratory-failure-recognized-\d+$/.test(event.eventId));
+      const escalation = log.find((event) => /^neuromuscular-respiratory-failure-escalation-activated-\d+$/.test(event.eventId));
+      const review = log.find((event) => /^neuromuscular-respiratory-failure-review-recorded-\d+$/.test(event.eventId));
+      const ownership = log.find((event) => /^neuromuscular-respiratory-failure-ownership-coordinated-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^neuromuscular-respiratory-failure-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-neuromuscular-respiratory-failure-trajectory') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'Functional, symptom, breathing, cough, bulbar, gas-exchange, and perfusion change was reconciled without granting examination or respiratory-test skill.' : 'The serial whole-patient trajectory was not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'recognize-neuromuscular-respiratory-failure') { const ordered = trajectory && failure && trajectory.tick <= failure.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The convergent symptomatic, muscle, cough, supine, and hypercapnic pattern established authored progressive ventilatory failure without one oxygen or mechanics cutoff.' : 'Failure recognition was absent or preceded trajectory review.', atTick: failure?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-neuromuscular-respiratory-failure-escalation') { const ordered = failure && escalation && failure.tick <= escalation.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Experienced respiratory-ventilation, critical-care, and airway-capable evaluation was activated without waiting for complete cause review or selecting support.' : 'Urgent escalation was absent or preceded failure recognition.', atTick: escalation?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-neuromuscular-respiratory-failure-bulbar-cough-and-alternatives') { const ordered = failure && review && failure.tick <= review.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Cough, secretion, bulbar, test-quality, trigger, aspiration, infection, pulmonary, cardiac, metabolic, medication, central, and other neuromuscular concerns stayed active.' : 'The parallel safety and alternative-cause review was absent or preceded failure recognition.', atTick: review?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'coordinate-neuromuscular-respiratory-failure-goals-and-ownership') { const ordered = escalation && review && ownership && escalation.tick <= ownership.tick && review.tick <= ownership.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Multidisciplinary ownership preserved communication, documented preferences, symptom goals, respiratory and secretion-management evaluation, and follow-up without selecting treatment.' : 'Shared ownership was absent or bypassed urgent escalation or the parallel safety review.', atTick: ownership?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = ownership && handoff && ownership.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved the serial trajectory, active risks, open causes, documented priorities, pending work, triggers, and owners without inventing response or outcome.' : 'The active-risk handoff was absent or did not follow shared ownership after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

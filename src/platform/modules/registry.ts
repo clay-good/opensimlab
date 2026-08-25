@@ -84,7 +84,7 @@ export const MODULES: readonly ModuleDeclaration[] = [
     id: 'respiratory-medicine',
     route: 'respiratory-medicine',
     displayName: 'Respiratory medicine',
-    description: 'Reassess changing respiratory illness, recognize failure early, and make each escalation step calm, explicit, and measurable.',
+    description: 'Practice calm reassessment of obstructive, hypoxemic, pleural, sleep-related, and neuromuscular respiratory failure.',
     audience: 'Medical students, residents, respiratory therapists, and acute-care trainees.',
     prerequisites: 'Basic respiratory physiology and familiarity with focused assessment of an acutely ill adult.',
     status: 'available',
