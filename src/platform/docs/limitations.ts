@@ -363,6 +363,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['anaphylaxis'],
   },
   {
+    id: 'adult-asthma-findings-and-peak-flow-are-authored',
+    headline: 'The adult asthma severity, immediate-mimic review, and peak-flow results are authored findings, not acquired measurements or diagnosis.',
+    simplification: 'One fixed severe presentation supplies speech, work-of-breathing, wheeze, saturation, and peak-flow findings before and after initial treatment. Examination, spirometry, blood gas, imaging, and broader differential testing are absent.',
+    whereItMisleads: 'Treating wheeze, the fixed peak-flow values, or the bounded response as proof of asthma or exclusion of another cause.',
+    correctUnderstanding: 'Assess acute asthma severity from the whole presentation while checking alternative causes, and obtain real measurements where appropriate without delaying urgent treatment.',
+    briefIn: ['adult-asthma'],
+  },
+  {
+    id: 'adult-asthma-treatment-is-a-fixed-intent-bundle',
+    headline: 'The adult asthma controls are a fixed initial teaching bundle, not an inhaler, oxygen, or prescription calculator.',
+    simplification: 'The screen records controlled oxygen, a fixed 6-puff salbutamol plus 4-puff ipratropium pMDI-and-spacer bundle, and dose-free systemic-corticosteroid intent. Technique, strength, lung delivery, toxicity, drug selection, dose, and route are not assessed.',
+    whereItMisleads: 'Copying the fixed bundle into a different severity, patient, inhaler formulation, resource setting, or local pathway.',
+    correctUnderstanding: 'Use current local guidance, available formulations, patient-specific severity and response, careful oxygen targets, and verified inhaler technique.',
+    briefIn: ['adult-asthma'],
+  },
+  {
+    id: 'no-advanced-asthma-support-disposition-or-prevention',
+    headline: 'Repeat bronchodilators, magnesium, ventilatory support, disposition, discharge treatment, and future-risk reduction are outside this initial-response vignette.',
+    simplification: 'The case ends after one initial bundle and reassessment. It has no repeat cycle, toxicity trajectory, blood gas, non-invasive or invasive ventilation, critical-care escalation, admission decision, discharge prescription, technique review, adherence review, trigger workup, or action plan.',
+    whereItMisleads: 'Assuming partial modeled improvement completes acute care or that preventing the next exacerbation can wait indefinitely.',
+    correctUnderstanding: 'Continue severity- and response-based escalation, determine safe disposition, and address ICS-containing treatment, technique, adherence, triggers, and a written action plan after stabilization.',
+    briefIn: ['adult-asthma'],
+  },
+  {
     id: 'malignant-hyperthermia-is-a-teaching-model',
     headline: 'The hypermetabolic carbon-dioxide, heart-rate, rigidity, and heat trajectories are bounded teaching models, not individualized predictions or a diagnostic test.',
     simplification: 'One latent severity drives excess carbon-dioxide production, tachycardia, '

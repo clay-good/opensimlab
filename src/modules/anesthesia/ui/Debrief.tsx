@@ -2342,6 +2342,52 @@ export function objectiveFindings(
       } satisfies ObjectiveFinding;
     }
 
+    if ([
+      'recognize-severe-adult-asthma', 'use-controlled-oxygen-in-adult-asthma',
+      'give-initial-adult-asthma-treatment', 'reassess-adult-asthma-response',
+    ].includes(objective.id)) {
+      const supported = scenario.timeline.some(
+        (event) => event.type === 'narrative' && event.target === 'adult-asthma',
+      );
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The adult-asthma vignette was not active.' } satisfies ObjectiveFinding;
+      const severity = log.find((event) => event.eventId.startsWith('adult-asthma-severity-reviewed-'));
+      const oxygen = log.find((event) => event.eventId.startsWith('adult-asthma-oxygen-'));
+      const bronchodilators = log.find((event) => event.eventId.startsWith('adult-asthma-bronchodilators-'));
+      const corticosteroid = log.find((event) => event.eventId.startsWith('adult-asthma-corticosteroid-'));
+      const reassessment = log.find((event) => event.eventId.startsWith('adult-asthma-reassessed-'));
+      if (objective.id === 'recognize-severe-adult-asthma') return {
+        ...base, outcome: severity ? 'met' : 'not-met',
+        finding: severity
+          ? 'Speech, work of breathing, room-air oxygenation, peak flow, and immediate alternative causes were reviewed together without treating wheeze as diagnostic proof.'
+          : 'The fixed whole-patient severity and immediate-mimic review was not recorded.',
+        atTick: severity?.tick ?? 0,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'use-controlled-oxygen-in-adult-asthma') {
+        const ordered = severity && oxygen && severity.tick <= oxygen.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'Controlled oxygen for room-air SpO₂ below 92% followed severity review with a fixed adult target of 92–95%, rather than an unbounded oxygen setting.'
+            : 'Severity review and controlled oxygen targeting were incomplete or out of order.',
+          atTick: oxygen?.tick ?? severity?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'give-initial-adult-asthma-treatment') {
+        const complete = bronchodilators && corticosteroid;
+        return { ...base, outcome: complete ? 'met' : 'not-met',
+          finding: complete
+            ? 'The fixed conservative pMDI-and-spacer bronchodilator bundle and early systemic-corticosteroid intent were both recorded without implying technique, dose calculation, or prescription.'
+            : 'Initial inhaled bronchodilator and early anti-inflammatory intents were incomplete.',
+          atTick: Math.max(bronchodilators?.tick ?? 0, corticosteroid?.tick ?? 0) } satisfies ObjectiveFinding;
+      }
+      const ordered = oxygen && bronchodilators && corticosteroid && reassessment
+        && Math.max(oxygen.tick, bronchodilators.tick, corticosteroid.tick) <= reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met',
+        finding: ordered
+          ? 'Symptoms, speech, work of breathing, oxygenation, waveform response, and fixed repeat peak flow were reviewed before any automatic repeat treatment.'
+          : 'Initial treatment and serial whole-patient reassessment were incomplete or out of order.',
+        atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

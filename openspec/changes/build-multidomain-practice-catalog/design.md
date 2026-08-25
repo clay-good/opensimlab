@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with six playable, completion-audited scenarios. The remaining
-19 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with seven playable, completion-audited scenarios. The remaining
+18 planned titles remain descriptive scope only and do not enter playable counts before their full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -266,6 +266,20 @@ The focused response excludes the perioperative intravenous-dose tray and does n
 drug or fluid calculator. Findings and actions are authored. Diagnosis, preparation and injection
 technique, repeat-dose timing, refractory pathways, airway procedures, observation, recurrence,
 referral, local protocol, and outcome remain outside this initial-response vignette.
+
+### Wave B slice 7: adult asthma exacerbation
+
+The seventh emergency-medicine slice reuses lower-airway-obstruction physiology in a distinct,
+spontaneously breathing severe adult presentation. Learners review authored speech, work-of-breathing,
+oxygenation, peak-flow, and immediate-mimic findings; record controlled oxygen with the current adult
+target; give a conservative fixed pMDI-and-spacer bronchodilator bundle; record early systemic-
+corticosteroid intent; and reassess symptoms, signs, waveforms, oxygenation, and repeat peak flow.
+
+The focused response does not expose the perioperative anesthesia, 100% oxygen, or 5 mg nebulized
+pathway. It is aligned to GINA 2026's lower oxygen threshold, 95% adult upper target, conservative
+SABA direction, and explicit response review. Examination, spirometry acquisition, inhaler technique,
+individualized dosing, repeat or advanced treatment, disposition, discharge treatment, prevention
+planning, local protocol, and outcome remain outside the vignette.
 
 #### Critical care: 24
 

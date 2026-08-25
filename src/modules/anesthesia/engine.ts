@@ -305,6 +305,11 @@ export class AnesthesiaEngine {
   private emergencyAnaphylaxisOxygenAtTick: number | null = null;
   private emergencyAnaphylaxisCrystalloidAtTick: number | null = null;
   private emergencyAnaphylaxisReassessedAtTick: number | null = null;
+  private adultAsthmaSeverityReviewedAtTick: number | null = null;
+  private adultAsthmaControlledOxygenAtTick: number | null = null;
+  private adultAsthmaBronchodilatorBundleAtTick: number | null = null;
+  private adultAsthmaCorticosteroidIntentAtTick: number | null = null;
+  private adultAsthmaReassessedAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1026,6 +1031,107 @@ export class AnesthesiaEngine {
         this.emergencyAnaphylaxisReassessedAtTick = this.currentTick;
         this.log('advisory', 'assessment', `emergency-anaphylaxis-reassessed-${this.currentTick}`,
           'Airway, breathing, circulation, mental status, and the canonical monitor response were reassessed. Repeat-dose timing, refractory treatment, observation, referral, and outcome remain outside this initial-response vignette.');
+        break;
+      }
+      case 'adult-asthma-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some(
+          (event) => event.type === 'narrative' && event.target === 'adult-asthma',
+        );
+        const valid = [
+          'review-severity-and-mimics', 'record-controlled-oxygen',
+          'give-fixed-inhaled-bronchodilators', 'record-early-corticosteroid-intent',
+          'reassess-after-initial-treatment',
+        ].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `adult-asthma-refused-${this.currentTick}`,
+            supported
+              ? 'The adult-asthma action was not one of the listed choices. Nothing changed.'
+              : 'The bounded adult-asthma choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-severity-and-mimics') {
+          if (this.adultAsthmaSeverityReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `adult-asthma-severity-refused-${this.currentTick}`,
+              'The fixed severity and immediate-mimic review has already been recorded.');
+            break;
+          }
+          this.adultAsthmaSeverityReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `adult-asthma-severity-reviewed-${this.currentTick}`,
+            'Fixed assessment: words only, respiratory rate 34/min, accessory-muscle use, widespread expiratory wheeze, SpO₂ 91% on room air, and peak expiratory flow 32% predicted. No urticaria, angioedema, focal air-entry loss, fever, or edema is authored. This supports a severe asthma-exacerbation response without proving the diagnosis.');
+          break;
+        }
+        if (this.adultAsthmaSeverityReviewedAtTick === null) {
+          this.log('warning', 'assessment', `adult-asthma-order-refused-${this.currentTick}`,
+            'Review severity and immediate alternative causes before recording treatment.');
+          break;
+        }
+        if (response === 'record-controlled-oxygen') {
+          if (this.adultAsthmaControlledOxygenAtTick !== null) {
+            this.log('warning', 'equipment', `adult-asthma-oxygen-refused-${this.currentTick}`,
+              'Controlled oxygen has already been recorded.');
+            break;
+          }
+          this.adultAsthmaControlledOxygenAtTick = this.currentTick;
+          this.ventilator = { ...this.ventilator, fio2: 0.4 };
+          this.log('critical', 'equipment', `adult-asthma-oxygen-${this.currentTick}`,
+            'Controlled oxygen was recorded for SpO₂ below 92%, with a fixed adult target of 92–95%. Device, flow, titration technique, and actual delivered concentration are not simulated.');
+          break;
+        }
+        if (response === 'give-fixed-inhaled-bronchodilators') {
+          if (this.adultAsthmaBronchodilatorBundleAtTick !== null) {
+            this.log('warning', 'drug', `adult-asthma-bronchodilator-refused-${this.currentTick}`,
+              'The fixed initial inhaled bronchodilator bundle has already been recorded.');
+            break;
+          }
+          this.adultAsthmaBronchodilatorBundleAtTick = this.currentTick;
+          this.salbutamolTotalMg += 0.6;
+          this.lastSalbutamolTick = this.currentTick;
+          this.bronchodilatorEffectFraction = clamp(
+            this.bronchodilatorEffectFraction + 0.75, 0, 1,
+          );
+          this.log('critical', 'drug', `adult-asthma-bronchodilators-${this.currentTick}`,
+            'A fixed severe-presentation pMDI-and-spacer bundle of 6 salbutamol puffs and 4 ipratropium puffs was recorded. Inhaler strength, preparation, technique, lung delivery, repeat dosing, toxicity, and individual response are not simulated.', {
+              route: 'inhaled-pmdi-spacer', salbutamolPuffs: 6, ipratropiumPuffs: 4,
+              teachingModel: true,
+            });
+          break;
+        }
+        if (response === 'record-early-corticosteroid-intent') {
+          if (this.adultAsthmaCorticosteroidIntentAtTick !== null) {
+            this.log('warning', 'drug', `adult-asthma-corticosteroid-refused-${this.currentTick}`,
+              'Early systemic-corticosteroid intent has already been recorded.');
+            break;
+          }
+          this.adultAsthmaCorticosteroidIntentAtTick = this.currentTick;
+          this.log('critical', 'drug', `adult-asthma-corticosteroid-${this.currentTick}`,
+            'Early systemic-corticosteroid intent within the first hour was recorded. Drug, dose, route, contraindications, delayed pharmacology, and prescription are outside this vignette.', {
+              intentOnly: true, timingWindowMinutes: 60,
+            });
+          break;
+        }
+        if (this.adultAsthmaControlledOxygenAtTick === null
+          || this.adultAsthmaBronchodilatorBundleAtTick === null
+          || this.adultAsthmaCorticosteroidIntentAtTick === null
+          || this.currentTick <= Math.max(
+            this.adultAsthmaControlledOxygenAtTick,
+            this.adultAsthmaBronchodilatorBundleAtTick,
+            this.adultAsthmaCorticosteroidIntentAtTick,
+          )) {
+          this.log('warning', 'assessment', `adult-asthma-reassessment-order-refused-${this.currentTick}`,
+            'Record controlled oxygen, inhaled bronchodilators, and early corticosteroid intent, then allow the next engine tick before reassessment.');
+          break;
+        }
+        if (this.adultAsthmaReassessedAtTick !== null) {
+          this.log('warning', 'assessment', `adult-asthma-reassessment-refused-${this.currentTick}`,
+            'The fixed post-treatment reassessment has already been recorded.');
+          break;
+        }
+        this.adultAsthmaReassessedAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `adult-asthma-reassessed-${this.currentTick}`,
+          'Symptoms, speech, work of breathing, saturation, canonical waveform response, and fixed repeat peak flow were reassessed. Peak flow is now 55% predicted. Repeat treatment, magnesium, ventilatory support, disposition, prevention planning, and outcome remain outside this initial-response vignette.', {
+            repeatPeakExpiratoryFlowPercentPredicted: 55, teachingModel: true,
+          });
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -3678,6 +3784,20 @@ export class AnesthesiaEngine {
       };
     }
 
+    // This ED vignette declares fixed observed severity anchors that the
+    // perioperative gas-exchange model cannot infer from a respiratory profile.
+    // Keep the live monitor consistent with those authored findings, then show
+    // a bounded response to the two accepted initial treatment intents.
+    if (this.scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'adult-asthma',
+    )) {
+      crisisState = {
+        ...crisisState,
+        respiratoryRateBpm: this.adultAsthmaBronchodilatorBundleAtTick === null ? 34 : 24,
+        spo2Percent: this.adultAsthmaControlledOxygenAtTick === null ? 91 : 94,
+      };
+    }
+
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
       heartRateBpm: 0,
@@ -3964,6 +4084,13 @@ export class AnesthesiaEngine {
           oxygenAtTick: this.emergencyAnaphylaxisOxygenAtTick,
           crystalloidAtTick: this.emergencyAnaphylaxisCrystalloidAtTick,
           reassessedAtTick: this.emergencyAnaphylaxisReassessedAtTick,
+        },
+        adultAsthmaAssessment: {
+          severityReviewedAtTick: this.adultAsthmaSeverityReviewedAtTick,
+          controlledOxygenAtTick: this.adultAsthmaControlledOxygenAtTick,
+          bronchodilatorBundleAtTick: this.adultAsthmaBronchodilatorBundleAtTick,
+          corticosteroidIntentAtTick: this.adultAsthmaCorticosteroidIntentAtTick,
+          reassessedAtTick: this.adultAsthmaReassessedAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

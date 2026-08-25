@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "emergency-medicine",
-  "recordCount": 6,
+  "recordCount": 7,
   "records": [
     {
       "recordId": "scenario:undifferentiated-shock@0.1.0",
@@ -67,6 +67,17 @@
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#anaphylaxis@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#anaphylaxis@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:adult-asthma@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "adult-asthma",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/emergency-medicine-completion-audit.json#adult-asthma@0.1.0",
+        "/catalog/emergency-medicine-quality-audit.json#adult-asthma@0.1.0"
       ]
     }
   ]

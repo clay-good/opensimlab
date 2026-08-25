@@ -114,7 +114,8 @@ Reviewers run the routine induction themselves before answering.
 | B60 | In the obstructive-shock lesson, penetrating chest trauma, unilateral ventilation findings, hypoxia, and severe hemodynamic compromise form a coherent tension-pneumothorax teaching pattern; escalation, high-concentration oxygen, immediate decompression intent without imaging delay, and serial reassessment are inspectable without implying diagnosis, examination or POCUS competence, procedural skill, equipment selection, or outcome | | |
 | B61 | In the cardiac-tamponade lesson, penetrating central-chest trauma, preserved bilateral air entry, impaired perfusion, narrowing pressure, and falling end-tidal carbon dioxide form a coherent obstructive-circulation pattern; whole-patient review precedes a fixed POCUS statement, immediate trauma and surgical control intent, and serial reassessment without implying diagnostic proof, POCUS competence, procedure selection or skill, technical success, or outcome | | |
 | B62 | In the emergency-anaphylaxis lesson, a community food exposure, lip and tongue swelling, widespread wheeze, hypoxemia, hypotension, and impaired perfusion form a coherent multisystem pattern; whole-patient review precedes positioning and help, fixed adult IM epinephrine, parallel oxygen and crystalloid support, and serial reassessment without implying diagnostic proof, dose calculation, injection or airway skill, refractory-care competence, or outcome | | |
-| B63 | Overall: does this patient behave like a patient? | | |
+| B63 | In the adult-asthma lesson, words-only speech, accessory-muscle use, expiratory wheeze, room-air hypoxemia, and reduced peak flow form a coherent severe presentation; whole-patient review precedes controlled oxygen, a conservative fixed inhaled bronchodilator bundle, early anti-inflammatory intent, and serial reassessment without implying diagnostic proof, examination or spirometry acquisition, inhaler technique, individualized dosing, advanced-support competence, disposition, or outcome | | |
+| B64 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -243,4 +244,9 @@ So that reviewers spend their attention on what this review is for:
   epinephrine, oxygen, and crystalloid are fixed screen actions. The case omits diagnostic
   acquisition, dose calculation, injection and airway technique, repeat and refractory treatment,
   observation, recurrence, referral, and outcome.
+- The adult-asthma case uses fixed severity, immediate-mimic, and peak-flow findings plus shared
+  lower-airway-obstruction physiology. Controlled oxygen, a conservative inhaled bronchodilator
+  bundle, early systemic-corticosteroid intent, and reassessment are fixed controls. Examination,
+  spirometry, technique, individualized dosing, repeat and advanced support, disposition,
+  prevention planning, and outcome are absent.
 - Nothing here has been clinically reviewed before — you are the first.

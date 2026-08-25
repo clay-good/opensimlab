@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 41 reports bounded ED-anaphylaxis state. */
-export const WORKER_PROTOCOL_VERSION = 41;
+/** Bumped whenever the message shape changes incompatibly. Version 42 reports bounded adult-asthma state. */
+export const WORKER_PROTOCOL_VERSION = 42;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -297,6 +297,13 @@ export interface EquipmentSnapshot {
       readonly imEpinephrineAtTick: number | null;
       readonly oxygenAtTick: number | null;
       readonly crystalloidAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+    };
+    readonly adultAsthmaAssessment?: {
+      readonly severityReviewedAtTick: number | null;
+      readonly controlledOxygenAtTick: number | null;
+      readonly bronchodilatorBundleAtTick: number | null;
+      readonly corticosteroidIntentAtTick: number | null;
       readonly reassessedAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
