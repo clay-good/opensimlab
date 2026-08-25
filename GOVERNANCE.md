@@ -72,10 +72,12 @@ register and every item citing the old version is queued for re-review.
 
 ## Reporting a clinical inaccuracy
 
-The shared in-product report control and isolated report service are specified but **not yet
-implemented**. The repository is also still private, so there is no public issue intake today.
-Clinician reviewers with repository access can record claim-specific notes on `/content-review`,
-export one local file, and send it through the private channel by which they were invited.
+Every playable scenario inherits the shared in-product report control. The isolated Worker, D1
+migration, bounded request contract, Turnstile verification, quotas, retention, and kill switch are
+implemented; deployment remains fail-closed until the production Cloudflare values are configured
+and explicitly enabled. The repository remains private, so there is no public issue intake today.
+Clinician reviewers can also record claim-specific notes on `/content-review`, export one local
+file, and send it through the private channel by which they were invited.
 
 Once public intake ships, usable reports will be acknowledged within five working days. Corrections
 are appended permanently to [`CORRECTIONS.md`](CORRECTIONS.md) and never deleted or rewritten.

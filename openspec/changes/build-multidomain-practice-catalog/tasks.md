@@ -129,21 +129,21 @@ credited toward the catalog until every item in the completion contract passes.
 
 ## 5. Report-a-problem foundation
 
-- [ ] Specify and implement the exact report request/response schemas and generated scenario report
+- [x] Specify and implement the exact report request/response schemas and generated scenario report
   catalog.
 - [ ] Add one shared report control to prebrief, live, debrief, source, and limitation surfaces.
-- [ ] Implement the accessible payload-preview dialog, category-only submission, optional 500-
+- [ ] Implement the accessible payload-preview dialog, category-only submission, optional 160-
   character note, and opt-in bounded recent context.
-- [ ] Structurally exclude reflections, local history, progress, imported files, arbitrary storage,
+- [x] Structurally exclude reflections, local history, progress, imported files, arbitrary storage,
   real-world timestamps, identity, locale, user agent, and device data.
-- [ ] Implement a separately routed API-only Worker for exact config and POST paths with no asset,
+- [x] Implement a separately routed API-only Worker for exact config and POST paths with no asset,
   preview, `workers.dev`, public-read, or broader API surface.
-- [ ] Add server-derived metadata, origin/URL/content-type/body/schema/control-character validation,
+- [x] Add server-derived metadata, origin/URL/content-type/body/schema/control-character validation,
   Turnstile Siteverify hostname/action checks, daily HMAC quotas, verified-attempt quotas, global
   ceilings, dedupe, generic accepted responses, and fail-closed errors.
-- [ ] Add D1 migrations for reports, counters, triage, severity, resolution evidence, and public
+- [x] Add D1 migrations for reports, counters, triage, severity, resolution evidence, and public
   correction links.
-- [ ] Add daily scheduled retention for 30-day reports and 14-day counters plus manual recovery
+- [x] Add daily scheduled retention for 30-day reports and 14-day counters plus manual recovery
   commands.
 - [ ] Add a zone WAF rate-limit launch requirement, secret-handling runbook, test keys, cost model,
   live verification checklist, kill switch, and self-hosting behavior.

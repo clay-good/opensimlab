@@ -18,8 +18,8 @@ export const PRIVACY_CLAIMS: readonly PrivacyClaim[] = [
     test: 'tests/arch/boundaries.test.ts → no third-party or telemetry dependency exists',
   },
   {
-    claim: 'No script, font, style or image references a foreign origin.',
-    test: 'tests/arch/boundaries.test.ts → Scenario: A third-party request fails the build',
+    claim: 'Turnstile is the sole foreign runtime script and it loads only after the report dialog opens.',
+    test: 'tests/ui/problem-reporting.test.tsx → loads nothing until opened',
   },
   {
     claim: 'There is no sign-in, sign-up, password or federated identity control anywhere.',
@@ -44,5 +44,13 @@ export const PRIVACY_CLAIMS: readonly PrivacyClaim[] = [
   {
     claim: 'The application depends on no external pharmacology dataset.',
     test: 'tests/arch/dependencies.test.ts → Scenario: The dependency graph is clean',
+  },
+  {
+    claim: 'Reporting cannot inspect browser storage, debrief writing, or private learner records.',
+    test: 'tests/arch/private-tutor-reporting.test.ts → keeps reporting unable to discover browser storage',
+  },
+  {
+    claim: 'The report API fails closed and accepts only exact routes and bounded exact-version payloads.',
+    test: 'tests/unit/problem-reporting.test.ts → has only the two exact API routes',
   },
 ];

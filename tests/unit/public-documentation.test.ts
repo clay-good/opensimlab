@@ -15,16 +15,16 @@ describe('public contribution and governance documentation', () => {
       expect(existsSync(join(root, path)), path).toBe(true);
       expect(readFileSync(join(root, path), 'utf8').length, path).toBeGreaterThan(400);
     }
-    expect(readFileSync(join(root, 'GOVERNANCE.md'), 'utf8')).toMatch(/not yet\s+implemented/);
-    expect(readFileSync(join(root, 'CORRECTIONS.md'), 'utf8')).toContain('not available yet');
+    expect(readFileSync(join(root, 'GOVERNANCE.md'), 'utf8')).toContain('Every playable scenario inherits');
+    expect(readFileSync(join(root, 'CORRECTIONS.md'), 'utf8')).toContain('Every playable scenario has');
     expect(readFileSync(join(root, 'docs/organizational-endorsement.md'), 'utf8'))
       .toContain('No organization is currently recorded or endorsed.');
   });
 
-  it('does not claim public intake or an in-product reporter already exists', () => {
+  it('distinguishes the implemented reporter from unavailable public repository intake', () => {
     const governance = readFileSync(join(root, 'GOVERNANCE.md'), 'utf8');
     const corrections = readFileSync(join(root, 'CORRECTIONS.md'), 'utf8');
-    expect(governance).not.toContain('control is reachable from every content item');
+    expect(governance).toContain('isolated Worker');
     expect(corrections).not.toContain('[public repository]');
     expect(`${governance}\n${corrections}`).toContain('repository remains private');
   });

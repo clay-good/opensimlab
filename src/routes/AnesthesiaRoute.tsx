@@ -49,6 +49,9 @@ import {
 import {
   CARDIOLOGY_SCENARIOS, DEFAULT_CARDIOLOGY_SCENARIO_ID, getCardiologyScenario,
 } from '../modules/cardiology/scenarios';
+import { APP_VERSION } from '@platform/governance/status';
+import { ScenarioProblemReport } from '@platform/reporting/ScenarioProblemReport';
+import { SITE_ORIGIN } from './site-metadata';
 
 interface ClinicalModuleConfig {
   readonly id: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology';
@@ -194,11 +197,40 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
       candidate === null || (typeof candidate === 'string' && REGIONS.some((r) => r.id === candidate)),
   );
   const audio = useMemo(() => new SonificationEngine(), []);
+  const reportWasRunning = useRef(false);
 
   const guess = useMemo(() => guessRegion(
     typeof navigator === 'undefined' ? ['en-GB'] : [...navigator.languages],
   ), []);
   const region = (regionId ? getRegion(regionId) : null) ?? guess.profile;
+
+  const reportControl = (
+    <ScenarioProblemReport
+      context={{
+        scenarioId: scenario.metadata.id,
+        contentVersion: scenario.metadata.version,
+        appVersion: APP_VERSION,
+        engineVersion: ENGINE_VERSION,
+        moduleId: config.id,
+        maturity: scenario.metadata.maturity,
+        practiceRegion: region.id,
+        fidelityClass: config.id === 'anesthesia' ? 'closed_loop_physiology' : 'state_transition',
+        surface: session.phase === 'ended'
+          ? 'debrief'
+          : session.phase === 'briefing' || session.phase === 'idle' ? 'prebrief' : 'live',
+        simulatedTick: session.tick,
+        canonicalUrl: `${SITE_ORIGIN}${config.basePath}/scenario/${scenario.metadata.id}`,
+      }}
+      onOpen={() => {
+        reportWasRunning.current = session.transport === 'running';
+        if (reportWasRunning.current) session.pause();
+      }}
+      onClose={() => {
+        if (reportWasRunning.current) session.play();
+        reportWasRunning.current = false;
+      }}
+    />
+  );
 
   // The assignment's guidance level is applied once, before the session begins.
   // After that it is the learner's own control: a link sets the starting point,
@@ -299,6 +331,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
       };
     })();
     return (
+      <>
       <Debrief
         scenario={scenario}
         history={session.history}
@@ -318,6 +351,8 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
         onReplayDecisionPoint={(point) => session.rehearseFromDecisionPoint(point.id, point.atTick)}
         {...(nextRecommendation ? { nextRecommendation } : {})}
       />
+      {reportControl}
+      </>
     );
   }
 
@@ -345,11 +380,13 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
           </div>
         )}
         <p className="visually-hidden">{path}</p>
+        {reportControl}
       </>
     );
   }
 
   return (
+    <>
     <Cockpit
       scenario={scenario}
       region={region}
@@ -359,6 +396,8 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
       onEnd={session.end}
       moduleId={config.id}
     />
+    {reportControl}
+    </>
   );
 }
 

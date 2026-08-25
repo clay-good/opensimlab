@@ -208,8 +208,8 @@ export const ROUTES: readonly RouteMetadata[] = [
     path: '/privacy',
     title: formatTitle('Privacy'),
     description:
-      'What is stored, where, and what leaves your device. Nothing leaves your device. Each claim '
-      + 'on this page maps to a named test that enforces it.',
+      'Private clinical simulation practice with no accounts, analytics, or learner telemetry. '
+      + 'Anonymous problem reports are bounded, previewed, and briefly retained.',
     indexable: true,
     structuredData: [],
     heading: 'Privacy',

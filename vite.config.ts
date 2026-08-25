@@ -4,8 +4,8 @@ import { fileURLToPath } from 'node:url';
 
 const r = (p: string) => fileURLToPath(new URL(p, import.meta.url));
 
-// Static build only. No server, no runtime function, no foreign origin.
-// See platform/delivery and platform/privacy.
+// The simulator remains a portable static build. Anonymous problem reports use
+// a separately deployed exact-route Worker and lazy Turnstile client.
 export default defineConfig({
   plugins: [react()],
   resolve: {

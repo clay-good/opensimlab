@@ -1316,7 +1316,7 @@ The smallest useful report is:
 
 1. choose one category: clinical content, patient behavior, tutor/debrief, controls, accessibility,
    outdated source, or other;
-2. optionally describe the problem in at most 500 characters;
+2. optionally describe the problem in at most 160 characters;
 3. inspect an exact payload preview;
 4. optionally select **Include recent simulation context**; it is off by default;
 5. complete Turnstile and send.
@@ -1472,7 +1472,7 @@ exact version is no longer current.
 ## 12. Authoritative platform behavior
 
 The reporting design assumes that simulation contains sensitive learner context. The note limit is
-500 characters, recent context is off by default, a payload preview is mandatory, reflections and
+160 characters, recent context is off by default, a payload preview is mandatory, reflections and
 prior history are structurally inaccessible, and captured context comes from a typed scenario
 projection rather than a form or document sweep.
 

@@ -94,7 +94,7 @@ specification is the capability tree under [`openspec/specs/`](openspec/specs/).
 | [`platform/practice-region`](openspec/specs/platform/practice-region/spec.md) | Technique availability, formulary, protocol variant, and terminology by country |
 | [`platform/sustainability`](openspec/specs/platform/sustainability/spec.md) | Bus factor, succession, dependency ceiling, supply chain, funding disclosure, honest status |
 | [`platform/safety-and-scope`](openspec/specs/platform/safety-and-scope/spec.md) | Not-for-clinical-use guards, regulatory position, the forward-only boundary |
-| [`platform/privacy`](openspec/specs/platform/privacy/spec.md) | No telemetry, no accounts, no server state, on-device only |
+| [`platform/privacy`](openspec/specs/platform/privacy/spec.md) | No telemetry or accounts; practice stays local; optional anonymous reports are bounded and previewed |
 | [`platform/offline-pwa`](openspec/specs/platform/offline-pwa/spec.md) | Service worker, installability, download budgets, local storage |
 | [`platform/accessibility`](openspec/specs/platform/accessibility/spec.md) | WCAG 2.2 AA, keyboard operation, screen reader access to live physiology |
 | [`platform/global-reach`](openspec/specs/platform/global-reach/spec.md) | Translation, both unit systems, regional drug naming, low-end devices, licensing |

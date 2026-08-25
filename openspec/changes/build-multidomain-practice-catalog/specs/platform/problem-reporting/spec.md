@@ -24,7 +24,7 @@ frame and SHALL NOT implement private reporting variants.
 ### Requirement: The Smallest Report Requires No Prose
 
 The dialog SHALL require one category from clinical content, patient behavior, tutor/debrief,
-controls, accessibility, outdated source, or other. A note of at most 500 characters and recent
+controls, accessibility, outdated source, or other. A note of at most 160 characters and recent
 simulation context SHALL be optional.
 
 #### Scenario: Category-only submission remains useful

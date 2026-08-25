@@ -3,6 +3,7 @@ export const PUBLIC_CATALOG_ARTIFACTS = [
   '/catalog/scenario-catalog.schema.json',
   '/catalog/anesthesia-catalog.json',
   '/catalog/scenario-completion.schema.json',
+  '/catalog/scenario-report-catalog.json',
   '/catalog/anesthesia-completion-audit.json',
   '/catalog/emergency-medicine-completion-audit.json',
   '/catalog/critical-care-completion-audit.json',

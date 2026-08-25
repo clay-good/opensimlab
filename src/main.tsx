@@ -1,8 +1,8 @@
 /**
  * The application entry point.
  *
- * A static build: this is the only script the page loads, and after the first
- * load the application makes no network request at all.
+ * A static simulator build. Ordinary practice stays local; the reporting
+ * package alone may lazy-load Turnstile after the learner opens its dialog.
  */
 
 import { StrictMode } from 'react';

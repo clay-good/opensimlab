@@ -45,9 +45,12 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
-  // Same-origin only. There is nothing else to fetch: the application makes no
-  // request to any foreign origin, ever.
+  // Same-origin application assets only. Turnstile is loaded by the page after
+  // a learner opens the report dialog and never passes through this cache.
   if (url.origin !== self.location.origin) return;
+  // Report configuration is an operational kill switch and must never be
+  // cached or served stale. The report POST is already excluded by method.
+  if (url.pathname.startsWith('/api/')) return;
 
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_NAME);

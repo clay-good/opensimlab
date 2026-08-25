@@ -24,7 +24,8 @@ export const FICTION_CONTRACT =
   'This is a simulation. The patient is not real, nothing you do here reaches anyone, and an '
   + 'error here costs nothing except what you learn from it. In exchange, treat the patient as '
   + 'though they were real: the learning only works if you make the decisions you would actually '
-  + 'make. Nothing you do leaves this device.';
+  + 'make. Your practice and tutor stay on this device. Only a problem report you preview and '
+  + 'deliberately send leaves it.';
 
 export interface PrebriefProps {
   readonly scenario: Scenario;

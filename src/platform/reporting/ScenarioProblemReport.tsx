@@ -1,0 +1,151 @@
+import { useEffect, useRef, useState } from 'react';
+import { Button, Modal } from '@platform/ui';
+import {
+  REPORT_CATEGORIES, REPORT_NOTE_LIMIT, buildScenarioReportRequest,
+  type ReportCategory, type ScenarioReportContext,
+} from './contracts';
+import {
+  loadTurnstile, renderTurnstile, reportConfig, submitScenarioReport, type TurnstileApi,
+} from './client';
+import './reporting.css';
+
+export function ScenarioProblemReport({ context, onOpen, onClose }: {
+  readonly context: ScenarioReportContext;
+  readonly onOpen?: () => void;
+  readonly onClose?: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [category, setCategory] = useState<ReportCategory>('clinical-content');
+  const [note, setNote] = useState('');
+  const [token, setToken] = useState('');
+  const [status, setStatus] = useState('');
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const turnstileHost = useRef<HTMLDivElement>(null);
+  const widget = useRef<{ api: TurnstileApi; id: string } | null>(null);
+
+  useEffect(() => {
+    if (!open || sent) return undefined;
+    let active = true;
+    setStatus('Preparing secure submission…');
+    void reportConfig().then(async (config) => [config, await loadTurnstile()] as const).then(([config, api]) => {
+      if (!active || !turnstileHost.current) return;
+      const id = renderTurnstile(api, turnstileHost.current, config.sitekey, {
+        ready: (value) => { if (active) { setToken(value); setStatus('Ready to send.'); } },
+        expired: () => { if (active) { setToken(''); setStatus('Security check expired. Please try it again.'); } },
+        error: () => { if (active) { setToken(''); setStatus('Security check unavailable. Please try again later.'); } },
+      });
+      widget.current = { api, id };
+      setStatus('Complete the security check to send.');
+    }).catch(() => {
+      if (active) setStatus('Reporting is temporarily unavailable. Your practice session still works normally.');
+    });
+    return () => {
+      active = false;
+      if (widget.current) {
+        try { widget.current.api.remove(widget.current.id); } catch { /* Removing the modal is sufficient. */ }
+        widget.current = null;
+      }
+    };
+  }, [open, sent]);
+
+  const close = () => {
+    setOpen(false);
+    setToken('');
+    setStatus('');
+    setSending(false);
+    setSent(false);
+    setNote('');
+    onClose?.();
+  };
+
+  const send = async () => {
+    if (!token || sending) return;
+    setSending(true);
+    setStatus('Sending report…');
+    try {
+      await submitScenarioReport(buildScenarioReportRequest(context, category, note, token));
+      setSent(true);
+      setStatus('Thanks. Your report is in the weekly review queue.');
+    } catch {
+      setToken('');
+      setSending(false);
+      setStatus('Report not sent. Please try again later.');
+      if (widget.current) {
+        try { widget.current.api.reset(widget.current.id); } catch { /* Keep send disabled. */ }
+      }
+    }
+  };
+
+  return (
+    <div className="problem-report">
+      <Button compact variant="ghost" onClick={() => { setOpen(true); onOpen?.(); }}>
+        Report a problem
+      </Button>
+      <Modal
+        open={open}
+        title="Report a problem"
+        onClose={close}
+        footer={sent
+          ? <Button variant="primary" onClick={close}>Done</Button>
+          : <>
+              <Button onClick={close} disabled={sending}>Cancel</Button>
+              <Button variant="primary" onClick={() => { void send(); }} disabled={!token || sending}>
+                {sending ? 'Sending…' : 'Send report'}
+              </Button>
+            </>}
+      >
+        {sent ? (
+          <p role="status">{status}</p>
+        ) : (
+          <div className="problem-report__form">
+            <p>
+              Tell us what seems wrong in this fictional scenario. Do not include a patient name
+              or any real clinical information. <a href="/privacy#problem-reports">How reports stay private</a>.
+            </p>
+            <label className="field" htmlFor="problem-report-category">
+              <span className="field__label">Kind of problem</span>
+              <select
+                id="problem-report-category"
+                className="select"
+                value={category}
+                onChange={(event) => setCategory(event.target.value as ReportCategory)}
+              >
+                {REPORT_CATEGORIES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+              </select>
+            </label>
+            <label className="field" htmlFor="problem-report-note">
+              <span className="field__label">A short note (optional)</span>
+              <textarea
+                id="problem-report-note"
+                className="field__input"
+                rows={3}
+                maxLength={REPORT_NOTE_LIMIT}
+                autoComplete="off"
+                value={note}
+                onChange={(event) => setNote(event.target.value.slice(0, REPORT_NOTE_LIMIT))}
+                placeholder="What did you expect instead?"
+              />
+              <span className="field__hint problem-report__count" aria-live="polite">
+                {note.length} / {REPORT_NOTE_LIMIT}
+              </span>
+            </label>
+            <details className="problem-report__preview">
+              <summary>Review what will be sent</summary>
+              <dl>
+                <div><dt>Scenario</dt><dd>{context.scenarioId}</dd></div>
+                <div><dt>Version</dt><dd>{context.contentVersion}</dd></div>
+                <div><dt>Where</dt><dd>{context.surface}</dd></div>
+                <div><dt>Simulated tick</dt><dd>{context.simulatedTick}</dd></div>
+                <div><dt>Category</dt><dd>{category}</dd></div>
+              </dl>
+              <p className="field__hint">No debrief writing, practice history, identity, browser details, or real-world time is included.</p>
+            </details>
+            <div ref={turnstileHost} className="problem-report__turnstile" />
+            <p role="status" aria-live="polite" className="field__hint">{status}</p>
+          </div>
+        )}
+      </Modal>
+    </div>
+  );
+}

@@ -1,0 +1,29 @@
+name = "opensimlab-reports"
+main = "src/index.mjs"
+compatibility_date = "2026-08-25"
+workers_dev = false
+preview_urls = false
+
+routes = [
+  { pattern = "https://opensimlab.com/api/reports", zone_name = "opensimlab.com" },
+  { pattern = "https://opensimlab.com/api/reports/config", zone_name = "opensimlab.com" },
+]
+
+[observability]
+enabled = false
+
+[triggers]
+crons = ["17 8 * * *"]
+
+[vars]
+REPORTING_ENABLED = "false"
+REPORT_ALLOWED_ORIGIN = "https://opensimlab.com"
+TURNSTILE_SITE_KEY = ""
+REPORT_DAILY_LIMIT = "200"
+REPORT_REPORTER_DAILY_LIMIT = "3"
+
+[[d1_databases]]
+binding = "REPORTS_DB"
+database_name = "opensimlab-reports"
+database_id = "replace-with-d1-database-id"
+migrations_dir = "migrations"

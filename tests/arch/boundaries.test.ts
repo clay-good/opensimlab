@@ -118,8 +118,10 @@ describe('Requirement: No Telemetry, No Analytics, No Third-Party Requests', () 
       if (isMetaFile(file.path)) continue;
       for (const match of file.text.matchAll(/https?:\/\/[^\s'"`)]+/g)) {
         const url = match[0];
+        const lazyTurnstile = file.path === 'src/platform/reporting/client.ts'
+          && url === 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
         expect(
-          documentationHosts.test(url) || namespaceUris.test(url),
+          documentationHosts.test(url) || namespaceUris.test(url) || lazyTurnstile,
           `${file.path} references ${url}`,
         ).toBe(true);
       }
@@ -305,13 +307,14 @@ describe('Requirement: The Deployment Has No Origin Service', () => {
     expect(wrangler).toContain('not_found_handling = "404-page"');
   });
 
-  it('Scenario: the content security policy forbids reaching a foreign origin', () => {
+  it('Scenario: the content security policy permits only the declared reporting boundary', () => {
     const headers = readFileSync(join(root, 'dist/_headers'), 'utf8');
     const csp = /Content-Security-Policy: ([^\n]+)/.exec(headers)?.[1] ?? '';
     expect(csp, 'dist/_headers has no content security policy').toBeTruthy();
-    // `connect-src 'self'` is the mechanism behind "nothing leaves the device".
     expect(csp).toContain("default-src 'self'");
     expect(csp).toContain("connect-src 'self'");
+    expect(csp).toContain("script-src 'self' https://challenges.cloudflare.com");
+    expect(csp).toContain('frame-src https://challenges.cloudflare.com');
     expect(csp).toContain("form-action 'none'");
     expect(csp).toContain("frame-ancestors 'none'");
   });

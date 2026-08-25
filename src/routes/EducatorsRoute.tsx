@@ -118,8 +118,9 @@ export function EducatorsRoute() {
       <main className="reading" id="main">
         <h1>For educators</h1>
         <p>
-          Open Sim Lab is a free, browser-based anaesthesia simulator with no accounts, no server
-          and no data collection. This page is what a programme needs to decide whether to use it.
+          Open Sim Lab is a free, browser-based anesthesia simulator with no accounts, learner
+          telemetry, or remote practice history. An optional anonymous problem report sends only
+          the fields it previews. This page is what a program needs to decide whether to use it.
         </p>
 
         <h2>Read this part first</h2>
@@ -167,7 +168,7 @@ export function EducatorsRoute() {
 
         <h2>Seeing what your students did</h2>
         <p>
-          There is no dashboard, because there is no server and nothing leaves the device. A
+          There is no learner dashboard because practice stays on the device. A
           learner exports their session as a file and hands it to you; you open it on the{' '}
           <a href="/review">review page</a>, which replays the engine over their recorded actions
           and shows you what happened and where the group is weak.

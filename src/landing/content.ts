@@ -197,11 +197,11 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
     id: 'using-it-in-a-course',
     heading: 'How to use it in a course',
     paragraphs: [
-      'It needs no licence, no procurement, no accounts and no institutional integration, because '
-      + 'there is no server to integrate with. Send your students a link and they are in, or clone '
+      'It needs no licence, no procurement, no accounts and no institutional integration. Send '
+      + 'your students a link and they are in, or clone '
       + 'the repository, run the documented build, and host the resulting files yourself from any '
       + 'static host, on your own domain, with no dependency on this project staying online.',
-      'Because nothing leaves the device, you cannot see what a student did unless they export a '
+      'Because practice stays on the device, you cannot see what a student did unless they export a '
       + 'transcript and send it to you themselves. That is a deliberate trade: the confidentiality '
       + 'simulation standards ask for is easier to guarantee when the data was never collected.',
       'Scenarios are plain JSON validated against a published schema, so an educator can write one '
@@ -224,7 +224,7 @@ export const QUESTIONS: readonly QuestionAnswer[] = [
   },
   {
     question: 'Do I need an account?',
-    answer: 'No. There is no sign-in anywhere, because there is no server to sign in to.',
+    answer: 'No. There is no sign-in, learner account, or remote practice record anywhere.',
   },
   {
     question: 'Does it work offline?',

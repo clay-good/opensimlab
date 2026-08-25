@@ -23,7 +23,9 @@ import {
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const target = join(root, 'public', 'catalog');
+const reportTarget = join(root, 'workers', 'reports', 'src');
 mkdirSync(target, { recursive: true });
+mkdirSync(reportTarget, { recursive: true });
 
 const completion = buildAnesthesiaCompletionCatalog(SCENARIOS, ENGINE_VERSION);
 const quality = buildScenarioQualityCatalog(completion);
@@ -43,6 +45,29 @@ const cardiologyCompletion = buildModuleCompletionCatalog(
   CARDIOLOGY_SCENARIOS, ENGINE_VERSION, 'cardiology', 'clinic', 'state_transition',
 );
 const cardiologyQuality = buildScenarioQualityCatalog(cardiologyCompletion);
+const reportCatalog = {
+  schemaVersion: 1,
+  scenarios: [completion, emergencyCompletion, criticalCareCompletion, cardiologyCompletion]
+    .flatMap((catalog) => catalog.scenarios)
+    .map((scenario) => ({
+      scenarioId: scenario.scenarioId,
+      contentVersion: scenario.contentVersion,
+      moduleId: scenario.moduleId,
+      maturity: scenario.maturity,
+      practiceRegions: scenario.practiceRegions,
+      fidelityClass: scenario.fidelityClass,
+    })),
+};
+writeFileSync(
+  join(reportTarget, 'report-catalog.generated.json'),
+  `${JSON.stringify(reportCatalog, null, 2)}\n`,
+  'utf8',
+);
+writeFileSync(
+  join(target, 'scenario-report-catalog.json'),
+  `${JSON.stringify(reportCatalog, null, 2)}\n`,
+  'utf8',
+);
 writeFileSync(
   join(target, 'scenario-catalog.schema.json'),
   `${JSON.stringify(SCENARIO_CATALOG_SCHEMA, null, 2)}\n`,

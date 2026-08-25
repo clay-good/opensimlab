@@ -9,10 +9,12 @@ changed, and which release carried the fix.
 
 ## How to report something
 
-Public issue intake and the shared in-product report control are not available yet because the
-repository remains private and the report service has not been implemented. Invited clinical
-reviewers can use `/content-review`, export their local notes file, and return it through their
-existing private invitation channel. Do not include real patient or learner information.
+Every playable scenario has a shared **Report a problem** control. It sends only the scenario,
+version, public practice context, category, and an optional 160-character note after showing a
+preview and completing Cloudflare Turnstile. Do not include real patient or learner information.
+If the separately deployed report service is disabled, invited reviewers can still use
+`/content-review`, export their local notes file, and return it through their invitation channel.
+The repository remains private, so public repository issue intake is not available yet.
 
 Once public intake ships, reports are acknowledged within five working days. An error that could teach an unsafe
 practice is triaged as urgent and the affected content is disabled in the next build

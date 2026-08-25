@@ -321,9 +321,10 @@ function PrivacyBody() {
   return (
     <>
       <p>
-        Using Open Sim Lab is unobservable. There is no login, no account, no server, no analytics
-        and no telemetry. This is a property of the architecture, not a promise: there is nothing to
-        turn off, because there is nothing there.
+        Practicing in Open Sim Lab is unobservable. There is no login, account, analytics, learner
+        telemetry, or remote practice history. The one deliberate exception is an anonymous
+        problem report: nothing is sent unless you open its dialog, review the bounded fields, and
+        choose to send it.
       </p>
       <h2>What is stored, and where</h2>
       <ul>
@@ -333,12 +334,18 @@ function PrivacyBody() {
         <li>Your newest 50 bounded practice-attempt summaries, in the same place.</li>
         <li>Session transcripts, if you save them, in the same place.</li>
       </ul>
-      <p>Nothing else, and nothing anywhere else.</p>
+      <p id="problem-reports">
+        A problem report you deliberately send is kept in a private correction queue for at most
+        30 days. Abuse-prevention counters are kept for at most 14 days. They contain no raw network
+        address, account, email, cookie, browser identity, or real-world time from your device.
+      </p>
 
       <h2>What leaves the device</h2>
       <p>
-        Nothing, unless you deliberately export a file and send it somewhere yourself. There is no
-        upload, no share link, and no cloud destination anywhere in the application.
+        Your simulation, tutor, debrief writing, and practice history do not leave. If you open
+        <strong> Report a problem</strong>, Cloudflare Turnstile loads for abuse prevention. If you
+        then send, the previewed scenario/version, public practice context, category, and optional
+        160-character note go to the isolated correction service. Canceling sends no report.
       </p>
 
       <h2>Your private practice history</h2>
@@ -391,7 +398,8 @@ function PrivacyBody() {
       <p>
         The static host serving these files sees requests for those files and the network address
         they came from, as any web server does. It retains no per-request identity and stores no
-        state about you. After the first load the application makes no further requests at all.
+        state about you. After the first load, ordinary practice makes no application API request;
+        only the problem-report flow makes the declared requests above.
       </p>
 
       <h2>Each claim, and the test that enforces it</h2>
