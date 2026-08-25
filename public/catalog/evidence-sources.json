@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 130,
+  "sourceCount": 131,
   "sources": [
     {
       "id": "association-qrh-2023",
@@ -1553,7 +1553,7 @@
       "publication": "Circulation",
       "year": 2019,
       "locator": "140:e382-e482; doi:10.1161/CIR.0000000000000628",
-      "usedFor": "Bradycardia boundaries: sinus-node dysfunction uses symptom correlation without a universal rate or pause threshold; acquired third-degree AV block not due to reversible or physiologic causes supports permanent pacing regardless of symptoms; and symptomatic capture failure requires pulse-confirmed rescue and expert temporary-pacing judgment rather than ECG artifact alone.",
+      "usedFor": "Bradycardia boundaries: sinus-node dysfunction uses symptom correlation without a universal rate or pause threshold; acquired third-degree AV block not due to reversible or physiologic causes supports permanent pacing regardless of symptoms; effective transcutaneous capture requires a pulse or arterial waveform rather than ECG appearance alone; and temporary pacing is a short bridge.",
       "verifiedAgainst": "https://www.acc.org/~/media/Non-Clinical/Files-PDFs-Excel-MS-Word-etc/Guidelines/2018/Guidelines_Made_Simple_2018_Bradycardia.pdf",
       "verifiedOn": "2026-08-25"
     },
@@ -1610,8 +1610,19 @@
       "publication": "Circulation",
       "year": 2025,
       "locator": "152(suppl 2):S538-S577; doi:10.1161/CIR.0000000000001376",
-      "usedFor": "The torsades rescue boundary and pacemaker capture-failure rescue boundary: sustained polymorphic VT requires immediate unsynchronized shock; symptomatic bradycardia is judged by perfusion, mechanical capture cannot be assumed from electrical artifacts, reversible causes remain active, and unstable persistent bradycardia requires expert pacing pathways.",
+      "usedFor": "The torsades and pacing-rescue boundaries: sustained polymorphic VT requires immediate unsynchronized shock; symptomatic bradycardia is judged by perfusion; electrical pacing capture does not establish circulation; pulse loss opens nonshockable-arrest care; and pacing attempts must not delay evidence-based resuscitation.",
       "verifiedAgainst": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-advanced-life-support",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "aha-adult-bradycardia-algorithm-2025",
+      "authors": "American Heart Association",
+      "title": "Adult Bradycardia With a Pulse Algorithm",
+      "publication": "American Heart Association CPR & First Aid",
+      "year": 2025,
+      "locator": "Boxes 2-7; accessible long-description edition 2025",
+      "usedFor": "The transition boundary from persistent bradycardia with cardiopulmonary compromise to transcutaneous-pacing and expert pathways, while loss of pulse leaves the with-pulse algorithm and opens cardiac-arrest care.",
+      "verifiedAgainst": "https://www.heart.org/-/media/CPR-Files/CPR-Guidelines-Files/2025-Accessible/Algorithm-ACLS-Bradycardia-LngDscrp-250725-Ed.pdf",
       "verifiedOn": "2026-08-25"
     },
     {

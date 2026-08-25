@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 100 reports pacemaker-capture-failure state. */
-export const WORKER_PROTOCOL_VERSION = 100;
+/** Bumped whenever the message shape changes incompatibly. Version 101 reports transcutaneous-pacing capture state. */
+export const WORKER_PROTOCOL_VERSION = 101;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -810,6 +810,23 @@ export interface EquipmentSnapshot {
       readonly outputSelectedByLearner: false;
       readonly leadManipulatedByLearner: false;
       readonly treatmentDeliveredByLearner: false;
+      readonly outcomePredicted: false;
+    };
+    readonly transcutaneousPacingCaptureAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly pulselessResponseAtTick: number | null;
+      readonly causesBridgeAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: false;
+      readonly electricalCaptureAuthored: true;
+      readonly mechanicalCaptureAbsent: true;
+      readonly nonshockableArrestPathwayActivated: boolean;
+      readonly pacingDeliveredByLearner: false;
+      readonly captureAssessedByLearner: false;
+      readonly cprDeliveredByLearner: false;
+      readonly treatmentDeliveredByLearner: false;
+      readonly procedurePerformedByLearner: false;
+      readonly roscReported: false;
       readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */

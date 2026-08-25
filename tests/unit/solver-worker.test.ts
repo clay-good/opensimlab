@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: pacemaker capture failure has protocol version 100', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(100);
+  it('Scenario: transcutaneous pacing capture reassessment has protocol version 101', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(101);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

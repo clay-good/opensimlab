@@ -1278,6 +1278,26 @@ interrogate, or program a device; select output, mode, drug, temporary pacing, l
 extraction, or generator replacement; deliver pacing or treatment; determine disposition or
 prognosis; or predict durable capture, repair, or outcome.
 
+### Wave C cardiology slice 17: transcutaneous pacing mechanical-capture reassessment
+
+The seventeenth cardiology slice begins with a pulsed complete-heart-block emergency immediately
+before an experienced team starts transcutaneous pacing. The ventricular rate and central pulse are
+24/min, BP is 70/40 mmHg, and the patient is confused with cool perfusion. A fixed report then shows
+pacing stimuli at 70/min, each followed by a broad QRS and distinct T wave, establishing authored
+electrical capture rather than artifact. The patient becomes unresponsive with agonal breaths; a
+fixed 10-second assessment reports no central pulse, nonpulsatile arterial and pleth waveforms, and
+no measurable BP. Electrical capture has not produced mechanical capture or circulation.
+
+Learners reconcile the fixed electrical and mechanical evidence, immediately activate the
+nonshockable pulseless response, then review open causes and future pacing-bridge needs without
+interrupting arrest care. A strictly later handoff preserves active resuscitation, capture findings,
+cause work, bridge questions, and named owners. The lesson intentionally reports no return of
+spontaneous circulation, later perfusion, neurologic trajectory, disposition, prognosis, or outcome.
+It does not examine or palpate; acquire or interpret ECG, monitoring, laboratory, or imaging data;
+place pads; expose or select a pacing rate, output, current, pulse width, energy, drug, dose,
+sedation, or modality; operate a pacer; deliver pacing, CPR, or treatment; perform a procedure; or
+choose disposition or outcome.
+
 #### Respiratory medicine: 15
 
 Acute severe asthma; COPD exacerbation; community-acquired pneumonia with hypoxemia; pulmonary

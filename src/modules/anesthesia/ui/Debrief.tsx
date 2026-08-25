@@ -4257,6 +4257,20 @@ export function objectiveFindings(
       const ordered = later && handoff && later.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The next-interval handoff preserved lead and generator integrity, cause, recurrence, durable strategy, ownership, and deterioration-trigger work without learner repair, disposition, or outcome.' : 'The final handoff was absent or did not follow the later panel after another elapsed interval.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-transcutaneous-pacing-electrical-and-mechanical-capture',
+      'activate-transcutaneous-pacing-pulseless-response',
+      'review-transcutaneous-pacing-open-causes-and-bridge',
+      'handoff-transcutaneous-pacing-reassessment'].includes(objective.id)) {
+      const recognition = log.find((event) => /^transcutaneous-pacing-capture-reconciled-\d+$/.test(event.eventId));
+      const response = log.find((event) => /^transcutaneous-pacing-pulseless-response-activated-\d+$/.test(event.eventId));
+      const causes = log.find((event) => /^transcutaneous-pacing-causes-bridge-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^transcutaneous-pacing-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-transcutaneous-pacing-electrical-and-mechanical-capture') return { ...base, outcome: recognition ? 'met' : 'not-met', finding: recognition ? 'Authored pacing artifacts, broad QRS and T complexes, absent pulse, flat mechanical traces, and unobtainable pressure were reconciled as electrical capture without mechanical capture.' : 'The authored electrical and mechanical capture evidence was not reconciled.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'activate-transcutaneous-pacing-pulseless-response') { const ordered = recognition && response && recognition.tick <= response.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Pulse loss opened the nonshockable arrest pathway without trusting the paced ECG or crediting learner resuscitation, pacing, drug, or shock delivery.' : 'The pulseless response was absent or preceded capture reconciliation.', atTick: response?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-transcutaneous-pacing-open-causes-and-bridge') { const ordered = response && causes && response.tick <= causes.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'PEA causes remained open and transcutaneous pacing was not treated as arrest therapy or a learner-selected bridge.' : 'Cause and bridge review was absent or preceded pulse-loss activation.', atTick: causes?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = causes && handoff && causes.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved active resuscitation ownership, cause evaluation, mechanical capture, circulation, any later pacing strategy, ROSC, disposition, and outcome as unresolved.' : 'The active-resuscitation handoff was absent or did not follow cause review after an elapsed tick.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

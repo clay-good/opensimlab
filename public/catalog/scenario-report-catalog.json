@@ -1144,6 +1144,17 @@
         "GB"
       ],
       "fidelityClass": "state_transition"
+    },
+    {
+      "scenarioId": "transcutaneous-pacing-mechanical-capture-reassessment",
+      "contentVersion": "0.1.0",
+      "moduleId": "cardiology",
+      "maturity": "draft",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition"
     }
   ]
 }

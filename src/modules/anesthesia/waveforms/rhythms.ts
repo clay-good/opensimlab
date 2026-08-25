@@ -200,6 +200,19 @@ const RHYTHM_LIST: readonly RhythmDefinition[] = Object.freeze([
     source: 'A narrow pacing artifact preceding a broad ventricular complex with discordant repolarization.',
     morphologyDescription: 'A sharp pacing spike before each wide complex, at a fixed regular rate.',
   },
+  {
+    id: 'paced-electrical-no-mechanical-capture',
+    name: 'Paced electrical activity without mechanical capture',
+    morphology: {
+      events: table({ P: { a: 0 }, Q: { b: 0.13 }, R: { a: 20, b: 0.15 }, S: { a: -9, b: 0.17 }, T: { a: -0.8 } }),
+      mechanicalPulse: false,
+      pacingSpike: true,
+    },
+    rateRangeBpm: [60, 90],
+    rateIsMeasurable: true,
+    source: 'Electrical capture requires a paced complex, while effective capture must be confirmed by a pulse or arterial waveform; 2018 ACC/AHA/HRS bradycardia guideline.',
+    morphologyDescription: 'A sharp pacing spike precedes each wide captured complex, but no mechanical pulse follows.',
+  },
 ]);
 
 export const RHYTHMS: ReadonlyMap<RhythmId, RhythmDefinition> = new Map(

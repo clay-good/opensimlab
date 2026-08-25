@@ -3071,6 +3071,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use current resuscitation and pacing guidance, verified mechanical capture, device-specific expertise, local rescue pathways, continuous reassessment, and shared definitive lead and system decisions.',
     briefIn: ['pacemaker-capture-failure'],
   },
+  {
+    id: 'transcutaneous-pacing-capture-and-perfusion-findings-are-authored',
+    headline: 'The bradycardia, paced complexes, pulse-loss, waveform, pressure, and perfusion findings are authored teaching reports.',
+    simplification: 'One fixed record stands in for repeated examination, pulse checks, ECG and waveform review, pressure measurement, device assessment, and team communication.',
+    whereItMisleads: 'Treating pacing artifacts or paced QRS complexes as proof of circulation, treating the fixed pattern as a reusable diagnostic rule, or treating the handoff as a reported recovery.',
+    correctUnderstanding: 'Effective capture requires verified mechanical circulation using pulse or arterial waveform and whole-patient perfusion; a pulseless patient needs uninterrupted guideline-based arrest care.',
+    briefIn: ['transcutaneous-pacing-mechanical-capture-reassessment'],
+  },
+  {
+    id: 'transcutaneous-pacing-controls-record-recognition-review-and-handoff-only',
+    headline: 'The controls record recognition, pathway activation, open-cause and bridge review, and handoff; they do not deliver resuscitation or pacing.',
+    simplification: 'Four clicks stand in for immediate nonshockable-arrest teamwork, cause review, future pacing planning, communication, and elapsed handoff.',
+    whereItMisleads: 'Equating button order with pulse assessment, ECG interpretation, device operation, pacing, CPR, medication, procedure, or resuscitation competence.',
+    correctUnderstanding: 'Actual care requires qualified teams, continuous high-quality resuscitation, verified circulation, reversible-cause treatment, device-specific expertise, and local protocols.',
+    briefIn: ['transcutaneous-pacing-mechanical-capture-reassessment'],
+  },
+  {
+    id: 'no-live-transcutaneous-pacing-arrest-treatment-procedure-disposition-or-outcome',
+    headline: 'The lab does not assess capture, operate a pacer, deliver arrest care, perform a procedure, determine disposition, or predict outcome.',
+    simplification: 'No examination, pulse palpation, ECG or waveform interpretation, pad placement, setting selection, pacing, CPR mechanics, drug, dose, sedation, access, procedure, return of circulation, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values as a recipe or using completion as evidence of capture assessment, pacing, resuscitation, prescribing, procedural, disposition, or prognostic competence.',
+    correctUnderstanding: 'Use current resuscitation and bradycardia guidance, device instructions, verified mechanical capture, qualified pacing and arrest teams, continuous reassessment, and patient-specific definitive planning.',
+    briefIn: ['transcutaneous-pacing-mechanical-capture-reassessment'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

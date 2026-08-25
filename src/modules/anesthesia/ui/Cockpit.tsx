@@ -915,6 +915,9 @@ export function Cockpit({
           onPacemakerCaptureFailureResponse={(action) => session.act({
             type: 'pacemaker-capture-failure-response', payload: { action },
           })}
+          onTranscutaneousPacingCaptureResponse={(action) => session.act({
+            type: 'transcutaneous-pacing-capture-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

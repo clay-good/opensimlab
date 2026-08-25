@@ -297,6 +297,7 @@ describe('The rhythm library is complete and self-describing', () => {
       'first-degree-block', 'complete-heart-block', 'hyperkalemic-conduction',
       'torsades-de-pointes', 'ventricular-tachycardia',
       'ventricular-fibrillation', 'asystole', 'pea', 'paced',
+      'paced-electrical-no-mechanical-capture',
     ]);
   });
 

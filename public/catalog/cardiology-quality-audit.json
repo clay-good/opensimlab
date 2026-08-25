@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "cardiology",
-  "scenarioCount": 16,
+  "scenarioCount": 17,
   "playableScenarioCount": 0,
   "scenarios": [
     {
@@ -575,6 +575,42 @@
           "status": "missing",
           "evidence": [
             "No version-bound state-space-verification record exists for pacemaker-capture-failure 0.1.0."
+          ]
+        }
+      ],
+      "playable": false
+    },
+    {
+      "scenarioId": "transcutaneous-pacing-mechanical-capture-reassessment",
+      "contentVersion": "0.1.0",
+      "completionComplete": false,
+      "qualityRecords": [
+        {
+          "kind": "training-value",
+          "status": "missing",
+          "evidence": [
+            "No version-bound training-value record exists for transcutaneous-pacing-mechanical-capture-reassessment 0.1.0."
+          ]
+        },
+        {
+          "kind": "authored-defaults",
+          "status": "missing",
+          "evidence": [
+            "No version-bound authored-defaults record exists for transcutaneous-pacing-mechanical-capture-reassessment 0.1.0."
+          ]
+        },
+        {
+          "kind": "scenario-hazard",
+          "status": "missing",
+          "evidence": [
+            "No version-bound scenario-hazard record exists for transcutaneous-pacing-mechanical-capture-reassessment 0.1.0."
+          ]
+        },
+        {
+          "kind": "state-space-verification",
+          "status": "missing",
+          "evidence": [
+            "No version-bound state-space-verification record exists for transcutaneous-pacing-mechanical-capture-reassessment 0.1.0."
           ]
         }
       ],

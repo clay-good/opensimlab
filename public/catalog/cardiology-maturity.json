@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "cardiology",
-  "recordCount": 16,
+  "recordCount": 17,
   "records": [
     {
       "recordId": "scenario:stable-chest-pain-evaluation@0.1.0",
@@ -177,6 +177,17 @@
       "evidence": [
         "/catalog/cardiology-completion-audit.json#pacemaker-capture-failure@0.1.0",
         "/catalog/cardiology-quality-audit.json#pacemaker-capture-failure@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:transcutaneous-pacing-mechanical-capture-reassessment@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "transcutaneous-pacing-mechanical-capture-reassessment",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/cardiology-completion-audit.json#transcutaneous-pacing-mechanical-capture-reassessment@0.1.0",
+        "/catalog/cardiology-quality-audit.json#transcutaneous-pacing-mechanical-capture-reassessment@0.1.0"
       ]
     }
   ]

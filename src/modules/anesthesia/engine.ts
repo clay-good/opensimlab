@@ -70,6 +70,7 @@ const HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES = new Set([
   'venous-air-embolism',
 ]);
 const PACEMAKER_CAPTURE_FAILURE_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
+const TRANSCUTANEOUS_PACING_CAPTURE_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -621,6 +622,10 @@ export class AnesthesiaEngine {
   private pacemakerCaptureFailureCausesAtTick: number | null = null;
   private pacemakerCaptureFailureLaterPanelAtTick: number | null = null;
   private pacemakerCaptureFailureHandoffAtTick: number | null = null;
+  private transcutaneousPacingRecognitionAtTick: number | null = null;
+  private transcutaneousPacingPulselessResponseAtTick: number | null = null;
+  private transcutaneousPacingCausesBridgeAtTick: number | null = null;
+  private transcutaneousPacingHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -863,6 +868,16 @@ export class AnesthesiaEngine {
     if (pacemakerCaptureFailure && PACEMAKER_CAPTURE_FAILURE_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `pacemaker-capture-failure-generic-action-refused-${this.currentTick}`,
         'This review-only pacemaker-capture-failure lesson does not expose generic treatment, pacing, device, procedure, rhythm, artifact, or crisis-injection actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const transcutaneousPacingCapture = this.scenario.timeline.some((event) =>
+      event.type === 'narrative'
+        && event.target === 'transcutaneous-pacing-mechanical-capture-reassessment');
+    if (transcutaneousPacingCapture
+      && TRANSCUTANEOUS_PACING_CAPTURE_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `transcutaneous-pacing-generic-action-refused-${this.currentTick}`,
+        'This review-only transcutaneous-pacing lesson does not expose generic treatment, pacing, procedure, rhythm, artifact, or crisis-injection actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -4937,6 +4952,38 @@ export class AnesthesiaEngine {
         this.pacemakerCaptureFailureHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `pacemaker-capture-failure-handoff-recorded-${this.currentTick}`, 'Fixed later report: paced rate 70/min, BP 114/68 mmHg, alert warm perfusion, no recurrent presyncope, and consistent reported electrical and mechanical capture during this interval. Lead and generator integrity, the cause of threshold and impedance change, recurrence surveillance, durable device strategy, owners, and deterioration or pulse-loss triggers remain open without learner programming, lead manipulation, definitive repair, disposition, prognosis, or outcome.', { treatmentDeliveredByLearner: false, deviceProgrammedByLearner: false, leadManipulatedByLearner: false, dispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'transcutaneous-pacing-capture-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'transcutaneous-pacing-mechanical-capture-reassessment');
+        const valid = ['reconcile-transcutaneous-pacing-electrical-and-mechanical-capture',
+          'activate-transcutaneous-pacing-pulseless-response',
+          'review-transcutaneous-pacing-open-causes-and-bridge',
+          'handoff-transcutaneous-pacing-reassessment'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `transcutaneous-pacing-response-refused-${this.currentTick}`, supported ? 'The transcutaneous-pacing action was not one of the listed choices. Nothing changed.' : 'These transcutaneous-pacing choices are available only in the declared Cardiology lesson.'); break; }
+        if (response === 'reconcile-transcutaneous-pacing-electrical-and-mechanical-capture') {
+          if (this.transcutaneousPacingRecognitionAtTick !== null) { this.log('warning', 'assessment', `transcutaneous-pacing-recognition-refused-${this.currentTick}`, 'The authored electrical-capture and absent-mechanical-capture pattern was already reconciled.'); break; }
+          this.transcutaneousPacingRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `transcutaneous-pacing-capture-reconciled-${this.currentTick}`, 'Fixed monitor and 12-lead reports show a transcutaneous pacing artifact before every broad QRS and a distinct ST-T complex at 70/min, establishing authored electrical capture rather than afterpotential alone. Fixed carotid and femoral assessments find no pulse, the arterial and pleth waveforms are nonpulsatile, noninvasive pressure is unobtainable, and the patient is unresponsive with agonal breathing. Electrical capture without mechanical output is pulse loss and PEA; the learner did not examine, palpate, interpret the ECG, operate the pacer, or assess capture.', { electricalCaptureAuthored: true, mechanicalCaptureAbsent: true, initialPulsePresent: false, captureAssessedByLearner: false, pacingDeliveredByLearner: false }); break;
+        }
+        if (this.transcutaneousPacingRecognitionAtTick === null) { this.log('warning', 'assessment', `transcutaneous-pacing-order-refused-${this.currentTick}`, 'Reconcile the authored electrical and mechanical capture evidence before opening the pulse-loss pathway.'); break; }
+        if (response === 'activate-transcutaneous-pacing-pulseless-response') {
+          if (this.transcutaneousPacingPulselessResponseAtTick !== null) { this.log('warning', 'assessment', `transcutaneous-pacing-pulseless-response-refused-${this.currentTick}`, 'The nonshockable pulse-loss response and resuscitation-team ownership were already activated.'); break; }
+          this.transcutaneousPacingPulselessResponseAtTick = this.currentTick;
+          this.log('critical', 'assessment', `transcutaneous-pacing-pulseless-response-activated-${this.currentTick}`, 'The fixed pulse-loss finding activated the nonshockable cardiac-arrest pathway, uninterrupted resuscitation-team ownership, oxygenation and ventilation support, and reversible-cause work without treating displayed electrical capture as circulation or continuing pacing as an arrest treatment. No CPR mechanics, oxygen, airway, drug, infusion, shock, pacing setting, pacing delivery, access, or procedure was selected or performed by the learner.', { nonshockableArrestPathwayActivated: true, treatmentDeliveredByLearner: false, cprDeliveredByLearner: false, pacingDeliveredByLearner: false, shockSelected: false }); break;
+        }
+        if (this.transcutaneousPacingPulselessResponseAtTick === null) { this.log('warning', 'assessment', `transcutaneous-pacing-pulseless-order-refused-${this.currentTick}`, 'Activate the pulse-loss pathway before reviewing causes or any later pacing bridge.'); break; }
+        if (response === 'review-transcutaneous-pacing-open-causes-and-bridge') {
+          if (this.transcutaneousPacingCausesBridgeAtTick !== null) { this.log('warning', 'assessment', `transcutaneous-pacing-causes-refused-${this.currentTick}`, 'The open PEA causes and expert pacing-bridge boundary were already reviewed.'); break; }
+          this.transcutaneousPacingCausesBridgeAtTick = this.currentTick;
+          this.log('critical', 'assessment', `transcutaneous-pacing-causes-bridge-reviewed-${this.currentTick}`, 'Hypoxia, hypovolemia, acidosis, potassium disturbance, hypothermia, tension physiology, tamponade, thrombosis, toxins, myocardial failure, ischemia, and measurement error remain open until the resuscitation team evaluates them. Transcutaneous pacing is not credited as treatment for established arrest; any later temporary pacing strategy remains an experienced-team bridge only after circulation and indication are reassessed. No cause was assigned and no test, drug, fluid, pacing mode, rate, output, pulse width, pad placement, transvenous access, or procedure was selected.', { causeAssigned: false, testAcquiredByLearner: false, pacingDeliveredByLearner: false, treatmentDeliveredByLearner: false, procedurePerformedByLearner: false }); break;
+        }
+        if (this.transcutaneousPacingCausesBridgeAtTick === null) { this.log('warning', 'assessment', `transcutaneous-pacing-handoff-order-refused-${this.currentTick}`, 'Review the open causes and pacing-bridge boundary before handing off the active arrest trajectory.'); break; }
+        if (this.currentTick <= this.transcutaneousPacingCausesBridgeAtTick) { this.log('warning', 'assessment', `transcutaneous-pacing-handoff-time-refused-${this.currentTick}`, 'Allow a later simulated tick before handing off the active resuscitation trajectory.'); break; }
+        if (this.transcutaneousPacingHandoffAtTick !== null) { this.log('warning', 'assessment', `transcutaneous-pacing-handoff-refused-${this.currentTick}`, 'The active resuscitation and unresolved-work handoff was already recorded.'); break; }
+        this.transcutaneousPacingHandoffAtTick = this.currentTick;
+        this.log('critical', 'assessment', `transcutaneous-pacing-handoff-recorded-${this.currentTick}`, 'Fixed later report: paced electrical activity remains present without a reported mechanical pulse while the experienced resuscitation team owns continuous nonshockable-arrest care and cause-directed evaluation. Mechanical capture, circulation, cause, response, any later temporary pacing bridge, post-arrest care, disposition, prognosis, ROSC, and outcome remain unreported or unresolved. The learner did not deliver resuscitation, pacing, treatment, or a procedure.', { mechanicalCaptureRestored: false, roscReported: false, treatmentDeliveredByLearner: false, pacingDeliveredByLearner: false, dispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'emergence-residual-block-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative'
@@ -7621,6 +7668,13 @@ export class AnesthesiaEngine {
         meanArterialMmHg: restored ? 83 : 63, coreTemperatureC: 36.7 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'transcutaneous-pacing-mechanical-capture-reassessment')) {
+      crisisState = { ...crisisState, heartRateBpm: 70, respiratoryRateBpm: 0,
+        spo2Percent: 0, etco2MmHg: 0, strokeVolumeMl: 0, cardiacOutputLPerMin: 0,
+        systolicMmHg: 0, diastolicMmHg: 0, meanArterialMmHg: 0,
+        perfusionIndex: 0, coreTemperatureC: 36.6 };
+    }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'post-infarction-cardiogenic-shock-escalation')) {
       const reassessed = this.postInfarctionShockHandoffAtTick !== null;
       crisisState = { ...crisisState, heartRateBpm: reassessed ? 104 : 108,
@@ -8732,6 +8786,27 @@ export class AnesthesiaEngine {
               outcomePredicted: false as const,
             },
           } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'transcutaneous-pacing-mechanical-capture-reassessment') ? {
+            transcutaneousPacingCaptureAssessment: {
+              recognitionAtTick: this.transcutaneousPacingRecognitionAtTick,
+              pulselessResponseAtTick: this.transcutaneousPacingPulselessResponseAtTick,
+              causesBridgeAtTick: this.transcutaneousPacingCausesBridgeAtTick,
+              handoffAtTick: this.transcutaneousPacingHandoffAtTick,
+              initialPulsePresent: false as const,
+              electricalCaptureAuthored: true as const,
+              mechanicalCaptureAbsent: true as const,
+              nonshockableArrestPathwayActivated:
+                this.transcutaneousPacingPulselessResponseAtTick !== null,
+              pacingDeliveredByLearner: false as const,
+              captureAssessedByLearner: false as const,
+              cprDeliveredByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              procedurePerformedByLearner: false as const,
+              roscReported: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,
           classification: this.aspirationRiskClassification,
@@ -8928,7 +9003,8 @@ export class AnesthesiaEngine {
     if (this.rhythm === 'ventricular-fibrillation' || this.rhythm === 'asystole') {
       invalid.add('heartRateBpm');
     }
-    if (this.rhythm === 'pea' || this.rhythm === 'ventricular-fibrillation' || this.rhythm === 'asystole') {
+    if (this.rhythm === 'pea' || this.rhythm === 'paced-electrical-no-mechanical-capture'
+      || this.rhythm === 'ventricular-fibrillation' || this.rhythm === 'asystole') {
       invalid.add('spo2Percent');
       invalid.add('systolicMmHg');
       invalid.add('diastolicMmHg');

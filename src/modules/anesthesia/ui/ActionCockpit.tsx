@@ -721,6 +721,23 @@ export interface ActionCockpitProps {
       readonly treatmentDeliveredByLearner: false;
       readonly outcomePredicted: false;
     };
+    readonly transcutaneousPacingCaptureAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly pulselessResponseAtTick: number | null;
+      readonly causesBridgeAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: false;
+      readonly electricalCaptureAuthored: true;
+      readonly mechanicalCaptureAbsent: true;
+      readonly nonshockableArrestPathwayActivated: boolean;
+      readonly pacingDeliveredByLearner: false;
+      readonly captureAssessedByLearner: false;
+      readonly cprDeliveredByLearner: false;
+      readonly treatmentDeliveredByLearner: false;
+      readonly procedurePerformedByLearner: false;
+      readonly roscReported: false;
+      readonly outcomePredicted: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1157,6 +1174,12 @@ export interface ActionCockpitProps {
       | 'review-pacemaker-capture-failure-later-panel'
       | 'handoff-pacemaker-capture-failure-reassessment',
   ) => void;
+  readonly onTranscutaneousPacingCaptureResponse?: (
+    action: 'reconcile-transcutaneous-pacing-electrical-and-mechanical-capture'
+      | 'activate-transcutaneous-pacing-pulseless-response'
+      | 'review-transcutaneous-pacing-open-causes-and-bridge'
+      | 'handoff-transcutaneous-pacing-reassessment',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1434,6 +1457,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'pacemaker-capture-failure-reassessment',
     ),
+    hasTranscutaneousPacingCaptureResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'transcutaneous-pacing-mechanical-capture-reassessment',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1546,6 +1573,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'right-ventricular-infarction')
       || (event.type === 'narrative' && event.target === 'hypertensive-emergency-reassessment')
       || (event.type === 'narrative' && event.target === 'pacemaker-capture-failure-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'transcutaneous-pacing-mechanical-capture-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1597,6 +1626,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasRightVentricularInfarctionResponse,
     hasHypertensiveEmergencyResponse,
     hasPacemakerCaptureFailureResponse,
+    hasTranscutaneousPacingCaptureResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1660,7 +1690,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasSymptomaticBradycardiaResponse || hasCompleteHeartBlockResponse || hasTorsadesResponse
     || hasHyperkalemicConductionResponse || hasPericardialTamponadeResponse
     || hasRightVentricularInfarctionResponse || hasHypertensiveEmergencyResponse
-    || hasPacemakerCaptureFailureResponse;
+    || hasPacemakerCaptureFailureResponse || hasTranscutaneousPacingCaptureResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1691,7 +1721,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasPacemakerCaptureFailureResponse
+  const responseTray = hasTranscutaneousPacingCaptureResponse
+    ? { id: 'crisis', label: 'Electrical ≠ mechanical' } as const
+    : hasPacemakerCaptureFailureResponse
     ? { id: 'crisis', label: 'Capture-failure response' } as const
     : hasHypertensiveEmergencyResponse
     ? { id: 'crisis', label: 'Pressure + organ review' } as const
@@ -1892,6 +1924,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasRightVentricularInfarctionResponse
     || hasHypertensiveEmergencyResponse
     || hasPacemakerCaptureFailureResponse
+    || hasTranscutaneousPacingCaptureResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2466,6 +2499,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <PacemakerCaptureFailureTray
                 assessment={props.resuscitation.pacemakerCaptureFailureAssessment}
                 onAction={props.onPacemakerCaptureFailureResponse ?? (() => {})} />
+            )}
+            {hasTranscutaneousPacingCaptureResponse && (
+              <TranscutaneousPacingCaptureTray
+                assessment={props.resuscitation.transcutaneousPacingCaptureAssessment}
+                onAction={props.onTranscutaneousPacingCaptureResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -6573,6 +6611,40 @@ function PacemakerCaptureFailureTray({ assessment, onAction }: {
         <Button className="crisis-drug__action" disabled={!laterPanel || handoff} onClick={() => onAction('handoff-pacemaker-capture-failure-reassessment')}>Hand off capture-failure plan</Button>
       </div>
       <p className="field__hint">No magnet, drug, pad placement, rate, output, pulse width, mode, sedation, access, pacing delivery, interrogation, programming, lead procedure, repair, disposition, prognosis, or outcome is selected.</p>
+    </section>
+  </div>;
+}
+
+function TranscutaneousPacingCaptureTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['transcutaneousPacingCaptureAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onTranscutaneousPacingCaptureResponse']>;
+}) {
+  const recognized = assessment?.recognitionAtTick != null;
+  const pulselessResponse = assessment?.pulselessResponseAtTick != null;
+  const causesBridge = assessment?.causesBridgeAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="transcutaneous-pacing-capture-title">
+      <div id="transcutaneous-pacing-capture-title" className="syringe__name">A QRS can still have no pulse.</div>
+      <Badge kind="teaching">paced electrical capture · no mechanical output · PEA</Badge>
+      <div className="syringe__meta">spike → broad QRS + T · flat pressure · nonpulsatile pleth</div>
+      <p className="syringe__remaining" role="status">{pulselessResponse ? 'Pulse loss recognized · nonshockable pathway active' : recognized ? 'Electrical capture reconciled · act on pulse loss now' : 'Match each electrical complex to mechanical output'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={recognized} onClick={() => onAction('reconcile-transcutaneous-pacing-electrical-and-mechanical-capture')}>Reconcile electrical + mechanical capture</Button>
+        <Button className="crisis-drug__action" disabled={!recognized || pulselessResponse} onClick={() => onAction('activate-transcutaneous-pacing-pulseless-response')}>Activate pulseless response</Button>
+      </div>
+      <p className="field__hint">The fixed report, not a learner examination, confirms every pacing artifact has a broad QRS and T wave while pulse, arterial, pleth, and pressure checks show no circulation. The live trace represents this paced electrical activity with flat mechanical signals.</p>
+    </section>
+    <section className="syringe" aria-labelledby="transcutaneous-pacing-boundary-title">
+      <div id="transcutaneous-pacing-boundary-title" className="syringe__name">Treat the arrest. Keep causes open.</div>
+      <Badge kind="teaching">nonshockable pathway · reversible causes · expert bridge</Badge>
+      <div className="syringe__meta">no pacing-as-arrest-treatment · ROSC unreported · active ownership</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Active resuscitation + unresolved causes handed off' : causesBridge ? 'Causes + pacing boundary reviewed · allow later handoff' : pulselessResponse ? 'Review causes and the pacing-bridge boundary' : 'Activate the pulseless response first'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={!pulselessResponse || causesBridge} onClick={() => onAction('review-transcutaneous-pacing-open-causes-and-bridge')}>Review open causes + bridge</Button>
+        <Button className="crisis-drug__action" disabled={!causesBridge || handoff} onClick={() => onAction('handoff-transcutaneous-pacing-reassessment')}>Hand off active resuscitation</Button>
+      </div>
+      <p className="field__hint">No pulse palpation, ECG interpretation, CPR mechanics, oxygen, airway, drug, shock, pad placement, rate, output, pulse width, pacing delivery, transvenous procedure, ROSC, disposition, prognosis, or outcome is selected.</p>
     </section>
   </div>;
 }

@@ -87,6 +87,7 @@ export type RhythmId =
   | 'ventricular-fibrillation'
   | 'asystole'
   | 'pea'
+  | 'paced-electrical-no-mechanical-capture'
   | 'paced';
 
 /** A sensor artifact corrupts what is displayed without touching the state vector. */
