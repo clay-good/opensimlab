@@ -2130,6 +2130,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['escalating-hypoxemia'],
   },
   {
+    id: 'dyssynchrony-patient-graphics-drivers-and-response-are-authored',
+    headline: 'The effort, graphics, mechanics, driver, classification, and response panels are authored facts.',
+    simplification: 'One fixed adult has a reproducible flow-starvation and premature-cycling pattern with double triggering and a fixed 10-minute response.',
+    whereItMisleads: 'Treating the screen as physical assessment, waveform acquisition, phenotype diagnosis, or individualized response prediction.',
+    correctUnderstanding: 'Real dyssynchrony requires direct patient assessment, ventilator graphics and mechanics, airway and equipment checks, and serial expert interpretation.',
+    briefIn: ['ventilator-dyssynchrony'],
+  },
+  {
+    id: 'dyssynchrony-waveform-ventilator-and-analgesia-controls-are-proxies',
+    headline: 'Patient, waveform, driver, analgesia, flow, cycling, and reassessment buttons record intents; they do not perform care.',
+    simplification: 'The interface enforces a reasoning sequence without examining the patient, acquiring graphics, programming a ventilator, or delivering analgesia.',
+    whereItMisleads: 'Equating ordered controls with respiratory-therapy, waveform, ventilator, airway, pain, sedation, prescribing, or team competence.',
+    correctUnderstanding: 'Use trained bedside teams, validated assessment, equipment-specific graphics and mechanics, cause-directed care, and explicit lung-protection safeguards.',
+    briefIn: ['ventilator-dyssynchrony'],
+  },
+  {
+    id: 'no-live-dyssynchrony-diagnosis-ventilator-prescribing-procedure-or-outcome',
+    headline: 'The case does not diagnose dyssynchrony, prescribe drugs, program a ventilator, perform procedures, or predict outcome.',
+    simplification: 'Trigger, cycling, reverse-trigger, ineffective-effort, auto-PEEP, obstructive, neurologic, metabolic, airway, device, sedation, and disease phenotypes are incomplete.',
+    whereItMisleads: 'Assuming one graphic proves a mechanism, copying an adjustment, or using deep sedation or paralysis as a generic waveform treatment.',
+    correctUnderstanding: 'Name the phase and likely mechanism, treat reversible drivers, preserve lung protection, adjust support with the ICU team, and reassess the patient and delivered breath.',
+    briefIn: ['ventilator-dyssynchrony'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

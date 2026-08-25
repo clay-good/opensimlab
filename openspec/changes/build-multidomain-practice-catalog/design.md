@@ -584,6 +584,21 @@ urgent gas and imaging intent, protocolized lung-protective support, and a fixed
 reassessment. The case does not examine, manipulate equipment, sample blood, image, diagnose,
 program a ventilator, perform airway or rescue procedures, or predict outcome.
 
+### Wave B critical-care slice 3: ventilator dyssynchrony
+
+The third critical-care slice presents an awake, intubated adult with visible inspiratory effort,
+pressure-waveform scooping, premature cycling, 8 double triggers in 20 observed breaths, and fixed
+stacked volume of 760 mL despite a 420 mL lung-protective command. Learners integrate the patient,
+pressure, flow, and volume graphics; review pain, drive, airway, secretions, circuit, auto-PEEP, gas,
+and circulation; then classify the bounded flow-starvation and premature-cycling pattern.
+
+The focused tutor pairs “read the person and the breath” with “match support; keep protection.” A
+recorded analgesia-first and respiratory-therapy adjustment intent preserves predicted-body-weight
+volume and plateau limits while matching inspiratory flow and cycling, followed by a fixed 10-minute
+response. The case does not examine, acquire waveforms, diagnose, program a ventilator, prescribe or
+deliver drugs, paralyze, or assess airway, respiratory-therapy, procedural, disposition, or outcome
+competence.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute

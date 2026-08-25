@@ -368,6 +368,13 @@ export interface ActionCockpitProps {
       readonly bedsidePatternAtTick: number | null;
       readonly escalationAtTick: number | null;
     };
+    readonly ventilatorDyssynchronyAssessment?: {
+      readonly graphicsAtTick: number | null;
+      readonly driversAtTick: number | null;
+      readonly classificationAtTick: number | null;
+      readonly correctionAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -587,6 +594,11 @@ export interface ActionCockpitProps {
       | 'trace-hypoxemia-delivery-path' | 'integrate-hypoxemia-bedside-pattern'
       | 'escalate-and-reassess-hypoxemia',
   ) => void;
+  readonly onVentilatorDyssynchronyResponse?: (
+    action: 'review-dyssynchrony-patient-and-graphics' | 'review-dyssynchrony-drivers'
+      | 'classify-dyssynchrony-pattern' | 'record-dyssynchrony-correction-intent'
+      | 'reassess-dyssynchrony-response',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -733,6 +745,9 @@ export function crisisResponseAvailability(
     hasEscalatingHypoxemiaResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'escalating-hypoxemia',
     ),
+    hasVentilatorDyssynchronyResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'ventilator-dyssynchrony',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -806,6 +821,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'acute-aortic-syndrome')
       || (event.type === 'narrative' && event.target === 'ards-lung-protective-ventilation')
       || (event.type === 'narrative' && event.target === 'escalating-hypoxemia')
+      || (event.type === 'narrative' && event.target === 'ventilator-dyssynchrony')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -837,6 +853,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasAcuteAorticSyndromeResponse,
     hasArdsLungProtectiveResponse,
     hasEscalatingHypoxemiaResponse,
+    hasVentilatorDyssynchronyResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -866,7 +883,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasDiabeticKetoacidosisResponse || hasHyperkalemiaResponse
     || hasSevereHyponatremiaResponse || hasOpioidToxicityResponse || hasHeatStrokeResponse
     || hasTraumaPrimarySurveyResponse || hasAcuteAorticSyndromeResponse || hasArdsLungProtectiveResponse
-    || hasEscalatingHypoxemiaResponse;
+    || hasEscalatingHypoxemiaResponse || hasVentilatorDyssynchronyResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -885,8 +902,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasIntracranialHemorrhageResponse || hasDiabeticKetoacidosisResponse
     || hasHyperkalemiaResponse || hasSevereHyponatremiaResponse || hasOpioidToxicityResponse
     || hasHeatStrokeResponse || hasTraumaPrimarySurveyResponse || hasAcuteAorticSyndromeResponse
-    || hasArdsLungProtectiveResponse || hasEscalatingHypoxemiaResponse;
-  const responseTray = hasEscalatingHypoxemiaResponse
+    || hasArdsLungProtectiveResponse || hasEscalatingHypoxemiaResponse
+    || hasVentilatorDyssynchronyResponse;
+  const responseTray = hasVentilatorDyssynchronyResponse
+    ? { id: 'crisis', label: 'Ventilator dyssynchrony' } as const
+    : hasEscalatingHypoxemiaResponse
     ? { id: 'crisis', label: 'Escalating hypoxemia' } as const
     : hasArdsLungProtectiveResponse
     ? { id: 'crisis', label: 'ARDS ventilation' } as const
@@ -973,6 +993,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasAcuteAorticSyndromeResponse
     || hasArdsLungProtectiveResponse
     || hasEscalatingHypoxemiaResponse
+    || hasVentilatorDyssynchronyResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1371,6 +1392,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <EscalatingHypoxemiaTray
                 assessment={props.resuscitation.escalatingHypoxemiaAssessment}
                 onAction={props.onEscalatingHypoxemiaResponse ?? (() => {})} />
+            )}
+            {hasVentilatorDyssynchronyResponse && (
+              <VentilatorDyssynchronyTray
+                assessment={props.resuscitation.ventilatorDyssynchronyAssessment}
+                onAction={props.onVentilatorDyssynchronyResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -3834,6 +3860,57 @@ function EscalatingHypoxemiaTray({ assessment, onAction }: {
             onClick={() => onAction('escalate-and-reassess-hypoxemia')}>Escalate + review 15-min response</Button>
         </div>
         <p className="field__hint">A passed check narrows the field; it never makes tube, pleural, embolic, or equipment danger impossible.</p>
+      </section>
+    </div>
+  );
+}
+
+function VentilatorDyssynchronyTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['ventilatorDyssynchronyAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onVentilatorDyssynchronyResponse']>;
+}) {
+  const graphics = assessment?.graphicsAtTick != null;
+  const drivers = assessment?.driversAtTick != null;
+  const classification = assessment?.classificationAtTick != null;
+  const correction = assessment?.correctionAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="dyssynchrony-read-title">
+        <div id="dyssynchrony-read-title" className="syringe__name">Read the person and the breath.</div>
+        <Badge kind="teaching">effort · pressure · flow · volume</Badge>
+        <div className="syringe__meta">8/20 double triggers · 420 mL set · 760 mL stacked</div>
+        <p className="syringe__remaining" role="status">
+          {classification ? 'Flow starvation + premature cycling · bounded pattern'
+            : drivers ? 'Drivers reviewed · classify the interaction'
+              : graphics ? 'Pattern seen · look for the reason' : 'Patient + graphics review pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={graphics}
+            onClick={() => onAction('review-dyssynchrony-patient-and-graphics')}>Read patient + pressure + flow + volume</Button>
+          <Button className="crisis-drug__action" disabled={!graphics || drivers}
+            onClick={() => onAction('review-dyssynchrony-drivers')}>Review pain + drive + airway + mechanics</Button>
+          <Button className="crisis-drug__action" disabled={!drivers || classification}
+            onClick={() => onAction('classify-dyssynchrony-pattern')}>Classify the bounded pattern</Button>
+        </div>
+        <p className="field__hint">Irregularity is a clue, not a diagnosis. Name the phase and mechanism only after you read the patient.</p>
+      </section>
+      <section className="syringe" aria-labelledby="dyssynchrony-match-title">
+        <div id="dyssynchrony-match-title" className="syringe__name">Match support. Keep protection.</div>
+        <Badge kind="teaching">cause first · flow · cycle · volume</Badge>
+        <div className="syringe__meta">analgesia first · PBW volume · plateau guardrail · RT review</div>
+        <p className="syringe__remaining" role="status">
+          {reassessment ? '10 min · 1/20 double trigger · 420–450 mL · plateau 22'
+            : correction ? 'Correction recorded · response due'
+              : classification ? 'Match demand without surrendering protection' : 'Classification pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!classification || correction}
+            onClick={() => onAction('record-dyssynchrony-correction-intent')}>Analgesia first + match flow and cycle</Button>
+          <Button className="crisis-drug__action" disabled={!correction || reassessment}
+            onClick={() => onAction('reassess-dyssynchrony-response')}>Review 10-minute response</Button>
+        </div>
+        <p className="field__hint">A quieter waveform is not enough. Recheck comfort, effort, delivered volume, pressure, gas, and circulation.</p>
       </section>
     </div>
   );

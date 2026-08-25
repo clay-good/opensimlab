@@ -793,6 +793,9 @@ export function Cockpit({
           onEscalatingHypoxemiaResponse={(action) => session.act({
             type: 'escalating-hypoxemia-response', payload: { action },
           })}
+          onVentilatorDyssynchronyResponse={(action) => session.act({
+            type: 'ventilator-dyssynchrony-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

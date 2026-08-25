@@ -406,6 +406,11 @@ export class AnesthesiaEngine {
   private hypoxemiaDeliveryPathAtTick: number | null = null;
   private hypoxemiaBedsidePatternAtTick: number | null = null;
   private hypoxemiaEscalationAtTick: number | null = null;
+  private dyssynchronyGraphicsAtTick: number | null = null;
+  private dyssynchronyDriversAtTick: number | null = null;
+  private dyssynchronyClassificationAtTick: number | null = null;
+  private dyssynchronyCorrectionAtTick: number | null = null;
+  private dyssynchronyReassessmentAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2818,6 +2823,57 @@ export class AnesthesiaEngine {
         this.hypoxemiaEscalationAtTick = this.currentTick;
         this.log('critical', 'assessment', `hypoxemia-escalation-reassessed-${this.currentTick}`,
           'Urgent repeat gas and bedside imaging intent, protocolized lung-protective FiO₂/PEEP escalation, and ongoing pressure and hemodynamic surveillance were recorded with senior and respiratory-therapy review. Fixed reassessment after 15 minutes: SpO₂ 92%, PaO₂ 68 mmHg, plateau pressure 29 cm H₂O, ETCO₂ 44 mmHg, and MAP 72 mmHg. Imaging result, diagnosis, individualized settings, procedures, later course, and outcome remain outside this lesson.', { intentOnly: true, reassessmentMinutes: 15, spo2Percent: 92, pao2MmHg: 68, plateauPressureCmH2O: 29, mapMmHg: 72 });
+        break;
+      }
+      case 'ventilator-dyssynchrony-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'ventilator-dyssynchrony');
+        const valid = ['review-dyssynchrony-patient-and-graphics', 'review-dyssynchrony-drivers',
+          'classify-dyssynchrony-pattern', 'record-dyssynchrony-correction-intent',
+          'reassess-dyssynchrony-response'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `ventilator-dyssynchrony-response-refused-${this.currentTick}`,
+            supported ? 'The dyssynchrony action was not one of the listed choices. Nothing changed.'
+              : 'The bounded dyssynchrony choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-dyssynchrony-patient-and-graphics') {
+          if (this.dyssynchronyGraphicsAtTick !== null) { this.log('warning', 'assessment', `dyssynchrony-graphics-refused-${this.currentTick}`, 'The fixed patient and graphics panel has already been reviewed.'); break; }
+          this.dyssynchronyGraphicsAtTick = this.currentTick;
+          this.log('critical', 'assessment', `dyssynchrony-graphics-reviewed-${this.currentTick}`,
+            'Fixed 20-breath observation: visible inspiratory effort, pressure-time scooping, premature cycling followed by continued effort, 8 double triggers, and stacked delivered volume up to 760 mL despite a 420 mL command. Peak pressure is 30 cm H₂O; the last passive plateau was 22 cm H₂O. Examination and waveform acquisition are not simulated.', { observedBreaths: 20, doubleTriggers: 8, commandedTidalVolumeMl: 420, stackedVolumeMl: 760 });
+          break;
+        }
+        if (this.dyssynchronyGraphicsAtTick === null) { this.log('warning', 'assessment', `dyssynchrony-graphics-order-refused-${this.currentTick}`, 'Read patient effort with pressure, flow, volume, and delivered breaths first.'); break; }
+        if (response === 'review-dyssynchrony-drivers') {
+          if (this.dyssynchronyDriversAtTick !== null) { this.log('warning', 'assessment', `dyssynchrony-drivers-refused-${this.currentTick}`, 'The fixed driver panel has already been reviewed.'); break; }
+          this.dyssynchronyDriversAtTick = this.currentTick;
+          this.log('critical', 'assessment', `dyssynchrony-drivers-reviewed-${this.currentTick}`,
+            'Fixed driver panel: the patient indicates chest-tube-site pain 6/10, temperature 37.9°C, scant secretions, unchanged tube depth and cuff state, connected circuit, no authored auto-PEEP, no new wheeze or unilateral chest pattern, SpO₂ 93%, pH 7.31, PaCO₂ 50 mmHg, and MAP 77 mmHg. These findings narrow but do not exclude airway, lung, neurologic, metabolic, device, or drive causes.', { painScore: 6, autoPeepCmH2O: 0, spo2Percent: 93, ph: 7.31, paco2MmHg: 50 });
+          break;
+        }
+        if (this.dyssynchronyDriversAtTick === null) { this.log('warning', 'assessment', `dyssynchrony-drivers-order-refused-${this.currentTick}`, 'Review reversible patient, airway, equipment, gas, and circulation drivers before classifying the interaction.'); break; }
+        if (response === 'classify-dyssynchrony-pattern') {
+          if (this.dyssynchronyClassificationAtTick !== null) { this.log('warning', 'assessment', `dyssynchrony-classification-refused-${this.currentTick}`, 'The bounded dyssynchrony pattern has already been classified.'); break; }
+          this.dyssynchronyClassificationAtTick = this.currentTick;
+          this.log('critical', 'assessment', `dyssynchrony-pattern-classified-${this.currentTick}`,
+            'The authored pattern is classified as insufficient inspiratory flow plus premature cycling with double triggering and potentially injurious stacked volume. It is not classified as auto-triggering, ineffective effort, reverse triggering, auto-PEEP, obstruction, or universal proof of one mechanism.', { flowStarvation: true, prematureCycling: true, doubleTriggering: true });
+          break;
+        }
+        if (this.dyssynchronyClassificationAtTick === null) { this.log('warning', 'assessment', `dyssynchrony-classification-order-refused-${this.currentTick}`, 'Classify the observed interaction before recording a correction.'); break; }
+        if (response === 'record-dyssynchrony-correction-intent') {
+          if (this.dyssynchronyCorrectionAtTick !== null) { this.log('warning', 'assessment', `dyssynchrony-correction-refused-${this.currentTick}`, 'The bounded correction intent has already been recorded.'); break; }
+          this.dyssynchronyCorrectionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `dyssynchrony-correction-recorded-${this.currentTick}`,
+            'Analgesia-first reassessment and respiratory-therapy adjustment intent were recorded to better match inspiratory flow and cycling while preserving predicted-body-weight tidal volume, plateau-pressure, oxygenation, and hemodynamic guardrails. No drug, dose, mode, flow, trigger, cycling value, sedation depth, or paralysis is selected or delivered.', { intentOnly: true, analgesiaFirst: true, preserveLungProtection: true });
+          break;
+        }
+        if (this.dyssynchronyCorrectionAtTick === null) { this.log('warning', 'assessment', `dyssynchrony-correction-order-refused-${this.currentTick}`, 'Record cause-directed, lung-protective correction intent before reassessment.'); break; }
+        if (this.dyssynchronyReassessmentAtTick !== null) { this.log('warning', 'assessment', `dyssynchrony-reassessment-refused-${this.currentTick}`, 'The fixed post-adjustment panel has already been reviewed.'); break; }
+        this.dyssynchronyReassessmentAtTick = this.currentTick;
+        this.log('critical', 'assessment', `dyssynchrony-response-reassessed-${this.currentTick}`,
+          'Fixed response after 10 minutes: pain report 3/10, less visible effort, pressure scooping resolved in the observed panel, 1 double trigger in 20 breaths, delivered tidal volumes 420–450 mL, peak pressure 27 cm H₂O, plateau pressure 22 cm H₂O, SpO₂ 94%, ETCO₂ 42 mmHg, and MAP 76 mmHg. This is an authored response, not a prescription, waveform interpretation credential, or outcome prediction.', { reassessmentMinutes: 10, painScore: 3, doubleTriggers: 1, maximumTidalVolumeMl: 450, plateauPressureCmH2O: 22 });
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -5985,6 +6041,13 @@ export class AnesthesiaEngine {
           deliveryPathAtTick: this.hypoxemiaDeliveryPathAtTick,
           bedsidePatternAtTick: this.hypoxemiaBedsidePatternAtTick,
           escalationAtTick: this.hypoxemiaEscalationAtTick,
+        },
+        ventilatorDyssynchronyAssessment: {
+          graphicsAtTick: this.dyssynchronyGraphicsAtTick,
+          driversAtTick: this.dyssynchronyDriversAtTick,
+          classificationAtTick: this.dyssynchronyClassificationAtTick,
+          correctionAtTick: this.dyssynchronyCorrectionAtTick,
+          reassessmentAtTick: this.dyssynchronyReassessmentAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

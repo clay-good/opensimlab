@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: escalating-hypoxemia state has protocol version 60', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(60);
+  it('Scenario: ventilator-dyssynchrony state has protocol version 61', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(61);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

@@ -3191,6 +3191,46 @@ export function objectiveFindings(
         : 'Escalation and reassessment were absent or preceded the structured review.', atTick: escalation?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['review-dyssynchrony-patient-and-graphics', 'review-dyssynchrony-drivers',
+      'classify-dyssynchrony-pattern', 'record-dyssynchrony-correction-intent',
+      'reassess-dyssynchrony-response'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'ventilator-dyssynchrony');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The ventilator-dyssynchrony vignette was not active.' } satisfies ObjectiveFinding;
+      const graphics = log.find((event) => /^dyssynchrony-graphics-reviewed-\d+$/.test(event.eventId));
+      const drivers = log.find((event) => /^dyssynchrony-drivers-reviewed-\d+$/.test(event.eventId));
+      const classification = log.find((event) => /^dyssynchrony-pattern-classified-\d+$/.test(event.eventId));
+      const correction = log.find((event) => /^dyssynchrony-correction-recorded-\d+$/.test(event.eventId));
+      const reassessment = log.find((event) => /^dyssynchrony-response-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'review-dyssynchrony-patient-and-graphics') return { ...base,
+        outcome: graphics ? 'met' : 'not-met', finding: graphics
+          ? 'Patient effort, pressure and flow shape, cycling, double triggers, and stacked volume were integrated.'
+          : 'The patient and graphics panel was not reviewed.', atTick: graphics?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-dyssynchrony-drivers') {
+        const ordered = graphics && drivers && graphics.tick <= drivers.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Pain, drive, airway, secretion, circuit, auto-PEEP, gas, and circulation drivers followed the graphics review.'
+          : 'The driver review was absent or out of order.', atTick: drivers?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'classify-dyssynchrony-pattern') {
+        const ordered = drivers && classification && drivers.tick <= classification.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'The bounded flow-starvation, premature-cycling, and double-triggering pattern was classified after driver review.'
+          : 'The pattern was absent or classified before reversible drivers were reviewed.', atTick: classification?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'record-dyssynchrony-correction-intent') {
+        const ordered = classification && correction && classification.tick <= correction.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Analgesia-first and respiratory-therapy adjustment intent matched flow and cycling while preserving protection.'
+          : 'Cause-directed correction was absent or preceded classification.', atTick: correction?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = correction && reassessment && correction.tick <= reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+        ? 'Comfort, effort, graphics, delivered volume, pressure, gas exchange, and circulation improved on the fixed 10-minute panel.'
+        : 'Whole-patient reassessment was absent or preceded correction.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;
