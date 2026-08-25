@@ -452,6 +452,13 @@ export interface ActionCockpitProps {
       readonly causesAtTick: number | null;
       readonly reassessmentAtTick: number | null;
     };
+    readonly postArrestTemperatureAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly contextAtTick: number | null;
+      readonly protocolAtTick: number | null;
+      readonly guardrailsAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -730,6 +737,11 @@ export interface ActionCockpitProps {
       | 'activate-refractory-status-pathway' | 'address-refractory-status-causes'
       | 'reassess-refractory-status-trajectory',
   ) => void;
+  readonly onPostArrestTemperatureResponse?: (
+    action: 'recognize-post-arrest-temperature-control' | 'review-post-arrest-temperature-context'
+      | 'activate-post-arrest-temperature-protocol' | 'record-temperature-control-guardrails'
+      | 'reassess-post-arrest-temperature-trajectory',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -912,6 +924,9 @@ export function crisisResponseAvailability(
     hasCriticalCareStatusEpilepticusResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'critical-care-status-epilepticus',
     ),
+    hasPostArrestTemperatureResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'targeted-temperature-management',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -997,6 +1012,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'massive-pulmonary-embolism')
       || (event.type === 'narrative' && event.target === 'upper-gi-hemorrhage')
       || (event.type === 'narrative' && event.target === 'critical-care-status-epilepticus')
+      || (event.type === 'narrative' && event.target === 'targeted-temperature-management')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1022,6 +1038,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasMassivePulmonaryEmbolismResponse,
     hasUpperGiHemorrhageResponse,
     hasCriticalCareStatusEpilepticusResponse,
+    hasPostArrestTemperatureResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1072,7 +1089,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasSpontaneousBreathingTrialResponse || hasPostIntubationHypotensionResponse
     || hasCardiogenicShockResponse || hasMixedShockResponse || hasRightVentricularFailureResponse
     || hasMassivePulmonaryEmbolismResponse || hasUpperGiHemorrhageResponse
-    || hasCriticalCareStatusEpilepticusResponse;
+    || hasCriticalCareStatusEpilepticusResponse || hasPostArrestTemperatureResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1097,8 +1114,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPostIntubationHypotensionResponse || hasCardiogenicShockResponse
     || hasMixedShockResponse || hasRightVentricularFailureResponse
     || hasMassivePulmonaryEmbolismResponse || hasUpperGiHemorrhageResponse
-    || hasCriticalCareStatusEpilepticusResponse;
-  const responseTray = hasCriticalCareStatusEpilepticusResponse
+    || hasCriticalCareStatusEpilepticusResponse || hasPostArrestTemperatureResponse;
+  const responseTray = hasPostArrestTemperatureResponse
+    ? { id: 'crisis', label: 'Temperature control' } as const
+    : hasCriticalCareStatusEpilepticusResponse
     ? { id: 'crisis', label: 'Refractory status' } as const
     : hasUpperGiHemorrhageResponse
     ? { id: 'crisis', label: 'Upper GI bleed' } as const
@@ -1221,6 +1240,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasMassivePulmonaryEmbolismResponse
     || hasUpperGiHemorrhageResponse
     || hasCriticalCareStatusEpilepticusResponse
+    || hasPostArrestTemperatureResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1675,6 +1695,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <CriticalCareStatusEpilepticusTray
                 assessment={props.resuscitation.criticalCareStatusEpilepticusAssessment}
                 onAction={props.onCriticalCareStatusEpilepticusResponse ?? (() => {})} />
+            )}
+            {hasPostArrestTemperatureResponse && (
+              <PostArrestTemperatureTray
+                assessment={props.resuscitation.postArrestTemperatureAssessment}
+                onAction={props.onPostArrestTemperatureResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -4757,6 +4782,58 @@ function CriticalCareStatusEpilepticusTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-refractory-status-trajectory')}>Review EEG + organ trajectory</Button>
         </div>
         <p className="field__hint">A seizure-free window is a response signal, not proof of durable control or recovery.</p>
+      </section>
+    </div>
+  );
+}
+
+function PostArrestTemperatureTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['postArrestTemperatureAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onPostArrestTemperatureResponse']>;
+}) {
+  const recognized = assessment?.recognitionAtTick != null;
+  const context = assessment?.contextAtTick != null;
+  const protocol = assessment?.protocolAtTick != null;
+  const guardrails = assessment?.guardrailsAtTick != null;
+  const reassessed = assessment?.reassessmentAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="post-arrest-temperature-context-title">
+        <div id="post-arrest-temperature-context-title" className="syringe__name">Control temperature. No early prognosis.</div>
+        <Badge kind="teaching">32 min after ROSC · no command following · temperature 38.3°C and rising</Badge>
+        <div className="syringe__meta">MAP 68 · SpO₂ 96% · EtCO₂ 36 · no current seizure · cause work open</div>
+        <p className="syringe__remaining" role="status">
+          {context ? 'Temperature control indicated · prognosis remains open'
+            : recognized ? 'Post-arrest team active · whole-context review due'
+              : 'Fever is a treatment signal, not a prognostic shortcut.'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={recognized}
+            onClick={() => onAction('recognize-post-arrest-temperature-control')}>Recognize indication + activate help</Button>
+          <Button className="crisis-drug__action" disabled={!recognized || context}
+            onClick={() => onAction('review-post-arrest-temperature-context')}>Review brain + systemic context</Button>
+        </div>
+        <p className="field__hint">Absent command following opens a temperature-control pathway. It does not settle neurologic prognosis.</p>
+      </section>
+      <section className="syringe" aria-labelledby="post-arrest-temperature-protocol-title">
+        <div id="post-arrest-temperature-protocol-title" className="syringe__name">Choose a range. Protect the patient.</div>
+        <Badge kind="teaching">32–37.5°C · at least 36 h · avoid fever · controlled rewarming</Badge>
+        <div className="syringe__meta">no universal best target · no rapid cold-fluid loading · rewarm ≤0.5°C/h</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'Temperature in range · brain + organ trajectories remain open'
+            : guardrails ? 'Protocol + guardrails active · response review due'
+              : protocol ? 'Temperature protocol active · guardrails due'
+                : 'Protocolized control pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!context || protocol}
+            onClick={() => onAction('activate-post-arrest-temperature-protocol')}>Activate individualized temperature protocol</Button>
+          <Button className="crisis-drug__action" disabled={!protocol || guardrails}
+            onClick={() => onAction('record-temperature-control-guardrails')}>Record cooling + rewarming guardrails</Button>
+          <Button className="crisis-drug__action" disabled={!guardrails || reassessed}
+            onClick={() => onAction('reassess-post-arrest-temperature-trajectory')}>Review temperature + organ trajectory</Button>
+        </div>
+        <p className="field__hint">Reaching the range is an immediate process signal, not proof of neurologic recovery or benefit.</p>
       </section>
     </div>
   );

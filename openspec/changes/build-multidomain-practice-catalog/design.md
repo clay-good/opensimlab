@@ -791,6 +791,24 @@ The case does not examine, acquire or interpret monitoring or EEG, diagnose, del
 ventilation, fluid, or drugs, manage an airway, prescribe, image, perform lumbar puncture or another
 procedure, transfer, determine disposition or prognosis, or predict outcome.
 
+### Wave B critical-care slice 15: targeted temperature management
+
+The fifteenth critical-care slice begins 32 minutes after ROSC from a witnessed VF arrest. The
+intubated patient does not follow verbal commands, core temperature is 38.3°C and rising, and no
+deliberate temperature strategy is recorded. Learners recognize the indication for protocolized
+temperature control and activate post-arrest, cardiac, neurologic, nursing, pharmacy, and
+temperature-control support without converting eligibility into early neuroprognosis.
+
+The focused tutor pairs “control temperature; no early prognosis” with “choose a range; protect the
+patient.” Learners review the fixed neurologic and systemic context, activate an
+individualized protocol within 32–37.5°C for at least 36 hours, record whole-patient and rewarming
+guardrails, and review a fixed response into range. The lab teaches neither one universally superior
+target nor routine rapid cold-IV-fluid loading and avoids rewarming faster than 0.5°C/h. It does not
+examine, acquire or interpret monitoring, EEG, laboratory tests, or imaging; diagnose; deliver oxygen,
+ventilation, fluid, or drugs; manage an airway; prescribe; use a cooling or warming device; treat
+shivering or cause; perform coronary care or neuroprognostication; transfer; determine disposition;
+or predict outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute

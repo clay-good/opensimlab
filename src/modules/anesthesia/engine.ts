@@ -466,6 +466,11 @@ export class AnesthesiaEngine {
   private criticalCareStatusPathwayAtTick: number | null = null;
   private criticalCareStatusCausesAtTick: number | null = null;
   private criticalCareStatusReassessmentAtTick: number | null = null;
+  private postArrestTemperatureRecognitionAtTick: number | null = null;
+  private postArrestTemperatureContextAtTick: number | null = null;
+  private postArrestTemperatureProtocolAtTick: number | null = null;
+  private postArrestTemperatureGuardrailsAtTick: number | null = null;
+  private postArrestTemperatureReassessmentAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -3496,6 +3501,58 @@ export class AnesthesiaEngine {
           'Fixed response after specialist pathway activation: the authored EEG reports no electrographic seizure during a brief 10-minute window, MAP is 68 mmHg, HR 102/min, SpO₂ 96%, and temperature is 37.9°C. Durable seizure control, recurrence, EEG background, consciousness, anesthetic adverse effects, cause, organ recovery, weaning, prognosis, and outcome remain unknown.', { reassessmentMinutes: 10, electrographicSeizureDuringWindow: false, durableSeizureControlProven: false, mapMmHg: 68, heartRateBpm: 102, spo2Percent: 96, temperatureC: 37.9, consciousnessRecovered: false, causeKnown: false });
         break;
       }
+      case 'targeted-temperature-management-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'targeted-temperature-management');
+        const valid = ['recognize-post-arrest-temperature-control',
+          'review-post-arrest-temperature-context', 'activate-post-arrest-temperature-protocol',
+          'record-temperature-control-guardrails',
+          'reassess-post-arrest-temperature-trajectory'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `post-arrest-temperature-response-refused-${this.currentTick}`,
+            supported ? 'The post-arrest temperature action was not one of the listed choices. Nothing changed.'
+              : 'The bounded post-arrest temperature choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'recognize-post-arrest-temperature-control') {
+          if (this.postArrestTemperatureRecognitionAtTick !== null) { this.log('warning', 'assessment', `post-arrest-temperature-recognition-refused-${this.currentTick}`, 'Temperature-control eligibility and experienced-team activation have already been recorded.'); break; }
+          this.postArrestTemperatureRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `post-arrest-temperature-recognized-${this.currentTick}`,
+            'The adult patient remains unresponsive to verbal commands after ROSC and core temperature is 38.3°C and rising. Deliberate protocolized temperature control and post-arrest, cardiac, neurologic, nursing, pharmacy, and temperature-control help were activated without making a neurologic prognosis.', { adultPostRosc: true, followsVerbalCommands: false, coreTemperatureC: 38.3, deliberateTemperatureControlIndicated: true, postArrestTeamActivated: true, neurologicPrognosisMade: false });
+          break;
+        }
+        if (this.postArrestTemperatureRecognitionAtTick === null) { this.log('warning', 'assessment', `post-arrest-temperature-recognition-order-refused-${this.currentTick}`, 'Recognize temperature-control eligibility and activate experienced post-arrest help first.'); break; }
+        if (response === 'review-post-arrest-temperature-context') {
+          if (this.postArrestTemperatureContextAtTick !== null) { this.log('warning', 'assessment', `post-arrest-temperature-context-refused-${this.currentTick}`, 'The fixed post-ROSC neurologic and systemic context has already been reviewed.'); break; }
+          this.postArrestTemperatureContextAtTick = this.currentTick;
+          this.log('critical', 'assessment', `post-arrest-temperature-context-reviewed-${this.currentTick}`,
+            'Fixed review reports no command following, equal reactive pupils, no current clinical or electrographic seizure, perfusing sinus rhythm, MAP 68 mmHg on reported support, bilateral ventilation, SpO₂ 96%, EtCO₂ 36 mmHg, no external bleeding, oliguria, lactate 5.1 mmol/L, and active arrest-cause evaluation. No isolated sign was used for prognosis.', { followsCommands: false, pupilsEqualReactive: true, currentClinicalSeizure: false, currentElectrographicSeizure: false, perfusingSinusRhythm: true, mapMmHg: 68, spo2Percent: 96, etco2MmHg: 36, externalBleeding: false, arrestCauseEvaluationOpen: true, isolatedPrognosticSignUsed: false });
+          break;
+        }
+        if (this.postArrestTemperatureContextAtTick === null) { this.log('warning', 'assessment', `post-arrest-temperature-context-order-refused-${this.currentTick}`, 'Review the fixed neurologic, temperature, perfusion, oxygenation, ventilation, seizure, and cause context before choosing a protocol.'); break; }
+        if (response === 'activate-post-arrest-temperature-protocol') {
+          if (this.postArrestTemperatureProtocolAtTick !== null) { this.log('warning', 'assessment', `post-arrest-temperature-protocol-refused-${this.currentTick}`, 'The individualized protocolized temperature strategy has already been activated.'); break; }
+          this.postArrestTemperatureProtocolAtTick = this.currentTick;
+          this.log('critical', 'assessment', `post-arrest-temperature-protocol-activated-${this.currentTick}`,
+            'An individualized local protocol was activated to maintain temperature within 32°C to 37.5°C for at least 36 hours while avoiding fever. No temperature within the range was treated as universally superior, and no cooling or warming device, fluid, medication, target-selection rule, or outcome benefit is simulated.', { minimumTemperatureC: 32, maximumTemperatureC: 37.5, minimumDurationHours: 36, feverAvoidance: true, universalBestTarget: false, deviceUsed: false, intentOnly: true });
+          break;
+        }
+        if (this.postArrestTemperatureProtocolAtTick === null) { this.log('warning', 'assessment', `post-arrest-temperature-protocol-order-refused-${this.currentTick}`, 'Activate an individualized protocolized temperature range before recording guardrails.'); break; }
+        if (response === 'record-temperature-control-guardrails') {
+          if (this.postArrestTemperatureGuardrailsAtTick !== null) { this.log('warning', 'assessment', `post-arrest-temperature-guardrails-refused-${this.currentTick}`, 'Temperature-control monitoring and rewarming guardrails have already been recorded.'); break; }
+          this.postArrestTemperatureGuardrailsAtTick = this.currentTick;
+          this.log('critical', 'assessment', `post-arrest-temperature-guardrails-recorded-${this.currentTick}`,
+            'Continuous core-temperature, shivering, sedation, ventilation, oxygenation, perfusion, rhythm, electrolytes, glucose, skin, device, and organ review were recorded. Routine rapid cold-IV-fluid loading was not selected, and rewarming faster than 0.5°C/h was avoided. No measurement, fluid, drug, device, cooling, warming, or shivering treatment is simulated.', { continuousCoreTemperatureReview: true, shiveringSedationReview: true, ventilationPerfusionReview: true, electrolyteGlucoseReview: true, skinDeviceReview: true, routineRapidColdIvFluid: false, maximumRewarmingRateCPerHour: 0.5, treatmentDelivered: false });
+          break;
+        }
+        if (this.postArrestTemperatureGuardrailsAtTick === null) { this.log('warning', 'assessment', `post-arrest-temperature-guardrails-order-refused-${this.currentTick}`, 'Record temperature-control and whole-patient guardrails before reviewing the fixed response.'); break; }
+        if (this.postArrestTemperatureReassessmentAtTick !== null) { this.log('warning', 'assessment', `post-arrest-temperature-reassessment-refused-${this.currentTick}`, 'The fixed post-arrest temperature reassessment has already been reviewed.'); break; }
+        this.postArrestTemperatureReassessmentAtTick = this.currentTick;
+        this.log('critical', 'assessment', `post-arrest-temperature-trajectory-reassessed-${this.currentTick}`,
+          'Fixed response after 45 minutes: core temperature is 37.4°C within the selected protocol range, MAP is 70 mmHg, HR 92/min, SpO₂ 97%, and EtCO₂ 36 mmHg. Command following remains absent. Temperature durability, shivering, cause, seizures, cardiac function, organ recovery, neurologic recovery, neuroprognostication, and outcome remain open.', { reassessmentMinutes: 45, coreTemperatureC: 37.4, mapMmHg: 70, heartRateBpm: 92, spo2Percent: 97, etco2MmHg: 36, followsCommands: false, durableTemperatureControlProven: false, neurologicPrognosisMade: false });
+        break;
+      }
       case 'aspiration-risk-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
@@ -6281,6 +6338,18 @@ export class AnesthesiaEngine {
         meanArterialMmHg: reassessed ? 68 : 62,
         coreTemperatureC: reassessed ? 37.9 : 38.1 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'targeted-temperature-management')) {
+      const reassessed = this.postArrestTemperatureReassessmentAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: reassessed ? 92 : 98,
+        respiratoryRateBpm: 18,
+        spo2Percent: reassessed ? 97 : 96,
+        systolicMmHg: reassessed ? 100 : 96,
+        diastolicMmHg: reassessed ? 55 : 54,
+        meanArterialMmHg: reassessed ? 70 : 68,
+        coreTemperatureC: reassessed ? 37.4 : 38.3 };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -6790,6 +6859,13 @@ export class AnesthesiaEngine {
           pathwayAtTick: this.criticalCareStatusPathwayAtTick,
           causesAtTick: this.criticalCareStatusCausesAtTick,
           reassessmentAtTick: this.criticalCareStatusReassessmentAtTick,
+        },
+        postArrestTemperatureAssessment: {
+          recognitionAtTick: this.postArrestTemperatureRecognitionAtTick,
+          contextAtTick: this.postArrestTemperatureContextAtTick,
+          protocolAtTick: this.postArrestTemperatureProtocolAtTick,
+          guardrailsAtTick: this.postArrestTemperatureGuardrailsAtTick,
+          reassessmentAtTick: this.postArrestTemperatureReassessmentAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

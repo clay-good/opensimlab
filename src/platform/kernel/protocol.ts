@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 72 reports refractory-status state. */
-export const WORKER_PROTOCOL_VERSION = 72;
+/** Bumped whenever the message shape changes incompatibly. Version 73 reports temperature-control state. */
+export const WORKER_PROTOCOL_VERSION = 73;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -519,6 +519,13 @@ export interface EquipmentSnapshot {
       readonly patternAtTick: number | null;
       readonly pathwayAtTick: number | null;
       readonly causesAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+    };
+    readonly postArrestTemperatureAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly contextAtTick: number | null;
+      readonly protocolAtTick: number | null;
+      readonly guardrailsAtTick: number | null;
       readonly reassessmentAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */

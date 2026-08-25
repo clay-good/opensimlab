@@ -3672,6 +3672,46 @@ export function objectiveFindings(
         : 'Whole-trajectory reassessment was absent or preceded cause review.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-post-arrest-temperature-control', 'review-post-arrest-temperature-context',
+      'activate-post-arrest-temperature-protocol', 'record-temperature-control-guardrails',
+      'reassess-post-arrest-temperature-trajectory'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'targeted-temperature-management');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The post-arrest temperature-control vignette was not active.' } satisfies ObjectiveFinding;
+      const recognition = log.find((event) => /^post-arrest-temperature-recognized-\d+$/.test(event.eventId));
+      const context = log.find((event) => /^post-arrest-temperature-context-reviewed-\d+$/.test(event.eventId));
+      const protocol = log.find((event) => /^post-arrest-temperature-protocol-activated-\d+$/.test(event.eventId));
+      const guardrails = log.find((event) => /^post-arrest-temperature-guardrails-recorded-\d+$/.test(event.eventId));
+      const reassessment = log.find((event) => /^post-arrest-temperature-trajectory-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'recognize-post-arrest-temperature-control') return { ...base,
+        outcome: recognition ? 'met' : 'not-met', finding: recognition
+          ? 'Absent command following after ROSC triggered deliberate protocolized temperature control without an early prognosis.'
+          : 'Temperature-control eligibility or experienced-team activation was absent.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-post-arrest-temperature-context') {
+        const ordered = recognition && context && recognition.tick <= context.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Neurologic, temperature, perfusion, oxygenation, ventilation, seizure, and cause findings shaped the strategy without a prognostic shortcut.'
+          : 'Whole-context review was absent or preceded recognition.', atTick: context?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'activate-post-arrest-temperature-protocol') {
+        const ordered = context && protocol && context.tick <= protocol.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'An individualized 32–37.5°C protocol for at least 36 hours was activated without claiming one universally superior target.'
+          : 'The protocolized strategy was absent or preceded context review.', atTick: protocol?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'record-temperature-control-guardrails') {
+        const ordered = protocol && guardrails && protocol.tick <= guardrails.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Core temperature, shivering, sedation, ventilation, perfusion, organ, fluid, device, and controlled-rewarming guardrails were recorded.'
+          : 'Whole-patient guardrails were absent or preceded protocol activation.', atTick: guardrails?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = guardrails && reassessment && guardrails.tick <= reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+        ? 'Temperature entered the authored range while durable control, cause, seizure, cardiac, organ, neurologic, and prognosis trajectories stayed open.'
+        : 'Whole-trajectory reassessment was absent or preceded guardrail review.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;
