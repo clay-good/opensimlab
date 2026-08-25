@@ -72,6 +72,7 @@ const HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES = new Set([
 const PACEMAKER_CAPTURE_FAILURE_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 const TRANSCUTANEOUS_PACING_CAPTURE_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 const ACUTE_SEVERE_ASTHMA_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
+const COPD_TRANSITION_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -632,6 +633,11 @@ export class AnesthesiaEngine {
   private acuteSevereAsthmaEscalationAtTick: number | null = null;
   private acuteSevereAsthmaRisksAtTick: number | null = null;
   private acuteSevereAsthmaHandoffAtTick: number | null = null;
+  private copdTransitionReadinessAtTick: number | null = null;
+  private copdTransitionRespiratoryNeedsAtTick: number | null = null;
+  private copdTransitionMedicationAtTick: number | null = null;
+  private copdTransitionCoordinationAtTick: number | null = null;
+  private copdTransitionHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -892,6 +898,14 @@ export class AnesthesiaEngine {
     if (acuteSevereAsthma && ACUTE_SEVERE_ASTHMA_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `acute-severe-asthma-generic-action-refused-${this.currentTick}`,
         'This reassessment-only asthma lesson does not expose generic medication, oxygen, airway, ventilator, procedure, rhythm, artifact, or crisis-injection actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const copdTransition = this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'copd-exacerbation-transition-reassessment');
+    if (copdTransition && COPD_TRANSITION_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `copd-transition-generic-action-refused-${this.currentTick}`,
+        'This transition-review lesson does not expose generic testing, treatment, oxygen, airway, ventilator, procedure, rhythm, artifact, or crisis-injection actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -4955,6 +4969,45 @@ export class AnesthesiaEngine {
         this.acuteSevereAsthmaHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `acute-severe-asthma-handoff-recorded-${this.currentTick}`, 'Active hypercapnic respiratory failure was handed off with named respiratory, critical-care, and experienced-airway ownership; continuous surveillance; unresolved cause and treatment-toxicity questions; air-trapping and ventilation hazards; and explicit deterioration triggers. No subsequent treatment, airway procedure, support settings, physiologic response, disposition, prognosis, or outcome is reported.', { treatmentDeliveredByLearner: false, airwayProcedurePerformedByLearner: false, ventilatorSettingSelected: false, dispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'copd-exacerbation-transition-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'copd-exacerbation-transition-reassessment');
+        const valid = ['reconcile-copd-exacerbation-recovery-and-readiness',
+          'review-copd-exacerbation-residual-respiratory-and-oxygen-needs',
+          'review-copd-exacerbation-maintenance-and-acute-medication-plan',
+          'coordinate-copd-exacerbation-rehabilitation-self-management-and-follow-up',
+          'handoff-copd-exacerbation-transition-reassessment'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `copd-transition-response-refused-${this.currentTick}`, supported ? 'The COPD transition action was not one of the listed choices. Nothing changed.' : 'These COPD transition choices are available only in the declared Respiratory Medicine lesson.'); break; }
+        if (response === 'reconcile-copd-exacerbation-recovery-and-readiness') {
+          if (this.copdTransitionReadinessAtTick !== null) { this.log('warning', 'assessment', `copd-transition-readiness-refused-${this.currentTick}`, 'Recovery versus readiness was already reconciled.'); break; }
+          this.copdTransitionReadinessAtTick = this.currentTick;
+          this.log('warning', 'assessment', `copd-transition-readiness-reconciled-${this.currentTick}`, 'Verified hospital treatment and physiologic improvement were reconciled with persistent functional and oxygen uncertainty. Prior care was not learner-delivered, and improvement did not establish discharge readiness, recovery, or outcome.', { treatmentDeliveredByLearner: false, readinessDetermined: false }); break;
+        }
+        if (this.copdTransitionReadinessAtTick === null) { this.log('warning', 'assessment', `copd-transition-readiness-order-refused-${this.currentTick}`, 'Reconcile recovery versus readiness before reviewing residual needs.'); break; }
+        if (response === 'review-copd-exacerbation-residual-respiratory-and-oxygen-needs') {
+          if (this.copdTransitionRespiratoryNeedsAtTick !== null) { this.log('warning', 'assessment', `copd-transition-respiratory-refused-${this.currentTick}`, 'Residual respiratory and oxygen uncertainty was already reviewed.'); break; }
+          this.copdTransitionRespiratoryNeedsAtTick = this.currentTick;
+          this.log('warning', 'assessment', `copd-transition-respiratory-reviewed-${this.currentTick}`, 'Resting and corridor reports, recovery time, function, and serial arterial gases were reviewed together. The acute exertional desaturation report did not establish long-term oxygen eligibility or a prescription.', { testAcquiredByLearner: false, oxygenDeliveredByLearner: false, longTermOxygenEligibilityDetermined: false }); break;
+        }
+        if (this.copdTransitionRespiratoryNeedsAtTick === null) { this.log('warning', 'assessment', `copd-transition-respiratory-order-refused-${this.currentTick}`, 'Review residual respiratory and oxygen needs before the medication transition.'); break; }
+        if (response === 'review-copd-exacerbation-maintenance-and-acute-medication-plan') {
+          if (this.copdTransitionMedicationAtTick !== null) { this.log('warning', 'assessment', `copd-transition-medication-refused-${this.currentTick}`, 'The medication and technique-ownership review was already recorded.'); break; }
+          this.copdTransitionMedicationAtTick = this.currentTick;
+          this.log('warning', 'assessment', `copd-transition-medication-reviewed-${this.currentTick}`, 'Maintenance treatment, experienced respiratory-therapist technique correction, and acute-course end points received named review ownership. No inhaler class, device, drug, dose, duration, or technique grade was selected.', { medicationDeliveredByLearner: false, regimenSelected: false, techniquePerformedByLearner: false }); break;
+        }
+        if (this.copdTransitionMedicationAtTick === null) { this.log('warning', 'assessment', `copd-transition-medication-order-refused-${this.currentTick}`, 'Review medication and technique ownership before coordinating follow-up work.'); break; }
+        if (response === 'coordinate-copd-exacerbation-rehabilitation-self-management-and-follow-up') {
+          if (this.copdTransitionCoordinationAtTick !== null) { this.log('warning', 'assessment', `copd-transition-coordination-refused-${this.currentTick}`, 'Rehabilitation, teaching, comorbidity, and follow-up coordination was already recorded.'); break; }
+          this.copdTransitionCoordinationAtTick = this.currentTick;
+          this.log('warning', 'assessment', `copd-transition-coordination-recorded-${this.currentTick}`, 'Pulmonary-rehabilitation consideration, self-management teaching, comorbidity review, and early and later respiratory follow-up received named owners without guaranteeing access, enrollment, attendance, timing, or outcome.', { rehabilitationEnrolled: false, appointmentGuaranteed: false, outcomePredicted: false }); break;
+        }
+        if (this.copdTransitionCoordinationAtTick === null) { this.log('warning', 'assessment', `copd-transition-handoff-order-refused-${this.currentTick}`, 'Coordinate rehabilitation, teaching, comorbidity, and follow-up work before handoff.'); break; }
+        if (this.currentTick <= this.copdTransitionCoordinationAtTick) { this.log('warning', 'assessment', `copd-transition-handoff-time-refused-${this.currentTick}`, 'Allow a later simulated tick before handing off unresolved transition work.'); break; }
+        if (this.copdTransitionHandoffAtTick !== null) { this.log('warning', 'assessment', `copd-transition-handoff-refused-${this.currentTick}`, 'The COPD transition handoff was already recorded.'); break; }
+        this.copdTransitionHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `copd-transition-handoff-recorded-${this.currentTick}`, 'Residual respiratory and oxygen reassessment, functional recovery, maintenance and acute medication review, technique correction, rehabilitation, self-management, comorbidity review, and follow-up were handed off with named owners. No discharge readiness, disposition, prognosis, readmission risk, recovery, or outcome was determined.', { dispositionDetermined: false, readinessDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -7666,6 +7719,12 @@ export class AnesthesiaEngine {
         coreTemperatureC: 36.8,
       };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'copd-exacerbation-transition-reassessment')) {
+      crisisState = { ...crisisState, heartRateBpm: 88, respiratoryRateBpm: 20,
+        spo2Percent: 91, systolicMmHg: 126, diastolicMmHg: 74,
+        meanArterialMmHg: 91, coreTemperatureC: 36.8 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -8888,6 +8947,25 @@ export class AnesthesiaEngine {
               oxygenDeliveredByLearner: false as const,
               airwayProcedurePerformedByLearner: false as const,
               ventilatorSettingSelected: false as const,
+              dispositionDetermined: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'copd-exacerbation-transition-reassessment') ? {
+            copdTransitionAssessment: {
+              readinessAtTick: this.copdTransitionReadinessAtTick,
+              respiratoryNeedsAtTick: this.copdTransitionRespiratoryNeedsAtTick,
+              medicationAtTick: this.copdTransitionMedicationAtTick,
+              coordinationAtTick: this.copdTransitionCoordinationAtTick,
+              handoffAtTick: this.copdTransitionHandoffAtTick,
+              treatmentDeliveredByLearner: false as const,
+              oxygenDeliveredByLearner: false as const,
+              longTermOxygenEligibilityDetermined: false as const,
+              regimenSelected: false as const,
+              techniquePerformedByLearner: false as const,
+              rehabilitationEnrolled: false as const,
+              appointmentGuaranteed: false as const,
               dispositionDetermined: false as const,
               outcomePredicted: false as const,
             },

@@ -46,7 +46,7 @@ const lastState = () => {
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
   it('Scenario: acute severe-asthma reassessment has protocol version 102', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(102);
+    expect(WORKER_PROTOCOL_VERSION).toBe(103);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

@@ -605,6 +605,8 @@ export function Cockpit({
       <div className="cockpit__analysis">
         <AnalysisRegion
           scenario={scenario}
+          moduleId={moduleId}
+          initialTab={moduleId === 'respiratory-medicine' ? 'patient' : 'concentrations'}
           history={session.history}
           concentrations={session.concentrations}
           attribution={session.attribution}
@@ -920,6 +922,9 @@ export function Cockpit({
           })}
           onAcuteSevereAsthmaResponse={(action) => session.act({
             type: 'acute-severe-asthma-response', payload: { action },
+          })}
+          onCopdTransitionResponse={(action) => session.act({
+            type: 'copd-exacerbation-transition-response', payload: { action },
           })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },

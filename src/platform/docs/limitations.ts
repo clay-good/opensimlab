@@ -3119,6 +3119,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use current acute-asthma guidance, verified patient data, device instructions, qualified airway and ventilation expertise, local protocols, and continuous patient-specific reassessment.',
     briefIn: ['acute-severe-asthma'],
   },
+  {
+    id: 'copd-transition-baseline-treatment-tests-and-function-are-authored',
+    headline: 'The baseline, hospital treatment, blood gases, oximetry, imaging, corridor report, and inhaler-technique report are authored.',
+    simplification: 'Fixed reports stand in for longitudinal records, examination, testing, respiratory-therapy assessment, medication reconciliation, and multidisciplinary communication.',
+    whereItMisleads: 'Treating one exertional saturation as a long-term oxygen qualification, improvement as readiness, or fixed reports as learner-acquired clinical skill.',
+    correctUnderstanding: 'Real transition decisions require verified baseline and serial data, patient-centered functional assessment, local oxygen pathways, qualified teams, and repeated review after the acute illness.',
+    briefIn: ['copd-exacerbation-transition-reassessment'],
+  },
+  {
+    id: 'copd-transition-controls-record-review-coordination-and-handoff-only',
+    headline: 'The controls record recovery review, residual-needs review, medication ownership, coordination, and handoff only.',
+    simplification: 'Five clicks stand in for multidisciplinary transition assessment, education, referral work, access planning, and communication.',
+    whereItMisleads: 'Equating button order with examination, testing, prescribing, inhaler education, rehabilitation enrollment, discharge planning, or longitudinal-care competence.',
+    correctUnderstanding: 'Actual transition care requires patient participation, verified technique teaching, local services, access-sensitive planning, named clinical owners, and longitudinal reassessment.',
+    briefIn: ['copd-exacerbation-transition-reassessment'],
+  },
+  {
+    id: 'no-live-copd-transition-testing-treatment-prescribing-discharge-or-outcome',
+    headline: 'The lab does not test, treat, prescribe, qualify oxygen, enroll rehabilitation, discharge, or predict outcome.',
+    simplification: 'No live oximetry or gas acquisition, exercise testing, oxygen or medication delivery, inhaler selection, technique grading, appointment booking, home assessment, discharge, prognosis, readmission risk, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values as qualification or prescribing rules or using completion as evidence of clinical, educational, transition, or prognostic competence.',
+    correctUnderstanding: 'Use current COPD guidance, verified patient data, device instructions, local qualification and rehabilitation pathways, qualified respiratory teams, and patient-specific follow-up.',
+    briefIn: ['copd-exacerbation-transition-reassessment'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

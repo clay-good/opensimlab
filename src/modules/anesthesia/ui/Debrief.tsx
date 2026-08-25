@@ -4288,6 +4288,23 @@ export function objectiveFindings(
       const ordered = risks && handoff && risks.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved active respiratory failure, continuous surveillance, unresolved causes, ventilation hazards, named owners, and deterioration triggers without inventing treatment response, disposition, or outcome.' : 'The active respiratory-failure handoff was absent or did not follow risk review after an elapsed tick.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-copd-exacerbation-recovery-and-readiness',
+      'review-copd-exacerbation-residual-respiratory-and-oxygen-needs',
+      'review-copd-exacerbation-maintenance-and-acute-medication-plan',
+      'coordinate-copd-exacerbation-rehabilitation-self-management-and-follow-up',
+      'handoff-copd-exacerbation-transition-reassessment'].includes(objective.id)) {
+      const readiness = log.find((event) => /^copd-transition-readiness-reconciled-\d+$/.test(event.eventId));
+      const respiratory = log.find((event) => /^copd-transition-respiratory-reviewed-\d+$/.test(event.eventId));
+      const medication = log.find((event) => /^copd-transition-medication-reviewed-\d+$/.test(event.eventId));
+      const coordination = log.find((event) => /^copd-transition-coordination-recorded-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^copd-transition-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-copd-exacerbation-recovery-and-readiness') return { ...base, outcome: readiness ? 'met' : 'not-met', finding: readiness ? 'Baseline, admission, verified treatment, current physiology, and function were reconciled without equating improvement with readiness.' : 'Recovery versus readiness was not reconciled.', atTick: readiness?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-copd-exacerbation-residual-respiratory-and-oxygen-needs') { const ordered = readiness && respiratory && readiness.tick <= respiratory.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Resting and exertional reports, recovery, function, and gas exchange were reviewed without declaring long-term oxygen eligibility.' : 'Residual respiratory review was absent or preceded recovery reconciliation.', atTick: respiratory?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-copd-exacerbation-maintenance-and-acute-medication-plan') { const ordered = respiratory && medication && respiratory.tick <= medication.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Maintenance, acute-course, and technique-correction ownership were reviewed without prescribing a regimen.' : 'Medication transition review was absent or preceded residual-needs review.', atTick: medication?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'coordinate-copd-exacerbation-rehabilitation-self-management-and-follow-up') { const ordered = medication && coordination && medication.tick <= coordination.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Rehabilitation, self-management, comorbidity, and follow-up work received owners without guaranteeing access or outcome.' : 'Transition coordination was absent or preceded medication review.', atTick: coordination?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = coordination && handoff && coordination.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved respiratory, functional, medication, rehabilitation, and follow-up uncertainties without declaring discharge or outcome.' : 'The transition handoff was absent or did not follow coordination after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

@@ -1330,6 +1330,25 @@ Emergency Medicine adult-asthma lab, which owns first-contact severity and initi
 The live capnogram uses a generic severe-obstruction shape so it does not contradict the authored
 quiet-chest state; it remains pattern rehearsal rather than patient-specific quantitative data.
 
+### Wave C respiratory-medicine slice 2: COPD exacerbation transition reassessment
+
+The second respiratory-medicine slice begins on hospital day 3 after verified experienced-team
+controlled oxygen, bronchodilator and antimuscarinic therapy, systemic corticosteroid, antibiotic
+treatment for the authored indication, and 12 hours of noninvasive ventilation. Admission acidotic
+hypercapnic failure has improved, but a fixed corridor report shows marked dyspnea after 30 m and
+SpO₂ 86%, compared with a documented pre-admission 200 m range and resting room-air SpO₂ 92%.
+
+Learners distinguish recovery from readiness, review residual respiratory and oxygen uncertainty
+without declaring long-term oxygen eligibility, assign maintenance-treatment, acute-course, and
+inhaler-technique review, coordinate pulmonary rehabilitation, self-management, comorbidity review,
+and early and later follow-up, then complete a strictly elapsed unresolved-work handoff. The lesson
+does not examine; acquire or interpret blood gas, oximetry, imaging, spirometry, or exercise testing;
+deliver or prescribe oxygen, medication, ventilation, or treatment; select an inhaler, drug, dose,
+device, or duration; perform or grade technique; enroll rehabilitation; guarantee access; assess a
+home; determine discharge, disposition, prognosis, readmission risk, recovery, or outcome. This is
+distinct from Emergency Medicine's first-contact COPD treatment lab and Critical Care's intubated
+auto-PEEP mechanics lab.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

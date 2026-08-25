@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 102 reports acute severe-asthma reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 102;
+/** Bumped whenever the message shape changes incompatibly. Version 103 reports COPD transition reassessment state. */
+export const WORKER_PROTOCOL_VERSION = 103;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -840,6 +840,22 @@ export interface EquipmentSnapshot {
       readonly oxygenDeliveredByLearner: false;
       readonly airwayProcedurePerformedByLearner: false;
       readonly ventilatorSettingSelected: false;
+      readonly dispositionDetermined: false;
+      readonly outcomePredicted: false;
+    };
+    readonly copdTransitionAssessment?: {
+      readonly readinessAtTick: number | null;
+      readonly respiratoryNeedsAtTick: number | null;
+      readonly medicationAtTick: number | null;
+      readonly coordinationAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly treatmentDeliveredByLearner: false;
+      readonly oxygenDeliveredByLearner: false;
+      readonly longTermOxygenEligibilityDetermined: false;
+      readonly regimenSelected: false;
+      readonly techniquePerformedByLearner: false;
+      readonly rehabilitationEnrolled: false;
+      readonly appointmentGuaranteed: false;
       readonly dispositionDetermined: false;
       readonly outcomePredicted: false;
     };

@@ -11,6 +11,7 @@ import { PrerenderedBody } from '@routes/Prerendered';
 const moduleId = 'respiratory-medicine';
 const modulePath = '/respiratory-medicine';
 const scenarioPath = `${modulePath}/scenario/acute-severe-asthma`;
+const transitionPath = `${modulePath}/scenario/copd-exacerbation-transition-reassessment`;
 
 describe('respiratory medicine foundation surfaces', () => {
   it('offers the specialty from the shared navigation and marks it current', () => {
@@ -23,12 +24,14 @@ describe('respiratory medicine foundation surfaces', () => {
     expect(markup).toMatch(/href="\/respiratory-medicine"[^>]*aria-current="page"/);
   });
 
-  it('renders a crawler-usable module page with exactly one scenario link', () => {
+  it('renders a crawler-usable module page with exactly two scenario links', () => {
     const markup = renderToStaticMarkup(createElement(PrerenderedBody, { path: modulePath }));
     expect(markup).toContain('<h1>Respiratory medicine simulator</h1>');
     expect(markup).toContain(`href="${scenarioPath}"`);
     expect(markup).toMatch(/Acute severe asthma/i);
-    expect((markup.match(/\/respiratory-medicine\/scenario\//g) ?? [])).toHaveLength(1);
+    expect(markup).toContain(`href="${transitionPath}"`);
+    expect(markup).toMatch(/COPD exacerbation/i);
+    expect((markup.match(/\/respiratory-medicine\/scenario\//g) ?? [])).toHaveLength(2);
     expect(markup).toContain('aria-label="Site"');
   });
 

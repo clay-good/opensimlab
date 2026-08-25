@@ -752,6 +752,22 @@ export interface ActionCockpitProps {
       readonly dispositionDetermined: false;
       readonly outcomePredicted: false;
     };
+    readonly copdTransitionAssessment?: {
+      readonly readinessAtTick: number | null;
+      readonly respiratoryNeedsAtTick: number | null;
+      readonly medicationAtTick: number | null;
+      readonly coordinationAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly treatmentDeliveredByLearner: false;
+      readonly oxygenDeliveredByLearner: false;
+      readonly longTermOxygenEligibilityDetermined: false;
+      readonly regimenSelected: false;
+      readonly techniquePerformedByLearner: false;
+      readonly rehabilitationEnrolled: false;
+      readonly appointmentGuaranteed: false;
+      readonly dispositionDetermined: false;
+      readonly outcomePredicted: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1201,6 +1217,13 @@ export interface ActionCockpitProps {
       | 'review-acute-severe-asthma-alternatives-and-ventilation-risks'
       | 'handoff-acute-severe-asthma-reassessment',
   ) => void;
+  readonly onCopdTransitionResponse?: (
+    action: 'reconcile-copd-exacerbation-recovery-and-readiness'
+      | 'review-copd-exacerbation-residual-respiratory-and-oxygen-needs'
+      | 'review-copd-exacerbation-maintenance-and-acute-medication-plan'
+      | 'coordinate-copd-exacerbation-rehabilitation-self-management-and-follow-up'
+      | 'handoff-copd-exacerbation-transition-reassessment',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1486,6 +1509,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'acute-severe-asthma-reassessment',
     ),
+    hasCopdTransitionResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'copd-exacerbation-transition-reassessment',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1601,6 +1628,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative'
         && event.target === 'transcutaneous-pacing-mechanical-capture-reassessment')
       || (event.type === 'narrative' && event.target === 'acute-severe-asthma-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'copd-exacerbation-transition-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1654,6 +1683,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasPacemakerCaptureFailureResponse,
     hasTranscutaneousPacingCaptureResponse,
     hasAcuteSevereAsthmaResponse,
+    hasCopdTransitionResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1718,7 +1748,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasHyperkalemicConductionResponse || hasPericardialTamponadeResponse
     || hasRightVentricularInfarctionResponse || hasHypertensiveEmergencyResponse
     || hasPacemakerCaptureFailureResponse || hasTranscutaneousPacingCaptureResponse
-    || hasAcuteSevereAsthmaResponse;
+    || hasAcuteSevereAsthmaResponse || hasCopdTransitionResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1749,7 +1779,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasAcuteSevereAsthmaResponse
+  const responseTray = hasCopdTransitionResponse
+    ? { id: 'crisis', label: 'Recovery + readiness' } as const
+    : hasAcuteSevereAsthmaResponse
     ? { id: 'crisis', label: 'Breathing-failure response' } as const
     : hasTranscutaneousPacingCaptureResponse
     ? { id: 'crisis', label: 'Electrical ≠ mechanical' } as const
@@ -1956,6 +1988,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPacemakerCaptureFailureResponse
     || hasTranscutaneousPacingCaptureResponse
     || hasAcuteSevereAsthmaResponse
+    || hasCopdTransitionResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2540,6 +2573,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <AcuteSevereAsthmaTray
                 assessment={props.resuscitation.acuteSevereAsthmaAssessment}
                 onAction={props.onAcuteSevereAsthmaResponse ?? (() => {})} />
+            )}
+            {hasCopdTransitionResponse && (
+              <CopdTransitionTray assessment={props.resuscitation.copdTransitionAssessment}
+                onAction={props.onCopdTransitionResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -6717,6 +6754,42 @@ function AcuteSevereAsthmaTray({ assessment, onAction }: {
         <Button className="crisis-drug__action" disabled={!risks || handoff} onClick={() => onAction('handoff-acute-severe-asthma-reassessment')}>Hand off active respiratory failure</Button>
       </div>
       <p className="field__hint">No repeat medication, oxygen change, support device, airway procedure, sedation, ventilator setting, disposition, or outcome is selected. Gas values inform this trajectory; they are not universal intubation cutoffs.</p>
+    </section>
+  </div>;
+}
+
+function CopdTransitionTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['copdTransitionAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onCopdTransitionResponse']>;
+}) {
+  const readiness = assessment?.readinessAtTick != null;
+  const respiratory = assessment?.respiratoryNeedsAtTick != null;
+  const medication = assessment?.medicationAtTick != null;
+  const coordination = assessment?.coordinationAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="copd-transition-readiness-title">
+      <div id="copd-transition-readiness-title" className="syringe__name">Better is not the same as ready.</div>
+      <Badge kind="teaching">hospital day 3 · improving gas · residual limits</Badge>
+      <div className="syringe__meta">baseline → admission → current rest + activity</div>
+      <p className="syringe__remaining" role="status">{medication ? 'Residual needs reviewed · medication ownership recorded' : respiratory ? 'Oxygen uncertainty preserved · review the transition regimen' : readiness ? 'Improvement reconciled · review what remains' : 'Start with recovery versus readiness'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={readiness} onClick={() => onAction('reconcile-copd-exacerbation-recovery-and-readiness')}>Reconcile recovery + readiness</Button>
+        <Button className="crisis-drug__action" disabled={!readiness || respiratory} onClick={() => onAction('review-copd-exacerbation-residual-respiratory-and-oxygen-needs')}>Review residual breathing + oxygen needs</Button>
+        <Button className="crisis-drug__action" disabled={!respiratory || medication} onClick={() => onAction('review-copd-exacerbation-maintenance-and-acute-medication-plan')}>Review medication + technique ownership</Button>
+      </div>
+      <p className="field__hint">The corridor and blood-gas reports are authored. This acute snapshot does not qualify long-term oxygen or turn improvement into a discharge decision.</p>
+    </section>
+    <section className="syringe" aria-labelledby="copd-transition-ownership-title">
+      <div id="copd-transition-ownership-title" className="syringe__name">Make the next steps feel held.</div>
+      <Badge kind="teaching">rehabilitation · self-management · follow-up</Badge>
+      <div className="syringe__meta">named owners · access remains local · no promises</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Open transition work handed off with named owners' : coordination ? 'Coordination recorded · advance time before handoff' : medication ? 'Transition review ready for coordinated ownership' : 'Complete the recovery review first'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={!medication || coordination} onClick={() => onAction('coordinate-copd-exacerbation-rehabilitation-self-management-and-follow-up')}>Coordinate rehab + follow-up</Button>
+        <Button className="crisis-drug__action" disabled={!coordination || handoff} onClick={() => onAction('handoff-copd-exacerbation-transition-reassessment')}>Hand off unresolved transition work</Button>
+      </div>
+      <p className="field__hint">No oxygen prescription, inhaler selection, treatment delivery, technique grading, rehabilitation enrollment, guaranteed appointment, discharge, prognosis, or outcome is chosen here.</p>
     </section>
   </div>;
 }

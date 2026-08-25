@@ -129,8 +129,8 @@ export function Prebrief({ scenario, region, environment = 'anesthesia', onStart
               opens below. Pause freely and work through each change in breathing and alertness deliberately.
             </p>
             <p>
-              This lab practices recognition, escalation, risk review, and handoff. Initial therapy is
-              authored prior care; no medication, support device, airway procedure, or outcome is delivered.
+              This lab practices serial reassessment, planning, coordination, and handoff. Prior care and
+              current reports are authored; no treatment, prescription, procedure, discharge, or outcome is delivered.
             </p>
           </>
         ) : (

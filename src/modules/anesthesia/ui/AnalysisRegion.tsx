@@ -36,10 +36,12 @@ export interface AnalysisRegionProps {
   readonly onExportCsv: () => void;
   readonly onOpenExplainer: (id: string) => void;
   readonly onMarkLogRead: () => void;
+  readonly initialTab?: AnalysisTab;
+  readonly moduleId?: string;
 }
 
 export function AnalysisRegion(props: AnalysisRegionProps) {
-  const [tab, setTab] = useState<AnalysisTab>('concentrations');
+  const [tab, setTab] = useState<AnalysisTab>(props.initialTab ?? 'concentrations');
   const [severityFilter, setSeverityFilter] = useState<Severity | 'all'>('all');
 
   const filtered = useMemo(
@@ -101,7 +103,7 @@ export function AnalysisRegion(props: AnalysisRegionProps) {
         </TabPanel>
 
         <TabPanel id="patient" active={tab}>
-          <PatientPanel scenario={props.scenario} />
+          <PatientPanel scenario={props.scenario} moduleId={props.moduleId} />
         </TabPanel>
 
         <TabPanel id="learn" active={tab}>
@@ -112,21 +114,22 @@ export function AnalysisRegion(props: AnalysisRegionProps) {
   );
 }
 
-function PatientPanel({ scenario }: { scenario: Scenario }) {
+function PatientPanel({ scenario, moduleId }: { scenario: Scenario; moduleId?: string }) {
   const patient = scenario.patient;
+  const perioperativeProfile = moduleId !== 'respiratory-medicine';
   const rows: [string, string][] = [
     ['Age', `${patient.ageYears} years`],
     ['Sex', patient.sex],
     ['Height', `${patient.heightCm} cm`],
     ['Weight', `${patient.weightKg} kg`],
     ['Body mass index', (patient.weightKg / (patient.heightCm / 100) ** 2).toFixed(1)],
-    ['ASA physical status', String(patient.asaClass)],
+    ...(perioperativeProfile ? [['ASA physical status', String(patient.asaClass)] as [string, string]] : []),
     ['Diagnosis', patient.diagnosis],
     ['Procedure', patient.procedure],
     ['Comorbidities', (patient.comorbidities ?? []).join(', ') || 'None recorded'],
     ['Medications', (patient.medications ?? []).join(', ') || 'None recorded'],
     ['Allergies', (patient.allergies ?? []).join(', ') || 'None documented'],
-    ['Fasting', patient.fasting ?? 'Not recorded'],
+    ...(perioperativeProfile ? [['Fasting', patient.fasting ?? 'Not recorded'] as [string, string]] : []),
     ['Airway assessment', patient.airway.assessment ?? 'Not recorded'],
   ];
   return (
