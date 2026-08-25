@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "critical-care",
-  "recordCount": 20,
+  "recordCount": 21,
   "records": [
     {
       "recordId": "scenario:ards-lung-protective-ventilation@0.1.0",
@@ -221,6 +221,17 @@
       "evidence": [
         "/catalog/critical-care-completion-audit.json#ventilator-circuit-disconnection@0.1.0",
         "/catalog/critical-care-quality-audit.json#ventilator-circuit-disconnection@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:delayed-vasopressor-delivery@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "delayed-vasopressor-delivery",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/critical-care-completion-audit.json#delayed-vasopressor-delivery@0.1.0",
+        "/catalog/critical-care-quality-audit.json#delayed-vasopressor-delivery@0.1.0"
       ]
     }
   ]

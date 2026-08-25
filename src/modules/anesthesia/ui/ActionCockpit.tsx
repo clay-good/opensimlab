@@ -494,6 +494,13 @@ export interface ActionCockpitProps {
       readonly restoredAtTick: number | null;
       readonly reassessedAtTick: number | null;
     };
+    readonly delayedVasopressorDeliveryAssessment?: {
+      readonly discordanceAtTick: number | null;
+      readonly pathAtTick: number | null;
+      readonly classifiedAtTick: number | null;
+      readonly protocolAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -803,6 +810,13 @@ export interface ActionCockpitProps {
       | 'bridge-ventilator-circuit-disconnection' | 'inspect-ventilator-circuit-disconnection'
       | 'restore-ventilator-circuit-support' | 'reassess-ventilator-circuit-response',
   ) => void;
+  readonly onDelayedVasopressorDeliveryResponse?: (
+    action: 'review-vasopressor-command-delivery-discordance'
+      | 'trace-vasopressor-source-to-patient-path'
+      | 'classify-vasopressor-dead-space-startup-delay'
+      | 'activate-vasopressor-startup-safety-plan'
+      | 'reassess-vasopressor-delivery-and-perfusion',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1006,6 +1020,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'ventilator-circuit-disconnection',
     ),
+    hasDelayedVasopressorDeliveryResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'delayed-vasopressor-delivery',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1097,6 +1115,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'severe-acidemia')
       || (event.type === 'narrative' && event.target === 'icu-handoff-with-hidden-deterioration')
       || (event.type === 'narrative' && event.target === 'ventilator-circuit-disconnection')
+      || (event.type === 'narrative' && event.target === 'delayed-vasopressor-delivery')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1128,6 +1147,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasSevereAcidemiaResponse,
     hasIcuHiddenDeteriorationHandoffResponse,
     hasVentilatorCircuitDisconnectionResponse,
+    hasDelayedVasopressorDeliveryResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1181,7 +1201,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasCriticalCareStatusEpilepticusResponse || hasPostArrestTemperatureResponse
     || hasIntracranialHypertensionResponse || hasAkiFluidOverloadResponse
     || hasSevereAcidemiaResponse || hasIcuHiddenDeteriorationHandoffResponse
-    || hasVentilatorCircuitDisconnectionResponse;
+    || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1209,8 +1229,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasCriticalCareStatusEpilepticusResponse || hasPostArrestTemperatureResponse
     || hasIntracranialHypertensionResponse || hasAkiFluidOverloadResponse
     || hasSevereAcidemiaResponse || hasIcuHiddenDeteriorationHandoffResponse
-    || hasVentilatorCircuitDisconnectionResponse;
-  const responseTray = hasVentilatorCircuitDisconnectionResponse
+    || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse;
+  const responseTray = hasDelayedVasopressorDeliveryResponse
+    ? { id: 'crisis', label: 'Vasopressor delivery' } as const
+    : hasVentilatorCircuitDisconnectionResponse
     ? { id: 'crisis', label: 'Circuit disconnection' } as const
     : hasIcuHiddenDeteriorationHandoffResponse
     ? { id: 'crisis', label: 'ICU handoff' } as const
@@ -1351,6 +1373,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasSevereAcidemiaResponse
     || hasIcuHiddenDeteriorationHandoffResponse
     || hasVentilatorCircuitDisconnectionResponse
+    || hasDelayedVasopressorDeliveryResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1833,6 +1856,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <VentilatorCircuitDisconnectionTray
                 assessment={props.resuscitation.ventilatorCircuitDisconnectionAssessment}
                 onAction={props.onVentilatorCircuitDisconnectionResponse ?? (() => {})} />
+            )}
+            {hasDelayedVasopressorDeliveryResponse && (
+              <DelayedVasopressorDeliveryTray
+                assessment={props.resuscitation.delayedVasopressorDeliveryAssessment}
+                onAction={props.onDelayedVasopressorDeliveryResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -5227,6 +5255,58 @@ function VentilatorCircuitDisconnectionTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-ventilator-circuit-response')}>Prove delivered breaths + patient response</Button>
         </div>
         <p className="field__hint">These controls record authored intent. They do not handle equipment, ventilate, or predict a person’s oxygen reserve.</p>
+      </section>
+    </div>
+  );
+}
+
+function DelayedVasopressorDeliveryTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['delayedVasopressorDeliveryAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onDelayedVasopressorDeliveryResponse']>;
+}) {
+  const discordance = assessment?.discordanceAtTick != null;
+  const path = assessment?.pathAtTick != null;
+  const classified = assessment?.classifiedAtTick != null;
+  const protocol = assessment?.protocolAtTick != null;
+  const reassessed = assessment?.reassessedAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="vasopressor-delivery-truth-title">
+        <div id="vasopressor-delivery-truth-title" className="syringe__name">Running is not arriving.</div>
+        <Badge kind="teaching">commanded · in transit · delivered · effect</Badge>
+        <div className="syringe__meta">RUNNING 6 min · distal 0.6 mL drug-free · MAP 54</div>
+        <p className="syringe__remaining" role="status">
+          {classified ? 'Delayed delivery classified · alternatives open'
+            : path ? 'Source-to-patient path traced · classify the delay'
+              : discordance ? 'Command ≠ delivery · trace the whole path'
+                : 'Persistent shock · no catheter-tip arrival documented'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={discordance}
+            onClick={() => onAction('review-vasopressor-command-delivery-discordance')}>Separate command from delivery</Button>
+          <Button className="crisis-drug__action" disabled={!discordance || path}
+            onClick={() => onAction('trace-vasopressor-source-to-patient-path')}>Trace syringe → pump → line → patient</Button>
+          <Button className="crisis-drug__action" disabled={!path || classified}
+            onClick={() => onAction('classify-vasopressor-dead-space-startup-delay')}>Classify dead-space + startup delay</Button>
+        </div>
+        <p className="field__hint">A bright RUNNING label describes the pump command, not arrival at the catheter tip.</p>
+      </section>
+      <section className="syringe" aria-labelledby="vasopressor-delivery-safety-title">
+        <div id="vasopressor-delivery-safety-title" className="syringe__name">Move the drug, not the risk.</div>
+        <Badge kind="teaching">local protocol · no flush · prove response</Badge>
+        <div className="syringe__meta">nursing · pharmacy · critical care · device-specific plan</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'Arrived · MAP 67 · shock + durability remain open'
+            : protocol ? 'Safe-start plan active · delivery + perfusion proof due'
+              : 'No unsupervised purge, flush, or bolus into the patient'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!classified || protocol}
+            onClick={() => onAction('activate-vasopressor-startup-safety-plan')}>Activate local safe-start protocol</Button>
+          <Button className="crisis-drug__action" disabled={!protocol || reassessed}
+            onClick={() => onAction('reassess-vasopressor-delivery-and-perfusion')}>Prove delivery + perfusion response</Button>
+        </div>
+        <p className="field__hint">This records a bounded protocol intent. It never calculates, primes, flushes, programs, or delivers a drug.</p>
       </section>
     </div>
   );

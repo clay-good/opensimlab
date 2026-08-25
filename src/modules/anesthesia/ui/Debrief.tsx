@@ -3912,6 +3912,25 @@ export function objectiveFindings(
         : 'Whole-system reassessment was absent or preceded restoration.', atTick: reassessed?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['review-vasopressor-command-delivery-discordance',
+      'trace-vasopressor-source-to-patient-path', 'classify-vasopressor-dead-space-startup-delay',
+      'activate-vasopressor-startup-safety-plan', 'reassess-vasopressor-delivery-and-perfusion'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'delayed-vasopressor-delivery');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The delayed-vasopressor-delivery lesson was not active.' } satisfies ObjectiveFinding;
+      const discordance = log.find((event) => /^vasopressor-delivery-discordance-reviewed-\d+$/.test(event.eventId));
+      const path = log.find((event) => /^vasopressor-delivery-path-traced-\d+$/.test(event.eventId));
+      const classified = log.find((event) => /^vasopressor-delivery-delay-classified-\d+$/.test(event.eventId));
+      const protocol = log.find((event) => /^vasopressor-delivery-protocol-activated-\d+$/.test(event.eventId));
+      const reassessed = log.find((event) => /^vasopressor-delivery-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'review-vasopressor-command-delivery-discordance') return { ...base, outcome: discordance ? 'met' : 'not-met', finding: discordance ? 'Pump command, line transit, patient delivery, and physiologic effect were separated.' : 'The running command was not reconciled with absent delivery and persistent shock.', atTick: discordance?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'trace-vasopressor-source-to-patient-path') { const ordered = discordance && path && discordance.tick <= path.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The fixed syringe-to-patient path and every declared delivery component were traced.' : 'The full path trace was absent or preceded recognition of discordance.', atTick: path?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'classify-vasopressor-dead-space-startup-delay') { const ordered = path && classified && path.tick <= classified.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Dead-space and startup delay were classified from the fixed record while alternatives stayed open.' : 'Classification was absent or preceded the source-to-patient trace.', atTick: classified?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-vasopressor-startup-safety-plan') { const ordered = classified && protocol && classified.tick <= protocol.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The local device-specific protocol was activated with an explicit no-flush/no-bolus guardrail.' : 'The safe protocol was absent or preceded classification.', atTick: protocol?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = protocol && reassessed && protocol.tick <= reassessed.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Documented arrival and perfusion improved while shock, durability, and outcome remained open.' : 'Delivery and perfusion reassessment was absent or preceded the safety plan.', atTick: reassessed?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

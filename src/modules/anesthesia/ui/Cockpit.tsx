@@ -848,6 +848,9 @@ export function Cockpit({
           onVentilatorCircuitDisconnectionResponse={(action) => session.act({
             type: 'ventilator-circuit-disconnection-response', payload: { action },
           })}
+          onDelayedVasopressorDeliveryResponse={(action) => session.act({
+            type: 'delayed-vasopressor-delivery-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

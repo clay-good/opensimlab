@@ -496,6 +496,11 @@ export class AnesthesiaEngine {
   private ventilatorDisconnectionInspectedAtTick: number | null = null;
   private ventilatorDisconnectionRestoredAtTick: number | null = null;
   private ventilatorDisconnectionReassessedAtTick: number | null = null;
+  private delayedVasopressorDiscordanceAtTick: number | null = null;
+  private delayedVasopressorPathAtTick: number | null = null;
+  private delayedVasopressorClassifiedAtTick: number | null = null;
+  private delayedVasopressorProtocolAtTick: number | null = null;
+  private delayedVasopressorReassessedAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -3836,6 +3841,47 @@ export class AnesthesiaEngine {
           'Fixed 2-minute response: exhaled tidal volume 410 mL, minute ventilation 8.2 L/min, peak pressure 27 cm H₂O, measured PEEP 8 cm H₂O, EtCO₂ 36 mmHg with a continuous waveform, SpO₂ 94% on unchanged FiO₂ 0.45, HR 98/min, and MAP 77 mmHg. Delivered ventilation is restored; physical reconnection, reserve prediction, durability, and outcome remain outside the model.', { reassessmentMinutes: 2, exhaledTidalVolumeMl: 410, minuteVentilationLMin: 8.2, deliveredVentilationRestored: true, physicalReconnectionPerformed: false, outcomeProven: false });
         break;
       }
+      case 'delayed-vasopressor-delivery-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'delayed-vasopressor-delivery');
+        const valid = ['review-vasopressor-command-delivery-discordance',
+          'trace-vasopressor-source-to-patient-path', 'classify-vasopressor-dead-space-startup-delay',
+          'activate-vasopressor-startup-safety-plan', 'reassess-vasopressor-delivery-and-perfusion'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `vasopressor-delivery-response-refused-${this.currentTick}`, supported ? 'The delayed-delivery action was not one of the listed choices. Nothing changed.' : 'The bounded delayed-delivery choices are available only in the declared lesson.'); break; }
+        if (response === 'review-vasopressor-command-delivery-discordance') {
+          if (this.delayedVasopressorDiscordanceAtTick !== null) { this.log('warning', 'assessment', `vasopressor-delivery-discordance-refused-${this.currentTick}`, 'Command-versus-delivery discordance has already been reviewed.'); break; }
+          this.delayedVasopressorDiscordanceAtTick = this.currentTick;
+          this.log('critical', 'assessment', `vasopressor-delivery-discordance-reviewed-${this.currentTick}`, 'The RUNNING command and elapsed time were reconciled with persistent shock and the fixed record of no catheter-tip drug arrival. Pump command, line transit, patient delivery, and physiologic effect remain separate states.', { pumpRunning: true, deliveryDocumented: false, effectObserved: false });
+          break;
+        }
+        if (this.delayedVasopressorDiscordanceAtTick === null) { this.log('warning', 'assessment', `vasopressor-delivery-discordance-order-refused-${this.currentTick}`, 'Review command-versus-delivery discordance before tracing or correcting the infusion path.'); break; }
+        if (response === 'trace-vasopressor-source-to-patient-path') {
+          if (this.delayedVasopressorPathAtTick !== null) { this.log('warning', 'assessment', `vasopressor-delivery-path-refused-${this.currentTick}`, 'The fixed source-to-patient path has already been reviewed.'); break; }
+          this.delayedVasopressorPathAtTick = this.currentTick;
+          this.log('critical', 'assessment', `vasopressor-delivery-path-traced-${this.currentTick}`, 'The labeled syringe, pump fit and event log, tubing compliance and resistance, valves and connectors, mixing point, 0.6 mL downstream segment, 2 mL/h carrier, stopcock state and level, dedicated catheter, occlusion status, and patient were included in the fixed trace. No equipment was inspected or manipulated.', { downstreamVolumeMl: 0.6, carrierFlowMlHour: 2, physicalInspectionPerformed: false });
+          break;
+        }
+        if (this.delayedVasopressorPathAtTick === null) { this.log('warning', 'assessment', `vasopressor-delivery-path-order-refused-${this.currentTick}`, 'Trace the full declared source-to-patient path before classifying the delay.'); break; }
+        if (response === 'classify-vasopressor-dead-space-startup-delay') {
+          if (this.delayedVasopressorClassifiedAtTick !== null) { this.log('warning', 'assessment', `vasopressor-delivery-classification-refused-${this.currentTick}`, 'The fixed delayed-delivery pattern has already been classified.'); break; }
+          this.delayedVasopressorClassifiedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `vasopressor-delivery-delay-classified-${this.currentTick}`, 'The fixed record supports delayed patient delivery from downstream dead-space transit and startup mechanics. Wrong drug, concentration, rate, route, access, occlusion, extravasation, incompatibility, pump fault, changing shock, and measurement error remain open.', { classification: 'dead-space-and-startup-delay', alternativesOpen: true, bedsideCalculationPerformed: false });
+          break;
+        }
+        if (this.delayedVasopressorClassifiedAtTick === null) { this.log('warning', 'assessment', `vasopressor-delivery-classification-order-refused-${this.currentTick}`, 'Classify the fixed delivery pattern while preserving alternatives before activating a correction plan.'); break; }
+        if (response === 'activate-vasopressor-startup-safety-plan') {
+          if (this.delayedVasopressorProtocolAtTick !== null) { this.log('warning', 'assessment', `vasopressor-delivery-protocol-refused-${this.currentTick}`, 'The local safe-start or changeover protocol has already been activated.'); break; }
+          this.delayedVasopressorProtocolAtTick = this.currentTick;
+          this.log('critical', 'assessment', `vasopressor-delivery-protocol-activated-${this.currentTick}`, 'Bedside nursing, pharmacy, and critical-care help and the local device-specific safe-start or changeover protocol were activated with an explicit guard against flushing or purging concentrated vasopressor into the patient. No pump programming, line manipulation, flush, bolus, prescription, or drug delivery occurred.', { protocolActivated: true, flushIntoPatient: false, drugDeliveredByControl: false });
+          break;
+        }
+        if (this.delayedVasopressorProtocolAtTick === null) { this.log('warning', 'assessment', `vasopressor-delivery-protocol-order-refused-${this.currentTick}`, 'Activate the bounded safe-start or changeover plan before reassessing delivery and perfusion.'); break; }
+        if (this.delayedVasopressorReassessedAtTick !== null) { this.log('warning', 'assessment', `vasopressor-delivery-reassessment-refused-${this.currentTick}`, 'The fixed delivery and perfusion response has already been recorded.'); break; }
+        this.delayedVasopressorReassessedAtTick = this.currentTick;
+        this.log('critical', 'assessment', `vasopressor-delivery-reassessed-${this.currentTick}`, 'Fixed 5-minute response: documented drug arrival, MAP 67 mmHg, HR 108/min, refill 3 seconds, EtCO₂ 32 mmHg, unchanged SpO₂ 95% on FiO₂ 0.40, and temperature 38.9°C. Shock, source control, dose adequacy, line durability, later perfusion, and outcome remain open.', { deliveryDocumented: true, drugDeliveredByControl: false, outcomeProven: false });
+        break;
+      }
       case 'aspiration-risk-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
@@ -6697,6 +6743,14 @@ export class AnesthesiaEngine {
         meanArterialMmHg: reassessed ? 77 : 76,
         coreTemperatureC: 38 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'delayed-vasopressor-delivery')) {
+      const reassessed = this.delayedVasopressorReassessedAtTick !== null;
+      crisisState = { ...crisisState, heartRateBpm: reassessed ? 108 : 124,
+        respiratoryRateBpm: 20, spo2Percent: 95, etco2MmHg: reassessed ? 32 : 29,
+        systolicMmHg: reassessed ? 90 : 75, diastolicMmHg: reassessed ? 55 : 44,
+        meanArterialMmHg: reassessed ? 67 : 54, coreTemperatureC: reassessed ? 38.9 : 39 };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -7248,6 +7302,13 @@ export class AnesthesiaEngine {
           inspectedAtTick: this.ventilatorDisconnectionInspectedAtTick,
           restoredAtTick: this.ventilatorDisconnectionRestoredAtTick,
           reassessedAtTick: this.ventilatorDisconnectionReassessedAtTick,
+        },
+        delayedVasopressorDeliveryAssessment: {
+          discordanceAtTick: this.delayedVasopressorDiscordanceAtTick,
+          pathAtTick: this.delayedVasopressorPathAtTick,
+          classifiedAtTick: this.delayedVasopressorClassifiedAtTick,
+          protocolAtTick: this.delayedVasopressorProtocolAtTick,
+          reassessedAtTick: this.delayedVasopressorReassessedAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

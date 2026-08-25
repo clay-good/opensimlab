@@ -1401,6 +1401,35 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-24',
   },
   {
+    id: 'weiss-microinfusion-safety-2023',
+    pmid: '37132300',
+    authors: 'Weiss M, van der Eijk A, Lönnqvist PA, Lucchini A, Timmerman A',
+    title: '10 clinical tips for advancing patient safety when using syringe pump systems for microinfusion intravenous drug therapy',
+    publication: 'Eur J Anaesthesiol',
+    year: 2023,
+    locator: '40:387-390; doi:10.1097/EJA.0000000000001839',
+    usedFor: 'The delayed-vasopressor-delivery systems boundary: low-flow syringe-pump startup, '
+      + 'dead space, compliance, resistance, pressure, carrier flow, valves, connectors, and '
+      + 'changeover can separate a pump command from patient delivery; use trained staff and a '
+      + 'validated device-specific protocol rather than an unsupervised flush or bolus.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-25',
+  },
+  {
+    id: 'lovich-carrier-flow-dead-volume-2015',
+    pmid: '25811259',
+    authors: 'Lovich MA, Pezone MJ, Maslov MY, Murray MR, Wakim MG, Peterfreund RA',
+    title: 'Infusion system carrier flow perturbations and dead-volume: large effects on drug delivery in vitro and hemodynamic responses in a swine model',
+    publication: 'Anesth Analg',
+    year: 2015,
+    locator: '120:1255-1263; doi:10.1213/ANE.0000000000000654',
+    usedFor: 'The delayed-vasopressor-delivery distinction between commanded infusion, transit '
+      + 'through the shared downstream volume, drug delivery, and hemodynamic effect, including '
+      + 'the warning that carrier-flow changes can perturb delivery more when dead volume is large.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-25',
+  },
+  {
     id: 'schwid-2001',
     pmid: '11302037',
     authors: 'Schwid HA, Rooke GA, Michalowski P, Ross BK',

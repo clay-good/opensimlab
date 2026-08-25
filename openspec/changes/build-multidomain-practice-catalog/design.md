@@ -901,6 +901,24 @@ teaching values. The lab does not hear or configure alarms, examine, monitor, in
 equipment, oxygenate, ventilate, reconnect a circuit, program a ventilator, diagnose, perform a
 procedure, determine disposition, or predict outcome.
 
+### Wave B critical-care slice 21: delayed vasopressor delivery
+
+The twenty-first critical-care slice presents persistent septic shock after a newly connected
+vasopressor pump has displayed RUNNING for 6 minutes. The fixed setup record separates the command
+from delivery: a drug-free 0.6 mL downstream segment remains beyond the mixing point, carrier flow
+is 2 mL/h, the dedicated central lumen is patent, no occlusion alarm is active, and catheter-tip
+arrival is not documented while MAP remains 54 mmHg with worsening perfusion.
+
+The focused tutor pairs “running is not arriving” with “move the drug, not the risk.” Learners
+reconcile pump command with patient response, trace the declared syringe-to-patient path, classify
+dead-space transit and startup mechanics while keeping medication, access, device, shock, and
+measurement alternatives open, and activate nursing, pharmacy, critical-care, and a local
+device-specific safe-start or changeover protocol. An explicit guard rejects flushing or purging
+concentrated vasopressor into the patient. A fixed 5-minute response documents arrival and reaches
+MAP 67 mmHg while shock, source control, dose adequacy, durability, and outcome remain open. The
+lab does not inspect, measure, calculate, prime, purge, flush, bolus, program, prescribe, compound,
+deliver a drug, manipulate equipment, diagnose shock, determine disposition, or predict outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute

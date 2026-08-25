@@ -110,6 +110,9 @@ describe('exact-version maturity records', () => {
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'ventilator-circuit-disconnection', '0.1.0',
     )?.status).toBe('draft');
+    expect(maturityFor(
+      criticalCareCatalog, 'scenario', 'delayed-vasopressor-delivery', '0.1.0',
+    )?.status).toBe('draft');
   });
 
   it('never applies a record to a different content version', () => {

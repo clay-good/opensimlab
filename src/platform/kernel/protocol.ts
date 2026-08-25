@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 78 reports circuit-disconnection state. */
-export const WORKER_PROTOCOL_VERSION = 78;
+/** Bumped whenever the message shape changes incompatibly. Version 79 reports delayed-delivery state. */
+export const WORKER_PROTOCOL_VERSION = 79;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -561,6 +561,13 @@ export interface EquipmentSnapshot {
       readonly bridgedAtTick: number | null;
       readonly inspectedAtTick: number | null;
       readonly restoredAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+    };
+    readonly delayedVasopressorDeliveryAssessment?: {
+      readonly discordanceAtTick: number | null;
+      readonly pathAtTick: number | null;
+      readonly classifiedAtTick: number | null;
+      readonly protocolAtTick: number | null;
       readonly reassessedAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
