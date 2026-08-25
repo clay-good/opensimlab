@@ -419,6 +419,9 @@ export function objectiveFindings(
     'prepare-pediatric-inhalational-circuit': 'preoxygenation-and-safe-apnea-time',
     'follow-pediatric-end-tidal-wash-in': 'depth-monitoring-and-its-limits',
     'settle-pediatric-volatile-depth': 'depth-monitoring-and-its-limits',
+    'prepare-obstetric-oxygen-reserve': 'preoxygenation-and-safe-apnea-time',
+    'protect-obstetric-apnea-margin': 'preoxygenation-and-safe-apnea-time',
+    'confirm-obstetric-ventilation': 'capnogram-morphology',
     'recognize-hemorrhage': 'vasodilation-versus-hypovolemia',
     'temporize-volume-loss': 'vasodilation-versus-hypovolemia',
     'avoid-full-dose-induction': 'hysteresis-and-effect-site-lag',
@@ -1941,6 +1944,44 @@ export function objectiveFindings(
       } satisfies ObjectiveFinding;
     }
 
+    if (objective.id === 'prepare-obstetric-oxygen-reserve') {
+      const induction = actions.find(
+        (action) => action.type === 'bolus' && action.payload.drugId === 'propofol',
+      );
+      if (!induction) {
+        return { ...base, outcome: 'not-exercised', finding: 'No propofol induction dose was recorded.' } satisfies ObjectiveFinding;
+      }
+      const initial = scenario.equipment.ventilator;
+      const acceptedSettings = actions.filter((action) => action.type === 'ventilator'
+        && action.tick < induction.tick).reduce((settings, action) => {
+        const entered = (field: string, fallback: number, min: number, max: number) => {
+          if (action.payload[field] === undefined) return fallback;
+          const value = Number(action.payload[field]);
+          return Number.isFinite(value) && value >= min && value <= max ? value : fallback;
+        };
+        return {
+          fio2: entered('fio2', settings.fio2, 0.21, 1),
+          freshGasFlowLPerMin: entered(
+            'freshGasFlowLPerMin', settings.freshGasFlowLPerMin, 0.5, 15,
+          ),
+        };
+      }, {
+        fio2: initial.fio2,
+        freshGasFlowLPerMin: initial.freshGasFlowLPerMin ?? 1,
+      });
+      const sample = history.filter((entry) => entry.tick <= induction.tick).at(-1);
+      const endTidal = sample?.state.endTidalO2Fraction ?? 0;
+      const machineReady = acceptedSettings.fio2 >= 0.95
+        && acceptedSettings.freshGasFlowLPerMin >= 10;
+      return {
+        ...base,
+        outcome: machineReady && endTidal >= 0.9 ? 'met'
+          : machineReady || endTidal >= 0.8 ? 'partly-met' : 'not-met',
+        finding: `Before propofol, accepted settings were oxygen ${(acceptedSettings.fio2 * 100).toFixed(0)}% and fresh-gas flow ${acceptedSettings.freshGasFlowLPerMin.toFixed(1)} L/min; end-tidal oxygen was ${endTidal.toFixed(2)}. This assesses a modeled machine endpoint, not mask seal or physical preoxygenation technique.`,
+        atTick: induction.tick,
+      } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'preoxygenate-before-induction') {
       const induction = actions.find(
         (action) => action.type === 'bolus' && action.payload.drugId === 'propofol',
@@ -2004,6 +2045,32 @@ export function objectiveFindings(
       } satisfies ObjectiveFinding;
     }
 
+    if (objective.id === 'protect-obstetric-apnea-margin') {
+      const induction = actions.find(
+        (action) => action.type === 'bolus' && action.payload.drugId === 'propofol',
+      );
+      if (!induction) {
+        return { ...base, outcome: 'not-exercised', finding: 'No propofol induction dose was recorded.' } satisfies ObjectiveFinding;
+      }
+      const airway = actions.find((action) => action.type === 'laryngoscopy');
+      const successful = airway ? log.find((entry) => entry.tick >= airway.tick
+        && entry.eventId.startsWith('laryngoscopy-') && entry.data?.intubated === true) : undefined;
+      const gasExchange = successful ? history.find((sample) => sample.tick > successful.tick
+        && Number(sample.state.respiratoryRateBpm ?? 0) > 0
+        && Number(sample.state.etco2MmHg ?? 0) >= 20) : undefined;
+      const relevant = history.filter((sample) => sample.tick >= induction.tick
+        && sample.tick <= (gasExchange?.tick ?? history.at(-1)?.tick ?? induction.tick));
+      const lowest = relevant.length > 0
+        ? Math.min(...relevant.map((sample) => Number(sample.state.spo2Percent ?? 100))) : 100;
+      return {
+        ...base,
+        outcome: gasExchange && lowest >= 95 ? 'met'
+          : lowest >= 92 ? 'partly-met' : 'not-met',
+        finding: `${gasExchange ? 'Delivered ventilation and sustained carbon dioxide returned' : 'Sustained gas exchange was not confirmed'}; the lowest maternal saturation after induction was ${lowest.toFixed(0)}%. The term-pregnancy reserve is one calibrated teaching profile, not an individual prediction.`,
+        atTick: gasExchange?.tick ?? relevant.at(-1)?.tick ?? induction.tick,
+      } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'protect-the-apnea-margin') {
       const lowest = Math.min(...history.map((sample) => sample.state.spo2Percent ?? 100));
       return {
@@ -2011,6 +2078,28 @@ export function objectiveFindings(
         outcome: lowest >= 92 ? 'met' : lowest >= 88 ? 'partly-met' : 'not-met',
         finding: `The lowest saturation during the session was ${lowest.toFixed(0)}%. `
           + 'Below 90% the oxyhaemoglobin dissociation curve is steep, so the remaining margin disappears quickly.',
+      } satisfies ObjectiveFinding;
+    }
+
+    if (objective.id === 'confirm-obstetric-ventilation') {
+      const airway = actions.find((action) => action.type === 'laryngoscopy');
+      if (!airway) {
+        return { ...base, outcome: 'not-exercised', finding: 'No attempt to secure the airway was recorded.' } satisfies ObjectiveFinding;
+      }
+      const successful = log.find((entry) => entry.tick >= airway.tick
+        && entry.eventId.startsWith('laryngoscopy-') && entry.data?.intubated === true);
+      const gasExchange = successful ? history.find((sample) => sample.tick > successful.tick
+        && Number(sample.state.respiratoryRateBpm ?? 0) > 0
+        && Number(sample.state.etco2MmHg ?? 0) >= 20) : undefined;
+      return {
+        ...base,
+        outcome: successful && gasExchange ? 'met' : successful ? 'partly-met' : 'not-met',
+        finding: successful
+          ? gasExchange
+            ? `The modeled tracheal placement was followed by delivered ventilation and sustained end-tidal carbon dioxide of ${Number(gasExchange.state.etco2MmHg ?? 0).toFixed(0)} mmHg.`
+            : 'The modeled tracheal placement succeeded, but subsequent delivered ventilation with sustained carbon dioxide was not confirmed.'
+          : 'No successful modeled tracheal placement was recorded. Gas exchange through another route does not confirm tracheal intubation.',
+        atTick: gasExchange?.tick ?? successful?.tick ?? airway.tick,
       } satisfies ObjectiveFinding;
     }
 

@@ -267,6 +267,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasBronchospasmResponse;
   const trays = hasCrisisResponse ? [...TRAYS, CRISIS_TRAY] : TRAYS;
   const hasRocuronium = props.scenario.formulary.some((entry) => entry.drugId === 'rocuronium');
+  const teachesNeuromuscularReversal = props.scenario.metadata.objectives.some((objective) => [
+    'reverse-observed-block', 'reverse-recovering-block', 'confirm-quantitative-recovery',
+  ].includes(objective.id));
   const hasArterialLineFault = props.scenario.timeline.some((event) => event.type === 'artifact'
     && ['arterial-damping', 'arterial-transducer-misleveled'].includes(event.target ?? ''));
   const hasCircuitFault = props.scenario.timeline.some((event) => event.type === 'equipment-failure'
@@ -309,7 +312,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
               onBolus={props.onBolus}
               onDrugCard={props.onDrugCard}
             />
-            {hasRocuronium && (
+            {hasRocuronium && teachesNeuromuscularReversal && (
               <NeuromuscularReversalTray
                 trainOfFourRatio={props.trainOfFourRatio ?? 1}
                 trainOfFourCount={props.trainOfFourCount ?? 4}

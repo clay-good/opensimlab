@@ -443,3 +443,17 @@
 - [ ] Add cooperation, distress, parental presence, premedication, mask technique, seal or leak,
   excitement, airway reflexes, volatile respiratory depression, consciousness, IV access, airway
   placement, movement, emergence, recovery, or individual anesthetic need.
+
+## Slice 30: bounded obstetric general anesthesia
+
+- [x] Check in an evidence brief covering the OAA/DAS preparation endpoint, pregnancy apnea
+  calibration context, current induction evidence, expert fixture, and unsafe inference boundaries.
+- [x] Add a twenty-seventh authored scenario with a bounded term-pregnancy respiratory profile,
+  end-tidal preoxygenation, induction ordering, modeled tube placement, and ventilation confirmation.
+- [x] Require successful modeled placement before post-attempt capnography can satisfy airway
+  confirmation, so facemask gas exchange after a failed attempt cannot earn false credit.
+- [x] Add curriculum and obstetric preparation-path coverage plus expert/no-action/unprepared/
+  paralysis-first/failed-airway/replay regressions.
+- [x] Complete catalog assets, route SEO, responsive browser inspection, and full CI.
+- [ ] Add fetal monitoring or physiology, delivery, aspiration, cricoid pressure, awareness,
+  neonatal effects, hemorrhage, emergence, extubation, physical airway technique, or team performance.

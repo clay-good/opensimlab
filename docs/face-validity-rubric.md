@@ -95,7 +95,8 @@ Reviewers run the routine induction themselves before answering.
 | B41 | During routine geriatric induction, five spaced 20 mg propofol increments produce a plausible delayed depth and pressure trajectory while preoxygenation and 6–8 mL/kg delivered ventilation preserve oxygenation | | |
 | B42 | After one 0.6 mg/kg rocuronium dose during established anesthesia, the quantitative teaching signal progresses through onset and recovery, rejects onset-phase reversal, and responds directionally to a recovery-depth-matched reversal branch | | |
 | B43 | In the pediatric inhalational-induction lesson, high fresh-gas flow produces visible vaporizer-to-end-tidal lag, age-adjusted MAC and predicted depth change together, and reducing delivery settles the bounded pressure and depth trends without changing the healthy-child gas-exchange baseline implausibly | | |
-| B44 | Overall: does this patient behave like a patient? | | |
+| B44 | In the obstetric general-anesthesia lesson, the calibrated term-pregnancy reserve fills with preoxygenation, the maternal saturation margin remains plausible through the declared induction and modeled airway interval, and confirmed ventilation restores sustained capnography | | |
+| B45 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -119,6 +120,9 @@ So that reviewers spend their attention on what this review is for:
   consciousness, IV access, airway placement, emergence, recovery, or individual anesthetic need.
 - Peripheral train-of-four is observable but does not guarantee conditions at the larynx.
 - The full-stomach case does not model regurgitation, aspiration, or cricoid pressure.
+- Obstetric general anesthesia uses one fixed term-pregnancy oxygen-reserve profile and stops after
+  initial ventilation. It does not model fetal status, delivery, aortocaval compression, maternal
+  awareness, neonatal drug effects, hemorrhage, emergence, extubation, or team performance.
 - Fresh gas flow scales calibrated volatile wash-in/washout and, only in the dedicated exhausted-
   absorbent case, a bounded rebreathing curve. There is no complete circuit, tissue-uptake,
   canister-chemistry, valve, acid-base, sympathetic-response, or agent-consumption model.

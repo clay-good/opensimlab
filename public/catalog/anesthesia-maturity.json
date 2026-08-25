@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "recordCount": 40,
+  "recordCount": 41,
   "records": [
     {
       "recordId": "scenario:routine-induction@0.1.0",
@@ -287,6 +287,17 @@
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#routine-pediatric-inhalational-induction@0.1.0",
         "/catalog/anesthesia-quality-audit.json#routine-pediatric-inhalational-induction@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:obstetric-general-anesthesia@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "obstetric-general-anesthesia",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#obstetric-general-anesthesia@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#obstetric-general-anesthesia@0.1.0"
       ]
     },
     {

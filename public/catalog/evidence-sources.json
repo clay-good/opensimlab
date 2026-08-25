@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 69,
+  "sourceCount": 72,
   "sources": [
     {
       "id": "association-qrh-2023",
@@ -835,6 +835,45 @@
       "usedFor": "The three alarm priorities and their visual language: high priority red flashing at 1.4 to 2.8 Hz, medium priority amber flashing at 0.4 to 0.8 Hz, low priority steady. The simulator follows the standard's conventions so the visual language a learner internalises here matches the equipment they meet clinically; it is not a certified medical device and does not claim conformity.",
       "verifiedAgainst": "Secondary engineering references describing the standard's priority colours and flash-rate bands. The standard itself is paywalled and was not read.",
       "verifiedOn": "2026-08-20"
+    },
+    {
+      "id": "mushambi-oaa-das-obstetric-airway-2015",
+      "pmid": "26449292",
+      "authors": "Mushambi MC, Kinsella SM, Popat M, Swales H, Ramaswamy KK, Winton AL, Quinn AC; Obstetric Anaesthetists’ Association; Difficult Airway Society",
+      "title": "Obstetric Anaesthetists’ Association and Difficult Airway Society guidelines for the management of difficult and failed tracheal intubation in obstetrics",
+      "publication": "Anaesthesia",
+      "year": 2015,
+      "locator": "70:1286-306",
+      "usedFor": "The obstetric general-anesthesia lesson’s end-tidal oxygen endpoint of at least 0.90, fresh-gas flow of at least 10 L/min during preoxygenation, preparation emphasis, and explicit boundary that mask seal and physical airway technique are not assessed.",
+      "verifiedAgainst": "NCBI E-utilities record, field by field",
+      "verifiedOn": "2026-08-24",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/26449292/"
+    },
+    {
+      "id": "mcclelland-pregnancy-apnoea-2008",
+      "pmid": "18289232",
+      "authors": "McClelland SH, Bogod DG, Hardman JG",
+      "title": "Apnoea in pregnancy: an investigation using physiological modelling",
+      "publication": "Anaesthesia",
+      "year": 2008,
+      "locator": "63:264-9",
+      "usedFor": "Calibration context for the fixed term-pregnancy respiratory profile: lower modeled apnea tolerance than non-pregnancy after near-complete denitrogenation. The published course is not presented as an individual prediction.",
+      "verifiedAgainst": "NCBI E-utilities record, field by field",
+      "verifiedOn": "2026-08-24",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/18289232/"
+    },
+    {
+      "id": "craig-obstetric-ga-umbrella-2026",
+      "pmid": "41987713",
+      "authors": "Craig R, Carnachan A, Mak KA, Beesley O, Borg Xuereb L, O’Carroll JE, et al.",
+      "title": "Best practice in obstetric general anaesthesia: an umbrella review of pharmacological strategies for induction of general anaesthesia",
+      "publication": "Anaesthesia",
+      "year": 2026,
+      "locator": "online ahead of print; doi:10.1111/anae.70214",
+      "usedFor": "Current context for propofol and rocuronium as available obstetric induction choices, and the important limitation that much of the evidence excluded high-risk pregnancies and emergencies.",
+      "verifiedAgainst": "NCBI E-utilities record, field by field",
+      "verifiedOn": "2026-08-24",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/41987713/"
     },
     {
       "id": "eppich-cheng-2015",

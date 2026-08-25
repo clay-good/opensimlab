@@ -587,6 +587,44 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     objectiveIds: ['protect-the-apnea-margin', 'secure-and-confirm'],
   },
 
+  // --- Obstetric general anesthesia -----------------------------------
+  {
+    scenarioId: 'obstetric-general-anesthesia',
+    frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['prepare-obstetric-oxygen-reserve', 'wait-for-intubating-block', 'protect-obstetric-apnea-margin'],
+  },
+  {
+    scenarioId: 'obstetric-general-anesthesia',
+    frameworkId: 'nbcrna-nce',
+    domainId: 'equipment-instrumentation-technology',
+    objectiveIds: ['prepare-obstetric-oxygen-reserve', 'confirm-obstetric-ventilation'],
+  },
+  {
+    scenarioId: 'obstetric-general-anesthesia',
+    frameworkId: 'coa-standards',
+    domainId: 'airway-management',
+    objectiveIds: ['protect-obstetric-apnea-margin', 'confirm-obstetric-ventilation'],
+  },
+  {
+    scenarioId: 'obstetric-general-anesthesia',
+    frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['prepare-obstetric-oxygen-reserve', 'wait-for-intubating-block'],
+  },
+  {
+    scenarioId: 'obstetric-general-anesthesia',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-preanesthetic-evaluation',
+    objectiveIds: ['prepare-obstetric-oxygen-reserve'],
+  },
+  {
+    scenarioId: 'obstetric-general-anesthesia',
+    frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-airway-management',
+    objectiveIds: ['wait-for-intubating-block', 'protect-obstetric-apnea-margin', 'confirm-obstetric-ventilation'],
+  },
+
   // --- Awareness under paralysis -----------------------------------------
   {
     scenarioId: 'awareness-under-paralysis',

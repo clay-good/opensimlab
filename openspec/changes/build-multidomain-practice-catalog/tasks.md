@@ -198,7 +198,7 @@ credited toward the catalog until every item in the completion contract passes.
 
 ## 8. Catalog production waves
 
-- [ ] Wave A: migrate and complete 39 anesthesia scenarios — 26 are authored and registered.
+- [ ] Wave A: migrate and complete 39 anesthesia scenarios — 27 are authored and registered.
 - [ ] Wave B: complete 25 emergency-medicine and 24 critical-care scenarios.
 - [ ] Wave C: complete 17 cardiology and 15 respiratory-medicine scenarios.
 - [ ] Wave D: complete 16 pediatric, 15 obstetric, and 11 neonatal scenarios.

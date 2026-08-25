@@ -89,12 +89,12 @@ export const PREPARATION_PATHS: readonly PreparationPathDefinition[] = [
     supportedRoles: ['Medical student', 'Resident', 'Nurse anesthesia learner'], limitations: `${BROWSER_LIMIT} These cases share one healthy 6-year-old teaching profile and do not assess physical airway skill.`,
   },
   {
-    id: 'obstetric-emergencies', version: '0.1.0', title: 'Obstetric emergencies',
-    description: 'Start with recognition and escalation of rapidly ascending neuraxial block.',
-    scenarioIds: ['high-spinal-after-epidural-top-up'],
+    id: 'obstetric-emergencies', version: '0.2.0', title: 'Obstetric emergencies',
+    description: 'Build a general-anesthesia preparation sequence, then recognize and support rapidly ascending neuraxial block.',
+    scenarioIds: ['obstetric-general-anesthesia', 'high-spinal-after-epidural-top-up'],
     prerequisites: ['Basic neuraxial-block concepts.'],
-    targetCompetencies: ['High-spinal recognition', 'Early escalation', 'Ventilatory support'],
-    supportedRoles: ['Medical student', 'Resident', 'Nurse anesthesia learner'], limitations: `${BROWSER_LIMIT} This development path currently contains one obstetric scenario.`,
+    targetCompetencies: ['Maternal oxygen reserve', 'Induction sequencing', 'High-spinal recognition', 'Early escalation', 'Ventilatory support'],
+    supportedRoles: ['Medical student', 'Resident', 'Nurse anesthesia learner'], limitations: `${BROWSER_LIMIT} These bounded cases do not model fetal status, delivery, or a complete obstetric anesthetic.`,
   },
   {
     id: 'medication-infusion-safety', version: '0.4.0', title: 'Medication and infusion safety',

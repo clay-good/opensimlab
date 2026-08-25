@@ -152,7 +152,7 @@ export const SCENARIO_SCHEMA: SchemaNode = {
           type: 'object', description: 'Respiratory reserve, which sets the safe apnoea time.',
           required: ['profile'],
           properties: {
-            profile: { type: 'string', description: 'Which gas-exchange profile this patient matches.', enum: ['healthy', 'moderately-ill', 'obese', 'healthy-child'] },
+            profile: { type: 'string', description: 'Which gas-exchange profile this patient matches.', enum: ['healthy', 'moderately-ill', 'obese', 'healthy-child', 'term-pregnancy'] },
           },
         },
       },

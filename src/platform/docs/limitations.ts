@@ -180,7 +180,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'that drives propofol induction hypotension.',
     correctUnderstanding: 'How fast you push it changes the peak plasma concentration and the '
       + 'haemodynamic response, sometimes more than how much you push.',
-    briefIn: ['routine-induction', 'routine-geriatric-induction'],
+    briefIn: ['routine-induction', 'routine-geriatric-induction', 'obstetric-general-anesthesia'],
   },
   {
     id: 'opioid-alone-hypnosis',
@@ -640,7 +640,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'a prediction for a real patient.',
     correctUnderstanding: 'Rocuronium onset and duration vary with dose, circulation, age, and '
       + 'patient factors. Quantitative monitoring, not elapsed time alone, measures recovery.',
-    briefIn: ['rapid-sequence-induction', 'quantitative-neuromuscular-reversal'],
+    briefIn: ['rapid-sequence-induction', 'quantitative-neuromuscular-reversal', 'obstetric-general-anesthesia'],
   },
   {
     id: 'tof-monitor-is-an-idealized-teaching-signal',
@@ -662,7 +662,7 @@ export const LIMITATIONS: readonly Limitation[] = [
     whereItMisleads: 'Treating a count of zero at the hand as proof of intubating conditions.',
     correctUnderstanding: 'Neuromuscular block develops and recovers differently across muscle '
       + 'groups. Peripheral monitoring informs timing but does not inspect the larynx.',
-    briefIn: ['rapid-sequence-induction'],
+    briefIn: ['rapid-sequence-induction', 'obstetric-general-anesthesia'],
   },
   {
     id: 'neuromuscular-reversal-is-bounded-without-emergence',
@@ -687,7 +687,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'prevented aspiration.',
     correctUnderstanding: 'Aspiration risk is the reason the airway plan changes. This simulator '
       + 'can exercise preparation and timing, not estimate that risk or reproduce the event.',
-    briefIn: ['rapid-sequence-induction'],
+    briefIn: ['rapid-sequence-induction', 'obstetric-general-anesthesia'],
   },
   {
     id: 'interaction-coefficient-calibrated',
@@ -775,6 +775,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Once oxygenation is restored, stop, reassess urgency and aspiration risk, '
       + 'and make an explicit next plan with the team using the applicable guideline.',
     briefIn: ['difficult-airway-supraglottic-rescue', 'repeated-laryngoscopy-harm'],
+  },
+  {
+    id: 'term-pregnancy-respiratory-profile-is-calibrated',
+    headline: 'Term pregnancy uses one calibrated oxygen-reserve profile, not individualized maternal physiology.',
+    simplification: 'One fixed profile reduces functional residual capacity and increases oxygen '
+      + 'consumption so apnea is less forgiving than in the healthy-adult profile. It does not vary '
+      + 'with gestation, position, body habitus, labor, disease, fetal state, or an individual airway.',
+    whereItMisleads: 'Using the displayed time to desaturation as a prediction for a pregnant patient, '
+      + 'or assuming the model contains the full respiratory and cardiovascular physiology of pregnancy.',
+    correctUnderstanding: 'Pregnancy reduces oxygen reserve and increases oxygen demand, but the '
+      + 'margin varies. Use direct monitoring, preparation, and the applicable obstetric airway plan.',
+    briefIn: ['obstetric-general-anesthesia'],
+  },
+  {
+    id: 'obstetric-general-anesthesia-stops-before-delivery',
+    headline: 'The obstetric general-anesthesia lesson stops after maternal gas exchange returns.',
+    simplification: 'There is no fetal monitor, uterine displacement, surgical incision, delivery, '
+      + 'cord clamping, volatile maintenance, uterine tone, hemorrhage, neonatal transition, drug '
+      + 'transfer, maternal awareness, emergence, extubation, or postoperative care.',
+    whereItMisleads: 'Treating a completed induction sequence as rehearsal of cesarean anesthesia '
+      + 'or as evidence about fetal, neonatal, hemorrhage, awareness, or recovery outcomes.',
+    correctUnderstanding: 'Obstetric general anesthesia is a multidisciplinary course extending '
+      + 'well beyond induction. This screen rehearses only preparation through initial ventilation.',
+    briefIn: ['obstetric-general-anesthesia'],
   },
   {
     id: 'high-spinal-injector-is-a-teaching-trajectory',
@@ -929,7 +953,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'called, when, and what you said.',
     correctUnderstanding: 'Crisis resource management is a team skill. This simulator cannot teach '
       + 'it and mannequin-based simulation remains necessary for it.',
-    briefIn: ['unexpected-intraoperative-hemorrhage', 'blood-bank-handoff'],
+    briefIn: ['unexpected-intraoperative-hemorrhage', 'blood-bank-handoff', 'obstetric-general-anesthesia'],
   },
   {
     id: 'parameters-unverified',

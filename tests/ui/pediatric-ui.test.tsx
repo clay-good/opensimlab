@@ -10,6 +10,7 @@ import { ConcentrationPanel } from '@anesthesia/ui/ConcentrationPanel';
 import { depthConfidenceFor } from '@anesthesia/ui/Cockpit';
 import { Prebrief } from '@anesthesia/ui/Prebrief';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
+import { OBSTETRIC_GENERAL_ANESTHESIA } from '@anesthesia/scenarios/obstetric-general-anesthesia';
 import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PrerenderedBody } from '../../src/routes/Prerendered';
@@ -61,7 +62,9 @@ describe('Requirement: pediatric controls expose their actual-weight conversions
   const button = (label: string) => [...container.querySelectorAll('button')]
     .find((entry) => entry.textContent?.trim() === label) as HTMLButtonElement | undefined;
 
-  function renderCockpit(onFluid = vi.fn(), scenario = CHILD_SCENARIO) {
+  function renderCockpit(
+    onFluid = vi.fn(), scenario: ActionCockpitProps['scenario'] = CHILD_SCENARIO,
+  ) {
     const props: ActionCockpitProps = {
       scenario,
       region: UNITED_STATES,
@@ -125,6 +128,12 @@ describe('Requirement: pediatric controls expose their actual-weight conversions
     renderCockpit(vi.fn(), { ...CHILD_SCENARIO, formulary: [] });
     expect(container.textContent).toContain('No syringes in this lesson');
     expect(container.textContent).toContain('Use Airway & Vent');
+  });
+
+  it('does not offer reversal in a rocuronium lesson that ends after induction', () => {
+    renderCockpit(vi.fn(), OBSTETRIC_GENERAL_ANESTHESIA);
+    expect(container.textContent).toContain('rocuronium');
+    expect(container.textContent).not.toContain('Neuromuscular reversal');
   });
 
   it('shows active model identity and opens its bundled source accessibly', () => {

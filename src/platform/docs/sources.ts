@@ -922,6 +922,47 @@ export const SOURCES: readonly Source[] = [
   },
 
   {
+    id: 'mushambi-oaa-das-obstetric-airway-2015',
+    pmid: '26449292',
+    authors: 'Mushambi MC, Kinsella SM, Popat M, Swales H, Ramaswamy KK, Winton AL, Quinn AC; Obstetric Anaesthetists’ Association; Difficult Airway Society',
+    title: 'Obstetric Anaesthetists’ Association and Difficult Airway Society guidelines for the management of difficult and failed tracheal intubation in obstetrics',
+    publication: 'Anaesthesia',
+    year: 2015,
+    locator: '70:1286-306',
+    usedFor: 'The obstetric general-anesthesia lesson’s end-tidal oxygen endpoint of at least 0.90, '
+      + 'fresh-gas flow of at least 10 L/min during preoxygenation, preparation emphasis, and '
+      + 'explicit boundary that mask seal and physical airway technique are not assessed.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-24',
+  },
+  {
+    id: 'mcclelland-pregnancy-apnoea-2008',
+    pmid: '18289232',
+    authors: 'McClelland SH, Bogod DG, Hardman JG',
+    title: 'Apnoea in pregnancy: an investigation using physiological modelling',
+    publication: 'Anaesthesia',
+    year: 2008,
+    locator: '63:264-9',
+    usedFor: 'Calibration context for the fixed term-pregnancy respiratory profile: lower modeled '
+      + 'apnea tolerance than non-pregnancy after near-complete denitrogenation. The published '
+      + 'course is not presented as an individual prediction.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-24',
+  },
+  {
+    id: 'craig-obstetric-ga-umbrella-2026',
+    pmid: '41987713',
+    authors: 'Craig R, Carnachan A, Mak KA, Beesley O, Borg Xuereb L, O’Carroll JE, et al.',
+    title: 'Best practice in obstetric general anaesthesia: an umbrella review of pharmacological strategies for induction of general anaesthesia',
+    publication: 'Anaesthesia',
+    year: 2026,
+    locator: 'online ahead of print; doi:10.1111/anae.70214',
+    usedFor: 'Current context for propofol and rocuronium as available obstetric induction choices, '
+      + 'and the important limitation that much of the evidence excluded high-risk pregnancies and emergencies.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-24',
+  },
+  {
     id: 'eppich-cheng-2015',
     pmid: '25710312',
     authors: 'Eppich W, Cheng A',

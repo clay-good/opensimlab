@@ -141,10 +141,13 @@ response, stopping before dysrhythmia treatment or cardiac arrest.
 - Add a twenty-sixth scenario for one healthy 6-year-old that separates circuit preparation,
   vaporizer delivery, end-tidal wash-in, age-adjusted MAC, and bounded response trends without
   claiming mask technique, consciousness, airway behavior, respiratory depression, or individual timing.
+- Add a twenty-seventh scenario for emergency cesarean delivery that connects a calibrated
+  term-pregnancy oxygen reserve, end-tidal preoxygenation, hypnotic-before-paralytic sequencing,
+  modeled tube placement, and confirmed ventilation without claiming a complete obstetric anesthetic.
 
 ## Impact
 
-These 29 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+These 30 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
 awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. The seventh also closes the bounded
 pediatric-family gap without claiming a general pediatric patient model. The eighth reaches the
 minimum count of 12 scenarios and closes the bounded difficult-airway rescue gap. The ninth closes
@@ -201,3 +204,8 @@ path. It makes the vaporizer-to-end-tidal lag, age-adjusted MAC, predicted depth
 saturation inspectable, while an intentional empty syringe tray directs attention to the machine.
 It does not claim cooperation, mask delivery, behavioral endpoints, consciousness, airway reflexes,
 volatile respiratory depression, IV access, physical airway skill, emergence, or individual need.
+The thirtieth adds the twenty-seventh authored scenario and the first bounded obstetric
+general-anesthesia sequence. One calibrated term-pregnancy reserve makes preparation and maternal
+oxygen margin inspectable; accepted induction order, modeled tube placement, and gas-exchange
+confirmation complete the screen. Fetal status, delivery, aspiration, cricoid pressure, awareness,
+neonatal effects, hemorrhage, emergence, and team performance remain excluded.

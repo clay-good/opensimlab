@@ -88,7 +88,7 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
     id: 'inside-the-module',
     heading: 'What is inside the anesthesia module',
     paragraphs: [
-      'This is an early build. It contains twenty-six scenarios — a routine induction on a healthy '
+      'This is an early build. It contains twenty-seven scenarios — a routine induction on a healthy '
       + 'adult, rapid desaturation in an obese patient, hypotension after induction, and '
       + 'bronchospasm after intubation with a region-aware inhaled bronchodilator response, plus unexpected intraoperative hemorrhage with crystalloid '
       + 'temporization, bounded adult packed-red-cell support, and a dilution-only coagulation panel with plasma support, rapid-sequence induction with modeled rocuronium onset, and silent TIVA-line '
@@ -111,6 +111,7 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
       + 'and a routine geriatric intravenous induction that makes oxygen reserve, small spaced propofol increments, effect-site delay, pressure, and early ventilation visible together '
       + 'and quantitative neuromuscular reversal during established anesthesia that separates onset from recovery, matches reversal to measured block depth, and confirms the resulting ratio '
       + 'and a pediatric inhalational-induction wash-in lesson that separates circuit preparation, vaporizer delivery, end-tidal agent, and bounded response trends '
+      + 'and an obstetric general-anesthesia sequence that connects maternal oxygen reserve, induction order, modeled tube placement, and confirmed ventilation '
       + '— with three drugs: population PK/PD for propofol and remifentanil, pediatric Paedfusor PK, '
       + 'a clearly labeled rocuronium teaching model, scripted cefazolin exposure, and dedicated '
       + 'epinephrine, dantrolene, benzodiazepine-class, lipid-emulsion, compression, and defibrillation crisis actions, the real monitor, the real design system, '

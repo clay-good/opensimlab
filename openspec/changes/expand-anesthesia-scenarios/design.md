@@ -489,3 +489,25 @@ machine preparation, a valid entered induction setting, observed end-tidal wash-
 0.5–3% reduction, and 60 seconds of bounded depth, pressure, and saturation. Cooperation, distress,
 parental presence, mask seal, breathing technique, excitement, airway reflexes, volatile respiratory
 depression, consciousness, IV access, airway placement, emergence, and individual need remain absent.
+
+## Slice 30: bounded obstetric general anesthesia
+
+The twenty-seventh authored scenario begins with one term patient requiring emergency cesarean
+delivery under general anesthesia. A new `term-pregnancy` respiratory profile uses lower functional
+residual capacity and higher oxygen consumption than the healthy-adult profile, calibrated only to
+the published direction and approximate pregnancy apnea course. The learner accepts at least 95%
+inspired oxygen and 10 L/min fresh-gas flow, reaches end-tidal oxygen of at least 0.90, gives the
+declared propofol action before rocuronium, waits for displayed count zero, performs one modeled
+airway attempt, and confirms subsequent delivered ventilation and capnography.
+
+In seed 1, the expert fixture prepares at 10 seconds, gives propofol at 90 seconds and rocuronium at
+91 seconds, begins video laryngoscopy at 99.2 seconds, records modeled placement at 121.2 seconds,
+and resumes 470 mL by 12 breaths/min ventilation. The 4-minute regression trace has a saturation
+nadir of 96.73% and ends near EtCO2 39.73 mmHg, MAP 65.56 mmHg, and predicted depth 46.04. These are
+teaching outputs, not individual timing, dose, or outcome recommendations.
+
+The debrief reconstructs pre-induction machine settings, reads the end-tidal value at induction,
+rejects paralysis-before-hypnosis, requires the displayed block signal before instrumentation, and
+does not accept capnography after a failed attempt as proof of tracheal placement. Fetal physiology,
+delivery, aspiration, cricoid pressure, awareness, neonatal effects, hemorrhage, emergence,
+extubation, physical technique, and team performance remain outside the model.

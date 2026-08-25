@@ -74,7 +74,7 @@ export interface ScenarioPatient {
     readonly difficultMaskVentilation: boolean;
     readonly assessment?: string;
   };
-  readonly respiratory: { readonly profile: 'healthy' | 'moderately-ill' | 'obese' | 'healthy-child' };
+  readonly respiratory: { readonly profile: 'healthy' | 'moderately-ill' | 'obese' | 'healthy-child' | 'term-pregnancy' };
 }
 
 export interface ScenarioEquipment {

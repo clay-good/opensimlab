@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 26,
+  "scenarioCount": 27,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -572,6 +572,28 @@
         "Reduce delivery as end-tidal agent accumulates and reassess the modeled response."
       ],
       "searchText": "routine-pediatric-inhalational-induction routine pediatric inhalational induction chronic otitis media with effusion bilateral myringotomy and tympanostomy tubes prepare oxygen and fresh-gas flow before starting volatile delivery. an accepted setting established at least 95% inspired oxygen and 6 l/min fresh-gas flow while the vaporizer remained off. follow end-tidal sevoflurane rather than treating the vaporizer dial as the patient concentration. after circuit preparation, accepted sevoflurane delivery stayed within the labeled 0–8% induction range and the recorded end-tidal concentration rose through 0.8 age-adjusted mac. reduce delivery as end-tidal agent accumulates and reassess the modeled response. after reaching the wash-in target, an accepted reduction to 0.5–3% was followed by 60 seconds with predicted depth 40–60, mean arterial pressure at least 55 mmhg, and oxygen saturation at least 92%."
+    },
+    {
+      "id": "obstetric-general-anesthesia",
+      "path": "/anesthesia/scenario/obstetric-general-anesthesia",
+      "title": "Obstetric general anesthesia",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 8,
+      "difficulty": "intermediate",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Reach an end-tidal oxygen endpoint before the first induction drug.",
+        "Give the hypnotic before paralysis, then allow the modeled block to develop.",
+        "Protect the smaller modeled oxygen margin during induction.",
+        "Resume delivered ventilation and confirm sustained gas exchange."
+      ],
+      "searchText": "obstetric-general-anesthesia obstetric general anesthesia term pregnancy with persistent fetal bradycardia emergency cesarean delivery under general anesthesia reach an end-tidal oxygen endpoint before the first induction drug. at least 95% inspired oxygen and 10 l/min fresh-gas flow were accepted, and end-tidal oxygen reached at least 0.90 before propofol. give the hypnotic before paralysis, then allow the modeled block to develop. propofol preceded rocuronium, and the train-of-four count reached zero before laryngoscopy. protect the smaller modeled oxygen margin during induction. maternal oxygen saturation remained at or above 95% from the first induction drug until gas exchange returned. resume delivered ventilation and confirm sustained gas exchange. successful modeled tracheal placement was followed by delivered ventilation and sustained capnography."
     }
   ],
   "preparationPathCount": 10,
@@ -771,16 +793,19 @@
     },
     {
       "id": "obstetric-emergencies",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Obstetric emergencies",
-      "description": "Start with recognition and escalation of rapidly ascending neuraxial block.",
+      "description": "Build a general-anesthesia preparation sequence, then recognize and support rapidly ascending neuraxial block.",
       "scenarioIds": [
+        "obstetric-general-anesthesia",
         "high-spinal-after-epidural-top-up"
       ],
       "prerequisites": [
         "Basic neuraxial-block concepts."
       ],
       "targetCompetencies": [
+        "Maternal oxygen reserve",
+        "Induction sequencing",
         "High-spinal recognition",
         "Early escalation",
         "Ventilatory support"
@@ -790,8 +815,8 @@
         "Resident",
         "Nurse anesthesia learner"
       ],
-      "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance. This development path currently contains one obstetric scenario.",
-      "estimatedMinutes": 8
+      "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance. These bounded cases do not model fetal status, delivery, or a complete obstetric anesthetic.",
+      "estimatedMinutes": 16
     },
     {
       "id": "medication-infusion-safety",

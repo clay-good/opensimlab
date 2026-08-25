@@ -76,7 +76,7 @@ export interface RespiratoryProfile {
 }
 
 /** The three profiles the Benumof benchmark is stated for. */
-export const RESPIRATORY_PROFILES: Record<'healthy' | 'moderately-ill' | 'obese', RespiratoryProfile> = {
+export const RESPIRATORY_PROFILES: Record<'healthy' | 'moderately-ill' | 'obese' | 'term-pregnancy', RespiratoryProfile> = {
   // A healthy 70 kg adult.
   healthy: {
     frcLitres: 2.5, vo2LitresPerMin: 0.25, vco2LitresPerMin: 0.2, deadSpaceMl: 150,
@@ -94,6 +94,14 @@ export const RESPIRATORY_PROFILES: Record<'healthy' | 'moderately-ill' | 'obese'
     frcLitres: 1.3, vo2LitresPerMin: 0.39, vco2LitresPerMin: 0.3, deadSpaceMl: 180,
     co2StoreMlPerMmHg: CO2_STORE_ML_PER_MMHG,
     spontaneousTidalVolumeMl: 500, spontaneousRespiratoryRateBpm: 14, aaGradientMmHg: 30,
+  },
+  // One term-pregnancy teaching profile. Reduced reserve and increased oxygen
+  // consumption are calibrated against the pregnancy apnoea course reported by
+  // McClelland, Bogod and Hardman (2008; PMID 18289232), not a patient forecast.
+  'term-pregnancy': {
+    frcLitres: 2.0, vo2LitresPerMin: 0.30, vco2LitresPerMin: 0.24, deadSpaceMl: 150,
+    co2StoreMlPerMmHg: CO2_STORE_ML_PER_MMHG,
+    spontaneousTidalVolumeMl: 500, spontaneousRespiratoryRateBpm: 14, aaGradientMmHg: 12,
   },
 };
 
