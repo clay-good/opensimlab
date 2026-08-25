@@ -816,6 +816,29 @@ export interface ActionCockpitProps {
       readonly dispositionDetermined: false;
       readonly outcomePredicted: false;
     };
+    readonly postTensionPneumothoraxAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly drainageResponseAtTick: number | null;
+      readonly systemAtTick: number | null;
+      readonly etiologyAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true;
+      readonly priorTensionPhysiologyAuthored: true;
+      readonly experiencedTeamDrainageAuthored: true;
+      readonly decompressionPerformedByLearner: false;
+      readonly chestDrainPlacedByLearner: false;
+      readonly drainManipulatedByLearner: false;
+      readonly suctionOrClampSelected: false;
+      readonly deviceOrSiteSelected: false;
+      readonly oxygenDeliveredByLearner: false;
+      readonly medicationDeliveredByLearner: false;
+      readonly testAcquiredByLearner: false;
+      readonly procedurePerformedByLearner: false;
+      readonly treatmentDeliveredByLearner: false;
+      readonly dispositionDetermined: false;
+      readonly recurrencePredicted: false;
+      readonly outcomePredicted: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1293,6 +1316,13 @@ export interface ActionCockpitProps {
       | 'activate-ape-airway-capable-escalation'
       | 'handoff-ape-respiratory-support-reassessment',
   ) => void;
+  readonly onPostTensionPneumothoraxResponse?: (
+    action: 'reconcile-spontaneous-tension-pneumothorax-trajectory-and-prior-care'
+      | 'review-spontaneous-tension-pneumothorax-drainage-response'
+      | 'review-spontaneous-tension-pneumothorax-drain-system-and-complications'
+      | 'review-spontaneous-tension-pneumothorax-etiology-recurrence-and-definitive-planning'
+      | 'handoff-spontaneous-tension-pneumothorax-post-drainage-reassessment',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1594,6 +1624,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'acute-pulmonary-edema-respiratory-support-reassessment',
     ),
+    hasPostTensionPneumothoraxResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'spontaneous-tension-pneumothorax-post-drainage-reassessment',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1717,6 +1751,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'post-pulmonary-embolism-persistent-dyspnea-reassessment')
       || (event.type === 'narrative'
         && event.target === 'acute-pulmonary-edema-respiratory-support-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'spontaneous-tension-pneumothorax-post-drainage-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1771,7 +1807,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasTranscutaneousPacingCaptureResponse,
     hasAcuteSevereAsthmaResponse,
     hasCopdTransitionResponse, hasCapHypoxemiaResponse, hasPostPeDyspneaResponse,
-    hasApeSupportResponse,
+    hasApeSupportResponse, hasPostTensionPneumothoraxResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1837,7 +1873,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasRightVentricularInfarctionResponse || hasHypertensiveEmergencyResponse
     || hasPacemakerCaptureFailureResponse || hasTranscutaneousPacingCaptureResponse
     || hasAcuteSevereAsthmaResponse || hasCopdTransitionResponse || hasCapHypoxemiaResponse
-    || hasPostPeDyspneaResponse || hasApeSupportResponse;
+    || hasPostPeDyspneaResponse || hasApeSupportResponse || hasPostTensionPneumothoraxResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1868,7 +1904,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasApeSupportResponse
+  const responseTray = hasPostTensionPneumothoraxResponse
+    ? { id: 'crisis', label: 'Pleural recovery review' } as const
+    : hasApeSupportResponse
     ? { id: 'crisis', label: 'Pulmonary edema reassessment' } as const
     : hasPostPeDyspneaResponse
     ? { id: 'crisis', label: 'Post-PE breathlessness' } as const
@@ -2087,6 +2125,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasCapHypoxemiaResponse
     || hasPostPeDyspneaResponse
     || hasApeSupportResponse
+    || hasPostTensionPneumothoraxResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2687,6 +2726,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasApeSupportResponse && (
               <ApeSupportTray assessment={props.resuscitation.apeSupportAssessment}
                 onAction={props.onApeSupportResponse ?? (() => {})} />
+            )}
+            {hasPostTensionPneumothoraxResponse && (
+              <PostTensionPneumothoraxTray
+                assessment={props.resuscitation.postTensionPneumothoraxAssessment}
+                onAction={props.onPostTensionPneumothoraxResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -7008,6 +7052,42 @@ function ApeSupportTray({ assessment, onAction }: {
         <Button className="crisis-drug__action" disabled={!escalation || handoff} onClick={() => onAction('handoff-ape-respiratory-support-reassessment')}>Hand off active respiratory failure</Button>
       </div>
       <p className="field__hint">No interface, oxygen, pressure, PEEP, ventilator setting, drug, dose, airway procedure, later response, disposition, prognosis, resolution, or outcome is chosen here.</p>
+    </section>
+  </div>;
+}
+
+function PostTensionPneumothoraxTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['postTensionPneumothoraxAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onPostTensionPneumothoraxResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const response = assessment?.drainageResponseAtTick != null;
+  const system = assessment?.systemAtTick != null;
+  const etiology = assessment?.etiologyAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="post-tension-trajectory-title">
+      <div id="post-tension-trajectory-title" className="syringe__name">Relief is the start of the next watch.</div>
+      <Badge kind="teaching">6 hours after experienced-team drainage</Badge>
+      <div className="syringe__meta">prior tension · current safety · response without certainty</div>
+      <p className="syringe__remaining" role="status">{response ? 'Improvement reviewed · durable recovery remains open' : trajectory ? 'Prior rescue reconciled · review the patient now' : 'Start with the event, rescue + trajectory'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={trajectory} onClick={() => onAction('reconcile-spontaneous-tension-pneumothorax-trajectory-and-prior-care')}>Reconcile tension event + prior care</Button>
+        <Button className="crisis-drug__action" disabled={!trajectory || response} onClick={() => onAction('review-spontaneous-tension-pneumothorax-drainage-response')}>Review post-drainage response</Button>
+      </div>
+      <p className="field__hint">The presentation, examination, drainage, radiograph, and current findings are authored. Improvement does not prove full re-expansion, durable drain function, or resolution.</p>
+    </section>
+    <section className="syringe" aria-labelledby="post-tension-ownership-title">
+      <div id="post-tension-ownership-title" className="syringe__name">Keep the pleural story gently held.</div>
+      <Badge kind="teaching">drain watch · air leak · preferences · named owners</Badge>
+      <div className="syringe__meta">parallel review · change triggers · definitive planning</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Unresolved pleural work handed off' : system && etiology ? 'Both lanes complete · advance time before handoff' : response ? 'Open both the system + planning lanes' : 'Review the current response first'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={!response || system} onClick={() => onAction('review-spontaneous-tension-pneumothorax-drain-system-and-complications')}>Review drain system + complications</Button>
+        <Button className="crisis-drug__action" disabled={!response || etiology} onClick={() => onAction('review-spontaneous-tension-pneumothorax-etiology-recurrence-and-definitive-planning')}>Review causes + definitive planning</Button>
+        <Button className="crisis-drug__action" disabled={!system || !etiology || handoff} onClick={() => onAction('handoff-spontaneous-tension-pneumothorax-post-drainage-reassessment')}>Hand off unresolved pleural work</Button>
+      </div>
+      <p className="field__hint">No drain inspection or manipulation, suction, clamp, flush, device, site, oxygen target, drug, procedure, pleurodesis, surgery, disposition, prognosis, recurrence, resolution, or outcome is chosen.</p>
     </section>
   </div>;
 }

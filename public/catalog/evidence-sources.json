@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 137,
+  "sourceCount": 139,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -1759,6 +1759,28 @@
       "locator": "153:e977-e1051; doi:10.1161/CIR.0000000000001415; sections 5.1.1 and 6.1",
       "usedFor": "The post-PE persistent-symptom boundary: structured follow-up by 3 months, evaluation after at least 3 months of therapeutic anticoagulation, echo plus lung-perfusion context, continued anticoagulation ownership during evaluation, and qualified CTEPD referral without browser diagnosis or treatment selection.",
       "verifiedAgainst": "https://professional.heart.org/en/guidelines-statements/2026-ahaaccaccpchestscaishmsirsvmsvn-guideline-for-the-evaluation-andcir0000000000001415 and official Circulation guideline PDF",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "bts-pleural-disease-guideline-2023",
+      "authors": "Roberts ME, Rahman NM, Maskell NA, et al",
+      "title": "British Thoracic Society Guideline for pleural disease",
+      "publication": "Thorax",
+      "year": 2023,
+      "locator": "78(Suppl 3):s1-s42; doi:10.1136/thorax-2022-219784; spontaneous-pneumothorax recommendations",
+      "usedFor": "The post-tension-pneumothorax boundary: symptoms and physiologic compromise matter more than size alone, and a tension presentation can make recurrence-prevention and thoracic-surgical review important without selecting one automatic procedure.",
+      "verifiedAgainst": "https://thorax.bmj.com/content/78/Suppl_3/s1",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "ers-eacts-ests-spontaneous-pneumothorax-guideline-2024",
+      "authors": "Walker S, Hallifax R, Ricciardi S, et al",
+      "title": "Joint ERS/EACTS/ESTS clinical practice guidelines on adults with spontaneous pneumothorax",
+      "publication": "European Respiratory Journal",
+      "year": 2024,
+      "locator": "63:2300797; doi:10.1183/13993003.00797-2023",
+      "usedFor": "The individualized post-drainage boundary: spontaneous-pneumothorax management and recurrence-prevention decisions require specialist and patient-centered review, while evidence for persistent-air-leak interventions remains limited.",
+      "verifiedAgainst": "https://publications.ersnet.org/content/erj/63/5/2300797",
       "verifiedOn": "2026-08-25"
     }
   ]

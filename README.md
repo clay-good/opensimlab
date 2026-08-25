@@ -5,7 +5,7 @@ nurse anesthetists — anywhere in the world, on any device, with or without a n
 
 **opensimlab.com/anesthesia** is the first complete 39-scenario module. Emergency medicine is complete at `/emergency-medicine` with 25 bounded labs. Critical care is complete at `/critical-care` with 24 bounded labs. Cardiology is complete at `/cardiology` with 17 bounded labs spanning coronary care, heart failure, shock, arrhythmias, conduction, pacing, pericardial disease, infarction, and hypertensive emergency.
 
-Respiratory Medicine is now playable at `/respiratory-medicine` with 5 bounded labs: acute severe asthma, post-exacerbation COPD recovery-versus-readiness, hypoxemic community-acquired pneumonia, persistent dyspnea after pulmonary embolism, and progressive respiratory failure during initial support for acute pulmonary edema.
+Respiratory Medicine is now playable at `/respiratory-medicine` with 6 bounded labs: acute severe asthma, post-exacerbation COPD recovery-versus-readiness, hypoxemic community-acquired pneumonia, persistent dyspnea after pulmonary embolism, progressive respiratory failure during initial support for acute pulmonary edema, and post-drainage reassessment after a spontaneous tension pneumothorax.
 
 The goal is not a tech demo. It is the best anesthesia education on the internet: the
 thing a student opens the night before their first day in the OR and comes out of
@@ -13,7 +13,8 @@ understanding something they did not understand before.
 
 Physical simulation labs cost hundreds of thousands of dollars, require physical
 attendance, and are bottlenecked by scheduling. Open Sim Lab is free, needs no login or
-install, runs entirely in the browser, works offline, and sends nothing anywhere.
+install, runs in the browser, and works offline. Practice data stays local. A problem report is sent
+only after the learner opens the report form, previews what will be shared, and explicitly submits it.
 
 > **Not for clinical use.** Open Sim Lab is an educational simulator. It is not a clinical
 > decision-support tool, not a dosing calculator, and not validated for any decision
@@ -35,8 +36,8 @@ nothing fetched at build or runtime. Tests assert published reference values so 
 digit fails immediately.
 
 **Practice stays on the device.** No login, accounts, analytics, or telemetry. Progress,
-transcripts, reflections, tutoring, and debriefs stay in the browser. The current build sends
-nothing; a future report service may receive only a report the user previews and explicitly sends.
+transcripts, reflections, tutoring, and debriefs stay in the browser. The report service receives
+only a problem report the user previews and explicitly sends.
 
 **Clinical claims are sourced, gated, and correctable.** The editorial board is currently empty,
 so no clinical content is signed and the release gate says so. Crisis protocols trace to their

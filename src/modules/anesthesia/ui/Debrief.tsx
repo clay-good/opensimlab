@@ -4356,6 +4356,24 @@ export function objectiveFindings(
       const ordered = escalation && handoff && escalation.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved active failure, support context, hemodynamics, congestion, causes, triggers, and owners without inventing response or outcome.' : 'The active-failure handoff was absent or did not follow escalation after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-spontaneous-tension-pneumothorax-trajectory-and-prior-care',
+      'review-spontaneous-tension-pneumothorax-drainage-response',
+      'review-spontaneous-tension-pneumothorax-drain-system-and-complications',
+      'review-spontaneous-tension-pneumothorax-etiology-recurrence-and-definitive-planning',
+      'handoff-spontaneous-tension-pneumothorax-post-drainage-reassessment'].includes(objective.id)) {
+      const trajectory = log.find((event) => /^post-tension-pneumothorax-trajectory-reconciled-\d+$/.test(event.eventId));
+      const response = log.find((event) => /^post-tension-pneumothorax-drainage-response-reviewed-\d+$/.test(event.eventId));
+      const system = log.find((event) => /^post-tension-pneumothorax-system-reviewed-\d+$/.test(event.eventId));
+      const etiology = log.find((event) => /^post-tension-pneumothorax-etiology-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^post-tension-pneumothorax-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-spontaneous-tension-pneumothorax-trajectory-and-prior-care') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'The spontaneous tension event, experienced-team drainage, and current trajectory were reconciled without claiming learner-delivered care.' : 'The tension event, prior care, and trajectory were not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-spontaneous-tension-pneumothorax-drainage-response') { const ordered = trajectory && response && trajectory.tick <= response.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Current safety and fixed post-drainage findings supported improvement without proving durable drain function or resolution.' : 'Current safety and drainage response review was absent or preceded trajectory reconciliation.', atTick: response?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-spontaneous-tension-pneumothorax-drain-system-and-complications') { const ordered = response && system && response.tick <= system.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The authored drain-system record, persistent-air-leak questions, complications, and deterioration triggers were reviewed without manipulating the drain.' : 'Drain-system and complication review was absent or preceded the response review.', atTick: system?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-spontaneous-tension-pneumothorax-etiology-recurrence-and-definitive-planning') { const ordered = response && etiology && response.tick <= etiology.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Cause, recurrence-prevention priorities, patient preferences, and specialist ownership were reviewed without choosing a procedure.' : 'Definitive-planning review was absent or preceded the response review.', atTick: etiology?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = system && etiology && handoff
+        && Math.max(system.tick, etiology.tick) < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved the prior event, current safety, unresolved pleural work, change triggers, preferences, and owners without inventing recurrence or outcome.' : 'The unresolved-work handoff was absent or did not follow both review lanes after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

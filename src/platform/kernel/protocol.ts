@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 103 reports COPD transition reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 106;
+export const WORKER_PROTOCOL_VERSION = 107;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -905,6 +905,29 @@ export interface EquipmentSnapshot {
       readonly airwayProcedurePerformedByLearner: false;
       readonly treatmentDeliveredByLearner: false;
       readonly dispositionDetermined: false;
+      readonly outcomePredicted: false;
+    };
+    readonly postTensionPneumothoraxAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly drainageResponseAtTick: number | null;
+      readonly systemAtTick: number | null;
+      readonly etiologyAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true;
+      readonly priorTensionPhysiologyAuthored: true;
+      readonly experiencedTeamDrainageAuthored: true;
+      readonly decompressionPerformedByLearner: false;
+      readonly chestDrainPlacedByLearner: false;
+      readonly drainManipulatedByLearner: false;
+      readonly suctionOrClampSelected: false;
+      readonly deviceOrSiteSelected: false;
+      readonly oxygenDeliveredByLearner: false;
+      readonly medicationDeliveredByLearner: false;
+      readonly testAcquiredByLearner: false;
+      readonly procedurePerformedByLearner: false;
+      readonly treatmentDeliveredByLearner: false;
+      readonly dispositionDetermined: false;
+      readonly recurrencePredicted: false;
       readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */

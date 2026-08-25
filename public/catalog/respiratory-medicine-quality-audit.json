@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "respiratory-medicine",
-  "scenarioCount": 5,
+  "scenarioCount": 6,
   "playableScenarioCount": 0,
   "scenarios": [
     {
@@ -179,6 +179,42 @@
           "status": "missing",
           "evidence": [
             "No version-bound state-space-verification record exists for acute-pulmonary-edema-respiratory-support-reassessment 0.1.0."
+          ]
+        }
+      ],
+      "playable": false
+    },
+    {
+      "scenarioId": "spontaneous-tension-pneumothorax-post-drainage-reassessment",
+      "contentVersion": "0.1.0",
+      "completionComplete": false,
+      "qualityRecords": [
+        {
+          "kind": "training-value",
+          "status": "missing",
+          "evidence": [
+            "No version-bound training-value record exists for spontaneous-tension-pneumothorax-post-drainage-reassessment 0.1.0."
+          ]
+        },
+        {
+          "kind": "authored-defaults",
+          "status": "missing",
+          "evidence": [
+            "No version-bound authored-defaults record exists for spontaneous-tension-pneumothorax-post-drainage-reassessment 0.1.0."
+          ]
+        },
+        {
+          "kind": "scenario-hazard",
+          "status": "missing",
+          "evidence": [
+            "No version-bound scenario-hazard record exists for spontaneous-tension-pneumothorax-post-drainage-reassessment 0.1.0."
+          ]
+        },
+        {
+          "kind": "state-space-verification",
+          "status": "missing",
+          "evidence": [
+            "No version-bound state-space-verification record exists for spontaneous-tension-pneumothorax-post-drainage-reassessment 0.1.0."
           ]
         }
       ],

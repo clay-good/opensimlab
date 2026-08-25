@@ -76,6 +76,7 @@ const COPD_TRANSITION_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTI
 const CAP_HYPOXEMIA_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 const POST_PE_DYSPNEA_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 const APE_SUPPORT_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
+const POST_TENSION_PNEUMOTHORAX_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -656,6 +657,11 @@ export class AnesthesiaEngine {
   private apeSupportWholePatientAtTick: number | null = null;
   private apeSupportEscalationAtTick: number | null = null;
   private apeSupportHandoffAtTick: number | null = null;
+  private postTensionPneumothoraxTrajectoryAtTick: number | null = null;
+  private postTensionPneumothoraxDrainageResponseAtTick: number | null = null;
+  private postTensionPneumothoraxSystemAtTick: number | null = null;
+  private postTensionPneumothoraxEtiologyAtTick: number | null = null;
+  private postTensionPneumothoraxHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -948,6 +954,16 @@ export class AnesthesiaEngine {
     if (apeSupport && APE_SUPPORT_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `ape-support-generic-action-refused-${this.currentTick}`,
         'This reassessment-only pulmonary edema lesson does not expose generic testing, treatment, oxygen, airway, ventilator, procedure, rhythm, artifact, or crisis-injection actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const postTensionPneumothorax = this.scenario.timeline.some((event) =>
+      event.type === 'narrative'
+        && event.target === 'spontaneous-tension-pneumothorax-post-drainage-reassessment');
+    if (postTensionPneumothorax
+      && POST_TENSION_PNEUMOTHORAX_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `post-tension-pneumothorax-generic-action-refused-${this.currentTick}`,
+        'This review-only post-drainage lesson does not expose generic testing, treatment, oxygen, airway, ventilator, pleural procedure, rhythm, artifact, or crisis-injection actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -5167,6 +5183,46 @@ export class AnesthesiaEngine {
         this.apeSupportHandoffAtTick = this.currentTick;
         this.log('critical', 'assessment', `ape-support-handoff-recorded-${this.currentTick}`, 'Active respiratory failure, reported NIV and oxygen context, current hemodynamics and perfusion, persistent congestion, open causes, deterioration triggers, rescue readiness, and named experienced owners were handed off. No later response, intubation, disposition, prognosis, resolution, or outcome was invented.', { airwayProcedurePerformedByLearner: false, treatmentDeliveredByLearner: false, dispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'spontaneous-tension-pneumothorax-post-drainage-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'spontaneous-tension-pneumothorax-post-drainage-reassessment');
+        const valid = ['reconcile-spontaneous-tension-pneumothorax-trajectory-and-prior-care',
+          'review-spontaneous-tension-pneumothorax-drainage-response',
+          'review-spontaneous-tension-pneumothorax-drain-system-and-complications',
+          'review-spontaneous-tension-pneumothorax-etiology-recurrence-and-definitive-planning',
+          'handoff-spontaneous-tension-pneumothorax-post-drainage-reassessment'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `post-tension-pneumothorax-response-refused-${this.currentTick}`, supported ? 'The post-drainage pneumothorax action was not one of the listed choices. Nothing changed.' : 'These post-drainage pneumothorax choices are available only in the declared Respiratory Medicine lesson.'); break; }
+        if (response === 'reconcile-spontaneous-tension-pneumothorax-trajectory-and-prior-care') {
+          if (this.postTensionPneumothoraxTrajectoryAtTick !== null) { this.log('warning', 'assessment', `post-tension-pneumothorax-trajectory-refused-${this.currentTick}`, 'The tension event, experienced-team drainage, and current trajectory were already reconciled.'); break; }
+          this.postTensionPneumothoraxTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment', `post-tension-pneumothorax-trajectory-reconciled-${this.currentTick}`, 'The spontaneous tension-pneumothorax presentation, experienced-team emergency treatment and right pleural-drain placement, and current improvement were reconciled. No diagnosis, examination, oxygen, drainage, procedure, or treatment was learner-performed.', { initialPulsePresent: true, priorTensionPhysiologyAuthored: true, experiencedTeamDrainageAuthored: true, decompressionPerformedByLearner: false, chestDrainPlacedByLearner: false, oxygenDeliveredByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.postTensionPneumothoraxTrajectoryAtTick === null) { this.log('warning', 'assessment', `post-tension-pneumothorax-trajectory-order-refused-${this.currentTick}`, 'Reconcile the tension event, prior drainage, and trajectory before reviewing the current response.'); break; }
+        if (response === 'review-spontaneous-tension-pneumothorax-drainage-response') {
+          if (this.postTensionPneumothoraxDrainageResponseAtTick !== null) { this.log('warning', 'assessment', `post-tension-pneumothorax-response-review-refused-${this.currentTick}`, 'The current safety and fixed drainage response were already reviewed.'); break; }
+          this.postTensionPneumothoraxDrainageResponseAtTick = this.currentTick;
+          this.log('critical', 'assessment', `post-tension-pneumothorax-drainage-response-reviewed-${this.currentTick}`, 'Improved symptoms, alert full-sentence speech, HR 96/min, RR 22/min, BP 108/64 mmHg, SpO₂ 93% on room air, warm perfusion, improved but reduced right air entry, and partial re-expansion on the fixed report were reviewed. These findings do not prove durable drain function, full re-expansion, or resolution.', { examinationPerformedByLearner: false, testAcquiredByLearner: false, imagingInterpretedByLearner: false, resolutionEstablished: false }); break;
+        }
+        if (this.postTensionPneumothoraxDrainageResponseAtTick === null) { this.log('warning', 'assessment', `post-tension-pneumothorax-drainage-response-order-refused-${this.currentTick}`, 'Review the current safety and fixed drainage response before opening the drain-system or planning lanes.'); break; }
+        if (response === 'review-spontaneous-tension-pneumothorax-drain-system-and-complications') {
+          if (this.postTensionPneumothoraxSystemAtTick !== null) { this.log('warning', 'assessment', `post-tension-pneumothorax-system-refused-${this.currentTick}`, 'The authored drain system, persistent air leak, complications, and change triggers were already reviewed.'); break; }
+          this.postTensionPneumothoraxSystemAtTick = this.currentTick;
+          this.log('warning', 'assessment', `post-tension-pneumothorax-system-reviewed-${this.currentTick}`, 'The fixed observation record reports bottle position, connection, respiratory swing, intermittent bubbling, and an intact site dressing. Persistent air leak, loss of patency, failure of re-expansion, enlarging subcutaneous emphysema, bleeding, infection, recurrent tension physiology, and other complications remain active review and escalation triggers.', { drainInspectedByLearner: false, drainManipulatedByLearner: false, suctionOrClampSelected: false, deviceOrSiteSelected: false, procedurePerformedByLearner: false }); break;
+        }
+        if (response === 'review-spontaneous-tension-pneumothorax-etiology-recurrence-and-definitive-planning') {
+          if (this.postTensionPneumothoraxEtiologyAtTick !== null) { this.log('warning', 'assessment', `post-tension-pneumothorax-etiology-refused-${this.currentTick}`, 'Cause, recurrence-prevention priorities, preferences, and definitive planning were already reviewed.'); break; }
+          this.postTensionPneumothoraxEtiologyAtTick = this.currentTick;
+          this.log('warning', 'assessment', `post-tension-pneumothorax-etiology-reviewed-${this.currentTick}`, 'Emphysema is relevant authored context, while other secondary causes and the full individualized evaluation remain open. Recurrence prevention matters after a tension presentation, so patient priorities and pleural and thoracic ownership were recorded without selecting aspiration, pleurodesis, thoracoscopy, surgery, another intervention, or an outcome.', { causeAssigned: false, recurrencePredicted: false, treatmentSelected: false, procedurePerformedByLearner: false }); break;
+        }
+        if (this.postTensionPneumothoraxSystemAtTick === null
+          || this.postTensionPneumothoraxEtiologyAtTick === null) { this.log('warning', 'assessment', `post-tension-pneumothorax-handoff-order-refused-${this.currentTick}`, 'Complete both the drain-system and definitive-planning lanes before handoff.'); break; }
+        if (this.currentTick <= Math.max(this.postTensionPneumothoraxSystemAtTick,
+          this.postTensionPneumothoraxEtiologyAtTick)) { this.log('warning', 'assessment', `post-tension-pneumothorax-handoff-time-refused-${this.currentTick}`, 'Allow a later simulated tick before handing off the unresolved pleural work.'); break; }
+        if (this.postTensionPneumothoraxHandoffAtTick !== null) { this.log('warning', 'assessment', `post-tension-pneumothorax-handoff-refused-${this.currentTick}`, 'The post-drainage pneumothorax handoff was already recorded.'); break; }
+        this.postTensionPneumothoraxHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `post-tension-pneumothorax-handoff-recorded-${this.currentTick}`, 'The prior spontaneous tension event, experienced-team drainage, current safety, fixed drain and imaging reports, persistent-air-leak and complication questions, recurrence-prevention priorities, deterioration triggers, patient preferences, and pleural and thoracic owners were handed off. No drain action, procedure, treatment, disposition, prognosis, recurrence, resolution, or outcome was determined.', { drainManipulatedByLearner: false, procedurePerformedByLearner: false, treatmentDeliveredByLearner: false, dispositionDetermined: false, recurrencePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -7902,6 +7958,12 @@ export class AnesthesiaEngine {
         spo2Percent: 86, etco2MmHg: 60, systolicMmHg: 108, diastolicMmHg: 68,
         meanArterialMmHg: 81, coreTemperatureC: 36.8 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'spontaneous-tension-pneumothorax-post-drainage-reassessment')) {
+      crisisState = { ...crisisState, heartRateBpm: 96, respiratoryRateBpm: 22,
+        spo2Percent: 93, systolicMmHg: 108, diastolicMmHg: 64,
+        meanArterialMmHg: 79, coreTemperatureC: 36.7 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -9201,6 +9263,32 @@ export class AnesthesiaEngine {
               airwayProcedurePerformedByLearner: false as const,
               treatmentDeliveredByLearner: false as const,
               dispositionDetermined: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'spontaneous-tension-pneumothorax-post-drainage-reassessment') ? {
+            postTensionPneumothoraxAssessment: {
+              trajectoryAtTick: this.postTensionPneumothoraxTrajectoryAtTick,
+              drainageResponseAtTick: this.postTensionPneumothoraxDrainageResponseAtTick,
+              systemAtTick: this.postTensionPneumothoraxSystemAtTick,
+              etiologyAtTick: this.postTensionPneumothoraxEtiologyAtTick,
+              handoffAtTick: this.postTensionPneumothoraxHandoffAtTick,
+              initialPulsePresent: true as const,
+              priorTensionPhysiologyAuthored: true as const,
+              experiencedTeamDrainageAuthored: true as const,
+              decompressionPerformedByLearner: false as const,
+              chestDrainPlacedByLearner: false as const,
+              drainManipulatedByLearner: false as const,
+              suctionOrClampSelected: false as const,
+              deviceOrSiteSelected: false as const,
+              oxygenDeliveredByLearner: false as const,
+              medicationDeliveredByLearner: false as const,
+              testAcquiredByLearner: false as const,
+              procedurePerformedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              dispositionDetermined: false as const,
+              recurrencePredicted: false as const,
               outcomePredicted: false as const,
             },
           } : {}),

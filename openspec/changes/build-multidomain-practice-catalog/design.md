@@ -1301,7 +1301,7 @@ choose disposition or outcome.
 #### Respiratory medicine: 15
 
 Acute severe asthma; COPD exacerbation; community-acquired pneumonia with hypoxemia; pulmonary
-embolism; acute pulmonary edema respiratory-support reassessment; tension pneumothorax; large pleural effusion; mucus plugging;
+embolism; acute pulmonary edema respiratory-support reassessment; spontaneous tension pneumothorax post-drainage reassessment; large pleural effusion; mucus plugging;
 opioid-related hypoventilation; neuromuscular respiratory failure; obesity hypoventilation;
 noninvasive-ventilation selection; high-flow oxygen escalation; oxygen-device failure; acute
 tracheostomy obstruction requiring assessment, oxygenation, escalation, and a bounded device pathway.
@@ -1408,6 +1408,28 @@ interface, flow, FiO₂, mode, pressure, PEEP, drug, dose, or treatment; intubat
 procedure; determine disposition or prognosis; or predict response, resolution, or outcome. This is
 distinct from Emergency Medicine's first-contact rescue, Cardiology's 24-hour decongestion and
 transition review, and the later Respiratory Medicine NIV-selection lab.
+
+### Wave C respiratory-medicine slice 6: spontaneous tension pneumothorax post-drainage reassessment
+
+The sixth respiratory-medicine slice begins 6 hours after an experienced team has immediately
+treated a fixed spontaneous right tension-pneumothorax pattern and placed a pleural drain. Severe
+dyspnea, hypoxemia, hypotension, confusion, cool perfusion, and markedly reduced right ventilation
+have improved to alert full-sentence speech, HR 96/min, RR 22/min, BP 108/64 mmHg, room-air SpO₂
+93%, warm perfusion, and improved but still reduced right air entry. A fixed radiograph reports
+partial re-expansion. A fixed observation record reports an upright bottle below the insertion
+site, an intact visible connection, respiratory swing, intermittent bubbling, and an intact
+dressing. Improvement does not establish durable drain function, full re-expansion, or resolution.
+
+Learners reconcile the prior event and experienced-team drainage, review current safety and the
+authored response, then open parallel drain-system/complication and cause/recurrence-prevention
+planning lanes. A strictly later handoff preserves persistent-air-leak questions, patency and
+re-expansion concerns, complication and recurrent-deterioration triggers, patient preferences, and
+named pleural and thoracic owners. The lesson does not examine; acquire or interpret tests; inspect,
+manipulate, clamp, flush, apply suction to, remove, replace, or insert a drain; select a device,
+site, technique, oxygen target, drug, dose, pleurodesis, thoracoscopy, surgery, or treatment;
+perform decompression or another procedure; determine disposition or prognosis; or predict
+recurrence, resolution, or outcome. It contains no live tension-pneumothorax event and is distinct
+from Emergency Medicine's penetrating-trauma rescue and Anesthesia's positive-pressure emergency.
 
 #### Pediatrics: 16
 

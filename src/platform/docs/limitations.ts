@@ -3215,6 +3215,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, current heart-failure and ventilation guidance, device instructions, qualified respiratory and airway teams, and patient-specific judgment.',
     briefIn: ['acute-pulmonary-edema-respiratory-support-reassessment'],
   },
+  {
+    id: 'post-tension-course-drain-and-complication-reports-are-authored',
+    headline: 'The tension event, emergency drainage, examination, current observations, radiograph, drain record, and complication screen are authored.',
+    simplification: 'One fixed record stands in for emergency care, serial bedside assessment, pleural-system observation, imaging, multidisciplinary review, and patient communication.',
+    whereItMisleads: 'Treating improvement, drain swing or bubbling, one radiograph, or a quiet complication snapshot as proof of patency, full re-expansion, durable resolution, or learner-acquired skill.',
+    correctUnderstanding: 'Real post-drainage care requires repeated whole-patient and drain-system assessment, verified imaging when appropriate, qualified pleural teams, and immediate escalation for recurrent tension physiology.',
+    briefIn: ['spontaneous-tension-pneumothorax-post-drainage-reassessment'],
+  },
+  {
+    id: 'post-tension-controls-record-review-planning-ownership-and-handoff-only',
+    headline: 'The controls record trajectory, safety, drain-system, complication, cause, planning, ownership, and handoff review only.',
+    simplification: 'Five clicks stand in for serial pleural assessment, emergency safety-netting, shared decisions, multidisciplinary planning, and communication.',
+    whereItMisleads: 'Equating button order with examination, drain inspection or management, imaging interpretation, diagnosis, procedure selection, treatment, or pleural-team competence.',
+    correctUnderstanding: 'Actual care requires qualified bedside teams, current pathways, patient participation, explicit drain safety practices, and repeated reassessment.',
+    briefIn: ['spontaneous-tension-pneumothorax-post-drainage-reassessment'],
+  },
+  {
+    id: 'no-live-pleural-examination-testing-drain-procedure-treatment-or-outcome',
+    headline: 'The lab does not examine, test, manage a drain, select or perform a pleural procedure, deliver treatment, determine disposition, or predict outcome.',
+    simplification: 'No live examination, monitoring, imaging, ultrasound, pleural-pressure or laboratory testing, oxygen, medication, aspiration, decompression, drain inspection or manipulation, suction, clamping, flushing, removal, replacement, pleurodesis, thoracoscopy, surgery, disposition, prognosis, recurrence, resolution, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional observations as drain instructions or using completion as evidence of clinical, imaging, procedural, treatment, disposition, or prognostic competence.',
+    correctUnderstanding: 'Use verified patient and drain data, current pleural guidance, local equipment and escalation pathways, qualified pleural and thoracic teams, and patient-specific judgment.',
+    briefIn: ['spontaneous-tension-pneumothorax-post-drainage-reassessment'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {
