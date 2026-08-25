@@ -576,6 +576,12 @@ export class AnesthesiaEngine {
   private torsadesContextAtTick: number | null = null;
   private torsadesRecurrenceIntentAtTick: number | null = null;
   private torsadesHandoffAtTick: number | null = null;
+  private hyperkalemicConductionReconciledAtTick: number | null = null;
+  private hyperkalemicConductionCalciumResponseAtTick: number | null = null;
+  private hyperkalemicConductionShiftSurveillanceAtTick: number | null = null;
+  private hyperkalemicConductionRemovalDeviceAtTick: number | null = null;
+  private hyperkalemicConductionLaterPanelAtTick: number | null = null;
+  private hyperkalemicConductionHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -4646,6 +4652,56 @@ export class AnesthesiaEngine {
         this.torsadesHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `torsades-handoff-recorded-${this.currentTick}`, 'Fixed later check remains sinus bradycardia 52/min with preserved perfusion and no authored recurrence in this brief interval; QT risk remains open. Rhythm, QT, electrolytes, medication work, recurrence and pulse-loss triggers, arrest transition, expert rate-support contingency, and named owners were handed off without predicting disposition or outcome.', { recurrenceObservedInBriefInterval: false, recurrenceRiskResolved: false, ownerNamed: true, outcomePredicted: false }); break;
       }
+      case 'hyperkalemic-conduction-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'hyperkalemic-conduction-disturbance');
+        const valid = ['reconcile-hyperkalemic-conduction-trajectory',
+          'review-hyperkalemic-conduction-calcium-response',
+          'review-hyperkalemic-conduction-shift-surveillance',
+          'review-hyperkalemic-conduction-removal-and-device-restraint',
+          'review-hyperkalemic-conduction-later-panel',
+          'handoff-hyperkalemic-conduction-reassessment'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `hyperkalemic-conduction-response-refused-${this.currentTick}`, supported ? 'The hyperkalemic-conduction action was not one of the listed choices. Nothing changed.' : 'These hyperkalemic-conduction choices are available only in the declared Cardiology lesson.'); break; }
+        if (response === 'reconcile-hyperkalemic-conduction-trajectory') {
+          if (this.hyperkalemicConductionReconciledAtTick !== null) { this.log('warning', 'assessment', `hyperkalemic-conduction-reconcile-refused-${this.currentTick}`, 'The fixed metabolic and conduction trajectory was already reconciled.'); break; }
+          this.hyperkalemicConductionReconciledAtTick = this.currentTick;
+          this.log('warning', 'assessment', `hyperkalemic-conduction-trajectory-reconciled-${this.currentTick}`, 'The pre-treatment record links confirmed nonhemolyzed potassium 6.9 mmol/L with HR 38/min, attenuated P waves, conduction slowing, and QRS 154 ms. The current reported post-calcium state has a mechanical pulse, HR 52/min, QRS 112 ms, BP 118/70 mmHg, alert mentation, warm perfusion, and no authored shock, ischemic discomfort, acute heart failure, or syncope. Hyperkalemia is a reversible contributor; intrinsic conduction disease, ischemia, drug effects, and measurement error remain open.', { pulsePresent: true, hemodynamicallyStable: true, causeProvenExclusive: false }); break;
+        }
+        if (this.hyperkalemicConductionReconciledAtTick === null) { this.log('warning', 'assessment', `hyperkalemic-conduction-order-refused-${this.currentTick}`, 'Reconcile the pulse, whole-patient stability, potassium, ECG reports, and treatment timeline before interpreting the response.'); break; }
+        if (response === 'review-hyperkalemic-conduction-calcium-response') {
+          if (this.hyperkalemicConductionCalciumResponseAtTick !== null) { this.log('warning', 'assessment', `hyperkalemic-conduction-calcium-refused-${this.currentTick}`, 'The reported calcium and conduction response was already reviewed.'); break; }
+          this.hyperkalemicConductionCalciumResponseAtTick = this.currentTick;
+          this.log('warning', 'assessment', `hyperkalemic-conduction-calcium-response-reviewed-${this.currentTick}`, 'The treating team reports local-protocol IV calcium was delivered before Cardiology review. QRS narrowed from 154 to 112 ms and P waves became clearer while potassium remained 6.9 mmol/L. Membrane stabilization can improve the ECG without shifting or removing potassium; the authored association does not prove exclusive cause, learner delivery, durable response, or resolution.', { priorCareReported: true, potassiumLoweredByCalcium: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (response === 'review-hyperkalemic-conduction-shift-surveillance') {
+          if (this.hyperkalemicConductionShiftSurveillanceAtTick !== null) { this.log('warning', 'assessment', `hyperkalemic-conduction-shift-refused-${this.currentTick}`, 'The reported shifting and glucose-surveillance lane was already reviewed.'); break; }
+          this.hyperkalemicConductionShiftSurveillanceAtTick = this.currentTick;
+          this.log('warning', 'assessment', `hyperkalemic-conduction-shift-surveillance-reviewed-${this.currentTick}`, 'Reported insulin-glucose and a locally selected adjunct shifting path were reconciled with baseline and serial glucose checks, repeat potassium timing, hypoglycemia contingency, and rebound surveillance. No dose, formulation, agent, delivery, potassium kinetics, or glucose outcome was selected or simulated.', { priorCareReported: true, glucoseSurveillanceRequired: true, treatmentDeliveredByLearner: false }); break;
+        }
+        if (response === 'review-hyperkalemic-conduction-removal-and-device-restraint') {
+          if (this.hyperkalemicConductionRemovalDeviceAtTick !== null) { this.log('warning', 'assessment', `hyperkalemic-conduction-removal-device-refused-${this.currentTick}`, 'The removal, contributor, and device-restraint lane was already reviewed.'); break; }
+          this.hyperkalemicConductionRemovalDeviceAtTick = this.currentTick;
+          this.log('warning', 'assessment', `hyperkalemic-conduction-removal-device-reviewed-${this.currentTick}`, 'Kidney trajectory, illness and medication contributors, renal ownership, potassium removal, dialysis contingency, and rebound risk were reviewed. Pacing readiness remains available for new compromise, but pacing does not treat hyperkalemia and no permanent-device conclusion is made while reversible metabolic toxicity is being corrected. Persistent conduction disease after correction remains an expert reevaluation trigger.', { pacingDelivered: false, captureAssessed: false, permanentDeviceSelected: false }); break;
+        }
+        if (this.hyperkalemicConductionCalciumResponseAtTick === null
+          || this.hyperkalemicConductionShiftSurveillanceAtTick === null
+          || this.hyperkalemicConductionRemovalDeviceAtTick === null) { this.log('warning', 'assessment', `hyperkalemic-conduction-panel-order-refused-${this.currentTick}`, 'Review the calcium-response, shifting-surveillance, and removal/device-restraint lanes before the later panel.'); break; }
+        if (response === 'review-hyperkalemic-conduction-later-panel') {
+          if (this.hyperkalemicConductionLaterPanelAtTick !== null) { this.log('warning', 'assessment', `hyperkalemic-conduction-panel-refused-${this.currentTick}`, 'The authored later conduction panel was already reviewed.'); break; }
+          if (this.currentTick <= Math.max(this.hyperkalemicConductionCalciumResponseAtTick,
+            this.hyperkalemicConductionShiftSurveillanceAtTick,
+            this.hyperkalemicConductionRemovalDeviceAtTick)) { this.log('warning', 'assessment', `hyperkalemic-conduction-panel-time-refused-${this.currentTick}`, 'Allow a later simulated tick before reviewing the authored follow-up potassium, glucose, and ECG report.'); break; }
+          this.hyperkalemicConductionLaterPanelAtTick = this.currentTick;
+          this.rhythm = 'sinus';
+          this.log('advisory', 'assessment', `hyperkalemic-conduction-later-panel-reviewed-${this.currentTick}`, 'Fixed later treating-team report: potassium 5.8 mmol/L, glucose 92 mg/dL, sinus rhythm 62/min with visible P waves and QRS 98 ms, BP 122/72 mmHg, alert mentation, and warm perfusion. Improvement supports a reversible metabolic contribution but does not prove exclusive causality, durable resolution, learner-delivered effect, or absence of intrinsic conduction disease.', { potassiumMmolPerL: 5.8, glucoseMgPerDl: 92, qrsMs: 98, treatmentDeliveredByLearner: false, causeProvenExclusive: false }); break;
+        }
+        if (this.hyperkalemicConductionLaterPanelAtTick === null) { this.log('warning', 'assessment', `hyperkalemic-conduction-handoff-order-refused-${this.currentTick}`, 'Review the elapsed later potassium, glucose, and conduction report before handoff.'); break; }
+        if (this.currentTick <= this.hyperkalemicConductionLaterPanelAtTick) { this.log('warning', 'assessment', `hyperkalemic-conduction-handoff-time-refused-${this.currentTick}`, 'Allow a later simulated tick before handing off surveillance and the unresolved conduction question.'); break; }
+        if (this.hyperkalemicConductionHandoffAtTick !== null) { this.log('warning', 'assessment', `hyperkalemic-conduction-handoff-refused-${this.currentTick}`, 'The surveillance and conduction handoff was already recorded.'); break; }
+        this.hyperkalemicConductionHandoffAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `hyperkalemic-conduction-handoff-recorded-${this.currentTick}`, 'Serial potassium, glucose, ECG, kidney function, removal progress, rebound risk, medication and illness contributors, compromise and pulse-loss triggers, renal and Cardiology owners, and persistent-conduction reevaluation were handed off. No pacing eligibility, device, capture, disposition, prognosis, recurrence, or outcome was supplied.', { permanentDeviceSelected: false, pacingDelivered: false, captureAssessed: false, outcomePredicted: false }); break;
+      }
       case 'emergence-residual-block-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative'
@@ -7353,6 +7409,14 @@ export class AnesthesiaEngine {
         coreTemperatureC: 36.7 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'hyperkalemic-conduction-disturbance')) {
+      const improved = this.hyperkalemicConductionLaterPanelAtTick !== null;
+      crisisState = { ...crisisState, heartRateBpm: improved ? 62 : 52,
+        respiratoryRateBpm: 16, spo2Percent: 97, etco2MmHg: 36,
+        systolicMmHg: improved ? 122 : 118, diastolicMmHg: improved ? 72 : 70,
+        meanArterialMmHg: improved ? 89 : 86, coreTemperatureC: 36.7 };
+    }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'unstable-narrow-complex-tachycardia')) {
       const cardioverted = this.unstableNarrowTachycardiaCardiovertedAtTick !== null;
       crisisState = { ...crisisState, heartRateBpm: cardioverted ? 92 : 188,
@@ -8305,6 +8369,20 @@ export class AnesthesiaEngine {
               handoffAtTick: this.torsadesHandoffAtTick,
               initialPulsePresent: true as const, shockDeliveredByLearner: false as const,
               treatmentDeliveredByLearner: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'hyperkalemic-conduction-disturbance') ? {
+            hyperkalemicConductionAssessment: {
+              reconciledAtTick: this.hyperkalemicConductionReconciledAtTick,
+              calciumResponseAtTick: this.hyperkalemicConductionCalciumResponseAtTick,
+              shiftSurveillanceAtTick: this.hyperkalemicConductionShiftSurveillanceAtTick,
+              removalDeviceAtTick: this.hyperkalemicConductionRemovalDeviceAtTick,
+              laterPanelAtTick: this.hyperkalemicConductionLaterPanelAtTick,
+              handoffAtTick: this.hyperkalemicConductionHandoffAtTick,
+              initialPulsePresent: true as const, treatmentDeliveredByLearner: false as const,
+              pacingDelivered: false as const, captureAssessed: false as const,
+              permanentDeviceSelected: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

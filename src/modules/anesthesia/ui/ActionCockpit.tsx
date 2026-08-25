@@ -646,6 +646,19 @@ export interface ActionCockpitProps {
       readonly shockDeliveredByLearner: false;
       readonly treatmentDeliveredByLearner: false;
     };
+    readonly hyperkalemicConductionAssessment?: {
+      readonly reconciledAtTick: number | null;
+      readonly calciumResponseAtTick: number | null;
+      readonly shiftSurveillanceAtTick: number | null;
+      readonly removalDeviceAtTick: number | null;
+      readonly laterPanelAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true;
+      readonly treatmentDeliveredByLearner: false;
+      readonly pacingDelivered: false;
+      readonly captureAssessed: false;
+      readonly permanentDeviceSelected: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1044,6 +1057,14 @@ export interface ActionCockpitProps {
       | 'review-torsades-long-qt-context' | 'record-torsades-recurrence-suppression-intent'
       | 'handoff-torsades-recurrence-plan',
   ) => void;
+  readonly onHyperkalemicConductionResponse?: (
+    action: 'reconcile-hyperkalemic-conduction-trajectory'
+      | 'review-hyperkalemic-conduction-calcium-response'
+      | 'review-hyperkalemic-conduction-shift-surveillance'
+      | 'review-hyperkalemic-conduction-removal-and-device-restraint'
+      | 'review-hyperkalemic-conduction-later-panel'
+      | 'handoff-hyperkalemic-conduction-reassessment',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1301,6 +1322,10 @@ export function crisisResponseAvailability(
     hasTorsadesResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'torsades-de-pointes',
     ),
+    hasHyperkalemicConductionResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'hyperkalemic-conduction-disturbance',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1408,6 +1433,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'symptomatic-sinus-bradycardia-reassessment')
       || (event.type === 'narrative' && event.target === 'complete-heart-block')
       || (event.type === 'narrative' && event.target === 'torsades-de-pointes')
+      || (event.type === 'narrative' && event.target === 'hyperkalemic-conduction-disturbance')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1454,6 +1480,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasSymptomaticBradycardiaResponse,
     hasCompleteHeartBlockResponse,
     hasTorsadesResponse,
+    hasHyperkalemicConductionResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1514,7 +1541,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasClinicStemiResponse
     || hasHeartFailureResponse || hasAfRvrResponse || hasPostInfarctionShockResponse
     || hasStableNarrowTachycardiaResponse || hasStableWideTachycardiaResponse
-    || hasSymptomaticBradycardiaResponse || hasCompleteHeartBlockResponse || hasTorsadesResponse;
+    || hasSymptomaticBradycardiaResponse || hasCompleteHeartBlockResponse || hasTorsadesResponse
+    || hasHyperkalemicConductionResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1545,7 +1573,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasTorsadesResponse
+  const responseTray = hasHyperkalemicConductionResponse
+    ? { id: 'crisis', label: 'Potassium rhythm review' } as const
+    : hasTorsadesResponse
     ? { id: 'crisis', label: 'Torsades response' } as const
     : hasCompleteHeartBlockResponse
     ? { id: 'crisis', label: 'Complete-block review' } as const
@@ -1731,6 +1761,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasSymptomaticBradycardiaResponse
     || hasCompleteHeartBlockResponse
     || hasTorsadesResponse
+    || hasHyperkalemicConductionResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2280,6 +2311,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasTorsadesResponse && (
               <TorsadesTray assessment={props.resuscitation.torsadesAssessment}
                 onAction={props.onTorsadesResponse ?? (() => {})} />
+            )}
+            {hasHyperkalemicConductionResponse && (
+              <HyperkalemicConductionTray
+                assessment={props.resuscitation.hyperkalemicConductionAssessment}
+                onAction={props.onHyperkalemicConductionResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -6201,6 +6237,44 @@ function TorsadesTray({ assessment, onAction }: {
         <Button className="crisis-drug__action" disabled={!context || !recurrence || handoff} onClick={() => onAction('handoff-torsades-recurrence-plan')}>Reassess recurrence risk + hand off</Button>
       </div>
       <p className="field__hint">Magnesium is bounded to recurrent long-QT polymorphic VT. No dose, target, medication change, pacing, isoproterenol, capture, device, or durable outcome is supplied.</p>
+    </section>
+  </div>;
+}
+
+function HyperkalemicConductionTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['hyperkalemicConductionAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onHyperkalemicConductionResponse']>;
+}) {
+  const trajectory = assessment?.reconciledAtTick != null;
+  const calcium = assessment?.calciumResponseAtTick != null;
+  const shift = assessment?.shiftSurveillanceAtTick != null;
+  const removal = assessment?.removalDeviceAtTick != null;
+  const laterPanel = assessment?.laterPanelAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="hyperkalemic-conduction-protection-title">
+      <div id="hyperkalemic-conduction-protection-title" className="syringe__name">The rhythm changed. Check the chemistry.</div>
+      <Badge kind="out-of-range">conduction change · reported hyperkalemia pathway</Badge>
+      <div className="syringe__meta">serial ECG + potassium · pressure + perfusion · glucose</div>
+      <p className="syringe__remaining" role="status">{calcium && shift ? 'Membrane response + shifting surveillance reviewed' : shift ? 'Shifting surveillance reviewed · calcium-response reasoning remains' : calcium ? 'Membrane response reviewed · shifting surveillance remains' : trajectory ? 'Trajectory reconciled · three review lanes are open' : 'Read the serial rhythm, potassium, and whole-patient trajectory'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={trajectory} onClick={() => onAction('reconcile-hyperkalemic-conduction-trajectory')}>Reconcile rhythm + potassium trajectory</Button>
+        <Button className="crisis-drug__action" disabled={!trajectory || calcium} onClick={() => onAction('review-hyperkalemic-conduction-calcium-response')}>Review reported calcium response</Button>
+        <Button className="crisis-drug__action" disabled={!trajectory || shift} onClick={() => onAction('review-hyperkalemic-conduction-shift-surveillance')}>Review shifting + glucose surveillance</Button>
+      </div>
+      <p className="field__hint">These are authored case reports. Calcium does not lower potassium, and ECG appearance does not reliably quantify potassium severity.</p>
+    </section>
+    <section className="syringe" aria-labelledby="hyperkalemic-conduction-reassessment-title">
+      <div id="hyperkalemic-conduction-reassessment-title" className="syringe__name">Remove. Recheck. Hand off.</div>
+      <Badge kind="teaching">removal · device restraint · later panel · owner</Badge>
+      <div className="syringe__meta">renal pathway · pacing backup · serial ECG + labs</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Reversible contribution preserved · risk + ownership remain' : laterPanel ? 'Later ECG + potassium panel reviewed · handoff due' : calcium && shift && removal ? 'All review lanes complete · allow the later panel' : removal ? 'Removal + device restraint reviewed · other lanes remain' : trajectory ? 'Removal, calcium-response, and shifting review can proceed in parallel' : 'Reconcile the trajectory first'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={!trajectory || removal} onClick={() => onAction('review-hyperkalemic-conduction-removal-and-device-restraint')}>Review removal + device restraint</Button>
+        <Button className="crisis-drug__action" disabled={!calcium || !shift || !removal || laterPanel} onClick={() => onAction('review-hyperkalemic-conduction-later-panel')}>Review later ECG + potassium panel</Button>
+        <Button className="crisis-drug__action" disabled={!laterPanel || handoff} onClick={() => onAction('handoff-hyperkalemic-conduction-reassessment')}>Hand off rhythm + rebound plan</Button>
+      </div>
+      <p className="field__hint">Pacing does not treat hyperkalemia. No drug, dialysis, pacing, or device is delivered or selected. Improvement does not prove one exclusive cause or permanent resolution.</p>
     </section>
   </div>;
 }

@@ -2943,6 +2943,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use current resuscitation guidance, local protocols, verified patient data, qualified judgment, toxicology or electrophysiology expertise, and continuous reassessment.',
     briefIn: ['torsades-de-pointes'],
   },
+  {
+    id: 'hyperkalemic-conduction-record-treatment-and-response-are-authored',
+    headline: 'The pretreatment chemistry and rhythm, reported emergency care, and serial response are authored teaching facts.',
+    simplification: 'One post-emergency record supplies fixed potassium, ECG, glucose, prior-care, and current-stability snapshots.',
+    whereItMisleads: 'Treating the teaching waveform as diagnostic, assuming one potassium value proves cause, or reading conduction improvement as potassium removal.',
+    correctUnderstanding: 'Real care verifies treatment delivery, serial ECG and laboratory findings, pulse and perfusion, glucose, rebound, and alternative causes with qualified teams.',
+    briefIn: ['hyperkalemic-conduction-disturbance'],
+  },
+  {
+    id: 'hyperkalemic-conduction-controls-record-review-restraint-and-handoff-only',
+    headline: 'The controls record serial review, device restraint, and handoff; they do not deliver treatment or make device decisions.',
+    simplification: 'Six clicks stand in for longitudinal record review, consultation, multidisciplinary care, communication, and handoff.',
+    whereItMisleads: 'Equating button order with examination, ECG or laboratory interpretation, treatment delivery, pacing, device eligibility, or cardiology competence.',
+    correctUnderstanding: 'Actual care uses verified data, qualified teams, current local protocols, continuous monitoring, and patient-specific pacing and device judgment.',
+    briefIn: ['hyperkalemic-conduction-disturbance'],
+  },
+  {
+    id: 'no-live-hyperkalemia-treatment-kinetics-pacing-device-or-outcome',
+    headline: 'The lab does not model live treatment, potassium or glucose kinetics, pacing, a device, or outcome.',
+    simplification: 'No live exam, specimen, ECG, laboratory, drug, dialysis, pacing, capture, device, disposition, prognosis, benefit, or outcome is modeled.',
+    whereItMisleads: 'Inferring that calcium lowers potassium, temporary shifting removes potassium, ECG normalization resolves the disturbance, or a reversible state establishes a permanent-device indication.',
+    correctUnderstanding: 'Use current protocols, serial verified findings, qualified judgment, and explicit reassessment of reversible and persistent conduction disturbance.',
+    briefIn: ['hyperkalemic-conduction-disturbance'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

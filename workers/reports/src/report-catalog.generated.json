@@ -1089,6 +1089,17 @@
         "GB"
       ],
       "fidelityClass": "state_transition"
+    },
+    {
+      "scenarioId": "hyperkalemic-conduction-disturbance",
+      "contentVersion": "0.1.0",
+      "moduleId": "cardiology",
+      "maturity": "draft",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition"
     }
   ]
 }

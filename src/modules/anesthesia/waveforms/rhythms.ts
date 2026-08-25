@@ -102,6 +102,26 @@ const RHYTHM_LIST: readonly RhythmDefinition[] = Object.freeze([
       'Slow wide escape complexes with regular P waves marching through them, unrelated to the complexes.',
   },
   {
+    id: 'hyperkalemic-conduction',
+    name: 'Hyperkalemic conduction disturbance',
+    morphology: {
+      events: table({
+        P: { a: 0.35 },
+        Q: { a: -4, b: 0.16 },
+        R: { a: 24, b: 0.18 },
+        S: { a: -8, b: 0.18 },
+        T: { a: 5, b: 0.22 },
+      }),
+      mechanicalPulse: true,
+    },
+    rateRangeBpm: [35, 70],
+    rateIsMeasurable: true,
+    source:
+      'Attenuated P waves, QRS widening, and prominent peaked T waves in hyperkalemia; standard electrocardiography descriptions.',
+    morphologyDescription:
+      'A slow rhythm with faint but visible P waves, widened complexes, and tall narrow peaked T waves.',
+  },
+  {
     id: 'torsades-de-pointes',
     name: 'Torsades de pointes',
     morphology: {

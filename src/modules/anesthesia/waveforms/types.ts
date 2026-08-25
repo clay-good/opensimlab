@@ -81,6 +81,7 @@ export type RhythmId =
   | 'svt'
   | 'first-degree-block'
   | 'complete-heart-block'
+  | 'hyperkalemic-conduction'
   | 'torsades-de-pointes'
   | 'ventricular-tachycardia'
   | 'ventricular-fibrillation'

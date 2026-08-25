@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 93 reports torsades state. */
-export const WORKER_PROTOCOL_VERSION = 94;
+export const WORKER_PROTOCOL_VERSION = 95;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -727,6 +727,19 @@ export interface EquipmentSnapshot {
       readonly initialPulsePresent: true;
       readonly shockDeliveredByLearner: false;
       readonly treatmentDeliveredByLearner: false;
+    };
+    readonly hyperkalemicConductionAssessment?: {
+      readonly reconciledAtTick: number | null;
+      readonly calciumResponseAtTick: number | null;
+      readonly shiftSurveillanceAtTick: number | null;
+      readonly removalDeviceAtTick: number | null;
+      readonly laterPanelAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true;
+      readonly treatmentDeliveredByLearner: false;
+      readonly pacingDelivered: false;
+      readonly captureAssessed: false;
+      readonly permanentDeviceSelected: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

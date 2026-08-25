@@ -900,6 +900,9 @@ export function Cockpit({
           onTorsadesResponse={(action) => session.act({
             type: 'torsades-response', payload: { action },
           })}
+          onHyperkalemicConductionResponse={(action) => session.act({
+            type: 'hyperkalemic-conduction-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

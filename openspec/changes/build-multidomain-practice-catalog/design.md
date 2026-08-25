@@ -1172,6 +1172,27 @@ energy or sedation; operate a defibrillator; deliver shock, CPR, oxygen, magnesi
 medication, infusion, pacing, or isoproterenol; assess capture; choose a device; determine disposition
 or prognosis; or predict recurrence or outcome.
 
+### Wave C cardiology slice 12: hyperkalemic conduction disturbance
+
+The twelfth cardiology slice begins after reported emergency treatment for nonhemolyzed potassium
+6.9 mmol/L with sinus bradycardia 38/min, attenuated P waves, and QRS 154 ms. The current authored
+record shows a pulse, preserved pressure and perfusion, sinus 52/min with QRS 112 ms after reported
+calcium, and potassium still 6.9 mmol/L. The dedicated teaching waveform is not a diagnostic ECG,
+and its improvement does not establish potassium lowering or exclude another conduction cause.
+
+Learners reconcile the serial chemistry and conduction record before reviewing calcium-associated
+membrane stabilization. Shift and glucose surveillance, potassium-removal and contributor
+ownership, and restraint from permanent-device conclusions during correction of a reversible
+disturbance may proceed in any order. Only after those 3 lanes can a later fixed panel show potassium
+5.8 mmol/L, glucose 92 mg/dL, sinus 62/min, and QRS 98 ms; a further elapsed tick records ownership,
+rebound and deterioration triggers, and reassessment handoff. This is distinct from the Emergency
+Medicine hyperkalemia lab, which owns initial treatment intent, and from complete heart block, which
+owns pacing-capable escalation for persistent acquired block without an identified reversible cause.
+The lab does not examine; acquire or interpret specimens, ECG, monitoring, or laboratory data;
+diagnose cause; select or deliver calcium, insulin, glucose, beta agonist, potassium removal,
+dialysis, pacing, or a device; model live kinetics; assess capture; determine disposition or
+prognosis; or predict recurrence, benefit, or outcome.
+
 #### Respiratory medicine: 15
 
 Acute severe asthma; COPD exacerbation; community-acquired pneumonia with hypoxemia; pulmonary

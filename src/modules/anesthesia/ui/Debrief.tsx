@@ -4161,6 +4161,26 @@ export function objectiveFindings(
       const ordered = context && recurrence && handoff && context.tick < handoff.tick && recurrence.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Elapsed handoff kept QT risk, open causes, recurrence and pulse-loss triggers, expert contingency, and owners visible.' : 'Final handoff was absent, premature, or bypassed a prevention lane.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-hyperkalemic-conduction-trajectory',
+      'review-hyperkalemic-conduction-calcium-response',
+      'review-hyperkalemic-conduction-shift-surveillance',
+      'review-hyperkalemic-conduction-removal-and-device-restraint',
+      'review-hyperkalemic-conduction-later-panel',
+      'handoff-hyperkalemic-conduction-reassessment'].includes(objective.id)) {
+      const reconciled = log.find((event) => /^hyperkalemic-conduction-trajectory-reconciled-\d+$/.test(event.eventId));
+      const calcium = log.find((event) => /^hyperkalemic-conduction-calcium-response-reviewed-\d+$/.test(event.eventId));
+      const shift = log.find((event) => /^hyperkalemic-conduction-shift-surveillance-reviewed-\d+$/.test(event.eventId));
+      const removal = log.find((event) => /^hyperkalemic-conduction-removal-device-reviewed-\d+$/.test(event.eventId));
+      const panel = log.find((event) => /^hyperkalemic-conduction-later-panel-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^hyperkalemic-conduction-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-hyperkalemic-conduction-trajectory') return { ...base, outcome: reconciled ? 'met' : 'not-met', finding: reconciled ? 'The confirmed potassium, changing conduction reports, mechanical pulse, current stability, prior-care timeline, and open alternatives were reconciled.' : 'The metabolic and conduction trajectory was not reconciled.', atTick: reconciled?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-hyperkalemic-conduction-calcium-response') { const ordered = reconciled && calcium && reconciled.tick <= calcium.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The reported calcium response was separated from potassium lowering, learner delivery, exclusive cause, and resolution.' : 'Calcium-response reasoning was absent or bypassed trajectory reconciliation.', atTick: calcium?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-hyperkalemic-conduction-shift-surveillance') { const ordered = reconciled && shift && reconciled.tick <= shift.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Reported shifting was paired with serial glucose, potassium, hypoglycemia, and rebound surveillance without selecting treatment.' : 'Shifting and glucose surveillance were absent or bypassed trajectory reconciliation.', atTick: shift?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-hyperkalemic-conduction-removal-and-device-restraint') { const ordered = reconciled && removal && reconciled.tick <= removal.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Removal, contributors, renal ownership, pacing contingency, and permanent-device restraint remained explicit while reversible toxicity was corrected.' : 'Removal ownership or device restraint was absent or bypassed trajectory reconciliation.', atTick: removal?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-hyperkalemic-conduction-later-panel') { const ordered = calcium && shift && removal && panel && calcium.tick < panel.tick && shift.tick < panel.tick && removal.tick < panel.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed later potassium, glucose, ECG, and perfusion report showed improvement without proving exclusive cause or durable resolution.' : 'The later panel was absent, premature, or bypassed a review lane.', atTick: panel?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = panel && handoff && panel.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Elapsed handoff preserved serial metabolic, conduction, removal, rebound, compromise, and ownership work without choosing a device or outcome.' : 'The final handoff was absent or did not follow the later panel after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

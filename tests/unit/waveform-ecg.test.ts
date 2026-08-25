@@ -183,9 +183,52 @@ describe('Scenario: Rate changes do not distort morphology incorrectly', () => {
       .filter((event) => event.name === 'Q' || event.name === 'R' || event.name === 'S')
       .reduce((sum, event) => sum + event.b, 0);
     const sinusWidth = qrsWidth('sinus');
-    for (const rhythm of ['complete-heart-block', 'ventricular-tachycardia', 'paced'] as const) {
+    for (const rhythm of ['complete-heart-block', 'hyperkalemic-conduction',
+      'ventricular-tachycardia', 'paced'] as const) {
       expect(qrsWidth(rhythm)).toBeGreaterThan(sinusWidth);
     }
+  });
+});
+
+describe('Scenario: Hyperkalemic conduction has a distinct organized morphology', () => {
+  it('keeps a faint P wave, wide QRS, peaked T wave, and mechanical pulse', () => {
+    const rhythm = getRhythm('hyperkalemic-conduction');
+    const event = (name: 'P' | 'Q' | 'R' | 'S' | 'T') =>
+      rhythm.morphology.events.find((entry) => entry.name === name);
+    const sinus = getRhythm('sinus');
+    const sinusEvent = (name: 'P' | 'Q' | 'R' | 'S' | 'T') =>
+      sinus.morphology.events.find((entry) => entry.name === name);
+
+    expect(event('P')?.a).toBeGreaterThan(0);
+    expect(event('P')?.a).toBeLessThan(sinusEvent('P')?.a ?? 0);
+    const qrsWidth = (definition: ReturnType<typeof getRhythm>) => definition.morphology.events
+      .filter((entry) => entry.name === 'Q' || entry.name === 'R' || entry.name === 'S')
+      .reduce((sum, entry) => sum + entry.b, 0);
+    expect(qrsWidth(rhythm)).toBeGreaterThan(qrsWidth(sinus));
+    const tProminence = (definition: ReturnType<typeof getRhythm>) => {
+      const t = definition.morphology.events.find((entry) => entry.name === 'T');
+      return t ? Math.abs(t.a) * t.b * t.b : 0;
+    };
+    expect(tProminence(rhythm)).toBeGreaterThan(tProminence(sinus));
+    expect(rhythm.morphology.mechanicalPulse).toBe(true);
+    expect(rhythm.rateRangeBpm).toEqual([35, 70]);
+  });
+
+  it('renders deterministically without AV dissociation or monomorphic VT morphology', () => {
+    const first = render(8, { heartRateBpm: 48 }, 'hyperkalemic-conduction');
+    const second = render(8, { heartRateBpm: 48 }, 'hyperkalemic-conduction');
+    expect(first.samples).toEqual(second.samples);
+    expect(first.rWaves).toEqual(second.rWaves);
+
+    const hyperkalemic = getRhythm('hyperkalemic-conduction').morphology;
+    const completeBlock = getRhythm('complete-heart-block').morphology;
+    const ventricularTachycardia = getRhythm('ventricular-tachycardia').morphology;
+    expect(hyperkalemic.atrialRateBpm).toBeUndefined();
+    expect(completeBlock.atrialRateBpm).toBe(82);
+    expect(hyperkalemic.events).not.toEqual(completeBlock.events);
+    expect(hyperkalemic.events).not.toEqual(ventricularTachycardia.events);
+    expect(hyperkalemic.events.find((entry) => entry.name === 'P')?.a).toBeGreaterThan(0);
+    expect(ventricularTachycardia.events.find((entry) => entry.name === 'P')?.a).toBe(0);
   });
 });
 
@@ -251,7 +294,8 @@ describe('The rhythm library is complete and self-describing', () => {
   it('provides every named rhythm the specification lists', () => {
     expect(RHYTHM_IDS).toEqual([
       'sinus', 'sinus-bradycardia', 'sinus-tachycardia', 'atrial-fibrillation', 'svt',
-      'first-degree-block', 'complete-heart-block', 'torsades-de-pointes', 'ventricular-tachycardia',
+      'first-degree-block', 'complete-heart-block', 'hyperkalemic-conduction',
+      'torsades-de-pointes', 'ventricular-tachycardia',
       'ventricular-fibrillation', 'asystole', 'pea', 'paced',
     ]);
   });
