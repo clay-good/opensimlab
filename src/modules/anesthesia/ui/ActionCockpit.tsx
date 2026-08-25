@@ -634,6 +634,17 @@ export interface ActionCockpitProps {
       readonly pacingDelivered: false;
       readonly captureAssessed: false;
     };
+    readonly torsadesAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly shockIntentAtTick: number | null;
+      readonly postShockAtTick: number | null;
+      readonly contextAtTick: number | null;
+      readonly recurrenceIntentAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true;
+      readonly shockDeliveredByLearner: false;
+      readonly treatmentDeliveredByLearner: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1025,6 +1036,12 @@ export interface ActionCockpitProps {
       | 'activate-complete-heart-block-pathway' | 'reassess-complete-heart-block-trajectory'
       | 'handoff-complete-heart-block-pacing-plan',
   ) => void;
+  readonly onTorsadesResponse?: (
+    action: 'reconcile-torsades-pulse-and-pattern'
+      | 'record-torsades-unsynchronized-shock-intent' | 'review-torsades-post-shock-rhythm'
+      | 'review-torsades-long-qt-context' | 'record-torsades-recurrence-suppression-intent'
+      | 'handoff-torsades-recurrence-plan',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1279,6 +1296,9 @@ export function crisisResponseAvailability(
     hasCompleteHeartBlockResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'complete-heart-block',
     ),
+    hasTorsadesResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'torsades-de-pointes',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1385,6 +1405,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative'
         && event.target === 'symptomatic-sinus-bradycardia-reassessment')
       || (event.type === 'narrative' && event.target === 'complete-heart-block')
+      || (event.type === 'narrative' && event.target === 'torsades-de-pointes')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1430,6 +1451,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasStableWideTachycardiaResponse,
     hasSymptomaticBradycardiaResponse,
     hasCompleteHeartBlockResponse,
+    hasTorsadesResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1490,7 +1512,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasClinicStemiResponse
     || hasHeartFailureResponse || hasAfRvrResponse || hasPostInfarctionShockResponse
     || hasStableNarrowTachycardiaResponse || hasStableWideTachycardiaResponse
-    || hasSymptomaticBradycardiaResponse || hasCompleteHeartBlockResponse;
+    || hasSymptomaticBradycardiaResponse || hasCompleteHeartBlockResponse || hasTorsadesResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1521,7 +1543,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasCompleteHeartBlockResponse
+  const responseTray = hasTorsadesResponse
+    ? { id: 'crisis', label: 'Torsades response' } as const
+    : hasCompleteHeartBlockResponse
     ? { id: 'crisis', label: 'Complete-block review' } as const
     : hasSymptomaticBradycardiaResponse
     ? { id: 'crisis', label: 'Slow-rhythm review' } as const
@@ -1704,6 +1728,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasStableWideTachycardiaResponse
     || hasSymptomaticBradycardiaResponse
     || hasCompleteHeartBlockResponse
+    || hasTorsadesResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2249,6 +2274,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasCompleteHeartBlockResponse && (
               <CompleteHeartBlockTray assessment={props.resuscitation.completeHeartBlockAssessment}
                 onAction={props.onCompleteHeartBlockResponse ?? (() => {})} />
+            )}
+            {hasTorsadesResponse && (
+              <TorsadesTray assessment={props.resuscitation.torsadesAssessment}
+                onAction={props.onTorsadesResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -6128,6 +6157,44 @@ function CompleteHeartBlockTray({ assessment, onAction }: {
         <Button className="crisis-drug__action" disabled={!reassessed || handoff} onClick={() => onAction('handoff-complete-heart-block-pacing-plan')}>Record pacing evaluation + handoff</Button>
       </div>
       <p className="field__hint">No routine oxygen, atropine gate, pacing, capture check, device choice, or implantation occurs here. New compromise opens acute rescue care.</p>
+    </section>
+  </div>;
+}
+
+function TorsadesTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['torsadesAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onTorsadesResponse']>;
+}) {
+  const recognition = assessment?.recognitionAtTick != null;
+  const shock = assessment?.shockIntentAtTick != null;
+  const postShock = assessment?.postShockAtTick != null;
+  const context = assessment?.contextAtTick != null;
+  const recurrence = assessment?.recurrenceIntentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="torsades-rescue-title">
+      <div id="torsades-rescue-title" className="syringe__name">Polymorphic means shock now.</div>
+      <Badge kind="out-of-range">sustained torsades · weak pulse · compromised</Badge>
+      <div className="syringe__meta">~220/min · BP 74/42 · confused · QTc 560 ms before event</div>
+      <p className="syringe__remaining" role="status">{postShock ? 'Sinus 52/min · QT remains prolonged' : shock ? 'Unsynchronized intent recorded · allow post-team review time' : recognition ? 'Pulse confirmed · do not delay unsynchronized shock' : 'Read the rhythm through pulse + perfusion'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={recognition} onClick={() => onAction('reconcile-torsades-pulse-and-pattern')}>Reconcile pulse + polymorphic pattern</Button>
+        <Button className="crisis-drug__action" disabled={!recognition || shock} onClick={() => onAction('record-torsades-unsynchronized-shock-intent')}>Record immediate unsynchronized shock</Button>
+        <Button className="crisis-drug__action" disabled={!shock || postShock} onClick={() => onAction('review-torsades-post-shock-rhythm')}>Review post-team rhythm</Button>
+      </div>
+      <p className="field__hint">Sustained polymorphic VT cannot be synchronized reliably. Pulse loss opens the cardiac-arrest pathway; no energy, device operation, or shock delivery occurs here.</p>
+    </section>
+    <section className="syringe" aria-labelledby="torsades-prevention-title">
+      <div id="torsades-prevention-title" className="syringe__name">Correct. Protect. Reassess.</div>
+      <Badge kind="teaching">QT · magnesium · electrolytes · culprits · bradycardia</Badge>
+      <div className="syringe__meta">K 3.0 · Mg 1.5 · kidney + QT-active medication context</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'QT risk remains · owner + arrest triggers handed off' : context && recurrence ? 'Both prevention lanes complete · allow reassessment time' : context ? 'Context reviewed · suppression intent remains' : recurrence ? 'Suppression intent recorded · context remains' : postShock ? 'Sinus returned · recurrence risk did not' : 'Immediate unsynchronized rescue comes first'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={!postShock || context} onClick={() => onAction('review-torsades-long-qt-context')}>Review QT + culprits + electrolytes</Button>
+        <Button className="crisis-drug__action" disabled={!postShock || recurrence} onClick={() => onAction('record-torsades-recurrence-suppression-intent')}>Record magnesium + correction intent</Button>
+        <Button className="crisis-drug__action" disabled={!context || !recurrence || handoff} onClick={() => onAction('handoff-torsades-recurrence-plan')}>Reassess recurrence risk + hand off</Button>
+      </div>
+      <p className="field__hint">Magnesium is bounded to recurrent long-QT polymorphic VT. No dose, target, medication change, pacing, isoproterenol, capture, device, or durable outcome is supplied.</p>
     </section>
   </div>;
 }

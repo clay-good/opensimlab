@@ -251,7 +251,7 @@ describe('The rhythm library is complete and self-describing', () => {
   it('provides every named rhythm the specification lists', () => {
     expect(RHYTHM_IDS).toEqual([
       'sinus', 'sinus-bradycardia', 'sinus-tachycardia', 'atrial-fibrillation', 'svt',
-      'first-degree-block', 'complete-heart-block', 'ventricular-tachycardia',
+      'first-degree-block', 'complete-heart-block', 'torsades-de-pointes', 'ventricular-tachycardia',
       'ventricular-fibrillation', 'asystole', 'pea', 'paced',
     ]);
   });
@@ -270,6 +270,16 @@ describe('The rhythm library is complete and self-describing', () => {
     expect(getRhythm('ventricular-fibrillation').rateIsMeasurable).toBe(false);
     expect(Math.max(...samples)).toBeLessThan(0.7);
     expect(Math.max(...samples)).toBeGreaterThan(0.2);
+  });
+
+  it('renders torsades as deterministic wide complexes that twist around baseline', () => {
+    const first = render(8, { heartRateBpm: 220 }, 'torsades-de-pointes');
+    const second = render(8, { heartRateBpm: 220 }, 'torsades-de-pointes');
+    expect(first.rWaves.length).toBeGreaterThan(20);
+    expect(Math.min(...first.samples)).toBeLessThan(-0.4);
+    expect(Math.max(...first.samples)).toBeGreaterThan(0.4);
+    expect(first.samples).toEqual(second.samples);
+    expect(getRhythm('torsades-de-pointes').morphologyDescription).toContain('polymorphic');
   });
 
   it('renders asystole as a flat line with only baseline noise', () => {

@@ -569,6 +569,12 @@ export class AnesthesiaEngine {
   private completeHeartBlockPathwayAtTick: number | null = null;
   private completeHeartBlockReassessmentAtTick: number | null = null;
   private completeHeartBlockHandoffAtTick: number | null = null;
+  private torsadesRecognitionAtTick: number | null = null;
+  private torsadesShockIntentAtTick: number | null = null;
+  private torsadesPostShockAtTick: number | null = null;
+  private torsadesContextAtTick: number | null = null;
+  private torsadesRecurrenceIntentAtTick: number | null = null;
+  private torsadesHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -4577,6 +4583,51 @@ export class AnesthesiaEngine {
         this.completeHeartBlockHandoffAtTick = this.currentTick;
         this.log('advisory', 'assessment', `complete-heart-block-handoff-recorded-${this.currentTick}`, 'Guideline-supported permanent-pacing evaluation for authored acquired complete AV block without an identified reversible or physiologic cause, shared goals and tradeoffs, current perfusion, open causes, monitored contingency, named owners, and acute-change triggers were handed off. No eligibility adjudication, device, mode, lead, implant, program, capture claim, disposition, benefit, or outcome was supplied.', { intentOnly: true, deviceSelected: false, pacingDelivered: false, captureAssessed: false }); break;
       }
+      case 'torsades-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'torsades-de-pointes');
+        const valid = ['reconcile-torsades-pulse-and-pattern',
+          'record-torsades-unsynchronized-shock-intent', 'review-torsades-post-shock-rhythm',
+          'review-torsades-long-qt-context', 'record-torsades-recurrence-suppression-intent',
+          'handoff-torsades-recurrence-plan'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `torsades-response-refused-${this.currentTick}`, supported ? 'The torsades action was not one of the listed choices. Nothing changed.' : 'These torsades choices are available only in the declared lesson.'); break; }
+        if (response === 'reconcile-torsades-pulse-and-pattern') {
+          if (this.torsadesRecognitionAtTick !== null) { this.log('warning', 'assessment', `torsades-recognition-refused-${this.currentTick}`, 'The polymorphic rhythm, pulse, and compromise were already reconciled.'); break; }
+          this.torsadesRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `torsades-recognition-recorded-${this.currentTick}`, 'The fixed report and teaching trace show sustained polymorphic VT near 220/min in preceding long-QT context. A weak mechanical pulse, BP 74/42 mmHg, acute confusion, and poor perfusion are authored. This is electrically unstable torsades with a pulse, not stable monomorphic WCT or pulseless VF.', { pulsePresent: true, polymorphic: true, prolongedQtContext: true, hemodynamicallyCompromised: true }); break;
+        }
+        if (this.torsadesRecognitionAtTick === null) { this.log('warning', 'assessment', `torsades-order-refused-${this.currentTick}`, 'Confirm the fixed polymorphic rhythm, mechanical pulse, and compromise before recording the emergency response.'); break; }
+        if (response === 'record-torsades-unsynchronized-shock-intent') {
+          if (this.torsadesShockIntentAtTick !== null) { this.log('warning', 'assessment', `torsades-shock-refused-${this.currentTick}`, 'Immediate unsynchronized-shock intent was already recorded.'); break; }
+          this.torsadesShockIntentAtTick = this.currentTick;
+          this.log('critical', 'assessment', `torsades-unsynchronized-shock-intent-recorded-${this.currentTick}`, 'Immediate unsynchronized high-energy shock intent, experienced help, pads and defibrillator readiness, repeated pulse checks, and arrest-pathway transition for pulse loss were recorded. Magnesium, QT review, synchronization, and energy calculation did not delay the shock-first plan. Device operation, energy selection, sedation, and shock delivery are not simulated.', { intentOnly: true, unsynchronized: true, shockDeliveredByLearner: false, pulsePresent: true }); break;
+        }
+        if (this.torsadesShockIntentAtTick === null) { this.log('warning', 'assessment', `torsades-shock-order-refused-${this.currentTick}`, 'Record immediate unsynchronized-shock intent before cause or magnesium work.'); break; }
+        if (response === 'review-torsades-post-shock-rhythm') {
+          if (this.torsadesPostShockAtTick !== null) { this.log('warning', 'assessment', `torsades-post-shock-refused-${this.currentTick}`, 'The authored post-team rhythm report was already reviewed.'); break; }
+          if (this.currentTick <= this.torsadesShockIntentAtTick) { this.log('warning', 'assessment', `torsades-post-shock-time-refused-${this.currentTick}`, 'Allow a later simulated tick before reviewing the authored post-team report. The learner did not deliver the shock.'); break; }
+          this.torsadesPostShockAtTick = this.currentTick;
+          this.rhythm = 'sinus-bradycardia';
+          this.log('warning', 'assessment', `torsades-post-shock-rhythm-reviewed-${this.currentTick}`, 'Fixed later treating-team report: sinus bradycardia 52/min, BP 112/68 mmHg, alert mentation, warm perfusion, and SpO2 97% on room air. QTc remains 558 ms. Termination does not prevent recurrence, prove cause, or establish cure or outcome.', { converted: true, learnerShockDelivered: false, prolongedQtPersists: true, recurrenceRiskResolved: false }); break;
+        }
+        if (this.torsadesPostShockAtTick === null) { this.log('warning', 'assessment', `torsades-post-shock-order-refused-${this.currentTick}`, 'Review the elapsed authored post-team rhythm before recurrence prevention.'); break; }
+        if (response === 'review-torsades-long-qt-context') {
+          if (this.torsadesContextAtTick !== null) { this.log('warning', 'assessment', `torsades-context-refused-${this.currentTick}`, 'The long-QT and contributor context was already reviewed.'); break; }
+          this.torsadesContextAtTick = this.currentTick;
+          this.log('warning', 'assessment', `torsades-long-qt-context-reviewed-${this.currentTick}`, 'QT-active medications and interactions, reduced kidney function, bradycardia and pauses, potassium, magnesium, calcium, poor intake, ischemic and structural findings, and inherited and family context were reviewed. The fixed K 3.0 mmol/L, Mg 1.5 mg/dL, and QTc are patient facts, not universal thresholds or proof of one cause.', { causeProven: false, normalQtPolymorphicVt: false }); break;
+        }
+        if (response === 'record-torsades-recurrence-suppression-intent') {
+          if (this.torsadesRecurrenceIntentAtTick !== null) { this.log('warning', 'assessment', `torsades-recurrence-intent-refused-${this.currentTick}`, 'The long-QT recurrence-suppression intent was already recorded.'); break; }
+          this.torsadesRecurrenceIntentAtTick = this.currentTick;
+          this.log('warning', 'assessment', `torsades-recurrence-suppression-intent-recorded-${this.currentTick}`, 'Protocol-bounded IV magnesium intent for recurrent long-QT polymorphic VT, correction of authored electrolyte abnormalities, QT-active culprit withdrawal and replacement review, continuous monitoring, and expert consultation for individualized bradycardia or pause prevention were recorded. No dose, target, delivery, pacing, isoproterenol, capture, or routine normal-QT magnesium claim was supplied.', { intentOnly: true, longQtSpecific: true, doseSelected: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.torsadesContextAtTick === null || this.torsadesRecurrenceIntentAtTick === null) { this.log('warning', 'assessment', `torsades-handoff-order-refused-${this.currentTick}`, 'Complete both long-QT context and recurrence-suppression lanes before final reassessment.'); break; }
+        if (this.currentTick <= Math.max(this.torsadesContextAtTick, this.torsadesRecurrenceIntentAtTick)) { this.log('warning', 'assessment', `torsades-handoff-time-refused-${this.currentTick}`, 'Allow a later simulated tick before the recurrence-risk handoff. One interval cannot prove durable freedom from recurrence.'); break; }
+        if (this.torsadesHandoffAtTick !== null) { this.log('warning', 'assessment', `torsades-handoff-refused-${this.currentTick}`, 'The recurrence-risk handoff was already recorded.'); break; }
+        this.torsadesHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `torsades-handoff-recorded-${this.currentTick}`, 'Fixed later check remains sinus bradycardia 52/min with preserved perfusion and no authored recurrence in this brief interval; QT risk remains open. Rhythm, QT, electrolytes, medication work, recurrence and pulse-loss triggers, arrest transition, expert rate-support contingency, and named owners were handed off without predicting disposition or outcome.', { recurrenceObservedInBriefInterval: false, recurrenceRiskResolved: false, ownerNamed: true, outcomePredicted: false }); break;
+      }
       case 'emergence-residual-block-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative'
@@ -7275,6 +7326,15 @@ export class AnesthesiaEngine {
         meanArterialMmHg: 85, coreTemperatureC: 36.7 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'torsades-de-pointes')) {
+      const converted = this.torsadesPostShockAtTick !== null;
+      crisisState = { ...crisisState, heartRateBpm: converted ? 52 : 220,
+        respiratoryRateBpm: converted ? 16 : 22, spo2Percent: converted ? 97 : 96,
+        etco2MmHg: converted ? 36 : 28, systolicMmHg: converted ? 112 : 74,
+        diastolicMmHg: converted ? 68 : 42, meanArterialMmHg: converted ? 83 : 53,
+        coreTemperatureC: 36.7 };
+    }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'unstable-narrow-complex-tachycardia')) {
       const cardioverted = this.unstableNarrowTachycardiaCardiovertedAtTick !== null;
       crisisState = { ...crisisState, heartRateBpm: cardioverted ? 92 : 188,
@@ -8213,6 +8273,19 @@ export class AnesthesiaEngine {
               handoffAtTick: this.completeHeartBlockHandoffAtTick,
               hemodynamicallyStable: true as const, pacingDelivered: false as const,
               captureAssessed: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'torsades-de-pointes') ? {
+            torsadesAssessment: {
+              recognitionAtTick: this.torsadesRecognitionAtTick,
+              shockIntentAtTick: this.torsadesShockIntentAtTick,
+              postShockAtTick: this.torsadesPostShockAtTick,
+              contextAtTick: this.torsadesContextAtTick,
+              recurrenceIntentAtTick: this.torsadesRecurrenceIntentAtTick,
+              handoffAtTick: this.torsadesHandoffAtTick,
+              initialPulsePresent: true as const, shockDeliveredByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

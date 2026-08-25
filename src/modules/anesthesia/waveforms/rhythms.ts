@@ -102,6 +102,23 @@ const RHYTHM_LIST: readonly RhythmDefinition[] = Object.freeze([
       'Slow wide escape complexes with regular P waves marching through them, unrelated to the complexes.',
   },
   {
+    id: 'torsades-de-pointes',
+    name: 'Torsades de pointes',
+    morphology: {
+      events: table({
+        P: { a: 0 }, Q: { a: -2, b: 0.28 }, R: { a: 17, b: 0.32 },
+        S: { a: -7, b: 0.34 }, T: { a: -1, b: 0.48 },
+      }),
+      mechanicalPulse: true,
+      torsadesTwist: true,
+    },
+    rateRangeBpm: [180, 300],
+    rateIsMeasurable: true,
+    source: 'Polymorphic ventricular tachycardia with wide complexes that change axis and amplitude around the baseline in long-QT context; 2025 AHA adult advanced life support guideline.',
+    morphologyDescription:
+      'Rapid wide polymorphic complexes wax, wane, and rotate around the baseline.',
+  },
+  {
     id: 'ventricular-tachycardia',
     name: 'Ventricular tachycardia',
     morphology: {

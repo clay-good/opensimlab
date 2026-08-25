@@ -121,6 +121,8 @@ export interface BeatMorphology {
   readonly atrialRateBpm?: number;
   /** When true, a narrow pacing artifact precedes each ventricular complex. */
   readonly pacingSpike?: boolean;
+  /** When true, successive wide complexes wax, wane, and reverse around baseline. */
+  readonly torsadesTwist?: boolean;
 }
 
 /** Rescale the table for a given RR interval, per each event's rate exponent. */
@@ -365,6 +367,13 @@ export class EcgGenerator {
         this.beatPhaseSeconds = 0;
       }
       let value = this.z * MV_PER_Z_UNIT;
+
+      // Torsades is polymorphic rather than a fixed wide-complex template. The
+      // slow signed envelope makes successive complexes wax, wane, and rotate
+      // through the baseline while retaining deterministic beat timing.
+      if (this.morphology.torsadesTwist === true) {
+        value *= 0.2 + 1.15 * Math.sin(2 * Math.PI * 0.24 * this.elapsed);
+      }
 
       // Dissociated atrial activity: a Gaussian P train on its own clock.
       const atrialRate = this.morphology.atrialRateBpm;

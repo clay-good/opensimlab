@@ -1,0 +1,60 @@
+/** Pulsed sustained torsades with immediate shock and long-QT recurrence control. */
+
+import type { Scenario } from '@anesthesia/scenarios/types';
+
+export const TORSADES_DE_POINTES: Scenario = {
+  schemaVersion: 1,
+  metadata: {
+    id: 'torsades-de-pointes', version: '0.1.0', maturity: 'draft', title: 'Torsades de pointes',
+    author: 'Open Sim Lab', license: 'CC BY-SA 4.0', estimatedMinutes: 8,
+    difficulty: 'advanced', objectives: [
+      { id: 'reconcile-torsades-pulse-and-pattern', statement: 'Reconcile the fixed sustained polymorphic VT report, mechanical pulse, compromise, and preceding long-QT context.', measure: 'Torsades remained distinct from monomorphic VT, VF, and a rate-only diagnosis.' },
+      { id: 'record-torsades-unsynchronized-shock-intent', statement: 'Record immediate unsynchronized-shock intent without waiting for magnesium, QT review, synchronization, or an energy calculation.', measure: 'The electrically unstable sustained polymorphic rhythm received a shock-first intent pathway.' },
+      { id: 'review-torsades-post-shock-rhythm', statement: 'After elapsed time, review the authored post-team sinus rhythm, perfusion response, and persistent long-QT risk.', measure: 'Conversion did not imply cure, recurrence prevention, learner shock delivery, or outcome.' },
+      { id: 'review-torsades-long-qt-context', statement: 'Review QT-active medications, interactions, kidney function, bradycardia/pauses, electrolytes, ischemic, structural, and inherited context.', measure: 'Authored acquired contributors remained patient-specific without proving one cause.' },
+      { id: 'record-torsades-recurrence-suppression-intent', statement: 'Record long-QT-specific magnesium, electrolyte correction, culprit-medication, monitoring, and expert strategy intent.', measure: 'No dose, target, delivery, pacing setting, capture, or routine normal-QT magnesium claim was supplied.' },
+      { id: 'handoff-torsades-recurrence-plan', statement: 'After elapsed reassessment, hand off persistent QT risk, recurrence and pulse-loss triggers, open work, and owners.', measure: 'The handoff did not predict durable freedom from recurrence, disposition, or outcome.' },
+    ],
+    clinicalReview: { reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED',
+      competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01',
+      contentVersion: '0.1.0', sources: [
+        'Wigginton JG, et al. Part 9: Adult Advanced Life Support: 2025 AHA Guidelines for CPR and ECC. Circulation. 2025;152(suppl 2):S538-S577. doi:10.1161/CIR.0000000000001376.',
+        'Tisdale JE, Chung MK, Campbell KB, et al. Drug-Induced Arrhythmias: A Scientific Statement From the American Heart Association. Circulation. 2020;142:e214-e233.',
+      ] },
+    limitations: ['torsades-rhythm-pulse-long-qt-context-and-response-are-authored',
+      'torsades-controls-record-rescue-prevention-and-handoff-intent-only',
+      'no-live-torsades-diagnosis-shock-medication-pacing-device-or-outcome'],
+  },
+  patient: { ageYears: 67, sex: 'female', heightCm: 165, weightKg: 64, asaClass: 4,
+    diagnosis: 'Authored acquired long-QT torsades de pointes; exact cause remains open',
+    procedure: 'Immediate polymorphic-VT response and recurrence-risk handoff',
+    comorbidities: ['Chronic kidney disease'],
+    medications: ['Dofetilide; fixed QT-active medication context for review'],
+    allergies: ['No known drug allergies'], fasting: 'Not established in the monitored Cardiology unit',
+    baseline: { heartRateBpm: 220, meanArterialMmHg: 53, strokeVolumeMl: 34,
+      hemoglobinGPerDl: 12.6, bloodVolumeMl: 4300, coreTemperatureC: 36.7,
+      arterialStiffness: 1.15, baroreflexGain: 0.7, fixedStrokeVolume: false },
+    airway: { difficulty: 0.2, difficultMaskVentilation: false,
+      assessment: 'Acutely confused, pale, with a weak palpable pulse and spontaneous breathing' },
+    respiratory: { profile: 'healthy' } },
+  equipment: { monitoring: ['ecg', 'nibp', 'capnography', 'pulse-oximetry', 'temperature'],
+    ventilator: { mode: 'manual', fio2: 0.21, tidalVolumeMl: 430,
+      respiratoryRateBpm: 22, delivering: false } },
+  formulary: [],
+  timeline: [
+    { id: 'torsades-rhythm', type: 'rhythm-change', target: 'torsades-de-pointes', atTick: 0,
+      severity: 'critical', message: 'The teaching monitor shows rapid wide polymorphic complexes waxing, waning, and rotating around the baseline with a mechanical pulse.' },
+    { id: 'torsades-presentation', type: 'narrative', target: 'torsades-de-pointes', atTick: 0,
+      severity: 'critical', message: 'In a monitored Cardiology unit after presyncope, a 67-year-old woman develops sustained polymorphic VT near 220/min with a weak palpable pulse, BP 74/42 mmHg, acute confusion, and cool pale skin. SpO₂ is 96% on room air. A fixed pre-event 12-lead report described sinus bradycardia 52/min with QTc 560 ms. Sustained polymorphic VT is electrically unstable and requires immediate unsynchronized-shock intent; do not delay for magnesium, a cause checklist, synchronization, or an energy calculation. Pulse loss opens the cardiac-arrest pathway.' },
+    { id: 'torsades-boundary', type: 'narrative', target: 'torsades-de-pointes-boundary', atTick: 0,
+      severity: 'warning', message: 'Fixed pre-event context includes K 3.0 mmol/L, Mg 1.5 mg/dL, reduced kidney function, recent poor intake, and a QT-active medication. These are patient facts, not universal thresholds or proof of one cause. A later authored post-team report may show sinus rhythm while QT risk remains. Magnesium intent is bounded to recurrent polymorphic VT with long QT; electrolyte and culprit review remain separate. The controls do not examine; acquire or interpret pulse, ECG, monitoring, labs, or imaging; diagnose cause; select shock energy or sedation; operate a defibrillator; deliver shock, CPR, oxygen, magnesium, electrolyte, medication, infusion, pacing, or isoproterenol; assess capture; choose a device; determine disposition or prognosis; or predict recurrence or outcome.' },
+  ],
+  debrief: { rubric: [
+    { id: 'torsades-pattern', objectiveId: 'reconcile-torsades-pulse-and-pattern', question: 'Which fixed rhythm, pulse, QT, and whole-patient findings established this pulsed torsades emergency?' },
+    { id: 'torsades-shock', objectiveId: 'record-torsades-unsynchronized-shock-intent', question: 'Why was immediate unsynchronized rather than synchronized shock intent recorded?' },
+    { id: 'torsades-post-shock', objectiveId: 'review-torsades-post-shock-rhythm', question: 'What changed in the authored post-team report, and which recurrence risk remained?' },
+    { id: 'torsades-context', objectiveId: 'review-torsades-long-qt-context', question: 'Which acquired, reversible, structural, and inherited contributors remained open?' },
+    { id: 'torsades-recurrence', objectiveId: 'record-torsades-recurrence-suppression-intent', question: 'Why was magnesium bounded to recurrent long-QT polymorphic VT, and what work remained separate?' },
+    { id: 'torsades-handoff', objectiveId: 'handoff-torsades-recurrence-plan', question: 'Which rhythm, QT, electrolyte, medication, recurrence, pulse-loss, owner, and expert-contingency details were handed off?' },
+  ] },
+};

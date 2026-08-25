@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 92 reports complete-heart-block state. */
-export const WORKER_PROTOCOL_VERSION = 92;
+/** Bumped whenever the message shape changes incompatibly. Version 93 reports torsades state. */
+export const WORKER_PROTOCOL_VERSION = 93;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -715,6 +715,17 @@ export interface EquipmentSnapshot {
       readonly hemodynamicallyStable: true;
       readonly pacingDelivered: false;
       readonly captureAssessed: false;
+    };
+    readonly torsadesAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly shockIntentAtTick: number | null;
+      readonly postShockAtTick: number | null;
+      readonly contextAtTick: number | null;
+      readonly recurrenceIntentAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true;
+      readonly shockDeliveredByLearner: false;
+      readonly treatmentDeliveredByLearner: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

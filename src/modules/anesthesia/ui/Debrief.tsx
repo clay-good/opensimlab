@@ -4139,6 +4139,24 @@ export function objectiveFindings(
       const ordered = reassessment && handoff && reassessment.tick <= handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Permanent-pacing evaluation, shared decisions, owners, open causes, and triggers were handed off without choosing or operating a device.' : 'The definitive evaluation handoff was absent or preceded elapsed reassessment.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-torsades-pulse-and-pattern', 'record-torsades-unsynchronized-shock-intent',
+      'review-torsades-post-shock-rhythm', 'review-torsades-long-qt-context',
+      'record-torsades-recurrence-suppression-intent',
+      'handoff-torsades-recurrence-plan'].includes(objective.id)) {
+      const recognition = log.find((event) => /^torsades-recognition-recorded-\d+$/.test(event.eventId));
+      const shock = log.find((event) => /^torsades-unsynchronized-shock-intent-recorded-\d+$/.test(event.eventId));
+      const postShock = log.find((event) => /^torsades-post-shock-rhythm-reviewed-\d+$/.test(event.eventId));
+      const context = log.find((event) => /^torsades-long-qt-context-reviewed-\d+$/.test(event.eventId));
+      const recurrence = log.find((event) => /^torsades-recurrence-suppression-intent-recorded-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^torsades-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-torsades-pulse-and-pattern') return { ...base, outcome: recognition ? 'met' : 'not-met', finding: recognition ? 'Sustained polymorphic VT, pulse, compromise, and preceding long-QT context were reconciled.' : 'The pulsed polymorphic emergency was not reconciled.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'record-torsades-unsynchronized-shock-intent') { const ordered = recognition && shock && recognition.tick <= shock.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Immediate unsynchronized-shock intent followed recognition without a magnesium, QT-review, synchronization, or energy gate.' : 'Shock intent was absent, synchronized, or bypassed recognition.', atTick: shock?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-torsades-post-shock-rhythm') { const ordered = shock && postShock && shock.tick < postShock.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed authored post-team sinus report preserved long-QT recurrence risk and the no-learner-delivery boundary.' : 'Post-team review was absent or did not follow shock intent after elapsed time.', atTick: postShock?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-torsades-long-qt-context') { const ordered = postShock && context && postShock.tick <= context.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'QT-active medication, kidney, bradycardia, electrolyte, ischemic, structural, and inherited context remained open.' : 'Long-QT context review was absent or preceded the post-team report.', atTick: context?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'record-torsades-recurrence-suppression-intent') { const ordered = postShock && recurrence && postShock.tick <= recurrence.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Long-QT-specific magnesium, electrolyte, culprit, monitoring, and expert intent were recorded without dose or delivery claims.' : 'Recurrence-suppression intent was absent or preceded the post-team report.', atTick: recurrence?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = context && recurrence && handoff && context.tick < handoff.tick && recurrence.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Elapsed handoff kept QT risk, open causes, recurrence and pulse-loss triggers, expert contingency, and owners visible.' : 'Final handoff was absent, premature, or bypassed a prevention lane.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

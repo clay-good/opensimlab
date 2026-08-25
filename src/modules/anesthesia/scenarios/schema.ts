@@ -126,7 +126,7 @@ export const SCENARIO_SCHEMA: SchemaNode = {
           type: 'object', description: 'The patient\'s own baseline, not a default.',
           required: ['heartRateBpm', 'meanArterialMmHg', 'strokeVolumeMl', 'hemoglobinGPerDl', 'bloodVolumeMl', 'coreTemperatureC'],
           properties: {
-            heartRateBpm: NUMBER_FIELD('Baseline heart rate.', 25, 180),
+            heartRateBpm: NUMBER_FIELD('Baseline heart rate.', 25, 300),
             meanArterialMmHg: NUMBER_FIELD('Baseline mean arterial pressure.', 40, 160),
             strokeVolumeMl: NUMBER_FIELD('Baseline stroke volume.', 20, 150),
             hemoglobinGPerDl: NUMBER_FIELD('Baseline haemoglobin.', 4, 20),

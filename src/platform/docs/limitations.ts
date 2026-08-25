@@ -2919,6 +2919,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use current specialty and acute-care guidance, local resources, qualified judgment, shared decisions, and explicit rescue and arrest pathway switching.',
     briefIn: ['complete-heart-block'],
   },
+  {
+    id: 'torsades-rhythm-pulse-long-qt-context-and-response-are-authored',
+    headline: 'The torsades pattern, weak pulse, prolonged-QT context, compromise, and post-team sinus report are authored teaching facts.',
+    simplification: 'One monitored-unit record supplies fixed pre-event ECG, rhythm, physiology, laboratory, medication, kidney, and response snapshots.',
+    whereItMisleads: 'Treating the teaching waveform as a diagnostic ECG, measuring QT during polymorphic VT, or reading the authored sinus report as proof of cure or one cause.',
+    correctUnderstanding: 'Real care verifies pulse and perfusion immediately, uses real ECG and monitoring, treats sustained polymorphic VT as electrically unstable, and reassesses continuously.',
+    briefIn: ['torsades-de-pointes'],
+  },
+  {
+    id: 'torsades-controls-record-rescue-prevention-and-handoff-intent-only',
+    headline: 'The controls record unsynchronized-shock intent, later review, long-QT recurrence prevention, and handoff; they do not deliver care.',
+    simplification: 'Six clicks stand in for emergency assessment, team activation, defibrillation, monitoring, treatment, consultation, communication, and handoff.',
+    whereItMisleads: 'Equating button order with pulse or ECG interpretation, shock delivery, magnesium administration, electrolyte correction, pacing, or cardiology competence.',
+    correctUnderstanding: 'Actual care requires qualified teams, immediate unsynchronized shock for sustained polymorphic VT, cause-specific treatment, and explicit arrest-pathway switching if the pulse is lost.',
+    briefIn: ['torsades-de-pointes'],
+  },
+  {
+    id: 'no-live-torsades-diagnosis-shock-medication-pacing-device-or-outcome',
+    headline: 'The lab does not diagnose cause, choose energy, shock, medicate, correct electrolytes, pace, operate a device, or predict outcome.',
+    simplification: 'No live exam, test acquisition or interpretation, oxygen, CPR, shock, drug, infusion, electrolyte, pacing, capture, device, procedure, disposition, recurrence, prognosis, benefit, or outcome is modeled.',
+    whereItMisleads: 'Delaying shock for magnesium or a checklist, synchronizing polymorphic VT, generalizing magnesium to normal-QT polymorphic VT, or copying fictional values.',
+    correctUnderstanding: 'Use current resuscitation guidance, local protocols, verified patient data, qualified judgment, toxicology or electrophysiology expertise, and continuous reassessment.',
+    briefIn: ['torsades-de-pointes'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

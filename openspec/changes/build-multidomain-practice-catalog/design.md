@@ -1152,6 +1152,24 @@ and deterioration triggers. The lab does not examine; acquire or interpret tests
 deliver oxygen, atropine, medication, infusion, or pacing; choose settings, sedation, device, mode,
 or lead; assess capture; implant or program; determine disposition or prognosis; or predict outcome.
 
+### Wave C cardiology slice 11: torsades de pointes
+
+The eleventh cardiology slice begins in a monitored unit with sustained polymorphic VT near 220/min,
+a weak palpable pulse, BP 74/42 mmHg, acute confusion, and a fixed pre-event sinus report with QTc
+560 ms. The dedicated teaching waveform waxes, wanes, and reverses polarity around the baseline; it
+is not a diagnostic ECG or a substitute for pulse and perfusion assessment.
+
+Learners first reconcile the polymorphic pattern, pulse, and compromise, then record immediate
+unsynchronized-shock intent. Context review, magnesium intent, synchronization, and energy selection
+cannot delay that step. Shock delivery is not simulated, and a separate later tick supplies the
+authored post-team sinus report. Long-QT context review and recurrence-suppression intent may then
+occur in either order before elapsed reassessment and handoff. Magnesium is bounded to recurrent
+long-QT polymorphic VT; electrolyte and culprit review remain explicit, and pulse loss opens the
+cardiac-arrest pathway. The lab does not examine; acquire or interpret tests; diagnose cause; choose
+energy or sedation; operate a defibrillator; deliver shock, CPR, oxygen, magnesium, electrolyte,
+medication, infusion, pacing, or isoproterenol; assess capture; choose a device; determine disposition
+or prognosis; or predict recurrence or outcome.
+
 #### Respiratory medicine: 15
 
 Acute severe asthma; COPD exacerbation; community-acquired pneumonia with hypoxemia; pulmonary

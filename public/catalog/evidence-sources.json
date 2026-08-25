@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 119,
+  "sourceCount": 121,
   "sources": [
     {
       "id": "association-qrh-2023",
@@ -1544,6 +1544,28 @@
       "locator": "140:e382-e482; doi:10.1161/CIR.0000000000000628",
       "usedFor": "Bradycardia boundaries: sinus-node dysfunction uses symptom correlation without a universal rate or pause threshold; acquired third-degree AV block not due to reversible or physiologic causes supports permanent pacing regardless of symptoms; shared decisions still apply.",
       "verifiedAgainst": "https://www.acc.org/~/media/Non-Clinical/Files-PDFs-Excel-MS-Word-etc/Guidelines/2018/Guidelines_Made_Simple_2018_Bradycardia.pdf",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "wigginton-adult-als-2025",
+      "authors": "Wigginton JG, Perman SM, Elmer J, et al",
+      "title": "Part 9: Adult Advanced Life Support: 2025 American Heart Association Guidelines for CPR and ECC",
+      "publication": "Circulation",
+      "year": 2025,
+      "locator": "152(suppl 2):S538-S577; doi:10.1161/CIR.0000000000001376",
+      "usedFor": "The torsades rescue boundary: sustained polymorphic VT is electrically unstable and requires immediate unsynchronized shock; magnesium may be considered for recurrences associated with long QT, while routine magnesium is not recommended for normal-QT polymorphic VT.",
+      "verifiedAgainst": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-advanced-life-support",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "tisdale-drug-induced-arrhythmias-2020",
+      "authors": "Tisdale JE, Chung MK, Campbell KB, et al",
+      "title": "Drug-Induced Arrhythmias: A Scientific Statement From the American Heart Association",
+      "publication": "Circulation",
+      "year": 2020,
+      "locator": "142:e214-e233; doi:10.1161/CIR.0000000000000905",
+      "usedFor": "The acquired long-QT context boundary: review QT-prolonging drugs and patient risk factors, correct modifiable electrolyte abnormalities, and preserve specialist judgment rather than assigning one fictional cause.",
+      "verifiedAgainst": "https://www.acc.org/latest-in-cardiology/ten-points-to-remember/2020/09/21/03/45/drug-induced-arrhythmias",
       "verifiedOn": "2026-08-25"
     },
     {
