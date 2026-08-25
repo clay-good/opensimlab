@@ -1713,7 +1713,7 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Status epilepticus is time-critical and patient-specific. Reassess '
       + 'airway, ventilation, circulation, glucose, visible and electrographic seizure activity, '
       + 'treatment response, and etiology continuously.',
-    briefIn: ['status-epilepticus'],
+    briefIn: [],
   },
   {
     id: 'status-epilepticus-controls-are-screen-proxies',
@@ -1725,7 +1725,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'airway management, or team performance.',
     correctUnderstanding: 'These are psychomotor, medication, and team skills requiring local '
       + 'protocols, trained people, functioning equipment, supervised practice, and bedside reassessment.',
-    briefIn: ['status-epilepticus'],
+    briefIn: [],
   },
   {
     id: 'no-status-second-line-eeg-cause-airway-recurrence-or-outcome',
@@ -1738,7 +1738,7 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Persistent or recurrent status requires prompt protocol-based '
       + 'escalation, continued airway and physiologic support, EEG when indicated, etiologic '
       + 'evaluation and treatment, and appropriate critical care.',
-    briefIn: ['status-epilepticus'],
+    briefIn: [],
   },
   {
     id: 'acute-ischemic-stroke-findings-and-eligibility-are-authored',
@@ -2384,6 +2384,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     whereItMisleads: 'Treating 7 g/dL as a universal trigger, assuming improved pressure proves hemostasis, or applying a nonvariceal pathway to suspected variceal bleeding.',
     correctUnderstanding: 'Use current local protocols and GI, critical-care, blood-bank, pharmacy, airway, interventional-radiology, and surgical expertise for real care.',
     briefIn: ['upper-gi-hemorrhage'],
+  },
+  {
+    id: 'critical-care-status-epilepticus-findings-and-response-are-authored',
+    headline: 'The EEG, neurologic, airway, ventilation, perfusion, laboratory, and response panels are authored teaching facts.',
+    simplification: 'One refractory-status patient has fixed persistent electrographic seizures and a bounded post-pathway response.',
+    whereItMisleads: 'Treating the screen as examination, monitoring or EEG acquisition or interpretation, diagnosis, seizure quantification, prognosis, or outcome prediction.',
+    correctUnderstanding: 'Real refractory-status care repeatedly integrates clinical state, EEG, medication delivery, airway, ventilation, perfusion, temperature, organ function, cause, adverse effects, and serial response.',
+    briefIn: [],
+  },
+  {
+    id: 'critical-care-status-epilepticus-eeg-anesthetic-and-cause-actions-are-proxies',
+    headline: 'EEG, continuous-anesthetic, organ-support, cause, and reassessment buttons record intents; they do not perform care.',
+    simplification: 'The interface orders reasoning without acquiring EEG, delivering oxygen, ventilation, fluid or drugs, managing an airway, or treating a cause.',
+    whereItMisleads: 'Equating button order with neurocritical-care, epilepsy, EEG, pharmacy, airway, prescribing, procedural, imaging, or transfer competence.',
+    correctUnderstanding: 'Actual therapy and monitoring are individualized to EEG, cause, physiology, organ function, adverse effects, local protocols, and expert reassessment.',
+    briefIn: [],
+  },
+  {
+    id: 'no-live-critical-care-status-epilepticus-diagnosis-prescribing-eeg-airway-or-outcome',
+    headline: 'The case does not diagnose status, interpret EEG, prescribe therapy, manage an airway, perform procedures, or predict outcome.',
+    simplification: 'Agent selection, dosing, EEG target, duration, weaning, recurrence, cause treatment, complications, recovery, and prognosis remain incomplete.',
+    whereItMisleads: 'Assuming absent movement proves seizure control, applying one anesthetic or burst-suppression target universally, or treating a brief EEG response as durable recovery.',
+    correctUnderstanding: 'Use current local protocols and neurocritical-care, epilepsy, EEG, pharmacy, airway, critical-care, imaging, infectious, immune, toxicology, and procedural expertise for real care.',
+    briefIn: [],
   },
   {
     id: 'no-live-mixed-shock-diagnosis-prescribing-hemodynamic-procedure-or-outcome',

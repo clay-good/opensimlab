@@ -3632,6 +3632,46 @@ export function objectiveFindings(
         : 'Post-bridge reassessment was absent or preceded hemostasis escalation.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-refractory-status-epilepticus', 'review-refractory-status-pattern',
+      'activate-refractory-status-pathway', 'address-refractory-status-causes',
+      'reassess-refractory-status-trajectory'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'critical-care-status-epilepticus');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The critical-care refractory-status vignette was not active.' } satisfies ObjectiveFinding;
+      const recognition = log.find((event) => /^critical-care-status-recognized-\d+$/.test(event.eventId));
+      const pattern = log.find((event) => /^critical-care-status-pattern-reviewed-\d+$/.test(event.eventId));
+      const pathway = log.find((event) => /^critical-care-status-pathway-activated-\d+$/.test(event.eventId));
+      const causes = log.find((event) => /^critical-care-status-causes-addressed-\d+$/.test(event.eventId));
+      const reassessment = log.find((event) => /^critical-care-status-trajectory-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'recognize-refractory-status-epilepticus') return { ...base,
+        outcome: recognition ? 'met' : 'not-met', finding: recognition
+          ? 'Persistent electrographic seizures despite reported emergent and urgent therapy triggered refractory-status escalation despite stopped convulsions.'
+          : 'Refractory electrographic status recognition or experienced-team activation was absent.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-refractory-status-pattern') {
+        const ordered = recognition && pattern && recognition.tick <= pattern.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'The authored EEG report was integrated with airway, ventilation, perfusion, temperature, medication, and mimic context.'
+          : 'Whole-pattern review was absent or preceded recognition.', atTick: pattern?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'activate-refractory-status-pathway') {
+        const ordered = pattern && pathway && pattern.tick <= pathway.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Expert continuous-anesthetic and EEG pathways were activated with ventilation and hemodynamic guardrails and no universal agent or target.'
+          : 'The refractory-status pathway was absent or preceded pattern review.', atTick: pathway?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'address-refractory-status-causes') {
+        const ordered = pathway && causes && pathway.tick <= causes.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Metabolic, toxic, infectious, structural, vascular, immune, and medication pathways remained active during suppression.'
+          : 'Cause review was absent or preceded refractory therapy activation.', atTick: causes?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = causes && reassessment && causes.tick <= reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+        ? 'The fixed EEG and systemic response improved briefly while durable control, recurrence, cause, sedation, organ, and recovery trajectories stayed open.'
+        : 'Whole-trajectory reassessment was absent or preceded cause review.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

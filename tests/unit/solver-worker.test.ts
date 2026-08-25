@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: upper-gi-hemorrhage state has protocol version 71', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(71);
+  it('Scenario: refractory-status state has protocol version 72', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(72);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

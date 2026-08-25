@@ -461,6 +461,11 @@ export class AnesthesiaEngine {
   private upperGiHemorrhageResuscitationAtTick: number | null = null;
   private upperGiHemorrhageHemostasisAtTick: number | null = null;
   private upperGiHemorrhageReassessmentAtTick: number | null = null;
+  private criticalCareStatusRecognitionAtTick: number | null = null;
+  private criticalCareStatusPatternAtTick: number | null = null;
+  private criticalCareStatusPathwayAtTick: number | null = null;
+  private criticalCareStatusCausesAtTick: number | null = null;
+  private criticalCareStatusReassessmentAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -3439,6 +3444,58 @@ export class AnesthesiaEngine {
           'Fixed response after the authored resuscitation bridge: MAP is 68 mmHg, HR 104/min, capillary refill is 3 seconds, and mentation is clearer. No further hematemesis occurs during this brief window, but hemostasis is not proven; repeat endoscopy, serial hemoglobin, lactate, urine output, medication decisions, organ trajectory, and failure pathways remain open.', { mapMmHg: 68, heartRateBpm: 104, capillaryRefillSeconds: 3, mentationClearer: true, hematemesisDuringBriefWindow: false, hemostasisProven: false, hemoglobinResponseKnown: false, lactateResponseKnown: false, urineResponseKnown: false });
         break;
       }
+      case 'critical-care-status-epilepticus-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'critical-care-status-epilepticus');
+        const valid = ['recognize-refractory-status-epilepticus',
+          'review-refractory-status-pattern', 'activate-refractory-status-pathway',
+          'address-refractory-status-causes',
+          'reassess-refractory-status-trajectory'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `critical-care-status-response-refused-${this.currentTick}`,
+            supported ? 'The critical-care status-epilepticus action was not one of the listed choices. Nothing changed.'
+              : 'The bounded refractory-status choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'recognize-refractory-status-epilepticus') {
+          if (this.criticalCareStatusRecognitionAtTick !== null) { this.log('warning', 'assessment', `critical-care-status-recognition-refused-${this.currentTick}`, 'Refractory electrographic status recognition and experienced-team activation have already been recorded.'); break; }
+          this.criticalCareStatusRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `critical-care-status-recognized-${this.currentTick}`,
+            'Fixed continuous EEG reports recurrent evolving electrographic seizures without recovery despite reported adequate lorazepam and levetiracetam. Visible convulsions stopped 12 minutes ago, but absent movement did not establish seizure control. Neurocritical-care, epilepsy, EEG, pharmacy, airway, and critical-care teams were activated.', { emergentTherapyReported: true, urgentTherapyReported: true, electrographicSeizuresPersist: true, visibleConvulsionsPresent: false, consciousnessRecovered: false, refractoryStatusPattern: true, neurocriticalCareActivated: true, epilepsyEegActivated: true });
+          break;
+        }
+        if (this.criticalCareStatusRecognitionAtTick === null) { this.log('warning', 'assessment', `critical-care-status-recognition-order-refused-${this.currentTick}`, 'Recognize refractory electrographic status and activate experienced help first.'); break; }
+        if (response === 'review-refractory-status-pattern') {
+          if (this.criticalCareStatusPatternAtTick !== null) { this.log('warning', 'assessment', `critical-care-status-pattern-refused-${this.currentTick}`, 'The fixed EEG and systemic-risk panel has already been reviewed.'); break; }
+          this.criticalCareStatusPatternAtTick = this.currentTick;
+          this.log('critical', 'assessment', `critical-care-status-pattern-reviewed-${this.currentTick}`,
+            'Fixed review links persistent EEG seizures and absent recovery with an intubated airway, reported bilateral ventilation and capnography, MAP 62 mmHg, HR 118/min, SpO₂ 94%, temperature 38.1°C, oliguria, and lactate 4.2 mmol/L. Glucose, electrolytes, medication delivery, physiology, and dangerous mimics remain active; the browser does not acquire or interpret EEG.', { continuousEegReportAuthored: true, airwaySecuredReported: true, bilateralVentilationReported: true, mapMmHg: 62, heartRateBpm: 118, spo2Percent: 94, temperatureC: 38.1, urineOutputMlPerHour: 18, lactateMmolPerL: 4.2, eegAcquiredOrInterpreted: false });
+          break;
+        }
+        if (this.criticalCareStatusPatternAtTick === null) { this.log('warning', 'assessment', `critical-care-status-pattern-order-refused-${this.currentTick}`, 'Review the fixed EEG, airway, ventilation, perfusion, medication, and mimic context before activating refractory therapy.'); break; }
+        if (response === 'activate-refractory-status-pathway') {
+          if (this.criticalCareStatusPathwayAtTick !== null) { this.log('warning', 'assessment', `critical-care-status-pathway-refused-${this.currentTick}`, 'The continuous-anesthetic and EEG pathway has already been activated.'); break; }
+          this.criticalCareStatusPathwayAtTick = this.currentTick;
+          this.log('critical', 'assessment', `critical-care-status-pathway-activated-${this.currentTick}`,
+            'Expert-selected continuous anesthetic therapy was activated with continuous EEG, ventilation, oxygenation, pressure, perfusion, temperature, and organ-support guardrails. No universal agent, dose, EEG depth, burst-suppression target, duration, access, pump, airway, ventilation, fluid, or drug delivery is simulated.', { continuousAnestheticPathwayActivated: true, continuousEegRequired: true, ventilationGuardrail: true, hemodynamicGuardrail: true, universalAgentOrDose: false, universalBurstSuppressionTarget: false, therapyDelivered: false });
+          break;
+        }
+        if (this.criticalCareStatusPathwayAtTick === null) { this.log('warning', 'assessment', `critical-care-status-pathway-order-refused-${this.currentTick}`, 'Activate the expert refractory-status and continuous-EEG pathway before cause review.'); break; }
+        if (response === 'address-refractory-status-causes') {
+          if (this.criticalCareStatusCausesAtTick !== null) { this.log('warning', 'assessment', `critical-care-status-causes-refused-${this.currentTick}`, 'The reversible and dangerous cause pathways have already been recorded.'); break; }
+          this.criticalCareStatusCausesAtTick = this.currentTick;
+          this.log('critical', 'assessment', `critical-care-status-causes-addressed-${this.currentTick}`,
+            'Metabolic, glucose, electrolyte, toxic, medication, infectious, structural, vascular, immune, and other cause pathways remained active alongside seizure suppression, including immediate treatment of any confirmed time-critical reversible cause. No specimen, test, imaging, lumbar puncture, diagnosis, or cause-directed therapy is simulated.', { metabolicCauseReview: true, toxicMedicationCauseReview: true, infectiousCauseReview: true, structuralVascularCauseReview: true, immuneCauseReview: true, causeSearchClosed: false, causeTreatmentDelivered: false });
+          break;
+        }
+        if (this.criticalCareStatusCausesAtTick === null) { this.log('warning', 'assessment', `critical-care-status-causes-order-refused-${this.currentTick}`, 'Keep reversible and dangerous causes active before reviewing the fixed response.'); break; }
+        if (this.criticalCareStatusReassessmentAtTick !== null) { this.log('warning', 'assessment', `critical-care-status-reassessment-refused-${this.currentTick}`, 'The fixed refractory-status reassessment has already been reviewed.'); break; }
+        this.criticalCareStatusReassessmentAtTick = this.currentTick;
+        this.log('critical', 'assessment', `critical-care-status-trajectory-reassessed-${this.currentTick}`,
+          'Fixed response after specialist pathway activation: the authored EEG reports no electrographic seizure during a brief 10-minute window, MAP is 68 mmHg, HR 102/min, SpO₂ 96%, and temperature is 37.9°C. Durable seizure control, recurrence, EEG background, consciousness, anesthetic adverse effects, cause, organ recovery, weaning, prognosis, and outcome remain unknown.', { reassessmentMinutes: 10, electrographicSeizureDuringWindow: false, durableSeizureControlProven: false, mapMmHg: 68, heartRateBpm: 102, spo2Percent: 96, temperatureC: 37.9, consciousnessRecovered: false, causeKnown: false });
+        break;
+      }
       case 'aspiration-risk-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
@@ -6212,6 +6269,18 @@ export class AnesthesiaEngine {
         diastolicMmHg: reassessed ? 55 : 43,
         meanArterialMmHg: reassessed ? 68 : 55 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'critical-care-status-epilepticus')) {
+      const reassessed = this.criticalCareStatusReassessmentAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: reassessed ? 102 : 118,
+        respiratoryRateBpm: 18,
+        spo2Percent: reassessed ? 96 : 94,
+        systolicMmHg: reassessed ? 96 : 86,
+        diastolicMmHg: reassessed ? 54 : 50,
+        meanArterialMmHg: reassessed ? 68 : 62,
+        coreTemperatureC: reassessed ? 37.9 : 38.1 };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -6714,6 +6783,13 @@ export class AnesthesiaEngine {
           resuscitationAtTick: this.upperGiHemorrhageResuscitationAtTick,
           hemostasisAtTick: this.upperGiHemorrhageHemostasisAtTick,
           reassessmentAtTick: this.upperGiHemorrhageReassessmentAtTick,
+        },
+        criticalCareStatusEpilepticusAssessment: {
+          recognitionAtTick: this.criticalCareStatusRecognitionAtTick,
+          patternAtTick: this.criticalCareStatusPatternAtTick,
+          pathwayAtTick: this.criticalCareStatusPathwayAtTick,
+          causesAtTick: this.criticalCareStatusCausesAtTick,
+          reassessmentAtTick: this.criticalCareStatusReassessmentAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

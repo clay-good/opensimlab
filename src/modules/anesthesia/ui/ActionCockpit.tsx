@@ -445,6 +445,13 @@ export interface ActionCockpitProps {
       readonly hemostasisAtTick: number | null;
       readonly reassessmentAtTick: number | null;
     };
+    readonly criticalCareStatusEpilepticusAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly patternAtTick: number | null;
+      readonly pathwayAtTick: number | null;
+      readonly causesAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -718,6 +725,11 @@ export interface ActionCockpitProps {
       | 'record-upper-gi-hemorrhage-resuscitation' | 'activate-repeat-endoscopy-pathway'
       | 'reassess-upper-gi-hemorrhage-trajectory',
   ) => void;
+  readonly onCriticalCareStatusEpilepticusResponse?: (
+    action: 'recognize-refractory-status-epilepticus' | 'review-refractory-status-pattern'
+      | 'activate-refractory-status-pathway' | 'address-refractory-status-causes'
+      | 'reassess-refractory-status-trajectory',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -897,6 +909,9 @@ export function crisisResponseAvailability(
     hasUpperGiHemorrhageResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'upper-gi-hemorrhage',
     ),
+    hasCriticalCareStatusEpilepticusResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'critical-care-status-epilepticus',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -981,6 +996,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'right-ventricular-failure')
       || (event.type === 'narrative' && event.target === 'massive-pulmonary-embolism')
       || (event.type === 'narrative' && event.target === 'upper-gi-hemorrhage')
+      || (event.type === 'narrative' && event.target === 'critical-care-status-epilepticus')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1005,6 +1021,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasRightVentricularFailureResponse,
     hasMassivePulmonaryEmbolismResponse,
     hasUpperGiHemorrhageResponse,
+    hasCriticalCareStatusEpilepticusResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1054,7 +1071,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasMucusPluggingResponse || hasUnplannedExtubationResponse
     || hasSpontaneousBreathingTrialResponse || hasPostIntubationHypotensionResponse
     || hasCardiogenicShockResponse || hasMixedShockResponse || hasRightVentricularFailureResponse
-    || hasMassivePulmonaryEmbolismResponse || hasUpperGiHemorrhageResponse;
+    || hasMassivePulmonaryEmbolismResponse || hasUpperGiHemorrhageResponse
+    || hasCriticalCareStatusEpilepticusResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1078,8 +1096,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasUnplannedExtubationResponse || hasSpontaneousBreathingTrialResponse
     || hasPostIntubationHypotensionResponse || hasCardiogenicShockResponse
     || hasMixedShockResponse || hasRightVentricularFailureResponse
-    || hasMassivePulmonaryEmbolismResponse || hasUpperGiHemorrhageResponse;
-  const responseTray = hasUpperGiHemorrhageResponse
+    || hasMassivePulmonaryEmbolismResponse || hasUpperGiHemorrhageResponse
+    || hasCriticalCareStatusEpilepticusResponse;
+  const responseTray = hasCriticalCareStatusEpilepticusResponse
+    ? { id: 'crisis', label: 'Refractory status' } as const
+    : hasUpperGiHemorrhageResponse
     ? { id: 'crisis', label: 'Upper GI bleed' } as const
     : hasMassivePulmonaryEmbolismResponse
     ? { id: 'crisis', label: 'Massive PE' } as const
@@ -1199,6 +1220,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasRightVentricularFailureResponse
     || hasMassivePulmonaryEmbolismResponse
     || hasUpperGiHemorrhageResponse
+    || hasCriticalCareStatusEpilepticusResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1648,6 +1670,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <UpperGiHemorrhageTray
                 assessment={props.resuscitation.upperGiHemorrhageAssessment}
                 onAction={props.onUpperGiHemorrhageResponse ?? (() => {})} />
+            )}
+            {hasCriticalCareStatusEpilepticusResponse && (
+              <CriticalCareStatusEpilepticusTray
+                assessment={props.resuscitation.criticalCareStatusEpilepticusAssessment}
+                onAction={props.onCriticalCareStatusEpilepticusResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -4678,6 +4705,58 @@ function UpperGiHemorrhageTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-upper-gi-hemorrhage-trajectory')}>Review bridge + bleeding trajectory</Button>
         </div>
         <p className="field__hint">A better pressure is a bridge signal, not proof that the ulcer stopped bleeding.</p>
+      </section>
+    </div>
+  );
+}
+
+function CriticalCareStatusEpilepticusTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['criticalCareStatusEpilepticusAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onCriticalCareStatusEpilepticusResponse']>;
+}) {
+  const recognized = assessment?.recognitionAtTick != null;
+  const pattern = assessment?.patternAtTick != null;
+  const pathway = assessment?.pathwayAtTick != null;
+  const causes = assessment?.causesAtTick != null;
+  const reassessed = assessment?.reassessmentAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="critical-care-status-pattern-title">
+        <div id="critical-care-status-pattern-title" className="syringe__name">Movement stopped. The seizure did not.</div>
+        <Badge kind="teaching">reported benzodiazepine + urgent load · no recovery · EEG seizures persist</Badge>
+        <div className="syringe__meta">intubated · MAP 62 · HR 118 · SpO₂ 94% · temperature 38.1°C</div>
+        <p className="syringe__remaining" role="status">
+          {pattern ? 'Refractory electrographic status · systemic risks stay visible'
+            : recognized ? 'Neurocritical pathway active · whole-pattern review due'
+              : 'No convulsions is not the same as no seizure.'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={recognized}
+            onClick={() => onAction('recognize-refractory-status-epilepticus')}>Recognize refractory status + activate help</Button>
+          <Button className="crisis-drug__action" disabled={!recognized || pattern}
+            onClick={() => onAction('review-refractory-status-pattern')}>Review EEG + systemic context</Button>
+        </div>
+        <p className="field__hint">The EEG report is an authored fact. This surface does not teach acquisition or interpretation.</p>
+      </section>
+      <section className="syringe" aria-labelledby="critical-care-status-control-title">
+        <div id="critical-care-status-control-title" className="syringe__name">Suppress the seizure. Protect the patient.</div>
+        <Badge kind="teaching">continuous therapy + EEG · ventilation + perfusion guardrails · cause search</Badge>
+        <div className="syringe__meta">no universal agent · no universal EEG depth · no closed cause</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'Brief EEG response · durable control still unproven'
+            : causes ? 'Suppression + cause pathways active · response review due'
+              : pathway ? 'Continuous pathway active · cause review due'
+                : 'Refractory therapy + cause pathways pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!pattern || pathway}
+            onClick={() => onAction('activate-refractory-status-pathway')}>Activate continuous therapy + EEG</Button>
+          <Button className="crisis-drug__action" disabled={!pathway || causes}
+            onClick={() => onAction('address-refractory-status-causes')}>Keep reversible causes active</Button>
+          <Button className="crisis-drug__action" disabled={!causes || reassessed}
+            onClick={() => onAction('reassess-refractory-status-trajectory')}>Review EEG + organ trajectory</Button>
+        </div>
+        <p className="field__hint">A seizure-free window is a response signal, not proof of durable control or recovery.</p>
       </section>
     </div>
   );

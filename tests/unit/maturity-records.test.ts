@@ -89,6 +89,9 @@ describe('exact-version maturity records', () => {
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'upper-gi-hemorrhage', '0.1.0',
     )?.status).toBe('draft');
+    expect(maturityFor(
+      criticalCareCatalog, 'scenario', 'status-epilepticus', '0.1.0',
+    )?.status).toBe('draft');
   });
 
   it('never applies a record to a different content version', () => {

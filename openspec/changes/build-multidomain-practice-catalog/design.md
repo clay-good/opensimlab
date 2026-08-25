@@ -774,6 +774,23 @@ The case does not examine, acquire monitoring or tests, diagnose, deliver oxygen
 products, or drugs, manage an airway, prescribe, perform endoscopy, embolization, or surgery,
 transfer, determine disposition, or predict outcome.
 
+### Wave B critical-care slice 14: status epilepticus
+
+The fourteenth critical-care slice begins after the emergency status-epilepticus lab ends. An
+adequate benzodiazepine and urgent antiseizure load are reported, visible convulsions stopped, and
+the intubated patient has not recovered consciousness while fixed continuous EEG still reports
+evolving seizures. Learners recognize refractory electrographic status and activate neurocritical,
+epilepsy, EEG, pharmacy, airway, and critical-care help without treating immobility as seizure control.
+
+The focused tutor pairs “movement stopped; the seizure did not” with “suppress the seizure; protect
+the patient.” Learners activate expert-selected continuous anesthetic therapy with continuous EEG,
+ventilation, perfusion, temperature, and organ-support guardrails; keep metabolic, toxic,
+infectious, structural, vascular, immune, and medication causes active; and review a fixed brief EEG
+and systemic response without universal agent, dose, EEG-depth, burst-suppression, or duration rules.
+The case does not examine, acquire or interpret monitoring or EEG, diagnose, deliver oxygen,
+ventilation, fluid, or drugs, manage an airway, prescribe, image, perform lumbar puncture or another
+procedure, transfer, determine disposition or prognosis, or predict outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute
