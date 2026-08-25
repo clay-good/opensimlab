@@ -446,6 +446,11 @@ export class AnesthesiaEngine {
   private mixedShockSupportAtTick: number | null = null;
   private mixedShockCausesAtTick: number | null = null;
   private mixedShockReassessmentAtTick: number | null = null;
+  private rvFailureRecognitionAtTick: number | null = null;
+  private rvFailurePhenotypeAtTick: number | null = null;
+  private rvFailureSupportAtTick: number | null = null;
+  private rvFailureTriggersAtTick: number | null = null;
+  private rvFailureReassessmentAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -3270,6 +3275,57 @@ export class AnesthesiaEngine {
           'Fixed response after 10 minutes: MAP is 66 mmHg, HR 112/min, capillary refill 3 seconds, cardiac index 1.9 L/min/m², SVR 850 dyn·s/cm⁵, wedge pressure 23 mmHg, and SpO₂ 94%. Congestion persists; urine and lactate response remain too early to declare. Both cause pathways and serial organ trajectory remain open.', { reassessmentMinutes: 10, mapMmHg: 66, heartRateBpm: 112, capillaryRefillSeconds: 3, cardiacIndexLPerMinM2: 1.9, svrDynSecPerCm5: 850, wedgePressureMmHg: 23, spo2Percent: 94, congestionPersists: true, urineResponseKnown: false, lactateResponseKnown: false });
         break;
       }
+      case 'right-ventricular-failure-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'right-ventricular-failure');
+        const valid = ['recognize-rv-failure-trajectory', 'review-rv-failure-phenotype',
+          'record-rv-failure-support', 'address-rv-failure-triggers',
+          'reassess-rv-failure-trajectory'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `rv-failure-response-refused-${this.currentTick}`,
+            supported ? 'The right-ventricular-failure action was not one of the listed choices. Nothing changed.'
+              : 'The bounded right-ventricular-failure choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'recognize-rv-failure-trajectory') {
+          if (this.rvFailureRecognitionAtTick !== null) { this.log('warning', 'assessment', `rv-failure-recognition-refused-${this.currentTick}`, 'The congestion-underperfusion trajectory and experienced-team activation have already been recorded.'); break; }
+          this.rvFailureRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `rv-failure-trajectory-recognized-${this.currentTick}`,
+            'MAP 58 mmHg accompanies cool extremities, 5-second capillary refill, slowing mentation, urine output 12 mL/h, lactate rising from 2.8 to 4.3 mmol/L, elevated JVP, edema, and abdominal distension. Pulmonary-hypertension, cardiac, and shock help were activated from simultaneous systemic congestion and underperfusion.', { mapMmHg: 58, capillaryRefillSeconds: 5, urineOutputMlPerHour: 12, lactateFromMmolPerL: 2.8, lactateToMmolPerL: 4.3, systemicCongestion: true, underperfusion: true, pulmonaryHypertensionTeam: true, cardiacTeam: true, shockTeam: true });
+          break;
+        }
+        if (this.rvFailureRecognitionAtTick === null) { this.log('warning', 'assessment', `rv-failure-recognition-order-refused-${this.currentTick}`, 'Recognize the congestion-underperfusion trajectory and activate experienced help first.'); break; }
+        if (response === 'review-rv-failure-phenotype') {
+          if (this.rvFailurePhenotypeAtTick !== null) { this.log('warning', 'assessment', `rv-failure-phenotype-refused-${this.currentTick}`, 'The fixed RV phenotype panel has already been reviewed.'); break; }
+          this.rvFailurePhenotypeAtTick = this.currentTick;
+          this.log('critical', 'assessment', `rv-failure-phenotype-reviewed-${this.currentTick}`,
+            'Fixed panel: severe RV dilation and systolic dysfunction, systolic septal flattening, a small underfilled LV, no effusion, CVP 18 mmHg, wedge pressure 10 mmHg, and cardiac index 1.8 L/min/m². This supports a pressure-loaded RV-failure phenotype with high right-sided filling pressure and low output; the authored values are not universal diagnostic or treatment cutoffs.', { severeRvDilation: true, reducedRvSystolicFunction: true, systolicSeptalFlattening: true, smallUnderfilledLv: true, pericardialEffusion: false, cvpMmHg: 18, wedgePressureMmHg: 10, cardiacIndexLPerMinM2: 1.8, pressureLoadedRvPhenotype: true, universalCutoffs: false });
+          break;
+        }
+        if (this.rvFailurePhenotypeAtTick === null) { this.log('warning', 'assessment', `rv-failure-phenotype-order-refused-${this.currentTick}`, 'Review the fixed RV phenotype and hemodynamic context before recording support.'); break; }
+        if (response === 'record-rv-failure-support') {
+          if (this.rvFailureSupportAtTick !== null) { this.log('warning', 'assessment', `rv-failure-support-refused-${this.currentTick}`, 'The bounded RV-support intent has already been recorded.'); break; }
+          this.rvFailureSupportAtTick = this.currentTick;
+          this.log('critical', 'assessment', `rv-failure-support-recorded-${this.currentTick}`,
+            'Expert-selected intent was recorded to protect systemic perfusion, oxygenation, acid-base balance, sinus rhythm, RV contractility, and pulmonary afterload while individualizing preload from congestion, output, and response. Neither reflex fluid loading nor reflex decongestion was selected. No universal target, agent, access, dose, pump, oxygen, ventilation, fluid, diuresis, or drug delivery is simulated.', { systemicPerfusionReview: true, oxygenationAcidBaseReview: true, sinusRhythmReview: true, rvContractilityReview: true, pulmonaryAfterloadReview: true, individualizedPreload: true, reflexFluidLoading: false, reflexDecongestion: false, intentOnly: true });
+          break;
+        }
+        if (this.rvFailureSupportAtTick === null) { this.log('warning', 'assessment', `rv-failure-support-order-refused-${this.currentTick}`, 'Record an individualized RV-support intent before reviewing triggers.'); break; }
+        if (response === 'address-rv-failure-triggers') {
+          if (this.rvFailureTriggersAtTick !== null) { this.log('warning', 'assessment', `rv-failure-triggers-refused-${this.currentTick}`, 'The reversible-trigger and pulmonary-vascular pathways have already been recorded.'); break; }
+          this.rvFailureTriggersAtTick = this.currentTick;
+          this.log('critical', 'assessment', `rv-failure-triggers-addressed-${this.currentTick}`,
+            'Hypoxia, acidosis, infection, arrhythmia, ischemia, acute pulmonary embolism, medication interruption, and airway-pressure contributors remained under review while specialist pulmonary-vascular therapy was reconciled. The RV-failure phenotype did not close the precipitant search.', { hypoxiaAcidosisReview: true, infectionReview: true, arrhythmiaIschemiaReview: true, pulmonaryEmbolismReview: true, medicationInterruptionReview: true, airwayPressureReview: true, specialistPulmonaryVascularPathway: true, precipitantSearchClosed: false });
+          break;
+        }
+        if (this.rvFailureTriggersAtTick === null) { this.log('warning', 'assessment', `rv-failure-triggers-order-refused-${this.currentTick}`, 'Keep reversible triggers and the specialist pulmonary-vascular pathway active before reassessment.'); break; }
+        if (this.rvFailureReassessmentAtTick !== null) { this.log('warning', 'assessment', `rv-failure-reassessment-refused-${this.currentTick}`, 'The fixed RV-failure reassessment has already been reviewed.'); break; }
+        this.rvFailureReassessmentAtTick = this.currentTick;
+        this.log('critical', 'assessment', `rv-failure-trajectory-reassessed-${this.currentTick}`,
+          'Fixed response after 10 minutes: MAP is 66 mmHg, HR 108/min in sinus rhythm, capillary refill is 3 seconds, mentation is clearer, SpO₂ is 94%, CVP is 17 mmHg, and cardiac index is 2.0 L/min/m². Edema and JVP elevation persist; urine and lactate response remain too early to declare. Serial RV, congestion, perfusion, oxygenation, trigger, and organ trajectories remain open.', { reassessmentMinutes: 10, mapMmHg: 66, heartRateBpm: 108, sinusRhythm: true, capillaryRefillSeconds: 3, spo2Percent: 94, cvpMmHg: 17, cardiacIndexLPerMinM2: 2, systemicCongestionPersists: true, urineResponseKnown: false, lactateResponseKnown: false });
+        break;
+      }
       case 'aspiration-risk-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
@@ -6010,6 +6066,17 @@ export class AnesthesiaEngine {
       crisisState = { ...crisisState, heartRateBpm: treated ? 98 : 118,
         respiratoryRateBpm: treated ? 18 : 24, spo2Percent: supported ? 96 : 92 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'right-ventricular-failure')) {
+      const reassessed = this.rvFailureReassessmentAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: reassessed ? 108 : 116,
+        respiratoryRateBpm: 24,
+        spo2Percent: reassessed ? 94 : 91,
+        systolicMmHg: reassessed ? 94 : 82,
+        diastolicMmHg: reassessed ? 52 : 46,
+        meanArterialMmHg: reassessed ? 66 : 58 };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -6491,6 +6558,13 @@ export class AnesthesiaEngine {
           supportAtTick: this.mixedShockSupportAtTick,
           causesAtTick: this.mixedShockCausesAtTick,
           reassessmentAtTick: this.mixedShockReassessmentAtTick,
+        },
+        rightVentricularFailureAssessment: {
+          recognitionAtTick: this.rvFailureRecognitionAtTick,
+          phenotypeAtTick: this.rvFailurePhenotypeAtTick,
+          supportAtTick: this.rvFailureSupportAtTick,
+          triggersAtTick: this.rvFailureTriggersAtTick,
+          reassessmentAtTick: this.rvFailureReassessmentAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

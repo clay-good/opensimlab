@@ -424,6 +424,13 @@ export interface ActionCockpitProps {
       readonly causesAtTick: number | null;
       readonly reassessmentAtTick: number | null;
     };
+    readonly rightVentricularFailureAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly phenotypeAtTick: number | null;
+      readonly supportAtTick: number | null;
+      readonly triggersAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -682,6 +689,11 @@ export interface ActionCockpitProps {
       | 'record-mixed-shock-support' | 'address-mixed-shock-causes'
       | 'reassess-mixed-shock-trajectory',
   ) => void;
+  readonly onRightVentricularFailureResponse?: (
+    action: 'recognize-rv-failure-trajectory' | 'review-rv-failure-phenotype'
+      | 'record-rv-failure-support' | 'address-rv-failure-triggers'
+      | 'reassess-rv-failure-trajectory',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -852,6 +864,9 @@ export function crisisResponseAvailability(
     hasMixedShockResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'mixed-shock',
     ),
+    hasRightVentricularFailureResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'right-ventricular-failure',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -933,6 +948,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'post-intubation-hypotension')
       || (event.type === 'narrative' && event.target === 'cardiogenic-shock')
       || (event.type === 'narrative' && event.target === 'mixed-shock')
+      || (event.type === 'narrative' && event.target === 'right-ventricular-failure')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -954,6 +970,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasPostIntubationHypotensionResponse,
     hasCardiogenicShockResponse,
     hasMixedShockResponse,
+    hasRightVentricularFailureResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1002,7 +1019,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasEscalatingHypoxemiaResponse || hasVentilatorDyssynchronyResponse || hasAutoPeepResponse
     || hasMucusPluggingResponse || hasUnplannedExtubationResponse
     || hasSpontaneousBreathingTrialResponse || hasPostIntubationHypotensionResponse
-    || hasCardiogenicShockResponse || hasMixedShockResponse;
+    || hasCardiogenicShockResponse || hasMixedShockResponse || hasRightVentricularFailureResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1025,8 +1042,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorDyssynchronyResponse || hasAutoPeepResponse || hasMucusPluggingResponse
     || hasUnplannedExtubationResponse || hasSpontaneousBreathingTrialResponse
     || hasPostIntubationHypotensionResponse || hasCardiogenicShockResponse
-    || hasMixedShockResponse;
-  const responseTray = hasMixedShockResponse
+    || hasMixedShockResponse || hasRightVentricularFailureResponse;
+  const responseTray = hasRightVentricularFailureResponse
+    ? { id: 'crisis', label: 'RV failure' } as const
+    : hasMixedShockResponse
     ? { id: 'crisis', label: 'Mixed shock' } as const
     : hasCardiogenicShockResponse
     ? { id: 'crisis', label: 'Cardiogenic shock' } as const
@@ -1137,6 +1156,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPostIntubationHypotensionResponse
     || hasCardiogenicShockResponse
     || hasMixedShockResponse
+    || hasRightVentricularFailureResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1571,6 +1591,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasMixedShockResponse && (
               <MixedShockTray assessment={props.resuscitation.mixedShockAssessment}
                 onAction={props.onMixedShockResponse ?? (() => {})} />
+            )}
+            {hasRightVentricularFailureResponse && (
+              <RightVentricularFailureTray
+                assessment={props.resuscitation.rightVentricularFailureAssessment}
+                onAction={props.onRightVentricularFailureResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -4445,6 +4470,58 @@ function MixedShockTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-mixed-shock-trajectory')}>Review 10-minute trajectory</Button>
         </div>
         <p className="field__hint">A mixed label is a beginning, not a destination. Reassess perfusion, congestion, infection, cardiac function, and treatment effect together.</p>
+      </section>
+    </div>
+  );
+}
+
+function RightVentricularFailureTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['rightVentricularFailureAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onRightVentricularFailureResponse']>;
+}) {
+  const recognized = assessment?.recognitionAtTick != null;
+  const phenotype = assessment?.phenotypeAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const triggers = assessment?.triggersAtTick != null;
+  const reassessed = assessment?.reassessmentAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="rv-pattern-title">
+        <div id="rv-pattern-title" className="syringe__name">Read the ventricle, not just the pressure.</div>
+        <Badge kind="teaching">congestion · perfusion · RV shape · septum · output</Badge>
+        <div className="syringe__meta">dilated weak RV · flat septum · small LV · CVP 18 · CI 1.8</div>
+        <p className="syringe__remaining" role="status">
+          {phenotype ? 'Pressure-loaded RV failure · no universal cutoff'
+            : recognized ? 'Congestion + underperfusion recognized · phenotype due'
+              : 'The venous side can fail the whole circulation'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={recognized}
+            onClick={() => onAction('recognize-rv-failure-trajectory')}>Recognize trajectory + call teams</Button>
+          <Button className="crisis-drug__action" disabled={!recognized || phenotype}
+            onClick={() => onAction('review-rv-failure-phenotype')}>Review RV pattern in context</Button>
+        </div>
+        <p className="field__hint">A high CVP is not a fluid prescription. Read filling pressure beside output, congestion, the septum, and treatment response.</p>
+      </section>
+      <section className="syringe" aria-labelledby="rv-support-title">
+        <div id="rv-support-title" className="syringe__name">Protect filling. Lower the load. Prove the flow.</div>
+        <Badge kind="teaching">perfusion · oxygen + pH · rhythm · preload · afterload · reassess</Badge>
+        <div className="syringe__meta">no reflex fluid · no reflex decongestion · triggers stay open</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'Immediate perfusion improved · congestion + cause work remain'
+            : triggers ? 'Triggers kept open · trajectory reassessment due'
+              : support ? 'Individualized support recorded · trigger review due'
+                : 'RV-protective support pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!phenotype || support}
+            onClick={() => onAction('record-rv-failure-support')}>Record individualized RV support</Button>
+          <Button className="crisis-drug__action" disabled={!support || triggers}
+            onClick={() => onAction('address-rv-failure-triggers')}>Keep reversible triggers open</Button>
+          <Button className="crisis-drug__action" disabled={!triggers || reassessed}
+            onClick={() => onAction('reassess-rv-failure-trajectory')}>Review 10-minute trajectory</Button>
+        </div>
+        <p className="field__hint">Support is a moving balance, not a recipe. Specialist therapy, ventilation, diuresis, inotropy, and temporary support remain cause and trajectory dependent.</p>
       </section>
     </div>
   );

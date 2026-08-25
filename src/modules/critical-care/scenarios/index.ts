@@ -9,6 +9,7 @@ import { SPONTANEOUS_BREATHING_TRIAL } from './spontaneous-breathing-trial';
 import { POST_INTUBATION_HYPOTENSION } from './post-intubation-hypotension';
 import { CARDIOGENIC_SHOCK } from './cardiogenic-shock';
 import { MIXED_SHOCK } from './mixed-shock';
+import { RIGHT_VENTRICULAR_FAILURE } from './right-ventricular-failure';
 
 export const CRITICAL_CARE_SCENARIOS: readonly Scenario[] = [
   ARDS_LUNG_PROTECTIVE_VENTILATION,
@@ -21,6 +22,7 @@ export const CRITICAL_CARE_SCENARIOS: readonly Scenario[] = [
   POST_INTUBATION_HYPOTENSION,
   CARDIOGENIC_SHOCK,
   MIXED_SHOCK,
+  RIGHT_VENTRICULAR_FAILURE,
 ];
 export const DEFAULT_CRITICAL_CARE_SCENARIO_ID = ARDS_LUNG_PROTECTIVE_VENTILATION.metadata.id;
 

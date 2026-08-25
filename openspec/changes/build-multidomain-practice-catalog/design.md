@@ -725,6 +725,22 @@ trajectory. The case does not examine, acquire a catheter or tests, calculate or
 oxygen, fluid, or drugs, prescribe, revascularize, treat infection, perform source control, place
 support, transfer, determine disposition, or predict outcome.
 
+### Wave B critical-care slice 11: right-ventricular failure
+
+The eleventh critical-care slice presents acute-on-chronic pulmonary-arterial-hypertension
+decompensation with systemic congestion, worsening tissue perfusion, and a fixed pressure-loaded
+RV pattern. Learners activate pulmonary-hypertension, cardiac, and shock help, then integrate severe
+RV dilation and systolic dysfunction, septal flattening, a small underfilled LV, high right-sided
+filling pressure, and low output without turning any authored value into a diagnostic cutoff.
+
+The focused tutor pairs “read the ventricle, not just the pressure” with “protect filling; lower the
+load; prove the flow.” Learners record expert-selected systemic-perfusion and RV-protective support,
+individualize preload without reflex fluid loading or reflex decongestion, keep reversible triggers
+and specialist pulmonary-vascular therapy open, and review a fixed 10-minute trajectory. The case
+does not examine, acquire or interpret tests, calculate or diagnose, change oxygen or ventilation,
+deliver fluid, diuresis, or drugs, prescribe, perform procedures, place support, transfer, determine
+disposition, or predict outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute

@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 68 reports mixed-shock state. */
-export const WORKER_PROTOCOL_VERSION = 68;
+/** Bumped whenever the message shape changes incompatibly. Version 69 reports RV-failure state. */
+export const WORKER_PROTOCOL_VERSION = 69;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -491,6 +491,13 @@ export interface EquipmentSnapshot {
       readonly hemodynamicsAtTick: number | null;
       readonly supportAtTick: number | null;
       readonly causesAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+    };
+    readonly rightVentricularFailureAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly phenotypeAtTick: number | null;
+      readonly supportAtTick: number | null;
+      readonly triggersAtTick: number | null;
       readonly reassessmentAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */

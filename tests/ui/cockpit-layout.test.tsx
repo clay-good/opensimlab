@@ -558,6 +558,13 @@ describe('Requirement: A Phone Can Run A Full Scenario', () => {
     expect(componentsCss + cockpitCss).toContain('.actions__tray { overflow: auto');
   });
 
+  it('contains every card row inside the phone-width action sheet', () => {
+    // A long tutor badge otherwise sets the implicit grid track to its min-content
+    // width, creating a nested horizontal scrollbar and clipping the next card.
+    expect(cockpitCss).toMatch(/\.syringe \{[^}]*grid-template-columns: minmax\(0, 1fr\);/s);
+    expect(cockpitCss).toContain('.syringe > .badge { white-space: normal; overflow-wrap: anywhere; }');
+  });
+
   it('keeps both overlays clear of the pills that close them', () => {
     // The pills are the only control that closes either overlay, so they stay on
     // top — which means whatever an overlay puts at its own bottom edge would

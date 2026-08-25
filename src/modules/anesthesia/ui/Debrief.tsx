@@ -3512,6 +3512,46 @@ export function objectiveFindings(
         : 'Whole-trajectory reassessment was absent or preceded cause control.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-rv-failure-trajectory', 'review-rv-failure-phenotype',
+      'record-rv-failure-support', 'address-rv-failure-triggers',
+      'reassess-rv-failure-trajectory'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'right-ventricular-failure');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The right-ventricular-failure vignette was not active.' } satisfies ObjectiveFinding;
+      const recognition = log.find((event) => /^rv-failure-trajectory-recognized-\d+$/.test(event.eventId));
+      const phenotype = log.find((event) => /^rv-failure-phenotype-reviewed-\d+$/.test(event.eventId));
+      const support = log.find((event) => /^rv-failure-support-recorded-\d+$/.test(event.eventId));
+      const triggers = log.find((event) => /^rv-failure-triggers-addressed-\d+$/.test(event.eventId));
+      const reassessment = log.find((event) => /^rv-failure-trajectory-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'recognize-rv-failure-trajectory') return { ...base,
+        outcome: recognition ? 'met' : 'not-met', finding: recognition
+          ? 'Systemic congestion plus worsening brain, skin, kidney, lactate, and pressure evidence triggered pulmonary-hypertension, cardiac, and shock help.'
+          : 'The congestion-underperfusion trajectory or experienced-team activation was absent.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-rv-failure-phenotype') {
+        const ordered = recognition && phenotype && recognition.tick <= phenotype.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'The fixed RV, septal, LV, filling-pressure, and output panel supported pressure-loaded RV failure without universal cutoffs.'
+          : 'RV-phenotype review was absent or preceded recognition.', atTick: phenotype?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'record-rv-failure-support') {
+        const ordered = phenotype && support && phenotype.tick <= support.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Systemic perfusion and RV-protective support were reviewed with individualized preload and no reflex fluid or decongestion rule.'
+          : 'Individualized RV support was absent or preceded phenotype review.', atTick: support?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'address-rv-failure-triggers') {
+        const ordered = support && triggers && support.tick <= triggers.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Hypoxia, acidosis, infection, rhythm, ischemia, embolism, medication, airway-pressure, and specialist pulmonary-vascular pathways remained open.'
+          : 'Trigger review was absent or preceded support.', atTick: triggers?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = triggers && reassessment && triggers.tick <= reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+        ? 'Immediate perfusion and oxygenation improved while congestion, precipitant, RV, and organ trajectories stayed open.'
+        : 'Whole-trajectory reassessment was absent or preceded trigger review.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;
