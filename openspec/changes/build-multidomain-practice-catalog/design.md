@@ -1301,7 +1301,7 @@ choose disposition or outcome.
 #### Respiratory medicine: 15
 
 Acute severe asthma; COPD exacerbation; community-acquired pneumonia with hypoxemia; pulmonary
-embolism; acute pulmonary edema respiratory-support reassessment; spontaneous tension pneumothorax post-drainage reassessment; large pleural effusion; mucus plugging;
+embolism; acute pulmonary edema respiratory-support reassessment; spontaneous tension pneumothorax post-drainage reassessment; large unilateral pleural effusion reassessment; mucus plugging;
 opioid-related hypoventilation; neuromuscular respiratory failure; obesity hypoventilation;
 noninvasive-ventilation selection; high-flow oxygen escalation; oxygen-device failure; acute
 tracheostomy obstruction requiring assessment, oxygenation, escalation, and a bounded device pathway.
@@ -1430,6 +1430,26 @@ site, technique, oxygen target, drug, dose, pleurodesis, thoracoscopy, surgery, 
 perform decompression or another procedure; determine disposition or prognosis; or predict
 recurrence, resolution, or outcome. It contains no live tension-pneumothorax event and is distinct
 from Emergency Medicine's penetrating-trauma rescue and Anesthesia's positive-pressure emergency.
+
+### Wave C respiratory-medicine slice 7: large unilateral pleural effusion reassessment
+
+The seventh respiratory-medicine slice presents 6 weeks of progressive dyspnea, cough, and left
+chest heaviness with stable perfusion, mild room-air hypoxemia, markedly reduced left basal
+ventilation claims, and fixed radiograph and thoracic-ultrasound reports supporting a large
+predominantly free-flowing unilateral effusion. Size and appearance do not establish urgency,
+procedural safety, or cause by themselves.
+
+Learners record experienced pleural-team, image-guided diagnostic and slow symptom-relief
+aspiration intent without choosing a site, device, technique, rate, or volume. After elapsed time,
+a fixed experienced-team report gives 850 mL removed before persistent cough and mild chest
+tightness prompt stopping; this is a case fact, not a target or maximum. Symptoms, oxygenation, and
+expansion improve while residual effusion and cause remain open. Learners review an authored paired-
+fluid exudative classification without acquiring, calculating, or interpreting it, coordinate
+pending-result and definitive-evaluation ownership, then complete a strictly elapsed handoff. No
+examination, live test, calculation, diagnosis, aspiration, drain action, biopsy, catheter,
+pleurodesis, surgery, oxygen, drug, treatment, disposition, prognosis, recurrence, or outcome is
+modeled. This is distinct from pulmonary-edema congestion, pneumonia, pleural-air rescue, and
+post-drain pneumothorax surveillance.
 
 #### Pediatrics: 16
 

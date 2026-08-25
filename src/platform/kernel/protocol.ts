@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 103 reports COPD transition reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 107;
+export const WORKER_PROTOCOL_VERSION = 108;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -929,6 +929,19 @@ export interface EquipmentSnapshot {
       readonly dispositionDetermined: false;
       readonly recurrencePredicted: false;
       readonly outcomePredicted: false;
+    };
+    readonly largePleuralEffusionAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly intentAtTick: number | null;
+      readonly responseAtTick: number | null; readonly fluidAtTick: number | null;
+      readonly evaluationAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true; readonly largeUnilateralEffusionAuthored: true;
+      readonly tensionPhysiologyAuthored: false; readonly hemodynamicCompromiseAuthored: false;
+      readonly examinationPerformedByLearner: false; readonly imagingAcquiredByLearner: false;
+      readonly ultrasoundPerformedByLearner: false; readonly pleuralFluidAcquiredByLearner: false;
+      readonly fluidInterpretedByLearner: false; readonly thoracentesisPerformedByLearner: false;
+      readonly deviceOrSiteSelected: false; readonly drainageVolumeSelected: false;
+      readonly treatmentDeliveredByLearner: false; readonly diagnosisDetermined: false;
+      readonly dispositionDetermined: false; readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

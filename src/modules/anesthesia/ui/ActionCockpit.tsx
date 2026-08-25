@@ -839,6 +839,19 @@ export interface ActionCockpitProps {
       readonly recurrencePredicted: false;
       readonly outcomePredicted: false;
     };
+    readonly largePleuralEffusionAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly intentAtTick: number | null;
+      readonly responseAtTick: number | null; readonly fluidAtTick: number | null;
+      readonly evaluationAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true; readonly largeUnilateralEffusionAuthored: true;
+      readonly tensionPhysiologyAuthored: false; readonly hemodynamicCompromiseAuthored: false;
+      readonly examinationPerformedByLearner: false; readonly imagingAcquiredByLearner: false;
+      readonly ultrasoundPerformedByLearner: false; readonly pleuralFluidAcquiredByLearner: false;
+      readonly fluidInterpretedByLearner: false; readonly thoracentesisPerformedByLearner: false;
+      readonly deviceOrSiteSelected: false; readonly drainageVolumeSelected: false;
+      readonly treatmentDeliveredByLearner: false; readonly diagnosisDetermined: false;
+      readonly dispositionDetermined: false; readonly outcomePredicted: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1323,6 +1336,14 @@ export interface ActionCockpitProps {
       | 'review-spontaneous-tension-pneumothorax-etiology-recurrence-and-definitive-planning'
       | 'handoff-spontaneous-tension-pneumothorax-post-drainage-reassessment',
   ) => void;
+  readonly onLargePleuralEffusionResponse?: (
+    action: 'reconcile-large-unilateral-pleural-effusion-trajectory'
+      | 'record-large-unilateral-pleural-effusion-pleural-team-and-drainage-intent'
+      | 'review-large-unilateral-pleural-effusion-drainage-response'
+      | 'review-large-unilateral-pleural-effusion-fluid-pattern-and-causes'
+      | 'coordinate-large-unilateral-pleural-effusion-definitive-evaluation'
+      | 'handoff-large-unilateral-pleural-effusion-reassessment',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1628,6 +1649,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'spontaneous-tension-pneumothorax-post-drainage-reassessment',
     ),
+    hasLargePleuralEffusionResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'large-unilateral-pleural-effusion-reassessment',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1753,6 +1778,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'acute-pulmonary-edema-respiratory-support-reassessment')
       || (event.type === 'narrative'
         && event.target === 'spontaneous-tension-pneumothorax-post-drainage-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'large-unilateral-pleural-effusion-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1807,7 +1834,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasTranscutaneousPacingCaptureResponse,
     hasAcuteSevereAsthmaResponse,
     hasCopdTransitionResponse, hasCapHypoxemiaResponse, hasPostPeDyspneaResponse,
-    hasApeSupportResponse, hasPostTensionPneumothoraxResponse,
+    hasApeSupportResponse, hasPostTensionPneumothoraxResponse, hasLargePleuralEffusionResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1873,7 +1900,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasRightVentricularInfarctionResponse || hasHypertensiveEmergencyResponse
     || hasPacemakerCaptureFailureResponse || hasTranscutaneousPacingCaptureResponse
     || hasAcuteSevereAsthmaResponse || hasCopdTransitionResponse || hasCapHypoxemiaResponse
-    || hasPostPeDyspneaResponse || hasApeSupportResponse || hasPostTensionPneumothoraxResponse;
+    || hasPostPeDyspneaResponse || hasApeSupportResponse || hasPostTensionPneumothoraxResponse
+    || hasLargePleuralEffusionResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1904,7 +1932,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasPostTensionPneumothoraxResponse
+  const responseTray = hasLargePleuralEffusionResponse
+    ? { id: 'crisis', label: 'Pleural effusion review' } as const
+    : hasPostTensionPneumothoraxResponse
     ? { id: 'crisis', label: 'Pleural recovery review' } as const
     : hasApeSupportResponse
     ? { id: 'crisis', label: 'Pulmonary edema reassessment' } as const
@@ -2126,6 +2156,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPostPeDyspneaResponse
     || hasApeSupportResponse
     || hasPostTensionPneumothoraxResponse
+    || hasLargePleuralEffusionResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2731,6 +2762,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <PostTensionPneumothoraxTray
                 assessment={props.resuscitation.postTensionPneumothoraxAssessment}
                 onAction={props.onPostTensionPneumothoraxResponse ?? (() => {})} />
+            )}
+            {hasLargePleuralEffusionResponse && (
+              <LargePleuralEffusionTray assessment={props.resuscitation.largePleuralEffusionAssessment}
+                onAction={props.onLargePleuralEffusionResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -7088,6 +7123,44 @@ function PostTensionPneumothoraxTray({ assessment, onAction }: {
         <Button className="crisis-drug__action" disabled={!system || !etiology || handoff} onClick={() => onAction('handoff-spontaneous-tension-pneumothorax-post-drainage-reassessment')}>Hand off unresolved pleural work</Button>
       </div>
       <p className="field__hint">No drain inspection or manipulation, suction, clamp, flush, device, site, oxygen target, drug, procedure, pleurodesis, surgery, disposition, prognosis, recurrence, resolution, or outcome is chosen.</p>
+    </section>
+  </div>;
+}
+
+function LargePleuralEffusionTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['largePleuralEffusionAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onLargePleuralEffusionResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const intent = assessment?.intentAtTick != null;
+  const response = assessment?.responseAtTick != null;
+  const fluid = assessment?.fluidAtTick != null;
+  const evaluation = assessment?.evaluationAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="large-effusion-pattern-title">
+      <div id="large-effusion-pattern-title" className="syringe__name">The fluid is real. The cause is still open.</div>
+      <Badge kind="teaching">large unilateral effusion · stable circulation</Badge>
+      <div className="syringe__meta">trajectory · oxygenation · imaging · symptom-led safety</div>
+      <p className="syringe__remaining" role="status">{response ? 'Drainage stopped at symptoms · improvement reviewed' : intent ? 'Experienced-team intent active · advance to the authored checkpoint' : trajectory ? 'Pattern reconciled · plan useful, safe sampling + relief' : 'Begin with the patient, not the fluid volume'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={trajectory} onClick={() => onAction('reconcile-large-unilateral-pleural-effusion-trajectory')}>Review patient + pleural pattern</Button>
+        <Button className="crisis-drug__action" disabled={!trajectory || intent} onClick={() => onAction('record-large-unilateral-pleural-effusion-pleural-team-and-drainage-intent')}>Record guided sampling + relief intent</Button>
+        <Button className="crisis-drug__action" disabled={!intent || response} onClick={() => onAction('review-large-unilateral-pleural-effusion-drainage-response')}>Review symptom-limited checkpoint</Button>
+      </div>
+      <p className="field__hint">Ultrasound guidance, slow drainage, and experienced ownership are authored safety boundaries. Cough and chest tightness prompt stopping; 850 mL is a case fact, not a target or maximum.</p>
+    </section>
+    <section className="syringe" aria-labelledby="large-effusion-cause-title">
+      <div id="large-effusion-cause-title" className="syringe__name">Relief is not the finish line.</div>
+      <Badge kind="teaching">paired fluid report · pending results · named owners</Badge>
+      <div className="syringe__meta">cause open · residual effusion · recurrence questions</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Response + unresolved cause work handed off' : evaluation ? 'Definitive evaluation connected · advance time before handoff' : fluid ? 'Pattern reviewed · connect every pending result' : response ? 'Relief reviewed · keep the cause open' : 'Review the authored checkpoint first'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={!response || fluid} onClick={() => onAction('review-large-unilateral-pleural-effusion-fluid-pattern-and-causes')}>Review fluid pattern + open causes</Button>
+        <Button className="crisis-drug__action" disabled={!fluid || evaluation} onClick={() => onAction('coordinate-large-unilateral-pleural-effusion-definitive-evaluation')}>Coordinate definitive evaluation</Button>
+        <Button className="crisis-drug__action" disabled={!evaluation || handoff} onClick={() => onAction('handoff-large-unilateral-pleural-effusion-reassessment')}>Hand off unresolved effusion work</Button>
+      </div>
+      <p className="field__hint">No examination, calculation, diagnosis, needle, site, device, volume, suction, drain, biopsy, catheter, pleurodesis, surgery, treatment, disposition, recurrence, or outcome is chosen.</p>
     </section>
   </div>;
 }

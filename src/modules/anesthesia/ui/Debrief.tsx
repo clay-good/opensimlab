@@ -4374,6 +4374,26 @@ export function objectiveFindings(
         && Math.max(system.tick, etiology.tick) < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved the prior event, current safety, unresolved pleural work, change triggers, preferences, and owners without inventing recurrence or outcome.' : 'The unresolved-work handoff was absent or did not follow both review lanes after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-large-unilateral-pleural-effusion-trajectory',
+      'record-large-unilateral-pleural-effusion-pleural-team-and-drainage-intent',
+      'review-large-unilateral-pleural-effusion-drainage-response',
+      'review-large-unilateral-pleural-effusion-fluid-pattern-and-causes',
+      'coordinate-large-unilateral-pleural-effusion-definitive-evaluation',
+      'handoff-large-unilateral-pleural-effusion-reassessment'].includes(objective.id)) {
+      const trajectory = log.find((event) => /^large-pleural-effusion-trajectory-reconciled-\d+$/.test(event.eventId));
+      const intent = log.find((event) => /^large-pleural-effusion-intent-recorded-\d+$/.test(event.eventId));
+      const response = log.find((event) => /^large-pleural-effusion-drainage-response-reviewed-\d+$/.test(event.eventId));
+      const fluid = log.find((event) => /^large-pleural-effusion-fluid-reviewed-\d+$/.test(event.eventId));
+      const evaluation = log.find((event) => /^large-pleural-effusion-evaluation-coordinated-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^large-pleural-effusion-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-large-unilateral-pleural-effusion-trajectory') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'Symptoms, current safety, unilateral findings, and imaging were reconciled without using size alone or claiming examination or imaging skill.' : 'The whole-patient and imaging trajectory was not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'record-large-unilateral-pleural-effusion-pleural-team-and-drainage-intent') { const ordered = trajectory && intent && trajectory.tick <= intent.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Experienced image-guided diagnostic and symptom-relief aspiration intent preserved slow, symptom-led stopping without a site, device, or volume target.' : 'Pleural-team intent was absent or preceded trajectory review.', atTick: intent?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-large-unilateral-pleural-effusion-drainage-response') { const ordered = intent && response && intent.tick < response.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed checkpoint stopped at cough and chest tightness, and improvement did not become proof of cause, complete drainage, or durable response.' : 'The response review was absent or did not follow intent after elapsed time.', atTick: response?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-large-unilateral-pleural-effusion-fluid-pattern-and-causes') { const ordered = response && fluid && response.tick <= fluid.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The authored paired-fluid classification informed a broad unresolved cause pathway without learner calculation or diagnosis.' : 'Fluid-pattern review was absent or preceded the response checkpoint.', atTick: fluid?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'coordinate-large-unilateral-pleural-effusion-definitive-evaluation') { const ordered = fluid && evaluation && fluid.tick <= evaluation.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Pending results and individualized pleural evaluation received owners without choosing a procedure or cause-specific treatment.' : 'Definitive-evaluation ownership was absent or preceded fluid review.', atTick: evaluation?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = evaluation && handoff && evaluation.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved response, residual effusion, causes, results, complications, recurrence questions, triggers, and owners without inventing diagnosis or outcome.' : 'The unresolved-work handoff was absent or did not follow evaluation ownership after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

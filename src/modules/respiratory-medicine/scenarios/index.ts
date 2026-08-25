@@ -5,6 +5,7 @@ import { COPD_EXACERBATION_TRANSITION_REASSESSMENT } from './copd-exacerbation-t
 import { COMMUNITY_ACQUIRED_PNEUMONIA_HYPOXEMIA_REASSESSMENT } from './community-acquired-pneumonia-hypoxemia-reassessment';
 import { POST_PULMONARY_EMBOLISM_PERSISTENT_DYSPNEA } from './post-pulmonary-embolism-persistent-dyspnea';
 import { SPONTANEOUS_TENSION_PNEUMOTHORAX_POST_DRAINAGE_REASSESSMENT } from './spontaneous-tension-pneumothorax-post-drainage-reassessment';
+import { LARGE_UNILATERAL_PLEURAL_EFFUSION_REASSESSMENT } from './large-unilateral-pleural-effusion-reassessment';
 
 export const RESPIRATORY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   ACUTE_SEVERE_ASTHMA,
@@ -13,6 +14,7 @@ export const RESPIRATORY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   POST_PULMONARY_EMBOLISM_PERSISTENT_DYSPNEA,
   ACUTE_PULMONARY_EDEMA_RESPIRATORY_SUPPORT_REASSESSMENT,
   SPONTANEOUS_TENSION_PNEUMOTHORAX_POST_DRAINAGE_REASSESSMENT,
+  LARGE_UNILATERAL_PLEURAL_EFFUSION_REASSESSMENT,
 ];
 export const DEFAULT_RESPIRATORY_MEDICINE_SCENARIO_ID = ACUTE_SEVERE_ASTHMA.metadata.id;
 

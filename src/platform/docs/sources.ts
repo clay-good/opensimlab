@@ -1916,6 +1916,17 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'https://publications.ersnet.org/content/erj/63/5/2300797',
     verifiedOn: '2026-08-25',
   },
+  {
+    id: 'bts-pleural-procedures-statement-2023',
+    authors: 'Asciak R, Bedawi EO, Bhatnagar R, et al',
+    title: 'British Thoracic Society Clinical Statement on pleural procedures',
+    publication: 'Thorax',
+    year: 2023,
+    locator: '78(Suppl 3):s43-s68; doi:10.1136/thorax-2022-219371; pleural-aspiration safety points',
+    usedFor: 'The large-effusion aspiration boundary: thoracic ultrasound in the procedure position, slow manual or gravity drainage, and stopping for chest tightness, pain, persistent cough, worsening breathlessness, or concerning oxygenation change rather than pursuing a volume target.',
+    verifiedAgainst: 'https://thorax.bmj.com/content/78/Suppl_3/s43',
+    verifiedOn: '2026-08-25',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

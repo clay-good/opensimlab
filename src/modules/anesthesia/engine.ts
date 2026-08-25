@@ -77,6 +77,7 @@ const CAP_HYPOXEMIA_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION
 const POST_PE_DYSPNEA_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 const APE_SUPPORT_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 const POST_TENSION_PNEUMOTHORAX_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
+const LARGE_PLEURAL_EFFUSION_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -662,6 +663,12 @@ export class AnesthesiaEngine {
   private postTensionPneumothoraxSystemAtTick: number | null = null;
   private postTensionPneumothoraxEtiologyAtTick: number | null = null;
   private postTensionPneumothoraxHandoffAtTick: number | null = null;
+  private largePleuralEffusionTrajectoryAtTick: number | null = null;
+  private largePleuralEffusionIntentAtTick: number | null = null;
+  private largePleuralEffusionResponseAtTick: number | null = null;
+  private largePleuralEffusionFluidAtTick: number | null = null;
+  private largePleuralEffusionEvaluationAtTick: number | null = null;
+  private largePleuralEffusionHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -964,6 +971,14 @@ export class AnesthesiaEngine {
       && POST_TENSION_PNEUMOTHORAX_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `post-tension-pneumothorax-generic-action-refused-${this.currentTick}`,
         'This review-only post-drainage lesson does not expose generic testing, treatment, oxygen, airway, ventilator, pleural procedure, rhythm, artifact, or crisis-injection actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const largePleuralEffusion = this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'large-unilateral-pleural-effusion-reassessment');
+    if (largePleuralEffusion && LARGE_PLEURAL_EFFUSION_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `large-pleural-effusion-generic-action-refused-${this.currentTick}`,
+        'This review-only pleural-effusion lesson does not expose generic testing, treatment, oxygen, airway, ventilator, pleural procedure, rhythm, artifact, or crisis-injection actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -5223,6 +5238,53 @@ export class AnesthesiaEngine {
         this.postTensionPneumothoraxHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `post-tension-pneumothorax-handoff-recorded-${this.currentTick}`, 'The prior spontaneous tension event, experienced-team drainage, current safety, fixed drain and imaging reports, persistent-air-leak and complication questions, recurrence-prevention priorities, deterioration triggers, patient preferences, and pleural and thoracic owners were handed off. No drain action, procedure, treatment, disposition, prognosis, recurrence, resolution, or outcome was determined.', { drainManipulatedByLearner: false, procedurePerformedByLearner: false, treatmentDeliveredByLearner: false, dispositionDetermined: false, recurrencePredicted: false, outcomePredicted: false }); break;
       }
+      case 'large-unilateral-pleural-effusion-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'large-unilateral-pleural-effusion-reassessment');
+        const valid = ['reconcile-large-unilateral-pleural-effusion-trajectory',
+          'record-large-unilateral-pleural-effusion-pleural-team-and-drainage-intent',
+          'review-large-unilateral-pleural-effusion-drainage-response',
+          'review-large-unilateral-pleural-effusion-fluid-pattern-and-causes',
+          'coordinate-large-unilateral-pleural-effusion-definitive-evaluation',
+          'handoff-large-unilateral-pleural-effusion-reassessment'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `large-pleural-effusion-response-refused-${this.currentTick}`, supported ? 'The large-effusion action was not one of the listed choices. Nothing changed.' : 'These large-effusion choices are available only in the declared Respiratory Medicine lesson.'); break; }
+        if (response === 'reconcile-large-unilateral-pleural-effusion-trajectory') {
+          if (this.largePleuralEffusionTrajectoryAtTick !== null) { this.log('warning', 'assessment', `large-pleural-effusion-trajectory-refused-${this.currentTick}`, 'The symptom, safety, unilateral, and imaging trajectory was already reconciled.'); break; }
+          this.largePleuralEffusionTrajectoryAtTick = this.currentTick;
+          this.log('warning', 'assessment', `large-pleural-effusion-trajectory-reconciled-${this.currentTick}`, 'Six weeks of progressive limitation, current mild hypoxemia with stable perfusion, unilateral examination claims, and fixed radiograph and ultrasound reports were reconciled. Size supports a substantial effusion but does not alone determine urgency, safety, cause, or procedure.', { initialPulsePresent: true, largeUnilateralEffusionAuthored: true, tensionPhysiologyAuthored: false, hemodynamicCompromiseAuthored: false, examinationPerformedByLearner: false, imagingAcquiredByLearner: false }); break;
+        }
+        if (this.largePleuralEffusionTrajectoryAtTick === null) { this.log('warning', 'assessment', `large-pleural-effusion-trajectory-order-refused-${this.currentTick}`, 'Reconcile the whole-patient and fixed imaging trajectory before recording pleural-team intent.'); break; }
+        if (response === 'record-large-unilateral-pleural-effusion-pleural-team-and-drainage-intent') {
+          if (this.largePleuralEffusionIntentAtTick !== null) { this.log('warning', 'assessment', `large-pleural-effusion-intent-refused-${this.currentTick}`, 'Pleural-team, diagnostic-sampling, and symptom-relief aspiration intent was already recorded.'); break; }
+          this.largePleuralEffusionIntentAtTick = this.currentTick;
+          this.log('warning', 'assessment', `large-pleural-effusion-intent-recorded-${this.currentTick}`, 'Experienced pleural-team review, image guidance in the procedure position, diagnostic sampling, and slow symptom-limited aspiration intent were recorded. Chest tightness, pain, persistent cough, worsening breathlessness, or concerning oxygenation change are stop and reassessment triggers; no site, device, technique, suction, rate, or target volume was selected.', { ultrasoundPerformedByLearner: false, thoracentesisPerformedByLearner: false, deviceOrSiteSelected: false, drainageVolumeSelected: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.largePleuralEffusionIntentAtTick === null) { this.log('warning', 'assessment', `large-pleural-effusion-intent-order-refused-${this.currentTick}`, 'Record qualified image-guided and symptom-limited aspiration intent before reviewing the authored checkpoint.'); break; }
+        if (response === 'review-large-unilateral-pleural-effusion-drainage-response') {
+          if (this.currentTick <= this.largePleuralEffusionIntentAtTick) { this.log('warning', 'assessment', `large-pleural-effusion-response-time-refused-${this.currentTick}`, 'Allow a later simulated tick before reviewing the authored aspiration checkpoint.'); break; }
+          if (this.largePleuralEffusionResponseAtTick !== null) { this.log('warning', 'assessment', `large-pleural-effusion-response-review-refused-${this.currentTick}`, 'The authored symptom-limited aspiration response was already reviewed.'); break; }
+          this.largePleuralEffusionResponseAtTick = this.currentTick;
+          this.log('warning', 'assessment', `large-pleural-effusion-drainage-response-reviewed-${this.currentTick}`, 'The experienced team reports 850 mL removed slowly before persistent cough and mild chest tightness prompted stopping. The volume is a case fact, not a target or maximum. Symptoms, respiratory rate, oxygenation, and expansion improved, while residual effusion and cause remain unresolved.', { thoracentesisPerformedByLearner: false, drainageVolumeSelected: false, treatmentDeliveredByLearner: false, completeDrainageEstablished: false, durableResponseEstablished: false }); break;
+        }
+        if (this.largePleuralEffusionResponseAtTick === null) { this.log('warning', 'assessment', `large-pleural-effusion-response-order-refused-${this.currentTick}`, 'Review the authored symptom-limited response before the fluid and definitive-evaluation work.'); break; }
+        if (response === 'review-large-unilateral-pleural-effusion-fluid-pattern-and-causes') {
+          if (this.largePleuralEffusionFluidAtTick !== null) { this.log('warning', 'assessment', `large-pleural-effusion-fluid-refused-${this.currentTick}`, 'The fixed paired-fluid classification and open causes were already reviewed.'); break; }
+          this.largePleuralEffusionFluidAtTick = this.currentTick;
+          this.log('warning', 'assessment', `large-pleural-effusion-fluid-reviewed-${this.currentTick}`, 'The experienced laboratory and pleural team classify the fixed paired sample as exudative; the learner does not acquire, calculate, or interpret it. Cytology, microbiology, and selected studies remain pending, and malignancy, infection, tuberculosis, embolic, autoimmune, and other causes remain open.', { pleuralFluidAcquiredByLearner: false, fluidInterpretedByLearner: false, criteriaCalculatedByLearner: false, etiologyDetermined: false, malignancyDetermined: false }); break;
+        }
+        if (this.largePleuralEffusionFluidAtTick === null) { this.log('warning', 'assessment', `large-pleural-effusion-fluid-order-refused-${this.currentTick}`, 'Review the fixed paired-fluid pattern and open causes before coordinating definitive evaluation.'); break; }
+        if (response === 'coordinate-large-unilateral-pleural-effusion-definitive-evaluation') {
+          if (this.largePleuralEffusionEvaluationAtTick !== null) { this.log('warning', 'assessment', `large-pleural-effusion-evaluation-refused-${this.currentTick}`, 'Pending-result and definitive pleural-evaluation ownership was already coordinated.'); break; }
+          this.largePleuralEffusionEvaluationAtTick = this.currentTick;
+          this.log('warning', 'assessment', `large-pleural-effusion-evaluation-coordinated-${this.currentTick}`, 'Cytology, microbiology, cause-directed results, residual-effusion and symptom review, and individualized pleural evaluation received named owners. No biopsy, bronchoscopy, indwelling catheter, pleurodesis, thoracoscopy, surgery, systemic therapy, or cause-specific treatment was selected.', { procedureSelected: false, treatmentSelected: false, diagnosisDetermined: false, dispositionDetermined: false }); break;
+        }
+        if (this.largePleuralEffusionEvaluationAtTick === null) { this.log('warning', 'assessment', `large-pleural-effusion-handoff-order-refused-${this.currentTick}`, 'Coordinate definitive evaluation and pending-result ownership before handoff.'); break; }
+        if (this.currentTick <= this.largePleuralEffusionEvaluationAtTick) { this.log('warning', 'assessment', `large-pleural-effusion-handoff-time-refused-${this.currentTick}`, 'Allow a later simulated tick before handing off the unresolved pleural work.'); break; }
+        if (this.largePleuralEffusionHandoffAtTick !== null) { this.log('warning', 'assessment', `large-pleural-effusion-handoff-refused-${this.currentTick}`, 'The large-effusion handoff was already recorded.'); break; }
+        this.largePleuralEffusionHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `large-pleural-effusion-handoff-recorded-${this.currentTick}`, 'The original breathing and imaging pattern, symptom-limited aspiration report, residual effusion, fixed fluid classification, open causes, pending results, complications, recurrence questions, deterioration triggers, and named pleural and longitudinal owners were handed off. No diagnosis, procedure, treatment, disposition, prognosis, recurrence, or outcome was determined.', { diagnosisDetermined: false, procedurePerformedByLearner: false, treatmentDeliveredByLearner: false, dispositionDetermined: false, recurrencePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -7964,6 +8026,14 @@ export class AnesthesiaEngine {
         spo2Percent: 93, systolicMmHg: 108, diastolicMmHg: 64,
         meanArterialMmHg: 79, coreTemperatureC: 36.7 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'large-unilateral-pleural-effusion-reassessment')) {
+      const reviewed = this.largePleuralEffusionResponseAtTick !== null;
+      crisisState = { ...crisisState, heartRateBpm: reviewed ? 92 : 104,
+        respiratoryRateBpm: reviewed ? 20 : 26, spo2Percent: reviewed ? 95 : 91,
+        systolicMmHg: reviewed ? 124 : 128, diastolicMmHg: reviewed ? 74 : 76,
+        meanArterialMmHg: reviewed ? 91 : 93, coreTemperatureC: 36.8 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -9290,6 +9360,25 @@ export class AnesthesiaEngine {
               dispositionDetermined: false as const,
               recurrencePredicted: false as const,
               outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'large-unilateral-pleural-effusion-reassessment') ? {
+            largePleuralEffusionAssessment: {
+              trajectoryAtTick: this.largePleuralEffusionTrajectoryAtTick,
+              intentAtTick: this.largePleuralEffusionIntentAtTick,
+              responseAtTick: this.largePleuralEffusionResponseAtTick,
+              fluidAtTick: this.largePleuralEffusionFluidAtTick,
+              evaluationAtTick: this.largePleuralEffusionEvaluationAtTick,
+              handoffAtTick: this.largePleuralEffusionHandoffAtTick,
+              initialPulsePresent: true as const, largeUnilateralEffusionAuthored: true as const,
+              tensionPhysiologyAuthored: false as const, hemodynamicCompromiseAuthored: false as const,
+              examinationPerformedByLearner: false as const, imagingAcquiredByLearner: false as const,
+              ultrasoundPerformedByLearner: false as const, pleuralFluidAcquiredByLearner: false as const,
+              fluidInterpretedByLearner: false as const, thoracentesisPerformedByLearner: false as const,
+              deviceOrSiteSelected: false as const, drainageVolumeSelected: false as const,
+              treatmentDeliveredByLearner: false as const, diagnosisDetermined: false as const,
+              dispositionDetermined: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

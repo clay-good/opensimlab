@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: post-drainage tension-pneumothorax reassessment has protocol version 107', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(107);
+  it('Scenario: large unilateral pleural-effusion reassessment has protocol version 108', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(108);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

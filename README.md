@@ -5,7 +5,7 @@ nurse anesthetists — anywhere in the world, on any device, with or without a n
 
 **opensimlab.com/anesthesia** is the first complete 39-scenario module. Emergency medicine is complete at `/emergency-medicine` with 25 bounded labs. Critical care is complete at `/critical-care` with 24 bounded labs. Cardiology is complete at `/cardiology` with 17 bounded labs spanning coronary care, heart failure, shock, arrhythmias, conduction, pacing, pericardial disease, infarction, and hypertensive emergency.
 
-Respiratory Medicine is now playable at `/respiratory-medicine` with 6 bounded labs: acute severe asthma, post-exacerbation COPD recovery-versus-readiness, hypoxemic community-acquired pneumonia, persistent dyspnea after pulmonary embolism, progressive respiratory failure during initial support for acute pulmonary edema, and post-drainage reassessment after a spontaneous tension pneumothorax.
+Respiratory Medicine is now playable at `/respiratory-medicine` with 7 bounded labs: acute severe asthma, post-exacerbation COPD recovery-versus-readiness, hypoxemic community-acquired pneumonia, persistent dyspnea after pulmonary embolism, progressive respiratory failure during initial support for acute pulmonary edema, post-drainage reassessment after a spontaneous tension pneumothorax, and symptom-limited evaluation of a large unilateral pleural effusion.
 
 The goal is not a tech demo. It is the best anesthesia education on the internet: the
 thing a student opens the night before their first day in the OR and comes out of

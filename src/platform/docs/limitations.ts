@@ -3239,6 +3239,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient and drain data, current pleural guidance, local equipment and escalation pathways, qualified pleural and thoracic teams, and patient-specific judgment.',
     briefIn: ['spontaneous-tension-pneumothorax-post-drainage-reassessment'],
   },
+  {
+    id: 'large-effusion-presentation-imaging-fluid-and-response-are-authored',
+    headline: 'The symptoms, examination claims, imaging, ultrasound window, aspiration, response, fluid values, classification, and negative findings are authored.',
+    simplification: 'Fixed reports stand in for history, examination, safety review, thoracic ultrasound, image-guided aspiration, paired sampling, laboratory work, imaging, and serial multidisciplinary reassessment.',
+    whereItMisleads: 'Treating size or appearance as a cause or urgency rule, 850 mL as a target, improvement as cure, or the fixed reports as learner-acquired examination, imaging, procedural, or interpretive skill.',
+    correctUnderstanding: 'Real pleural evaluation requires verified whole-patient data, qualified thoracic ultrasound and procedures, symptom-led stopping, correct paired samples, local pathways, and repeated reassessment.',
+    briefIn: ['large-unilateral-pleural-effusion-reassessment'],
+  },
+  {
+    id: 'large-effusion-controls-record-review-intent-ownership-and-handoff-only',
+    headline: 'The controls record review, experienced-team intent, an authored checkpoint, result ownership, and handoff only.',
+    simplification: 'Six clicks stand in for whole-patient assessment, procedural safety planning, diagnostic sampling, response review, etiologic work, shared decisions, and communication.',
+    whereItMisleads: 'Equating button order with examination, ultrasound, aspiration, sample handling, fluid calculation, diagnosis, procedure choice, treatment, or pleural-team competence.',
+    correctUnderstanding: 'Actual care requires qualified teams, patient participation, current guidance, local equipment and laboratory processes, and patient-specific reassessment.',
+    briefIn: ['large-unilateral-pleural-effusion-reassessment'],
+  },
+  {
+    id: 'no-live-pleural-testing-calculation-procedure-treatment-diagnosis-or-outcome',
+    headline: 'The lab does not examine, test, calculate, diagnose, perform aspiration or another procedure, deliver treatment, determine disposition, or predict outcome.',
+    simplification: 'No live examination, monitoring, imaging, ultrasound, laboratory, cytology, microbiology, pleural-fluid acquisition or interpretation, criteria calculation, site or device selection, aspiration, drain, suction, biopsy, catheter, pleurodesis, surgery, medication, oxygen, systemic therapy, disposition, prognosis, recurrence, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values as procedural or diagnostic rules or using completion as evidence of clinical, imaging, laboratory, procedural, treatment, disposition, or prognostic competence.',
+    correctUnderstanding: 'Use verified patient and pleural data, current guidance, qualified pleural, radiology, pathology, microbiology, thoracic, and longitudinal teams, and patient-specific judgment.',
+    briefIn: ['large-unilateral-pleural-effusion-reassessment'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

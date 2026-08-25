@@ -938,6 +938,9 @@ export function Cockpit({
           onPostTensionPneumothoraxResponse={(action) => session.act({
             type: 'spontaneous-tension-pneumothorax-post-drainage-response', payload: { action },
           })}
+          onLargePleuralEffusionResponse={(action) => session.act({
+            type: 'large-unilateral-pleural-effusion-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}
