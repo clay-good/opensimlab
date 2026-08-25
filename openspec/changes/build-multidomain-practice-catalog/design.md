@@ -187,9 +187,7 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with 24 playable, completion-audited scenarios. The remaining
-1 planned title remains descriptive scope only and does not enter playable counts before its full
-scenario contracts pass.
+`/emergency-medicine` module boundary with all 25 playable, completion-audited scenarios.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
 
@@ -529,6 +527,20 @@ The learner then completes D and E, prevents heat loss, repeats the entire surve
 times, trends, interventions, and uncertainty. The case does not examine, stabilize, apply pressure
 or a tourniquet, ventilate, deliver blood or drugs, bind a pelvis, image, operate, transport, or
 predict outcome.
+
+### Wave B slice 25: acute aortic syndrome before definitive imaging
+
+The twenty-fifth emergency-medicine slice begins with abrupt maximal-at-onset chest-to-back pain,
+a nondiagnostic ECG, a plausible coronary alternative, and initially symmetric bilateral pressure,
+pulse, perfusion, and neurologic findings. Only ordered reassessment reveals a 36 mmHg inter-arm
+systolic difference, a new radial pulse deficit, a cool hypoperfused foot, and focal arm drift.
+
+Learners integrate the evolving multi-territory discordance, activate multidisciplinary aortic and
+critical-care response, protect the patient from unsupported default coronary or isolated-stroke
+pathways, record monitored analgesia and rate-first anti-impulse intent with explicit end-organ
+perfusion guardrails, prioritize urgent definitive aortic imaging, and repeat the territories before
+handoff. The case stops before a scan result and does not examine, diagnose, score risk, deliver
+drugs, image, choose surgery, transfer, or predict outcome.
 
 #### Critical care: 24
 

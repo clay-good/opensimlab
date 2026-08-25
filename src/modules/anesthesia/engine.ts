@@ -390,6 +390,12 @@ export class AnesthesiaEngine {
   private traumaCirculationAtTick: number | null = null;
   private traumaDisabilityExposureAtTick: number | null = null;
   private traumaRepeatedAtTick: number | null = null;
+  private aorticInitialReviewedAtTick: number | null = null;
+  private aorticEvolutionReviewedAtTick: number | null = null;
+  private aorticEscalatedAtTick: number | null = null;
+  private aorticAntiImpulseAtTick: number | null = null;
+  private aorticImagingAtTick: number | null = null;
+  private aorticHandedOffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2598,6 +2604,109 @@ export class AnesthesiaEngine {
         this.traumaRepeatedAtTick = this.currentTick;
         this.log('critical', 'assessment', `trauma-repeated-${this.currentTick}`,
           'Repeated <C>ABCDE: no visible limb rebleeding; airway remains patent with coherent speech; bilateral breathing remains present with SpO₂ 97% on oxygen; HR is 112/min and BP 100/62 mmHg after the authored bounded response; commands are followed; temperature is 35.8°C after heat-loss measures. Persistent abdominal and pelvic concern plus positive eFAST were handed directly to the definitive-control team with times, trends, interventions, and remaining uncertainties. No procedure, transport, later deterioration, disposition, or outcome is simulated.', { heartRatePerMin: 112, systolicBpMmHg: 100, spo2Percent: 97, coreTemperatureC: 35.8 });
+        break;
+      }
+      case 'acute-aortic-syndrome-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'acute-aortic-syndrome');
+        const valid = ['review-aortic-initial-pattern', 'repeat-aortic-asymmetry-exam',
+          'activate-aortic-pathway', 'record-aortic-anti-impulse-intent',
+          'prioritize-aortic-imaging', 'repeat-and-handoff-aortic-evolution'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `acute-aortic-syndrome-response-refused-${this.currentTick}`,
+            supported ? 'The acute-aortic-syndrome action was not one of the listed choices. Nothing changed.'
+              : 'The bounded acute-aortic-syndrome choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-aortic-initial-pattern') {
+          if (this.aorticInitialReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `aortic-initial-refused-${this.currentTick}`,
+              'The incomplete initial presentation has already been reviewed.');
+            break;
+          }
+          this.aorticInitialReviewedAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `aortic-initial-reviewed-${this.currentTick}`,
+            'Initial synthesis: abrupt severe pain maximal at onset and now between the shoulder blades is a high-risk aortic feature, but bilateral pressures, pulses, perfusion, and neurologic examination are authored as symmetric and the ECG is nondiagnostic. Acute coronary and other dangerous chest-pain causes remain plausible; no diagnosis or default antithrombotic pathway was recorded.', { leftArmSystolicBpMmHg: 198, rightArmSystolicBpMmHg: 194, heartRatePerMin: 104 });
+          break;
+        }
+        if (this.aorticInitialReviewedAtTick === null) {
+          this.log('warning', 'assessment', `aortic-initial-order-refused-${this.currentTick}`,
+            'Review the incomplete initial pain, ECG, bilateral pressure, pulse, perfusion, and neurologic pattern first.');
+          break;
+        }
+        if (response === 'repeat-aortic-asymmetry-exam') {
+          if (this.aorticEvolutionReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `aortic-evolution-refused-${this.currentTick}`,
+              'The fixed evolving asymmetry panel has already been revealed.');
+            break;
+          }
+          this.aorticEvolutionReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `aortic-evolution-reviewed-${this.currentTick}`,
+            'Six minutes later the pain migrates toward the abdomen. Repeat fixed findings now show left-arm BP 202/108 mmHg and right-arm BP 166/92 mmHg, a newly weak right radial pulse, a cool left foot with diminished pedal pulse and delayed capillary refill, and new mild left-arm drift with clear speech. Glucose is 112 mg/dL. These multi-territory changes raise urgent malperfusion concern but do not constitute definitive diagnosis.', { leftArmSystolicBpMmHg: 202, rightArmSystolicBpMmHg: 166, pressureDifferenceMmHg: 36, glucoseMgPerDl: 112 });
+          break;
+        }
+        if (this.aorticEvolutionReviewedAtTick === null) {
+          this.log('warning', 'assessment', `aortic-evolution-order-refused-${this.currentTick}`,
+            'Repeat bilateral pressures, pulses, limb perfusion, and neurologic findings before selecting a pathway.');
+          break;
+        }
+        if (response === 'activate-aortic-pathway') {
+          if (this.aorticEscalatedAtTick !== null) {
+            this.log('warning', 'assessment', `aortic-escalation-refused-${this.currentTick}`,
+              'The multidisciplinary aortic pathway has already been activated.');
+            break;
+          }
+          this.aorticEscalatedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `aortic-pathway-activated-${this.currentTick}`,
+            'The evolving pain, 36 mmHg inter-arm systolic difference, pulse deficit, limb-perfusion change, and focal neurologic finding triggered immediate multidisciplinary aortic and critical-care escalation. Unsupported routine coronary anticoagulation or thrombolysis and isolated stroke thrombolysis were paused pending urgent definitive evaluation. Consultation, transfer, and treatment eligibility are not simulated.', { intentOnly: true });
+          break;
+        }
+        if (this.aorticEscalatedAtTick === null) {
+          this.log('warning', 'assessment', `aortic-escalation-order-refused-${this.currentTick}`,
+            'Escalate the evolving multi-territory aortic concern before treatment or imaging workflow.');
+          break;
+        }
+        if (response === 'record-aortic-anti-impulse-intent') {
+          if (this.aorticAntiImpulseAtTick !== null) {
+            this.log('warning', 'assessment', `aortic-anti-impulse-refused-${this.currentTick}`,
+              'The bounded anti-impulse and analgesia intent has already been recorded.');
+            break;
+          }
+          this.aorticAntiImpulseAtTick = this.currentTick;
+          this.log('critical', 'assessment', `aortic-anti-impulse-${this.currentTick}`,
+            'ICU-level monitoring, arterial-line intent, titrated analgesia, and local-protocol intravenous rate control were recorded before any added vasodilator intent. Targets are HR 60–80/min and SBP below 120 mmHg only if the lowest pressure still preserves end-organ perfusion; evolving brain and limb perfusion make that guardrail explicit. Drug selection, contraindication review, dosing, line placement, delivery, and individual response are not simulated.', { intentOnly: true, targetHeartRateMin: 60, targetHeartRateMax: 80, targetSystolicBpBelowMmHg: 120 });
+          break;
+        }
+        if (this.aorticAntiImpulseAtTick === null) {
+          this.log('warning', 'assessment', `aortic-anti-impulse-order-refused-${this.currentTick}`,
+            'Record monitored analgesia and rate-first, perfusion-preserving anti-impulse intent before imaging workflow.');
+          break;
+        }
+        if (response === 'prioritize-aortic-imaging') {
+          if (this.aorticImagingAtTick !== null) {
+            this.log('warning', 'assessment', `aortic-imaging-refused-${this.currentTick}`,
+              'Urgent definitive aortic imaging intent has already been recorded.');
+            break;
+          }
+          this.aorticImagingAtTick = this.currentTick;
+          this.log('critical', 'assessment', `aortic-imaging-prioritized-${this.currentTick}`,
+            'Urgent definitive CT imaging of the aorta and branch vessels was prioritized because the patient remains transportable; TEE or MRI remains a context-dependent alternative when CT is unsuitable. The scan is not yet available. Acquisition, contrast decisions, transport risk, interpretation, classification, and operative choice are outside this lesson.', { intentOnly: true, resultAvailable: false });
+          break;
+        }
+        if (this.aorticImagingAtTick === null) {
+          this.log('warning', 'assessment', `aortic-imaging-order-refused-${this.currentTick}`,
+            'Prioritize urgent definitive aortic imaging before the final serial handoff.');
+          break;
+        }
+        if (this.aorticHandedOffAtTick !== null) {
+          this.log('warning', 'assessment', `aortic-handoff-refused-${this.currentTick}`,
+            'The final fixed serial assessment and uncertainty handoff have already been recorded.');
+          break;
+        }
+        this.aorticHandedOffAtTick = this.currentTick;
+        this.log('critical', 'assessment', `aortic-evolution-handed-off-${this.currentTick}`,
+          'Before imaging, repeat fixed assessment shows pain still present, HR 82/min, left-arm BP 156/88 mmHg, right-arm BP 132/78 mmHg, persistent weak right radial and left pedal pulses, a still-cool left foot, and unchanged mild left-arm drift with clear speech. Times, trends, treatment intents, competing diagnoses, malperfusion concern, and the unavailable scan were handed to the aortic team. No diagnosis, image result, procedure, transfer, disposition, or outcome is simulated.', { heartRatePerMin: 82, leftArmSystolicBpMmHg: 156, rightArmSystolicBpMmHg: 132, imagingAvailable: false });
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -5743,6 +5852,14 @@ export class AnesthesiaEngine {
           circulationAtTick: this.traumaCirculationAtTick,
           disabilityExposureAtTick: this.traumaDisabilityExposureAtTick,
           repeatedAtTick: this.traumaRepeatedAtTick,
+        },
+        acuteAorticSyndromeAssessment: {
+          initialReviewedAtTick: this.aorticInitialReviewedAtTick,
+          evolutionReviewedAtTick: this.aorticEvolutionReviewedAtTick,
+          escalatedAtTick: this.aorticEscalatedAtTick,
+          antiImpulseAtTick: this.aorticAntiImpulseAtTick,
+          imagingAtTick: this.aorticImagingAtTick,
+          handedOffAtTick: this.aorticHandedOffAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

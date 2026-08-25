@@ -23,6 +23,7 @@ import { SEVERE_HYPONATREMIA_WITH_SEIZURE } from './severe-hyponatremia-with-sei
 import { OPIOID_TOXICITY } from './opioid-toxicity';
 import { EXERTIONAL_HEAT_STROKE } from './exertional-heat-stroke';
 import { TRAUMA_PRIMARY_SURVEY } from './trauma-primary-survey';
+import { ACUTE_AORTIC_SYNDROME } from './acute-aortic-syndrome';
 
 export const EMERGENCY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   UNDIFFERENTIATED_SHOCK,
@@ -49,6 +50,7 @@ export const EMERGENCY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   OPIOID_TOXICITY,
   EXERTIONAL_HEAT_STROKE,
   TRAUMA_PRIMARY_SURVEY,
+  ACUTE_AORTIC_SYNDROME,
 ];
 export const DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID = UNDIFFERENTIATED_SHOCK.metadata.id;
 

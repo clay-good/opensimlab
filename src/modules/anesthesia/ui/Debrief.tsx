@@ -3068,6 +3068,49 @@ export function objectiveFindings(
           : 'D, E, heat-loss prevention, repeated <C>ABCDE, or trend handoff was incomplete or out of order.', atTick: repeated?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['assess-aortic-presentation-without-closure', 'detect-evolving-aortic-asymmetry',
+      'escalate-suspected-aortic-syndrome', 'record-aortic-anti-impulse-intent',
+      'image-and-hand-off-aortic-uncertainty'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'acute-aortic-syndrome');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The acute-aortic-syndrome vignette was not active.' } satisfies ObjectiveFinding;
+      const initial = log.find((event) => /^aortic-initial-reviewed-\d+$/.test(event.eventId));
+      const evolution = log.find((event) => /^aortic-evolution-reviewed-\d+$/.test(event.eventId));
+      const escalation = log.find((event) => /^aortic-pathway-activated-\d+$/.test(event.eventId));
+      const antiImpulse = log.find((event) => /^aortic-anti-impulse-\d+$/.test(event.eventId));
+      const imaging = log.find((event) => /^aortic-imaging-prioritized-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^aortic-evolution-handed-off-\d+$/.test(event.eventId));
+      if (objective.id === 'assess-aortic-presentation-without-closure') return {
+        ...base, outcome: initial ? 'met' : 'not-met',
+        finding: initial ? 'Abrupt maximal-at-onset pain was integrated with a nondiagnostic ECG and initially symmetric territories without premature closure.'
+          : 'The incomplete initial aortic and competing chest-pain pattern was not reviewed.',
+        atTick: initial?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'detect-evolving-aortic-asymmetry') {
+        const ordered = initial && evolution && initial.tick <= evolution.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered ? 'Repeat bilateral pressure, pulse, limb-perfusion, and neurologic checks revealed the authored multi-territory change.'
+            : 'The evolving asymmetry was absent or reviewed before the baseline.', atTick: evolution?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'escalate-suspected-aortic-syndrome') {
+        const ordered = evolution && escalation && evolution.tick <= escalation.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered ? 'The evolving discordance triggered immediate multidisciplinary aortic escalation and paused unsupported default pathways.'
+            : 'Aortic escalation was absent or preceded recognition of the evolving pattern.', atTick: escalation?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'record-aortic-anti-impulse-intent') {
+        const ordered = escalation && antiImpulse && escalation.tick <= antiImpulse.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered ? 'Monitored analgesia and rate-first anti-impulse intent used explicit heart-rate, pressure, and end-organ-perfusion guardrails.'
+            : 'Perfusion-preserving anti-impulse intent was absent or out of order.', atTick: antiImpulse?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = antiImpulse && imaging && handoff
+        && antiImpulse.tick <= imaging.tick && imaging.tick <= handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met',
+        finding: ordered ? 'Urgent definitive imaging was prioritized, then serial territories, changes, competing diagnoses, and the unavailable result were handed off.'
+          : 'Definitive imaging intent, serial reassessment, or uncertainty handoff was incomplete or out of order.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

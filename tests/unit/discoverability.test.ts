@@ -274,6 +274,8 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
       .toMatchObject({ indexable: true, heading: 'Exertional heat stroke' });
     expect(routeFor('/emergency-medicine/scenario/trauma-primary-survey'))
       .toMatchObject({ indexable: true, heading: 'Trauma primary survey' });
+    expect(routeFor('/emergency-medicine/scenario/acute-aortic-syndrome'))
+      .toMatchObject({ indexable: true, heading: 'Acute aortic syndrome' });
   });
 
   it('Requirement: Modules Declare Their Own Physiological Timescale', () => {

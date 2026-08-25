@@ -346,6 +346,14 @@ export interface ActionCockpitProps {
       readonly disabilityExposureAtTick: number | null;
       readonly repeatedAtTick: number | null;
     };
+    readonly acuteAorticSyndromeAssessment?: {
+      readonly initialReviewedAtTick: number | null;
+      readonly evolutionReviewedAtTick: number | null;
+      readonly escalatedAtTick: number | null;
+      readonly antiImpulseAtTick: number | null;
+      readonly imagingAtTick: number | null;
+      readonly handedOffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -551,6 +559,11 @@ export interface ActionCockpitProps {
       | 'review-trauma-airway-and-breathing' | 'record-trauma-circulation-response'
       | 'review-trauma-disability-and-exposure' | 'repeat-trauma-primary-survey',
   ) => void;
+  readonly onAcuteAorticSyndromeResponse?: (
+    action: 'review-aortic-initial-pattern' | 'repeat-aortic-asymmetry-exam'
+      | 'activate-aortic-pathway' | 'record-aortic-anti-impulse-intent'
+      | 'prioritize-aortic-imaging' | 'repeat-and-handoff-aortic-evolution',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -688,6 +701,9 @@ export function crisisResponseAvailability(
     hasTraumaPrimarySurveyResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'trauma-primary-survey',
     ),
+    hasAcuteAorticSyndromeResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'acute-aortic-syndrome',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -758,6 +774,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'opioid-toxicity')
       || (event.type === 'narrative' && event.target === 'exertional-heat-stroke')
       || (event.type === 'narrative' && event.target === 'trauma-primary-survey')
+      || (event.type === 'narrative' && event.target === 'acute-aortic-syndrome')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -786,6 +803,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasOpioidToxicityResponse,
     hasHeatStrokeResponse,
     hasTraumaPrimarySurveyResponse,
+    hasAcuteAorticSyndromeResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -814,7 +832,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasAcuteIschemicStrokeResponse || hasIntracranialHemorrhageResponse
     || hasDiabeticKetoacidosisResponse || hasHyperkalemiaResponse
     || hasSevereHyponatremiaResponse || hasOpioidToxicityResponse || hasHeatStrokeResponse
-    || hasTraumaPrimarySurveyResponse;
+    || hasTraumaPrimarySurveyResponse || hasAcuteAorticSyndromeResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -832,8 +850,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasStatusEpilepticusResponse || hasAcuteIschemicStrokeResponse
     || hasIntracranialHemorrhageResponse || hasDiabeticKetoacidosisResponse
     || hasHyperkalemiaResponse || hasSevereHyponatremiaResponse || hasOpioidToxicityResponse
-    || hasHeatStrokeResponse || hasTraumaPrimarySurveyResponse;
-  const responseTray = hasTraumaPrimarySurveyResponse
+    || hasHeatStrokeResponse || hasTraumaPrimarySurveyResponse || hasAcuteAorticSyndromeResponse;
+  const responseTray = hasAcuteAorticSyndromeResponse
+    ? { id: 'crisis', label: 'Acute aortic syndrome' } as const
+    : hasTraumaPrimarySurveyResponse
     ? { id: 'crisis', label: 'Trauma primary survey' } as const
     : hasHeatStrokeResponse
     ? { id: 'crisis', label: 'Exertional heat stroke' } as const
@@ -911,6 +931,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasOpioidToxicityResponse
     || hasHeatStrokeResponse
     || hasTraumaPrimarySurveyResponse
+    || hasAcuteAorticSyndromeResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1296,6 +1317,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasTraumaPrimarySurveyResponse && (
               <TraumaPrimarySurveyTray assessment={props.resuscitation.traumaPrimarySurveyAssessment}
                 onAction={props.onTraumaPrimarySurveyResponse ?? (() => {})} />
+            )}
+            {hasAcuteAorticSyndromeResponse && (
+              <AcuteAorticSyndromeTray assessment={props.resuscitation.acuteAorticSyndromeAssessment}
+                onAction={props.onAcuteAorticSyndromeResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -3600,6 +3625,62 @@ function TraumaPrimarySurveyTray({ assessment, onAction }: {
             onClick={() => onAction('repeat-trauma-primary-survey')}>Repeat sweep + hand off change</Button>
         </div>
         <p className="field__hint">Use only imaging that directs intervention in persistent instability. A negative FAST would not exclude bleeding; the authored positive statement does not replace definitive control.</p>
+      </section>
+    </div>
+  );
+}
+
+function AcuteAorticSyndromeTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['acuteAorticSyndromeAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onAcuteAorticSyndromeResponse']>;
+}) {
+  const initial = assessment?.initialReviewedAtTick != null;
+  const evolution = assessment?.evolutionReviewedAtTick != null;
+  const escalated = assessment?.escalatedAtTick != null;
+  const antiImpulse = assessment?.antiImpulseAtTick != null;
+  const imaging = assessment?.imagingAtTick != null;
+  const handedOff = assessment?.handedOffAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="aortic-drift-title">
+        <div id="aortic-drift-title" className="syringe__name">The first exam is a timestamp.</div>
+        <Badge kind="teaching">pain · pressure · pulse · perfusion · brain</Badge>
+        <div className="syringe__meta">18 min · abrupt maximum · ECG nondiagnostic · initially symmetric</div>
+        <p className="syringe__remaining" role="status">
+          {escalated ? 'Aortic + critical-care teams activated · unsupported defaults paused'
+            : evolution ? 'ΔBP 36 · weak right radial · cool left foot · left-arm drift'
+              : initial ? 'Danger remains open · repeat every territory'
+                : 'Incomplete presentation · no diagnosis leaked'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={initial}
+            onClick={() => onAction('review-aortic-initial-pattern')}>Review pain + ECG + symmetric baseline</Button>
+          <Button className="crisis-drug__action" disabled={!initial || evolution}
+            onClick={() => onAction('repeat-aortic-asymmetry-exam')}>Repeat both arms + pulses + brain</Button>
+          <Button className="crisis-drug__action" disabled={!evolution || escalated}
+            onClick={() => onAction('activate-aortic-pathway')}>Escalate aortic concern + pause defaults</Button>
+        </div>
+        <p className="field__hint">A normal first pulse or neurologic exam does not stay normal by promise. Recheck discordant territories when the story changes.</p>
+      </section>
+      <section className="syringe" aria-labelledby="aortic-protect-title">
+        <div id="aortic-protect-title" className="syringe__name">Quiet the impulse. Protect the organs.</div>
+        <Badge kind="teaching">rate first · pressure second · perfusion always</Badge>
+        <div className="syringe__meta">analgesia · arterial line · urgent CT · serial handoff</div>
+        <p className="syringe__remaining" role="status">
+          {handedOff ? 'Evolution + uncertainty handed off · scan still unavailable'
+            : imaging ? 'Definitive imaging prioritized · repeat before leaving'
+              : antiImpulse ? 'HR 60–80 target · SBP &lt;120 only with organ perfusion'
+                : escalated ? 'Monitored anti-impulse intent next' : 'Escalation pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!escalated || antiImpulse}
+            onClick={() => onAction('record-aortic-anti-impulse-intent')}>Analgesia + rate-first anti-impulse</Button>
+          <Button className="crisis-drug__action" disabled={!antiImpulse || imaging}
+            onClick={() => onAction('prioritize-aortic-imaging')}>Prioritize definitive aortic imaging</Button>
+          <Button className="crisis-drug__action" disabled={!imaging || handedOff}
+            onClick={() => onAction('repeat-and-handoff-aortic-evolution')}>Repeat territories + hand off uncertainty</Button>
+        </div>
+        <p className="field__hint">CT is the authored first imaging intent while transportable; TEE or MRI may fit another context. This lesson ends before any result or operative choice.</p>
       </section>
     </div>
   );

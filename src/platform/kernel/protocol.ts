@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 57 reports bounded trauma-survey state. */
-export const WORKER_PROTOCOL_VERSION = 57;
+/** Bumped whenever the message shape changes incompatibly. Version 58 reports bounded acute-aortic state. */
+export const WORKER_PROTOCOL_VERSION = 58;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -414,6 +414,14 @@ export interface EquipmentSnapshot {
       readonly circulationAtTick: number | null;
       readonly disabilityExposureAtTick: number | null;
       readonly repeatedAtTick: number | null;
+    };
+    readonly acuteAorticSyndromeAssessment?: {
+      readonly initialReviewedAtTick: number | null;
+      readonly evolutionReviewedAtTick: number | null;
+      readonly escalatedAtTick: number | null;
+      readonly antiImpulseAtTick: number | null;
+      readonly imagingAtTick: number | null;
+      readonly handedOffAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

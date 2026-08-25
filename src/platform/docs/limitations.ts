@@ -2043,6 +2043,45 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['trauma-primary-survey'],
   },
   {
+    id: 'aortic-presentation-asymmetry-and-response-are-authored',
+    headline: 'The pain, ECG, bilateral pressures, pulses, limb perfusion, neurologic findings, timing, and treatment response are authored facts, not acquired findings or predictions.',
+    simplification: 'One fixed adult progresses from abrupt pain with initially symmetric territories '
+      + 'to a fixed inter-arm pressure difference, pulse deficits, cool limb, focal drift, and bounded response.',
+    whereItMisleads: 'Treating the screen as examination, blood-pressure verification, vascular or '
+      + 'neurologic diagnosis, ECG interpretation, malperfusion measurement, or prediction of evolution.',
+    correctUnderstanding: 'Real acute aortic syndromes require repeated whole-patient examination, '
+      + 'verified bilateral measurements, parallel dangerous-differential assessment, expert imaging, '
+      + 'and immediate multidisciplinary management as findings evolve.',
+    briefIn: ['acute-aortic-syndrome'],
+  },
+  {
+    id: 'aortic-assessment-escalation-anti-impulse-and-imaging-controls-are-proxies',
+    headline: 'Assessment, escalation, analgesia, anti-impulse, imaging, repeat, and handoff buttons record intents; they do not perform care.',
+    simplification: 'The interface enforces a serial reasoning sequence without examining the patient, '
+      + 'placing an arterial line, selecting or delivering medication, transporting, imaging, consulting, '
+      + 'or handing off to a real team.',
+    whereItMisleads: 'Equating ordered buttons with competent cardiovascular or neurologic examination, '
+      + 'drug titration, perfusion protection, imaging selection, consultation, transfer, or team performance.',
+    correctUnderstanding: 'Use current regional acute-aortic pathways, trained teams, continuous '
+      + 'monitoring, patient-specific contraindication review, titration that preserves organ perfusion, '
+      + 'and direct aortic-center coordination.',
+    briefIn: ['acute-aortic-syndrome'],
+  },
+  {
+    id: 'no-live-aortic-diagnosis-risk-score-drug-delivery-imaging-procedure-transfer-or-outcome',
+    headline: 'The case does not diagnose, calculate a risk score, deliver drugs, image, operate, transfer, or predict outcome.',
+    simplification: 'Rupture, tamponade, acute aortic regurgitation, coronary involvement, spinal, renal '
+      + 'or mesenteric malperfusion, pregnancy, connective-tissue disease, contrast constraints, shock, '
+      + 'arrest, alternate phenotypes, procedures, disposition, and prognosis are absent.',
+    whereItMisleads: 'Excluding aortic disease after one symmetric exam, treating evolving deficits as '
+      + 'isolated coronary or stroke disease, lowering pressure below organ perfusion, delaying escalation, '
+      + 'or assuming imaging intent establishes anatomy or an operation.',
+    correctUnderstanding: 'Keep dangerous alternatives open, repeat pulse, pressure, perfusion, and '
+      + 'neurologic assessment, escalate new discordance immediately, reduce aortic wall stress while '
+      + 'preserving organs, and obtain definitive imaging and surgical evaluation without avoidable delay.',
+    briefIn: ['acute-aortic-syndrome'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '
