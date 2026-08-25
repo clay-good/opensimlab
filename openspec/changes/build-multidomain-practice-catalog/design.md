@@ -186,6 +186,10 @@ intracranial hemorrhage deterioration; diabetic ketoacidosis; hyperkalemia with 
 hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; acute aortic
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
+Wave A is complete at 39 registered anesthesia scenarios. Wave B begins from the planned,
+indexable `/emergency-medicine` module boundary; planned titles remain descriptive scope only and
+do not enter playable or completion counts before their full scenario contracts pass.
+
 #### Critical care: 24
 
 Septic shock resuscitation; ARDS lung-protective ventilation; escalating hypoxemia; ventilator

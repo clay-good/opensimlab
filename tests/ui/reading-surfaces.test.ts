@@ -82,3 +82,9 @@ describe('Requirement: A Field In Prose Reads As A Field', () => {
     expect(textarea.slice(0, 120)).toContain('inline-size: 100%');
   });
 });
+
+describe('Requirement: A Prose Page Primary Action Is Easy To Tap', () => {
+  it('keeps the primary link at the comfortable touch-target minimum', () => {
+    expect(componentsCss).toMatch(/\.button--primary \{[^}]*min-block-size: 44px/s);
+  });
+});

@@ -3,7 +3,7 @@
 An open-source, browser-native clinical simulator for medical students, residents, and
 nurse anesthetists — anywhere in the world, on any device, with or without a network.
 
-**opensimlab.com/anesthesia** is the first module. `/oncology` and `/cardiology` follow.
+**opensimlab.com/anesthesia** is the first complete 39-scenario module. Emergency medicine is the next catalog wave; `/emergency-medicine` honestly describes the planned 25-case scope while it is built.
 
 The goal is not a tech demo. It is the best anesthesia education on the internet: the
 thing a student opens the night before their first day in the OR and comes out of

@@ -205,6 +205,17 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
     }
   });
 
+  it('publishes the next exact catalog wave as planned without implying playable cases', () => {
+    const emergency = MODULES.find((module) => module.id === 'emergency-medicine');
+    expect(emergency).toMatchObject({
+      route: 'emergency-medicine', displayName: 'Emergency medicine', status: 'planned',
+    });
+    expect(emergency?.plannedScope).toContain('Twenty-five');
+    expect(routeFor('/emergency-medicine')).toMatchObject({
+      indexable: true, heading: 'Emergency medicine — planned',
+    });
+  });
+
   it('Requirement: Modules Declare Their Own Physiological Timescale', () => {
     const anesthesia = MODULES.find((module) => module.id === 'anesthesia')!;
     expect(anesthesia.timescale.unit).toBe('seconds');

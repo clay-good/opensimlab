@@ -40,6 +40,7 @@
   cursor: not-allowed;
 }
 .button--primary {
+  min-block-size: 44px;
   background: var(--focus);
   border-color: var(--focus);
   color: var(--text-on-accent);

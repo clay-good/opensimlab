@@ -69,7 +69,7 @@ credited toward the catalog until every item in the completion contract passes.
   Authored domain/environment/fidelity filters remain.
 - [ ] Implement catalog desktop, tablet, 320 px phone, keyboard, screen-reader, reduced-motion, and
   no-script/prerendered experiences.
-  The default prerender contains all 17 scenario cards, controls are native keyboard and screen-
+  The default prerender contains all 39 anesthesia scenario cards, controls are native keyboard and screen-
   reader fields, result changes use a focused polite status, and browser inspection passes without
   horizontal overflow at 320 px. Tablet and reduced-motion procedures remain.
 - [ ] Demonstrate with 20 moderated learners that named and need-based cases are found within the
@@ -198,7 +198,9 @@ credited toward the catalog until every item in the completion contract passes.
 
 ## 8. Catalog production waves
 
-- [ ] Wave A: migrate and complete 39 anesthesia scenarios — 27 are authored and registered.
+- [x] Wave A: migrate and complete 39 anesthesia scenarios — all 39 are authored, registered,
+  completion-audited, prerendered, available offline, and verified at 320 px. Emergency medicine is
+  registered as the next planned module without counting a placeholder as playable.
 - [ ] Wave B: complete 25 emergency-medicine and 24 critical-care scenarios.
 - [ ] Wave C: complete 17 cardiology and 15 respiratory-medicine scenarios.
 - [ ] Wave D: complete 16 pediatric, 15 obstetric, and 11 neonatal scenarios.
