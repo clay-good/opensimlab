@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with 13 playable, completion-audited scenarios. The remaining
-12 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with 14 playable, completion-audited scenarios. The remaining
+11 planned titles remain descriptive scope only and do not enter playable counts before their full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -375,6 +375,19 @@ calculation. ECG acquisition, definitive conduction or causal diagnosis, actual 
 access, medication preparation or delivery, repeated atropine, transcutaneous or transvenous pacing,
 electrical or mechanical capture, sedation, dopamine or epinephrine infusion, recurrence,
 disposition, local protocol, and outcome remain outside the vignette.
+
+### Wave B slice 14: persistent VF arrest
+
+The fourteenth emergency-medicine slice reuses the shared bounded cardiac-arrest capability in an
+emergency-department third-cycle VF handoff after 2 unsuccessful biphasic shocks. Learners resume
+fixed-rate compression intent, record one 1 mg IV/IO epinephrine action while compressions are active,
+select the fictional device's declared 200 J setting, deliver one modeled shock, and recognize the
+authored return of spontaneous circulation while preserving shockable/non-shockable discrimination.
+
+The formulary-free case opens directly into one focused arrest surface. Compression and ventilation
+quality, airway skill, pads, device operation, shock safety, vascular access, medication delivery,
+repeated cycles, antiarrhythmics, reversible-cause treatment, team performance, individual conversion
+probability, termination decisions, and post-cardiac-arrest care remain outside the vignette.
 
 #### Critical care: 24
 

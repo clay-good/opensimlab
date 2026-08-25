@@ -596,6 +596,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || event.type === 'opioid-ventilatory-impairment',
   ) ? 'airway' : props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'tension-pneumothorax'
+      || (event.type === 'rhythm-change' && event.target === 'ventricular-fibrillation')
       || event.type === 'sepsis-pattern'
       || event.type === 'hemorrhagic-shock-pattern'
       || event.type === 'cardiac-tamponade'
@@ -651,6 +652,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
   const hasNonMaternalCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse
     || hasCardiacArrestResponse || hasHighSpinalResponse || hasVenousAirEmbolismResponse
     || hasPneumothoraxResponse || hasBronchospasmResponse;
+  const focusedArrestScenario = props.scenario.formulary.length === 0
+    && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
+      && event.target === 'ventricular-fibrillation');
   const hasCrisisResponse = hasNonMaternalCrisisResponse || hasPreeclampsiaResponse
     || hasAspirationRiskResponse || hasEmergenceResidualBlockResponse
     || hasDelayedEmergenceResponse || hasExtubationReadinessResponse || hasCiedPlanningResponse
@@ -659,7 +663,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse || hasCopdExacerbationResponse
     || hasAcutePulmonaryEdemaResponse || hasPulmonaryEmbolismResponse || hasStemiResponse
     || hasUnstableNarrowTachycardiaResponse || hasUnstableBradycardiaResponse;
-  const responseTray = hasUnstableBradycardiaResponse
+  const responseTray = focusedArrestScenario
+    ? { id: 'crisis', label: 'Persistent VF' } as const
+    : hasUnstableBradycardiaResponse
     ? { id: 'crisis', label: 'Unstable bradycardia' } as const
     : hasUnstableNarrowTachycardiaResponse
     ? { id: 'crisis', label: 'Unstable tachycardia' } as const
@@ -706,7 +712,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     : hasPreeclampsiaResponse && !hasNonMaternalCrisisResponse
       ? { id: 'crisis', label: 'Maternal response' } as const : CRISIS_TRAY;
   const focusedEmergencyAssessment = props.scenario.formulary.length === 0
-    && (focusedPleuralEmergency || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
+    && (focusedArrestScenario || focusedPleuralEmergency
+    || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
       || hasCopdExacerbationResponse || hasAcutePulmonaryEdemaResponse

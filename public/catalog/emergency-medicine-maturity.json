@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "emergency-medicine",
-  "recordCount": 13,
+  "recordCount": 14,
   "records": [
     {
       "recordId": "scenario:undifferentiated-shock@0.1.0",
@@ -144,6 +144,17 @@
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#unstable-bradycardia@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#unstable-bradycardia@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:persistent-vf-arrest@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "persistent-vf-arrest",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/emergency-medicine-completion-audit.json#persistent-vf-arrest@0.1.0",
+        "/catalog/emergency-medicine-quality-audit.json#persistent-vf-arrest@0.1.0"
       ]
     }
   ]
