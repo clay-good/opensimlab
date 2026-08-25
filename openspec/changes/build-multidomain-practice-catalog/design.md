@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with 21 playable, completion-audited scenarios. The remaining
-4 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with 22 playable, completion-audited scenarios. The remaining
+3 planned titles remain descriptive scope only and do not enter playable counts before their full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -486,6 +486,20 @@ guard the next 24 hours.” It stops rescue at the fixed +5 mmol/L response, mak
 cause control, serial sodium and urine surveillance, and an overcorrection contingency explicit,
 and does not examine or sample the patient, select or deliver a regional bolus, treat a seizure or
 airway, model sodium kinetics, adjudicate cause, perform relowering treatment, or predict outcome.
+
+### Wave B slice 22: opioid toxicity
+
+The twenty-second emergency-medicine slice adds suspected fentanyl toxicity with a definite pulse,
+severe respiratory depression, hypoxemia, hypercapnia, depressed responsiveness, and pinpoint
+pupils. Learners review the fixed pattern and immediate mimics; record airway opening, oxygen and
+effective bag-mask ventilation before waiting for an antagonist; record local-protocol naloxone
+intent toward normal breathing; and review an authored initial respiratory response.
+
+The second card then reveals fixed recurrent respiratory depression at 25 minutes, requiring renewed
+ventilation, repeat-antagonist intent, co-exposure and complication review, monitored observation,
+and an eventual discharge-safety handoff. The case does not examine the patient, confirm a pulse,
+provide ventilation, select or deliver a drug, model pharmacology, diagnose co-exposure, manage
+withdrawal or complications, determine observation duration, dispense medication, or predict outcome.
 
 #### Critical care: 24
 

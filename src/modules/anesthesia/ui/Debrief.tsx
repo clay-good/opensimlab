@@ -2941,6 +2941,49 @@ export function objectiveFindings(
           : 'The stop, correction ceiling, cause evaluation, or overcorrection safety plan was incomplete or out of order.', atTick: guardrails?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-opioid-respiratory-emergency', 'ventilate-opioid-toxicity-first',
+      'record-opioid-antagonist-intent', 'reassess-opioid-breathing-response',
+      'manage-recurrent-opioid-depression'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'opioid-toxicity');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The opioid-toxicity vignette was not active.' } satisfies ObjectiveFinding;
+      const reviewed = log.find((event) => /^opioid-toxicity-reviewed-\d+$/.test(event.eventId));
+      const ventilation = log.find((event) => /^opioid-ventilation-\d+$/.test(event.eventId));
+      const antagonist = log.find((event) => /^opioid-naloxone-\d+$/.test(event.eventId));
+      const initial = log.find((event) => /^opioid-initial-reassessed-\d+$/.test(event.eventId));
+      const recurrence = log.find((event) => /^opioid-recurrence-reviewed-\d+$/.test(event.eventId));
+      const plan = log.find((event) => /^opioid-recurrence-plan-\d+$/.test(event.eventId));
+      if (objective.id === 'recognize-opioid-respiratory-emergency') return {
+        ...base, outcome: reviewed ? 'met' : 'not-met',
+        finding: reviewed ? 'Depressed responsiveness and ventilation, hypoxemia, hypercapnia, pupils, exposure, pulse, glucose, and immediate mimics were integrated without claiming diagnostic proof.'
+          : 'The fixed opioid respiratory-emergency pattern and immediate mimics were not reviewed.',
+        atTick: reviewed?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'ventilate-opioid-toxicity-first') {
+        const ordered = reviewed && ventilation && reviewed.tick <= ventilation.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered ? 'Airway opening, oxygen, effective ventilation, monitoring, access, glucose review, and help followed recognition without waiting for antagonist effect.'
+            : 'Immediate breathing support and escalation were absent or out of order.', atTick: ventilation?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'record-opioid-antagonist-intent') {
+        const ordered = ventilation && antagonist && ventilation.tick <= antagonist.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered ? 'Local-protocol naloxone intent followed ventilation and targeted normal spontaneous breathing rather than mandatory full arousal.'
+            : 'Naloxone intent was absent, preceded ventilation, or used the wrong endpoint.', atTick: antagonist?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'reassess-opioid-breathing-response') {
+        const ordered = antagonist && initial && antagonist.tick <= initial.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered ? 'Respiratory rate, oxygenation, carbon dioxide, responsiveness, and pulse were reviewed after the initial rescue.'
+            : 'The initial respiratory response was absent or reviewed out of order.', atTick: initial?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = initial && recurrence && plan
+        && initial.tick <= recurrence.tick && recurrence.tick <= plan.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met',
+        finding: ordered ? 'Recurrent respiratory depression triggered renewed ventilation, repeat-antagonist intent, monitored observation, co-exposure review, and discharge safety planning.'
+          : 'Recurrence recognition, renewed rescue, observation, or discharge safety was incomplete or out of order.', atTick: plan?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

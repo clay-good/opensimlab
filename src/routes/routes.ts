@@ -105,7 +105,7 @@ export const ROUTES: readonly RouteMetadata[] = [
     path: '/emergency-medicine',
     title: formatTitle('Emergency medicine simulator'),
     description:
-      'Rehearse emergency decisions across shock, breathing, metabolic, sodium, and potassium crises, stroke, unstable rhythms, cardiac arrest, and seizures.',
+      'Rehearse emergency decisions across shock, breathing, metabolic, electrolyte, and overdose crises, stroke, unstable rhythms, cardiac arrest, and seizures.',
     indexable: true,
     structuredData: ['SoftwareApplication'],
     heading: 'Emergency medicine simulator',

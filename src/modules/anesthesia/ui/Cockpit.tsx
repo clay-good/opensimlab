@@ -775,6 +775,9 @@ export function Cockpit({
           onHyponatremiaResponse={(action) => session.act({
             type: 'hyponatremia-response', payload: { action },
           })}
+          onOpioidToxicityResponse={(action) => session.act({
+            type: 'opioid-toxicity-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

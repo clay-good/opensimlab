@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 54 reports bounded hyponatremia state. */
-export const WORKER_PROTOCOL_VERSION = 54;
+/** Bumped whenever the message shape changes incompatibly. Version 55 reports bounded opioid-toxicity state. */
+export const WORKER_PROTOCOL_VERSION = 55;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -391,6 +391,14 @@ export interface EquipmentSnapshot {
       readonly hypertonicAtTick: number | null;
       readonly reassessedAtTick: number | null;
       readonly guardrailsAtTick: number | null;
+    };
+    readonly opioidToxicityAssessment?: {
+      readonly patternReviewedAtTick: number | null;
+      readonly ventilationAtTick: number | null;
+      readonly antagonistAtTick: number | null;
+      readonly initialReassessmentAtTick: number | null;
+      readonly recurrenceReviewedAtTick: number | null;
+      readonly recurrencePlanAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

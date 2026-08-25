@@ -1923,6 +1923,46 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['severe-hyponatremia-with-seizure'],
   },
   {
+    id: 'opioid-toxicity-pattern-response-and-recurrence-are-authored',
+    headline: 'The exposure, pulse, breathing, oxygenation, carbon dioxide, pupils, glucose, initial response, and recurrence are authored facts, not acquired findings or predictions.',
+    simplification: 'One fixed adult has reported fentanyl exposure, a definite pulse, respirations '
+      + '4/min, SpO₂ 78%, end-tidal CO₂ 68 mmHg, pinpoint pupils, and normal glucose, followed by '
+      + 'fixed initial improvement and recurrent respiratory depression at 25 minutes.',
+    whereItMisleads: 'Treating the screen as examination, pulse confirmation, capnography or glucose '
+      + 'acquisition, opioid diagnosis, co-exposure exclusion, or prediction of ventilation or naloxone response.',
+    correctUnderstanding: 'Real suspected opioid poisoning requires immediate whole-patient and '
+      + 'airway assessment, pulse and breathing confirmation, standard resuscitation, verified '
+      + 'monitoring, glucose review, repeated reassessment, and an open differential.',
+    briefIn: ['opioid-toxicity'],
+  },
+  {
+    id: 'opioid-ventilation-antagonist-monitoring-and-handoff-controls-are-proxies',
+    headline: 'Airway, ventilation, naloxone, monitoring, recurrence, observation, and discharge-safety buttons record intents; they do not perform care.',
+    simplification: 'The interface enforces breathing support before waiting for antagonist effect '
+      + 'and keeps recurrence visible without opening an airway, ventilating, selecting a product, '
+      + 'route or dose, delivering medication, monitoring a patient, or dispensing take-home naloxone.',
+    whereItMisleads: 'Equating ordered buttons with competent airway or bag-mask technique, dose '
+      + 'titration, access, monitoring, withdrawal management, counseling, treatment linkage, or discharge skill.',
+    correctUnderstanding: 'Use current protocols, trained teams, effective ventilation, verified '
+      + 'monitoring, repeated antagonist when indicated, health care observation, harm-reduction '
+      + 'resources, and patient-centered substance-use treatment pathways.',
+    briefIn: ['opioid-toxicity'],
+  },
+  {
+    id: 'no-live-opioid-exam-airway-drug-coexposure-recurrence-disposition-or-outcome',
+    headline: 'The case does not examine the patient, confirm a pulse, ventilate, deliver an antagonist, model drug effects, diagnose co-exposure, determine observation, or predict outcome.',
+    simplification: 'Alternate opioids, dose and route, mixed sedatives or stimulants, head injury, '
+      + 'stroke, seizure, hypoglycemia, aspiration, pulmonary edema, severe withdrawal, agitation, '
+      + 'cardiac arrest, pregnancy, later recurrence, disposition, and prognosis are absent.',
+    whereItMisleads: 'Withholding ventilation while waiting for naloxone, demanding full arousal, '
+      + 'assuming a response proves opioid-only toxicity, treating one improvement as durable, or '
+      + 'copying the fixed 25-minute recurrence to another patient.',
+    correctUnderstanding: 'Support ventilation immediately, give an opioid antagonist without '
+      + 'interrupting standard resuscitation, target normal breathing, keep other causes open, and '
+      + 'observe until consciousness and vital signs are normal and recurrence risk is low.',
+    briefIn: ['opioid-toxicity'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

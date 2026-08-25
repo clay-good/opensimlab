@@ -323,6 +323,14 @@ export interface ActionCockpitProps {
       readonly reassessedAtTick: number | null;
       readonly guardrailsAtTick: number | null;
     };
+    readonly opioidToxicityAssessment?: {
+      readonly patternReviewedAtTick: number | null;
+      readonly ventilationAtTick: number | null;
+      readonly antagonistAtTick: number | null;
+      readonly initialReassessmentAtTick: number | null;
+      readonly recurrenceReviewedAtTick: number | null;
+      readonly recurrencePlanAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -513,6 +521,11 @@ export interface ActionCockpitProps {
       | 'record-hypertonic-saline-intent' | 'reassess-hyponatremia-first-hour'
       | 'record-hyponatremia-guardrails-and-cause-plan',
   ) => void;
+  readonly onOpioidToxicityResponse?: (
+    action: 'review-opioid-toxicity-pattern' | 'record-opioid-ventilation-support'
+      | 'record-opioid-naloxone-intent' | 'reassess-opioid-initial-response'
+      | 'review-opioid-recurrence' | 'record-opioid-recurrence-and-safety-plan',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -641,6 +654,9 @@ export function crisisResponseAvailability(
     hasSevereHyponatremiaResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'severe-hyponatremia-with-seizure',
     ),
+    hasOpioidToxicityResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'opioid-toxicity',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -708,6 +724,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'diabetic-ketoacidosis')
       || (event.type === 'narrative' && event.target === 'hyperkalemia-with-ecg-change')
       || (event.type === 'narrative' && event.target === 'severe-hyponatremia-with-seizure')
+      || (event.type === 'narrative' && event.target === 'opioid-toxicity')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -733,6 +750,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasDiabeticKetoacidosisResponse,
     hasHyperkalemiaResponse,
     hasSevereHyponatremiaResponse,
+    hasOpioidToxicityResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -760,7 +778,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPneumothoraxResponse || hasBronchospasmResponse || hasStatusEpilepticusResponse
     || hasAcuteIschemicStrokeResponse || hasIntracranialHemorrhageResponse
     || hasDiabeticKetoacidosisResponse || hasHyperkalemiaResponse
-    || hasSevereHyponatremiaResponse;
+    || hasSevereHyponatremiaResponse || hasOpioidToxicityResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -777,8 +795,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasUnstableNarrowTachycardiaResponse || hasUnstableBradycardiaResponse
     || hasStatusEpilepticusResponse || hasAcuteIschemicStrokeResponse
     || hasIntracranialHemorrhageResponse || hasDiabeticKetoacidosisResponse
-    || hasHyperkalemiaResponse || hasSevereHyponatremiaResponse;
-  const responseTray = hasSevereHyponatremiaResponse
+    || hasHyperkalemiaResponse || hasSevereHyponatremiaResponse || hasOpioidToxicityResponse;
+  const responseTray = hasOpioidToxicityResponse
+    ? { id: 'crisis', label: 'Opioid toxicity' } as const
+    : hasSevereHyponatremiaResponse
     ? { id: 'crisis', label: 'Severe hyponatremia' } as const
     : hasHyperkalemiaResponse
     ? { id: 'crisis', label: 'Severe hyperkalemia' } as const
@@ -847,6 +867,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasDiabeticKetoacidosisResponse
     || hasHyperkalemiaResponse
     || hasSevereHyponatremiaResponse
+    || hasOpioidToxicityResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1220,6 +1241,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasSevereHyponatremiaResponse && (
               <HyponatremiaTray assessment={props.resuscitation.hyponatremiaAssessment}
                 onAction={props.onHyponatremiaResponse ?? (() => {})} />
+            )}
+            {hasOpioidToxicityResponse && (
+              <OpioidToxicityTray assessment={props.resuscitation.opioidToxicityAssessment}
+                onAction={props.onOpioidToxicityResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -3360,6 +3385,62 @@ function HyponatremiaTray({ assessment, onAction }: {
             onClick={() => onAction('record-hyponatremia-guardrails-and-cause-plan')}>Stop rescue + set ceiling + find cause</Button>
         </div>
         <p className="field__hint">This authored path stops after +5 mmol/L improvement, caps total rise at 10 mmol/L in the first 24 hours and 8 mmol/L per day after, and keeps a specialist overcorrection plan visible.</p>
+      </section>
+    </div>
+  );
+}
+
+function OpioidToxicityTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['opioidToxicityAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onOpioidToxicityResponse']>;
+}) {
+  const reviewed = assessment?.patternReviewedAtTick != null;
+  const ventilated = assessment?.ventilationAtTick != null;
+  const antagonist = assessment?.antagonistAtTick != null;
+  const initial = assessment?.initialReassessmentAtTick != null;
+  const recurrence = assessment?.recurrenceReviewedAtTick != null;
+  const plan = assessment?.recurrencePlanAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="opioid-breathe-title">
+        <div id="opioid-breathe-title" className="syringe__name">Breathe first. Antidote without delay.</div>
+        <Badge kind="teaching">Pulse 58 · RR 4 · SpO₂ 78% · ETCO₂ 68</Badge>
+        <div className="syringe__meta">Unresponsive · pinpoint pupils · glucose 102 · no arrest</div>
+        <p className="syringe__remaining" role="status">
+          {initial ? 'RR 14 · SpO₂ 97% · ETCO₂ 43 · responds to voice'
+            : antagonist ? 'Ventilation continues · initial response next'
+              : ventilated ? 'Breathing supported · naloxone intent next'
+                : reviewed ? 'Respiratory emergency recognized · ventilate now'
+                  : 'Pulse + breathing + oxygenation + mimics review pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={reviewed}
+            onClick={() => onAction('review-opioid-toxicity-pattern')}>Review pulse + breathing + pattern</Button>
+          <Button className="crisis-drug__action" disabled={!reviewed || ventilated}
+            onClick={() => onAction('record-opioid-ventilation-support')}>Open airway + oxygen + ventilate</Button>
+          <Button className="crisis-drug__action" disabled={!ventilated || antagonist}
+            onClick={() => onAction('record-opioid-naloxone-intent')}>Record naloxone toward breathing</Button>
+          <Button className="crisis-drug__action" disabled={!antagonist || initial}
+            onClick={() => onAction('reassess-opioid-initial-response')}>Recheck breathing + CO₂ + pulse</Button>
+        </div>
+        <p className="field__hint">Ventilation does not wait for naloxone. Normal spontaneous breathing and airway reflexes are the endpoint; full arousal is not required.</p>
+      </section>
+      <section className="syringe" aria-labelledby="opioid-recurrence-title">
+        <div id="opioid-recurrence-title" className="syringe__name">The opioid can outlast the antidote.</div>
+        <div className="syringe__meta">Observe · detect recurrence · rescue again · leave safer</div>
+        <p className="syringe__remaining" role="status">
+          {plan ? 'Renewed rescue + observation + discharge safety handed off'
+            : recurrence ? 'RR 7 · SpO₂ 90% · ETCO₂ 58 · respiratory depression is back'
+              : initial ? 'Initial response is not the finish line · advance observation'
+                : 'Initial breathing response pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!initial || recurrence}
+            onClick={() => onAction('review-opioid-recurrence')}>Review 25-minute recurrence</Button>
+          <Button className="crisis-drug__action" disabled={!recurrence || plan}
+            onClick={() => onAction('record-opioid-recurrence-and-safety-plan')}>Ventilate again + repeat + observe</Button>
+        </div>
+        <p className="field__hint">Keep co-exposures and complications open. Eventual discharge requires low recurrence risk, normal consciousness and vital signs, antagonist access with instruction, and treatment linkage.</p>
       </section>
     </div>
   );

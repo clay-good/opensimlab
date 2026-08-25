@@ -373,6 +373,12 @@ export class AnesthesiaEngine {
   private hyponatremiaHypertonicAtTick: number | null = null;
   private hyponatremiaReassessedAtTick: number | null = null;
   private hyponatremiaGuardrailsAtTick: number | null = null;
+  private opioidPatternReviewedAtTick: number | null = null;
+  private opioidVentilationAtTick: number | null = null;
+  private opioidAntagonistAtTick: number | null = null;
+  private opioidInitialReassessmentAtTick: number | null = null;
+  private opioidRecurrenceReviewedAtTick: number | null = null;
+  private opioidRecurrencePlanAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2288,6 +2294,109 @@ export class AnesthesiaEngine {
         this.hyponatremiaGuardrailsAtTick = this.currentTick;
         this.log('critical', 'assessment', `hyponatremia-guardrails-${this.currentTick}`,
           'Hypertonic-saline intent was stopped after neurologic improvement and a 5 mmol/L rise. A maximum total rise of 10 mmol/L in the first 24 hours and 8 mmol/L per 24 hours thereafter, serial sodium and urine-output review, chlorthalidone hold, paired serum and urine cause evaluation, thyroid and adrenal review, and a specialist plan to halt or reverse overcorrection were handed off. Testing, diagnosis, fluid selection, desmopressin or free-water treatment, later course, disposition, and outcome are outside this lesson.', { intentOnly: true, firstDayMaximumRiseMmolPerL: 10, laterDailyMaximumRiseMmolPerL: 8 });
+        break;
+      }
+      case 'opioid-toxicity-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'opioid-toxicity');
+        const valid = ['review-opioid-toxicity-pattern', 'record-opioid-ventilation-support',
+          'record-opioid-naloxone-intent', 'reassess-opioid-initial-response',
+          'review-opioid-recurrence', 'record-opioid-recurrence-and-safety-plan'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `opioid-toxicity-response-refused-${this.currentTick}`,
+            supported ? 'The opioid-toxicity action was not one of the listed choices. Nothing changed.'
+              : 'The bounded opioid-toxicity choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-opioid-toxicity-pattern') {
+          if (this.opioidPatternReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `opioid-toxicity-review-refused-${this.currentTick}`,
+              'The fixed opioid-toxicity pattern has already been reviewed.');
+            break;
+          }
+          this.opioidPatternReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `opioid-toxicity-reviewed-${this.currentTick}`,
+            'Fixed review: the patient is unresponsive with a definite pulse 58/min, respirations 4/min, SpO₂ 78%, end-tidal CO₂ 68 mmHg, pinpoint pupils, glucose 102 mg/dL, and a reported fentanyl exposure. No trauma, focal deficit, seizure, or arrest is authored; co-exposure remains possible. This screen does not examine the patient, confirm a pulse, or acquire real monitor or laboratory data.');
+          break;
+        }
+        if (this.opioidPatternReviewedAtTick === null) {
+          this.log('warning', 'assessment', `opioid-toxicity-order-refused-${this.currentTick}`,
+            'Review responsiveness, pulse, breathing, oxygenation, carbon dioxide, glucose, exposure, and immediate mimics first.');
+          break;
+        }
+        if (response === 'record-opioid-ventilation-support') {
+          if (this.opioidVentilationAtTick !== null) {
+            this.log('warning', 'assessment', `opioid-ventilation-refused-${this.currentTick}`,
+              'The bounded airway, breathing, and escalation bundle has already been recorded.');
+            break;
+          }
+          this.opioidVentilationAtTick = this.currentTick;
+          this.log('critical', 'assessment', `opioid-ventilation-${this.currentTick}`,
+            'Emergency response activation, airway opening, oxygen, effective bag-mask ventilation, continuous cardiorespiratory monitoring, vascular access, and glucose review were recorded immediately. Airway maneuvers, ventilation quality, oxygen delivery, access, testing, and team performance are not simulated.', { intentOnly: true });
+          break;
+        }
+        if (this.opioidVentilationAtTick === null) {
+          this.log('warning', 'assessment', `opioid-ventilation-order-refused-${this.currentTick}`,
+            'Support airway and breathing immediately rather than waiting for an opioid antagonist to work.');
+          break;
+        }
+        if (response === 'record-opioid-naloxone-intent') {
+          if (this.opioidAntagonistAtTick !== null) {
+            this.log('warning', 'drug', `opioid-naloxone-refused-${this.currentTick}`,
+              'The bounded naloxone intent has already been recorded.');
+            break;
+          }
+          this.opioidAntagonistAtTick = this.currentTick;
+          this.log('critical', 'drug', `opioid-naloxone-${this.currentTick}`,
+            'Local-protocol naloxone intent was recorded while ventilation continued, titrated toward normal spontaneous breathing and protective airway reflexes rather than mandatory full arousal. Product, route, dose, access, delivery, pharmacology, withdrawal, and individual response are not simulated.', { intentOnly: true });
+          break;
+        }
+        if (this.opioidAntagonistAtTick === null) {
+          this.log('warning', 'assessment', `opioid-naloxone-order-refused-${this.currentTick}`,
+            'Record ventilation plus local-protocol naloxone intent before reviewing the authored response.');
+          break;
+        }
+        if (response === 'reassess-opioid-initial-response') {
+          if (this.opioidInitialReassessmentAtTick !== null) {
+            this.log('warning', 'assessment', `opioid-initial-reassessment-refused-${this.currentTick}`,
+              'The fixed initial opioid-toxicity reassessment has already been reviewed.');
+            break;
+          }
+          this.opioidInitialReassessmentAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `opioid-initial-reassessed-${this.currentTick}`,
+            'Fixed initial response: spontaneous respirations 14/min, SpO₂ 97% with oxygen, end-tidal CO₂ 43 mmHg, pulse 72/min, and response to voice with persistent drowsiness. No severe withdrawal is authored. Ventilation adequacy, not full wakefulness, is the immediate endpoint; this panel is not an individual prediction.', { respiratoryRatePerMin: 14, spo2Percent: 97, etco2MmHg: 43, pulsePerMin: 72 });
+          break;
+        }
+        if (this.opioidInitialReassessmentAtTick === null) {
+          this.log('warning', 'assessment', `opioid-recurrence-order-refused-${this.currentTick}`,
+            'Review the fixed initial breathing and responsiveness panel before advancing the observation clock.');
+          break;
+        }
+        if (response === 'review-opioid-recurrence') {
+          if (this.opioidRecurrenceReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `opioid-recurrence-review-refused-${this.currentTick}`,
+              'The fixed recurrent respiratory-depression panel has already been reviewed.');
+            break;
+          }
+          this.opioidRecurrenceReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `opioid-recurrence-reviewed-${this.currentTick}`,
+            'Fixed 25-minute observation panel: respirations have fallen to 7/min, SpO₂ to 90% with oxygen, end-tidal CO₂ has risen to 58 mmHg, drowsiness has deepened, and a pulse remains present at 64/min. Recurrent respiratory depression is authored to teach that opioid effect can outlast naloxone.', { respiratoryRatePerMin: 7, spo2Percent: 90, etco2MmHg: 58, pulsePerMin: 64 });
+          break;
+        }
+        if (this.opioidRecurrenceReviewedAtTick === null) {
+          this.log('warning', 'assessment', `opioid-recurrence-plan-order-refused-${this.currentTick}`,
+            'Recognize the fixed recurrent respiratory depression before recording renewed rescue and observation.');
+          break;
+        }
+        if (this.opioidRecurrencePlanAtTick !== null) {
+          this.log('warning', 'assessment', `opioid-recurrence-plan-refused-${this.currentTick}`,
+            'The recurrent-depression response and safety plan have already been recorded.');
+          break;
+        }
+        this.opioidRecurrencePlanAtTick = this.currentTick;
+        this.log('critical', 'assessment', `opioid-recurrence-plan-${this.currentTick}`,
+          'Renewed airway and ventilation support, repeat local-protocol naloxone intent, prolonged-antagonist and higher-acuity escalation contingencies, co-exposure and complication evaluation, and monitored observation until recurrence risk is low with normal consciousness and vital signs were recorded. Naloxone supply plus use-instruction intent and treatment linkage were added to the eventual discharge handoff. Delivery, later response, observation duration, counseling, dispensing, disposition, and outcome are outside this lesson.', { intentOnly: true });
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -5410,6 +5519,14 @@ export class AnesthesiaEngine {
           hypertonicAtTick: this.hyponatremiaHypertonicAtTick,
           reassessedAtTick: this.hyponatremiaReassessedAtTick,
           guardrailsAtTick: this.hyponatremiaGuardrailsAtTick,
+        },
+        opioidToxicityAssessment: {
+          patternReviewedAtTick: this.opioidPatternReviewedAtTick,
+          ventilationAtTick: this.opioidVentilationAtTick,
+          antagonistAtTick: this.opioidAntagonistAtTick,
+          initialReassessmentAtTick: this.opioidInitialReassessmentAtTick,
+          recurrenceReviewedAtTick: this.opioidRecurrenceReviewedAtTick,
+          recurrencePlanAtTick: this.opioidRecurrencePlanAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,
