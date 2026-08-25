@@ -114,7 +114,7 @@ export const PREPARATION_PATHS: readonly PreparationPathDefinition[] = [
   {
     id: 'handoff-escalation', version: '0.3.0', title: 'Handoff and escalation',
     description: 'Practice recognizing when the simulated problem exceeds solo management, ordering a bounded handoff, and making help part of the response.',
-    scenarioIds: ['unexpected-intraoperative-hemorrhage', 'blood-bank-handoff', 'bronchospasm', 'perioperative-anaphylaxis-after-antibiotic', 'early-malignant-hyperthermia-during-volatile-anesthesia', 'venous-air-embolism-during-line-removal', 'pneumothorax-under-positive-pressure'],
+    scenarioIds: ['unexpected-intraoperative-hemorrhage', 'blood-bank-handoff', 'bronchospasm', 'perioperative-anaphylaxis-after-antibiotic', 'early-malignant-hyperthermia-during-volatile-anesthesia', 'venous-air-embolism-during-line-removal', 'pneumothorax-under-positive-pressure', 'delayed-emergence-differential'],
     prerequisites: ['Basic monitor orientation.'],
     targetCompetencies: ['Early escalation', 'Structured priorities', 'Reassessment after help'],
     supportedRoles: ['Medical student', 'Resident', 'Nurse anesthesia learner'], limitations: BROWSER_LIMIT,

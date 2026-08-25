@@ -518,3 +518,17 @@
 - [ ] Add commercial-monitor behavior, stimulation technique, clinical-sign measurement, drug or
   reversal pharmacology, spontaneous recovery, consciousness, airway reflexes, airway removal,
   postoperative weakness, complete extubation readiness, or individual outcome.
+
+## Slice 35: bounded delayed-emergence differential
+
+- [x] Check in an evidence brief covering systematic pharmacologic, metabolic, and neurologic
+  cause review and the unsafe inference boundaries.
+- [x] Add a thirty-second authored scenario with an established airway, stable support, fixed
+  exposure and metabolic findings, and a new lateralizing focused examination pattern.
+- [x] Add ordered support, exposure, metabolic, neurologic-examination, and confirmed escalation
+  actions backed by engine-owned accepted state and deterministic replay.
+- [x] Score only accepted events and reject unsupported, out-of-order, duplicate, and unknown requests.
+- [x] Complete curriculum mapping, preparation path, limitations, catalog, SEO, responsive browser
+  inspection, and full CI.
+- [ ] Add consciousness measurement, drug concentrations, reversal dosing, test acquisition,
+  imaging, diagnostic certainty, treatment, team workflow, transfer, complications, or outcome.

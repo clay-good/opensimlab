@@ -588,3 +588,17 @@ This is not the separate quantitative reversal-selection lab or the future full 
 scenario. It does not simulate drug dosing, spontaneous recovery, consciousness, airway reflexes,
 airway removal, postoperative weakness, or outcome. Reaching 0.9 would satisfy the neuromuscular
 checkpoint only; it would not prove complete extubation readiness.
+
+## Slice 35: bounded delayed-emergence differential
+
+The thirty-second authored scenario begins 20 minutes after anesthetic delivery ended with the
+tracheal tube and delivered ventilation still established. It reveals an ordered sequence of
+immediate support, recorded anesthetic and quantitative-block evidence, four fixed metabolic
+findings, and a focused neurologic examination. The expert path recognizes the new lateralizing
+pattern and records urgent neurologic evaluation while airway support continues.
+
+Accepted progression is engine-owned and deterministic. Skipped steps, duplicates, unknown actions,
+and use outside the declared lesson are refused; debrief credit comes only from accepted events.
+The values and examination are authored fixtures. The slice does not measure consciousness,
+simulate laboratory acquisition or drug concentrations, establish a diagnosis, choose imaging or
+treatment, reproduce team workflow, or model outcome.

@@ -13,6 +13,7 @@ import { PREECLAMPSIA_URGENT_DELIVERY } from '@anesthesia/scenarios/preeclampsia
 import { PNEUMOTHORAX_UNDER_POSITIVE_PRESSURE } from '@anesthesia/scenarios/pneumothorax-under-positive-pressure';
 import { ASPIRATION_RISK_RECOGNITION } from '@anesthesia/scenarios/aspiration-risk-recognition';
 import { EMERGENCE_WITH_RESIDUAL_BLOCKADE } from '@anesthesia/scenarios/emergence-with-residual-blockade';
+import { DELAYED_EMERGENCE_DIFFERENTIAL } from '@anesthesia/scenarios/delayed-emergence-differential';
 import { UNITED_KINGDOM, UNITED_STATES } from '@anesthesia/region/profiles';
 
 const CRISIS_SCENARIO = {
@@ -165,6 +166,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       hasPneumothoraxResponse: false,
       hasAspirationRiskResponse: false,
       hasEmergenceResidualBlockResponse: false,
+      hasDelayedEmergenceResponse: false,
       hasBronchospasmResponse: false,
     });
     renderCockpit(UNITED_STATES, vi.fn(), {
@@ -496,6 +498,64 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
     act(() => button('Confirm choice')!.click());
     expect(onEmergenceResidualBlockAssessment)
       .toHaveBeenLastCalledWith('defer-extubation-and-support');
+  });
+
+  it('reveals the delayed-emergence differential in order and confirms escalation', () => {
+    const onDelayedEmergenceAssessment = vi.fn();
+    const base = {
+      scenario: DELAYED_EMERGENCE_DIFFERENTIAL, onDelayedEmergenceAssessment,
+    };
+    const assessment = (values: Partial<NonNullable<
+      ActionCockpitProps['resuscitation']['delayedEmergenceAssessment']
+    >> = {}) => ({
+      supportReviewedAtTick: null, exposureReviewedAtTick: null,
+      metabolicReviewedAtTick: null, neurologicExamAtTick: null,
+      escalation: null, escalatedAtTick: null, ...values,
+    } as const);
+    const renderAssessment = (values = assessment()) => renderCockpit(
+      UNITED_STATES, vi.fn(), {
+        ...base,
+        resuscitation: {
+          epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+          lastEpinephrineTick: null, crystalloidTotalMl: 0,
+          dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
+          lastDantroleneTick: null, activeCooling: false,
+          delayedEmergenceAssessment: values,
+        },
+      },
+    );
+
+    renderAssessment();
+    expect(button('Emergence differential')?.getAttribute('aria-selected')).toBe('true');
+    expect(button('Reconcile drugs + block')?.disabled).toBe(true);
+    act(() => button('Review immediate support')!.click());
+    expect(onDelayedEmergenceAssessment).toHaveBeenCalledWith('review-support');
+
+    renderAssessment(assessment({ supportReviewedAtTick: 1 }));
+    expect(container.textContent).toContain('Tube + ventilation established · physiology stable');
+    act(() => button('Reconcile drugs + block')!.click());
+    renderAssessment(assessment({ supportReviewedAtTick: 1, exposureReviewedAtTick: 2 }));
+    expect(container.textContent).toContain('Agents off · no benzodiazepine · TOF ratio 0.95');
+    act(() => button('Check reversible causes')!.click());
+
+    renderAssessment(assessment({
+      supportReviewedAtTick: 1, exposureReviewedAtTick: 2, metabolicReviewedAtTick: 3,
+    }));
+    expect(container.textContent).toContain('Glucose 102 · PaCO₂ 41 · sodium 139 · 36.7°C');
+    act(() => button('Perform focused neurologic exam')!.click());
+    renderAssessment(assessment({
+      supportReviewedAtTick: 1, exposureReviewedAtTick: 2, metabolicReviewedAtTick: 3,
+      neurologicExamAtTick: 4,
+    }));
+    expect(container.textContent).toContain('Left arm localizes · right absent · left gaze preference');
+    expect(container.textContent).not.toContain('Packed red cells use a bounded adult-only');
+    act(() => button('Escalate urgently')!.click());
+    expect(container.textContent).toContain(
+      'Record urgent neurologic evaluation while support continues?',
+    );
+    act(() => button('Confirm choice')!.click());
+    expect(onDelayedEmergenceAssessment)
+      .toHaveBeenLastCalledWith('urgent-neurologic-evaluation');
   });
 
   it('offers only bounded presets, no hostile free-dose or route field, inside the phone scroll area', () => {

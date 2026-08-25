@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 31,
+  "scenarioCount": 32,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -683,6 +683,29 @@
         "Treat quantitative neuromuscular recovery as necessary but not sufficient for a complete extubation decision."
       ],
       "searchText": "emergence-with-residual-blockade emergence with residual blockade inguinal hernia laparoscopic inguinal hernia repair read the quantitative train-of-four ratio instead of relying on clinical signs or twitch count alone. the focused quantitative monitor review was accepted before classification. identify residual neuromuscular blockade when four twitches show no detectable fade but the ratio remains below 0.9. residual blockade was classified after the quantitative review. keep the tracheal tube and delivered ventilation in place while recovery is addressed and reassessed. the defer-extubation-and-support plan was accepted after residual blockade was classified. treat quantitative neuromuscular recovery as necessary but not sufficient for a complete extubation decision. the accepted path deferred extubation without claiming that a ratio threshold alone proves readiness."
+    },
+    {
+      "id": "delayed-emergence-differential",
+      "path": "/anesthesia/scenario/delayed-emergence-differential",
+      "title": "Delayed emergence differential",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 6,
+      "difficulty": "advanced",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Preserve the airway and review ventilation, oxygenation, circulation, and temperature first.",
+        "Reconcile anesthetic, opioid, benzodiazepine, and neuromuscular-blockade evidence without anchoring on one category.",
+        "Check glucose, ventilation, sodium, and temperature as bounded reversible categories.",
+        "Perform a focused neurologic examination when common recorded causes do not explain the pattern.",
+        "Escalate the new lateralizing pattern urgently while continuing airway support."
+      ],
+      "searchText": "delayed-emergence-differential delayed emergence differential colon cancer laparoscopic right hemicolectomy preserve the airway and review ventilation, oxygenation, circulation, and temperature first. the immediate support review was accepted before cause investigation. reconcile anesthetic, opioid, benzodiazepine, and neuromuscular-blockade evidence without anchoring on one category. the medication record and quantitative recovery review was accepted after immediate support. check glucose, ventilation, sodium, and temperature as bounded reversible categories. the fixed bedside metabolic findings were reviewed after exposure reconciliation. perform a focused neurologic examination when common recorded causes do not explain the pattern. the accepted examination recorded a new asymmetric motor response and gaze preference. escalate the new lateralizing pattern urgently while continuing airway support. urgent neurologic evaluation was accepted after the focused examination."
     }
   ],
   "preparationPathCount": 10,
@@ -954,7 +977,8 @@
         "perioperative-anaphylaxis-after-antibiotic",
         "early-malignant-hyperthermia-during-volatile-anesthesia",
         "venous-air-embolism-during-line-removal",
-        "pneumothorax-under-positive-pressure"
+        "pneumothorax-under-positive-pressure",
+        "delayed-emergence-differential"
       ],
       "prerequisites": [
         "Basic monitor orientation."
@@ -970,7 +994,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 61
+      "estimatedMinutes": 67
     }
   ]
 }

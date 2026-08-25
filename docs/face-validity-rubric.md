@@ -100,6 +100,7 @@ Reviewers run the routine induction themselves before answering.
 | B46 | In the positive-pressure pneumothorax lesson, the combined respiratory and circulatory change is recognizable, bilateral assessment and escalation are easy to find, decompression is clearly an intent control rather than procedural instruction, and recovery is plausible | | |
 | B47 | In the aspiration-risk lesson, medication escalation, active symptoms, fasting, and elective urgency are easy to integrate; the defer-and-replan path is patient-specific; and the interface does not imply gastric-volume knowledge, universal medication cessation, or aspiration prevention | | |
 | B48 | In the emergence lesson, four twitches and no detectable fade coexist with a quantitative ratio of 0.72; the protective path preserves the tube and delivered ventilation without implying recovery timing, airway removal, or complete extubation readiness | | |
+| B49 | In the delayed-emergence lesson, the ordered support, exposure, metabolic, and neurologic reviews are clinically coherent; the fixed focal finding clearly changes urgency without implying a diagnosis, treatment, or outcome | | |
 | B45 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response

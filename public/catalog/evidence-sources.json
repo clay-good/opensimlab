@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 82,
+  "sourceCount": 83,
   "sources": [
     {
       "id": "association-qrh-2023",
@@ -439,6 +439,19 @@
       "verifiedAgainst": "NCBI E-utilities record, field by field",
       "verifiedOn": "2026-08-24",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/36377554/"
+    },
+    {
+      "id": "tzabazis-delayed-emergence-2015",
+      "pmid": "25912729",
+      "authors": "Tzabazis A, Miller C, Dobrow MF, Zheng K, Brock-Utne JG",
+      "title": "Delayed emergence after anesthesia",
+      "publication": "J Clin Anesth",
+      "year": 2015,
+      "locator": "27:353-60",
+      "usedFor": "The delayed-emergence vignette: use a structured differential spanning pharmacologic, metabolic, and neurologic causes instead of attributing delayed response to drug clearance alone. The case does not reproduce a complete diagnostic algorithm.",
+      "verifiedAgainst": "NCBI E-utilities record, field by field",
+      "verifiedOn": "2026-08-24",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/25912729/"
     },
     {
       "id": "das-extubation-2012",

@@ -30,6 +30,9 @@ the physical procedure.
 The thirty-third adds patient-specific aspiration-risk recognition without aspiration physiology.
 The thirty-fourth adds emergence recognition of residual blockade without reversal selection,
 airway removal, or a complete extubation-readiness model.
+The thirty-fifth adds an ordered delayed-emergence differential with immediate support, common
+recorded cause review, a fixed lateralizing examination finding, and urgent escalation without
+simulating testing, diagnosis, treatment, or outcome.
 
 ## What changes
 
@@ -240,3 +243,7 @@ The thirty-fourth adds the thirty-first authored scenario and isolates the emerg
 precedes reversal selection or airway removal. Four twitches and no detectable fade coexist with a
 static quantitative ratio below 0.9; accepted review, classification, and airway-support decisions
 are inspectable without claiming recovery timing, consciousness, or complete extubation readiness.
+The thirty-fifth adds the thirty-second authored scenario and turns delayed emergence into a short,
+ordered diagnostic-reasoning vignette. Immediate support, anesthetic and block evidence, fixed
+metabolic findings, a focused neurologic examination, and urgent escalation are inspectable, while
+test acquisition, diagnostic certainty, imaging, treatment, team workflow, and outcome remain excluded.

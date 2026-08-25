@@ -136,6 +136,14 @@ export interface ActionCockpitProps {
       readonly plan: 'defer-extubation-and-support' | 'proceed-to-extubation' | null;
       readonly planAtTick: number | null;
     };
+    readonly delayedEmergenceAssessment?: {
+      readonly supportReviewedAtTick: number | null;
+      readonly exposureReviewedAtTick: number | null;
+      readonly metabolicReviewedAtTick: number | null;
+      readonly neurologicExamAtTick: number | null;
+      readonly escalation: 'urgent-neurologic-evaluation' | 'continue-routine-recovery' | null;
+      readonly escalatedAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -208,6 +216,11 @@ export interface ActionCockpitProps {
     action: 'review-quantitative-monitor' | 'classify-residual' | 'classify-recovered'
       | 'defer-extubation-and-support' | 'proceed-to-extubation',
   ) => void;
+  readonly onDelayedEmergenceAssessment?: (
+    action: 'review-support' | 'review-exposure-and-block' | 'check-metabolic-causes'
+      | 'perform-focused-neurologic-exam' | 'urgent-neurologic-evaluation'
+      | 'continue-routine-recovery',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -268,6 +281,9 @@ export function crisisResponseAvailability(
     hasEmergenceResidualBlockResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'emergence-residual-blockade',
     ),
+    hasDelayedEmergenceResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'delayed-emergence-differential',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -312,14 +328,14 @@ export function ActionCockpit(props: ActionCockpitProps) {
     && props.scenario.timeline.some((event) => event.type === 'tension-pneumothorax'
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
-        'emergence-residual-blockade',
+        'emergence-residual-blockade', 'delayed-emergence-differential',
       ].includes(event.target ?? '')))
     ? 'crisis' : 'syringes');
   const {
     hasAnaphylaxisResponse, hasHypermetabolicResponse, hasLastResponse,
     hasCardiacArrestResponse, hasHighSpinalResponse, hasVenousAirEmbolismResponse,
     hasBronchospasmResponse, hasPreeclampsiaResponse, hasPneumothoraxResponse,
-    hasAspirationRiskResponse, hasEmergenceResidualBlockResponse,
+    hasAspirationRiskResponse, hasEmergenceResidualBlockResponse, hasDelayedEmergenceResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -329,8 +345,13 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasCardiacArrestResponse || hasHighSpinalResponse || hasVenousAirEmbolismResponse
     || hasPneumothoraxResponse || hasBronchospasmResponse;
   const hasCrisisResponse = hasNonMaternalCrisisResponse || hasPreeclampsiaResponse
-    || hasAspirationRiskResponse || hasEmergenceResidualBlockResponse;
-  const responseTray = hasEmergenceResidualBlockResponse && !hasNonMaternalCrisisResponse
+    || hasAspirationRiskResponse || hasEmergenceResidualBlockResponse
+    || hasDelayedEmergenceResponse;
+  const responseTray = hasDelayedEmergenceResponse && !hasNonMaternalCrisisResponse
+    && !hasPreeclampsiaResponse && !hasAspirationRiskResponse
+    && !hasEmergenceResidualBlockResponse
+    ? { id: 'crisis', label: 'Emergence differential' } as const
+    : hasEmergenceResidualBlockResponse && !hasNonMaternalCrisisResponse
     && !hasPreeclampsiaResponse && !hasAspirationRiskResponse
     ? { id: 'crisis', label: 'Emergence check' } as const
     : hasAspirationRiskResponse && !hasNonMaternalCrisisResponse
@@ -581,6 +602,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 onAction={props.onEmergenceResidualBlockAssessment ?? (() => {})}
               />
             )}
+            {hasDelayedEmergenceResponse && (
+              <DelayedEmergenceTray
+                assessment={props.resuscitation.delayedEmergenceAssessment}
+                onAction={props.onDelayedEmergenceAssessment ?? (() => {})}
+              />
+            )}
             {hasBronchospasmResponse && (
               <BronchospasmTray
                 region={props.region}
@@ -601,7 +628,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             below the fold. Here it costs nothing and is still found by anyone
             who scrolls to the end looking for the thing that is missing. */}
         {(tray === 'fluids' || (tray === 'crisis'
-          && !hasAspirationRiskResponse && !hasEmergenceResidualBlockResponse)) && (
+          && !hasAspirationRiskResponse && !hasEmergenceResidualBlockResponse
+          && !hasDelayedEmergenceResponse)) && (
           <p className="actions__not-modelled field__hint">
             {NOT_IN_THIS_BUILD}{' '}
             <a href="/limitations">The limitations register says what else.</a>
@@ -1514,6 +1542,106 @@ function EmergenceResidualBlockTray({
         <p className="field__hint">
           Reversal choice, recovery timing, consciousness, airway removal, and full extubation
           readiness remain outside this decision snapshot.
+        </p>
+      </section>
+    </div>
+  );
+}
+
+function DelayedEmergenceTray({ assessment, onAction }: {
+  assessment?: {
+    readonly supportReviewedAtTick: number | null;
+    readonly exposureReviewedAtTick: number | null;
+    readonly metabolicReviewedAtTick: number | null;
+    readonly neurologicExamAtTick: number | null;
+    readonly escalation: 'urgent-neurologic-evaluation' | 'continue-routine-recovery' | null;
+    readonly escalatedAtTick: number | null;
+  };
+  onAction: NonNullable<ActionCockpitProps['onDelayedEmergenceAssessment']>;
+}) {
+  const [pendingEscalation, setPendingEscalation] = useState<
+    'urgent-neurologic-evaluation' | 'continue-routine-recovery' | null
+  >(null);
+  const support = assessment?.supportReviewedAtTick != null;
+  const exposure = assessment?.exposureReviewedAtTick != null;
+  const metabolic = assessment?.metabolicReviewedAtTick != null;
+  const neurologic = assessment?.neurologicExamAtTick != null;
+  const escalation = assessment?.escalation ?? null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="delayed-emergence-review-title">
+        <div id="delayed-emergence-review-title" className="syringe__name">
+          Stabilize, then narrow
+        </div>
+        <Badge kind="teaching">Focused vignette</Badge>
+        <div className="syringe__meta">Support · exposure · reversible categories</div>
+        <p className="syringe__remaining" role="status">
+          {!support ? 'Immediate support review pending'
+            : !exposure ? 'Tube + ventilation established · physiology stable'
+              : !metabolic ? 'Agents off · no benzodiazepine · TOF ratio 0.95'
+                : 'Glucose 102 · PaCO₂ 41 · sodium 139 · 36.7°C'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={support}
+            onClick={() => onAction('review-support')}>Review immediate support</Button>
+          <Button className="crisis-drug__action" disabled={!support || exposure}
+            onClick={() => onAction('review-exposure-and-block')}>Reconcile drugs + block</Button>
+          <Button className="crisis-drug__action" disabled={!exposure || metabolic}
+            onClick={() => onAction('check-metabolic-causes')}>Check reversible causes</Button>
+        </div>
+        <p className="field__hint">
+          The fixed values organize a differential. They do not simulate laboratory testing or
+          exclude every real cause of delayed emergence.
+        </p>
+      </section>
+      <section className="syringe" aria-labelledby="delayed-emergence-exam-title">
+        <div id="delayed-emergence-exam-title" className="syringe__name">
+          Look for what changes urgency
+        </div>
+        <div className="syringe__meta">Focused examination · escalation</div>
+        <p className="syringe__remaining" role="status">
+          {escalation === 'urgent-neurologic-evaluation'
+            ? 'Urgent neurologic evaluation · airway support continues'
+            : escalation === 'continue-routine-recovery'
+              ? 'Routine recovery observation recorded'
+              : neurologic
+                ? 'Left arm localizes · right absent · left gaze preference'
+                : 'Focused neurologic examination pending'}
+        </p>
+        <Button className="crisis-drug__action" disabled={!metabolic || neurologic}
+          onClick={() => onAction('perform-focused-neurologic-exam')}>
+          Perform focused neurologic exam
+        </Button>
+        {neurologic && escalation === null && pendingEscalation === null && (
+          <div className="syringe__presets">
+            <Button className="crisis-drug__action"
+              onClick={() => setPendingEscalation('urgent-neurologic-evaluation')}>
+              Escalate urgently
+            </Button>
+            <Button className="crisis-drug__action"
+              onClick={() => setPendingEscalation('continue-routine-recovery')}>
+              Continue routine recovery
+            </Button>
+          </div>
+        )}
+        {pendingEscalation !== null && (
+          <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
+            <span>{pendingEscalation === 'urgent-neurologic-evaluation'
+              ? 'Record urgent neurologic evaluation while support continues?'
+              : 'Record routine observation despite the new asymmetry?'}</span>
+            <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+              <Button variant="primary" className="crisis-drug__action" onClick={() => {
+                onAction(pendingEscalation);
+                setPendingEscalation(null);
+              }}>Confirm choice</Button>
+              <Button variant="ghost" className="crisis-drug__action"
+                onClick={() => setPendingEscalation(null)}>Cancel</Button>
+            </div>
+          </div>
+        )}
+        <p className="field__hint">
+          This screen recognizes a lateralizing pattern. Diagnosis, imaging, treatment, team
+          workflow, and outcome remain outside the vignette.
         </p>
       </section>
     </div>

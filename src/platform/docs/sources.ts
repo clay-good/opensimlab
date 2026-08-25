@@ -491,6 +491,20 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-24',
   },
   {
+    id: 'tzabazis-delayed-emergence-2015',
+    pmid: '25912729',
+    authors: 'Tzabazis A, Miller C, Dobrow MF, Zheng K, Brock-Utne JG',
+    title: 'Delayed emergence after anesthesia',
+    publication: 'J Clin Anesth',
+    year: 2015,
+    locator: '27:353-60',
+    usedFor: 'The delayed-emergence vignette: use a structured differential spanning '
+      + 'pharmacologic, metabolic, and neurologic causes instead of attributing delayed response '
+      + 'to drug clearance alone. The case does not reproduce a complete diagnostic algorithm.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-24',
+  },
+  {
     id: 'das-extubation-2012',
     pmid: '22321104',
     authors: 'Difficult Airway Society Extubation Guidelines Group, Popat M, Mitchell V, Dravid R, Patel A, Swampillai C, Higgs A',

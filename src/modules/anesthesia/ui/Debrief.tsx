@@ -439,6 +439,11 @@ export function objectiveFindings(
     'recognize-emergence-residual-blockade': 'train-of-four-and-residual-blockade',
     'defer-extubation-during-residual-blockade': 'train-of-four-and-residual-blockade',
     'separate-recovery-from-extubation-readiness': 'train-of-four-and-residual-blockade',
+    'support-delayed-emergence-patient': 'preoxygenation-and-safe-apnea-time',
+    'reconcile-delayed-emergence-exposures': 'train-of-four-and-residual-blockade',
+    'check-delayed-emergence-metabolic-causes': 'capnogram-morphology',
+    'find-delayed-emergence-lateralizing-sign': 'depth-monitoring-and-its-limits',
+    'escalate-delayed-emergence-neurologic-pattern': 'depth-monitoring-and-its-limits',
     'recognize-hemorrhage': 'vasodilation-versus-hypovolemia',
     'temporize-volume-loss': 'vasodilation-versus-hypovolemia',
     'avoid-full-dose-induction': 'hysteresis-and-effect-site-lag',
@@ -1419,6 +1424,68 @@ export function objectiveFindings(
           ? 'The accepted path treated quantitative recovery as a necessary checkpoint while preserving the separate, broader extubation-readiness decision.'
           : 'The completed path did not preserve the distinction between quantitative recovery and full extubation readiness.',
         atTick: defer?.tick ?? residual?.tick ?? review?.tick ?? history.at(-1)?.tick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
+      'support-delayed-emergence-patient', 'reconcile-delayed-emergence-exposures',
+      'check-delayed-emergence-metabolic-causes', 'find-delayed-emergence-lateralizing-sign',
+      'escalate-delayed-emergence-neurologic-pattern',
+    ].includes(objective.id)) {
+      const support = log.find(
+        (entry) => entry.eventId.startsWith('delayed-emergence-support-reviewed-'),
+      );
+      const exposure = log.find(
+        (entry) => entry.eventId.startsWith('delayed-emergence-exposure-reviewed-'),
+      );
+      const metabolic = log.find(
+        (entry) => entry.eventId.startsWith('delayed-emergence-metabolic-reviewed-'),
+      );
+      const neurologic = log.find(
+        (entry) => entry.eventId.startsWith('delayed-emergence-neurologic-exam-'),
+      );
+      const urgent = log.find((entry) => entry.eventId.startsWith(
+        'delayed-emergence-escalation-urgent-neurologic-evaluation-',
+      ));
+      const routine = log.find((entry) => entry.eventId.startsWith(
+        'delayed-emergence-escalation-continue-routine-recovery-',
+      ));
+      if (objective.id === 'support-delayed-emergence-patient') return {
+        ...base, outcome: support ? 'met' : 'not-met',
+        finding: support
+          ? 'You preserved the secured airway and reviewed ventilation, oxygenation, circulation, and temperature before investigating causes.'
+          : 'No accepted immediate airway and physiologic support review was recorded.',
+        atTick: support?.tick ?? history.at(-1)?.tick,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'reconcile-delayed-emergence-exposures') return {
+        ...base, outcome: exposure ? 'met' : 'not-met',
+        finding: exposure
+          ? 'You reconciled anesthetic, opioid, benzodiazepine, and quantitative neuromuscular-block evidence without assigning an unsupported single cause.'
+          : 'No accepted anesthetic-exposure and quantitative-block review was recorded.',
+        atTick: exposure?.tick ?? history.at(-1)?.tick,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'check-delayed-emergence-metabolic-causes') return {
+        ...base, outcome: metabolic ? 'met' : 'not-met',
+        finding: metabolic
+          ? 'You reviewed the fixed glucose, carbon dioxide, sodium, and temperature findings as bounded reversible categories.'
+          : 'No accepted review of the bounded metabolic findings was recorded.',
+        atTick: metabolic?.tick ?? history.at(-1)?.tick,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'find-delayed-emergence-lateralizing-sign') return {
+        ...base, outcome: neurologic ? 'met' : 'not-met',
+        finding: neurologic
+          ? 'You found the new asymmetric arm response and leftward gaze preference after common recorded causes did not explain the pattern.'
+          : 'No accepted focused neurologic examination was recorded.',
+        atTick: neurologic?.tick ?? history.at(-1)?.tick,
+      } satisfies ObjectiveFinding;
+      return {
+        ...base, outcome: urgent ? 'met' : 'not-met',
+        finding: urgent
+          ? 'You escalated the new lateralizing pattern for urgent neurologic evaluation while airway support continued.'
+          : routine
+            ? 'You continued routine recovery observation despite the new lateralizing examination finding.'
+            : 'No accepted escalation decision was recorded.',
+        atTick: urgent?.tick ?? routine?.tick ?? history.at(-1)?.tick,
       } satisfies ObjectiveFinding;
     }
 

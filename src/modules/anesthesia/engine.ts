@@ -39,7 +39,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.29';
+export const ENGINE_VERSION = '0.1.0-alpha.30';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -301,6 +301,12 @@ export class AnesthesiaEngine {
   private emergenceBlockClassifiedAtTick: number | null = null;
   private emergencePlan: 'defer-extubation-and-support' | 'proceed-to-extubation' | null = null;
   private emergencePlanAtTick: number | null = null;
+  private delayedEmergenceSupportReviewedAtTick: number | null = null;
+  private delayedEmergenceExposureReviewedAtTick: number | null = null;
+  private delayedEmergenceMetabolicReviewedAtTick: number | null = null;
+  private delayedEmergenceNeurologicExamAtTick: number | null = null;
+  private delayedEmergenceEscalation: 'urgent-neurologic-evaluation' | 'continue-routine-recovery' | null = null;
+  private delayedEmergenceEscalatedAtTick: number | null = null;
   /** Static starting snapshot for the bounded emergence decision vignette. */
   private readonly configuredResidualRocuroniumCe: number;
   /** Bounded teaching opposition to the current rocuronium effect-site concentration. */
@@ -908,6 +914,118 @@ export class AnesthesiaEngine {
             : 'Progression toward extubation recorded despite quantitative residual blockade.', {
             plan: this.emergencePlan,
             classification: this.emergenceBlockClassification,
+            airwayRemainedIntubated: this.patient.airway.intubated,
+            ventilationRemainedDelivered: this.ventilator.delivering,
+          });
+        break;
+      }
+      case 'delayed-emergence-assessment': {
+        const supported = this.scenario.timeline.some(
+          (event) => event.type === 'narrative' && event.target === 'delayed-emergence-differential',
+        );
+        const response = String(action.payload.action ?? '');
+        const valid = [
+          'review-support', 'review-exposure-and-block', 'check-metabolic-causes',
+          'perform-focused-neurologic-exam', 'urgent-neurologic-evaluation',
+          'continue-routine-recovery',
+        ].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `delayed-emergence-refused-${this.currentTick}`,
+            supported
+              ? 'The delayed-emergence action was not one of the listed choices. No finding was recorded.'
+              : 'The bounded delayed-emergence assessment is available only in its declared lesson.');
+          break;
+        }
+        if (response === 'review-support') {
+          if (this.delayedEmergenceSupportReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `delayed-emergence-support-refused-${this.currentTick}`,
+              'Airway, ventilation, oxygenation, circulation, and temperature have already been reviewed.');
+            break;
+          }
+          this.delayedEmergenceSupportReviewedAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `delayed-emergence-support-reviewed-${this.currentTick}`,
+            'Immediate review: the tracheal tube and delivered ventilation remain established; oxygenation, end-tidal carbon dioxide, circulation, and temperature are stable.', {
+              airwaySupported: this.patient.airway.intubated,
+              ventilationSupported: this.ventilator.delivering,
+            });
+          break;
+        }
+        if (this.delayedEmergenceSupportReviewedAtTick === null) {
+          this.log('warning', 'assessment', `delayed-emergence-order-refused-${this.currentTick}`,
+            'Review immediate airway and physiologic support before investigating causes.');
+          break;
+        }
+        if (response === 'review-exposure-and-block') {
+          if (this.delayedEmergenceExposureReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `delayed-emergence-exposure-refused-${this.currentTick}`,
+              'The anesthetic record and quantitative neuromuscular recovery have already been reviewed.');
+            break;
+          }
+          this.delayedEmergenceExposureReviewedAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `delayed-emergence-exposure-reviewed-${this.currentTick}`,
+            'Record review: volatile delivery and infusions are off, no benzodiazepine was given, the last small opioid dose was more than one hour ago, and the quantitative train-of-four ratio is 0.95. Residual drug effect remains a category, but no single recorded exposure explains the new pattern.', {
+              trainOfFourRatio: 0.95, volatileDeliveryPercent: 0,
+              infusionRunning: false, benzodiazepineGiven: false,
+            });
+          break;
+        }
+        if (response === 'check-metabolic-causes') {
+          if (this.delayedEmergenceExposureReviewedAtTick === null) {
+            this.log('warning', 'assessment', `delayed-emergence-metabolic-order-refused-${this.currentTick}`,
+              'Reconcile anesthetic exposure and quantitative block before the next differential step.');
+            break;
+          }
+          if (this.delayedEmergenceMetabolicReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `delayed-emergence-metabolic-refused-${this.currentTick}`,
+              'The bounded bedside glucose and blood-gas findings have already been reviewed.');
+            break;
+          }
+          this.delayedEmergenceMetabolicReviewedAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `delayed-emergence-metabolic-reviewed-${this.currentTick}`,
+            'Bounded bedside results: glucose 102 mg/dL, arterial carbon dioxide 41 mmHg, sodium 139 mEq/L, and temperature 36.7°C. These fixed findings do not identify a metabolic explanation.', {
+              glucoseMgPerDl: 102, arterialCarbonDioxideMmHg: 41,
+              sodiumMEqPerL: 139, temperatureC: 36.7,
+            });
+          break;
+        }
+        if (response === 'perform-focused-neurologic-exam') {
+          if (this.delayedEmergenceMetabolicReviewedAtTick === null) {
+            this.log('warning', 'assessment', `delayed-emergence-neurologic-order-refused-${this.currentTick}`,
+              'Complete the immediate, exposure, and metabolic reviews before the focused neurologic examination.');
+            break;
+          }
+          if (this.delayedEmergenceNeurologicExamAtTick !== null) {
+            this.log('warning', 'assessment', `delayed-emergence-neurologic-refused-${this.currentTick}`,
+              'The focused neurologic examination has already been recorded.');
+            break;
+          }
+          this.delayedEmergenceNeurologicExamAtTick = this.currentTick;
+          this.log('critical', 'assessment', `delayed-emergence-neurologic-exam-${this.currentTick}`,
+            'Focused examination: the patient localizes with the left arm but not the right and has a new leftward gaze preference. This lateralizing pattern requires urgent evaluation; the vignette does not diagnose its cause.', {
+              rightArmResponse: 'absent', leftArmResponse: 'localizes',
+              gazePreference: 'left', diagnosisEstablished: false,
+            });
+          break;
+        }
+        if (this.delayedEmergenceNeurologicExamAtTick === null) {
+          this.log('warning', 'assessment', `delayed-emergence-escalation-order-refused-${this.currentTick}`,
+            'Complete the focused neurologic examination before choosing the escalation path.');
+          break;
+        }
+        if (this.delayedEmergenceEscalation !== null) {
+          this.log('warning', 'assessment', `delayed-emergence-escalation-refused-${this.currentTick}`,
+            'A delayed-emergence escalation path has already been recorded.');
+          break;
+        }
+        this.delayedEmergenceEscalation = response === 'urgent-neurologic-evaluation'
+          ? 'urgent-neurologic-evaluation' : 'continue-routine-recovery';
+        this.delayedEmergenceEscalatedAtTick = this.currentTick;
+        this.log(this.delayedEmergenceEscalation === 'urgent-neurologic-evaluation' ? 'critical' : 'warning',
+          'assessment', `delayed-emergence-escalation-${this.delayedEmergenceEscalation}-${this.currentTick}`,
+          this.delayedEmergenceEscalation === 'urgent-neurologic-evaluation'
+            ? 'Urgent neurologic evaluation and continued airway support recorded. Imaging, diagnosis, treatment, team workflow, and outcome are outside this vignette.'
+            : 'Routine recovery observation recorded despite the new lateralizing examination finding.', {
+            escalation: this.delayedEmergenceEscalation,
             airwayRemainedIntubated: this.patient.airway.intubated,
             ventilationRemainedDelivered: this.ventilator.delivering,
           });
@@ -2619,6 +2737,14 @@ export class AnesthesiaEngine {
           classifiedAtTick: this.emergenceBlockClassifiedAtTick,
           plan: this.emergencePlan,
           planAtTick: this.emergencePlanAtTick,
+        },
+        delayedEmergenceAssessment: {
+          supportReviewedAtTick: this.delayedEmergenceSupportReviewedAtTick,
+          exposureReviewedAtTick: this.delayedEmergenceExposureReviewedAtTick,
+          metabolicReviewedAtTick: this.delayedEmergenceMetabolicReviewedAtTick,
+          neurologicExamAtTick: this.delayedEmergenceNeurologicExamAtTick,
+          escalation: this.delayedEmergenceEscalation,
+          escalatedAtTick: this.delayedEmergenceEscalatedAtTick,
         },
         neuromuscularReversalFraction: this.neuromuscularReversalFraction,
         postTetanicCount: this.postTetanicCount,

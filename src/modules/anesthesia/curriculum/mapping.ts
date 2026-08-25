@@ -1155,6 +1155,21 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'pc-preanesthetic-evaluation',
     objectiveIds: ['review-aspiration-risk-cues', 'classify-elevated-aspiration-risk', 'choose-shared-elective-plan', 'avoid-blanket-glp1-rule'],
   },
+  {
+    scenarioId: 'delayed-emergence-differential', frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['support-delayed-emergence-patient', 'reconcile-delayed-emergence-exposures', 'check-delayed-emergence-metabolic-causes', 'find-delayed-emergence-lateralizing-sign', 'escalate-delayed-emergence-neurologic-pattern'],
+  },
+  {
+    scenarioId: 'delayed-emergence-differential', frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['support-delayed-emergence-patient', 'reconcile-delayed-emergence-exposures', 'check-delayed-emergence-metabolic-causes', 'find-delayed-emergence-lateralizing-sign', 'escalate-delayed-emergence-neurologic-pattern'],
+  },
+  {
+    scenarioId: 'delayed-emergence-differential', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-crisis-management',
+    objectiveIds: ['support-delayed-emergence-patient', 'reconcile-delayed-emergence-exposures', 'check-delayed-emergence-metabolic-causes', 'find-delayed-emergence-lateralizing-sign', 'escalate-delayed-emergence-neurologic-pattern'],
+  },
 ];
 
 export interface DomainCoverage {

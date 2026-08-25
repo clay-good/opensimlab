@@ -1081,6 +1081,39 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['unexpected-intraoperative-hemorrhage', 'blood-bank-handoff', 'obstetric-general-anesthesia', 'pneumothorax-under-positive-pressure'],
   },
   {
+    id: 'delayed-emergence-is-a-bounded-differential-vignette',
+    headline: 'Delayed emergence is reduced to one ordered differential; this is not a complete assessment or an individual diagnosis.',
+    simplification: 'The learner reviews immediate support, recorded exposures, four fixed '
+      + 'reversible categories, and one focused neurologic examination in a prescribed order.',
+    whereItMisleads: 'Treating the short sequence as exhaustive, assuming every delayed emergence '
+      + 'presents this way, or using completion as evidence that a real patient has been fully assessed.',
+    correctUnderstanding: 'Delayed emergence requires immediate support and a systematic '
+      + 'patient-specific differential that adapts to the history, examination, monitoring, and response.',
+    briefIn: ['delayed-emergence-differential'],
+  },
+  {
+    id: 'fixed-bedside-results-do-not-model-laboratory-testing',
+    headline: 'The displayed glucose, carbon dioxide, sodium, and temperature are fixed teaching findings, not simulated tests or a complete metabolic workup.',
+    simplification: 'Four authored values appear immediately after the learner selects the bounded '
+      + 'review. There is no specimen, device, delay, uncertainty, artifact, trend, or additional result.',
+    whereItMisleads: 'Inferring that these are the only relevant reversible causes, that a single '
+      + 'normal value excludes a category, or that the browser teaches test selection and interpretation.',
+    correctUnderstanding: 'Testing and interpretation depend on the clinical context, test quality, '
+      + 'timing, trends, and the broader differential. These values only narrow this fictional case.',
+    briefIn: ['delayed-emergence-differential'],
+  },
+  {
+    id: 'no-neurologic-diagnosis-treatment-or-outcome',
+    headline: 'The focal examination changes urgency here, but no neurologic diagnosis, imaging, treatment, workflow, or outcome is modeled.',
+    simplification: 'One fixed asymmetric motor response and gaze preference unlock an urgent '
+      + 'escalation choice while the existing airway and ventilation remain supported.',
+    whereItMisleads: 'Naming a diagnosis from the browser finding, predicting imaging, choosing '
+      + 'treatment, or treating the accepted escalation as a complete emergency response.',
+    correctUnderstanding: 'A new focal neurologic pattern during delayed emergence warrants urgent '
+      + 'evaluation and coordinated real-world care; diagnosis and management require capabilities absent here.',
+    briefIn: ['delayed-emergence-differential'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '
