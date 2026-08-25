@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "moduleId": "emergency-medicine",
-  "capabilityVersion": "0.1.0-alpha.41",
-  "scenarioCount": 4,
+  "capabilityVersion": "0.1.0-alpha.42",
+  "scenarioCount": 5,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -19,7 +19,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.41",
+      "capabilityVersion": "0.1.0-alpha.42",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -28,7 +28,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario undifferentiated-shock carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.41 is bound by this audit."
+            "Capability version 0.1.0-alpha.42 is bound by this audit."
           ]
         },
         {
@@ -145,7 +145,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.41",
+      "capabilityVersion": "0.1.0-alpha.42",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -154,7 +154,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario septic-shock carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.41 is bound by this audit."
+            "Capability version 0.1.0-alpha.42 is bound by this audit."
           ]
         },
         {
@@ -271,7 +271,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.41",
+      "capabilityVersion": "0.1.0-alpha.42",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -280,7 +280,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario hemorrhagic-shock carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.41 is bound by this audit."
+            "Capability version 0.1.0-alpha.42 is bound by this audit."
           ]
         },
         {
@@ -397,7 +397,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.41",
+      "capabilityVersion": "0.1.0-alpha.42",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -406,7 +406,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario obstructive-shock-tension-pneumothorax carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.41 is bound by this audit."
+            "Capability version 0.1.0-alpha.42 is bound by this audit."
           ]
         },
         {
@@ -421,6 +421,132 @@
           "status": "satisfied",
           "evidence": [
             "5 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a seed policy."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "The timeline contains at least one non-narrative state event."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "missing",
+          "evidence": [
+            "Accepted actions, refused actions, and clinically distinct choices are not yet declared in a completion sidecar."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "missing",
+          "evidence": [
+            "The legacy scenario document does not declare a stop condition or bounded outcome space."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "missing",
+          "evidence": [
+            "Guidance rules and an expert demonstration are not bound to this content version."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "missing",
+          "evidence": [
+            "A PEARLS debrief exists, but no required per-scenario counterfactual record is declared."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "2 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "4 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "missing",
+          "evidence": [
+            "Expert, common-error, and recovery transcript fixtures are not all bound to this scenario version."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Per-scenario keyboard, screen-reader, reduced-motion, color-vision, 320 px, offline, replay, and performance evidence is not complete."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "The shared report control is not yet implemented on briefing, live, debrief, and provenance surfaces."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "cardiac-tamponade",
+      "title": "Cardiac tamponade",
+      "moduleId": "emergency-medicine",
+      "environment": "emergency-department",
+      "estimatedMinutes": 7,
+      "difficulty": "advanced",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.42",
+      "maturity": "draft",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario cardiac-tamponade carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.42 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "4 objectives map to debrief rubric evidence."
           ]
         },
         {

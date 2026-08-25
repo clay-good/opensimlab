@@ -41,7 +41,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.41';
+export const ENGINE_VERSION = '0.1.0-alpha.42';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -293,6 +293,12 @@ export class AnesthesiaEngine {
   private tensionPneumothoraxFraction = 0;
   private pneumothoraxAssessedAtTick: number | null = null;
   private pneumothoraxDecompressedAtTick: number | null = null;
+  private cardiacTamponadeSeverity = 0;
+  private cardiacTamponadeFraction = 0;
+  private tamponadeContextReviewedAtTick: number | null = null;
+  private tamponadePocusReviewedAtTick: number | null = null;
+  private tamponadeDefinitiveControlAtTick: number | null = null;
+  private tamponadeReassessedAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -824,6 +830,81 @@ export class AnesthesiaEngine {
           'Immediate left-chest decompression intent accepted. The monitor pattern now clears on a bounded teaching trajectory; technique, site, equipment, and procedural complications are not simulated.', {
             side: 'left', action: 'decompression-intent', teachingModel: true,
           });
+        break;
+      }
+      case 'cardiac-tamponade-assessment': {
+        const response = String(action.payload.action ?? '');
+        const active = this.cardiacTamponadeSeverity > 0 || this.cardiacTamponadeFraction > 0.05
+          || this.tamponadeDefinitiveControlAtTick !== null;
+        const valid = [
+          'review-context-and-perfusion', 'review-fixed-pocus',
+          'record-definitive-control-intent', 'reassess-perfusion',
+        ].includes(response);
+        if (!active || !valid) {
+          this.log('warning', 'assessment', `cardiac-tamponade-refused-${this.currentTick}`,
+            active
+              ? 'The tamponade action was not one of the listed choices. Nothing changed.'
+              : 'The bounded tamponade choices are available only while the declared event is active.');
+          break;
+        }
+        if (response === 'review-context-and-perfusion') {
+          if (this.tamponadeContextReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `tamponade-context-refused-${this.currentTick}`,
+              'The fixed trauma and perfusion evidence has already been reviewed.');
+            break;
+          }
+          this.tamponadeContextReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `tamponade-context-reviewed-${this.currentTick}`,
+            'Fixed evidence: penetrating central-chest trauma, tachycardia, narrowing pulse pressure, cool skin, inattention, and falling end-tidal carbon dioxide accompany shock without unilateral ventilation loss. This pattern requires immediate cause-directed evaluation; it is not diagnostic proof.');
+          break;
+        }
+        if (response === 'review-fixed-pocus') {
+          if (this.tamponadeContextReviewedAtTick === null) {
+            this.log('warning', 'assessment', `tamponade-pocus-order-refused-${this.currentTick}`,
+              'Review the mechanism and whole-patient perfusion evidence before the fixed POCUS finding.');
+            break;
+          }
+          if (this.tamponadePocusReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `tamponade-pocus-refused-${this.currentTick}`,
+              'The fixed POCUS finding has already been reviewed.');
+            break;
+          }
+          this.tamponadePocusReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `tamponade-pocus-reviewed-${this.currentTick}`,
+            'Fixed POCUS statement: pericardial fluid is present with right-sided chamber collapse in this hemodynamically unstable trauma vignette. Image acquisition, views, interpretation error, and alternative causes are not simulated.');
+          break;
+        }
+        if (response === 'record-definitive-control-intent') {
+          if (this.tamponadePocusReviewedAtTick === null) {
+            this.log('warning', 'assessment', `tamponade-control-order-refused-${this.currentTick}`,
+              'Review the fixed POCUS finding before recording immediate definitive-control intent.');
+            break;
+          }
+          if (this.tamponadeDefinitiveControlAtTick !== null) {
+            this.log('warning', 'assessment', `tamponade-control-refused-${this.currentTick}`,
+              'Immediate definitive-control intent has already been recorded.');
+            break;
+          }
+          this.tamponadeDefinitiveControlAtTick = this.currentTick;
+          this.cardiacTamponadeSeverity = 0;
+          this.log('critical', 'assessment', `tamponade-control-recorded-${this.currentTick}`,
+            'Immediate trauma, surgical, and resuscitation-team transfer for definitive tamponade control was recorded. Pericardiocentesis, thoracotomy, access, equipment, transport, technical success, complications, and outcome are not simulated.');
+          break;
+        }
+        if (this.tamponadeDefinitiveControlAtTick === null
+          || this.currentTick <= this.tamponadeDefinitiveControlAtTick) {
+          this.log('warning', 'assessment', `tamponade-reassessment-order-refused-${this.currentTick}`,
+            'Record definitive-control intent and allow the next engine tick before reassessment.');
+          break;
+        }
+        if (this.tamponadeReassessedAtTick !== null) {
+          this.log('warning', 'assessment', `tamponade-reassessment-refused-${this.currentTick}`,
+            'The fixed post-control perfusion reassessment has already been recorded.');
+          break;
+        }
+        this.tamponadeReassessedAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `tamponade-perfusion-reassessed-${this.currentTick}`,
+          'The canonical monitor response was reviewed after accepted definitive-control intent. Residual physiology clears on a teaching trajectory and does not prove technical success or predict outcome.');
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -2991,6 +3072,22 @@ export class AnesthesiaEngine {
         return;
       }
 
+      case 'cardiac-tamponade': {
+        const severity = event.value;
+        if (event.target !== 'traumatic-pericardial-pressure' || typeof severity !== 'number'
+          || !Number.isFinite(severity) || severity < 0 || severity > 1) {
+          this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" must identify traumatic pericardial pressure and a finite severity from 0 to 1, so the event had no effect.`);
+          return;
+        }
+        this.cardiacTamponadeSeverity = Math.max(this.cardiacTamponadeSeverity, severity);
+        this.tamponadeContextReviewedAtTick = null;
+        this.tamponadePocusReviewedAtTick = null;
+        this.tamponadeDefinitiveControlAtTick = null;
+        this.tamponadeReassessedAtTick = null;
+        return;
+      }
+
       case 'difficult-airway': {
         const deliveryFraction = event.value;
         if (event.target !== 'failed-intubation-with-marginal-mask'
@@ -3271,6 +3368,11 @@ export class AnesthesiaEngine {
     this.tensionPneumothoraxFraction += (
       this.tensionPneumothoraxSeverity - this.tensionPneumothoraxFraction
     ) * (1 - Math.exp(-0.1 / pneumothoraxTimeConstantSeconds));
+    const tamponadeTimeConstantSeconds = this.cardiacTamponadeSeverity
+      >= this.cardiacTamponadeFraction ? 8 : 20;
+    this.cardiacTamponadeFraction += (
+      this.cardiacTamponadeSeverity - this.cardiacTamponadeFraction
+    ) * (1 - Math.exp(-0.1 / tamponadeTimeConstantSeconds));
 
     // --- Physiology ------------------------------------------------------------
     const effectiveVentilator = this.pendingLaryngoscopy || this.pendingSupraglotticInsertion
@@ -3408,6 +3510,21 @@ export class AnesthesiaEngine {
         meanArterialMmHg: crisisState.meanArterialMmHg * (1 - 0.55 * fraction),
         etco2MmHg: crisisState.etco2MmHg * (1 - 0.35 * fraction),
         spo2Percent: clamp(crisisState.spo2Percent - 18 * fraction, 0, 100),
+      };
+    }
+    if (this.cardiacTamponadeFraction > 0) {
+      const fraction = this.cardiacTamponadeFraction;
+      const outputFactor = 1 - 0.65 * fraction;
+      const pressureFactor = 1 - 0.6 * fraction;
+      crisisState = {
+        ...crisisState,
+        heartRateBpm: crisisState.heartRateBpm * (1 + 0.12 * fraction),
+        strokeVolumeMl: crisisState.strokeVolumeMl * outputFactor,
+        cardiacOutputLPerMin: crisisState.cardiacOutputLPerMin * outputFactor,
+        systolicMmHg: crisisState.systolicMmHg * pressureFactor,
+        diastolicMmHg: crisisState.diastolicMmHg * pressureFactor,
+        meanArterialMmHg: crisisState.meanArterialMmHg * pressureFactor,
+        etco2MmHg: crisisState.etco2MmHg * (1 - 0.4 * fraction),
       };
     }
     if (this.labetalolEffectFraction > 0) {
@@ -3711,6 +3828,13 @@ export class AnesthesiaEngine {
         tensionPneumothoraxFraction: this.tensionPneumothoraxFraction,
         pneumothoraxAssessedAtTick: this.pneumothoraxAssessedAtTick,
         pneumothoraxDecompressedAtTick: this.pneumothoraxDecompressedAtTick,
+        cardiacTamponadeFraction: this.cardiacTamponadeFraction,
+        cardiacTamponadeAssessment: {
+          contextReviewedAtTick: this.tamponadeContextReviewedAtTick,
+          pocusReviewedAtTick: this.tamponadePocusReviewedAtTick,
+          definitiveControlAtTick: this.tamponadeDefinitiveControlAtTick,
+          reassessedAtTick: this.tamponadeReassessedAtTick,
+        },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,
           classification: this.aspirationRiskClassification,

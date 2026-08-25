@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 38 reports bounded traumatic-hemorrhage state. */
-export const WORKER_PROTOCOL_VERSION = 39;
+export const WORKER_PROTOCOL_VERSION = 40;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -284,6 +284,13 @@ export interface EquipmentSnapshot {
     readonly tensionPneumothoraxFraction?: number;
     readonly pneumothoraxAssessedAtTick?: number | null;
     readonly pneumothoraxDecompressedAtTick?: number | null;
+    readonly cardiacTamponadeFraction?: number;
+    readonly cardiacTamponadeAssessment?: {
+      readonly contextReviewedAtTick: number | null;
+      readonly pocusReviewedAtTick: number | null;
+      readonly definitiveControlAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+    };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {
       readonly cuesReviewedAtTick: number | null;

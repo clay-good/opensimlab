@@ -3263,6 +3263,48 @@ export function objectiveFindings(
     }
 
     if ([
+      'recognize-traumatic-tamponade-pattern', 'review-tamponade-focused-pocus',
+      'escalate-traumatic-tamponade-control', 'reassess-traumatic-tamponade',
+    ].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'cardiac-tamponade');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The traumatic cardiac-tamponade vignette was not active.' } satisfies ObjectiveFinding;
+      const context = log.find((event) => event.eventId.startsWith('tamponade-context-reviewed-'));
+      const pocus = log.find((event) => event.eventId.startsWith('tamponade-pocus-reviewed-'));
+      const control = log.find((event) => event.eventId.startsWith('tamponade-control-recorded-'));
+      const reassessment = log.find((event) => event.eventId.startsWith('tamponade-perfusion-reassessed-'));
+      if (objective.id === 'recognize-traumatic-tamponade-pattern') return {
+        ...base, outcome: context ? 'met' : 'not-met',
+        finding: context
+          ? 'Penetrating central-chest mechanism, bilateral breathing, impaired perfusion, narrowing pressure, and falling end-tidal carbon dioxide were integrated.'
+          : 'The fixed trauma and whole-patient perfusion evidence was not reviewed together.',
+        atTick: context?.tick ?? 0,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'review-tamponade-focused-pocus') {
+        const ordered = context && pocus && context.tick <= pocus.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'The fixed pericardial-fluid and right-sided-collapse statement followed whole-patient assessment without implying image-acquisition competence.'
+            : 'Whole-patient assessment and the fixed POCUS statement were incomplete or out of order.',
+          atTick: pocus?.tick ?? context?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'escalate-traumatic-tamponade-control') {
+        const ordered = pocus && control && pocus.tick <= control.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'Immediate trauma and surgical definitive-control intent followed the fixed unstable pattern and POCUS statement.'
+            : 'The fixed focused finding and definitive-control escalation were incomplete or out of order.',
+          atTick: control?.tick ?? pocus?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = control && reassessment && control.tick <= reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met',
+        finding: ordered
+          ? 'Canonical perfusion was reassessed after accepted control intent without treating monitor recovery as procedural proof.'
+          : 'Definitive-control intent and serial perfusion reassessment were incomplete or out of order.',
+        atTick: reassessment?.tick ?? control?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
+    if ([
       'recognize-post-extubation-obstruction', 'support-post-extubation-airway',
       'confirm-post-extubation-recovery',
     ].includes(objective.id)) {

@@ -946,6 +946,50 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['pneumothorax-under-positive-pressure', 'obstructive-shock-tension-pneumothorax'],
   },
   {
+    id: 'tamponade-findings-and-pocus-are-authored',
+    headline: 'The penetrating-trauma context, perfusion findings, and focused POCUS statement are fixed teaching facts.',
+    simplification: 'Controls reveal one authored whole-patient pattern and pericardial-fluid/right-sided-collapse '
+      + 'statement without examination or image acquisition, views, artifacts, interpretation error, or competing data.',
+    whereItMisleads: 'Treating the case as a diagnostic test, assuming one ultrasound statement proves '
+      + 'tamponade, or reading a click as evidence of POCUS competence.',
+    correctUnderstanding: 'Unstable penetrating chest trauma requires immediate repeated assessment and '
+      + 'expert integration of mechanism, physiology, imaging when feasible, and concurrent threats.',
+    briefIn: ['cardiac-tamponade'],
+  },
+  {
+    id: 'tamponade-physiology-is-a-teaching-trajectory',
+    headline: 'The tamponade drive is a bounded obstructive-circulation trajectory, not a pericardial pressure or injury model.',
+    simplification: 'One authored drive lowers stroke volume, cardiac output, pressure, and end-tidal '
+      + 'carbon dioxide, then clears on fixed time constants after accepted control intent.',
+    whereItMisleads: 'Using displayed values to estimate pericardial blood, pressure, injury severity, '
+      + 'time to arrest, technical success, or an individual response.',
+    correctUnderstanding: 'Tamponade physiology and response vary with accumulation rate, volume status, '
+      + 'injury, ventilation, and treatment; monitor trends require direct patient reassessment.',
+    briefIn: ['cardiac-tamponade'],
+  },
+  {
+    id: 'tamponade-control-is-intent-only',
+    headline: 'Definitive tamponade control is an escalation intent, not pericardiocentesis or thoracotomy instruction.',
+    simplification: 'One control records immediate transfer to trauma, surgical, and resuscitation capability; '
+      + 'the simulator performs no access, drainage, incision, repair, transport, or team action.',
+    whereItMisleads: 'Treating the browser response as a procedure choice, protocol, proof of competence, '
+      + 'or evidence that a real obstruction has been relieved.',
+    correctUnderstanding: 'Traumatic tamponade requires immediate expert, system-specific definitive care; '
+      + 'procedure selection depends on arrest state, setting, expertise, equipment, and injury.',
+    briefIn: ['cardiac-tamponade'],
+  },
+  {
+    id: 'no-tamponade-procedure-differential-or-outcome',
+    headline: 'The vignette omits procedure selection, concurrent injuries, full shock differential, arrest, complications, and outcome.',
+    simplification: 'The fixed case closes at escalation and serial monitor review; pleural injury, hemorrhage, '
+      + 'aortic injury, pulmonary embolism, arrest, recurrence, disposition, and prognosis are absent.',
+    whereItMisleads: 'Assuming the fixed cause is proven, delaying care for a fuller browser sequence, '
+      + 'ignoring concurrent threats, or inferring survival from directional recovery.',
+    correctUnderstanding: 'Real trauma resuscitation addresses concurrent reversible causes in parallel and '
+      + 'continues through definitive repair, complication surveillance, and critical care.',
+    briefIn: ['cardiac-tamponade'],
+  },
+  {
     id: 'aspiration-risk-choice-is-a-bounded-vignette',
     headline: 'The aspiration-risk lesson records one vignette decision, not an individualized risk estimate.',
     simplification: 'One fictional elective patient has a declared semaglutide escalation phase, '

@@ -215,6 +215,13 @@ export interface ActionCockpitProps {
       readonly reassessedAtTick: number | null;
       readonly definitiveControlEscalatedAtTick: number | null;
     };
+    readonly cardiacTamponadeFraction?: number;
+    readonly cardiacTamponadeAssessment?: {
+      readonly contextReviewedAtTick: number | null;
+      readonly pocusReviewedAtTick: number | null;
+      readonly definitiveControlAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -335,6 +342,10 @@ export interface ActionCockpitProps {
       | 'review-coagulation-and-temperature' | 'reassess-perfusion'
       | 'escalate-definitive-bleeding-control',
   ) => void;
+  readonly onCardiacTamponadeAssessment?: (
+    action: 'review-context-and-perfusion' | 'review-fixed-pocus'
+      | 'record-definitive-control-intent' | 'reassess-perfusion',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -416,6 +427,9 @@ export function crisisResponseAvailability(
     hasHemorrhagicShockResponse: scenario.timeline.some(
       (event) => event.type === 'hemorrhagic-shock-pattern',
     ),
+    hasCardiacTamponadeResponse: scenario.timeline.some(
+      (event) => event.type === 'cardiac-tamponade',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -466,6 +480,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     && props.scenario.timeline.some((event) => event.type === 'tension-pneumothorax'
       || event.type === 'sepsis-pattern'
       || event.type === 'hemorrhagic-shock-pattern'
+      || event.type === 'cardiac-tamponade'
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -480,6 +495,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasAspirationRiskResponse, hasEmergenceResidualBlockResponse, hasDelayedEmergenceResponse,
     hasExtubationReadinessResponse, hasCiedPlanningResponse, hasPostoperativeHandoffResponse,
     hasUndifferentiatedShockResponse, hasSepticShockResponse, hasHemorrhagicShockResponse,
+    hasCardiacTamponadeResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -508,8 +524,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasAspirationRiskResponse || hasEmergenceResidualBlockResponse
     || hasDelayedEmergenceResponse || hasExtubationReadinessResponse || hasCiedPlanningResponse
     || hasPostoperativeHandoffResponse || hasUndifferentiatedShockResponse
-    || hasSepticShockResponse || hasHemorrhagicShockResponse;
-  const responseTray = focusedPleuralEmergency
+    || hasSepticShockResponse || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse;
+  const responseTray = hasCardiacTamponadeResponse && !hasNonMaternalCrisisResponse
+    ? { id: 'crisis', label: 'Tamponade response' } as const
+    : focusedPleuralEmergency
     ? { id: 'crisis', label: 'Obstructive shock' } as const
     : hasHemorrhagicShockResponse && !hasNonMaternalCrisisResponse
     ? { id: 'crisis', label: 'Trauma hemorrhage' } as const
@@ -539,7 +557,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
       ? { id: 'crisis', label: 'Maternal response' } as const : CRISIS_TRAY;
   const focusedEmergencyAssessment = props.scenario.formulary.length === 0
     && (focusedPleuralEmergency || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
-      || hasHemorrhagicShockResponse) && !hasNonMaternalCrisisResponse));
+      || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse)
+      && !hasNonMaternalCrisisResponse));
   const trays = hasCrisisResponse
     ? focusedEmergencyAssessment ? [responseTray]
       : props.scenario.formulary.length === 0 ? [responseTray, ...TRAYS] : [...TRAYS, responseTray]
@@ -821,6 +840,13 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <HemorrhagicShockTray
                 assessment={props.resuscitation.hemorrhagicShockAssessment}
                 onAction={props.onHemorrhagicShockAssessment ?? (() => {})}
+              />
+            )}
+            {hasCardiacTamponadeResponse && (
+              <CardiacTamponadeTray
+                fraction={props.resuscitation.cardiacTamponadeFraction ?? 0}
+                assessment={props.resuscitation.cardiacTamponadeAssessment}
+                onAction={props.onCardiacTamponadeAssessment ?? (() => {})}
               />
             )}
             {hasEmergenceResidualBlockResponse && (
@@ -2083,6 +2109,62 @@ function HemorrhagicShockTray({ assessment, onAction }: {
           </Button>
         </div>
         <p className="field__hint">No TXA, calcium, component ratio, procedure, local protocol, repeat transfusion, or outcome is offered.</p>
+      </section>
+    </div>
+  );
+}
+
+function CardiacTamponadeTray({ fraction, assessment, onAction }: {
+  fraction: number;
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['cardiacTamponadeAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onCardiacTamponadeAssessment']>;
+}) {
+  const reviewed = assessment?.contextReviewedAtTick != null;
+  const pocus = assessment?.pocusReviewedAtTick != null;
+  const control = assessment?.definitiveControlAtTick != null;
+  const reassessed = assessment?.reassessedAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="tamponade-recognition-title">
+        <div id="tamponade-recognition-title" className="syringe__name">Recognize obstructed filling</div>
+        <Badge kind="teaching">Fixed trauma vignette</Badge>
+        <div className="syringe__meta">Mechanism · perfusion · bilateral breathing · POCUS</div>
+        <p className="syringe__remaining" role="status">
+          {pocus ? 'Fixed pericardial finding reviewed'
+            : reviewed ? 'Whole-patient pattern reviewed · focused finding next'
+              : `Modeled obstructive burden ${(fraction * 100).toFixed(0)}%`}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={reviewed}
+            onClick={() => onAction('review-context-and-perfusion')}>
+            Review context + perfusion
+          </Button>
+          <Button className="crisis-drug__action" disabled={!reviewed || pocus}
+            onClick={() => onAction('review-fixed-pocus')}>
+            Review fixed POCUS finding
+          </Button>
+        </div>
+        <p className="field__hint">The interface reveals authored findings. It does not acquire images, teach views, or establish diagnostic competence.</p>
+      </section>
+      <section className="syringe" aria-labelledby="tamponade-control-title">
+        <div id="tamponade-control-title" className="syringe__name">Escalate definitive control</div>
+        <div className="syringe__meta">Immediate team transfer · intent only · reassess</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'Post-intent perfusion reassessed'
+            : control ? 'Definitive-control intent recorded · reassess next'
+              : 'Obstructive shock continues'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!pocus || control}
+            onClick={() => onAction('record-definitive-control-intent')}>
+            Record immediate definitive-control intent
+          </Button>
+          <Button className="crisis-drug__action" disabled={!control || reassessed}
+            onClick={() => onAction('reassess-perfusion')}>
+            Reassess perfusion
+          </Button>
+        </div>
+        <p className="field__hint">No pericardiocentesis or thoracotomy technique, equipment, transport, technical success, complication, or outcome is offered.</p>
       </section>
     </div>
   );

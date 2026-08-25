@@ -22,6 +22,7 @@ export const EVENT_TYPES = [
   'high-spinal',
   'venous-air-embolism',
   'tension-pneumothorax',
+  'cardiac-tamponade',
   'difficult-airway',
   'narrative', 'rhythm-change', 'artifact', 'equipment-failure',
 ] as const;

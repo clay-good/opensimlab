@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with four playable, completion-audited scenarios. The remaining
-21 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with five playable, completion-audited scenarios. The remaining
+20 planned titles remain descriptive scope only and do not enter playable counts before their full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -242,6 +242,18 @@ the canonical oxygenation and circulation response.
 The bilateral findings are authored and decompression remains an intent control. The case does not
 teach examination or POCUS acquisition, technique, site or equipment selection, later chest
 drainage, recurrence, the full obstructive-shock differential, local protocol, or outcome.
+
+### Wave B slice 5: traumatic cardiac tamponade
+
+The fifth emergency-medicine slice adds a distinct penetrating central-chest-trauma trajectory.
+Learners integrate preserved bilateral air entry with worsening perfusion, narrowing pressure, and
+falling end-tidal carbon dioxide; review one fixed pericardial-fluid/right-sided-collapse POCUS
+statement; record immediate trauma and surgical definitive-control intent; and reassess.
+
+The new bounded drive affects obstructive circulation without borrowing the pleural oxygenation
+trajectory. POCUS is an authored statement and control is an escalation intent. The case does not
+teach procedure selection or technique, simulate transport or technical success, cover concurrent
+injuries or the full differential, progress to arrest, or predict outcome.
 
 #### Critical care: 24
 
