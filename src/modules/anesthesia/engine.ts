@@ -486,6 +486,11 @@ export class AnesthesiaEngine {
   private severeAcidemiaVentilationAtTick: number | null = null;
   private severeAcidemiaCausePlanAtTick: number | null = null;
   private severeAcidemiaReassessmentAtTick: number | null = null;
+  private icuHandoffReadinessAtTick: number | null = null;
+  private icuHandoffContentAtTick: number | null = null;
+  private icuHandoffCrossCheckAtTick: number | null = null;
+  private icuHandoffEscalationAtTick: number | null = null;
+  private icuHandoffAcceptanceAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -3723,6 +3728,57 @@ export class AnesthesiaEngine {
           'Fixed response after 30 minutes: pH is 7.23, PaCO₂ 32 mmHg, bicarbonate 13 mmol/L, lactate 6.9 mmol/L, potassium 5.2 mmol/L, HR 112/min, MAP 68 mmHg, SpO₂ 95% on unchanged FiO₂ 0.40, and temperature 38.2°C. Metabolic acidosis and the septic source remain active. Durability, safe mechanics, clearance, kidney trajectory, source control, prescription, recovery, and outcome remain open.', { reassessmentMinutes: 30, ph: 7.23, paco2MmHg: 32, bicarbonateMmolL: 13, lactateMmolL: 6.9, potassiumMmolL: 5.2, mapMmHg: 68, causeResolved: false, outcomeProven: false });
         break;
       }
+      case 'icu-hidden-deterioration-handoff-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'icu-handoff-with-hidden-deterioration');
+        const valid = ['establish-icu-handoff-readiness', 'receive-icu-handoff-content',
+          'cross-check-hidden-deterioration', 'escalate-icu-handoff-deterioration',
+          'synthesize-accept-and-reassess-icu-handoff'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `icu-hidden-handoff-response-refused-${this.currentTick}`,
+            supported ? 'The ICU handoff action was not one of the listed choices. Nothing changed.'
+              : 'The bounded hidden-deterioration handoff choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'establish-icu-handoff-readiness') {
+          if (this.icuHandoffReadinessAtTick !== null) { this.log('warning', 'assessment', `icu-hidden-handoff-readiness-refused-${this.currentTick}`, 'Receiver readiness and responsibility boundaries have already been recorded.'); break; }
+          this.icuHandoffReadinessAtTick = this.currentTick;
+          this.log('critical', 'assessment', `icu-hidden-handoff-readiness-established-${this.currentTick}`,
+            'Receiver identity, shared attention, monitoring continuity, question opportunity, and uninterrupted bedside coverage were established before content transfer. Staffing, workload, interruptions, and communication quality are not measured.', { receiverIdentified: true, monitoringContinuity: true, bedsideCoverageContinuous: true, communicationQualityMeasured: false });
+          break;
+        }
+        if (this.icuHandoffReadinessAtTick === null) { this.log('warning', 'assessment', `icu-hidden-handoff-readiness-order-refused-${this.currentTick}`, 'Establish receiver readiness, monitoring continuity, and bedside coverage before receiving content.'); break; }
+        if (response === 'receive-icu-handoff-content') {
+          if (this.icuHandoffContentAtTick !== null) { this.log('warning', 'assessment', `icu-hidden-handoff-content-refused-${this.currentTick}`, 'The fixed outgoing handoff content has already been received.'); break; }
+          this.icuHandoffContentAtTick = this.currentTick;
+          this.log('critical', 'assessment', `icu-hidden-handoff-content-received-${this.currentTick}`,
+            'The outgoing “stable on low-dose support” claim, patient summary, active support, dated data, task list, pending cholangitis source control, and contingencies were received as claims requiring bedside verification, not accepted as ground truth.', { outgoingSeverityClaim: 'stable', claimVerified: false, sourceControlPending: true });
+          break;
+        }
+        if (this.icuHandoffContentAtTick === null) { this.log('warning', 'assessment', `icu-hidden-handoff-content-order-refused-${this.currentTick}`, 'Receive the fixed illness-severity, summary, support, task, and contingency content before cross-checking it.'); break; }
+        if (response === 'cross-check-hidden-deterioration') {
+          if (this.icuHandoffCrossCheckAtTick !== null) { this.log('warning', 'assessment', `icu-hidden-handoff-cross-check-refused-${this.currentTick}`, 'The fixed bedside, trend, device, infusion, and record cross-check has already been recorded.'); break; }
+          this.icuHandoffCrossCheckAtTick = this.currentTick;
+          this.log('critical', 'assessment', `icu-hidden-handoff-deterioration-cross-checked-${this.currentTick}`,
+            'Dated trends disproved “stable”: HR 94→118/min, MAP 70→64 mmHg despite reported norepinephrine 0.08→0.22 mcg/kg/min, refill 2→5 seconds, lactate 3.1→5.8 mmol/L, urine 30→5 mL/h, and EtCO₂ 35→30 mmHg. The patient, monitor, airway and circuit, access, infusion path, pumps, concentrations, rates, compatibility, medications, labs, urine, orders, and documentation were included in the fixed review; alternate causes remain open.', { stableClaimCorrected: true, severity: 'worsening-shock', supportIncreasing: true, alternateCausesOpen: true, verificationPerformed: false });
+          break;
+        }
+        if (this.icuHandoffCrossCheckAtTick === null) { this.log('warning', 'assessment', `icu-hidden-handoff-cross-check-order-refused-${this.currentTick}`, 'Cross-check the outgoing claim against the patient, dated trends, devices, infusions, orders, and pending source control before escalation or acceptance.'); break; }
+        if (response === 'escalate-icu-handoff-deterioration') {
+          if (this.icuHandoffEscalationAtTick !== null) { this.log('warning', 'assessment', `icu-hidden-handoff-escalation-refused-${this.currentTick}`, 'The worsening-shock escalation, contingencies, and ownership have already been recorded.'); break; }
+          this.icuHandoffEscalationAtTick = this.currentTick;
+          this.log('critical', 'assessment', `icu-hidden-handoff-deterioration-escalated-${this.currentTick}`,
+            'Critical-care, nursing, pharmacy, respiratory-therapy, and urgent source-control escalation were activated for worsening shock. Immediate airway, breathing, perfusion, infusion-path, laboratory, antimicrobial, and source priorities; failure triggers; contingencies; and named task ownership were recorded before transfer acceptance. No assessment, communication, treatment, or source control is performed.', { escalationActivated: true, triggersExplicit: true, contingenciesExplicit: true, ownershipNamed: true, treatmentDelivered: false });
+          break;
+        }
+        if (this.icuHandoffEscalationAtTick === null) { this.log('warning', 'assessment', `icu-hidden-handoff-escalation-order-refused-${this.currentTick}`, 'Escalate the corrected worsening-shock state with priorities, triggers, contingencies, and named owners before synthesis and acceptance.'); break; }
+        if (this.icuHandoffAcceptanceAtTick !== null) { this.log('warning', 'assessment', `icu-hidden-handoff-acceptance-refused-${this.currentTick}`, 'Receiver synthesis, accepted ownership, and the fixed reassessment have already been recorded.'); break; }
+        this.icuHandoffAcceptanceAtTick = this.currentTick;
+        this.log('critical', 'assessment', `icu-hidden-handoff-synthesized-accepted-reassessed-${this.currentTick}`,
+          'The receiver synthesized worsening shock, active support, pending source control, immediate tasks, triggers, contingencies, owners, and escalation route before acknowledging responsibility. Fixed 15-minute bridge response: HR 108/min, MAP 70 mmHg, EtCO₂ 33 mmHg, SpO₂ 96% on unchanged FiO₂ 0.35, and temperature 38.9°C. Lactate, urine, source control, durability, recovery, and outcome remain open.', { receiverSynthesis: true, responsibilityAccepted: true, reassessmentMinutes: 15, heartRateBpm: 108, mapMmHg: 70, etco2MmHg: 33, sourceControlComplete: false, outcomeProven: false });
+        break;
+      }
       case 'aspiration-risk-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
@@ -6558,6 +6614,19 @@ export class AnesthesiaEngine {
         meanArterialMmHg: reassessed ? 68 : 61,
         coreTemperatureC: reassessed ? 38.2 : 38.4 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'icu-handoff-with-hidden-deterioration')) {
+      const reassessed = this.icuHandoffAcceptanceAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: reassessed ? 108 : 118,
+        respiratoryRateBpm: 18,
+        spo2Percent: 96,
+        etco2MmHg: reassessed ? 33 : 30,
+        systolicMmHg: reassessed ? 96 : 88,
+        diastolicMmHg: reassessed ? 57 : 52,
+        meanArterialMmHg: reassessed ? 70 : 64,
+        coreTemperatureC: reassessed ? 38.9 : 39.1 };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -7095,6 +7164,13 @@ export class AnesthesiaEngine {
           ventilationAtTick: this.severeAcidemiaVentilationAtTick,
           causePlanAtTick: this.severeAcidemiaCausePlanAtTick,
           reassessmentAtTick: this.severeAcidemiaReassessmentAtTick,
+        },
+        icuHiddenDeteriorationHandoffAssessment: {
+          readinessAtTick: this.icuHandoffReadinessAtTick,
+          contentAtTick: this.icuHandoffContentAtTick,
+          crossCheckAtTick: this.icuHandoffCrossCheckAtTick,
+          escalationAtTick: this.icuHandoffEscalationAtTick,
+          acceptanceAtTick: this.icuHandoffAcceptanceAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

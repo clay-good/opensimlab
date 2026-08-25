@@ -865,6 +865,24 @@ lab does not acquire or interpret samples, calculate or diagnose, examine, monit
 deliver oxygen, fluid, drugs, buffer, antidotes, or kidney support, control a source, prescribe,
 perform procedures, transfer, determine recovery or disposition, or predict outcome.
 
+### Wave B critical-care slice 19: ICU handoff with hidden deterioration
+
+The nineteenth critical-care slice begins at shift change with an outgoing “stable on low-dose
+support” headline. The fixed 90-minute record contradicts it: HR rises 94→118/min, MAP falls
+70→64 mmHg while reported norepinephrine rises 0.08→0.22 mcg/kg/min, refill lengthens 2→5 seconds,
+lactate rises 3.1→5.8 mmol/L, urine falls 30→5 mL/h, and EtCO₂ falls 35→30 mmHg while suspected
+cholangitis source control remains pending.
+
+The focused tutor pairs “receive the story; check the patient” with “make the next move
+unmistakable.” Learners establish shared attention and uninterrupted bedside coverage, receive
+structured content as claims requiring verification, reconcile the patient, trends, devices,
+infusions, orders, and pending work, correct illness severity to worsening shock, and escalate with
+priorities, triggers, contingencies, and named owners before receiver synthesis and acceptance. A
+fixed bridge reaches MAP 70 mmHg, but lactate, urine, source control, durability, and outcome remain
+open. The lab does not verify identity, examine, monitor, inspect devices or records, communicate,
+document, deliver treatment, control a source, transfer responsibility, determine disposition, or
+predict outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute

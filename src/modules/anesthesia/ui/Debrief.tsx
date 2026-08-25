@@ -3832,6 +3832,46 @@ export function objectiveFindings(
         : 'Whole-trajectory reassessment was absent or preceded the cause-directed plan.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['establish-icu-handoff-readiness', 'receive-icu-handoff-content',
+      'cross-check-hidden-deterioration', 'escalate-icu-handoff-deterioration',
+      'synthesize-accept-and-reassess-icu-handoff'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'icu-handoff-with-hidden-deterioration');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The ICU hidden-deterioration handoff was not active.' } satisfies ObjectiveFinding;
+      const ready = log.find((event) => /^icu-hidden-handoff-readiness-established-\d+$/.test(event.eventId));
+      const content = log.find((event) => /^icu-hidden-handoff-content-received-\d+$/.test(event.eventId));
+      const crossCheck = log.find((event) => /^icu-hidden-handoff-deterioration-cross-checked-\d+$/.test(event.eventId));
+      const escalation = log.find((event) => /^icu-hidden-handoff-deterioration-escalated-\d+$/.test(event.eventId));
+      const acceptance = log.find((event) => /^icu-hidden-handoff-synthesized-accepted-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'establish-icu-handoff-readiness') return { ...base,
+        outcome: ready ? 'met' : 'not-met', finding: ready
+          ? 'Receiver identity, shared attention, monitoring continuity, questions, and uninterrupted bedside coverage were explicit.'
+          : 'Receiver readiness or bedside responsibility continuity was absent.', atTick: ready?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'receive-icu-handoff-content') {
+        const ordered = ready && content && ready.tick <= content.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Illness severity, summary, support, dated data, pending work, and contingencies were received as claims requiring verification.'
+          : 'Structured content was absent or preceded receiver readiness.', atTick: content?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'cross-check-hidden-deterioration') {
+        const ordered = content && crossCheck && content.tick <= crossCheck.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Dated physiology, rising support, devices, infusions, records, and pending source control corrected the stable label to worsening shock.'
+          : 'Bedside reconciliation was absent or preceded receipt of the outgoing content.', atTick: crossCheck?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'escalate-icu-handoff-deterioration') {
+        const ordered = crossCheck && escalation && crossCheck.tick <= escalation.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Worsening shock triggered multidisciplinary and source-control escalation with priorities, triggers, contingencies, and named owners.'
+          : 'Escalation and ownership were absent or preceded bedside cross-check.', atTick: escalation?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = escalation && acceptance && escalation.tick <= acceptance.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+        ? 'Receiver synthesis and accepted ownership followed escalation; the fixed bridge improved pressure while source control and outcome stayed open.'
+        : 'Synthesis, accepted ownership, or reassessment was absent or preceded escalation.', atTick: acceptance?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

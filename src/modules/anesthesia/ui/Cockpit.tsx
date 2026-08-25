@@ -841,6 +841,9 @@ export function Cockpit({
           onSevereAcidemiaResponse={(action) => session.act({
             type: 'severe-acidemia-response', payload: { action },
           })}
+          onIcuHiddenDeteriorationHandoffResponse={(action) => session.act({
+            type: 'icu-hidden-deterioration-handoff-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

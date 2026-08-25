@@ -17,6 +17,7 @@ import { TARGETED_TEMPERATURE_MANAGEMENT } from './targeted-temperature-manageme
 import { INTRACRANIAL_HYPERTENSION } from './intracranial-hypertension';
 import { ACUTE_KIDNEY_INJURY_WITH_FLUID_OVERLOAD } from './acute-kidney-injury-with-fluid-overload';
 import { SEVERE_ACIDEMIA } from './severe-acidemia';
+import { ICU_HANDOFF_WITH_HIDDEN_DETERIORATION } from './icu-handoff-with-hidden-deterioration';
 
 export const CRITICAL_CARE_SCENARIOS: readonly Scenario[] = [
   ARDS_LUNG_PROTECTIVE_VENTILATION,
@@ -37,6 +38,7 @@ export const CRITICAL_CARE_SCENARIOS: readonly Scenario[] = [
   INTRACRANIAL_HYPERTENSION,
   ACUTE_KIDNEY_INJURY_WITH_FLUID_OVERLOAD,
   SEVERE_ACIDEMIA,
+  ICU_HANDOFF_WITH_HIDDEN_DETERIORATION,
 ];
 export const DEFAULT_CRITICAL_CARE_SCENARIO_ID = ARDS_LUNG_PROTECTIVE_VENTILATION.metadata.id;
 

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "critical-care",
-  "recordCount": 18,
+  "recordCount": 19,
   "records": [
     {
       "recordId": "scenario:ards-lung-protective-ventilation@0.1.0",
@@ -199,6 +199,17 @@
       "evidence": [
         "/catalog/critical-care-completion-audit.json#severe-acidemia@0.1.0",
         "/catalog/critical-care-quality-audit.json#severe-acidemia@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:icu-handoff-with-hidden-deterioration@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "icu-handoff-with-hidden-deterioration",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/critical-care-completion-audit.json#icu-handoff-with-hidden-deterioration@0.1.0",
+        "/catalog/critical-care-quality-audit.json#icu-handoff-with-hidden-deterioration@0.1.0"
       ]
     }
   ]

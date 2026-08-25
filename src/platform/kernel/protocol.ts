@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 76 reports severe-acidemia state. */
-export const WORKER_PROTOCOL_VERSION = 76;
+/** Bumped whenever the message shape changes incompatibly. Version 77 reports ICU handoff state. */
+export const WORKER_PROTOCOL_VERSION = 77;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -548,6 +548,13 @@ export interface EquipmentSnapshot {
       readonly ventilationAtTick: number | null;
       readonly causePlanAtTick: number | null;
       readonly reassessmentAtTick: number | null;
+    };
+    readonly icuHiddenDeteriorationHandoffAssessment?: {
+      readonly readinessAtTick: number | null;
+      readonly contentAtTick: number | null;
+      readonly crossCheckAtTick: number | null;
+      readonly escalationAtTick: number | null;
+      readonly acceptanceAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

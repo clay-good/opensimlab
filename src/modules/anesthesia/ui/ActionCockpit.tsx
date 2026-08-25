@@ -480,6 +480,13 @@ export interface ActionCockpitProps {
       readonly causePlanAtTick: number | null;
       readonly reassessmentAtTick: number | null;
     };
+    readonly icuHiddenDeteriorationHandoffAssessment?: {
+      readonly readinessAtTick: number | null;
+      readonly contentAtTick: number | null;
+      readonly crossCheckAtTick: number | null;
+      readonly escalationAtTick: number | null;
+      readonly acceptanceAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -779,6 +786,11 @@ export interface ActionCockpitProps {
       | 'protect-severe-acidemia-ventilation' | 'activate-severe-acidemia-cause-plan'
       | 'reassess-severe-acidemia-trajectory',
   ) => void;
+  readonly onIcuHiddenDeteriorationHandoffResponse?: (
+    action: 'establish-icu-handoff-readiness' | 'receive-icu-handoff-content'
+      | 'cross-check-hidden-deterioration' | 'escalate-icu-handoff-deterioration'
+      | 'synthesize-accept-and-reassess-icu-handoff',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -974,6 +986,10 @@ export function crisisResponseAvailability(
     hasSevereAcidemiaResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'severe-acidemia',
     ),
+    hasIcuHiddenDeteriorationHandoffResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'icu-handoff-with-hidden-deterioration',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1063,6 +1079,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'intracranial-hypertension')
       || (event.type === 'narrative' && event.target === 'acute-kidney-injury-with-fluid-overload')
       || (event.type === 'narrative' && event.target === 'severe-acidemia')
+      || (event.type === 'narrative' && event.target === 'icu-handoff-with-hidden-deterioration')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1092,6 +1109,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasIntracranialHypertensionResponse,
     hasAkiFluidOverloadResponse,
     hasSevereAcidemiaResponse,
+    hasIcuHiddenDeteriorationHandoffResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1144,7 +1162,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasMassivePulmonaryEmbolismResponse || hasUpperGiHemorrhageResponse
     || hasCriticalCareStatusEpilepticusResponse || hasPostArrestTemperatureResponse
     || hasIntracranialHypertensionResponse || hasAkiFluidOverloadResponse
-    || hasSevereAcidemiaResponse;
+    || hasSevereAcidemiaResponse || hasIcuHiddenDeteriorationHandoffResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1171,8 +1189,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasMassivePulmonaryEmbolismResponse || hasUpperGiHemorrhageResponse
     || hasCriticalCareStatusEpilepticusResponse || hasPostArrestTemperatureResponse
     || hasIntracranialHypertensionResponse || hasAkiFluidOverloadResponse
-    || hasSevereAcidemiaResponse;
-  const responseTray = hasSevereAcidemiaResponse
+    || hasSevereAcidemiaResponse || hasIcuHiddenDeteriorationHandoffResponse;
+  const responseTray = hasIcuHiddenDeteriorationHandoffResponse
+    ? { id: 'crisis', label: 'ICU handoff' } as const
+    : hasSevereAcidemiaResponse
     ? { id: 'crisis', label: 'Severe acidemia' } as const
     : hasAkiFluidOverloadResponse
     ? { id: 'crisis', label: 'AKI fluid balance' } as const
@@ -1307,6 +1327,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasIntracranialHypertensionResponse
     || hasAkiFluidOverloadResponse
     || hasSevereAcidemiaResponse
+    || hasIcuHiddenDeteriorationHandoffResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1779,6 +1800,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasSevereAcidemiaResponse && (
               <SevereAcidemiaTray assessment={props.resuscitation.severeAcidemiaAssessment}
                 onAction={props.onSevereAcidemiaResponse ?? (() => {})} />
+            )}
+            {hasIcuHiddenDeteriorationHandoffResponse && (
+              <IcuHiddenDeteriorationHandoffTray
+                assessment={props.resuscitation.icuHiddenDeteriorationHandoffAssessment}
+                onAction={props.onIcuHiddenDeteriorationHandoffResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -5069,6 +5095,58 @@ function SevereAcidemiaTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-severe-acidemia-trajectory')}>Review gas + organ trajectory</Button>
         </div>
         <p className="field__hint">A better pH is an immediate process signal, not proof of acid clearance or recovery.</p>
+      </section>
+    </div>
+  );
+}
+
+function IcuHiddenDeteriorationHandoffTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['icuHiddenDeteriorationHandoffAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onIcuHiddenDeteriorationHandoffResponse']>;
+}) {
+  const ready = assessment?.readinessAtTick != null;
+  const content = assessment?.contentAtTick != null;
+  const crossChecked = assessment?.crossCheckAtTick != null;
+  const escalated = assessment?.escalationAtTick != null;
+  const accepted = assessment?.acceptanceAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="icu-hidden-handoff-truth-title">
+        <div id="icu-hidden-handoff-truth-title" className="syringe__name">Receive the story. Check the patient.</div>
+        <Badge kind="teaching">“stable” · support rising · perfusion falling</Badge>
+        <div className="syringe__meta">HR 94→118 · MAP 70→64 · lactate 3.1→5.8 · urine 30→5</div>
+        <p className="syringe__remaining" role="status">
+          {crossChecked ? 'Label corrected · worsening shock recognized'
+            : content ? 'Outgoing claim received · bedside reconciliation due'
+              : ready ? 'Receiver ready · structured content due'
+                : 'Shared attention + bedside coverage pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={ready}
+            onClick={() => onAction('establish-icu-handoff-readiness')}>Establish readiness + bedside coverage</Button>
+          <Button className="crisis-drug__action" disabled={!ready || content}
+            onClick={() => onAction('receive-icu-handoff-content')}>Receive severity + support + pending work</Button>
+          <Button className="crisis-drug__action" disabled={!content || crossChecked}
+            onClick={() => onAction('cross-check-hidden-deterioration')}>Cross-check patient + trends + devices</Button>
+        </div>
+        <p className="field__hint">The outgoing label is a claim. Dated physiology and source-to-patient support are the cross-check.</p>
+      </section>
+      <section className="syringe" aria-labelledby="icu-hidden-handoff-ownership-title">
+        <div id="icu-hidden-handoff-ownership-title" className="syringe__name">Make the next move unmistakable.</div>
+        <Badge kind="teaching">severity · action · trigger · contingency · owner</Badge>
+        <div className="syringe__meta">escalate before acceptance · synthesize before ownership changes</div>
+        <p className="syringe__remaining" role="status">
+          {accepted ? 'Accepted · MAP 70 · source + trajectory remain open'
+            : escalated ? 'Escalation + owners explicit · receiver synthesis due'
+              : 'Worsening-shock escalation pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!crossChecked || escalated}
+            onClick={() => onAction('escalate-icu-handoff-deterioration')}>Escalate + assign triggers + owners</Button>
+          <Button className="crisis-drug__action" disabled={!escalated || accepted}
+            onClick={() => onAction('synthesize-accept-and-reassess-icu-handoff')}>Synthesize + accept + reassess</Button>
+        </div>
+        <p className="field__hint">Acceptance records a teaching-state transition, not real communication, staffing, treatment, or transfer.</p>
       </section>
     </div>
   );

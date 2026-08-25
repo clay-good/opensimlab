@@ -1,0 +1,60 @@
+/** Bounded ICU shift handoff with active cross-check of hidden deterioration. */
+
+import type { Scenario } from '@anesthesia/scenarios/types';
+
+export const ICU_HANDOFF_WITH_HIDDEN_DETERIORATION: Scenario = {
+  schemaVersion: 1,
+  metadata: {
+    id: 'icu-handoff-with-hidden-deterioration', version: '0.1.0', maturity: 'draft',
+    title: 'ICU handoff with hidden deterioration', author: 'Open Sim Lab',
+    license: 'CC BY-SA 4.0', estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
+      { id: 'establish-icu-handoff-readiness', statement: 'Establish receiver readiness, monitoring continuity, and responsibility boundaries.', measure: 'Shared attention, questions, and uninterrupted bedside responsibility were explicit before content transfer.' },
+      { id: 'receive-icu-handoff-content', statement: 'Receive illness severity, patient summary, active support, pending work, and contingencies.', measure: 'The fixed outgoing summary was recorded as a claim to verify, not accepted as ground truth.' },
+      { id: 'cross-check-hidden-deterioration', statement: 'Cross-check dated bedside trends, devices, infusions, examination, and pending source control.', measure: 'Rising support, worsening perfusion, lactate, urine, and end-tidal carbon dioxide corrected the stable label.' },
+      { id: 'escalate-icu-handoff-deterioration', statement: 'Escalate the worsening shock with explicit immediate actions, triggers, contingencies, and ownership.', measure: 'Critical-care and source-control escalation preceded transfer acceptance.' },
+      { id: 'synthesize-accept-and-reassess-icu-handoff', statement: 'Require receiver synthesis, acknowledge ownership, and reassess the immediate trajectory.', measure: 'Closed-loop acceptance followed cross-check and escalation; the fixed response preserved unresolved shock and source uncertainty.' },
+    ],
+    clinicalReview: { reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED',
+      competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01',
+      contentVersion: '0.1.0', sources: [
+        'Agency for Healthcare Research and Quality. TeamSTEPPS 3.0 Communication Module: Handoff and I-PASS. Current web curriculum.',
+        'The Joint Commission. Sentinel Event Alert 58: Inadequate hand-off communication. September 11, 2017.',
+        'Starmer AJ, Spector ND, Srivastava R, et al. Changes in Medical Errors after Implementation of a Handoff Program. N Engl J Med. 2014;371:1803-1812.',
+        'Starmer AJ, Spector ND, O’Toole JK, et al. Implementation of the I-PASS handoff program in diverse clinical environments. J Hosp Med. 2023;18:5-14.',
+      ] },
+    limitations: ['icu-hidden-deterioration-handoff-content-and-response-are-authored',
+      'icu-handoff-controls-record-events-not-communication-or-care',
+      'no-live-handoff-verification-escalation-treatment-transfer-or-outcome'],
+  },
+  patient: { ageYears: 57, sex: 'female', heightCm: 166, weightKg: 76, asaClass: 5,
+    diagnosis: 'Septic shock from suspected cholangitis with pending source control',
+    procedure: 'Shift-change handoff and deterioration review',
+    comorbidities: ['Type 2 diabetes mellitus', 'Hypertension'],
+    medications: ['Reported antimicrobial and vasoactive therapy; delivery not modeled'],
+    allergies: ['No known drug allergies'], fasting: 'ICU patient; nutrition state not represented',
+    baseline: { heartRateBpm: 118, meanArterialMmHg: 64, strokeVolumeMl: 48,
+      hemoglobinGPerDl: 10.4, bloodVolumeMl: 4700, coreTemperatureC: 39.1,
+      arterialStiffness: 1.15, baroreflexGain: 0.7, fixedStrokeVolume: false },
+    airway: { difficulty: 0.2, difficultMaskVentilation: false,
+      assessment: 'Intubated with reported waveform capnography and bilateral ventilation' },
+    respiratory: { profile: 'moderately-ill' } },
+  equipment: { monitoring: ['ecg', 'arterial-line', 'pulse-oximetry', 'capnography', 'temperature'],
+    airwayDevice: 'tracheal-tube', ventilator: { mode: 'volume-control', fio2: 0.35,
+      tidalVolumeMl: 420, respiratoryRateBpm: 18, freshGasFlowLPerMin: 10, delivering: true } },
+  formulary: [],
+  timeline: [
+    { id: 'icu-handoff-hidden-deterioration-presentation', type: 'narrative',
+      target: 'icu-handoff-with-hidden-deterioration', atTick: 0, severity: 'critical',
+      message: 'At shift change, the outgoing headline is “stable septic shock on low-dose support.” The fixed 90-minute record contradicts it: HR 94 to 118/min, MAP 70 to 64 mmHg while reported norepinephrine rose from 0.08 to 0.22 mcg/kg/min, capillary refill 2 to 5 seconds, lactate 3.1 to 5.8 mmol/L, urine output 30 to 5 mL/h, and EtCO₂ 35 to 30 mmHg on unchanged ventilation. SpO₂ is 96% on FiO₂ 0.35 and temperature is 39.1°C. Suspected cholangitis source control is still pending.' },
+    { id: 'icu-handoff-hidden-deterioration-boundary', type: 'narrative',
+      target: 'icu-handoff-with-hidden-deterioration-boundary', atTick: 0, severity: 'warning',
+      message: 'Establish receiver identity, shared attention, monitoring continuity, question opportunity, and uninterrupted bedside coverage. Receive the fixed illness-severity claim, patient summary, active support, dated data, task list, source-control plan, and contingencies; then cross-check the patient, monitor, airway and circuit, vascular access, infusion source-to-patient path, pumps, concentrations, rates, compatibility, medications, laboratory trends, urine, orders, and documentation. Correct the illness-severity label to worsening shock, keep alternate causes open, and activate critical-care, nursing, pharmacy, respiratory-therapy, and urgent source-control escalation with immediate priorities, triggers, contingencies, and named ownership before receiver synthesis and acceptance. Fixed 15-minute bridge response is HR 108/min, MAP 70 mmHg, EtCO₂ 33 mmHg, SpO₂ 96% on unchanged FiO₂ 0.35, and temperature 38.9°C; lactate, urine, source control, durability, recovery, and outcome remain open. Voice, language, nonverbal behavior, interruptions, workload, staffing, examination, monitoring, device or record verification, communication, documentation, oxygen, ventilation, fluid or drug delivery, source control, procedures, transfer, disposition, and outcome are not simulated.' },
+  ],
+  debrief: { rubric: [
+    { id: 'icu-handoff-readiness', objectiveId: 'establish-icu-handoff-readiness', question: 'What had to be true before the outgoing summary began?' },
+    { id: 'icu-handoff-content', objectiveId: 'receive-icu-handoff-content', question: 'Which fixed content needed active verification rather than passive receipt?' },
+    { id: 'icu-handoff-cross-check', objectiveId: 'cross-check-hidden-deterioration', question: 'Which dated trends disproved the word stable?' },
+    { id: 'icu-handoff-escalation', objectiveId: 'escalate-icu-handoff-deterioration', question: 'Which immediate priorities, triggers, contingencies, and owners made escalation actionable?' },
+    { id: 'icu-handoff-closure', objectiveId: 'synthesize-accept-and-reassess-icu-handoff', question: 'Why did synthesis and acceptance follow, rather than precede, bedside reconciliation?' },
+  ] },
+};
