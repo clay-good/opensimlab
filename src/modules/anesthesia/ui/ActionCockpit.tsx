@@ -354,6 +354,13 @@ export interface ActionCockpitProps {
       readonly imagingAtTick: number | null;
       readonly handedOffAtTick: number | null;
     };
+    readonly ardsLungProtectiveAssessment?: {
+      readonly baselineAtTick: number | null;
+      readonly pbwAtTick: number | null;
+      readonly protectionAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+      readonly escalationAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -564,6 +571,10 @@ export interface ActionCockpitProps {
       | 'activate-aortic-pathway' | 'record-aortic-anti-impulse-intent'
       | 'prioritize-aortic-imaging' | 'repeat-and-handoff-aortic-evolution',
   ) => void;
+  readonly onArdsLungProtectiveResponse?: (
+    action: 'review-ards-baseline' | 'calculate-ards-pbw' | 'record-ards-protective-settings'
+      | 'reassess-ards-protection' | 'record-ards-peep-prone-escalation',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -704,6 +715,9 @@ export function crisisResponseAvailability(
     hasAcuteAorticSyndromeResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'acute-aortic-syndrome',
     ),
+    hasArdsLungProtectiveResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'ards-lung-protective-ventilation',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -775,6 +789,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'exertional-heat-stroke')
       || (event.type === 'narrative' && event.target === 'trauma-primary-survey')
       || (event.type === 'narrative' && event.target === 'acute-aortic-syndrome')
+      || (event.type === 'narrative' && event.target === 'ards-lung-protective-ventilation')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -804,6 +819,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasHeatStrokeResponse,
     hasTraumaPrimarySurveyResponse,
     hasAcuteAorticSyndromeResponse,
+    hasArdsLungProtectiveResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -832,7 +848,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasAcuteIschemicStrokeResponse || hasIntracranialHemorrhageResponse
     || hasDiabeticKetoacidosisResponse || hasHyperkalemiaResponse
     || hasSevereHyponatremiaResponse || hasOpioidToxicityResponse || hasHeatStrokeResponse
-    || hasTraumaPrimarySurveyResponse || hasAcuteAorticSyndromeResponse;
+    || hasTraumaPrimarySurveyResponse || hasAcuteAorticSyndromeResponse || hasArdsLungProtectiveResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -850,8 +866,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasStatusEpilepticusResponse || hasAcuteIschemicStrokeResponse
     || hasIntracranialHemorrhageResponse || hasDiabeticKetoacidosisResponse
     || hasHyperkalemiaResponse || hasSevereHyponatremiaResponse || hasOpioidToxicityResponse
-    || hasHeatStrokeResponse || hasTraumaPrimarySurveyResponse || hasAcuteAorticSyndromeResponse;
-  const responseTray = hasAcuteAorticSyndromeResponse
+    || hasHeatStrokeResponse || hasTraumaPrimarySurveyResponse || hasAcuteAorticSyndromeResponse
+    || hasArdsLungProtectiveResponse;
+  const responseTray = hasArdsLungProtectiveResponse
+    ? { id: 'crisis', label: 'ARDS ventilation' } as const
+    : hasAcuteAorticSyndromeResponse
     ? { id: 'crisis', label: 'Acute aortic syndrome' } as const
     : hasTraumaPrimarySurveyResponse
     ? { id: 'crisis', label: 'Trauma primary survey' } as const
@@ -932,6 +951,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasHeatStrokeResponse
     || hasTraumaPrimarySurveyResponse
     || hasAcuteAorticSyndromeResponse
+    || hasArdsLungProtectiveResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1321,6 +1341,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasAcuteAorticSyndromeResponse && (
               <AcuteAorticSyndromeTray assessment={props.resuscitation.acuteAorticSyndromeAssessment}
                 onAction={props.onAcuteAorticSyndromeResponse ?? (() => {})} />
+            )}
+            {hasArdsLungProtectiveResponse && (
+              <ArdsLungProtectiveTray assessment={props.resuscitation.ardsLungProtectiveAssessment}
+                onAction={props.onArdsLungProtectiveResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -3681,6 +3705,57 @@ function AcuteAorticSyndromeTray({ assessment, onAction }: {
             onClick={() => onAction('repeat-and-handoff-aortic-evolution')}>Repeat territories + hand off uncertainty</Button>
         </div>
         <p className="field__hint">CT is the authored first imaging intent while transportable; TEE or MRI may fit another context. This lesson ends before any result or operative choice.</p>
+      </section>
+    </div>
+  );
+}
+
+function ArdsLungProtectiveTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['ardsLungProtectiveAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onArdsLungProtectiveResponse']>;
+}) {
+  const baseline = assessment?.baselineAtTick != null;
+  const pbw = assessment?.pbwAtTick != null;
+  const protection = assessment?.protectionAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const escalation = assessment?.escalationAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="ards-size-title">
+        <div id="ards-size-title" className="syringe__name">Size the breath to the lung.</div>
+        <Badge kind="teaching">height + sex → PBW · never actual weight</Badge>
+        <div className="syringe__meta">170 cm · 92 kg actual · 61.5 kg PBW · plateau 32</div>
+        <p className="syringe__remaining" role="status">
+          {protection ? '370 mL · 6 mL/kg PBW · plateau limit <30'
+            : pbw ? '500 mL is 8.1 mL/kg PBW · protect now'
+              : baseline ? 'Oxygenation + mechanics integrated · find PBW' : 'Baseline review pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={baseline}
+            onClick={() => onAction('review-ards-baseline')}>Review gas + mechanics + circulation</Button>
+          <Button className="crisis-drug__action" disabled={!baseline || pbw}
+            onClick={() => onAction('calculate-ards-pbw')}>Calculate height-based PBW</Button>
+          <Button className="crisis-drug__action" disabled={!pbw || protection}
+            onClick={() => onAction('record-ards-protective-settings')}>Set 370 mL + plateau guardrail</Button>
+        </div>
+        <p className="field__hint">A reassuring pH does not make a plateau pressure of 32 safe. Protect first, then measure what the change costs.</p>
+      </section>
+      <section className="syringe" aria-labelledby="ards-response-title">
+        <div id="ards-response-title" className="syringe__name">Every setting owes you a response.</div>
+        <Badge kind="teaching">pressure · gas · synchrony · circulation</Badge>
+        <div className="syringe__meta">30 min · plateau 27 · pH 7.29 · PaCO₂ 52 · MAP 70</div>
+        <p className="syringe__remaining" role="status">
+          {escalation ? 'PEEP/FiO₂ + >12 h prone-team intent handed off'
+            : reassessment ? 'Protection held · hypoxemia persists · escalate deliberately'
+              : protection ? 'Reassessment due before escalation' : 'Protective setting pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!protection || reassessment}
+            onClick={() => onAction('reassess-ards-protection')}>Review 30-minute response</Button>
+          <Button className="crisis-drug__action" disabled={!reassessment || escalation}
+            onClick={() => onAction('record-ards-peep-prone-escalation')}>PEEP/FiO₂ + prolonged prone team</Button>
+        </div>
+        <p className="field__hint">Accept bounded hypercapnia only with serial pH and whole-patient review. Proning is a trained-team procedure, not a button skill.</p>
       </section>
     </div>
   );

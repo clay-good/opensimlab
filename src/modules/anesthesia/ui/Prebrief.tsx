@@ -29,7 +29,7 @@ export const FICTION_CONTRACT =
 export interface PrebriefProps {
   readonly scenario: Scenario;
   readonly region: RegionProfile;
-  readonly environment?: 'anesthesia' | 'emergency-medicine';
+  readonly environment?: 'anesthesia' | 'emergency-medicine' | 'critical-care';
   readonly onStart: () => void;
   /**
    * Offered only where the demonstration was authored. A "watch this" control on
@@ -86,7 +86,12 @@ export function Prebrief({ scenario, region, environment = 'anesthesia', onStart
 
       <section>
         <h2>The environment</h2>
-        {environment === 'emergency-medicine' ? (
+        {environment === 'critical-care' ? (
+          <p>
+            The ICU monitor and organ-support state stay visible while the focused reassessment opens
+            below. Pause freely; every setting change should be followed by a measured response.
+          </p>
+        ) : environment === 'emergency-medicine' ? (
           <p>
             The monitor and patient state stay visible while the focused assessment opens below.
             The clock only runs when you press play, and you can pause at any moment to think.

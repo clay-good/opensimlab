@@ -396,6 +396,11 @@ export class AnesthesiaEngine {
   private aorticAntiImpulseAtTick: number | null = null;
   private aorticImagingAtTick: number | null = null;
   private aorticHandedOffAtTick: number | null = null;
+  private ardsBaselineAtTick: number | null = null;
+  private ardsPbwAtTick: number | null = null;
+  private ardsProtectionAtTick: number | null = null;
+  private ardsReassessmentAtTick: number | null = null;
+  private ardsEscalationAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2707,6 +2712,56 @@ export class AnesthesiaEngine {
         this.aorticHandedOffAtTick = this.currentTick;
         this.log('critical', 'assessment', `aortic-evolution-handed-off-${this.currentTick}`,
           'Before imaging, repeat fixed assessment shows pain still present, HR 82/min, left-arm BP 156/88 mmHg, right-arm BP 132/78 mmHg, persistent weak right radial and left pedal pulses, a still-cool left foot, and unchanged mild left-arm drift with clear speech. Times, trends, treatment intents, competing diagnoses, malperfusion concern, and the unavailable scan were handed to the aortic team. No diagnosis, image result, procedure, transfer, disposition, or outcome is simulated.', { heartRatePerMin: 82, leftArmSystolicBpMmHg: 156, rightArmSystolicBpMmHg: 132, imagingAvailable: false });
+        break;
+      }
+      case 'ards-lung-protective-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'ards-lung-protective-ventilation');
+        const valid = ['review-ards-baseline', 'calculate-ards-pbw', 'record-ards-protective-settings',
+          'reassess-ards-protection', 'record-ards-peep-prone-escalation'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `ards-lung-protective-response-refused-${this.currentTick}`,
+            supported ? 'The ARDS action was not one of the listed choices. Nothing changed.'
+              : 'The bounded ARDS choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-ards-baseline') {
+          if (this.ardsBaselineAtTick !== null) { this.log('warning', 'assessment', `ards-baseline-refused-${this.currentTick}`, 'The fixed baseline has already been reviewed.'); break; }
+          this.ardsBaselineAtTick = this.currentTick;
+          this.log('critical', 'assessment', `ards-baseline-reviewed-${this.currentTick}`,
+            'Baseline review: 500 mL at 24/min, PEEP 8 cm H₂O, FiO₂ 0.70, SpO₂ 90%, PaO₂ 64 mmHg, pH 7.36, PaCO₂ 42 mmHg, and authored plateau pressure 32 cm H₂O with passive synchrony and MAP 72 mmHg. Gas sampling, airway verification, ventilator measurements, and ARDS diagnosis are not simulated.', { tidalVolumeMl: 500, plateauPressureCmH2O: 32, pao2MmHg: 64 });
+          break;
+        }
+        if (this.ardsBaselineAtTick === null) { this.log('warning', 'assessment', `ards-baseline-order-refused-${this.currentTick}`, 'Review oxygenation, mechanics, support, synchrony, and circulation first.'); break; }
+        if (response === 'calculate-ards-pbw') {
+          if (this.ardsPbwAtTick !== null) { this.log('warning', 'assessment', `ards-pbw-refused-${this.currentTick}`, 'The fixed predicted-body-weight basis has already been reviewed.'); break; }
+          this.ardsPbwAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `ards-pbw-calculated-${this.currentTick}`,
+            'For the authored 170 cm adult woman, predicted body weight is 61.5 kg. The current 500 mL is 8.1 mL/kg predicted body weight; actual 92 kg weight is not the tidal-volume basis. This is a fixed teaching calculation, not a bedside calculator.', { predictedBodyWeightKg: 61.5, currentMlPerKgPbw: 8.1 });
+          break;
+        }
+        if (this.ardsPbwAtTick === null) { this.log('warning', 'assessment', `ards-pbw-order-refused-${this.currentTick}`, 'Establish the height-and-sex predicted-body-weight basis before setting tidal volume.'); break; }
+        if (response === 'record-ards-protective-settings') {
+          if (this.ardsProtectionAtTick !== null) { this.log('warning', 'assessment', `ards-protection-refused-${this.currentTick}`, 'The protective-setting intent has already been recorded.'); break; }
+          this.ardsProtectionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `ards-protection-recorded-${this.currentTick}`,
+            'A 370 mL tidal-volume intent (about 6 mL/kg predicted body weight) and plateau-pressure limit below 30 cm H₂O were recorded, with respiratory-rate adjustment delegated to the current protocol and pH response. Ventilator programming, inspiratory hold, auto-PEEP, dead space, and delivered mechanics are not simulated.', { intentOnly: true, tidalVolumeMl: 370, mlPerKgPbw: 6, plateauLimitCmH2O: 30 });
+          break;
+        }
+        if (this.ardsProtectionAtTick === null) { this.log('warning', 'assessment', `ards-protection-order-refused-${this.currentTick}`, 'Record predicted-body-weight lung protection before reassessment.'); break; }
+        if (response === 'reassess-ards-protection') {
+          if (this.ardsReassessmentAtTick !== null) { this.log('warning', 'assessment', `ards-reassessment-refused-${this.currentTick}`, 'The fixed post-change panel has already been reviewed.'); break; }
+          this.ardsReassessmentAtTick = this.currentTick;
+          this.log('critical', 'assessment', `ards-protection-reassessed-${this.currentTick}`,
+            'Fixed response after 30 minutes: delivered tidal volume 370 mL, plateau pressure 27 cm H₂O, SpO₂ 91%, PaO₂ 66 mmHg, pH 7.29, PaCO₂ 52 mmHg, passive synchrony, and MAP 70 mmHg. The bounded hypercapnia was accepted while pH, mechanics, synchrony, and circulation remain under review; no individualized target or outcome is predicted.', { tidalVolumeMl: 370, plateauPressureCmH2O: 27, ph: 7.29, paco2MmHg: 52, mapMmHg: 70 });
+          break;
+        }
+        if (this.ardsReassessmentAtTick === null) { this.log('warning', 'assessment', `ards-reassessment-order-refused-${this.currentTick}`, 'Reassess mechanics, gas exchange, synchrony, and circulation before escalating support.'); break; }
+        if (this.ardsEscalationAtTick !== null) { this.log('warning', 'assessment', `ards-escalation-refused-${this.currentTick}`, 'The bounded PEEP, oxygen, and prone-team intent has already been recorded.'); break; }
+        this.ardsEscalationAtTick = this.currentTick;
+        this.log('critical', 'assessment', `ards-escalation-recorded-${this.currentTick}`,
+          'Persistent moderate-severe hypoxemia triggered local protocolized PEEP/FiO₂ adjustment with pressure, oxygen-toxicity, barotrauma, and hemodynamic surveillance plus an experienced-team prolonged prone-positioning intent for more than 12 hours daily. Recruitment maneuvers, sedation, paralysis, physical turning, complications, ECMO, later course, and outcome are outside this lesson.', { intentOnly: true, proneHoursPerDayGreaterThan: 12 });
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -5860,6 +5915,13 @@ export class AnesthesiaEngine {
           antiImpulseAtTick: this.aorticAntiImpulseAtTick,
           imagingAtTick: this.aorticImagingAtTick,
           handedOffAtTick: this.aorticHandedOffAtTick,
+        },
+        ardsLungProtectiveAssessment: {
+          baselineAtTick: this.ardsBaselineAtTick,
+          pbwAtTick: this.ardsPbwAtTick,
+          protectionAtTick: this.ardsProtectionAtTick,
+          reassessmentAtTick: this.ardsReassessmentAtTick,
+          escalationAtTick: this.ardsEscalationAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

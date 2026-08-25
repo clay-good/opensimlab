@@ -3111,6 +3111,46 @@ export function objectiveFindings(
           : 'Definitive imaging intent, serial reassessment, or uncertainty handoff was incomplete or out of order.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['review-ards-ventilation-baseline', 'calculate-ards-predicted-body-weight',
+      'record-ards-lung-protective-settings', 'reassess-ards-gas-and-mechanics',
+      'escalate-moderate-severe-ards-support'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'ards-lung-protective-ventilation');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The ARDS lung-protective-ventilation vignette was not active.' } satisfies ObjectiveFinding;
+      const baseline = log.find((event) => /^ards-baseline-reviewed-\d+$/.test(event.eventId));
+      const pbw = log.find((event) => /^ards-pbw-calculated-\d+$/.test(event.eventId));
+      const protection = log.find((event) => /^ards-protection-recorded-\d+$/.test(event.eventId));
+      const reassessment = log.find((event) => /^ards-protection-reassessed-\d+$/.test(event.eventId));
+      const escalation = log.find((event) => /^ards-escalation-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'review-ards-ventilation-baseline') return { ...base,
+        outcome: baseline ? 'met' : 'not-met', finding: baseline
+          ? 'Oxygenation, gas exchange, delivered support, plateau pressure, synchrony, and circulation were integrated.'
+          : 'The initial gas-exchange and mechanics panel was not reviewed.', atTick: baseline?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'calculate-ards-predicted-body-weight') {
+        const ordered = baseline && pbw && baseline.tick <= pbw.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Height and sex established the 61.5 kg predicted-body-weight basis instead of actual weight.'
+          : 'The predicted-body-weight basis was absent or out of order.', atTick: pbw?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'record-ards-lung-protective-settings') {
+        const ordered = pbw && protection && pbw.tick <= protection.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'A 370 mL, about 6 mL/kg PBW intent with plateau pressure below 30 cm H₂O followed the PBW review.'
+          : 'Lung-protective settings were absent or out of order.', atTick: protection?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'reassess-ards-gas-and-mechanics') {
+        const ordered = protection && reassessment && protection.tick <= reassessment.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'The 30-minute plateau, oxygenation, pH, carbon dioxide, synchrony, and circulation response was reviewed together.'
+          : 'The post-change whole-patient reassessment was absent or out of order.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = reassessment && escalation && reassessment.tick <= escalation.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+        ? 'Persistent hypoxemia triggered protocolized PEEP/FiO₂ and prolonged-prone-team intent with safety monitoring.'
+        : 'Moderate-severe ARDS escalation was absent or preceded reassessment.', atTick: escalation?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

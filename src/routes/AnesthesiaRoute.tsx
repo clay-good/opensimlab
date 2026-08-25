@@ -43,10 +43,13 @@ import {
   EMERGENCY_MEDICINE_SCENARIOS,
   getEmergencyMedicineScenario,
 } from '../modules/emergency-medicine/scenarios';
+import {
+  CRITICAL_CARE_SCENARIOS, DEFAULT_CRITICAL_CARE_SCENARIO_ID, getCriticalCareScenario,
+} from '../modules/critical-care/scenarios';
 
 interface ClinicalModuleConfig {
-  readonly id: 'anesthesia' | 'emergency-medicine';
-  readonly basePath: '/anesthesia' | '/emergency-medicine';
+  readonly id: 'anesthesia' | 'emergency-medicine' | 'critical-care';
+  readonly basePath: '/anesthesia' | '/emergency-medicine' | '/critical-care';
   readonly heading: string;
   readonly scenarios: readonly Scenario[];
   readonly defaultScenarioId: string;
@@ -63,6 +66,12 @@ const EMERGENCY_MEDICINE_CONFIG: ClinicalModuleConfig = {
   heading: 'Emergency medicine simulator', scenarios: EMERGENCY_MEDICINE_SCENARIOS,
   defaultScenarioId: DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID,
   getScenario: getEmergencyMedicineScenario,
+};
+
+const CRITICAL_CARE_CONFIG: ClinicalModuleConfig = {
+  id: 'critical-care', basePath: '/critical-care', heading: 'Critical care simulator',
+  scenarios: CRITICAL_CARE_SCENARIOS, defaultScenarioId: DEFAULT_CRITICAL_CARE_SCENARIO_ID,
+  getScenario: getCriticalCareScenario,
 };
 
 /**
@@ -341,6 +350,10 @@ export function AnesthesiaRoute({ path }: { path: string }) {
 
 export function EmergencyMedicineRoute({ path }: { path: string }) {
   return <ClinicalModuleRoute path={path} config={EMERGENCY_MEDICINE_CONFIG} />;
+}
+
+export function CriticalCareRoute({ path }: { path: string }) {
+  return <ClinicalModuleRoute path={path} config={CRITICAL_CARE_CONFIG} />;
 }
 
 /**

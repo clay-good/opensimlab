@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 58 reports bounded acute-aortic state. */
-export const WORKER_PROTOCOL_VERSION = 58;
+/** Bumped whenever the message shape changes incompatibly. Version 59 reports bounded ARDS state. */
+export const WORKER_PROTOCOL_VERSION = 59;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -422,6 +422,13 @@ export interface EquipmentSnapshot {
       readonly antiImpulseAtTick: number | null;
       readonly imagingAtTick: number | null;
       readonly handedOffAtTick: number | null;
+    };
+    readonly ardsLungProtectiveAssessment?: {
+      readonly baselineAtTick: number | null;
+      readonly pbwAtTick: number | null;
+      readonly protectionAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+      readonly escalationAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

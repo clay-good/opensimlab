@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "moduleId": "critical-care",
+  "recordCount": 1,
+  "records": [
+    {
+      "recordId": "scenario:ards-lung-protective-ventilation@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "ards-lung-protective-ventilation",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/critical-care-completion-audit.json#ards-lung-protective-ventilation@0.1.0",
+        "/catalog/critical-care-quality-audit.json#ards-lung-protective-ventilation@0.1.0"
+      ]
+    }
+  ]
+}

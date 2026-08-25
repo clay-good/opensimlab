@@ -2082,6 +2082,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['acute-aortic-syndrome'],
   },
   {
+    id: 'ards-findings-settings-and-response-are-authored',
+    headline: 'The ARDS context, gases, pressures, synchrony, circulation, settings, and response are authored facts, not measurements or predictions.',
+    simplification: 'One fixed adult moves from a high plateau-pressure pattern to fixed protective-setting and reassessment panels.',
+    whereItMisleads: 'Treating the screen as diagnosis, blood-gas sampling, ventilator measurement, mechanics, or individualized response prediction.',
+    correctUnderstanding: 'Real ARDS care requires verified airway and ventilator data, serial whole-patient assessment, and individualized multidisciplinary management.',
+    briefIn: ['ards-lung-protective-ventilation'],
+  },
+  {
+    id: 'ards-ventilator-reassessment-peep-and-prone-controls-are-proxies',
+    headline: 'Ventilator, reassessment, PEEP, oxygen, and prone buttons record intents; they do not perform ICU care.',
+    simplification: 'The interface enforces an evidence-based sequence without programming equipment, measuring pressure, titrating support, or turning a patient.',
+    whereItMisleads: 'Equating ordered controls with respiratory-therapy, ventilator, sedation, paralysis, proning, monitoring, or team competence.',
+    correctUnderstanding: 'Use trained teams, verified equipment, current protocols, serial gas and mechanics review, and explicit device and hemodynamic safeguards.',
+    briefIn: ['ards-lung-protective-ventilation'],
+  },
+  {
+    id: 'no-live-ards-diagnosis-ventilator-management-proning-procedure-or-outcome',
+    headline: 'The case does not diagnose ARDS, manage a ventilator, prone, perform procedures, select ECMO, or predict outcome.',
+    simplification: 'Alternate lung and cardiac disease, dead space, auto-PEEP, chest-wall effects, contraindications, sedation, paralysis, fluids, and liberation are absent.',
+    whereItMisleads: 'Using actual weight for tidal volume, normalizing gas values at the expense of protection, or treating a prone control as procedural skill.',
+    correctUnderstanding: 'Base tidal volume on predicted body weight, limit inspiratory pressure, reassess the whole patient, and escalate with trained ICU teams.',
+    briefIn: ['ards-lung-protective-ventilation'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

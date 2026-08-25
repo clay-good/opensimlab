@@ -8,6 +8,7 @@ import {
   buildAnesthesiaCompletionCatalog, buildModuleCompletionCatalog,
 } from '@anesthesia/catalog/scenario-completion';
 import { EMERGENCY_MEDICINE_SCENARIOS } from '../src/modules/emergency-medicine/scenarios';
+import { CRITICAL_CARE_SCENARIOS } from '../src/modules/critical-care/scenarios';
 import { buildScenarioQualityCatalog } from '@platform/catalog/scenario-quality';
 import {
   buildMaturityCatalog, maturityFor, type MaturitySubjectKind,
@@ -52,9 +53,16 @@ function main(): void {
   );
   const emergencyQuality = buildScenarioQualityCatalog(emergencyCompletion);
   const emergencyMaturity = buildMaturityCatalog(emergencyCompletion, emergencyQuality);
+  const criticalCareCompletion = buildModuleCompletionCatalog(
+    CRITICAL_CARE_SCENARIOS, ENGINE_VERSION, 'critical-care',
+    'icu', 'state_transition',
+  );
+  const criticalCareQuality = buildScenarioQualityCatalog(criticalCareCompletion);
+  const criticalCareMaturity = buildMaturityCatalog(criticalCareCompletion, criticalCareQuality);
   const moduleCatalogs = [
     { completion, quality, maturity },
     { completion: emergencyCompletion, quality: emergencyQuality, maturity: emergencyMaturity },
+    { completion: criticalCareCompletion, quality: criticalCareQuality, maturity: criticalCareMaturity },
   ];
   const validation = buildValidationReport();
   const evidenceOptions = {

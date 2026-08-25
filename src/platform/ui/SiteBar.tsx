@@ -23,6 +23,7 @@ export interface SiteBarLink {
 export const SITE_BAR_LINKS: readonly SiteBarLink[] = [
   { href: '/anesthesia', label: 'Anesthesia' },
   { href: '/emergency-medicine', label: 'Emergency' },
+  { href: '/critical-care', label: 'Critical care' },
   { href: '/about', label: 'About' },
   { href: '/validation', label: 'Validation' },
   { href: '/governance', label: 'Governance' },

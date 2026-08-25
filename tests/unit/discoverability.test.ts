@@ -18,6 +18,7 @@ import {
 import { heroStaticSvg } from '@landing/hero';
 import { SCENARIOS } from '@anesthesia/scenarios';
 import { EMERGENCY_MEDICINE_SCENARIOS } from '../../src/modules/emergency-medicine/scenarios';
+import { CRITICAL_CARE_SCENARIOS } from '../../src/modules/critical-care/scenarios';
 import { Landing } from '@landing/Landing';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -179,7 +180,8 @@ describe('Requirement: The Hero Is The Product Running', () => {
 
 describe('Requirement: Modules Directory Is Honest About What Exists', () => {
   it('Scenario: Available and planned are visually distinct, with no date', () => {
-    expect(availableModules().map((module) => module.id)).toEqual(['anesthesia', 'emergency-medicine']);
+    expect(availableModules().map((module) => module.id))
+      .toEqual(['anesthesia', 'emergency-medicine', 'critical-care']);
     expect(plannedModules().length).toBeGreaterThanOrEqual(2);
     for (const module of plannedModules()) {
       expect(module.plannedScope, `${module.id} needs a description of its scope`).toBeTruthy();
@@ -276,6 +278,8 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
       .toMatchObject({ indexable: true, heading: 'Trauma primary survey' });
     expect(routeFor('/emergency-medicine/scenario/acute-aortic-syndrome'))
       .toMatchObject({ indexable: true, heading: 'Acute aortic syndrome' });
+    expect(routeFor('/critical-care/scenario/ards-lung-protective-ventilation'))
+      .toMatchObject({ indexable: true, heading: 'ARDS lung-protective ventilation' });
   });
 
   it('Requirement: Modules Declare Their Own Physiological Timescale', () => {
@@ -289,6 +293,9 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
     expect(oncology.timescale.unit).toBe('days');
     expect(oncology.timescale.stepSeconds).toBeGreaterThan(0.1);
     expect(speedsFor(oncology)).not.toEqual(speedsFor(anesthesia));
+    const criticalCare = MODULES.find((module) => module.id === 'critical-care')!;
+    expect(criticalCare.timescale.unit).toBe('seconds');
+    expect(criticalCare.timescale.stepSeconds).toBe(0.1);
   });
 });
 
@@ -368,6 +375,7 @@ describe('Requirement: Crawlability Basics', () => {
       ...EMERGENCY_MEDICINE_SCENARIOS.map((scenario) => ({
         basePath: '/emergency-medicine', scenario,
       })),
+      ...CRITICAL_CARE_SCENARIOS.map((scenario) => ({ basePath: '/critical-care', scenario })),
     ];
     for (const { basePath, scenario } of scenarios) {
       const markup = renderToStaticMarkup(createElement(PrerenderedBody, {

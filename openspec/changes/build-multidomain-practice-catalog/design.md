@@ -554,6 +554,21 @@ vasopressor delivery from infusion dead space and startup mechanics; pulse-oxime
 requiring cross-check of waveform, perfusion, and another oxygenation signal; endotracheal-tube
 migration after repositioning with unilateral ventilation and progressive gas-exchange change.
 
+### Wave B critical-care slice 1: ARDS lung-protective ventilation
+
+The first critical-care slice activates the indexable `/critical-care` module with an intubated
+adult whose authored moderate-severe ARDS panel combines 500 mL tidal volume, plateau pressure
+32 cm H₂O, persistent hypoxemia, passive synchrony, and preserved circulation. Learners translate
+height and sex into a fixed 61.5 kg predicted body weight rather than using actual weight, record a
+370 mL protective setting and plateau-pressure limit, then reassess mechanics, gas exchange,
+synchrony, and circulation after 30 minutes.
+
+The focused tutor pairs “size the breath to the lung” with “every setting owes you a response.”
+Persistent hypoxemia leads to protocolized PEEP/FiO₂ and experienced-team prolonged-prone intent,
+while bounded hypercapnia remains a monitored tradeoff rather than a universal target. The case does
+not diagnose, sample blood, program a ventilator, manage sedation or paralysis, prone, recruit,
+select ECMO, liberate support, or predict outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute

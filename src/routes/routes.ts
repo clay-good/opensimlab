@@ -10,6 +10,8 @@ import { MODULES } from '@platform/modules/registry';
 import { SCENARIOS } from '@anesthesia/scenarios';
 import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
 import { EMERGENCY_MEDICINE_SCENARIOS } from '../modules/emergency-medicine/scenarios';
+import { CRITICAL_CARE_SCENARIOS } from '../modules/critical-care/scenarios';
+import type { Scenario } from '@anesthesia/scenarios/types';
 
 export const SITE_ORIGIN = 'https://opensimlab.com';
 export const SITE_NAME = 'Open Sim Lab';
@@ -31,7 +33,7 @@ export interface RouteMetadata {
  * A briefing's description: the patient, the procedure, and what it teaches. Kept
  * between 110 and 160 characters, which the discoverability tests assert.
  */
-function scenarioDescription(scenario: (typeof SCENARIOS)[number] | (typeof EMERGENCY_MEDICINE_SCENARIOS)[number]): string {
+function scenarioDescription(scenario: Scenario): string {
   const { patient, metadata } = scenario;
   const who = `${patient.ageYears}-year-old ${patientPersonNoun(patient)}`;
   let description = `A ${who} for ${patient.procedure.toLowerCase()}.`;
@@ -115,6 +117,23 @@ export const ROUTES: readonly RouteMetadata[] = [
     title: formatTitle(scenario.metadata.title.length > 40
       ? `${scenario.metadata.title.slice(0, 37)}…`
       : scenario.metadata.title),
+    description: scenarioDescription(scenario),
+    indexable: true,
+    structuredData: ['LearningResource'] as const,
+    heading: scenario.metadata.title,
+  })),
+  {
+    path: '/critical-care',
+    title: formatTitle('Critical care simulator'),
+    description: 'Rehearse ICU organ support through serial ventilation, circulation, neurologic, renal, device, escalation, and handoff decisions over time.',
+    indexable: true,
+    structuredData: ['SoftwareApplication'],
+    heading: 'Critical care simulator',
+  },
+  ...CRITICAL_CARE_SCENARIOS.map((scenario) => ({
+    path: `/critical-care/scenario/${scenario.metadata.id}`,
+    title: formatTitle(scenario.metadata.title.length > 40
+      ? `${scenario.metadata.title.slice(0, 37)}…` : scenario.metadata.title),
     description: scenarioDescription(scenario),
     indexable: true,
     structuredData: ['LearningResource'] as const,

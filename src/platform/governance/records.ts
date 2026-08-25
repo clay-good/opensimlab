@@ -12,6 +12,7 @@ import { DRUG_CARDS } from '@anesthesia/content/drug-cards';
 import { SCENARIOS } from '@anesthesia/scenarios';
 import { REGIONS } from '@anesthesia/region/profiles';
 import { EMERGENCY_MEDICINE_SCENARIOS } from '../../modules/emergency-medicine/scenarios';
+import { CRITICAL_CARE_SCENARIOS } from '../../modules/critical-care/scenarios';
 import type { MaturitySubjectInput } from '@platform/catalog/maturity';
 
 /**
@@ -50,6 +51,12 @@ export function reviewableItems(): ReviewableItem[] {
       review: scenario.metadata.clinicalReview,
       domains: ['emergency-medicine'],
     });
+  }
+
+  for (const scenario of CRITICAL_CARE_SCENARIOS) {
+    items.push({ id: scenario.metadata.id, kind: 'scenario',
+      contentVersion: scenario.metadata.version, review: scenario.metadata.clinicalReview,
+      domains: ['critical-care'] });
   }
 
   for (const explainer of EXPLAINERS) {

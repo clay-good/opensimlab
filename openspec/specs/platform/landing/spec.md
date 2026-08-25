@@ -93,12 +93,12 @@ Below the primary action the page SHALL present at most three short supporting f
 
 ### Requirement: Modules Directory Is Honest About What Exists
 
-The landing page SHALL name every module with an unambiguous status — Anesthesia as available, and the planned modules such as cardiology, oncology and critical care marked as planned — with no date promised. The one-line scope of each module SHALL be carried by the About page and by that module's own route, so the front door states the status without becoming a catalogue.
+The landing page SHALL name every module with an unambiguous status — Anesthesia, emergency medicine, and critical care as available, and planned modules such as cardiology and oncology marked as planned — with no date promised. The one-line scope of each module SHALL be carried by the About page and by that module's own route, so the front door states the status without becoming a catalogue.
 
 #### Scenario: Available and planned are distinguishable on the front door
 
 - **WHEN** the landing page's module line renders
-- **THEN** the available module reads as the live destination and the planned ones are named as planned in the same line, with no date, no quarter and no countdown
+- **THEN** available modules read as live destinations and the planned ones are named as planned in the same line, with no date, no quarter and no countdown
 
 #### Scenario: The scope of each module is one click away
 

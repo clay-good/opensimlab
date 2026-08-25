@@ -7,6 +7,7 @@ import {
   buildAnesthesiaCompletionCatalog, buildModuleCompletionCatalog,
 } from '@anesthesia/catalog/scenario-completion';
 import { EMERGENCY_MEDICINE_SCENARIOS } from '../../src/modules/emergency-medicine/scenarios';
+import { CRITICAL_CARE_SCENARIOS } from '../../src/modules/critical-care/scenarios';
 import { buildScenarioQualityCatalog } from '@platform/catalog/scenario-quality';
 import {
   buildMaturityCatalog, MATURITY_RECORD_SCHEMA, MATURITY_STATUSES,
@@ -24,6 +25,12 @@ const emergencyCompletion = buildModuleCompletionCatalog(
 const emergencyCatalog = buildMaturityCatalog(
   emergencyCompletion, buildScenarioQualityCatalog(emergencyCompletion),
 );
+const criticalCareCompletion = buildModuleCompletionCatalog(
+  CRITICAL_CARE_SCENARIOS, ENGINE_VERSION, 'critical-care', 'icu', 'state_transition',
+);
+const criticalCareCatalog = buildMaturityCatalog(
+  criticalCareCompletion, buildScenarioQualityCatalog(criticalCareCompletion),
+);
 
 describe('exact-version maturity records', () => {
   it('supports the complete public vocabulary and records every clinical item honestly', () => {
@@ -32,7 +39,8 @@ describe('exact-version maturity records', () => {
       'institution_endorsed', 'withdrawn',
     ]);
     expect(validateMaturityCatalog(catalog)).toEqual([]);
-    expect(catalog.recordCount + emergencyCatalog.recordCount).toBe(reviewableItems().length);
+    expect(catalog.recordCount + emergencyCatalog.recordCount + criticalCareCatalog.recordCount)
+      .toBe(reviewableItems().length);
     expect(catalog.recordCount).toBe(54);
     expect(catalog.records.every((record) => record.status === 'draft')).toBe(true);
     expect(maturityFor(catalog, 'explanation', 'hysteresis-and-effect-site-lag', '0.1.0'))
@@ -41,6 +49,9 @@ describe('exact-version maturity records', () => {
     expect(maturityFor(catalog, 'practice-region', 'US', '0.1.0')).toBeDefined();
     expect(maturityFor(
       emergencyCatalog, 'scenario', 'undifferentiated-shock', '0.1.0',
+    )?.status).toBe('draft');
+    expect(maturityFor(
+      criticalCareCatalog, 'scenario', 'ards-lung-protective-ventilation', '0.1.0',
     )?.status).toBe('draft');
   });
 
@@ -84,5 +95,7 @@ describe('exact-version maturity records', () => {
       .toEqual(catalog);
     expect(JSON.parse(readFileSync(join(publicCatalog, 'emergency-medicine-maturity.json'), 'utf8')))
       .toEqual(emergencyCatalog);
+    expect(JSON.parse(readFileSync(join(publicCatalog, 'critical-care-maturity.json'), 'utf8')))
+      .toEqual(criticalCareCatalog);
   });
 });

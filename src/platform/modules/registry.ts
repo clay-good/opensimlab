@@ -97,14 +97,14 @@ export const MODULES: readonly ModuleDeclaration[] = [
     id: 'critical-care',
     route: 'critical-care',
     displayName: 'Critical care',
-    description: 'Planned.',
+    description: 'Reassess organ support over time and make each ventilator, circulation, and escalation change earn a measured response.',
     audience: 'Residents and advanced practice trainees.',
     prerequisites: 'The anaesthesia module, or equivalent familiarity with ventilation and vasoactive support.',
-    status: 'planned',
+    status: 'available',
     plannedScope:
-      'Ventilator management, shock states, and sedation over hours, reusing the physiology layer '
-      + 'with a longer timescale.',
-    timescale: { unit: 'hours', stepSeconds: 60, speeds: [1, 10, 60, 360] },
+      'Twenty-four bounded ICU rehearsals spanning ventilation, shock, neurologic and renal support, '
+      + 'device failures, longitudinal reassessment, and handoff, beginning with ARDS ventilation.',
+    timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
 ];
 

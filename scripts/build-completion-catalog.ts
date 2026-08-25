@@ -8,6 +8,7 @@ import {
   buildModuleCompletionCatalog,
 } from '@anesthesia/catalog/scenario-completion';
 import { EMERGENCY_MEDICINE_SCENARIOS } from '../src/modules/emergency-medicine/scenarios';
+import { CRITICAL_CARE_SCENARIOS } from '../src/modules/critical-care/scenarios';
 import { SCENARIO_COMPLETION_SCHEMA } from '@platform/catalog/scenario-completion';
 import { buildScenarioQualityCatalog, QUALITY_SCHEMAS } from '@platform/catalog/scenario-quality';
 import { buildMaturityCatalog, MATURITY_RECORD_SCHEMA } from '@platform/catalog/maturity';
@@ -33,6 +34,10 @@ const emergencyCompletion = buildModuleCompletionCatalog(
   'state_transition',
 );
 const emergencyQuality = buildScenarioQualityCatalog(emergencyCompletion);
+const criticalCareCompletion = buildModuleCompletionCatalog(
+  CRITICAL_CARE_SCENARIOS, ENGINE_VERSION, 'critical-care', 'icu', 'state_transition',
+);
+const criticalCareQuality = buildScenarioQualityCatalog(criticalCareCompletion);
 writeFileSync(
   join(target, 'scenario-catalog.schema.json'),
   `${JSON.stringify(SCENARIO_CATALOG_SCHEMA, null, 2)}\n`,
@@ -71,6 +76,10 @@ writeFileSync(
   `${JSON.stringify(emergencyQuality, null, 2)}\n`,
   'utf8',
 );
+writeFileSync(join(target, 'critical-care-completion-audit.json'),
+  `${JSON.stringify(criticalCareCompletion, null, 2)}\n`, 'utf8');
+writeFileSync(join(target, 'critical-care-quality-audit.json'),
+  `${JSON.stringify(criticalCareQuality, null, 2)}\n`, 'utf8');
 writeFileSync(
   join(target, 'maturity-record.schema.json'),
   `${JSON.stringify(MATURITY_RECORD_SCHEMA, null, 2)}\n`,
@@ -86,9 +95,11 @@ writeFileSync(
   `${JSON.stringify(buildMaturityCatalog(emergencyCompletion, emergencyQuality), null, 2)}\n`,
   'utf8',
 );
+writeFileSync(join(target, 'critical-care-maturity.json'),
+  `${JSON.stringify(buildMaturityCatalog(criticalCareCompletion, criticalCareQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'asset-licenses.json'), `${JSON.stringify(ASSET_LICENSE_MANIFEST, null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'evidence-sources.json'), `${JSON.stringify(buildEvidenceSourceManifest(SOURCES), null, 2)}\n`, 'utf8');
 
 process.stdout.write(
-  `catalog: audited ${SCENARIOS.length} anesthesia and ${EMERGENCY_MEDICINE_SCENARIOS.length} emergency medicine scenarios\n`,
+  `catalog: audited ${SCENARIOS.length} anesthesia, ${EMERGENCY_MEDICINE_SCENARIOS.length} emergency medicine, and ${CRITICAL_CARE_SCENARIOS.length} critical care scenarios\n`,
 );
