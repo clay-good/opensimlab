@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 86 reports AF reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 86;
+/** Bumped whenever the message shape changes incompatibly. Version 87 reports clinic STEMI state. */
+export const WORKER_PROTOCOL_VERSION = 87;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -650,6 +650,17 @@ export interface EquipmentSnapshot {
       readonly hemodynamicallyStable: true;
       readonly durationCertain: false;
       readonly exactScoreCalculated: false;
+      readonly treatmentDelivered: false;
+    };
+    readonly clinicStemiAssessment?: {
+      readonly patternAtTick: number | null;
+      readonly dangerAtTick: number | null;
+      readonly transferAtTick: number | null;
+      readonly bridgeAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly pciCapableSetting: false;
+      readonly biomarkerDelayUsed: false;
+      readonly downstreamTherapySelected: false;
       readonly treatmentDelivered: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */

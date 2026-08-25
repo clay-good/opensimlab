@@ -4014,6 +4014,25 @@ export function objectiveFindings(
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Follow-up and explicit acute-change triggers closed the bounded evaluation without predicting outcome.' : 'Follow-up and the acute-change safety net were absent or preceded the shared pathway.', atTick: safetyNet?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['reconcile-clinic-stemi-pattern', 'screen-clinic-stemi-danger',
+      'activate-clinic-stemi-transfer', 'record-clinic-stemi-bridge',
+      'reassess-clinic-stemi-handoff'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'stemi-recognition-and-first-actions');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The clinic STEMI first-actions lesson was not active.' } satisfies ObjectiveFinding;
+      const pattern = log.find((event) => /^clinic-stemi-pattern-reconciled-\d+$/.test(event.eventId));
+      const danger = log.find((event) => /^clinic-stemi-danger-screened-\d+$/.test(event.eventId));
+      const transfer = log.find((event) => /^clinic-stemi-transfer-activated-\d+$/.test(event.eventId));
+      const bridge = log.find((event) => /^clinic-stemi-bridge-recorded-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^clinic-stemi-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-clinic-stemi-pattern') return { ...base, outcome: pattern ? 'met' : 'not-met', finding: pattern ? 'Ongoing symptoms, exact timing, the fixed diagnostic ECG report, and physiology were reconciled without live interpretation.' : 'The time-sensitive pattern was not reconciled.', atTick: pattern?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'screen-clinic-stemi-danger') { const ordered = pattern && danger && pattern.tick <= danger.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Stability, complications, alternatives, bleeding, allergy, and oxygenation were screened while escalation stayed active.' : 'The parallel danger screen was absent or preceded recognition.', atTick: danger?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-clinic-stemi-transfer') { const ordered = pattern && transfer && pattern.tick <= transfer.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'EMS and the regional STEMI system were activated without biomarker delay or private transport.' : 'Regional-system activation was absent or preceded recognition.', atTick: transfer?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'record-clinic-stemi-bridge') { const ordered = danger && transfer && bridge && danger.tick <= bridge.tick && transfer.tick <= bridge.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Aspirin suitability, monitored transport, defibrillation readiness, access, and change triggers were recorded without selecting downstream therapy.' : 'The clinic bridge was absent or preceded activation or the danger screen.', atTick: bridge?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = bridge && handoff && bridge.tick <= handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Exact onset, ECG, physiology, allergy, medication, intervention, and change data traveled in the reassessment and handoff.' : 'Reassessment and receiving-team handoff were absent or preceded the clinic bridge.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (['reconcile-nstemi-serial-trajectory', 'verify-nstemi-and-alternatives',
       'screen-nstemi-very-high-risk-features', 'classify-nstemi-invasive-strategy',
       'record-nstemi-monitoring-and-handoff'].includes(objective.id)) {

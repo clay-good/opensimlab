@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 111,
+  "sourceCount": 113,
   "sources": [
     {
       "id": "association-qrh-2023",
@@ -1356,10 +1356,36 @@
       "publication": "Circulation",
       "year": 2025,
       "locator": "151:e771-e862; doi:10.1161/CIR.0000000000001309",
-      "usedFor": "The NSTEMI risk-reassessment boundary: intermediate- or high-risk NSTE-ACS supports an invasive approach during hospitalization, while lower ischemic risk requires further risk stratification rather than automatic invasive treatment.",
+      "usedFor": "The STEMI and NSTEMI boundaries: STEMI activates a time-sensitive regional reperfusion pathway without biomarker delay, while NSTE-ACS invasive timing follows current risk, bleeding, patient, regional, and system context.",
       "verifiedAgainst": "NCBI E-utilities record, field by field",
       "verifiedOn": "2026-08-25",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/40014670/"
+    },
+    {
+      "id": "jacobs-stemi-systems-of-care-2021",
+      "pmid": "34601908",
+      "authors": "Jacobs AK, Ali MJ, Best PJ, et al",
+      "title": "Systems of Care for ST-Segment-Elevation Myocardial Infarction: A Policy Statement From the American Heart Association",
+      "publication": "Circulation",
+      "year": 2021,
+      "locator": "144:e310-e327; doi:10.1161/CIR.0000000000001025",
+      "usedFor": "The clinic STEMI routing boundary: regional systems should use planned EMS, referring-setting, receiving-center, activation, acceptance, and transport pathways.",
+      "verifiedAgainst": "NCBI E-utilities record, field by field",
+      "verifiedOn": "2026-08-25",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/34601908/"
+    },
+    {
+      "id": "aha-red-cross-first-aid-2024",
+      "pmid": "39540278",
+      "authors": "Hewett Brumberg EK, Douma MJ, Alibertis K, et al",
+      "title": "2024 American Heart Association and American Red Cross Guidelines for First Aid",
+      "publication": "Circulation",
+      "year": 2024,
+      "locator": "150:e519-e579; doi:10.1161/CIR.0000000000001281",
+      "usedFor": "The clinic STEMI bridge: activate EMS rather than private transport, consider aspirin only when appropriate while awaiting EMS, and do not use routine oxygen for acute coronary syndrome without hypoxemia.",
+      "verifiedAgainst": "https://cpr.heart.org/en/resuscitation-science/2024-first-aid-guidelines",
+      "verifiedOn": "2026-08-25",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/39540278/"
     },
     {
       "id": "byrne-acute-coronary-syndromes-2023",

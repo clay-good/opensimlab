@@ -873,6 +873,9 @@ export function Cockpit({
           onNstemiRiskResponse={(action) => session.act({
             type: 'nstemi-risk-response', payload: { action },
           })}
+          onClinicStemiResponse={(action) => session.act({
+            type: 'clinic-stemi-response', payload: { action },
+          })}
           onHeartFailureResponse={(action) => session.act({
             type: 'heart-failure-response', payload: { action },
           })}

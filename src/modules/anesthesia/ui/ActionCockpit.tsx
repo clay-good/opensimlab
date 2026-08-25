@@ -570,6 +570,17 @@ export interface ActionCockpitProps {
       readonly exactScoreCalculated: false;
       readonly treatmentDelivered: false;
     };
+    readonly clinicStemiAssessment?: {
+      readonly patternAtTick: number | null;
+      readonly dangerAtTick: number | null;
+      readonly transferAtTick: number | null;
+      readonly bridgeAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly pciCapableSetting: false;
+      readonly biomarkerDelayUsed: false;
+      readonly downstreamTherapySelected: false;
+      readonly treatmentDelivered: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -914,6 +925,11 @@ export interface ActionCockpitProps {
       | 'screen-nstemi-very-high-risk-features' | 'record-nstemi-invasive-strategy'
       | 'record-nstemi-monitoring-and-handoff',
   ) => void;
+  readonly onClinicStemiResponse?: (
+    action: 'reconcile-clinic-stemi-pattern' | 'screen-clinic-stemi-danger'
+      | 'activate-clinic-stemi-transfer' | 'record-clinic-stemi-bridge'
+      | 'reassess-clinic-stemi-handoff',
+  ) => void;
   readonly onHeartFailureResponse?: (
     action: 'reconcile-heart-failure-congestion-and-perfusion'
       | 'review-heart-failure-diuretic-response'
@@ -1150,6 +1166,10 @@ export function crisisResponseAvailability(
     hasNstemiRiskResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'nstemi-risk-reassessment',
     ),
+    hasClinicStemiResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'stemi-recognition-and-first-actions',
+    ),
     hasHeartFailureResponse: scenario.timeline.some(
       (event) => event.type === 'narrative'
         && event.target === 'acute-decompensated-heart-failure',
@@ -1255,6 +1275,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'septic-shock-resuscitation')
       || (event.type === 'narrative' && event.target === 'stable-chest-pain-evaluation')
       || (event.type === 'narrative' && event.target === 'nstemi-risk-reassessment')
+      || (event.type === 'narrative' && event.target === 'stemi-recognition-and-first-actions')
       || (event.type === 'narrative' && event.target === 'acute-decompensated-heart-failure')
       || (event.type === 'narrative' && event.target === 'atrial-fibrillation-with-rapid-response')
       || (event.type === 'narrative' && [
@@ -1294,6 +1315,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasSepticShockResuscitationResponse,
     hasStableChestPainResponse,
     hasNstemiRiskResponse,
+    hasClinicStemiResponse,
     hasHeartFailureResponse,
     hasAfRvrResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
@@ -1353,6 +1375,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse;
   const hasAnyNonAcuteAssessment = hasStableChestPainResponse || hasNstemiRiskResponse
+    || hasClinicStemiResponse
     || hasHeartFailureResponse || hasAfRvrResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
@@ -1384,7 +1407,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasAfRvrResponse
+  const responseTray = hasClinicStemiResponse
+    ? { id: 'crisis', label: 'STEMI first actions' } as const
+    : hasAfRvrResponse
     ? { id: 'crisis', label: 'AF reassessment' } as const
     : hasHeartFailureResponse
     ? { id: 'crisis', label: 'Heart-failure review' } as const
@@ -1547,6 +1572,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasSepticShockResuscitationResponse
     || hasStableChestPainResponse
     || hasNstemiRiskResponse
+    || hasClinicStemiResponse
     || hasHeartFailureResponse
     || hasAfRvrResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
@@ -2059,6 +2085,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNstemiRiskResponse && (
               <NstemiRiskTray assessment={props.resuscitation.nstemiRiskAssessment}
                 onAction={props.onNstemiRiskResponse ?? (() => {})} />
+            )}
+            {hasClinicStemiResponse && (
+              <ClinicStemiTray assessment={props.resuscitation.clinicStemiAssessment}
+                onAction={props.onClinicStemiResponse ?? (() => {})} />
             )}
             {hasHeartFailureResponse && (
               <HeartFailureTray assessment={props.resuscitation.heartFailureAssessment}
@@ -5669,6 +5699,60 @@ function SepticShockResuscitationTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-septic-shock-trajectory')}>Review 10-minute trajectory</Button>
         </div>
         <p className="field__hint">The +2% response and B-lines are case facts, not universal cutoffs. This screen gives no fluid or drug and performs no drainage.</p>
+      </section>
+    </div>
+  );
+}
+
+function ClinicStemiTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['clinicStemiAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onClinicStemiResponse']>;
+}) {
+  const pattern = assessment?.patternAtTick != null;
+  const danger = assessment?.dangerAtTick != null;
+  const transfer = assessment?.transferAtTick != null;
+  const bridge = assessment?.bridgeAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="clinic-stemi-pattern-title">
+        <div id="clinic-stemi-pattern-title" className="syringe__name">Recognize, then open the route.</div>
+        <Badge kind="teaching">non-PCI clinic · authored diagnostic 12-lead</Badge>
+        <div className="syringe__meta">22 min ongoing · BP 128/76 · SpO₂ 96% room air</div>
+        <p className="syringe__remaining" role="status">
+          {transfer && danger ? 'EMS + regional system active · authored danger screen reviewed'
+            : transfer ? 'EMS + regional system active · screen danger in parallel'
+              : danger ? 'Danger screen complete · activate EMS now'
+                : pattern ? 'Pattern reconciled · activation and danger review are parallel'
+                  : 'The teaching monitor is not a diagnostic 12-lead.'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={pattern}
+            onClick={() => onAction('reconcile-clinic-stemi-pattern')}>Reconcile symptoms + fixed ECG</Button>
+          <Button className="crisis-drug__action" disabled={!pattern || transfer}
+            onClick={() => onAction('activate-clinic-stemi-transfer')}>Activate EMS + regional STEMI system</Button>
+          <Button className="crisis-drug__action" disabled={!pattern || danger}
+            onClick={() => onAction('screen-clinic-stemi-danger')}>Screen danger in parallel</Button>
+        </div>
+        <p className="field__hint">Activate EMS now. Do not use private transport or delay for biomarkers, checklist completion, or paperwork.</p>
+      </section>
+      <section className="syringe" aria-labelledby="clinic-stemi-bridge-title">
+        <div id="clinic-stemi-bridge-title" className="syringe__name">Keep the bridge simple and observable.</div>
+        <Badge kind="teaching">aspirin suitability · monitor · transport · handoff</Badge>
+        <div className="syringe__meta">regional system selects destination + reperfusion pathway</div>
+        <p className="syringe__remaining" role="status">
+          {handoff ? 'Reassessed + handed off · downstream care remains open'
+            : bridge ? 'Clinic bridge recorded · reassess and hand off'
+              : transfer && danger ? 'Activation + danger screen complete · bridge is ready'
+                : 'Activation and danger review come first.'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!transfer || !danger || bridge}
+            onClick={() => onAction('record-clinic-stemi-bridge')}>Record aspirin + monitored-transport intent</Button>
+          <Button className="crisis-drug__action" disabled={!bridge || handoff}
+            onClick={() => onAction('reassess-clinic-stemi-handoff')}>Reassess + hand off the trajectory</Button>
+        </div>
+        <p className="field__hint">No routine oxygen at 96%. P2Y12, anticoagulation, fibrinolysis, PCI, nitrate, and opioid choices are not controls here.</p>
       </section>
     </div>
   );

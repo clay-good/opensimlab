@@ -981,6 +981,17 @@
       "fidelityClass": "state_transition"
     },
     {
+      "scenarioId": "stemi-recognition-and-first-actions",
+      "contentVersion": "0.1.0",
+      "moduleId": "cardiology",
+      "maturity": "draft",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition"
+    },
+    {
       "scenarioId": "nstemi-risk-reassessment",
       "contentVersion": "0.1.0",
       "moduleId": "cardiology",

@@ -536,6 +536,11 @@ export class AnesthesiaEngine {
   private afRvrRateIntentAtTick: number | null = null;
   private afRvrStrokePreventionAtTick: number | null = null;
   private afRvrReassessmentAtTick: number | null = null;
+  private clinicStemiPatternAtTick: number | null = null;
+  private clinicStemiDangerAtTick: number | null = null;
+  private clinicStemiTransferAtTick: number | null = null;
+  private clinicStemiBridgeAtTick: number | null = null;
+  private clinicStemiHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -4087,6 +4092,52 @@ export class AnesthesiaEngine {
         this.log('advisory', 'assessment', `stable-chest-pain-safety-net-recorded-${this.currentTick}`, 'Follow-up and urgent reassessment for rest or prolonged symptoms, increasing frequency, severity, duration or lower threshold, syncope, marked dyspnea, instability, or another acute concern were recorded. No disposition, diagnosis, treatment, event forecast, or outcome was supplied.', { urgentChangeTriggersExplicit: true, outcomePredicted: false });
         break;
       }
+      case 'clinic-stemi-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'stemi-recognition-and-first-actions');
+        const valid = ['reconcile-clinic-stemi-pattern', 'screen-clinic-stemi-danger',
+          'activate-clinic-stemi-transfer', 'record-clinic-stemi-bridge',
+          'reassess-clinic-stemi-handoff'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `clinic-stemi-response-refused-${this.currentTick}`, supported ? 'The clinic STEMI action was not one of the listed choices. Nothing changed.' : 'The bounded clinic STEMI choices are available only in the declared lesson.'); break; }
+        if (response === 'reconcile-clinic-stemi-pattern') {
+          if (this.clinicStemiPatternAtTick !== null) { this.log('warning', 'assessment', `clinic-stemi-pattern-refused-${this.currentTick}`, 'The symptom and fixed ECG trajectory has already been reconciled.'); break; }
+          this.clinicStemiPatternAtTick = this.currentTick;
+          this.log('critical', 'assessment', `clinic-stemi-pattern-reconciled-${this.currentTick}`, 'Twenty-two minutes of ongoing central pressure, diaphoresis, and nausea were reconciled with the fixed diagnostic inferior-STEMI 12-lead report and current physiology. The ECG was not acquired or interpreted in this lab.', { authoredDiagnosis: 'inferior-stemi', liveEcgInterpreted: false });
+          break;
+        }
+        if (this.clinicStemiPatternAtTick === null) { this.log('warning', 'assessment', `clinic-stemi-order-refused-${this.currentTick}`, 'Reconcile the time-sensitive symptom and fixed ECG trajectory before recording the response.'); break; }
+        if (response === 'activate-clinic-stemi-transfer') {
+          if (this.clinicStemiTransferAtTick !== null) { this.log('warning', 'assessment', `clinic-stemi-transfer-refused-${this.currentTick}`, 'EMS and the regional reperfusion pathway have already been activated.'); break; }
+          this.clinicStemiTransferAtTick = this.currentTick;
+          this.log('critical', 'assessment', `clinic-stemi-transfer-activated-${this.currentTick}`, 'EMS and the regional STEMI/reperfusion system were activated from the non-PCI clinic. The fixed ECG is transmitted and the system-selected receiving team is pre-alerted. Private transport and biomarker delay were rejected; the regional system retains individualized destination and reperfusion selection.', { emsActivated: true, biomarkerDelayUsed: false, selfTransportSelected: false, downstreamTherapySelected: false });
+          break;
+        }
+        if (response === 'screen-clinic-stemi-danger') {
+          if (this.clinicStemiDangerAtTick !== null) { this.log('warning', 'assessment', `clinic-stemi-danger-refused-${this.currentTick}`, 'Current danger, alternative, bleeding, allergy, and oxygenation context has already been screened.'); break; }
+          this.clinicStemiDangerAtTick = this.currentTick;
+          this.log('critical', 'assessment', `clinic-stemi-danger-screened-${this.currentTick}`, 'The patient remains alert and warm at BP 128/76 mmHg, HR 62/min, and SpO₂ 96% on room air. No shock, acute heart failure, sustained arrhythmia, mechanical-complication finding, dissection pattern, active bleeding, or aspirin contraindication is authored. Escalation continues in parallel.', { hemodynamicallyStable: true, hypoxemiaPresent: false, routineOxygenSelected: false });
+          break;
+        }
+        if (this.clinicStemiDangerAtTick === null) { this.log('warning', 'assessment', `clinic-stemi-danger-order-refused-${this.currentTick}`, 'Screen current danger in parallel before recording the clinic bridge.'); break; }
+        if (this.clinicStemiTransferAtTick === null) { this.log('warning', 'assessment', `clinic-stemi-transfer-order-refused-${this.currentTick}`, 'Activate EMS and the receiving reperfusion pathway before recording the clinic bridge.'); break; }
+        if (response === 'record-clinic-stemi-bridge') {
+          if (this.clinicStemiBridgeAtTick !== null) { this.log('warning', 'assessment', `clinic-stemi-bridge-refused-${this.currentTick}`, 'The setting-bounded clinic bridge has already been recorded.'); break; }
+          this.clinicStemiBridgeAtTick = this.currentTick;
+          this.log('critical', 'assessment', `clinic-stemi-bridge-recorded-${this.currentTick}`, 'Protocol-bounded aspirin suitability and monitored-transport intent were recorded with rhythm, defibrillation readiness, access, and change triggers. No drug was delivered; routine oxygen, P2Y12 inhibitor, anticoagulant, fibrinolytic, and PCI selection were not supplied.', { aspirinIntentOnly: true, routineOxygenSelected: false, downstreamTherapySelected: false, treatmentDelivered: false });
+          break;
+        }
+        if (this.clinicStemiBridgeAtTick === null
+          || this.currentTick <= Math.max(this.clinicStemiDangerAtTick ?? 0,
+            this.clinicStemiTransferAtTick ?? 0, this.clinicStemiBridgeAtTick ?? 0)) {
+          this.log('warning', 'assessment', `clinic-stemi-handoff-order-refused-${this.currentTick}`, 'Record activation, the parallel danger screen, and the clinic bridge, then allow the next engine tick before reassessment and handoff.');
+          break;
+        }
+        if (this.clinicStemiHandoffAtTick !== null) { this.log('warning', 'assessment', `clinic-stemi-handoff-refused-${this.currentTick}`, 'Reassessment and the receiving-team handoff have already been recorded.'); break; }
+        this.clinicStemiHandoffAtTick = this.currentTick;
+        this.log('critical', 'assessment', `clinic-stemi-handoff-recorded-${this.currentTick}`, 'Symptoms, exact onset, fixed ECG report, rhythm, pressure, perfusion, oxygenation, allergy, medication, interventions, and interval change were reassessed and handed off after a later engine tick. Reperfusion, complications, disposition, and outcome remain open.', { exactOnsetHandedOff: true, receivingTeamPrealerted: true, outcomePredicted: false });
+        break;
+      }
       case 'nstemi-risk-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -6930,6 +6981,12 @@ export class AnesthesiaEngine {
         spo2Percent: 95, systolicMmHg: 146, diastolicMmHg: 92, meanArterialMmHg: 110 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'stemi-recognition-and-first-actions')) {
+      crisisState = { ...crisisState, heartRateBpm: 62, respiratoryRateBpm: 16,
+        spo2Percent: 96, systolicMmHg: 128, diastolicMmHg: 76,
+        meanArterialMmHg: 93, coreTemperatureC: 36.7 };
+    }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'nstemi-risk-reassessment')) {
       crisisState = { ...crisisState, heartRateBpm: 88, respiratoryRateBpm: 16,
         spo2Percent: 97, systolicMmHg: 132, diastolicMmHg: 78,
@@ -7794,6 +7851,20 @@ export class AnesthesiaEngine {
               hemodynamicallyStable: true,
               durationCertain: false,
               exactScoreCalculated: false,
+              treatmentDelivered: false,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'stemi-recognition-and-first-actions') ? {
+            clinicStemiAssessment: {
+              patternAtTick: this.clinicStemiPatternAtTick,
+              dangerAtTick: this.clinicStemiDangerAtTick,
+              transferAtTick: this.clinicStemiTransferAtTick,
+              bridgeAtTick: this.clinicStemiBridgeAtTick,
+              handoffAtTick: this.clinicStemiHandoffAtTick,
+              pciCapableSetting: false as const,
+              biomarkerDelayUsed: false,
+              downstreamTherapySelected: false,
               treatmentDelivered: false,
             },
           } : {}),

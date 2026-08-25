@@ -1048,6 +1048,23 @@ select a universal target, prescribe or deliver medication or anticoagulation, d
 cardioversion eligibility, perform cardioversion or ablation, determine disposition or prognosis,
 or predict recurrence or outcome.
 
+### Wave C cardiology slice 5: STEMI recognition and first actions
+
+The fifth cardiology slice begins in a non-PCI outpatient cardiology clinic with 22 minutes of
+ongoing central pressure, diaphoresis, and nausea. A fixed 12-lead report states an inferior STEMI
+pattern. The learner reconciles symptoms, timing, ECG report, and physiology, then activates EMS
+and the regional STEMI system immediately while screening current stability, immediate
+complications, dangerous alternatives, bleeding, allergy, and oxygenation in parallel. The fixed
+ECG is transmitted and the system-selected receiving team is pre-alerted without waiting for
+biomarkers, paperwork, a complete checklist, or private transport. Protocol-bounded aspirin, monitoring, defibrillation-readiness, access, and
+transport intent precede reassessment and an exact receiving-team handoff.
+
+This clinic recognition-and-routing lesson is distinct from the emergency-medicine PCI-capable
+STEMI lab, which rehearses ED cath-lab activation and aspirin, P2Y12-inhibitor, and anticoagulation
+preparation. It does not examine; acquire or interpret an ECG or test; diagnose a real patient;
+prescribe or deliver a drug; choose P2Y12 inhibition, anticoagulation, fibrinolysis, or PCI; perform
+a procedure; determine disposition; or predict complications or outcome.
+
 #### Respiratory medicine: 15
 
 Acute severe asthma; COPD exacerbation; community-acquired pneumonia with hypoxemia; pulmonary
