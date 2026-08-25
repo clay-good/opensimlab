@@ -416,6 +416,11 @@ export class AnesthesiaEngine {
   private autoPeepClassificationAtTick: number | null = null;
   private autoPeepCorrectionAtTick: number | null = null;
   private autoPeepReassessmentAtTick: number | null = null;
+  private mucusSupportAtTick: number | null = null;
+  private mucusIndicatorsAtTick: number | null = null;
+  private mucusSuctionAtTick: number | null = null;
+  private mucusReassessmentAtTick: number | null = null;
+  private mucusEscalationAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2930,6 +2935,57 @@ export class AnesthesiaEngine {
         this.autoPeepReassessmentAtTick = this.currentTick;
         this.log('critical', 'assessment', `auto-peep-response-reassessed-${this.currentTick}`,
           'Fixed response after 10 minutes: expiratory flow reaches zero before the next breath, total PEEP is 9 cm H₂O with set PEEP 5 cm H₂O and intrinsic PEEP 4 cm H₂O, peak pressure is 30 cm H₂O, plateau pressure remains 22 cm H₂O, all observed efforts trigger, SpO₂ is 93%, pH 7.27, PaCO₂ 58 mmHg, HR 98/min, and MAP 72 mmHg. The bounded hypercapnia remains under protocolized review; this is an authored response, not a setting prescription or outcome prediction.', { reassessmentMinutes: 10, expiratoryFlowReachesZero: true, totalPeepCmH2O: 9, intrinsicPeepCmH2O: 4, peakPressureCmH2O: 30, plateauPressureCmH2O: 22, mapMmHg: 72 });
+        break;
+      }
+      case 'mucus-plugging-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'mucus-plugging');
+        const valid = ['support-mucus-plugging-and-call-help', 'review-mucus-plugging-indicators',
+          'record-indicated-airway-suction-intent', 'reassess-mucus-plugging-response',
+          'escalate-persistent-mucus-plugging'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `mucus-plugging-response-refused-${this.currentTick}`,
+            supported ? 'The mucus-plugging action was not one of the listed choices. Nothing changed.'
+              : 'The bounded mucus-plugging choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'support-mucus-plugging-and-call-help') {
+          if (this.mucusSupportAtTick !== null) { this.log('warning', 'assessment', `mucus-support-refused-${this.currentTick}`, 'Oxygenation support and help have already been recorded.'); break; }
+          this.mucusSupportAtTick = this.currentTick;
+          this.log('critical', 'assessment', `mucus-support-recorded-${this.currentTick}`,
+            'Immediate oxygen-support intent, continuous monitoring, and respiratory-therapy plus senior ICU help were recorded while airway resistance is assessed. Oxygen delivery, team arrival, and rescue ventilation are not simulated.', { intentOnly: true, respiratoryTherapyHelp: true, seniorHelp: true });
+          break;
+        }
+        if (this.mucusSupportAtTick === null) { this.log('warning', 'assessment', `mucus-support-order-refused-${this.currentTick}`, 'Support oxygenation and call experienced help before airway-clearance intent.'); break; }
+        if (response === 'review-mucus-plugging-indicators') {
+          if (this.mucusIndicatorsAtTick !== null) { this.log('warning', 'assessment', `mucus-indicators-refused-${this.currentTick}`, 'The fixed retained-secretion panel has already been reviewed.'); break; }
+          this.mucusIndicatorsAtTick = this.currentTick;
+          this.log('critical', 'assessment', `mucus-indicators-reviewed-${this.currentTick}`,
+            'Fixed panel: coarse central sounds, visible thick tracheal-tube secretion, sawtooth expiratory flow, peak pressure 38 cm H₂O with passive plateau 23 cm H₂O, reduced left-base air entry, SpO₂ 87%, ETCO₂ 46 mmHg with continuous capnogram, HR 108/min, MAP 74 mmHg, unchanged tube depth and cuff, and connected circuit. These converge on retained secretion but do not diagnose location or exclude other airway, pleural, parenchymal, or equipment causes.', { visibleSecretions: true, sawtoothFlow: true, peakPressureCmH2O: 38, plateauPressureCmH2O: 23, spo2Percent: 87 });
+          break;
+        }
+        if (this.mucusIndicatorsAtTick === null) { this.log('warning', 'assessment', `mucus-indicators-order-refused-${this.currentTick}`, 'Review the patient, airway, graphics, mechanics, gas exchange, and circulation before suction intent.'); break; }
+        if (response === 'record-indicated-airway-suction-intent') {
+          if (this.mucusSuctionAtTick !== null) { this.log('warning', 'assessment', `mucus-suction-refused-${this.currentTick}`, 'The bounded suction intent has already been recorded.'); break; }
+          this.mucusSuctionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `mucus-suction-recorded-${this.currentTick}`,
+            'Preoxygenated, as-needed, initially shallow artificial-airway suction intent was recorded with routine saline instillation avoided and immediate physiologic reassessment required. No catheter, system, depth, pressure, duration, technique, secretion removal, or complication is simulated.', { intentOnly: true, preoxygenation: true, asNeeded: true, shallowFirst: true, routineSaline: false });
+          break;
+        }
+        if (this.mucusSuctionAtTick === null) { this.log('warning', 'assessment', `mucus-suction-order-refused-${this.currentTick}`, 'Record indicated airway-clearance intent before reviewing a response.'); break; }
+        if (response === 'reassess-mucus-plugging-response') {
+          if (this.mucusReassessmentAtTick !== null) { this.log('warning', 'assessment', `mucus-reassessment-refused-${this.currentTick}`, 'The fixed post-suction panel has already been reviewed.'); break; }
+          this.mucusReassessmentAtTick = this.currentTick;
+          this.log('critical', 'assessment', `mucus-response-reassessed-${this.currentTick}`,
+            'Fixed response after the suction proxy: the catheter passes, thick secretion is reported removed, the sawtooth flow pattern resolves, peak pressure falls to 30 cm H₂O with plateau 23 cm H₂O, SpO₂ rises to 92%, ETCO₂ is 44 mmHg, HR is 98/min, and MAP is 76 mmHg. Reduced left-base air entry persists, so central-airway improvement does not close the case.', { catheterPasses: true, secretionRemoved: true, sawtoothFlow: false, peakPressureCmH2O: 30, plateauPressureCmH2O: 23, spo2Percent: 92, persistentFocalFinding: true });
+          break;
+        }
+        if (this.mucusReassessmentAtTick === null) { this.log('warning', 'assessment', `mucus-reassessment-order-refused-${this.currentTick}`, 'Reassess the whole patient after airway-clearance intent before escalation.'); break; }
+        if (this.mucusEscalationAtTick !== null) { this.log('warning', 'assessment', `mucus-escalation-refused-${this.currentTick}`, 'The persistent focal concern has already been escalated.'); break; }
+        this.mucusEscalationAtTick = this.currentTick;
+        this.log('critical', 'assessment', `mucus-escalation-recorded-${this.currentTick}`,
+          'Urgent chest-imaging intent and experienced airway evaluation were recorded for persistent left-base volume-loss concern while tube migration, pneumothorax, consolidation, blood, foreign body, and equipment problems remain open. Bronchoscopy is not routine; its indication, timing, findings, technique, complications, and outcome remain outside this lesson.', { intentOnly: true, imaging: true, experiencedAirwayReview: true, routineBronchoscopy: false });
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -6111,6 +6167,13 @@ export class AnesthesiaEngine {
           classificationAtTick: this.autoPeepClassificationAtTick,
           correctionAtTick: this.autoPeepCorrectionAtTick,
           reassessmentAtTick: this.autoPeepReassessmentAtTick,
+        },
+        mucusPluggingAssessment: {
+          supportAtTick: this.mucusSupportAtTick,
+          indicatorsAtTick: this.mucusIndicatorsAtTick,
+          suctionAtTick: this.mucusSuctionAtTick,
+          reassessmentAtTick: this.mucusReassessmentAtTick,
+          escalationAtTick: this.mucusEscalationAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

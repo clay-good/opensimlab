@@ -382,6 +382,13 @@ export interface ActionCockpitProps {
       readonly correctionAtTick: number | null;
       readonly reassessmentAtTick: number | null;
     };
+    readonly mucusPluggingAssessment?: {
+      readonly supportAtTick: number | null;
+      readonly indicatorsAtTick: number | null;
+      readonly suctionAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+      readonly escalationAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -611,6 +618,11 @@ export interface ActionCockpitProps {
       | 'classify-auto-peep-pattern' | 'record-auto-peep-correction-intent'
       | 'reassess-auto-peep-response',
   ) => void;
+  readonly onMucusPluggingResponse?: (
+    action: 'support-mucus-plugging-and-call-help' | 'review-mucus-plugging-indicators'
+      | 'record-indicated-airway-suction-intent' | 'reassess-mucus-plugging-response'
+      | 'escalate-persistent-mucus-plugging',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -763,6 +775,9 @@ export function crisisResponseAvailability(
     hasAutoPeepResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'auto-peep',
     ),
+    hasMucusPluggingResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'mucus-plugging',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -838,6 +853,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'escalating-hypoxemia')
       || (event.type === 'narrative' && event.target === 'ventilator-dyssynchrony')
       || (event.type === 'narrative' && event.target === 'auto-peep')
+      || (event.type === 'narrative' && event.target === 'mucus-plugging')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -853,7 +869,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasExtubationReadinessResponse, hasCiedPlanningResponse, hasPostoperativeHandoffResponse,
     hasUndifferentiatedShockResponse, hasSepticShockResponse, hasHemorrhagicShockResponse,
     hasCardiacTamponadeResponse, hasEmergencyAnaphylaxisResponse, hasAdultAsthmaResponse,
-    hasCopdExacerbationResponse, hasAutoPeepResponse,
+    hasCopdExacerbationResponse, hasAutoPeepResponse, hasMucusPluggingResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -899,7 +915,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasDiabeticKetoacidosisResponse || hasHyperkalemiaResponse
     || hasSevereHyponatremiaResponse || hasOpioidToxicityResponse || hasHeatStrokeResponse
     || hasTraumaPrimarySurveyResponse || hasAcuteAorticSyndromeResponse || hasArdsLungProtectiveResponse
-    || hasEscalatingHypoxemiaResponse || hasVentilatorDyssynchronyResponse || hasAutoPeepResponse;
+    || hasEscalatingHypoxemiaResponse || hasVentilatorDyssynchronyResponse || hasAutoPeepResponse
+    || hasMucusPluggingResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -919,8 +936,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasHyperkalemiaResponse || hasSevereHyponatremiaResponse || hasOpioidToxicityResponse
     || hasHeatStrokeResponse || hasTraumaPrimarySurveyResponse || hasAcuteAorticSyndromeResponse
     || hasArdsLungProtectiveResponse || hasEscalatingHypoxemiaResponse
-    || hasVentilatorDyssynchronyResponse || hasAutoPeepResponse;
-  const responseTray = hasAutoPeepResponse
+    || hasVentilatorDyssynchronyResponse || hasAutoPeepResponse || hasMucusPluggingResponse;
+  const responseTray = hasMucusPluggingResponse
+    ? { id: 'crisis', label: 'Mucus plugging' } as const
+    : hasAutoPeepResponse
     ? { id: 'crisis', label: 'Auto-PEEP' } as const
     : hasVentilatorDyssynchronyResponse
     ? { id: 'crisis', label: 'Ventilator dyssynchrony' } as const
@@ -1013,6 +1032,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasEscalatingHypoxemiaResponse
     || hasVentilatorDyssynchronyResponse
     || hasAutoPeepResponse
+    || hasMucusPluggingResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1420,6 +1440,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasAutoPeepResponse && (
               <AutoPeepTray assessment={props.resuscitation.autoPeepAssessment}
                 onAction={props.onAutoPeepResponse ?? (() => {})} />
+            )}
+            {hasMucusPluggingResponse && (
+              <MucusPluggingTray assessment={props.resuscitation.mucusPluggingAssessment}
+                onAction={props.onMucusPluggingResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -3985,6 +4009,57 @@ function AutoPeepTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-auto-peep-response')}>Review 10-minute response</Button>
         </div>
         <p className="field__hint">External PEEP is individualized. Recheck flow, mechanics, triggering, gas exchange, and circulation after any change.</p>
+      </section>
+    </div>
+  );
+}
+
+function MucusPluggingTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['mucusPluggingAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onMucusPluggingResponse']>;
+}) {
+  const support = assessment?.supportAtTick != null;
+  const indicators = assessment?.indicatorsAtTick != null;
+  const suction = assessment?.suctionAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const escalation = assessment?.escalationAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="mucus-listen-title">
+        <div id="mucus-listen-title" className="syringe__name">Listen to the resistance.</div>
+        <Badge kind="teaching">sounds · secretions · flow · pressure</Badge>
+        <div className="syringe__meta">sawtooth flow · peak 38 · plateau 23 · SpO₂ 87%</div>
+        <p className="syringe__remaining" role="status">
+          {indicators ? 'Retained-secretion indicators converge · location unproven'
+            : support ? 'Support active · review the airway-resistance pattern'
+              : 'Oxygenation support + experienced help due'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={support}
+            onClick={() => onAction('support-mucus-plugging-and-call-help')}>Support oxygenation + call help</Button>
+          <Button className="crisis-drug__action" disabled={!support || indicators}
+            onClick={() => onAction('review-mucus-plugging-indicators')}>Review airway + graphics + mechanics</Button>
+        </div>
+        <p className="field__hint">No single sign diagnoses a plug. Keep tube, circuit, pleural, parenchymal, blood, and foreign-body causes open.</p>
+      </section>
+      <section className="syringe" aria-labelledby="mucus-clear-title">
+        <div id="mucus-clear-title" className="syringe__name">Clear, then prove it.</div>
+        <Badge kind="teaching">preoxygenate · as needed · no routine saline</Badge>
+        <div className="syringe__meta">shallow first · reassess · focal finding persists</div>
+        <p className="syringe__remaining" role="status">
+          {escalation ? 'Persistent left-base concern · imaging + airway review recorded'
+            : reassessment ? 'Central resistance improved · focal concern remains'
+              : suction ? 'Clearance intent recorded · response due' : 'Indication review pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!indicators || suction}
+            onClick={() => onAction('record-indicated-airway-suction-intent')}>Record indicated suction intent</Button>
+          <Button className="crisis-drug__action" disabled={!suction || reassessment}
+            onClick={() => onAction('reassess-mucus-plugging-response')}>Review post-clearance response</Button>
+          <Button className="crisis-drug__action" disabled={!reassessment || escalation}
+            onClick={() => onAction('escalate-persistent-mucus-plugging')}>Escalate persistent focal concern</Button>
+        </div>
+        <p className="field__hint">Routine bronchoscopy is not the answer. Persistent focal physiology still earns imaging and experienced evaluation.</p>
       </section>
     </div>
   );

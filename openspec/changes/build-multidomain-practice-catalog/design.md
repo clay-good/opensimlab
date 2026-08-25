@@ -620,6 +620,22 @@ effect depends on effort and expiratory flow limitation. The case does not exami
 graphics or mechanics, perform a hold, diagnose, manipulate an airway or ventilator, prescribe or
 deliver drugs, sedate, paralyze, perform emergency procedures, or predict outcome.
 
+### Wave B critical-care slice 5: mucus plugging
+
+The fifth critical-care slice begins with new coarse central sounds, visible thick tracheal-tube
+secretion, a sawtooth expiratory-flow graphic, peak pressure 38 cm H₂O with passive plateau
+pressure 23 cm H₂O, reduced left-base air entry, and hypoxemia. Learners support oxygenation and
+call experienced help, then integrate patient, airway, circuit, graphics, mechanics, gas exchange,
+and circulation before recording airway-clearance intent.
+
+The focused tutor pairs “listen to the resistance” with “clear, then prove it.” Preoxygenated,
+as-needed, initially shallow suction intent avoids routine saline and requires an immediate fixed
+response panel. Central resistance and oxygenation improve, but the focal finding persists and
+triggers imaging plus experienced airway evaluation while alternative causes remain open. Routine
+bronchoscopy is not the default. The case does not examine, inspect equipment, acquire graphics or
+mechanics, suction, remove secretions, image, perform bronchoscopy, diagnose, program a ventilator,
+deliver medication, perform procedures, or predict outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute

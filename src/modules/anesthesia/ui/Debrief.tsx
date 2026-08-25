@@ -3271,6 +3271,46 @@ export function objectiveFindings(
         : 'Whole-patient reassessment was absent or preceded correction.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['support-mucus-plugging-and-call-help', 'review-mucus-plugging-indicators',
+      'record-indicated-airway-suction-intent', 'reassess-mucus-plugging-response',
+      'escalate-persistent-mucus-plugging'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'mucus-plugging');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The mucus-plugging vignette was not active.' } satisfies ObjectiveFinding;
+      const support = log.find((event) => /^mucus-support-recorded-\d+$/.test(event.eventId));
+      const indicators = log.find((event) => /^mucus-indicators-reviewed-\d+$/.test(event.eventId));
+      const suction = log.find((event) => /^mucus-suction-recorded-\d+$/.test(event.eventId));
+      const reassessment = log.find((event) => /^mucus-response-reassessed-\d+$/.test(event.eventId));
+      const escalation = log.find((event) => /^mucus-escalation-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'support-mucus-plugging-and-call-help') return { ...base,
+        outcome: support ? 'met' : 'not-met', finding: support
+          ? 'Oxygen-support intent and experienced respiratory-therapy and ICU help were recorded.'
+          : 'Immediate support and help were not recorded.', atTick: support?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-mucus-plugging-indicators') {
+        const ordered = support && indicators && support.tick <= indicators.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Sounds, secretion, flow, pressure, tube, circuit, gas, and circulation followed support.'
+          : 'The indicator review was absent or out of order.', atTick: indicators?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'record-indicated-airway-suction-intent') {
+        const ordered = indicators && suction && indicators.tick <= suction.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Preoxygenated as-needed shallow-first suction intent avoided routine saline after indication review.'
+          : 'Airway-clearance intent was absent or preceded indication review.', atTick: suction?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'reassess-mucus-plugging-response') {
+        const ordered = suction && reassessment && suction.tick <= reassessment.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Secretions, flow, pressures, gas exchange, circulation, and the persistent focal finding were reassessed.'
+          : 'Reassessment was absent or preceded clearance intent.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = reassessment && escalation && reassessment.tick <= escalation.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+        ? 'Persistent focal physiology triggered imaging and experienced airway review without routine bronchoscopy.'
+        : 'Escalation was absent or preceded the persistent finding.', atTick: escalation?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

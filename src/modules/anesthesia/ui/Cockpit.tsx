@@ -799,6 +799,9 @@ export function Cockpit({
           onAutoPeepResponse={(action) => session.act({
             type: 'auto-peep-response', payload: { action },
           })}
+          onMucusPluggingResponse={(action) => session.act({
+            type: 'mucus-plugging-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

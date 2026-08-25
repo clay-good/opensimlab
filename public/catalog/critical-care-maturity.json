@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "critical-care",
-  "recordCount": 4,
+  "recordCount": 5,
   "records": [
     {
       "recordId": "scenario:ards-lung-protective-ventilation@0.1.0",
@@ -45,6 +45,17 @@
       "evidence": [
         "/catalog/critical-care-completion-audit.json#auto-peep@0.1.0",
         "/catalog/critical-care-quality-audit.json#auto-peep@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:mucus-plugging@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "mucus-plugging",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/critical-care-completion-audit.json#mucus-plugging@0.1.0",
+        "/catalog/critical-care-quality-audit.json#mucus-plugging@0.1.0"
       ]
     }
   ]

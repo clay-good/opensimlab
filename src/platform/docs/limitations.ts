@@ -2178,6 +2178,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['auto-peep'],
   },
   {
+    id: 'mucus-plugging-findings-clearance-and-response-are-authored',
+    headline: 'The secretion, sounds, graphics, mechanics, clearance, imaging, and response panels are authored facts.',
+    simplification: 'One fixed adult has convergent retained-secretion indicators, partial central-airway improvement, and a persistent focal concern.',
+    whereItMisleads: 'Treating the screen as examination, equipment inspection, waveform acquisition, secretion removal, imaging, diagnosis, or response prediction.',
+    correctUnderstanding: 'Real assessment combines the patient, artificial airway, circuit, graphics, mechanics, gas exchange, circulation, retrieved material, and serial findings.',
+    briefIn: ['mucus-plugging'],
+  },
+  {
+    id: 'mucus-plugging-suction-imaging-and-airway-controls-are-proxies',
+    headline: 'Oxygen, suction, imaging, and airway-evaluation buttons record intents; they do not perform care.',
+    simplification: 'The interface enforces indication and reassessment without preoxygenating, suctioning, removing secretions, imaging, or performing bronchoscopy.',
+    whereItMisleads: 'Equating ordered controls with airway, suction, respiratory-therapy, imaging, bronchoscopy, procedural, or team competence.',
+    correctUnderstanding: 'Use trained teams, indicated equipment-specific clearance, complication safeguards, and immediate whole-patient reassessment.',
+    briefIn: ['mucus-plugging'],
+  },
+  {
+    id: 'no-live-mucus-plugging-diagnosis-suction-bronchoscopy-or-outcome',
+    headline: 'The case does not diagnose mucus plugging, teach suction or bronchoscopy, or predict outcome.',
+    simplification: 'Tube migration or obstruction, pneumothorax, atelectasis, consolidation, blood, foreign body, peripheral secretions, recurrence, and complications are incomplete.',
+    whereItMisleads: 'Assuming one sign proves a plug, copying a suction technique, using routine saline, or treating bronchoscopy as routine secretion removal.',
+    correctUnderstanding: 'Support oxygenation, establish an indication, clear the artificial airway safely, prove the response, and escalate unresolved focal physiology.',
+    briefIn: ['mucus-plugging'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '
