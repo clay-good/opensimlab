@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 29,
+  "scenarioCount": 30,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -639,6 +639,28 @@
         "Reassess oxygenation and pressure after accepted decompression intent."
       ],
       "searchText": "pneumothorax-under-positive-pressure pneumothorax under positive pressure colon cancer after left subclavian central-line placement open right hemicolectomy check bilateral ventilation when airway pressure, oxygenation, and circulation deteriorate together. a bilateral-ventilation assessment was accepted within 30 seconds of the modeled event. call for help when the combined breathing and circulation pattern appears. a pneumothorax-context help request was accepted within 30 seconds of the modeled event. deliver 100% oxygen while the cause is addressed. inspired oxygen fraction 1.0 with active breath delivery was in effect within 60 seconds. record immediate left-chest decompression intent for severe tension physiology. the bounded decompression-intent action was accepted within 60 seconds of the modeled event. reassess oxygenation and pressure after accepted decompression intent. oxygen saturation recovered to at least 94% and mean arterial pressure to at least 65 mmhg after accepted decompression."
+    },
+    {
+      "id": "aspiration-risk-recognition",
+      "path": "/anesthesia/scenario/aspiration-risk-recognition",
+      "title": "Aspiration-risk recognition",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 6,
+      "difficulty": "intermediate",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Review medication phase, gastrointestinal symptoms, fasting, and procedure urgency together.",
+        "Recognize elevated delayed-gastric-emptying risk despite an ordinary fasting interval.",
+        "Defer this elective case for symptom resolution and shared replanning.",
+        "Use the patient-specific risk pattern rather than a blanket GLP-1 medication rule."
+      ],
+      "searchText": "aspiration-risk-recognition aspiration-risk recognition symptomatic cholelithiasis elective laparoscopic cholecystectomy review medication phase, gastrointestinal symptoms, fasting, and procedure urgency together. the focused aspiration-risk cue review was accepted before classification. recognize elevated delayed-gastric-emptying risk despite an ordinary fasting interval. the case was classified as elevated risk after the cue review. defer this elective case for symptom resolution and shared replanning. the defer-and-replan pathway was selected after elevated-risk classification. use the patient-specific risk pattern rather than a blanket glp-1 medication rule. the accepted reasoning named escalation and symptoms without claiming every glp-1 user should stop treatment or cancel surgery."
     }
   ],
   "preparationPathCount": 10,
@@ -868,10 +890,11 @@
     },
     {
       "id": "medication-infusion-safety",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "title": "Medication and infusion safety",
-      "description": "Rehearse age-bounded titration, effect-site delay, depth-matched reversal, changing maintenance needs, paralysis, delivery failure, and toxicity as distinct medication risks.",
+      "description": "Rehearse preprocedure medication-risk recognition, age-bounded titration, effect-site delay, depth-matched reversal, changing maintenance needs, paralysis, delivery failure, and toxicity as distinct medication risks.",
       "scenarioIds": [
+        "aspiration-risk-recognition",
         "routine-induction",
         "routine-geriatric-induction",
         "routine-inhalational-maintenance",
@@ -894,7 +917,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 65
+      "estimatedMinutes": 71
     },
     {
       "id": "handoff-escalation",

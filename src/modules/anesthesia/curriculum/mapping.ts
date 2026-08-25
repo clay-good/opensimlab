@@ -1114,6 +1114,21 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'pc-crisis-management',
     objectiveIds: ['assess-pneumothorax-pattern', 'escalate-pneumothorax-pattern', 'support-pneumothorax-oxygenation', 'decompress-pneumothorax', 'reassess-pneumothorax-recovery'],
   },
+  {
+    scenarioId: 'aspiration-risk-recognition', frameworkId: 'nbcrna-nce',
+    domainId: 'basic-principles',
+    objectiveIds: ['review-aspiration-risk-cues', 'classify-elevated-aspiration-risk', 'choose-shared-elective-plan', 'avoid-blanket-glp1-rule'],
+  },
+  {
+    scenarioId: 'aspiration-risk-recognition', frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['review-aspiration-risk-cues', 'classify-elevated-aspiration-risk', 'choose-shared-elective-plan', 'avoid-blanket-glp1-rule'],
+  },
+  {
+    scenarioId: 'aspiration-risk-recognition', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-preanesthetic-evaluation',
+    objectiveIds: ['review-aspiration-risk-cues', 'classify-elevated-aspiration-risk', 'choose-shared-elective-plan', 'avoid-blanket-glp1-rule'],
+  },
 ];
 
 export interface DomainCoverage {

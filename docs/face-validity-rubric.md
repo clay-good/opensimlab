@@ -98,6 +98,7 @@ Reviewers run the routine induction themselves before answering.
 | B44 | In the obstetric general-anesthesia lesson, the calibrated term-pregnancy reserve fills with preoxygenation, the maternal saturation margin remains plausible through the declared induction and modeled airway interval, and confirmed ventilation restores sustained capnography | | |
 | B45 | In the preeclampsia lesson, the initial pressure is recognizably severe-range, the bounded labetalol branch produces a plausible downward trajectory without hypotension, magnesium does not masquerade as an antihypertensive, and the repeat-pressure workflow is clear | | |
 | B46 | In the positive-pressure pneumothorax lesson, the combined respiratory and circulatory change is recognizable, bilateral assessment and escalation are easy to find, decompression is clearly an intent control rather than procedural instruction, and recovery is plausible | | |
+| B47 | In the aspiration-risk lesson, medication escalation, active symptoms, fasting, and elective urgency are easy to integrate; the defer-and-replan path is patient-specific; and the interface does not imply gastric-volume knowledge, universal medication cessation, or aspiration prevention | | |
 | B45 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
@@ -121,7 +122,9 @@ So that reviewers spend their attention on what this review is for:
   child's cooperation, distress, mask seal, excitement, airway reflexes, respiratory depression,
   consciousness, IV access, airway placement, emergence, recovery, or individual anesthetic need.
 - Peripheral train-of-four is observable but does not guarantee conditions at the larynx.
-- The full-stomach case does not model regurgitation, aspiration, or cricoid pressure.
+- The full-stomach case does not model regurgitation, aspiration, or cricoid pressure. The separate
+  aspiration-risk vignette records one GLP-1 escalation-and-symptom decision but does not estimate
+  gastric contents, teach ultrasound or airway technique, or create a universal medication rule.
 - Obstetric general anesthesia uses one fixed term-pregnancy oxygen-reserve profile and stops after
   initial ventilation. It does not model fetal status, delivery, aortocaval compression, maternal
   awareness, neonatal drug effects, hemorrhage, emergence, extubation, or team performance.

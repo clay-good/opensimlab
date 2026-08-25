@@ -489,3 +489,18 @@
 - [ ] Add a numerical airway-pressure or compliance model, pleural gas volume or pressure,
   barotrauma, differential diagnosis, ultrasound or radiography, arrest, later chest drainage,
   procedural site or equipment selection, psychomotor technique, complications, or teams.
+
+## Slice 33: bounded aspiration-risk recognition
+
+- [x] Check in an evidence brief covering the 2024 multi-society GLP-1 guidance, the ASA issuing-body
+  summary, elective fasting scope, and unsafe inference boundaries.
+- [x] Add a thirtieth authored scenario with declared medication escalation, active gastrointestinal
+  symptoms, ordinary fasting, elective urgency, and no simulated aspiration physiology.
+- [x] Add ordered cue-review, elevated-or-routine classification, and confirmed defer-or-proceed
+  choices backed by engine-owned accepted state and deterministic replay.
+- [x] Score only accepted decisions, preserve normal physiology, and reject unsupported,
+  out-of-order, and duplicate requests.
+- [x] Complete catalog assets, route SEO, responsive browser inspection, and full CI.
+- [ ] Add gastric-emptying or content estimates, ultrasound, regurgitation, aspiration, pneumonitis,
+  medication cessation, liquid-diet preparation, glycemic effects, emergency surgery, anesthetic or
+  airway technique, local policy, cancellation logistics, team communication, or individual outcome.

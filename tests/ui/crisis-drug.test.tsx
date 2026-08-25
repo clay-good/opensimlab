@@ -11,6 +11,7 @@ import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { BRONCHOSPASM } from '@anesthesia/scenarios/bronchospasm';
 import { PREECLAMPSIA_URGENT_DELIVERY } from '@anesthesia/scenarios/preeclampsia-urgent-delivery';
 import { PNEUMOTHORAX_UNDER_POSITIVE_PRESSURE } from '@anesthesia/scenarios/pneumothorax-under-positive-pressure';
+import { ASPIRATION_RISK_RECOGNITION } from '@anesthesia/scenarios/aspiration-risk-recognition';
 import { UNITED_KINGDOM, UNITED_STATES } from '@anesthesia/region/profiles';
 
 const CRISIS_SCENARIO = {
@@ -161,6 +162,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       hasPreeclampsiaResponse: false,
       hasVenousAirEmbolismResponse: false,
       hasPneumothoraxResponse: false,
+      hasAspirationRiskResponse: false,
       hasBronchospasmResponse: false,
     });
     renderCockpit(UNITED_STATES, vi.fn(), {
@@ -364,6 +366,69 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
     expect(button('Check bilateral ventilation')?.disabled).toBe(true);
     expect(button('Call for help')?.disabled).toBe(true);
     expect(button('Decompress left chest')?.disabled).toBe(true);
+  });
+
+  it('opens the aspiration check and makes classification precede a confirmed disposition', () => {
+    const onAspirationRiskAssessment = vi.fn();
+    const base = {
+      scenario: ASPIRATION_RISK_RECOGNITION,
+      onAspirationRiskAssessment,
+    };
+    renderCockpit(UNITED_STATES, vi.fn(), {
+      ...base,
+      resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+        lastEpinephrineTick: null, crystalloidTotalMl: 0,
+        dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
+        lastDantroleneTick: null, activeCooling: false,
+        aspirationRiskAssessment: {
+          cuesReviewedAtTick: null, classification: null, classifiedAtTick: null,
+          plan: null, planAtTick: null,
+        },
+      },
+    });
+    expect(button('Aspiration check')?.getAttribute('aria-selected')).toBe('true');
+    expect(container.querySelector('[role="tab"]')?.textContent).toBe('Aspiration check');
+    expect(button('Elevated delayed-emptying risk')?.disabled).toBe(true);
+    act(() => button('Review aspiration-risk cues')!.click());
+    expect(onAspirationRiskAssessment).toHaveBeenCalledWith('review-cues');
+
+    renderCockpit(UNITED_STATES, vi.fn(), {
+      ...base,
+      resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+        lastEpinephrineTick: null, crystalloidTotalMl: 0,
+        dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
+        lastDantroleneTick: null, activeCooling: false,
+        aspirationRiskAssessment: {
+          cuesReviewedAtTick: 1, classification: null, classifiedAtTick: null,
+          plan: null, planAtTick: null,
+        },
+      },
+    });
+    expect(container.textContent).toContain('Week 3 escalation · dose increased 3 days ago');
+    expect(container.textContent).not.toContain('Packed red cells use a bounded adult-only');
+    act(() => button('Elevated delayed-emptying risk')!.click());
+    expect(onAspirationRiskAssessment).toHaveBeenCalledWith('classify-elevated');
+
+    renderCockpit(UNITED_STATES, vi.fn(), {
+      ...base,
+      resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+        lastEpinephrineTick: null, crystalloidTotalMl: 0,
+        dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
+        lastDantroleneTick: null, activeCooling: false,
+        aspirationRiskAssessment: {
+          cuesReviewedAtTick: 1, classification: 'elevated', classifiedAtTick: 2,
+          plan: null, planAtTick: null,
+        },
+      },
+    });
+    act(() => button('Defer elective case')!.click());
+    expect(onAspirationRiskAssessment).toHaveBeenCalledTimes(2);
+    expect(container.textContent).toContain('Record elective deferral and shared replanning?');
+    act(() => button('Confirm choice')!.click());
+    expect(onAspirationRiskAssessment).toHaveBeenLastCalledWith('defer-and-replan');
   });
 
   it('offers only bounded presets, no hostile free-dose or route field, inside the phone scroll area', () => {

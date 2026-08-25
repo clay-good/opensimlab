@@ -122,6 +122,13 @@ export interface ActionCockpitProps {
     readonly tensionPneumothoraxFraction?: number;
     readonly pneumothoraxAssessedAtTick?: number | null;
     readonly pneumothoraxDecompressedAtTick?: number | null;
+    readonly aspirationRiskAssessment?: {
+      readonly cuesReviewedAtTick: number | null;
+      readonly classification: 'elevated' | 'routine' | null;
+      readonly classifiedAtTick: number | null;
+      readonly plan: 'defer-and-replan' | 'proceed-routine' | null;
+      readonly planAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -186,6 +193,10 @@ export interface ActionCockpitProps {
   readonly onPneumothoraxResponse?: (
     action: 'assess-bilateral-ventilation' | 'decompress-left-chest',
   ) => void;
+  readonly onAspirationRiskAssessment?: (
+    action: 'review-cues' | 'classify-elevated' | 'classify-routine'
+      | 'defer-and-replan' | 'proceed-routine',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -240,6 +251,9 @@ export function crisisResponseAvailability(
     hasPneumothoraxResponse: scenario.timeline.some(
       (event) => event.type === 'tension-pneumothorax',
     ),
+    hasAspirationRiskResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -282,12 +296,15 @@ export const NOT_IN_THIS_BUILD =
 export function ActionCockpit(props: ActionCockpitProps) {
   const [tray, setTray] = useState<TrayId>(() => props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'tension-pneumothorax'
-      || (event.type === 'narrative' && event.target === 'persistent-severe-preeclampsia'))
+      || (event.type === 'narrative' && [
+        'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
+      ].includes(event.target ?? '')))
     ? 'crisis' : 'syringes');
   const {
     hasAnaphylaxisResponse, hasHypermetabolicResponse, hasLastResponse,
     hasCardiacArrestResponse, hasHighSpinalResponse, hasVenousAirEmbolismResponse,
     hasBronchospasmResponse, hasPreeclampsiaResponse, hasPneumothoraxResponse,
+    hasAspirationRiskResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -296,10 +313,16 @@ export function ActionCockpit(props: ActionCockpitProps) {
   const hasNonMaternalCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse
     || hasCardiacArrestResponse || hasHighSpinalResponse || hasVenousAirEmbolismResponse
     || hasPneumothoraxResponse || hasBronchospasmResponse;
-  const hasCrisisResponse = hasNonMaternalCrisisResponse || hasPreeclampsiaResponse;
-  const responseTray = hasPreeclampsiaResponse && !hasNonMaternalCrisisResponse
-    ? { id: 'crisis', label: 'Maternal response' } as const : CRISIS_TRAY;
-  const trays = hasCrisisResponse ? [...TRAYS, responseTray] : TRAYS;
+  const hasCrisisResponse = hasNonMaternalCrisisResponse || hasPreeclampsiaResponse
+    || hasAspirationRiskResponse;
+  const responseTray = hasAspirationRiskResponse && !hasNonMaternalCrisisResponse
+    && !hasPreeclampsiaResponse
+    ? { id: 'crisis', label: 'Aspiration check' } as const
+    : hasPreeclampsiaResponse && !hasNonMaternalCrisisResponse
+      ? { id: 'crisis', label: 'Maternal response' } as const : CRISIS_TRAY;
+  const trays = hasCrisisResponse
+    ? props.scenario.formulary.length === 0 ? [responseTray, ...TRAYS] : [...TRAYS, responseTray]
+    : TRAYS;
   const hasRocuronium = props.scenario.formulary.some((entry) => entry.drugId === 'rocuronium');
   const teachesNeuromuscularReversal = props.scenario.metadata.objectives.some((objective) => [
     'reverse-observed-block', 'reverse-recovering-block', 'confirm-quantitative-recovery',
@@ -526,6 +549,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 onAction={props.onPneumothoraxResponse ?? (() => {})}
               />
             )}
+            {hasAspirationRiskResponse && (
+              <AspirationRiskTray
+                assessment={props.resuscitation.aspirationRiskAssessment}
+                onAction={props.onAspirationRiskAssessment ?? (() => {})}
+              />
+            )}
             {hasBronchospasmResponse && (
               <BronchospasmTray
                 region={props.region}
@@ -545,7 +574,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
             laptop with the demonstration strip up, and the dose buttons went
             below the fold. Here it costs nothing and is still found by anyone
             who scrolls to the end looking for the thing that is missing. */}
-        {(tray === 'fluids' || tray === 'crisis') && (
+        {(tray === 'fluids' || (tray === 'crisis' && !hasAspirationRiskResponse)) && (
           <p className="actions__not-modelled field__hint">
             {NOT_IN_THIS_BUILD}{' '}
             <a href="/limitations">The limitations register says what else.</a>
@@ -1274,6 +1303,94 @@ function PneumothoraxResponseTray({
         <p className="field__hint">
           Site selection, needle or thoracostomy technique, equipment, imaging, and complications
           stay outside this lab. Reassess the live monitor after the accepted action.
+        </p>
+      </section>
+    </div>
+  );
+}
+
+function AspirationRiskTray({
+  assessment, onAction,
+}: {
+  assessment?: {
+    readonly cuesReviewedAtTick: number | null;
+    readonly classification: 'elevated' | 'routine' | null;
+    readonly classifiedAtTick: number | null;
+    readonly plan: 'defer-and-replan' | 'proceed-routine' | null;
+    readonly planAtTick: number | null;
+  };
+  onAction: (
+    action: 'review-cues' | 'classify-elevated' | 'classify-routine'
+      | 'defer-and-replan' | 'proceed-routine',
+  ) => void;
+}) {
+  const [pendingPlan, setPendingPlan] = useState<'defer-and-replan' | 'proceed-routine' | null>(null);
+  const reviewed = assessment?.cuesReviewedAtTick !== null
+    && assessment?.cuesReviewedAtTick !== undefined;
+  const classification = assessment?.classification ?? null;
+  const plan = assessment?.plan ?? null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="aspiration-cues-title">
+        <div id="aspiration-cues-title" className="syringe__name">Read the whole pattern</div>
+        <Badge kind="teaching">Focused vignette</Badge>
+        <div className="syringe__meta">Medication phase · symptoms · fasting · urgency</div>
+        <p className="syringe__remaining" role="status">
+          {reviewed
+            ? 'Week 3 escalation · dose increased 3 days ago · nausea + bloating · fasted 10 h/2 h · elective case'
+            : 'Combined cue review pending'}
+        </p>
+        <Button className="crisis-drug__action" disabled={reviewed}
+          onClick={() => onAction('review-cues')}>Review aspiration-risk cues</Button>
+        <p className="field__hint">
+          This case asks whether ordinary fasting instructions settle the question for this patient.
+          It does not estimate gastric volume or teach ultrasound.
+        </p>
+      </section>
+      <section className="syringe" aria-labelledby="aspiration-decision-title">
+        <div id="aspiration-decision-title" className="syringe__name">Classify, then choose</div>
+        <div className="syringe__meta">One classification · one disposition</div>
+        <p className="syringe__remaining" role="status">
+          {plan === 'defer-and-replan' ? 'Elective deferral + shared replanning recorded'
+            : plan === 'proceed-routine' ? 'Routine same-day progression recorded'
+              : classification === 'elevated' ? 'Elevated risk classified · disposition pending'
+                : classification === 'routine' ? 'Routine fasting risk classified · disposition pending'
+                  : 'Classification pending'}
+        </p>
+        {classification === null && (
+          <div className="syringe__presets">
+            <Button className="crisis-drug__action" disabled={!reviewed}
+              onClick={() => onAction('classify-elevated')}>Elevated delayed-emptying risk</Button>
+            <Button className="crisis-drug__action" disabled={!reviewed}
+              onClick={() => onAction('classify-routine')}>Routine fasting risk</Button>
+          </div>
+        )}
+        {classification !== null && plan === null && pendingPlan === null && (
+          <div className="syringe__presets">
+            <Button className="crisis-drug__action"
+              onClick={() => setPendingPlan('defer-and-replan')}>Defer elective case</Button>
+            <Button className="crisis-drug__action"
+              onClick={() => setPendingPlan('proceed-routine')}>Proceed routinely today</Button>
+          </div>
+        )}
+        {pendingPlan !== null && (
+          <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
+            <span>{pendingPlan === 'defer-and-replan'
+              ? 'Record elective deferral and shared replanning?'
+              : 'Record routine same-day progression?'}</span>
+            <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+              <Button variant="primary" className="crisis-drug__action" onClick={() => {
+                onAction(pendingPlan);
+                setPendingPlan(null);
+              }}>Confirm choice</Button>
+              <Button variant="ghost" className="crisis-drug__action"
+                onClick={() => setPendingPlan(null)}>Cancel</Button>
+            </div>
+          </div>
+        )}
+        <p className="field__hint">
+          The patient-specific choice is not a universal GLP-1 medication rule. Shared decision-making,
+          future preparation, gastric assessment, and anesthetic technique remain outside this screen.
         </p>
       </section>
     </div>

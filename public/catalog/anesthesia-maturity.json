@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "recordCount": 43,
+  "recordCount": 45,
   "records": [
     {
       "recordId": "scenario:routine-induction@0.1.0",
@@ -323,6 +323,17 @@
       ]
     },
     {
+      "recordId": "scenario:aspiration-risk-recognition@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "aspiration-risk-recognition",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#aspiration-risk-recognition@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#aspiration-risk-recognition@0.1.0"
+      ]
+    },
+    {
       "recordId": "explanation:hysteresis-and-effect-site-lag@0.1.0",
       "subjectKind": "explanation",
       "subjectId": "hysteresis-and-effect-site-lag",
@@ -410,6 +421,16 @@
       "status": "draft",
       "evidence": [
         "src/modules/anesthesia/content/explainers.ts#malignant-hyperthermia-early-pattern"
+      ]
+    },
+    {
+      "recordId": "explanation:aspiration-risk-is-more-than-fasting-time@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "aspiration-risk-is-more-than-fasting-time",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "src/modules/anesthesia/content/explainers.ts#aspiration-risk-is-more-than-fasting-time"
       ]
     },
     {

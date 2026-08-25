@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 78,
+  "sourceCount": 81,
   "sources": [
     {
       "id": "association-qrh-2023",
@@ -947,6 +947,45 @@
       "locator": "215(Suppl 1):110753",
       "usedFor": "Primary guideline context for current special-circumstances management of tension pneumothorax and prioritization of reversible-cause treatment.",
       "verifiedAgainst": "Resuscitation Council UK official guideline reference and DOI record",
+      "verifiedOn": "2026-08-24"
+    },
+    {
+      "id": "kindel-multisociety-glp1-2024",
+      "pmid": "39370500",
+      "authors": "Kindel TL, Wang AY, Wadhwa A, Schulman AR, Sharaiha RZ, Kroh M, et al.",
+      "title": "Multi-society clinical practice guidance for the safe use of glucagon-like peptide-1 receptor agonists in the perioperative period",
+      "publication": "Surgical Endoscopy",
+      "year": 2025,
+      "locator": "39(1):180-183; published online October 29, 2024",
+      "usedFor": "The aspiration-risk vignette’s patient-specific review of dose escalation, active gastrointestinal symptoms, fasting, and urgency; shared planning; and the boundary against a universal GLP-1 medication or cancellation rule.",
+      "verifiedAgainst": "NCBI E-utilities record, field by field",
+      "verifiedOn": "2026-08-24",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/39370500/"
+    },
+    {
+      "id": "asa-multisociety-glp1-release-2024",
+      "currency": {
+        "lastAmended": "2024-10-29",
+        "checkedAt": "2026-08-24"
+      },
+      "authors": "American Society of Anesthesiologists",
+      "title": "New Multi-Society GLP-1 Clinical Practice Guidance Released",
+      "publication": "American Society of Anesthesiologists",
+      "year": 2024,
+      "locator": "October 29, 2024 issuing-body summary",
+      "usedFor": "The bounded elective deferral branch when dose escalation and active gastrointestinal symptoms coexist, plus the statement that most lower-risk patients can continue therapy.",
+      "verifiedAgainst": "American Society of Anesthesiologists official newsroom release",
+      "verifiedOn": "2026-08-24"
+    },
+    {
+      "id": "asa-preoperative-fasting-2017",
+      "authors": "American Society of Anesthesiologists Task Force on Preoperative Fasting",
+      "title": "Practice Guidelines for Preoperative Fasting and the Use of Pharmacologic Agents to Reduce the Risk of Pulmonary Aspiration",
+      "publication": "Anesthesiology",
+      "year": 2017,
+      "locator": "126:376-393",
+      "usedFor": "The boundary that ordinary elective fasting recommendations apply to healthy patients and may need modification when a condition affects gastric emptying or fluid volume.",
+      "verifiedAgainst": "American Society of Anesthesiologists official practice-guideline PDF",
       "verifiedOn": "2026-08-24"
     },
     {

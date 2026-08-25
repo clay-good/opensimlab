@@ -52,7 +52,7 @@ describe('Requirement: routine geriatric induction is incremental and bounded', 
   it('validates, registers, maps every objective, and starts awake on room air', () => {
     expect(validateScenario(SCENARIO)).toEqual([]);
     expect(SCENARIOS).toContain(SCENARIO);
-    expect(SCENARIOS).toHaveLength(29);
+    expect(SCENARIOS).toHaveLength(30);
     const subject = engine();
     expect(subject.equipment()).toMatchObject({
       ventilator: { delivering: false, fio2: 0.21, sevofluranePercent: 0 },

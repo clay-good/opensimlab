@@ -551,3 +551,22 @@ The crisis drive rises on a fixed 4-second teaching time constant and clears on 
 time constant after accepted decompression intent. Debrief credit comes from accepted engine events,
 accepted ventilator actions, and observed recovery to saturation at least 94% with mean arterial
 pressure at least 65 mmHg. The trajectory is deterministic and cannot predict a patient outcome.
+
+## Slice 33: bounded aspiration-risk recognition
+
+The thirtieth authored scenario is a day-of-procedure reasoning vignette rather than an aspiration
+physiology model. One elective patient reports nausea and bloating during week 3 of semaglutide
+dose escalation despite following ordinary fasting instructions. The learner reviews medication
+phase, symptoms, fasting, and urgency together, then records one risk classification and one
+disposition.
+
+The expert path classifies elevated delayed-gastric-emptying risk and defers the elective case for
+symptom resolution and shared replanning. The action order and accepted choices live in engine
+state so raw requests, unsupported values, skipped review, and duplicates cannot earn debrief
+credit. The controls explicitly contrast this patient-specific path with routine progression.
+
+The scenario changes no physiology and estimates no probability. It does not simulate gastric
+contents, regurgitation, aspiration, ultrasound, liquid-diet preparation, medication cessation,
+glycemic consequences, emergency care, airway technique, local policy, or the quality of shared
+decision-making. Its source brief records that the multi-society document is guidance built on
+limited evidence and may change as the evidence base evolves.

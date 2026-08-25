@@ -38,7 +38,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.27';
+export const ENGINE_VERSION = '0.1.0-alpha.28';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -290,6 +290,11 @@ export class AnesthesiaEngine {
   private tensionPneumothoraxFraction = 0;
   private pneumothoraxAssessedAtTick: number | null = null;
   private pneumothoraxDecompressedAtTick: number | null = null;
+  private aspirationRiskCuesReviewedAtTick: number | null = null;
+  private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
+  private aspirationRiskClassifiedAtTick: number | null = null;
+  private aspirationRiskPlan: 'defer-and-replan' | 'proceed-routine' | null = null;
+  private aspirationRiskPlanAtTick: number | null = null;
   /** Bounded teaching opposition to the current rocuronium effect-site concentration. */
   private neuromuscularReversalFraction = 0;
   private postTetanicCount = 0;
@@ -739,6 +744,78 @@ export class AnesthesiaEngine {
         this.log('critical', 'crisis', `pneumothorax-decompressed-${this.currentTick}`,
           'Immediate left-chest decompression intent accepted. The monitor pattern now clears on a bounded teaching trajectory; technique, site, equipment, and procedural complications are not simulated.', {
             side: 'left', action: 'decompression-intent', teachingModel: true,
+          });
+        break;
+      }
+      case 'aspiration-risk-assessment': {
+        const supported = this.scenario.timeline.some(
+          (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
+        );
+        const response = String(action.payload.action ?? '');
+        const valid = [
+          'review-cues', 'classify-elevated', 'classify-routine',
+          'defer-and-replan', 'proceed-routine',
+        ].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `aspiration-risk-refused-${this.currentTick}`,
+            supported
+              ? 'The aspiration-risk action was not one of the listed choices. No decision was recorded.'
+              : 'The bounded aspiration-risk choices are available only in the declared recognition lesson.');
+          break;
+        }
+        if (response === 'review-cues') {
+          if (this.aspirationRiskCuesReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `aspiration-risk-review-refused-${this.currentTick}`,
+              'The medication, symptom, fasting, and urgency cues have already been reviewed.');
+            break;
+          }
+          this.aspirationRiskCuesReviewedAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `aspiration-risk-cues-reviewed-${this.currentTick}`,
+            'Focused review: semaglutide dose escalation, a dose increase three days ago, current nausea and bloating, an ordinary fasting interval, and an elective procedure. Fasting time alone does not resolve this patient-specific delayed-emptying concern.', {
+              doseEscalation: true, gastrointestinalSymptoms: true,
+              ordinaryFastingInterval: true, electiveProcedure: true,
+            });
+          break;
+        }
+        if (this.aspirationRiskCuesReviewedAtTick === null) {
+          this.log('warning', 'assessment', `aspiration-risk-order-refused-${this.currentTick}`,
+            'Review the medication, symptom, fasting, and urgency cues before classifying or choosing a plan.');
+          break;
+        }
+        if (response.startsWith('classify-')) {
+          if (this.aspirationRiskClassification !== null) {
+            this.log('warning', 'assessment', `aspiration-risk-classification-refused-${this.currentTick}`,
+              'An aspiration-risk classification has already been recorded for this attempt.');
+            break;
+          }
+          this.aspirationRiskClassification = response === 'classify-elevated' ? 'elevated' : 'routine';
+          this.aspirationRiskClassifiedAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `aspiration-risk-classified-${this.aspirationRiskClassification}-${this.currentTick}`,
+            this.aspirationRiskClassification === 'elevated'
+              ? 'Elevated delayed-gastric-emptying risk recorded. The classification comes from the combined escalation-phase and active-symptom pattern, not from GLP-1 use alone.'
+              : 'Routine fasting risk recorded. This does not account for the declared escalation-phase and active gastrointestinal symptoms.', {
+              classification: this.aspirationRiskClassification,
+            });
+          break;
+        }
+        if (this.aspirationRiskClassification === null) {
+          this.log('warning', 'assessment', `aspiration-risk-plan-order-refused-${this.currentTick}`,
+            'Classify the reviewed risk pattern before choosing a disposition.');
+          break;
+        }
+        if (this.aspirationRiskPlan !== null) {
+          this.log('warning', 'assessment', `aspiration-risk-plan-refused-${this.currentTick}`,
+            'A disposition has already been recorded for this attempt.');
+          break;
+        }
+        this.aspirationRiskPlan = response === 'defer-and-replan'
+          ? 'defer-and-replan' : 'proceed-routine';
+        this.aspirationRiskPlanAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `aspiration-risk-plan-${this.aspirationRiskPlan}-${this.currentTick}`,
+          this.aspirationRiskPlan === 'defer-and-replan'
+            ? 'Elective deferral and shared replanning recorded. This vignette does not set a universal medication-hold interval or choose a later anesthetic technique.'
+            : 'Routine same-day progression recorded despite the declared escalation-phase and active gastrointestinal symptoms.', {
+            plan: this.aspirationRiskPlan, classification: this.aspirationRiskClassification,
           });
         break;
       }
@@ -2432,6 +2509,13 @@ export class AnesthesiaEngine {
         tensionPneumothoraxFraction: this.tensionPneumothoraxFraction,
         pneumothoraxAssessedAtTick: this.pneumothoraxAssessedAtTick,
         pneumothoraxDecompressedAtTick: this.pneumothoraxDecompressedAtTick,
+        aspirationRiskAssessment: {
+          cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,
+          classification: this.aspirationRiskClassification,
+          classifiedAtTick: this.aspirationRiskClassifiedAtTick,
+          plan: this.aspirationRiskPlan,
+          planAtTick: this.aspirationRiskPlanAtTick,
+        },
         neuromuscularReversalFraction: this.neuromuscularReversalFraction,
         postTetanicCount: this.postTetanicCount,
         lastNeuromuscularReversal: this.lastNeuromuscularReversal

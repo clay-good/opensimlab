@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: pleural-response state has protocol version 25', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(25);
+  it('Scenario: aspiration-risk state has protocol version 26', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(26);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

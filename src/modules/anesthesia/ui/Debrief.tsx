@@ -431,6 +431,10 @@ export function objectiveFindings(
     'support-pneumothorax-oxygenation': 'capnogram-morphology',
     'decompress-pneumothorax': 'vasodilation-versus-hypovolemia',
     'reassess-pneumothorax-recovery': 'vasodilation-versus-hypovolemia',
+    'review-aspiration-risk-cues': 'aspiration-risk-is-more-than-fasting-time',
+    'classify-elevated-aspiration-risk': 'aspiration-risk-is-more-than-fasting-time',
+    'choose-shared-elective-plan': 'aspiration-risk-is-more-than-fasting-time',
+    'avoid-blanket-glp1-rule': 'aspiration-risk-is-more-than-fasting-time',
     'recognize-hemorrhage': 'vasodilation-versus-hypovolemia',
     'temporize-volume-loss': 'vasodilation-versus-hypovolemia',
     'avoid-full-dose-induction': 'hysteresis-and-effect-site-lag',
@@ -1291,6 +1295,66 @@ export function objectiveFindings(
           ? `Oxygen saturation recovered to ${(recovered.state.spo2Percent ?? 0).toFixed(0)}% and mean arterial pressure to ${(recovered.state.meanArterialMmHg ?? 0).toFixed(0)} mmHg after accepted decompression intent. This is a teaching trajectory, not an individual prognosis.`
           : 'Oxygen saturation and mean arterial pressure had not both reached the declared reassessment endpoint before the session ended.',
         atTick: recovered?.tick ?? history.at(-1)?.tick ?? onset,
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
+      'review-aspiration-risk-cues', 'classify-elevated-aspiration-risk',
+      'choose-shared-elective-plan', 'avoid-blanket-glp1-rule',
+    ].includes(objective.id)) {
+      const review = log.find(
+        (entry) => entry.eventId.startsWith('aspiration-risk-cues-reviewed-'),
+      );
+      const elevated = log.find(
+        (entry) => entry.eventId.startsWith('aspiration-risk-classified-elevated-'),
+      );
+      const routine = log.find(
+        (entry) => entry.eventId.startsWith('aspiration-risk-classified-routine-'),
+      );
+      const defer = log.find(
+        (entry) => entry.eventId.startsWith('aspiration-risk-plan-defer-and-replan-'),
+      );
+      const proceed = log.find(
+        (entry) => entry.eventId.startsWith('aspiration-risk-plan-proceed-routine-'),
+      );
+      if (objective.id === 'review-aspiration-risk-cues') return {
+        ...base,
+        outcome: review ? 'met' : 'not-met',
+        finding: review
+          ? 'You reviewed medication escalation, active gastrointestinal symptoms, the ordinary fasting interval, and elective urgency together.'
+          : 'No accepted combined review of medication phase, symptoms, fasting, and urgency was recorded.',
+        atTick: review?.tick ?? history.at(-1)?.tick,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'classify-elevated-aspiration-risk') return {
+        ...base,
+        outcome: elevated ? 'met' : routine ? 'not-met' : 'not-met',
+        finding: elevated
+          ? 'You classified elevated delayed-gastric-emptying risk from the combined escalation-phase and active-symptom pattern, not from medication use alone.'
+          : routine
+            ? 'You classified routine fasting risk despite the declared dose escalation and active nausea and bloating.'
+            : 'No accepted aspiration-risk classification was recorded.',
+        atTick: elevated?.tick ?? routine?.tick ?? history.at(-1)?.tick,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'choose-shared-elective-plan') return {
+        ...base,
+        outcome: elevated && defer ? 'met' : defer ? 'partly-met' : 'not-met',
+        finding: elevated && defer
+          ? 'You deferred this elective case for symptom resolution and shared replanning after recognizing elevated risk.'
+          : proceed
+            ? 'You chose routine same-day progression despite the declared escalation-phase and active gastrointestinal symptoms.'
+            : defer
+              ? 'You deferred the case, but the accepted classification did not identify the elevated patient-specific risk pattern.'
+              : 'No accepted disposition was recorded.',
+        atTick: defer?.tick ?? proceed?.tick ?? history.at(-1)?.tick,
+      } satisfies ObjectiveFinding;
+      const patientSpecific = Boolean(review && elevated && defer);
+      return {
+        ...base,
+        outcome: patientSpecific ? 'met' : 'not-met',
+        finding: patientSpecific
+          ? 'The accepted path tied deferral to this patient’s escalation phase and active symptoms without creating a blanket medication-stop or cancellation rule.'
+          : 'The completed path did not demonstrate the patient-specific reasoning needed to avoid a blanket GLP-1 rule.',
+        atTick: defer?.tick ?? elevated?.tick ?? review?.tick ?? history.at(-1)?.tick,
       } satisfies ObjectiveFinding;
     }
 

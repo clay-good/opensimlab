@@ -281,6 +281,43 @@ export const EXPLAINERS: readonly Explainer[] = [
       ],
     },
   },
+  {
+    id: 'aspiration-risk-is-more-than-fasting-time',
+    maturity: 'draft',
+    title: 'Aspiration risk is more than fasting time',
+    body:
+      'A fasting interval answers what the patient last ate or drank. It does not, by itself, '
+      + 'prove that the stomach is empty. Conditions and medicines that delay gastric emptying '
+      + 'can change the meaning of an otherwise ordinary fasting history.\n\n'
+      + 'Current multi-society GLP-1 guidance therefore starts with the whole patient. Relevant '
+      + 'signals include being early in treatment or dose escalation, a recent dose increase, '
+      + 'higher doses, nausea, vomiting, abdominal pain, bloating or constipation, and other '
+      + 'conditions that delay emptying. Procedure urgency and the consequences of interrupting '
+      + 'treatment matter too.\n\n'
+      + 'This is not a rule that every patient taking a GLP-1 medicine must stop it or cancel '
+      + 'surgery. Most lower-risk patients can continue treatment. When concern is elevated, the '
+      + 'patient, procedural team, anesthesia team, and prescribing team weigh options such as '
+      + 'advance diet modification, gastric ultrasound where expertise exists, an anesthesia '
+      + 'plan that accounts for aspiration risk, or deferral when the risk is expected to fall.\n\n'
+      + 'In this vignette, dose escalation and active gastrointestinal symptoms coexist before an '
+      + 'elective operation. That patient-specific combination supports deferral and shared '
+      + 'replanning. The simulator does not know what is in the stomach and cannot show that '
+      + 'aspiration was prevented.',
+    diagram: {
+      kind: 'hysteresis',
+      caption: 'Medication phase, current symptoms, fasting history, procedure urgency, and available safeguards belong in one assessment.',
+    },
+    showMe: { scenarioId: 'aspiration-risk-recognition' },
+    reflects: 'Kindel et al. multi-society GLP-1 perioperative guidance, published online 2024 '
+      + '(PMID 39370500), and the ASA issuing-body summary dated October 29, 2024.',
+    review: {
+      ...UNSIGNED,
+      sources: [
+        'Kindel et al. multi-society GLP-1 perioperative guidance, PMID 39370500',
+        'American Society of Anesthesiologists issuing-body summary, October 29, 2024',
+      ],
+    },
+  },
 ];
 
 export function getExplainer(id: string): Explainer {

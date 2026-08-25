@@ -898,6 +898,39 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['pneumothorax-under-positive-pressure'],
   },
   {
+    id: 'aspiration-risk-choice-is-a-bounded-vignette',
+    headline: 'The aspiration-risk lesson records one vignette decision, not an individualized risk estimate.',
+    simplification: 'One fictional elective patient has a declared semaglutide escalation phase, '
+      + 'active nausea and bloating, an ordinary fasting interval, and two bounded classification '
+      + 'and disposition choices. The browser does not calculate gastric emptying or aspiration probability.',
+    whereItMisleads: 'Applying the case’s disposition to every patient taking a GLP-1 medicine or '
+      + 'treating a completed screen as a comprehensive preanesthetic assessment.',
+    correctUnderstanding: 'Current guidance emphasizes patient-specific, multidisciplinary decisions '
+      + 'that balance medication benefit, delayed-emptying risk, symptoms, procedure urgency, and available safeguards.',
+    briefIn: ['aspiration-risk-recognition'],
+  },
+  {
+    id: 'no-gastric-content-or-aspiration-physiology',
+    headline: 'No stomach contents, regurgitation, aspiration, or lung injury are simulated.',
+    simplification: 'The scenario keeps normal physiology while recording reasoning actions. It cannot '
+      + 'show whether the stomach is empty, whether aspiration would occur, or what its consequences would be.',
+    whereItMisleads: 'Reading a fasting interval or a successful decision path as proof of an empty '
+      + 'stomach, prevented aspiration, or predicted outcome.',
+    correctUnderstanding: 'Fasting history is one part of a broader assessment; real findings, local '
+      + 'policy, available testing, and clinical judgment determine management.',
+    briefIn: ['aspiration-risk-recognition'],
+  },
+  {
+    id: 'no-ultrasound-or-airway-technique-instruction',
+    headline: 'The lesson does not teach gastric ultrasound, rapid-sequence induction, or another airway technique.',
+    simplification: 'Guidance-supported options are named only as excluded context. There are no images, '
+      + 'measurements, anatomic steps, equipment choices, psychomotor actions, or claims of technical success.',
+    whereItMisleads: 'Treating the vignette as procedural training or as endorsement of one universal anesthetic plan.',
+    correctUnderstanding: 'Use current local guidance, supervised training, appropriate equipment, and '
+      + 'shared clinical judgment for gastric assessment and airway management.',
+    briefIn: ['aspiration-risk-recognition'],
+  },
+  {
     id: 'capnography-sampling-line-obstruction-is-display-only',
     headline: 'The obstructed sampling line changes the capnography display, not patient ventilation.',
     simplification: 'One fixed artifact flattens the sampled waveform and removes the displayed '

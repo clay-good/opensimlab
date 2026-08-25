@@ -587,8 +587,9 @@ describe('Requirement: The Action Cockpit Offers Only Trays That Do Something', 
     expect(source).toContain("const CRISIS_TRAY = { id: 'crisis', label: 'Crisis response' }");
     expect(source).toContain("event.type === 'anaphylaxis'");
     expect(source).toContain("event.type === 'malignant-hyperthermia'");
-    expect(source).toContain('hasCrisisResponse ? [...TRAYS, responseTray] : TRAYS');
+    expect(source).toContain('props.scenario.formulary.length === 0 ? [responseTray, ...TRAYS] : [...TRAYS, responseTray]');
     expect(source).toContain("label: 'Maternal response'");
+    expect(source).toContain("label: 'Aspiration check'");
     // Five tabs fit a phone by scrolling within the strip, not by widening the cockpit.
     expect(componentsCss).toMatch(/\.tabs \{[^}]*overflow-x: auto/s);
   });

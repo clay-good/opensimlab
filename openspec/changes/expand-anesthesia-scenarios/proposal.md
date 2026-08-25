@@ -153,10 +153,13 @@ the physical procedure.
 - Add a twenty-ninth scenario for pneumothorax under positive-pressure ventilation with a declared
   pressure alarm, bilateral ventilation assessment, help, 100% oxygen, decompression intent, and
   observed recovery without claiming diagnostic certainty or procedural instruction.
+- Add a thirtieth scenario for aspiration-risk recognition that combines a GLP-1 dose-escalation
+  phase, active gastrointestinal symptoms, fasting, and elective urgency into one bounded
+  classification and disposition vignette without claiming gastric contents or a universal rule.
 
 ## Impact
 
-These 32 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+These 33 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
 awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. The seventh also closes the bounded
 pediatric-family gap without claiming a general pediatric patient model. The eighth reaches the
 minimum count of 12 scenarios and closes the bounded difficult-airway rescue gap. The ninth closes

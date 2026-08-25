@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 25 reports the pleural-response state. */
-export const WORKER_PROTOCOL_VERSION = 25;
+/** Bumped whenever the message shape changes incompatibly. Version 26 reports aspiration-risk decisions. */
+export const WORKER_PROTOCOL_VERSION = 26;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -282,6 +282,14 @@ export interface EquipmentSnapshot {
     readonly tensionPneumothoraxFraction?: number;
     readonly pneumothoraxAssessedAtTick?: number | null;
     readonly pneumothoraxDecompressedAtTick?: number | null;
+    /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
+    readonly aspirationRiskAssessment?: {
+      readonly cuesReviewedAtTick: number | null;
+      readonly classification: 'elevated' | 'routine' | null;
+      readonly classifiedAtTick: number | null;
+      readonly plan: 'defer-and-replan' | 'proceed-routine' | null;
+      readonly planAtTick: number | null;
+    };
     /** Accepted quantitative neuromuscular-reversal teaching state. */
     readonly neuromuscularReversalFraction?: number;
     readonly postTetanicCount?: number;

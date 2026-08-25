@@ -184,7 +184,9 @@ massive-transfusion management remain explicitly out of scope. Its second slice 
 full-stomach rapid-sequence induction, modeled rocuronium onset, quantitative train-of-four
 monitoring, and airway attempts that consume simulated time. A later bounded slice adds depth-
 matched sugammadex and neostigmine with an antimuscarinic only during minimal block; emergence, extubation, and
-aspiration physiology remain later work. Its third slice separates a running propofol pump command
+aspiration physiology remain later work. A later recognition vignette now separates ordinary fasting
+from a patient-specific GLP-1 escalation-and-symptom pattern without simulating gastric contents or
+creating a blanket medication rule. Its third slice separates a running propofol pump command
 from actual intravenous delivery, then uses a silent line disconnection under neuromuscular
 blockade to teach inspection and restoration of TIVA delivery. It models a risk pattern, not
 consciousness or recall. Its fourth slice models abrupt upper-airway closure and a held jaw-thrust
@@ -313,6 +315,11 @@ change by checking bilateral ventilation, escalating, delivering 100% oxygen, re
 left-chest decompression intent, and observing recovery. It does not model airway pressure, lung
 compliance, pleural gas volume, diagnostic imaging, procedural technique, equipment selection,
 complications, or team performance.
+Slice 33 adds the thirtieth authored scenario, aspiration-risk recognition. One elective patient is
+in week 3 of semaglutide dose escalation with current nausea and bloating despite an ordinary fasting
+interval. The learner reviews the combined cues, classifies delayed-emptying risk, and chooses a
+confirmed disposition. It does not estimate gastric contents, simulate aspiration, teach ultrasound
+or airway technique, set a universal medication rule, or replace shared planning and local policy.
 
 ## Running it
 
