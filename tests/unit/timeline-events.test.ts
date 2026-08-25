@@ -204,7 +204,7 @@ describe('every declared event type does something', () => {
     expect(EVENT_TYPES).toContain('high-spinal');
     expect(EVENT_TYPES).toContain('venous-air-embolism');
     expect(EVENT_TYPES).toContain('tension-pneumothorax');
-    expect(EVENT_TYPES).toHaveLength(16);
+    expect(EVENT_TYPES).toHaveLength(17);
   });
 });
 

@@ -35,6 +35,9 @@ recorded cause review, a fixed lateralizing examination finding, and urgent esca
 simulating testing, diagnosis, treatment, or outcome.
 The thirty-sixth adds low-risk awake-extubation readiness as an integration decision without tube
 removal, procedural technique, advanced at-risk strategies, rescue performance, or outcome.
+The thirty-seventh adds immediate post-extubation soft-tissue obstruction with a live, bounded
+gas-flow recovery trajectory, while keeping laryngospasm, edema, adjuncts, reintubation,
+complications, recurrence, and team performance outside the model.
 
 ## What changes
 
@@ -253,3 +256,8 @@ The thirty-sixth adds the thirty-third authored scenario and makes quantitative 
 several inspectable extubation checkpoints. Awake response, airway protection, bounded spontaneous
 gas exchange, airway-risk review, and rescue planning precede readiness, while the tube and delivered
 ventilation remain in place and all procedural and post-extubation behavior stays excluded.
+The thirty-seventh adds the thirty-fourth authored scenario and begins after the tracheal tube has
+already been removed. A dedicated soft-tissue obstruction state remains distinct from laryngospasm
+and bronchospasm; accepted help escalation, high-concentration oxygen, continuous positive pressure,
+and a held jaw thrust restore modeled gas flow. The response rate is a teaching trajectory, not an
+individual prediction or a complete post-extubation airway algorithm.

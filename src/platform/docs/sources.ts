@@ -512,11 +512,11 @@ export const SOURCES: readonly Source[] = [
     publication: 'Anaesthesia',
     year: 2012,
     locator: '67:318-40',
-    usedFor: 'The laryngospasm case\'s explicitly partial initial-response sequence: call for help, '
-      + 'ensure airway patency, apply continuous positive airway pressure with 100% oxygen, deepen '
-      + 'with propofol, and escalate to succinylcholine when closure persists or saturation falls.',
+    usedFor: 'Extubation risk stratification and confirmation of airway patency and breathing; simple '
+      + 'maneuvers, oxygen, and continuous positive airway pressure for reduced pharyngeal tone; and '
+      + 'the laryngospasm case\'s explicitly partial initial-response sequence and escalation boundary.',
     verifiedAgainst: NCBI,
-    verifiedOn: '2026-08-23',
+    verifiedOn: '2026-08-24',
   },
   {
     id: 'visvanathan-laryngospasm-2005',

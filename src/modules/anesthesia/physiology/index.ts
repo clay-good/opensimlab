@@ -29,6 +29,7 @@ export * from './hemodynamics';
 export * from './airway';
 export * from './neuromuscular';
 export * from './laryngospasm';
+export * from './upper-airway-obstruction';
 export { AttributionRecorder } from './attribution';
 
 /** One tick, in minutes. */
@@ -98,6 +99,8 @@ export interface ScenarioDrive {
   readonly airwayDeliveryFraction?: number;
   /** 0 to 1 functional closure at the larynx, separate from lower-airway obstruction. */
   readonly upperAirwayClosureFraction?: number;
+  /** 0 to 1 post-extubation soft-tissue collapse, separate from laryngospasm. */
+  readonly upperAirwayObstructionFraction?: number;
   /** Millilitres of blood lost this tick. */
   readonly bloodLossMl: number;
   /** Millilitres of crystalloid given this tick. */
@@ -523,7 +526,10 @@ export class VirtualPatient {
       ? clamp(scenario.airwayDeliveryFraction ?? 1, 0, 1)
       : 1;
     const deliveredTidal = Math.round(commandedTidal * assistedDeliveryFraction);
-    const airwayPatency = 1 - clamp(scenario.upperAirwayClosureFraction ?? 0, 0, 1);
+    const airwayPatency = 1 - Math.max(
+      clamp(scenario.upperAirwayClosureFraction ?? 0, 0, 1),
+      clamp(scenario.upperAirwayObstructionFraction ?? 0, 0, 1),
+    );
     // At five percent patency or less, the calculated few millilitres are below
     // effective dead-space ventilation. Calling a set respiratory rate a breath
     // here would draw a normal capnogram for a functionally closed airway.

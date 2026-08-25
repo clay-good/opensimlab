@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 29 reports extubation readiness. */
-export const WORKER_PROTOCOL_VERSION = 29;
+/** Bumped whenever the message shape changes incompatibly. Version 30 reports post-extubation obstruction state. */
+export const WORKER_PROTOCOL_VERSION = 30;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -182,6 +182,8 @@ export interface EquipmentSnapshot {
     readonly helpRequestedAtTick: number | null;
     /** Fraction of the upper airway open to gas flow, without diagnosing its cause. */
     readonly patencyFraction: number;
+    /** Modeled post-extubation soft-tissue obstruction severity, kept distinct from laryngospasm. */
+    readonly postExtubationObstructionSeverity: number;
     /** Lower-airway obstruction that shapes the capnogram, kept distinct from patency. */
     readonly bronchospasmSeverity: number;
     /** Whole seconds left in the bounded held jaw-thrust/CPAP maneuver. */

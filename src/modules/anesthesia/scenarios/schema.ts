@@ -451,6 +451,14 @@ export function validateScenarioSemantics(scenario: unknown): ValidationError[] 
         message: `Timeline event "${String(event.id)}" must declare laryngospasm severity from 0 to 1.`,
       });
     }
+    if (event.type === 'upper-airway-obstruction'
+      && (typeof event.value !== 'number' || !Number.isFinite(event.value)
+        || event.value < 0 || event.value > 1)) {
+      errors.push({
+        pointer: `/timeline/${index}/value`, rule: 'range',
+        message: `Timeline event "${String(event.id)}" must declare upper-airway obstruction severity from 0 to 1.`,
+      });
+    }
     if (event.type === 'anaphylaxis'
       && (typeof event.value !== 'number' || !Number.isFinite(event.value)
         || event.value < 0 || event.value > 1)) {

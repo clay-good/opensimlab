@@ -90,7 +90,8 @@ const DEFAULT_VENTILATOR = {
 } as const;
 const DEFAULT_AIRWAY = {
   intubated: false, attempts: 0, lastGrade: null, attemptInProgress: false, attemptSecondsRemaining: 0,
-  patencyFraction: 1, bronchospasmSeverity: 0, jawThrustCpapSecondsRemaining: 0,
+  patencyFraction: 1, postExtubationObstructionSeverity: 0,
+  bronchospasmSeverity: 0, jawThrustCpapSecondsRemaining: 0,
   device: 'facemask', supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null,
 } as const;
 const DEFAULT_HYPNOTIC_LINE = { connected: true, inspected: false } as const;

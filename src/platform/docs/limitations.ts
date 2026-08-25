@@ -1147,6 +1147,39 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['extubation-readiness'],
   },
   {
+    id: 'post-extubation-obstruction-is-a-bounded-teaching-trajectory',
+    headline: 'The post-extubation airway response is a deterministic teaching trajectory, not an individual prediction.',
+    simplification: 'One scripted soft-tissue obstruction lowers gas flow and resolves at a fixed '
+      + 'rate only while the declared jaw-thrust, continuous-pressure, and oxygen controls are active.',
+    whereItMisleads: 'Inferring a real patient response time, pressure requirement, oxygen reserve, '
+      + 'or probability of recovery from the displayed trace.',
+    correctUnderstanding: 'Real response depends on cause, anatomy, depth, residual drugs, position, '
+      + 'equipment, technique, and time. Reassess continuously and escalate when simple support fails.',
+    briefIn: ['post-extubation-obstruction'],
+  },
+  {
+    id: 'soft-tissue-obstruction-only',
+    headline: 'This lesson models reduced pharyngeal tone only; it does not diagnose every cause of obstruction after extubation.',
+    simplification: 'The authored snoring, paradoxical effort, low tidal volume, and smaller capnogram '
+      + 'are assigned to one reversible soft-tissue collapse state.',
+    whereItMisleads: 'Using improvement or non-improvement to exclude laryngospasm, edema, blood, '
+      + 'secretions, aspiration, device problems, respiratory depression, or other causes.',
+    correctUnderstanding: 'Post-extubation obstruction has a broad, time-critical differential. '
+      + 'Findings and response guide assessment but do not replace it.',
+    briefIn: ['post-extubation-obstruction'],
+  },
+  {
+    id: 'no-refractory-post-extubation-airway-pathway',
+    headline: 'The browser stops after initial airway support and recovery; adjuncts, reintubation, complications, and team performance are absent.',
+    simplification: 'The available path recruits help, changes the machine controls, applies one '
+      + 'held maneuver, and observes gas-exchange recovery.',
+    whereItMisleads: 'Treating completion as a full failed-airway algorithm or evidence that '
+      + 'post-obstructive pulmonary edema, aspiration, or recurrent obstruction cannot occur.',
+    correctUnderstanding: 'Persistent or recurrent compromise requires immediate skilled escalation, '
+      + 'additional airway techniques and devices, and continued post-extubation monitoring.',
+    briefIn: ['post-extubation-obstruction'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

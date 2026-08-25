@@ -1185,6 +1185,21 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'pc-airway-management',
     objectiveIds: ['confirm-extubation-quantitative-recovery', 'assess-awake-airway-protection', 'assess-extubation-gas-exchange', 'plan-extubation-risk-and-rescue', 'integrate-awake-extubation-readiness'],
   },
+  {
+    scenarioId: 'post-extubation-obstruction', frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['recognize-post-extubation-obstruction', 'support-post-extubation-airway', 'confirm-post-extubation-recovery'],
+  },
+  {
+    scenarioId: 'post-extubation-obstruction', frameworkId: 'coa-standards',
+    domainId: 'airway-management',
+    objectiveIds: ['recognize-post-extubation-obstruction', 'support-post-extubation-airway', 'confirm-post-extubation-recovery'],
+  },
+  {
+    scenarioId: 'post-extubation-obstruction', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-airway-management',
+    objectiveIds: ['recognize-post-extubation-obstruction', 'support-post-extubation-airway', 'confirm-post-extubation-recovery'],
+  },
 ];
 
 export interface DomainCoverage {

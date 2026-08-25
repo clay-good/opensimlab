@@ -449,6 +449,9 @@ export function objectiveFindings(
     'assess-extubation-gas-exchange': 'capnogram-morphology',
     'plan-extubation-risk-and-rescue': 'airway-assessment-predicts-poorly',
     'integrate-awake-extubation-readiness': 'train-of-four-and-residual-blockade',
+    'recognize-post-extubation-obstruction': 'capnogram-morphology',
+    'support-post-extubation-airway': 'preoxygenation-and-safe-apnea-time',
+    'confirm-post-extubation-recovery': 'capnogram-morphology',
     'recognize-hemorrhage': 'vasodilation-versus-hypovolemia',
     'temporize-volume-loss': 'vasodilation-versus-hypovolemia',
     'avoid-full-dose-induction': 'hysteresis-and-effect-site-lag',
@@ -2779,6 +2782,74 @@ export function objectiveFindings(
           ? `Predicted depth reached ${lightest.toFixed(0)} while train-of-four remained suppressed. This marks modeled awareness risk, not measured consciousness or recall.`
           : `Predicted depth peaked at ${lightest.toFixed(0)} without a recorded interval above 60 while train-of-four was suppressed.`,
         atTick: risk?.tick ?? failureTick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
+      'recognize-post-extubation-obstruction', 'support-post-extubation-airway',
+      'confirm-post-extubation-recovery',
+    ].includes(objective.id)) {
+      const onset = scenario.timeline.find(
+        (event) => event.type === 'upper-airway-obstruction',
+      )?.atTick;
+      if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) {
+        return {
+          ...base, outcome: 'not-exercised',
+          finding: 'The session ended before the scripted post-extubation obstruction began.',
+        } satisfies ObjectiveFinding;
+      }
+      const help = log.find((event) =>
+        event.tick >= onset && event.eventId.startsWith('airway-help-requested-'));
+      if (objective.id === 'recognize-post-extubation-obstruction') {
+        const delay = help ? (help.tick - onset) / TICKS_PER_SECOND : null;
+        return {
+          ...base,
+          outcome: delay === null ? 'not-met' : delay <= 30 ? 'met' : delay <= 60 ? 'partly-met' : 'not-met',
+          finding: delay === null
+            ? 'No accepted airway-help request followed the obstructed-breathing pattern.'
+            : `Airway help was requested ${delay.toFixed(0)} seconds after the pattern began. The request records escalation timing, not diagnosis, communication quality, or team arrival.`,
+          atTick: help?.tick ?? onset,
+        } satisfies ObjectiveFinding;
+      }
+      const maneuver = actions.find((action) => action.tick >= onset
+        && action.type === 'airway-maneuver'
+        && action.payload.maneuver === 'jaw-thrust-cpap');
+      const delivered = actions
+        .filter((action) => action.type === 'ventilator' && action.tick <= (maneuver?.tick ?? Infinity))
+        .reduce((settings, action) => ({
+          fio2: action.payload.fio2 === undefined ? settings.fio2 : Number(action.payload.fio2),
+          delivering: action.payload.delivering === undefined
+            ? settings.delivering : action.payload.delivering === true,
+        }), {
+          fio2: scenario.equipment.ventilator.fio2,
+          delivering: scenario.equipment.ventilator.delivering,
+        });
+      if (objective.id === 'support-post-extubation-airway') {
+        const complete = Boolean(maneuver && delivered.delivering && delivered.fio2 >= 0.95);
+        const delay = maneuver ? (maneuver.tick - onset) / TICKS_PER_SECOND : null;
+        return {
+          ...base,
+          outcome: !complete ? 'not-met' : delay! <= 45 ? 'met' : delay! <= 90 ? 'partly-met' : 'not-met',
+          finding: !complete
+            ? 'The trace did not record a held jaw-thrust/CPAP maneuver with active breath delivery and at least 95% oxygen.'
+            : `The held jaw-thrust/CPAP maneuver began ${delay!.toFixed(0)} seconds after onset with active breath delivery and at least 95% oxygen. This records controls, not physical technique.`,
+          atTick: maneuver?.tick ?? onset,
+        } satisfies ObjectiveFinding;
+      }
+      if (!maneuver || !delivered.delivering || delivered.fio2 < 0.95) return {
+        ...base, outcome: 'not-met', atTick: history.at(-1)?.tick ?? onset,
+        finding: 'Recovery was not credited because the declared initial airway-support bundle was incomplete.',
+      } satisfies ObjectiveFinding;
+      const recovered = history.find((entry) => entry.tick >= maneuver.tick
+        && (entry.state.tidalVolumeMl ?? 0) >= 300
+        && (entry.state.etco2MmHg ?? 0) > 0
+        && (entry.state.spo2Percent ?? 0) >= 94);
+      return {
+        ...base, outcome: recovered ? 'met' : 'not-met',
+        finding: recovered
+          ? `Tidal volume recovered to ${(recovered.state.tidalVolumeMl ?? 0).toFixed(0)} mL with end-tidal carbon dioxide ${(recovered.state.etco2MmHg ?? 0).toFixed(0)} mmHg and oxygen saturation ${(recovered.state.spo2Percent ?? 0).toFixed(0)}%. This is a bounded teaching trajectory, not proof that every cause of post-extubation obstruction was excluded.`
+          : 'Tidal volume, end-tidal carbon dioxide, and oxygen saturation had not all reached the declared recovery endpoints before the session ended.',
+        atTick: recovered?.tick ?? history.at(-1)?.tick ?? onset,
       } satisfies ObjectiveFinding;
     }
 

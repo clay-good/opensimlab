@@ -42,6 +42,7 @@ import { ASPIRATION_RISK_RECOGNITION } from './aspiration-risk-recognition';
 import { EMERGENCE_WITH_RESIDUAL_BLOCKADE } from './emergence-with-residual-blockade';
 import { DELAYED_EMERGENCE_DIFFERENTIAL } from './delayed-emergence-differential';
 import { EXTUBATION_READINESS } from './extubation-readiness';
+import { POST_EXTUBATION_OBSTRUCTION } from './post-extubation-obstruction';
 
 export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_INDUCTION,
@@ -77,6 +78,7 @@ export const SCENARIOS: readonly Scenario[] = [
   EMERGENCE_WITH_RESIDUAL_BLOCKADE,
   DELAYED_EMERGENCE_DIFFERENTIAL,
   EXTUBATION_READINESS,
+  POST_EXTUBATION_OBSTRUCTION,
 ];
 
 /** The scenario a learner meets first. */

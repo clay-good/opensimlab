@@ -615,3 +615,16 @@ The accepted decision does not remove the tube or stop delivered ventilation. Th
 one declared low-risk adult only and does not measure its findings, teach extubation technique,
 simulate deep or at-risk strategies, reproduce reintubation, or model post-extubation monitoring,
 complications, and outcome.
+
+## Slice 37: bounded post-extubation obstruction
+
+The thirty-fourth authored scenario begins after removal of the tracheal tube in a drowsy adult
+with obesity and obstructive sleep apnea. A dedicated upper-airway soft-tissue obstruction state
+reduces patency and spontaneous gas flow without producing the lower-airway waveform mechanics of
+bronchospasm or the depth-dependent treatment path of laryngospasm.
+
+The expert path recruits airway help, actively delivers at least 95% oxygen and positive pressure,
+holds the existing jaw-thrust/continuous-pressure maneuver, and confirms modeled tidal-volume,
+capnography, and oxygenation recovery. The deterministic response is explicitly a bounded teaching
+trajectory. Airway adjuncts, laryngospasm, edema, aspiration, reintubation, pulmonary edema,
+recurrence, continued monitoring, and team performance remain excluded.

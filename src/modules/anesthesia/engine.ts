@@ -31,6 +31,7 @@ import type { Covariates } from './pharmacology/body-composition';
 import {
   RESPIRATORY_PROFILES, VirtualPatient, baselineSvr, healthyChildRespiratoryProfile,
   JAW_THRUST_CPAP_SECONDS, neuromuscularState, stepLaryngospasm,
+  stepUpperAirwayObstruction,
   qualitativeTwitchAssessment, rocuroniumEffectSiteForTrainOfFourRatio,
   type LaryngoscopyResult, type PatientProfile, type PatientState, type VentilatorSettings,
 } from './physiology';
@@ -39,7 +40,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.31';
+export const ENGINE_VERSION = '0.1.0-alpha.32';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -334,6 +335,7 @@ export class AnesthesiaEngine {
   private hypnoticLineInspected = false;
   /** Persistent functional closure set by the scenario, 0 fully patent to 1 fully closed. */
   private upperAirwayClosureFraction = 0;
+  private postExtubationObstructionSeverity = 0;
   /** Exclusive tick at which the bounded held airway maneuver ends. */
   private jawThrustCpapUntilTick = 0;
   /** Current lower-airway obstruction, retained for truthful equipment/accessibility output. */
@@ -2062,6 +2064,23 @@ export class AnesthesiaEngine {
         return;
       }
 
+      case 'upper-airway-obstruction': {
+        if (this.patient.airway.intubated) {
+          this.log('warning', 'scenario', `inapplicable-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" cannot obstruct an upper airway still secured by a tracheal tube, so the event had no effect.`);
+          return;
+        }
+        const severity = event.value;
+        if (typeof severity !== 'number' || !Number.isFinite(severity)
+          || severity < 0 || severity > 1) {
+          this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" has an invalid upper-airway obstruction severity. It must be a finite number from 0 to 1, so the event had no effect.`);
+          return;
+        }
+        this.postExtubationObstructionSeverity = severity;
+        return;
+      }
+
       case 'anaphylaxis': {
         const severity = event.value;
         if (event.target !== 'cefazolin' || typeof severity !== 'number'
@@ -2456,6 +2475,17 @@ export class AnesthesiaEngine {
       },
       1 / TICKS_PER_SECOND,
     );
+    this.postExtubationObstructionSeverity = stepUpperAirwayObstruction(
+      this.postExtubationObstructionSeverity,
+      {
+        jawThrustCpap: this.currentTick < this.jawThrustCpapUntilTick,
+        positivePressure: effectiveVentilator.delivering
+          && effectiveVentilator.tidalVolumeMl > 0
+          && effectiveVentilator.respiratoryRateBpm > 0,
+        fio2: effectiveVentilator.fio2,
+      },
+      1 / TICKS_PER_SECOND,
+    );
     const result = this.patient.tick(
       {
         propofolCe, remifentanilCe, rocuroniumCe,
@@ -2465,6 +2495,7 @@ export class AnesthesiaEngine {
       {
         surgicalStimulus: stimulus, obstructionFraction: obstruction, airwayDeliveryFraction,
         upperAirwayClosureFraction: this.upperAirwayClosureFraction,
+        upperAirwayObstructionFraction: this.postExtubationObstructionSeverity,
         bloodLossMl, crystalloidMl,
         packedRedCellVolumeMl, packedRedCellHemoglobinG, freshFrozenPlasmaVolumeMl,
         anaphylaxisFraction: unopposedAnaphylaxis, capillaryLeakMl,
@@ -2745,7 +2776,10 @@ export class AnesthesiaEngine {
           ))
           : 0,
         helpRequestedAtTick: this.helpRequestedAtTick,
-        patencyFraction: 1 - this.upperAirwayClosureFraction,
+        patencyFraction: 1 - Math.max(
+          this.upperAirwayClosureFraction, this.postExtubationObstructionSeverity,
+        ),
+        postExtubationObstructionSeverity: this.postExtubationObstructionSeverity,
         bronchospasmSeverity: this.bronchospasmSeverity,
         jawThrustCpapSecondsRemaining: Math.max(
           0, Math.ceil((this.jawThrustCpapUntilTick - this.currentTick) / TICKS_PER_SECOND),

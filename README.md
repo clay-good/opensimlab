@@ -334,6 +334,12 @@ Slice 36 adds the thirty-third authored scenario, extubation readiness. A static
 of 0.93 opens, but cannot complete, an ordered awake-airway, spontaneous-gas-exchange, airway-risk,
 and rescue-plan review. The expert path records readiness for a planned awake extubation while the
 tube and delivered ventilation remain in place; removal, technique, rescue, and outcome are absent.
+Slice 37 adds the thirty-fourth authored scenario, post-extubation obstruction. A drowsy adult with
+obesity and obstructive sleep apnea develops a scripted soft-tissue obstruction after the tube has
+already been removed. The learner recruits airway help, delivers high-concentration oxygen and
+continuous positive pressure, holds a jaw thrust, and confirms modeled gas-flow recovery. The slice
+does not model laryngospasm, edema, aspiration, airway adjuncts, reintubation, pulmonary edema,
+recurrent obstruction, or team performance.
 
 ## Running it
 

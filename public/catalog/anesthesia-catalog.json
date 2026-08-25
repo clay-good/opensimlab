@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 33,
+  "scenarioCount": 34,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -729,6 +729,27 @@
         "Integrate every declared checkpoint into a planned awake-extubation readiness decision."
       ],
       "searchText": "extubation-readiness extubation readiness symptomatic cholelithiasis laparoscopic cholecystectomy confirm quantitative neuromuscular recovery without treating it as the whole decision. a train-of-four ratio of 0.93 was reviewed before the broader readiness assessment. review awake response, command following, cough, and secretion management. the fixed awake-airway findings were accepted after quantitative recovery. review spontaneous breathing, ventilation, and oxygenation together. the bounded breathing and gas-exchange findings were accepted after awake-airway review. classify the airway as low risk only after checking airway change, resources, and a rescue plan. the fixed airway-risk and reintubation-plan review was accepted before the decision. integrate every declared checkpoint into a planned awake-extubation readiness decision. readiness was accepted after all four reviews without simulating tube removal."
+    },
+    {
+      "id": "post-extubation-obstruction",
+      "path": "/anesthesia/scenario/post-extubation-obstruction",
+      "title": "Post-extubation obstruction",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 6,
+      "difficulty": "intermediate",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Recognize obstructed inspiratory effort after extubation as an upper-airway emergency.",
+        "Restore upper-airway patency with a held jaw thrust, continuous positive pressure, and 100% oxygen.",
+        "Confirm that gas movement, capnography, and oxygenation recover after initial support."
+      ],
+      "searchText": "post-extubation-obstruction post-extubation obstruction umbilical hernia laparoscopic umbilical hernia repair recognize obstructed inspiratory effort after extubation as an upper-airway emergency. airway help was requested within 30 seconds of the scripted obstructed-breathing pattern. restore upper-airway patency with a held jaw thrust, continuous positive pressure, and 100% oxygen. the combined maneuver began with active breath delivery and at least 95% oxygen within 45 seconds of onset. confirm that gas movement, capnography, and oxygenation recover after initial support. modeled airway patency returned to at least 95% with tidal volume and end-tidal carbon dioxide present."
     }
   ],
   "preparationPathCount": 10,
@@ -800,7 +821,8 @@
         "laryngospasm-after-airway-stimulation",
         "difficult-airway-supraglottic-rescue",
         "repeated-laryngoscopy-harm",
-        "extubation-readiness"
+        "extubation-readiness",
+        "post-extubation-obstruction"
       ],
       "prerequisites": [
         "Basic induction controls."
@@ -816,7 +838,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 54
+      "estimatedMinutes": 60
     },
     {
       "id": "shock-perfusion",

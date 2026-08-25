@@ -546,3 +546,17 @@
   inspection, and full CI.
 - [ ] Add measured examination, tube removal, extubation technique, deep or at-risk strategies,
   rescue devices, reintubation, communication, post-extubation monitoring, complications, or outcome.
+
+## Slice 37: bounded post-extubation obstruction
+
+- [x] Check the existing Difficult Airway Society extubation source for reduced pharyngeal tone,
+  airway patency, simple maneuvers, oxygen, continuous positive pressure, and escalation boundaries.
+- [x] Add a thirty-fourth authored scenario that starts after tube removal and keeps soft-tissue
+  obstruction distinct from laryngospasm and bronchospasm.
+- [x] Require accepted help escalation, active high-concentration oxygen and positive pressure, a
+  held jaw thrust, and observable gas-flow recovery on a deterministic teaching trajectory.
+- [x] Score the engine trace and preserve safe handling of invalid or inapplicable event severity.
+- [x] Complete curriculum mapping, preparation path, limitations, catalog, SEO, responsive browser
+  inspection, and full CI.
+- [ ] Add airway adjuncts, position controls, laryngospasm, edema, aspiration, reintubation,
+  post-obstructive pulmonary edema, recurrence, prolonged monitoring, or team performance.

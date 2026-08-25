@@ -10,7 +10,8 @@
  * used by any scenario. It was removed rather than given invented semantics.
  */
 export const EVENT_TYPES = [
-  'surgical-stimulus', 'blood-loss', 'crystalloid', 'obstruction', 'laryngospasm', 'anaphylaxis',
+  'surgical-stimulus', 'blood-loss', 'crystalloid', 'obstruction', 'laryngospasm',
+  'upper-airway-obstruction', 'anaphylaxis',
   'malignant-hyperthermia', 'local-anesthetic-toxicity',
   'high-spinal',
   'venous-air-embolism',

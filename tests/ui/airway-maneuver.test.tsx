@@ -4,6 +4,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
+import { POST_EXTUBATION_OBSTRUCTION } from '@anesthesia/scenarios/post-extubation-obstruction';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 
 describe('Requirement: bounded upper-airway support is operable without naming the diagnosis', () => {
@@ -26,9 +27,11 @@ describe('Requirement: bounded upper-airway support is operable without naming t
     secondsRemaining: number,
     onAirwayManeuver = vi.fn(),
     delivering = true,
+    scenario: ActionCockpitProps['scenario'] = ROUTINE_INDUCTION,
+    onCallForHelp = vi.fn(),
   ) => {
     const props: ActionCockpitProps = {
-      scenario: ROUTINE_INDUCTION,
+      scenario,
       region: UNITED_STATES,
       infusions: [],
       hypnoticLine: { connected: true, inspected: false },
@@ -57,7 +60,7 @@ describe('Requirement: bounded upper-airway support is operable without naming t
       onVentilator: () => {},
       onLaryngoscopy: () => {},
       onAirwayManeuver,
-      onCallForHelp: () => {}, onAirwayDevice: () => {},
+      onCallForHelp, onAirwayDevice: () => {},
       onEpinephrine: () => {},
       onDantrolene: () => {},
       onActiveCooling: () => {},
@@ -101,5 +104,19 @@ describe('Requirement: bounded upper-airway support is operable without naming t
 
     expect(container.textContent).toContain('The ventilator is not delivering positive pressure.');
     expect(container.textContent).not.toContain('continuous positive pressure in progress');
+  });
+
+  it('opens directly to focused post-extubation support without exposing an invented rescue device', () => {
+    const onCallForHelp = vi.fn();
+    renderCockpit(0, vi.fn(), false, POST_EXTUBATION_OBSTRUCTION, onCallForHelp);
+
+    expect(button('Apply jaw thrust + continuous positive pressure')).toBeInstanceOf(HTMLButtonElement);
+    expect(button('Call for help')).toBeInstanceOf(HTMLButtonElement);
+    expect(button('Insert supraglottic airway')).toBeUndefined();
+    expect(button('Direct laryngoscopy')).toBeUndefined();
+    expect(button('Videolaryngoscopy')).toBeUndefined();
+    expect(container.textContent).not.toContain('No attempt yet');
+    act(() => button('Call for help')!.click());
+    expect(onCallForHelp).toHaveBeenCalledOnce();
   });
 });

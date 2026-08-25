@@ -341,7 +341,9 @@ export const NOT_IN_THIS_BUILD =
   + 'are available only in the bounded scripted arrest case; a patient with hypoxic arrest elsewhere does not recover.';
 
 export function ActionCockpit(props: ActionCockpitProps) {
-  const [tray, setTray] = useState<TrayId>(() => props.scenario.formulary.length === 0
+  const [tray, setTray] = useState<TrayId>(() => props.scenario.timeline.some(
+    (event) => event.type === 'upper-airway-obstruction',
+  ) ? 'airway' : props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'tension-pneumothorax'
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
@@ -358,6 +360,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
+  );
+  const hasUpperAirwayObstructionResponse = props.scenario.timeline.some(
+    (event) => event.type === 'upper-airway-obstruction',
   );
   const hasEpinephrineResponse = hasAnaphylaxisResponse || hasLastResponse;
   const hasNonMaternalCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse
@@ -485,6 +490,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             supraglotticInsertionSecondsRemaining={props.supraglotticInsertionSecondsRemaining}
             helpRequestedAtTick={props.helpRequestedAtTick}
             showDifficultAirwayRescue={hasDifficultAirwayResponse}
+            showAirwayHelp={hasDifficultAirwayResponse || hasUpperAirwayObstructionResponse}
+            showLaryngoscopy={!hasUpperAirwayObstructionResponse}
             showCapnographyLine={props.scenario.timeline.some(
               (event) => event.type === 'artifact' && event.target === 'sampling-line-obstruction',
             )}
@@ -2224,7 +2231,8 @@ function InfusionTray({ formulary, region, weightKg, hypnoticLine, onInfusion, o
 function AirwayTray({
   ventilator, intubated, attempts, lastGrade, attemptInProgress, attemptSecondsRemaining,
   jawThrustCpapSecondsRemaining, device, supraglotticInsertionSecondsRemaining,
-  helpRequestedAtTick, showDifficultAirwayRescue, region, onVentilator, onLaryngoscopy,
+  helpRequestedAtTick, showDifficultAirwayRescue, showAirwayHelp, showLaryngoscopy,
+  region, onVentilator, onLaryngoscopy,
   onAirwayManeuver, onCallForHelp, onAirwayDevice,
   showCapnographyLine, capnographyLine, onCapnographyLine,
   actualBodyWeightKg,
@@ -2240,6 +2248,8 @@ function AirwayTray({
   supraglotticInsertionSecondsRemaining: number;
   helpRequestedAtTick: number | null;
   showDifficultAirwayRescue: boolean;
+  showAirwayHelp: boolean;
+  showLaryngoscopy: boolean;
   showCapnographyLine: boolean;
   capnographyLine: CapnographyLineStatus;
   actualBodyWeightKg: number;
@@ -2359,18 +2369,22 @@ function AirwayTray({
           >
             Apply jaw thrust + continuous positive pressure
           </Button>
-          <Button
-            onClick={() => onLaryngoscopy('direct')}
-            disabled={intubated || device !== 'facemask' || attemptInProgress || insertingSupraglottic}
-          >
-            Direct laryngoscopy
-          </Button>
-          <Button
-            onClick={() => onLaryngoscopy('video')}
-            disabled={intubated || device !== 'facemask' || attemptInProgress || insertingSupraglottic}
-          >
-            Videolaryngoscopy
-          </Button>
+          {showLaryngoscopy && (
+            <>
+              <Button
+                onClick={() => onLaryngoscopy('direct')}
+                disabled={intubated || device !== 'facemask' || attemptInProgress || insertingSupraglottic}
+              >
+                Direct laryngoscopy
+              </Button>
+              <Button
+                onClick={() => onLaryngoscopy('video')}
+                disabled={intubated || device !== 'facemask' || attemptInProgress || insertingSupraglottic}
+              >
+                Videolaryngoscopy
+              </Button>
+            </>
+          )}
         </div>
         <p id="jaw-thrust-cpap-status" className="field__hint">
           {holdingAirway
@@ -2379,20 +2393,22 @@ function AirwayTray({
               : `Jaw thrust hold in progress: ${Math.ceil(jawThrustCpapSecondsRemaining)} simulated seconds remaining. The ventilator is not delivering positive pressure.`
             : `Applies a fixed ${JAW_THRUST_CPAP_SECONDS}-second teaching-model hold, not a recommended clinical duration. Assess its effect from gas movement and the capnogram.`}
         </p>
-        <p className="field__hint">
-          {attemptInProgress
-            ? `Attempt in progress: ${attemptSecondsRemaining} simulated seconds remaining. Ventilation is interrupted.`
-            : intubated
-            ? 'The tube is in and its position is confirmed by the capnogram.'
-            : attempts === 0
-              ? 'No attempt yet. Each attempt consumes time and the patient is apnoeic throughout.'
-              : `${attempts} attempt${attempts === 1 ? '' : 's'} so far`
-                + (lastGrade !== null ? `, last view Cormack-Lehane grade ${lastGrade}.` : '.')
-                + ' Repeated attempts worsen the view through airway trauma.'}
-        </p>
-        {showDifficultAirwayRescue && (
+        {showLaryngoscopy && (
+          <p className="field__hint">
+            {attemptInProgress
+              ? `Attempt in progress: ${attemptSecondsRemaining} simulated seconds remaining. Ventilation is interrupted.`
+              : intubated
+              ? 'The tube is in and its position is confirmed by the capnogram.'
+              : attempts === 0
+                ? 'No attempt yet. Each attempt consumes time and the patient is apnoeic throughout.'
+                : `${attempts} attempt${attempts === 1 ? '' : 's'} so far`
+                  + (lastGrade !== null ? `, last view Cormack-Lehane grade ${lastGrade}.` : '.')
+                  + ' Repeated attempts worsen the view through airway trauma.'}
+          </p>
+        )}
+        {showAirwayHelp && (
           <section aria-labelledby="airway-rescue-title" style={{ marginBlockStart: 'var(--space-3)' }}>
-            <h4 id="airway-rescue-title" className="field__label">Airway rescue</h4>
+            <h4 id="airway-rescue-title" className="field__label">Airway support</h4>
             <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
               <Button
                 className="airway-rescue__action"
@@ -2402,24 +2418,28 @@ function AirwayTray({
               >
                 Call for help
               </Button>
-              <Button
-                className="airway-rescue__action"
-                aria-describedby="airway-rescue-status airway-rescue-countdown"
-                disabled={device !== 'facemask' || attemptInProgress || insertingSupraglottic}
-                onClick={() => onAirwayDevice('supraglottic-airway')}
-              >
-                Insert supraglottic airway
-              </Button>
+              {showDifficultAirwayRescue && (
+                <Button
+                  className="airway-rescue__action"
+                  aria-describedby="airway-rescue-status airway-rescue-countdown"
+                  disabled={device !== 'facemask' || attemptInProgress || insertingSupraglottic}
+                  onClick={() => onAirwayDevice('supraglottic-airway')}
+                >
+                  Insert supraglottic airway
+                </Button>
+              )}
             </div>
             <p id="airway-rescue-status" className="field__hint" role="status" aria-live="polite">
-              {helpRequested ? 'Help has been requested. ' : 'No help request has been recorded. '}
-              {supraglotticStatus}
+              {helpRequested ? 'Help has been requested.' : 'No help request has been recorded.'}
+              {showDifficultAirwayRescue ? ` ${supraglotticStatus}` : ''}
             </p>
-            <p id="airway-rescue-countdown" className="field__hint" aria-live="off">
-              {insertingSupraglottic
-                ? `Insertion countdown: ${Math.ceil(supraglotticInsertionSecondsRemaining)} simulated seconds remaining.`
-                : 'Insertion takes a fixed 15 simulated seconds in this teaching model.'}
-            </p>
+            {showDifficultAirwayRescue && (
+              <p id="airway-rescue-countdown" className="field__hint" aria-live="off">
+                {insertingSupraglottic
+                  ? `Insertion countdown: ${Math.ceil(supraglotticInsertionSecondsRemaining)} simulated seconds remaining.`
+                  : 'Insertion takes a fixed 15 simulated seconds in this teaching model.'}
+              </p>
+            )}
           </section>
         )}
         <p className="reading__aside">
