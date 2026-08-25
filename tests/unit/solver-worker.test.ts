@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: cardiogenic-shock state has protocol version 67', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(67);
+  it('Scenario: mixed-shock state has protocol version 68', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(68);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

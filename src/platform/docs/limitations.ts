@@ -2298,6 +2298,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['cardiogenic-shock'],
   },
   {
+    id: 'mixed-shock-findings-hemodynamics-and-response-are-authored',
+    headline: 'The perfusion, cardiac, infection, catheter, phenotype, and response panels are authored facts.',
+    simplification: 'One fixed post-MI patient with pneumonia has low output, high filling pressure, low vascular resistance, and a bounded early response.',
+    whereItMisleads: 'Treating the screen as examination, catheter placement, monitoring or test acquisition, calculation, diagnosis, staging, or outcome prediction.',
+    correctUnderstanding: 'Real mixed-shock assessment repeatedly integrates cause, output, filling pressure, vascular tone, treatment context, congestion, perfusion, and organ trajectory.',
+    briefIn: ['mixed-shock'],
+  },
+  {
+    id: 'mixed-shock-support-and-cause-control-actions-are-proxies',
+    headline: 'Team, support, cause-control, and reassessment buttons record intents; they do not perform care.',
+    simplification: 'The interface orders reasoning without delivering oxygen, fluid, or drugs, choosing access or dose, treating infection or ischemia, or placing support.',
+    whereItMisleads: 'Equating button order with cardiac, critical-care, catheter, prescribing, infectious-disease, procedural, device, or transfer competence.',
+    correctUnderstanding: 'Use multidisciplinary teams, safe delivery, parallel cause control, and frequent physiology- and trajectory-linked reassessment.',
+    briefIn: ['mixed-shock'],
+  },
+  {
+    id: 'no-live-mixed-shock-diagnosis-prescribing-hemodynamic-procedure-or-outcome',
+    headline: 'The case does not diagnose mixed shock, define universal catheter cutoffs, prescribe support, perform procedures, or predict outcome.',
+    simplification: 'Concurrent treatment alters hemodynamics, and evolving mechanical, right-heart, obstructive, bleeding, medication, infection, and equipment causes remain incomplete.',
+    whereItMisleads: 'Copying the numbers as cutoffs, giving the same support to every phenotype, loading fluid despite congestion, or letting a mixed label close either cause.',
+    correctUnderstanding: 'Treat proposed ranges as prompts, interpret them in treatment context, support perfusion, address every active cause, and reassess serially.',
+    briefIn: ['mixed-shock'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

@@ -709,6 +709,22 @@ open. The case does not examine, acquire or interpret tests, diagnose, deliver o
 select access or dose, catheterize, revascularize, place support, transfer, determine disposition,
 or predict outcome.
 
+### Wave B critical-care slice 10: mixed shock
+
+The tenth critical-care slice presents post-MI LV dysfunction plus pneumonia, fever, warm hands,
+mottling, worsening perfusion, and congestion despite reported vasoactive therapy. A fixed teaching
+panel combines cardiac index 1.7 L/min/m², wedge pressure 24 mmHg, CVP 11 mmHg, and SVR 720
+dyn·s/cm⁵. Learners integrate output, filling pressure, tone, treatment context, echo, lungs, and
+perfusion into a cardiac-vasodilatory phenotype without treating suggested ranges as universal
+diagnostic cutoffs.
+
+The focused tutor pairs “when clues disagree, believe the pattern” with “support both halves; chase
+both causes.” Learners record tone support plus expert output-support review without blind fluid
+loading, keep cardiac and pneumonia cause-control pathways active, and review a fixed 10-minute
+trajectory. The case does not examine, acquire a catheter or tests, calculate or diagnose, deliver
+oxygen, fluid, or drugs, prescribe, revascularize, treat infection, perform source control, place
+support, transfer, determine disposition, or predict outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute

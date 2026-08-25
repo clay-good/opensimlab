@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 67 reports cardiogenic-shock state. */
-export const WORKER_PROTOCOL_VERSION = 67;
+/** Bumped whenever the message shape changes incompatibly. Version 68 reports mixed-shock state. */
+export const WORKER_PROTOCOL_VERSION = 68;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -484,6 +484,13 @@ export interface EquipmentSnapshot {
       readonly phenotypeAtTick: number | null;
       readonly bridgeAtTick: number | null;
       readonly causeControlAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+    };
+    readonly mixedShockAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly hemodynamicsAtTick: number | null;
+      readonly supportAtTick: number | null;
+      readonly causesAtTick: number | null;
       readonly reassessmentAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */

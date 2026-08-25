@@ -22,7 +22,7 @@ function media(dir: string, out: string[] = []): string[] {
 describe('public provenance manifests', () => {
   it('classifies every shipped media asset exactly once', () => {
     const assets = media(publicDir);
-    expect(assets).toHaveLength(95);
+    expect(assets).toHaveLength(96);
     for (const asset of assets) {
       expect(ASSET_LICENSE_MANIFEST.records.filter((record) => assetMatches(record.match, asset)), asset)
         .toHaveLength(1);

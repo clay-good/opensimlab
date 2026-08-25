@@ -3472,6 +3472,46 @@ export function objectiveFindings(
         : 'Trajectory reassessment was absent or preceded cause control.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-mixed-shock-discordance', 'classify-mixed-shock-hemodynamics',
+      'record-mixed-shock-support', 'address-mixed-shock-causes',
+      'reassess-mixed-shock-trajectory'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'mixed-shock');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The mixed-shock vignette was not active.' } satisfies ObjectiveFinding;
+      const recognition = log.find((event) => /^mixed-shock-discordance-recognized-\d+$/.test(event.eventId));
+      const hemodynamics = log.find((event) => /^mixed-shock-hemodynamics-classified-\d+$/.test(event.eventId));
+      const support = log.find((event) => /^mixed-shock-support-recorded-\d+$/.test(event.eventId));
+      const causes = log.find((event) => /^mixed-shock-causes-addressed-\d+$/.test(event.eventId));
+      const reassessment = log.find((event) => /^mixed-shock-trajectory-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'recognize-mixed-shock-discordance') return { ...base,
+        outcome: recognition ? 'met' : 'not-met', finding: recognition
+          ? 'Discordant perfusion, congestion, infection, cardiac, and treatment-context clues triggered experienced help.'
+          : 'The discordant trajectory or experienced-team activation was absent.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'classify-mixed-shock-hemodynamics') {
+        const ordered = recognition && hemodynamics && recognition.tick <= hemodynamics.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Output, filling pressure, tone, echo, lungs, perfusion, and treatment context supported a cardiac-vasodilatory phenotype without universal cutoffs.'
+          : 'Hemodynamic classification was absent or preceded recognition.', atTick: hemodynamics?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'record-mixed-shock-support') {
+        const ordered = hemodynamics && support && hemodynamics.tick <= support.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Tone support and expert output-support review were paired with congestion guardrails and no blind fluid loading.'
+          : 'Mixed-physiology support was absent or preceded classification.', atTick: support?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'address-mixed-shock-causes') {
+        const ordered = support && causes && support.tick <= causes.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Cardiac and pneumonia cause-control pathways remained active in parallel.'
+          : 'Parallel cause control was absent or preceded support.', atTick: causes?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = causes && reassessment && causes.tick <= reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+        ? 'Immediate perfusion improved while congestion, organ trajectory, and both causes stayed open.'
+        : 'Whole-trajectory reassessment was absent or preceded cause control.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

@@ -417,6 +417,13 @@ export interface ActionCockpitProps {
       readonly causeControlAtTick: number | null;
       readonly reassessmentAtTick: number | null;
     };
+    readonly mixedShockAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly hemodynamicsAtTick: number | null;
+      readonly supportAtTick: number | null;
+      readonly causesAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -670,6 +677,11 @@ export interface ActionCockpitProps {
       | 'review-cardiogenic-shock-cause-and-phenotype' | 'record-cardiogenic-shock-bridge'
       | 'escalate-cardiogenic-shock-cause-control' | 'reassess-cardiogenic-shock-trajectory',
   ) => void;
+  readonly onMixedShockResponse?: (
+    action: 'recognize-mixed-shock-discordance' | 'classify-mixed-shock-hemodynamics'
+      | 'record-mixed-shock-support' | 'address-mixed-shock-causes'
+      | 'reassess-mixed-shock-trajectory',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -837,6 +849,9 @@ export function crisisResponseAvailability(
     hasCardiogenicShockResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'cardiogenic-shock',
     ),
+    hasMixedShockResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'mixed-shock',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -917,6 +932,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'spontaneous-breathing-trial')
       || (event.type === 'narrative' && event.target === 'post-intubation-hypotension')
       || (event.type === 'narrative' && event.target === 'cardiogenic-shock')
+      || (event.type === 'narrative' && event.target === 'mixed-shock')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -937,6 +953,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasSpontaneousBreathingTrialResponse,
     hasPostIntubationHypotensionResponse,
     hasCardiogenicShockResponse,
+    hasMixedShockResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -985,7 +1002,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasEscalatingHypoxemiaResponse || hasVentilatorDyssynchronyResponse || hasAutoPeepResponse
     || hasMucusPluggingResponse || hasUnplannedExtubationResponse
     || hasSpontaneousBreathingTrialResponse || hasPostIntubationHypotensionResponse
-    || hasCardiogenicShockResponse;
+    || hasCardiogenicShockResponse || hasMixedShockResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1007,8 +1024,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasArdsLungProtectiveResponse || hasEscalatingHypoxemiaResponse
     || hasVentilatorDyssynchronyResponse || hasAutoPeepResponse || hasMucusPluggingResponse
     || hasUnplannedExtubationResponse || hasSpontaneousBreathingTrialResponse
-    || hasPostIntubationHypotensionResponse || hasCardiogenicShockResponse;
-  const responseTray = hasCardiogenicShockResponse
+    || hasPostIntubationHypotensionResponse || hasCardiogenicShockResponse
+    || hasMixedShockResponse;
+  const responseTray = hasMixedShockResponse
+    ? { id: 'crisis', label: 'Mixed shock' } as const
+    : hasCardiogenicShockResponse
     ? { id: 'crisis', label: 'Cardiogenic shock' } as const
     : hasPostIntubationHypotensionResponse
     ? { id: 'crisis', label: 'Post-intubation pressure' } as const
@@ -1116,6 +1136,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasSpontaneousBreathingTrialResponse
     || hasPostIntubationHypotensionResponse
     || hasCardiogenicShockResponse
+    || hasMixedShockResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1546,6 +1567,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasCardiogenicShockResponse && (
               <CardiogenicShockTray assessment={props.resuscitation.cardiogenicShockAssessment}
                 onAction={props.onCardiogenicShockResponse ?? (() => {})} />
+            )}
+            {hasMixedShockResponse && (
+              <MixedShockTray assessment={props.resuscitation.mixedShockAssessment}
+                onAction={props.onMixedShockResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -4368,6 +4393,58 @@ function CardiogenicShockTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-cardiogenic-shock-trajectory')}>Review 10-minute trajectory</Button>
         </div>
         <p className="field__hint">Support buys time; it does not repair the infarct. Further hemodynamics, inotrope, transfer, and temporary support remain expert and trajectory dependent.</p>
+      </section>
+    </div>
+  );
+}
+
+function MixedShockTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['mixedShockAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onMixedShockResponse']>;
+}) {
+  const recognized = assessment?.recognitionAtTick != null;
+  const hemodynamics = assessment?.hemodynamicsAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const causes = assessment?.causesAtTick != null;
+  const reassessed = assessment?.reassessmentAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="mixed-pattern-title">
+        <div id="mixed-pattern-title" className="syringe__name">When clues disagree, believe the pattern.</div>
+        <Badge kind="teaching">output · tone · filling pressure · perfusion · context</Badge>
+        <div className="syringe__meta">CI 1.7 · wedge 24 · SVR 720 · LVEF 25% · warm + mottled</div>
+        <p className="syringe__remaining" role="status">
+          {hemodynamics ? 'Cardiac + vasodilatory phenotype · no universal cutoff'
+            : recognized ? 'Discordant shock recognized · hemodynamic context due'
+              : 'One pure label cannot explain this trajectory'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={recognized}
+            onClick={() => onAction('recognize-mixed-shock-discordance')}>Recognize discordance + call teams</Button>
+          <Button className="crisis-drug__action" disabled={!recognized || hemodynamics}
+            onClick={() => onAction('classify-mixed-shock-hemodynamics')}>Review hemodynamics in context</Button>
+        </div>
+        <p className="field__hint">Numbers should make you reconsider the model, not stop thinking. Vasoactive treatment changes both output and vascular-resistance interpretation.</p>
+      </section>
+      <section className="syringe" aria-labelledby="mixed-support-title">
+        <div id="mixed-support-title" className="syringe__name">Support both halves. Chase both causes.</div>
+        <Badge kind="teaching">tone · output review · no blind fluid · parallel causes · reassess</Badge>
+        <div className="syringe__meta">cardiac pathway · pneumonia pathway · congestion guardrail</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'Immediate perfusion improved · both causes remain open'
+            : causes ? 'Parallel cause control recorded · trajectory reassessment due'
+              : support ? 'Tone + output review recorded · cause pathways due'
+                : 'Mixed-physiology support pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!hemodynamics || support}
+            onClick={() => onAction('record-mixed-shock-support')}>Record tone + output support review</Button>
+          <Button className="crisis-drug__action" disabled={!support || causes}
+            onClick={() => onAction('address-mixed-shock-causes')}>Keep both cause pathways active</Button>
+          <Button className="crisis-drug__action" disabled={!causes || reassessed}
+            onClick={() => onAction('reassess-mixed-shock-trajectory')}>Review 10-minute trajectory</Button>
+        </div>
+        <p className="field__hint">A mixed label is a beginning, not a destination. Reassess perfusion, congestion, infection, cardiac function, and treatment effect together.</p>
       </section>
     </div>
   );

@@ -441,6 +441,11 @@ export class AnesthesiaEngine {
   private cardiogenicShockBridgeAtTick: number | null = null;
   private cardiogenicShockCauseControlAtTick: number | null = null;
   private cardiogenicShockReassessmentAtTick: number | null = null;
+  private mixedShockRecognitionAtTick: number | null = null;
+  private mixedShockHemodynamicsAtTick: number | null = null;
+  private mixedShockSupportAtTick: number | null = null;
+  private mixedShockCausesAtTick: number | null = null;
+  private mixedShockReassessmentAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -3212,6 +3217,57 @@ export class AnesthesiaEngine {
         this.cardiogenicShockReassessmentAtTick = this.currentTick;
         this.log('critical', 'assessment', `cardiogenic-shock-trajectory-reassessed-${this.currentTick}`,
           'Fixed response after 10 minutes: MAP is 68 mmHg, HR 104/min, capillary refill 3 seconds, mentation is clearer, SpO₂ is 94%, crackles persist, and urine and lactate response remain too early to declare. Revascularization, serial perfusion, rhythm, congestion, organ trajectory, and escalation work remain open.', { reassessmentMinutes: 10, mapMmHg: 68, heartRateBpm: 104, capillaryRefillSeconds: 3, spo2Percent: 94, cracklesPersist: true, urineResponseKnown: false, lactateResponseKnown: false });
+        break;
+      }
+      case 'mixed-shock-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'mixed-shock');
+        const valid = ['recognize-mixed-shock-discordance', 'classify-mixed-shock-hemodynamics',
+          'record-mixed-shock-support', 'address-mixed-shock-causes',
+          'reassess-mixed-shock-trajectory'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `mixed-shock-response-refused-${this.currentTick}`,
+            supported ? 'The mixed-shock action was not one of the listed choices. Nothing changed.'
+              : 'The bounded mixed-shock choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'recognize-mixed-shock-discordance') {
+          if (this.mixedShockRecognitionAtTick !== null) { this.log('warning', 'assessment', `mixed-shock-recognition-refused-${this.currentTick}`, 'The discordant trajectory and experienced-team activation have already been recorded.'); break; }
+          this.mixedShockRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `mixed-shock-discordance-recognized-${this.currentTick}`,
+            'MAP 54 mmHg accompanies rising lactate, oliguria, confusion, mottled knees, warm hands, fever, pulmonary congestion, pneumonia, and known LV dysfunction despite reported vasoactive support. Shock, cardiac, and infection help were activated because one pure-shock label does not explain the trajectory.', { mapMmHg: 54, lactateFromMmolPerL: 3.4, lactateToMmolPerL: 5.1, urineOutputMlPerHour: 10, warmHands: true, mottledKnees: true, shockTeam: true, cardiacTeam: true, infectionTeam: true });
+          break;
+        }
+        if (this.mixedShockRecognitionAtTick === null) { this.log('warning', 'assessment', `mixed-shock-recognition-order-refused-${this.currentTick}`, 'Recognize the discordant whole-patient trajectory and activate experienced help first.'); break; }
+        if (response === 'classify-mixed-shock-hemodynamics') {
+          if (this.mixedShockHemodynamicsAtTick !== null) { this.log('warning', 'assessment', `mixed-shock-hemodynamics-refused-${this.currentTick}`, 'The fixed mixed-hemodynamic panel has already been reviewed.'); break; }
+          this.mixedShockHemodynamicsAtTick = this.currentTick;
+          this.log('critical', 'assessment', `mixed-shock-hemodynamics-classified-${this.currentTick}`,
+            'Fixed panel: cardiac index 1.7 L/min/m², wedge pressure 24 mmHg, CVP 11 mmHg, SVR 720 dyn·s/cm⁵, LVEF 25%, preserved RV size, B-lines, and pneumonia consolidation. In treatment context this supports a cardiac-vasodilatory mixed phenotype; the values are authored prompts, not universal diagnostic cutoffs.', { cardiacIndexLPerMinM2: 1.7, wedgePressureMmHg: 24, cvpMmHg: 11, svrDynSecPerCm5: 720, lvefPercent: 25, cardiacVasodilatoryPhenotype: true, universalCutoffs: false });
+          break;
+        }
+        if (this.mixedShockHemodynamicsAtTick === null) { this.log('warning', 'assessment', `mixed-shock-hemodynamics-order-refused-${this.currentTick}`, 'Integrate output, filling pressure, vascular tone, treatment context, and the whole patient before recording support.'); break; }
+        if (response === 'record-mixed-shock-support') {
+          if (this.mixedShockSupportAtTick !== null) { this.log('warning', 'assessment', `mixed-shock-support-refused-${this.currentTick}`, 'The bounded mixed-physiology support intent has already been recorded.'); break; }
+          this.mixedShockSupportAtTick = this.currentTick;
+          this.log('critical', 'assessment', `mixed-shock-support-recorded-${this.currentTick}`,
+            'Vascular-tone support and expert review of output support were recorded concurrently, with pressure, perfusion, rhythm, and congestion guardrails. Blind fluid loading was withheld because filling pressure and lung congestion are already high. No universal agent, target, access, dose, pump, fluid, or drug delivery is simulated.', { toneSupport: true, outputSupportReview: true, concurrentSupport: true, primaryFluidLoading: false, intentOnly: true });
+          break;
+        }
+        if (this.mixedShockSupportAtTick === null) { this.log('warning', 'assessment', `mixed-shock-support-order-refused-${this.currentTick}`, 'Record support for both physiological halves before reviewing cause control.'); break; }
+        if (response === 'address-mixed-shock-causes') {
+          if (this.mixedShockCausesAtTick !== null) { this.log('warning', 'assessment', `mixed-shock-causes-refused-${this.currentTick}`, 'The parallel cause-control pathways have already been recorded.'); break; }
+          this.mixedShockCausesAtTick = this.currentTick;
+          this.log('critical', 'assessment', `mixed-shock-causes-addressed-${this.currentTick}`,
+            'Cardiac ischemia, mechanical-complication, rhythm, congestion, and device-escalation review remained active alongside pneumonia antimicrobial, culture, source, and complication work. The mixed label did not close either cause pathway.', { cardiacCausePathway: true, pneumoniaCausePathway: true, mechanicalAlternativesOpen: true, mixedLabelClosesCauses: false });
+          break;
+        }
+        if (this.mixedShockCausesAtTick === null) { this.log('warning', 'assessment', `mixed-shock-causes-order-refused-${this.currentTick}`, 'Keep cardiac and infectious cause-control pathways active before reviewing the fixed response.'); break; }
+        if (this.mixedShockReassessmentAtTick !== null) { this.log('warning', 'assessment', `mixed-shock-reassessment-refused-${this.currentTick}`, 'The fixed mixed-shock reassessment has already been reviewed.'); break; }
+        this.mixedShockReassessmentAtTick = this.currentTick;
+        this.log('critical', 'assessment', `mixed-shock-trajectory-reassessed-${this.currentTick}`,
+          'Fixed response after 10 minutes: MAP is 66 mmHg, HR 112/min, capillary refill 3 seconds, cardiac index 1.9 L/min/m², SVR 850 dyn·s/cm⁵, wedge pressure 23 mmHg, and SpO₂ 94%. Congestion persists; urine and lactate response remain too early to declare. Both cause pathways and serial organ trajectory remain open.', { reassessmentMinutes: 10, mapMmHg: 66, heartRateBpm: 112, capillaryRefillSeconds: 3, cardiacIndexLPerMinM2: 1.9, svrDynSecPerCm5: 850, wedgePressureMmHg: 23, spo2Percent: 94, congestionPersists: true, urineResponseKnown: false, lactateResponseKnown: false });
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -6428,6 +6484,13 @@ export class AnesthesiaEngine {
           bridgeAtTick: this.cardiogenicShockBridgeAtTick,
           causeControlAtTick: this.cardiogenicShockCauseControlAtTick,
           reassessmentAtTick: this.cardiogenicShockReassessmentAtTick,
+        },
+        mixedShockAssessment: {
+          recognitionAtTick: this.mixedShockRecognitionAtTick,
+          hemodynamicsAtTick: this.mixedShockHemodynamicsAtTick,
+          supportAtTick: this.mixedShockSupportAtTick,
+          causesAtTick: this.mixedShockCausesAtTick,
+          reassessmentAtTick: this.mixedShockReassessmentAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

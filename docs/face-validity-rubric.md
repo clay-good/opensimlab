@@ -142,7 +142,8 @@ Reviewers run the routine induction themselves before answering.
 | B88 | In the spontaneous-breathing-trial lesson, an improving cause, low oxygen support, stable circulation, wakefulness, spontaneous effort, cough, and manageable secretions lead to a standardized readiness review without requiring RSBI, an authored pressure-supported trial without increasing FiO₂, convergent intolerance recognition, prompt restoration of prior support, fixed recovery reassessment, and reversible-driver planning without equating SBT success with extubation readiness or implying examination, monitoring, ventilator, prescribing, treatment, airway, disposition, or outcome competence | | |
 | B89 | In the post-intubation-hypotension lesson, confirmed severe hypotension with impaired perfusion, preserved airway and ventilation signals, warm extremities, and a positive authored passive-leg-raise proxy lead to immediate help, a structured alternate-cause review, bounded mixed vasodilated and preload-sensitive classification, concurrent norepinephrine and cautious balanced-crystalloid intent, and fixed 5-minute reassessment without claiming a universal fluid-versus-vasopressor answer or implying examination, pressure acquisition, ultrasound, passive-leg-raise, fluid, prescribing, drug delivery, ventilator, sedation, diagnosis, infection-treatment, disposition, or outcome competence | | |
 | B90 | In the cardiogenic-shock lesson, worsening brain, skin, kidney, lactate, and pressure evidence with a fixed anterior-MI, severe-LV-dysfunction, and congested phenotype lead to multidisciplinary activation, open alternate-cause review, a perfusion-linked norepinephrine bridge without primary fluid loading, prompt culprit-vessel revascularization intent, expert-dependent further support, and fixed reassessment without implying examination, monitoring, ECG or echo interpretation, diagnosis, oxygen or drug delivery, prescribing, catheterization, revascularization, device, transfer, disposition, or outcome competence | | |
-| B91 | Overall: does this patient behave like a patient? | | |
+| B91 | In the mixed-shock lesson, post-MI LV dysfunction, pneumonia, fever, warm hands, mottling, worsening perfusion, congestion, and a fixed low-output, high-filling-pressure, low-resistance panel lead to multidisciplinary escalation, treatment-context classification without universal cutoffs, tone support plus expert output-support review without blind fluid loading, parallel cardiac and infectious cause control, and fixed reassessment without implying examination, catheter or test acquisition, calculation, diagnosis, oxygen, fluid, prescribing, drug delivery, revascularization, infection treatment, source control, device, transfer, disposition, or outcome competence | | |
+| B92 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -306,4 +307,8 @@ So that reviewers spend their attention on what this review is for:
   response panels. It does not examine, acquire or interpret tests, diagnose, deliver oxygen or
   drugs, choose access or dose, catheterize, revascularize, place support, transfer, determine
   disposition, or predict outcome.
+- The mixed-shock case uses fixed perfusion, cardiac, infection, catheter, phenotype, support, and
+  response panels. It does not examine, acquire or interpret monitoring or tests, calculate,
+  diagnose, deliver oxygen, fluid, or drugs, choose access or dose, revascularize, treat infection,
+  perform source control, place support, transfer, determine disposition, or predict outcome.
 - Nothing here has been clinically reviewed before — you are the first.
