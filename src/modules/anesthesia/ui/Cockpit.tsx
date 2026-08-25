@@ -941,6 +941,9 @@ export function Cockpit({
           onLargePleuralEffusionResponse={(action) => session.act({
             type: 'large-unilateral-pleural-effusion-response', payload: { action },
           })}
+          onBronchiectasisMucusPluggingResponse={(action) => session.act({
+            type: 'bronchiectasis-mucus-plugging-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

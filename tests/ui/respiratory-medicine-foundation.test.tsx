@@ -17,6 +17,7 @@ const postPePath = `${modulePath}/scenario/post-pulmonary-embolism-persistent-dy
 const apeSupportPath = `${modulePath}/scenario/acute-pulmonary-edema-respiratory-support-reassessment`;
 const postTensionPath = `${modulePath}/scenario/spontaneous-tension-pneumothorax-post-drainage-reassessment`;
 const largeEffusionPath = `${modulePath}/scenario/large-unilateral-pleural-effusion-reassessment`;
+const bronchiectasisMucusPath = `${modulePath}/scenario/bronchiectasis-mucus-plugging-reassessment`;
 
 describe('respiratory medicine foundation surfaces', () => {
   it('offers the specialty from the shared navigation and marks it current', () => {
@@ -29,7 +30,7 @@ describe('respiratory medicine foundation surfaces', () => {
     expect(markup).toMatch(/href="\/respiratory-medicine"[^>]*aria-current="page"/);
   });
 
-  it('renders a crawler-usable module page with exactly seven scenario links', () => {
+  it('renders a crawler-usable module page with exactly eight scenario links', () => {
     const markup = renderToStaticMarkup(createElement(PrerenderedBody, { path: modulePath }));
     expect(markup).toContain('<h1>Respiratory medicine simulator</h1>');
     expect(markup).toContain(`href="${scenarioPath}"`);
@@ -46,7 +47,9 @@ describe('respiratory medicine foundation surfaces', () => {
     expect(markup).toMatch(/After tension pneumothorax drainage/i);
     expect(markup).toContain(`href="${largeEffusionPath}"`);
     expect(markup).toMatch(/Large unilateral pleural effusion/i);
-    expect((markup.match(/\/respiratory-medicine\/scenario\//g) ?? [])).toHaveLength(7);
+    expect(markup).toContain(`href="${bronchiectasisMucusPath}"`);
+    expect(markup).toMatch(/Mucus plugging with focal collapse/i);
+    expect((markup.match(/\/respiratory-medicine\/scenario\//g) ?? [])).toHaveLength(8);
     expect(markup).toContain('aria-label="Site"');
   });
 

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "respiratory-medicine",
-  "recordCount": 7,
+  "recordCount": 8,
   "records": [
     {
       "recordId": "scenario:acute-severe-asthma@0.1.0",
@@ -78,6 +78,17 @@
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#large-unilateral-pleural-effusion-reassessment@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#large-unilateral-pleural-effusion-reassessment@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:bronchiectasis-mucus-plugging-reassessment@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "bronchiectasis-mucus-plugging-reassessment",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/respiratory-medicine-completion-audit.json#bronchiectasis-mucus-plugging-reassessment@0.1.0",
+        "/catalog/respiratory-medicine-quality-audit.json#bronchiectasis-mucus-plugging-reassessment@0.1.0"
       ]
     }
   ]

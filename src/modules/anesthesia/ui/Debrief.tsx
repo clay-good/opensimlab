@@ -4394,6 +4394,26 @@ export function objectiveFindings(
       const ordered = evaluation && handoff && evaluation.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved response, residual effusion, causes, results, complications, recurrence questions, triggers, and owners without inventing diagnosis or outcome.' : 'The unresolved-work handoff was absent or did not follow evaluation ownership after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-bronchiectasis-mucus-plugging-trajectory',
+      'review-bronchiectasis-mucus-plugging-evidence-and-alternatives',
+      'record-bronchiectasis-mucus-plugging-supported-airway-clearance-intent',
+      'review-bronchiectasis-mucus-plugging-later-response',
+      'escalate-bronchiectasis-mucus-plugging-persistent-collapse',
+      'handoff-bronchiectasis-mucus-plugging-reassessment'].includes(objective.id)) {
+      const trajectory = log.find((event) => /^bronchiectasis-mucus-trajectory-reconciled-\d+$/.test(event.eventId));
+      const evidence = log.find((event) => /^bronchiectasis-mucus-evidence-reviewed-\d+$/.test(event.eventId));
+      const clearance = log.find((event) => /^bronchiectasis-mucus-clearance-intent-recorded-\d+$/.test(event.eventId));
+      const response = log.find((event) => /^bronchiectasis-mucus-later-response-reviewed-\d+$/.test(event.eventId));
+      const escalation = log.find((event) => /^bronchiectasis-mucus-escalation-recorded-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^bronchiectasis-mucus-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-bronchiectasis-mucus-plugging-trajectory') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'Baseline function, secretion-clearance change, current breathing, perfusion, cough, and focal claims were reconciled without granting examination or diagnostic skill.' : 'The whole-patient secretion-clearance trajectory was not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-bronchiectasis-mucus-plugging-evidence-and-alternatives') { const ordered = trajectory && evidence && trajectory.tick <= evidence.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Fixed focal imaging supported a mucus-impaction working pattern while infection, blood, aspiration, foreign body, occult obstruction, compression, and other causes stayed open.' : 'The fixed evidence review was absent or preceded trajectory review.', atTick: evidence?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'record-bronchiectasis-mucus-plugging-supported-airway-clearance-intent') { const ordered = evidence && clearance && evidence.tick <= clearance.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Qualified individualized airway-clearance intent preserved preference, tolerance, monitoring, and a response goal without selecting a technique, device, setting, or drug.' : 'Airway-clearance intent was absent or preceded evidence review.', atTick: clearance?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-bronchiectasis-mucus-plugging-later-response') { const ordered = clearance && response && clearance.tick < response.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed whole-patient response improved while residual focal collapse and cause remained unresolved.' : 'The response review was absent or did not follow clearance intent after elapsed time.', atTick: response?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'escalate-bronchiectasis-mucus-plugging-persistent-collapse') { const ordered = response && escalation && response.tick <= escalation.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Persistent focal collapse received experienced respiratory and airway-capable ownership without making bronchoscopy or another procedure routine.' : 'Persistent-collapse escalation was absent or preceded response review.', atTick: escalation?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = escalation && handoff && escalation.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved partial response, residual collapse, open causes, triggers, pending work, and owners without inventing diagnosis or outcome.' : 'The unresolved-work handoff was absent or did not follow escalation after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

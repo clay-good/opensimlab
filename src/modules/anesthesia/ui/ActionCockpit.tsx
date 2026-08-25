@@ -852,6 +852,20 @@ export interface ActionCockpitProps {
       readonly treatmentDeliveredByLearner: false; readonly diagnosisDetermined: false;
       readonly dispositionDetermined: false; readonly outcomePredicted: false;
     };
+    readonly bronchiectasisMucusPluggingAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly clearanceIntentAtTick: number | null; readonly responseAtTick: number | null;
+      readonly escalationAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true; readonly spontaneouslyBreathingAuthored: true;
+      readonly artificialAirwayPresent: false; readonly focalCollapseAuthored: true;
+      readonly mucusImpactionWorkingPatternAuthored: true; readonly mucusPlugEtiologyProven: false;
+      readonly examinationPerformedByLearner: false; readonly imagingAcquiredByLearner: false;
+      readonly sputumAssessedByLearner: false; readonly airwayClearancePerformedByLearner: false;
+      readonly suctionPerformedByLearner: false; readonly bronchoscopyPerformedByLearner: false;
+      readonly deviceOrTechniqueSelected: false; readonly oxygenDeliveredByLearner: false;
+      readonly treatmentDeliveredByLearner: false; readonly diagnosisDetermined: false;
+      readonly dispositionDetermined: false; readonly outcomePredicted: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1344,6 +1358,14 @@ export interface ActionCockpitProps {
       | 'coordinate-large-unilateral-pleural-effusion-definitive-evaluation'
       | 'handoff-large-unilateral-pleural-effusion-reassessment',
   ) => void;
+  readonly onBronchiectasisMucusPluggingResponse?: (
+    action: 'reconcile-bronchiectasis-mucus-plugging-trajectory'
+      | 'review-bronchiectasis-mucus-plugging-evidence-and-alternatives'
+      | 'record-bronchiectasis-mucus-plugging-supported-airway-clearance-intent'
+      | 'review-bronchiectasis-mucus-plugging-later-response'
+      | 'escalate-bronchiectasis-mucus-plugging-persistent-collapse'
+      | 'handoff-bronchiectasis-mucus-plugging-reassessment',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1653,6 +1675,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'large-unilateral-pleural-effusion-reassessment',
     ),
+    hasBronchiectasisMucusPluggingResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'bronchiectasis-mucus-plugging-reassessment',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1780,6 +1806,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'spontaneous-tension-pneumothorax-post-drainage-reassessment')
       || (event.type === 'narrative'
         && event.target === 'large-unilateral-pleural-effusion-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'bronchiectasis-mucus-plugging-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1835,6 +1863,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasAcuteSevereAsthmaResponse,
     hasCopdTransitionResponse, hasCapHypoxemiaResponse, hasPostPeDyspneaResponse,
     hasApeSupportResponse, hasPostTensionPneumothoraxResponse, hasLargePleuralEffusionResponse,
+    hasBronchiectasisMucusPluggingResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1901,7 +1930,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPacemakerCaptureFailureResponse || hasTranscutaneousPacingCaptureResponse
     || hasAcuteSevereAsthmaResponse || hasCopdTransitionResponse || hasCapHypoxemiaResponse
     || hasPostPeDyspneaResponse || hasApeSupportResponse || hasPostTensionPneumothoraxResponse
-    || hasLargePleuralEffusionResponse;
+    || hasLargePleuralEffusionResponse || hasBronchiectasisMucusPluggingResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1932,7 +1961,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasLargePleuralEffusionResponse
+  const responseTray = hasBronchiectasisMucusPluggingResponse
+    ? { id: 'crisis', label: 'Mucus + focal collapse' } as const
+    : hasLargePleuralEffusionResponse
     ? { id: 'crisis', label: 'Pleural effusion review' } as const
     : hasPostTensionPneumothoraxResponse
     ? { id: 'crisis', label: 'Pleural recovery review' } as const
@@ -2157,6 +2188,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasApeSupportResponse
     || hasPostTensionPneumothoraxResponse
     || hasLargePleuralEffusionResponse
+    || hasBronchiectasisMucusPluggingResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2766,6 +2798,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasLargePleuralEffusionResponse && (
               <LargePleuralEffusionTray assessment={props.resuscitation.largePleuralEffusionAssessment}
                 onAction={props.onLargePleuralEffusionResponse ?? (() => {})} />
+            )}
+            {hasBronchiectasisMucusPluggingResponse && (
+              <BronchiectasisMucusPluggingTray
+                assessment={props.resuscitation.bronchiectasisMucusPluggingAssessment}
+                onAction={props.onBronchiectasisMucusPluggingResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -7161,6 +7198,44 @@ function LargePleuralEffusionTray({ assessment, onAction }: {
         <Button className="crisis-drug__action" disabled={!evaluation || handoff} onClick={() => onAction('handoff-large-unilateral-pleural-effusion-reassessment')}>Hand off unresolved effusion work</Button>
       </div>
       <p className="field__hint">No examination, calculation, diagnosis, needle, site, device, volume, suction, drain, biopsy, catheter, pleurodesis, surgery, treatment, disposition, recurrence, or outcome is chosen.</p>
+    </section>
+  </div>;
+}
+
+function BronchiectasisMucusPluggingTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['bronchiectasisMucusPluggingAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onBronchiectasisMucusPluggingResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const evidence = assessment?.evidenceAtTick != null;
+  const clearance = assessment?.clearanceIntentAtTick != null;
+  const response = assessment?.responseAtTick != null;
+  const escalation = assessment?.escalationAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="bronchiectasis-mucus-pattern-title">
+      <div id="bronchiectasis-mucus-pattern-title" className="syringe__name">The image says where. The trajectory says why it matters.</div>
+      <Badge kind="teaching">spontaneous breathing · focal collapse · stable circulation</Badge>
+      <div className="syringe__meta">baseline · cough · secretions · oxygenation · fixed imaging</div>
+      <p className="syringe__remaining" role="status">{clearance ? 'Individualized team trial recorded · advance to its response' : evidence ? 'Working pattern held beside open causes' : trajectory ? 'Whole-patient change reconciled · review the fixed evidence' : 'Begin with the change in clearance capacity'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={trajectory} onClick={() => onAction('reconcile-bronchiectasis-mucus-plugging-trajectory')}>Review patient + clearance trajectory</Button>
+        <Button className="crisis-drug__action" disabled={!trajectory || evidence} onClick={() => onAction('review-bronchiectasis-mucus-plugging-evidence-and-alternatives')}>Review focal evidence + alternatives</Button>
+        <Button className="crisis-drug__action" disabled={!evidence || clearance} onClick={() => onAction('record-bronchiectasis-mucus-plugging-supported-airway-clearance-intent')}>Record individualized clearance trial</Button>
+      </div>
+      <p className="field__hint">Respiratory-physiotherapy expertise, preference, tolerance, and an expected response shape the trial. No technique, device, position, duration, frequency, oxygen setting, or drug is selected.</p>
+    </section>
+    <section className="syringe" aria-labelledby="bronchiectasis-mucus-response-title">
+      <div id="bronchiectasis-mucus-response-title" className="syringe__name">Better is useful. Persistent is useful, too.</div>
+      <Badge kind="teaching">partial response · residual focal collapse · cause open</Badge>
+      <div className="syringe__meta">cough · speech · work · SpO₂ · air entry · re-expansion</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Response + unresolved focal work handed off' : escalation ? 'Experienced evaluation connected · advance time before handoff' : response ? 'Clearance improved · focal collapse and cause remain active' : 'Review the authored team response first'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={!clearance || response} onClick={() => onAction('review-bronchiectasis-mucus-plugging-later-response')}>Review later patient + focal response</Button>
+        <Button className="crisis-drug__action" disabled={!response || escalation} onClick={() => onAction('escalate-bronchiectasis-mucus-plugging-persistent-collapse')}>Connect persistent-collapse evaluation</Button>
+        <Button className="crisis-drug__action" disabled={!escalation || handoff} onClick={() => onAction('handoff-bronchiectasis-mucus-plugging-reassessment')}>Hand off unresolved focal work</Button>
+      </div>
+      <p className="field__hint">No sputum test, clearance maneuver, suction, bronchoscopy, plug removal, biopsy, treatment, diagnosis, disposition, recurrence, or outcome is performed or chosen.</p>
     </section>
   </div>;
 }

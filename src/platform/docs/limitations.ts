@@ -3263,6 +3263,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient and pleural data, current guidance, qualified pleural, radiology, pathology, microbiology, thoracic, and longitudinal teams, and patient-specific judgment.',
     briefIn: ['large-unilateral-pleural-effusion-reassessment'],
   },
+  {
+    id: 'bronchiectasis-mucus-presentation-imaging-and-response-are-authored',
+    headline: 'The baseline, symptoms, cough, secretions, examination claims, imaging, team-delivered care, and response are authored.',
+    simplification: 'Fixed reports stand in for longitudinal history, examination, cough and secretion assessment, oxygenation review, radiograph and CT acquisition and interpretation, respiratory physiotherapy, airway clearance, and serial multidisciplinary reassessment.',
+    whereItMisleads: 'Treating focal collapse or endobronchial material as etiologic proof, improvement as complete clearance, or the reports as learner-acquired examination, imaging, airway-clearance, or respiratory-therapy skill.',
+    correctUnderstanding: 'Real bronchiectasis deterioration requires verified whole-patient data, qualified imaging, experienced respiratory physiotherapy, individualized and tolerated airway clearance, and repeated reassessment.',
+    briefIn: ['bronchiectasis-mucus-plugging-reassessment'],
+  },
+  {
+    id: 'bronchiectasis-mucus-controls-record-review-intent-escalation-and-handoff-only',
+    headline: 'The controls record review, individualized team intent, an authored response, escalation, ownership, and handoff only.',
+    simplification: 'Six clicks stand in for assessment, imaging review, shared airway-clearance planning, response review, specialist evaluation, and communication.',
+    whereItMisleads: 'Equating button order with examination, cough or sputum assessment, imaging interpretation, technique selection, secretion clearance, diagnosis, procedure choice, treatment, or team competence.',
+    correctUnderstanding: 'Actual care requires qualified respiratory and airway teams, patient preference and tolerance, current guidance, local resources, explicit response goals, and patient-specific reassessment.',
+    briefIn: ['bronchiectasis-mucus-plugging-reassessment'],
+  },
+  {
+    id: 'no-live-airway-clearance-suction-bronchoscopy-treatment-diagnosis-or-outcome',
+    headline: 'The lab does not examine, test, clear an airway, suction, perform bronchoscopy, diagnose, deliver treatment, determine disposition, or predict outcome.',
+    simplification: 'No live examination, cough test, sputum assessment, monitoring, imaging, microbiology, airway-clearance technique or device, position, pressure, duration, frequency, humidification, saline, oxygen, medication, suction, bronchoscopy, lavage, biopsy, surgery, disposition, prognosis, resolution, recurrence, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional findings as a technique or procedure rule or using completion as evidence of clinical, imaging, respiratory-therapy, prescribing, procedural, disposition, or prognostic competence.',
+    correctUnderstanding: 'Use verified patient data, current bronchiectasis guidance, qualified respiratory physiotherapy and airway teams, local pathways, and patient-specific judgment.',
+    briefIn: ['bronchiectasis-mucus-plugging-reassessment'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

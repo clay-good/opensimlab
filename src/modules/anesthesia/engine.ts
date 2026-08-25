@@ -78,6 +78,9 @@ const POST_PE_DYSPNEA_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTI
 const APE_SUPPORT_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 const POST_TENSION_PNEUMOTHORAX_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 const LARGE_PLEURAL_EFFUSION_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
+const BRONCHIECTASIS_MUCUS_BLOCKED_ACTION_TYPES = new Set([
+  ...HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES, 'mucus-plugging-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -669,6 +672,12 @@ export class AnesthesiaEngine {
   private largePleuralEffusionFluidAtTick: number | null = null;
   private largePleuralEffusionEvaluationAtTick: number | null = null;
   private largePleuralEffusionHandoffAtTick: number | null = null;
+  private bronchiectasisMucusTrajectoryAtTick: number | null = null;
+  private bronchiectasisMucusEvidenceAtTick: number | null = null;
+  private bronchiectasisMucusClearanceIntentAtTick: number | null = null;
+  private bronchiectasisMucusResponseAtTick: number | null = null;
+  private bronchiectasisMucusEscalationAtTick: number | null = null;
+  private bronchiectasisMucusHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -979,6 +988,14 @@ export class AnesthesiaEngine {
     if (largePleuralEffusion && LARGE_PLEURAL_EFFUSION_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `large-pleural-effusion-generic-action-refused-${this.currentTick}`,
         'This review-only pleural-effusion lesson does not expose generic testing, treatment, oxygen, airway, ventilator, pleural procedure, rhythm, artifact, or crisis-injection actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const bronchiectasisMucus = this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'bronchiectasis-mucus-plugging-reassessment');
+    if (bronchiectasisMucus && BRONCHIECTASIS_MUCUS_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `bronchiectasis-mucus-generic-action-refused-${this.currentTick}`,
+        'This review-only bronchiectasis lesson does not expose generic testing, oxygen, medication, airway-clearance, suction, airway, ventilator, rhythm, artifact, procedure, or crisis actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -5285,6 +5302,53 @@ export class AnesthesiaEngine {
         this.largePleuralEffusionHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `large-pleural-effusion-handoff-recorded-${this.currentTick}`, 'The original breathing and imaging pattern, symptom-limited aspiration report, residual effusion, fixed fluid classification, open causes, pending results, complications, recurrence questions, deterioration triggers, and named pleural and longitudinal owners were handed off. No diagnosis, procedure, treatment, disposition, prognosis, recurrence, or outcome was determined.', { diagnosisDetermined: false, procedurePerformedByLearner: false, treatmentDeliveredByLearner: false, dispositionDetermined: false, recurrencePredicted: false, outcomePredicted: false }); break;
       }
+      case 'bronchiectasis-mucus-plugging-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'bronchiectasis-mucus-plugging-reassessment');
+        const valid = ['reconcile-bronchiectasis-mucus-plugging-trajectory',
+          'review-bronchiectasis-mucus-plugging-evidence-and-alternatives',
+          'record-bronchiectasis-mucus-plugging-supported-airway-clearance-intent',
+          'review-bronchiectasis-mucus-plugging-later-response',
+          'escalate-bronchiectasis-mucus-plugging-persistent-collapse',
+          'handoff-bronchiectasis-mucus-plugging-reassessment'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `bronchiectasis-mucus-response-refused-${this.currentTick}`, supported ? 'The bronchiectasis mucus action was not one of the listed choices. Nothing changed.' : 'These bronchiectasis mucus choices are available only in the declared Respiratory Medicine lesson.'); break; }
+        if (response === 'reconcile-bronchiectasis-mucus-plugging-trajectory') {
+          if (this.bronchiectasisMucusTrajectoryAtTick !== null) { this.log('warning', 'assessment', `bronchiectasis-mucus-trajectory-refused-${this.currentTick}`, 'The baseline, breathing, perfusion, cough, secretion, and focal trajectory was already reconciled.'); break; }
+          this.bronchiectasisMucusTrajectoryAtTick = this.currentTick;
+          this.log('warning', 'assessment', `bronchiectasis-mucus-trajectory-reconciled-${this.currentTick}`, 'The documented baseline was reconciled with 2 days of worsening secretion clearance, current hypoxemia and work, stable perfusion, ineffective cough, and focal examination claims. No examination, cough test, sputum assessment, diagnosis, or treatment occurred.', { initialPulsePresent: true, spontaneouslyBreathingAuthored: true, artificialAirwayPresent: false, examinationPerformedByLearner: false, sputumAssessedByLearner: false }); break;
+        }
+        if (this.bronchiectasisMucusTrajectoryAtTick === null) { this.log('warning', 'assessment', `bronchiectasis-mucus-trajectory-order-refused-${this.currentTick}`, 'Reconcile the whole-patient secretion-clearance trajectory before reviewing the fixed imaging pattern.'); break; }
+        if (response === 'review-bronchiectasis-mucus-plugging-evidence-and-alternatives') {
+          if (this.bronchiectasisMucusEvidenceAtTick !== null) { this.log('warning', 'assessment', `bronchiectasis-mucus-evidence-refused-${this.currentTick}`, 'The fixed imaging pattern and alternatives were already reviewed.'); break; }
+          this.bronchiectasisMucusEvidenceAtTick = this.currentTick;
+          this.log('warning', 'assessment', `bronchiectasis-mucus-evidence-reviewed-${this.currentTick}`, 'The fixed radiograph and CT reports support focal left-lower-lobe collapse with a mucus-impaction working pattern. Infection, blood, aspiration, foreign body, occult obstruction, compression, and other causes remain open; no image was acquired or interpreted and no cause was diagnosed.', { focalCollapseAuthored: true, mucusImpactionWorkingPatternAuthored: true, mucusPlugEtiologyProven: false, imagingAcquiredByLearner: false, diagnosisDetermined: false }); break;
+        }
+        if (this.bronchiectasisMucusEvidenceAtTick === null) { this.log('warning', 'assessment', `bronchiectasis-mucus-evidence-order-refused-${this.currentTick}`, 'Review the fixed focal imaging pattern and alternatives before recording airway-clearance intent.'); break; }
+        if (response === 'record-bronchiectasis-mucus-plugging-supported-airway-clearance-intent') {
+          if (this.bronchiectasisMucusClearanceIntentAtTick !== null) { this.log('warning', 'assessment', `bronchiectasis-mucus-clearance-refused-${this.currentTick}`, 'The supported individualized airway-clearance intent was already recorded.'); break; }
+          this.bronchiectasisMucusClearanceIntentAtTick = this.currentTick;
+          this.log('warning', 'assessment', `bronchiectasis-mucus-clearance-intent-recorded-${this.currentTick}`, 'Experienced respiratory-physiotherapy review and a supported individualized airway-clearance trial were recorded with patient preference, tolerance, monitoring, and an expected response. No technique, device, position, pressure, duration, frequency, oxygen setting, drug, suction, or treatment was selected or delivered.', { airwayClearancePerformedByLearner: false, deviceOrTechniqueSelected: false, oxygenDeliveredByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.bronchiectasisMucusClearanceIntentAtTick === null) { this.log('warning', 'assessment', `bronchiectasis-mucus-clearance-order-refused-${this.currentTick}`, 'Record qualified individualized airway-clearance intent before reviewing the authored response.'); break; }
+        if (response === 'review-bronchiectasis-mucus-plugging-later-response') {
+          if (this.currentTick <= this.bronchiectasisMucusClearanceIntentAtTick) { this.log('warning', 'assessment', `bronchiectasis-mucus-response-time-refused-${this.currentTick}`, 'Allow a later simulated tick before reviewing the authored airway-clearance response.'); break; }
+          if (this.bronchiectasisMucusResponseAtTick !== null) { this.log('warning', 'assessment', `bronchiectasis-mucus-response-review-refused-${this.currentTick}`, 'The authored airway-clearance response was already reviewed.'); break; }
+          this.bronchiectasisMucusResponseAtTick = this.currentTick;
+          this.log('warning', 'assessment', `bronchiectasis-mucus-later-response-reviewed-${this.currentTick}`, 'Team-delivered care produced expectorated secretions, stronger cough, easier speech, lower work, and improved oxygenation, while focal air entry and radiographic volume loss remain abnormal. Improvement does not prove complete clearance, re-expansion, cause, durable response, recurrence risk, or outcome.', { airwayClearancePerformedByLearner: false, secretionRemovedByLearner: false, completeClearanceEstablished: false, completeReexpansionEstablished: false, outcomePredicted: false }); break;
+        }
+        if (this.bronchiectasisMucusResponseAtTick === null) { this.log('warning', 'assessment', `bronchiectasis-mucus-response-order-refused-${this.currentTick}`, 'Review the authored later response before escalating the residual focal disease.'); break; }
+        if (response === 'escalate-bronchiectasis-mucus-plugging-persistent-collapse') {
+          if (this.bronchiectasisMucusEscalationAtTick !== null) { this.log('warning', 'assessment', `bronchiectasis-mucus-escalation-refused-${this.currentTick}`, 'Persistent focal-collapse and cause evaluation was already escalated.'); break; }
+          this.bronchiectasisMucusEscalationAtTick = this.currentTick;
+          this.log('warning', 'assessment', `bronchiectasis-mucus-escalation-recorded-${this.currentTick}`, 'Residual focal collapse, incomplete clearance, and unresolved cause received experienced respiratory and airway-capable owners. Bronchoscopy was not made routine or selected; no suction, procedure, biopsy, surgery, treatment, disposition, or diagnosis was chosen.', { suctionPerformedByLearner: false, bronchoscopyPerformedByLearner: false, procedureSelected: false, treatmentDeliveredByLearner: false, diagnosisDetermined: false, dispositionDetermined: false }); break;
+        }
+        if (this.bronchiectasisMucusEscalationAtTick === null) { this.log('warning', 'assessment', `bronchiectasis-mucus-handoff-order-refused-${this.currentTick}`, 'Escalate residual focal collapse and unresolved cause before handoff.'); break; }
+        if (this.currentTick <= this.bronchiectasisMucusEscalationAtTick) { this.log('warning', 'assessment', `bronchiectasis-mucus-handoff-time-refused-${this.currentTick}`, 'Allow a later simulated tick before handing off the unresolved respiratory work.'); break; }
+        if (this.bronchiectasisMucusHandoffAtTick !== null) { this.log('warning', 'assessment', `bronchiectasis-mucus-handoff-refused-${this.currentTick}`, 'The bronchiectasis mucus handoff was already recorded.'); break; }
+        this.bronchiectasisMucusHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `bronchiectasis-mucus-handoff-recorded-${this.currentTick}`, 'The baseline and acute trajectory, fixed imaging, partial response, residual collapse, open causes, deterioration triggers, pending work, and named respiratory and airway-capable owners were handed off. No diagnosis, procedure, treatment, disposition, prognosis, resolution, recurrence, or outcome was determined.', { diagnosisDetermined: false, procedurePerformedByLearner: false, treatmentDeliveredByLearner: false, dispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -8034,6 +8098,14 @@ export class AnesthesiaEngine {
         systolicMmHg: reviewed ? 124 : 128, diastolicMmHg: reviewed ? 74 : 76,
         meanArterialMmHg: reviewed ? 91 : 93, coreTemperatureC: 36.8 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'bronchiectasis-mucus-plugging-reassessment')) {
+      const reviewed = this.bronchiectasisMucusResponseAtTick !== null;
+      crisisState = { ...crisisState, heartRateBpm: reviewed ? 98 : 108,
+        respiratoryRateBpm: reviewed ? 22 : 28, spo2Percent: reviewed ? 93 : 88,
+        systolicMmHg: reviewed ? 116 : 118, diastolicMmHg: reviewed ? 70 : 72,
+        meanArterialMmHg: reviewed ? 85 : 87, coreTemperatureC: 37.4 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -9377,6 +9449,26 @@ export class AnesthesiaEngine {
               ultrasoundPerformedByLearner: false as const, pleuralFluidAcquiredByLearner: false as const,
               fluidInterpretedByLearner: false as const, thoracentesisPerformedByLearner: false as const,
               deviceOrSiteSelected: false as const, drainageVolumeSelected: false as const,
+              treatmentDeliveredByLearner: false as const, diagnosisDetermined: false as const,
+              dispositionDetermined: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'bronchiectasis-mucus-plugging-reassessment') ? {
+            bronchiectasisMucusPluggingAssessment: {
+              trajectoryAtTick: this.bronchiectasisMucusTrajectoryAtTick,
+              evidenceAtTick: this.bronchiectasisMucusEvidenceAtTick,
+              clearanceIntentAtTick: this.bronchiectasisMucusClearanceIntentAtTick,
+              responseAtTick: this.bronchiectasisMucusResponseAtTick,
+              escalationAtTick: this.bronchiectasisMucusEscalationAtTick,
+              handoffAtTick: this.bronchiectasisMucusHandoffAtTick,
+              initialPulsePresent: true as const, spontaneouslyBreathingAuthored: true as const,
+              artificialAirwayPresent: false as const, focalCollapseAuthored: true as const,
+              mucusImpactionWorkingPatternAuthored: true as const, mucusPlugEtiologyProven: false as const,
+              examinationPerformedByLearner: false as const, imagingAcquiredByLearner: false as const,
+              sputumAssessedByLearner: false as const, airwayClearancePerformedByLearner: false as const,
+              suctionPerformedByLearner: false as const, bronchoscopyPerformedByLearner: false as const,
+              deviceOrTechniqueSelected: false as const, oxygenDeliveredByLearner: false as const,
               treatmentDeliveredByLearner: false as const, diagnosisDetermined: false as const,
               dispositionDetermined: false as const, outcomePredicted: false as const,
             },

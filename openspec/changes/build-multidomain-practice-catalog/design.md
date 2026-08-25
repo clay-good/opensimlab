@@ -1451,6 +1451,28 @@ pleurodesis, surgery, oxygen, drug, treatment, disposition, prognosis, recurrenc
 modeled. This is distinct from pulmonary-edema congestion, pneumonia, pleural-air rescue, and
 post-drain pneumothorax surveillance.
 
+### Wave C respiratory-medicine slice 8: bronchiectasis mucus plugging with focal collapse
+
+The eighth respiratory-medicine slice presents a spontaneously breathing 59-year-old woman with
+established bronchiectasis whose previously independent airway-clearance routine has become
+ineffective over 2 days. She has short-sentence speech, weak cough, thicker retained secretions,
+RR 28/min, room-air SpO₂ 88%, stable perfusion, and markedly reduced left-base air entry. Fixed
+radiograph and CT reports show left-lower-lobe volume loss and endobronchial material. Mucus
+impaction is the authored working pattern, while infection, blood, aspiration, foreign body, occult
+obstruction, compression, and other causes remain open.
+
+Learners reconcile the whole-patient trajectory and fixed evidence, then record experienced
+respiratory-physiotherapy review and a supported individualized airway-clearance trial without
+selecting a technique, device, position, pressure, duration, frequency, oxygen setting, or drug.
+After elapsed time, a fixed report shows stronger cough, easier speech, lower work, improved room-
+air SpO₂, and partial re-expansion with residual focal collapse. Learners connect experienced
+respiratory and airway-capable evaluation without making bronchoscopy routine, then complete a
+strictly elapsed unresolved-work handoff. The lesson does not examine; test cough; assess sputum;
+acquire or interpret imaging, microbiology, or monitoring; diagnose; deliver airway clearance,
+oxygen, suction, medication, or treatment; select or perform bronchoscopy or another procedure;
+determine disposition or prognosis; or predict resolution, recurrence, durable benefit, or outcome.
+It is distinct from Critical Care's intubated artificial-airway suction and ventilator-mechanics lab.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

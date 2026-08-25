@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 103 reports COPD transition reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 108;
+/** Bumped whenever the message shape changes incompatibly. Version 109 reports bronchiectasis mucus-plugging reassessment state. */
+export const WORKER_PROTOCOL_VERSION = 109;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -940,6 +940,20 @@ export interface EquipmentSnapshot {
       readonly ultrasoundPerformedByLearner: false; readonly pleuralFluidAcquiredByLearner: false;
       readonly fluidInterpretedByLearner: false; readonly thoracentesisPerformedByLearner: false;
       readonly deviceOrSiteSelected: false; readonly drainageVolumeSelected: false;
+      readonly treatmentDeliveredByLearner: false; readonly diagnosisDetermined: false;
+      readonly dispositionDetermined: false; readonly outcomePredicted: false;
+    };
+    readonly bronchiectasisMucusPluggingAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly clearanceIntentAtTick: number | null; readonly responseAtTick: number | null;
+      readonly escalationAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true; readonly spontaneouslyBreathingAuthored: true;
+      readonly artificialAirwayPresent: false; readonly focalCollapseAuthored: true;
+      readonly mucusImpactionWorkingPatternAuthored: true; readonly mucusPlugEtiologyProven: false;
+      readonly examinationPerformedByLearner: false; readonly imagingAcquiredByLearner: false;
+      readonly sputumAssessedByLearner: false; readonly airwayClearancePerformedByLearner: false;
+      readonly suctionPerformedByLearner: false; readonly bronchoscopyPerformedByLearner: false;
+      readonly deviceOrTechniqueSelected: false; readonly oxygenDeliveredByLearner: false;
       readonly treatmentDeliveredByLearner: false; readonly diagnosisDetermined: false;
       readonly dispositionDetermined: false; readonly outcomePredicted: false;
     };
