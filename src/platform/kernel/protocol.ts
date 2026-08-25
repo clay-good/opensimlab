@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 85 reports heart-failure reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 85;
+/** Bumped whenever the message shape changes incompatibly. Version 86 reports AF reassessment state. */
+export const WORKER_PROTOCOL_VERSION = 86;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -639,6 +639,17 @@ export interface EquipmentSnapshot {
       readonly residualCongestion: true;
       readonly dischargeReady: false;
       readonly doseCalculated: false;
+      readonly treatmentDelivered: false;
+    };
+    readonly afRvrAssessment?: {
+      readonly stabilityAtTick: number | null;
+      readonly contextAtTick: number | null;
+      readonly rateIntentAtTick: number | null;
+      readonly strokePreventionAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+      readonly hemodynamicallyStable: true;
+      readonly durationCertain: false;
+      readonly exactScoreCalculated: false;
       readonly treatmentDelivered: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */

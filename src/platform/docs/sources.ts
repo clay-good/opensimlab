@@ -1528,6 +1528,34 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-25',
   },
   {
+    id: 'joglar-atrial-fibrillation-guideline-2023',
+    pmid: '38033089',
+    authors: 'Joglar JA, Chung MK, Armbruster AL, et al',
+    title: '2023 ACC/AHA/ACCP/HRS Guideline for the Diagnosis and Management of Atrial Fibrillation',
+    publication: 'Circulation',
+    year: 2024,
+    locator: '149:e1-e156; doi:10.1161/CIR.0000000000001193',
+    usedFor: 'The stable rapid-AF boundary: determine hemodynamic stability, use ventricular '
+      + 'function and contraindications in acute rate-control selection, assess thromboembolic '
+      + 'risk with validated tools, and preserve cardioversion safety when AF duration is uncertain.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-25',
+  },
+  {
+    id: 'chyou-acute-atrial-fibrillation-statement-2023',
+    pmid: '36912134',
+    authors: 'Chyou JY, Barkoudah E, Dukes JW, et al',
+    title: 'Atrial Fibrillation Occurring During Acute Hospitalization: A Scientific Statement From the American Heart Association',
+    publication: 'Circulation',
+    year: 2023,
+    locator: '147:e676-e698; doi:10.1161/CIR.0000000000001133',
+    usedFor: 'The acute AF trajectory boundary: evaluate triggers, rate or rhythm management, and '
+      + 'anticoagulation as linked but separate decisions, then preserve rhythm monitoring, risk '
+      + 'factor modification, and longitudinal follow-up after the acute encounter.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-25',
+  },
+  {
     id: 'mcdonagh-heart-failure-guideline-2021',
     pmid: '34447992',
     authors: 'McDonagh TA, Metra M, Adamo M, et al',

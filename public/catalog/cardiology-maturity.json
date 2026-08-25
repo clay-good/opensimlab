@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "cardiology",
-  "recordCount": 3,
+  "recordCount": 4,
   "records": [
     {
       "recordId": "scenario:stable-chest-pain-evaluation@0.1.0",
@@ -34,6 +34,17 @@
       "evidence": [
         "/catalog/cardiology-completion-audit.json#acute-decompensated-heart-failure@0.1.0",
         "/catalog/cardiology-quality-audit.json#acute-decompensated-heart-failure@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:atrial-fibrillation-with-rapid-response@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "atrial-fibrillation-with-rapid-response",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/cardiology-completion-audit.json#atrial-fibrillation-with-rapid-response@0.1.0",
+        "/catalog/cardiology-quality-audit.json#atrial-fibrillation-with-rapid-response@0.1.0"
       ]
     }
   ]

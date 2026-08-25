@@ -1030,6 +1030,24 @@ verify administration; acquire or interpret weight, balance, urine output, labor
 ultrasound, or imaging; calculate dry weight, fluid targets, doses, or scores; diagnose; prescribe
 or deliver treatment; select a regimen; determine disposition or prognosis; or predict outcome.
 
+### Wave C cardiology slice 4: atrial fibrillation with rapid response
+
+The fourth cardiology slice starts with a fixed diagnostic report of atrial fibrillation at
+142/min in an alert, warm patient with preserved pressure and no authored ischemia, acute heart
+failure, syncope, or shock. Learners reconcile rhythm and stability without using rate alone,
+review uncertain AF duration, prior history, adherence, ventricular function, comorbidity, and
+acute contributors, then record patient-specific rate-control intent. A separate thromboembolic,
+bleeding, preference, and cardioversion-context review prevents rate improvement from erasing
+stroke prevention. The fixed response remains AF at 96/min and closes with monitoring, change
+triggers, ownership, risk-factor review, and follow-up.
+
+This stable, multidomain AF lesson is distinct from the emergency-medicine regular
+narrow-complex-tachycardia lab, which rehearses immediate synchronized cardioversion for authored
+shock and ischemia. It does not acquire or interpret an ECG or test, calculate a score, diagnose,
+select a universal target, prescribe or deliver medication or anticoagulation, determine
+cardioversion eligibility, perform cardioversion or ablation, determine disposition or prognosis,
+or predict recurrence or outcome.
+
 #### Respiratory medicine: 15
 
 Acute severe asthma; COPD exacerbation; community-acquired pneumonia with hypoxemia; pulmonary

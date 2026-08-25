@@ -531,6 +531,11 @@ export class AnesthesiaEngine {
   private heartFailureToleranceAtTick: number | null = null;
   private heartFailureTransitionAtTick: number | null = null;
   private heartFailureReadinessAtTick: number | null = null;
+  private afRvrStabilityAtTick: number | null = null;
+  private afRvrContextAtTick: number | null = null;
+  private afRvrRateIntentAtTick: number | null = null;
+  private afRvrStrokePreventionAtTick: number | null = null;
+  private afRvrReassessmentAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -4165,6 +4170,47 @@ export class AnesthesiaEngine {
         this.log('warning', 'assessment', `heart-failure-readiness-reassessed-${this.currentTick}`, 'Persistent orthopnea, JVP elevation, crackles, edema, and weight above the documented clinic value mean this authored snapshot is not discharge-ready. Medication and monitoring ownership, self-management education, change triggers, early follow-up, and the next reassessment were recorded without determining disposition, prognosis, or outcome.', { residualCongestion: true, dischargeReady: false, ownerNamed: true, outcomePredicted: false });
         break;
       }
+      case 'af-rvr-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'atrial-fibrillation-with-rapid-response');
+        const valid = ['reconcile-af-rvr-rhythm-and-stability', 'review-af-rvr-context-and-triggers',
+          'record-af-rvr-rate-control-intent', 'record-af-rvr-stroke-prevention-intent',
+          'reassess-af-rvr-trajectory-and-follow-up'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `af-rvr-response-refused-${this.currentTick}`, supported ? 'The AF-with-rapid-response action was not one of the listed choices. Nothing changed.' : 'The bounded AF-with-rapid-response choices are available only in the declared lesson.'); break; }
+        if (response === 'reconcile-af-rvr-rhythm-and-stability') {
+          if (this.afRvrStabilityAtTick !== null) { this.log('warning', 'assessment', `af-rvr-stability-refused-${this.currentTick}`, 'The authored rhythm and current stability have already been reconciled.'); break; }
+          this.afRvrStabilityAtTick = this.currentTick;
+          this.log('warning', 'assessment', `af-rvr-stability-reconciled-${this.currentTick}`, 'The fixed diagnostic report names atrial fibrillation with an irregular narrow-complex rate of 142/min. BP 119/71 mmHg, alert mentation, warm perfusion, and no authored shock, ischemic discomfort, acute heart failure, or syncope support a hemodynamically stable pathway now. Heart rate alone did not define instability.', { hemodynamicallyStable: true, instabilityDefinedByRateAlone: false });
+          break;
+        }
+        if (this.afRvrStabilityAtTick === null) { this.log('warning', 'assessment', `af-rvr-order-refused-${this.currentTick}`, 'Reconcile rhythm and current stability before rate, rhythm, or stroke-prevention planning.'); break; }
+        if (response === 'review-af-rvr-context-and-triggers') {
+          if (this.afRvrContextAtTick !== null) { this.log('warning', 'assessment', `af-rvr-context-refused-${this.currentTick}`, 'The duration, prior-history, ventricular-function, and trigger context has already been reviewed.'); break; }
+          this.afRvrContextAtTick = this.currentTick;
+          this.log('warning', 'assessment', `af-rvr-context-reviewed-${this.currentTick}`, 'Palpitations were noticed 6 hours ago, but the last symptom-free check was 3 days ago, so AF duration is uncertain. Prior AF, medications and adherence, LVEF 55%, hypertension, diabetes, hemoglobin, electrolytes, TSH, temperature, infection, alcohol, stimulants, and medication change were reviewed without inventing an acute cause.', { durationCertain: false, lvefPercent: 55, triggerDiagnosed: false });
+          break;
+        }
+        if (this.afRvrContextAtTick === null) { this.log('warning', 'assessment', `af-rvr-context-order-refused-${this.currentTick}`, 'Review duration, history, ventricular function, and contributors before recording rate-control intent.'); break; }
+        if (response === 'record-af-rvr-rate-control-intent') {
+          if (this.afRvrRateIntentAtTick !== null) { this.log('warning', 'assessment', `af-rvr-rate-refused-${this.currentTick}`, 'The patient-specific acute rate-control intent has already been recorded.'); break; }
+          this.afRvrRateIntentAtTick = this.currentTick;
+          this.log('warning', 'assessment', `af-rvr-rate-intent-recorded-${this.currentTick}`, 'Patient-specific acute rate-control intent was recorded using current stability, LVEF, pressure, symptoms, comorbidity, contraindications, interactions, and anticipated response. No universal target, agent, dose, prescription, medication delivery, or rhythm conversion was supplied.', { intentOnly: true, universalTargetSelected: false, treatmentDelivered: false });
+          break;
+        }
+        if (this.afRvrRateIntentAtTick === null) { this.log('warning', 'assessment', `af-rvr-rate-order-refused-${this.currentTick}`, 'Record bounded rate-control intent before stroke-prevention planning.'); break; }
+        if (response === 'record-af-rvr-stroke-prevention-intent') {
+          if (this.afRvrStrokePreventionAtTick !== null) { this.log('warning', 'assessment', `af-rvr-stroke-refused-${this.currentTick}`, 'The thromboembolic, bleeding, preference, and cardioversion context has already been reviewed.'); break; }
+          this.afRvrStrokePreventionAtTick = this.currentTick;
+          this.log('warning', 'assessment', `af-rvr-stroke-prevention-recorded-${this.currentTick}`, 'Validated thromboembolic-risk review, bleeding context, kidney function, interactions, preferences, uncertain AF duration, and cardioversion implications were recorded separately from rate control. The authored risk is not low; no exact score, anticoagulant, dose, eligibility decision, or treatment was supplied.', { strokeRisk: 'not-low', exactScoreCalculated: false, anticoagulantSelected: false, treatmentDelivered: false });
+          break;
+        }
+        if (this.afRvrStrokePreventionAtTick === null) { this.log('warning', 'assessment', `af-rvr-stroke-order-refused-${this.currentTick}`, 'Review stroke prevention and cardioversion context before reassessing the trajectory.'); break; }
+        if (this.afRvrReassessmentAtTick !== null) { this.log('warning', 'assessment', `af-rvr-reassessment-refused-${this.currentTick}`, 'The fixed AF trajectory and follow-up ownership have already been reassessed.'); break; }
+        this.afRvrReassessmentAtTick = this.currentTick;
+        this.log('warning', 'assessment', `af-rvr-trajectory-reassessed-${this.currentTick}`, 'Fixed reassessment: the rhythm remains atrial fibrillation with ventricular rate 96/min, BP 120/72 mmHg, improved palpitations, alert mentation, warm perfusion, and no authored ischemia or acute heart failure. Monitoring, instability triggers, owner, rhythm follow-up, risk-factor review, and the next reassessment were recorded. Better rate did not erase AF or stroke-prevention questions.', { rhythmRemainsAf: true, heartRateBpm: 96, ownerNamed: true, outcomePredicted: false });
+        break;
+      }
       case 'aspiration-risk-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
@@ -7076,6 +7122,14 @@ export class AnesthesiaEngine {
         spo2Percent: 94, etco2MmHg: 36, systolicMmHg: 118, diastolicMmHg: 73,
         meanArterialMmHg: 88, coreTemperatureC: 36.8 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'atrial-fibrillation-with-rapid-response')) {
+      const reassessed = this.afRvrReassessmentAtTick !== null;
+      crisisState = { ...crisisState, heartRateBpm: reassessed ? 96 : 142,
+        respiratoryRateBpm: reassessed ? 16 : 18, spo2Percent: 97, etco2MmHg: 36,
+        systolicMmHg: reassessed ? 120 : 119, diastolicMmHg: reassessed ? 72 : 71,
+        meanArterialMmHg: reassessed ? 88 : 87, coreTemperatureC: 36.7 };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -7726,6 +7780,20 @@ export class AnesthesiaEngine {
               residualCongestion: true,
               dischargeReady: false,
               doseCalculated: false,
+              treatmentDelivered: false,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'atrial-fibrillation-with-rapid-response') ? {
+            afRvrAssessment: {
+              stabilityAtTick: this.afRvrStabilityAtTick,
+              contextAtTick: this.afRvrContextAtTick,
+              rateIntentAtTick: this.afRvrRateIntentAtTick,
+              strokePreventionAtTick: this.afRvrStrokePreventionAtTick,
+              reassessmentAtTick: this.afRvrReassessmentAtTick,
+              hemodynamicallyStable: true,
+              durationCertain: false,
+              exactScoreCalculated: false,
               treatmentDelivered: false,
             },
           } : {}),

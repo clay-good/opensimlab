@@ -559,6 +559,17 @@ export interface ActionCockpitProps {
       readonly doseCalculated: false;
       readonly treatmentDelivered: false;
     };
+    readonly afRvrAssessment?: {
+      readonly stabilityAtTick: number | null;
+      readonly contextAtTick: number | null;
+      readonly rateIntentAtTick: number | null;
+      readonly strokePreventionAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+      readonly hemodynamicallyStable: true;
+      readonly durationCertain: false;
+      readonly exactScoreCalculated: false;
+      readonly treatmentDelivered: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -910,6 +921,11 @@ export interface ActionCockpitProps {
       | 'record-heart-failure-transition-intent'
       | 'reassess-heart-failure-discharge-readiness',
   ) => void;
+  readonly onAfRvrResponse?: (
+    action: 'reconcile-af-rvr-rhythm-and-stability' | 'review-af-rvr-context-and-triggers'
+      | 'record-af-rvr-rate-control-intent' | 'record-af-rvr-stroke-prevention-intent'
+      | 'reassess-af-rvr-trajectory-and-follow-up',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1138,6 +1154,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'acute-decompensated-heart-failure',
     ),
+    hasAfRvrResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'atrial-fibrillation-with-rapid-response',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1236,6 +1256,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'stable-chest-pain-evaluation')
       || (event.type === 'narrative' && event.target === 'nstemi-risk-reassessment')
       || (event.type === 'narrative' && event.target === 'acute-decompensated-heart-failure')
+      || (event.type === 'narrative' && event.target === 'atrial-fibrillation-with-rapid-response')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1274,6 +1295,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasStableChestPainResponse,
     hasNstemiRiskResponse,
     hasHeartFailureResponse,
+    hasAfRvrResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1331,7 +1353,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse;
   const hasAnyNonAcuteAssessment = hasStableChestPainResponse || hasNstemiRiskResponse
-    || hasHeartFailureResponse;
+    || hasHeartFailureResponse || hasAfRvrResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1362,7 +1384,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasHeartFailureResponse
+  const responseTray = hasAfRvrResponse
+    ? { id: 'crisis', label: 'AF reassessment' } as const
+    : hasHeartFailureResponse
     ? { id: 'crisis', label: 'Heart-failure review' } as const
     : hasNstemiRiskResponse
     ? { id: 'crisis', label: 'NSTEMI reassessment' } as const
@@ -1524,6 +1548,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasStableChestPainResponse
     || hasNstemiRiskResponse
     || hasHeartFailureResponse
+    || hasAfRvrResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2038,6 +2063,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasHeartFailureResponse && (
               <HeartFailureTray assessment={props.resuscitation.heartFailureAssessment}
                 onAction={props.onHeartFailureResponse ?? (() => {})} />
+            )}
+            {hasAfRvrResponse && (
+              <AfRvrTray assessment={props.resuscitation.afRvrAssessment}
+                onAction={props.onAfRvrResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -5693,6 +5722,59 @@ function NstemiRiskTray({ assessment, onAction }: {
             onClick={() => onAction('record-nstemi-monitoring-and-handoff')}>Record triggers + owner + reassessment</Button>
         </div>
         <p className="field__hint">No score, medication, angiography, or procedure is supplied. The applicable local pathway resolves exact timing as risk evolves.</p>
+      </section>
+    </div>
+  );
+}
+
+function AfRvrTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['afRvrAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onAfRvrResponse']>;
+}) {
+  const stability = assessment?.stabilityAtTick != null;
+  const context = assessment?.contextAtTick != null;
+  const rateIntent = assessment?.rateIntentAtTick != null;
+  const stroke = assessment?.strokePreventionAtTick != null;
+  const reassessed = assessment?.reassessmentAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="af-rvr-stability-title">
+        <div id="af-rvr-stability-title" className="syringe__name">Treat the patient before the number.</div>
+        <Badge kind="teaching">rhythm · pressure · perfusion · ischemia · heart failure</Badge>
+        <div className="syringe__meta">142/min irregular · stable pressure · no shock, ischemia, or acute HF</div>
+        <p className="syringe__remaining" role="status">
+          {rateIntent ? 'Patient-specific rate intent recorded · no treatment delivered'
+            : context ? 'Duration uncertain · LVEF 55% · patient-specific plan due'
+              : stability ? 'Stable now · review context before strategy'
+                : 'Heart rate alone does not define instability'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={stability}
+            onClick={() => onAction('reconcile-af-rvr-rhythm-and-stability')}>Reconcile rhythm + stability</Button>
+          <Button className="crisis-drug__action" disabled={!stability || context}
+            onClick={() => onAction('review-af-rvr-context-and-triggers')}>Review duration + contributors</Button>
+          <Button className="crisis-drug__action" disabled={!context || rateIntent}
+            onClick={() => onAction('record-af-rvr-rate-control-intent')}>Record patient-specific rate intent</Button>
+        </div>
+        <p className="field__hint">Instability changes urgency. In a stable patient, ventricular function, pressure, symptoms, contraindications, and interactions shape acute rate-control selection.</p>
+      </section>
+      <section className="syringe" aria-labelledby="af-rvr-stroke-title">
+        <div id="af-rvr-stroke-title" className="syringe__name">Rate is one lane. Stroke prevention is another.</div>
+        <Badge kind="teaching">validated risk · bleeding · preference · duration · reassessment</Badge>
+        <div className="syringe__meta">Duration uncertain · risk not low · cardioversion not assumed</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? '96/min · still AF · symptoms improved · ownership recorded'
+            : stroke ? 'Stroke-prevention context recorded · reassess the whole patient'
+              : rateIntent ? 'Rate lane recorded · stroke-prevention lane remains'
+                : 'Rate-control context pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!rateIntent || stroke}
+            onClick={() => onAction('record-af-rvr-stroke-prevention-intent')}>Review stroke prevention + cardioversion context</Button>
+          <Button className="crisis-drug__action" disabled={!stroke || reassessed}
+            onClick={() => onAction('reassess-af-rvr-trajectory-and-follow-up')}>Reassess trajectory + ownership</Button>
+        </div>
+        <p className="field__hint">Better can still be AF. No score, agent, dose, anticoagulation decision, cardioversion, disposition, prognosis, or outcome is supplied.</p>
       </section>
     </div>
   );

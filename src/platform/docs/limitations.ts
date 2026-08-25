@@ -2741,6 +2741,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['acute-decompensated-heart-failure'],
   },
   {
+    id: 'af-rvr-rhythm-duration-risk-and-response-are-authored',
+    headline: 'The AF report, stability, duration uncertainty, ventricular function, risk tier, contributor screen, and response are authored teaching facts.',
+    simplification: 'One stable patient has fixed AF at 142/min, uncertain duration, preserved LVEF, a not-low stroke-risk label without a score, and a fixed lower-rate response that remains AF.',
+    whereItMisleads: 'Treating the teaching trace as a diagnostic ECG, the fixed stability as examination, or the authored duration, contributor, risk, and response record as patient-specific assessment or prediction.',
+    correctUnderstanding: 'Real AF care verifies the rhythm and repeatedly integrates hemodynamics, symptoms, perfusion, heart failure, duration, prior history, triggers, ventricular function, thromboembolic and bleeding risk, preferences, and response.',
+    briefIn: ['atrial-fibrillation-with-rapid-response'],
+  },
+  {
+    id: 'af-rvr-controls-record-review-and-plan-intent-only',
+    headline: 'The ordered controls record stability, context, rate, stroke-prevention, reassessment, and ownership intent; they do not deliver AF care.',
+    simplification: 'Five clicks stand in for history, examination, diagnostic review, patient-specific treatment planning, shared decision-making, monitoring, communication, and follow-up.',
+    whereItMisleads: 'Equating button order with ECG interpretation, risk calculation, medication selection, anticoagulation, cardioversion planning, communication, documentation, or cardiology competence.',
+    correctUnderstanding: 'Actual care requires qualified assessment, a diagnostic ECG, current local pathways, patient-specific rate and rhythm decisions, validated stroke-risk review, shared decisions, and repeated follow-up.',
+    briefIn: ['atrial-fibrillation-with-rapid-response'],
+  },
+  {
+    id: 'no-live-af-rvr-ecg-scoring-prescribing-cardioversion-prognosis-or-outcome',
+    headline: 'The lab does not interpret an ECG, calculate a score, prescribe or deliver treatment, decide anticoagulation or cardioversion eligibility, or predict outcome.',
+    simplification: 'No live ECG, laboratory test, imaging, risk score, rate target, medication, anticoagulant, dose, rhythm conversion, cardioversion, ablation, disposition, recurrence, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Using heart rate alone for instability, copying a target or agent, assuming a lower rate removes AF or stroke risk, inferring AF onset from symptom onset, or treating one pathway as universal.',
+    correctUnderstanding: 'Use current local AF guidance and qualified judgment to determine stability, duration, contributors, rate or rhythm strategy, stroke prevention, cardioversion safety, monitoring, and longitudinal care.',
+    briefIn: ['atrial-fibrillation-with-rapid-response'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

@@ -160,7 +160,8 @@ Reviewers run the routine induction themselves before answering.
 | B106 | In the stable chest-pain evaluation lesson, a fixed 3-month exertional pressure pattern resolves with rest and has no recent change or acute feature, requiring explicit stable-versus-acute verification, complete symptom characterization without “atypical,” risk-factor-weighted clinical-likelihood review before testing, shared patient-specific testing intent, and an acute-change safety net without implying examination, ECG acquisition or interpretation, score calculation, exercise testing, diagnostic testing, diagnosis, prescribing, disposition, prognosis, or outcome competence | | |
 | B107 | In the NSTEMI risk-reassessment lesson, a resolved symptom episode is reconciled with a fixed assay-bounded troponin rise and changing ECG reports, requiring authored-diagnosis verification with alternate myocardial injury preserved, a fresh very-high-risk screen, ischemic and bleeding risk review before region-specific inpatient invasive intent, and explicit monitoring, triggers, ownership, and reassessment without implying examination, test acquisition or interpretation, scoring, diagnosis, prescribing, treatment, procedure, universal timing, disposition, prognosis, or outcome competence | | |
 | B108 | In the acute decompensated heart-failure lesson, a patient 24 hours after reported IV loop-diuretic treatment has improved dyspnea, lower weight, negative recorded balance, and substantial urine output but persistent orthopnea, JVP elevation, crackles, edema, and weight above a documented clinic value, requiring whole-state congestion and perfusion reconciliation, serial response review, kidney, electrolyte, hemodynamic, and precipitant context, individualized decongestion and transition intent, and a not-discharge-ready reassessment with ownership and follow-up without implying examination, administration verification, monitoring or test acquisition or interpretation, calculation, diagnosis, prescribing, treatment delivery, regimen selection, disposition, prognosis, or outcome competence | | |
-| B109 | Overall: does this patient behave like a patient? | | |
+| B109 | In the atrial-fibrillation-with-rapid-response lesson, a fixed diagnostic report of irregular narrow-complex AF at 142/min combines with preserved pressure, alert mentation, warm perfusion, uncertain duration, preserved LVEF, and no authored ischemia, acute heart failure, syncope, or shock, requiring stability review without using rate alone, duration and contributor context, patient-specific rate-control intent, a separate thromboembolic, bleeding, preference, and cardioversion-context lane, and fixed reassessment that remains AF at 96/min with ownership and follow-up without implying history, examination, ECG or test acquisition or interpretation, score calculation, diagnosis, prescribing, drug or anticoagulation delivery, cardioversion eligibility or performance, ablation, disposition, prognosis, recurrence, or outcome competence | | |
+| B110 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -409,4 +410,11 @@ So that reviewers spend their attention on what this review is for:
   deliver treatment, select a regimen, determine disposition or prognosis, or predict outcome.
   Its documented clinic weight, balance, urine output, and creatinine change are not universal
   targets or patient-specific tools.
+- The atrial-fibrillation-with-rapid-response case uses a fixed diagnostic ECG report, stability,
+  uncertain duration, ventricular function, contributor review, not-low stroke-risk tier, and
+  lower-rate response that remains AF. It does not take a history, examine, acquire or interpret
+  tests, calculate a score, diagnose, select a target, prescribe or deliver medication or
+  anticoagulation, determine or perform cardioversion, perform ablation, determine disposition or
+  prognosis, or predict recurrence or outcome. Its rate, risk tier, and response are not
+  patient-specific tools.
 - Nothing here has been clinically reviewed before — you are the first.

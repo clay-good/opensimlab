@@ -4054,6 +4054,25 @@ export function objectiveFindings(
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Residual congestion prevented a discharge-ready declaration while ownership and follow-up stayed explicit.' : 'Readiness and ownership were absent or preceded transition intent.', atTick: readiness?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['reconcile-af-rvr-rhythm-and-stability', 'review-af-rvr-context-and-triggers',
+      'record-af-rvr-rate-control-intent', 'record-af-rvr-stroke-prevention-intent',
+      'reassess-af-rvr-trajectory-and-follow-up'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'atrial-fibrillation-with-rapid-response');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The atrial-fibrillation-with-rapid-response lesson was not active.' } satisfies ObjectiveFinding;
+      const stability = log.find((event) => /^af-rvr-stability-reconciled-\d+$/.test(event.eventId));
+      const context = log.find((event) => /^af-rvr-context-reviewed-\d+$/.test(event.eventId));
+      const rate = log.find((event) => /^af-rvr-rate-intent-recorded-\d+$/.test(event.eventId));
+      const stroke = log.find((event) => /^af-rvr-stroke-prevention-recorded-\d+$/.test(event.eventId));
+      const reassessment = log.find((event) => /^af-rvr-trajectory-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-af-rvr-rhythm-and-stability') return { ...base, outcome: stability ? 'met' : 'not-met', finding: stability ? 'The authored AF rhythm and current stability were reconciled without using heart rate alone.' : 'Rhythm and current stability were not reconciled.', atTick: stability?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-af-rvr-context-and-triggers') { const ordered = stability && context && stability.tick <= context.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Uncertain duration, ventricular function, history, adherence, comorbidity, and contributor context were reviewed before strategy.' : 'Context review was absent or preceded stability.', atTick: context?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'record-af-rvr-rate-control-intent') { const ordered = context && rate && context.tick <= rate.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Patient-specific acute rate-control intent was recorded without selecting a universal target, agent, or dose.' : 'Rate-control intent was absent or preceded context review.', atTick: rate?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'record-af-rvr-stroke-prevention-intent') { const ordered = rate && stroke && rate.tick <= stroke.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Stroke prevention, bleeding, preference, duration, and cardioversion context stayed separate from rate control.' : 'Stroke-prevention review was absent or preceded the rate-control lane.', atTick: stroke?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = stroke && reassessment && stroke.tick <= reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The lower-rate response remained AF and closed with change triggers, ownership, and follow-up.' : 'Trajectory reassessment was absent or preceded stroke-prevention review.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;
