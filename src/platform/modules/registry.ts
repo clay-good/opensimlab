@@ -81,6 +81,19 @@ export const MODULES: readonly ModuleDeclaration[] = [
     timescale: { unit: 'minutes', stepSeconds: 1, speeds: [1, 5, 30, 120] },
   },
   {
+    id: 'respiratory-medicine',
+    route: 'respiratory-medicine',
+    displayName: 'Respiratory medicine',
+    description: 'Reassess changing respiratory illness, recognize failure early, and make each escalation step calm, explicit, and measurable.',
+    audience: 'Medical students, residents, respiratory therapists, and acute-care trainees.',
+    prerequisites: 'Basic respiratory physiology and familiarity with focused assessment of an acutely ill adult.',
+    status: 'available',
+    plannedScope:
+      'Fifteen bounded respiratory-medicine rehearsals spanning obstructive disease, oxygenation, '
+      + 'ventilatory failure, pleural and parenchymal disease, escalation, longitudinal reassessment, and handoff.',
+    timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
+  },
+  {
     id: 'oncology',
     route: 'oncology',
     displayName: 'Oncology',

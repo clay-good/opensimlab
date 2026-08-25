@@ -1,0 +1,63 @@
+/** Acute severe asthma with respiratory-failure reassessment after documented initial therapy. */
+
+import type { Scenario } from '@anesthesia/scenarios/types';
+
+export const ACUTE_SEVERE_ASTHMA: Scenario = {
+  schemaVersion: 1,
+  metadata: {
+    id: 'acute-severe-asthma', version: '0.1.0', maturity: 'draft',
+    title: 'Acute severe asthma: worsening after initial treatment', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
+    estimatedMinutes: 8, difficulty: 'advanced', objectives: [
+      { id: 'reconcile-acute-severe-asthma-treatment-and-trajectory', statement: 'Reconcile the verified initial therapy, earlier severity, and current whole-patient trajectory without mistaking a falling respiratory rate for improvement.', measure: 'Prior care and response were separated, and fatigue was interpreted beside mentation, speech, air movement, oxygenation, flow, and blood gas.' },
+      { id: 'recognize-acute-severe-asthma-respiratory-failure', statement: 'Recognize the authored life-threatening asthma and evolving respiratory-failure pattern after poor response.', measure: 'Drowsiness, inability to speak, quiet chest, weakening effort, persistent hypoxemia, unobtainable PEF, acidemia, and increased PaCO₂ drove recognition.' },
+      { id: 'activate-acute-severe-asthma-critical-care-escalation', statement: 'Activate immediate critical-care and airway-capable support before completing alternative-cause review.', measure: 'Escalation did not wait for another treatment cycle, a complete differential, or further deterioration.' },
+      { id: 'review-acute-severe-asthma-alternatives-and-ventilation-risks', statement: 'Review dangerous alternatives, reversible contributors, and expert ventilation risks without selecting a device, procedure, or setting.', measure: 'Dynamic hyperinflation, air trapping, hypotension, barotrauma, mucus plugging, and dangerous mimics remained planning concerns rather than learner treatment controls.' },
+      { id: 'handoff-acute-severe-asthma-reassessment', statement: 'After elapsed time, hand off active respiratory-failure care, current evidence, unresolved causes, deterioration triggers, and named ownership.', measure: 'The handoff preserved active critical-care and airway work without reporting treatment response, disposition, prognosis, or outcome.' },
+    ],
+    clinicalReview: { reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED',
+      competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01',
+      contentVersion: '0.1.0', sources: [
+        'Global Initiative for Asthma. Global Strategy for Asthma Management and Prevention, 2026 update. Boxes 9-4 and 9-6; pp. 180-188.',
+      ] },
+    limitations: ['acute-severe-asthma-treatment-trajectory-and-tests-are-authored',
+      'acute-severe-asthma-controls-record-recognition-escalation-review-and-handoff-only',
+      'no-live-acute-severe-asthma-treatment-ventilation-procedure-disposition-or-outcome'],
+  },
+  patient: { ageYears: 38, sex: 'female', heightCm: 166, weightKg: 68, asaClass: 4,
+    diagnosis: 'Authored acute severe asthma with evolving respiratory failure after documented initial therapy',
+    procedure: 'Acute severe-asthma respiratory-failure reassessment after documented initial therapy',
+    comorbidities: ['Asthma with one prior ICU admission'],
+    medications: ['Inhaled corticosteroid-formoterol maintenance-and-reliever therapy'],
+    allergies: ['No known drug allergies'], fasting: 'Not established during acute care',
+    baseline: { heartRateBpm: 132, meanArterialMmHg: 77, strokeVolumeMl: 58,
+      hemoglobinGPerDl: 13.4, bloodVolumeMl: 4500, coreTemperatureC: 36.9,
+      arterialStiffness: 1, baroreflexGain: 0.9, fixedStrokeVolume: false },
+    airway: { difficulty: 0.2, difficultMaskVentilation: false,
+      assessment: 'Drowsy and confused, unable to speak, with a quiet chest and weakening effort' },
+    respiratory: { profile: 'moderately-ill' } },
+  equipment: { monitoring: ['ecg', 'nibp', 'capnography', 'pulse-oximetry', 'temperature'],
+    airwayDevice: 'facemask', ventilator: { mode: 'manual', fio2: 0.35,
+      tidalVolumeMl: 360, respiratoryRateBpm: 18, freshGasFlowLPerMin: 10, delivering: false } },
+  formulary: [],
+  timeline: [
+    { id: 'acute-severe-asthma-obstruction', type: 'obstruction', value: 0.95,
+      durationTicks: 36000, atTick: 0, severity: 'critical',
+      message: 'A generic severe lower-airway-obstruction waveform cue is active for this authored asthma state. Its shape supports pattern rehearsal but is not a quantitative measurement, examination, or patient-specific capnography model.' },
+    { id: 'acute-severe-asthma-presentation', type: 'narrative',
+      target: 'acute-severe-asthma-reassessment', atTick: 0, severity: 'critical',
+      message: 'A 38-year-old woman with known asthma and one prior ICU admission arrived awake and agitated with words-only speech, HR 126/min, RR 36/min, room-air SpO₂ 89%, and fixed PEF 28% predicted. The verified delivered-care record states that controlled oxygen began at arrival; 3 inhaled short-acting bronchodilator plus antimuscarinic cycles were completed at minutes 0, 20, and 40; systemic corticosteroid was delivered at minute 5; and IV magnesium was delivered at minute 45 after poor response. This is prior experienced-team care, not learner delivery. At the current 75-minute reassessment she is drowsy and confused, cannot speak, has a now-quiet chest with weakening effort, HR 132/min, RR 18/min, BP 102/64 mmHg (MAP 77), SpO₂ 93% in an authored nominal 35% oxygen condition, and cannot perform PEF. The respiratory-rate fall reflects fatigue in this authored trajectory, not improvement.' },
+    { id: 'acute-severe-asthma-fixed-tests', type: 'narrative',
+      target: 'acute-severe-asthma-reassessment', atTick: 0, severity: 'critical',
+      message: 'Fixed blood-gas reports: at minute 10, pH 7.45, PaCO₂ 31 mmHg, and PaO₂ 61 mmHg; at minute 75, pH 7.24, PaCO₂ 58 mmHg, and PaO₂ 68 mmHg. In the context of worsening mentation, effort, air movement, oxygenation, and unobtainable expiratory flow after initial therapy, this authored combination establishes evolving respiratory failure; no single value is a universal isolated threshold. A fixed chest-radiograph report obtained because of nonresponse shows hyperinflation without pneumothorax or focal opacity. Current authored snapshots report no stridor, urticaria, facial swelling, unilateral absent breath sounds, fever, or acute pulmonary-edema pattern. These findings narrow but do not permanently exclude anaphylaxis, upper-airway obstruction, pneumothorax, infection, edema, mucus plugging, aspiration, pulmonary embolism, dysfunctional breathing, device problems, or other causes. The controls do not examine, measure PEF, sample or interpret a blood gas, acquire or interpret imaging, or diagnose.' },
+    { id: 'acute-severe-asthma-boundary', type: 'narrative',
+      target: 'acute-severe-asthma-reassessment-boundary', atTick: 0, severity: 'warning',
+      message: 'Reconcile verified treatment against the worsening trajectory, recognize respiratory failure, and activate critical-care and airway-capable support before reviewing alternatives and ventilation risks. After that review and a strictly later engine tick, hand off active care, current evidence, open causes, deterioration triggers, and named owners. No treatment-response or resolution panel follows. The controls do not repeat or deliver bronchodilator, antimuscarinic, oxygen, corticosteroid, magnesium, antibiotic, epinephrine, fluid, or another treatment; select a drug or dose; trial noninvasive ventilation or high-flow oxygen; perform intubation; select sedation or neuromuscular blockade; choose ventilator mode, rate, tidal volume, flow, inspiratory-to-expiratory ratio, PEEP, or a permissive-hypercapnia target; perform a procedure; determine disposition or prognosis; or predict outcome.' },
+  ],
+  debrief: { rubric: [
+    { id: 'acute-severe-asthma-trajectory', objectiveId: 'reconcile-acute-severe-asthma-treatment-and-trajectory', question: 'Which verified treatments had already occurred, and which current findings showed worsening rather than improvement?' },
+    { id: 'acute-severe-asthma-respiratory-failure', objectiveId: 'recognize-acute-severe-asthma-respiratory-failure', question: 'Which whole-patient findings established evolving respiratory failure without relying on one threshold?' },
+    { id: 'acute-severe-asthma-escalation', objectiveId: 'activate-acute-severe-asthma-critical-care-escalation', question: 'Why did critical-care and airway-capable escalation precede a complete alternative-cause review?' },
+    { id: 'acute-severe-asthma-alternatives-risks', objectiveId: 'review-acute-severe-asthma-alternatives-and-ventilation-risks', question: 'Which dangerous alternatives and expert ventilation risks remained open without selecting treatment or settings?' },
+    { id: 'acute-severe-asthma-handoff', objectiveId: 'handoff-acute-severe-asthma-reassessment', question: 'Which active respiratory-failure, cause, deterioration, and ownership work remained unresolved at handoff?' },
+  ] },
+};

@@ -49,13 +49,17 @@ import {
 import {
   CARDIOLOGY_SCENARIOS, DEFAULT_CARDIOLOGY_SCENARIO_ID, getCardiologyScenario,
 } from '../modules/cardiology/scenarios';
+import {
+  RESPIRATORY_MEDICINE_SCENARIOS, DEFAULT_RESPIRATORY_MEDICINE_SCENARIO_ID,
+  getRespiratoryMedicineScenario,
+} from '../modules/respiratory-medicine/scenarios';
 import { APP_VERSION } from '@platform/governance/status';
 import { ScenarioProblemReport } from '@platform/reporting/ScenarioProblemReport';
 import { SITE_ORIGIN } from './site-metadata';
 
 interface ClinicalModuleConfig {
-  readonly id: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology';
-  readonly basePath: '/anesthesia' | '/emergency-medicine' | '/critical-care' | '/cardiology';
+  readonly id: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine';
+  readonly basePath: '/anesthesia' | '/emergency-medicine' | '/critical-care' | '/cardiology' | '/respiratory-medicine';
   readonly heading: string;
   readonly catalogIntroduction: string;
   readonly catalogStatus: string;
@@ -93,6 +97,16 @@ const CARDIOLOGY_CONFIG: ClinicalModuleConfig = {
   catalogStatus: 'All seventeen bounded cardiology labs are playable.',
   scenarios: CARDIOLOGY_SCENARIOS, defaultScenarioId: DEFAULT_CARDIOLOGY_SCENARIO_ID,
   getScenario: getCardiologyScenario,
+};
+
+const RESPIRATORY_MEDICINE_CONFIG: ClinicalModuleConfig = {
+  id: 'respiratory-medicine', basePath: '/respiratory-medicine',
+  heading: 'Respiratory medicine simulator',
+  catalogIntroduction: 'Calm respiratory reassessment labs for the moment a familiar pattern changes. Read the trajectory, act on danger early, and leave the next team a clear map.',
+  catalogStatus: 'One bounded respiratory medicine lab is playable.',
+  scenarios: RESPIRATORY_MEDICINE_SCENARIOS,
+  defaultScenarioId: DEFAULT_RESPIRATORY_MEDICINE_SCENARIO_ID,
+  getScenario: getRespiratoryMedicineScenario,
 };
 
 /**
@@ -417,6 +431,10 @@ export function CardiologyRoute({ path }: { path: string }) {
   return <ClinicalModuleRoute path={path} config={CARDIOLOGY_CONFIG} />;
 }
 
+export function RespiratoryMedicineRoute({ path }: { path: string }) {
+  return <ClinicalModuleRoute path={path} config={RESPIRATORY_MEDICINE_CONFIG} />;
+}
+
 /**
  * The scenario directory at `/anesthesia`.
  *
@@ -478,7 +496,8 @@ function EmergencyMedicineScenarioIndex({ config }: { config: ClinicalModuleConf
               </a>
               <p className="scenario-index__patient">
                 {entry.patient.ageYears}-year-old {patientPersonNoun(entry.patient)}
-                {config.id === 'cardiology' ? '.' : `, ASA ${entry.patient.asaClass}.`}{' '}
+                {config.id === 'cardiology' || config.id === 'respiratory-medicine'
+                  ? '.' : `, ASA ${entry.patient.asaClass}.`}{' '}
                 About {entry.metadata.estimatedMinutes} simulated minutes.
               </p>
               <p className="scenario-index__teaches">{entry.metadata.objectives[0]?.statement}</p>

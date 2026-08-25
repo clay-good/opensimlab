@@ -738,6 +738,20 @@ export interface ActionCockpitProps {
       readonly roscReported: false;
       readonly outcomePredicted: false;
     };
+    readonly acuteSevereAsthmaAssessment?: {
+      readonly treatmentAtTick: number | null;
+      readonly failureAtTick: number | null;
+      readonly escalationAtTick: number | null;
+      readonly risksAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly respiratoryFailureAuthored: true;
+      readonly medicationDeliveredByLearner: false;
+      readonly oxygenDeliveredByLearner: false;
+      readonly airwayProcedurePerformedByLearner: false;
+      readonly ventilatorSettingSelected: false;
+      readonly dispositionDetermined: false;
+      readonly outcomePredicted: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1180,6 +1194,13 @@ export interface ActionCockpitProps {
       | 'review-transcutaneous-pacing-open-causes-and-bridge'
       | 'handoff-transcutaneous-pacing-reassessment',
   ) => void;
+  readonly onAcuteSevereAsthmaResponse?: (
+    action: 'reconcile-acute-severe-asthma-treatment-and-trajectory'
+      | 'recognize-acute-severe-asthma-respiratory-failure'
+      | 'activate-acute-severe-asthma-critical-care-escalation'
+      | 'review-acute-severe-asthma-alternatives-and-ventilation-risks'
+      | 'handoff-acute-severe-asthma-reassessment',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1461,6 +1482,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'transcutaneous-pacing-mechanical-capture-reassessment',
     ),
+    hasAcuteSevereAsthmaResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'acute-severe-asthma-reassessment',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1575,6 +1600,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'pacemaker-capture-failure-reassessment')
       || (event.type === 'narrative'
         && event.target === 'transcutaneous-pacing-mechanical-capture-reassessment')
+      || (event.type === 'narrative' && event.target === 'acute-severe-asthma-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1627,6 +1653,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasHypertensiveEmergencyResponse,
     hasPacemakerCaptureFailureResponse,
     hasTranscutaneousPacingCaptureResponse,
+    hasAcuteSevereAsthmaResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1690,7 +1717,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasSymptomaticBradycardiaResponse || hasCompleteHeartBlockResponse || hasTorsadesResponse
     || hasHyperkalemicConductionResponse || hasPericardialTamponadeResponse
     || hasRightVentricularInfarctionResponse || hasHypertensiveEmergencyResponse
-    || hasPacemakerCaptureFailureResponse || hasTranscutaneousPacingCaptureResponse;
+    || hasPacemakerCaptureFailureResponse || hasTranscutaneousPacingCaptureResponse
+    || hasAcuteSevereAsthmaResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1721,7 +1749,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasTranscutaneousPacingCaptureResponse
+  const responseTray = hasAcuteSevereAsthmaResponse
+    ? { id: 'crisis', label: 'Breathing-failure response' } as const
+    : hasTranscutaneousPacingCaptureResponse
     ? { id: 'crisis', label: 'Electrical ≠ mechanical' } as const
     : hasPacemakerCaptureFailureResponse
     ? { id: 'crisis', label: 'Capture-failure response' } as const
@@ -1925,6 +1955,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasHypertensiveEmergencyResponse
     || hasPacemakerCaptureFailureResponse
     || hasTranscutaneousPacingCaptureResponse
+    || hasAcuteSevereAsthmaResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2504,6 +2535,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <TranscutaneousPacingCaptureTray
                 assessment={props.resuscitation.transcutaneousPacingCaptureAssessment}
                 onAction={props.onTranscutaneousPacingCaptureResponse ?? (() => {})} />
+            )}
+            {hasAcuteSevereAsthmaResponse && (
+              <AcuteSevereAsthmaTray
+                assessment={props.resuscitation.acuteSevereAsthmaAssessment}
+                onAction={props.onAcuteSevereAsthmaResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -6645,6 +6681,42 @@ function TranscutaneousPacingCaptureTray({ assessment, onAction }: {
         <Button className="crisis-drug__action" disabled={!causesBridge || handoff} onClick={() => onAction('handoff-transcutaneous-pacing-reassessment')}>Hand off active resuscitation</Button>
       </div>
       <p className="field__hint">No pulse palpation, ECG interpretation, CPR mechanics, oxygen, airway, drug, shock, pad placement, rate, output, pulse width, pacing delivery, transvenous procedure, ROSC, disposition, prognosis, or outcome is selected.</p>
+    </section>
+  </div>;
+}
+
+function AcuteSevereAsthmaTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['acuteSevereAsthmaAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onAcuteSevereAsthmaResponse']>;
+}) {
+  const treatment = assessment?.treatmentAtTick != null;
+  const failure = assessment?.failureAtTick != null;
+  const escalation = assessment?.escalationAtTick != null;
+  const risks = assessment?.risksAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="acute-severe-asthma-trajectory-title">
+      <div id="acute-severe-asthma-trajectory-title" className="syringe__name">Quieter is not always better.</div>
+      <Badge kind="teaching">post-treatment · exhausted · hypercapnic failure</Badge>
+      <div className="syringe__meta">delivery record → whole trajectory → gas trend</div>
+      <p className="syringe__remaining" role="status">{escalation ? 'Respiratory failure recognized · critical-care help active' : failure ? 'Life-threatening failure recognized · escalate now' : treatment ? 'Treatment verified · reconcile the quieter, slower patient' : 'Start with what was delivered and what changed'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={treatment} onClick={() => onAction('reconcile-acute-severe-asthma-treatment-and-trajectory')}>Reconcile treatment + trajectory</Button>
+        <Button className="crisis-drug__action" disabled={!treatment || failure} onClick={() => onAction('recognize-acute-severe-asthma-respiratory-failure')}>Recognize respiratory failure</Button>
+        <Button className="crisis-drug__action" disabled={!failure || escalation} onClick={() => onAction('activate-acute-severe-asthma-critical-care-escalation')}>Activate critical-care help</Button>
+      </div>
+      <p className="field__hint">A fall from 36 to 18 breaths/min, less wheeze, and SpO₂ 93% on oxygen do not signal recovery when mentation and effort worsen. Peak flow is not forced in an exhausted, drowsy patient.</p>
+    </section>
+    <section className="syringe" aria-labelledby="acute-severe-asthma-open-work-title">
+      <div id="acute-severe-asthma-open-work-title" className="syringe__name">Call early. Keep the causes open.</div>
+      <Badge kind="teaching">continuous watch · expert airway help · active failure</Badge>
+      <div className="syringe__meta">alternatives · air trapping · ownership + triggers</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Active failure, hazards, and owners handed off' : risks ? 'Open causes + ventilation hazards reviewed · advance time before handoff' : escalation ? 'Help is active · review alternatives and support hazards' : 'Escalation comes before the complete cause review'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={!escalation || risks} onClick={() => onAction('review-acute-severe-asthma-alternatives-and-ventilation-risks')}>Review causes + ventilation risks</Button>
+        <Button className="crisis-drug__action" disabled={!risks || handoff} onClick={() => onAction('handoff-acute-severe-asthma-reassessment')}>Hand off active respiratory failure</Button>
+      </div>
+      <p className="field__hint">No repeat medication, oxygen change, support device, airway procedure, sedation, ventilator setting, disposition, or outcome is selected. Gas values inform this trajectory; they are not universal intubation cutoffs.</p>
     </section>
   </div>;
 }

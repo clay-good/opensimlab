@@ -1155,6 +1155,17 @@
         "GB"
       ],
       "fidelityClass": "state_transition"
+    },
+    {
+      "scenarioId": "acute-severe-asthma",
+      "contentVersion": "0.1.0",
+      "moduleId": "respiratory-medicine",
+      "maturity": "draft",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition"
     }
   ]
 }

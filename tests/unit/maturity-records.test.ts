@@ -9,6 +9,7 @@ import {
 import { EMERGENCY_MEDICINE_SCENARIOS } from '../../src/modules/emergency-medicine/scenarios';
 import { CRITICAL_CARE_SCENARIOS } from '../../src/modules/critical-care/scenarios';
 import { CARDIOLOGY_SCENARIOS } from '../../src/modules/cardiology/scenarios';
+import { RESPIRATORY_MEDICINE_SCENARIOS } from '../../src/modules/respiratory-medicine/scenarios';
 import { buildScenarioQualityCatalog } from '@platform/catalog/scenario-quality';
 import {
   buildMaturityCatalog, MATURITY_RECORD_SCHEMA, MATURITY_STATUSES,
@@ -38,6 +39,13 @@ const cardiologyCompletion = buildModuleCompletionCatalog(
 const cardiologyCatalog = buildMaturityCatalog(
   cardiologyCompletion, buildScenarioQualityCatalog(cardiologyCompletion),
 );
+const respiratoryMedicineCompletion = buildModuleCompletionCatalog(
+  RESPIRATORY_MEDICINE_SCENARIOS, ENGINE_VERSION, 'respiratory-medicine', 'icu',
+  'state_transition',
+);
+const respiratoryMedicineCatalog = buildMaturityCatalog(
+  respiratoryMedicineCompletion, buildScenarioQualityCatalog(respiratoryMedicineCompletion),
+);
 
 describe('exact-version maturity records', () => {
   it('supports the complete public vocabulary and records every clinical item honestly', () => {
@@ -47,7 +55,7 @@ describe('exact-version maturity records', () => {
     ]);
     expect(validateMaturityCatalog(catalog)).toEqual([]);
     expect(catalog.recordCount + emergencyCatalog.recordCount + criticalCareCatalog.recordCount
-      + cardiologyCatalog.recordCount)
+      + cardiologyCatalog.recordCount + respiratoryMedicineCatalog.recordCount)
       .toBe(reviewableItems().length);
     expect(catalog.recordCount).toBe(54);
     expect(catalog.records.every((record) => record.status === 'draft')).toBe(true);

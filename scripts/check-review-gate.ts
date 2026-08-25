@@ -10,6 +10,7 @@ import {
 import { EMERGENCY_MEDICINE_SCENARIOS } from '../src/modules/emergency-medicine/scenarios';
 import { CRITICAL_CARE_SCENARIOS } from '../src/modules/critical-care/scenarios';
 import { CARDIOLOGY_SCENARIOS } from '../src/modules/cardiology/scenarios';
+import { RESPIRATORY_MEDICINE_SCENARIOS } from '../src/modules/respiratory-medicine/scenarios';
 import { buildScenarioQualityCatalog } from '@platform/catalog/scenario-quality';
 import {
   buildMaturityCatalog, maturityFor, type MaturitySubjectKind,
@@ -65,11 +66,21 @@ function main(): void {
   );
   const cardiologyQuality = buildScenarioQualityCatalog(cardiologyCompletion);
   const cardiologyMaturity = buildMaturityCatalog(cardiologyCompletion, cardiologyQuality);
+  const respiratoryMedicineCompletion = buildModuleCompletionCatalog(
+    RESPIRATORY_MEDICINE_SCENARIOS, ENGINE_VERSION, 'respiratory-medicine',
+    'icu', 'state_transition',
+  );
+  const respiratoryMedicineQuality = buildScenarioQualityCatalog(respiratoryMedicineCompletion);
+  const respiratoryMedicineMaturity = buildMaturityCatalog(
+    respiratoryMedicineCompletion, respiratoryMedicineQuality,
+  );
   const moduleCatalogs = [
     { completion, quality, maturity },
     { completion: emergencyCompletion, quality: emergencyQuality, maturity: emergencyMaturity },
     { completion: criticalCareCompletion, quality: criticalCareQuality, maturity: criticalCareMaturity },
     { completion: cardiologyCompletion, quality: cardiologyQuality, maturity: cardiologyMaturity },
+    { completion: respiratoryMedicineCompletion, quality: respiratoryMedicineQuality,
+      maturity: respiratoryMedicineMaturity },
   ];
   const validation = buildValidationReport();
   const evidenceOptions = {

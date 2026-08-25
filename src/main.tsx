@@ -31,7 +31,7 @@ const tree = (
  * React is right to complain about it, so those mount fresh instead.
  */
 /** Routes whose prerendered markup is the same tree the client renders. */
-const HYDRATABLE = new Set(['', '/about', '/for-educators', '/curriculum', '/validation', '/governance', '/limitations', '/privacy', '/cardiology', '/oncology', '/critical-care']);
+const HYDRATABLE = new Set(['', '/about', '/for-educators', '/curriculum', '/validation', '/governance', '/limitations', '/privacy', '/cardiology', '/respiratory-medicine', '/oncology', '/critical-care']);
 const path = window.location.pathname.replace(/\/+$/, '');
 if (root.dataset.prerendered === 'true' && HYDRATABLE.has(path)) hydrateRoot(root, tree);
 else createRoot(root).render(tree);

@@ -231,7 +231,8 @@ credited toward the catalog until every item in the completion contract passes.
   symptomatic bradycardia, complete heart block, torsades de pointes, hyperkalemic conduction
   disturbance, pericardial tamponade, right-ventricular infarction, hypertensive emergency, and
   pacemaker capture failure, and transcutaneous pacing mechanical-capture reassessment. Respiratory
-  medicine remains at 0 of 15.
+  medicine is live with 1 of 15 scenarios: acute severe asthma reassessment after documented initial
+  therapy.
 - [ ] Wave D: complete 16 pediatric, 15 obstetric, and 11 neonatal scenarios.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.

@@ -71,6 +71,7 @@ const HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES = new Set([
 ]);
 const PACEMAKER_CAPTURE_FAILURE_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 const TRANSCUTANEOUS_PACING_CAPTURE_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
+const ACUTE_SEVERE_ASTHMA_BLOCKED_ACTION_TYPES = HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES;
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -626,6 +627,11 @@ export class AnesthesiaEngine {
   private transcutaneousPacingPulselessResponseAtTick: number | null = null;
   private transcutaneousPacingCausesBridgeAtTick: number | null = null;
   private transcutaneousPacingHandoffAtTick: number | null = null;
+  private acuteSevereAsthmaTreatmentAtTick: number | null = null;
+  private acuteSevereAsthmaFailureAtTick: number | null = null;
+  private acuteSevereAsthmaEscalationAtTick: number | null = null;
+  private acuteSevereAsthmaRisksAtTick: number | null = null;
+  private acuteSevereAsthmaHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -878,6 +884,14 @@ export class AnesthesiaEngine {
       && TRANSCUTANEOUS_PACING_CAPTURE_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `transcutaneous-pacing-generic-action-refused-${this.currentTick}`,
         'This review-only transcutaneous-pacing lesson does not expose generic treatment, pacing, procedure, rhythm, artifact, or crisis-injection actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const acuteSevereAsthma = this.scenario.timeline.some((event) =>
+      event.type === 'narrative' && event.target === 'acute-severe-asthma-reassessment');
+    if (acuteSevereAsthma && ACUTE_SEVERE_ASTHMA_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `acute-severe-asthma-generic-action-refused-${this.currentTick}`,
+        'This reassessment-only asthma lesson does not expose generic medication, oxygen, airway, ventilator, procedure, rhythm, artifact, or crisis-injection actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -4902,6 +4916,45 @@ export class AnesthesiaEngine {
         this.hypertensiveEmergencyHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `hypertensive-emergency-handoff-recorded-${this.currentTick}`, 'Fixed 3-hour report: BP 188/106 mmHg, HR 80/min, headache improved, vision not worse, alert nonfocal mentation, clear lungs, urine output 38 mL/h, and creatinine 2.1 mg/dL. Renal-retinal injury, visual symptoms, causes, treatment selection and delivery, owners, and change triggers remain open without determining disposition, prognosis, resolution, or outcome.', { treatmentDeliveredByLearner: false, testAcquiredByLearner: false, procedurePerformed: false, dispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'acute-severe-asthma-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'acute-severe-asthma-reassessment');
+        const valid = ['reconcile-acute-severe-asthma-treatment-and-trajectory',
+          'recognize-acute-severe-asthma-respiratory-failure',
+          'activate-acute-severe-asthma-critical-care-escalation',
+          'review-acute-severe-asthma-alternatives-and-ventilation-risks',
+          'handoff-acute-severe-asthma-reassessment'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `acute-severe-asthma-response-refused-${this.currentTick}`, supported ? 'The acute severe-asthma action was not one of the listed choices. Nothing changed.' : 'These acute severe-asthma choices are available only in the declared Respiratory Medicine lesson.'); break; }
+        if (response === 'reconcile-acute-severe-asthma-treatment-and-trajectory') {
+          if (this.acuteSevereAsthmaTreatmentAtTick !== null) { this.log('warning', 'assessment', `acute-severe-asthma-treatment-refused-${this.currentTick}`, 'The authored treatment-delivery record and trajectory were already reconciled.'); break; }
+          this.acuteSevereAsthmaTreatmentAtTick = this.currentTick;
+          this.log('critical', 'assessment', `acute-severe-asthma-treatment-reconciled-${this.currentTick}`, 'The record verifies controlled oxygen; 3 delivered salbutamol-and-ipratropium cycles at 0, 20, and 40 minutes; systemic corticosteroid at 5 minutes; and IV magnesium at 45 minutes for poor response. At 75 minutes the patient is drowsy and confused, cannot speak, has a quieter chest and weakening effort, and now breathes 18/min after 36/min initially. SpO₂ is 93% on fixed 35% oxygen and peak flow is no longer safely performable. Less wheeze, a slower respiratory rate, and acceptable saturation on oxygen do not establish improvement.', { treatmentRecordAuthored: true, medicationDeliveredByLearner: false, oxygenDeliveredByLearner: false, peakFlowForced: false, improvementEstablished: false }); break;
+        }
+        if (this.acuteSevereAsthmaTreatmentAtTick === null) { this.log('warning', 'assessment', `acute-severe-asthma-treatment-order-refused-${this.currentTick}`, 'Reconcile what was delivered and the whole trajectory before naming respiratory failure.'); break; }
+        if (response === 'recognize-acute-severe-asthma-respiratory-failure') {
+          if (this.acuteSevereAsthmaFailureAtTick !== null) { this.log('warning', 'assessment', `acute-severe-asthma-failure-refused-${this.currentTick}`, 'The authored life-threatening deterioration and ventilatory failure were already recognized.'); break; }
+          this.acuteSevereAsthmaFailureAtTick = this.currentTick;
+          this.log('critical', 'assessment', `acute-severe-asthma-failure-recognized-${this.currentTick}`, 'Drowsiness, confusion, inability to speak, a quiet chest, weakening effort, and a fall in respiratory rate with exhaustion establish life-threatening deterioration. Fixed blood gas changed from pH 7.45, PaCO₂ 31 mm Hg, and PaO₂ 61 mm Hg at 10 minutes to pH 7.24, PaCO₂ 58 mm Hg, and PaO₂ 68 mm Hg at 75 minutes. In this authored trajectory, rising carbon dioxide and acidemia support hypercapnic ventilatory failure despite SpO₂ 93% on oxygen; no single gas value is treated as a universal airway threshold.', { respiratoryFailureAuthored: true, universalAirwayThresholdUsed: false, bloodGasAcquiredByLearner: false, peakFlowForced: false }); break;
+        }
+        if (this.acuteSevereAsthmaFailureAtTick === null) { this.log('warning', 'assessment', `acute-severe-asthma-failure-order-refused-${this.currentTick}`, 'Recognize the authored life-threatening respiratory failure before escalation or broader review.'); break; }
+        if (response === 'activate-acute-severe-asthma-critical-care-escalation') {
+          if (this.acuteSevereAsthmaEscalationAtTick !== null) { this.log('warning', 'assessment', `acute-severe-asthma-escalation-refused-${this.currentTick}`, 'Critical-care and experienced-airway escalation were already activated.'); break; }
+          this.acuteSevereAsthmaEscalationAtTick = this.currentTick;
+          this.log('critical', 'assessment', `acute-severe-asthma-escalation-activated-${this.currentTick}`, 'Immediate critical-care and experienced-airway help, continuous monitoring, urgent respiratory-support preparation, and deterioration contingencies were activated without waiting for complete cause review. No medication, oxygen change, device, noninvasive-support mode, airway procedure, sedation, neuromuscular blocker, ventilator setting, disposition, or outcome was selected or delivered.', { escalationActivated: true, treatmentDeliveredByLearner: false, airwayProcedurePerformedByLearner: false, ventilatorSettingSelected: false, dispositionDetermined: false, outcomePredicted: false }); break;
+        }
+        if (this.acuteSevereAsthmaEscalationAtTick === null) { this.log('warning', 'assessment', `acute-severe-asthma-escalation-order-refused-${this.currentTick}`, 'Activate critical-care and experienced-airway help before broadening the cause and ventilation-risk review.'); break; }
+        if (response === 'review-acute-severe-asthma-alternatives-and-ventilation-risks') {
+          if (this.acuteSevereAsthmaRisksAtTick !== null) { this.log('warning', 'assessment', `acute-severe-asthma-risks-refused-${this.currentTick}`, 'The fixed alternative-cause screen and ventilation-risk review were already completed.'); break; }
+          this.acuteSevereAsthmaRisksAtTick = this.currentTick;
+          this.log('warning', 'assessment', `acute-severe-asthma-risks-reviewed-${this.currentTick}`, 'A chest radiograph obtained because treatment response was poor reports hyperinflation without pneumothorax or focal opacity. No current stridor, urticaria, facial swelling, unilateral absent breath sounds, fever, or acute pulmonary-edema pattern is authored. These snapshots narrow but do not permanently exclude anaphylaxis, upper-airway disease, pneumothorax, infection, cardiac disease, pulmonary embolism, mucus plugging, treatment toxicity, or another contributor. Expert planning must account for airflow obstruction, air trapping, dynamic hyperinflation, hemodynamic compromise, and barotrauma without exposing a support device or ventilator recipe.', { imagingRoutine: false, alternativesPermanentlyExcluded: false, causeAssigned: false, imageAcquiredByLearner: false, supportDeviceSelected: false, ventilatorSettingSelected: false }); break;
+        }
+        if (this.acuteSevereAsthmaRisksAtTick === null) { this.log('warning', 'assessment', `acute-severe-asthma-handoff-order-refused-${this.currentTick}`, 'Review the open alternatives and ventilation risks before handing off active respiratory failure.'); break; }
+        if (this.currentTick <= this.acuteSevereAsthmaRisksAtTick) { this.log('warning', 'assessment', `acute-severe-asthma-handoff-time-refused-${this.currentTick}`, 'Allow a later simulated tick before handing off the active respiratory-failure trajectory.'); break; }
+        if (this.acuteSevereAsthmaHandoffAtTick !== null) { this.log('warning', 'assessment', `acute-severe-asthma-handoff-refused-${this.currentTick}`, 'The active respiratory-failure handoff was already recorded.'); break; }
+        this.acuteSevereAsthmaHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `acute-severe-asthma-handoff-recorded-${this.currentTick}`, 'Active hypercapnic respiratory failure was handed off with named respiratory, critical-care, and experienced-airway ownership; continuous surveillance; unresolved cause and treatment-toxicity questions; air-trapping and ventilation hazards; and explicit deterioration triggers. No subsequent treatment, airway procedure, support settings, physiologic response, disposition, prognosis, or outcome is reported.', { treatmentDeliveredByLearner: false, airwayProcedurePerformedByLearner: false, ventilatorSettingSelected: false, dispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -7599,6 +7652,21 @@ export class AnesthesiaEngine {
       };
     }
     if (this.scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'acute-severe-asthma-reassessment',
+    )) {
+      crisisState = {
+        ...crisisState,
+        heartRateBpm: 132,
+        respiratoryRateBpm: 18,
+        spo2Percent: 93,
+        systolicMmHg: 102,
+        diastolicMmHg: 64,
+        meanArterialMmHg: 77,
+        coreTemperatureC: 36.8,
+      };
+    }
+    if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
       crisisState = {
@@ -8804,6 +8872,23 @@ export class AnesthesiaEngine {
               treatmentDeliveredByLearner: false as const,
               procedurePerformedByLearner: false as const,
               roscReported: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'acute-severe-asthma-reassessment') ? {
+            acuteSevereAsthmaAssessment: {
+              treatmentAtTick: this.acuteSevereAsthmaTreatmentAtTick,
+              failureAtTick: this.acuteSevereAsthmaFailureAtTick,
+              escalationAtTick: this.acuteSevereAsthmaEscalationAtTick,
+              risksAtTick: this.acuteSevereAsthmaRisksAtTick,
+              handoffAtTick: this.acuteSevereAsthmaHandoffAtTick,
+              respiratoryFailureAuthored: true as const,
+              medicationDeliveredByLearner: false as const,
+              oxygenDeliveredByLearner: false as const,
+              airwayProcedurePerformedByLearner: false as const,
+              ventilatorSettingSelected: false as const,
+              dispositionDetermined: false as const,
               outcomePredicted: false as const,
             },
           } : {}),

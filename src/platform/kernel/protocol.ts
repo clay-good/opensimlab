@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 101 reports transcutaneous-pacing capture state. */
-export const WORKER_PROTOCOL_VERSION = 101;
+/** Bumped whenever the message shape changes incompatibly. Version 102 reports acute severe-asthma reassessment state. */
+export const WORKER_PROTOCOL_VERSION = 102;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -827,6 +827,20 @@ export interface EquipmentSnapshot {
       readonly treatmentDeliveredByLearner: false;
       readonly procedurePerformedByLearner: false;
       readonly roscReported: false;
+      readonly outcomePredicted: false;
+    };
+    readonly acuteSevereAsthmaAssessment?: {
+      readonly treatmentAtTick: number | null;
+      readonly failureAtTick: number | null;
+      readonly escalationAtTick: number | null;
+      readonly risksAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly respiratoryFailureAuthored: true;
+      readonly medicationDeliveredByLearner: false;
+      readonly oxygenDeliveredByLearner: false;
+      readonly airwayProcedurePerformedByLearner: false;
+      readonly ventilatorSettingSelected: false;
+      readonly dispositionDetermined: false;
       readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */

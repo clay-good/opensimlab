@@ -1306,6 +1306,30 @@ opioid-related hypoventilation; neuromuscular respiratory failure; obesity hypov
 noninvasive-ventilation selection; high-flow oxygen escalation; oxygen-device failure; acute
 tracheostomy obstruction requiring assessment, oxygenation, escalation, and a bounded device pathway.
 
+### Wave C respiratory-medicine slice 1: acute severe asthma reassessment
+
+The first respiratory-medicine slice begins 75 minutes into acute care, after an experienced team
+has delivered controlled oxygen, 3 inhaled short-acting bronchodilator plus antimuscarinic cycles,
+systemic corticosteroid, and IV magnesium for poor response. Arrival words-only speech, RR 36/min,
+room-air SpO₂ 89%, and fixed PEF 28% predicted have progressed to drowsiness, confusion, inability to
+speak, a quiet chest with weakening effort, RR 18/min, SpO₂ 93% in an authored nominal 35% oxygen condition, and
+unperformable PEF. The lower respiratory rate is authored fatigue, not improvement. Fixed blood gas
+reports change from pH 7.45/PaCO₂ 31/PaO₂ 61 mmHg to pH 7.24/PaCO₂ 58/PaO₂ 68 mmHg.
+
+Learners reconcile verified treatment against the worsening whole-patient trajectory, recognize
+evolving respiratory failure, and activate critical-care and airway-capable
+support before reviewing dangerous alternatives, dynamic hyperinflation, air trapping, hypotension,
+barotrauma, mucus plugging, and expert ventilation risks. A strictly later handoff preserves active
+respiratory failure, current evidence, unresolved causes, deterioration triggers, and named owners.
+No treatment-response panel, resolution, disposition, prognosis, or outcome follows. The lesson does
+not examine; measure PEF; acquire or interpret blood gas, imaging, or monitoring; diagnose; repeat
+or deliver medication or oxygen; select a drug, dose, ventilation device, airway procedure,
+sedation, neuromuscular blockade, ventilator setting, or permissive-hypercapnia target; perform a
+procedure; determine disposition or prognosis; or predict outcome. This is distinct from the
+Emergency Medicine adult-asthma lab, which owns first-contact severity and initial treatment only.
+The live capnogram uses a generic severe-obstruction shape so it does not contradict the authored
+quiet-chest state; it remains pattern rehearsal rather than patient-specific quantitative data.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

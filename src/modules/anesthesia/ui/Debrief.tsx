@@ -4271,6 +4271,23 @@ export function objectiveFindings(
       const ordered = causes && handoff && causes.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved active resuscitation ownership, cause evaluation, mechanical capture, circulation, any later pacing strategy, ROSC, disposition, and outcome as unresolved.' : 'The active-resuscitation handoff was absent or did not follow cause review after an elapsed tick.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-acute-severe-asthma-treatment-and-trajectory',
+      'recognize-acute-severe-asthma-respiratory-failure',
+      'activate-acute-severe-asthma-critical-care-escalation',
+      'review-acute-severe-asthma-alternatives-and-ventilation-risks',
+      'handoff-acute-severe-asthma-reassessment'].includes(objective.id)) {
+      const treatment = log.find((event) => /^acute-severe-asthma-treatment-reconciled-\d+$/.test(event.eventId));
+      const failure = log.find((event) => /^acute-severe-asthma-failure-recognized-\d+$/.test(event.eventId));
+      const escalation = log.find((event) => /^acute-severe-asthma-escalation-activated-\d+$/.test(event.eventId));
+      const risks = log.find((event) => /^acute-severe-asthma-risks-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^acute-severe-asthma-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-acute-severe-asthma-treatment-and-trajectory') return { ...base, outcome: treatment ? 'met' : 'not-met', finding: treatment ? 'Documented prior treatment delivery and the worsening whole-patient trajectory were reconciled without treating slower breathing, less wheeze, or saturation on oxygen as recovery.' : 'The documented treatment and deterioration trajectory were not reconciled.', atTick: treatment?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'recognize-acute-severe-asthma-respiratory-failure') { const ordered = treatment && failure && treatment.tick <= failure.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Life-threatening hypercapnic ventilatory failure was recognized from mentation, speech, air movement, effort, respiratory-rate, oxygen, and blood-gas trends without forcing peak flow or using one airway cutoff.' : 'Respiratory-failure recognition was absent or preceded treatment-and-trajectory reconciliation.', atTick: failure?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-acute-severe-asthma-critical-care-escalation') { const ordered = failure && escalation && failure.tick <= escalation.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Critical-care and experienced-airway help, monitoring, support preparation, and deterioration contingencies were activated before complete cause review and without learner treatment or procedure delivery.' : 'Critical-care escalation was absent or preceded respiratory-failure recognition.', atTick: escalation?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-acute-severe-asthma-alternatives-and-ventilation-risks') { const ordered = escalation && risks && escalation.tick <= risks.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Case-justified imaging, open alternatives, treatment-toxicity questions, air trapping, hemodynamic compromise, and barotrauma risk were reviewed without a support or ventilator recipe.' : 'Alternative-cause and ventilation-risk review was absent or delayed escalation.', atTick: risks?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = risks && handoff && risks.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved active respiratory failure, continuous surveillance, unresolved causes, ventilation hazards, named owners, and deterioration triggers without inventing treatment response, disposition, or outcome.' : 'The active respiratory-failure handoff was absent or did not follow risk review after an elapsed tick.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

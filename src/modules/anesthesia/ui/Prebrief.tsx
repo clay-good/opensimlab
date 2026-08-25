@@ -30,7 +30,7 @@ export const FICTION_CONTRACT =
 export interface PrebriefProps {
   readonly scenario: Scenario;
   readonly region: RegionProfile;
-  readonly environment?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology';
+  readonly environment?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine';
   readonly onStart: () => void;
   /**
    * Offered only where the demonstration was authored. A "watch this" control on
@@ -53,8 +53,10 @@ export function Prebrief({ scenario, region, environment = 'anesthesia', onStart
         <p className="field__label">Assignment: {assignmentLabel}</p>
       )}
       <h1>{scenario.metadata.title}</h1>
-      <p>{patient.ageYears}-year-old {patientPersonNoun(patient)}, {patient.weightKg} kg,
-        ASA {patient.asaClass}, for {patient.procedure}.</p>
+      <p>{patient.ageYears}-year-old {patientPersonNoun(patient)}, {patient.weightKg} kg
+        {environment === 'cardiology' || environment === 'respiratory-medicine'
+          ? `, for ${patient.procedure}.`
+          : `, ASA ${patient.asaClass}, for ${patient.procedure}.`}</p>
 
       <Panel title="The fiction contract">
         <p>{FICTION_CONTRACT}</p>
@@ -75,7 +77,15 @@ export function Prebrief({ scenario, region, environment = 'anesthesia', onStart
 
       <section>
         <h2>The patient</h2>
-        {environment === 'cardiology' ? (
+        {environment === 'respiratory-medicine' ? (
+          <ul>
+            <li>{patient.diagnosis}.</li>
+            <li>Current authored reassessment: {patient.baseline.heartRateBpm} bpm and mean arterial pressure{' '}
+              {patient.baseline.meanArterialMmHg} mmHg.</li>
+            <li>Breathing and alertness: {patient.airway.assessment ?? 'not recorded'}.</li>
+            <li>Allergies: {(patient.allergies ?? []).join(', ') || 'none documented'}.</li>
+          </ul>
+        ) : environment === 'cardiology' ? (
           <ul>
             <li>{patient.diagnosis}.</li>
             <li>{(patient.comorbidities ?? []).join('; ') || 'No comorbidities recorded'}.</li>
@@ -112,6 +122,17 @@ export function Prebrief({ scenario, region, environment = 'anesthesia', onStart
             The fixed clinical record and patient context stay visible while the
             focused evaluation opens below. Pause freely and work through the sequence deliberately.
           </p>
+        ) : environment === 'respiratory-medicine' ? (
+          <>
+            <p>
+              The current respiratory record and monitor stay visible while the focused reassessment
+              opens below. Pause freely and work through each change in breathing and alertness deliberately.
+            </p>
+            <p>
+              This lab practices recognition, escalation, risk review, and handoff. Initial therapy is
+              authored prior care; no medication, support device, airway procedure, or outcome is delivered.
+            </p>
+          </>
         ) : (
           <>
             <p>

@@ -1,7 +1,18 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 131,
+  "sourceCount": 132,
   "sources": [
+    {
+      "id": "gina-strategy-report-2026",
+      "authors": "Global Initiative for Asthma",
+      "title": "Global Strategy for Asthma Management and Prevention, 2026 update",
+      "publication": "Global Initiative for Asthma",
+      "year": 2026,
+      "locator": "Chapter 9, Boxes 9-4 and 9-6, pp. 180-188; blood-gas and imaging text p. 185",
+      "usedFor": "Acute-asthma boundaries: reassess symptoms, oxygenation, and lung function after initial treatment; drowsiness, confusion, quiet chest, fatigue, and increasing PaCO₂ require urgent respiratory and intensive-care escalation; reserve blood gas and imaging for severe, deteriorating, nonresponding, or alternative-diagnosis contexts.",
+      "verifiedAgainst": "https://ginasthma.org/wp-content/uploads/2026/05/GINA-2026-Strategy-Report-WMS.pdf",
+      "verifiedOn": "2026-08-25"
+    },
     {
       "id": "association-qrh-2023",
       "authors": "Association of Anaesthetists",

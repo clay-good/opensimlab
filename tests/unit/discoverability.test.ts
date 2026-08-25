@@ -20,6 +20,7 @@ import { SCENARIOS } from '@anesthesia/scenarios';
 import { EMERGENCY_MEDICINE_SCENARIOS } from '../../src/modules/emergency-medicine/scenarios';
 import { CRITICAL_CARE_SCENARIOS } from '../../src/modules/critical-care/scenarios';
 import { CARDIOLOGY_SCENARIOS } from '../../src/modules/cardiology/scenarios';
+import { RESPIRATORY_MEDICINE_SCENARIOS } from '../../src/modules/respiratory-medicine/scenarios';
 import { Landing } from '@landing/Landing';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -204,7 +205,7 @@ describe('Requirement: The Hero Is The Product Running', () => {
 describe('Requirement: Modules Directory Is Honest About What Exists', () => {
   it('Scenario: Available and planned are visually distinct, with no date', () => {
     expect(availableModules().map((module) => module.id))
-      .toEqual(['anesthesia', 'emergency-medicine', 'cardiology', 'critical-care']);
+      .toEqual(['anesthesia', 'emergency-medicine', 'cardiology', 'respiratory-medicine', 'critical-care']);
     expect(plannedModules().length).toBeGreaterThanOrEqual(1);
     for (const module of plannedModules()) {
       expect(module.plannedScope, `${module.id} needs a description of its scope`).toBeTruthy();
@@ -448,6 +449,9 @@ describe('Requirement: Crawlability Basics', () => {
       })),
       ...CRITICAL_CARE_SCENARIOS.map((scenario) => ({ basePath: '/critical-care', scenario })),
       ...CARDIOLOGY_SCENARIOS.map((scenario) => ({ basePath: '/cardiology', scenario })),
+      ...RESPIRATORY_MEDICINE_SCENARIOS.map((scenario) => ({
+        basePath: '/respiratory-medicine', scenario,
+      })),
     ];
     for (const { basePath, scenario } of scenarios) {
       const markup = renderToStaticMarkup(createElement(PrerenderedBody, {

@@ -12,6 +12,7 @@ import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
 import { EMERGENCY_MEDICINE_SCENARIOS } from '../modules/emergency-medicine/scenarios';
 import { CRITICAL_CARE_SCENARIOS } from '../modules/critical-care/scenarios';
 import { CARDIOLOGY_SCENARIOS } from '../modules/cardiology/scenarios';
+import { RESPIRATORY_MEDICINE_SCENARIOS } from '../modules/respiratory-medicine/scenarios';
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { ROOT_ROUTE, formatTitle } from './site-metadata';
 import type { RouteMetadata } from './site-metadata';
@@ -126,6 +127,23 @@ export const ROUTES: readonly RouteMetadata[] = [
   },
   ...CARDIOLOGY_SCENARIOS.map((scenario) => ({
     path: `/cardiology/scenario/${scenario.metadata.id}`,
+    title: formatTitle(scenario.metadata.title.length > 40
+      ? `${scenario.metadata.title.slice(0, 37)}…` : scenario.metadata.title),
+    description: scenarioDescription(scenario),
+    indexable: true,
+    structuredData: ['LearningResource'] as const,
+    heading: scenario.metadata.title,
+  })),
+  {
+    path: '/respiratory-medicine',
+    title: formatTitle('Respiratory medicine simulator'),
+    description: 'Practice calm serial reassessment of acute severe asthma, ventilatory failure, respiratory escalation, open causes, and clinical handoff.',
+    indexable: true,
+    structuredData: ['SoftwareApplication'],
+    heading: 'Respiratory medicine simulator',
+  },
+  ...RESPIRATORY_MEDICINE_SCENARIOS.map((scenario) => ({
+    path: `/respiratory-medicine/scenario/${scenario.metadata.id}`,
     title: formatTitle(scenario.metadata.title.length > 40
       ? `${scenario.metadata.title.slice(0, 37)}…` : scenario.metadata.title),
     description: scenarioDescription(scenario),

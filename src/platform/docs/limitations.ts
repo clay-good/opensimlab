@@ -3095,6 +3095,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use current resuscitation and bradycardia guidance, device instructions, verified mechanical capture, qualified pacing and arrest teams, continuous reassessment, and patient-specific definitive planning.',
     briefIn: ['transcutaneous-pacing-mechanical-capture-reassessment'],
   },
+  {
+    id: 'acute-severe-asthma-treatment-trajectory-and-tests-are-authored',
+    headline: 'The prior therapy, serial findings, tests, and severe-obstruction waveform cue are bounded teaching reports.',
+    simplification: 'One fixed record stands in for medication administration records, repeated examination, respiratory monitoring, PEF effort, specimen collection, blood-gas analysis, imaging, and team communication; a generic obstruction waveform supports pattern rehearsal rather than patient-specific capnography.',
+    whereItMisleads: 'Treating the falling respiratory rate as improvement, one gas value as a universal threshold, negative snapshots as permanent exclusions, or completion as diagnostic skill.',
+    correctUnderstanding: 'Real reassessment integrates treatment timing, trajectory, mentation, speech, effort, air movement, oxygenation, objective airflow when feasible, gas exchange when indicated, dangerous alternatives, verified monitoring, and repeated expert review.',
+    briefIn: ['acute-severe-asthma'],
+  },
+  {
+    id: 'acute-severe-asthma-controls-record-recognition-escalation-review-and-handoff-only',
+    headline: 'The controls record trajectory review, respiratory-failure recognition, escalation, bounded risk review, and handoff; they do not deliver care.',
+    simplification: 'Five clicks stand in for urgent multidisciplinary reassessment, critical-care and airway mobilization, alternative-cause review, ventilation planning, communication, and handoff.',
+    whereItMisleads: 'Equating button order with examination, test interpretation, airway judgment, prescribing, treatment delivery, ventilation, or critical-care competence.',
+    correctUnderstanding: 'Actual care requires continuous bedside reassessment, experienced respiratory and critical-care teams, local emergency pathways, monitored treatment, and readiness for rapid deterioration.',
+    briefIn: ['acute-severe-asthma'],
+  },
+  {
+    id: 'no-live-acute-severe-asthma-treatment-ventilation-procedure-disposition-or-outcome',
+    headline: 'The lab does not repeat treatment, select ventilation, perform an airway procedure, determine disposition, or predict outcome.',
+    simplification: 'No live bronchodilator, antimuscarinic, oxygen, steroid, magnesium, antibiotic, epinephrine, fluid, device trial, intubation, sedation, neuromuscular blockade, ventilator setting, procedure, disposition, prognosis, response, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values as a treatment or ventilation recipe or using completion as evidence of prescribing, airway, ventilation, procedural, disposition, or prognostic competence.',
+    correctUnderstanding: 'Use current acute-asthma guidance, verified patient data, device instructions, qualified airway and ventilation expertise, local protocols, and continuous patient-specific reassessment.',
+    briefIn: ['acute-severe-asthma'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {
