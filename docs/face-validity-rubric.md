@@ -138,7 +138,8 @@ Reviewers run the routine induction themselves before answering.
 | B84 | In the ventilator-dyssynchrony lesson, visible effort, pressure scooping, premature cycling, 8 double triggers in 20 breaths, and 760 mL stacked volume lead to a patient/graphics review, reversible-driver panel, bounded flow-starvation and premature-cycling classification, analgesia-first plus respiratory-therapy adjustment intent, retained lung-protection guardrails, and 10-minute whole-patient reassessment without implying examination, waveform acquisition, diagnosis, ventilator programming, prescribing, drug delivery, paralysis, respiratory-therapy skill, disposition, or outcome competence | | |
 | B85 | In the auto-PEEP lesson, expiratory flow that misses zero, high peak-to-plateau pressure separation, failed triggers, hypercapnia, and low pressure lead to a whole-patient review, a clearly passive authored hold separating set, total, and intrinsic PEEP, a bounded dynamic-hyperinflation classification, obstruction-treatment and more-expiratory-time intent with no universal setting or external-PEEP claim, and 10-minute flow, mechanics, gas, and circulation reassessment without implying examination, waveform or mechanics acquisition, airway or ventilator manipulation, prescribing, drug delivery, procedure, respiratory-therapy skill, disposition, or outcome competence | | |
 | B86 | In the mucus-plugging lesson, coarse central sounds, visible tracheal-tube secretion, a sawtooth flow graphic, high peak-to-plateau pressure separation, focal reduced air entry, and hypoxemia lead to support and help, convergent indication review, preoxygenated as-needed shallow-first suction intent without routine saline, a partial fixed response, and escalation of persistent focal physiology without making bronchoscopy routine or implying examination, equipment, suction, imaging, bronchoscopy, respiratory-therapy, procedural, disposition, or outcome competence | | |
-| B87 | Overall: does this patient behave like a patient? | | |
+| B87 | In the unplanned-extubation lesson, visible tube displacement, severe work, weak airway protection, hypoxemia, respiratory acidemia, and declining alertness lead to immediate oxygen support and experienced help, a whole-patient tolerance assessment, case-specific failure classification, prompt skilled reintubation intent without noninvasive-support delay, reported placement and response confirmation, and non-punitive prevention handoff without implying examination, monitoring, oxygenation, ventilation, prescribing, airway, investigation, disposition, or outcome competence | | |
+| B88 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -288,4 +289,7 @@ So that reviewers spend their attention on what this review is for:
 - The mucus-plugging case uses fixed secretion, sound, graphic, mechanics, clearance, and response
   panels. It does not examine, suction, remove secretions, image, perform bronchoscopy, diagnose,
   program a ventilator, deliver medication, manage complications, or predict outcome.
+- The unplanned-extubation case uses fixed event, tolerance, failure, airway, response, and handoff
+  panels. It does not examine, sample, oxygenate, ventilate, select drugs or equipment, intubate,
+  confirm placement, investigate, assign fault, determine disposition, or predict outcome.
 - Nothing here has been clinically reviewed before — you are the first.

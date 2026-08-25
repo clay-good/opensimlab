@@ -2202,6 +2202,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['mucus-plugging'],
   },
   {
+    id: 'unplanned-extubation-findings-failure-and-response-are-authored',
+    headline: 'The unplanned event, tolerance findings, failure classification, airway response, and handoff are authored facts.',
+    simplification: 'One fixed adult deteriorates after tube displacement and then improves on a reported post-reintubation panel.',
+    whereItMisleads: 'Treating the screen as examination, gas sampling, monitoring acquisition, diagnosis, airway confirmation, investigation, or response prediction.',
+    correctUnderstanding: 'Real assessment integrates airway protection, work, oxygenation, ventilation, neurologic state, secretions, circulation, trend, and goals of care.',
+    briefIn: ['unplanned-extubation'],
+  },
+  {
+    id: 'unplanned-extubation-oxygen-airway-and-confirmation-controls-are-proxies',
+    headline: 'Oxygenation, help, reintubation, and confirmation buttons record intents; they do not perform care.',
+    simplification: 'The interface enforces an ordered cognitive response without delivering oxygen, ventilating, selecting drugs or equipment, intubating, or confirming placement.',
+    whereItMisleads: 'Equating button order with airway, respiratory-therapy, critical-care, team, equipment, or procedural competence.',
+    correctUnderstanding: 'Use trained teams, local emergency-airway systems, preoxygenation, hemodynamic preparation, backup planning, placement confirmation, and serial reassessment.',
+    briefIn: ['unplanned-extubation'],
+  },
+  {
+    id: 'no-live-unplanned-extubation-diagnosis-airway-procedure-or-outcome',
+    headline: 'The case does not diagnose extubation failure, teach airway management, assign fault, or predict outcome.',
+    simplification: 'Alternative tolerance trajectories, upper-airway obstruction, aspiration, arrest, difficult reintubation, NIV exceptions, goals-of-care limits, and complications are incomplete.',
+    whereItMisleads: 'Automatically reintubating every event, delaying this failing airway with noninvasive support, copying an airway plan, or blaming one person.',
+    correctUnderstanding: 'Support immediately, decide from the whole patient, act promptly when failure converges, prove the new airway, and learn from the system non-punitively.',
+    briefIn: ['unplanned-extubation'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

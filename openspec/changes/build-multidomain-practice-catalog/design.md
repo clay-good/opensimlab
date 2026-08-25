@@ -636,6 +636,25 @@ bronchoscopy is not the default. The case does not examine, inspect equipment, a
 mechanics, suction, remove secretions, image, perform bronchoscopy, diagnose, program a ventilator,
 deliver medication, perform procedures, or predict outcome.
 
+### Wave B critical-care slice 6: unplanned extubation
+
+The sixth critical-care slice begins after repositioning with a disconnect alarm and the tracheal
+tube visibly outside the mouth. The fixed adult has a respiratory rate of 36/min, accessory-muscle
+use, weak voice and cough, pooled secretions, SpO₂ 86% despite face-mask oxygen, pH 7.27, PaCO₂
+58 mmHg, and declining alertness with preserved circulation. Learners announce the event, support
+oxygenation, call respiratory-therapy, senior ICU, and airway help, then review airway protection,
+work, gas exchange, brain, secretions, and circulation rather than treating every unplanned
+extubation as automatic reintubation.
+
+The focused tutor pairs “the tube is out; read the patient” with “don’t rent time from failure.”
+Convergent failure triggers experienced-team preoxygenation and prompt reintubation intent with
+hemodynamic preparation and backup; noninvasive support does not delay this failing airway. A fixed
+reported response requires continuous capnography, bilateral ventilation, documented tube state,
+and whole-patient improvement before a non-punitive securement, sedation, mobility, staffing,
+observation, and communication review. The case does not examine, acquire monitoring or blood gas,
+deliver oxygen, ventilate, select drugs or equipment, intubate, confirm placement, investigate,
+assign fault, determine disposition, or predict outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute

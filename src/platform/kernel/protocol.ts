@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 63 reports mucus-plugging state. */
-export const WORKER_PROTOCOL_VERSION = 63;
+/** Bumped whenever the message shape changes incompatibly. Version 64 reports unplanned-extubation state. */
+export const WORKER_PROTOCOL_VERSION = 64;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -457,6 +457,13 @@ export interface EquipmentSnapshot {
       readonly suctionAtTick: number | null;
       readonly reassessmentAtTick: number | null;
       readonly escalationAtTick: number | null;
+    };
+    readonly unplannedExtubationAssessment?: {
+      readonly supportAtTick: number | null;
+      readonly assessmentAtTick: number | null;
+      readonly failureAtTick: number | null;
+      readonly airwayPlanAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

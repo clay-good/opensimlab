@@ -310,6 +310,8 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
       .toMatchObject({ indexable: true, heading: 'Auto-PEEP and dynamic hyperinflation' });
     expect(routeFor('/critical-care/scenario/mucus-plugging'))
       .toMatchObject({ indexable: true, heading: 'Mucus plugging' });
+    expect(routeFor('/critical-care/scenario/unplanned-extubation'))
+      .toMatchObject({ indexable: true, heading: 'Unplanned extubation' });
   });
 
   it('Requirement: Modules Declare Their Own Physiological Timescale', () => {

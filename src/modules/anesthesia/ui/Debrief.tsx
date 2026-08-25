@@ -3311,6 +3311,46 @@ export function objectiveFindings(
         : 'Escalation was absent or preceded the persistent finding.', atTick: escalation?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['support-unplanned-extubation-and-call-help', 'assess-unplanned-extubation-tolerance',
+      'classify-unplanned-extubation-failure', 'record-unplanned-extubation-airway-plan',
+      'reassess-unplanned-extubation-response'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'unplanned-extubation');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The unplanned-extubation vignette was not active.' } satisfies ObjectiveFinding;
+      const support = log.find((event) => /^unplanned-extubation-support-recorded-\d+$/.test(event.eventId));
+      const assessment = log.find((event) => /^unplanned-extubation-tolerance-assessed-\d+$/.test(event.eventId));
+      const failure = log.find((event) => /^unplanned-extubation-failure-classified-\d+$/.test(event.eventId));
+      const plan = log.find((event) => /^unplanned-extubation-airway-plan-recorded-\d+$/.test(event.eventId));
+      const reassessment = log.find((event) => /^unplanned-extubation-response-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'support-unplanned-extubation-and-call-help') return { ...base,
+        outcome: support ? 'met' : 'not-met', finding: support
+          ? 'The event was announced with oxygen-support and respiratory-therapy, ICU, and airway help intent.'
+          : 'Immediate support and experienced help were not recorded.', atTick: support?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'assess-unplanned-extubation-tolerance') {
+        const ordered = support && assessment && support.tick <= assessment.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Airway protection, work, gas exchange, alertness, secretions, and circulation were assessed after support.'
+          : 'The tolerance assessment was absent or out of order.', atTick: assessment?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'classify-unplanned-extubation-failure') {
+        const ordered = assessment && failure && assessment.tick <= failure.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Convergent whole-patient failure, rather than the event alone, triggered prompt reintubation intent.'
+          : 'Failure classification was absent or preceded assessment.', atTick: failure?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'record-unplanned-extubation-airway-plan') {
+        const ordered = failure && plan && failure.tick <= plan.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Experienced-team preoxygenation and reintubation intent included preparation, backup, and no NIV delay.'
+          : 'The airway plan was absent or preceded failure recognition.', atTick: plan?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = plan && reassessment && plan.tick <= reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+        ? 'Reported capnography, bilateral ventilation, tube state, physiology, and prevention handoff closed the loop.'
+        : 'Placement and whole-patient reassessment were absent or preceded the airway plan.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

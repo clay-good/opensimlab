@@ -421,6 +421,11 @@ export class AnesthesiaEngine {
   private mucusSuctionAtTick: number | null = null;
   private mucusReassessmentAtTick: number | null = null;
   private mucusEscalationAtTick: number | null = null;
+  private unplannedExtubationSupportAtTick: number | null = null;
+  private unplannedExtubationAssessmentAtTick: number | null = null;
+  private unplannedExtubationFailureAtTick: number | null = null;
+  private unplannedExtubationAirwayPlanAtTick: number | null = null;
+  private unplannedExtubationReassessmentAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2986,6 +2991,58 @@ export class AnesthesiaEngine {
         this.mucusEscalationAtTick = this.currentTick;
         this.log('critical', 'assessment', `mucus-escalation-recorded-${this.currentTick}`,
           'Urgent chest-imaging intent and experienced airway evaluation were recorded for persistent left-base volume-loss concern while tube migration, pneumothorax, consolidation, blood, foreign body, and equipment problems remain open. Bronchoscopy is not routine; its indication, timing, findings, technique, complications, and outcome remain outside this lesson.', { intentOnly: true, imaging: true, experiencedAirwayReview: true, routineBronchoscopy: false });
+        break;
+      }
+      case 'unplanned-extubation-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'unplanned-extubation');
+        const valid = ['support-unplanned-extubation-and-call-help',
+          'assess-unplanned-extubation-tolerance', 'classify-unplanned-extubation-failure',
+          'record-unplanned-extubation-airway-plan',
+          'reassess-unplanned-extubation-response'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `unplanned-extubation-response-refused-${this.currentTick}`,
+            supported ? 'The unplanned-extubation action was not one of the listed choices. Nothing changed.'
+              : 'The bounded unplanned-extubation choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'support-unplanned-extubation-and-call-help') {
+          if (this.unplannedExtubationSupportAtTick !== null) { this.log('warning', 'assessment', `unplanned-extubation-support-refused-${this.currentTick}`, 'Oxygenation support and experienced help have already been recorded.'); break; }
+          this.unplannedExtubationSupportAtTick = this.currentTick;
+          this.log('critical', 'assessment', `unplanned-extubation-support-recorded-${this.currentTick}`,
+            'The unplanned extubation was announced. Immediate face-mask oxygen, continuous monitoring, and respiratory-therapy, senior ICU, and airway help were recorded. Oxygen delivery, mask ventilation, team arrival, and procedures are not simulated.', { intentOnly: true, oxygenSupport: true, respiratoryTherapyHelp: true, seniorHelp: true, airwayHelp: true });
+          break;
+        }
+        if (this.unplannedExtubationSupportAtTick === null) { this.log('warning', 'assessment', `unplanned-extubation-support-order-refused-${this.currentTick}`, 'Announce the event, support oxygenation, and call experienced help before the tolerance assessment.'); break; }
+        if (response === 'assess-unplanned-extubation-tolerance') {
+          if (this.unplannedExtubationAssessmentAtTick !== null) { this.log('warning', 'assessment', `unplanned-extubation-assessment-refused-${this.currentTick}`, 'The fixed post-extubation tolerance panel has already been reviewed.'); break; }
+          this.unplannedExtubationAssessmentAtTick = this.currentTick;
+          this.log('critical', 'assessment', `unplanned-extubation-tolerance-assessed-${this.currentTick}`,
+            'Fixed whole-patient panel: airway remains patent but voice and cough are weak with pooled secretions; respiratory rate is 36/min with accessory use; SpO₂ is 86% despite face-mask oxygen; pH is 7.27 and PaCO₂ 58 mmHg; alertness is declining; HR is 116/min and MAP 78 mmHg. The event alone does not mandate reintubation, but these findings test airway protection, work, oxygenation, ventilation, brain, and circulation.', { airwayPatent: true, respiratoryRateBpm: 36, weakCough: true, pooledSecretions: true, spo2Percent: 86, pH: 7.27, paCo2MmHg: 58, decliningAlertness: true });
+          break;
+        }
+        if (this.unplannedExtubationAssessmentAtTick === null) { this.log('warning', 'assessment', `unplanned-extubation-assessment-order-refused-${this.currentTick}`, 'Review the whole-patient tolerance panel before deciding on a definitive airway.'); break; }
+        if (response === 'classify-unplanned-extubation-failure') {
+          if (this.unplannedExtubationFailureAtTick !== null) { this.log('warning', 'assessment', `unplanned-extubation-failure-refused-${this.currentTick}`, 'Post-extubation respiratory failure has already been recorded.'); break; }
+          this.unplannedExtubationFailureAtTick = this.currentTick;
+          this.log('critical', 'assessment', `unplanned-extubation-failure-classified-${this.currentTick}`,
+            'The combined severe work, hypoxemia, respiratory acidemia, weak secretion clearance, and declining alertness were classified as an authored failing post-extubation trajectory requiring prompt reintubation. This is a case-specific classification, not a universal rule for every unplanned extubation.', { classification: 'failing', promptReintubation: true, automaticForEveryEvent: false });
+          break;
+        }
+        if (this.unplannedExtubationFailureAtTick === null) { this.log('warning', 'assessment', `unplanned-extubation-failure-order-refused-${this.currentTick}`, 'Classify the observed trajectory before recording the airway plan.'); break; }
+        if (response === 'record-unplanned-extubation-airway-plan') {
+          if (this.unplannedExtubationAirwayPlanAtTick !== null) { this.log('warning', 'assessment', `unplanned-extubation-plan-refused-${this.currentTick}`, 'The bounded experienced-airway plan has already been recorded.'); break; }
+          this.unplannedExtubationAirwayPlanAtTick = this.currentTick;
+          this.log('critical', 'assessment', `unplanned-extubation-airway-plan-recorded-${this.currentTick}`,
+            'Experienced-team preoxygenation and prompt reintubation intent were recorded with hemodynamic preparation and a difficult-airway backup. Noninvasive support will not be used to delay a failing airway. No oxygen interface, drug, dose, device, technique, attempt, placement, or complication is simulated.', { intentOnly: true, preoxygenation: true, promptReintubation: true, hemodynamicPreparation: true, difficultAirwayBackup: true, nivDelay: false });
+          break;
+        }
+        if (this.unplannedExtubationAirwayPlanAtTick === null) { this.log('warning', 'assessment', `unplanned-extubation-plan-order-refused-${this.currentTick}`, 'Record the experienced-airway plan before reviewing its fixed response.'); break; }
+        if (this.unplannedExtubationReassessmentAtTick !== null) { this.log('warning', 'assessment', `unplanned-extubation-reassessment-refused-${this.currentTick}`, 'The fixed airway and patient-response panel has already been reviewed.'); break; }
+        this.unplannedExtubationReassessmentAtTick = this.currentTick;
+        this.log('critical', 'assessment', `unplanned-extubation-response-reassessed-${this.currentTick}`,
+          'Fixed reported response: continuous exhaled-carbon-dioxide waveform is present, bilateral ventilation is reported, tube depth and cuff state are documented, SpO₂ is 95%, ETCO₂ is 43 mmHg, peak pressure is 28 cm H₂O, HR is 104/min, MAP is 75 mmHg, and alertness is improving. A non-punitive handoff requests review of securement, sedation and delirium, mobility, staffing, observation, and communication around the repositioning event.', { continuousCapnogram: true, bilateralVentilation: true, tubeDepthDocumented: true, cuffStateDocumented: true, spo2Percent: 95, etCo2MmHg: 43, incidentReview: true });
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -6174,6 +6231,13 @@ export class AnesthesiaEngine {
           suctionAtTick: this.mucusSuctionAtTick,
           reassessmentAtTick: this.mucusReassessmentAtTick,
           escalationAtTick: this.mucusEscalationAtTick,
+        },
+        unplannedExtubationAssessment: {
+          supportAtTick: this.unplannedExtubationSupportAtTick,
+          assessmentAtTick: this.unplannedExtubationAssessmentAtTick,
+          failureAtTick: this.unplannedExtubationFailureAtTick,
+          airwayPlanAtTick: this.unplannedExtubationAirwayPlanAtTick,
+          reassessmentAtTick: this.unplannedExtubationReassessmentAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

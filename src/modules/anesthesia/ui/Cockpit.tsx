@@ -802,6 +802,9 @@ export function Cockpit({
           onMucusPluggingResponse={(action) => session.act({
             type: 'mucus-plugging-response', payload: { action },
           })}
+          onUnplannedExtubationResponse={(action) => session.act({
+            type: 'unplanned-extubation-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}
