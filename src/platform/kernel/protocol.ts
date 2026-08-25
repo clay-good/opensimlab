@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 38 reports bounded traumatic-hemorrhage state. */
-export const WORKER_PROTOCOL_VERSION = 40;
+/** Bumped whenever the message shape changes incompatibly. Version 41 reports bounded ED-anaphylaxis state. */
+export const WORKER_PROTOCOL_VERSION = 41;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -289,6 +289,14 @@ export interface EquipmentSnapshot {
       readonly contextReviewedAtTick: number | null;
       readonly pocusReviewedAtTick: number | null;
       readonly definitiveControlAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+    };
+    readonly emergencyAnaphylaxisAssessment?: {
+      readonly patternReviewedAtTick: number | null;
+      readonly positionedAndHelpedAtTick: number | null;
+      readonly imEpinephrineAtTick: number | null;
+      readonly oxygenAtTick: number | null;
+      readonly crystalloidAtTick: number | null;
       readonly reassessedAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */

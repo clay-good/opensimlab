@@ -4,6 +4,7 @@ import { SEPTIC_SHOCK } from './septic-shock';
 import { HEMORRHAGIC_SHOCK } from './hemorrhagic-shock';
 import { OBSTRUCTIVE_SHOCK_TENSION_PNEUMOTHORAX } from './obstructive-shock-tension-pneumothorax';
 import { CARDIAC_TAMPONADE } from './cardiac-tamponade';
+import { ANAPHYLAXIS } from './anaphylaxis';
 
 export const EMERGENCY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   UNDIFFERENTIATED_SHOCK,
@@ -11,6 +12,7 @@ export const EMERGENCY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   HEMORRHAGIC_SHOCK,
   OBSTRUCTIVE_SHOCK_TENSION_PNEUMOTHORAX,
   CARDIAC_TAMPONADE,
+  ANAPHYLAXIS,
 ];
 export const DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID = UNDIFFERENTIATED_SHOCK.metadata.id;
 

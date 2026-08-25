@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with five playable, completion-audited scenarios. The remaining
-20 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with six playable, completion-audited scenarios. The remaining
+19 planned titles remain descriptive scope only and do not enter playable counts before their full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -254,6 +254,18 @@ The new bounded drive affects obstructive circulation without borrowing the pleu
 trajectory. POCUS is an authored statement and control is an escalation intent. The case does not
 teach procedure selection or technique, simulate transport or technical success, cover concurrent
 injuries or the full differential, progress to arrest, or predict outcome.
+
+### Wave B slice 6: emergency anaphylaxis
+
+The sixth emergency-medicine slice reuses the shared anaphylaxis physiology in a distinct community
+food-exposure presentation. Learners integrate fixed airway, breathing, and circulation findings;
+record recumbent positioning and emergency help; give a fixed 500-microgram adult intramuscular
+epinephrine action; add high-flow oxygen and a fixed 20 mL/kg crystalloid bolus; then reassess.
+
+The focused response excludes the perioperative intravenous-dose tray and does not expose a generic
+drug or fluid calculator. Findings and actions are authored. Diagnosis, preparation and injection
+technique, repeat-dose timing, refractory pathways, airway procedures, observation, recurrence,
+referral, local protocol, and outcome remain outside this initial-response vignette.
 
 #### Critical care: 24
 

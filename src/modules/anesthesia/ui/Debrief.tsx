@@ -3490,6 +3490,54 @@ export function objectiveFindings(
     }
 
     if ([
+      'recognize-ed-anaphylaxis-pattern', 'give-first-line-im-epinephrine',
+      'support-anaphylaxis-airway-and-circulation', 'reassess-initial-anaphylaxis-response',
+    ].includes(objective.id)) {
+      const supported = scenario.timeline.some(
+        (event) => event.type === 'narrative' && event.target === 'emergency-anaphylaxis',
+      );
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The emergency-department anaphylaxis vignette was not active.' } satisfies ObjectiveFinding;
+      const pattern = log.find((event) => event.eventId.startsWith('emergency-anaphylaxis-pattern-reviewed-'));
+      const positioned = log.find((event) => event.eventId.startsWith('emergency-anaphylaxis-positioned-'));
+      const epinephrine = log.find((event) => event.eventId.startsWith('epinephrine-im-emergency-'));
+      const oxygen = log.find((event) => event.eventId.startsWith('emergency-anaphylaxis-oxygen-'));
+      const fluid = log.find((event) => event.eventId.startsWith('emergency-anaphylaxis-fluid-'));
+      const reassessment = log.find((event) => event.eventId.startsWith('emergency-anaphylaxis-reassessed-'));
+      if (objective.id === 'recognize-ed-anaphylaxis-pattern') return {
+        ...base, outcome: pattern ? 'met' : 'not-met',
+        finding: pattern
+          ? 'The fixed airway, breathing, circulation, and exposure pattern was integrated without waiting for skin findings or claiming diagnostic certainty.'
+          : 'The fixed systemic pattern was not reviewed before the response.',
+        atTick: pattern?.tick ?? 0,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'give-first-line-im-epinephrine') {
+        const ordered = positioned && epinephrine && positioned.tick <= epinephrine.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'Recumbent positioning and emergency help preceded the fixed 500-microgram intramuscular epinephrine action; no intravenous bolus pathway was used.'
+            : 'Positioning, emergency help, and fixed first-line IM epinephrine were incomplete or out of order.',
+          atTick: epinephrine?.tick ?? positioned?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'support-anaphylaxis-airway-and-circulation') {
+        const ordered = epinephrine && oxygen && fluid
+          && epinephrine.tick <= oxygen.tick && epinephrine.tick <= fluid.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'High-flow oxygen and the fixed 1,500 mL isotonic-crystalloid bolus followed first-line IM epinephrine as parallel support.'
+            : 'First-line epinephrine, oxygen, and early crystalloid support were incomplete or out of order.',
+          atTick: Math.max(epinephrine?.tick ?? 0, oxygen?.tick ?? 0, fluid?.tick ?? 0) } satisfies ObjectiveFinding;
+      }
+      const ordered = oxygen && fluid && reassessment
+        && oxygen.tick <= reassessment.tick && fluid.tick <= reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met',
+        finding: ordered
+          ? 'Airway, breathing, circulation, mental status, and the canonical monitor response were reassessed without treating recovery as diagnostic or prognostic proof.'
+          : 'Initial support and serial whole-patient reassessment were incomplete or out of order.',
+        atTick: reassessment?.tick ?? Math.max(oxygen?.tick ?? 0, fluid?.tick ?? 0) } satisfies ObjectiveFinding;
+    }
+
+    if ([
       'recognize-anaphylaxis-pattern', 'give-initial-epinephrine',
       'support-anaphylaxis-circulation', 'support-anaphylaxis-oxygenation',
     ].includes(objective.id)) {

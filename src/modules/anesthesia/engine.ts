@@ -299,6 +299,12 @@ export class AnesthesiaEngine {
   private tamponadePocusReviewedAtTick: number | null = null;
   private tamponadeDefinitiveControlAtTick: number | null = null;
   private tamponadeReassessedAtTick: number | null = null;
+  private emergencyAnaphylaxisPatternReviewedAtTick: number | null = null;
+  private emergencyAnaphylaxisPositionedAndHelpedAtTick: number | null = null;
+  private emergencyAnaphylaxisImEpinephrineAtTick: number | null = null;
+  private emergencyAnaphylaxisOxygenAtTick: number | null = null;
+  private emergencyAnaphylaxisCrystalloidAtTick: number | null = null;
+  private emergencyAnaphylaxisReassessedAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -905,6 +911,121 @@ export class AnesthesiaEngine {
         this.tamponadeReassessedAtTick = this.currentTick;
         this.log('advisory', 'assessment', `tamponade-perfusion-reassessed-${this.currentTick}`,
           'The canonical monitor response was reviewed after accepted definitive-control intent. Residual physiology clears on a teaching trajectory and does not prove technical success or predict outcome.');
+        break;
+      }
+      case 'emergency-anaphylaxis-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some(
+          (event) => event.type === 'narrative' && event.target === 'emergency-anaphylaxis',
+        );
+        const valid = [
+          'review-systemic-pattern', 'position-and-call-for-help', 'give-im-epinephrine',
+          'give-high-flow-oxygen', 'begin-fixed-crystalloid', 'reassess-response',
+        ].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `emergency-anaphylaxis-refused-${this.currentTick}`,
+            supported
+              ? 'The emergency-anaphylaxis action was not one of the listed choices. Nothing changed.'
+              : 'The bounded emergency-anaphylaxis choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-systemic-pattern') {
+          if (this.emergencyAnaphylaxisPatternReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `emergency-anaphylaxis-pattern-refused-${this.currentTick}`,
+              'The fixed airway, breathing, circulation, and exposure pattern has already been reviewed.');
+            break;
+          }
+          this.emergencyAnaphylaxisPatternReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `emergency-anaphylaxis-pattern-reviewed-${this.currentTick}`,
+            'Fixed evidence: abrupt lip and tongue swelling, widespread wheeze, hypoxemia, hypotension, and impaired perfusion followed a food exposure. Skin findings are absent in this vignette; the pattern supports immediate treatment without making the simulator a diagnostic test.');
+          break;
+        }
+        if (this.emergencyAnaphylaxisPatternReviewedAtTick === null) {
+          this.log('warning', 'assessment', `emergency-anaphylaxis-order-refused-${this.currentTick}`,
+            'Review the fixed systemic pattern before recording response actions.');
+          break;
+        }
+        if (response === 'position-and-call-for-help') {
+          if (this.emergencyAnaphylaxisPositionedAndHelpedAtTick !== null) {
+            this.log('warning', 'assessment', `emergency-anaphylaxis-position-refused-${this.currentTick}`,
+              'Recumbent positioning and emergency help have already been recorded.');
+            break;
+          }
+          this.emergencyAnaphylaxisPositionedAndHelpedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `emergency-anaphylaxis-positioned-${this.currentTick}`,
+            'Recumbent positioning, trigger avoidance, continuous monitoring, and immediate emergency help were recorded. Physical positioning, staffing, communication, and trigger verification are not simulated.');
+          break;
+        }
+        if (this.emergencyAnaphylaxisPositionedAndHelpedAtTick === null) {
+          this.log('warning', 'assessment', `emergency-anaphylaxis-support-order-refused-${this.currentTick}`,
+            'Record positioning and emergency help before first-line treatment.');
+          break;
+        }
+        if (response === 'give-im-epinephrine') {
+          if (this.emergencyAnaphylaxisImEpinephrineAtTick !== null) {
+            this.log('warning', 'drug', `emergency-anaphylaxis-epinephrine-refused-${this.currentTick}`,
+              'The fixed initial intramuscular epinephrine action has already been accepted.');
+            break;
+          }
+          this.emergencyAnaphylaxisImEpinephrineAtTick = this.currentTick;
+          this.epinephrineEffect = 1;
+          this.epinephrineTotalMicrograms += 500;
+          this.lastEpinephrineTick = this.currentTick;
+          this.log('critical', 'drug', `epinephrine-im-emergency-${this.currentTick}`,
+            'Epinephrine 500 micrograms IM in the anterolateral thigh recorded as the fixed adult first-line action. Preparation, injection technique, absorption, and individual response are not simulated.', {
+              drugId: 'epinephrine', route: 'im', doseMicrograms: 500, teachingModel: true,
+            });
+          break;
+        }
+        if (this.emergencyAnaphylaxisImEpinephrineAtTick === null) {
+          this.log('warning', 'assessment', `emergency-anaphylaxis-adjunct-order-refused-${this.currentTick}`,
+            'Record first-line intramuscular epinephrine before supportive adjuncts.');
+          break;
+        }
+        if (response === 'give-high-flow-oxygen') {
+          if (this.emergencyAnaphylaxisOxygenAtTick !== null) {
+            this.log('warning', 'equipment', `emergency-anaphylaxis-oxygen-refused-${this.currentTick}`,
+              'High-flow oxygen intent has already been recorded.');
+            break;
+          }
+          this.emergencyAnaphylaxisOxygenAtTick = this.currentTick;
+          this.ventilator = { ...this.ventilator, fio2: 1 };
+          this.log('critical', 'equipment', `emergency-anaphylaxis-oxygen-${this.currentTick}`,
+            'High-flow oxygen by non-rebreather mask was recorded. Mask fit, flow, airway procedures, and delivered concentration are not simulated.');
+          break;
+        }
+        if (response === 'begin-fixed-crystalloid') {
+          if (this.emergencyAnaphylaxisCrystalloidAtTick !== null) {
+            this.log('warning', 'fluid', `emergency-anaphylaxis-fluid-refused-${this.currentTick}`,
+              'The fixed initial crystalloid bolus has already been recorded.');
+            break;
+          }
+          this.emergencyAnaphylaxisCrystalloidAtTick = this.currentTick;
+          this.pendingCrystalloidMl += 1500;
+          this.crystalloidTotalMl += 1500;
+          this.log('critical', 'fluid', `emergency-anaphylaxis-fluid-${this.currentTick}`,
+            'A fixed 1,500 mL isotonic crystalloid bolus was recorded for cardiovascular instability. Access, delivery rate, individualized volume, and fluid complications are not simulated.', {
+              fluidId: 'balanced-crystalloid', volumeMl: 1500, teachingModel: true,
+            });
+          break;
+        }
+        if (this.emergencyAnaphylaxisOxygenAtTick === null
+          || this.emergencyAnaphylaxisCrystalloidAtTick === null
+          || this.currentTick <= Math.max(
+            this.emergencyAnaphylaxisOxygenAtTick, this.emergencyAnaphylaxisCrystalloidAtTick,
+          )) {
+          this.log('warning', 'assessment', `emergency-anaphylaxis-reassessment-order-refused-${this.currentTick}`,
+            'Record oxygen and initial crystalloid, then allow the next engine tick before reassessment.');
+          break;
+        }
+        if (this.emergencyAnaphylaxisReassessedAtTick !== null) {
+          this.log('warning', 'assessment', `emergency-anaphylaxis-reassessment-refused-${this.currentTick}`,
+            'The bounded response has already been reassessed.');
+          break;
+        }
+        this.emergencyAnaphylaxisReassessedAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `emergency-anaphylaxis-reassessed-${this.currentTick}`,
+          'Airway, breathing, circulation, mental status, and the canonical monitor response were reassessed. Repeat-dose timing, refractory treatment, observation, referral, and outcome remain outside this initial-response vignette.');
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -2988,14 +3109,15 @@ export class AnesthesiaEngine {
 
       case 'anaphylaxis': {
         const severity = event.value;
-        if (event.target !== 'cefazolin' || typeof severity !== 'number'
+        if (!['cefazolin', 'community-food-exposure'].includes(event.target ?? '')
+          || typeof severity !== 'number'
           || !Number.isFinite(severity) || severity < 0 || severity > 1) {
           this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
-            `Timeline event "${event.id}" must identify cefazolin exposure and a finite severity `
+            `Timeline event "${event.id}" must identify a supported exposure and a finite severity `
             + 'from 0 to 1, so the event had no effect.');
           return;
         }
-        this.triggerAnaphylaxis('cefazolin', severity, `exposure-${event.id}-${this.currentTick}`);
+        this.triggerAnaphylaxis(event.target!, severity, `exposure-${event.id}-${this.currentTick}`);
         return;
       }
 
@@ -3834,6 +3956,14 @@ export class AnesthesiaEngine {
           pocusReviewedAtTick: this.tamponadePocusReviewedAtTick,
           definitiveControlAtTick: this.tamponadeDefinitiveControlAtTick,
           reassessedAtTick: this.tamponadeReassessedAtTick,
+        },
+        emergencyAnaphylaxisAssessment: {
+          patternReviewedAtTick: this.emergencyAnaphylaxisPatternReviewedAtTick,
+          positionedAndHelpedAtTick: this.emergencyAnaphylaxisPositionedAndHelpedAtTick,
+          imEpinephrineAtTick: this.emergencyAnaphylaxisImEpinephrineAtTick,
+          oxygenAtTick: this.emergencyAnaphylaxisOxygenAtTick,
+          crystalloidAtTick: this.emergencyAnaphylaxisCrystalloidAtTick,
+          reassessedAtTick: this.emergencyAnaphylaxisReassessedAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

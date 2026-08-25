@@ -113,7 +113,8 @@ Reviewers run the routine induction themselves before answering.
 | B59 | In the hemorrhagic-shock lesson, blunt mechanism, pelvic injury pattern, impaired perfusion, lactate, hypothermia risk, and ongoing concealed blood loss form a coherent teaching pattern; pelvic stabilization and definitive-control escalation proceed alongside major-hemorrhage activation, a bounded 2-unit red-cell bridge, coagulation and temperature review, and serial reassessment without implying procedural skill, a universal component ratio, local protocol, or outcome | | |
 | B60 | In the obstructive-shock lesson, penetrating chest trauma, unilateral ventilation findings, hypoxia, and severe hemodynamic compromise form a coherent tension-pneumothorax teaching pattern; escalation, high-concentration oxygen, immediate decompression intent without imaging delay, and serial reassessment are inspectable without implying diagnosis, examination or POCUS competence, procedural skill, equipment selection, or outcome | | |
 | B61 | In the cardiac-tamponade lesson, penetrating central-chest trauma, preserved bilateral air entry, impaired perfusion, narrowing pressure, and falling end-tidal carbon dioxide form a coherent obstructive-circulation pattern; whole-patient review precedes a fixed POCUS statement, immediate trauma and surgical control intent, and serial reassessment without implying diagnostic proof, POCUS competence, procedure selection or skill, technical success, or outcome | | |
-| B62 | Overall: does this patient behave like a patient? | | |
+| B62 | In the emergency-anaphylaxis lesson, a community food exposure, lip and tongue swelling, widespread wheeze, hypoxemia, hypotension, and impaired perfusion form a coherent multisystem pattern; whole-patient review precedes positioning and help, fixed adult IM epinephrine, parallel oxygen and crystalloid support, and serial reassessment without implying diagnostic proof, dose calculation, injection or airway skill, refractory-care competence, or outcome | | |
+| B63 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -237,4 +238,9 @@ So that reviewers spend their attention on what this review is for:
   findings plus a bounded obstructive-circulation trajectory. Definitive control is an escalation
   intent, not pericardiocentesis or thoracotomy instruction. The case omits procedure selection,
   concurrent injuries, arrest, complications, disposition, and outcome.
+- The emergency-anaphylaxis case uses fixed food-exposure, airway, breathing, circulation, and
+  perfusion findings plus a bounded shared anaphylaxis trajectory. Positioning, help, adult IM
+  epinephrine, oxygen, and crystalloid are fixed screen actions. The case omits diagnostic
+  acquisition, dose calculation, injection and airway technique, repeat and refractory treatment,
+  observation, recurrence, referral, and outcome.
 - Nothing here has been clinically reviewed before — you are the first.

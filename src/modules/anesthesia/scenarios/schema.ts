@@ -491,10 +491,11 @@ export function validateScenarioSemantics(scenario: unknown): ValidationError[] 
         message: `Timeline event "${String(event.id)}" must declare anaphylaxis severity from 0 to 1.`,
       });
     }
-    if (event.type === 'anaphylaxis' && event.target !== 'cefazolin') {
+    if (event.type === 'anaphylaxis'
+      && !['cefazolin', 'community-food-exposure'].includes(String(event.target ?? ''))) {
       errors.push({
         pointer: `/timeline/${index}/target`, rule: 'enum',
-        message: `Timeline event "${String(event.id)}" must identify the modeled exposure "cefazolin".`,
+        message: `Timeline event "${String(event.id)}" must identify a supported modeled exposure.`,
       });
     }
     if (event.type === 'local-anesthetic-toxicity'

@@ -339,6 +339,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['perioperative-anaphylaxis-after-antibiotic'],
   },
   {
+    id: 'emergency-anaphylaxis-findings-are-authored',
+    headline: 'The emergency anaphylaxis presentation is authored, not diagnosed from a complete examination or differential.',
+    simplification: 'One fixed food-exposure vignette supplies lip and tongue swelling, wheeze, hypoxemia, hypotension, and impaired perfusion. Skin findings, examination acquisition, and competing diagnoses are absent.',
+    whereItMisleads: 'Treating the scripted pattern or its response as diagnostic proof, or assuming anaphylaxis requires the same findings in every patient.',
+    correctUnderstanding: 'Recognize anaphylaxis clinically from the evolving exposure context and airway, breathing, or circulation compromise, with or without skin findings, while continuing real differential assessment.',
+    briefIn: ['anaphylaxis'],
+  },
+  {
+    id: 'emergency-anaphylaxis-actions-are-bounded',
+    headline: 'The emergency response offers fixed adult teaching actions, not a dose, device, fluid, or airway calculator.',
+    simplification: 'The screen records recumbent positioning, help, 500 micrograms of IM epinephrine, high-flow oxygen, and a fixed 1,500 mL isotonic-crystalloid bolus. It does not individualize preparation, delivery, access, rate, or response.',
+    whereItMisleads: 'Copying the fixed adult actions into another patient, age group, setting, formulation, or local protocol without verification.',
+    correctUnderstanding: 'Use the current local anaphylaxis pathway and patient-specific assessment; intramuscular epinephrine is first-line, while oxygen and fluid support follow clinical need.',
+    briefIn: ['anaphylaxis'],
+  },
+  {
+    id: 'no-refractory-anaphylaxis-airway-or-outcome',
+    headline: 'Repeat dosing, refractory anaphylaxis, airway intervention, observation, referral, recurrence, and outcome are outside this initial-response case.',
+    simplification: 'The case ends after one fixed first-line sequence and serial reassessment. It has no repeat-dose clock, infusion, adjunct medication, airway procedure, arrest pathway, biphasic reaction, discharge, or follow-up workflow.',
+    whereItMisleads: 'Assuming modeled improvement completes care or that the initial sequence is sufficient when airway, breathing, or circulation problems persist.',
+    correctUnderstanding: 'Continue frequent reassessment, repeat and escalate treatment under the current pathway when needed, and complete appropriate observation, safety planning, and specialist follow-up.',
+    briefIn: ['anaphylaxis'],
+  },
+  {
     id: 'malignant-hyperthermia-is-a-teaching-model',
     headline: 'The hypermetabolic carbon-dioxide, heart-rate, rigidity, and heat trajectories are bounded teaching models, not individualized predictions or a diagnostic test.',
     simplification: 'One latent severity drives excess carbon-dioxide production, tachycardia, '

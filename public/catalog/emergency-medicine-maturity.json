@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "emergency-medicine",
-  "recordCount": 5,
+  "recordCount": 6,
   "records": [
     {
       "recordId": "scenario:undifferentiated-shock@0.1.0",
@@ -56,6 +56,17 @@
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#cardiac-tamponade@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#cardiac-tamponade@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:anaphylaxis@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "anaphylaxis",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/emergency-medicine-completion-audit.json#anaphylaxis@0.1.0",
+        "/catalog/emergency-medicine-quality-audit.json#anaphylaxis@0.1.0"
       ]
     }
   ]

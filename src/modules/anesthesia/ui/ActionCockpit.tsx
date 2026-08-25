@@ -222,6 +222,14 @@ export interface ActionCockpitProps {
       readonly definitiveControlAtTick: number | null;
       readonly reassessedAtTick: number | null;
     };
+    readonly emergencyAnaphylaxisAssessment?: {
+      readonly patternReviewedAtTick: number | null;
+      readonly positionedAndHelpedAtTick: number | null;
+      readonly imEpinephrineAtTick: number | null;
+      readonly oxygenAtTick: number | null;
+      readonly crystalloidAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -346,6 +354,11 @@ export interface ActionCockpitProps {
     action: 'review-context-and-perfusion' | 'review-fixed-pocus'
       | 'record-definitive-control-intent' | 'reassess-perfusion',
   ) => void;
+  readonly onEmergencyAnaphylaxisResponse?: (
+    action: 'review-systemic-pattern' | 'position-and-call-for-help'
+      | 'give-im-epinephrine' | 'give-high-flow-oxygen'
+      | 'begin-fixed-crystalloid' | 'reassess-response',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -430,6 +443,9 @@ export function crisisResponseAvailability(
     hasCardiacTamponadeResponse: scenario.timeline.some(
       (event) => event.type === 'cardiac-tamponade',
     ),
+    hasEmergencyAnaphylaxisResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'emergency-anaphylaxis',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -481,6 +497,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || event.type === 'sepsis-pattern'
       || event.type === 'hemorrhagic-shock-pattern'
       || event.type === 'cardiac-tamponade'
+      || (event.type === 'narrative' && event.target === 'emergency-anaphylaxis')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -495,7 +512,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasAspirationRiskResponse, hasEmergenceResidualBlockResponse, hasDelayedEmergenceResponse,
     hasExtubationReadinessResponse, hasCiedPlanningResponse, hasPostoperativeHandoffResponse,
     hasUndifferentiatedShockResponse, hasSepticShockResponse, hasHemorrhagicShockResponse,
-    hasCardiacTamponadeResponse,
+    hasCardiacTamponadeResponse, hasEmergencyAnaphylaxisResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -516,7 +533,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     (event) => event.type === 'narrative'
       && event.target === 'obstructive-shock-tension-pneumothorax',
   );
-  const hasEpinephrineResponse = hasAnaphylaxisResponse || hasLastResponse;
+  const hasEpinephrineResponse = (hasAnaphylaxisResponse && !hasEmergencyAnaphylaxisResponse)
+    || hasLastResponse;
   const hasNonMaternalCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse
     || hasCardiacArrestResponse || hasHighSpinalResponse || hasVenousAirEmbolismResponse
     || hasPneumothoraxResponse || hasBronchospasmResponse;
@@ -524,8 +542,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasAspirationRiskResponse || hasEmergenceResidualBlockResponse
     || hasDelayedEmergenceResponse || hasExtubationReadinessResponse || hasCiedPlanningResponse
     || hasPostoperativeHandoffResponse || hasUndifferentiatedShockResponse
-    || hasSepticShockResponse || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse;
-  const responseTray = hasCardiacTamponadeResponse && !hasNonMaternalCrisisResponse
+    || hasSepticShockResponse || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
+    || hasEmergencyAnaphylaxisResponse;
+  const responseTray = hasEmergencyAnaphylaxisResponse
+    ? { id: 'crisis', label: 'Anaphylaxis response' } as const
+    : hasCardiacTamponadeResponse && !hasNonMaternalCrisisResponse
     ? { id: 'crisis', label: 'Tamponade response' } as const
     : focusedPleuralEmergency
     ? { id: 'crisis', label: 'Obstructive shock' } as const
@@ -557,8 +578,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
       ? { id: 'crisis', label: 'Maternal response' } as const : CRISIS_TRAY;
   const focusedEmergencyAssessment = props.scenario.formulary.length === 0
     && (focusedPleuralEmergency || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
-      || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse)
-      && !hasNonMaternalCrisisResponse));
+      || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
+      || hasEmergencyAnaphylaxisResponse)
+      && (!hasNonMaternalCrisisResponse || hasEmergencyAnaphylaxisResponse)));
   const trays = hasCrisisResponse
     ? focusedEmergencyAssessment ? [responseTray]
       : props.scenario.formulary.length === 0 ? [responseTray, ...TRAYS] : [...TRAYS, responseTray]
@@ -847,6 +869,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 fraction={props.resuscitation.cardiacTamponadeFraction ?? 0}
                 assessment={props.resuscitation.cardiacTamponadeAssessment}
                 onAction={props.onCardiacTamponadeAssessment ?? (() => {})}
+              />
+            )}
+            {hasEmergencyAnaphylaxisResponse && (
+              <EmergencyAnaphylaxisTray
+                assessment={props.resuscitation.emergencyAnaphylaxisAssessment}
+                onAction={props.onEmergencyAnaphylaxisResponse ?? (() => {})}
               />
             )}
             {hasEmergenceResidualBlockResponse && (
@@ -2165,6 +2193,73 @@ function CardiacTamponadeTray({ fraction, assessment, onAction }: {
           </Button>
         </div>
         <p className="field__hint">No pericardiocentesis or thoracotomy technique, equipment, transport, technical success, complication, or outcome is offered.</p>
+      </section>
+    </div>
+  );
+}
+
+function EmergencyAnaphylaxisTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['emergencyAnaphylaxisAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onEmergencyAnaphylaxisResponse']>;
+}) {
+  const reviewed = assessment?.patternReviewedAtTick != null;
+  const positioned = assessment?.positionedAndHelpedAtTick != null;
+  const epinephrine = assessment?.imEpinephrineAtTick != null;
+  const oxygen = assessment?.oxygenAtTick != null;
+  const fluid = assessment?.crystalloidAtTick != null;
+  const reassessed = assessment?.reassessedAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="ed-anaphylaxis-recognition-title">
+        <div id="ed-anaphylaxis-recognition-title" className="syringe__name">Recognize and lead</div>
+        <Badge kind="teaching">Fixed community vignette</Badge>
+        <div className="syringe__meta">Airway · breathing · circulation · exposure</div>
+        <p className="syringe__remaining" role="status">
+          {epinephrine ? 'First-line IM epinephrine recorded'
+            : positioned ? 'Support mobilized · first-line treatment next'
+              : reviewed ? 'Systemic pattern reviewed · lead the response'
+                : 'Abrupt multisystem deterioration'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={reviewed}
+            onClick={() => onAction('review-systemic-pattern')}>
+            Review systemic pattern
+          </Button>
+          <Button className="crisis-drug__action" disabled={!reviewed || positioned}
+            onClick={() => onAction('position-and-call-for-help')}>
+            Position + call for help
+          </Button>
+          <Button className="crisis-drug__action" disabled={!positioned || epinephrine}
+            onClick={() => onAction('give-im-epinephrine')}>
+            Give 500 µg epinephrine IM
+          </Button>
+        </div>
+        <p className="field__hint">This is a fixed adult first-line action, not a dosing calculator or injection-technique trainer. IV bolus epinephrine is not offered.</p>
+      </section>
+      <section className="syringe" aria-labelledby="ed-anaphylaxis-support-title">
+        <div id="ed-anaphylaxis-support-title" className="syringe__name">Support and reassess</div>
+        <div className="syringe__meta">Oxygen · isotonic crystalloid · serial review</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'Initial response reassessed'
+            : oxygen && fluid ? 'Parallel support recorded · reassess next'
+              : epinephrine ? 'First-line treatment recorded · parallel support open'
+                : 'First-line treatment pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!epinephrine || oxygen}
+            onClick={() => onAction('give-high-flow-oxygen')}>
+            Record high-flow oxygen
+          </Button>
+          <Button className="crisis-drug__action" disabled={!epinephrine || fluid}
+            onClick={() => onAction('begin-fixed-crystalloid')}>
+            Begin fixed 1,500 mL crystalloid
+          </Button>
+          <Button className="crisis-drug__action" disabled={!oxygen || !fluid || reassessed}
+            onClick={() => onAction('reassess-response')}>
+            Reassess airway + perfusion
+          </Button>
+        </div>
+        <p className="field__hint">No repeat-dose clock, refractory infusion, bronchodilator, antihistamine, steroid, airway procedure, observation, discharge, referral, or outcome is offered.</p>
       </section>
     </div>
   );

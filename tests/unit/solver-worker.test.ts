@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: undifferentiated-shock state has protocol version 36', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(40);
+  it('Scenario: emergency-anaphylaxis state has protocol version 41', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(41);
   });
 
   it('Scenario: init reports ready before any step runs', () => {
