@@ -481,6 +481,11 @@ export class AnesthesiaEngine {
   private akiFluidOverloadFluidPlanAtTick: number | null = null;
   private akiFluidOverloadSupportAtTick: number | null = null;
   private akiFluidOverloadReassessmentAtTick: number | null = null;
+  private severeAcidemiaRecognitionAtTick: number | null = null;
+  private severeAcidemiaAnalysisAtTick: number | null = null;
+  private severeAcidemiaVentilationAtTick: number | null = null;
+  private severeAcidemiaCausePlanAtTick: number | null = null;
+  private severeAcidemiaReassessmentAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -3667,6 +3672,57 @@ export class AnesthesiaEngine {
           'Fixed response after 6 hours: net balance is −1.1 L, SpO₂ 95% on unchanged FiO₂ 0.50, HR 96/min, MAP 74 mmHg, potassium 5.1 mmol/L, pH 7.31, and temperature 37.3°C. Oliguria persists. Ongoing removal, hemodynamic tolerance, solute control, modality, medication dosing, nutrition, kidney recovery, duration, prognosis, and outcome remain open.', { reassessmentHours: 6, netBalanceLiters: -1.1, spo2Percent: 95, fio2: 0.5, heartRateBpm: 96, mapMmHg: 74, potassiumMmolL: 5.1, ph: 7.31, oliguriaPersists: true, kidneyRecoveryProven: false, outcomeProven: false });
         break;
       }
+      case 'severe-acidemia-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'severe-acidemia');
+        const valid = ['recognize-severe-acidemia', 'analyze-severe-acidemia-context',
+          'protect-severe-acidemia-ventilation', 'activate-severe-acidemia-cause-plan',
+          'reassess-severe-acidemia-trajectory'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `severe-acidemia-response-refused-${this.currentTick}`,
+            supported ? 'The severe-acidemia action was not one of the listed choices. Nothing changed.'
+              : 'The bounded severe-acidemia choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'recognize-severe-acidemia') {
+          if (this.severeAcidemiaRecognitionAtTick !== null) { this.log('warning', 'assessment', `severe-acidemia-recognition-refused-${this.currentTick}`, 'The severe mixed-acidemia pattern and team activation have already been recorded.'); break; }
+          this.severeAcidemiaRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `severe-acidemia-recognized-${this.currentTick}`,
+            'pH 7.09 with shock, PaCO₂ 48 mmHg, bicarbonate 14 mmol/L, lactate 8.1 mmol/L, potassium 5.7 mmol/L, and AKI triggered critical-care, respiratory-therapy, nursing, pharmacy, nephrology, and source-control help. pH was treated as a severity signal, not a diagnosis or automatic prescription.', { ph: 7.09, paco2MmHg: 48, bicarbonateMmolL: 14, lactateMmolL: 8.1, potassiumMmolL: 5.7, automaticPhPrescription: false });
+          break;
+        }
+        if (this.severeAcidemiaRecognitionAtTick === null) { this.log('warning', 'assessment', `severe-acidemia-recognition-order-refused-${this.currentTick}`, 'Recognize the severe gas and organ trajectory and activate experienced help first.'); break; }
+        if (response === 'analyze-severe-acidemia-context') {
+          if (this.severeAcidemiaAnalysisAtTick !== null) { this.log('warning', 'assessment', `severe-acidemia-analysis-refused-${this.currentTick}`, 'The fixed gas, compensation, cause, and urgent-complication review has already been recorded.'); break; }
+          this.severeAcidemiaAnalysisAtTick = this.currentTick;
+          this.log('critical', 'assessment', `severe-acidemia-analyzed-${this.currentTick}`,
+            'The repeated arterial gas confirmed high-anion-gap metabolic acidosis plus respiratory acidosis: expected PaCO₂ was approximately 29 ±2 mmHg for bicarbonate 14 mmol/L, but actual PaCO₂ was 48 mmHg. Perfusion, lactate, ketones, kidney and gastrointestinal losses, chloride, medications, ventilation, potassium and ECG, and toxin contexts remained in review.', { mixedMetabolicAndRespiratoryAcidemia: true, expectedPaco2MmHg: 29, expectedRangeMmHg: 2, actualPaco2MmHg: 48, causeClosed: false });
+          break;
+        }
+        if (this.severeAcidemiaAnalysisAtTick === null) { this.log('warning', 'assessment', `severe-acidemia-analysis-order-refused-${this.currentTick}`, 'Confirm the sample and map metabolic, respiratory, electrolyte, perfusion, kidney, and cause context before stabilization choices.'); break; }
+        if (response === 'protect-severe-acidemia-ventilation') {
+          if (this.severeAcidemiaVentilationAtTick !== null) { this.log('warning', 'assessment', `severe-acidemia-ventilation-refused-${this.currentTick}`, 'The safe ventilatory-compensation plan has already been recorded.'); break; }
+          this.severeAcidemiaVentilationAtTick = this.currentTick;
+          this.log('critical', 'assessment', `severe-acidemia-ventilation-protected-${this.currentTick}`,
+            'Airway, circuit, synchrony, minute ventilation, plateau pressure, and auto-PEEP were reviewed; safe compensatory ventilation was restored without forcing a normal pH or using injurious mechanics. This records intent only: no ventilator assessment, setting, breath, or response is performed.', { compensationProtected: true, normalPhTarget: false, injuriousVentilationAccepted: false, ventilationDelivered: false });
+          break;
+        }
+        if (this.severeAcidemiaVentilationAtTick === null) { this.log('warning', 'assessment', `severe-acidemia-ventilation-order-refused-${this.currentTick}`, 'Protect safe ventilatory compensation before reviewing the cause-directed and buffer or kidney-support plan.'); break; }
+        if (response === 'activate-severe-acidemia-cause-plan') {
+          if (this.severeAcidemiaCausePlanAtTick !== null) { this.log('warning', 'assessment', `severe-acidemia-cause-plan-refused-${this.currentTick}`, 'The cause-directed, buffer, and kidney-support planning guardrails have already been recorded.'); break; }
+          this.severeAcidemiaCausePlanAtTick = this.currentTick;
+          this.log('critical', 'assessment', `severe-acidemia-cause-plan-activated-${this.currentTick}`,
+            'Shock, infection, oxygen delivery, and source-control work continued. Bicarbonate was considered in the specific septic-shock, severe-acidemia, and AKI context, not as a universal hemodynamic rescue or mortality benefit. Life-threatening acid-base imbalance preserved urgent kidney-support assessment; exact buffer, fluid, vasopressor, electrolyte, antidote, and kidney-support choices remained expert decisions. Nothing was delivered.', { causeDirectedPlan: true, bicarbonateUniversal: false, mortalityBenefitClaimed: false, urgentKidneySupportAssessmentPreserved: true, treatmentDelivered: false });
+          break;
+        }
+        if (this.severeAcidemiaCausePlanAtTick === null) { this.log('warning', 'assessment', `severe-acidemia-cause-plan-order-refused-${this.currentTick}`, 'Activate cause-directed care and individualized buffer and kidney-support planning before reviewing the fixed response.'); break; }
+        if (this.severeAcidemiaReassessmentAtTick !== null) { this.log('warning', 'assessment', `severe-acidemia-reassessment-refused-${this.currentTick}`, 'The fixed gas and organ reassessment has already been reviewed.'); break; }
+        this.severeAcidemiaReassessmentAtTick = this.currentTick;
+        this.log('critical', 'assessment', `severe-acidemia-trajectory-reassessed-${this.currentTick}`,
+          'Fixed response after 30 minutes: pH is 7.23, PaCO₂ 32 mmHg, bicarbonate 13 mmol/L, lactate 6.9 mmol/L, potassium 5.2 mmol/L, HR 112/min, MAP 68 mmHg, SpO₂ 95% on unchanged FiO₂ 0.40, and temperature 38.2°C. Metabolic acidosis and the septic source remain active. Durability, safe mechanics, clearance, kidney trajectory, source control, prescription, recovery, and outcome remain open.', { reassessmentMinutes: 30, ph: 7.23, paco2MmHg: 32, bicarbonateMmolL: 13, lactateMmolL: 6.9, potassiumMmolL: 5.2, mapMmHg: 68, causeResolved: false, outcomeProven: false });
+        break;
+      }
       case 'aspiration-risk-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
@@ -6489,6 +6545,19 @@ export class AnesthesiaEngine {
         meanArterialMmHg: reassessed ? 74 : 72,
         coreTemperatureC: reassessed ? 37.3 : 37.4 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'severe-acidemia')) {
+      const reassessed = this.severeAcidemiaReassessmentAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: reassessed ? 112 : 122,
+        respiratoryRateBpm: 18,
+        spo2Percent: 95,
+        etco2MmHg: reassessed ? 32 : 48,
+        systolicMmHg: reassessed ? 94 : 84,
+        diastolicMmHg: reassessed ? 55 : 48,
+        meanArterialMmHg: reassessed ? 68 : 61,
+        coreTemperatureC: reassessed ? 38.2 : 38.4 };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -7019,6 +7088,13 @@ export class AnesthesiaEngine {
           fluidPlanAtTick: this.akiFluidOverloadFluidPlanAtTick,
           supportAtTick: this.akiFluidOverloadSupportAtTick,
           reassessmentAtTick: this.akiFluidOverloadReassessmentAtTick,
+        },
+        severeAcidemiaAssessment: {
+          recognitionAtTick: this.severeAcidemiaRecognitionAtTick,
+          analysisAtTick: this.severeAcidemiaAnalysisAtTick,
+          ventilationAtTick: this.severeAcidemiaVentilationAtTick,
+          causePlanAtTick: this.severeAcidemiaCausePlanAtTick,
+          reassessmentAtTick: this.severeAcidemiaReassessmentAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

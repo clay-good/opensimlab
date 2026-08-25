@@ -847,6 +847,24 @@ does not examine, acquire or interpret monitoring, laboratory tests, or imaging;
 fluid; change nutrition; deliver oxygen, ventilation, fluid, or drugs; prescribe diuretics; place
 access; provide kidney support; transfer; determine disposition, kidney recovery, or outcome.
 
+### Wave B critical-care slice 18: severe acidemia
+
+The eighteenth critical-care slice presents septic shock with pH 7.09, bicarbonate 14 mmol/L,
+PaCO₂ 48 mmHg, lactate 8.1 mmol/L, potassium 5.7 mmol/L without ECG change, and creatinine
+3.0 mg/dL from 1.2. The repeated gas and expected PaCO₂ of approximately 29 ±2 expose added
+respiratory acidemia rather than adequate compensation. Learners activate critical-care,
+respiratory-therapy, nursing, pharmacy, nephrology, and source-control help and keep perfusion,
+ventilation, electrolyte, kidney, medication, and toxin causes open.
+
+The focused tutor pairs “read the system, not pH alone” with “buy time; treat the source.” Learners
+protect safe ventilatory compensation without forcing normal pH, continue cause-directed shock and
+infection work, and individualize bicarbonate and kidney-support planning without promising a
+hemodynamic or mortality benefit. A fixed 30-minute response reaches pH 7.23, PaCO₂ 32 mmHg,
+lactate 6.9 mmol/L, and MAP 68 mmHg while metabolic acid and the septic source remain active. The
+lab does not acquire or interpret samples, calculate or diagnose, examine, monitor, set ventilation,
+deliver oxygen, fluid, drugs, buffer, antidotes, or kidney support, control a source, prescribe,
+perform procedures, transfer, determine recovery or disposition, or predict outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute

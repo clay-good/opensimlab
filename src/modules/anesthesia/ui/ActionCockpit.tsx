@@ -473,6 +473,13 @@ export interface ActionCockpitProps {
       readonly supportAtTick: number | null;
       readonly reassessmentAtTick: number | null;
     };
+    readonly severeAcidemiaAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly analysisAtTick: number | null;
+      readonly ventilationAtTick: number | null;
+      readonly causePlanAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -767,6 +774,11 @@ export interface ActionCockpitProps {
       | 'activate-individualized-kidney-support-pathway'
       | 'reassess-aki-fluid-overload-trajectory',
   ) => void;
+  readonly onSevereAcidemiaResponse?: (
+    action: 'recognize-severe-acidemia' | 'analyze-severe-acidemia-context'
+      | 'protect-severe-acidemia-ventilation' | 'activate-severe-acidemia-cause-plan'
+      | 'reassess-severe-acidemia-trajectory',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -959,6 +971,9 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'acute-kidney-injury-with-fluid-overload',
     ),
+    hasSevereAcidemiaResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'severe-acidemia',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1047,6 +1062,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'targeted-temperature-management')
       || (event.type === 'narrative' && event.target === 'intracranial-hypertension')
       || (event.type === 'narrative' && event.target === 'acute-kidney-injury-with-fluid-overload')
+      || (event.type === 'narrative' && event.target === 'severe-acidemia')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1075,6 +1091,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasPostArrestTemperatureResponse,
     hasIntracranialHypertensionResponse,
     hasAkiFluidOverloadResponse,
+    hasSevereAcidemiaResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1126,7 +1143,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasCardiogenicShockResponse || hasMixedShockResponse || hasRightVentricularFailureResponse
     || hasMassivePulmonaryEmbolismResponse || hasUpperGiHemorrhageResponse
     || hasCriticalCareStatusEpilepticusResponse || hasPostArrestTemperatureResponse
-    || hasIntracranialHypertensionResponse || hasAkiFluidOverloadResponse;
+    || hasIntracranialHypertensionResponse || hasAkiFluidOverloadResponse
+    || hasSevereAcidemiaResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1152,8 +1170,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasMixedShockResponse || hasRightVentricularFailureResponse
     || hasMassivePulmonaryEmbolismResponse || hasUpperGiHemorrhageResponse
     || hasCriticalCareStatusEpilepticusResponse || hasPostArrestTemperatureResponse
-    || hasIntracranialHypertensionResponse || hasAkiFluidOverloadResponse;
-  const responseTray = hasAkiFluidOverloadResponse
+    || hasIntracranialHypertensionResponse || hasAkiFluidOverloadResponse
+    || hasSevereAcidemiaResponse;
+  const responseTray = hasSevereAcidemiaResponse
+    ? { id: 'crisis', label: 'Severe acidemia' } as const
+    : hasAkiFluidOverloadResponse
     ? { id: 'crisis', label: 'AKI fluid balance' } as const
     : hasIntracranialHypertensionResponse
     ? { id: 'crisis', label: 'ICP crisis' } as const
@@ -1285,6 +1306,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPostArrestTemperatureResponse
     || hasIntracranialHypertensionResponse
     || hasAkiFluidOverloadResponse
+    || hasSevereAcidemiaResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1753,6 +1775,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasAkiFluidOverloadResponse && (
               <AkiFluidOverloadTray assessment={props.resuscitation.akiFluidOverloadAssessment}
                 onAction={props.onAkiFluidOverloadResponse ?? (() => {})} />
+            )}
+            {hasSevereAcidemiaResponse && (
+              <SevereAcidemiaTray assessment={props.resuscitation.severeAcidemiaAssessment}
+                onAction={props.onSevereAcidemiaResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -4991,6 +5017,58 @@ function AkiFluidOverloadTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-aki-fluid-overload-trajectory')}>Review fluid + organ trajectory</Button>
         </div>
         <p className="field__hint">A better balance is an immediate process signal, not proof of kidney recovery or outcome.</p>
+      </section>
+    </div>
+  );
+}
+
+function SevereAcidemiaTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['severeAcidemiaAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onSevereAcidemiaResponse']>;
+}) {
+  const recognized = assessment?.recognitionAtTick != null;
+  const analyzed = assessment?.analysisAtTick != null;
+  const ventilation = assessment?.ventilationAtTick != null;
+  const causePlan = assessment?.causePlanAtTick != null;
+  const reassessed = assessment?.reassessmentAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="severe-acidemia-pattern-title">
+        <div id="severe-acidemia-pattern-title" className="syringe__name">Read the system, not pH alone.</div>
+        <Badge kind="teaching">pH 7.09 · HCO₃ 14 · PaCO₂ 48 · lactate 8.1</Badge>
+        <div className="syringe__meta">expected PaCO₂ ≈29 ±2 · actual 48 = added respiratory burden</div>
+        <p className="syringe__remaining" role="status">
+          {analyzed ? 'Mixed metabolic + respiratory acidemia recognized'
+            : recognized ? 'Experienced team active · mixed-disorder review due'
+              : 'Treat pH as a severity signal, not the diagnosis.'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={recognized}
+            onClick={() => onAction('recognize-severe-acidemia')}>Recognize severe mixed acidemia + activate help</Button>
+          <Button className="crisis-drug__action" disabled={!recognized || analyzed}
+            onClick={() => onAction('analyze-severe-acidemia-context')}>Confirm gas + map the disorder</Button>
+        </div>
+        <p className="field__hint">Gas, perfusion, potassium, ECG, ventilation, kidney function, and causes travel together.</p>
+      </section>
+      <section className="syringe" aria-labelledby="severe-acidemia-stabilization-title">
+        <div id="severe-acidemia-stabilization-title" className="syringe__name">Buy time. Treat the source.</div>
+        <Badge kind="teaching">safe compensation · cause control · no pH-only prescription</Badge>
+        <div className="syringe__meta">protect mechanics · restore perfusion · individualize buffer + kidney support</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'pH 7.23 · PaCO₂ 32 · lactate 6.9 · cause remains active'
+            : causePlan ? 'Ventilation + cause plan active · whole-trajectory review due'
+              : ventilation ? 'Compensation protected · cause + support plan due'
+                : 'Stabilization plan pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!analyzed || ventilation}
+            onClick={() => onAction('protect-severe-acidemia-ventilation')}>Restore safe ventilatory compensation</Button>
+          <Button className="crisis-drug__action" disabled={!ventilation || causePlan}
+            onClick={() => onAction('activate-severe-acidemia-cause-plan')}>Activate cause-directed + buffer/KRT planning</Button>
+          <Button className="crisis-drug__action" disabled={!causePlan || reassessed}
+            onClick={() => onAction('reassess-severe-acidemia-trajectory')}>Review gas + organ trajectory</Button>
+        </div>
+        <p className="field__hint">A better pH is an immediate process signal, not proof of acid clearance or recovery.</p>
       </section>
     </div>
   );

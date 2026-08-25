@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "critical-care",
-  "recordCount": 17,
+  "recordCount": 18,
   "records": [
     {
       "recordId": "scenario:ards-lung-protective-ventilation@0.1.0",
@@ -188,6 +188,17 @@
       "evidence": [
         "/catalog/critical-care-completion-audit.json#acute-kidney-injury-with-fluid-overload@0.1.0",
         "/catalog/critical-care-quality-audit.json#acute-kidney-injury-with-fluid-overload@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:severe-acidemia@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "severe-acidemia",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/critical-care-completion-audit.json#severe-acidemia@0.1.0",
+        "/catalog/critical-care-quality-audit.json#severe-acidemia@0.1.0"
       ]
     }
   ]

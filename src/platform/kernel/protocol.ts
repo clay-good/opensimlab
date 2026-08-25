@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 75 reports AKI fluid-overload state. */
-export const WORKER_PROTOCOL_VERSION = 75;
+/** Bumped whenever the message shape changes incompatibly. Version 76 reports severe-acidemia state. */
+export const WORKER_PROTOCOL_VERSION = 76;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -540,6 +540,13 @@ export interface EquipmentSnapshot {
       readonly contextAtTick: number | null;
       readonly fluidPlanAtTick: number | null;
       readonly supportAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+    };
+    readonly severeAcidemiaAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly analysisAtTick: number | null;
+      readonly ventilationAtTick: number | null;
+      readonly causePlanAtTick: number | null;
       readonly reassessmentAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */

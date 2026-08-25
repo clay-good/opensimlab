@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: AKI fluid-overload state has protocol version 75', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(75);
+  it('Scenario: severe-acidemia state has protocol version 76', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(76);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

@@ -3792,6 +3792,46 @@ export function objectiveFindings(
         : 'Whole-trajectory reassessment was absent or preceded kidney-support planning.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-severe-acidemia', 'analyze-severe-acidemia-context',
+      'protect-severe-acidemia-ventilation', 'activate-severe-acidemia-cause-plan',
+      'reassess-severe-acidemia-trajectory'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'severe-acidemia');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The severe-acidemia vignette was not active.' } satisfies ObjectiveFinding;
+      const recognition = log.find((event) => /^severe-acidemia-recognized-\d+$/.test(event.eventId));
+      const analysis = log.find((event) => /^severe-acidemia-analyzed-\d+$/.test(event.eventId));
+      const ventilation = log.find((event) => /^severe-acidemia-ventilation-protected-\d+$/.test(event.eventId));
+      const causePlan = log.find((event) => /^severe-acidemia-cause-plan-activated-\d+$/.test(event.eventId));
+      const reassessment = log.find((event) => /^severe-acidemia-trajectory-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'recognize-severe-acidemia') return { ...base,
+        outcome: recognition ? 'met' : 'not-met', finding: recognition
+          ? 'Severe pH, gas, perfusion, potassium, kidney, and cause risks triggered experienced multidisciplinary help.'
+          : 'The severe mixed-acidemia trajectory or experienced-team activation was absent.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'analyze-severe-acidemia-context') {
+        const ordered = recognition && analysis && recognition.tick <= analysis.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'The repeated gas, expected compensation, anion gap, perfusion, kidney, electrolyte, ventilation, and cause review identified a mixed process.'
+          : 'Mixed-disorder analysis was absent or preceded recognition.', atTick: analysis?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'protect-severe-acidemia-ventilation') {
+        const ordered = analysis && ventilation && analysis.tick <= ventilation.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Safe ventilatory compensation was protected without forcing normal pH or accepting injurious mechanics.'
+          : 'Ventilatory-compensation planning was absent or preceded mixed-disorder analysis.', atTick: ventilation?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'activate-severe-acidemia-cause-plan') {
+        const ordered = ventilation && causePlan && ventilation.tick <= causePlan.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Cause-directed shock care continued while bicarbonate and kidney support remained indication- and physiology-specific.'
+          : 'The cause-directed and support plan was absent or preceded ventilation review.', atTick: causePlan?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = causePlan && reassessment && causePlan.tick <= reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+        ? 'pH, ventilation, perfusion, lactate, and potassium improved while metabolic acid, source control, kidney recovery, and outcome stayed open.'
+        : 'Whole-trajectory reassessment was absent or preceded the cause-directed plan.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

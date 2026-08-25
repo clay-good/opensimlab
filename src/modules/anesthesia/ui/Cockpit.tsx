@@ -838,6 +838,9 @@ export function Cockpit({
           onAkiFluidOverloadResponse={(action) => session.act({
             type: 'aki-fluid-overload-response', payload: { action },
           })}
+          onSevereAcidemiaResponse={(action) => session.act({
+            type: 'severe-acidemia-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}
