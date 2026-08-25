@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 79 reports delayed-delivery state. */
-export const WORKER_PROTOCOL_VERSION = 81;
+export const WORKER_PROTOCOL_VERSION = 82;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -599,6 +599,15 @@ export interface EquipmentSnapshot {
       readonly positionReviewedAtTick: number | null;
       readonly correctionAtTick: number | null;
       readonly reassessedAtTick: number | null;
+    };
+    readonly septicShockResuscitationAssessment?: {
+      readonly contextAtTick: number | null;
+      readonly perfusionAtTick: number | null;
+      readonly fluidResponseAtTick: number | null;
+      readonly planAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+      readonly passiveLegRaiseStrokeVolumeChangePercent: number;
+      readonly blindRepeatFluidOffered: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

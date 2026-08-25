@@ -22,6 +22,7 @@ import { VENTILATOR_CIRCUIT_DISCONNECTION } from './ventilator-circuit-disconnec
 import { DELAYED_VASOPRESSOR_DELIVERY } from './delayed-vasopressor-delivery';
 import { PULSE_OXIMETER_MOTION_ARTIFACT } from './pulse-oximeter-motion-artifact';
 import { ENDOTRACHEAL_TUBE_MIGRATION_AFTER_REPOSITIONING } from './endotracheal-tube-migration-after-repositioning';
+import { SEPTIC_SHOCK_RESUSCITATION } from './septic-shock-resuscitation';
 
 export const CRITICAL_CARE_SCENARIOS: readonly Scenario[] = [
   ARDS_LUNG_PROTECTIVE_VENTILATION,
@@ -47,6 +48,7 @@ export const CRITICAL_CARE_SCENARIOS: readonly Scenario[] = [
   DELAYED_VASOPRESSOR_DELIVERY,
   PULSE_OXIMETER_MOTION_ARTIFACT,
   ENDOTRACHEAL_TUBE_MIGRATION_AFTER_REPOSITIONING,
+  SEPTIC_SHOCK_RESUSCITATION,
 ];
 export const DEFAULT_CRITICAL_CARE_SCENARIO_ID = ARDS_LUNG_PROTECTIVE_VENTILATION.metadata.id;
 

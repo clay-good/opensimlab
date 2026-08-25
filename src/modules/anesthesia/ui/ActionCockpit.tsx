@@ -518,6 +518,15 @@ export interface ActionCockpitProps {
       readonly correctionAtTick: number | null;
       readonly reassessedAtTick: number | null;
     };
+    readonly septicShockResuscitationAssessment?: {
+      readonly contextAtTick: number | null;
+      readonly perfusionAtTick: number | null;
+      readonly fluidResponseAtTick: number | null;
+      readonly planAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+      readonly passiveLegRaiseStrokeVolumeChangePercent: number;
+      readonly blindRepeatFluidOffered: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -846,6 +855,12 @@ export interface ActionCockpitProps {
       | 'record-experienced-tube-correction-intent'
       | 'reassess-tube-position-and-gas-exchange',
   ) => void;
+  readonly onSepticShockResuscitationResponse?: (
+    action: 'reconcile-septic-shock-resuscitation-so-far'
+      | 'reassess-septic-shock-perfusion' | 'test-septic-shock-fluid-responsiveness'
+      | 'individualize-septic-shock-support-and-source-control'
+      | 'reassess-septic-shock-trajectory',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1061,6 +1076,9 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'endotracheal-tube-migration-after-repositioning',
     ),
+    hasSepticShockResuscitationResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'septic-shock-resuscitation',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1155,6 +1173,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'delayed-vasopressor-delivery')
       || (event.type === 'narrative' && event.target === 'pulse-oximeter-motion-artifact')
       || (event.type === 'narrative' && event.target === 'endotracheal-tube-migration-after-repositioning')
+      || (event.type === 'narrative' && event.target === 'septic-shock-resuscitation')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1189,6 +1208,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasDelayedVasopressorDeliveryResponse,
     hasPulseOximeterArtifactResponse,
     hasEndotrachealTubeMigrationResponse,
+    hasSepticShockResuscitationResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1243,7 +1263,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasIntracranialHypertensionResponse || hasAkiFluidOverloadResponse
     || hasSevereAcidemiaResponse || hasIcuHiddenDeteriorationHandoffResponse
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
-    || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse;
+    || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
+    || hasSepticShockResuscitationResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1272,8 +1293,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasIntracranialHypertensionResponse || hasAkiFluidOverloadResponse
     || hasSevereAcidemiaResponse || hasIcuHiddenDeteriorationHandoffResponse
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
-    || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse;
-  const responseTray = hasEndotrachealTubeMigrationResponse
+    || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
+    || hasSepticShockResuscitationResponse;
+  const responseTray = hasSepticShockResuscitationResponse
+    ? { id: 'crisis', label: 'Septic resuscitation' } as const
+    : hasEndotrachealTubeMigrationResponse
     ? { id: 'crisis', label: 'Tube position' } as const
     : hasPulseOximeterArtifactResponse
     ? { id: 'crisis', label: 'Pulse-ox signal' } as const
@@ -1423,6 +1447,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse
     || hasEndotrachealTubeMigrationResponse
+    || hasSepticShockResuscitationResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1920,6 +1945,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <EndotrachealTubeMigrationTray
                 assessment={props.resuscitation.endotrachealTubeMigrationAssessment}
                 onAction={props.onEndotrachealTubeMigrationResponse ?? (() => {})} />
+            )}
+            {hasSepticShockResuscitationResponse && (
+              <SepticShockResuscitationTray
+                assessment={props.resuscitation.septicShockResuscitationAssessment}
+                onAction={props.onSepticShockResuscitationResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -5470,6 +5500,58 @@ function EndotrachealTubeMigrationTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-tube-position-and-gas-exchange')}>Reassess position + gas exchange</Button>
         </div>
         <p className="field__hint">Exact depth is a case fact, not a target. These controls inspect, auscultate, image, or manipulate nothing.</p>
+      </section>
+    </div>
+  );
+}
+
+function SepticShockResuscitationTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['septicShockResuscitationAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onSepticShockResuscitationResponse']>;
+}) {
+  const context = assessment?.contextAtTick != null;
+  const perfusion = assessment?.perfusionAtTick != null;
+  const fluidResponse = assessment?.fluidResponseAtTick != null;
+  const planned = assessment?.planAtTick != null;
+  const reassessed = assessment?.reassessedAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="septic-resuscitation-loop-title">
+        <div id="septic-resuscitation-loop-title" className="syringe__name">Resuscitation is a loop, not a liter count.</div>
+        <Badge kind="teaching">delivery · pressure · brain · skin · kidney · trend</Badge>
+        <div className="syringe__meta">MAP 64 · refill 5 s · lactate 5.8 → 6.4</div>
+        <p className="syringe__remaining" role="status">
+          {perfusion ? 'MAP ≠ restored perfusion · fluid tolerance due'
+            : context ? 'Prior care claims reconciled · read the patient response'
+              : 'Reported antibiotics + 2.1 L + running norepinephrine · shock persists'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={context}
+            onClick={() => onAction('reconcile-septic-shock-resuscitation-so-far')}>Reconcile care + response</Button>
+          <Button className="crisis-drug__action" disabled={!context || perfusion}
+            onClick={() => onAction('reassess-septic-shock-perfusion')}>Reassess multi-organ perfusion</Button>
+          <Button className="crisis-drug__action" disabled={!perfusion || fluidResponse}
+            onClick={() => onAction('test-septic-shock-fluid-responsiveness')}>Review dynamic response + lungs</Button>
+        </div>
+        <p className="field__hint">Lactate is interpreted in context. A pressure target, one value, or one trend does not prove recovery.</p>
+      </section>
+      <section className="syringe" aria-labelledby="septic-resuscitation-exit-title">
+        <div id="septic-resuscitation-exit-title" className="syringe__name">Fluid needs a target and an exit.</div>
+        <Badge kind="teaching">dynamic response · lung tolerance · support · source</Badge>
+        <div className="syringe__meta">PLR SV +2% · new B-lines · no blind repeat bolus</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'Modest perfusion change · source + organ failure remain open'
+            : planned ? 'Support review + urgent source control activated · trajectory due'
+              : fluidResponse ? 'Further fluid needs a new patient-specific reason'
+                : 'Dynamic response and lung tolerance pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!fluidResponse || planned}
+            onClick={() => onAction('individualize-septic-shock-support-and-source-control')}>Individualize support + source control</Button>
+          <Button className="crisis-drug__action" disabled={!planned || reassessed}
+            onClick={() => onAction('reassess-septic-shock-trajectory')}>Review 10-minute trajectory</Button>
+        </div>
+        <p className="field__hint">The +2% response and B-lines are case facts, not universal cutoffs. This screen gives no fluid or drug and performs no drainage.</p>
       </section>
     </div>
   );

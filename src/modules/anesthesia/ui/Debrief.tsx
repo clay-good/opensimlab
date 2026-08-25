@@ -3970,6 +3970,26 @@ export function objectiveFindings(
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Tube position, bilateral ventilation, pressure, volume, capnography, and oxygenation proved the fixed response.' : 'Multi-signal reassessment was absent or preceded correction intent.', atTick: reassessed?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['reconcile-septic-shock-resuscitation-so-far', 'reassess-septic-shock-perfusion',
+      'test-septic-shock-fluid-responsiveness',
+      'individualize-septic-shock-support-and-source-control',
+      'reassess-septic-shock-trajectory'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'septic-shock-resuscitation');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The persistent septic-shock resuscitation lesson was not active.' } satisfies ObjectiveFinding;
+      const context = log.find((event) => /^septic-resuscitation-context-reconciled-\d+$/.test(event.eventId));
+      const perfusion = log.find((event) => /^septic-resuscitation-perfusion-reviewed-\d+$/.test(event.eventId));
+      const fluidResponse = log.find((event) => /^septic-resuscitation-fluid-response-reviewed-\d+$/.test(event.eventId));
+      const plan = log.find((event) => /^septic-resuscitation-plan-recorded-\d+$/.test(event.eventId));
+      const reassessed = log.find((event) => /^septic-resuscitation-trajectory-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-septic-shock-resuscitation-so-far') return { ...base, outcome: context ? 'met' : 'not-met', finding: context ? 'Prior commands, reported delivery, and persistent patient response were kept separate.' : 'The prior resuscitation record was not reconciled with the current response.', atTick: context?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'reassess-septic-shock-perfusion') { const ordered = context && perfusion && context.tick <= perfusion.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Pressure was joined with brain, skin, kidney, lactate, gas exchange, and respiratory tolerance.' : 'Multi-organ perfusion review was absent or preceded context reconciliation.', atTick: perfusion?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'test-septic-shock-fluid-responsiveness') { const ordered = perfusion && fluidResponse && perfusion.tick <= fluidResponse.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The fixed dynamic and lung panels constrained further fluid without creating a universal cutoff.' : 'Fluid-responsiveness and tolerance review was absent or preceded perfusion review.', atTick: fluidResponse?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'individualize-septic-shock-support-and-source-control') { const ordered = fluidResponse && plan && fluidResponse.tick <= plan.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Individualized support review and urgent biliary source-control intent proceeded in parallel.' : 'The parallel plan was absent or preceded the dynamic and lung review.', atTick: plan?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = plan && reassessed && plan.tick <= reassessed.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The fixed response showed modest change while hypoperfusion, source, organ failure, durability, and outcome remained open.' : 'Trajectory reassessment was absent or preceded the bounded plan.', atTick: reassessed?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

@@ -3,7 +3,7 @@
 An open-source, browser-native clinical simulator for medical students, residents, and
 nurse anesthetists — anywhere in the world, on any device, with or without a network.
 
-**opensimlab.com/anesthesia** is the first complete 39-scenario module. Emergency medicine is complete at `/emergency-medicine` with 25 bounded labs. Critical care is now playable at `/critical-care` with 23 bounded labs, from ARDS ventilation through post-repositioning tube-position reassessment, inside its planned 24-case wave.
+**opensimlab.com/anesthesia** is the first complete 39-scenario module. Emergency medicine is complete at `/emergency-medicine` with 25 bounded labs. Critical care is complete at `/critical-care` with 24 bounded labs, from ARDS ventilation through persistent septic-shock resuscitation.
 
 The goal is not a tech demo. It is the best anesthesia education on the internet: the
 thing a student opens the night before their first day in the OR and comes out of

@@ -864,6 +864,9 @@ export function Cockpit({
           onEndotrachealTubeMigrationResponse={(action) => session.act({
             type: 'endotracheal-tube-migration-response', payload: { action },
           })}
+          onSepticShockResuscitationResponse={(action) => session.act({
+            type: 'septic-shock-resuscitation-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

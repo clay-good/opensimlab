@@ -202,7 +202,7 @@ credited toward the catalog until every item in the completion contract passes.
 
 - [x] Wave A: migrate and complete 39 anesthesia scenarios — all 39 are authored, registered,
   completion-audited, prerendered, available offline, and verified at 320 px.
-- [ ] Wave B: complete 25 emergency-medicine and 24 critical-care scenarios.
+- [x] Wave B: complete 25 emergency-medicine and 24 critical-care scenarios.
   Emergency Medicine is complete with 25 of 25 scenarios. These 25 — undifferentiated,
   septic, hemorrhagic,
   tension-pneumothorax, cardiac-tamponade, community anaphylaxis, adult asthma, COPD exacerbation,
@@ -213,17 +213,17 @@ credited toward the catalog until every item in the completion contract passes.
   trauma primary survey, and acute aortic syndrome reuse the shared deterministic session, monitor,
   transcript, action, and debrief frame; all 25 are completion-audited, prerendered, available
   offline, and explicitly bounded.
-  Critical Care is available with 23 of 24 scenarios. ARDS lung-protective ventilation, escalating
+  Critical Care is complete with 24 of 24 scenarios. ARDS lung-protective ventilation, escalating
   hypoxemia, ventilator dyssynchrony, auto-PEEP, mucus plugging, unplanned extubation, and
   spontaneous-breathing trial, post-intubation hypotension, cardiogenic shock, mixed shock, and
   right-ventricular failure, massive pulmonary embolism, upper GI hemorrhage, refractory status
   epilepticus, post-arrest temperature control, intracranial hypertension, and acute kidney injury
   with fluid overload, severe acidemia, ICU handoff with hidden deterioration, and ventilator
   circuit disconnection, delayed vasopressor delivery, pulse-oximeter motion artifact, and
-  endotracheal-tube migration after repositioning reuse the shared deterministic
+  endotracheal-tube migration after repositioning, and persistent septic-shock resuscitation reuse
+  the shared deterministic
   session, monitor, transcript, action, and debrief frame and are completion-audited, prerendered,
-  available offline, and explicitly bounded. The remaining title stays descriptive scope until
-  their full contracts pass.
+  available offline, and explicitly bounded.
 - [ ] Wave C: complete 17 cardiology and 15 respiratory-medicine scenarios.
 - [ ] Wave D: complete 16 pediatric, 15 obstetric, and 11 neonatal scenarios.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.

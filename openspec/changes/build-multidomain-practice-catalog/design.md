@@ -955,6 +955,24 @@ pressure, and improved gas exchange. The exact depth is a case fact, not a targe
 turn or examine a patient, auscultate, inspect equipment, handle or secure a tube, acquire imaging,
 perform bronchoscopy, diagnose, determine disposition, or predict outcome.
 
+### Wave B critical-care slice 24: persistent septic-shock resuscitation
+
+The twenty-fourth critical-care slice begins 2 hours after probable ascending cholangitis was
+recognized. Cultures, empiric antimicrobials, 30 mL/kg balanced crystalloid, and running
+norepinephrine are reported, but command, delivery, effect, and patient response remain separate.
+MAP is 64 mmHg with reduced attention, refill 5 seconds, mottling to the knees, urine 12 mL/h, and
+lactate rising from 5.8 to 6.4 mmol/L. Urgent biliary source control has not occurred.
+
+The focused tutor frames resuscitation as a loop rather than a liter count and gives fluid both a
+target and an exit. Learners reconcile prior care claims, reassess pressure alongside multi-organ
+perfusion and respiratory tolerance, and review a fixed passive-leg-raise stroke-volume change of
+2% plus new diffuse B-lines. Those case facts prevent a blind repeat bolus without becoming
+universal cutoffs. Individualized hemodynamic-support review and urgent source-control intent run
+in parallel, followed by a modest fixed 10-minute response that leaves hypoperfusion, lactate,
+oliguria, source, support, organ failure, and outcome open. The lab does not examine, measure,
+sample, scan, calculate, diagnose, prescribe, deliver fluid or drugs, adjust a device, perform
+drainage, determine disposition, or predict outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute

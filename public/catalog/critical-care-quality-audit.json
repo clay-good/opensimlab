@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "critical-care",
-  "scenarioCount": 23,
+  "scenarioCount": 24,
   "playableScenarioCount": 0,
   "scenarios": [
     {
@@ -827,6 +827,42 @@
           "status": "missing",
           "evidence": [
             "No version-bound state-space-verification record exists for endotracheal-tube-migration-after-repositioning 0.1.0."
+          ]
+        }
+      ],
+      "playable": false
+    },
+    {
+      "scenarioId": "septic-shock-resuscitation",
+      "contentVersion": "0.1.0",
+      "completionComplete": false,
+      "qualityRecords": [
+        {
+          "kind": "training-value",
+          "status": "missing",
+          "evidence": [
+            "No version-bound training-value record exists for septic-shock-resuscitation 0.1.0."
+          ]
+        },
+        {
+          "kind": "authored-defaults",
+          "status": "missing",
+          "evidence": [
+            "No version-bound authored-defaults record exists for septic-shock-resuscitation 0.1.0."
+          ]
+        },
+        {
+          "kind": "scenario-hazard",
+          "status": "missing",
+          "evidence": [
+            "No version-bound scenario-hazard record exists for septic-shock-resuscitation 0.1.0."
+          ]
+        },
+        {
+          "kind": "state-space-verification",
+          "status": "missing",
+          "evidence": [
+            "No version-bound state-space-verification record exists for septic-shock-resuscitation 0.1.0."
           ]
         }
       ],

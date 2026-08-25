@@ -511,6 +511,11 @@ export class AnesthesiaEngine {
   private tubeMigrationPositionReviewedAtTick: number | null = null;
   private tubeMigrationCorrectionAtTick: number | null = null;
   private tubeMigrationReassessedAtTick: number | null = null;
+  private septicResuscitationContextAtTick: number | null = null;
+  private septicResuscitationPerfusionAtTick: number | null = null;
+  private septicResuscitationFluidResponseAtTick: number | null = null;
+  private septicResuscitationPlanAtTick: number | null = null;
+  private septicResuscitationReassessedAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -3977,6 +3982,48 @@ export class AnesthesiaEngine {
         this.log('critical', 'assessment', `tube-migration-reassessed-${this.currentTick}`, 'Fixed 3-minute response: tube mark 22 cm, typed tracheal position, bilateral ventilation, exhaled volume 410 mL, peak pressure 27 cm H₂O, plateau 21, PEEP 8, continuous EtCO₂ 39 mmHg, SpO₂ 96% on unchanged FiO₂ 0.50, HR 94/min, and MAP 77 mmHg. Physical correction, imaging, durability, diagnosis, and outcome remain outside the model.', { bilateralVentilation: true, physicalTubeMovementPerformed: false, outcomeProven: false });
         break;
       }
+      case 'septic-shock-resuscitation-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'septic-shock-resuscitation');
+        const valid = ['reconcile-septic-shock-resuscitation-so-far',
+          'reassess-septic-shock-perfusion', 'test-septic-shock-fluid-responsiveness',
+          'individualize-septic-shock-support-and-source-control',
+          'reassess-septic-shock-trajectory'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `septic-resuscitation-response-refused-${this.currentTick}`, supported ? 'The septic-resuscitation action was not one of the listed choices. Nothing changed.' : 'The bounded persistent-shock choices are available only in the declared lesson.'); break; }
+        if (response === 'reconcile-septic-shock-resuscitation-so-far') {
+          if (this.septicResuscitationContextAtTick !== null) { this.log('warning', 'assessment', `septic-resuscitation-context-refused-${this.currentTick}`, 'The reported resuscitation context has already been reconciled.'); break; }
+          this.septicResuscitationContextAtTick = this.currentTick;
+          this.log('critical', 'assessment', `septic-resuscitation-context-reconciled-${this.currentTick}`, 'The fixed record separates reported cultures, empiric antimicrobials, 2,100 mL balanced crystalloid, and a running norepinephrine command from actual delivery evidence and the persistent patient response.', { reportedCrystalloidMl: 2100, commandDeliveryEffectSeparated: true });
+          break;
+        }
+        if (this.septicResuscitationContextAtTick === null) { this.log('warning', 'assessment', `septic-resuscitation-context-order-refused-${this.currentTick}`, 'Reconcile prior resuscitation claims before reassessing or changing the plan.'); break; }
+        if (response === 'reassess-septic-shock-perfusion') {
+          if (this.septicResuscitationPerfusionAtTick !== null) { this.log('warning', 'assessment', `septic-resuscitation-perfusion-refused-${this.currentTick}`, 'The fixed perfusion trajectory has already been reviewed.'); break; }
+          this.septicResuscitationPerfusionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `septic-resuscitation-perfusion-reviewed-${this.currentTick}`, 'MAP 64 mmHg was joined with reduced attention, refill 5 seconds, mottling to the knees, urine 12 mL/h, lactate 5.8 to 6.4 mmol/L, gas exchange, and respiratory tolerance. Pressure alone did not close perfusion.', { mapAloneClosesResuscitation: false, lactateInterpretedInContext: true });
+          break;
+        }
+        if (this.septicResuscitationPerfusionAtTick === null) { this.log('warning', 'assessment', `septic-resuscitation-perfusion-order-refused-${this.currentTick}`, 'Review serial tissue perfusion before testing whether further fluid has a target.'); break; }
+        if (response === 'test-septic-shock-fluid-responsiveness') {
+          if (this.septicResuscitationFluidResponseAtTick !== null) { this.log('warning', 'assessment', `septic-resuscitation-fluid-response-refused-${this.currentTick}`, 'The fixed dynamic and lung panels have already been reviewed.'); break; }
+          this.septicResuscitationFluidResponseAtTick = this.currentTick;
+          this.log('critical', 'assessment', `septic-resuscitation-fluid-response-reviewed-${this.currentTick}`, 'Fixed passive-leg-raise stroke volume changes from 48 to 49 mL (+2%) and the fixed lung panel has new diffuse B-lines after reported initial fluid. These case facts do not support a blind repeat bolus; they are not universal cutoffs and no maneuver or scan occurred.', { passiveLegRaiseStrokeVolumeChangePercent: 2, diffuseBLines: true, blindRepeatFluidOffered: false, physicalAssessmentPerformed: false });
+          break;
+        }
+        if (this.septicResuscitationFluidResponseAtTick === null) { this.log('warning', 'assessment', `septic-resuscitation-fluid-response-order-refused-${this.currentTick}`, 'Review the fixed dynamic response and lung tolerance before recording the parallel plan.'); break; }
+        if (response === 'individualize-septic-shock-support-and-source-control') {
+          if (this.septicResuscitationPlanAtTick !== null) { this.log('warning', 'assessment', `septic-resuscitation-plan-refused-${this.currentTick}`, 'The individualized support and source-control plan has already been recorded.'); break; }
+          this.septicResuscitationPlanAtTick = this.currentTick;
+          this.log('critical', 'assessment', `septic-resuscitation-plan-recorded-${this.currentTick}`, 'Senior critical-care, nursing, pharmacy, respiratory, procedural, and source-control help were activated. Patient-specific pressure, flow, rhythm, access, perfusion, and urgent biliary source-control review proceed together without selecting a dose, giving fluid or drug, adjusting a device, or performing drainage.', { supportReview: true, urgentSourceControlIntent: true, treatmentDeliveredByControl: false });
+          break;
+        }
+        if (this.septicResuscitationPlanAtTick === null) { this.log('warning', 'assessment', `septic-resuscitation-plan-order-refused-${this.currentTick}`, 'Record individualized support and urgent source-control intent before trajectory reassessment.'); break; }
+        if (this.septicResuscitationReassessedAtTick !== null) { this.log('warning', 'assessment', `septic-resuscitation-reassessment-refused-${this.currentTick}`, 'The fixed 10-minute trajectory has already been recorded.'); break; }
+        this.septicResuscitationReassessedAtTick = this.currentTick;
+        this.log('critical', 'assessment', `septic-resuscitation-trajectory-reassessed-${this.currentTick}`, 'Fixed 10-minute response: MAP 68 mmHg, HR 110/min, refill 4 seconds, unchanged urine 12 mL/h, lactate not yet repeated, SpO₂ 94% on unchanged FiO₂ 0.35, RR 23/min, EtCO₂ 33 mmHg, and temperature 39.0°C. Persistent hypoperfusion, source control, support needs, alternate causes, organ failure, durability, and outcome remain open.', { lactateRepeated: false, sourceControlPerformedByControl: false, outcomeProven: false });
+        break;
+      }
       case 'aspiration-risk-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
@@ -6861,6 +6908,15 @@ export class AnesthesiaEngine {
         diastolicMmHg: reassessed ? 63 : 62, meanArterialMmHg: reassessed ? 77 : 75,
         coreTemperatureC: 37.6 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'septic-shock-resuscitation')) {
+      const reassessed = this.septicResuscitationReassessedAtTick !== null;
+      crisisState = { ...crisisState, heartRateBpm: reassessed ? 110 : 118,
+        respiratoryRateBpm: reassessed ? 23 : 24, spo2Percent: 94,
+        etco2MmHg: reassessed ? 33 : 31, systolicMmHg: reassessed ? 91 : 86,
+        diastolicMmHg: reassessed ? 56 : 53, meanArterialMmHg: reassessed ? 68 : 64,
+        coreTemperatureC: reassessed ? 39 : 39.1 };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -7459,6 +7515,18 @@ export class AnesthesiaEngine {
               positionReviewedAtTick: this.tubeMigrationPositionReviewedAtTick,
               correctionAtTick: this.tubeMigrationCorrectionAtTick,
               reassessedAtTick: this.tubeMigrationReassessedAtTick,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'septic-shock-resuscitation') ? {
+            septicShockResuscitationAssessment: {
+              contextAtTick: this.septicResuscitationContextAtTick,
+              perfusionAtTick: this.septicResuscitationPerfusionAtTick,
+              fluidResponseAtTick: this.septicResuscitationFluidResponseAtTick,
+              planAtTick: this.septicResuscitationPlanAtTick,
+              reassessedAtTick: this.septicResuscitationReassessedAtTick,
+              passiveLegRaiseStrokeVolumeChangePercent: 2,
+              blindRepeatFluidOffered: false,
             },
           } : {}),
         aspirationRiskAssessment: {
