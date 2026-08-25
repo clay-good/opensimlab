@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 31 reports bounded OIVI response state. */
-export const WORKER_PROTOCOL_VERSION = 31;
+/** Bumped whenever the message shape changes incompatibly. Version 32 reports bounded thermal response state. */
+export const WORKER_PROTOCOL_VERSION = 32;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -324,6 +324,13 @@ export interface EquipmentSnapshot {
       readonly severity: number;
       readonly furtherOpioidHeldAtTick: number | null;
       readonly naloxoneIntentAtTick: number | null;
+    };
+    /** Bounded intraoperative hypothermia recognition and warming response. */
+    readonly thermalResponse?: {
+      readonly targetTemperatureC: number | null;
+      readonly coreTemperatureConfirmedAtTick: number | null;
+      readonly forcedAirWarmingAtTick: number | null;
+      readonly warmedBulkFluidsAtTick: number | null;
     };
     /** Accepted quantitative neuromuscular-reversal teaching state. */
     readonly neuromuscularReversalFraction?: number;

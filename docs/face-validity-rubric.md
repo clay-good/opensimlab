@@ -104,6 +104,7 @@ Reviewers run the routine induction themselves before answering.
 | B50 | In the extubation-readiness lesson, a ratio above 0.90 remains only one checkpoint; awake airway protection, spontaneous gas exchange, airway risk, and rescue planning integrate clearly without implying tube-removal skill or outcome | | |
 | B51 | In the post-extubation-obstruction lesson, soft-tissue collapse is visibly distinct from laryngospasm and bronchospasm; help, oxygen, continuous positive pressure, a held jaw thrust, and recovery are inspectable without implying a complete rescue algorithm or individual response time | | |
 | B52 | In the opioid-induced-ventilatory-impairment lesson, advancing sedation and a slow-rate/preserved-breath pattern appear before hypoxemia; help, ventilatory support, an opioid hold, dose-free naloxone intent, and spontaneous reassessment are inspectable without implying complete reversal or safe disposition | | |
+| B53 | In the hypothermia-and-rewarming lesson, a falling core-temperature trend, the below-36°C signal, active surface warming, bulk-fluid warming intent, and gradual recovery are inspectable without implying device competence, heat-transfer calculation, or individual timing | | |
 | B45 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
@@ -205,4 +206,7 @@ So that reviewers spend their attention on what this review is for:
   source-control intent stops new entry and starts a fixed recovery trajectory.
 - Neuromuscular reversal is a bounded teaching effect. The PTC is auto-derived, and reversal dose pharmacology, emergence,
   extubation, recurrent block, hypersensitivity, and postoperative residual weakness are absent.
+- The hypothermia case uses fixed cooling and warming targets rather than redistribution or energy
+  balance. Surface and fluid warming are intent controls, not device, probe, delivery, or heat-transfer
+  simulations. Shivering, comfort, complications, medication effects, emergence, and disposition are absent.
 - Nothing here has been clinically reviewed before — you are the first.

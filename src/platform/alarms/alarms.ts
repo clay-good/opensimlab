@@ -132,6 +132,11 @@ export const DEFAULT_LIMITS: readonly AlarmLimit[] = [
     source: 'Hypoventilation, or the first sign of a hypermetabolic state.',
   },
   {
+    id: 'temperature-low', parameter: 'coreTemperatureC', label: 'Temp', unit: '°C', priority: 'medium',
+    low: 36, message: 'Core temperature below 36°C',
+    source: 'NICE CG65 defines inadvertent perioperative hypothermia as core temperature below 36.0°C.',
+  },
+  {
     id: 'temperature-high', parameter: 'coreTemperatureC', label: 'Temp', unit: '°C', priority: 'medium',
     high: 39, message: 'Core temperature high',
     source: 'The MHAUS acute-crisis threshold for active cooling during malignant hyperthermia.',

@@ -27,7 +27,7 @@ export const PREPARATION_PATHS: readonly PreparationPathDefinition[] = [
     description: 'Build a calm foundation: prepare, induce, maintain, reassess, and respond to a common pressure change.',
     scenarioIds: [
       'routine-induction', 'routine-inhalational-maintenance',
-      'hypotension-after-induction', 'rapid-desaturation',
+      'hypotension-after-induction', 'rapid-desaturation', 'hypothermia-and-rewarming',
     ],
     prerequisites: ['No prior simulator experience required.'],
     targetCompetencies: ['Preoxygenation', 'Induction sequencing', 'Early reassessment'],

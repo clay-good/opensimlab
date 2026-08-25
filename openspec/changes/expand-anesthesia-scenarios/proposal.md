@@ -269,3 +269,7 @@ depression from the preceding upper-airway lesson. Difficult arousal, a slow-rat
 preserved-breath pattern, active ventilation, opioid-hold intent, dose-free naloxone escalation, and
 spontaneous reassessment are inspectable. Exposure pharmacokinetics, analgesia, dosing, withdrawal,
 recurrent depression, and monitoring disposition remain excluded.
+The thirty-ninth adds the thirty-sixth authored scenario and isolates a fixed perioperative cooling
+course from the existing malignant-hyperthermia model. Core-temperature confirmation, active
+surface warming, bulk-fluid warming intent, and gradual observed recovery are inspectable. Device
+settings, probe technique, heat transfer, complications, and disposition remain excluded.

@@ -642,3 +642,14 @@ titration intent, and confirms spontaneous recovery only after delivered breaths
 severity, and reversal curve are teaching fixtures. Morphine and naloxone pharmacology, dose and
 route, pain, sedation-scale technique, co-sedatives, withdrawal, recurrent depression, and continued
 monitoring or disposition are not modeled.
+
+## Slice 39: bounded hypothermia and rewarming
+
+The thirty-sixth authored scenario isolates perioperative temperature from the prior hypermetabolic
+crisis. A fixed interrupted-warming course approaches 35.5°C while the rest of the patient remains
+stable. The learner confirms core temperature, restores active surface warming, includes a declared
+700 mL crystalloid exposure in the warming plan, and follows recovery through 36.5°C.
+
+The cooling and warming curves are deterministic teaching targets, not a redistribution or
+energy-balance model. Device settings, probe technique, skin contact, fluid-delivery heat transfer,
+shivering, comfort, complications, medication effects, emergence, and disposition remain excluded.

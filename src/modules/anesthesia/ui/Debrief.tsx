@@ -457,6 +457,10 @@ export function objectiveFindings(
     'prevent-further-opioid-harm': 'hypnotic-opioid-synergy',
     'escalate-opioid-reversal': 'hypnotic-opioid-synergy',
     'reassess-opioid-ventilatory-recovery': 'capnogram-morphology',
+    'recognize-perioperative-hypothermia': 'depth-monitoring-and-its-limits',
+    'start-active-surface-warming': 'vasodilation-versus-hypovolemia',
+    'warm-bulk-perioperative-fluids': 'vasodilation-versus-hypovolemia',
+    'reassess-perioperative-rewarming': 'depth-monitoring-and-its-limits',
     'recognize-hemorrhage': 'vasodilation-versus-hypovolemia',
     'temporize-volume-loss': 'vasodilation-versus-hypovolemia',
     'avoid-full-dose-induction': 'hysteresis-and-effect-site-lag',
@@ -2880,6 +2884,57 @@ export function objectiveFindings(
         finding: recovered
           ? `Spontaneous rate recovered to ${(recovered.state.respiratoryRateBpm ?? 0).toFixed(0)}/min with tidal volume ${(recovered.state.tidalVolumeMl ?? 0).toFixed(0)} mL, end-tidal carbon dioxide ${(recovered.state.etco2MmHg ?? 0).toFixed(0)} mmHg, and oxygen saturation ${(recovered.state.spo2Percent ?? 0).toFixed(0)}%. Continued monitoring and recurrent depression remain outside this trace.`
           : 'Spontaneous rate, breath size, carbon dioxide, and oxygenation had not all reached the declared recovery endpoints before the session ended.',
+        atTick: recovered?.tick ?? history.at(-1)?.tick ?? onset,
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
+      'recognize-perioperative-hypothermia', 'start-active-surface-warming',
+      'warm-bulk-perioperative-fluids', 'reassess-perioperative-rewarming',
+    ].includes(objective.id)) {
+      const onset = scenario.timeline.find(
+        (event) => event.type === 'perioperative-hypothermia',
+      )?.atTick;
+      if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) return {
+        ...base, outcome: 'not-exercised',
+        finding: 'The session ended before the fixed perioperative cooling course began.',
+      } satisfies ObjectiveFinding;
+      const confirmed = log.find((event) => event.eventId.startsWith('core-temperature-confirmed-'));
+      const warming = log.find((event) => event.eventId.startsWith('forced-air-warming-started-'));
+      const warmedFluids = log.find((event) => event.eventId.startsWith('warmed-bulk-fluids-recorded-'));
+      if (objective.id === 'recognize-perioperative-hypothermia') return {
+        ...base, outcome: confirmed ? 'met' : 'not-met',
+        finding: confirmed
+          ? `Core temperature was deliberately confirmed at ${Number(confirmed.data?.temperatureC ?? history.find((entry) => entry.tick >= confirmed.tick)?.state.coreTemperatureC ?? 0).toFixed(1)}°C after the cooling trend began. Probe site and technique are not inferred.`
+          : 'No accepted core-temperature confirmation followed the fixed cooling trend.',
+        atTick: confirmed?.tick ?? onset,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'start-active-surface-warming') return {
+        ...base, outcome: warming ? 'met' : 'not-met',
+        finding: warming
+          ? 'Active surface warming was recorded after temperature confirmation. Device settings, skin contact, and heat transfer remain outside the model.'
+          : 'No accepted active surface-warming response followed temperature confirmation.',
+        atTick: warming?.tick ?? onset,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'warm-bulk-perioperative-fluids') return {
+        ...base, outcome: warmedFluids ? 'met' : 'not-met',
+        finding: warmedFluids
+          ? 'Warming intent was recorded for the fixed 700 mL remaining crystalloid exposure. Fluid delivery and thermal transfer are not simulated.'
+          : 'No accepted bulk-fluid warming intent was recorded.',
+        atTick: warmedFluids?.tick ?? onset,
+      } satisfies ObjectiveFinding;
+      if (!warming) return {
+        ...base, outcome: 'not-met',
+        finding: 'Rewarming was not credited because active surface warming was not recorded.',
+        atTick: history.at(-1)?.tick ?? onset,
+      } satisfies ObjectiveFinding;
+      const recovered = history.find((entry) => entry.tick >= warming.tick
+        && (entry.state.coreTemperatureC ?? 0) >= 36.5);
+      return {
+        ...base, outcome: recovered ? 'met' : 'not-met',
+        finding: recovered
+          ? `Core temperature reached ${(recovered.state.coreTemperatureC ?? 0).toFixed(1)}°C after active warming. This is a bounded teaching trajectory, not an individual rewarming prediction.`
+          : 'Core temperature had not reached the declared 36.5°C reassessment point before the session ended.',
         atTick: recovered?.tick ?? history.at(-1)?.tick ?? onset,
       } satisfies ObjectiveFinding;
     }

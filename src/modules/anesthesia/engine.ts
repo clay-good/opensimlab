@@ -41,7 +41,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.33';
+export const ENGINE_VERSION = '0.1.0-alpha.34';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -341,6 +341,10 @@ export class AnesthesiaEngine {
   private opioidVentilatoryImpairmentTarget = 0;
   private furtherOpioidHeldAtTick: number | null = null;
   private naloxoneIntentAtTick: number | null = null;
+  private perioperativeTemperatureTargetC: number | null = null;
+  private coreTemperatureConfirmedAtTick: number | null = null;
+  private forcedAirWarmingAtTick: number | null = null;
+  private warmedBulkFluidsAtTick: number | null = null;
   /** Exclusive tick at which the bounded held airway maneuver ends. */
   private jawThrustCpapUntilTick = 0;
   /** Current lower-airway obstruction, retained for truthful equipment/accessibility output. */
@@ -1667,6 +1671,55 @@ export class AnesthesiaEngine {
           });
         break;
       }
+      case 'thermal-response': {
+        const response = action.payload.response;
+        if (this.perioperativeTemperatureTargetC === null
+          || !['confirm-core-temperature', 'start-forced-air-warming', 'record-warmed-bulk-fluids']
+            .includes(String(response))) {
+          this.log('warning', 'equipment', `thermal-response-refused-${this.currentTick}`,
+            this.perioperativeTemperatureTargetC === null
+              ? 'No active modeled perioperative thermal course is available for this response.'
+              : 'The thermal response was not one of the listed choices. Nothing changed.');
+          break;
+        }
+        if (response === 'confirm-core-temperature') {
+          if (this.coreTemperatureConfirmedAtTick !== null) {
+            this.log('warning', 'equipment', `temperature-confirmation-refused-${this.currentTick}`,
+              'Core temperature has already been confirmed in this teaching response.');
+            break;
+          }
+          this.coreTemperatureConfirmedAtTick = this.currentTick;
+          this.log('warning', 'equipment', `core-temperature-confirmed-${this.currentTick}`,
+            `Core temperature confirmed at ${(this.lastState.coreTemperatureC ?? 0).toFixed(1)}°C. Measurement site and technique are not simulated.`);
+          break;
+        }
+        if (this.coreTemperatureConfirmedAtTick === null) {
+          this.log('warning', 'equipment', `thermal-order-refused-${this.currentTick}`,
+            'Confirm core temperature before recording a warming response.');
+          break;
+        }
+        if (response === 'start-forced-air-warming') {
+          if (this.forcedAirWarmingAtTick !== null) {
+            this.log('warning', 'equipment', `forced-air-warming-refused-${this.currentTick}`,
+              'Active surface warming has already been recorded.');
+            break;
+          }
+          this.forcedAirWarmingAtTick = this.currentTick;
+          this.perioperativeTemperatureTargetC = 36.6;
+          this.log('warning', 'equipment', `forced-air-warming-started-${this.currentTick}`,
+            'Active surface warming started. Device settings, skin contact, heat transfer, and individual rewarming time are not modeled.');
+          break;
+        }
+        if (this.warmedBulkFluidsAtTick !== null) {
+          this.log('warning', 'equipment', `warmed-bulk-fluids-refused-${this.currentTick}`,
+            'Bulk-fluid warming intent has already been recorded.');
+          break;
+        }
+        this.warmedBulkFluidsAtTick = this.currentTick;
+        this.log('warning', 'equipment', `warmed-bulk-fluids-recorded-${this.currentTick}`,
+          'The fixed 700 mL remaining crystalloid exposure will use a fluid warmer. Delivery mechanics and heat transfer are not modeled.');
+        break;
+      }
       case 'silence-alarm': {
         this.alarmEngine.silence(String(action.payload.alarmId), this.currentTick, TICKS_PER_SECOND);
         break;
@@ -2139,6 +2192,18 @@ export class AnesthesiaEngine {
         return;
       }
 
+      case 'perioperative-hypothermia': {
+        const target = event.value;
+        if (typeof target !== 'number' || !Number.isFinite(target)
+          || target < 34 || target >= 36) {
+          this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" has an invalid perioperative temperature target. It must be finite from 34°C up to but not including 36°C, so the event had no effect.`);
+          return;
+        }
+        this.perioperativeTemperatureTargetC = target;
+        return;
+      }
+
       case 'anaphylaxis': {
         const severity = event.value;
         if (event.target !== 'cefazolin' || typeof severity !== 'number'
@@ -2568,6 +2633,8 @@ export class AnesthesiaEngine {
         anaphylaxisFraction: unopposedAnaphylaxis, capillaryLeakMl,
         hypermetabolicFraction: unopposedHypermetabolism,
         activeCooling: this.activeCooling,
+        ...(this.perioperativeTemperatureTargetC === null
+          ? {} : { perioperativeTemperatureTargetC: this.perioperativeTemperatureTargetC }),
         localAnestheticToxicityFraction: unopposedLocalAnestheticToxicity,
         // An airway procedure occupies the airway. Disabling only commanded
         // breaths left residual spontaneous breaths passing through active
@@ -2978,6 +3045,12 @@ export class AnesthesiaEngine {
           severity: this.opioidVentilatoryImpairmentSeverity,
           furtherOpioidHeldAtTick: this.furtherOpioidHeldAtTick,
           naloxoneIntentAtTick: this.naloxoneIntentAtTick,
+        },
+        thermalResponse: {
+          targetTemperatureC: this.perioperativeTemperatureTargetC,
+          coreTemperatureConfirmedAtTick: this.coreTemperatureConfirmedAtTick,
+          forcedAirWarmingAtTick: this.forcedAirWarmingAtTick,
+          warmedBulkFluidsAtTick: this.warmedBulkFluidsAtTick,
         },
         neuromuscularReversalFraction: this.neuromuscularReversalFraction,
         postTetanicCount: this.postTetanicCount,

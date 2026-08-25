@@ -1215,6 +1215,21 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'pc-crisis-management',
     objectiveIds: ['recognize-opioid-ventilatory-impairment', 'support-opioid-impaired-ventilation', 'prevent-further-opioid-harm', 'escalate-opioid-reversal', 'reassess-opioid-ventilatory-recovery'],
   },
+  {
+    scenarioId: 'hypothermia-and-rewarming', frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['recognize-perioperative-hypothermia', 'start-active-surface-warming', 'warm-bulk-perioperative-fluids', 'reassess-perioperative-rewarming'],
+  },
+  {
+    scenarioId: 'hypothermia-and-rewarming', frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['recognize-perioperative-hypothermia', 'start-active-surface-warming', 'warm-bulk-perioperative-fluids', 'reassess-perioperative-rewarming'],
+  },
+  {
+    scenarioId: 'hypothermia-and-rewarming', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-anesthetic-plan-and-conduct',
+    objectiveIds: ['recognize-perioperative-hypothermia', 'start-active-surface-warming', 'warm-bulk-perioperative-fluids', 'reassess-perioperative-rewarming'],
+  },
 ];
 
 export interface DomainCoverage {

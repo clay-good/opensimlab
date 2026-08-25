@@ -346,6 +346,11 @@ breath pattern while supplemental oxygen initially leaves saturation reassuring.
 recruits help, supports ventilation, holds further opioid, records dose-free naloxone titration
 intent, and checks spontaneous recovery. Morphine pharmacokinetics, pain, sedation-scale technique,
 naloxone dosing, withdrawal, recurrent depression, and monitoring disposition are absent.
+Slice 39 adds the thirty-sixth authored scenario, hypothermia and rewarming. During stable
+intraoperative maintenance, a fixed cooling course lowers core temperature while circulation and
+ventilation remain observable. The learner confirms the trend, restores active surface warming,
+records warming intent for a fixed 700 mL crystalloid exposure, and follows gradual recovery.
+Device setup, probe technique, heat transfer, complications, comfort, and disposition are absent.
 
 ## Running it
 

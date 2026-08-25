@@ -120,6 +120,8 @@ export interface ScenarioDrive {
   readonly hypermetabolicFraction?: number;
   /** Whether active cooling is being applied at a modeled treatment temperature. */
   readonly activeCooling?: boolean;
+  /** Fixed perioperative thermal teaching target, separate from hypermetabolic heat. */
+  readonly perioperativeTemperatureTargetC?: number;
   /** Unopposed local-anesthetic cardiovascular toxicity, 0 to 1. */
   readonly localAnestheticToxicityFraction?: number;
   /** Remaining spontaneous breathing drive during a high central neuraxial block teaching course. */
@@ -337,7 +339,11 @@ export class VirtualPatient {
     const heatDelta = 0.42 * this.thermalLoadFraction * TICK_MINUTES;
     const coolingDelta = scenario.activeCooling && this.temperatureC >= 38
       ? -1.2 * TICK_MINUTES : 0;
-    const rawTemperatureDelta = heatDelta + coolingDelta;
+    const perioperativeTarget = scenario.perioperativeTemperatureTargetC;
+    const perioperativeDelta = perioperativeTarget === undefined ? 0
+      : (perioperativeTarget - this.temperatureC)
+        * TICK_MINUTES / (perioperativeTarget < this.temperatureC ? 3 : 2);
+    const rawTemperatureDelta = heatDelta + coolingDelta + perioperativeDelta;
     const nextTemperature = clamp(this.temperatureC + rawTemperatureDelta, 25, 43);
     const actualTemperatureDelta = nextTemperature - this.temperatureC;
     const temperatureScale = Math.abs(rawTemperatureDelta) > 1e-12
@@ -353,6 +359,13 @@ export class VirtualPatient {
       recorder.add(
         'coreTemperatureC', 'active-cooling', 'Active cooling',
         coolingDelta * temperatureScale, { teachingModel: true },
+      );
+    }
+    if (Math.abs(perioperativeDelta) > 1e-12 && temperatureScale !== 0) {
+      recorder.add(
+        'coreTemperatureC', perioperativeDelta < 0 ? 'perioperative-heat-loss' : 'active-warming',
+        perioperativeDelta < 0 ? 'Fixed perioperative heat loss' : 'Active surface warming',
+        perioperativeDelta * temperatureScale, { teachingModel: true },
       );
     }
 

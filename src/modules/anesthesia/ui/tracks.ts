@@ -74,7 +74,7 @@ export const TILES: readonly TileDefinition[] = [
   { field: 'respiratoryRateBpm', name: 'RR', traceToken: '--capno', asaCategory: 'ventilation' },
   { field: 'spo2Percent', name: 'SpO₂', traceToken: '--spo2', lowLimit: 90, asaCategory: 'oxygenation', invalidReason: 'Probe not reading' },
   { field: 'depthIndex', name: 'Depth', traceToken: '--neuro', lowLimit: 30, highLimit: 60, asaCategory: 'other' },
-  { field: 'coreTemperatureC', name: 'Temp', traceToken: '--arterial', asaCategory: 'temperature' },
+  { field: 'coreTemperatureC', name: 'Temp', traceToken: '--arterial', lowLimit: 36, asaCategory: 'temperature' },
   { field: 'fio2', name: 'FiO₂', traceToken: '--spo2', asaCategory: 'oxygenation' },
   { field: 'trainOfFourRatio', name: 'Train-of-four', traceToken: '--neuro', asaCategory: 'other', neuromuscular: true },
 ];

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 35,
+  "scenarioCount": 36,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -773,6 +773,28 @@
         "Reassess respiratory rate, tidal volume, carbon dioxide, and oxygenation together."
       ],
       "searchText": "opioid-induced-ventilatory-impairment opioid-induced ventilatory impairment severe knee osteoarthritis total knee arthroplasty recognize advancing sedation and depressed ventilation before oxygen saturation becomes the only signal. help was requested within 30 seconds of the fixed difficult-arousal, low-rate, rising-carbon-dioxide pattern. keep the airway patent and support ventilation while definitive reversal is prepared. active breath delivery with at least 95% oxygen was established within 45 seconds of onset. hold further opioid instead of chasing a pain score during advancing sedation. the fixed further-opioid hold was recorded before reversal intent. record patient-specific naloxone titration intent without treating one reversal as the end of monitoring. naloxone titration intent was accepted after further opioid was held. reassess respiratory rate, tidal volume, carbon dioxide, and oxygenation together. spontaneous rate recovered to at least 10/min with tidal volume and end-tidal carbon dioxide present."
+    },
+    {
+      "id": "hypothermia-and-rewarming",
+      "path": "/anesthesia/scenario/hypothermia-and-rewarming",
+      "title": "Hypothermia and rewarming",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 9,
+      "difficulty": "introductory",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Recognize a falling core-temperature trend before treating one displayed value as an isolated number.",
+        "Restore active surface warming after the modeled interruption.",
+        "Include the fixed remaining 700 mL crystalloid exposure in the thermal plan.",
+        "Follow core temperature through rewarming rather than treating the warming action as the endpoint."
+      ],
+      "searchText": "hypothermia-and-rewarming hypothermia and rewarming right colon adenocarcinoma open right hemicolectomy recognize a falling core-temperature trend before treating one displayed value as an isolated number. core temperature was deliberately confirmed after the fixed cooling course began. restore active surface warming after the modeled interruption. active surface warming was recorded after core temperature confirmation. include the fixed remaining 700 ml crystalloid exposure in the thermal plan. bulk-fluid warming intent was recorded after core temperature confirmation. follow core temperature through rewarming rather than treating the warming action as the endpoint. core temperature subsequently reached at least 36.5°c in the bounded teaching trajectory."
     }
   ],
   "preparationPathCount": 10,
@@ -786,7 +808,8 @@
         "routine-induction",
         "routine-inhalational-maintenance",
         "hypotension-after-induction",
-        "rapid-desaturation"
+        "rapid-desaturation",
+        "hypothermia-and-rewarming"
       ],
       "prerequisites": [
         "No prior simulator experience required."
@@ -802,7 +825,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 43
+      "estimatedMinutes": 52
     },
     {
       "id": "deteriorating-patient",

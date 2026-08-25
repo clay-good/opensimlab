@@ -700,6 +700,9 @@ export function Cockpit({
           onOpioidVentilatoryResponse={(response) => session.act({
             type: 'opioid-ventilatory-response', payload: { response },
           })}
+          onThermalResponse={(response) => session.act({
+            type: 'thermal-response', payload: { response },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

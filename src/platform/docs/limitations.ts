@@ -1213,6 +1213,39 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['opioid-induced-ventilatory-impairment'],
   },
   {
+    id: 'perioperative-temperature-course-is-a-fixed-teaching-target',
+    headline: 'The cooling and rewarming curves approach fixed teaching targets; they are not an energy-balance or individual-patient model.',
+    simplification: 'One scripted interruption moves core temperature toward 35.5°C, and accepted '
+      + 'active warming moves it toward 36.6°C along deterministic curves.',
+    whereItMisleads: 'Inferring a real rate of heat loss or rewarming, predicting a patient’s '
+      + 'temperature, or transferring the displayed trajectory across procedures and environments.',
+    correctUnderstanding: 'Perioperative temperature depends on redistribution, anesthetic state, '
+      + 'exposure, ambient conditions, patient factors, fluids, equipment, and time.',
+    briefIn: ['hypothermia-and-rewarming'],
+  },
+  {
+    id: 'warming-actions-have-no-device-or-heat-transfer-model',
+    headline: 'Surface and fluid warming are recorded intents, not device setup, delivery, or heat-transfer simulations.',
+    simplification: 'Buttons record confirmation, active surface warming, and warming of one fixed '
+      + '700 mL crystalloid exposure. Only surface warming changes the teaching target.',
+    whereItMisleads: 'Treating a click as device competence, assuming settings or contact are safe, '
+      + 'or reading a fluid-warming action as a quantified thermal effect.',
+    correctUnderstanding: 'Real warming requires appropriate equipment, setup, monitoring, skin '
+      + 'assessment, fluid-delivery workflow, and adjustment to the patient’s response.',
+    briefIn: ['hypothermia-and-rewarming'],
+  },
+  {
+    id: 'no-hypothermia-complications-comfort-or-disposition',
+    headline: 'The stable vignette does not model shivering, comfort, coagulopathy, infection, drug effects, cardiac events, or transfer decisions.',
+    simplification: 'Temperature is the only patient variable altered by the scripted thermal state; '
+      + 'the scenario ends after a bounded rewarming observation.',
+    whereItMisleads: 'Assuming a stable trace excludes complications, proves comfort, or establishes '
+      + 'readiness for emergence, recovery discharge, or ward transfer.',
+    correctUnderstanding: 'Hypothermia can affect multiple systems and perioperative workflows. '
+      + 'Whole-patient assessment and local policy determine ongoing care and disposition.',
+    briefIn: ['hypothermia-and-rewarming'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

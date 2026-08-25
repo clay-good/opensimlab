@@ -15,6 +15,8 @@ describe('scenario catalog query', () => {
       .map((scenario) => scenario.metadata.id)).toContain(
         'early-malignant-hyperthermia-during-volatile-anesthesia',
       );
+    expect(filterCatalog(SCENARIOS, { ...EMPTY_CATALOG_QUERY, q: 'hypothermia warming' })
+      .map((scenario) => scenario.metadata.id)).toContain('hypothermia-and-rewarming');
   });
 
   it('combines difficulty, duration, and maturity filters', () => {

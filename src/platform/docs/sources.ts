@@ -1190,6 +1190,37 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-24',
   },
   {
+    id: 'nice-cg65-hypothermia',
+    currency: {
+      lastAmended: '2016',
+      checkedAt: 'https://www.nice.org.uk/guidance/cg65/chapter/Recommendations',
+    },
+    authors: 'National Institute for Health and Care Excellence',
+    title: 'Hypothermia: prevention and management in adults having surgery',
+    publication: 'NICE',
+    year: 2008,
+    locator: 'Clinical guideline CG65, recommendations amended 2016',
+    usedFor: 'The thermal lesson and monitor threshold: core temperature below 36.0°C defines '
+      + 'inadvertent perioperative hypothermia; temperature is trended, active warming is used, '
+      + 'and intravenous fluid exposures of 500 mL or more are warmed.',
+    verifiedAgainst: 'Current NICE CG65 recommendations page',
+    verifiedOn: '2026-08-24',
+  },
+  {
+    id: 'sessler-thermoregulation-2016',
+    pmid: '26775126',
+    authors: 'Sessler DI',
+    title: 'Perioperative thermoregulation and heat balance',
+    publication: 'Lancet',
+    year: 2016,
+    locator: '387:2655-64',
+    usedFor: 'The physiology boundary: anesthesia impairs thermoregulation; perioperative '
+      + 'hypothermia begins with redistribution and continues when heat loss exceeds production. '
+      + 'The browser implements only a fixed target trajectory, not an energy-balance model.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-24',
+  },
+  {
     id: 'schwid-2001',
     pmid: '11302037',
     authors: 'Schwid HA, Rooke GA, Michalowski P, Ross BK',

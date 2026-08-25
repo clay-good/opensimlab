@@ -574,3 +574,18 @@
   inspection, and full CI.
 - [ ] Add opioid or naloxone pharmacokinetics, dose or route, pain, sedation-scale technique,
   co-sedatives, withdrawal, recurrent depression, repeated reversal, or monitoring disposition.
+
+## Slice 39: bounded hypothermia and rewarming
+
+- [x] Check in an evidence brief covering the below-36°C definition, temperature trending,
+  active surface warming, bulk-fluid warming, redistribution, and unsafe inference boundaries.
+- [x] Add a thirty-sixth authored adult scenario with isolated deterministic cooling and rewarming
+  targets while ventilation and circulation remain stable.
+- [x] Require core-temperature confirmation before active surface-warming and bulk-fluid warming
+  intents, then score observed recovery through 36.5°C.
+- [x] Add a low-temperature monitor signal and reject unsupported, duplicate, out-of-order,
+  hostile, and inactive response requests.
+- [x] Complete curriculum mapping, preparation path, limitations, catalog, SEO, responsive browser
+  inspection, and full CI.
+- [ ] Add device settings, probe-site technique, redistribution compartments, heat-transfer
+  calculation, shivering, comfort, complications, medication effects, emergence, or disposition.

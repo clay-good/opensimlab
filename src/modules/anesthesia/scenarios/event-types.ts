@@ -13,6 +13,7 @@ export const EVENT_TYPES = [
   'surgical-stimulus', 'blood-loss', 'crystalloid', 'obstruction', 'laryngospasm',
   'upper-airway-obstruction', 'anaphylaxis',
   'opioid-ventilatory-impairment',
+  'perioperative-hypothermia',
   'malignant-hyperthermia', 'local-anesthetic-toxicity',
   'high-spinal',
   'venous-air-embolism',

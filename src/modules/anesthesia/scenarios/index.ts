@@ -44,6 +44,7 @@ import { DELAYED_EMERGENCE_DIFFERENTIAL } from './delayed-emergence-differential
 import { EXTUBATION_READINESS } from './extubation-readiness';
 import { POST_EXTUBATION_OBSTRUCTION } from './post-extubation-obstruction';
 import { OPIOID_INDUCED_VENTILATORY_IMPAIRMENT } from './opioid-induced-ventilatory-impairment';
+import { HYPOTHERMIA_AND_REWARMING } from './hypothermia-and-rewarming';
 
 export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_INDUCTION,
@@ -81,6 +82,7 @@ export const SCENARIOS: readonly Scenario[] = [
   EXTUBATION_READINESS,
   POST_EXTUBATION_OBSTRUCTION,
   OPIOID_INDUCED_VENTILATORY_IMPAIRMENT,
+  HYPOTHERMIA_AND_REWARMING,
 ];
 
 /** The scenario a learner meets first. */

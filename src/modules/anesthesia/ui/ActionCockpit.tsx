@@ -158,6 +158,12 @@ export interface ActionCockpitProps {
       readonly furtherOpioidHeldAtTick: number | null;
       readonly naloxoneIntentAtTick: number | null;
     };
+    readonly thermalResponse?: {
+      readonly targetTemperatureC: number | null;
+      readonly coreTemperatureConfirmedAtTick: number | null;
+      readonly forcedAirWarmingAtTick: number | null;
+      readonly warmedBulkFluidsAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -242,6 +248,10 @@ export interface ActionCockpitProps {
   ) => void;
   readonly onOpioidVentilatoryResponse?: (
     response: 'hold-further-opioid' | 'record-naloxone-titration',
+  ) => void;
+  readonly onThermalResponse?: (
+    response: 'confirm-core-temperature' | 'start-forced-air-warming'
+      | 'record-warmed-bulk-fluids',
   ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
@@ -350,6 +360,8 @@ export const NOT_IN_THIS_BUILD =
 
 export function ActionCockpit(props: ActionCockpitProps) {
   const [tray, setTray] = useState<TrayId>(() => props.scenario.timeline.some(
+    (event) => event.type === 'perioperative-hypothermia',
+  ) ? 'fluids' : props.scenario.timeline.some(
     (event) => event.type === 'upper-airway-obstruction'
       || event.type === 'opioid-ventilatory-impairment',
   ) ? 'airway' : props.scenario.formulary.length === 0
@@ -375,6 +387,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
   );
   const hasOpioidVentilatoryResponse = props.scenario.timeline.some(
     (event) => event.type === 'opioid-ventilatory-impairment',
+  );
+  const hasThermalResponse = props.scenario.timeline.some(
+    (event) => event.type === 'perioperative-hypothermia',
   );
   const hasEpinephrineResponse = hasAnaphylaxisResponse || hasLastResponse;
   const hasNonMaternalCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse
@@ -472,6 +487,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         )}
         {tray === 'fluids' && (
           <FluidTray
+            showStandardFluids={!hasThermalResponse}
+            thermalResponse={props.resuscitation.thermalResponse}
             crystalloidTotalMl={props.resuscitation.crystalloidTotalMl}
             packedRedBloodCellUnits={props.resuscitation.packedRedBloodCellUnits ?? 0}
             freshFrozenPlasmaUnits={props.resuscitation.freshFrozenPlasmaUnits ?? 0}
@@ -487,6 +504,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
             onBloodProduct={props.onBloodProduct ?? (() => {})}
             onBloodBankRequest={props.onBloodBankRequest ?? (() => {})}
             onCoagulationLabs={props.onCoagulationLabs ?? (() => {})}
+            onThermalResponse={props.onThermalResponse ?? (() => {})}
           />
         )}
         {tray === 'airway' && (
@@ -988,11 +1006,14 @@ function CardiacArrestTray({
 }
 
 function FluidTray({
+  showStandardFluids, thermalResponse,
   crystalloidTotalMl, packedRedBloodCellUnits, freshFrozenPlasmaUnits, bloodProductTotalMl,
   ageYears, hemorrhageAvailable, coagulationAvailable, coagulationPanelReported, bloodProductsReleased,
   prothrombinTimeRatio, fibrinogenGPerL,
-  onFluid, onBloodProduct, onBloodBankRequest, onCoagulationLabs,
+  onFluid, onBloodProduct, onBloodBankRequest, onCoagulationLabs, onThermalResponse,
 }: {
+  showStandardFluids: boolean;
+  thermalResponse: ActionCockpitProps['resuscitation']['thermalResponse'];
   crystalloidTotalMl: number;
   packedRedBloodCellUnits: number;
   freshFrozenPlasmaUnits: number;
@@ -1008,6 +1029,7 @@ function FluidTray({
   onBloodProduct: (productId: string, units: number) => void;
   onBloodBankRequest: () => void;
   onCoagulationLabs: () => void;
+  onThermalResponse: NonNullable<ActionCockpitProps['onThermalResponse']>;
 }) {
   const pediatric = ageYears < 18;
   const [pending, setPending] = useState<{ fluidId: string; volumeMl: number } | null>(null);
@@ -1015,7 +1037,46 @@ function FluidTray({
   const [pendingBloodBank, setPendingBloodBank] = useState(false);
   return (
     <div className="tray-grid">
-      {FLUIDS.map((fluid) => (
+      {thermalResponse && (
+        <section className="syringe" aria-labelledby="thermal-response-title">
+          <div id="thermal-response-title" className="syringe__name">Thermal care</div>
+          <div className="syringe__meta">Core trend · active surface warming · bulk fluids</div>
+          <p className="syringe__remaining" role="status">
+            {thermalResponse.forcedAirWarmingAtTick != null
+              ? 'Active surface warming recorded'
+              : thermalResponse.coreTemperatureConfirmedAtTick != null
+                ? 'Core temperature confirmed · warming response available'
+                : thermalResponse.targetTemperatureC === null
+                  ? 'No active modeled cooling course'
+                  : 'Core-temperature confirmation pending'}
+          </p>
+          <div className="syringe__presets">
+            <Button className="thermal-response__action"
+              disabled={thermalResponse.targetTemperatureC === null
+                || thermalResponse.coreTemperatureConfirmedAtTick != null}
+              onClick={() => onThermalResponse('confirm-core-temperature')}>
+              Confirm core temperature
+            </Button>
+            <Button className="thermal-response__action"
+              disabled={thermalResponse.coreTemperatureConfirmedAtTick == null
+                || thermalResponse.forcedAirWarmingAtTick != null}
+              onClick={() => onThermalResponse('start-forced-air-warming')}>
+              Start active surface warming
+            </Button>
+            <Button className="thermal-response__action"
+              disabled={thermalResponse.coreTemperatureConfirmedAtTick == null
+                || thermalResponse.warmedBulkFluidsAtTick != null}
+              onClick={() => onThermalResponse('record-warmed-bulk-fluids')}>
+              Warm remaining 700 mL crystalloid
+            </Button>
+          </div>
+          <p className="field__hint">
+            This records intent only. Device settings, probe technique, fluid delivery, heat
+            transfer, complications, and individual rewarming time are not modeled.
+          </p>
+        </section>
+      )}
+      {showStandardFluids && FLUIDS.map((fluid) => (
         <section className="syringe" key={fluid.id}>
           <div className="syringe__name">{fluid.name}</div>
           <p className="field__hint">

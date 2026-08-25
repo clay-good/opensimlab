@@ -88,7 +88,7 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
     id: 'inside-the-module',
     heading: 'What is inside the anesthesia module',
     paragraphs: [
-      'This is an early build. It contains thirty-five scenarios — a routine induction on a healthy '
+      'This is an early build. It contains thirty-six scenarios — a routine induction on a healthy '
       + 'adult, rapid desaturation in an obese patient, hypotension after induction, and '
       + 'bronchospasm after intubation with a region-aware inhaled bronchodilator response, plus unexpected intraoperative hemorrhage with crystalloid '
       + 'temporization, bounded adult packed-red-cell support, and a dilution-only coagulation panel with plasma support, rapid-sequence induction with modeled rocuronium onset, and silent TIVA-line '
@@ -120,6 +120,7 @@ export const CONTENT_SECTIONS: readonly ContentSection[] = [
       + 'and extubation readiness that integrates quantitative recovery, awake airway protection, gas exchange, airway risk, and rescue planning '
       + 'and post-extubation soft-tissue obstruction that connects urgent help, a held jaw thrust, continuous positive pressure, oxygen, and visible gas-flow recovery '
       + 'and opioid-induced ventilatory impairment that connects advancing sedation, ventilation trends, active support, an opioid hold, dose-free naloxone intent, and spontaneous reassessment '
+      + 'and hypothermia and rewarming that connects a falling core-temperature trend, active surface warming, bulk-fluid warming intent, and visible recovery '
       + '— with three drugs: population PK/PD for propofol and remifentanil, pediatric Paedfusor PK, '
       + 'a clearly labeled rocuronium teaching model, scripted cefazolin exposure, and dedicated '
       + 'epinephrine, dantrolene, benzodiazepine-class, lipid-emulsion, compression, and defibrillation crisis actions, the real monitor, the real design system, '

@@ -32,7 +32,7 @@ describe('scenario catalog', () => {
     const markup = renderToStaticMarkup(<ScenarioIndex />);
     expect(markup).toContain('Your private practice path');
     expect(markup).toContain('My first simulation lab');
-    expect(markup).toContain('4 scenarios · 43 minutes');
+    expect(markup).toContain('5 scenarios · 52 minutes');
     expect(markup).toContain('Recommended because you chose');
     expect(markup).toContain('does not assess psychomotor technique');
     expect(markup).toContain('Nothing is locked');
