@@ -39,6 +39,7 @@ import { OBSTETRIC_GENERAL_ANESTHESIA } from './obstetric-general-anesthesia';
 import { PREECLAMPSIA_URGENT_DELIVERY } from './preeclampsia-urgent-delivery';
 import { PNEUMOTHORAX_UNDER_POSITIVE_PRESSURE } from './pneumothorax-under-positive-pressure';
 import { ASPIRATION_RISK_RECOGNITION } from './aspiration-risk-recognition';
+import { EMERGENCE_WITH_RESIDUAL_BLOCKADE } from './emergence-with-residual-blockade';
 
 export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_INDUCTION,
@@ -71,6 +72,7 @@ export const SCENARIOS: readonly Scenario[] = [
   PREECLAMPSIA_URGENT_DELIVERY,
   PNEUMOTHORAX_UNDER_POSITIVE_PRESSURE,
   ASPIRATION_RISK_RECOGNITION,
+  EMERGENCE_WITH_RESIDUAL_BLOCKADE,
 ];
 
 /** The scenario a learner meets first. */

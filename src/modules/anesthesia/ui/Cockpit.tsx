@@ -687,6 +687,9 @@ export function Cockpit({
           onAspirationRiskAssessment={(action) => session.act({
             type: 'aspiration-risk-assessment', payload: { action },
           })}
+          onEmergenceResidualBlockAssessment={(action) => session.act({
+            type: 'emergence-residual-block-assessment', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

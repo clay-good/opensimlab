@@ -12,6 +12,7 @@ import { BRONCHOSPASM } from '@anesthesia/scenarios/bronchospasm';
 import { PREECLAMPSIA_URGENT_DELIVERY } from '@anesthesia/scenarios/preeclampsia-urgent-delivery';
 import { PNEUMOTHORAX_UNDER_POSITIVE_PRESSURE } from '@anesthesia/scenarios/pneumothorax-under-positive-pressure';
 import { ASPIRATION_RISK_RECOGNITION } from '@anesthesia/scenarios/aspiration-risk-recognition';
+import { EMERGENCE_WITH_RESIDUAL_BLOCKADE } from '@anesthesia/scenarios/emergence-with-residual-blockade';
 import { UNITED_KINGDOM, UNITED_STATES } from '@anesthesia/region/profiles';
 
 const CRISIS_SCENARIO = {
@@ -163,6 +164,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       hasVenousAirEmbolismResponse: false,
       hasPneumothoraxResponse: false,
       hasAspirationRiskResponse: false,
+      hasEmergenceResidualBlockResponse: false,
       hasBronchospasmResponse: false,
     });
     renderCockpit(UNITED_STATES, vi.fn(), {
@@ -429,6 +431,71 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
     expect(container.textContent).toContain('Record elective deferral and shared replanning?');
     act(() => button('Confirm choice')!.click());
     expect(onAspirationRiskAssessment).toHaveBeenLastCalledWith('defer-and-replan');
+  });
+
+  it('opens the emergence check and protects the airway after quantitative review', () => {
+    const onEmergenceResidualBlockAssessment = vi.fn();
+    const base = {
+      scenario: EMERGENCE_WITH_RESIDUAL_BLOCKADE,
+      trainOfFourCount: 4,
+      trainOfFourRatio: 0.72,
+      onEmergenceResidualBlockAssessment,
+    };
+    renderCockpit(UNITED_STATES, vi.fn(), {
+      ...base,
+      resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+        lastEpinephrineTick: null, crystalloidTotalMl: 0,
+        dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
+        lastDantroleneTick: null, activeCooling: false,
+        emergenceResidualBlockAssessment: {
+          monitorReviewedAtTick: null, classification: null, classifiedAtTick: null,
+          plan: null, planAtTick: null,
+        },
+      },
+    });
+    expect(button('Emergence check')?.getAttribute('aria-selected')).toBe('true');
+    expect(container.querySelector('[role="tab"]')?.textContent).toBe('Emergence check');
+    expect(button('Residual blockade')?.disabled).toBe(true);
+    act(() => button('Review quantitative monitor')!.click());
+    expect(onEmergenceResidualBlockAssessment).toHaveBeenCalledWith('review-quantitative-monitor');
+
+    renderCockpit(UNITED_STATES, vi.fn(), {
+      ...base,
+      resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+        lastEpinephrineTick: null, crystalloidTotalMl: 0,
+        dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
+        lastDantroleneTick: null, activeCooling: false,
+        emergenceResidualBlockAssessment: {
+          monitorReviewedAtTick: 1, classification: null, classifiedAtTick: null,
+          plan: null, planAtTick: null,
+        },
+      },
+    });
+    expect(container.textContent).toContain('TOF 4/4 · ratio 0.72 · no detectable fade');
+    expect(container.textContent).not.toContain('Packed red cells use a bounded adult-only');
+    act(() => button('Residual blockade')!.click());
+    expect(onEmergenceResidualBlockAssessment).toHaveBeenCalledWith('classify-residual');
+
+    renderCockpit(UNITED_STATES, vi.fn(), {
+      ...base,
+      resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+        lastEpinephrineTick: null, crystalloidTotalMl: 0,
+        dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
+        lastDantroleneTick: null, activeCooling: false,
+        emergenceResidualBlockAssessment: {
+          monitorReviewedAtTick: 1, classification: 'residual', classifiedAtTick: 2,
+          plan: null, planAtTick: null,
+        },
+      },
+    });
+    act(() => button('Defer extubation + support')!.click());
+    expect(container.textContent).toContain('Keep the tube and delivered ventilation in place?');
+    act(() => button('Confirm choice')!.click());
+    expect(onEmergenceResidualBlockAssessment)
+      .toHaveBeenLastCalledWith('defer-extubation-and-support');
   });
 
   it('offers only bounded presets, no hostile free-dose or route field, inside the phone scroll area', () => {

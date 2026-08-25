@@ -125,7 +125,7 @@ holds.
 
 The `/anesthesia` catalog keeps discovery local and linkable: search covers the patient, problem,
 procedure, and objectives, while difficulty, duration, and maturity filters are encoded in the URL.
-The unfiltered prerender still contains all 28 current scenarios, so filtering adds no telemetry and
+The unfiltered prerender still contains all 31 current scenarios, so filtering adds no telemetry and
 does not trade away no-script access or scenario-page indexing.
 `/catalog/anesthesia-catalog.json` publishes the same 28 exact-version entries, filters, objectives,
 and normalized search text for static integrations; its schema and data are included in the offline
@@ -320,6 +320,11 @@ in week 3 of semaglutide dose escalation with current nausea and bloating despit
 interval. The learner reviews the combined cues, classifies delayed-emptying risk, and chooses a
 confirmed disposition. It does not estimate gastric contents, simulate aspiration, teach ultrasound
 or airway technique, set a universal medication rule, or replace shared planning and local policy.
+Slice 34 adds the thirty-first authored scenario, emergence with residual neuromuscular blockade.
+Four visible twitches and no detectable fade conflict with a static quantitative ratio of 0.72.
+The learner reviews the quantitative signal, identifies residual blockade below 0.9, and preserves
+the tracheal tube and delivered ventilation. It does not model reversal selection, recovery time,
+consciousness, airway removal, postoperative weakness, or complete extubation readiness.
 
 ## Running it
 

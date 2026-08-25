@@ -99,6 +99,7 @@ Reviewers run the routine induction themselves before answering.
 | B45 | In the preeclampsia lesson, the initial pressure is recognizably severe-range, the bounded labetalol branch produces a plausible downward trajectory without hypotension, magnesium does not masquerade as an antihypertensive, and the repeat-pressure workflow is clear | | |
 | B46 | In the positive-pressure pneumothorax lesson, the combined respiratory and circulatory change is recognizable, bilateral assessment and escalation are easy to find, decompression is clearly an intent control rather than procedural instruction, and recovery is plausible | | |
 | B47 | In the aspiration-risk lesson, medication escalation, active symptoms, fasting, and elective urgency are easy to integrate; the defer-and-replan path is patient-specific; and the interface does not imply gastric-volume knowledge, universal medication cessation, or aspiration prevention | | |
+| B48 | In the emergence lesson, four twitches and no detectable fade coexist with a quantitative ratio of 0.72; the protective path preserves the tube and delivered ventilation without implying recovery timing, airway removal, or complete extubation readiness | | |
 | B45 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
@@ -118,6 +119,9 @@ So that reviewers spend their attention on what this review is for:
   engine distinguishes onset from recovery, but it does not model commercial-monitor behavior,
   stimulation technique, artifact, pharmacokinetics, individual recovery, emergence, extubation,
   recurrent block, postoperative weakness, or postoperative outcomes.
+- The emergence residual-blockade lesson is a static decision snapshot at ratio 0.72. It does not
+  model clinical-sign measurement, drug or reversal pharmacology, spontaneous recovery,
+  consciousness, airway reflexes, airway removal, complete extubation readiness, or outcomes.
 - Pediatric inhalational induction models the machine and an end-tidal wash-in signal, not the
   child's cooperation, distress, mask seal, excitement, airway reflexes, respiratory depression,
   consciousness, IV access, airway placement, emergence, recovery, or individual anesthetic need.

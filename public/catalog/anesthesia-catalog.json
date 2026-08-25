@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 30,
+  "scenarioCount": 31,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -661,6 +661,28 @@
         "Use the patient-specific risk pattern rather than a blanket GLP-1 medication rule."
       ],
       "searchText": "aspiration-risk-recognition aspiration-risk recognition symptomatic cholelithiasis elective laparoscopic cholecystectomy review medication phase, gastrointestinal symptoms, fasting, and procedure urgency together. the focused aspiration-risk cue review was accepted before classification. recognize elevated delayed-gastric-emptying risk despite an ordinary fasting interval. the case was classified as elevated risk after the cue review. defer this elective case for symptom resolution and shared replanning. the defer-and-replan pathway was selected after elevated-risk classification. use the patient-specific risk pattern rather than a blanket glp-1 medication rule. the accepted reasoning named escalation and symptoms without claiming every glp-1 user should stop treatment or cancel surgery."
+    },
+    {
+      "id": "emergence-with-residual-blockade",
+      "path": "/anesthesia/scenario/emergence-with-residual-blockade",
+      "title": "Emergence with residual blockade",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 5,
+      "difficulty": "intermediate",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Read the quantitative train-of-four ratio instead of relying on clinical signs or twitch count alone.",
+        "Identify residual neuromuscular blockade when four twitches show no detectable fade but the ratio remains below 0.9.",
+        "Keep the tracheal tube and delivered ventilation in place while recovery is addressed and reassessed.",
+        "Treat quantitative neuromuscular recovery as necessary but not sufficient for a complete extubation decision."
+      ],
+      "searchText": "emergence-with-residual-blockade emergence with residual blockade inguinal hernia laparoscopic inguinal hernia repair read the quantitative train-of-four ratio instead of relying on clinical signs or twitch count alone. the focused quantitative monitor review was accepted before classification. identify residual neuromuscular blockade when four twitches show no detectable fade but the ratio remains below 0.9. residual blockade was classified after the quantitative review. keep the tracheal tube and delivered ventilation in place while recovery is addressed and reassessed. the defer-extubation-and-support plan was accepted after residual blockade was classified. treat quantitative neuromuscular recovery as necessary but not sufficient for a complete extubation decision. the accepted path deferred extubation without claiming that a ratio threshold alone proves readiness."
     }
   ],
   "preparationPathCount": 10,
@@ -900,6 +922,7 @@
         "routine-inhalational-maintenance",
         "rapid-sequence-induction",
         "quantitative-neuromuscular-reversal",
+        "emergence-with-residual-blockade",
         "awareness-under-paralysis",
         "local-anesthetic-systemic-toxicity"
       ],
@@ -917,7 +940,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 71
+      "estimatedMinutes": 76
     },
     {
       "id": "handoff-escalation",

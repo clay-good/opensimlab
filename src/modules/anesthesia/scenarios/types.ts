@@ -80,6 +80,8 @@ export interface ScenarioPatient {
 export interface ScenarioEquipment {
   readonly monitoring: readonly string[];
   readonly airwayDevice?: 'facemask' | 'tracheal-tube';
+  /** Optional four-twitch quantitative ratio for a static residual-blockade vignette. */
+  readonly startingTrainOfFourRatio?: number;
   readonly ventilator: {
     readonly mode: 'volume-control' | 'pressure-control' | 'manual';
     readonly fio2: number;

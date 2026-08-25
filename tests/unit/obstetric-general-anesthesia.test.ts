@@ -66,7 +66,7 @@ describe('Requirement: bounded obstetric general anesthesia', () => {
   it('validates, registers the 27th scenario, and maps every objective', () => {
     expect(validateScenario(SCENARIO)).toEqual([]);
     expect(SCENARIOS).toContain(SCENARIO);
-    expect(SCENARIOS).toHaveLength(30);
+    expect(SCENARIOS).toHaveLength(31);
     expect(SCENARIO.patient.respiratory.profile).toBe('term-pregnancy');
     const mappings = SCENARIO_MAPPINGS.filter((entry) => entry.scenarioId === SCENARIO.metadata.id);
     expect(new Set(mappings.map((entry) => entry.frameworkId))).toEqual(new Set([

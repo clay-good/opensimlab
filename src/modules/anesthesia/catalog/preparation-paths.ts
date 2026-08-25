@@ -104,7 +104,7 @@ export const PREPARATION_PATHS: readonly PreparationPathDefinition[] = [
       'aspiration-risk-recognition',
       'routine-induction', 'routine-geriatric-induction',
       'routine-inhalational-maintenance', 'rapid-sequence-induction',
-      'quantitative-neuromuscular-reversal',
+      'quantitative-neuromuscular-reversal', 'emergence-with-residual-blockade',
       'awareness-under-paralysis', 'local-anesthetic-systemic-toxicity',
     ],
     prerequisites: ['Read syringe and infusion controls.'],

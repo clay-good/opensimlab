@@ -129,6 +129,13 @@ export interface ActionCockpitProps {
       readonly plan: 'defer-and-replan' | 'proceed-routine' | null;
       readonly planAtTick: number | null;
     };
+    readonly emergenceResidualBlockAssessment?: {
+      readonly monitorReviewedAtTick: number | null;
+      readonly classification: 'residual' | 'recovered' | null;
+      readonly classifiedAtTick: number | null;
+      readonly plan: 'defer-extubation-and-support' | 'proceed-to-extubation' | null;
+      readonly planAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -197,6 +204,10 @@ export interface ActionCockpitProps {
     action: 'review-cues' | 'classify-elevated' | 'classify-routine'
       | 'defer-and-replan' | 'proceed-routine',
   ) => void;
+  readonly onEmergenceResidualBlockAssessment?: (
+    action: 'review-quantitative-monitor' | 'classify-residual' | 'classify-recovered'
+      | 'defer-extubation-and-support' | 'proceed-to-extubation',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -254,6 +265,9 @@ export function crisisResponseAvailability(
     hasAspirationRiskResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
     ),
+    hasEmergenceResidualBlockResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'emergence-residual-blockade',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -298,13 +312,14 @@ export function ActionCockpit(props: ActionCockpitProps) {
     && props.scenario.timeline.some((event) => event.type === 'tension-pneumothorax'
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
+        'emergence-residual-blockade',
       ].includes(event.target ?? '')))
     ? 'crisis' : 'syringes');
   const {
     hasAnaphylaxisResponse, hasHypermetabolicResponse, hasLastResponse,
     hasCardiacArrestResponse, hasHighSpinalResponse, hasVenousAirEmbolismResponse,
     hasBronchospasmResponse, hasPreeclampsiaResponse, hasPneumothoraxResponse,
-    hasAspirationRiskResponse,
+    hasAspirationRiskResponse, hasEmergenceResidualBlockResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -314,8 +329,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasCardiacArrestResponse || hasHighSpinalResponse || hasVenousAirEmbolismResponse
     || hasPneumothoraxResponse || hasBronchospasmResponse;
   const hasCrisisResponse = hasNonMaternalCrisisResponse || hasPreeclampsiaResponse
-    || hasAspirationRiskResponse;
-  const responseTray = hasAspirationRiskResponse && !hasNonMaternalCrisisResponse
+    || hasAspirationRiskResponse || hasEmergenceResidualBlockResponse;
+  const responseTray = hasEmergenceResidualBlockResponse && !hasNonMaternalCrisisResponse
+    && !hasPreeclampsiaResponse && !hasAspirationRiskResponse
+    ? { id: 'crisis', label: 'Emergence check' } as const
+    : hasAspirationRiskResponse && !hasNonMaternalCrisisResponse
     && !hasPreeclampsiaResponse
     ? { id: 'crisis', label: 'Aspiration check' } as const
     : hasPreeclampsiaResponse && !hasNonMaternalCrisisResponse
@@ -555,6 +573,14 @@ export function ActionCockpit(props: ActionCockpitProps) {
                 onAction={props.onAspirationRiskAssessment ?? (() => {})}
               />
             )}
+            {hasEmergenceResidualBlockResponse && (
+              <EmergenceResidualBlockTray
+                assessment={props.resuscitation.emergenceResidualBlockAssessment}
+                trainOfFourCount={props.trainOfFourCount ?? 4}
+                trainOfFourRatio={props.trainOfFourRatio ?? 1}
+                onAction={props.onEmergenceResidualBlockAssessment ?? (() => {})}
+              />
+            )}
             {hasBronchospasmResponse && (
               <BronchospasmTray
                 region={props.region}
@@ -574,7 +600,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
             laptop with the demonstration strip up, and the dose buttons went
             below the fold. Here it costs nothing and is still found by anyone
             who scrolls to the end looking for the thing that is missing. */}
-        {(tray === 'fluids' || (tray === 'crisis' && !hasAspirationRiskResponse)) && (
+        {(tray === 'fluids' || (tray === 'crisis'
+          && !hasAspirationRiskResponse && !hasEmergenceResidualBlockResponse)) && (
           <p className="actions__not-modelled field__hint">
             {NOT_IN_THIS_BUILD}{' '}
             <a href="/limitations">The limitations register says what else.</a>
@@ -1391,6 +1418,102 @@ function AspirationRiskTray({
         <p className="field__hint">
           The patient-specific choice is not a universal GLP-1 medication rule. Shared decision-making,
           future preparation, gastric assessment, and anesthetic technique remain outside this screen.
+        </p>
+      </section>
+    </div>
+  );
+}
+
+function EmergenceResidualBlockTray({
+  assessment, trainOfFourCount, trainOfFourRatio, onAction,
+}: {
+  assessment?: {
+    readonly monitorReviewedAtTick: number | null;
+    readonly classification: 'residual' | 'recovered' | null;
+    readonly classifiedAtTick: number | null;
+    readonly plan: 'defer-extubation-and-support' | 'proceed-to-extubation' | null;
+    readonly planAtTick: number | null;
+  };
+  trainOfFourCount: number;
+  trainOfFourRatio: number;
+  onAction: (
+    action: 'review-quantitative-monitor' | 'classify-residual' | 'classify-recovered'
+      | 'defer-extubation-and-support' | 'proceed-to-extubation',
+  ) => void;
+}) {
+  const [pendingPlan, setPendingPlan] = useState<
+    'defer-extubation-and-support' | 'proceed-to-extubation' | null
+  >(null);
+  const reviewed = assessment?.monitorReviewedAtTick !== null
+    && assessment?.monitorReviewedAtTick !== undefined;
+  const classification = assessment?.classification ?? null;
+  const plan = assessment?.plan ?? null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="emergence-monitor-title">
+        <div id="emergence-monitor-title" className="syringe__name">Trust the quantitative signal</div>
+        <Badge kind="teaching">Focused vignette</Badge>
+        <div className="syringe__meta">Four twitches · clinical signs present · tube secured</div>
+        <p className="syringe__remaining" role="status">
+          {reviewed
+            ? `TOF ${trainOfFourCount.toFixed(0)}/4 · ratio ${trainOfFourRatio.toFixed(2)} · no detectable fade`
+            : 'Quantitative monitor review pending'}
+        </p>
+        <Button className="crisis-drug__action" disabled={reviewed}
+          onClick={() => onAction('review-quantitative-monitor')}>Review quantitative monitor</Button>
+        <p className="field__hint">
+          A head lift, adequate tidal volume, four visible twitches, or no detectable fade cannot
+          establish a quantitative ratio of at least 0.90.
+        </p>
+      </section>
+      <section className="syringe" aria-labelledby="emergence-decision-title">
+        <div id="emergence-decision-title" className="syringe__name">Classify, then protect</div>
+        <div className="syringe__meta">One classification · one airway plan</div>
+        <p className="syringe__remaining" role="status">
+          {plan === 'defer-extubation-and-support' ? 'Extubation deferred · tube + ventilation maintained'
+            : plan === 'proceed-to-extubation' ? 'Progression toward extubation recorded'
+              : classification === 'residual' ? 'Residual blockade classified · plan pending'
+                : classification === 'recovered' ? 'Recovery classified · plan pending'
+                  : 'Classification pending'}
+        </p>
+        {classification === null && (
+          <div className="syringe__presets">
+            <Button className="crisis-drug__action" disabled={!reviewed}
+              onClick={() => onAction('classify-residual')}>Residual blockade</Button>
+            <Button className="crisis-drug__action" disabled={!reviewed}
+              onClick={() => onAction('classify-recovered')}>Adequate recovery</Button>
+          </div>
+        )}
+        {classification !== null && plan === null && pendingPlan === null && (
+          <div className="syringe__presets">
+            <Button className="crisis-drug__action"
+              onClick={() => setPendingPlan('defer-extubation-and-support')}>
+              Defer extubation + support
+            </Button>
+            <Button className="crisis-drug__action"
+              onClick={() => setPendingPlan('proceed-to-extubation')}>
+              Proceed toward extubation
+            </Button>
+          </div>
+        )}
+        {pendingPlan !== null && (
+          <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
+            <span>{pendingPlan === 'defer-extubation-and-support'
+              ? 'Keep the tube and delivered ventilation in place?'
+              : 'Record progression toward extubation?'}</span>
+            <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+              <Button variant="primary" className="crisis-drug__action" onClick={() => {
+                onAction(pendingPlan);
+                setPendingPlan(null);
+              }}>Confirm choice</Button>
+              <Button variant="ghost" className="crisis-drug__action"
+                onClick={() => setPendingPlan(null)}>Cancel</Button>
+            </div>
+          </div>
+        )}
+        <p className="field__hint">
+          Reversal choice, recovery timing, consciousness, airway removal, and full extubation
+          readiness remain outside this decision snapshot.
         </p>
       </section>
     </div>

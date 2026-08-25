@@ -56,6 +56,16 @@ export function neuromuscularState(rocuroniumCeMgPerL: number): NeuromuscularSta
   };
 }
 
+/** Invert the four-twitch branch so a scenario can declare a measured starting ratio. */
+export function rocuroniumEffectSiteForTrainOfFourRatio(ratio: number) {
+  const boundedRatio = clamp(ratio, 0.4, 1);
+  const firstTwitchFraction = 0.25 + 0.75 * boundedRatio ** (2 / 3);
+  const blockadeFraction = 1 - firstTwitchFraction;
+  const { ce50MgPerL, gamma } = ROCURONIUM_TEACHING_PD;
+  return blockadeFraction <= 0 ? 0
+    : ce50MgPerL * (blockadeFraction / (1 - blockadeFraction)) ** (1 / gamma);
+}
+
 /** What touch or sight would report; deliberately less sensitive than the numeric ratio. */
 export function qualitativeTwitchAssessment(trainOfFourCount: number, trainOfFourRatio: number) {
   if (trainOfFourCount < 4) return `${trainOfFourCount.toFixed(0)} visible twitches`;

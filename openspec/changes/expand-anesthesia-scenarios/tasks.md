@@ -504,3 +504,17 @@
 - [ ] Add gastric-emptying or content estimates, ultrasound, regurgitation, aspiration, pneumonitis,
   medication cessation, liquid-diet preparation, glycemic effects, emergency surgery, anesthetic or
   airway technique, local policy, cancellation logistics, team communication, or individual outcome.
+
+## Slice 34: bounded emergence with residual blockade
+
+- [x] Check in an evidence brief covering current ASA and ESAIC quantitative-monitoring guidance,
+  the static 0.72 fixture, and unsafe inference boundaries.
+- [x] Add a thirty-first authored scenario where four twitches and no detectable fade conflict with
+  a quantitative ratio below 0.9 while the tracheal tube and delivered ventilation remain in place.
+- [x] Add ordered monitor-review, residual-or-recovered classification, and confirmed
+  defer-or-proceed choices backed by engine-owned accepted state and deterministic replay.
+- [x] Score only accepted decisions and reject unsupported, out-of-order, and duplicate requests.
+- [x] Complete catalog assets, route SEO, responsive browser inspection, and full CI.
+- [ ] Add commercial-monitor behavior, stimulation technique, clinical-sign measurement, drug or
+  reversal pharmacology, spontaneous recovery, consciousness, airway reflexes, airway removal,
+  postoperative weakness, complete extubation readiness, or individual outcome.

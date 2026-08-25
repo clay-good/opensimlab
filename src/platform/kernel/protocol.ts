@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 26 reports aspiration-risk decisions. */
-export const WORKER_PROTOCOL_VERSION = 26;
+/** Bumped whenever the message shape changes incompatibly. Version 27 reports emergence decisions. */
+export const WORKER_PROTOCOL_VERSION = 27;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -288,6 +288,14 @@ export interface EquipmentSnapshot {
       readonly classification: 'elevated' | 'routine' | null;
       readonly classifiedAtTick: number | null;
       readonly plan: 'defer-and-replan' | 'proceed-routine' | null;
+      readonly planAtTick: number | null;
+    };
+    /** Bounded emergence decision when quantitative monitoring shows residual blockade. */
+    readonly emergenceResidualBlockAssessment?: {
+      readonly monitorReviewedAtTick: number | null;
+      readonly classification: 'residual' | 'recovered' | null;
+      readonly classifiedAtTick: number | null;
+      readonly plan: 'defer-extubation-and-support' | 'proceed-to-extubation' | null;
       readonly planAtTick: number | null;
     };
     /** Accepted quantitative neuromuscular-reversal teaching state. */

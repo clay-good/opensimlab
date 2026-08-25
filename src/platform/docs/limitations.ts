@@ -652,7 +652,7 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'correctly, or treating this browser as practice in nerve-stimulator placement and use.',
     correctUnderstanding: 'Quantitative monitoring requires correct site, setup, calibration, '
       + 'signal assessment, and interpretation in the full clinical context.',
-    briefIn: ['quantitative-neuromuscular-reversal'],
+    briefIn: ['quantitative-neuromuscular-reversal', 'emergence-with-residual-blockade'],
   },
   {
     id: 'peripheral-tof-does-not-prove-laryngeal-conditions',
@@ -663,6 +663,32 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Neuromuscular block develops and recovers differently across muscle '
       + 'groups. Peripheral monitoring informs timing but does not inspect the larynx.',
     briefIn: ['rapid-sequence-induction', 'obstetric-general-anesthesia'],
+  },
+  {
+    id: 'emergence-residual-blockade-is-a-static-decision-vignette',
+    headline: 'The emergence ratio is a static authored snapshot, not a drug course or individual recovery prediction.',
+    simplification: 'The scenario starts and remains at a quantitative train-of-four ratio of '
+      + '0.72 so the learner can resolve a single conflict between clinical signs, qualitative '
+      + 'assessment, and quantitative monitoring. No administered blocker or elapsed recovery '
+      + 'course produces that value inside the vignette.',
+    whereItMisleads: 'Predicting how long residual blockade will last or inferring a drug dose, '
+      + 'concentration, or reversal response from the static display.',
+    correctUnderstanding: 'Recovery varies by drug, dose, timing, patient, and treatment. Use '
+      + 'correctly configured quantitative monitoring and repeated assessment rather than this fixture.',
+    briefIn: ['emergence-with-residual-blockade'],
+  },
+  {
+    id: 'no-extubation-or-recovery-physiology',
+    headline: 'This decision snapshot preserves a secured airway; it does not simulate recovery, consciousness, or extubation.',
+    simplification: 'The accepted protective plan records that the tracheal tube and delivered '
+      + 'ventilation remain in place. There is no spontaneous neuromuscular recovery, reversal '
+      + 'choice, awakening, airway-reflex assessment, tube removal, or postoperative course.',
+    whereItMisleads: 'Treating the accepted choice as a complete emergence plan or using a ratio '
+      + 'alone as proof of extubation readiness.',
+    correctUnderstanding: 'Quantitative neuromuscular recovery is necessary after nondepolarizing '
+      + 'blockade, but extubation also requires a broader patient, airway, ventilation, oxygenation, '
+      + 'and anesthetic assessment that this vignette does not perform.',
+    briefIn: ['emergence-with-residual-blockade'],
   },
   {
     id: 'neuromuscular-reversal-is-bounded-without-emergence',

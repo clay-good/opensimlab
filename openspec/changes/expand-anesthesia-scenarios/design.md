@@ -570,3 +570,21 @@ contents, regurgitation, aspiration, ultrasound, liquid-diet preparation, medica
 glycemic consequences, emergency care, airway technique, local policy, or the quality of shared
 decision-making. Its source brief records that the multi-society document is guidance built on
 limited evidence and may change as the evidence base evolves.
+
+## Slice 34: bounded emergence with residual blockade
+
+The thirty-first authored scenario is a short emergence decision snapshot. A secured tracheal tube
+and delivered ventilation remain in place while four visible twitches, no detectable qualitative
+fade, and a quantitative train-of-four ratio of 0.72 create the disagreement the learner must
+resolve. The ratio is a declared static fixture mapped through the existing neuromuscular teaching
+signal, not a hidden dose or individual recovery prediction.
+
+The engine accepts an ordered quantitative review, residual-or-recovered classification, and
+confirmed defer-or-proceed plan only in the declared lesson. The expert path classifies residual
+blockade below 0.9 and records continued airway and ventilatory support. Raw requests, skipped
+review, unsupported values, and duplicate decisions cannot earn debrief credit.
+
+This is not the separate quantitative reversal-selection lab or the future full extubation-readiness
+scenario. It does not simulate drug dosing, spontaneous recovery, consciousness, airway reflexes,
+airway removal, postoperative weakness, or outcome. Reaching 0.9 would satisfy the neuromuscular
+checkpoint only; it would not prove complete extubation readiness.

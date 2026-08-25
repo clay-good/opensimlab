@@ -67,7 +67,7 @@ describe('Requirement: difficult-airway supraglottic rescue is a complete bounde
   it('validates, is registered, and does not announce the hidden failure course', () => {
     expect(validateScenario(SCENARIO)).toEqual([]);
     expect(SCENARIOS).toContain(SCENARIO);
-    expect(SCENARIOS).toHaveLength(30);
+    expect(SCENARIOS).toHaveLength(31);
     expect(SCENARIO.metadata.estimatedMinutes).toBeLessThan(20);
     expect(SCENARIO.timeline).toContainEqual(expect.objectContaining({
       type: 'difficult-airway', target: 'failed-intubation-with-marginal-mask', value: 0.35,

@@ -435,6 +435,10 @@ export function objectiveFindings(
     'classify-elevated-aspiration-risk': 'aspiration-risk-is-more-than-fasting-time',
     'choose-shared-elective-plan': 'aspiration-risk-is-more-than-fasting-time',
     'avoid-blanket-glp1-rule': 'aspiration-risk-is-more-than-fasting-time',
+    'review-emergence-quantitative-monitor': 'train-of-four-and-residual-blockade',
+    'recognize-emergence-residual-blockade': 'train-of-four-and-residual-blockade',
+    'defer-extubation-during-residual-blockade': 'train-of-four-and-residual-blockade',
+    'separate-recovery-from-extubation-readiness': 'train-of-four-and-residual-blockade',
     'recognize-hemorrhage': 'vasodilation-versus-hypovolemia',
     'temporize-volume-loss': 'vasodilation-versus-hypovolemia',
     'avoid-full-dose-induction': 'hysteresis-and-effect-site-lag',
@@ -1355,6 +1359,66 @@ export function objectiveFindings(
           ? 'The accepted path tied deferral to this patient’s escalation phase and active symptoms without creating a blanket medication-stop or cancellation rule.'
           : 'The completed path did not demonstrate the patient-specific reasoning needed to avoid a blanket GLP-1 rule.',
         atTick: defer?.tick ?? elevated?.tick ?? review?.tick ?? history.at(-1)?.tick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
+      'review-emergence-quantitative-monitor', 'recognize-emergence-residual-blockade',
+      'defer-extubation-during-residual-blockade', 'separate-recovery-from-extubation-readiness',
+    ].includes(objective.id)) {
+      const review = log.find((entry) => entry.eventId.startsWith('emergence-monitor-reviewed-'));
+      const residual = log.find(
+        (entry) => entry.eventId.startsWith('emergence-block-classified-residual-'),
+      );
+      const recovered = log.find(
+        (entry) => entry.eventId.startsWith('emergence-block-classified-recovered-'),
+      );
+      const defer = log.find(
+        (entry) => entry.eventId.startsWith('emergence-plan-defer-extubation-and-support-'),
+      );
+      const proceed = log.find(
+        (entry) => entry.eventId.startsWith('emergence-plan-proceed-to-extubation-'),
+      );
+      if (objective.id === 'review-emergence-quantitative-monitor') return {
+        ...base,
+        outcome: review ? 'met' : 'not-met',
+        finding: review
+          ? `You reviewed four twitches, no detectable fade, and the quantitative ratio of ${Number(review.data?.trainOfFourRatio ?? 0).toFixed(2)} together.`
+          : 'No accepted quantitative neuromuscular monitor review was recorded.',
+        atTick: review?.tick ?? history.at(-1)?.tick,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'recognize-emergence-residual-blockade') return {
+        ...base,
+        outcome: residual ? 'met' : 'not-met',
+        finding: residual
+          ? 'You classified residual blockade from the quantitative ratio below 0.90 despite reassuring clinical and qualitative signs.'
+          : recovered
+            ? 'You classified adequate recovery despite the quantitative ratio remaining below 0.90.'
+            : 'No accepted neuromuscular recovery classification was recorded.',
+        atTick: residual?.tick ?? recovered?.tick ?? history.at(-1)?.tick,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'defer-extubation-during-residual-blockade') return {
+        ...base,
+        outcome: residual && defer ? 'met' : defer ? 'partly-met' : 'not-met',
+        finding: residual && defer
+          ? 'You deferred extubation and kept the secured airway and delivered ventilation in place after identifying residual blockade.'
+          : proceed
+            ? 'You chose progression toward extubation despite quantitative residual blockade.'
+            : defer
+              ? 'You preserved the airway and ventilation, but the accepted classification did not identify residual blockade.'
+              : 'No accepted emergence airway plan was recorded.',
+        atTick: defer?.tick ?? proceed?.tick ?? history.at(-1)?.tick,
+      } satisfies ObjectiveFinding;
+      const bounded = Boolean(review && residual && defer
+        && defer.data?.airwayRemainedIntubated === true
+        && defer.data?.ventilationRemainedDelivered === true);
+      return {
+        ...base,
+        outcome: bounded ? 'met' : 'not-met',
+        finding: bounded
+          ? 'The accepted path treated quantitative recovery as a necessary checkpoint while preserving the separate, broader extubation-readiness decision.'
+          : 'The completed path did not preserve the distinction between quantitative recovery and full extubation readiness.',
+        atTick: defer?.tick ?? residual?.tick ?? review?.tick ?? history.at(-1)?.tick,
       } satisfies ObjectiveFinding;
     }
 

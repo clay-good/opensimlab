@@ -31,6 +31,7 @@ import type { Covariates } from './pharmacology/body-composition';
 import {
   RESPIRATORY_PROFILES, VirtualPatient, baselineSvr, healthyChildRespiratoryProfile,
   JAW_THRUST_CPAP_SECONDS, neuromuscularState, stepLaryngospasm,
+  qualitativeTwitchAssessment, rocuroniumEffectSiteForTrainOfFourRatio,
   type LaryngoscopyResult, type PatientProfile, type PatientState, type VentilatorSettings,
 } from './physiology';
 import { WaveformEngine, restingDrive, type ArtifactId, type RhythmId, type WaveformFrame } from './waveforms';
@@ -38,7 +39,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.28';
+export const ENGINE_VERSION = '0.1.0-alpha.29';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -295,6 +296,13 @@ export class AnesthesiaEngine {
   private aspirationRiskClassifiedAtTick: number | null = null;
   private aspirationRiskPlan: 'defer-and-replan' | 'proceed-routine' | null = null;
   private aspirationRiskPlanAtTick: number | null = null;
+  private emergenceMonitorReviewedAtTick: number | null = null;
+  private emergenceBlockClassification: 'residual' | 'recovered' | null = null;
+  private emergenceBlockClassifiedAtTick: number | null = null;
+  private emergencePlan: 'defer-extubation-and-support' | 'proceed-to-extubation' | null = null;
+  private emergencePlanAtTick: number | null = null;
+  /** Static starting snapshot for the bounded emergence decision vignette. */
+  private readonly configuredResidualRocuroniumCe: number;
   /** Bounded teaching opposition to the current rocuronium effect-site concentration. */
   private neuromuscularReversalFraction = 0;
   private postTetanicCount = 0;
@@ -328,6 +336,11 @@ export class AnesthesiaEngine {
     this.practiceRegion = options.practiceRegion;
     this.seed = options.seed;
     this.rng = createRng(options.seed, 'session');
+    this.configuredResidualRocuroniumCe = options.scenario.equipment.startingTrainOfFourRatio === undefined
+      ? 0
+      : rocuroniumEffectSiteForTrainOfFourRatio(
+        options.scenario.equipment.startingTrainOfFourRatio,
+      );
 
     const p = options.scenario.patient;
     this.covariates = {
@@ -816,6 +829,87 @@ export class AnesthesiaEngine {
             ? 'Elective deferral and shared replanning recorded. This vignette does not set a universal medication-hold interval or choose a later anesthetic technique.'
             : 'Routine same-day progression recorded despite the declared escalation-phase and active gastrointestinal symptoms.', {
             plan: this.aspirationRiskPlan, classification: this.aspirationRiskClassification,
+          });
+        break;
+      }
+      case 'emergence-residual-block-assessment': {
+        const supported = this.scenario.timeline.some(
+          (event) => event.type === 'narrative'
+            && event.target === 'emergence-residual-blockade',
+        );
+        const response = String(action.payload.action ?? '');
+        const valid = [
+          'review-quantitative-monitor', 'classify-residual', 'classify-recovered',
+          'defer-extubation-and-support', 'proceed-to-extubation',
+        ].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `emergence-block-refused-${this.currentTick}`,
+            supported
+              ? 'The emergence action was not one of the listed choices. No decision was recorded.'
+              : 'The bounded emergence choices are available only in the declared residual-blockade lesson.');
+          break;
+        }
+        const ratio = Number(this.lastState.trainOfFourRatio
+          ?? this.scenario.equipment.startingTrainOfFourRatio ?? 1);
+        const count = Number(this.lastState.trainOfFourCount ?? 4);
+        if (response === 'review-quantitative-monitor') {
+          if (this.emergenceMonitorReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `emergence-monitor-review-refused-${this.currentTick}`,
+              'The quantitative neuromuscular monitor has already been reviewed.');
+            break;
+          }
+          this.emergenceMonitorReviewedAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `emergence-monitor-reviewed-${this.currentTick}`,
+            `Quantitative review: four twitches, ratio ${ratio.toFixed(2)}, and ${qualitativeTwitchAssessment(count, ratio)}. Clinical signs and an apparently normal qualitative count do not exclude residual blockade.`, {
+              trainOfFourCount: count, trainOfFourRatio: ratio,
+              qualitativeFadeDetected: false,
+            });
+          break;
+        }
+        if (this.emergenceMonitorReviewedAtTick === null) {
+          this.log('warning', 'assessment', `emergence-block-order-refused-${this.currentTick}`,
+            'Review the quantitative neuromuscular monitor before classifying recovery or choosing a plan.');
+          break;
+        }
+        if (response.startsWith('classify-')) {
+          if (this.emergenceBlockClassification !== null) {
+            this.log('warning', 'assessment', `emergence-block-classification-refused-${this.currentTick}`,
+              'A neuromuscular recovery classification has already been recorded for this attempt.');
+            break;
+          }
+          this.emergenceBlockClassification = response === 'classify-residual'
+            ? 'residual' : 'recovered';
+          this.emergenceBlockClassifiedAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `emergence-block-classified-${this.emergenceBlockClassification}-${this.currentTick}`,
+            this.emergenceBlockClassification === 'residual'
+              ? `Residual blockade recorded because the quantitative ratio is ${ratio.toFixed(2)}, below 0.90.`
+              : `Recovery recorded despite a quantitative ratio of ${ratio.toFixed(2)}, below 0.90.`, {
+              classification: this.emergenceBlockClassification,
+              trainOfFourRatio: ratio,
+            });
+          break;
+        }
+        if (this.emergenceBlockClassification === null) {
+          this.log('warning', 'assessment', `emergence-plan-order-refused-${this.currentTick}`,
+            'Classify the quantitative neuromuscular result before choosing an emergence plan.');
+          break;
+        }
+        if (this.emergencePlan !== null) {
+          this.log('warning', 'assessment', `emergence-plan-refused-${this.currentTick}`,
+            'An emergence plan has already been recorded for this attempt.');
+          break;
+        }
+        this.emergencePlan = response === 'defer-extubation-and-support'
+          ? 'defer-extubation-and-support' : 'proceed-to-extubation';
+        this.emergencePlanAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `emergence-plan-${this.emergencePlan}-${this.currentTick}`,
+          this.emergencePlan === 'defer-extubation-and-support'
+            ? 'Extubation deferred; the tracheal tube and delivered ventilation remain in place while quantitative recovery is addressed and reassessed.'
+            : 'Progression toward extubation recorded despite quantitative residual blockade.', {
+            plan: this.emergencePlan,
+            classification: this.emergenceBlockClassification,
+            airwayRemainedIntubated: this.patient.airway.intubated,
+            ventilationRemainedDelivered: this.ventilator.delivering,
           });
         break;
       }
@@ -2021,7 +2115,10 @@ export class AnesthesiaEngine {
     // Remifentanil is dosed in micrograms into litres, so the plasma value is
     // µg/L, which is the same number as ng/mL.
     const remifentanilCe = remifentanil?.solver.hasEffectSiteCurve ? remifentanil.solver.effectSite : 0;
-    const rawRocuroniumCe = rocuronium?.solver.hasEffectSiteCurve ? rocuronium.solver.effectSite : 0;
+    const rawRocuroniumCe = Math.max(
+      rocuronium?.solver.hasEffectSiteCurve ? rocuronium.solver.effectSite : 0,
+      this.configuredResidualRocuroniumCe,
+    );
     const rocuroniumCe = rawRocuroniumCe * (1 - this.neuromuscularReversalFraction);
     this.postTetanicCount = neuromuscularState(rocuroniumCe).postTetanicCount;
 
@@ -2515,6 +2612,13 @@ export class AnesthesiaEngine {
           classifiedAtTick: this.aspirationRiskClassifiedAtTick,
           plan: this.aspirationRiskPlan,
           planAtTick: this.aspirationRiskPlanAtTick,
+        },
+        emergenceResidualBlockAssessment: {
+          monitorReviewedAtTick: this.emergenceMonitorReviewedAtTick,
+          classification: this.emergenceBlockClassification,
+          classifiedAtTick: this.emergenceBlockClassifiedAtTick,
+          plan: this.emergencePlan,
+          planAtTick: this.emergencePlanAtTick,
         },
         neuromuscularReversalFraction: this.neuromuscularReversalFraction,
         postTetanicCount: this.postTetanicCount,

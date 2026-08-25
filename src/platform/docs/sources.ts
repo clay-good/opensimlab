@@ -468,10 +468,27 @@ export const SOURCES: readonly Source[] = [
       + 'count of at least one; and restrict neostigmine with antimuscarinic coadministration to '
       + 'minimal blockade. The displayed post-tetanic count is an auto-derived teaching proxy. '
       + 'The dedicated scenario additionally requires a descending recovery-phase signal so an '
-      + 'onset value cannot be treated as recovery. Exact reversal dose pharmacology, emergence, '
-      + 'and extubation are not modeled.',
+      + 'onset value cannot be treated as recovery. The emergence vignette uses the same 0.9 '
+      + 'threshold to contrast quantitative recovery with reassuring clinical signs without '
+      + 'simulating airway removal or full extubation readiness.',
     verifiedAgainst: NCBI,
     verifiedOn: CHECKED,
+  },
+  {
+    id: 'esaic-neuromuscular-blockade-2023',
+    pmid: '36377554',
+    authors: 'Fuchs-Buder T, Romero CS, Lewald H, Lamperti M, Afshari A, Hristovska AM, et al.',
+    title: 'Peri-operative management of neuromuscular blockade: a guideline from the European '
+      + 'Society of Anaesthesiology and Intensive Care',
+    publication: 'Eur J Anaesthesiol',
+    year: 2023,
+    locator: '40:82-94',
+    usedFor: 'The emergence residual-blockade vignette: use ulnar-nerve stimulation and '
+      + 'quantitative monitoring at the adductor pollicis to exclude residual paralysis, and '
+      + 'continue monitoring until a train-of-four ratio above 0.9. The case does not simulate '
+      + 'reversal pharmacology, recovery time, or extubation.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-24',
   },
   {
     id: 'das-extubation-2012',

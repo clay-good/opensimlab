@@ -27,6 +27,9 @@ response, stopping before dysrhythmia treatment or cardiac arrest.
 The thirty-second adds pneumothorax under positive-pressure ventilation, bounded to recognition,
 escalation, oxygen support, decompression intent, and observable initial recovery without teaching
 the physical procedure.
+The thirty-third adds patient-specific aspiration-risk recognition without aspiration physiology.
+The thirty-fourth adds emergence recognition of residual blockade without reversal selection,
+airway removal, or a complete extubation-readiness model.
 
 ## What changes
 
@@ -156,10 +159,13 @@ the physical procedure.
 - Add a thirtieth scenario for aspiration-risk recognition that combines a GLP-1 dose-escalation
   phase, active gastrointestinal symptoms, fasting, and elective urgency into one bounded
   classification and disposition vignette without claiming gastric contents or a universal rule.
+- Add a thirty-first scenario that makes four twitches, no detectable fade, and a quantitative
+  ratio below 0.9 visible together, then preserves the airway and ventilation after residual
+  blockade is recognized without simulating reversal, recovery, or extubation.
 
 ## Impact
 
-These 33 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
+These 34 slices close the hemorrhage, obstetric-presentation, rapid-sequence-induction,
 awareness-under-paralysis, anaphylaxis, and malignant-hyperthermia gaps and add an honest initial-response laryngospasm case. The seventh also closes the bounded
 pediatric-family gap without claiming a general pediatric patient model. The eighth reaches the
 minimum count of 12 scenarios and closes the bounded difficult-airway rescue gap. The ninth closes
@@ -230,3 +236,7 @@ The thirty-second adds the twenty-ninth authored scenario and a combined breathi
 response under positive-pressure ventilation. Accepted bilateral assessment, help, oxygen, and
 decompression intent are inspectable, while pressure and compliance mechanics, diagnostic imaging,
 procedural technique, equipment selection, complications, and team performance remain excluded.
+The thirty-fourth adds the thirty-first authored scenario and isolates the emergence decision that
+precedes reversal selection or airway removal. Four twitches and no detectable fade coexist with a
+static quantitative ratio below 0.9; accepted review, classification, and airway-support decisions
+are inspectable without claiming recovery timing, consciousness, or complete extubation readiness.

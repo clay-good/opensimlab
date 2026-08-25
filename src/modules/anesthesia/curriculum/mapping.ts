@@ -476,6 +476,32 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     frameworkId: 'acgme-anesthesiology-milestones-2', domainId: 'pc-pharmacologic-management',
     objectiveIds: ['reverse-recovering-block', 'confirm-quantitative-recovery'],
   },
+
+  // --- Emergence with residual neuromuscular blockade ----------------------
+  {
+    scenarioId: 'emergence-with-residual-blockade',
+    frameworkId: 'nbcrna-nce', domainId: 'basic-principles',
+    objectiveIds: [
+      'review-emergence-quantitative-monitor', 'recognize-emergence-residual-blockade',
+      'defer-extubation-during-residual-blockade', 'separate-recovery-from-extubation-readiness',
+    ],
+  },
+  {
+    scenarioId: 'emergence-with-residual-blockade',
+    frameworkId: 'coa-standards', domainId: 'clinical-decision-making',
+    objectiveIds: [
+      'review-emergence-quantitative-monitor', 'recognize-emergence-residual-blockade',
+      'defer-extubation-during-residual-blockade', 'separate-recovery-from-extubation-readiness',
+    ],
+  },
+  {
+    scenarioId: 'emergence-with-residual-blockade',
+    frameworkId: 'acgme-anesthesiology-milestones-2', domainId: 'pc-anesthetic-plan-and-conduct',
+    objectiveIds: [
+      'review-emergence-quantitative-monitor', 'recognize-emergence-residual-blockade',
+      'defer-extubation-during-residual-blockade', 'separate-recovery-from-extubation-readiness',
+    ],
+  },
   {
     scenarioId: 'routine-geriatric-induction',
     frameworkId: 'coa-standards', domainId: 'clinical-decision-making',

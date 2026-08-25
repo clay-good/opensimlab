@@ -169,6 +169,11 @@ export const SCENARIO_SCHEMA: SchemaNode = {
           type: 'string', description: 'Airway device already in place at scenario start.',
           enum: ['facemask', 'tracheal-tube'],
         },
+        startingTrainOfFourRatio: NUMBER_FIELD(
+          'Optional starting quantitative ratio for a four-twitch residual-blockade vignette.',
+          0.4,
+          1,
+        ),
         ventilator: {
           type: 'object', description: 'Initial ventilator settings.',
           required: ['mode', 'fio2'],
