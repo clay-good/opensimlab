@@ -483,6 +483,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['stemi'],
   },
   {
+    id: 'unstable-tachycardia-rhythm-and-instability-are-authored',
+    headline: 'The rhythm width, regularity, rate, and hemodynamic instability are fixed teaching facts, not a live rhythm diagnosis.',
+    simplification: 'A fixed 12-lead statement and whole-patient findings create one unstable narrow-complex pattern. The waveform generator does not encode atrial mechanism, and no ECG acquisition, artifact, evolving rhythm, or alternative cause is modeled.',
+    whereItMisleads: 'Using the bedside teaching trace to diagnose an SVT mechanism, assuming tachycardia always causes the instability, or generalizing this fixed response to an individual patient.',
+    correctUnderstanding: 'Assess whether the rate is appropriate for the clinical condition, acquire a diagnostic ECG when feasible, and integrate rhythm with pressure, brain, chest, heart failure, and perfusion findings.',
+    briefIn: ['unstable-narrow-complex-tachycardia'],
+  },
+  {
+    id: 'synchronized-cardioversion-is-an-intent-control',
+    headline: 'Preparation and synchronized cardioversion are intent controls, not defibrillator operation or procedural training.',
+    simplification: 'The lesson records help, monitoring, access, pad preparation, and a synchronized-shock intent, then applies a fixed response. It does not place pads, verify synchronization, choose energy, charge, clear, shock, or deliver sedation.',
+    whereItMisleads: 'Assuming a click proves safe synchronization or shock delivery, copying an energy value from another device, or delaying urgent treatment to complete optional sedation.',
+    correctUnderstanding: 'Use a familiar device and current local process, verify synchronization carefully, sedate when feasible without delaying urgent cardioversion, and reassess immediately.',
+    briefIn: ['unstable-narrow-complex-tachycardia'],
+  },
+  {
+    id: 'no-tachycardia-energy-sedation-procedure-recurrence-or-outcome',
+    headline: 'Energy, sedation, device technique, refractory treatment, recurrence, causal diagnosis, disposition, and outcome are outside the vignette.',
+    simplification: 'The case ends after one authored rhythm and perfusion response. It has no adenosine or other drug pathway, repeated cardioversion, airway event, recurrence, anticoagulation decision, electrophysiology evaluation, admission, or follow-up.',
+    whereItMisleads: 'Assuming the fixed conversion predicts success, that one reassessment completes care, or that narrow-complex tachycardias share the same subsequent management.',
+    correctUnderstanding: 'Prepare for failed or recurrent cardioversion, investigate and treat the cause, obtain expert help, and determine ongoing rhythm-specific monitoring and care.',
+    briefIn: ['unstable-narrow-complex-tachycardia'],
+  },
+  {
     id: 'malignant-hyperthermia-is-a-teaching-model',
     headline: 'The hypermetabolic carbon-dioxide, heart-rate, rigidity, and heat trajectories are bounded teaching models, not individualized predictions or a diagnostic test.',
     simplification: 'One latent severity drives excess carbon-dioxide production, tachycardia, '

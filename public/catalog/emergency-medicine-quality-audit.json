@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "emergency-medicine",
-  "scenarioCount": 11,
+  "scenarioCount": 12,
   "playableScenarioCount": 0,
   "scenarios": [
     {
@@ -395,6 +395,42 @@
           "status": "missing",
           "evidence": [
             "No version-bound state-space-verification record exists for stemi 0.1.0."
+          ]
+        }
+      ],
+      "playable": false
+    },
+    {
+      "scenarioId": "unstable-narrow-complex-tachycardia",
+      "contentVersion": "0.1.0",
+      "completionComplete": false,
+      "qualityRecords": [
+        {
+          "kind": "training-value",
+          "status": "missing",
+          "evidence": [
+            "No version-bound training-value record exists for unstable-narrow-complex-tachycardia 0.1.0."
+          ]
+        },
+        {
+          "kind": "authored-defaults",
+          "status": "missing",
+          "evidence": [
+            "No version-bound authored-defaults record exists for unstable-narrow-complex-tachycardia 0.1.0."
+          ]
+        },
+        {
+          "kind": "scenario-hazard",
+          "status": "missing",
+          "evidence": [
+            "No version-bound scenario-hazard record exists for unstable-narrow-complex-tachycardia 0.1.0."
+          ]
+        },
+        {
+          "kind": "state-space-verification",
+          "status": "missing",
+          "evidence": [
+            "No version-bound state-space-verification record exists for unstable-narrow-complex-tachycardia 0.1.0."
           ]
         }
       ],

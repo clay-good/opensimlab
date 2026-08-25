@@ -266,6 +266,12 @@ export interface ActionCockpitProps {
       readonly additionalAntithromboticsAtTick: number | null;
       readonly reassessedAtTick: number | null;
     };
+    readonly unstableNarrowTachycardiaAssessment?: {
+      readonly reviewedAtTick: number | null;
+      readonly preparedAtTick: number | null;
+      readonly cardiovertedAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -419,6 +425,10 @@ export interface ActionCockpitProps {
     action: 'review-stemi-pattern' | 'activate-stemi-pathway' | 'record-aspirin-load'
       | 'record-p2y12-anticoagulation-intent' | 'reassess-and-handoff',
   ) => void;
+  readonly onUnstableNarrowTachycardiaResponse?: (
+    action: 'review-rhythm-and-instability' | 'prepare-synchronized-cardioversion'
+      | 'record-synchronized-cardioversion-intent' | 'reassess-rhythm-and-perfusion',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -521,6 +531,10 @@ export function crisisResponseAvailability(
     hasStemiResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'stemi',
     ),
+    hasUnstableNarrowTachycardiaResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'unstable-narrow-complex-tachycardia',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -578,6 +592,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'acute-pulmonary-edema')
       || (event.type === 'narrative' && event.target === 'pulmonary-embolism-deterioration')
       || (event.type === 'narrative' && event.target === 'stemi')
+      || (event.type === 'narrative' && event.target === 'unstable-narrow-complex-tachycardia')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -595,6 +610,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasCardiacTamponadeResponse, hasEmergencyAnaphylaxisResponse, hasAdultAsthmaResponse,
     hasCopdExacerbationResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
+    hasUnstableNarrowTachycardiaResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -626,8 +642,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPostoperativeHandoffResponse || hasUndifferentiatedShockResponse
     || hasSepticShockResponse || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
     || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse || hasCopdExacerbationResponse
-    || hasAcutePulmonaryEdemaResponse || hasPulmonaryEmbolismResponse || hasStemiResponse;
-  const responseTray = hasStemiResponse
+    || hasAcutePulmonaryEdemaResponse || hasPulmonaryEmbolismResponse || hasStemiResponse
+    || hasUnstableNarrowTachycardiaResponse;
+  const responseTray = hasUnstableNarrowTachycardiaResponse
+    ? { id: 'crisis', label: 'Unstable tachycardia' } as const
+    : hasStemiResponse
     ? { id: 'crisis', label: 'STEMI pathway' } as const
     : hasPulmonaryEmbolismResponse
     ? { id: 'crisis', label: 'PE deterioration' } as const
@@ -674,11 +693,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
       || hasCopdExacerbationResponse || hasAcutePulmonaryEdemaResponse
-      || hasPulmonaryEmbolismResponse || hasStemiResponse)
+      || hasPulmonaryEmbolismResponse || hasStemiResponse
+      || hasUnstableNarrowTachycardiaResponse)
       && (!hasNonMaternalCrisisResponse || hasEmergencyAnaphylaxisResponse
         || hasAdultAsthmaResponse || hasCopdExacerbationResponse
         || hasAcutePulmonaryEdemaResponse || hasPulmonaryEmbolismResponse
-        || hasStemiResponse)));
+        || hasStemiResponse || hasUnstableNarrowTachycardiaResponse)));
   const trays = hasCrisisResponse
     ? focusedEmergencyAssessment ? [responseTray]
       : props.scenario.formulary.length === 0 ? [responseTray, ...TRAYS] : [...TRAYS, responseTray]
@@ -1002,6 +1022,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasStemiResponse && (
               <StemiTray assessment={props.resuscitation.stemiAssessment}
                 onAction={props.onStemiResponse ?? (() => {})} />
+            )}
+            {hasUnstableNarrowTachycardiaResponse && (
+              <UnstableNarrowTachycardiaTray
+                assessment={props.resuscitation.unstableNarrowTachycardiaAssessment}
+                onAction={props.onUnstableNarrowTachycardiaResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -2697,6 +2722,61 @@ function StemiTray({ assessment, onAction }: {
           </Button>
         </div>
         <p className="field__hint">SpO₂ is 95%, so routine oxygen is not selected. No agent selection, individualized dose, nitrate or opioid pathway, PCI technique, complication treatment, disposition, or outcome is offered.</p>
+      </section>
+    </div>
+  );
+}
+
+function UnstableNarrowTachycardiaTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['unstableNarrowTachycardiaAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onUnstableNarrowTachycardiaResponse']>;
+}) {
+  const reviewed = assessment?.reviewedAtTick != null;
+  const prepared = assessment?.preparedAtTick != null;
+  const cardioverted = assessment?.cardiovertedAtTick != null;
+  const reassessed = assessment?.reassessedAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="unstable-nct-recognition-title">
+        <div id="unstable-nct-recognition-title" className="syringe__name">Read the rhythm through the patient</div>
+        <Badge kind="teaching">Fixed unstable NCT</Badge>
+        <div className="syringe__meta">188/min · QRS 0.08 s · BP · brain · chest · perfusion</div>
+        <p className="syringe__remaining" role="status">
+          {prepared ? 'Immediate support + synchronized pads prepared'
+            : reviewed ? 'Instability recognized · prepare now'
+              : 'Rhythm + whole-patient review pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={reviewed}
+            onClick={() => onAction('review-rhythm-and-instability')}>
+            Review rhythm + instability
+          </Button>
+          <Button className="crisis-drug__action" disabled={!reviewed || prepared}
+            onClick={() => onAction('prepare-synchronized-cardioversion')}>
+            Prepare support + synchronized pads
+          </Button>
+        </div>
+        <p className="field__hint">The fixed 12-lead supplies width and regularity. The teaching waveform does not diagnose the atrial mechanism.</p>
+      </section>
+      <section className="syringe" aria-labelledby="unstable-nct-response-title">
+        <div id="unstable-nct-response-title" className="syringe__name">Synchronize, restore, reassess</div>
+        <div className="syringe__meta">Sedate if feasible · do not delay · rhythm + perfusion</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'Response reassessed · HR 92 · BP 118/72'
+            : cardioverted ? 'Synchronized-cardioversion intent recorded · reassess next'
+              : prepared ? 'Ready for prompt synchronized intent' : 'Preparation pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!prepared || cardioverted}
+            onClick={() => onAction('record-synchronized-cardioversion-intent')}>
+            Record synchronized cardioversion intent
+          </Button>
+          <Button className="crisis-drug__action" disabled={!cardioverted || reassessed}
+            onClick={() => onAction('reassess-rhythm-and-perfusion')}>
+            Reassess rhythm + whole-patient perfusion
+          </Button>
+        </div>
+        <p className="field__hint">SpO₂ is 94%, so routine oxygen is not selected. No energy, sedation drug, device operation, shock technique, adenosine, refractory pathway, recurrence, disposition, or outcome is offered.</p>
       </section>
     </div>
   );

@@ -2580,6 +2580,47 @@ export function objectiveFindings(
         atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-unstable-narrow-tachycardia', 'prepare-unstable-tachycardia-response',
+      'cardiovert-unstable-narrow-tachycardia',
+      'reassess-after-tachycardia-cardioversion'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'unstable-narrow-complex-tachycardia');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The unstable narrow-complex tachycardia vignette was not active.' } satisfies ObjectiveFinding;
+      const reviewed = log.find((event) => event.eventId.startsWith('unstable-narrow-tachycardia-reviewed-'));
+      const prepared = log.find((event) => event.eventId.startsWith('unstable-narrow-tachycardia-prepared-'));
+      const cardioverted = log.find((event) => event.eventId.startsWith('unstable-narrow-tachycardia-cardioverted-'));
+      const reassessed = log.find((event) => event.eventId.startsWith('unstable-narrow-tachycardia-reassessed-'));
+      if (objective.id === 'recognize-unstable-narrow-tachycardia') return {
+        ...base, outcome: reviewed ? 'met' : 'not-met',
+        finding: reviewed
+          ? 'Regular narrow-complex tachycardia was integrated with hypotension, altered mentation, ischemic discomfort, and shock signs.'
+          : 'The fixed rhythm and instability pattern was not reviewed.',
+        atTick: reviewed?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'prepare-unstable-tachycardia-response') {
+        const ordered = reviewed && prepared && reviewed.tick <= prepared.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'Airway and breathing assessment, help, monitoring, access, and synchronized-pad preparation followed instability recognition without routine oxygen.'
+            : 'Immediate synchronized-cardioversion preparation was absent or out of order.',
+          atTick: prepared?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'cardiovert-unstable-narrow-tachycardia') {
+        const ordered = prepared && cardioverted && prepared.tick <= cardioverted.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'Prompt synchronized-cardioversion intent followed preparation, with sedation bounded to feasibility and no invented energy selection.'
+            : 'Synchronized-cardioversion intent was absent or preceded preparation.',
+          atTick: cardioverted?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = cardioverted && reassessed && cardioverted.tick <= reassessed.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met',
+        finding: ordered
+          ? 'Rhythm, pressure, mentation, ischemic discomfort, and perfusion were reassessed after the bounded response.'
+          : 'Post-cardioversion rhythm and whole-patient reassessment was incomplete or out of order.',
+        atTick: reassessed?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

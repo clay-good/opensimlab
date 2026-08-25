@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with 11 playable, completion-audited scenarios. The remaining
-14 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with 12 playable, completion-audited scenarios. The remaining
+13 planned titles remain descriptive scope only and do not enter playable counts before their full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -344,6 +344,22 @@ interpretation, complete contraindication and bleeding-risk review, individualiz
 nitrate or opioid decisions, non-PCI-capable reperfusion strategy, PCI technique, reperfusion,
 arrhythmia, shock, mechanical complications, transfer, disposition, secondary prevention, local
 protocol, and outcome remain outside the vignette.
+
+### Wave B slice 12: unstable narrow-complex tachycardia
+
+The twelfth emergency-medicine slice adds a fixed regular narrow-complex tachycardia causing
+hypotension, altered mentation, ischemic discomfort, and shock signs. Learners integrate the rhythm
+width, regularity, and rate with the whole patient; record airway and breathing assessment, help,
+continuous monitoring, IV access, and synchronized-pad preparation; record prompt synchronized
+cardioversion with sedation only when feasible and without delaying treatment; then reassess rhythm,
+pressure, mentation, discomfort, and perfusion after one bounded response.
+
+The focused tray explicitly withholds routine oxygen at the authored SpO2 of 94%, supplies no energy
+value, and distinguishes the fixed 12-lead statement from a teaching waveform that cannot diagnose
+atrial mechanism. ECG acquisition, causal diagnosis, device operation, synchronization verification,
+energy selection, sedation choice or delivery, cardioversion technique, adenosine or other drug
+therapy, refractory treatment, recurrence, anticoagulation questions, disposition, local protocol,
+and outcome remain outside the vignette.
 
 #### Critical care: 24
 

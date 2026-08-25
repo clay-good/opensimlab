@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 46 reports bounded STEMI state. */
-export const WORKER_PROTOCOL_VERSION = 46;
+/** Bumped whenever the message shape changes incompatibly. Version 47 reports bounded unstable-NCT state. */
+export const WORKER_PROTOCOL_VERSION = 47;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -333,6 +333,12 @@ export interface EquipmentSnapshot {
       readonly pathwayActivatedAtTick: number | null;
       readonly aspirinAtTick: number | null;
       readonly additionalAntithromboticsAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+    };
+    readonly unstableNarrowTachycardiaAssessment?: {
+      readonly reviewedAtTick: number | null;
+      readonly preparedAtTick: number | null;
+      readonly cardiovertedAtTick: number | null;
       readonly reassessedAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */

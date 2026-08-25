@@ -3,7 +3,7 @@
 An open-source, browser-native clinical simulator for medical students, residents, and
 nurse anesthetists — anywhere in the world, on any device, with or without a network.
 
-**opensimlab.com/anesthesia** is the first complete 39-scenario module. Emergency medicine is now playable at `/emergency-medicine`, beginning with 11 bounded labs spanning shock, tamponade, anaphylaxis, asthma, COPD, pulmonary edema, deteriorating pulmonary embolism, and STEMI inside the planned 25-case wave.
+**opensimlab.com/anesthesia** is the first complete 39-scenario module. Emergency medicine is now playable at `/emergency-medicine`, beginning with 12 bounded labs spanning shock, tamponade, anaphylaxis, asthma, COPD, pulmonary edema, pulmonary embolism, STEMI, and unstable tachycardia inside the planned 25-case wave.
 
 The goal is not a tech demo. It is the best anesthesia education on the internet: the
 thing a student opens the night before their first day in the OR and comes out of

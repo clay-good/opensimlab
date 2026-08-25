@@ -331,6 +331,10 @@ export class AnesthesiaEngine {
   private stemiAspirinAtTick: number | null = null;
   private stemiAdditionalAntithromboticsAtTick: number | null = null;
   private stemiReassessedAtTick: number | null = null;
+  private unstableNarrowTachycardiaReviewedAtTick: number | null = null;
+  private unstableNarrowTachycardiaPreparedAtTick: number | null = null;
+  private unstableNarrowTachycardiaCardiovertedAtTick: number | null = null;
+  private unstableNarrowTachycardiaReassessedAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1525,6 +1529,79 @@ export class AnesthesiaEngine {
         this.stemiReassessedAtTick = this.currentTick;
         this.log('advisory', 'assessment', `stemi-reassessed-${this.currentTick}`,
           'Pre-reperfusion reassessment: ongoing pain, HR 104/min, BP 146/92 mmHg, SpO₂ 95% on room air, warm perfusion, sinus rhythm, and no authored ventricular arrhythmia, heart failure, shock, or mechanical complication. Routine oxygen remains unselected because saturation is at least 90%. A time-stamped handoff to the activated reperfusion team was recorded; procedure and outcome remain outside this lesson.');
+        break;
+      }
+      case 'unstable-narrow-tachycardia-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'unstable-narrow-complex-tachycardia');
+        const valid = ['review-rhythm-and-instability', 'prepare-synchronized-cardioversion',
+          'record-synchronized-cardioversion-intent', 'reassess-rhythm-and-perfusion']
+          .includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `unstable-narrow-tachycardia-refused-${this.currentTick}`,
+            supported ? 'The unstable-tachycardia action was not one of the listed choices. Nothing changed.'
+              : 'The bounded unstable-tachycardia choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-rhythm-and-instability') {
+          if (this.unstableNarrowTachycardiaReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `unstable-narrow-tachycardia-review-refused-${this.currentTick}`,
+              'The fixed rhythm and instability review has already been recorded.');
+            break;
+          }
+          this.unstableNarrowTachycardiaReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `unstable-narrow-tachycardia-reviewed-${this.currentTick}`,
+            'Fixed assessment: abrupt persistent regular tachycardia at 188/min; authored 12-lead ECG shows QRS 0.08 second with no clearly visible preceding P waves. BP is 76/48 mmHg with drowsiness, ischemic chest discomfort, cool mottled extremities, and delayed capillary refill. SpO₂ is 94% and there is no acute heart failure. The bedside teaching waveform does not encode atrial mechanism and is not a diagnostic rhythm strip. The tachycardia is authored as the cause of instability.');
+          break;
+        }
+        if (this.unstableNarrowTachycardiaReviewedAtTick === null) {
+          this.log('warning', 'assessment', `unstable-narrow-tachycardia-order-refused-${this.currentTick}`,
+            'Review the rhythm features and whole-patient instability before treatment.');
+          break;
+        }
+        if (response === 'prepare-synchronized-cardioversion') {
+          if (this.unstableNarrowTachycardiaPreparedAtTick !== null) {
+            this.log('warning', 'equipment', `unstable-narrow-tachycardia-preparation-refused-${this.currentTick}`,
+              'Immediate support and synchronized-cardioversion preparation have already been recorded.');
+            break;
+          }
+          this.unstableNarrowTachycardiaPreparedAtTick = this.currentTick;
+          this.log('critical', 'equipment', `unstable-narrow-tachycardia-prepared-${this.currentTick}`,
+            'Patent airway and breathing were confirmed; help, continuous rhythm/pressure/oximetry monitoring, IV access, and synchronized-cardioversion pad preparation were recorded. Routine oxygen was not selected because SpO₂ is 94%. Actual access, pad placement, device operation, and synchronization-marker verification are not simulated.', { intentOnly: true, routineOxygenSelected: false });
+          break;
+        }
+        if (response === 'record-synchronized-cardioversion-intent') {
+          if (this.unstableNarrowTachycardiaPreparedAtTick === null) {
+            this.log('warning', 'assessment', `unstable-narrow-tachycardia-cardioversion-order-refused-${this.currentTick}`,
+              'Record immediate support and synchronized-cardioversion preparation first.');
+            break;
+          }
+          if (this.unstableNarrowTachycardiaCardiovertedAtTick !== null) {
+            this.log('warning', 'equipment', `unstable-narrow-tachycardia-cardioversion-refused-${this.currentTick}`,
+              'The bounded synchronized-cardioversion intent has already been recorded.');
+            break;
+          }
+          this.unstableNarrowTachycardiaCardiovertedAtTick = this.currentTick;
+          this.rhythm = 'sinus';
+          this.log('critical', 'equipment', `unstable-narrow-tachycardia-cardioverted-${this.currentTick}`,
+            'Prompt synchronized-cardioversion intent was recorded, with sedation only if feasible and without delaying the shock. Device-specific energy selection, synchronized-marker verification, sedation choice or delivery, shock delivery, and procedural competence are outside this vignette.', { intentOnly: true, synchronized: true, sedationOnlyIfFeasible: true });
+          break;
+        }
+        if (this.unstableNarrowTachycardiaCardiovertedAtTick === null
+          || this.currentTick <= this.unstableNarrowTachycardiaCardiovertedAtTick) {
+          this.log('warning', 'assessment', `unstable-narrow-tachycardia-reassessment-order-refused-${this.currentTick}`,
+            'Record synchronized-cardioversion intent, then allow the next engine tick before reassessment.');
+          break;
+        }
+        if (this.unstableNarrowTachycardiaReassessedAtTick !== null) {
+          this.log('warning', 'assessment', `unstable-narrow-tachycardia-reassessment-refused-${this.currentTick}`,
+            'The fixed post-cardioversion reassessment has already been recorded.');
+          break;
+        }
+        this.unstableNarrowTachycardiaReassessedAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `unstable-narrow-tachycardia-reassessed-${this.currentTick}`,
+          'Fixed post-cardioversion reassessment: regular sinus rhythm 92/min, BP 118/72 mmHg, alert mentation, resolving ischemic discomfort, warm extremities, and improved capillary refill. Refractory or recurrent tachycardia, causal investigation, medication therapy, anticoagulation questions, disposition, and outcome remain outside this vignette.');
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -4228,6 +4305,14 @@ export class AnesthesiaEngine {
       crisisState = { ...crisisState, heartRateBpm: 104, respiratoryRateBpm: 20,
         spo2Percent: 95, systolicMmHg: 146, diastolicMmHg: 92, meanArterialMmHg: 110 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'unstable-narrow-complex-tachycardia')) {
+      const cardioverted = this.unstableNarrowTachycardiaCardiovertedAtTick !== null;
+      crisisState = { ...crisisState, heartRateBpm: cardioverted ? 92 : 188,
+        respiratoryRateBpm: cardioverted ? 18 : 24, spo2Percent: cardioverted ? 95 : 94,
+        systolicMmHg: cardioverted ? 118 : 76, diastolicMmHg: cardioverted ? 72 : 48,
+        meanArterialMmHg: cardioverted ? 87 : 57 };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -4551,6 +4636,12 @@ export class AnesthesiaEngine {
           aspirinAtTick: this.stemiAspirinAtTick,
           additionalAntithromboticsAtTick: this.stemiAdditionalAntithromboticsAtTick,
           reassessedAtTick: this.stemiReassessedAtTick,
+        },
+        unstableNarrowTachycardiaAssessment: {
+          reviewedAtTick: this.unstableNarrowTachycardiaReviewedAtTick,
+          preparedAtTick: this.unstableNarrowTachycardiaPreparedAtTick,
+          cardiovertedAtTick: this.unstableNarrowTachycardiaCardiovertedAtTick,
+          reassessedAtTick: this.unstableNarrowTachycardiaReassessedAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: STEMI state has protocol version 46', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(46);
+  it('Scenario: unstable narrow-complex tachycardia state has protocol version 47', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(47);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

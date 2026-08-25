@@ -751,6 +751,9 @@ export function Cockpit({
           onStemiResponse={(action) => session.act({
             type: 'stemi-response', payload: { action },
           })}
+          onUnstableNarrowTachycardiaResponse={(action) => session.act({
+            type: 'unstable-narrow-tachycardia-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}
