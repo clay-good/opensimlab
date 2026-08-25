@@ -237,6 +237,14 @@ export interface ActionCockpitProps {
       readonly corticosteroidIntentAtTick: number | null;
       readonly reassessedAtTick: number | null;
     };
+    readonly copdExacerbationAssessment?: {
+      readonly severityReviewedAtTick: number | null;
+      readonly controlledOxygenAtTick: number | null;
+      readonly bronchodilatorBundleAtTick: number | null;
+      readonly corticosteroidIntentAtTick: number | null;
+      readonly antibioticIntentAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -371,6 +379,11 @@ export interface ActionCockpitProps {
       | 'give-fixed-inhaled-bronchodilators' | 'record-early-corticosteroid-intent'
       | 'reassess-after-initial-treatment',
   ) => void;
+  readonly onCopdExacerbationResponse?: (
+    action: 'review-severity-and-mimics' | 'record-controlled-oxygen'
+      | 'give-air-driven-bronchodilators' | 'record-five-day-corticosteroid-intent'
+      | 'record-antibiotic-indication' | 'reassess-and-review-ventilatory-support',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -461,6 +474,9 @@ export function crisisResponseAvailability(
     hasAdultAsthmaResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'adult-asthma',
     ),
+    hasCopdExacerbationResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -514,6 +530,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || event.type === 'cardiac-tamponade'
       || (event.type === 'narrative' && event.target === 'emergency-anaphylaxis')
       || (event.type === 'narrative' && event.target === 'adult-asthma')
+      || (event.type === 'narrative' && event.target === 'copd-exacerbation')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -529,6 +546,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasExtubationReadinessResponse, hasCiedPlanningResponse, hasPostoperativeHandoffResponse,
     hasUndifferentiatedShockResponse, hasSepticShockResponse, hasHemorrhagicShockResponse,
     hasCardiacTamponadeResponse, hasEmergencyAnaphylaxisResponse, hasAdultAsthmaResponse,
+    hasCopdExacerbationResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -559,8 +577,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasDelayedEmergenceResponse || hasExtubationReadinessResponse || hasCiedPlanningResponse
     || hasPostoperativeHandoffResponse || hasUndifferentiatedShockResponse
     || hasSepticShockResponse || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
-    || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse;
-  const responseTray = hasAdultAsthmaResponse
+    || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse || hasCopdExacerbationResponse;
+  const responseTray = hasCopdExacerbationResponse
+    ? { id: 'crisis', label: 'COPD response' } as const
+    : hasAdultAsthmaResponse
     ? { id: 'crisis', label: 'Asthma response' } as const
     : hasEmergencyAnaphylaxisResponse
     ? { id: 'crisis', label: 'Anaphylaxis response' } as const
@@ -597,9 +617,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
   const focusedEmergencyAssessment = props.scenario.formulary.length === 0
     && (focusedPleuralEmergency || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
-      || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse)
+      || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
+      || hasCopdExacerbationResponse)
       && (!hasNonMaternalCrisisResponse || hasEmergencyAnaphylaxisResponse
-        || hasAdultAsthmaResponse)));
+        || hasAdultAsthmaResponse || hasCopdExacerbationResponse)));
   const trays = hasCrisisResponse
     ? focusedEmergencyAssessment ? [responseTray]
       : props.scenario.formulary.length === 0 ? [responseTray, ...TRAYS] : [...TRAYS, responseTray]
@@ -900,6 +921,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <AdultAsthmaTray
                 assessment={props.resuscitation.adultAsthmaAssessment}
                 onAction={props.onAdultAsthmaResponse ?? (() => {})}
+              />
+            )}
+            {hasCopdExacerbationResponse && (
+              <CopdExacerbationTray
+                assessment={props.resuscitation.copdExacerbationAssessment}
+                onAction={props.onCopdExacerbationResponse ?? (() => {})}
               />
             )}
             {hasEmergenceResidualBlockResponse && (
@@ -2346,6 +2373,73 @@ function AdultAsthmaTray({ assessment, onAction }: {
           </Button>
         </div>
         <p className="field__hint">No inhaler technique, individualized dose, repeat cycle, toxicity, magnesium, ventilatory support, disposition, discharge prescription, or prevention plan is offered.</p>
+      </section>
+    </div>
+  );
+}
+
+function CopdExacerbationTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['copdExacerbationAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onCopdExacerbationResponse']>;
+}) {
+  const reviewed = assessment?.severityReviewedAtTick != null;
+  const oxygen = assessment?.controlledOxygenAtTick != null;
+  const bronchodilators = assessment?.bronchodilatorBundleAtTick != null;
+  const corticosteroid = assessment?.corticosteroidIntentAtTick != null;
+  const antibiotic = assessment?.antibioticIntentAtTick != null;
+  const reassessed = assessment?.reassessedAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="copd-assessment-title">
+        <div id="copd-assessment-title" className="syringe__name">Read the whole respiratory story</div>
+        <Badge kind="teaching">Fixed ED vignette</Badge>
+        <div className="syringe__meta">Symptoms · work · SpO₂ · sputum · blood gas · mimics</div>
+        <p className="syringe__remaining" role="status">
+          {oxygen ? 'Controlled oxygen target recorded'
+            : reviewed ? 'Moderate pattern reviewed · initial treatment open'
+              : 'Severity and blood-gas review pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={reviewed}
+            onClick={() => onAction('review-severity-and-mimics')}>
+            Review severity + blood gas + mimics
+          </Button>
+          <Button className="crisis-drug__action" disabled={!reviewed || oxygen}
+            onClick={() => onAction('record-controlled-oxygen')}>
+            Target controlled oxygen · 88–92%
+          </Button>
+        </div>
+        <p className="field__hint">Findings and blood gases are authored. The screen does not perform examination, sampling, imaging, ECG, microbiology, or differential diagnosis.</p>
+      </section>
+      <section className="syringe" aria-labelledby="copd-treatment-title">
+        <div id="copd-treatment-title" className="syringe__name">Open the airways, then look again</div>
+        <div className="syringe__meta">Air-driven inhaled intent · short anti-inflammatory course · indication check</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'Initial response reassessed · repeat pH 7.38'
+            : bronchodilators && corticosteroid && antibiotic
+              ? 'Initial treatment recorded · reassess next'
+              : reviewed ? 'Parallel initial treatment open' : 'Severity review pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!reviewed || bronchodilators}
+            onClick={() => onAction('give-air-driven-bronchodilators')}>
+            Give air-driven SABA + SAMA intent
+          </Button>
+          <Button className="crisis-drug__action" disabled={!reviewed || corticosteroid}
+            onClick={() => onAction('record-five-day-corticosteroid-intent')}>
+            Record 5-day corticosteroid intent
+          </Button>
+          <Button className="crisis-drug__action" disabled={!reviewed || antibiotic}
+            onClick={() => onAction('record-antibiotic-indication')}>
+            Record antibiotic indication · purulence
+          </Button>
+          <Button className="crisis-drug__action"
+            disabled={!oxygen || !bronchodilators || !corticosteroid || !antibiotic || reassessed}
+            onClick={() => onAction('reassess-and-review-ventilatory-support')}>
+            Reassess blood gas + ventilatory need
+          </Button>
+        </div>
+        <p className="field__hint">No device technique, individualized or repeat dose, toxicity, antibiotic selection, NIV setup, disposition, maintenance plan, or outcome is offered.</p>
       </section>
     </div>
   );

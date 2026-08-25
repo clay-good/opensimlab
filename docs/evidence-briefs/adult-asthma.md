@@ -19,7 +19,7 @@ corticosteroids in all but the mildest acute-care presentations, where possible 
 ## Authored vignette and modeled behavior
 
 - A fixed severe presentation supplies words-only speech, accessory-muscle use, widespread
-  expiratory wheeze, room-air SpO₂ 89%, and peak expiratory flow 32% predicted.
+  expiratory wheeze, room-air SpO₂ 91%, and peak expiratory flow 32% predicted.
 - One sustained obstruction event drives the shared shark-fin capnogram and gas-exchange model.
 - Controlled oxygen changes inspired oxygen to a bounded teaching setting. A fixed 6-puff
   salbutamol plus 4-puff ipratropium pMDI-and-spacer action reduces modeled obstruction.

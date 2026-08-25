@@ -181,7 +181,7 @@ export function Debrief(props: DebriefProps) {
             patientHarmed: episodes.length > 0,
             patientDied: false,
             ...(props.moduleId === 'emergency-medicine'
-              ? { activityContext: `assessing ${props.scenario.metadata.title.toLowerCase()} in the emergency department` }
+              ? { activityContext: `assessing ${sentenceCaseTitle(props.scenario.metadata.title)} in the emergency department` }
               : {}),
           })}</p>
           <label className="field__label" htmlFor="reactions-account">Your account</label>
@@ -388,6 +388,11 @@ function hardestThing(episodes: readonly Episode[], moduleId?: string): string {
     ? 'working through uncertainty without skipping reassessment'
     : 'keeping a normal patient normal, which is harder than it looks';
   return episodes[0]!.label.toLowerCase();
+}
+
+function sentenceCaseTitle(title: string): string {
+  const [first = '', ...rest] = title.split(' ');
+  return [first === first.toUpperCase() ? first : first.toLowerCase(), ...rest].join(' ');
 }
 
 function outcomeWord(outcome: ObjectiveFinding['outcome']): string {
@@ -2385,6 +2390,62 @@ export function objectiveFindings(
         finding: ordered
           ? 'Symptoms, speech, work of breathing, oxygenation, waveform response, and fixed repeat peak flow were reviewed before any automatic repeat treatment.'
           : 'Initial treatment and serial whole-patient reassessment were incomplete or out of order.',
+        atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
+    if ([
+      'assess-copd-exacerbation-severity', 'use-controlled-oxygen-in-copd',
+      'give-initial-copd-exacerbation-treatment', 'recognize-copd-antibiotic-indication',
+      'reassess-copd-respiratory-failure',
+    ].includes(objective.id)) {
+      const supported = scenario.timeline.some(
+        (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
+      );
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The COPD-exacerbation vignette was not active.' } satisfies ObjectiveFinding;
+      const severity = log.find((event) => event.eventId.startsWith('copd-exacerbation-severity-reviewed-'));
+      const oxygen = log.find((event) => event.eventId.startsWith('copd-exacerbation-oxygen-'));
+      const bronchodilators = log.find((event) => event.eventId.startsWith('copd-exacerbation-bronchodilators-'));
+      const corticosteroid = log.find((event) => event.eventId.startsWith('copd-exacerbation-corticosteroid-'));
+      const antibiotic = log.find((event) => event.eventId.startsWith('copd-exacerbation-antibiotic-'));
+      const reassessment = log.find((event) => event.eventId.startsWith('copd-exacerbation-reassessed-'));
+      if (objective.id === 'assess-copd-exacerbation-severity') return {
+        ...base, outcome: severity ? 'met' : 'not-met',
+        finding: severity
+          ? 'Symptoms, signs, room-air oxygenation, purulent sputum, one authored blood gas, and immediate respiratory and cardiac mimics were reviewed together.'
+          : 'The fixed whole-patient, blood-gas, and immediate-mimic review was not recorded.',
+        atTick: severity?.tick ?? 0,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'use-controlled-oxygen-in-copd') {
+        const ordered = severity && oxygen && severity.tick <= oxygen.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'Controlled oxygen followed severity review with a fixed 88-92% target and retained serial blood-gas review.'
+            : 'Severity review and controlled oxygen targeting were incomplete or out of order.',
+          atTick: oxygen?.tick ?? severity?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'give-initial-copd-exacerbation-treatment') {
+        const complete = bronchodilators && corticosteroid;
+        return { ...base, outcome: complete ? 'met' : 'not-met',
+          finding: complete
+            ? 'The fixed air-driven short-acting bronchodilator bundle and 5-day systemic-corticosteroid intent were both recorded without implying technique or a prescription.'
+            : 'Initial inhaled bronchodilator and short-course corticosteroid intents were incomplete.',
+          atTick: Math.max(bronchodilators?.tick ?? 0, corticosteroid?.tick ?? 0) } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'recognize-copd-antibiotic-indication') return {
+        ...base, outcome: antibiotic ? 'met' : 'not-met',
+        finding: antibiotic
+          ? 'Increased purulent sputum supported antibiotic intent without inventing agent selection, microbiology, resistance, or a prescription.'
+          : 'The authored purulent-sputum antibiotic indication was not recorded.',
+        atTick: antibiotic?.tick ?? 0,
+      } satisfies ObjectiveFinding;
+      const ordered = oxygen && bronchodilators && corticosteroid && antibiotic && reassessment
+        && Math.max(oxygen.tick, bronchodilators.tick, corticosteroid.tick, antibiotic.tick)
+          <= reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met',
+        finding: ordered
+          ? 'Symptoms, work of breathing, oxygenation, waveform response, and the fixed repeat blood gas were reviewed before deciding that immediate noninvasive ventilation was not selected in this improving vignette.'
+          : 'Initial treatment and serial respiratory-failure reassessment were incomplete or out of order.',
         atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 

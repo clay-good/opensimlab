@@ -310,6 +310,12 @@ export class AnesthesiaEngine {
   private adultAsthmaBronchodilatorBundleAtTick: number | null = null;
   private adultAsthmaCorticosteroidIntentAtTick: number | null = null;
   private adultAsthmaReassessedAtTick: number | null = null;
+  private copdSeverityReviewedAtTick: number | null = null;
+  private copdControlledOxygenAtTick: number | null = null;
+  private copdBronchodilatorBundleAtTick: number | null = null;
+  private copdCorticosteroidIntentAtTick: number | null = null;
+  private copdAntibioticIntentAtTick: number | null = null;
+  private copdReassessedAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1131,6 +1137,119 @@ export class AnesthesiaEngine {
         this.log('advisory', 'assessment', `adult-asthma-reassessed-${this.currentTick}`,
           'Symptoms, speech, work of breathing, saturation, canonical waveform response, and fixed repeat peak flow were reassessed. Peak flow is now 55% predicted. Repeat treatment, magnesium, ventilatory support, disposition, prevention planning, and outcome remain outside this initial-response vignette.', {
             repeatPeakExpiratoryFlowPercentPredicted: 55, teachingModel: true,
+          });
+        break;
+      }
+      case 'copd-exacerbation-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some(
+          (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
+        );
+        const valid = [
+          'review-severity-and-mimics', 'record-controlled-oxygen',
+          'give-air-driven-bronchodilators', 'record-five-day-corticosteroid-intent',
+          'record-antibiotic-indication', 'reassess-and-review-ventilatory-support',
+        ].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `copd-exacerbation-refused-${this.currentTick}`,
+            supported
+              ? 'The COPD-exacerbation action was not one of the listed choices. Nothing changed.'
+              : 'The bounded COPD-exacerbation choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-severity-and-mimics') {
+          if (this.copdSeverityReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `copd-exacerbation-severity-refused-${this.currentTick}`,
+              'The fixed severity, mimic, and blood-gas review has already been recorded.');
+            break;
+          }
+          this.copdSeverityReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `copd-exacerbation-severity-reviewed-${this.currentTick}`,
+            'Fixed assessment: increased dyspnea, short-phrase speech, respiratory rate 28/min, heart rate 104/min, accessory-muscle use, diffuse wheeze, increased purulent sputum, and SpO₂ 90% on room air. Authored blood gas: pH 7.36, PaCO₂ 52 mmHg, PaO₂ 58 mmHg. No focal consolidation, edema, pneumothorax, abrupt pleuritic onset, or new unilateral leg finding is authored. This supports a moderate COPD-exacerbation response without proving the diagnosis.');
+          break;
+        }
+        if (this.copdSeverityReviewedAtTick === null) {
+          this.log('warning', 'assessment', `copd-exacerbation-order-refused-${this.currentTick}`,
+            'Review severity, immediate mimics, and the fixed blood gas before treatment.');
+          break;
+        }
+        if (response === 'record-controlled-oxygen') {
+          if (this.copdControlledOxygenAtTick !== null) {
+            this.log('warning', 'equipment', `copd-exacerbation-oxygen-refused-${this.currentTick}`,
+              'Controlled oxygen has already been recorded.');
+            break;
+          }
+          this.copdControlledOxygenAtTick = this.currentTick;
+          this.ventilator = { ...this.ventilator, fio2: 0.28 };
+          this.log('critical', 'equipment', `copd-exacerbation-oxygen-${this.currentTick}`,
+            'Controlled oxygen was recorded with a fixed target of 88-92% and a plan for serial blood-gas review. Device, flow, titration technique, and actual delivered concentration are not simulated.');
+          break;
+        }
+        if (response === 'give-air-driven-bronchodilators') {
+          if (this.copdBronchodilatorBundleAtTick !== null) {
+            this.log('warning', 'drug', `copd-exacerbation-bronchodilator-refused-${this.currentTick}`,
+              'The fixed initial bronchodilator bundle has already been recorded.');
+            break;
+          }
+          this.copdBronchodilatorBundleAtTick = this.currentTick;
+          this.bronchodilatorEffectFraction = clamp(
+            this.bronchodilatorEffectFraction + 0.6, 0, 1,
+          );
+          this.log('critical', 'drug', `copd-exacerbation-bronchodilators-${this.currentTick}`,
+            'A fixed air-driven short-acting beta₂-agonist plus short-acting anticholinergic intent was recorded. Agent, dose, preparation, technique, lung delivery, repeat dosing, toxicity, and individual response are not simulated.', {
+              route: 'air-driven-inhaled-bundle', beta2Agonist: true,
+              anticholinergic: true, teachingModel: true,
+            });
+          break;
+        }
+        if (response === 'record-five-day-corticosteroid-intent') {
+          if (this.copdCorticosteroidIntentAtTick !== null) {
+            this.log('warning', 'drug', `copd-exacerbation-corticosteroid-refused-${this.currentTick}`,
+              'The short-course systemic-corticosteroid intent has already been recorded.');
+            break;
+          }
+          this.copdCorticosteroidIntentAtTick = this.currentTick;
+          this.log('critical', 'drug', `copd-exacerbation-corticosteroid-${this.currentTick}`,
+            'A 40 mg prednisone-equivalent daily systemic-corticosteroid intent for 5 days was recorded. Agent, route, contraindications, delayed pharmacology, and prescription are outside this vignette.', {
+              intentOnly: true, prednisoneEquivalentMgPerDay: 40, durationDays: 5,
+            });
+          break;
+        }
+        if (response === 'record-antibiotic-indication') {
+          if (this.copdAntibioticIntentAtTick !== null) {
+            this.log('warning', 'drug', `copd-exacerbation-antibiotic-refused-${this.currentTick}`,
+              'The authored antibiotic indication has already been recorded.');
+            break;
+          }
+          this.copdAntibioticIntentAtTick = this.currentTick;
+          this.log('critical', 'drug', `copd-exacerbation-antibiotic-${this.currentTick}`,
+            'Antibiotic intent was recorded because increased purulent sputum is authored. Agent selection, allergies, cultures, resistance, route, dose, duration, delayed pharmacology, and prescription are not simulated.', {
+              indication: 'purulent-sputum', intentOnly: true,
+            });
+          break;
+        }
+        if (this.copdControlledOxygenAtTick === null
+          || this.copdBronchodilatorBundleAtTick === null
+          || this.copdCorticosteroidIntentAtTick === null
+          || this.copdAntibioticIntentAtTick === null
+          || this.currentTick <= Math.max(
+            this.copdControlledOxygenAtTick, this.copdBronchodilatorBundleAtTick,
+            this.copdCorticosteroidIntentAtTick, this.copdAntibioticIntentAtTick,
+          )) {
+          this.log('warning', 'assessment', `copd-exacerbation-reassessment-order-refused-${this.currentTick}`,
+            'Record controlled oxygen, bronchodilators, corticosteroid intent, and the antibiotic indication, then allow the next engine tick before reassessment.');
+          break;
+        }
+        if (this.copdReassessedAtTick !== null) {
+          this.log('warning', 'assessment', `copd-exacerbation-reassessment-refused-${this.currentTick}`,
+            'The fixed post-treatment reassessment has already been recorded.');
+          break;
+        }
+        this.copdReassessedAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `copd-exacerbation-reassessed-${this.currentTick}`,
+          'Dyspnea, speech, work of breathing, saturation, and the canonical waveform response improved. Fixed repeat blood gas: pH 7.38 and PaCO₂ 48 mmHg. No current acidosis or worsening distress is authored, so immediate noninvasive ventilation is not selected; continued serial review and escalation for deterioration remain essential but outside this vignette.', {
+            repeatPh: 7.38, repeatPaco2MmHg: 48,
+            immediateNoninvasiveVentilationSelected: false, teachingModel: true,
           });
         break;
       }
@@ -3797,6 +3916,15 @@ export class AnesthesiaEngine {
         spo2Percent: this.adultAsthmaControlledOxygenAtTick === null ? 91 : 94,
       };
     }
+    if (this.scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
+    )) {
+      crisisState = {
+        ...crisisState,
+        respiratoryRateBpm: this.copdBronchodilatorBundleAtTick === null ? 28 : 22,
+        spo2Percent: this.copdControlledOxygenAtTick === null ? 90 : 91,
+      };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -4091,6 +4219,14 @@ export class AnesthesiaEngine {
           bronchodilatorBundleAtTick: this.adultAsthmaBronchodilatorBundleAtTick,
           corticosteroidIntentAtTick: this.adultAsthmaCorticosteroidIntentAtTick,
           reassessedAtTick: this.adultAsthmaReassessedAtTick,
+        },
+        copdExacerbationAssessment: {
+          severityReviewedAtTick: this.copdSeverityReviewedAtTick,
+          controlledOxygenAtTick: this.copdControlledOxygenAtTick,
+          bronchodilatorBundleAtTick: this.copdBronchodilatorBundleAtTick,
+          corticosteroidIntentAtTick: this.copdCorticosteroidIntentAtTick,
+          antibioticIntentAtTick: this.copdAntibioticIntentAtTick,
+          reassessedAtTick: this.copdReassessedAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

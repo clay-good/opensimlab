@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with seven playable, completion-audited scenarios. The remaining
-18 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with eight playable, completion-audited scenarios. The remaining
+17 planned titles remain descriptive scope only and do not enter playable counts before their full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -280,6 +280,22 @@ pathway. It is aligned to GINA 2026's lower oxygen threshold, 95% adult upper ta
 SABA direction, and explicit response review. Examination, spirometry acquisition, inhaler technique,
 individualized dosing, repeat or advanced treatment, disposition, discharge treatment, prevention
 planning, local protocol, and outcome remain outside the vignette.
+
+### Wave B slice 8: COPD exacerbation
+
+The eighth emergency-medicine slice reuses lower-airway-obstruction physiology in a distinct older
+adult presentation with established COPD. Learners integrate fixed symptom, respiratory-rate,
+heart-rate, oxygenation, sputum, blood-gas, and immediate-mimic findings; record controlled oxygen
+to 88-92%; give an air-driven short-acting beta2-agonist plus anticholinergic intent; record the
+GOLD 2026 5-day systemic-corticosteroid intent and an antibiotic indication from purulent sputum;
+then reassess symptoms, signs, oxygenation, waveforms, and a repeat blood gas before deciding whether
+immediate noninvasive ventilatory escalation is selected.
+
+The screen keeps the live respiratory-rate and saturation anchors consistent with the authored ED
+findings and gives the fixed bronchodilator intent a bounded directional obstruction response.
+Examination, sampling, blood-gas analysis, imaging, ECG, microbiology, inhaler or nebulizer technique,
+individualized or repeat treatment, antibiotic selection, noninvasive-ventilation setup, disposition,
+maintenance treatment, prevention planning, local protocol, and outcome remain outside the vignette.
 
 #### Critical care: 24
 

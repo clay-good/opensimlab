@@ -387,6 +387,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['adult-asthma'],
   },
   {
+    id: 'copd-exacerbation-findings-and-blood-gases-are-authored',
+    headline: 'The COPD severity, mimic review, sputum finding, and blood gases are authored, not acquired measurements or diagnosis.',
+    simplification: 'One fixed moderate presentation supplies symptoms, signs, oxygenation, sputum, and blood-gas findings before and after initial treatment. Examination, sampling, imaging, ECG, microbiology, and broader differential testing are absent.',
+    whereItMisleads: 'Treating the fixed blood gases, purulent sputum, or bounded response as proof of COPD exacerbation or exclusion of pneumonia, heart failure, pulmonary embolism, or another cause.',
+    correctUnderstanding: 'Assess the whole acute presentation, consider important mimics and contributors, and obtain real measurements where appropriate without delaying urgent support.',
+    briefIn: ['copd-exacerbation'],
+  },
+  {
+    id: 'copd-exacerbation-treatment-is-fixed-or-intent-only',
+    headline: 'The COPD controls are a fixed initial teaching bundle, not an oxygen, inhaler, nebulizer, drug, antibiotic, or prescription calculator.',
+    simplification: 'The screen records controlled oxygen, air-driven short-acting bronchodilator intent, a fixed 5-day prednisone-equivalent intent, and antibiotic intent from purulent sputum. Formulation, technique, lung delivery, toxicity, contraindications, cultures, resistance, agent selection, dose delivery, and prescription are not assessed.',
+    whereItMisleads: 'Copying the fixed intents into a different patient, exacerbation phenotype, resource setting, microbiology context, or local pathway.',
+    correctUnderstanding: 'Use current local guidance, available formulations, patient-specific severity, prior results, contraindications, response, careful oxygen titration, and verified delivery technique.',
+    briefIn: ['copd-exacerbation'],
+  },
+  {
+    id: 'no-copd-ventilatory-support-disposition-or-prevention',
+    headline: 'Repeat treatment, noninvasive or invasive ventilation, disposition, maintenance treatment, and future-risk reduction are outside this initial-response vignette.',
+    simplification: 'The case ends after one initial sequence and reassessment. It has no repeat bronchodilator cycle, serial deterioration, ventilatory device setup, intensive-care pathway, admission or discharge decision, smoking-cessation support, vaccination review, maintenance-inhaler plan, rehabilitation, or follow-up workflow.',
+    whereItMisleads: 'Assuming modeled improvement completes acute care or that the absence of acidosis in one authored repeat blood gas guarantees continued stability.',
+    correctUnderstanding: 'Continue serial clinical and blood-gas review, escalate respiratory support when indicated, determine safe disposition, and address maintenance treatment and exacerbation prevention after stabilization.',
+    briefIn: ['copd-exacerbation'],
+  },
+  {
     id: 'malignant-hyperthermia-is-a-teaching-model',
     headline: 'The hypermetabolic carbon-dioxide, heart-rate, rigidity, and heat trajectories are bounded teaching models, not individualized predictions or a diagnostic test.',
     simplification: 'One latent severity drives excess carbon-dioxide production, tachycardia, '

@@ -6,6 +6,7 @@ import { OBSTRUCTIVE_SHOCK_TENSION_PNEUMOTHORAX } from './obstructive-shock-tens
 import { CARDIAC_TAMPONADE } from './cardiac-tamponade';
 import { ANAPHYLAXIS } from './anaphylaxis';
 import { ADULT_ASTHMA } from './adult-asthma';
+import { COPD_EXACERBATION } from './copd-exacerbation';
 
 export const EMERGENCY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   UNDIFFERENTIATED_SHOCK,
@@ -15,6 +16,7 @@ export const EMERGENCY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   CARDIAC_TAMPONADE,
   ANAPHYLAXIS,
   ADULT_ASTHMA,
+  COPD_EXACERBATION,
 ];
 export const DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID = UNDIFFERENTIATED_SHOCK.metadata.id;
 
