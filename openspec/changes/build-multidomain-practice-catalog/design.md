@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with 17 playable, completion-audited scenarios. The remaining
-8 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with 18 playable, completion-audited scenarios. The remaining
+7 planned titles remain descriptive scope only and do not enter playable counts before their full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -430,6 +430,20 @@ focused surveillance plus a clock-explicit handoff. The case does not acquire an
 calculate a stroke score, interpret imaging, adjudicate eligibility, deliver medication, lower blood
 pressure, arrange real transport, perform thrombectomy, model reperfusion or complications, or
 predict disposition and outcome. No neurologic improvement is authored after treatment intent.
+
+### Wave B slice 18: intracranial hemorrhage deterioration
+
+The eighteenth emergency-medicine slice adds a warfarin-associated right thalamic hemorrhage with
+intraventricular extension, early hydrocephalus, and worsening alertness. Learners review serial
+whole-patient change; activate support and the ICH pathway; integrate the authored CT, last-dose
+timing, and INR 3.2; record urgent 4-factor PCC plus IV vitamin K intent; record smooth systolic
+pressure control toward 140 mmHg with a 130–150 mmHg maintenance boundary; and activate
+neurocritical and neurosurgical transfer with a clock-explicit handoff.
+
+The two-card surface pairs “notice the change” with “reverse the driver” while keeping airway
+surveillance and hydrocephalus escalation visible. The case does not examine or score the patient,
+interpret imaging, select a reversal dose, deliver a drug, titrate an infusion, perform an airway or
+neurosurgical procedure, model expansion or response, or predict complications or outcome.
 
 #### Critical care: 24
 

@@ -1779,6 +1779,43 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['acute-ischemic-stroke'],
   },
   {
+    id: 'ich-findings-deterioration-and-response-are-authored',
+    headline: 'The neurologic change, airway status, pressure, glucose, CT, anticoagulant history, and INR are authored facts, not acquired findings.',
+    simplification: 'One fixed adult has decreasing eye opening and coherent speech, BP 202/112 '
+      + 'mmHg, glucose 126 mg/dL, a 28 mL right thalamic hemorrhage with intraventricular extension '
+      + 'and early hydrocephalus, warfarin exposure, and INR 3.2.',
+    whereItMisleads: 'Treating the screen as neurologic examination, consciousness scoring, airway '
+      + 'assessment, CT interpretation, expansion prediction, or coagulopathy diagnosis.',
+    correctUnderstanding: 'Real deterioration requires repeated expert neurologic and whole-patient '
+      + 'assessment, verified medication and laboratory data, appropriate imaging, and continuous monitoring.',
+    briefIn: ['intracranial-hemorrhage-deterioration'],
+  },
+  {
+    id: 'ich-reversal-pressure-and-transfer-controls-are-screen-proxies',
+    headline: 'Reversal, pressure-control, airway-readiness, transfer, and handoff buttons record teaching intents; they do not perform care.',
+    simplification: 'The interface records stopping warfarin, urgent 4-factor PCC plus IV vitamin K '
+      + 'intent, one bounded pressure strategy, and specialist transfer without selecting a dose, '
+      + 'delivering treatment, or arranging transport.',
+    whereItMisleads: 'Equating ordered buttons with competent reversal dosing, infusion titration, '
+      + 'airway management, team coordination, neurosurgical selection, or handoff performance.',
+    correctUnderstanding: 'These actions require current local protocols, trained teams, pharmacy '
+      + 'and specialist support, functioning equipment, supervised skills, and bedside reassessment.',
+    briefIn: ['intracranial-hemorrhage-deterioration'],
+  },
+  {
+    id: 'no-live-ich-exam-imaging-drug-airway-procedure-expansion-or-outcome',
+    headline: 'The case does not examine the patient, interpret imaging, dose or deliver reversal, manage an airway, drain hydrocephalus, evacuate blood, or model outcome.',
+    simplification: 'No alternative anticoagulant branch, serial CT, INR correction, pressure '
+      + 'response, cerebral perfusion, herniation, seizure, thrombosis, ventricular drain, surgery, '
+      + 'critical-care course, disposition, or prognosis is modeled.',
+    whereItMisleads: 'Assuming the fixed pressure boundary fits every hemorrhage, inferring that '
+      + 'recorded intent stops expansion, or delaying airway or neurosurgical action for a screen response.',
+    correctUnderstanding: 'ICH care is patient-, trajectory-, anticoagulant-, and system-specific. '
+      + 'Reversal, smooth pressure control, airway support when needed, and specialist escalation '
+      + 'proceed urgently with serial reassessment.',
+    briefIn: ['intracranial-hemorrhage-deterioration'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

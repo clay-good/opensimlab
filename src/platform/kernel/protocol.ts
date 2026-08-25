@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 50 reports bounded acute-stroke state. */
-export const WORKER_PROTOCOL_VERSION = 50;
+/** Bumped whenever the message shape changes incompatibly. Version 51 reports bounded ICH state. */
+export const WORKER_PROTOCOL_VERSION = 51;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -360,6 +360,14 @@ export interface EquipmentSnapshot {
       readonly tenecteplaseAtTick: number | null;
       readonly thrombectomyActivatedAtTick: number | null;
       readonly reassessedAtTick: number | null;
+    };
+    readonly intracranialHemorrhageAssessment?: {
+      readonly deteriorationReviewedAtTick: number | null;
+      readonly pathwayActivatedAtTick: number | null;
+      readonly findingsReviewedAtTick: number | null;
+      readonly reversalAtTick: number | null;
+      readonly pressureControlAtTick: number | null;
+      readonly escalatedAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

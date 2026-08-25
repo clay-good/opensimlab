@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: acute ischemic stroke state has protocol version 50', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(50);
+  it('Scenario: intracranial hemorrhage state has protocol version 51', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(51);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

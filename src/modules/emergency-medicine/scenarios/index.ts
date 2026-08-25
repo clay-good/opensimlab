@@ -16,6 +16,7 @@ import { PERSISTENT_VF_ARREST } from './persistent-vf-arrest';
 import { PEA_ARREST } from './pea-arrest';
 import { STATUS_EPILEPTICUS } from './status-epilepticus';
 import { ACUTE_ISCHEMIC_STROKE } from './acute-ischemic-stroke';
+import { INTRACRANIAL_HEMORRHAGE_DETERIORATION } from './intracranial-hemorrhage-deterioration';
 
 export const EMERGENCY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   UNDIFFERENTIATED_SHOCK,
@@ -35,6 +36,7 @@ export const EMERGENCY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   PEA_ARREST,
   STATUS_EPILEPTICUS,
   ACUTE_ISCHEMIC_STROKE,
+  INTRACRANIAL_HEMORRHAGE_DETERIORATION,
 ];
 export const DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID = UNDIFFERENTIATED_SHOCK.metadata.id;
 

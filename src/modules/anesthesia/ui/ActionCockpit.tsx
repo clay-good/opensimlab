@@ -292,6 +292,14 @@ export interface ActionCockpitProps {
       readonly thrombectomyActivatedAtTick: number | null;
       readonly reassessedAtTick: number | null;
     };
+    readonly intracranialHemorrhageAssessment?: {
+      readonly deteriorationReviewedAtTick: number | null;
+      readonly pathwayActivatedAtTick: number | null;
+      readonly findingsReviewedAtTick: number | null;
+      readonly reversalAtTick: number | null;
+      readonly pressureControlAtTick: number | null;
+      readonly escalatedAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -462,6 +470,11 @@ export interface ActionCockpitProps {
       | 'review-stroke-imaging-and-eligibility' | 'record-tenecteplase-20-mg-intent'
       | 'activate-thrombectomy-transfer' | 'reassess-and-handoff-stroke',
   ) => void;
+  readonly onIntracranialHemorrhageResponse?: (
+    action: 'review-ich-deterioration' | 'activate-ich-pathway'
+      | 'review-ich-findings-and-coagulopathy' | 'record-warfarin-reversal-intent'
+      | 'record-smooth-ich-pressure-control' | 'escalate-ich-neurocritical-care',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -577,6 +590,10 @@ export function crisisResponseAvailability(
     hasAcuteIschemicStrokeResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'acute-ischemic-stroke',
     ),
+    hasIntracranialHemorrhageResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'intracranial-hemorrhage-deterioration',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -640,6 +657,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'unstable-narrow-complex-tachycardia')
       || (event.type === 'narrative' && event.target === 'unstable-bradycardia')
       || (event.type === 'narrative' && event.target === 'acute-ischemic-stroke')
+      || (event.type === 'narrative' && event.target === 'intracranial-hemorrhage-deterioration')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -661,6 +679,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasUnstableBradycardiaResponse,
     hasStatusEpilepticusResponse,
     hasAcuteIschemicStrokeResponse,
+    hasIntracranialHemorrhageResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -686,7 +705,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
   const hasNonMaternalCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse
     || hasCardiacArrestResponse || hasHighSpinalResponse || hasVenousAirEmbolismResponse
     || hasPneumothoraxResponse || hasBronchospasmResponse || hasStatusEpilepticusResponse
-    || hasAcuteIschemicStrokeResponse;
+    || hasAcuteIschemicStrokeResponse || hasIntracranialHemorrhageResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -701,8 +720,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse || hasCopdExacerbationResponse
     || hasAcutePulmonaryEdemaResponse || hasPulmonaryEmbolismResponse || hasStemiResponse
     || hasUnstableNarrowTachycardiaResponse || hasUnstableBradycardiaResponse
-    || hasStatusEpilepticusResponse || hasAcuteIschemicStrokeResponse;
-  const responseTray = hasAcuteIschemicStrokeResponse
+    || hasStatusEpilepticusResponse || hasAcuteIschemicStrokeResponse
+    || hasIntracranialHemorrhageResponse;
+  const responseTray = hasIntracranialHemorrhageResponse
+    ? { id: 'crisis', label: 'ICH deterioration' } as const
+    : hasAcuteIschemicStrokeResponse
     ? { id: 'crisis', label: 'Acute stroke' } as const
     : hasStatusEpilepticusResponse
     ? { id: 'crisis', label: 'Status epilepticus' } as const
@@ -759,6 +781,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
   const focusedEmergencyAssessment = props.scenario.formulary.length === 0
     && (focusedArrestScenario || focusedPleuralEmergency || hasStatusEpilepticusResponse
     || hasAcuteIschemicStrokeResponse
+    || hasIntracranialHemorrhageResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1114,6 +1137,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <AcuteIschemicStrokeTray
                 assessment={props.resuscitation.acuteIschemicStrokeAssessment}
                 onAction={props.onAcuteIschemicStrokeResponse ?? (() => {})} />
+            )}
+            {hasIntracranialHemorrhageResponse && (
+              <IntracranialHemorrhageTray
+                assessment={props.resuscitation.intracranialHemorrhageAssessment}
+                onAction={props.onIntracranialHemorrhageResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -3037,6 +3065,61 @@ function AcuteIschemicStrokeTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-and-handoff-stroke')}>Reassess + hand off with clocks</Button>
         </div>
         <p className="field__hint">No drug delivery, neurologic improvement, thrombectomy, reperfusion, complication, disposition, or outcome is simulated.</p>
+      </section>
+    </div>
+  );
+}
+
+function IntracranialHemorrhageTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['intracranialHemorrhageAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onIntracranialHemorrhageResponse']>;
+}) {
+  const reviewed = assessment?.deteriorationReviewedAtTick != null;
+  const activated = assessment?.pathwayActivatedAtTick != null;
+  const findings = assessment?.findingsReviewedAtTick != null;
+  const reversal = assessment?.reversalAtTick != null;
+  const pressure = assessment?.pressureControlAtTick != null;
+  const escalated = assessment?.escalatedAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="ich-deterioration-title">
+        <div id="ich-deterioration-title" className="syringe__name">Notice the change. Protect the next minute.</div>
+        <Badge kind="teaching">Worsening alertness · airway watch</Badge>
+        <div className="syringe__meta">15-minute decline · BP 202/112 · glucose 126</div>
+        <p className="syringe__remaining" role="status">
+          {findings ? '28 mL thalamic ICH · IVH · early hydrocephalus · INR 3.2'
+            : activated ? 'ICH pathway active · fixed findings ready'
+              : reviewed ? 'Deterioration recognized · activate now'
+                : 'Serial neurologic + whole-patient review pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={reviewed}
+            onClick={() => onAction('review-ich-deterioration')}>Review serial deterioration</Button>
+          <Button className="crisis-drug__action" disabled={!reviewed || activated}
+            onClick={() => onAction('activate-ich-pathway')}>Activate ICH pathway + support</Button>
+          <Button className="crisis-drug__action" disabled={!activated || findings}
+            onClick={() => onAction('review-ich-findings-and-coagulopathy')}>Review CT + warfarin + INR</Button>
+        </div>
+        <p className="field__hint">Airway protection can fail despite adequate oxygenation. The screen does not examine, score consciousness, interpret CT, or operate airway equipment.</p>
+      </section>
+      <section className="syringe" aria-labelledby="ich-control-title">
+        <div id="ich-control-title" className="syringe__name">Reverse the driver. Smooth the pressure.</div>
+        <div className="syringe__meta">Stop warfarin · urgent reversal · neurosurgical capability</div>
+        <p className="syringe__remaining" role="status">
+          {escalated ? 'Neurocritical + neurosurgical handoff active'
+            : pressure ? 'Reversal + smooth pressure intents recorded'
+              : reversal ? 'Reversal intent recorded · pressure track open'
+                : findings ? 'Two urgent treatment tracks ready' : 'Fixed findings review pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!findings || reversal}
+            onClick={() => onAction('record-warfarin-reversal-intent')}>Stop warfarin + record reversal intent</Button>
+          <Button className="crisis-drug__action" disabled={!reversal || pressure}
+            onClick={() => onAction('record-smooth-ich-pressure-control')}>Record smooth SBP control</Button>
+          <Button className="crisis-drug__action" disabled={!pressure || escalated}
+            onClick={() => onAction('escalate-ich-neurocritical-care')}>Escalate + hand off serial findings</Button>
+        </div>
+        <p className="field__hint">No dose, drug delivery, pressure response, hematoma expansion, airway procedure, ventricular drain, evacuation, complication, disposition, or outcome is simulated.</p>
       </section>
     </div>
   );

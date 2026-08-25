@@ -350,6 +350,12 @@ export class AnesthesiaEngine {
   private acuteStrokeTenecteplaseAtTick: number | null = null;
   private acuteStrokeThrombectomyActivatedAtTick: number | null = null;
   private acuteStrokeReassessedAtTick: number | null = null;
+  private ichDeteriorationReviewedAtTick: number | null = null;
+  private ichPathwayActivatedAtTick: number | null = null;
+  private ichFindingsReviewedAtTick: number | null = null;
+  private ichReversalAtTick: number | null = null;
+  private ichPressureControlAtTick: number | null = null;
+  private ichEscalatedAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1867,6 +1873,111 @@ export class AnesthesiaEngine {
         this.acuteStrokeReassessedAtTick = this.currentTick;
         this.log('advisory', 'assessment', `acute-stroke-reassessed-${this.currentTick}`,
           'Fixed surveillance and handoff: airway remains protected, breathing remains spontaneous, BP is 168/94 mmHg, and no overt bleeding is authored. Deficits are not re-scored and no treatment response is claimed. Last-known-well, activation, imaging, thrombolysis-intent, and transfer clocks accompany the thrombectomy handoff.');
+        break;
+      }
+      case 'intracranial-hemorrhage-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'intracranial-hemorrhage-deterioration');
+        const valid = ['review-ich-deterioration', 'activate-ich-pathway',
+          'review-ich-findings-and-coagulopathy', 'record-warfarin-reversal-intent',
+          'record-smooth-ich-pressure-control', 'escalate-ich-neurocritical-care'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `ich-response-refused-${this.currentTick}`,
+            supported ? 'The intracranial-hemorrhage action was not one of the listed choices. Nothing changed.'
+              : 'The bounded intracranial-hemorrhage choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-ich-deterioration') {
+          if (this.ichDeteriorationReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `ich-review-refused-${this.currentTick}`,
+              'The fixed deterioration pattern has already been reviewed.');
+            break;
+          }
+          this.ichDeteriorationReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `ich-deterioration-reviewed-${this.currentTick}`,
+            'Fixed serial assessment: eye opening and coherent speech have decreased over 15 minutes after sudden headache, vomiting, dysarthria, and left weakness. BP is 202/112 mmHg, glucose is 126 mg/dL, SpO₂ is 96% on room air, breathing is spontaneous, and secretions are currently handled. Airway protection requires continuous reassessment; this screen does not perform an examination or score consciousness.');
+          break;
+        }
+        if (this.ichDeteriorationReviewedAtTick === null) {
+          this.log('warning', 'assessment', `ich-order-refused-${this.currentTick}`,
+            'Review the serial neurologic change, airway, breathing, circulation, glucose, and pressure first.');
+          break;
+        }
+        if (response === 'activate-ich-pathway') {
+          if (this.ichPathwayActivatedAtTick !== null) {
+            this.log('warning', 'assessment', `ich-pathway-refused-${this.currentTick}`,
+              'The intracranial-hemorrhage pathway has already been activated.');
+            break;
+          }
+          this.ichPathwayActivatedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `ich-pathway-activated-${this.currentTick}`,
+            'Intracranial-hemorrhage activation, head elevation, nothing-by-mouth status, monitoring, access, laboratory workflow, and airway-equipment readiness were recorded. Physical care, equipment use, access, specimen collection, and team performance are not simulated.', { intentOnly: true });
+          break;
+        }
+        if (this.ichPathwayActivatedAtTick === null) {
+          this.log('warning', 'assessment', `ich-pathway-order-refused-${this.currentTick}`,
+            'Activate immediate support and the intracranial-hemorrhage pathway before reviewing fixed CT and coagulopathy findings.');
+          break;
+        }
+        if (response === 'review-ich-findings-and-coagulopathy') {
+          if (this.ichFindingsReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `ich-findings-refused-${this.currentTick}`,
+              'The authored hemorrhage and coagulopathy findings have already been reviewed.');
+            break;
+          }
+          this.ichFindingsReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `ich-findings-reviewed-${this.currentTick}`,
+            'Authored findings: CT shows a 28 mL right thalamic hemorrhage with intraventricular extension and early hydrocephalus, without authored herniation. Warfarin was last taken yesterday evening and INR is 3.2. This fixed screen does not interpret imaging, estimate expansion, or adjudicate a real reversal plan.');
+          break;
+        }
+        if (this.ichFindingsReviewedAtTick === null) {
+          this.log('warning', 'assessment', `ich-findings-order-refused-${this.currentTick}`,
+            'Review the authored CT, anticoagulant, last-dose timing, and INR before treatment intent.');
+          break;
+        }
+        if (response === 'record-warfarin-reversal-intent') {
+          if (this.ichReversalAtTick !== null) {
+            this.log('warning', 'drug', `ich-reversal-refused-${this.currentTick}`,
+              'The fixed warfarin-reversal intent has already been recorded.');
+            break;
+          }
+          this.ichReversalAtTick = this.currentTick;
+          this.log('critical', 'drug', `ich-reversal-${this.currentTick}`,
+            'Warfarin was stopped and urgent 4-factor PCC plus IV vitamin K intent was recorded without waiting for another coagulation result. Product selection, patient-specific dosing, preparation, physical delivery, INR response, thrombosis, and hematoma response are not simulated.',
+            { intentOnly: true, anticoagulant: 'warfarin', reversal: '4f-pcc-plus-iv-vitamin-k', authoredInr: 3.2 });
+          break;
+        }
+        if (this.ichReversalAtTick === null) {
+          this.log('warning', 'assessment', `ich-pressure-order-refused-${this.currentTick}`,
+            'Record urgent warfarin-reversal intent before completing the parallel pressure strategy.');
+          break;
+        }
+        if (response === 'record-smooth-ich-pressure-control') {
+          if (this.ichPressureControlAtTick !== null) {
+            this.log('warning', 'assessment', `ich-pressure-refused-${this.currentTick}`,
+              'The bounded pressure-control intent has already been recorded.');
+            break;
+          }
+          this.ichPressureControlAtTick = this.currentTick;
+          this.log('critical', 'assessment', `ich-pressure-control-${this.currentTick}`,
+            'Smooth, sustained systolic pressure control toward 140 mmHg, with a maintenance range of 130–150 mmHg and avoidance of less than 130 mmHg, was recorded for this authored presentation. Agent selection, titration, measurement technique, variability, cerebral perfusion, and individual response are not simulated.',
+            { intentOnly: true, targetSystolicMmHg: 140, lowerBoundSystolicMmHg: 130, upperBoundSystolicMmHg: 150 });
+          break;
+        }
+        if (this.ichPressureControlAtTick === null) {
+          this.log('warning', 'assessment', `ich-escalation-order-refused-${this.currentTick}`,
+            'Record the parallel pressure-control intent before closing the urgent escalation and handoff.');
+          break;
+        }
+        if (this.ichEscalatedAtTick !== null) {
+          this.log('warning', 'assessment', `ich-escalation-refused-${this.currentTick}`,
+            'The neurocritical and neurosurgical escalation has already been recorded.');
+          break;
+        }
+        this.ichEscalatedAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `ich-escalated-${this.currentTick}`,
+          'Immediate transfer to neurocritical and neurosurgical capability was activated for worsening alertness, intraventricular extension, and early hydrocephalus. Fixed handoff includes symptom onset, 15-minute deterioration, airway surveillance, CT, warfarin timing, INR, reversal intent, and pressure plan. Airway intervention, ventricular drainage, surgery, expansion, complications, disposition, and outcome remain outside this lesson.', { intentOnly: true });
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -4958,6 +5069,14 @@ export class AnesthesiaEngine {
           tenecteplaseAtTick: this.acuteStrokeTenecteplaseAtTick,
           thrombectomyActivatedAtTick: this.acuteStrokeThrombectomyActivatedAtTick,
           reassessedAtTick: this.acuteStrokeReassessedAtTick,
+        },
+        intracranialHemorrhageAssessment: {
+          deteriorationReviewedAtTick: this.ichDeteriorationReviewedAtTick,
+          pathwayActivatedAtTick: this.ichPathwayActivatedAtTick,
+          findingsReviewedAtTick: this.ichFindingsReviewedAtTick,
+          reversalAtTick: this.ichReversalAtTick,
+          pressureControlAtTick: this.ichPressureControlAtTick,
+          escalatedAtTick: this.ichEscalatedAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

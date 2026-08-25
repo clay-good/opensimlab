@@ -2756,6 +2756,59 @@ export function objectiveFindings(
         atTick: reassessed?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-and-stabilize-deteriorating-ich', 'review-ich-imaging-and-coagulopathy',
+      'record-urgent-warfarin-reversal-intent', 'record-smooth-ich-pressure-control',
+      'escalate-and-handoff-deteriorating-ich'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'intracranial-hemorrhage-deterioration');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The intracranial-hemorrhage-deterioration vignette was not active.' } satisfies ObjectiveFinding;
+      const reviewed = log.find((event) => event.eventId.startsWith('ich-deterioration-reviewed-'));
+      const activated = log.find((event) => event.eventId.startsWith('ich-pathway-activated-'));
+      const findings = log.find((event) => event.eventId.startsWith('ich-findings-reviewed-'));
+      const reversal = log.find((event) => /^ich-reversal-\d+$/.test(event.eventId));
+      const pressure = log.find((event) => event.eventId.startsWith('ich-pressure-control-'));
+      const escalated = log.find((event) => event.eventId.startsWith('ich-escalated-'));
+      if (objective.id === 'recognize-and-stabilize-deteriorating-ich') {
+        const ordered = reviewed && activated && reviewed.tick <= activated.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'The serial neurologic decline, airway watch, breathing, pressure, and glucose findings led to immediate support and ICH activation.'
+            : 'The deterioration pattern was not reviewed and activated in order.',
+          atTick: activated?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'review-ich-imaging-and-coagulopathy') {
+        const ordered = activated && findings && activated.tick <= findings.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'The authored thalamic hemorrhage, intraventricular extension, hydrocephalus, warfarin timing, and INR were integrated after activation.'
+            : 'The authored CT and coagulopathy findings were absent or out of order.',
+          atTick: findings?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'record-urgent-warfarin-reversal-intent') {
+        const ordered = findings && reversal && findings.tick <= reversal.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'Warfarin cessation and fixed 4-factor PCC plus IV vitamin K intent followed confirmation without claiming dosing, delivery, or response.'
+            : 'Urgent agent-specific reversal intent was absent or preceded confirmation.',
+          atTick: reversal?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'record-smooth-ich-pressure-control') {
+        const ordered = reversal && pressure && reversal.tick <= pressure.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'Smooth pressure control toward 140 mmHg with a 130–150 mmHg maintenance boundary followed reversal intent.'
+            : 'The bounded pressure strategy was absent or out of order.',
+          atTick: pressure?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = pressure && escalated && pressure.tick <= escalated.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met',
+        finding: ordered
+          ? 'Neurocritical and neurosurgical escalation carried the deterioration, airway, CT, coagulopathy, reversal, and pressure clocks forward.'
+          : 'Urgent neurocritical escalation and serial handoff were incomplete or out of order.',
+        atTick: escalated?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;
