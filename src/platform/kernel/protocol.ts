@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 66 reports post-intubation-hypotension state. */
-export const WORKER_PROTOCOL_VERSION = 66;
+/** Bumped whenever the message shape changes incompatibly. Version 67 reports cardiogenic-shock state. */
+export const WORKER_PROTOCOL_VERSION = 67;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -477,6 +477,13 @@ export interface EquipmentSnapshot {
       readonly dangerAtTick: number | null;
       readonly mechanismAtTick: number | null;
       readonly supportAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+    };
+    readonly cardiogenicShockAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly phenotypeAtTick: number | null;
+      readonly bridgeAtTick: number | null;
+      readonly causeControlAtTick: number | null;
       readonly reassessmentAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */

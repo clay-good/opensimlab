@@ -2274,6 +2274,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['post-intubation-hypotension'],
   },
   {
+    id: 'cardiogenic-shock-findings-phenotype-and-response-are-authored',
+    headline: 'The perfusion, ECG, echo, congestion, phenotype, and response panels are authored facts.',
+    simplification: 'One fixed acute-MI patient has a congested LV-predominant shock pattern and a bounded early response.',
+    whereItMisleads: 'Treating the screen as examination, monitoring, ECG or echo acquisition or interpretation, diagnosis, staging, or outcome prediction.',
+    correctUnderstanding: 'Real shock care repeatedly integrates trajectory, perfusion, cause, ventricular phenotype, congestion, rhythm, invasive data when needed, and response.',
+    briefIn: ['cardiogenic-shock'],
+  },
+  {
+    id: 'cardiogenic-shock-support-and-revascularization-controls-are-proxies',
+    headline: 'Team, support, revascularization, and reassessment buttons record intents; they do not perform care.',
+    simplification: 'The interface enforces ordered reasoning without delivering oxygen or drugs, choosing access or dose, catheterizing, revascularizing, transferring, or placing support.',
+    whereItMisleads: 'Equating button order with cardiovascular, critical-care, prescribing, imaging, catheterization, revascularization, device, or transfer competence.',
+    correctUnderstanding: 'Use multidisciplinary shock systems, safe delivery, prompt cause control, and frequent phenotype- and trajectory-linked reassessment.',
+    briefIn: ['cardiogenic-shock'],
+  },
+  {
+    id: 'no-live-cardiogenic-shock-diagnosis-prescribing-device-procedure-or-outcome',
+    headline: 'The case does not diagnose cardiogenic shock, prescribe a universal support target, select a device, perform revascularization, or predict outcome.',
+    simplification: 'Mechanical complications, evolving right-heart or mixed shock, arrhythmia, bleeding, infection, and other causes remain incomplete.',
+    whereItMisleads: 'Copying the bridge, withholding all fluid in every phenotype, choosing a routine device, or stopping evaluation when pressure improves.',
+    correctUnderstanding: 'Stabilize perfusion, identify and treat the cause promptly, reassess serially, and individualize hemodynamic and temporary support with expert teams.',
+    briefIn: ['cardiogenic-shock'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

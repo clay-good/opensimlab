@@ -693,6 +693,22 @@ not examine, acquire pressure, perform ultrasound or passive leg raise, deliver 
 choose access or dose, change sedation or ventilation, diagnose, treat infection, determine
 disposition, or predict outcome.
 
+### Wave B critical-care slice 9: cardiogenic shock
+
+The ninth critical-care slice uses a cold, congested acute-anterior-MI shock pattern with worsening
+brain, skin, kidney, lactate, and pressure evidence. Learners activate multidisciplinary shock and
+catheterization help, then integrate fixed ECG, echo, lung, rhythm, and perfusion findings into an
+LV-predominant phenotype while keeping mechanical, right-heart, rhythm, and noncardiac causes open.
+
+The focused tutor pairs “pressure is a clue; perfusion is the verdict” with “bridge the pump; fix the
+cause.” Learners record a perfusion-linked norepinephrine bridge without primary fluid loading,
+prioritize prompt culprit-vessel revascularization, and leave inotrope, invasive-hemodynamic,
+transfer, and temporary-support choices to expert trajectory-based selection. A fixed 10-minute
+response improves immediate perfusion but leaves congestion, organ trajectory, and definitive care
+open. The case does not examine, acquire or interpret tests, diagnose, deliver oxygen or drugs,
+select access or dose, catheterize, revascularize, place support, transfer, determine disposition,
+or predict outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute

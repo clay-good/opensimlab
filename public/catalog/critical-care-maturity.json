@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "critical-care",
-  "recordCount": 8,
+  "recordCount": 9,
   "records": [
     {
       "recordId": "scenario:ards-lung-protective-ventilation@0.1.0",
@@ -89,6 +89,17 @@
       "evidence": [
         "/catalog/critical-care-completion-audit.json#post-intubation-hypotension@0.1.0",
         "/catalog/critical-care-quality-audit.json#post-intubation-hypotension@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:cardiogenic-shock@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "cardiogenic-shock",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/critical-care-completion-audit.json#cardiogenic-shock@0.1.0",
+        "/catalog/critical-care-quality-audit.json#cardiogenic-shock@0.1.0"
       ]
     }
   ]

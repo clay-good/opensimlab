@@ -141,7 +141,8 @@ Reviewers run the routine induction themselves before answering.
 | B87 | In the unplanned-extubation lesson, visible tube displacement, severe work, weak airway protection, hypoxemia, respiratory acidemia, and declining alertness lead to immediate oxygen support and experienced help, a whole-patient tolerance assessment, case-specific failure classification, prompt skilled reintubation intent without noninvasive-support delay, reported placement and response confirmation, and non-punitive prevention handoff without implying examination, monitoring, oxygenation, ventilation, prescribing, airway, investigation, disposition, or outcome competence | | |
 | B88 | In the spontaneous-breathing-trial lesson, an improving cause, low oxygen support, stable circulation, wakefulness, spontaneous effort, cough, and manageable secretions lead to a standardized readiness review without requiring RSBI, an authored pressure-supported trial without increasing FiO₂, convergent intolerance recognition, prompt restoration of prior support, fixed recovery reassessment, and reversible-driver planning without equating SBT success with extubation readiness or implying examination, monitoring, ventilator, prescribing, treatment, airway, disposition, or outcome competence | | |
 | B89 | In the post-intubation-hypotension lesson, confirmed severe hypotension with impaired perfusion, preserved airway and ventilation signals, warm extremities, and a positive authored passive-leg-raise proxy lead to immediate help, a structured alternate-cause review, bounded mixed vasodilated and preload-sensitive classification, concurrent norepinephrine and cautious balanced-crystalloid intent, and fixed 5-minute reassessment without claiming a universal fluid-versus-vasopressor answer or implying examination, pressure acquisition, ultrasound, passive-leg-raise, fluid, prescribing, drug delivery, ventilator, sedation, diagnosis, infection-treatment, disposition, or outcome competence | | |
-| B90 | Overall: does this patient behave like a patient? | | |
+| B90 | In the cardiogenic-shock lesson, worsening brain, skin, kidney, lactate, and pressure evidence with a fixed anterior-MI, severe-LV-dysfunction, and congested phenotype lead to multidisciplinary activation, open alternate-cause review, a perfusion-linked norepinephrine bridge without primary fluid loading, prompt culprit-vessel revascularization intent, expert-dependent further support, and fixed reassessment without implying examination, monitoring, ECG or echo interpretation, diagnosis, oxygen or drug delivery, prescribing, catheterization, revascularization, device, transfer, disposition, or outcome competence | | |
+| B91 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -301,4 +302,8 @@ So that reviewers spend their attention on what this review is for:
   reassessment panels. It does not examine, acquire pressure, perform ultrasound or passive leg
   raise, deliver fluid or vasopressor, select access or dose, change sedation or ventilation,
   diagnose shock, treat infection, determine disposition, or predict outcome.
+- The cardiogenic-shock case uses fixed perfusion, ECG, echo, congestion, phenotype, bridge, and
+  response panels. It does not examine, acquire or interpret tests, diagnose, deliver oxygen or
+  drugs, choose access or dose, catheterize, revascularize, place support, transfer, determine
+  disposition, or predict outcome.
 - Nothing here has been clinically reviewed before — you are the first.

@@ -410,6 +410,13 @@ export interface ActionCockpitProps {
       readonly supportAtTick: number | null;
       readonly reassessmentAtTick: number | null;
     };
+    readonly cardiogenicShockAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly phenotypeAtTick: number | null;
+      readonly bridgeAtTick: number | null;
+      readonly causeControlAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -658,6 +665,11 @@ export interface ActionCockpitProps {
       | 'review-post-intubation-danger-pattern' | 'classify-post-intubation-hemodynamics'
       | 'record-post-intubation-support-intent' | 'reassess-post-intubation-hypotension',
   ) => void;
+  readonly onCardiogenicShockResponse?: (
+    action: 'recognize-cardiogenic-shock-trajectory'
+      | 'review-cardiogenic-shock-cause-and-phenotype' | 'record-cardiogenic-shock-bridge'
+      | 'escalate-cardiogenic-shock-cause-control' | 'reassess-cardiogenic-shock-trajectory',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -822,6 +834,9 @@ export function crisisResponseAvailability(
     hasPostIntubationHypotensionResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'post-intubation-hypotension',
     ),
+    hasCardiogenicShockResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'cardiogenic-shock',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -901,6 +916,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'unplanned-extubation')
       || (event.type === 'narrative' && event.target === 'spontaneous-breathing-trial')
       || (event.type === 'narrative' && event.target === 'post-intubation-hypotension')
+      || (event.type === 'narrative' && event.target === 'cardiogenic-shock')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -920,6 +936,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasUnplannedExtubationResponse,
     hasSpontaneousBreathingTrialResponse,
     hasPostIntubationHypotensionResponse,
+    hasCardiogenicShockResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -967,7 +984,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasTraumaPrimarySurveyResponse || hasAcuteAorticSyndromeResponse || hasArdsLungProtectiveResponse
     || hasEscalatingHypoxemiaResponse || hasVentilatorDyssynchronyResponse || hasAutoPeepResponse
     || hasMucusPluggingResponse || hasUnplannedExtubationResponse
-    || hasSpontaneousBreathingTrialResponse || hasPostIntubationHypotensionResponse;
+    || hasSpontaneousBreathingTrialResponse || hasPostIntubationHypotensionResponse
+    || hasCardiogenicShockResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -989,8 +1007,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasArdsLungProtectiveResponse || hasEscalatingHypoxemiaResponse
     || hasVentilatorDyssynchronyResponse || hasAutoPeepResponse || hasMucusPluggingResponse
     || hasUnplannedExtubationResponse || hasSpontaneousBreathingTrialResponse
-    || hasPostIntubationHypotensionResponse;
-  const responseTray = hasPostIntubationHypotensionResponse
+    || hasPostIntubationHypotensionResponse || hasCardiogenicShockResponse;
+  const responseTray = hasCardiogenicShockResponse
+    ? { id: 'crisis', label: 'Cardiogenic shock' } as const
+    : hasPostIntubationHypotensionResponse
     ? { id: 'crisis', label: 'Post-intubation pressure' } as const
     : hasSpontaneousBreathingTrialResponse
     ? { id: 'crisis', label: 'Breathing trial' } as const
@@ -1095,6 +1115,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasUnplannedExtubationResponse
     || hasSpontaneousBreathingTrialResponse
     || hasPostIntubationHypotensionResponse
+    || hasCardiogenicShockResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1521,6 +1542,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <PostIntubationHypotensionTray
                 assessment={props.resuscitation.postIntubationHypotensionAssessment}
                 onAction={props.onPostIntubationHypotensionResponse ?? (() => {})} />
+            )}
+            {hasCardiogenicShockResponse && (
+              <CardiogenicShockTray assessment={props.resuscitation.cardiogenicShockAssessment}
+                onAction={props.onCardiogenicShockResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -4292,6 +4317,57 @@ function PostIntubationHypotensionTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-post-intubation-hypotension')}>Review 5-minute whole-patient response</Button>
         </div>
         <p className="field__hint">This is not a universal fluid-versus-vasopressor answer. Dynamic response and repeated lung, gas, pressure, and perfusion checks constrain both.</p>
+      </section>
+    </div>
+  );
+}
+
+function CardiogenicShockTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['cardiogenicShockAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onCardiogenicShockResponse']>;
+}) {
+  const recognized = assessment?.recognitionAtTick != null;
+  const phenotype = assessment?.phenotypeAtTick != null;
+  const bridge = assessment?.bridgeAtTick != null;
+  const causeControl = assessment?.causeControlAtTick != null;
+  const reassessed = assessment?.reassessmentAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="cardiogenic-perfusion-title">
+        <div id="cardiogenic-perfusion-title" className="syringe__name">Pressure is a clue. Perfusion is the verdict.</div>
+        <Badge kind="teaching">brain · skin · kidney · lactate · trajectory</Badge>
+        <div className="syringe__meta">MAP 58 · refill 5 s · urine 10 mL/h · lactate 3.1 → 4.8</div>
+        <p className="syringe__remaining" role="status">
+          {phenotype ? 'Acute-MI · LV-predominant · congested · alternatives open'
+            : recognized ? 'Shock trajectory recognized · phenotype due'
+              : 'Read the whole perfusion trajectory'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={recognized}
+            onClick={() => onAction('recognize-cardiogenic-shock-trajectory')}>Recognize shock + activate teams</Button>
+          <Button className="crisis-drug__action" disabled={!recognized || phenotype}
+            onClick={() => onAction('review-cardiogenic-shock-cause-and-phenotype')}>Review cause + phenotype + threats</Button>
+        </div>
+        <p className="field__hint">Do not wait for one pressure threshold. Stage the trajectory, phenotype the pump, and keep mechanical, rhythm, right-heart, and noncardiac causes visible.</p>
+      </section>
+      <section className="syringe" aria-labelledby="cardiogenic-bridge-title">
+        <div id="cardiogenic-bridge-title" className="syringe__name">Bridge the pump. Fix the cause.</div>
+        <Badge kind="teaching">perfusion bridge · no blind fluid · culprit pathway · reassess</Badge>
+        <div className="syringe__meta">norepinephrine intent · no primary fluid load · no routine device</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'Perfusion improved · congestion + definitive work remain open'
+            : causeControl ? 'Culprit pathway prioritized · trajectory reassessment due'
+              : bridge ? 'Bounded bridge recorded · cause control due' : 'Phenotype review pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!phenotype || bridge}
+            onClick={() => onAction('record-cardiogenic-shock-bridge')}>Record perfusion-linked bridge</Button>
+          <Button className="crisis-drug__action" disabled={!bridge || causeControl}
+            onClick={() => onAction('escalate-cardiogenic-shock-cause-control')}>Prioritize culprit revascularization</Button>
+          <Button className="crisis-drug__action" disabled={!causeControl || reassessed}
+            onClick={() => onAction('reassess-cardiogenic-shock-trajectory')}>Review 10-minute trajectory</Button>
+        </div>
+        <p className="field__hint">Support buys time; it does not repair the infarct. Further hemodynamics, inotrope, transfer, and temporary support remain expert and trajectory dependent.</p>
       </section>
     </div>
   );

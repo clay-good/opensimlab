@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: post-intubation-hypotension state has protocol version 66', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(66);
+  it('Scenario: cardiogenic-shock state has protocol version 67', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(67);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

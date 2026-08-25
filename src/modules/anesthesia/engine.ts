@@ -436,6 +436,11 @@ export class AnesthesiaEngine {
   private postIntubationMechanismAtTick: number | null = null;
   private postIntubationSupportAtTick: number | null = null;
   private postIntubationReassessmentAtTick: number | null = null;
+  private cardiogenicShockRecognitionAtTick: number | null = null;
+  private cardiogenicShockPhenotypeAtTick: number | null = null;
+  private cardiogenicShockBridgeAtTick: number | null = null;
+  private cardiogenicShockCauseControlAtTick: number | null = null;
+  private cardiogenicShockReassessmentAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -3155,6 +3160,58 @@ export class AnesthesiaEngine {
         this.postIntubationReassessmentAtTick = this.currentTick;
         this.log('critical', 'assessment', `post-intubation-response-reassessed-${this.currentTick}`,
           'Fixed response after 5 minutes: MAP is 67 mmHg, HR 108/min, capillary refill 3 seconds, stroke volume 58 mL, SpO₂ 96%, peak pressure 27 cm H₂O, plateau 21 cm H₂O, and lungs remain clear without a new oxygenation penalty. Ongoing septic-shock resuscitation, serial perfusion, source treatment, and alternate-cause review remain open.', { reassessmentMinutes: 5, mapMmHg: 67, heartRateBpm: 108, capillaryRefillSeconds: 3, strokeVolumeMl: 58, spo2Percent: 96, lungsRemainClear: true });
+        break;
+      }
+      case 'cardiogenic-shock-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'cardiogenic-shock');
+        const valid = ['recognize-cardiogenic-shock-trajectory',
+          'review-cardiogenic-shock-cause-and-phenotype', 'record-cardiogenic-shock-bridge',
+          'escalate-cardiogenic-shock-cause-control',
+          'reassess-cardiogenic-shock-trajectory'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `cardiogenic-shock-response-refused-${this.currentTick}`,
+            supported ? 'The cardiogenic-shock action was not one of the listed choices. Nothing changed.'
+              : 'The bounded cardiogenic-shock choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'recognize-cardiogenic-shock-trajectory') {
+          if (this.cardiogenicShockRecognitionAtTick !== null) { this.log('warning', 'assessment', `cardiogenic-shock-recognition-refused-${this.currentTick}`, 'The perfusion trajectory and shock-team activation have already been recorded.'); break; }
+          this.cardiogenicShockRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `cardiogenic-shock-trajectory-recognized-${this.currentTick}`,
+            'MAP 58 mmHg accompanies cool mottling, 5-second capillary refill, new confusion, urine output 10 mL/h, and lactate rising from 3.1 to 4.8 mmol/L. Multidisciplinary shock and catheterization help were activated from the worsening perfusion trajectory, not pressure alone.', { mapMmHg: 58, capillaryRefillSeconds: 5, urineOutputMlPerHour: 10, lactateFromMmolPerL: 3.1, lactateToMmolPerL: 4.8, shockTeam: true, catheterizationTeam: true });
+          break;
+        }
+        if (this.cardiogenicShockRecognitionAtTick === null) { this.log('warning', 'assessment', `cardiogenic-shock-recognition-order-refused-${this.currentTick}`, 'Recognize the perfusion trajectory and activate experienced shock help first.'); break; }
+        if (response === 'review-cardiogenic-shock-cause-and-phenotype') {
+          if (this.cardiogenicShockPhenotypeAtTick !== null) { this.log('warning', 'assessment', `cardiogenic-shock-phenotype-refused-${this.currentTick}`, 'The fixed cause-and-phenotype panel has already been reviewed.'); break; }
+          this.cardiogenicShockPhenotypeAtTick = this.currentTick;
+          this.log('critical', 'assessment', `cardiogenic-shock-phenotype-reviewed-${this.currentTick}`,
+            'Fixed panel: persistent anterior ST elevation, severe LV systolic dysfunction with anterior and apical akinesis, preserved RV size, bilateral B-lines, no effusion, and no reported acute severe MR or VSD. This supports an acute-MI, left-sided congested phenotype without excluding evolving mechanical, rhythm, right-heart, or noncardiac causes.', { anteriorStElevation: true, severeLvDysfunction: true, preservedRvSize: true, bilateralBLines: true, pericardialEffusion: false, acuteSevereMrReported: false, vsdReported: false });
+          break;
+        }
+        if (this.cardiogenicShockPhenotypeAtTick === null) { this.log('warning', 'assessment', `cardiogenic-shock-phenotype-order-refused-${this.currentTick}`, 'Review the cause, phenotype, congestion, and dangerous alternatives before recording a bridge.'); break; }
+        if (response === 'record-cardiogenic-shock-bridge') {
+          if (this.cardiogenicShockBridgeAtTick !== null) { this.log('warning', 'assessment', `cardiogenic-shock-bridge-refused-${this.currentTick}`, 'The bounded bridge intent has already been recorded.'); break; }
+          this.cardiogenicShockBridgeAtTick = this.currentTick;
+          this.log('critical', 'assessment', `cardiogenic-shock-bridge-recorded-${this.currentTick}`,
+            'Norepinephrine bridge intent was recorded against pressure and tissue perfusion while definitive care mobilized. Primary fluid loading was withheld in this left-sided congested phenotype. No universal target, access, concentration, rate, dose, pump, fluid, or drug delivery is simulated.', { norepinephrine: true, perfusionLinked: true, primaryFluidLoading: false, intentOnly: true });
+          break;
+        }
+        if (this.cardiogenicShockBridgeAtTick === null) { this.log('warning', 'assessment', `cardiogenic-shock-bridge-order-refused-${this.currentTick}`, 'Record a phenotype-linked bridge before definitive cause control.'); break; }
+        if (response === 'escalate-cardiogenic-shock-cause-control') {
+          if (this.cardiogenicShockCauseControlAtTick !== null) { this.log('warning', 'assessment', `cardiogenic-shock-cause-control-refused-${this.currentTick}`, 'The definitive cause-control pathway has already been recorded.'); break; }
+          this.cardiogenicShockCauseControlAtTick = this.currentTick;
+          this.log('critical', 'assessment', `cardiogenic-shock-cause-control-escalated-${this.currentTick}`,
+            'Prompt culprit-vessel revascularization was prioritized through the active catheterization pathway. Inotrope, invasive-hemodynamic, transfer, and temporary-support choices remained multidisciplinary and trajectory dependent; no routine device or immediate multivessel intervention was recorded.', { culpritVesselRevascularization: true, routineDevice: false, routineImmediateMultivesselIntervention: false, expertSelection: true });
+          break;
+        }
+        if (this.cardiogenicShockCauseControlAtTick === null) { this.log('warning', 'assessment', `cardiogenic-shock-cause-control-order-refused-${this.currentTick}`, 'Prioritize cause control before reviewing the fixed response.'); break; }
+        if (this.cardiogenicShockReassessmentAtTick !== null) { this.log('warning', 'assessment', `cardiogenic-shock-reassessment-refused-${this.currentTick}`, 'The fixed trajectory reassessment has already been reviewed.'); break; }
+        this.cardiogenicShockReassessmentAtTick = this.currentTick;
+        this.log('critical', 'assessment', `cardiogenic-shock-trajectory-reassessed-${this.currentTick}`,
+          'Fixed response after 10 minutes: MAP is 68 mmHg, HR 104/min, capillary refill 3 seconds, mentation is clearer, SpO₂ is 94%, crackles persist, and urine and lactate response remain too early to declare. Revascularization, serial perfusion, rhythm, congestion, organ trajectory, and escalation work remain open.', { reassessmentMinutes: 10, mapMmHg: 68, heartRateBpm: 104, capillaryRefillSeconds: 3, spo2Percent: 94, cracklesPersist: true, urineResponseKnown: false, lactateResponseKnown: false });
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -6364,6 +6421,13 @@ export class AnesthesiaEngine {
           mechanismAtTick: this.postIntubationMechanismAtTick,
           supportAtTick: this.postIntubationSupportAtTick,
           reassessmentAtTick: this.postIntubationReassessmentAtTick,
+        },
+        cardiogenicShockAssessment: {
+          recognitionAtTick: this.cardiogenicShockRecognitionAtTick,
+          phenotypeAtTick: this.cardiogenicShockPhenotypeAtTick,
+          bridgeAtTick: this.cardiogenicShockBridgeAtTick,
+          causeControlAtTick: this.cardiogenicShockCauseControlAtTick,
+          reassessmentAtTick: this.cardiogenicShockReassessmentAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

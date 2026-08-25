@@ -3431,6 +3431,47 @@ export function objectiveFindings(
         : 'Whole-patient reassessment was absent or preceded support.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-cardiogenic-shock-trajectory',
+      'review-cardiogenic-shock-cause-and-phenotype', 'record-cardiogenic-shock-bridge',
+      'escalate-cardiogenic-shock-cause-control',
+      'reassess-cardiogenic-shock-trajectory'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'cardiogenic-shock');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The cardiogenic-shock vignette was not active.' } satisfies ObjectiveFinding;
+      const recognition = log.find((event) => /^cardiogenic-shock-trajectory-recognized-\d+$/.test(event.eventId));
+      const phenotype = log.find((event) => /^cardiogenic-shock-phenotype-reviewed-\d+$/.test(event.eventId));
+      const bridge = log.find((event) => /^cardiogenic-shock-bridge-recorded-\d+$/.test(event.eventId));
+      const causeControl = log.find((event) => /^cardiogenic-shock-cause-control-escalated-\d+$/.test(event.eventId));
+      const reassessment = log.find((event) => /^cardiogenic-shock-trajectory-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'recognize-cardiogenic-shock-trajectory') return { ...base,
+        outcome: recognition ? 'met' : 'not-met', finding: recognition
+          ? 'Worsening brain, skin, kidney, lactate, and pressure evidence triggered multidisciplinary shock help.'
+          : 'The perfusion trajectory or multidisciplinary activation was absent.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-cardiogenic-shock-cause-and-phenotype') {
+        const ordered = recognition && phenotype && recognition.tick <= phenotype.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'The fixed ECG, echo, lung, rhythm, and perfusion panel supported a congested LV-predominant acute-MI phenotype without closing alternatives.'
+          : 'Cause-and-phenotype review was absent or preceded shock recognition.', atTick: phenotype?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'record-cardiogenic-shock-bridge') {
+        const ordered = phenotype && bridge && phenotype.tick <= bridge.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'A perfusion-linked norepinephrine bridge avoided primary fluid loading and universal targets.'
+          : 'The bounded bridge was absent or preceded phenotype review.', atTick: bridge?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'escalate-cardiogenic-shock-cause-control') {
+        const ordered = bridge && causeControl && bridge.tick <= causeControl.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Prompt culprit-vessel revascularization took priority while further support remained expert selected.'
+          : 'Cause control was absent or preceded the initial bridge.', atTick: causeControl?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = causeControl && reassessment && causeControl.tick <= reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+        ? 'Pressure and immediate perfusion improved while congestion, organ trajectory, and definitive work stayed open.'
+        : 'Trajectory reassessment was absent or preceded cause control.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;
