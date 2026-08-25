@@ -115,6 +115,14 @@ describe('Requirement: Screen Reader Access To Live Physiology', () => {
     expect(descriptions[1]?.description).toContain('dicrotic notch');
   });
 
+  it('describes absent gas flow when a ventilator is commanded but not delivering', () => {
+    const descriptions = waveformDescriptions({
+      rhythm: 'sinus', bronchospasmSeverity: 0, airwayPatencyFraction: 1, perfusionIndex: 0.8,
+      artifacts: new Set(), ventilating: false, mechanicalPulse: true,
+    });
+    expect(descriptions[2]?.description).toBe('No waveform: no gas is moving.');
+  });
+
   it('describes normal baseline pulses from patient state even before ventilation starts', () => {
     const engine = new AnesthesiaEngine({
       scenario: ROUTINE_INDUCTION, seed: 7, practiceRegion: 'US',

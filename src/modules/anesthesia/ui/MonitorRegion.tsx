@@ -28,6 +28,7 @@ export interface MonitorRegionProps {
   readonly rhythm: RhythmId;
   readonly airwayPatencyFraction: number;
   readonly bronchospasmSeverity: number;
+  readonly ventilating?: boolean;
   readonly mechanicalPulse: boolean;
   readonly reducedMotion: boolean;
   readonly colorblindSafe: boolean;
@@ -63,12 +64,13 @@ export function MonitorRegion(props: MonitorRegionProps) {
     capnographySampleObstructed: props.capnographySampleObstructed,
     inspiredCo2MmHg: props.inspiredCo2MmHg,
     arterialDamped: props.arterialDamped,
-    ventilating: (props.state?.respiratoryRateBpm ?? 0) > 0,
+    ventilating: props.ventilating ?? (props.state?.respiratoryRateBpm ?? 0) > 0,
     mechanicalPulse: props.mechanicalPulse,
   }), [
     props.rhythm, props.state, props.waveformArtifacts, props.mechanicalPulse,
     props.airwayPatencyFraction, props.bronchospasmSeverity,
     props.capnographySampleObstructed, props.inspiredCo2MmHg, props.arterialDamped,
+    props.ventilating,
   ]);
 
   const alarmFor = (field: string): 'high' | 'medium' | 'low' | null => {

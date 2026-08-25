@@ -883,6 +883,24 @@ open. The lab does not verify identity, examine, monitor, inspect devices or rec
 document, deliver treatment, control a source, transfer responsibility, determine disposition, or
 predict outcome.
 
+### Wave B critical-care slice 20: ventilator circuit disconnection
+
+The twentieth critical-care slice begins with a fixed high-priority disconnect alarm after a
+declared 10-second teaching delay. Although volume control remains commanded at 420 mL and 20/min,
+exhaled tidal volume and minute ventilation are zero, airway pressure and measured PEEP collapse,
+the capnogram disappears, and a coherent pleth falls from SpO₂ 96% to 88% in a fully dependent
+patient. Tube depth and securement are unchanged, but the diagnosis is not announced.
+
+The focused tutor pairs “follow the breath, not the setting” with “bridge first; then reconnect;
+then prove.” Learners recognize command-delivery discordance, call respiratory-therapy and senior
+help, record immediate alternative oxygenation and ventilation intent, trace the patient, airway,
+circuit, ventilator, and gas source while preserving alternatives, then record restored continuity.
+A fixed 2-minute response restores exhaled volume, pressure, PEEP, capnography, SpO₂ 94%, and
+stable circulation. Alarm behavior and oxygen reserve are explicitly device- and patient-specific
+teaching values. The lab does not hear or configure alarms, examine, monitor, inspect or handle
+equipment, oxygenate, ventilate, reconnect a circuit, program a ventilator, diagnose, perform a
+procedure, determine disposition, or predict outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute

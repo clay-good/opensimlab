@@ -3872,6 +3872,46 @@ export function objectiveFindings(
         : 'Synthesis, accepted ownership, or reassessment was absent or preceded escalation.', atTick: acceptance?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-ventilator-circuit-disconnection',
+      'bridge-ventilator-circuit-disconnection', 'inspect-ventilator-circuit-disconnection',
+      'restore-ventilator-circuit-support', 'reassess-ventilator-circuit-response'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'ventilator-circuit-disconnection');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The ventilator circuit-disconnection lesson was not active.' } satisfies ObjectiveFinding;
+      const recognized = log.find((event) => /^ventilator-disconnection-recognized-\d+$/.test(event.eventId));
+      const bridged = log.find((event) => /^ventilator-disconnection-bridged-\d+$/.test(event.eventId));
+      const inspected = log.find((event) => /^ventilator-disconnection-inspected-\d+$/.test(event.eventId));
+      const restored = log.find((event) => /^ventilator-disconnection-restored-\d+$/.test(event.eventId));
+      const reassessed = log.find((event) => /^ventilator-disconnection-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'recognize-ventilator-circuit-disconnection') return { ...base,
+        outcome: recognized ? 'met' : 'not-met', finding: recognized
+          ? 'Commanded settings were separated from delivered volume, pressure, capnography, pleth, saturation, and the whole patient.'
+          : 'Loss of delivered ventilation was not recognized from independent patient and device signals.', atTick: recognized?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'bridge-ventilator-circuit-disconnection') {
+        const ordered = recognized && bridged && recognized.tick <= bridged.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Help and alternative oxygenation and ventilation intent followed recognition without waiting for definitive troubleshooting.'
+          : 'The immediate bridge was absent or preceded recognition.', atTick: bridged?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'inspect-ventilator-circuit-disconnection') {
+        const ordered = bridged && inspected && bridged.tick <= inspected.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'A patient-to-source trace localized circuit discontinuity while plausible alternatives remained open.'
+          : 'The source-to-patient review was absent or preceded immediate bridging.', atTick: inspected?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'restore-ventilator-circuit-support') {
+        const ordered = inspected && restored && inspected.tick <= restored.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Circuit continuity and established support were restored in the teaching state after inspection.'
+          : 'Restoration was absent or preceded the patient-to-source review.', atTick: restored?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = restored && reassessed && restored.tick <= reassessed.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+        ? 'Exhaled volume, minute ventilation, pressure, PEEP, capnography, oxygenation, and circulation proved the fixed response.'
+        : 'Whole-system reassessment was absent or preceded restoration.', atTick: reassessed?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

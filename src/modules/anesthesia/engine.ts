@@ -491,6 +491,11 @@ export class AnesthesiaEngine {
   private icuHandoffCrossCheckAtTick: number | null = null;
   private icuHandoffEscalationAtTick: number | null = null;
   private icuHandoffAcceptanceAtTick: number | null = null;
+  private ventilatorDisconnectionRecognizedAtTick: number | null = null;
+  private ventilatorDisconnectionBridgedAtTick: number | null = null;
+  private ventilatorDisconnectionInspectedAtTick: number | null = null;
+  private ventilatorDisconnectionRestoredAtTick: number | null = null;
+  private ventilatorDisconnectionReassessedAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -3779,6 +3784,58 @@ export class AnesthesiaEngine {
           'The receiver synthesized worsening shock, active support, pending source control, immediate tasks, triggers, contingencies, owners, and escalation route before acknowledging responsibility. Fixed 15-minute bridge response: HR 108/min, MAP 70 mmHg, EtCO₂ 33 mmHg, SpO₂ 96% on unchanged FiO₂ 0.35, and temperature 38.9°C. Lactate, urine, source control, durability, recovery, and outcome remain open.', { receiverSynthesis: true, responsibilityAccepted: true, reassessmentMinutes: 15, heartRateBpm: 108, mapMmHg: 70, etco2MmHg: 33, sourceControlComplete: false, outcomeProven: false });
         break;
       }
+      case 'ventilator-circuit-disconnection-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'ventilator-circuit-disconnection');
+        const valid = ['recognize-ventilator-circuit-disconnection',
+          'bridge-ventilator-circuit-disconnection', 'inspect-ventilator-circuit-disconnection',
+          'restore-ventilator-circuit-support', 'reassess-ventilator-circuit-response'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `ventilator-disconnection-response-refused-${this.currentTick}`,
+            supported ? 'The ventilator-disconnection action was not one of the listed choices. Nothing changed.'
+              : 'The bounded circuit-disconnection choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'recognize-ventilator-circuit-disconnection') {
+          if (this.ventilatorDisconnectionRecognizedAtTick !== null) { this.log('warning', 'assessment', `ventilator-disconnection-recognition-refused-${this.currentTick}`, 'Loss of delivered ventilation has already been recognized.'); break; }
+          this.ventilatorDisconnectionRecognizedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `ventilator-disconnection-recognized-${this.currentTick}`,
+            'Commanded volume control 420 mL at 20/min was separated from exhaled tidal volume 0, minute ventilation 0, airway pressure and measured PEEP 0, absent capnography, a coherent falling saturation, and the whole patient. The fixed alarm is corroborating evidence, not a diagnosis.', { commandedTidalVolumeMl: 420, exhaledTidalVolumeMl: 0, deliveredVentilationLost: true, alarmDiagnosesCause: false });
+          break;
+        }
+        if (this.ventilatorDisconnectionRecognizedAtTick === null) { this.log('warning', 'assessment', `ventilator-disconnection-recognition-order-refused-${this.currentTick}`, 'Recognize loss of delivered ventilation from the patient and independent signals before continuing.'); break; }
+        if (response === 'bridge-ventilator-circuit-disconnection') {
+          if (this.ventilatorDisconnectionBridgedAtTick !== null) { this.log('warning', 'assessment', `ventilator-disconnection-bridge-refused-${this.currentTick}`, 'Immediate help and alternative oxygenation and ventilation intent have already been recorded.'); break; }
+          this.ventilatorDisconnectionBridgedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `ventilator-disconnection-bridged-${this.currentTick}`,
+            'Respiratory-therapy and senior ICU help were activated, and immediate alternative oxygenation and ventilation intent was recorded while oxygen reserve was falling. No oxygen, ventilation, equipment handling, or care is delivered.', { helpActivated: true, alternativeVentilationIntent: true, careDelivered: false });
+          break;
+        }
+        if (this.ventilatorDisconnectionBridgedAtTick === null) { this.log('warning', 'assessment', `ventilator-disconnection-bridge-order-refused-${this.currentTick}`, 'Record immediate help and alternative oxygenation and ventilation intent before troubleshooting the circuit.'); break; }
+        if (response === 'inspect-ventilator-circuit-disconnection') {
+          if (this.ventilatorDisconnectionInspectedAtTick !== null) { this.log('warning', 'assessment', `ventilator-disconnection-inspection-refused-${this.currentTick}`, 'The fixed patient-to-source review has already been recorded.'); break; }
+          this.ventilatorDisconnectionInspectedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `ventilator-disconnection-inspected-${this.currentTick}`,
+            'The patient, pleth, pulse, airway, capnography, commanded and exhaled breaths, pressure, circuit from patient to ventilator, filters, accessories, ventilator, and gas source were included in the fixed review. It localizes complete circuit discontinuity while tube displacement or obstruction, pneumothorax, device failure, apnea, and monitor failure were considered; no physical inspection occurred.', { circuitDiscontinuityLocalized: true, alternateCausesConsidered: true, physicalInspectionPerformed: false });
+          break;
+        }
+        if (this.ventilatorDisconnectionInspectedAtTick === null) { this.log('warning', 'assessment', `ventilator-disconnection-inspection-order-refused-${this.currentTick}`, 'Trace the patient, airway, circuit, ventilator, and gas source before recording restoration.'); break; }
+        if (response === 'restore-ventilator-circuit-support') {
+          if (this.ventilatorDisconnectionRestoredAtTick !== null) { this.log('warning', 'assessment', `ventilator-disconnection-restoration-refused-${this.currentTick}`, 'Circuit continuity and established support have already been restored in the teaching state.'); break; }
+          this.ventilatorDisconnectionRestoredAtTick = this.currentTick;
+          this.setVentilator({ delivering: true });
+          this.log('critical', 'assessment', `ventilator-disconnection-restored-${this.currentTick}`,
+            'Reconnection and restoration of the established ventilator support were recorded after immediate bridging and the source-to-patient review. This changes only the authored teaching state; no connection was physically handled.', { circuitContinuityRestored: true, physicalReconnectionPerformed: false });
+          break;
+        }
+        if (this.ventilatorDisconnectionRestoredAtTick === null) { this.log('warning', 'assessment', `ventilator-disconnection-restoration-order-refused-${this.currentTick}`, 'Restore circuit continuity and established support before assessing the response.'); break; }
+        if (this.ventilatorDisconnectionReassessedAtTick !== null) { this.log('warning', 'assessment', `ventilator-disconnection-reassessment-refused-${this.currentTick}`, 'The fixed whole-system response has already been recorded.'); break; }
+        this.ventilatorDisconnectionReassessedAtTick = this.currentTick;
+        this.log('critical', 'assessment', `ventilator-disconnection-reassessed-${this.currentTick}`,
+          'Fixed 2-minute response: exhaled tidal volume 410 mL, minute ventilation 8.2 L/min, peak pressure 27 cm H₂O, measured PEEP 8 cm H₂O, EtCO₂ 36 mmHg with a continuous waveform, SpO₂ 94% on unchanged FiO₂ 0.45, HR 98/min, and MAP 77 mmHg. Delivered ventilation is restored; physical reconnection, reserve prediction, durability, and outcome remain outside the model.', { reassessmentMinutes: 2, exhaledTidalVolumeMl: 410, minuteVentilationLMin: 8.2, deliveredVentilationRestored: true, physicalReconnectionPerformed: false, outcomeProven: false });
+        break;
+      }
       case 'aspiration-risk-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
@@ -6627,6 +6684,19 @@ export class AnesthesiaEngine {
         meanArterialMmHg: reassessed ? 70 : 64,
         coreTemperatureC: reassessed ? 38.9 : 39.1 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'ventilator-circuit-disconnection')) {
+      const reassessed = this.ventilatorDisconnectionReassessedAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: reassessed ? 98 : 108,
+        respiratoryRateBpm: 20,
+        spo2Percent: reassessed ? 94 : 88,
+        etco2MmHg: reassessed ? 36 : 0,
+        systolicMmHg: reassessed ? 105 : 103,
+        diastolicMmHg: reassessed ? 63 : 62,
+        meanArterialMmHg: reassessed ? 77 : 76,
+        coreTemperatureC: 38 };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -7171,6 +7241,13 @@ export class AnesthesiaEngine {
           crossCheckAtTick: this.icuHandoffCrossCheckAtTick,
           escalationAtTick: this.icuHandoffEscalationAtTick,
           acceptanceAtTick: this.icuHandoffAcceptanceAtTick,
+        },
+        ventilatorCircuitDisconnectionAssessment: {
+          recognizedAtTick: this.ventilatorDisconnectionRecognizedAtTick,
+          bridgedAtTick: this.ventilatorDisconnectionBridgedAtTick,
+          inspectedAtTick: this.ventilatorDisconnectionInspectedAtTick,
+          restoredAtTick: this.ventilatorDisconnectionRestoredAtTick,
+          reassessedAtTick: this.ventilatorDisconnectionReassessedAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

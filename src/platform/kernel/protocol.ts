@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 77 reports ICU handoff state. */
-export const WORKER_PROTOCOL_VERSION = 77;
+/** Bumped whenever the message shape changes incompatibly. Version 78 reports circuit-disconnection state. */
+export const WORKER_PROTOCOL_VERSION = 78;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -555,6 +555,13 @@ export interface EquipmentSnapshot {
       readonly crossCheckAtTick: number | null;
       readonly escalationAtTick: number | null;
       readonly acceptanceAtTick: number | null;
+    };
+    readonly ventilatorCircuitDisconnectionAssessment?: {
+      readonly recognizedAtTick: number | null;
+      readonly bridgedAtTick: number | null;
+      readonly inspectedAtTick: number | null;
+      readonly restoredAtTick: number | null;
+      readonly reassessedAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

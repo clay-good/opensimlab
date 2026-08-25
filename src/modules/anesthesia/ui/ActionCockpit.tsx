@@ -487,6 +487,13 @@ export interface ActionCockpitProps {
       readonly escalationAtTick: number | null;
       readonly acceptanceAtTick: number | null;
     };
+    readonly ventilatorCircuitDisconnectionAssessment?: {
+      readonly recognizedAtTick: number | null;
+      readonly bridgedAtTick: number | null;
+      readonly inspectedAtTick: number | null;
+      readonly restoredAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -791,6 +798,11 @@ export interface ActionCockpitProps {
       | 'cross-check-hidden-deterioration' | 'escalate-icu-handoff-deterioration'
       | 'synthesize-accept-and-reassess-icu-handoff',
   ) => void;
+  readonly onVentilatorCircuitDisconnectionResponse?: (
+    action: 'recognize-ventilator-circuit-disconnection'
+      | 'bridge-ventilator-circuit-disconnection' | 'inspect-ventilator-circuit-disconnection'
+      | 'restore-ventilator-circuit-support' | 'reassess-ventilator-circuit-response',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -990,6 +1002,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'icu-handoff-with-hidden-deterioration',
     ),
+    hasVentilatorCircuitDisconnectionResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'ventilator-circuit-disconnection',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1080,6 +1096,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'acute-kidney-injury-with-fluid-overload')
       || (event.type === 'narrative' && event.target === 'severe-acidemia')
       || (event.type === 'narrative' && event.target === 'icu-handoff-with-hidden-deterioration')
+      || (event.type === 'narrative' && event.target === 'ventilator-circuit-disconnection')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1110,6 +1127,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasAkiFluidOverloadResponse,
     hasSevereAcidemiaResponse,
     hasIcuHiddenDeteriorationHandoffResponse,
+    hasVentilatorCircuitDisconnectionResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1162,7 +1180,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasMassivePulmonaryEmbolismResponse || hasUpperGiHemorrhageResponse
     || hasCriticalCareStatusEpilepticusResponse || hasPostArrestTemperatureResponse
     || hasIntracranialHypertensionResponse || hasAkiFluidOverloadResponse
-    || hasSevereAcidemiaResponse || hasIcuHiddenDeteriorationHandoffResponse;
+    || hasSevereAcidemiaResponse || hasIcuHiddenDeteriorationHandoffResponse
+    || hasVentilatorCircuitDisconnectionResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1189,8 +1208,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasMassivePulmonaryEmbolismResponse || hasUpperGiHemorrhageResponse
     || hasCriticalCareStatusEpilepticusResponse || hasPostArrestTemperatureResponse
     || hasIntracranialHypertensionResponse || hasAkiFluidOverloadResponse
-    || hasSevereAcidemiaResponse || hasIcuHiddenDeteriorationHandoffResponse;
-  const responseTray = hasIcuHiddenDeteriorationHandoffResponse
+    || hasSevereAcidemiaResponse || hasIcuHiddenDeteriorationHandoffResponse
+    || hasVentilatorCircuitDisconnectionResponse;
+  const responseTray = hasVentilatorCircuitDisconnectionResponse
+    ? { id: 'crisis', label: 'Circuit disconnection' } as const
+    : hasIcuHiddenDeteriorationHandoffResponse
     ? { id: 'crisis', label: 'ICU handoff' } as const
     : hasSevereAcidemiaResponse
     ? { id: 'crisis', label: 'Severe acidemia' } as const
@@ -1328,6 +1350,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasAkiFluidOverloadResponse
     || hasSevereAcidemiaResponse
     || hasIcuHiddenDeteriorationHandoffResponse
+    || hasVentilatorCircuitDisconnectionResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1805,6 +1828,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <IcuHiddenDeteriorationHandoffTray
                 assessment={props.resuscitation.icuHiddenDeteriorationHandoffAssessment}
                 onAction={props.onIcuHiddenDeteriorationHandoffResponse ?? (() => {})} />
+            )}
+            {hasVentilatorCircuitDisconnectionResponse && (
+              <VentilatorCircuitDisconnectionTray
+                assessment={props.resuscitation.ventilatorCircuitDisconnectionAssessment}
+                onAction={props.onVentilatorCircuitDisconnectionResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -5147,6 +5175,58 @@ function IcuHiddenDeteriorationHandoffTray({ assessment, onAction }: {
             onClick={() => onAction('synthesize-accept-and-reassess-icu-handoff')}>Synthesize + accept + reassess</Button>
         </div>
         <p className="field__hint">Acceptance records a teaching-state transition, not real communication, staffing, treatment, or transfer.</p>
+      </section>
+    </div>
+  );
+}
+
+function VentilatorCircuitDisconnectionTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['ventilatorCircuitDisconnectionAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onVentilatorCircuitDisconnectionResponse']>;
+}) {
+  const recognized = assessment?.recognizedAtTick != null;
+  const bridged = assessment?.bridgedAtTick != null;
+  const inspected = assessment?.inspectedAtTick != null;
+  const restored = assessment?.restoredAtTick != null;
+  const reassessed = assessment?.reassessedAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="ventilator-disconnection-breath-title">
+        <div id="ventilator-disconnection-breath-title" className="syringe__name">Follow the breath, not the setting.</div>
+        <Badge kind="teaching">commanded 420 mL · exhaled 0 · pressure lost</Badge>
+        <div className="syringe__meta">capnogram absent · SpO₂ 96→88 · reserve falling</div>
+        <p className="syringe__remaining" role="status">
+          {inspected ? 'Circuit discontinuity localized · alternatives kept open'
+            : bridged ? 'Bridge active · patient-to-source trace due'
+              : recognized ? 'Delivered ventilation lost · bridge now'
+                : 'Commanded settings ≠ delivered breaths'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={recognized}
+            onClick={() => onAction('recognize-ventilator-circuit-disconnection')}>Recognize loss of delivered ventilation</Button>
+          <Button className="crisis-drug__action" disabled={!recognized || bridged}
+            onClick={() => onAction('bridge-ventilator-circuit-disconnection')}>Call help + bridge oxygenation</Button>
+          <Button className="crisis-drug__action" disabled={!bridged || inspected}
+            onClick={() => onAction('inspect-ventilator-circuit-disconnection')}>Trace patient → airway → circuit → source</Button>
+        </div>
+        <p className="field__hint">The alarm earns attention. Independent patient and delivery signals establish the problem.</p>
+      </section>
+      <section className="syringe" aria-labelledby="ventilator-disconnection-proof-title">
+        <div id="ventilator-disconnection-proof-title" className="syringe__name">Bridge first. Then reconnect. Then prove.</div>
+        <Badge kind="teaching">oxygenate · inspect · restore · verify</Badge>
+        <div className="syringe__meta">exhaled volume · pressure · capnogram · pleth · patient</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'Proved · VTe 410 · EtCO₂ 36 · SpO₂ 94'
+            : restored ? 'Continuity restored · whole-system proof due'
+              : 'Restoration follows bridge + source-to-patient trace'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!inspected || restored}
+            onClick={() => onAction('restore-ventilator-circuit-support')}>Restore continuity + established support</Button>
+          <Button className="crisis-drug__action" disabled={!restored || reassessed}
+            onClick={() => onAction('reassess-ventilator-circuit-response')}>Prove delivered breaths + patient response</Button>
+        </div>
+        <p className="field__hint">These controls record authored intent. They do not handle equipment, ventilate, or predict a person’s oxygen reserve.</p>
       </section>
     </div>
   );

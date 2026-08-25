@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "critical-care",
-  "scenarioCount": 19,
+  "scenarioCount": 20,
   "playableScenarioCount": 0,
   "scenarios": [
     {
@@ -683,6 +683,42 @@
           "status": "missing",
           "evidence": [
             "No version-bound state-space-verification record exists for icu-handoff-with-hidden-deterioration 0.1.0."
+          ]
+        }
+      ],
+      "playable": false
+    },
+    {
+      "scenarioId": "ventilator-circuit-disconnection",
+      "contentVersion": "0.1.0",
+      "completionComplete": false,
+      "qualityRecords": [
+        {
+          "kind": "training-value",
+          "status": "missing",
+          "evidence": [
+            "No version-bound training-value record exists for ventilator-circuit-disconnection 0.1.0."
+          ]
+        },
+        {
+          "kind": "authored-defaults",
+          "status": "missing",
+          "evidence": [
+            "No version-bound authored-defaults record exists for ventilator-circuit-disconnection 0.1.0."
+          ]
+        },
+        {
+          "kind": "scenario-hazard",
+          "status": "missing",
+          "evidence": [
+            "No version-bound scenario-hazard record exists for ventilator-circuit-disconnection 0.1.0."
+          ]
+        },
+        {
+          "kind": "state-space-verification",
+          "status": "missing",
+          "evidence": [
+            "No version-bound state-space-verification record exists for ventilator-circuit-disconnection 0.1.0."
           ]
         }
       ],

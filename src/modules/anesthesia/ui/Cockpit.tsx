@@ -331,7 +331,7 @@ export function Cockpit({
       tick: session.tick,
       state: session.state,
       actions: sessionInternals().recorder?.build('pending').actions ?? [],
-      ventilating: (session.state?.respiratoryRateBpm ?? 0) > 0,
+      ventilating: ventilator.delivering,
       alarmCount: session.alarms.length,
     };
     if (prompt) {
@@ -399,7 +399,7 @@ export function Cockpit({
       mechanicalPulse: mechanicalPulseFromState(session.state),
     }).map((entry) => `${entry.label}: ${entry.description}`).join(' '));
   }, [session.state, speak, rhythm, waveformArtifacts, airway, capnographyLine.obstructed,
-    arterialLine.dynamicResponse, breathingCircuit.inspiredCo2MmHg]);
+    arterialLine.dynamicResponse, breathingCircuit.inspiredCo2MmHg, ventilator.delivering]);
 
   useEffect(() => {
     if (arterialLine.mislevelingCm > 0 || arterialLine.dynamicResponse === 'overdamped') {
@@ -574,6 +574,7 @@ export function Cockpit({
           rhythm={rhythm}
           airwayPatencyFraction={airway.patencyFraction}
           bronchospasmSeverity={airway.bronchospasmSeverity}
+          ventilating={ventilator.delivering}
           mechanicalPulse={mechanicalPulseFromState(session.state)}
           reducedMotion={reducedMotion}
           colorblindSafe={colorblindSafe}
@@ -843,6 +844,9 @@ export function Cockpit({
           })}
           onIcuHiddenDeteriorationHandoffResponse={(action) => session.act({
             type: 'icu-hidden-deterioration-handoff-response', payload: { action },
+          })}
+          onVentilatorCircuitDisconnectionResponse={(action) => session.act({
+            type: 'ventilator-circuit-disconnection-response', payload: { action },
           })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },

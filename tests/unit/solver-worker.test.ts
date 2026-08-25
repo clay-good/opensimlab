@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: ICU hidden-deterioration handoff has protocol version 77', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(77);
+  it('Scenario: ventilator circuit disconnection has protocol version 78', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(78);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

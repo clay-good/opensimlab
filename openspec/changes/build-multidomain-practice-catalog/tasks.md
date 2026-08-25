@@ -213,14 +213,15 @@ credited toward the catalog until every item in the completion contract passes.
   trauma primary survey, and acute aortic syndrome reuse the shared deterministic session, monitor,
   transcript, action, and debrief frame; all 25 are completion-audited, prerendered, available
   offline, and explicitly bounded.
-  Critical Care is available with 19 of 24 scenarios. ARDS lung-protective ventilation, escalating
+  Critical Care is available with 20 of 24 scenarios. ARDS lung-protective ventilation, escalating
   hypoxemia, ventilator dyssynchrony, auto-PEEP, mucus plugging, unplanned extubation, and
   spontaneous-breathing trial, post-intubation hypotension, cardiogenic shock, mixed shock, and
   right-ventricular failure, massive pulmonary embolism, upper GI hemorrhage, refractory status
   epilepticus, post-arrest temperature control, intracranial hypertension, and acute kidney injury
-  with fluid overload, severe acidemia, and ICU handoff with hidden deterioration reuse the shared deterministic
+  with fluid overload, severe acidemia, ICU handoff with hidden deterioration, and ventilator
+  circuit disconnection reuse the shared deterministic
   session, monitor, transcript, action, and debrief frame and are completion-audited, prerendered,
-  available offline, and explicitly bounded. The remaining 5 titles stay descriptive scope until
+  available offline, and explicitly bounded. The remaining 4 titles stay descriptive scope until
   their full contracts pass.
 - [ ] Wave C: complete 17 cardiology and 15 respiratory-medicine scenarios.
 - [ ] Wave D: complete 16 pediatric, 15 obstetric, and 11 neonatal scenarios.
