@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "cardiology",
-  "recordCount": 7,
+  "recordCount": 8,
   "records": [
     {
       "recordId": "scenario:stable-chest-pain-evaluation@0.1.0",
@@ -78,6 +78,17 @@
       "evidence": [
         "/catalog/cardiology-completion-audit.json#regular-narrow-complex-tachycardia@0.1.0",
         "/catalog/cardiology-quality-audit.json#regular-narrow-complex-tachycardia@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:wide-complex-tachycardia@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "wide-complex-tachycardia",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/cardiology-completion-audit.json#wide-complex-tachycardia@0.1.0",
+        "/catalog/cardiology-quality-audit.json#wide-complex-tachycardia@0.1.0"
       ]
     }
   ]

@@ -4090,6 +4090,24 @@ export function objectiveFindings(
       const ordered = adenosine && reassessment && adenosine.tick < reassessment.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Elapsed whole-patient reassessment preserved mechanism uncertainty, recurrence planning, triggers, and follow-up ownership.' : 'Final reassessment was absent or did not follow adenosine intent after elapsed time.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-stable-wide-complex-tachycardia', 'review-wide-complex-context',
+      'prepare-wide-complex-pathway', 'review-wide-complex-medication-response',
+      'record-wide-complex-cardioversion-intent', 'reassess-wide-complex-trajectory'].includes(objective.id)) {
+      const stability = log.find((event) => /^stable-wide-stability-reconciled-\d+$/.test(event.eventId));
+      const context = log.find((event) => /^stable-wide-context-reviewed-\d+$/.test(event.eventId));
+      const readiness = log.find((event) => /^stable-wide-readiness-recorded-\d+$/.test(event.eventId));
+      const medication = log.find((event) => /^stable-wide-medication-path-recorded-\d+$/.test(event.eventId));
+      const nonresponse = log.find((event) => /^stable-wide-medication-nonresponse-reviewed-\d+$/.test(event.eventId));
+      const cardioversion = log.find((event) => /^stable-wide-cardioversion-intent-recorded-\d+$/.test(event.eventId));
+      const reassessment = log.find((event) => /^stable-wide-trajectory-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-stable-wide-complex-tachycardia') return { ...base, outcome: stability ? 'met' : 'not-met', finding: stability ? 'Pulse, wide rhythm, and revisable whole-patient stability were reconciled without using rate alone.' : 'Pulse and current stability were not reconciled.', atTick: stability?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-wide-complex-context') { const ordered = stability && context && stability.tick <= context.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Morphology and structural, ischemic, electrolyte, medication, and toxic context were reviewed without proving a mechanism.' : 'Wide-rhythm context was absent or preceded stability.', atTick: context?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'prepare-wide-complex-pathway') { const ordered = context && readiness && context.tick <= readiness.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Monitoring, expert help, access, pads, triggers, and cardioversion readiness were recorded.' : 'Readiness was absent or preceded context review.', atTick: readiness?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-wide-complex-medication-response') { const ordered = readiness && medication && nonresponse && readiness.tick <= medication.tick && medication.tick < nonresponse.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'One authored monitored medication path was followed by elapsed persistent WCT without false diagnostic certainty.' : 'The medication path or its elapsed response was missing or out of order.', atTick: nonresponse?.tick ?? medication?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'record-wide-complex-cardioversion-intent') { const ordered = nonresponse && cardioversion && nonresponse.tick <= cardioversion.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Synchronized-cardioversion intent followed the authored medication nonresponse without device or energy claims.' : 'Cardioversion intent was absent or preceded response review.', atTick: cardioversion?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = cardioversion && reassessment && cardioversion.tick < reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Elapsed reassessment preserved mechanism uncertainty, cause and recurrence work, triggers, and follow-up ownership.' : 'Final reassessment was absent or did not follow cardioversion intent after elapsed time.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

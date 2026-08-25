@@ -888,6 +888,9 @@ export function Cockpit({
           onStableNarrowTachycardiaResponse={(action) => session.act({
             type: 'stable-narrow-tachycardia-response', payload: { action },
           })}
+          onStableWideTachycardiaResponse={(action) => session.act({
+            type: 'stable-wide-tachycardia-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

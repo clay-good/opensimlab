@@ -1,0 +1,60 @@
+/** Stable pulsed regular monomorphic wide-complex tachycardia. */
+
+import type { Scenario } from '@anesthesia/scenarios/types';
+
+export const WIDE_COMPLEX_TACHYCARDIA: Scenario = {
+  schemaVersion: 1,
+  metadata: {
+    id: 'wide-complex-tachycardia', version: '0.1.0', maturity: 'draft',
+    title: 'Wide-complex tachycardia', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
+    estimatedMinutes: 9, difficulty: 'advanced', objectives: [
+      { id: 'reconcile-stable-wide-complex-tachycardia', statement: 'Confirm the authored pulse and reconcile the regular monomorphic wide rhythm with revisable whole-patient stability.', measure: 'Rate alone did not define stability, and deterioration triggers stayed explicit.' },
+      { id: 'review-wide-complex-context', statement: 'Review morphology, prior ECG, structural disease, ischemic, electrolyte, medication, and toxic context without declaring one mechanism.', measure: 'Potential VT was treated safely while aberrancy, pre-excitation, pacing, and metabolic or toxic causes remained open.' },
+      { id: 'prepare-wide-complex-pathway', statement: 'Record continuous monitoring, access, expert help, pads, and immediate cardioversion readiness.', measure: 'The stable pathway remained ready to switch without routine oxygen or a learner-performed procedure.' },
+      { id: 'review-wide-complex-medication-response', statement: 'Record the authored expert-selected procainamide pathway and review its elapsed fixed nonresponse.', measure: 'One monitored pathway was used without dose calculation, stacked antiarrhythmics, or universalizing the choice.' },
+      { id: 'record-wide-complex-cardioversion-intent', statement: 'After reported medication nonresponse, record protocol-bounded synchronized-cardioversion intent.', measure: 'Synchronization, energy, sedation, device operation, and shock delivery were not simulated.' },
+      { id: 'reassess-wide-complex-trajectory', statement: 'After elapsed time, reassess the fixed rhythm and whole patient and hand off cause and recurrence work.', measure: 'Conversion did not become diagnostic proof, cure, disposition, or an ICD or ablation decision.' },
+    ],
+    clinicalReview: { reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED',
+      competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01', contentVersion: '0.1.0', sources: [
+        'Wigginton JG, et al. Part 9: Adult Advanced Life Support: 2025 American Heart Association Guidelines for CPR and ECC. Circulation. 2025;152(suppl 2):S538-S577.',
+        'American Heart Association. Adult Tachyarrhythmia With a Pulse Algorithm. 2025.',
+        'Al-Khatib SM, Stevenson WG, Ackerman MJ, et al. 2017 AHA/ACC/HRS Guideline for Management of Patients With Ventricular Arrhythmias and the Prevention of Sudden Cardiac Death. Circulation. 2018;138:e272-e391.',
+      ] },
+    limitations: ['stable-wide-complex-rhythm-context-and-responses-are-authored',
+      'stable-wide-complex-controls-record-review-readiness-and-treatment-intent-only',
+      'no-live-wide-complex-diagnosis-dose-drug-delivery-cardioversion-device-decision-or-outcome'],
+  },
+  patient: { ageYears: 68, sex: 'male', heightCm: 178, weightKg: 82, asaClass: 3,
+    diagnosis: 'Authored stable regular monomorphic wide-complex tachycardia; mechanism open',
+    procedure: 'Wide-rhythm stability, response, and escalation review',
+    comorbidities: ['Remote anterior myocardial infarction', 'Reported LVEF 55%; no heart-failure history'],
+    medications: ['No antiarrhythmic reported'], allergies: ['No known drug allergies'],
+    fasting: 'Urgent rhythm visit; fasting state not relevant to this lesson',
+    baseline: { heartRateBpm: 164, meanArterialMmHg: 87, strokeVolumeMl: 48,
+      hemoglobinGPerDl: 13.8, bloodVolumeMl: 5000, coreTemperatureC: 36.8,
+      arterialStiffness: 1.18, baroreflexGain: 0.75, fixedStrokeVolume: false },
+    airway: { difficulty: 0.1, difficultMaskVentilation: false,
+      assessment: 'Alert, speaking comfortably, with a palpable regular pulse' },
+    respiratory: { profile: 'healthy' } },
+  equipment: { monitoring: ['ecg', 'nibp', 'pulse-oximetry', 'temperature'],
+    ventilator: { mode: 'manual', fio2: 0.21, tidalVolumeMl: 450,
+      respiratoryRateBpm: 18, delivering: false } },
+  formulary: [],
+  timeline: [
+    { id: 'stable-wide-rhythm', type: 'rhythm-change', target: 'ventricular-tachycardia', atTick: 0,
+      severity: 'warning', message: 'The teaching monitor shows a regular monomorphic wide-complex tachycardia with a mechanical pulse.' },
+    { id: 'stable-wide-presentation', type: 'narrative', target: 'wide-complex-tachycardia', atTick: 0,
+      severity: 'warning', message: 'A 68-year-old man in a monitored urgent cardiology unit reports abrupt palpitations and lightheadedness for 22 minutes. A fixed diagnostic 12-lead report describes regular monomorphic wide-complex tachycardia at 164/min with QRS 158 ms. BP is 118/72 mmHg, SpO₂ 97% on room air, RR 18/min, and he is alert, warm, and has a palpable pulse. There is no authored hypotension, altered mentation, shock, ischemic discomfort, acute heart failure, or syncope. A prior sinus ECG had a narrow QRS and remote-infarct changes; reported LVEF is 55%, potassium 4.2 mmol/L, magnesium 2.0 mg/dL, and there is no prolonged-QT or acute-STEMI report.' },
+    { id: 'stable-wide-boundary', type: 'narrative', target: 'wide-complex-tachycardia-boundary', atTick: 0,
+      severity: 'advisory', message: 'Confirm pulse and current stability, preserve the wide-complex differential, and prepare monitoring, access, expert help, pads, and immediate synchronized-cardioversion capability. The authored treating team selects a monitored procainamide pathway after checking heart-failure and QT context; no dose is supplied. After elapsed time, the fixed rhythm persists at 158/min with BP 114/70 mmHg. Record synchronized-cardioversion intent; after further elapsed time, the authored report is sinus 84/min with BP 120/74 mmHg. Any instability changes the pathway immediately. Examination, live ECG or test acquisition or interpretation, exact diagnosis, medication selection beyond the authored path, dose, preparation or learner delivery, cardioversion performance, energy, sedation, ablation, ICD decisions, disposition, prognosis, recurrence, and outcome are not simulated.' },
+  ],
+  debrief: { rubric: [
+    { id: 'stable-wide-stability', objectiveId: 'reconcile-stable-wide-complex-tachycardia', question: 'Which pulse, rhythm, and whole-patient findings supported the current pathway, and which changes would switch it?' },
+    { id: 'stable-wide-context', objectiveId: 'review-wide-complex-context', question: 'Which fixed facts raised concern for VT while keeping the mechanism open?' },
+    { id: 'stable-wide-readiness', objectiveId: 'prepare-wide-complex-pathway', question: 'How did monitoring, expert help, and cardioversion readiness bound the stable pathway?' },
+    { id: 'stable-wide-medication', objectiveId: 'review-wide-complex-medication-response', question: 'Why was one authored monitored medication path reviewed, and what did nonresponse establish?' },
+    { id: 'stable-wide-cardioversion', objectiveId: 'record-wide-complex-cardioversion-intent', question: 'Why did synchronized-cardioversion intent follow elapsed nonresponse in this authored course?' },
+    { id: 'stable-wide-follow-up', objectiveId: 'reassess-wide-complex-trajectory', question: 'What remained open after the fixed conversion report?' },
+  ] },
+};

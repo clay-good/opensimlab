@@ -6,6 +6,7 @@ import { ATRIAL_FIBRILLATION_WITH_RAPID_RESPONSE } from './atrial-fibrillation-w
 import { STEMI_RECOGNITION_AND_FIRST_ACTIONS } from './stemi-recognition-and-first-actions';
 import { POST_INFARCTION_CARDIOGENIC_SHOCK_ESCALATION } from './post-infarction-cardiogenic-shock-escalation';
 import { REGULAR_NARROW_COMPLEX_TACHYCARDIA } from './regular-narrow-complex-tachycardia';
+import { WIDE_COMPLEX_TACHYCARDIA } from './wide-complex-tachycardia';
 
 export const CARDIOLOGY_SCENARIOS: readonly Scenario[] = [
   STABLE_CHEST_PAIN_EVALUATION,
@@ -15,6 +16,7 @@ export const CARDIOLOGY_SCENARIOS: readonly Scenario[] = [
   POST_INFARCTION_CARDIOGENIC_SHOCK_ESCALATION,
   ATRIAL_FIBRILLATION_WITH_RAPID_RESPONSE,
   REGULAR_NARROW_COMPLEX_TACHYCARDIA,
+  WIDE_COMPLEX_TACHYCARDIA,
 ];
 export const DEFAULT_CARDIOLOGY_SCENARIO_ID = STABLE_CHEST_PAIN_EVALUATION.metadata.id;
 

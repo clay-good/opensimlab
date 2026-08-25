@@ -1104,6 +1104,21 @@ not examine; acquire or interpret an ECG or test; diagnose a mechanism; perform 
 select a dose; prescribe or deliver medication; perform cardioversion or ablation; determine
 disposition or prognosis; predict recurrence or outcome; or assess psychomotor competence.
 
+### Wave C cardiology slice 8: wide-complex tachycardia
+
+The eighth cardiology slice keeps a palpable pulse and current whole-patient stability visible while
+a fixed diagnostic report describes regular monomorphic WCT at 164/min with QRS 158 ms. Remote
+infarct context raises concern for VT without proving it; aberrancy, pre-excitation, pacing, and
+toxic or metabolic causes remain open. Learners record monitoring, access, expert consultation,
+pads, and immediate synchronized-cardioversion readiness without routine oxygen.
+
+One authored treating-team procainamide pathway follows QT and heart-failure review. No learner
+dose, rate, preparation, delivery, or stacked antiarrhythmic is supplied. A real later engine tick
+reveals persistent stable WCT; synchronized-cardioversion intent then precedes another elapsed fixed
+sinus report. The lab excludes irregular or polymorphic WCT, torsades, pulseless VT/VF, live ECG or
+test interpretation, definitive diagnosis, device operation, energy or sedation selection,
+cardioversion performance, ablation, ICD decisions, disposition, recurrence, prognosis, and outcome.
+
 #### Respiratory medicine: 15
 
 Acute severe asthma; COPD exacerbation; community-acquired pneumonia with hypoxemia; pulmonary

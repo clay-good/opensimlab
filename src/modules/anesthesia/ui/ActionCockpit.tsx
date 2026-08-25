@@ -602,6 +602,18 @@ export interface ActionCockpitProps {
       readonly mechanismProven: false;
       readonly treatmentDelivered: false;
     };
+    readonly stableWideTachycardiaAssessment?: {
+      readonly stabilityAtTick: number | null;
+      readonly contextAtTick: number | null;
+      readonly readinessAtTick: number | null;
+      readonly medicationAtTick: number | null;
+      readonly nonresponseAtTick: number | null;
+      readonly cardioversionAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+      readonly hemodynamicallyStable: true;
+      readonly mechanismProven: false;
+      readonly learnerTreatmentDelivered: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -975,6 +987,12 @@ export interface ActionCockpitProps {
       | 'record-stable-regular-narrow-adenosine-intent'
       | 'reassess-stable-regular-narrow-trajectory',
   ) => void;
+  readonly onStableWideTachycardiaResponse?: (
+    action: 'reconcile-stable-wide-complex-tachycardia' | 'review-wide-complex-context'
+      | 'prepare-wide-complex-pathway' | 'record-wide-complex-procainamide-pathway'
+      | 'review-wide-complex-medication-nonresponse'
+      | 'record-wide-complex-cardioversion-intent' | 'reassess-wide-complex-trajectory',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1219,6 +1237,9 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'regular-narrow-complex-tachycardia',
     ),
+    hasStableWideTachycardiaResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'wide-complex-tachycardia',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1321,6 +1342,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'atrial-fibrillation-with-rapid-response')
       || (event.type === 'narrative' && event.target === 'post-infarction-cardiogenic-shock-escalation')
       || (event.type === 'narrative' && event.target === 'regular-narrow-complex-tachycardia')
+      || (event.type === 'narrative' && event.target === 'wide-complex-tachycardia')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1363,6 +1385,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasAfRvrResponse,
     hasPostInfarctionShockResponse,
     hasStableNarrowTachycardiaResponse,
+    hasStableWideTachycardiaResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1422,7 +1445,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
   const hasAnyNonAcuteAssessment = hasStableChestPainResponse || hasNstemiRiskResponse
     || hasClinicStemiResponse
     || hasHeartFailureResponse || hasAfRvrResponse || hasPostInfarctionShockResponse
-    || hasStableNarrowTachycardiaResponse;
+    || hasStableNarrowTachycardiaResponse || hasStableWideTachycardiaResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1453,7 +1476,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasStableNarrowTachycardiaResponse
+  const responseTray = hasStableWideTachycardiaResponse
+    ? { id: 'crisis', label: 'Wide-rhythm review' } as const
+    : hasStableNarrowTachycardiaResponse
     ? { id: 'crisis', label: 'Stable rhythm review' } as const
     : hasPostInfarctionShockResponse
     ? { id: 'crisis', label: 'Shock escalation' } as const
@@ -1627,6 +1652,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasAfRvrResponse
     || hasPostInfarctionShockResponse
     || hasStableNarrowTachycardiaResponse
+    || hasStableWideTachycardiaResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2158,6 +2184,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <StableNarrowTachycardiaTray
                 assessment={props.resuscitation.stableNarrowTachycardiaAssessment}
                 onAction={props.onStableNarrowTachycardiaResponse ?? (() => {})} />
+            )}
+            {hasStableWideTachycardiaResponse && (
+              <StableWideTachycardiaTray
+                assessment={props.resuscitation.stableWideTachycardiaAssessment}
+                onAction={props.onStableWideTachycardiaResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -5927,6 +5958,46 @@ function StableNarrowTachycardiaTray({ assessment, onAction }: {
       </section>
     </div>
   );
+}
+
+function StableWideTachycardiaTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['stableWideTachycardiaAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onStableWideTachycardiaResponse']>;
+}) {
+  const stability = assessment?.stabilityAtTick != null;
+  const context = assessment?.contextAtTick != null;
+  const readiness = assessment?.readinessAtTick != null;
+  const medication = assessment?.medicationAtTick != null;
+  const nonresponse = assessment?.nonresponseAtTick != null;
+  const cardioversion = assessment?.cardioversionAtTick != null;
+  const reassessed = assessment?.reassessmentAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="stable-wide-first-title">
+      <div id="stable-wide-first-title" className="syringe__name">Wide rhythm. Steady patient.</div>
+      <Badge kind="teaching">stable now · regular · monomorphic</Badge>
+      <div className="syringe__meta">164/min · QRS 158 ms · BP 118/72 · warm + alert</div>
+      <p className="syringe__remaining" role="status">{context ? 'Regular + monomorphic · mechanism remains open' : stability ? 'Stable now · define the wide rhythm' : 'Start with the patient, then read the width'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={stability} onClick={() => onAction('reconcile-stable-wide-complex-tachycardia')}>Reconcile pulse + stability</Button>
+        <Button className="crisis-drug__action" disabled={!stability || context} onClick={() => onAction('review-wide-complex-context')}>Review morphology + context</Button>
+        <Button className="crisis-drug__action" disabled={!context || readiness} onClick={() => onAction('prepare-wide-complex-pathway')}>Prepare monitored WCT pathway</Button>
+      </div>
+      <p className="field__hint">A wide rhythm is a pattern, not a final diagnosis. Keep VT, aberrancy, pre-excitation, pacing, electrolyte, and drug causes visible.</p>
+    </section>
+    <section className="syringe" aria-labelledby="stable-wide-response-title">
+      <div id="stable-wide-response-title" className="syringe__name">One pathway. Watch closely.</div>
+      <Badge kind="teaching">monitor · access · pads · expert help</Badge>
+      <div className="syringe__meta">one authored medication lane · cardioversion ready</div>
+      <p className="syringe__remaining" role="status">{reassessed ? 'Sinus 84/min · cause + recurrence work remain' : cardioversion ? 'Cardioversion intent recorded · allow reassessment time' : nonresponse ? 'WCT persists · synchronized escalation ready' : medication ? 'Medication path recorded · observe before reassessing' : readiness ? 'Team + rescue readiness recorded' : 'Rhythm review opens the monitored pathway'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={!readiness || medication} onClick={() => onAction('record-wide-complex-procainamide-pathway')}>Record expert-guided medication path</Button>
+        <Button className="crisis-drug__action" disabled={!medication || nonresponse} onClick={() => onAction('review-wide-complex-medication-nonresponse')}>Review observed medication response</Button>
+        <Button className="crisis-drug__action" disabled={!nonresponse || cardioversion} onClick={() => onAction('record-wide-complex-cardioversion-intent')}>Record synchronized-cardioversion intent</Button>
+        <Button className="crisis-drug__action" disabled={!cardioversion || reassessed} onClick={() => onAction('reassess-wide-complex-trajectory')}>Reassess rhythm + ownership</Button>
+      </div>
+      <p className="field__hint">No dose, rate, energy, or learner delivery is supplied. Any instability opens prompt synchronized cardioversion; polymorphic or pulseless rhythms use different pathways.</p>
+    </section>
+  </div>;
 }
 
 function PostInfarctionShockTray({ assessment, onAction }: {

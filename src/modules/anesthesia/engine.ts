@@ -552,6 +552,13 @@ export class AnesthesiaEngine {
   private stableNarrowVagalResponseAtTick: number | null = null;
   private stableNarrowAdenosineAtTick: number | null = null;
   private stableNarrowReassessmentAtTick: number | null = null;
+  private stableWideStabilityAtTick: number | null = null;
+  private stableWideContextAtTick: number | null = null;
+  private stableWideReadinessAtTick: number | null = null;
+  private stableWideMedicationAtTick: number | null = null;
+  private stableWideNonresponseAtTick: number | null = null;
+  private stableWideCardioversionAtTick: number | null = null;
+  private stableWideReassessmentAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -4365,6 +4372,56 @@ export class AnesthesiaEngine {
         this.log('warning', 'assessment', `stable-narrow-tachycardia-trajectory-reassessed-${this.currentTick}`, 'Fixed reassessment: sinus rhythm 88/min, BP 122/76 mmHg, improved palpitations, alert mentation, and warm perfusion. Rhythm capture, adverse effects, recurrence and instability triggers, patient-taught vagal strategy, owner, and cardiology/electrophysiology follow-up were recorded. Conversion did not prove one mechanism or guarantee cure.', { converted: true, mechanismProven: false, ownerNamed: true, outcomePredicted: false });
         break;
       }
+      case 'stable-wide-tachycardia-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'wide-complex-tachycardia');
+        const valid = ['reconcile-stable-wide-complex-tachycardia', 'review-wide-complex-context',
+          'prepare-wide-complex-pathway', 'record-wide-complex-procainamide-pathway',
+          'review-wide-complex-medication-nonresponse', 'record-wide-complex-cardioversion-intent',
+          'reassess-wide-complex-trajectory'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `stable-wide-tachycardia-response-refused-${this.currentTick}`, supported ? 'The wide-complex action was not one of the listed choices. Nothing changed.' : 'These wide-complex choices are available only in the declared lesson.'); break; }
+        if (response === 'reconcile-stable-wide-complex-tachycardia') {
+          if (this.stableWideStabilityAtTick !== null) { this.log('warning', 'assessment', `stable-wide-stability-refused-${this.currentTick}`, 'Pulse, rhythm, and stability were already reconciled.'); break; }
+          this.stableWideStabilityAtTick = this.currentTick;
+          this.log('warning', 'assessment', `stable-wide-stability-reconciled-${this.currentTick}`, 'A palpable pulse, BP 118/72 mmHg, alert mentation, warm perfusion, and no authored shock, ischemic discomfort, acute heart failure, or syncope support a stable pathway now. The regular monomorphic QRS is 158 ms; rate alone does not define stability.', { pulsePresent: true, hemodynamicallyStable: true, instabilityDefinedByRateAlone: false }); break;
+        }
+        if (this.stableWideStabilityAtTick === null) { this.log('warning', 'assessment', `stable-wide-order-refused-${this.currentTick}`, 'Confirm pulse and reconcile whole-patient stability first.'); break; }
+        if (response === 'review-wide-complex-context') {
+          if (this.stableWideContextAtTick !== null) { this.log('warning', 'assessment', `stable-wide-context-refused-${this.currentTick}`, 'The wide-rhythm context was already reviewed.'); break; }
+          this.stableWideContextAtTick = this.currentTick;
+          this.log('warning', 'assessment', `stable-wide-context-reviewed-${this.currentTick}`, 'Regular monomorphic morphology, prior narrow ECG, remote infarct, preserved reported LVEF, ischemic features, potassium, magnesium, QT, medications, pacing, pre-excitation, aberrancy, and toxic or metabolic contributors were reviewed. Structural disease raises concern for VT without proving one mechanism.', { mechanismProven: false, potentialVtTreatedSafely: true }); break;
+        }
+        if (this.stableWideContextAtTick === null) { this.log('warning', 'assessment', `stable-wide-context-order-refused-${this.currentTick}`, 'Review morphology and context before preparing the pathway.'); break; }
+        if (response === 'prepare-wide-complex-pathway') {
+          if (this.stableWideReadinessAtTick !== null) { this.log('warning', 'assessment', `stable-wide-readiness-refused-${this.currentTick}`, 'The monitored pathway was already prepared.'); break; }
+          this.stableWideReadinessAtTick = this.currentTick;
+          this.log('warning', 'equipment', `stable-wide-readiness-recorded-${this.currentTick}`, 'Continuous rhythm, pressure and oximetry, IV access, expert consultation, pads, defibrillator readiness, and instability triggers were recorded. SpO2 97% did not prompt routine oxygen.', { expertConsulted: true, cardioversionReady: true, routineOxygenSelected: false }); break;
+        }
+        if (this.stableWideReadinessAtTick === null) { this.log('warning', 'assessment', `stable-wide-readiness-order-refused-${this.currentTick}`, 'Prepare monitoring, expert help, and rescue capability before the authored medication path.'); break; }
+        if (response === 'record-wide-complex-procainamide-pathway') {
+          if (this.stableWideMedicationAtTick !== null) { this.log('warning', 'assessment', `stable-wide-medication-refused-${this.currentTick}`, 'The authored medication path was already recorded.'); break; }
+          this.stableWideMedicationAtTick = this.currentTick;
+          this.log('warning', 'assessment', `stable-wide-medication-path-recorded-${this.currentTick}`, 'The treating team selected one monitored procainamide pathway after confirming no heart-failure history or current signs and no prolonged-QT report. The learner did not select a dose, calculate a rate, prepare or deliver medication, or stack antiarrhythmics.', { authoredAgent: 'procainamide', doseSelected: false, learnerTreatmentDelivered: false, stackedAgents: false }); break;
+        }
+        if (response === 'review-wide-complex-medication-nonresponse') {
+          if (this.stableWideMedicationAtTick === null || this.currentTick <= this.stableWideMedicationAtTick) { this.log('warning', 'assessment', `stable-wide-nonresponse-order-refused-${this.currentTick}`, 'Record the authored medication path, allow an engine tick, then review the reported response.'); break; }
+          if (this.stableWideNonresponseAtTick !== null) { this.log('warning', 'assessment', `stable-wide-nonresponse-refused-${this.currentTick}`, 'The fixed medication response was already reviewed.'); break; }
+          this.stableWideNonresponseAtTick = this.currentTick;
+          this.log('warning', 'assessment', `stable-wide-medication-nonresponse-reviewed-${this.currentTick}`, 'Fixed treating-team report after the monitored course: regular monomorphic WCT persists at 158/min, BP 114/70 mmHg, with a pulse, alert mentation, warm perfusion, and no new instability. Nonresponse does not prove a mechanism or a universal drug sequence.', { converted: false, hemodynamicallyStable: true, mechanismProven: false }); break;
+        }
+        if (this.stableWideNonresponseAtTick === null) { this.log('warning', 'assessment', `stable-wide-cardioversion-order-refused-${this.currentTick}`, 'Review the elapsed fixed medication nonresponse before escalation in this authored course.'); break; }
+        if (response === 'record-wide-complex-cardioversion-intent') {
+          if (this.stableWideCardioversionAtTick !== null) { this.log('warning', 'assessment', `stable-wide-cardioversion-refused-${this.currentTick}`, 'Synchronized-cardioversion intent was already recorded.'); break; }
+          this.stableWideCardioversionAtTick = this.currentTick;
+          this.log('warning', 'assessment', `stable-wide-cardioversion-intent-recorded-${this.currentTick}`, 'Protocol-bounded synchronized-cardioversion intent was recorded after persistent WCT in this authored course. Energy, synchronization-marker verification, sedation, device operation, and shock delivery are not simulated.', { intentOnly: true, shockDelivered: false }); break;
+        }
+        if (this.stableWideCardioversionAtTick === null || this.currentTick <= this.stableWideCardioversionAtTick) { this.log('warning', 'assessment', `stable-wide-reassessment-order-refused-${this.currentTick}`, 'Record cardioversion intent, allow an engine tick, then reassess the fixed report.'); break; }
+        if (this.stableWideReassessmentAtTick !== null) { this.log('warning', 'assessment', `stable-wide-reassessment-refused-${this.currentTick}`, 'The fixed trajectory was already reassessed.'); break; }
+        this.stableWideReassessmentAtTick = this.currentTick;
+        this.rhythm = 'sinus';
+        this.log('warning', 'assessment', `stable-wide-trajectory-reassessed-${this.currentTick}`, 'Fixed post-team report: sinus rhythm 84/min, BP 120/74 mmHg, resolved palpitations, palpable pulse, alert mentation, and warm perfusion. Adverse effects, rhythm capture, cause, ischemic and structural evaluation, recurrence triggers, owner, and cardiology/electrophysiology follow-up remain explicit. Conversion is not diagnostic proof or cure.', { converted: true, mechanismProven: false, ownerNamed: true, outcomePredicted: false }); break;
+      }
       case 'aspiration-risk-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
@@ -7113,6 +7170,16 @@ export class AnesthesiaEngine {
         meanArterialMmHg: reassessed ? 91 : 93, coreTemperatureC: 36.8 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'wide-complex-tachycardia')) {
+      const converted = this.stableWideReassessmentAtTick !== null;
+      const nonresponse = this.stableWideNonresponseAtTick !== null;
+      crisisState = { ...crisisState, heartRateBpm: converted ? 84 : nonresponse ? 158 : 164,
+        respiratoryRateBpm: 18, spo2Percent: 97, etco2MmHg: 36,
+        systolicMmHg: converted ? 120 : nonresponse ? 114 : 118,
+        diastolicMmHg: converted ? 74 : nonresponse ? 70 : 72,
+        meanArterialMmHg: converted ? 89 : nonresponse ? 85 : 87, coreTemperatureC: 36.8 };
+    }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'unstable-narrow-complex-tachycardia')) {
       const cardioverted = this.unstableNarrowTachycardiaCardiovertedAtTick !== null;
       crisisState = { ...crisisState, heartRateBpm: cardioverted ? 92 : 188,
@@ -8013,6 +8080,20 @@ export class AnesthesiaEngine {
               hemodynamicallyStable: true as const,
               mechanismProven: false as const,
               treatmentDelivered: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'wide-complex-tachycardia') ? {
+            stableWideTachycardiaAssessment: {
+              stabilityAtTick: this.stableWideStabilityAtTick,
+              contextAtTick: this.stableWideContextAtTick,
+              readinessAtTick: this.stableWideReadinessAtTick,
+              medicationAtTick: this.stableWideMedicationAtTick,
+              nonresponseAtTick: this.stableWideNonresponseAtTick,
+              cardioversionAtTick: this.stableWideCardioversionAtTick,
+              reassessmentAtTick: this.stableWideReassessmentAtTick,
+              hemodynamicallyStable: true as const, mechanismProven: false as const,
+              learnerTreatmentDelivered: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

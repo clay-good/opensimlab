@@ -2847,6 +2847,30 @@ export const LIMITATIONS: readonly Limitation[] = [
       + 'curves, not as validated values. The validation report says which models are affected: all of them.',
     briefIn: ['routine-induction'],
   },
+  {
+    id: 'stable-wide-complex-rhythm-context-and-responses-are-authored',
+    headline: 'The pulsed regular monomorphic wide rhythm, stability, treating-team medication course, nonresponse, and sinus report are authored teaching facts.',
+    simplification: 'One monitored record supplies fixed rhythm, pressure, perfusion, history, laboratory, readiness, and response snapshots.',
+    whereItMisleads: 'Treating the teaching trace as diagnostic, declaring every WCT to be VT, or reading conversion as proof, cure, recurrence risk, or prognosis.',
+    correctUnderstanding: 'Real care repeatedly verifies pulse, stability, morphology, causes, contraindications, response, adverse effects, and pathway changes.',
+    briefIn: ['wide-complex-tachycardia'],
+  },
+  {
+    id: 'stable-wide-complex-controls-record-review-readiness-and-treatment-intent-only',
+    headline: 'The controls record review, readiness, an authored medication path, escalation intent, and follow-up; they do not deliver treatment.',
+    simplification: 'Seven clicks stand in for expert assessment, monitored preparation, treating-team care, observation, communication, and follow-up.',
+    whereItMisleads: 'Equating button order with ECG interpretation, access, medication preparation or delivery, synchronization, shock delivery, or cardiology competence.',
+    correctUnderstanding: 'Actual care requires qualified teams, verified findings, local protocols, safe delivery, immediate pathway switching, and repeated reassessment.',
+    briefIn: ['wide-complex-tachycardia'],
+  },
+  {
+    id: 'no-live-wide-complex-diagnosis-dose-drug-delivery-cardioversion-device-decision-or-outcome',
+    headline: 'The lab does not diagnose a mechanism, dose or deliver a drug, operate a defibrillator, cardiovert, decide device therapy, or predict outcome.',
+    simplification: 'No live exam, ECG, laboratory test, access, dose, infusion rate, drug delivery, energy, sedation, shock, procedure, disposition, recurrence, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Copying values, stacking agents, using verapamil or diltiazem, generalizing the authored sequence, or applying it to unstable, polymorphic, or pulseless rhythms.',
+    correctUnderstanding: 'Use current resuscitation guidance, local protocols, qualified judgment, expert consultation, and longitudinal cardiology care for real WCT.',
+    briefIn: ['wide-complex-tachycardia'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

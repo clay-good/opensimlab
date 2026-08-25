@@ -119,7 +119,7 @@ export const ROUTES: readonly RouteMetadata[] = [
   {
     path: '/cardiology',
     title: formatTitle('Cardiology simulator'),
-    description: 'Practice stable chest pain, acute coronary decisions, heart failure, post-infarction shock escalation, atrial fibrillation, and stable narrow tachycardia.',
+    description: 'Practice stable chest pain, acute coronary decisions, heart failure, shock escalation, atrial fibrillation, and stable narrow- and wide-complex tachycardia.',
     indexable: true,
     structuredData: ['SoftwareApplication'],
     heading: 'Cardiology simulator',

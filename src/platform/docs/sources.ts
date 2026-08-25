@@ -1656,6 +1656,17 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-25',
   },
   {
+    id: 'al-khatib-ventricular-arrhythmia-guideline-2017',
+    authors: 'Al-Khatib SM, Stevenson WG, Ackerman MJ, et al',
+    title: '2017 AHA/ACC/HRS Guideline for Management of Patients With Ventricular Arrhythmias and the Prevention of Sudden Cardiac Death',
+    publication: 'Circulation',
+    year: 2018,
+    locator: '138:e272-e391; doi:10.1161/CIR.0000000000000549',
+    usedFor: 'The stable wide-complex boundary: preserve diagnostic uncertainty, avoid verapamil and diltiazem in WCT of unknown origin, use monitored expert-guided therapy, and escalate persistent monomorphic VT while keeping longer-term structural, ischemic, recurrence, and sudden-death work open.',
+    verifiedAgainst: 'https://www.acc.org/Guidelines/Guidelines/2017/10/30/10/45/Ventricular-Arrhythmias-and-the-Prevention-of-Sudden-Cardiac-Death',
+    verifiedOn: '2026-08-25',
+  },
+  {
     id: 'schwid-2001',
     pmid: '11302037',
     authors: 'Schwid HA, Rooke GA, Michalowski P, Ross BK',
