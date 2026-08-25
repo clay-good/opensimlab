@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 55 reports bounded opioid-toxicity state. */
-export const WORKER_PROTOCOL_VERSION = 55;
+/** Bumped whenever the message shape changes incompatibly. Version 56 reports bounded heat-stroke state. */
+export const WORKER_PROTOCOL_VERSION = 56;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -399,6 +399,13 @@ export interface EquipmentSnapshot {
       readonly initialReassessmentAtTick: number | null;
       readonly recurrenceReviewedAtTick: number | null;
       readonly recurrencePlanAtTick: number | null;
+    };
+    readonly heatStrokeAssessment?: {
+      readonly patternReviewedAtTick: number | null;
+      readonly supportAtTick: number | null;
+      readonly coolingAtTick: number | null;
+      readonly targetAtTick: number | null;
+      readonly surveillanceAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

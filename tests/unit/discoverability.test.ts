@@ -270,6 +270,8 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
       .toMatchObject({ indexable: true, heading: 'Severe hyponatremia with seizure' });
     expect(routeFor('/emergency-medicine/scenario/opioid-toxicity'))
       .toMatchObject({ indexable: true, heading: 'Opioid toxicity' });
+    expect(routeFor('/emergency-medicine/scenario/exertional-heat-stroke'))
+      .toMatchObject({ indexable: true, heading: 'Exertional heat stroke' });
   });
 
   it('Requirement: Modules Declare Their Own Physiological Timescale', () => {

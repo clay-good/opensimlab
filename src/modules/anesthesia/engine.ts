@@ -379,6 +379,11 @@ export class AnesthesiaEngine {
   private opioidInitialReassessmentAtTick: number | null = null;
   private opioidRecurrenceReviewedAtTick: number | null = null;
   private opioidRecurrencePlanAtTick: number | null = null;
+  private heatStrokePatternReviewedAtTick: number | null = null;
+  private heatStrokeSupportAtTick: number | null = null;
+  private heatStrokeCoolingAtTick: number | null = null;
+  private heatStrokeTargetAtTick: number | null = null;
+  private heatStrokeSurveillanceAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2397,6 +2402,93 @@ export class AnesthesiaEngine {
         this.opioidRecurrencePlanAtTick = this.currentTick;
         this.log('critical', 'assessment', `opioid-recurrence-plan-${this.currentTick}`,
           'Renewed airway and ventilation support, repeat local-protocol naloxone intent, prolonged-antagonist and higher-acuity escalation contingencies, co-exposure and complication evaluation, and monitored observation until recurrence risk is low with normal consciousness and vital signs were recorded. Naloxone supply plus use-instruction intent and treatment linkage were added to the eventual discharge handoff. Delivery, later response, observation duration, counseling, dispensing, disposition, and outcome are outside this lesson.', { intentOnly: true });
+        break;
+      }
+      case 'heat-stroke-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'exertional-heat-stroke');
+        const valid = ['review-heat-stroke-pattern', 'record-heat-stroke-support',
+          'record-cold-water-immersion', 'reassess-heat-stroke-cooling-target',
+          'record-heat-stroke-organ-surveillance'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `heat-stroke-response-refused-${this.currentTick}`,
+            supported ? 'The heat-stroke action was not one of the listed choices. Nothing changed.'
+              : 'The bounded heat-stroke choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-heat-stroke-pattern') {
+          if (this.heatStrokePatternReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `heat-stroke-review-refused-${this.currentTick}`,
+              'The fixed exertional-heat-stroke pattern has already been reviewed.');
+            break;
+          }
+          this.heatStrokePatternReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `heat-stroke-reviewed-${this.currentTick}`,
+            'Fixed review: exertional collapse is accompanied by agitation, confusion, incoherent speech, rectal core temperature 41.3°C, HR 146/min, BP 92/54 mmHg, glucose 110 mg/dL, and sodium 139 mmol/L. No trauma, seizure, focal deficit, infection, stimulant exposure, or rigidity is authored. This screen does not examine the patient, measure temperature, test blood, or exclude real mimics.');
+          break;
+        }
+        if (this.heatStrokePatternReviewedAtTick === null) {
+          this.log('warning', 'assessment', `heat-stroke-order-refused-${this.currentTick}`,
+            'Review exertion, CNS dysfunction, rectal core temperature, ABCs, glucose, sodium, trauma, medications, and immediate mimics first.');
+          break;
+        }
+        if (response === 'record-heat-stroke-support') {
+          if (this.heatStrokeSupportAtTick !== null) {
+            this.log('warning', 'assessment', `heat-stroke-support-refused-${this.currentTick}`,
+              'The bounded heat-stroke support bundle has already been recorded.');
+            break;
+          }
+          this.heatStrokeSupportAtTick = this.currentTick;
+          this.log('critical', 'assessment', `heat-stroke-supported-${this.currentTick}`,
+            'Emergency response activation, ABC support, continuous monitoring, glucose review, removal of insulating clothing, cooling-team preparation, airway access, and transport coordination were recorded without delaying active cooling. Examination, equipment, airway care, monitoring, and team performance are not simulated.', { intentOnly: true });
+          break;
+        }
+        if (this.heatStrokeSupportAtTick === null) {
+          this.log('warning', 'assessment', `heat-stroke-support-order-refused-${this.currentTick}`,
+            'Record parallel support and prepare a safe rapid-cooling path before immersion intent.');
+          break;
+        }
+        if (response === 'record-cold-water-immersion') {
+          if (this.heatStrokeCoolingAtTick !== null) {
+            this.log('warning', 'assessment', `heat-stroke-cooling-refused-${this.currentTick}`,
+              'The bounded cold-water-immersion intent has already been recorded.');
+            break;
+          }
+          this.heatStrokeCoolingAtTick = this.currentTick;
+          this.log('critical', 'assessment', `heat-stroke-cooling-${this.currentTick}`,
+            'Immediate whole-body cold-water-immersion intent was recorded with continuous rectal core-temperature monitoring, maintained airway access, and cooling-centered transport coordination. Setup, water temperature, immersion technique, cooling rate, airway safety, transport, and individual response are not simulated.', { intentOnly: true, initialCoreTemperatureC: 41.3, stopBelowC: 39 });
+          break;
+        }
+        if (this.heatStrokeCoolingAtTick === null) {
+          this.log('warning', 'assessment', `heat-stroke-cooling-order-refused-${this.currentTick}`,
+            'Record rapid whole-body cooling before reviewing the authored target panel.');
+          break;
+        }
+        if (response === 'reassess-heat-stroke-cooling-target') {
+          if (this.heatStrokeTargetAtTick !== null) {
+            this.log('warning', 'assessment', `heat-stroke-target-refused-${this.currentTick}`,
+              'The fixed heat-stroke cooling target has already been reviewed.');
+            break;
+          }
+          this.heatStrokeTargetAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `heat-stroke-target-${this.currentTick}`,
+            'Fixed 14-minute cooling panel: rectal core temperature 38.9°C, HR 118/min, BP 104/62 mmHg, and coherent short answers with residual fatigue. Active cooling was stopped below 39°C to limit overshoot. These are authored findings, not a modeled cooling rate or individual prediction.', { coreTemperatureC: 38.9, elapsedMinutes: 14, heartRatePerMin: 118 });
+          break;
+        }
+        if (this.heatStrokeTargetAtTick === null) {
+          this.log('warning', 'assessment', `heat-stroke-surveillance-order-refused-${this.currentTick}`,
+            'Review and stop at the fixed cooling target before closing the thermal rescue phase.');
+          break;
+        }
+        if (this.heatStrokeSurveillanceAtTick !== null) {
+          this.log('warning', 'assessment', `heat-stroke-surveillance-refused-${this.currentTick}`,
+            'The heat-stroke organ-injury surveillance plan has already been recorded.');
+          break;
+        }
+        this.heatStrokeSurveillanceAtTick = this.currentTick;
+        this.log('critical', 'assessment', `heat-stroke-surveillance-${this.currentTick}`,
+          'Critical-care handoff recorded serial neurologic, renal, hepatic, coagulation, creatine-kinase, electrolyte, glucose, urine-output, and temperature surveillance with supportive complication management. Antipyretics and dantrolene were explicitly excluded because heat stroke is hyperthermia, not a raised hypothalamic set point or malignant hyperthermia. Tests, fluids, procedures, later injury, disposition, recovery, and outcome are outside this lesson.', { intentOnly: true });
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -5527,6 +5619,13 @@ export class AnesthesiaEngine {
           initialReassessmentAtTick: this.opioidInitialReassessmentAtTick,
           recurrenceReviewedAtTick: this.opioidRecurrenceReviewedAtTick,
           recurrencePlanAtTick: this.opioidRecurrencePlanAtTick,
+        },
+        heatStrokeAssessment: {
+          patternReviewedAtTick: this.heatStrokePatternReviewedAtTick,
+          supportAtTick: this.heatStrokeSupportAtTick,
+          coolingAtTick: this.heatStrokeCoolingAtTick,
+          targetAtTick: this.heatStrokeTargetAtTick,
+          surveillanceAtTick: this.heatStrokeSurveillanceAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

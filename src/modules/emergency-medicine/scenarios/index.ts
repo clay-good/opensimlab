@@ -21,6 +21,7 @@ import { DIABETIC_KETOACIDOSIS } from './diabetic-ketoacidosis';
 import { HYPERKALEMIA_WITH_ECG_CHANGE } from './hyperkalemia-with-ecg-change';
 import { SEVERE_HYPONATREMIA_WITH_SEIZURE } from './severe-hyponatremia-with-seizure';
 import { OPIOID_TOXICITY } from './opioid-toxicity';
+import { EXERTIONAL_HEAT_STROKE } from './exertional-heat-stroke';
 
 export const EMERGENCY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   UNDIFFERENTIATED_SHOCK,
@@ -45,6 +46,7 @@ export const EMERGENCY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   HYPERKALEMIA_WITH_ECG_CHANGE,
   SEVERE_HYPONATREMIA_WITH_SEIZURE,
   OPIOID_TOXICITY,
+  EXERTIONAL_HEAT_STROKE,
 ];
 export const DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID = UNDIFFERENTIATED_SHOCK.metadata.id;
 

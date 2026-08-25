@@ -331,6 +331,13 @@ export interface ActionCockpitProps {
       readonly recurrenceReviewedAtTick: number | null;
       readonly recurrencePlanAtTick: number | null;
     };
+    readonly heatStrokeAssessment?: {
+      readonly patternReviewedAtTick: number | null;
+      readonly supportAtTick: number | null;
+      readonly coolingAtTick: number | null;
+      readonly targetAtTick: number | null;
+      readonly surveillanceAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -526,6 +533,11 @@ export interface ActionCockpitProps {
       | 'record-opioid-naloxone-intent' | 'reassess-opioid-initial-response'
       | 'review-opioid-recurrence' | 'record-opioid-recurrence-and-safety-plan',
   ) => void;
+  readonly onHeatStrokeResponse?: (
+    action: 'review-heat-stroke-pattern' | 'record-heat-stroke-support'
+      | 'record-cold-water-immersion' | 'reassess-heat-stroke-cooling-target'
+      | 'record-heat-stroke-organ-surveillance',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -657,6 +669,9 @@ export function crisisResponseAvailability(
     hasOpioidToxicityResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'opioid-toxicity',
     ),
+    hasHeatStrokeResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'exertional-heat-stroke',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -725,6 +740,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'hyperkalemia-with-ecg-change')
       || (event.type === 'narrative' && event.target === 'severe-hyponatremia-with-seizure')
       || (event.type === 'narrative' && event.target === 'opioid-toxicity')
+      || (event.type === 'narrative' && event.target === 'exertional-heat-stroke')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -751,6 +767,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasHyperkalemiaResponse,
     hasSevereHyponatremiaResponse,
     hasOpioidToxicityResponse,
+    hasHeatStrokeResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -778,7 +795,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPneumothoraxResponse || hasBronchospasmResponse || hasStatusEpilepticusResponse
     || hasAcuteIschemicStrokeResponse || hasIntracranialHemorrhageResponse
     || hasDiabeticKetoacidosisResponse || hasHyperkalemiaResponse
-    || hasSevereHyponatremiaResponse || hasOpioidToxicityResponse;
+    || hasSevereHyponatremiaResponse || hasOpioidToxicityResponse || hasHeatStrokeResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -795,8 +812,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasUnstableNarrowTachycardiaResponse || hasUnstableBradycardiaResponse
     || hasStatusEpilepticusResponse || hasAcuteIschemicStrokeResponse
     || hasIntracranialHemorrhageResponse || hasDiabeticKetoacidosisResponse
-    || hasHyperkalemiaResponse || hasSevereHyponatremiaResponse || hasOpioidToxicityResponse;
-  const responseTray = hasOpioidToxicityResponse
+    || hasHyperkalemiaResponse || hasSevereHyponatremiaResponse || hasOpioidToxicityResponse
+    || hasHeatStrokeResponse;
+  const responseTray = hasHeatStrokeResponse
+    ? { id: 'crisis', label: 'Exertional heat stroke' } as const
+    : hasOpioidToxicityResponse
     ? { id: 'crisis', label: 'Opioid toxicity' } as const
     : hasSevereHyponatremiaResponse
     ? { id: 'crisis', label: 'Severe hyponatremia' } as const
@@ -868,6 +888,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasHyperkalemiaResponse
     || hasSevereHyponatremiaResponse
     || hasOpioidToxicityResponse
+    || hasHeatStrokeResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1245,6 +1266,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasOpioidToxicityResponse && (
               <OpioidToxicityTray assessment={props.resuscitation.opioidToxicityAssessment}
                 onAction={props.onOpioidToxicityResponse ?? (() => {})} />
+            )}
+            {hasHeatStrokeResponse && (
+              <HeatStrokeTray assessment={props.resuscitation.heatStrokeAssessment}
+                onAction={props.onHeatStrokeResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -3441,6 +3466,58 @@ function OpioidToxicityTray({ assessment, onAction }: {
             onClick={() => onAction('record-opioid-recurrence-and-safety-plan')}>Ventilate again + repeat + observe</Button>
         </div>
         <p className="field__hint">Keep co-exposures and complications open. Eventual discharge requires low recurrence risk, normal consciousness and vital signs, antagonist access with instruction, and treatment linkage.</p>
+      </section>
+    </div>
+  );
+}
+
+function HeatStrokeTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['heatStrokeAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onHeatStrokeResponse']>;
+}) {
+  const reviewed = assessment?.patternReviewedAtTick != null;
+  const supported = assessment?.supportAtTick != null;
+  const cooling = assessment?.coolingAtTick != null;
+  const target = assessment?.targetAtTick != null;
+  const surveillance = assessment?.surveillanceAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="heat-cool-title">
+        <div id="heat-cool-title" className="syringe__name">Hot brain. Cool now.</div>
+        <Badge kind="teaching">Rectal 41.3°C · confused · HR 146</Badge>
+        <div className="syringe__meta">Exertion · glucose 110 · sodium 139 · no trauma</div>
+        <p className="syringe__remaining" role="status">
+          {target ? '14 min · 38.9°C · coherent · stop active cooling'
+            : cooling ? 'Whole-body cooling active · watch rectal core'
+              : supported ? 'Support ready · immersion now'
+                : reviewed ? 'Heat stroke recognized · support while cooling starts'
+                  : 'Brain + core + glucose + sodium + mimics review pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={reviewed}
+            onClick={() => onAction('review-heat-stroke-pattern')}>Review brain + rectal core + mimics</Button>
+          <Button className="crisis-drug__action" disabled={!reviewed || supported}
+            onClick={() => onAction('record-heat-stroke-support')}>Support ABCs + strip + prepare</Button>
+          <Button className="crisis-drug__action" disabled={!supported || cooling}
+            onClick={() => onAction('record-cold-water-immersion')}>Immerse + monitor core + coordinate</Button>
+          <Button className="crisis-drug__action" disabled={!cooling || target}
+            onClick={() => onAction('reassess-heat-stroke-cooling-target')}>Review cooling target</Button>
+        </div>
+        <p className="field__hint">Whole-body cold-water immersion is the fastest cooling path. Preserve airway access, monitor rectal core continuously, and organize transport around cooling.</p>
+      </section>
+      <section className="syringe" aria-labelledby="heat-surveillance-title">
+        <div id="heat-surveillance-title" className="syringe__name">Stop the cooling, not the surveillance.</div>
+        <div className="syringe__meta">Below 39°C · prevent overshoot · watch delayed injury</div>
+        <p className="syringe__remaining" role="status">
+          {surveillance ? 'Thermal rescue closed · multiorgan surveillance handed off'
+            : target ? 'Temperature target met · organ-injury plan next'
+              : 'Cooling target pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!target || surveillance}
+            onClick={() => onAction('record-heat-stroke-organ-surveillance')}>Watch kidney + liver + clotting + muscle</Button>
+        </div>
+        <p className="field__hint">Temperature recovery does not exclude delayed injury. Antipyretics and dantrolene do not treat heat stroke and are outside this path.</p>
       </section>
     </div>
   );

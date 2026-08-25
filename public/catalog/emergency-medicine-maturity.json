@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "emergency-medicine",
-  "recordCount": 22,
+  "recordCount": 23,
   "records": [
     {
       "recordId": "scenario:undifferentiated-shock@0.1.0",
@@ -243,6 +243,17 @@
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#opioid-toxicity@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#opioid-toxicity@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:exertional-heat-stroke@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "exertional-heat-stroke",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/emergency-medicine-completion-audit.json#exertional-heat-stroke@0.1.0",
+        "/catalog/emergency-medicine-quality-audit.json#exertional-heat-stroke@0.1.0"
       ]
     }
   ]

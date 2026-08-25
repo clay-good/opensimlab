@@ -778,6 +778,9 @@ export function Cockpit({
           onOpioidToxicityResponse={(action) => session.act({
             type: 'opioid-toxicity-response', payload: { action },
           })}
+          onHeatStrokeResponse={(action) => session.act({
+            type: 'heat-stroke-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: opioid-toxicity state has protocol version 55', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(55);
+  it('Scenario: heat-stroke state has protocol version 56', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(56);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

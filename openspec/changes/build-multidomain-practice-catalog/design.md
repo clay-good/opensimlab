@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with 22 playable, completion-audited scenarios. The remaining
-3 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with 23 playable, completion-audited scenarios. The remaining
+2 planned titles remain descriptive scope only and do not enter playable counts before their full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -500,6 +500,20 @@ ventilation, repeat-antagonist intent, co-exposure and complication review, moni
 and an eventual discharge-safety handoff. The case does not examine the patient, confirm a pulse,
 provide ventilation, select or deliver a drug, model pharmacology, diagnose co-exposure, manage
 withdrawal or complications, determine observation duration, dispense medication, or predict outcome.
+
+### Wave B slice 23: exertional heat stroke
+
+The twenty-third emergency-medicine slice adds exertional collapse with CNS dysfunction and an
+authored rectal core temperature of 41.3°C. Learners integrate the exertion, neurologic change,
+temperature, glucose, sodium, trauma, medication, and mimic screen; record parallel ABC support and
+clothing removal; then prioritize whole-body cold-water immersion with continuous rectal monitoring
+and cooling-centered transport coordination.
+
+The focused surface pairs “hot brain, cool now” with “stop the cooling, not the surveillance.” A
+fixed 14-minute panel reaches 38.9°C and stops active cooling, after which delayed neurologic, renal,
+hepatic, coagulation, muscle, electrolyte, glucose, urine, and temperature surveillance continues.
+The case does not examine, measure, immerse, cool, transport, give fluids, run labs, treat organ
+injury, or predict outcome, and it explicitly excludes antipyretics and dantrolene.
 
 #### Critical care: 24
 

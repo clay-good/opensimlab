@@ -1963,6 +1963,46 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['opioid-toxicity'],
   },
   {
+    id: 'heat-stroke-temperature-neurologic-cooling-and-organ-panels-are-authored',
+    headline: 'The exertion, neurologic state, rectal temperature, glucose, sodium, cooling response, and organ-surveillance panel are authored facts, not acquired findings or predictions.',
+    simplification: 'One fixed runner has confusion and rectal core temperature 41.3°C with normal '
+      + 'glucose and sodium, followed by a fixed 14-minute 38.9°C panel and a declared multiorgan '
+      + 'surveillance handoff.',
+    whereItMisleads: 'Treating the screen as neurologic examination, rectal measurement, glucose or '
+      + 'sodium testing, exclusion of mimics, or prediction of cooling rate, response, or organ injury.',
+    correctUnderstanding: 'Real heat stroke requires immediate whole-patient assessment, reliable '
+      + 'core-temperature measurement when available, rapid active cooling, continuous monitoring, '
+      + 'repeat examination, and serial laboratory and organ-function review.',
+    briefIn: ['exertional-heat-stroke'],
+  },
+  {
+    id: 'heat-stroke-support-immersion-monitoring-and-handoff-controls-are-proxies',
+    headline: 'Support, clothing removal, immersion, monitoring, cooling-stop, transport, and surveillance buttons record intents; they do not perform care.',
+    simplification: 'The interface enforces a rapid-cooling sequence without examining the patient, '
+      + 'removing clothing, opening an airway, immersing safely, choosing water temperature, measuring '
+      + 'cooling rate, preventing aspiration, transporting, drawing labs, or treating complications.',
+    whereItMisleads: 'Equating ordered buttons with competent resuscitation, immersion safety, core '
+      + 'monitoring, cooling logistics, fluid care, transport coordination, or critical-care management.',
+    correctUnderstanding: 'Use current protocols, trained teams, the fastest safe available cooling '
+      + 'method, preserved airway access, continuous core monitoring, coordinated transfer, and '
+      + 'ongoing organ-support capability.',
+    briefIn: ['exertional-heat-stroke'],
+  },
+  {
+    id: 'no-live-heat-stroke-exam-cooling-fluids-labs-complications-transport-or-outcome',
+    headline: 'The case does not examine, measure, cool, give fluids, run labs, treat complications, coordinate real transport, or predict outcome.',
+    simplification: 'Classic heat stroke, exercise-associated hyponatremia, hypoglycemia, infection, '
+      + 'stimulants, serotonin toxicity, malignant hyperthermia, seizures, shock, liver failure, '
+      + 'kidney injury, rhabdomyolysis, coagulopathy, cerebral edema, disposition, and prognosis are absent.',
+    whereItMisleads: 'Waiting for a modeled response, using antipyretics or dantrolene, delaying rapid '
+      + 'cooling for transport, continuing cooling below the stop target, or assuming temperature '
+      + 'improvement excludes delayed organ injury.',
+    correctUnderstanding: 'Heat stroke is a time-critical hyperthermia emergency. Cool rapidly, stop '
+      + 'near the guideline target to avoid overshoot, and continue serial neurologic and multiorgan '
+      + 'surveillance after the temperature improves.',
+    briefIn: ['exertional-heat-stroke'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

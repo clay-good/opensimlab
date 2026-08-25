@@ -131,7 +131,7 @@ export const SCENARIO_SCHEMA: SchemaNode = {
             strokeVolumeMl: NUMBER_FIELD('Baseline stroke volume.', 20, 150),
             hemoglobinGPerDl: NUMBER_FIELD('Baseline haemoglobin.', 4, 20),
             bloodVolumeMl: NUMBER_FIELD('Circulating blood volume.', 800, 8000),
-            coreTemperatureC: NUMBER_FIELD('Core temperature.', 32, 40),
+            coreTemperatureC: NUMBER_FIELD('Core temperature.', 32, 45),
             arterialStiffness: NUMBER_FIELD('1.0 is a compliant artery; higher is stiffer.', 0.6, 2.5),
             baroreflexGain: NUMBER_FIELD('1.0 is a healthy reflex.', 0, 1.5),
             fixedStrokeVolume: { type: 'boolean', description: 'True where stroke volume cannot rise, as in severe aortic stenosis.' },

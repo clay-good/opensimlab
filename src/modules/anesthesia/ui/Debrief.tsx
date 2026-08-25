@@ -2984,6 +2984,47 @@ export function objectiveFindings(
           : 'Recurrence recognition, renewed rescue, observation, or discharge safety was incomplete or out of order.', atTick: plan?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-exertional-heat-stroke', 'stabilize-and-prepare-heat-stroke-cooling',
+      'cool-exertional-heat-stroke-rapidly', 'stop-heat-stroke-cooling-at-target',
+      'monitor-heat-stroke-organ-injury'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'exertional-heat-stroke');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The exertional-heat-stroke vignette was not active.' } satisfies ObjectiveFinding;
+      const reviewed = log.find((event) => /^heat-stroke-reviewed-\d+$/.test(event.eventId));
+      const support = log.find((event) => /^heat-stroke-supported-\d+$/.test(event.eventId));
+      const cooling = log.find((event) => /^heat-stroke-cooling-\d+$/.test(event.eventId));
+      const target = log.find((event) => /^heat-stroke-target-\d+$/.test(event.eventId));
+      const surveillance = log.find((event) => /^heat-stroke-surveillance-\d+$/.test(event.eventId));
+      if (objective.id === 'recognize-exertional-heat-stroke') return {
+        ...base, outcome: reviewed ? 'met' : 'not-met',
+        finding: reviewed ? 'Exertion, CNS dysfunction, rectal core hyperthermia, glucose, sodium, trauma, medication, and immediate mimics were integrated.'
+          : 'The fixed exertional heat-stroke pattern and immediate mimics were not reviewed.',
+        atTick: reviewed?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'stabilize-and-prepare-heat-stroke-cooling') {
+        const ordered = reviewed && support && reviewed.tick <= support.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered ? 'ABC support, monitoring, clothing removal, cooling preparation, airway access, and transport coordination followed recognition without delaying cooling.'
+            : 'Parallel support and cooling preparation were absent or out of order.', atTick: support?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'cool-exertional-heat-stroke-rapidly') {
+        const ordered = support && cooling && support.tick <= cooling.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered ? 'Whole-body cold-water immersion with continuous rectal core monitoring followed support and remained central to transport coordination.'
+            : 'Rapid conductive cooling was absent or out of order.', atTick: cooling?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'stop-heat-stroke-cooling-at-target') {
+        const ordered = cooling && target && cooling.tick <= target.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered ? 'The fixed 38.9°C panel was reviewed and active cooling stopped below 39°C to limit overshoot.'
+            : 'The cooling target was absent or reviewed out of order.', atTick: target?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = target && surveillance && target.tick <= surveillance.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met',
+        finding: ordered ? 'Delayed neurologic, renal, hepatic, coagulation, muscle, electrolyte, glucose, urine, and temperature surveillance continued without antipyretics or dantrolene.'
+          : 'The multiorgan surveillance and inappropriate-drug boundary were incomplete or out of order.', atTick: surveillance?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;
