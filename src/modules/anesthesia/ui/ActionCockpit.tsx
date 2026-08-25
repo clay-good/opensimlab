@@ -459,6 +459,13 @@ export interface ActionCockpitProps {
       readonly guardrailsAtTick: number | null;
       readonly reassessmentAtTick: number | null;
     };
+    readonly intracranialHypertensionAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly contextAtTick: number | null;
+      readonly protectionAtTick: number | null;
+      readonly rescueAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -742,6 +749,11 @@ export interface ActionCockpitProps {
       | 'activate-post-arrest-temperature-protocol' | 'record-temperature-control-guardrails'
       | 'reassess-post-arrest-temperature-trajectory',
   ) => void;
+  readonly onIntracranialHypertensionResponse?: (
+    action: 'recognize-intracranial-hypertension' | 'review-intracranial-hypertension-context'
+      | 'activate-first-tier-brain-protection' | 'activate-individualized-hyperosmolar-rescue'
+      | 'reassess-intracranial-hypertension-trajectory',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -927,6 +939,9 @@ export function crisisResponseAvailability(
     hasPostArrestTemperatureResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'targeted-temperature-management',
     ),
+    hasIntracranialHypertensionResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'intracranial-hypertension',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1013,6 +1028,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'upper-gi-hemorrhage')
       || (event.type === 'narrative' && event.target === 'critical-care-status-epilepticus')
       || (event.type === 'narrative' && event.target === 'targeted-temperature-management')
+      || (event.type === 'narrative' && event.target === 'intracranial-hypertension')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1039,6 +1055,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasUpperGiHemorrhageResponse,
     hasCriticalCareStatusEpilepticusResponse,
     hasPostArrestTemperatureResponse,
+    hasIntracranialHypertensionResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1089,7 +1106,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasSpontaneousBreathingTrialResponse || hasPostIntubationHypotensionResponse
     || hasCardiogenicShockResponse || hasMixedShockResponse || hasRightVentricularFailureResponse
     || hasMassivePulmonaryEmbolismResponse || hasUpperGiHemorrhageResponse
-    || hasCriticalCareStatusEpilepticusResponse || hasPostArrestTemperatureResponse;
+    || hasCriticalCareStatusEpilepticusResponse || hasPostArrestTemperatureResponse
+    || hasIntracranialHypertensionResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1114,8 +1132,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPostIntubationHypotensionResponse || hasCardiogenicShockResponse
     || hasMixedShockResponse || hasRightVentricularFailureResponse
     || hasMassivePulmonaryEmbolismResponse || hasUpperGiHemorrhageResponse
-    || hasCriticalCareStatusEpilepticusResponse || hasPostArrestTemperatureResponse;
-  const responseTray = hasPostArrestTemperatureResponse
+    || hasCriticalCareStatusEpilepticusResponse || hasPostArrestTemperatureResponse
+    || hasIntracranialHypertensionResponse;
+  const responseTray = hasIntracranialHypertensionResponse
+    ? { id: 'crisis', label: 'ICP crisis' } as const
+    : hasPostArrestTemperatureResponse
     ? { id: 'crisis', label: 'Temperature control' } as const
     : hasCriticalCareStatusEpilepticusResponse
     ? { id: 'crisis', label: 'Refractory status' } as const
@@ -1241,6 +1262,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasUpperGiHemorrhageResponse
     || hasCriticalCareStatusEpilepticusResponse
     || hasPostArrestTemperatureResponse
+    || hasIntracranialHypertensionResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1700,6 +1722,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <PostArrestTemperatureTray
                 assessment={props.resuscitation.postArrestTemperatureAssessment}
                 onAction={props.onPostArrestTemperatureResponse ?? (() => {})} />
+            )}
+            {hasIntracranialHypertensionResponse && (
+              <IntracranialHypertensionTray
+                assessment={props.resuscitation.intracranialHypertensionAssessment}
+                onAction={props.onIntracranialHypertensionResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -4834,6 +4861,58 @@ function PostArrestTemperatureTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-post-arrest-temperature-trajectory')}>Review temperature + organ trajectory</Button>
         </div>
         <p className="field__hint">Reaching the range is an immediate process signal, not proof of neurologic recovery or benefit.</p>
+      </section>
+    </div>
+  );
+}
+
+function IntracranialHypertensionTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['intracranialHypertensionAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onIntracranialHypertensionResponse']>;
+}) {
+  const recognized = assessment?.recognitionAtTick != null;
+  const context = assessment?.contextAtTick != null;
+  const protectedBrain = assessment?.protectionAtTick != null;
+  const rescued = assessment?.rescueAtTick != null;
+  const reassessed = assessment?.reassessmentAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="intracranial-hypertension-context-title">
+        <div id="intracranial-hypertension-context-title" className="syringe__name">Lower pressure. Preserve perfusion.</div>
+        <Badge kind="teaching">ICP 28 · CPP 54 · threshold &gt;22 · contextualize with exam + CT</Badge>
+        <div className="syringe__meta">8 min sustained · unchanged pupils · diffuse edema · repeat review open</div>
+        <p className="syringe__remaining" role="status">
+          {context ? 'ICP crisis recognized · reversible drivers identified'
+            : recognized ? 'Neurocritical teams active · whole-context review due'
+              : 'Treat the monitored pattern, not one number in isolation.'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={recognized}
+            onClick={() => onAction('recognize-intracranial-hypertension')}>Recognize ICP crisis + activate help</Button>
+          <Button className="crisis-drug__action" disabled={!recognized || context}
+            onClick={() => onAction('review-intracranial-hypertension-context')}>Review monitor + whole context</Button>
+        </div>
+        <p className="field__hint">ICP, CPP, examination, imaging, and systemic physiology belong in one decision.</p>
+      </section>
+      <section className="syringe" aria-labelledby="intracranial-hypertension-treatment-title">
+        <div id="intracranial-hypertension-treatment-title" className="syringe__name">Treat pressure. Protect the patient.</div>
+        <Badge kind="teaching">CPP 60–70 · do not force &gt;70 · no universal osmotherapy recipe</Badge>
+        <div className="syringe__meta">venous drainage · oxygen + ventilation · perfusion · temperature · synchrony</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'ICP 19 · CPP 65 · durability + escalation remain open'
+            : rescued ? 'Protection + rescue active · ICP and CPP review due'
+              : protectedBrain ? 'First-tier protection active · individualized rescue due'
+                : 'First-tier brain protection pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!context || protectedBrain}
+            onClick={() => onAction('activate-first-tier-brain-protection')}>Activate first-tier brain protection</Button>
+          <Button className="crisis-drug__action" disabled={!protectedBrain || rescued}
+            onClick={() => onAction('activate-individualized-hyperosmolar-rescue')}>Activate individualized hyperosmolar rescue</Button>
+          <Button className="crisis-drug__action" disabled={!rescued || reassessed}
+            onClick={() => onAction('reassess-intracranial-hypertension-trajectory')}>Review ICP + CPP trajectory</Button>
+        </div>
+        <p className="field__hint">An immediate pressure response does not prove durable control, recovery, or outcome.</p>
       </section>
     </div>
   );

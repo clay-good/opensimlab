@@ -471,6 +471,11 @@ export class AnesthesiaEngine {
   private postArrestTemperatureProtocolAtTick: number | null = null;
   private postArrestTemperatureGuardrailsAtTick: number | null = null;
   private postArrestTemperatureReassessmentAtTick: number | null = null;
+  private intracranialHypertensionRecognitionAtTick: number | null = null;
+  private intracranialHypertensionContextAtTick: number | null = null;
+  private intracranialHypertensionProtectionAtTick: number | null = null;
+  private intracranialHypertensionRescueAtTick: number | null = null;
+  private intracranialHypertensionReassessmentAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -3553,6 +3558,58 @@ export class AnesthesiaEngine {
           'Fixed response after 45 minutes: core temperature is 37.4°C within the selected protocol range, MAP is 70 mmHg, HR 92/min, SpO₂ 97%, and EtCO₂ 36 mmHg. Command following remains absent. Temperature durability, shivering, cause, seizures, cardiac function, organ recovery, neurologic recovery, neuroprognostication, and outcome remain open.', { reassessmentMinutes: 45, coreTemperatureC: 37.4, mapMmHg: 70, heartRateBpm: 92, spo2Percent: 97, etco2MmHg: 36, followsCommands: false, durableTemperatureControlProven: false, neurologicPrognosisMade: false });
         break;
       }
+      case 'intracranial-hypertension-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'intracranial-hypertension');
+        const valid = ['recognize-intracranial-hypertension',
+          'review-intracranial-hypertension-context', 'activate-first-tier-brain-protection',
+          'activate-individualized-hyperosmolar-rescue',
+          'reassess-intracranial-hypertension-trajectory'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `intracranial-hypertension-response-refused-${this.currentTick}`,
+            supported ? 'The intracranial-hypertension action was not one of the listed choices. Nothing changed.'
+              : 'The bounded intracranial-hypertension choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'recognize-intracranial-hypertension') {
+          if (this.intracranialHypertensionRecognitionAtTick !== null) { this.log('warning', 'assessment', `intracranial-hypertension-recognition-refused-${this.currentTick}`, 'Intracranial-hypertension recognition and experienced-team activation have already been recorded.'); break; }
+          this.intracranialHypertensionRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `intracranial-hypertension-recognized-${this.currentTick}`,
+            'A consistent ICP waveform at 28 mmHg for 8 minutes, CPP 54 mmHg, and the fixed examination and imaging context triggered neurocritical, neurosurgical, nursing, respiratory-therapy, and pharmacy help. The pattern was not treated as a stand-alone diagnosis or prognosis.', { icpMmHg: 28, sustainedMinutes: 8, cppMmHg: 54, treatmentThresholdMmHg: 22, neurocriticalTeamActivated: true, neurosurgicalTeamActivated: true, diagnosisMade: false, prognosisMade: false });
+          break;
+        }
+        if (this.intracranialHypertensionRecognitionAtTick === null) { this.log('warning', 'assessment', `intracranial-hypertension-recognition-order-refused-${this.currentTick}`, 'Recognize the sustained ICP and inadequate CPP pattern and activate experienced help first.'); break; }
+        if (response === 'review-intracranial-hypertension-context') {
+          if (this.intracranialHypertensionContextAtTick !== null) { this.log('warning', 'assessment', `intracranial-hypertension-context-refused-${this.currentTick}`, 'The fixed monitor, examination, imaging, systemic, and reversible-driver context has already been reviewed.'); break; }
+          this.intracranialHypertensionContextAtTick = this.currentTick;
+          this.log('critical', 'assessment', `intracranial-hypertension-context-reviewed-${this.currentTick}`,
+            'Fixed review confirmed the reported ICP waveform and unchanged pupils, diffuse edema without a reported new evacuable lesion, head elevation only 10° with neck rotation, intermittent dyssynchrony, normoxia, EtCO₂ 40 mmHg, MAP 82 mmHg, temperature 37.7°C, no current seizure, sodium 140 mmol/L, preserved urine output, and no new bleeding or hypotension. Monitor fidelity, examination, and repeat imaging remain active clinical questions.', { waveformReportedConsistent: true, pupilChange: false, newEvacuableLesionReported: false, headElevationDegrees: 10, neckNeutral: false, dyssynchrony: true, hypoxemia: false, hypotension: false, currentSeizure: false, contextClosed: false });
+          break;
+        }
+        if (this.intracranialHypertensionContextAtTick === null) { this.log('warning', 'assessment', `intracranial-hypertension-context-order-refused-${this.currentTick}`, 'Review the fixed monitor, examination, imaging, systemic, and reversible-driver context before activating protection.'); break; }
+        if (response === 'activate-first-tier-brain-protection') {
+          if (this.intracranialHypertensionProtectionAtTick !== null) { this.log('warning', 'assessment', `intracranial-hypertension-protection-refused-${this.currentTick}`, 'The first-tier positioning and systemic brain-protection intents have already been recorded.'); break; }
+          this.intracranialHypertensionProtectionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `intracranial-hypertension-protection-activated-${this.currentTick}`,
+            'Neutral head position and individualized elevation for venous drainage were recorded with oxygenation, ventilation, perfusion, temperature, analgesia, sedation, synchrony, glucose, sodium, and seizure-surveillance protection. CPP was individualized within 60–70 mmHg without aggressively forcing it above 70, and prolonged prophylactic aggressive hyperventilation was not selected. No positioning, monitoring, oxygen, ventilation, fluid, or drug delivery is simulated.', { venousDrainageProtected: true, systemicBrainProtection: true, minimumCppMmHg: 60, maximumCppMmHg: 70, forceCppAbove70: false, prophylacticAggressiveHyperventilation: false, treatmentDelivered: false });
+          break;
+        }
+        if (this.intracranialHypertensionProtectionAtTick === null) { this.log('warning', 'assessment', `intracranial-hypertension-protection-order-refused-${this.currentTick}`, 'Activate positioning and systemic brain protection before hyperosmolar rescue.'); break; }
+        if (response === 'activate-individualized-hyperosmolar-rescue') {
+          if (this.intracranialHypertensionRescueAtTick !== null) { this.log('warning', 'assessment', `intracranial-hypertension-rescue-refused-${this.currentTick}`, 'The individualized hyperosmolar rescue intent and safety review have already been recorded.'); break; }
+          this.intracranialHypertensionRescueAtTick = this.currentTick;
+          this.log('critical', 'assessment', `intracranial-hypertension-rescue-activated-${this.currentTick}`,
+            'Expert-selected hyperosmolar rescue intent was activated with agent suitability, sodium, chloride, osmolality, renal function, volume status, access, fluid balance, and response review. Hypertonic sodium is conditionally favored for initial TBI-related ICP management in the cited guideline, while mannitol remains an effective alternative when it is unsuitable. No universal agent, formulation, concentration, dose, or route was selected, and no treatment or outcome benefit is simulated.', { hyperosmolarRescueIntent: true, universalAgent: false, concentrationSelected: false, doseSelected: false, routeSelected: false, sodiumRenalVolumeGuardrails: true, treatmentDelivered: false, neurologicOutcomeExpected: false });
+          break;
+        }
+        if (this.intracranialHypertensionRescueAtTick === null) { this.log('warning', 'assessment', `intracranial-hypertension-rescue-order-refused-${this.currentTick}`, 'Activate individualized hyperosmolar rescue and safety guardrails before reviewing the fixed response.'); break; }
+        if (this.intracranialHypertensionReassessmentAtTick !== null) { this.log('warning', 'assessment', `intracranial-hypertension-reassessment-refused-${this.currentTick}`, 'The fixed ICP and CPP reassessment has already been reviewed.'); break; }
+        this.intracranialHypertensionReassessmentAtTick = this.currentTick;
+        this.log('critical', 'assessment', `intracranial-hypertension-trajectory-reassessed-${this.currentTick}`,
+          'Fixed response after 15 minutes: reported ICP is 19 mmHg, MAP 84 mmHg, calculated CPP 65 mmHg, HR 84/min, SpO₂ 97%, EtCO₂ 38 mmHg, and temperature 37.5°C. Pupils remain unchanged and no new herniation sign is reported. Monitor fidelity, durability, recurrent pressure, examination, imaging, drain or surgical escalation, recovery, prognosis, and outcome remain open.', { reassessmentMinutes: 15, icpMmHg: 19, mapMmHg: 84, cppMmHg: 65, heartRateBpm: 84, spo2Percent: 97, etco2MmHg: 38, temperatureC: 37.5, pupilChange: false, newHerniationSign: false, durableControlProven: false, neurologicOutcomeProven: false });
+        break;
+      }
       case 'aspiration-risk-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
@@ -6350,6 +6407,19 @@ export class AnesthesiaEngine {
         meanArterialMmHg: reassessed ? 70 : 68,
         coreTemperatureC: reassessed ? 37.4 : 38.3 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'intracranial-hypertension')) {
+      const reassessed = this.intracranialHypertensionReassessmentAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: reassessed ? 84 : 88,
+        respiratoryRateBpm: 16,
+        spo2Percent: 97,
+        etco2MmHg: reassessed ? 38 : 40,
+        systolicMmHg: reassessed ? 112 : 108,
+        diastolicMmHg: reassessed ? 70 : 68,
+        meanArterialMmHg: reassessed ? 84 : 82,
+        coreTemperatureC: reassessed ? 37.5 : 37.7 };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -6866,6 +6936,13 @@ export class AnesthesiaEngine {
           protocolAtTick: this.postArrestTemperatureProtocolAtTick,
           guardrailsAtTick: this.postArrestTemperatureGuardrailsAtTick,
           reassessmentAtTick: this.postArrestTemperatureReassessmentAtTick,
+        },
+        intracranialHypertensionAssessment: {
+          recognitionAtTick: this.intracranialHypertensionRecognitionAtTick,
+          contextAtTick: this.intracranialHypertensionContextAtTick,
+          protectionAtTick: this.intracranialHypertensionProtectionAtTick,
+          rescueAtTick: this.intracranialHypertensionRescueAtTick,
+          reassessmentAtTick: this.intracranialHypertensionReassessmentAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

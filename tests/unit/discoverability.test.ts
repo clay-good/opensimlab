@@ -330,6 +330,8 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
       .toMatchObject({ indexable: true, heading: 'Refractory status epilepticus' });
     expect(routeFor('/critical-care/scenario/targeted-temperature-management'))
       .toMatchObject({ indexable: true, heading: 'Post-arrest temperature control' });
+    expect(routeFor('/critical-care/scenario/intracranial-hypertension'))
+      .toMatchObject({ indexable: true, heading: 'Intracranial hypertension' });
   });
 
   it('Requirement: Modules Declare Their Own Physiological Timescale', () => {

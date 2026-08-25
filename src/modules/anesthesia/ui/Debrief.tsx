@@ -3712,6 +3712,46 @@ export function objectiveFindings(
         : 'Whole-trajectory reassessment was absent or preceded guardrail review.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-intracranial-hypertension', 'review-intracranial-hypertension-context',
+      'activate-first-tier-brain-protection', 'activate-individualized-hyperosmolar-rescue',
+      'reassess-intracranial-hypertension-trajectory'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'intracranial-hypertension');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The intracranial-hypertension vignette was not active.' } satisfies ObjectiveFinding;
+      const recognition = log.find((event) => /^intracranial-hypertension-recognized-\d+$/.test(event.eventId));
+      const context = log.find((event) => /^intracranial-hypertension-context-reviewed-\d+$/.test(event.eventId));
+      const protection = log.find((event) => /^intracranial-hypertension-protection-activated-\d+$/.test(event.eventId));
+      const rescue = log.find((event) => /^intracranial-hypertension-rescue-activated-\d+$/.test(event.eventId));
+      const reassessment = log.find((event) => /^intracranial-hypertension-trajectory-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'recognize-intracranial-hypertension') return { ...base,
+        outcome: recognition ? 'met' : 'not-met', finding: recognition
+          ? 'Sustained ICP 28 mmHg with CPP 54 mmHg triggered experienced neurocritical and neurosurgical help in the fixed examination and imaging context.'
+          : 'Intracranial-hypertension recognition or experienced-team activation was absent.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-intracranial-hypertension-context') {
+        const ordered = recognition && context && recognition.tick <= context.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Monitor, pupils, imaging, position, synchrony, oxygenation, ventilation, perfusion, temperature, seizure, sodium, and volume findings shaped the response.'
+          : 'Whole-context review was absent or preceded recognition.', atTick: context?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'activate-first-tier-brain-protection') {
+        const ordered = context && protection && context.tick <= protection.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Venous drainage and systemic brain-protection intents were activated with individualized CPP and ventilation guardrails.'
+          : 'First-tier brain protection was absent or preceded context review.', atTick: protection?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'activate-individualized-hyperosmolar-rescue') {
+        const ordered = protection && rescue && protection.tick <= rescue.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Expert-selected hyperosmolar rescue and sodium, renal, osmolar, volume, access, and response guardrails were activated without a universal recipe.'
+          : 'Individualized rescue was absent or preceded first-tier protection.', atTick: rescue?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = rescue && reassessment && rescue.tick <= reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+        ? 'Reported ICP fell to 19 mmHg and CPP rose to 65 mmHg while durability, imaging, escalation, recovery, prognosis, and outcome stayed open.'
+        : 'ICP and CPP reassessment was absent or preceded rescue review.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

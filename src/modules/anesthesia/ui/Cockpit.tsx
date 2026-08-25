@@ -832,6 +832,9 @@ export function Cockpit({
           onPostArrestTemperatureResponse={(action) => session.act({
             type: 'targeted-temperature-management-response', payload: { action },
           })}
+          onIntracranialHypertensionResponse={(action) => session.act({
+            type: 'intracranial-hypertension-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

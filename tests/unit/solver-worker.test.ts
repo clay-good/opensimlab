@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: post-arrest temperature-control state has protocol version 73', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(73);
+  it('Scenario: intracranial-pressure state has protocol version 74', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(74);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

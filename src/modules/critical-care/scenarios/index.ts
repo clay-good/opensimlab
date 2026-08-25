@@ -14,6 +14,7 @@ import { MASSIVE_PULMONARY_EMBOLISM } from './massive-pulmonary-embolism';
 import { UPPER_GI_HEMORRHAGE } from './upper-gi-hemorrhage';
 import { STATUS_EPILEPTICUS } from './status-epilepticus';
 import { TARGETED_TEMPERATURE_MANAGEMENT } from './targeted-temperature-management';
+import { INTRACRANIAL_HYPERTENSION } from './intracranial-hypertension';
 
 export const CRITICAL_CARE_SCENARIOS: readonly Scenario[] = [
   ARDS_LUNG_PROTECTIVE_VENTILATION,
@@ -31,6 +32,7 @@ export const CRITICAL_CARE_SCENARIOS: readonly Scenario[] = [
   UPPER_GI_HEMORRHAGE,
   STATUS_EPILEPTICUS,
   TARGETED_TEMPERATURE_MANAGEMENT,
+  INTRACRANIAL_HYPERTENSION,
 ];
 export const DEFAULT_CRITICAL_CARE_SCENARIO_ID = ARDS_LUNG_PROTECTIVE_VENTILATION.metadata.id;
 

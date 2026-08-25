@@ -809,6 +809,25 @@ ventilation, fluid, or drugs; manage an airway; prescribe; use a cooling or warm
 shivering or cause; perform coronary care or neuroprognostication; transfer; determine disposition;
 or predict outcome.
 
+### Wave B critical-care slice 16: intracranial hypertension
+
+The sixteenth critical-care slice presents an intubated adult 6 hours after severe traumatic brain
+injury and lesion evacuation. A reported consistent parenchymal-monitor waveform has shown ICP
+28 mmHg for 8 minutes while MAP 82 mmHg yields CPP 54 mmHg. Learners integrate the pressure trend,
+unchanged pupils, reported diffuse edema, and systemic physiology; activate neurocritical,
+neurosurgical, nursing, respiratory-therapy, and pharmacy help; and keep monitor fidelity, repeat
+imaging, and surgical review open.
+
+The focused tutor pairs “lower pressure; preserve perfusion” with “treat pressure; protect the
+patient.” Learners restore neutral positioning and venous-drainage intent, protect systemic brain
+physiology, individualize CPP within 60–70 mmHg without aggressively forcing it above 70, avoid
+prolonged prophylactic aggressive hyperventilation, activate expert-selected hyperosmolar rescue
+with safety guardrails, and review a fixed immediate ICP 19/CPP 65 response. The lab teaches neither
+one isolated automatic threshold nor one universal osmotherapy recipe. It does not examine, acquire
+or interpret ICP or other monitoring or imaging, calculate CPP, diagnose, position, deliver oxygen,
+ventilation, fluid, or drugs, prescribe, use a drain, operate, transfer, determine disposition or
+prognosis, or predict outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute
