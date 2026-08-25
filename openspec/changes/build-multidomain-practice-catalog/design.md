@@ -1135,6 +1135,23 @@ live ECG, monitor, laboratory, or imaging acquisition or interpretation; definit
 medication change; atropine, oxygen, infusion, or rescue pacing; pacemaker eligibility, selection,
 implantation, or programming; disposition, prognosis, recurrence, benefit, or outcome.
 
+### Wave C cardiology slice 10: complete heart block
+
+The tenth cardiology slice begins in a monitored urgent rhythm unit after 2 brief presyncopal
+episodes. A fixed diagnostic report states acquired complete AV block with atrial activity 82/min,
+a regular wide ventricular escape 34/min, and P waves marching independently through QRS complexes.
+The patient has a palpable pulse, preserved pressure, alert mentation, warm perfusion, and normal
+oxygenation without current shock, ischemic discomfort, acute heart failure, or syncope.
+
+Learners reconcile the block with the whole patient, then review reversible and structural context
+while activating cardiology/electrophysiology and pacing-capable monitored care in parallel. A later
+tick shows persistent complete block with unchanged perfusion and no simulated treatment or capture.
+The final handoff records the guideline-supported permanent-pacing evaluation for authored acquired
+third-degree block without an identified reversible or physiologic cause, shared decisions, owners,
+and deterioration triggers. The lab does not examine; acquire or interpret tests; diagnose cause;
+deliver oxygen, atropine, medication, infusion, or pacing; choose settings, sedation, device, mode,
+or lead; assess capture; implant or program; determine disposition or prognosis; or predict outcome.
+
 #### Respiratory medicine: 15
 
 Acute severe asthma; COPD exacerbation; community-acquired pneumonia with hypoxemia; pulmonary

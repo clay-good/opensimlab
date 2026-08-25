@@ -564,6 +564,11 @@ export class AnesthesiaEngine {
   private symptomaticBradycardiaCorrelationAtTick: number | null = null;
   private symptomaticBradycardiaPacingEvaluationAtTick: number | null = null;
   private symptomaticBradycardiaHandoffAtTick: number | null = null;
+  private completeHeartBlockStabilityAtTick: number | null = null;
+  private completeHeartBlockContextAtTick: number | null = null;
+  private completeHeartBlockPathwayAtTick: number | null = null;
+  private completeHeartBlockReassessmentAtTick: number | null = null;
+  private completeHeartBlockHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -4535,6 +4540,43 @@ export class AnesthesiaEngine {
         this.symptomaticBradycardiaHandoffAtTick = this.currentTick;
         this.log('advisory', 'assessment', `symptomatic-bradycardia-handoff-recorded-${this.currentTick}`, 'Symptom tracking, locally determined reassessment, a named owner, and urgent triggers for syncope, hypotension, confusion, shock, ischemic discomfort, dyspnea or acute heart failure, worsening hypoxemia, poor perfusion, or pulse loss were recorded. The current rhythm remains sinus bradycardia; symptom, cause, medication, preference, device, and outcome questions remain open.', { ownerNamed: true, rhythmChanged: false, treatmentDelivered: false }); break;
       }
+      case 'complete-heart-block-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'complete-heart-block');
+        const valid = ['reconcile-complete-heart-block-stability',
+          'review-complete-heart-block-context', 'activate-complete-heart-block-pathway',
+          'reassess-complete-heart-block-trajectory',
+          'handoff-complete-heart-block-pacing-plan'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `complete-heart-block-response-refused-${this.currentTick}`, supported ? 'The complete-heart-block action was not one of the listed choices. Nothing changed.' : 'These complete-heart-block choices are available only in the declared lesson.'); break; }
+        if (response === 'reconcile-complete-heart-block-stability') {
+          if (this.completeHeartBlockStabilityAtTick !== null) { this.log('warning', 'assessment', `complete-heart-block-stability-refused-${this.currentTick}`, 'The fixed block, pulse, symptoms, and current stability were already reconciled.'); break; }
+          this.completeHeartBlockStabilityAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `complete-heart-block-stability-reconciled-${this.currentTick}`, 'The fixed diagnostic report establishes complete AV block with independent atrial activity at 82/min and a regular wide ventricular escape at 34/min. A mechanical pulse, BP 116/70 mmHg, alert mentation, warm perfusion, SpO2 98% on room air, and no current hypotension, shock, ischemic discomfort, acute heart failure, or syncope establish stability now without making the block low risk.', { mechanicalPulsePresent: true, hemodynamicallyStable: true, ventricularRateBpm: 34, atrialRateBpm: 82 }); break;
+        }
+        if (this.completeHeartBlockStabilityAtTick === null) { this.log('warning', 'assessment', `complete-heart-block-order-refused-${this.currentTick}`, 'Reconcile the fixed AV-dissociation report, mechanical pulse, and current whole-patient stability first.'); break; }
+        if (response === 'review-complete-heart-block-context') {
+          if (this.completeHeartBlockContextAtTick !== null) { this.log('warning', 'assessment', `complete-heart-block-context-refused-${this.currentTick}`, 'The fixed reversible and structural context was already reviewed.'); break; }
+          this.completeHeartBlockContextAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `complete-heart-block-context-reviewed-${this.currentTick}`, 'The fixed initial medication, toxic, temperature, electrolyte, thyroid, ischemic, infectious, inflammatory, procedural, physiologic, and structural context was reviewed. No reversible cause is identified in this authored initial panel, but absence is not proved and cause remains open.', { reversibleCauseIdentified: false, absenceProven: false, acquiredBlockAuthored: true }); break;
+        }
+        if (response === 'activate-complete-heart-block-pathway') {
+          if (this.completeHeartBlockPathwayAtTick !== null) { this.log('warning', 'assessment', `complete-heart-block-pathway-refused-${this.currentTick}`, 'The monitored pacing-capable pathway was already activated.'); break; }
+          this.completeHeartBlockPathwayAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `complete-heart-block-pathway-activated-${this.currentTick}`, 'Continuous rhythm, pulse, pressure, and oximetry monitoring; access readiness; pads and external backup availability; cardiology/electrophysiology consultation; pacing-capable care; and triggers for hypotension, altered mentation, shock, ischemic discomfort, acute heart failure, syncope, escape failure, or pulse loss were recorded. Cause review continues in parallel. No routine oxygen, atropine gate, treatment, pacing, or capture is supplied.', { intentOnly: true, pacingDelivered: false, captureAssessed: false, routineOxygenSelected: false }); break;
+        }
+        if (this.completeHeartBlockContextAtTick === null || this.completeHeartBlockPathwayAtTick === null) { this.log('warning', 'assessment', `complete-heart-block-reassessment-order-refused-${this.currentTick}`, 'Complete both cause review and pacing-capable escalation before reassessing the persistent block.'); break; }
+        if (response === 'reassess-complete-heart-block-trajectory') {
+          if (this.completeHeartBlockReassessmentAtTick !== null) { this.log('warning', 'assessment', `complete-heart-block-reassessment-refused-${this.currentTick}`, 'The persistent block was already reassessed.'); break; }
+          if (this.currentTick <= Math.max(this.completeHeartBlockContextAtTick, this.completeHeartBlockPathwayAtTick)) { this.log('warning', 'assessment', `complete-heart-block-elapsed-time-refused-${this.currentTick}`, 'Allow a later simulated tick before reviewing persistence. No consultation, transfer, or procedure is implied.'); break; }
+          this.completeHeartBlockReassessmentAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `complete-heart-block-trajectory-reassessed-${this.currentTick}`, 'At the later check, the fixed complete AV block persists with ventricular escape 34/min, a palpable pulse, BP 116/70 mmHg, alert mentation, warm perfusion, and SpO2 98% on room air. Stability has not resolved the acquired block; no treatment, paced rhythm, or capture is simulated.', { blockPersists: true, pacingDelivered: false, captureAssessed: false }); break;
+        }
+        if (this.completeHeartBlockReassessmentAtTick === null) { this.log('warning', 'assessment', `complete-heart-block-handoff-order-refused-${this.currentTick}`, 'Reassess the persistent complete block before definitive evaluation handoff.'); break; }
+        if (this.completeHeartBlockHandoffAtTick !== null) { this.log('warning', 'assessment', `complete-heart-block-handoff-refused-${this.currentTick}`, 'The pacing evaluation and ownership handoff were already recorded.'); break; }
+        this.completeHeartBlockHandoffAtTick = this.currentTick;
+        this.log('advisory', 'assessment', `complete-heart-block-handoff-recorded-${this.currentTick}`, 'Guideline-supported permanent-pacing evaluation for authored acquired complete AV block without an identified reversible or physiologic cause, shared goals and tradeoffs, current perfusion, open causes, monitored contingency, named owners, and acute-change triggers were handed off. No eligibility adjudication, device, mode, lead, implant, program, capture claim, disposition, benefit, or outcome was supplied.', { intentOnly: true, deviceSelected: false, pacingDelivered: false, captureAssessed: false }); break;
+      }
       case 'emergence-residual-block-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative'
@@ -7227,6 +7269,12 @@ export class AnesthesiaEngine {
         meanArterialMmHg: 93, coreTemperatureC: 36.7 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'complete-heart-block')) {
+      crisisState = { ...crisisState, heartRateBpm: 34, respiratoryRateBpm: 16,
+        spo2Percent: 98, etco2MmHg: 36, systolicMmHg: 116, diastolicMmHg: 70,
+        meanArterialMmHg: 85, coreTemperatureC: 36.7 };
+    }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'unstable-narrow-complex-tachycardia')) {
       const cardioverted = this.unstableNarrowTachycardiaCardiovertedAtTick !== null;
       crisisState = { ...crisisState, heartRateBpm: cardioverted ? 92 : 188,
@@ -8153,6 +8201,18 @@ export class AnesthesiaEngine {
               handoffAtTick: this.symptomaticBradycardiaHandoffAtTick,
               hemodynamicallyStable: true as const, mechanismProven: false as const,
               treatmentDelivered: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'complete-heart-block') ? {
+            completeHeartBlockAssessment: {
+              stabilityAtTick: this.completeHeartBlockStabilityAtTick,
+              contextAtTick: this.completeHeartBlockContextAtTick,
+              pathwayAtTick: this.completeHeartBlockPathwayAtTick,
+              reassessmentAtTick: this.completeHeartBlockReassessmentAtTick,
+              handoffAtTick: this.completeHeartBlockHandoffAtTick,
+              hemodynamicallyStable: true as const, pacingDelivered: false as const,
+              captureAssessed: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

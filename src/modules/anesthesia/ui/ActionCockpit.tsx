@@ -624,6 +624,16 @@ export interface ActionCockpitProps {
       readonly mechanismProven: false;
       readonly treatmentDelivered: false;
     };
+    readonly completeHeartBlockAssessment?: {
+      readonly stabilityAtTick: number | null;
+      readonly contextAtTick: number | null;
+      readonly pathwayAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly hemodynamicallyStable: true;
+      readonly pacingDelivered: false;
+      readonly captureAssessed: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1010,6 +1020,11 @@ export interface ActionCockpitProps {
       | 'record-symptomatic-bradycardia-pacing-evaluation'
       | 'handoff-symptomatic-bradycardia-plan',
   ) => void;
+  readonly onCompleteHeartBlockResponse?: (
+    action: 'reconcile-complete-heart-block-stability' | 'review-complete-heart-block-context'
+      | 'activate-complete-heart-block-pathway' | 'reassess-complete-heart-block-trajectory'
+      | 'handoff-complete-heart-block-pacing-plan',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1261,6 +1276,9 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'symptomatic-sinus-bradycardia-reassessment',
     ),
+    hasCompleteHeartBlockResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'complete-heart-block',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1366,6 +1384,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'wide-complex-tachycardia')
       || (event.type === 'narrative'
         && event.target === 'symptomatic-sinus-bradycardia-reassessment')
+      || (event.type === 'narrative' && event.target === 'complete-heart-block')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1410,6 +1429,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasStableNarrowTachycardiaResponse,
     hasStableWideTachycardiaResponse,
     hasSymptomaticBradycardiaResponse,
+    hasCompleteHeartBlockResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1470,7 +1490,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasClinicStemiResponse
     || hasHeartFailureResponse || hasAfRvrResponse || hasPostInfarctionShockResponse
     || hasStableNarrowTachycardiaResponse || hasStableWideTachycardiaResponse
-    || hasSymptomaticBradycardiaResponse;
+    || hasSymptomaticBradycardiaResponse || hasCompleteHeartBlockResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1501,7 +1521,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasSymptomaticBradycardiaResponse
+  const responseTray = hasCompleteHeartBlockResponse
+    ? { id: 'crisis', label: 'Complete-block review' } as const
+    : hasSymptomaticBradycardiaResponse
     ? { id: 'crisis', label: 'Slow-rhythm review' } as const
     : hasStableWideTachycardiaResponse
     ? { id: 'crisis', label: 'Wide-rhythm review' } as const
@@ -1681,6 +1703,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasStableNarrowTachycardiaResponse
     || hasStableWideTachycardiaResponse
     || hasSymptomaticBradycardiaResponse
+    || hasCompleteHeartBlockResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2222,6 +2245,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <SymptomaticBradycardiaTray
                 assessment={props.resuscitation.symptomaticBradycardiaAssessment}
                 onAction={props.onSymptomaticBradycardiaResponse ?? (() => {})} />
+            )}
+            {hasCompleteHeartBlockResponse && (
+              <CompleteHeartBlockTray assessment={props.resuscitation.completeHeartBlockAssessment}
+                onAction={props.onCompleteHeartBlockResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -6065,6 +6092,42 @@ function SymptomaticBradycardiaTray({ assessment, onAction }: {
         <Button className="crisis-drug__action" disabled={!pacing || handoff} onClick={() => onAction('handoff-symptomatic-bradycardia-plan')}>Record safety net + owner</Button>
       </div>
       <p className="field__hint">Pacing is a shared clinical decision, not a reward for a low number. Acute compromise opens the emergency bradycardia pathway.</p>
+    </section>
+  </div>;
+}
+
+function CompleteHeartBlockTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['completeHeartBlockAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onCompleteHeartBlockResponse']>;
+}) {
+  const stability = assessment?.stabilityAtTick != null;
+  const context = assessment?.contextAtTick != null;
+  const pathway = assessment?.pathwayAtTick != null;
+  const reassessed = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="complete-heart-block-first-title">
+      <div id="complete-heart-block-first-title" className="syringe__name">Two rhythms. One patient.</div>
+      <Badge kind="teaching">fixed complete AV block · stable now</Badge>
+      <div className="syringe__meta">atria 82/min · escape 34/min · BP 116/70</div>
+      <p className="syringe__remaining" role="status">{context ? 'Context reviewed · complete block remains authored' : stability ? 'Stable now · context and escalation can proceed together' : 'Read the fixed block through the whole patient'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={stability} onClick={() => onAction('reconcile-complete-heart-block-stability')}>Reconcile block + stability</Button>
+        <Button className="crisis-drug__action" disabled={!stability || context} onClick={() => onAction('review-complete-heart-block-context')}>Review causes + escape rhythm</Button>
+      </div>
+      <p className="field__hint">The fixed diagnostic report establishes AV dissociation. The teaching monitor illustrates it; stable does not mean low risk.</p>
+    </section>
+    <section className="syringe" aria-labelledby="complete-heart-block-plan-title">
+      <div id="complete-heart-block-plan-title" className="syringe__name">Prepare early. Decide together.</div>
+      <Badge kind="teaching">continuous monitor · pads · pacing-capable team</Badge>
+      <div className="syringe__meta">deterioration plan · definitive evaluation · handoff</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Pacing evaluation + owner + handoff recorded' : reassessed ? 'Persistent block · definitive evaluation due' : context && pathway ? 'Context + escalation aligned · allow reassessment time' : pathway ? 'Pacing-capable care active · cause review continues' : context ? 'Context ready · activate pacing-capable care' : 'Whole-patient review opens monitored escalation'}</p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={!stability || pathway} onClick={() => onAction('activate-complete-heart-block-pathway')}>Activate monitored pacing pathway</Button>
+        <Button className="crisis-drug__action" disabled={!context || !pathway || reassessed} onClick={() => onAction('reassess-complete-heart-block-trajectory')}>Reassess block + perfusion</Button>
+        <Button className="crisis-drug__action" disabled={!reassessed || handoff} onClick={() => onAction('handoff-complete-heart-block-pacing-plan')}>Record pacing evaluation + handoff</Button>
+      </div>
+      <p className="field__hint">No routine oxygen, atropine gate, pacing, capture check, device choice, or implantation occurs here. New compromise opens acute rescue care.</p>
     </section>
   </div>;
 }

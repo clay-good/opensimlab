@@ -4124,6 +4124,21 @@ export function objectiveFindings(
       const ordered = pacing && handoff && pacing.tick <= handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Symptoms, acute-change triggers, unresolved questions, owner, and follow-up remained visible while the rhythm stayed unchanged.' : 'The longitudinal handoff was absent or preceded pacing evaluation.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-complete-heart-block-stability', 'review-complete-heart-block-context',
+      'activate-complete-heart-block-pathway', 'reassess-complete-heart-block-trajectory',
+      'handoff-complete-heart-block-pacing-plan'].includes(objective.id)) {
+      const stability = log.find((event) => /^complete-heart-block-stability-reconciled-\d+$/.test(event.eventId));
+      const context = log.find((event) => /^complete-heart-block-context-reviewed-\d+$/.test(event.eventId));
+      const pathway = log.find((event) => /^complete-heart-block-pathway-activated-\d+$/.test(event.eventId));
+      const reassessment = log.find((event) => /^complete-heart-block-trajectory-reassessed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^complete-heart-block-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-complete-heart-block-stability') return { ...base, outcome: stability ? 'met' : 'not-met', finding: stability ? 'The fixed AV-dissociation report, ventricular escape, pulse, symptoms, and current stability were reconciled.' : 'The fixed complete block and whole-patient stability were not reconciled.', atTick: stability?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-complete-heart-block-context') { const ordered = stability && context && stability.tick <= context.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The authored initial cause panel was reviewed without claiming that every reversible cause was excluded.' : 'Cause review was absent or preceded block and stability review.', atTick: context?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-complete-heart-block-pathway') { const ordered = stability && pathway && stability.tick <= pathway.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Monitored pacing-capable escalation and deterioration triggers were recorded without waiting for cause review or delivering treatment.' : 'Pacing-capable escalation was absent or preceded block and stability review.', atTick: pathway?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'reassess-complete-heart-block-trajectory') { const ordered = context && pathway && reassessment && context.tick < reassessment.tick && pathway.tick < reassessment.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Elapsed reassessment preserved persistent complete block, current perfusion, and the no-pacing/no-capture boundary.' : 'Reassessment was absent, premature, or bypassed a parallel lane.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = reassessment && handoff && reassessment.tick <= handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Permanent-pacing evaluation, shared decisions, owners, open causes, and triggers were handed off without choosing or operating a device.' : 'The definitive evaluation handoff was absent or preceded elapsed reassessment.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

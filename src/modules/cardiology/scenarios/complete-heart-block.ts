@@ -1,0 +1,60 @@
+/** Stable acquired complete atrioventricular block with urgent pacing-pathway escalation. */
+
+import type { Scenario } from '@anesthesia/scenarios/types';
+
+export const COMPLETE_HEART_BLOCK: Scenario = {
+  schemaVersion: 1,
+  metadata: {
+    id: 'complete-heart-block', version: '0.1.0', maturity: 'draft',
+    title: 'Complete heart block', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
+    estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
+      { id: 'reconcile-complete-heart-block-stability', statement: 'Reconcile the fixed complete-AV-block report, mechanical pulse, recent presyncope, and current whole-patient stability.', measure: 'Atrial-ventricular dissociation and a palpable escape rhythm remained distinct from sinus bradycardia and current compromise.' },
+      { id: 'review-complete-heart-block-context', statement: 'Review the fixed reversible, physiologic, ischemic, infectious, toxic, medication, procedural, and structural context without declaring a cause.', measure: 'The initial panel did not identify a reversible cause, but did not become proof that none exists.' },
+      { id: 'activate-complete-heart-block-pathway', statement: 'Promptly activate cardiology/electrophysiology and monitored pacing-capable care with a deterioration contingency.', measure: 'Escalation proceeded in parallel with cause review and did not wait for instability or deliver treatment.' },
+      { id: 'reassess-complete-heart-block-trajectory', statement: 'After elapsed time, reassess the fixed persistent complete block, pulse, perfusion, and acute-change triggers.', measure: 'Persistent stability did not erase the acquired complete-block risk or simulate pacing response.' },
+      { id: 'handoff-complete-heart-block-pacing-plan', statement: 'Record guideline-supported permanent-pacing evaluation, shared decisions, owner, and handoff.', measure: 'The plan did not select, implant, program, or test a device or predict outcome.' },
+    ],
+    clinicalReview: { reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED',
+      competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01',
+      contentVersion: '0.1.0', sources: [
+        'Kusumoto FM, Schoenfeld MH, Barrett C, et al. 2018 ACC/AHA/HRS Guideline on the Evaluation and Management of Patients With Bradycardia and Cardiac Conduction Delay. Circulation. 2019;140:e382-e482.',
+        'American Heart Association. Adult Bradycardia With a Pulse Algorithm. 2025.',
+      ] },
+    limitations: ['complete-heart-block-rhythm-stability-and-context-are-authored',
+      'complete-heart-block-controls-record-review-escalation-and-handoff-only',
+      'no-live-heart-block-diagnosis-treatment-pacing-capture-device-or-outcome'],
+  },
+  patient: { ageYears: 76, sex: 'female', heightCm: 164, weightKg: 68, asaClass: 3,
+    diagnosis: 'Authored acquired complete atrioventricular block; cause remains open',
+    procedure: 'Urgent monitored evaluation and pacing-pathway handoff',
+    comorbidities: ['Hypertension'], medications: ['Lisinopril'],
+    allergies: ['No known drug allergies'], fasting: 'Not established in the urgent rhythm unit',
+    baseline: { heartRateBpm: 34, meanArterialMmHg: 85, strokeVolumeMl: 68,
+      hemoglobinGPerDl: 13.0, bloodVolumeMl: 4500, coreTemperatureC: 36.7,
+      arterialStiffness: 1.2, baroreflexGain: 0.8, fixedStrokeVolume: false },
+    airway: { difficulty: 0.1, difficultMaskVentilation: false,
+      assessment: 'Alert, speaking comfortably, warm, with a palpable regular escape pulse' },
+    respiratory: { profile: 'healthy' } },
+  equipment: { monitoring: ['ecg', 'nibp', 'pulse-oximetry', 'temperature'],
+    ventilator: { mode: 'manual', fio2: 0.21, tidalVolumeMl: 450,
+      respiratoryRateBpm: 16, delivering: false } },
+  formulary: [],
+  timeline: [
+    { id: 'complete-heart-block-rhythm', type: 'rhythm-change', target: 'complete-heart-block',
+      atTick: 0, severity: 'warning',
+      message: 'The teaching monitor shows independent atrial activity and a slow wide escape rhythm with a mechanical pulse.' },
+    { id: 'complete-heart-block-presentation', type: 'narrative', target: 'complete-heart-block',
+      atTick: 0, severity: 'warning',
+      message: 'In a monitored urgent Cardiology rhythm unit, a 76-year-old woman is referred after 2 brief presyncopal episodes. She is now alert and warm with a palpable regular pulse, BP 116/70 mmHg, SpO₂ 98% on room air, and RR 16/min, without current hypotension, altered mentation, shock, ischemic discomfort, acute heart failure, or syncope. A fixed diagnostic 12-lead report states complete atrioventricular block: atrial rate 82/min, regular ventricular escape 34/min, P waves marching independently through QRS complexes, and QRS 146 ms.' },
+    { id: 'complete-heart-block-boundary', type: 'narrative',
+      target: 'complete-heart-block-boundary', atTick: 0, severity: 'advisory',
+      message: 'The fixed initial record reports no AV-nodal-blocking medication, drug toxicity, hypothermia, electrolyte or thyroid explanation, or acute STEMI pattern. Ischemic, infectious including epidemiology-dependent Lyme, inflammatory, toxic, structural, and post-procedural contributors remain review items; the panel does not prove absence. Cause review and prompt cardiology/electrophysiology pacing-capable escalation proceed in parallel. After both lanes and elapsed reassessment of persistent complete block, record permanent-pacing evaluation and shared-decision handoff. The controls do not examine; acquire or interpret ECG, monitoring, laboratory, or imaging data; diagnose cause; deliver oxygen, atropine, medication, infusion, or pacing; select rate, current, energy, sedation, temporary or permanent device; assess capture; implant or program; determine disposition or prognosis; or predict outcome.' },
+  ],
+  debrief: { rubric: [
+    { id: 'complete-heart-block-stability', objectiveId: 'reconcile-complete-heart-block-stability', question: 'Which fixed findings established complete AV block with a pulse, and which findings described current stability?' },
+    { id: 'complete-heart-block-context', objectiveId: 'review-complete-heart-block-context', question: 'Which reversible and structural causes remained open after the fixed initial panel?' },
+    { id: 'complete-heart-block-pathway', objectiveId: 'activate-complete-heart-block-pathway', question: 'Why did pacing-capable monitored escalation proceed before deterioration and in parallel with cause review?' },
+    { id: 'complete-heart-block-reassessment', objectiveId: 'reassess-complete-heart-block-trajectory', question: 'What remained unchanged after elapsed reassessment, and which acute changes would open rescue care?' },
+    { id: 'complete-heart-block-handoff', objectiveId: 'handoff-complete-heart-block-pacing-plan', question: 'What did permanent-pacing evaluation and handoff include without choosing or operating a device?' },
+  ] },
+};

@@ -894,6 +894,9 @@ export function Cockpit({
           onSymptomaticBradycardiaResponse={(action) => session.act({
             type: 'symptomatic-bradycardia-response', payload: { action },
           })}
+          onCompleteHeartBlockResponse={(action) => session.act({
+            type: 'complete-heart-block-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

@@ -2895,6 +2895,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use current specialty and acute-care guidance, qualified judgment, patient preferences, and explicit pathway switching for real bradycardia.',
     briefIn: ['symptomatic-sinus-bradycardia-reassessment'],
   },
+  {
+    id: 'complete-heart-block-rhythm-stability-and-context-are-authored',
+    headline: 'The complete AV block, escape rhythm, pulse, stability, symptoms, and initial cause panel are authored teaching facts.',
+    simplification: 'One urgent rhythm-unit record supplies a fixed diagnostic ECG description, physiology, history, and initial reversible and structural context.',
+    whereItMisleads: 'Treating the teaching waveform as a diagnostic ECG, confusing atrial rate with the perfusing ventricular rate, or reading current stability as low risk.',
+    correctUnderstanding: 'Real care verifies rhythm, pulse, perfusion, evolving compromise, acquired and reversible context, and pacing needs with qualified teams and real data.',
+    briefIn: ['complete-heart-block'],
+  },
+  {
+    id: 'complete-heart-block-controls-record-review-escalation-and-handoff-only',
+    headline: 'The controls record review, pacing-capable escalation, elapsed reassessment, and definitive evaluation handoff; they do not deliver care.',
+    simplification: 'Five clicks stand in for assessment, continuous monitoring, access and rescue readiness, consultation, shared decisions, communication, and handoff.',
+    whereItMisleads: 'Equating button order with examination, ECG interpretation, pad placement, pacing, capture assessment, counseling quality, transfer, or cardiology competence.',
+    correctUnderstanding: 'Actual care requires verified findings, qualified teams, immediate pathway switching when compromise develops, and patient-specific temporary and permanent pacing decisions.',
+    briefIn: ['complete-heart-block'],
+  },
+  {
+    id: 'no-live-heart-block-diagnosis-treatment-pacing-capture-device-or-outcome',
+    headline: 'The lab does not diagnose cause, deliver treatment, pace, assess capture, choose or implant a device, or predict outcome.',
+    simplification: 'No live exam, test acquisition or interpretation, oxygen, drug, infusion, pacing setting, sedation, temporary or permanent device, procedure, disposition, prognosis, benefit, or outcome is modeled.',
+    whereItMisleads: 'Using rate alone, delaying escalation for atropine or a complete cause panel, inferring capture from monitor complexes, or copying fictional device choices.',
+    correctUnderstanding: 'Use current specialty and acute-care guidance, local resources, qualified judgment, shared decisions, and explicit rescue and arrest pathway switching.',
+    briefIn: ['complete-heart-block'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

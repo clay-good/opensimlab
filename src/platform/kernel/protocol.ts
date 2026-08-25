@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 89 reports stable narrow-tachycardia state. */
-export const WORKER_PROTOCOL_VERSION = 91;
+/** Bumped whenever the message shape changes incompatibly. Version 92 reports complete-heart-block state. */
+export const WORKER_PROTOCOL_VERSION = 92;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -705,6 +705,16 @@ export interface EquipmentSnapshot {
       readonly hemodynamicallyStable: true;
       readonly mechanismProven: false;
       readonly treatmentDelivered: false;
+    };
+    readonly completeHeartBlockAssessment?: {
+      readonly stabilityAtTick: number | null;
+      readonly contextAtTick: number | null;
+      readonly pathwayAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly hemodynamicallyStable: true;
+      readonly pacingDelivered: false;
+      readonly captureAssessed: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

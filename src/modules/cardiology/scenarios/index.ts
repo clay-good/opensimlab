@@ -8,6 +8,7 @@ import { POST_INFARCTION_CARDIOGENIC_SHOCK_ESCALATION } from './post-infarction-
 import { REGULAR_NARROW_COMPLEX_TACHYCARDIA } from './regular-narrow-complex-tachycardia';
 import { WIDE_COMPLEX_TACHYCARDIA } from './wide-complex-tachycardia';
 import { SYMPTOMATIC_SINUS_BRADYCARDIA_REASSESSMENT } from './symptomatic-sinus-bradycardia-reassessment';
+import { COMPLETE_HEART_BLOCK } from './complete-heart-block';
 
 export const CARDIOLOGY_SCENARIOS: readonly Scenario[] = [
   STABLE_CHEST_PAIN_EVALUATION,
@@ -19,6 +20,7 @@ export const CARDIOLOGY_SCENARIOS: readonly Scenario[] = [
   REGULAR_NARROW_COMPLEX_TACHYCARDIA,
   WIDE_COMPLEX_TACHYCARDIA,
   SYMPTOMATIC_SINUS_BRADYCARDIA_REASSESSMENT,
+  COMPLETE_HEART_BLOCK,
 ];
 export const DEFAULT_CARDIOLOGY_SCENARIO_ID = STABLE_CHEST_PAIN_EVALUATION.metadata.id;
 
