@@ -1315,6 +1315,25 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-24',
   },
   {
+    id: 'european-trauma-bleeding-2023',
+    pmid: '36859355',
+    currency: {
+      lastAmended: '2023',
+      checkedAt: 'https://link.springer.com/article/10.1186/s13054-023-04327-7',
+    },
+    authors: 'Rossaint R, Afshari A, Bouillon B, et al',
+    title: 'The European guideline on management of major bleeding and coagulopathy following trauma: sixth edition',
+    publication: 'Crit Care',
+    year: 2023,
+    locator: '27:80; doi:10.1186/s13054-023-04327-7',
+    usedFor: 'The bounded traumatic-hemorrhage sequence: integrate mechanism, anatomy, physiology, '
+      + 'perfusion, and serial lactate; minimize time to bleeding control; stabilize a suspected '
+      + 'pelvic ring injury; activate major-hemorrhage support; monitor coagulation and temperature; '
+      + 'use blood only as a bridge; and reassess while definitive control proceeds.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-24',
+  },
+  {
     id: 'ssc-adult-sepsis-2026',
     currency: {
       lastAmended: '2026-03-23',

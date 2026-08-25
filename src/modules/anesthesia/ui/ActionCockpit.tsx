@@ -206,6 +206,15 @@ export interface ActionCockpitProps {
       readonly norepinephrineIntentAtTick: number | null;
       readonly sourceControlEscalationAtTick: number | null;
     };
+    readonly hemorrhagicShockAssessment?: {
+      readonly mechanismAndPerfusionReviewedAtTick: number | null;
+      readonly pelvicStabilizationAtTick: number | null;
+      readonly majorHemorrhageActivatedAtTick: number | null;
+      readonly redCellsAtTick: number | null;
+      readonly coagulationAndTemperatureAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+      readonly definitiveControlEscalatedAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -320,6 +329,12 @@ export interface ActionCockpitProps {
       | 'reassess-after-initial-fluid' | 'start-norepinephrine-intent'
       | 'escalate-source-control',
   ) => void;
+  readonly onHemorrhagicShockAssessment?: (
+    action: 'review-mechanism-and-perfusion' | 'record-pelvic-stabilization'
+      | 'activate-major-hemorrhage' | 'give-two-red-cell-units'
+      | 'review-coagulation-and-temperature' | 'reassess-perfusion'
+      | 'escalate-definitive-bleeding-control',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -398,6 +413,9 @@ export function crisisResponseAvailability(
     hasSepticShockResponse: scenario.timeline.some(
       (event) => event.type === 'sepsis-pattern',
     ),
+    hasHemorrhagicShockResponse: scenario.timeline.some(
+      (event) => event.type === 'hemorrhagic-shock-pattern',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -447,6 +465,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
   ) ? 'airway' : props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'tension-pneumothorax'
       || event.type === 'sepsis-pattern'
+      || event.type === 'hemorrhagic-shock-pattern'
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -460,7 +479,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasBronchospasmResponse, hasPreeclampsiaResponse, hasPneumothoraxResponse,
     hasAspirationRiskResponse, hasEmergenceResidualBlockResponse, hasDelayedEmergenceResponse,
     hasExtubationReadinessResponse, hasCiedPlanningResponse, hasPostoperativeHandoffResponse,
-    hasUndifferentiatedShockResponse, hasSepticShockResponse,
+    hasUndifferentiatedShockResponse, hasSepticShockResponse, hasHemorrhagicShockResponse,
   } = crisisResponseAvailability(props.scenario, props.injectedCrisisIds);
   const hasDifficultAirwayResponse = props.scenario.timeline.some(
     (event) => event.type === 'difficult-airway',
@@ -485,8 +504,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasAspirationRiskResponse || hasEmergenceResidualBlockResponse
     || hasDelayedEmergenceResponse || hasExtubationReadinessResponse || hasCiedPlanningResponse
     || hasPostoperativeHandoffResponse || hasUndifferentiatedShockResponse
-    || hasSepticShockResponse;
-  const responseTray = hasSepticShockResponse && !hasNonMaternalCrisisResponse
+    || hasSepticShockResponse || hasHemorrhagicShockResponse;
+  const responseTray = hasHemorrhagicShockResponse && !hasNonMaternalCrisisResponse
+    ? { id: 'crisis', label: 'Trauma hemorrhage' } as const
+    : hasSepticShockResponse && !hasNonMaternalCrisisResponse
     ? { id: 'crisis', label: 'Sepsis response' } as const
     : hasUndifferentiatedShockResponse && !hasNonMaternalCrisisResponse
     ? { id: 'crisis', label: 'Shock assessment' } as const
@@ -510,7 +531,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     ? { id: 'crisis', label: 'Aspiration check' } as const
     : hasPreeclampsiaResponse && !hasNonMaternalCrisisResponse
       ? { id: 'crisis', label: 'Maternal response' } as const : CRISIS_TRAY;
-  const focusedEmergencyAssessment = (hasUndifferentiatedShockResponse || hasSepticShockResponse)
+  const focusedEmergencyAssessment = (hasUndifferentiatedShockResponse || hasSepticShockResponse
+    || hasHemorrhagicShockResponse)
     && !hasNonMaternalCrisisResponse && props.scenario.formulary.length === 0;
   const trays = hasCrisisResponse
     ? focusedEmergencyAssessment ? [responseTray]
@@ -784,6 +806,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <SepticShockTray
                 assessment={props.resuscitation.septicShockAssessment}
                 onAction={props.onSepticShockAssessment ?? (() => {})}
+              />
+            )}
+            {hasHemorrhagicShockResponse && (
+              <HemorrhagicShockTray
+                assessment={props.resuscitation.hemorrhagicShockAssessment}
+                onAction={props.onHemorrhagicShockAssessment ?? (() => {})}
               />
             )}
             {hasEmergenceResidualBlockResponse && (
@@ -1965,6 +1993,78 @@ function SepticShockTray({ assessment, onAction }: {
           </Button>
         </div>
         <p className="field__hint">No antimicrobial choice, vasopressor dose, procedure, liberal repeat-fluid shortcut, or outcome is offered.</p>
+      </section>
+    </div>
+  );
+}
+
+function HemorrhagicShockTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['hemorrhagicShockAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onHemorrhagicShockAssessment']>;
+}) {
+  const recognized = assessment?.mechanismAndPerfusionReviewedAtTick != null;
+  const stabilized = assessment?.pelvicStabilizationAtTick != null;
+  const activated = assessment?.majorHemorrhageActivatedAtTick != null;
+  const redCells = assessment?.redCellsAtTick != null;
+  const monitoring = assessment?.coagulationAndTemperatureAtTick != null;
+  const reassessed = assessment?.reassessedAtTick != null;
+  const definitiveControl = assessment?.definitiveControlEscalatedAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="trauma-control-title">
+        <div id="trauma-control-title" className="syringe__name">Recognize and control</div>
+        <Badge kind="teaching">Fixed ED vignette</Badge>
+        <div className="syringe__meta">Mechanism · pelvis · perfusion · immediate control</div>
+        <p className="syringe__remaining" role="status">
+          {definitiveControl ? 'Definitive bleeding-control escalation recorded'
+            : stabilized ? 'Pelvic stabilization recorded · escalate without delay'
+              : recognized ? 'Concealed traumatic hemorrhage recognized'
+                : 'Mechanism, injury pattern, and perfusion review pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={recognized}
+            onClick={() => onAction('review-mechanism-and-perfusion')}>
+            Review mechanism + perfusion
+          </Button>
+          <Button className="crisis-drug__action" disabled={!recognized || stabilized}
+            onClick={() => onAction('record-pelvic-stabilization')}>
+            Record pelvic stabilization
+          </Button>
+          <Button className="crisis-drug__action" disabled={!stabilized || definitiveControl}
+            onClick={() => onAction('escalate-definitive-bleeding-control')}>
+            Escalate definitive bleeding control
+          </Button>
+        </div>
+        <p className="field__hint">These controls record intent. They do not place a device, choose a procedure, stop bleeding, or predict outcome.</p>
+      </section>
+      <section className="syringe" aria-labelledby="trauma-resuscitation-title">
+        <div id="trauma-resuscitation-title" className="syringe__name">Resuscitate and reassess</div>
+        <div className="syringe__meta">Major hemorrhage · 2 red-cell units · coagulation · temperature</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'Serial perfusion reassessment recorded'
+            : redCells && monitoring ? 'Bridge + monitoring complete · reassess next'
+              : activated ? 'Major-hemorrhage response active · parallel tasks open'
+                : 'Bounded resuscitation bridge pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!recognized || activated}
+            onClick={() => onAction('activate-major-hemorrhage')}>
+            Activate major-hemorrhage response
+          </Button>
+          <Button className="crisis-drug__action" disabled={!activated || redCells}
+            onClick={() => onAction('give-two-red-cell-units')}>
+            Give fixed 2-unit red-cell bridge
+          </Button>
+          <Button className="crisis-drug__action" disabled={!activated || monitoring}
+            onClick={() => onAction('review-coagulation-and-temperature')}>
+            Review coagulation + temperature
+          </Button>
+          <Button className="crisis-drug__action" disabled={!redCells || !monitoring || reassessed}
+            onClick={() => onAction('reassess-perfusion')}>
+            Reassess perfusion
+          </Button>
+        </div>
+        <p className="field__hint">No TXA, calcium, component ratio, procedure, local protocol, repeat transfusion, or outcome is offered.</p>
       </section>
     </div>
   );

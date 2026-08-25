@@ -208,7 +208,8 @@ describe('every declared event type does something', () => {
     expect(EVENT_TYPES).toContain('perioperative-hyperglycemia');
     expect(EVENT_TYPES).toContain('shock-pattern');
     expect(EVENT_TYPES).toContain('sepsis-pattern');
-    expect(EVENT_TYPES).toHaveLength(22);
+    expect(EVENT_TYPES).toContain('hemorrhagic-shock-pattern');
+    expect(EVENT_TYPES).toHaveLength(23);
   });
 });
 

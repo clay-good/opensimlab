@@ -1411,6 +1411,39 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['septic-shock'],
   },
   {
+    id: 'trauma-findings-and-source-are-authored',
+    headline: 'The mechanism, pelvic injury pattern, perfusion findings, lactate, and concealed bleeding source are fixed teaching facts.',
+    simplification: 'A click reveals one authored presentation without examination technique, '
+      + 'diagnostic uncertainty, competing injuries, measurement error, imaging, or evolving anatomy.',
+    whereItMisleads: 'Treating the case as a diagnostic test, assuming an unstable pelvis is the '
+      + 'only bleeding source, or generalizing this response to an individual patient.',
+    correctUnderstanding: 'Traumatic shock requires repeated patient-specific assessment that '
+      + 'integrates mechanism, anatomy, physiology, response, and concurrent threats.',
+    briefIn: ['hemorrhagic-shock'],
+  },
+  {
+    id: 'trauma-control-and-major-hemorrhage-actions-are-intents',
+    headline: 'Pelvic stabilization, major-hemorrhage activation, monitoring, and definitive-control escalation are bounded teaching intents.',
+    simplification: 'The vignette records a guideline-shaped response and a fixed 2-unit red-cell '
+      + 'bridge. It does not place a device, activate a real team, order products, or stop bleeding.',
+    whereItMisleads: 'Reading a button as a procedure or protocol, assuming intent proves correct '
+      + 'execution, or delaying definitive control until resuscitation is complete.',
+    correctUnderstanding: 'Bleeding control and damage-control resuscitation proceed in parallel '
+      + 'through trained teams, local systems, appropriate monitoring, and frequent reassessment.',
+    briefIn: ['hemorrhagic-shock'],
+  },
+  {
+    id: 'no-trauma-protocol-procedure-ratio-or-outcome',
+    headline: 'The vignette does not teach a trauma protocol, perform a procedure, prescribe component ratios, or predict outcome.',
+    simplification: 'TXA, calcium, plasma, platelets, fibrinogen replacement, warming delivery, '
+      + 'imaging, packing, embolization, operation, transport, and subsequent transfusion are absent.',
+    whereItMisleads: 'Copying a product sequence to a real patient, treating red cells as source '
+      + 'control, ignoring local protocols, or inferring recovery from a directional monitor response.',
+    correctUnderstanding: 'Real hemorrhage care is patient-, injury-, time-, inventory-, and '
+      + 'system-specific, with local massive-hemorrhage protocols and immediate control capability.',
+    briefIn: ['hemorrhagic-shock'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

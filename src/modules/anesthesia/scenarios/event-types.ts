@@ -17,6 +17,7 @@ export const EVENT_TYPES = [
   'perioperative-hyperglycemia',
   'shock-pattern',
   'sepsis-pattern',
+  'hemorrhagic-shock-pattern',
   'malignant-hyperthermia', 'local-anesthetic-toxicity',
   'high-spinal',
   'venous-air-embolism',

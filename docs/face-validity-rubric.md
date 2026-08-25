@@ -110,7 +110,8 @@ Reviewers run the routine induction themselves before answering.
 | B56 | In the postoperative-handoff lesson, shared readiness, patient/course and current-state content, unresolved-risk ownership, receiver synthesis, and acknowledged transfer are inspectable without implying observed communication competence or a real transfer | | |
 | B57 | In the undifferentiated-shock lesson, skin, brain, kidney, pressure, lactate, focused cardiac findings, and a positive dynamic response form a coherent low-preload teaching pattern; one bounded 500 mL challenge produces a plausible directional perfusion response; and reassessment clearly precedes escalation without implying diagnosis, ultrasound competence, or definitive treatment | | |
 | B58 | In the septic-shock lesson, probable infection, new organ dysfunction, and impaired perfusion form a coherent teaching pattern; diagnostic and antimicrobial intents, initial hemodynamic resuscitation, and source-control escalation proceed in parallel; the fixed crystalloid course is followed by reassessment; and persistent shock leads to directional norepinephrine support without implying drug selection, dosing, procedures, or outcome | | |
-| B59 | Overall: does this patient behave like a patient? | | |
+| B59 | In the hemorrhagic-shock lesson, blunt mechanism, pelvic injury pattern, impaired perfusion, lactate, hypothermia risk, and ongoing concealed blood loss form a coherent teaching pattern; pelvic stabilization and definitive-control escalation proceed alongside major-hemorrhage activation, a bounded 2-unit red-cell bridge, coagulation and temperature review, and serial reassessment without implying procedural skill, a universal component ratio, local protocol, or outcome | | |
+| B60 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -222,4 +223,8 @@ So that reviewers spend their attention on what this review is for:
   findings. Culture, antimicrobial, norepinephrine, and source-control controls record teaching
   intent. It does not select a drug or dose, perform diagnostics or procedures, model local
   resistance, or predict outcome.
+- The hemorrhagic-shock case uses a fixed blunt mechanism, pelvic injury pattern, perfusion findings,
+  lactate, temperature, and ongoing concealed blood loss. Pelvic stabilization, major-hemorrhage
+  activation, monitoring, and definitive-control controls record teaching intent. The 2-unit red-cell
+  bridge does not teach a universal ratio, perform bleeding control, model a local protocol, or predict outcome.
 - Nothing here has been clinically reviewed before — you are the first.

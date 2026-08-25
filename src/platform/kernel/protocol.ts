@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 37 reports bounded septic-shock state. */
-export const WORKER_PROTOCOL_VERSION = 37;
+/** Bumped whenever the message shape changes incompatibly. Version 38 reports bounded traumatic-hemorrhage state. */
+export const WORKER_PROTOCOL_VERSION = 38;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -378,6 +378,16 @@ export interface EquipmentSnapshot {
       readonly postFluidReassessmentAtTick: number | null;
       readonly norepinephrineIntentAtTick: number | null;
       readonly sourceControlEscalationAtTick: number | null;
+    };
+    /** Ordered recognition and initial-response intents for traumatic hemorrhagic shock. */
+    readonly hemorrhagicShockAssessment?: {
+      readonly mechanismAndPerfusionReviewedAtTick: number | null;
+      readonly pelvicStabilizationAtTick: number | null;
+      readonly majorHemorrhageActivatedAtTick: number | null;
+      readonly redCellsAtTick: number | null;
+      readonly coagulationAndTemperatureAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+      readonly definitiveControlEscalatedAtTick: number | null;
     };
     /** Accepted quantitative neuromuscular-reversal teaching state. */
     readonly neuromuscularReversalFraction?: number;

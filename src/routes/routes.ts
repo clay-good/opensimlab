@@ -105,8 +105,8 @@ export const ROUTES: readonly RouteMetadata[] = [
     path: '/emergency-medicine',
     title: formatTitle('Emergency medicine simulator'),
     description:
-      'Practice focused emergency decisions in short browser-based patient scenarios, starting '
-      + 'with undifferentiated and septic shock. No account or installation.',
+      'Practice focused emergency decisions in short browser patient scenarios for '
+      + 'undifferentiated, septic, and hemorrhagic shock. No account needed.',
     indexable: true,
     structuredData: ['SoftwareApplication'],
     heading: 'Emergency medicine simulator',

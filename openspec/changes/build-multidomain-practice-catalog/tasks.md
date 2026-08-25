@@ -201,9 +201,9 @@ credited toward the catalog until every item in the completion contract passes.
 - [x] Wave A: migrate and complete 39 anesthesia scenarios — all 39 are authored, registered,
   completion-audited, prerendered, available offline, and verified at 320 px.
 - [ ] Wave B: complete 25 emergency-medicine and 24 critical-care scenarios.
-  Emergency Medicine is available with 2 of 25 scenarios: undifferentiated shock and septic shock
-  reuse the shared deterministic session, monitor, transcript, action, and debrief frame; both are
-  completion-audited, prerendered, available offline, and explicitly bounded. The remaining 23
+  Emergency Medicine is available with 3 of 25 scenarios: undifferentiated, septic, and hemorrhagic
+  shock reuse the shared deterministic session, monitor, transcript, action, and debrief frame; all
+  three are completion-audited, prerendered, available offline, and explicitly bounded. The remaining 22
   titles are scope only.
 - [ ] Wave C: complete 17 cardiology and 15 respiratory-medicine scenarios.
 - [ ] Wave D: complete 16 pediatric, 15 obstetric, and 11 neonatal scenarios.

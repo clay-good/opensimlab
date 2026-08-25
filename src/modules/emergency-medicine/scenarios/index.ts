@@ -1,10 +1,12 @@
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { UNDIFFERENTIATED_SHOCK } from './undifferentiated-shock';
 import { SEPTIC_SHOCK } from './septic-shock';
+import { HEMORRHAGIC_SHOCK } from './hemorrhagic-shock';
 
 export const EMERGENCY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   UNDIFFERENTIATED_SHOCK,
   SEPTIC_SHOCK,
+  HEMORRHAGIC_SHOCK,
 ];
 export const DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID = UNDIFFERENTIATED_SHOCK.metadata.id;
 

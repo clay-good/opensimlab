@@ -41,7 +41,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.39';
+export const ENGINE_VERSION = '0.1.0-alpha.40';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -378,6 +378,14 @@ export class AnesthesiaEngine {
   private sepsisPostFluidReassessmentAtTick: number | null = null;
   private sepsisNorepinephrineIntentAtTick: number | null = null;
   private sepsisSourceControlEscalationAtTick: number | null = null;
+  private hemorrhagicShockActive = false;
+  private traumaMechanismAndPerfusionReviewedAtTick: number | null = null;
+  private traumaPelvicStabilizationAtTick: number | null = null;
+  private traumaMajorHemorrhageActivatedAtTick: number | null = null;
+  private traumaRedCellsAtTick: number | null = null;
+  private traumaCoagulationAndTemperatureAtTick: number | null = null;
+  private traumaReassessedAtTick: number | null = null;
+  private traumaDefinitiveControlEscalatedAtTick: number | null = null;
   /** Exclusive tick at which the bounded held airway maneuver ends. */
   private jawThrustCpapUntilTick = 0;
   /** Current lower-airway obstruction, retained for truthful equipment/accessibility output. */
@@ -2238,6 +2246,132 @@ export class AnesthesiaEngine {
           'Urgent evaluation of the suspected obstructed urinary source, senior help, and critical-care escalation were recorded. Imaging, drainage, consultation, disposition, and outcome are not simulated.');
         break;
       }
+      case 'hemorrhagic-shock-assessment': {
+        const response = String(action.payload.action ?? '');
+        const valid = [
+          'review-mechanism-and-perfusion', 'record-pelvic-stabilization',
+          'activate-major-hemorrhage', 'give-two-red-cell-units',
+          'review-coagulation-and-temperature', 'reassess-perfusion',
+          'escalate-definitive-bleeding-control',
+        ].includes(response);
+        if (!this.hemorrhagicShockActive || !valid) {
+          this.log('warning', 'assessment', `hemorrhagic-shock-refused-${this.currentTick}`,
+            this.hemorrhagicShockActive
+              ? 'The traumatic-hemorrhage action was not one of the listed choices. Nothing changed.'
+              : 'The bounded traumatic-hemorrhage choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-mechanism-and-perfusion') {
+          if (this.traumaMechanismAndPerfusionReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `trauma-recognition-refused-${this.currentTick}`,
+              'The fixed mechanism, anatomy, and perfusion evidence has already been reviewed.');
+            break;
+          }
+          this.traumaMechanismAndPerfusionReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `trauma-recognition-reviewed-${this.currentTick}`,
+            'Fixed evidence: high-energy blunt mechanism, pelvic instability, tachycardia, narrow pulse pressure, cool mottled skin, inattention, and lactate 5.8 mmol/L indicate traumatic hemorrhagic shock despite no visible external bleeding. Examination and measurement error are not simulated.');
+          break;
+        }
+        if (this.traumaMechanismAndPerfusionReviewedAtTick === null) {
+          this.log('warning', 'assessment', `trauma-action-order-refused-${this.currentTick}`,
+            'Review the mechanism, injury pattern, and tissue-perfusion evidence before recording a response.');
+          break;
+        }
+        if (response === 'record-pelvic-stabilization') {
+          if (this.traumaPelvicStabilizationAtTick !== null) {
+            this.log('warning', 'assessment', `trauma-pelvic-stabilization-refused-${this.currentTick}`,
+              'Pelvic-stabilization intent has already been recorded.');
+            break;
+          }
+          this.traumaPelvicStabilizationAtTick = this.currentTick;
+          this.log('critical', 'assessment', `trauma-pelvic-stabilization-recorded-${this.currentTick}`,
+            'Purpose-made pelvic-stabilization intent was recorded for suspected unstable pelvic injury. Placement, fit, pressure injury, fracture classification, and physical bleeding control are not simulated.');
+          break;
+        }
+        if (response === 'activate-major-hemorrhage') {
+          if (this.traumaMajorHemorrhageActivatedAtTick !== null) {
+            this.log('warning', 'blood-product', `trauma-major-hemorrhage-refused-${this.currentTick}`,
+              'The major-hemorrhage response has already been activated.');
+            break;
+          }
+          this.traumaMajorHemorrhageActivatedAtTick = this.currentTick;
+          this.bloodProductsReleased = true;
+          this.log('critical', 'blood-product', `trauma-major-hemorrhage-activated-${this.currentTick}`,
+            'Major-hemorrhage response and immediate bounded blood-product release were recorded. Local activation, specimen, compatibility, inventory, plasma, platelets, fibrinogen, calcium, TXA, warming, and team workflow are not simulated.');
+          break;
+        }
+        if (response === 'give-two-red-cell-units') {
+          if (this.traumaMajorHemorrhageActivatedAtTick === null) {
+            this.log('warning', 'blood-product', `trauma-red-cells-order-refused-${this.currentTick}`,
+              'Activate the major-hemorrhage response before the bounded red-cell bridge.');
+            break;
+          }
+          if (this.traumaRedCellsAtTick !== null) {
+            this.log('warning', 'blood-product', `trauma-red-cells-refused-${this.currentTick}`,
+              'The bounded 2-unit red-cell bridge has already been delivered.');
+            break;
+          }
+          const redCells = getBloodProduct('packed-red-blood-cells')!;
+          this.traumaRedCellsAtTick = this.currentTick;
+          this.pendingPackedRedCellUnits += 2;
+          this.pendingPackedRedCellVolumeMl += 2 * redCells.volumeMlPerUnit;
+          this.pendingPackedRedCellHemoglobinG += 2 * redCells.hemoglobinGPerUnit;
+          this.packedRedBloodCellUnits += 2;
+          this.bloodProductTotalMl += 2 * redCells.volumeMlPerUnit;
+          this.log('critical', 'blood-product', `trauma-red-cells-delivered-${this.currentTick}`,
+            'Two fixed adult packed-red-cell units were accepted as a bridge to bleeding control. Each unit is a 300 mL, 60 g hemoglobin teaching product; no universal trauma transfusion ratio or individual response is claimed.',
+            { units: 2, teachingModel: true });
+          break;
+        }
+        if (response === 'review-coagulation-and-temperature') {
+          if (this.traumaMajorHemorrhageActivatedAtTick === null) {
+            this.log('warning', 'laboratory', `trauma-monitoring-order-refused-${this.currentTick}`,
+              'Activate the major-hemorrhage response before reviewing the bounded monitoring panel.');
+            break;
+          }
+          if (this.traumaCoagulationAndTemperatureAtTick !== null) {
+            this.log('warning', 'laboratory', `trauma-monitoring-refused-${this.currentTick}`,
+              'Coagulation and temperature monitoring has already been reviewed.');
+            break;
+          }
+          this.traumaCoagulationAndTemperatureAtTick = this.currentTick;
+          this.coagulationPanelReported = true;
+          this.log('warning', 'laboratory', `trauma-monitoring-reviewed-${this.currentTick}`,
+            `Fixed monitoring: core temperature ${(this.lastState.coreTemperatureC ?? this.scenario.patient.baseline.coreTemperatureC).toFixed(1)}°C, prothrombin time ratio ${(this.lastState.prothrombinTimeRatio ?? 1).toFixed(2)} × normal, and fibrinogen ${(this.lastState.fibrinogenGPerL ?? 3).toFixed(1)} g/L. Active warming and repeated goal-directed coagulation management require local systems not simulated here.`);
+          break;
+        }
+        if (response === 'reassess-perfusion') {
+          if (this.traumaRedCellsAtTick === null || this.traumaCoagulationAndTemperatureAtTick === null
+            || this.currentTick <= this.traumaRedCellsAtTick) {
+            this.log('warning', 'assessment', `trauma-reassessment-order-refused-${this.currentTick}`,
+              'Deliver the bounded red-cell bridge, review coagulation and temperature, and allow the next engine tick before reassessment.');
+            break;
+          }
+          if (this.traumaReassessedAtTick !== null) {
+            this.log('warning', 'assessment', `trauma-reassessment-refused-${this.currentTick}`,
+              'The fixed serial perfusion reassessment has already been recorded.');
+            break;
+          }
+          this.traumaReassessedAtTick = this.currentTick;
+          this.log('advisory', 'assessment', `trauma-perfusion-reassessed-${this.currentTick}`,
+            'Fixed serial reassessment records the canonical monitor response while ongoing concealed bleeding remains active. Blood replacement is a bridge, not source control; repeat lactate and outcome are not available in this short vignette.');
+          break;
+        }
+        if (this.traumaPelvicStabilizationAtTick === null) {
+          this.log('warning', 'assessment', `trauma-definitive-control-order-refused-${this.currentTick}`,
+            'Record pelvic-stabilization intent before definitive bleeding-control escalation.');
+          break;
+        }
+        if (this.traumaDefinitiveControlEscalatedAtTick !== null) {
+          this.log('warning', 'assessment', `trauma-definitive-control-refused-${this.currentTick}`,
+            'Definitive bleeding-control escalation has already been recorded.');
+          break;
+        }
+        this.traumaDefinitiveControlEscalatedAtTick = this.currentTick;
+        this.log('critical', 'assessment', `trauma-definitive-control-recorded-${this.currentTick}`,
+          'Immediate transfer for definitive pelvic bleeding control with trauma, surgery, and interventional capability was recorded. Imaging, packing, embolization, operation, REBOA, transport, and outcome are not simulated.');
+        break;
+      }
       case 'silence-alarm': {
         this.alarmEngine.silence(String(action.payload.alarmId), this.currentTick, TICKS_PER_SECOND);
         break;
@@ -2755,6 +2889,18 @@ export class AnesthesiaEngine {
         this.septicShockActive = true;
         this.log('critical', 'scenario', `septic-shock-active-${this.currentTick}`,
           'Probable infection, new organ dysfunction, hypotension, and impaired tissue perfusion require immediate parallel evaluation and resuscitation. The source and pathogen remain unconfirmed.');
+        return;
+      }
+
+      case 'hemorrhagic-shock-pattern': {
+        if (event.target !== 'blunt-pelvic-trauma' || event.value !== 1) {
+          this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" must declare the bounded blunt-pelvic-trauma pattern with value 1, so the event had no effect.`);
+          return;
+        }
+        this.hemorrhagicShockActive = true;
+        this.log('critical', 'scenario', `hemorrhagic-shock-active-${this.currentTick}`,
+          'Blunt pelvic trauma, impaired tissue perfusion, and ongoing concealed blood loss require parallel resuscitation and immediate bleeding-control escalation. Severe traumatic brain injury is not present in this vignette.');
         return;
       }
 
@@ -3648,6 +3794,15 @@ export class AnesthesiaEngine {
           postFluidReassessmentAtTick: this.sepsisPostFluidReassessmentAtTick,
           norepinephrineIntentAtTick: this.sepsisNorepinephrineIntentAtTick,
           sourceControlEscalationAtTick: this.sepsisSourceControlEscalationAtTick,
+        },
+        hemorrhagicShockAssessment: {
+          mechanismAndPerfusionReviewedAtTick: this.traumaMechanismAndPerfusionReviewedAtTick,
+          pelvicStabilizationAtTick: this.traumaPelvicStabilizationAtTick,
+          majorHemorrhageActivatedAtTick: this.traumaMajorHemorrhageActivatedAtTick,
+          redCellsAtTick: this.traumaRedCellsAtTick,
+          coagulationAndTemperatureAtTick: this.traumaCoagulationAndTemperatureAtTick,
+          reassessedAtTick: this.traumaReassessedAtTick,
+          definitiveControlEscalatedAtTick: this.traumaDefinitiveControlEscalatedAtTick,
         },
         neuromuscularReversalFraction: this.neuromuscularReversalFraction,
         postTetanicCount: this.postTetanicCount,

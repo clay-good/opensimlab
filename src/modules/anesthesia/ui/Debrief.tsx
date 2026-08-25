@@ -3202,6 +3202,63 @@ export function objectiveFindings(
     }
 
     if ([
+      'recognize-traumatic-hemorrhagic-shock',
+      'stabilize-and-expedite-bleeding-control',
+      'activate-and-bridge-with-blood',
+      'monitor-and-reassess-traumatic-bleeding',
+    ].includes(objective.id)) {
+      const supported = scenario.timeline.some(
+        (event) => event.type === 'narrative' && event.target === 'hemorrhagic-shock',
+      );
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The traumatic hemorrhagic-shock vignette was not active.' } satisfies ObjectiveFinding;
+      const recognition = log.find((event) => event.eventId.startsWith('trauma-recognition-reviewed-'));
+      const stabilization = log.find((event) => event.eventId.startsWith('trauma-pelvic-stabilization-recorded-'));
+      const activation = log.find((event) => event.eventId.startsWith('trauma-major-hemorrhage-activated-'));
+      const redCells = log.find((event) => event.eventId.startsWith('trauma-red-cells-delivered-'));
+      const monitoring = log.find((event) => event.eventId.startsWith('trauma-monitoring-reviewed-'));
+      const reassessment = log.find((event) => event.eventId.startsWith('trauma-perfusion-reassessed-'));
+      const definitiveControl = log.find((event) => event.eventId.startsWith('trauma-definitive-control-recorded-'));
+      if (objective.id === 'recognize-traumatic-hemorrhagic-shock') return {
+        ...base, outcome: recognition ? 'met' : 'not-met',
+        finding: recognition
+          ? 'Mechanism, pelvic injury pattern, physiology, and impaired perfusion were integrated despite no visible external bleeding.'
+          : 'The fixed mechanism, injury pattern, and perfusion evidence was not reviewed together.',
+        atTick: recognition?.tick ?? 0,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'stabilize-and-expedite-bleeding-control') {
+        const ordered = stabilization && definitiveControl
+          && stabilization.tick <= definitiveControl.tick;
+        return {
+          ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'Pelvic-stabilization intent preceded immediate definitive-control escalation without waiting for resuscitation to finish.'
+            : 'Pelvic stabilization and definitive-control escalation were incomplete or out of order.',
+          atTick: definitiveControl?.tick ?? stabilization?.tick ?? 0,
+        } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'activate-and-bridge-with-blood') {
+        const ordered = activation && redCells && activation.tick <= redCells.tick;
+        return {
+          ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'Major-hemorrhage activation preceded the bounded 2-unit red-cell bridge while bleeding control remained definitive.'
+            : 'Major-hemorrhage activation and the bounded red-cell bridge were incomplete or out of order.',
+          atTick: redCells?.tick ?? activation?.tick ?? 0,
+        } satisfies ObjectiveFinding;
+      }
+      const ordered = redCells && monitoring && reassessment
+        && redCells.tick <= reassessment.tick && monitoring.tick <= reassessment.tick;
+      return {
+        ...base, outcome: ordered ? 'met' : 'not-met',
+        finding: ordered
+          ? 'Coagulation, temperature, and the canonical perfusion response were reviewed after the bounded blood bridge without implying that bleeding had stopped.'
+          : 'Coagulation, temperature, blood delivery, and serial perfusion reassessment were incomplete or out of order.',
+        atTick: reassessment?.tick ?? Math.max(redCells?.tick ?? 0, monitoring?.tick ?? 0),
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
       'recognize-post-extubation-obstruction', 'support-post-extubation-airway',
       'confirm-post-extubation-recovery',
     ].includes(objective.id)) {

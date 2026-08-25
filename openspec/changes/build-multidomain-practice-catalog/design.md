@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with two playable, completion-audited scenarios. The remaining
-23 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with three playable, completion-audited scenarios. The remaining
+22 planned titles remain descriptive scope only and do not enter playable counts before their full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -218,6 +218,18 @@ The only numerical patient responses are the shared bounded fluid-retention and 
 vasopressor teaching effects. The controls do not collect specimens, select an antimicrobial,
 provide a vasopressor dose, perform imaging or drainage, model local resistance or allergies, or
 predict outcome.
+
+### Wave B slice 3: traumatic hemorrhagic shock
+
+The third emergency-medicine slice adds a fixed adult blunt-pelvic-trauma trajectory with ongoing
+concealed bleeding, impaired perfusion, elevated lactate, and hypothermia risk. Learners integrate
+mechanism, anatomy, physiology, and response; record pelvic stabilization and immediate transfer
+for definitive bleeding control; activate a major-hemorrhage response; use a bounded 2-unit adult
+red-cell bridge; review coagulation and temperature; and reassess perfusion.
+
+Bleeding-control escalation proceeds in parallel with resuscitation and never waits for the blood
+bridge. The controls do not teach placement technique, TXA, calcium, component ratios, warming
+delivery, imaging, procedures, local activation workflow, repeat transfusion, or outcome.
 
 #### Critical care: 24
 
