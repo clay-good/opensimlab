@@ -828,6 +828,25 @@ or interpret ICP or other monitoring or imaging, calculate CPP, diagnose, positi
 ventilation, fluid, or drugs, prescribe, use a drain, operate, transfer, determine disposition or
 prognosis, or predict outcome.
 
+### Wave B critical-care slice 17: acute kidney injury with fluid overload
+
+The seventeenth critical-care slice presents severe oliguric AKI after septic shock with creatinine
+3.4 mg/dL from 1.0, urine output 0.15 mL/kg/h, +8.2 L cumulative balance, 9 kg weight gain, worsening
+pulmonary edema, SpO₂ 91% on FiO₂ 0.50, and poor reported response to an adequate loop-diuretic
+challenge. Learners activate critical-care, nephrology, nursing, respiratory-therapy, and pharmacy
+help and integrate kidney, fluid, weight, respiratory, perfusion, electrolyte, acid-base, uremic,
+cause, treatment, recovery, goal, and preference trajectories without dialyzing one laboratory value.
+
+The focused tutor pairs “see the burden; protect the organs” with “match demand to kidney capacity.”
+Learners stop nonessential accumulation while preserving necessary therapy and perfusion, review the
+poor reported diuretic response without blind escalation, and activate individualized kidney-support
+planning with urgent treatment preserved for life-threatening fluid, electrolyte, or acid-base
+imbalance. A fixed 6-hour response reaches −1.1 L balance and SpO₂ 95%, but oliguria and recovery
+remain open. The lab teaches neither one creatinine/BUN trigger nor universal accelerated support. It
+does not examine, acquire or interpret monitoring, laboratory tests, or imaging; diagnose; account
+fluid; change nutrition; deliver oxygen, ventilation, fluid, or drugs; prescribe diuretics; place
+access; provide kidney support; transfer; determine disposition, kidney recovery, or outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute

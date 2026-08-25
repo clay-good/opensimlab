@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "critical-care",
-  "recordCount": 16,
+  "recordCount": 17,
   "records": [
     {
       "recordId": "scenario:ards-lung-protective-ventilation@0.1.0",
@@ -177,6 +177,17 @@
       "evidence": [
         "/catalog/critical-care-completion-audit.json#intracranial-hypertension@0.1.0",
         "/catalog/critical-care-quality-audit.json#intracranial-hypertension@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:acute-kidney-injury-with-fluid-overload@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "acute-kidney-injury-with-fluid-overload",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/critical-care-completion-audit.json#acute-kidney-injury-with-fluid-overload@0.1.0",
+        "/catalog/critical-care-quality-audit.json#acute-kidney-injury-with-fluid-overload@0.1.0"
       ]
     }
   ]

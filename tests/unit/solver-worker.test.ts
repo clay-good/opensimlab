@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: intracranial-pressure state has protocol version 74', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(74);
+  it('Scenario: AKI fluid-overload state has protocol version 75', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(75);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

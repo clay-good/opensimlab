@@ -15,6 +15,7 @@ import { UPPER_GI_HEMORRHAGE } from './upper-gi-hemorrhage';
 import { STATUS_EPILEPTICUS } from './status-epilepticus';
 import { TARGETED_TEMPERATURE_MANAGEMENT } from './targeted-temperature-management';
 import { INTRACRANIAL_HYPERTENSION } from './intracranial-hypertension';
+import { ACUTE_KIDNEY_INJURY_WITH_FLUID_OVERLOAD } from './acute-kidney-injury-with-fluid-overload';
 
 export const CRITICAL_CARE_SCENARIOS: readonly Scenario[] = [
   ARDS_LUNG_PROTECTIVE_VENTILATION,
@@ -33,6 +34,7 @@ export const CRITICAL_CARE_SCENARIOS: readonly Scenario[] = [
   STATUS_EPILEPTICUS,
   TARGETED_TEMPERATURE_MANAGEMENT,
   INTRACRANIAL_HYPERTENSION,
+  ACUTE_KIDNEY_INJURY_WITH_FLUID_OVERLOAD,
 ];
 export const DEFAULT_CRITICAL_CARE_SCENARIO_ID = ARDS_LUNG_PROTECTIVE_VENTILATION.metadata.id;
 

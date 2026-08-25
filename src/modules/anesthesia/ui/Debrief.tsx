@@ -3752,6 +3752,46 @@ export function objectiveFindings(
         : 'ICP and CPP reassessment was absent or preceded rescue review.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-aki-fluid-overload', 'review-aki-fluid-overload-context',
+      'limit-fluid-and-review-diuretic-response', 'activate-individualized-kidney-support-pathway',
+      'reassess-aki-fluid-overload-trajectory'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'acute-kidney-injury-with-fluid-overload');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The AKI fluid-overload vignette was not active.' } satisfies ObjectiveFinding;
+      const recognition = log.find((event) => /^aki-fluid-overload-recognized-\d+$/.test(event.eventId));
+      const context = log.find((event) => /^aki-fluid-overload-context-reviewed-\d+$/.test(event.eventId));
+      const fluidPlan = log.find((event) => /^aki-fluid-overload-fluid-plan-recorded-\d+$/.test(event.eventId));
+      const support = log.find((event) => /^aki-fluid-overload-support-activated-\d+$/.test(event.eventId));
+      const reassessment = log.find((event) => /^aki-fluid-overload-trajectory-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'recognize-aki-fluid-overload') return { ...base,
+        outcome: recognition ? 'met' : 'not-met', finding: recognition
+          ? 'Kidney, fluid, weight, respiratory, perfusion, metabolic, and treatment trends triggered critical-care and nephrology help.'
+          : 'The harmful AKI fluid-accumulation trajectory or experienced-team activation was absent.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-aki-fluid-overload-context') {
+        const ordered = recognition && context && recognition.tick <= context.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Reversible causes, urgent complications, kidney capacity, treatment, recovery, goals, and preferences stayed in the whole-context review.'
+          : 'Whole-context review was absent or preceded recognition.', atTick: context?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'limit-fluid-and-review-diuretic-response') {
+        const ordered = context && fluidPlan && context.tick <= fluidPlan.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Nonessential accumulation was limited, necessary treatment preserved, and the poor reported diuretic response reviewed without blind escalation.'
+          : 'The fluid plan was absent or preceded context review.', atTick: fluidPlan?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'activate-individualized-kidney-support-pathway') {
+        const ordered = fluidPlan && support && fluidPlan.tick <= support.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Individualized kidney-support planning preserved emergency indications and patient-specific timing, access, modality, dose, removal, and goals.'
+          : 'Kidney-support planning was absent or preceded the fluid plan.', atTick: support?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = support && reassessment && support.tick <= reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+        ? 'Net balance and oxygenation improved while oliguria, solute control, hemodynamic tolerance, kidney recovery, duration, and outcome stayed open.'
+        : 'Whole-trajectory reassessment was absent or preceded kidney-support planning.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

@@ -332,6 +332,8 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
       .toMatchObject({ indexable: true, heading: 'Post-arrest temperature control' });
     expect(routeFor('/critical-care/scenario/intracranial-hypertension'))
       .toMatchObject({ indexable: true, heading: 'Intracranial hypertension' });
+    expect(routeFor('/critical-care/scenario/acute-kidney-injury-with-fluid-overload'))
+      .toMatchObject({ indexable: true, heading: 'Acute kidney injury with fluid overload' });
   });
 
   it('Requirement: Modules Declare Their Own Physiological Timescale', () => {

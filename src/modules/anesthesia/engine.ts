@@ -476,6 +476,11 @@ export class AnesthesiaEngine {
   private intracranialHypertensionProtectionAtTick: number | null = null;
   private intracranialHypertensionRescueAtTick: number | null = null;
   private intracranialHypertensionReassessmentAtTick: number | null = null;
+  private akiFluidOverloadRecognitionAtTick: number | null = null;
+  private akiFluidOverloadContextAtTick: number | null = null;
+  private akiFluidOverloadFluidPlanAtTick: number | null = null;
+  private akiFluidOverloadSupportAtTick: number | null = null;
+  private akiFluidOverloadReassessmentAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -3610,6 +3615,58 @@ export class AnesthesiaEngine {
           'Fixed response after 15 minutes: reported ICP is 19 mmHg, MAP 84 mmHg, calculated CPP 65 mmHg, HR 84/min, SpO₂ 97%, EtCO₂ 38 mmHg, and temperature 37.5°C. Pupils remain unchanged and no new herniation sign is reported. Monitor fidelity, durability, recurrent pressure, examination, imaging, drain or surgical escalation, recovery, prognosis, and outcome remain open.', { reassessmentMinutes: 15, icpMmHg: 19, mapMmHg: 84, cppMmHg: 65, heartRateBpm: 84, spo2Percent: 97, etco2MmHg: 38, temperatureC: 37.5, pupilChange: false, newHerniationSign: false, durableControlProven: false, neurologicOutcomeProven: false });
         break;
       }
+      case 'aki-fluid-overload-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'acute-kidney-injury-with-fluid-overload');
+        const valid = ['recognize-aki-fluid-overload', 'review-aki-fluid-overload-context',
+          'limit-fluid-and-review-diuretic-response',
+          'activate-individualized-kidney-support-pathway',
+          'reassess-aki-fluid-overload-trajectory'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `aki-fluid-overload-response-refused-${this.currentTick}`,
+            supported ? 'The AKI fluid-overload action was not one of the listed choices. Nothing changed.'
+              : 'The bounded AKI fluid-overload choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'recognize-aki-fluid-overload') {
+          if (this.akiFluidOverloadRecognitionAtTick !== null) { this.log('warning', 'assessment', `aki-fluid-overload-recognition-refused-${this.currentTick}`, 'The harmful AKI fluid-accumulation pattern and team activation have already been recorded.'); break; }
+          this.akiFluidOverloadRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `aki-fluid-overload-recognized-${this.currentTick}`,
+            'Severe oliguric AKI, +8.2 L cumulative balance, 9 kg weight gain, worsening pulmonary edema, rising oxygen support, and poor reported diuretic response triggered critical-care, nephrology, nursing, respiratory-therapy, and pharmacy help. No single creatinine, BUN, urine-output, or fluid-percentage value was used as an automatic kidney-support trigger.', { cumulativeBalanceLiters: 8.2, weightGainKg: 9, urineOutputMlPerKgHour: 0.15, spo2Percent: 91, nephrologyActivated: true, automaticSingleValueTrigger: false });
+          break;
+        }
+        if (this.akiFluidOverloadRecognitionAtTick === null) { this.log('warning', 'assessment', `aki-fluid-overload-recognition-order-refused-${this.currentTick}`, 'Recognize the harmful kidney, fluid, and organ trajectory and activate experienced help first.'); break; }
+        if (response === 'review-aki-fluid-overload-context') {
+          if (this.akiFluidOverloadContextAtTick !== null) { this.log('warning', 'assessment', `aki-fluid-overload-context-refused-${this.currentTick}`, 'The fixed AKI causes, urgent complications, kidney capacity, and treatment context have already been reviewed.'); break; }
+          this.akiFluidOverloadContextAtTick = this.currentTick;
+          this.log('critical', 'assessment', `aki-fluid-overload-context-reviewed-${this.currentTick}`,
+            'Fixed review integrated urine, balance, weight, respiratory support, perfusion, potassium, ECG, acid-base, BUN, uremic complications, obstruction, toxin, infection treatment, medications, contrast, hemodynamics, abdominal pressure, and intrinsic-kidney causes. Fluid demand exceeds reported kidney capacity, but exact urgency, reversibility, recovery, goals, and prescription remain open.', { lifeThreateningHyperkalemiaReported: false, severeRefractoryAcidemiaReported: false, uremicComplicationReported: false, pulmonaryOrganDysfunction: true, obstructionReported: false, kidneyCapacityExceeded: true, contextClosed: false });
+          break;
+        }
+        if (this.akiFluidOverloadContextAtTick === null) { this.log('warning', 'assessment', `aki-fluid-overload-context-order-refused-${this.currentTick}`, 'Review causes, urgent complications, kidney capacity, and treatment context before changing the fluid plan.'); break; }
+        if (response === 'limit-fluid-and-review-diuretic-response') {
+          if (this.akiFluidOverloadFluidPlanAtTick !== null) { this.log('warning', 'assessment', `aki-fluid-overload-fluid-plan-refused-${this.currentTick}`, 'The nonessential-fluid limit and reported diuretic-response review have already been recorded.'); break; }
+          this.akiFluidOverloadFluidPlanAtTick = this.currentTick;
+          this.log('critical', 'assessment', `aki-fluid-overload-fluid-plan-recorded-${this.currentTick}`,
+            'Nonessential fluid and sodium were stopped in the plan; infusions, antimicrobials, medications, nutrition, and inputs were reconciled while perfusion and necessary treatment were preserved. The poor reported response to an adequate loop-diuretic challenge was recorded without blind repeated escalation. No accounting, restriction, nutrition change, fluid, or diuretic delivery is simulated.', { nonessentialFluidLimited: true, sodiumIntakeReviewed: true, necessaryTherapyPreserved: true, poorDiureticResponseReviewed: true, blindDiureticEscalation: false, treatmentDelivered: false });
+          break;
+        }
+        if (this.akiFluidOverloadFluidPlanAtTick === null) { this.log('warning', 'assessment', `aki-fluid-overload-fluid-plan-order-refused-${this.currentTick}`, 'Limit further nonessential accumulation and review the reported diuretic response before kidney-support planning.'); break; }
+        if (response === 'activate-individualized-kidney-support-pathway') {
+          if (this.akiFluidOverloadSupportAtTick !== null) { this.log('warning', 'assessment', `aki-fluid-overload-support-refused-${this.currentTick}`, 'The individualized kidney-support pathway and guardrails have already been recorded.'); break; }
+          this.akiFluidOverloadSupportAtTick = this.currentTick;
+          this.log('critical', 'assessment', `aki-fluid-overload-support-activated-${this.currentTick}`,
+            'Critical care and nephrology activated individualized kidney-support planning for refractory fluid demand, with urgent initiation preserved for life-threatening fluid, electrolyte, or acid-base imbalance. Hemodynamics, access, modality, dose, anticoagulation, solute and medication clearance, net removal, goals, preferences, resources, and repeated response remain expert decisions. Accelerated initiation was not treated as universally beneficial, and no setup or therapy is simulated.', { kidneySupportPlanning: true, emergencyIndicationsPreserved: true, universalStartTime: false, accessSelected: false, modalitySelected: false, doseSelected: false, treatmentDelivered: false });
+          break;
+        }
+        if (this.akiFluidOverloadSupportAtTick === null) { this.log('warning', 'assessment', `aki-fluid-overload-support-order-refused-${this.currentTick}`, 'Activate individualized kidney-support planning before reviewing the fixed response.'); break; }
+        if (this.akiFluidOverloadReassessmentAtTick !== null) { this.log('warning', 'assessment', `aki-fluid-overload-reassessment-refused-${this.currentTick}`, 'The fixed fluid, respiratory, kidney, and metabolic reassessment has already been reviewed.'); break; }
+        this.akiFluidOverloadReassessmentAtTick = this.currentTick;
+        this.log('critical', 'assessment', `aki-fluid-overload-trajectory-reassessed-${this.currentTick}`,
+          'Fixed response after 6 hours: net balance is −1.1 L, SpO₂ 95% on unchanged FiO₂ 0.50, HR 96/min, MAP 74 mmHg, potassium 5.1 mmol/L, pH 7.31, and temperature 37.3°C. Oliguria persists. Ongoing removal, hemodynamic tolerance, solute control, modality, medication dosing, nutrition, kidney recovery, duration, prognosis, and outcome remain open.', { reassessmentHours: 6, netBalanceLiters: -1.1, spo2Percent: 95, fio2: 0.5, heartRateBpm: 96, mapMmHg: 74, potassiumMmolL: 5.1, ph: 7.31, oliguriaPersists: true, kidneyRecoveryProven: false, outcomeProven: false });
+        break;
+      }
       case 'aspiration-risk-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
@@ -6420,6 +6477,18 @@ export class AnesthesiaEngine {
         meanArterialMmHg: reassessed ? 84 : 82,
         coreTemperatureC: reassessed ? 37.5 : 37.7 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'acute-kidney-injury-with-fluid-overload')) {
+      const reassessed = this.akiFluidOverloadReassessmentAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: reassessed ? 96 : 104,
+        respiratoryRateBpm: 20,
+        spo2Percent: reassessed ? 95 : 91,
+        systolicMmHg: reassessed ? 100 : 96,
+        diastolicMmHg: reassessed ? 60 : 58,
+        meanArterialMmHg: reassessed ? 74 : 72,
+        coreTemperatureC: reassessed ? 37.3 : 37.4 };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -6943,6 +7012,13 @@ export class AnesthesiaEngine {
           protectionAtTick: this.intracranialHypertensionProtectionAtTick,
           rescueAtTick: this.intracranialHypertensionRescueAtTick,
           reassessmentAtTick: this.intracranialHypertensionReassessmentAtTick,
+        },
+        akiFluidOverloadAssessment: {
+          recognitionAtTick: this.akiFluidOverloadRecognitionAtTick,
+          contextAtTick: this.akiFluidOverloadContextAtTick,
+          fluidPlanAtTick: this.akiFluidOverloadFluidPlanAtTick,
+          supportAtTick: this.akiFluidOverloadSupportAtTick,
+          reassessmentAtTick: this.akiFluidOverloadReassessmentAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

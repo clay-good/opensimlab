@@ -835,6 +835,9 @@ export function Cockpit({
           onIntracranialHypertensionResponse={(action) => session.act({
             type: 'intracranial-hypertension-response', payload: { action },
           })}
+          onAkiFluidOverloadResponse={(action) => session.act({
+            type: 'aki-fluid-overload-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

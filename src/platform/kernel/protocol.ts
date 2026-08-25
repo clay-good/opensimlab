@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 74 reports intracranial-pressure state. */
-export const WORKER_PROTOCOL_VERSION = 74;
+/** Bumped whenever the message shape changes incompatibly. Version 75 reports AKI fluid-overload state. */
+export const WORKER_PROTOCOL_VERSION = 75;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -533,6 +533,13 @@ export interface EquipmentSnapshot {
       readonly contextAtTick: number | null;
       readonly protectionAtTick: number | null;
       readonly rescueAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+    };
+    readonly akiFluidOverloadAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly contextAtTick: number | null;
+      readonly fluidPlanAtTick: number | null;
+      readonly supportAtTick: number | null;
       readonly reassessmentAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */

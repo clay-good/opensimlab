@@ -466,6 +466,13 @@ export interface ActionCockpitProps {
       readonly rescueAtTick: number | null;
       readonly reassessmentAtTick: number | null;
     };
+    readonly akiFluidOverloadAssessment?: {
+      readonly recognitionAtTick: number | null;
+      readonly contextAtTick: number | null;
+      readonly fluidPlanAtTick: number | null;
+      readonly supportAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -754,6 +761,12 @@ export interface ActionCockpitProps {
       | 'activate-first-tier-brain-protection' | 'activate-individualized-hyperosmolar-rescue'
       | 'reassess-intracranial-hypertension-trajectory',
   ) => void;
+  readonly onAkiFluidOverloadResponse?: (
+    action: 'recognize-aki-fluid-overload' | 'review-aki-fluid-overload-context'
+      | 'limit-fluid-and-review-diuretic-response'
+      | 'activate-individualized-kidney-support-pathway'
+      | 'reassess-aki-fluid-overload-trajectory',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -942,6 +955,10 @@ export function crisisResponseAvailability(
     hasIntracranialHypertensionResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'intracranial-hypertension',
     ),
+    hasAkiFluidOverloadResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'acute-kidney-injury-with-fluid-overload',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1029,6 +1046,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'critical-care-status-epilepticus')
       || (event.type === 'narrative' && event.target === 'targeted-temperature-management')
       || (event.type === 'narrative' && event.target === 'intracranial-hypertension')
+      || (event.type === 'narrative' && event.target === 'acute-kidney-injury-with-fluid-overload')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1056,6 +1074,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasCriticalCareStatusEpilepticusResponse,
     hasPostArrestTemperatureResponse,
     hasIntracranialHypertensionResponse,
+    hasAkiFluidOverloadResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1107,7 +1126,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasCardiogenicShockResponse || hasMixedShockResponse || hasRightVentricularFailureResponse
     || hasMassivePulmonaryEmbolismResponse || hasUpperGiHemorrhageResponse
     || hasCriticalCareStatusEpilepticusResponse || hasPostArrestTemperatureResponse
-    || hasIntracranialHypertensionResponse;
+    || hasIntracranialHypertensionResponse || hasAkiFluidOverloadResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1133,8 +1152,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasMixedShockResponse || hasRightVentricularFailureResponse
     || hasMassivePulmonaryEmbolismResponse || hasUpperGiHemorrhageResponse
     || hasCriticalCareStatusEpilepticusResponse || hasPostArrestTemperatureResponse
-    || hasIntracranialHypertensionResponse;
-  const responseTray = hasIntracranialHypertensionResponse
+    || hasIntracranialHypertensionResponse || hasAkiFluidOverloadResponse;
+  const responseTray = hasAkiFluidOverloadResponse
+    ? { id: 'crisis', label: 'AKI fluid balance' } as const
+    : hasIntracranialHypertensionResponse
     ? { id: 'crisis', label: 'ICP crisis' } as const
     : hasPostArrestTemperatureResponse
     ? { id: 'crisis', label: 'Temperature control' } as const
@@ -1263,6 +1284,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasCriticalCareStatusEpilepticusResponse
     || hasPostArrestTemperatureResponse
     || hasIntracranialHypertensionResponse
+    || hasAkiFluidOverloadResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1727,6 +1749,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <IntracranialHypertensionTray
                 assessment={props.resuscitation.intracranialHypertensionAssessment}
                 onAction={props.onIntracranialHypertensionResponse ?? (() => {})} />
+            )}
+            {hasAkiFluidOverloadResponse && (
+              <AkiFluidOverloadTray assessment={props.resuscitation.akiFluidOverloadAssessment}
+                onAction={props.onAkiFluidOverloadResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -4913,6 +4939,58 @@ function IntracranialHypertensionTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-intracranial-hypertension-trajectory')}>Review ICP + CPP trajectory</Button>
         </div>
         <p className="field__hint">An immediate pressure response does not prove durable control, recovery, or outcome.</p>
+      </section>
+    </div>
+  );
+}
+
+function AkiFluidOverloadTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['akiFluidOverloadAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onAkiFluidOverloadResponse']>;
+}) {
+  const recognized = assessment?.recognitionAtTick != null;
+  const context = assessment?.contextAtTick != null;
+  const fluidPlan = assessment?.fluidPlanAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const reassessed = assessment?.reassessmentAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="aki-fluid-burden-title">
+        <div id="aki-fluid-burden-title" className="syringe__name">See the burden. Protect the organs.</div>
+        <Badge kind="teaching">+8.2 L · +9 kg · urine 0.15 mL/kg/h · pulmonary edema</Badge>
+        <div className="syringe__meta">SpO₂ 91% on FiO₂ 0.50 · poor reported diuretic response · intake &gt; output</div>
+        <p className="syringe__remaining" role="status">
+          {context ? 'Harmful accumulation recognized · demand exceeds capacity'
+            : recognized ? 'Kidney + critical-care teams active · whole-context review due'
+              : 'Follow the fluid and organ trajectory, not creatinine alone.'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={recognized}
+            onClick={() => onAction('recognize-aki-fluid-overload')}>Recognize harmful fluid burden + activate help</Button>
+          <Button className="crisis-drug__action" disabled={!recognized || context}
+            onClick={() => onAction('review-aki-fluid-overload-context')}>Review causes + urgent complications</Button>
+        </div>
+        <p className="field__hint">Urine, balance, weight, lungs, perfusion, electrolytes, acid-base state, and symptoms travel together.</p>
+      </section>
+      <section className="syringe" aria-labelledby="aki-fluid-support-title">
+        <div id="aki-fluid-support-title" className="syringe__name">Match demand to kidney capacity.</div>
+        <Badge kind="teaching">life-threatening imbalance = urgent · no creatinine trigger</Badge>
+        <div className="syringe__meta">limit accumulation · preserve perfusion · individualize timing + prescription</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'Net −1.1 L · SpO₂ 95% · oliguria + recovery remain open'
+            : support ? 'Fluid plan + kidney-support pathway active · reassessment due'
+              : fluidPlan ? 'Nonessential accumulation limited · support planning due'
+                : 'Fluid-demand control pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!context || fluidPlan}
+            onClick={() => onAction('limit-fluid-and-review-diuretic-response')}>Limit fluid + review diuretic response</Button>
+          <Button className="crisis-drug__action" disabled={!fluidPlan || support}
+            onClick={() => onAction('activate-individualized-kidney-support-pathway')}>Activate individualized kidney-support planning</Button>
+          <Button className="crisis-drug__action" disabled={!support || reassessed}
+            onClick={() => onAction('reassess-aki-fluid-overload-trajectory')}>Review fluid + organ trajectory</Button>
+        </div>
+        <p className="field__hint">A better balance is an immediate process signal, not proof of kidney recovery or outcome.</p>
       </section>
     </div>
   );
