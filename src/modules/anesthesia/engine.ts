@@ -506,6 +506,11 @@ export class AnesthesiaEngine {
   private pulseOximeterProbePerfusionAtTick: number | null = null;
   private pulseOximeterCorroboratedAtTick: number | null = null;
   private pulseOximeterReassessedAtTick: number | null = null;
+  private tubeMigrationRecognizedAtTick: number | null = null;
+  private tubeMigrationSupportedAtTick: number | null = null;
+  private tubeMigrationPositionReviewedAtTick: number | null = null;
+  private tubeMigrationCorrectionAtTick: number | null = null;
+  private tubeMigrationReassessedAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -3930,6 +3935,48 @@ export class AnesthesiaEngine {
         this.log('critical', 'assessment', `pulse-ox-signal-reassessed-${this.currentTick}`, 'Fixed clean-site reassessment: displayed SpO₂ 97%, pulse 86/min, and a regular stronger pleth now agree with unchanged ECG 86/min, MAP 76 mmHg, EtCO₂ 37 mmHg, RR 16/min, and patient observations. No oxygen or treatment was delivered; diagnosis, future signal durability, evolving illness, and outcome remain open.', { displayedSpo2Percent: 97, displayedPulseRateBpm: 86, signalQuality: 'good', treatmentDelivered: false, outcomeProven: false });
         break;
       }
+      case 'endotracheal-tube-migration-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'endotracheal-tube-migration-after-repositioning');
+        const valid = ['recognize-post-repositioning-ventilation-change',
+          'bridge-post-repositioning-oxygenation', 'integrate-tube-depth-and-bilateral-ventilation',
+          'record-experienced-tube-correction-intent',
+          'reassess-tube-position-and-gas-exchange'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `tube-migration-response-refused-${this.currentTick}`, supported ? 'The tube-migration action was not one of the listed choices. Nothing changed.' : 'The bounded tube-position choices are available only in the declared lesson.'); break; }
+        if (response === 'recognize-post-repositioning-ventilation-change') {
+          if (this.tubeMigrationRecognizedAtTick !== null) { this.log('warning', 'assessment', `tube-migration-recognition-refused-${this.currentTick}`, 'The post-repositioning change has already been recognized.'); break; }
+          this.tubeMigrationRecognizedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `tube-migration-change-recognized-${this.currentTick}`, 'The immediate post-turn fall in exhaled volume and oxygenation, rise in peak pressure and EtCO₂, persistent capnogram, and new unilateral ventilation were recognized without assigning a final cause.', { movementLinked: true, finalCauseAssigned: false });
+          break;
+        }
+        if (this.tubeMigrationRecognizedAtTick === null) { this.log('warning', 'assessment', `tube-migration-recognition-order-refused-${this.currentTick}`, 'Recognize the post-repositioning ventilation change before support or airway correction.'); break; }
+        if (response === 'bridge-post-repositioning-oxygenation') {
+          if (this.tubeMigrationSupportedAtTick !== null) { this.log('warning', 'assessment', `tube-migration-support-refused-${this.currentTick}`, 'Immediate support and experienced help have already been recorded.'); break; }
+          this.tubeMigrationSupportedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `tube-migration-support-activated-${this.currentTick}`, 'Respiratory-therapy, senior ICU, and experienced airway help and immediate oxygenation and ventilation support intent were recorded before final classification. No care was delivered.', { helpActivated: true, supportIntent: true, careDelivered: false });
+          break;
+        }
+        if (this.tubeMigrationSupportedAtTick === null) { this.log('warning', 'assessment', `tube-migration-support-order-refused-${this.currentTick}`, 'Record immediate support and experienced help before the position review.'); break; }
+        if (response === 'integrate-tube-depth-and-bilateral-ventilation') {
+          if (this.tubeMigrationPositionReviewedAtTick !== null) { this.log('warning', 'assessment', `tube-migration-position-refused-${this.currentTick}`, 'The fixed airway-position panel has already been reviewed.'); break; }
+          this.tubeMigrationPositionReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `tube-migration-position-reviewed-${this.currentTick}`, 'The fixed review compares 22 cm before the turn with 25 cm now, intact securement and unchanged cuff state, markedly reduced left ventilation, preserved right ventilation and capnography, exhaled volume 310 mL, peak pressure 36 cm H₂O, and worsening gas exchange. It supports right-mainstem migration while mucus plugging, pneumothorax, atelectasis, consolidation, circuit, ventilator, and other causes remain open. No examination or inspection occurred.', { beforeDepthCm: 22, currentDepthCm: 25, position: 'right-mainstem', physicalAssessmentPerformed: false, alternativesOpen: true });
+          break;
+        }
+        if (this.tubeMigrationPositionReviewedAtTick === null) { this.log('warning', 'assessment', `tube-migration-position-order-refused-${this.currentTick}`, 'Integrate the complete airway-position panel before correction intent.'); break; }
+        if (response === 'record-experienced-tube-correction-intent') {
+          if (this.tubeMigrationCorrectionAtTick !== null) { this.log('warning', 'assessment', `tube-migration-correction-refused-${this.currentTick}`, 'Experienced-airway correction intent has already been recorded.'); break; }
+          this.tubeMigrationCorrectionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `tube-migration-correction-recorded-${this.currentTick}`, 'Experienced-airway tube correction and resecurement intent were recorded for this authored migrated tube. The 22 cm response is a case fact, not a universal target; no tube was touched or moved.', { correctionIntent: true, physicalTubeMovementPerformed: false, universalDepthTarget: false });
+          break;
+        }
+        if (this.tubeMigrationCorrectionAtTick === null) { this.log('warning', 'assessment', `tube-migration-correction-order-refused-${this.currentTick}`, 'Record bounded experienced-airway correction intent before response proof.'); break; }
+        if (this.tubeMigrationReassessedAtTick !== null) { this.log('warning', 'assessment', `tube-migration-reassessment-refused-${this.currentTick}`, 'The fixed multi-signal response has already been recorded.'); break; }
+        this.tubeMigrationReassessedAtTick = this.currentTick;
+        this.log('critical', 'assessment', `tube-migration-reassessed-${this.currentTick}`, 'Fixed 3-minute response: tube mark 22 cm, typed tracheal position, bilateral ventilation, exhaled volume 410 mL, peak pressure 27 cm H₂O, plateau 21, PEEP 8, continuous EtCO₂ 39 mmHg, SpO₂ 96% on unchanged FiO₂ 0.50, HR 94/min, and MAP 77 mmHg. Physical correction, imaging, durability, diagnosis, and outcome remain outside the model.', { bilateralVentilation: true, physicalTubeMovementPerformed: false, outcomeProven: false });
+        break;
+      }
       case 'aspiration-risk-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
@@ -6805,6 +6852,15 @@ export class AnesthesiaEngine {
         spo2Percent: 97, etco2MmHg: 37, systolicMmHg: 108, diastolicMmHg: 60,
         meanArterialMmHg: 76, coreTemperatureC: 36.4 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'endotracheal-tube-migration-after-repositioning')) {
+      const reassessed = this.tubeMigrationReassessedAtTick !== null;
+      crisisState = { ...crisisState, heartRateBpm: reassessed ? 94 : 104,
+        respiratoryRateBpm: 18, spo2Percent: reassessed ? 96 : 89,
+        etco2MmHg: reassessed ? 39 : 45, systolicMmHg: reassessed ? 105 : 102,
+        diastolicMmHg: reassessed ? 63 : 62, meanArterialMmHg: reassessed ? 77 : 75,
+        coreTemperatureC: 37.6 };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -6987,6 +7043,24 @@ export class AnesthesiaEngine {
           0, Math.ceil((this.jawThrustCpapUntilTick - this.currentTick) / TICKS_PER_SECOND),
         ),
       },
+      ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'endotracheal-tube-migration-after-repositioning') ? {
+          trachealTubePosition: {
+            depthCm: this.tubeMigrationReassessedAtTick === null ? 25 : 22,
+            position: this.tubeMigrationReassessedAtTick === null
+              ? 'right-mainstem' as const : 'tracheal' as const,
+            leftVentilation: this.tubeMigrationReassessedAtTick === null
+              ? 'markedly-reduced' as const : 'present' as const,
+            rightVentilation: 'present' as const,
+            securement: 'intact' as const,
+            cuffState: 'unchanged' as const,
+            exhaledTidalVolumeMl: this.tubeMigrationReassessedAtTick === null ? 310 : 410,
+            peakPressureCmH2O: this.tubeMigrationReassessedAtTick === null ? 36 : 27,
+            plateauPressureCmH2O: this.tubeMigrationReassessedAtTick === null ? 22 : 21,
+            peepCmH2O: 8,
+            continuousCapnography: true,
+          },
+        } : {}),
       hypnoticLine: {
         connected: this.hypnoticLineConnected,
         inspected: this.hypnoticLineInspected,
@@ -7375,6 +7449,16 @@ export class AnesthesiaEngine {
               displayedSpo2Percent: this.pulseOximeterReassessedAtTick === null ? 82 : 97,
               displayedPulseRateBpm: this.pulseOximeterReassessedAtTick === null ? 132 : 86,
               signalQuality: this.pulseOximeterReassessedAtTick === null ? 'poor' as const : 'good' as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'endotracheal-tube-migration-after-repositioning') ? {
+            endotrachealTubeMigrationAssessment: {
+              recognizedAtTick: this.tubeMigrationRecognizedAtTick,
+              supportedAtTick: this.tubeMigrationSupportedAtTick,
+              positionReviewedAtTick: this.tubeMigrationPositionReviewedAtTick,
+              correctionAtTick: this.tubeMigrationCorrectionAtTick,
+              reassessedAtTick: this.tubeMigrationReassessedAtTick,
             },
           } : {}),
         aspirationRiskAssessment: {

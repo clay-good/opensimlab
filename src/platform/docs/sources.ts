@@ -1444,6 +1444,34 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-25',
   },
   {
+    id: 'tailleur-tube-displacement-movement-2016',
+    pmid: '27290945',
+    authors: 'Tailleur R, Bathory I, Dolci M, Frascarolo P, Kern C, Schoettker P',
+    title: 'Endotracheal tube displacement during head and neck movements: observational clinical trial',
+    publication: 'J Clin Anesth',
+    year: 2016,
+    locator: '32:54-58; doi:10.1016/j.jclinane.2015.12.043',
+    usedFor: 'The post-repositioning tube-migration boundary: head and neck movement can produce '
+      + 'unpredictable tube displacement, including selective right-mainstem position, so tube '
+      + 'position and ventilation require reassessment after movement.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-25',
+  },
+  {
+    id: 'hansel-confirming-intubation-review-2023',
+    pmid: '37325847',
+    authors: 'Hansel J, Law JA, Chrimes N, Higgs A, Cook TM',
+    title: 'Clinical tests for confirming tracheal intubation or excluding oesophageal intubation: a diagnostic test accuracy systematic review and meta-analysis',
+    publication: 'Anaesthesia',
+    year: 2023,
+    locator: '78:1020-1030; doi:10.1111/anae.16059',
+    usedFor: 'The airway-confirmation boundary: waveform capnography is the reference for confirming '
+      + 'tracheal rather than oesophageal intubation, while this lesson keeps tube depth and '
+      + 'bilateral ventilation as separate questions.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-25',
+  },
+  {
     id: 'schwid-2001',
     pmid: '11302037',
     authors: 'Schwid HA, Rooke GA, Michalowski P, Ross BK',

@@ -116,6 +116,9 @@ describe('exact-version maturity records', () => {
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'pulse-oximeter-motion-artifact', '0.1.0',
     )?.status).toBe('draft');
+    expect(maturityFor(
+      criticalCareCatalog, 'scenario', 'endotracheal-tube-migration-after-repositioning', '0.1.0',
+    )?.status).toBe('draft');
   });
 
   it('never applies a record to a different content version', () => {

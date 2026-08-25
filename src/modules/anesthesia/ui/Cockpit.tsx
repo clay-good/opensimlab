@@ -861,6 +861,9 @@ export function Cockpit({
           onPulseOximeterArtifactResponse={(action) => session.act({
             type: 'pulse-oximeter-artifact-response', payload: { action },
           })}
+          onEndotrachealTubeMigrationResponse={(action) => session.act({
+            type: 'endotracheal-tube-migration-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

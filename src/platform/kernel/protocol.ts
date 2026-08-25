@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 79 reports delayed-delivery state. */
-export const WORKER_PROTOCOL_VERSION = 80;
+export const WORKER_PROTOCOL_VERSION = 81;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -188,6 +188,19 @@ export interface EquipmentSnapshot {
     readonly bronchospasmSeverity: number;
     /** Whole seconds left in the bounded held jaw-thrust/CPAP maneuver. */
     readonly jawThrustCpapSecondsRemaining: number;
+  };
+  readonly trachealTubePosition?: {
+    readonly depthCm: number;
+    readonly position: 'tracheal' | 'right-mainstem';
+    readonly leftVentilation: 'present' | 'markedly-reduced';
+    readonly rightVentilation: 'present' | 'markedly-reduced';
+    readonly securement: 'intact';
+    readonly cuffState: 'unchanged';
+    readonly exhaledTidalVolumeMl: number;
+    readonly peakPressureCmH2O: number;
+    readonly plateauPressureCmH2O: number;
+    readonly peepCmH2O: number;
+    readonly continuousCapnography: boolean;
   };
   /** The physical delivery path for the propofol infusion. */
   readonly hypnoticLine: {
@@ -579,6 +592,13 @@ export interface EquipmentSnapshot {
       readonly displayedSpo2Percent: number;
       readonly displayedPulseRateBpm: number;
       readonly signalQuality: 'poor' | 'good';
+    };
+    readonly endotrachealTubeMigrationAssessment?: {
+      readonly recognizedAtTick: number | null;
+      readonly supportedAtTick: number | null;
+      readonly positionReviewedAtTick: number | null;
+      readonly correctionAtTick: number | null;
+      readonly reassessedAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

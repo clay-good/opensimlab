@@ -3950,6 +3950,26 @@ export function objectiveFindings(
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Display, pulse rate, and pleth became coherent while canonical physiology remained unchanged.' : 'Signal reassessment was absent or preceded independent corroboration.', atTick: reassessed?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-post-repositioning-ventilation-change',
+      'bridge-post-repositioning-oxygenation', 'integrate-tube-depth-and-bilateral-ventilation',
+      'record-experienced-tube-correction-intent',
+      'reassess-tube-position-and-gas-exchange'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'endotracheal-tube-migration-after-repositioning');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The post-repositioning tube-migration lesson was not active.' } satisfies ObjectiveFinding;
+      const recognized = log.find((event) => /^tube-migration-change-recognized-\d+$/.test(event.eventId));
+      const bridged = log.find((event) => /^tube-migration-support-activated-\d+$/.test(event.eventId));
+      const reviewed = log.find((event) => /^tube-migration-position-reviewed-\d+$/.test(event.eventId));
+      const correction = log.find((event) => /^tube-migration-correction-recorded-\d+$/.test(event.eventId));
+      const reassessed = log.find((event) => /^tube-migration-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'recognize-post-repositioning-ventilation-change') return { ...base, outcome: recognized ? 'met' : 'not-met', finding: recognized ? 'The post-turn multi-signal ventilation change was recognized without prematurely assigning one cause.' : 'The post-turn ventilation and oxygenation change was not recognized.', atTick: recognized?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'bridge-post-repositioning-oxygenation') { const ordered = recognized && bridged && recognized.tick <= bridged.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Immediate support and experienced help were recorded before final classification.' : 'Support was absent or preceded recognition of the change.', atTick: bridged?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'integrate-tube-depth-and-bilateral-ventilation') { const ordered = bridged && reviewed && bridged.tick <= reviewed.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Depth, bilateral ventilation, pressures, volume, capnography, and gas exchange supported migration while alternatives stayed open.' : 'The complete position review was absent or preceded immediate support.', atTick: reviewed?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'record-experienced-tube-correction-intent') { const ordered = reviewed && correction && reviewed.tick <= correction.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Experienced-airway correction intent was recorded without turning the authored depth into a universal target.' : 'Correction intent was absent or preceded the complete position review.', atTick: correction?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = correction && reassessed && correction.tick <= reassessed.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Tube position, bilateral ventilation, pressure, volume, capnography, and oxygenation proved the fixed response.' : 'Multi-signal reassessment was absent or preceded correction intent.', atTick: reassessed?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

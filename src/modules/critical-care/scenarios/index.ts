@@ -21,6 +21,7 @@ import { ICU_HANDOFF_WITH_HIDDEN_DETERIORATION } from './icu-handoff-with-hidden
 import { VENTILATOR_CIRCUIT_DISCONNECTION } from './ventilator-circuit-disconnection';
 import { DELAYED_VASOPRESSOR_DELIVERY } from './delayed-vasopressor-delivery';
 import { PULSE_OXIMETER_MOTION_ARTIFACT } from './pulse-oximeter-motion-artifact';
+import { ENDOTRACHEAL_TUBE_MIGRATION_AFTER_REPOSITIONING } from './endotracheal-tube-migration-after-repositioning';
 
 export const CRITICAL_CARE_SCENARIOS: readonly Scenario[] = [
   ARDS_LUNG_PROTECTIVE_VENTILATION,
@@ -45,6 +46,7 @@ export const CRITICAL_CARE_SCENARIOS: readonly Scenario[] = [
   VENTILATOR_CIRCUIT_DISCONNECTION,
   DELAYED_VASOPRESSOR_DELIVERY,
   PULSE_OXIMETER_MOTION_ARTIFACT,
+  ENDOTRACHEAL_TUBE_MIGRATION_AFTER_REPOSITIONING,
 ];
 export const DEFAULT_CRITICAL_CARE_SCENARIO_ID = ARDS_LUNG_PROTECTIVE_VENTILATION.metadata.id;
 

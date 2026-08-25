@@ -511,6 +511,13 @@ export interface ActionCockpitProps {
       readonly displayedPulseRateBpm: number;
       readonly signalQuality: 'poor' | 'good';
     };
+    readonly endotrachealTubeMigrationAssessment?: {
+      readonly recognizedAtTick: number | null;
+      readonly supportedAtTick: number | null;
+      readonly positionReviewedAtTick: number | null;
+      readonly correctionAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -832,6 +839,13 @@ export interface ActionCockpitProps {
       | 'inspect-pleth-and-pulse-rate-coherence' | 'review-probe-motion-and-perfusion'
       | 'corroborate-oxygenation-independently' | 'reassess-pulse-oximeter-signal',
   ) => void;
+  readonly onEndotrachealTubeMigrationResponse?: (
+    action: 'recognize-post-repositioning-ventilation-change'
+      | 'bridge-post-repositioning-oxygenation'
+      | 'integrate-tube-depth-and-bilateral-ventilation'
+      | 'record-experienced-tube-correction-intent'
+      | 'reassess-tube-position-and-gas-exchange',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1043,6 +1057,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'pulse-oximeter-motion-artifact',
     ),
+    hasEndotrachealTubeMigrationResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'endotracheal-tube-migration-after-repositioning',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1136,6 +1154,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'ventilator-circuit-disconnection')
       || (event.type === 'narrative' && event.target === 'delayed-vasopressor-delivery')
       || (event.type === 'narrative' && event.target === 'pulse-oximeter-motion-artifact')
+      || (event.type === 'narrative' && event.target === 'endotracheal-tube-migration-after-repositioning')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1169,6 +1188,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasVentilatorCircuitDisconnectionResponse,
     hasDelayedVasopressorDeliveryResponse,
     hasPulseOximeterArtifactResponse,
+    hasEndotrachealTubeMigrationResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1223,7 +1243,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasIntracranialHypertensionResponse || hasAkiFluidOverloadResponse
     || hasSevereAcidemiaResponse || hasIcuHiddenDeteriorationHandoffResponse
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
-    || hasPulseOximeterArtifactResponse;
+    || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1252,8 +1272,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasIntracranialHypertensionResponse || hasAkiFluidOverloadResponse
     || hasSevereAcidemiaResponse || hasIcuHiddenDeteriorationHandoffResponse
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
-    || hasPulseOximeterArtifactResponse;
-  const responseTray = hasPulseOximeterArtifactResponse
+    || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse;
+  const responseTray = hasEndotrachealTubeMigrationResponse
+    ? { id: 'crisis', label: 'Tube position' } as const
+    : hasPulseOximeterArtifactResponse
     ? { id: 'crisis', label: 'Pulse-ox signal' } as const
     : hasDelayedVasopressorDeliveryResponse
     ? { id: 'crisis', label: 'Vasopressor delivery' } as const
@@ -1400,6 +1422,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse
     || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse
+    || hasEndotrachealTubeMigrationResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1892,6 +1915,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <PulseOximeterArtifactTray
                 assessment={props.resuscitation.pulseOximeterArtifactAssessment}
                 onAction={props.onPulseOximeterArtifactResponse ?? (() => {})} />
+            )}
+            {hasEndotrachealTubeMigrationResponse && (
+              <EndotrachealTubeMigrationTray
+                assessment={props.resuscitation.endotrachealTubeMigrationAssessment}
+                onAction={props.onEndotrachealTubeMigrationResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -5390,6 +5418,58 @@ function PulseOximeterArtifactTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-pulse-oximeter-signal')}>Reassess display + signal coherence</Button>
         </div>
         <p className="field__hint">If the patient is unstable, support and escalate in parallel. These controls inspect nothing and deliver no care.</p>
+      </section>
+    </div>
+  );
+}
+
+function EndotrachealTubeMigrationTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['endotrachealTubeMigrationAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onEndotrachealTubeMigrationResponse']>;
+}) {
+  const recognized = assessment?.recognizedAtTick != null;
+  const supported = assessment?.supportedAtTick != null;
+  const positionReviewed = assessment?.positionReviewedAtTick != null;
+  const correction = assessment?.correctionAtTick != null;
+  const reassessed = assessment?.reassessedAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="tube-migration-recognition-title">
+        <div id="tube-migration-recognition-title" className="syringe__name">After every move, earn the airway again.</div>
+        <Badge kind="teaching">movement · depth · bilateral ventilation · pressure</Badge>
+        <div className="syringe__meta">22 → 25 cm · left markedly reduced · Ppeak 36</div>
+        <p className="syringe__remaining" role="status">
+          {positionReviewed ? 'Depth change + unilateral ventilation integrated · alternatives open'
+            : supported ? 'Oxygenation bridge recorded · locate the problem'
+              : recognized ? 'Post-turn ventilation change recognized · support in parallel'
+                : 'SpO₂ 89% · exhaled Vt 310 mL · continuous capnography present'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={recognized}
+            onClick={() => onAction('recognize-post-repositioning-ventilation-change')}>Recognize the post-turn change</Button>
+          <Button className="crisis-drug__action" disabled={!recognized || supported}
+            onClick={() => onAction('bridge-post-repositioning-oxygenation')}>Bridge oxygenation + escalate</Button>
+          <Button className="crisis-drug__action" disabled={!supported || positionReviewed}
+            onClick={() => onAction('integrate-tube-depth-and-bilateral-ventilation')}>Integrate depth + bilateral ventilation</Button>
+        </div>
+        <p className="field__hint">Continuous capnography supports tracheal placement; it does not prove correct depth or bilateral ventilation.</p>
+      </section>
+      <section className="syringe" aria-labelledby="tube-migration-correction-title">
+        <div id="tube-migration-correction-title" className="syringe__name">Support first. Correct with proof.</div>
+        <Badge kind="teaching">experienced correction · secure · reassess</Badge>
+        <div className="syringe__meta">fixed response: 22 cm · bilateral · Vt 410 · SpO₂ 96%</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'Position + gas exchange reassessed · ongoing care remains open'
+            : correction ? 'Experienced correction intent recorded · prove the response'
+              : 'No tube is handled by this screen.'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!positionReviewed || correction}
+            onClick={() => onAction('record-experienced-tube-correction-intent')}>Record experienced correction intent</Button>
+          <Button className="crisis-drug__action" disabled={!correction || reassessed}
+            onClick={() => onAction('reassess-tube-position-and-gas-exchange')}>Reassess position + gas exchange</Button>
+        </div>
+        <p className="field__hint">Exact depth is a case fact, not a target. These controls inspect, auscultate, image, or manipulate nothing.</p>
       </section>
     </div>
   );

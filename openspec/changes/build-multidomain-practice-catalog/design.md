@@ -937,6 +937,24 @@ dyshemoglobinemia, optical interference, venous pulsation, probe fault, and evol
 open. The lab does not inspect or move a probe, examine, sample blood, configure a monitor, diagnose,
 deliver oxygen or treatment, determine disposition, or predict outcome.
 
+### Wave B critical-care slice 23: endotracheal-tube migration after repositioning
+
+The twenty-third critical-care slice begins immediately after a turn and head repositioning. A
+previously documented tube mark of 22 cm is now 25 cm; commanded volume control persists while
+exhaled volume falls, peak pressure rises, left ventilation becomes markedly reduced, EtCO₂ rises,
+and SpO₂ falls despite continuous capnography. Securement remains intact and cuff state unchanged.
+
+The focused tutor pairs “after every move, earn the airway again” with “support first, correct with
+proof.” Learners recognize the movement-linked multi-signal change, record immediate oxygenation
+and ventilation support plus experienced help, and integrate pre/post depth, bilateral ventilation,
+pressures, delivered breath, capnography, and gas exchange. The fixed pattern supports right-mainstem
+migration while mucus plugging, pneumothorax, atelectasis, consolidation, circuit, ventilator, and
+other causes remain open. Experienced correction intent leads to a fixed 3-minute response with a
+22 cm case mark, typed tracheal position, bilateral ventilation, recovered exhaled volume and
+pressure, and improved gas exchange. The exact depth is a case fact, not a target. The lab does not
+turn or examine a patient, auscultate, inspect equipment, handle or secure a tube, acquire imaging,
+perform bronchoscopy, diagnose, determine disposition, or predict outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute

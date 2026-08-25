@@ -155,7 +155,8 @@ Reviewers run the routine induction themselves before answering.
 | B101 | In the ventilator-circuit-disconnection lesson, commanded volume control persists while exhaled volume, minute ventilation, pressure, PEEP, and capnography disappear and a coherent pleth falls, requiring recognition of lost delivery, immediate help and alternative oxygenation and ventilation intent, patient-to-source inspection with alternatives preserved, restoration of circuit continuity, and fixed whole-system reassessment without generalizing one alarm delay or implying alarm hearing or configuration, examination, monitoring, circuit or airway inspection, oxygenation, ventilation, equipment handling, reconnection, ventilator programming, diagnosis, procedure, disposition, or outcome competence | | |
 | B102 | In the delayed-vasopressor-delivery lesson, a RUNNING pump conflicts with persistent shock, a fixed drug-free downstream segment, and absent catheter-tip arrival, requiring command-versus-delivery reconciliation, a complete source-to-patient trace, bounded dead-space and startup-delay classification with alternatives preserved, activation of a local multidisciplinary safe-start or changeover protocol with an explicit no-flush/no-bolus guardrail, and fixed delivery and perfusion reassessment without implying pump-log or flow acquisition, examination, monitoring, calculation, infusion inspection or manipulation, priming, purging, flushing, bolusing, programming, prescribing, compounding, drug delivery, diagnosis, disposition, or outcome competence | | |
 | B103 | In the pulse-oximeter-motion-artifact lesson, an isolated 82% display and pulse 132/min conflict with ECG 86/min, a poor irregular pleth, stable patient observations, and canonical oxygenation, requiring display-versus-patient recognition, pleth and pulse-rate coherence review, declared probe, motion, temperature, and perfusion review, independent whole-patient and arterial oxygenation corroboration without overreading capnography, and fixed clean-site signal reassessment without implying probe or perfusion examination, monitor validation, arterial sampling, diagnosis, oxygen or treatment delivery, disposition, or outcome competence | | |
-| B104 | Overall: does this patient behave like a patient? | | |
+| B104 | In the endotracheal-tube-migration-after-repositioning lesson, a 22-to-25 cm post-turn depth change combines with new unilateral ventilation, lower exhaled volume, higher peak pressure, rising EtCO₂, falling SpO₂, and persistent capnography, requiring immediate support and experienced help, whole airway-position-panel review with alternatives preserved, bounded correction intent, and fixed bilateral multi-signal reassessment without making one depth a universal target or implying examination, auscultation, monitoring or ventilator-data acquisition, equipment inspection, oxygen or ventilation delivery, tube handling or securement, imaging, bronchoscopy, diagnosis, disposition, or outcome competence | | |
+| B105 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -377,4 +378,9 @@ So that reviewers spend their attention on what this review is for:
   inspect or move a probe, examine perfusion or the patient, sample blood, configure or validate a
   monitor, diagnose artifact or hypoxemia, deliver oxygen or treatment, determine disposition, or
   predict outcome.
+- The endotracheal-tube-migration-after-repositioning case uses fixed pre/post depth, bilateral
+  ventilation, commanded and exhaled breath, pressure, capnography, gas-exchange, typed-position,
+  and response records. It does not turn or examine a patient, auscultate, inspect equipment,
+  deliver oxygen or ventilation, handle or secure a tube, acquire imaging, perform bronchoscopy,
+  diagnose, determine disposition, or predict outcome. Its exact depth is not a universal target.
 - Nothing here has been clinically reviewed before — you are the first.

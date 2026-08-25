@@ -344,6 +344,8 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
       .toMatchObject({ indexable: true, heading: 'Delayed vasopressor delivery' });
     expect(routeFor('/critical-care/scenario/pulse-oximeter-motion-artifact'))
       .toMatchObject({ indexable: true, heading: 'Pulse-oximeter motion artifact' });
+    expect(routeFor('/critical-care/scenario/endotracheal-tube-migration-after-repositioning'))
+      .toMatchObject({ indexable: true, heading: 'Post-turn endotracheal tube migration' });
   });
 
   it('Requirement: Modules Declare Their Own Physiological Timescale', () => {
