@@ -2494,6 +2494,49 @@ export function objectiveFindings(
         atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['classify-acute-pe-severity', 'support-and-anticoagulate-acute-pe',
+      'recognize-pe-deterioration', 'escalate-deteriorating-pe'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pulmonary-embolism-deterioration');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The pulmonary-embolism deterioration vignette was not active.' } satisfies ObjectiveFinding;
+      const severity = log.find((event) => event.eventId.startsWith('pulmonary-embolism-severity-reviewed-'));
+      const oxygen = log.find((event) => event.eventId.startsWith('pulmonary-embolism-oxygen-'));
+      const anticoagulation = log.find((event) => event.eventId.startsWith('pulmonary-embolism-anticoagulation-'));
+      const deterioration = log.find((event) => event.eventId.startsWith('pulmonary-embolism-deterioration-recognized-'));
+      const escalation = log.find((event) => event.eventId.startsWith('pulmonary-embolism-escalation-'));
+      if (objective.id === 'classify-acute-pe-severity') return {
+        ...base, outcome: severity ? 'met' : 'not-met',
+        finding: severity
+          ? 'Confirmed clot burden, RV dysfunction, biomarkers, respiratory modifier, pressure, and perfusion were integrated as the fixed initial Category C3R pattern.'
+          : 'The fixed confirmed-PE severity pattern was not reviewed.',
+        atTick: severity?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'support-and-anticoagulate-acute-pe') {
+        const ordered = severity && oxygen && anticoagulation
+          && severity.tick <= Math.min(oxygen.tick, anticoagulation.tick);
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'Titrated-oxygen and immediate therapeutic-anticoagulation intents followed severity review without inventing device, agent, or dose choices.'
+            : 'Initial oxygen and anticoagulation intents were incomplete or preceded severity review.',
+          atTick: Math.max(oxygen?.tick ?? 0, anticoagulation?.tick ?? 0) } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'recognize-pe-deterioration') {
+        const ordered = oxygen && anticoagulation && deterioration
+          && Math.max(oxygen.tick, anticoagulation.tick) <= deterioration.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met',
+          finding: ordered
+            ? 'Serial hypotension and hypoperfusion were recognized as authored progression to Category E1 cardiopulmonary failure.'
+            : 'The serial cardiopulmonary deterioration was not recognized after initial treatment.',
+          atTick: deterioration?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = deterioration && escalation && deterioration.tick <= escalation.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met',
+        finding: ordered
+          ? 'Immediate multidisciplinary PE response and urgent reperfusion-strategy intent followed recognition of Category E1 deterioration.'
+          : 'Team escalation and reperfusion planning did not follow recognition of deterioration.',
+        atTick: escalation?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

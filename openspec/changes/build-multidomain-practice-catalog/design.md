@@ -187,8 +187,8 @@ hyponatremia with seizure; opioid toxicity; heat stroke; trauma primary survey; 
 syndrome with evolving pulse, perfusion, and neurologic asymmetry before definitive imaging.
 
 Wave A is complete at 39 registered anesthesia scenarios. Wave B is now live at the indexable
-`/emergency-medicine` module boundary with nine playable, completion-audited scenarios. The remaining
-16 planned titles remain descriptive scope only and do not enter playable counts before their full
+`/emergency-medicine` module boundary with 10 playable, completion-audited scenarios. The remaining
+15 planned titles remain descriptive scope only and do not enter playable counts before their full
 scenario contracts pass.
 
 ### Wave B slice 1: undifferentiated shock and the emergency-department frame
@@ -313,6 +313,21 @@ generic drug calculator or routine opioid action. Examination, test acquisition,
 selection, dosing or titration, urine output, renal and electrolyte response, precipitant treatment,
 intubation, shock care, disposition, chronic therapy, local protocol, and outcome remain outside the
 vignette.
+
+### Wave B slice 10: pulmonary embolism with deterioration
+
+The tenth emergency-medicine slice adds a serial, imaging-confirmed acute-PE lesson based on the
+2026 AHA/ACC multisociety clinical categories. The fixed initial state combines bilateral main and
+lobar clot burden, RV enlargement and dysfunction, elevated cardiac biomarkers, respiratory rate
+30/min, room-air SpO2 90%, and preserved perfusion as Category C3R. Learners review that whole
+pattern, record titrated oxygen and immediate therapeutic-anticoagulation intents, then reassess.
+
+Reassessment deliberately reveals persistent hypotension and hypoperfusion compatible with
+Category E1 cardiopulmonary failure. The final control activates multidisciplinary PE response and
+records urgent reperfusion-strategy intent without selecting a modality. Imaging, echocardiography,
+laboratory acquisition, complete risk scoring, drug selection or dosing, bleeding and reperfusion
+contraindication adjudication, airway technique, thrombolysis, thrombectomy or embolectomy skill,
+transfer, disposition, local protocol, complications, and outcome remain outside the vignette.
 
 #### Critical care: 24
 

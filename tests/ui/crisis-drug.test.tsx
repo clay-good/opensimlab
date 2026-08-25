@@ -176,6 +176,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       hasAdultAsthmaResponse: false,
       hasCopdExacerbationResponse: false,
       hasAcutePulmonaryEdemaResponse: false,
+      hasPulmonaryEmbolismResponse: false,
       hasEmergenceResidualBlockResponse: false,
       hasDelayedEmergenceResponse: false,
       hasExtubationReadinessResponse: false,

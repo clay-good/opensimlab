@@ -435,6 +435,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['acute-pulmonary-edema'],
   },
   {
+    id: 'pulmonary-embolism-findings-and-deterioration-are-authored',
+    headline: 'The confirmed PE, severity category, and deterioration are fixed teaching facts, not acquired findings or a predictive model.',
+    simplification: 'Authored CT, RV, biomarker, respiratory, pressure, perfusion, and lactate statements create one Category C3R-to-E1 sequence. No test acquisition, diagnostic uncertainty, complete score, measurement error, competing illness, or variable trajectory is modeled.',
+    whereItMisleads: 'Treating the category as a live calculator, assuming every PE deteriorates this way, or using the sequence to diagnose or predict an individual patient.',
+    correctUnderstanding: 'Acute PE severity is serial and patient-specific; integrate clinical state, hemodynamics, respiratory support, biomarkers, and RV findings as new evidence arrives.',
+    briefIn: ['pulmonary-embolism-deterioration'],
+  },
+  {
+    id: 'pulmonary-embolism-support-anticoagulation-and-reperfusion-are-intent-controls',
+    headline: 'Oxygen, anticoagulation, team activation, and reperfusion are bounded intents, not treatment selectors or procedure controls.',
+    simplification: 'The lab records a fixed oxygen display and dose-free intents. It does not choose a device, anticoagulant, dose, monitoring plan, vasoactive support, reperfusion modality, or procedural technique.',
+    whereItMisleads: 'Copying the displayed oxygen value, interpreting a click as treatment delivery, or assuming one reperfusion strategy suits every bleeding risk, anatomy, resource setting, or trajectory.',
+    correctUnderstanding: 'Real treatment requires immediate bedside support, contraindication review, appropriate anticoagulation, multidisciplinary expertise, local capability, and continuous reassessment.',
+    briefIn: ['pulmonary-embolism-deterioration'],
+  },
+  {
+    id: 'no-pulmonary-embolism-procedure-disposition-or-outcome',
+    headline: 'The vignette stops at urgent reperfusion planning and does not perform rescue therapy, transfer the patient, or predict outcome.',
+    simplification: 'Thrombolysis, catheter therapy, thrombectomy, embolectomy, mechanical support, ventilation, complications, transport, admission, follow-up, and recurrence prevention are absent.',
+    whereItMisleads: 'Assuming escalation stabilizes the patient, delaying local rescue processes, or inferring that the final low pressure is a treatment response or prognosis.',
+    correctUnderstanding: 'Category E cardiopulmonary failure requires immediate resource-specific rescue, hemodynamic and respiratory support, and ongoing critical care beyond this lesson.',
+    briefIn: ['pulmonary-embolism-deterioration'],
+  },
+  {
     id: 'malignant-hyperthermia-is-a-teaching-model',
     headline: 'The hypermetabolic carbon-dioxide, heart-rate, rigidity, and heat trajectories are bounded teaching models, not individualized predictions or a diagnostic test.',
     simplification: 'One latent severity drives excess carbon-dioxide production, tachycardia, '

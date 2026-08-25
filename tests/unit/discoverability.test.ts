@@ -243,6 +243,8 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
     expect(routeFor('/emergency-medicine/scenario/acute-pulmonary-edema')).toMatchObject({
       indexable: true, heading: 'Acute pulmonary edema',
     });
+    expect(routeFor('/emergency-medicine/scenario/pulmonary-embolism-deterioration'))
+      .toMatchObject({ indexable: true, heading: 'Pulmonary embolism with deterioration' });
   });
 
   it('Requirement: Modules Declare Their Own Physiological Timescale', () => {

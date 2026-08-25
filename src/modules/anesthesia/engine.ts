@@ -321,6 +321,11 @@ export class AnesthesiaEngine {
   private pulmonaryEdemaDiureticIntentAtTick: number | null = null;
   private pulmonaryEdemaVasodilatorIntentAtTick: number | null = null;
   private pulmonaryEdemaReassessedAtTick: number | null = null;
+  private pulmonaryEmbolismSeverityReviewedAtTick: number | null = null;
+  private pulmonaryEmbolismOxygenAtTick: number | null = null;
+  private pulmonaryEmbolismAnticoagulationAtTick: number | null = null;
+  private pulmonaryEmbolismDeteriorationAtTick: number | null = null;
+  private pulmonaryEmbolismEscalationAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1348,6 +1353,93 @@ export class AnesthesiaEngine {
         this.pulmonaryEdemaReassessedAtTick = this.currentTick;
         this.log('advisory', 'assessment', `acute-pulmonary-edema-reassessed-${this.currentTick}`,
           'Work of breathing, respiratory rate, oxygenation, blood pressure, mental status, and peripheral perfusion were reassessed. The bounded monitor now shows RR 22/min, SpO₂ 96%, and blood pressure 146/86 mmHg. Congestion, urine output, renal function, electrolytes, precipitant evaluation, support weaning, disposition, and outcome remain outside this initial-response vignette.');
+        break;
+      }
+      case 'pulmonary-embolism-deterioration-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) =>
+          event.type === 'narrative' && event.target === 'pulmonary-embolism-deterioration');
+        const valid = ['review-confirmed-pe-severity', 'record-titrated-oxygen',
+          'record-therapeutic-anticoagulation-intent', 'reassess-for-deterioration',
+          'activate-pert-and-record-reperfusion-intent'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `pulmonary-embolism-refused-${this.currentTick}`,
+            supported ? 'The pulmonary-embolism action was not one of the listed choices. Nothing changed.'
+              : 'The bounded pulmonary-embolism choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'review-confirmed-pe-severity') {
+          if (this.pulmonaryEmbolismSeverityReviewedAtTick !== null) {
+            this.log('warning', 'assessment', `pulmonary-embolism-severity-refused-${this.currentTick}`,
+              'The fixed pulmonary-embolism severity review has already been recorded.');
+            break;
+          }
+          this.pulmonaryEmbolismSeverityReviewedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pulmonary-embolism-severity-reviewed-${this.currentTick}`,
+            'Fixed initial assessment: sudden dyspnea and pleuritic pain, HR 124/min, RR 30/min, SpO₂ 90%, BP 112/70 mmHg, alert mentation, and warm perfused extremities. Authored CTPA confirms bilateral main and lobar acute pulmonary emboli; focused echocardiography shows RV enlargement and systolic dysfunction without pericardial effusion; troponin and BNP are elevated, with lactate 1.8 mmol/L. This is a fixed Category C3R pattern, not a live diagnostic calculation.');
+          break;
+        }
+        if (this.pulmonaryEmbolismSeverityReviewedAtTick === null) {
+          this.log('warning', 'assessment', `pulmonary-embolism-order-refused-${this.currentTick}`,
+            'Review the confirmed pulmonary embolism, severity markers, pressure, and perfusion first.');
+          break;
+        }
+        if (response === 'record-titrated-oxygen') {
+          if (this.pulmonaryEmbolismOxygenAtTick !== null) {
+            this.log('warning', 'equipment', `pulmonary-embolism-oxygen-refused-${this.currentTick}`,
+              'Titrated-oxygen intent has already been recorded.');
+            break;
+          }
+          this.pulmonaryEmbolismOxygenAtTick = this.currentTick;
+          this.ventilator = { ...this.ventilator, fio2: 0.4, delivering: true };
+          this.log('critical', 'equipment', `pulmonary-embolism-oxygen-${this.currentTick}`,
+            'Titrated supplemental-oxygen intent was recorded. Deep sedation and mechanical ventilation are deliberately not selected because acute RV dysfunction can decompensate when compensatory sympathetic tone and preload are lost. Device choice, flow, escalation, and airway rescue are outside this vignette.',
+            { intentOnly: true, fio2: 0.4, invasiveVentilationSelected: false });
+          break;
+        }
+        if (response === 'record-therapeutic-anticoagulation-intent') {
+          if (this.pulmonaryEmbolismAnticoagulationAtTick !== null) {
+            this.log('warning', 'drug', `pulmonary-embolism-anticoagulation-refused-${this.currentTick}`,
+              'Therapeutic-anticoagulation intent has already been recorded.');
+            break;
+          }
+          this.pulmonaryEmbolismAnticoagulationAtTick = this.currentTick;
+          this.log('critical', 'drug', `pulmonary-embolism-anticoagulation-${this.currentTick}`,
+            'Immediate therapeutic-anticoagulation intent was recorded for confirmed acute PE without an authored absolute contraindication. Agent, dose, renal adjustment, laboratory monitoring, bleeding assessment, and interaction with a reperfusion strategy are outside this vignette.', { intentOnly: true });
+          break;
+        }
+        if (response === 'reassess-for-deterioration') {
+          if (this.pulmonaryEmbolismOxygenAtTick === null
+            || this.pulmonaryEmbolismAnticoagulationAtTick === null
+            || this.currentTick <= Math.max(this.pulmonaryEmbolismOxygenAtTick,
+              this.pulmonaryEmbolismAnticoagulationAtTick)) {
+            this.log('warning', 'assessment', `pulmonary-embolism-reassessment-order-refused-${this.currentTick}`,
+              'Record oxygen and anticoagulation intents, then allow the next engine tick before serial reassessment.');
+            break;
+          }
+          if (this.pulmonaryEmbolismDeteriorationAtTick !== null) {
+            this.log('warning', 'assessment', `pulmonary-embolism-reassessment-refused-${this.currentTick}`,
+              'The fixed pulmonary-embolism deterioration has already been revealed.');
+            break;
+          }
+          this.pulmonaryEmbolismDeteriorationAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pulmonary-embolism-deterioration-recognized-${this.currentTick}`,
+            'Serial reassessment now shows persistent BP 78/50 mmHg, HR 138/min, cool mottled extremities, delayed capillary refill, new confusion, and fixed lactate 4.8 mmol/L despite oxygenation improving to 92%. The authored pattern has progressed to Category E1 cardiopulmonary failure with cardiogenic shock.');
+          break;
+        }
+        if (this.pulmonaryEmbolismDeteriorationAtTick === null) {
+          this.log('warning', 'assessment', `pulmonary-embolism-escalation-order-refused-${this.currentTick}`,
+            'Reassess and recognize the authored cardiopulmonary deterioration before escalation.');
+          break;
+        }
+        if (this.pulmonaryEmbolismEscalationAtTick !== null) {
+          this.log('warning', 'assessment', `pulmonary-embolism-escalation-refused-${this.currentTick}`,
+            'Multidisciplinary escalation and reperfusion-strategy intent have already been recorded.');
+          break;
+        }
+        this.pulmonaryEmbolismEscalationAtTick = this.currentTick;
+        this.log('critical', 'assessment', `pulmonary-embolism-escalation-${this.currentTick}`,
+          'Immediate pulmonary embolism response-team activation and urgent reperfusion-strategy intent were recorded for Category E1 deterioration. Systemic thrombolysis, catheter therapy, mechanical thrombectomy, and surgical embolectomy require real contraindication review, local expertise, and individualized selection; none is performed or preferred here.', { intentOnly: true, category: 'E1' });
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -4035,6 +4127,17 @@ export class AnesthesiaEngine {
         meanArterialMmHg: treated ? 106 : 137,
       };
     }
+    if (this.scenario.timeline.some((event) =>
+      event.type === 'narrative' && event.target === 'pulmonary-embolism-deterioration')) {
+      const deteriorated = this.pulmonaryEmbolismDeteriorationAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: deteriorated ? 138 : 124,
+        respiratoryRateBpm: deteriorated ? 34 : 30,
+        spo2Percent: this.pulmonaryEmbolismOxygenAtTick === null ? 90 : 92,
+        systolicMmHg: deteriorated ? 78 : 112,
+        diastolicMmHg: deteriorated ? 50 : 70,
+        meanArterialMmHg: deteriorated ? 59 : 84 };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -4344,6 +4447,13 @@ export class AnesthesiaEngine {
           diureticIntentAtTick: this.pulmonaryEdemaDiureticIntentAtTick,
           vasodilatorIntentAtTick: this.pulmonaryEdemaVasodilatorIntentAtTick,
           reassessedAtTick: this.pulmonaryEdemaReassessedAtTick,
+        },
+        pulmonaryEmbolismAssessment: {
+          severityReviewedAtTick: this.pulmonaryEmbolismSeverityReviewedAtTick,
+          oxygenAtTick: this.pulmonaryEmbolismOxygenAtTick,
+          anticoagulationAtTick: this.pulmonaryEmbolismAnticoagulationAtTick,
+          deteriorationAtTick: this.pulmonaryEmbolismDeteriorationAtTick,
+          escalationAtTick: this.pulmonaryEmbolismEscalationAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,
