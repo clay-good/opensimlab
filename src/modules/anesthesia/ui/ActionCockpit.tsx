@@ -311,6 +311,7 @@ export interface ActionCockpitProps {
     readonly hyperkalemiaAssessment?: {
       readonly patternReviewedAtTick: number | null;
       readonly calciumAtTick: number | null;
+      readonly postCalciumEcgAtTick: number | null;
       readonly insulinGlucoseAtTick: number | null;
       readonly betaAgonistAtTick: number | null;
       readonly removalAtTick: number | null;
@@ -827,6 +828,7 @@ export interface ActionCockpitProps {
   ) => void;
   readonly onHyperkalemiaResponse?: (
     action: 'review-hyperkalemia-pattern' | 'record-hyperkalemia-calcium-intent'
+      | 'review-hyperkalemia-post-calcium-ecg'
       | 'record-hyperkalemia-insulin-glucose' | 'record-hyperkalemia-beta-agonist'
       | 'record-hyperkalemia-removal-and-cause-control' | 'reassess-hyperkalemia',
   ) => void;
@@ -4322,6 +4324,7 @@ function HyperkalemiaTray({ assessment, onAction }: {
 }) {
   const reviewed = assessment?.patternReviewedAtTick != null;
   const calcium = assessment?.calciumAtTick != null;
+  const postCalcium = assessment?.postCalciumEcgAtTick != null;
   const insulin = assessment?.insulinGlucoseAtTick != null;
   const betaAgonist = assessment?.betaAgonistAtTick != null;
   const removal = assessment?.removalAtTick != null;
@@ -4333,7 +4336,8 @@ function HyperkalemiaTray({ assessment, onAction }: {
         <Badge kind="teaching">K 7.1 · ECG toxicity · no arrest</Badge>
         <div className="syringe__meta">HR 48 · peaked T · flat P · QRS 140 ms</div>
         <p className="syringe__remaining" role="status">
-          {calcium ? 'ECG stabilized · QRS 104 ms · K still 7.1'
+          {postCalcium ? 'Reported ECG response · QRS 104 ms · K still 7.1'
+            : calcium ? 'Calcium intent recorded · no ECG or K change claimed'
             : reviewed ? 'Severe toxicity recognized · calcium intent next'
               : 'Confirmed K + ECG + driver review pending'}
         </p>
@@ -4342,6 +4346,8 @@ function HyperkalemiaTray({ assessment, onAction }: {
             onClick={() => onAction('review-hyperkalemia-pattern')}>Review K + ECG + drivers</Button>
           <Button className="crisis-drug__action" disabled={!reviewed || calcium}
             onClick={() => onAction('record-hyperkalemia-calcium-intent')}>Record IV calcium-salt intent</Button>
+          <Button className="crisis-drug__action" disabled={!calcium || postCalcium}
+            onClick={() => onAction('review-hyperkalemia-post-calcium-ecg')}>Review post-team ECG</Button>
         </div>
         <p className="field__hint">Calcium protects the myocardium; it does not lower potassium. Salt, dose, access, delivery, and repeat dosing follow local protocol and are not simulated.</p>
       </section>
@@ -4350,19 +4356,19 @@ function HyperkalemiaTray({ assessment, onAction }: {
         <div className="syringe__meta">Insulin-glucose · adjunct shift · removal · rebound</div>
         <p className="syringe__remaining" role="status">
           {reassessed ? '1-hour K 5.8 · glucose 92 · QRS 98 ms · keep watching'
-            : removal ? 'Removal + cause control active · reassess next'
-              : betaAgonist ? 'Temporary shifting complete · remove K next'
-                : insulin ? 'Insulin-glucose recorded · adjunct available'
-                  : calcium ? 'Myocardium protected · shifting available' : 'Calcium intent pending'}
+            : postCalcium && insulin && betaAgonist && removal
+              ? 'All lanes recorded · allow time before the fixed 1-hour panel'
+              : calcium ? 'ECG review · shifting · removal can proceed in parallel'
+                : 'Calcium intent pending'}
         </p>
         <div className="syringe__presets">
           <Button className="crisis-drug__action" disabled={!calcium || insulin}
             onClick={() => onAction('record-hyperkalemia-insulin-glucose')}>Record insulin-glucose + surveillance</Button>
-          <Button className="crisis-drug__action" disabled={!insulin || betaAgonist}
+          <Button className="crisis-drug__action" disabled={!calcium || betaAgonist}
             onClick={() => onAction('record-hyperkalemia-beta-agonist')}>Record adjunct beta-2 shift</Button>
-          <Button className="crisis-drug__action" disabled={!betaAgonist || removal}
+          <Button className="crisis-drug__action" disabled={!calcium || removal}
             onClick={() => onAction('record-hyperkalemia-removal-and-cause-control')}>Remove K + stop drivers + renal help</Button>
-          <Button className="crisis-drug__action" disabled={!removal || reassessed}
+          <Button className="crisis-drug__action" disabled={!postCalcium || !insulin || !betaAgonist || !removal || reassessed}
             onClick={() => onAction('reassess-hyperkalemia')}>Recheck ECG + K + glucose</Button>
         </div>
         <p className="field__hint">No ECG reading, dose, delivery, potassium kinetics, glucose complication, binder, diuresis, dialysis, recurrence, disposition, or outcome is simulated.</p>

@@ -364,6 +364,7 @@ export class AnesthesiaEngine {
   private dkaTransitionAtTick: number | null = null;
   private hyperkalemiaPatternReviewedAtTick: number | null = null;
   private hyperkalemiaCalciumAtTick: number | null = null;
+  private hyperkalemiaPostCalciumEcgAtTick: number | null = null;
   private hyperkalemiaInsulinGlucoseAtTick: number | null = null;
   private hyperkalemiaBetaAgonistAtTick: number | null = null;
   private hyperkalemiaRemovalAtTick: number | null = null;
@@ -2307,6 +2308,7 @@ export class AnesthesiaEngine {
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
           && event.target === 'hyperkalemia-with-ecg-change');
         const valid = ['review-hyperkalemia-pattern', 'record-hyperkalemia-calcium-intent',
+          'review-hyperkalemia-post-calcium-ecg',
           'record-hyperkalemia-insulin-glucose', 'record-hyperkalemia-beta-agonist',
           'record-hyperkalemia-removal-and-cause-control', 'reassess-hyperkalemia'].includes(response);
         if (!supported || !valid) {
@@ -2339,12 +2341,28 @@ export class AnesthesiaEngine {
           }
           this.hyperkalemiaCalciumAtTick = this.currentTick;
           this.log('critical', 'drug', `hyperkalemia-calcium-${this.currentTick}`,
-            'Immediate local-protocol IV calcium-salt intent was recorded for ECG toxicity. Fixed repeat ECG shows HR 62/min, visible P waves, narrower QRS 104 ms, and less prominent T waves; potassium remains authored at 7.1 mmol/L because calcium stabilizes the myocardium but does not remove or shift potassium. Salt selection, dose, access, delivery, repeat dosing, and individual response are not simulated.', { intentOnly: true, potassiumMmolPerL: 7.1, repeatQrsMs: 104 });
+            'Immediate local-protocol IV calcium-salt intent was recorded for ECG toxicity. Calcium can stabilize the myocardium but does not remove or shift potassium. Salt selection, dose, access, delivery, repeat dosing, and individual response are not simulated; this intent click does not change the ECG or potassium.', { intentOnly: true, potassiumMmolPerL: 7.1, treatmentDeliveredByLearner: false, ecgChanged: false });
           break;
         }
         if (this.hyperkalemiaCalciumAtTick === null) {
           this.log('warning', 'assessment', `hyperkalemia-calcium-order-refused-${this.currentTick}`,
             'Protect the myocardium for the authored ECG toxicity before recording potassium-shifting intent.');
+          break;
+        }
+        if (response === 'review-hyperkalemia-post-calcium-ecg') {
+          if (this.hyperkalemiaPostCalciumEcgAtTick !== null) {
+            this.log('warning', 'assessment', `hyperkalemia-post-calcium-refused-${this.currentTick}`,
+              'The authored post-team ECG report has already been reviewed.');
+            break;
+          }
+          if (this.currentTick <= this.hyperkalemiaCalciumAtTick) {
+            this.log('warning', 'assessment', `hyperkalemia-post-calcium-time-refused-${this.currentTick}`,
+              'Allow a later simulated tick before reviewing the treating-team response. Intent alone does not change conduction.');
+            break;
+          }
+          this.hyperkalemiaPostCalciumEcgAtTick = this.currentTick;
+          this.log('critical', 'assessment', `hyperkalemia-post-calcium-ecg-${this.currentTick}`,
+            'Fixed later treating-team report after delivered local-protocol care: HR 62/min, visible P waves, QRS 104 ms, and less prominent T waves. Potassium remains 7.1 mmol/L. ECG improvement is an authored response, not learner delivery, biochemical resolution, or proof of one cause.', { potassiumMmolPerL: 7.1, repeatQrsMs: 104, treatmentDeliveredByLearner: false });
           break;
         }
         if (response === 'record-hyperkalemia-insulin-glucose') {
@@ -2358,11 +2376,6 @@ export class AnesthesiaEngine {
             'Local-protocol IV insulin-glucose intent was recorded with baseline and structured post-treatment glucose surveillance. Dose, glucose formulation, infusion, potassium shift, hypoglycemia, and rescue are not simulated.', { intentOnly: true, baselineGlucoseMgPerDl: 108 });
           break;
         }
-        if (this.hyperkalemiaInsulinGlucoseAtTick === null) {
-          this.log('warning', 'assessment', `hyperkalemia-shift-order-refused-${this.currentTick}`,
-            'Record insulin-glucose and its glucose-surveillance boundary before the adjunct shifting path.');
-          break;
-        }
         if (response === 'record-hyperkalemia-beta-agonist') {
           if (this.hyperkalemiaBetaAgonistAtTick !== null) {
             this.log('warning', 'drug', `hyperkalemia-beta-agonist-refused-${this.currentTick}`,
@@ -2371,12 +2384,7 @@ export class AnesthesiaEngine {
           }
           this.hyperkalemiaBetaAgonistAtTick = this.currentTick;
           this.log('critical', 'drug', `hyperkalemia-beta-agonist-${this.currentTick}`,
-            'Adjunct nebulized beta-2 agonist intent was recorded alongside insulin-glucose, not as sole therapy. Agent, dose, delivery, response variability, and adverse effects are not simulated.', { intentOnly: true });
-          break;
-        }
-        if (this.hyperkalemiaBetaAgonistAtTick === null) {
-          this.log('warning', 'assessment', `hyperkalemia-removal-order-refused-${this.currentTick}`,
-            'Complete the bounded temporary shifting path before definitive removal and cause control.');
+            'Adjunct nebulized beta-2 agonist intent was recorded as one temporary shifting lane, not as sole therapy. Agent, dose, delivery, response variability, and adverse effects are not simulated.', { intentOnly: true });
           break;
         }
         if (response === 'record-hyperkalemia-removal-and-cause-control') {
@@ -2390,9 +2398,19 @@ export class AnesthesiaEngine {
             'Lisinopril and trimethoprim were held; dehydration and kidney injury evaluation, renal consultation, local potassium-removal strategy, and urgent dialysis contingency for refractory severe hyperkalemia were recorded. Binder, diuretic, fluid, and dialysis selection or delivery are not simulated.', { intentOnly: true });
           break;
         }
-        if (this.hyperkalemiaRemovalAtTick === null) {
+        if (this.hyperkalemiaPostCalciumEcgAtTick === null
+          || this.hyperkalemiaInsulinGlucoseAtTick === null
+          || this.hyperkalemiaBetaAgonistAtTick === null
+          || this.hyperkalemiaRemovalAtTick === null) {
           this.log('warning', 'assessment', `hyperkalemia-reassessment-order-refused-${this.currentTick}`,
-            'Record definitive potassium removal, driver control, and dialysis contingency before reassessment.');
+            'Review the post-team ECG and complete both shifting lanes plus removal and cause control before final reassessment.');
+          break;
+        }
+        if (this.currentTick <= Math.max(this.hyperkalemiaPostCalciumEcgAtTick,
+          this.hyperkalemiaInsulinGlucoseAtTick, this.hyperkalemiaBetaAgonistAtTick,
+          this.hyperkalemiaRemovalAtTick)) {
+          this.log('warning', 'assessment', `hyperkalemia-reassessment-time-refused-${this.currentTick}`,
+            'Allow a later simulated tick before reviewing the authored 1-hour potassium, glucose, and ECG panel.');
           break;
         }
         if (this.hyperkalemiaReassessedAtTick !== null) {
@@ -7916,6 +7934,7 @@ export class AnesthesiaEngine {
         hyperkalemiaAssessment: {
           patternReviewedAtTick: this.hyperkalemiaPatternReviewedAtTick,
           calciumAtTick: this.hyperkalemiaCalciumAtTick,
+          postCalciumEcgAtTick: this.hyperkalemiaPostCalciumEcgAtTick,
           insulinGlucoseAtTick: this.hyperkalemiaInsulinGlucoseAtTick,
           betaAgonistAtTick: this.hyperkalemiaBetaAgonistAtTick,
           removalAtTick: this.hyperkalemiaRemovalAtTick,

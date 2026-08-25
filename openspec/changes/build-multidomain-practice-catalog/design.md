@@ -467,12 +467,14 @@ kinetics or complications, or predict disposition, recurrence, and outcome.
 The twentieth emergency-medicine slice adds confirmed severe hyperkalemia with bradycardia, peaked
 T waves, P-wave flattening, and QRS widening in an adult with CKD, dehydration, and medication
 drivers. Learners review the fixed potassium and ECG; record immediate local-protocol calcium-salt
-intent; record insulin-glucose with glucose surveillance and adjunct beta-2 agonist intent; stop
-contributors; activate renal expertise, potassium removal, and dialysis contingency; then reassess
-a fixed ECG, potassium, glucose, and rebound-risk panel.
+intent; review a separate later treating-team ECG report without attributing delivery to the learner;
+record insulin-glucose with glucose surveillance and adjunct beta-2 agonist intent while stopping
+contributors and activating renal expertise, potassium removal, and dialysis contingency in a
+parallel lane; then, after elapsed time, reassess a fixed ECG, potassium, glucose, and rebound-risk
+panel. Same-tick batching cannot impersonate either reported response.
 
-The focused surface makes the temporal logic unmistakable: protect the heart, shift now, remove
-next, and watch for return. It does not acquire a specimen or ECG, select or deliver a dose, model
+The focused surface makes the temporal logic unmistakable: protect the heart, shift and remove in
+parallel, and watch for return. It does not acquire a specimen or ECG, select or deliver a dose, model
 potassium kinetics or hypoglycemia, choose a removal strategy, perform dialysis, or predict later
 rebound, disposition, recurrence, and outcome.
 

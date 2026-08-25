@@ -17,6 +17,7 @@ describe('Requirement: severe hyperkalemia opens a focused protect-shift-remove 
         crystalloidTotalMl: 0, dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
         lastDantroleneTick: null, activeCooling: false, seizureSuppressed: false,
         hyperkalemiaAssessment: { patternReviewedAtTick: null, calciumAtTick: null,
+          postCalciumEcgAtTick: null,
           insulinGlucoseAtTick: null, betaAgonistAtTick: null, removalAtTick: null,
           reassessedAtTick: null },
       }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual',

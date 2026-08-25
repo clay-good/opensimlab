@@ -13,11 +13,14 @@ dialysis contingency, and reassessing ECG, potassium, glucose, kidney state, and
   recommends emergency treatment and expert help. A 12-lead ECG and cardiac monitoring are advised
   from potassium 6.0 mmol/L. This case authors a confirmed 7.1 mmol/L result and ECG toxicity.
 - IV calcium salt is used when ECG changes are present to stabilize the myocardium. It does not
-  lower serum potassium. The fixed repeat ECG improves while potassium remains 7.1 mmol/L.
+  lower serum potassium. The intent click changes nothing; a separate later treating-team report
+  supplies the improved ECG while potassium remains 7.1 mmol/L.
 - Insulin-glucose shifts potassium intracellularly and requires structured glucose surveillance;
   a nebulized beta-2 agonist may be an adjunct but not sole therapy. The case records no dose.
 - Shifting is temporary. Potassium removal, driver control, renal expertise, and a dialysis
-  contingency remain necessary, followed by serial potassium and glucose checks and rebound review.
+  contingency remain necessary. Shifting and removal lanes may proceed in parallel after immediate
+  myocardial-protection intent, followed only after elapsed time by serial potassium, glucose, ECG,
+  and rebound review.
 
 ## Explicit exclusions
 

@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 93 reports torsades state. */
-export const WORKER_PROTOCOL_VERSION = 93;
+export const WORKER_PROTOCOL_VERSION = 94;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -393,6 +393,7 @@ export interface EquipmentSnapshot {
     readonly hyperkalemiaAssessment?: {
       readonly patternReviewedAtTick: number | null;
       readonly calciumAtTick: number | null;
+      readonly postCalciumEcgAtTick: number | null;
       readonly insulinGlucoseAtTick: number | null;
       readonly betaAgonistAtTick: number | null;
       readonly removalAtTick: number | null;

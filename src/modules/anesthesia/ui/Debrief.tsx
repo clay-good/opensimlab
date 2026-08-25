@@ -2870,6 +2870,7 @@ export function objectiveFindings(
         finding: 'The hyperkalemia-with-ECG-change vignette was not active.' } satisfies ObjectiveFinding;
       const reviewed = log.find((event) => event.eventId.startsWith('hyperkalemia-reviewed-'));
       const calcium = log.find((event) => /^hyperkalemia-calcium-\d+$/.test(event.eventId));
+      const postCalcium = log.find((event) => /^hyperkalemia-post-calcium-ecg-\d+$/.test(event.eventId));
       const insulin = log.find((event) => /^hyperkalemia-insulin-glucose-\d+$/.test(event.eventId));
       const betaAgonist = log.find((event) => /^hyperkalemia-beta-agonist-\d+$/.test(event.eventId));
       const removal = log.find((event) => /^hyperkalemia-removal-\d+$/.test(event.eventId));
@@ -2880,25 +2881,28 @@ export function objectiveFindings(
           : 'The fixed severe hyperkalemia pattern and drivers were not reviewed.',
         atTick: reviewed?.tick ?? 0 } satisfies ObjectiveFinding;
       if (objective.id === 'protect-heart-in-hyperkalemia') {
-        const ordered = reviewed && calcium && reviewed.tick <= calcium.tick;
+        const ordered = reviewed && calcium && postCalcium
+          && reviewed.tick <= calcium.tick && calcium.tick < postCalcium.tick;
         return { ...base, outcome: ordered ? 'met' : 'not-met',
-          finding: ordered ? 'Calcium-salt intent followed ECG-toxicity recognition and improved the authored ECG without claiming potassium reduction.'
-            : 'Myocardial-protection intent was absent or out of order.', atTick: calcium?.tick ?? 0 } satisfies ObjectiveFinding;
+          finding: ordered ? 'Calcium-salt intent followed ECG-toxicity recognition; a separate later treating-team report showed ECG improvement without claiming learner delivery or potassium reduction.'
+            : 'Myocardial-protection intent or the separate elapsed ECG response was absent or out of order.', atTick: postCalcium?.tick ?? calcium?.tick ?? 0 } satisfies ObjectiveFinding;
       }
       if (objective.id === 'shift-potassium-and-protect-glucose') {
         const ordered = calcium && insulin && betaAgonist
-          && calcium.tick <= insulin.tick && insulin.tick <= betaAgonist.tick;
+          && calcium.tick <= insulin.tick && calcium.tick <= betaAgonist.tick;
         return { ...base, outcome: ordered ? 'met' : 'not-met',
-          finding: ordered ? 'Insulin-glucose with glucose surveillance and an adjunct beta-2 agonist followed myocardial protection.'
-            : 'The bounded shifting and glucose-surveillance sequence was incomplete or out of order.', atTick: betaAgonist?.tick ?? 0 } satisfies ObjectiveFinding;
+          finding: ordered ? 'Insulin-glucose with glucose surveillance and an adjunct beta-2 agonist followed myocardial-protection intent in parallel lanes.'
+            : 'The bounded shifting and glucose-surveillance lanes were incomplete or preceded myocardial protection.', atTick: Math.max(insulin?.tick ?? 0, betaAgonist?.tick ?? 0) } satisfies ObjectiveFinding;
       }
       if (objective.id === 'remove-potassium-and-control-cause') {
-        const ordered = betaAgonist && removal && betaAgonist.tick <= removal.tick;
+        const ordered = calcium && removal && calcium.tick <= removal.tick;
         return { ...base, outcome: ordered ? 'met' : 'not-met',
-          finding: ordered ? 'Contributors were held and renal removal plus dialysis contingency followed temporary shifting.'
-            : 'Definitive removal and cause control were absent or out of order.', atTick: removal?.tick ?? 0 } satisfies ObjectiveFinding;
+          finding: ordered ? 'Contributors, renal removal, and dialysis contingency were recorded without waiting for temporary shifting to finish.'
+            : 'Definitive removal and cause control were absent or preceded myocardial protection.', atTick: removal?.tick ?? 0 } satisfies ObjectiveFinding;
       }
-      const ordered = removal && reassessed && removal.tick <= reassessed.tick;
+      const ordered = postCalcium && insulin && betaAgonist && removal && reassessed
+        && postCalcium.tick < reassessed.tick && insulin.tick < reassessed.tick
+        && betaAgonist.tick < reassessed.tick && removal.tick < reassessed.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met',
         finding: ordered ? 'ECG, potassium, glucose, kidney function, removal, and rebound risk were reassessed without claiming resolution.'
           : 'Serial reassessment and rebound surveillance were incomplete or out of order.', atTick: reassessed?.tick ?? 0 } satisfies ObjectiveFinding;
