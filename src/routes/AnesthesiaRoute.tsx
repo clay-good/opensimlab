@@ -90,7 +90,7 @@ const CRITICAL_CARE_CONFIG: ClinicalModuleConfig = {
 const CARDIOLOGY_CONFIG: ClinicalModuleConfig = {
   id: 'cardiology', basePath: '/cardiology', heading: 'Cardiology simulator',
   catalogIntroduction: 'Calm cardiovascular rehearsals from clinic to inpatient care. Read the trajectory, surface what remains, and make each next step earn its place.',
-  catalogStatus: 'Six bounded cardiology labs are playable now. The remaining Wave C titles stay visibly planned until their full contracts pass.',
+  catalogStatus: 'Seven bounded cardiology labs are playable now. The remaining Wave C titles stay visibly planned until their full contracts pass.',
   scenarios: CARDIOLOGY_SCENARIOS, defaultScenarioId: DEFAULT_CARDIOLOGY_SCENARIO_ID,
   getScenario: getCardiologyScenario,
 };

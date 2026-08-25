@@ -1085,6 +1085,25 @@ does not examine; acquire or interpret monitoring, tests, imaging, angiography, 
 diagnose; prescribe or deliver treatment; select or place a device; perform PCI or surgery;
 authorize or perform transfer; determine disposition or prognosis; or predict outcome.
 
+### Wave C cardiology slice 7: regular narrow-complex tachycardia
+
+The seventh cardiology slice begins in a monitored hospital-based urgent rhythm unit with abrupt
+palpitations and a fixed regular narrow-complex 12-lead report at 176/min. Preserved pressure, alert
+mentation, warm perfusion, normal oxygenation, and no authored shock, ischemic discomfort, acute
+heart failure, or syncope support a stable pathway now without using rate alone. Learners preserve
+AV-nodal reentry, accessory-pathway, atrial-tachycardia, flutter, sinus, and contributor uncertainty
+while reviewing continuous monitoring, access, contraindications, and resuscitation readiness.
+
+Coached modified-Valsalva intent is followed only after elapsed simulated time by a fixed stable
+nonconversion review. Protocol-bounded adenosine intent then precedes a second elapsed reassessment
+with authored sinus conversion, preserved mechanism uncertainty, recurrence and instability
+triggers, ownership, and cardiology/electrophysiology follow-up. This is distinct from the unstable
+Emergency Medicine narrow-tachycardia lab, which begins with hypotension, altered mentation,
+ischemic discomfort, and shock and rehearses prompt synchronized cardioversion. The stable lab does
+not examine; acquire or interpret an ECG or test; diagnose a mechanism; perform a vagal maneuver;
+select a dose; prescribe or deliver medication; perform cardioversion or ablation; determine
+disposition or prognosis; predict recurrence or outcome; or assess psychomotor competence.
+
 #### Respiratory medicine: 15
 
 Acute severe asthma; COPD exacerbation; community-acquired pneumonia with hypoxemia; pulmonary

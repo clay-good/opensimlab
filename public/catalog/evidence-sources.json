@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 115,
+  "sourceCount": 117,
   "sources": [
     {
       "id": "association-qrh-2023",
@@ -1500,6 +1500,28 @@
       "locator": "151:e687-e707; doi:10.1161/CIR.0000000000001300",
       "usedFor": "The regional-care boundary: cardiac critical-care systems use protocolized escalation and transfer pathways, with higher-level care considered for selected deteriorating shock and multisystem organ dysfunction.",
       "verifiedAgainst": "https://www.jacc.org/doi/10.1016/j.jacc.2025.02.002",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "aha-adult-tachyarrhythmia-algorithm-2025",
+      "authors": "American Heart Association",
+      "title": "Adult Tachyarrhythmia With a Pulse Algorithm",
+      "publication": "2025 Guidelines for CPR and ECC",
+      "year": 2025,
+      "locator": "Algorithm ACLS Tachycardia 250514",
+      "usedFor": "The stable regular narrow-tachycardia boundary: determine instability from the whole patient; use monitoring, pressure, oximetry, and access; avoid oxygen without hypoxemia; and use vagal maneuvers and protocol-governed adenosine for a stable regular narrow rhythm.",
+      "verifiedAgainst": "https://www.heart.org/-/media/CPR-Files/CPR-Guidelines-Files/2025-Algorithms/Algorithm-ACLS-Tachycardia-250514.pdf",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "page-svt-guideline-2015",
+      "authors": "Page RL, Joglar JA, Caldwell MA, et al",
+      "title": "2015 ACC/AHA/HRS Guideline for the Management of Adult Patients With Supraventricular Tachycardia",
+      "publication": "Circulation",
+      "year": 2016,
+      "locator": "133:e506-e574; doi:10.1161/CIR.0000000000000311",
+      "usedFor": "The mechanism and follow-up boundary: regular SVT includes several mechanisms; acute vagal and adenosine pathways do not erase diagnostic uncertainty; ongoing observation, medication, or electrophysiology and ablation decisions depend on symptoms, recurrence, preferences, and context.",
+      "verifiedAgainst": "https://professional.heart.org/en/guidelines-statements/2015-accahahrs-guideline-for-the-management-of-adult-patients-withe506",
       "verifiedOn": "2026-08-25"
     },
     {

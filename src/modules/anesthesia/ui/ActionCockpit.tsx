@@ -591,6 +591,17 @@ export interface ActionCockpitProps {
       readonly routineDeviceSelected: false;
       readonly treatmentDelivered: false;
     };
+    readonly stableNarrowTachycardiaAssessment?: {
+      readonly stabilityAtTick: number | null;
+      readonly contextAtTick: number | null;
+      readonly vagalAtTick: number | null;
+      readonly vagalResponseAtTick: number | null;
+      readonly adenosineAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+      readonly hemodynamicallyStable: true;
+      readonly mechanismProven: false;
+      readonly treatmentDelivered: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -957,6 +968,13 @@ export interface ActionCockpitProps {
       | 'reopen-post-infarction-shock-causes' | 'contact-post-infarction-shock-center'
       | 'record-post-infarction-shock-bridge' | 'handoff-post-infarction-shock-trajectory',
   ) => void;
+  readonly onStableNarrowTachycardiaResponse?: (
+    action: 'reconcile-stable-regular-narrow-tachycardia'
+      | 'review-stable-regular-narrow-context' | 'record-stable-regular-narrow-vagal-intent'
+      | 'review-stable-regular-narrow-vagal-response'
+      | 'record-stable-regular-narrow-adenosine-intent'
+      | 'reassess-stable-regular-narrow-trajectory',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1197,6 +1215,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'post-infarction-cardiogenic-shock-escalation',
     ),
+    hasStableNarrowTachycardiaResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'regular-narrow-complex-tachycardia',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1298,6 +1320,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'acute-decompensated-heart-failure')
       || (event.type === 'narrative' && event.target === 'atrial-fibrillation-with-rapid-response')
       || (event.type === 'narrative' && event.target === 'post-infarction-cardiogenic-shock-escalation')
+      || (event.type === 'narrative' && event.target === 'regular-narrow-complex-tachycardia')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1339,6 +1362,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasHeartFailureResponse,
     hasAfRvrResponse,
     hasPostInfarctionShockResponse,
+    hasStableNarrowTachycardiaResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1397,7 +1421,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasSepticShockResuscitationResponse;
   const hasAnyNonAcuteAssessment = hasStableChestPainResponse || hasNstemiRiskResponse
     || hasClinicStemiResponse
-    || hasHeartFailureResponse || hasAfRvrResponse || hasPostInfarctionShockResponse;
+    || hasHeartFailureResponse || hasAfRvrResponse || hasPostInfarctionShockResponse
+    || hasStableNarrowTachycardiaResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1428,7 +1453,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasPostInfarctionShockResponse
+  const responseTray = hasStableNarrowTachycardiaResponse
+    ? { id: 'crisis', label: 'Stable rhythm review' } as const
+    : hasPostInfarctionShockResponse
     ? { id: 'crisis', label: 'Shock escalation' } as const
     : hasClinicStemiResponse
     ? { id: 'crisis', label: 'STEMI first actions' } as const
@@ -1599,6 +1626,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasHeartFailureResponse
     || hasAfRvrResponse
     || hasPostInfarctionShockResponse
+    || hasStableNarrowTachycardiaResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2125,6 +2153,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasPostInfarctionShockResponse && (
               <PostInfarctionShockTray assessment={props.resuscitation.postInfarctionShockAssessment}
                 onAction={props.onPostInfarctionShockResponse ?? (() => {})} />
+            )}
+            {hasStableNarrowTachycardiaResponse && (
+              <StableNarrowTachycardiaTray
+                assessment={props.resuscitation.stableNarrowTachycardiaAssessment}
+                onAction={props.onStableNarrowTachycardiaResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -5834,6 +5867,63 @@ function NstemiRiskTray({ assessment, onAction }: {
             onClick={() => onAction('record-nstemi-monitoring-and-handoff')}>Record triggers + owner + reassessment</Button>
         </div>
         <p className="field__hint">No score, medication, angiography, or procedure is supplied. The applicable local pathway resolves exact timing as risk evolves.</p>
+      </section>
+    </div>
+  );
+}
+
+function StableNarrowTachycardiaTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['stableNarrowTachycardiaAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onStableNarrowTachycardiaResponse']>;
+}) {
+  const stability = assessment?.stabilityAtTick != null;
+  const context = assessment?.contextAtTick != null;
+  const vagal = assessment?.vagalAtTick != null;
+  const vagalResponse = assessment?.vagalResponseAtTick != null;
+  const adenosine = assessment?.adenosineAtTick != null;
+  const reassessed = assessment?.reassessmentAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="stable-narrow-first-title">
+        <div id="stable-narrow-first-title" className="syringe__name">Fast rhythm. Steady patient.</div>
+        <Badge kind="teaching">regular · narrow · stable now</Badge>
+        <div className="syringe__meta">176/min · QRS 82 ms · BP 124/78 · warm + alert</div>
+        <p className="syringe__remaining" role="status">
+          {vagal ? 'Vagal intent recorded · allow observation time'
+            : context ? 'Mechanism open · monitored first step ready'
+              : stability ? 'Stable now · review context + readiness'
+                : 'Read the rhythm through the whole patient'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={stability}
+            onClick={() => onAction('reconcile-stable-regular-narrow-tachycardia')}>Reconcile rhythm + stability</Button>
+          <Button className="crisis-drug__action" disabled={!stability || context}
+            onClick={() => onAction('review-stable-regular-narrow-context')}>Review context + monitored readiness</Button>
+          <Button className="crisis-drug__action" disabled={!context || vagal}
+            onClick={() => onAction('record-stable-regular-narrow-vagal-intent')}>Record coached modified-Valsalva intent</Button>
+        </div>
+        <p className="field__hint">Heart rate alone does not define instability. The fixed 12-lead supplies width and regularity; it does not prove AVNRT, AVRT, atrial tachycardia, or flutter.</p>
+      </section>
+      <section className="syringe" aria-labelledby="stable-narrow-response-title">
+        <div id="stable-narrow-response-title" className="syringe__name">Try gently. Watch closely. Plan beyond today.</div>
+        <Badge kind="teaching">response · suitability · recurrence · rhythm follow-up</Badge>
+        <div className="syringe__meta">continuous rhythm + pressure · access ready · no routine oxygen</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'Sinus 88/min · mechanism open · follow-up owned'
+            : adenosine ? 'Adenosine intent recorded · allow reassessment time'
+              : vagalResponse ? 'Still regular + stable · bounded next intent ready'
+                : vagal ? 'Observe before deciding'
+                  : 'Monitored first response pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!vagal || vagalResponse}
+            onClick={() => onAction('review-stable-regular-narrow-vagal-response')}>Review observed vagal response</Button>
+          <Button className="crisis-drug__action" disabled={!vagalResponse || adenosine}
+            onClick={() => onAction('record-stable-regular-narrow-adenosine-intent')}>Record monitored adenosine intent</Button>
+          <Button className="crisis-drug__action" disabled={!adenosine || reassessed}
+            onClick={() => onAction('reassess-stable-regular-narrow-trajectory')}>Reassess rhythm + recurrence plan</Button>
+        </div>
+        <p className="field__hint">No dose or drug delivery is supplied. Instability opens synchronized cardioversion; conversion does not prove one mechanism, cure recurrence, or choose ablation.</p>
       </section>
     </div>
   );

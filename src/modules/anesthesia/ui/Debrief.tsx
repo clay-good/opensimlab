@@ -4073,6 +4073,23 @@ export function objectiveFindings(
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Residual congestion prevented a discharge-ready declaration while ownership and follow-up stayed explicit.' : 'Readiness and ownership were absent or preceded transition intent.', atTick: readiness?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['reconcile-stable-regular-narrow-tachycardia', 'review-stable-regular-narrow-context',
+      'record-stable-regular-narrow-vagal-intent',
+      'record-stable-regular-narrow-adenosine-intent',
+      'reassess-stable-regular-narrow-trajectory'].includes(objective.id)) {
+      const stability = log.find((event) => /^stable-narrow-tachycardia-stability-reconciled-\d+$/.test(event.eventId));
+      const context = log.find((event) => /^stable-narrow-tachycardia-context-reviewed-\d+$/.test(event.eventId));
+      const vagal = log.find((event) => /^stable-narrow-tachycardia-vagal-intent-recorded-\d+$/.test(event.eventId));
+      const vagalResponse = log.find((event) => /^stable-narrow-tachycardia-vagal-response-reviewed-\d+$/.test(event.eventId));
+      const adenosine = log.find((event) => /^stable-narrow-tachycardia-adenosine-intent-recorded-\d+$/.test(event.eventId));
+      const reassessment = log.find((event) => /^stable-narrow-tachycardia-trajectory-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-stable-regular-narrow-tachycardia') return { ...base, outcome: stability ? 'met' : 'not-met', finding: stability ? 'The regular narrow rhythm was reconciled with whole-patient stability without using rate alone.' : 'Rhythm and current stability were not reconciled.', atTick: stability?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-stable-regular-narrow-context') { const ordered = stability && context && stability.tick <= context.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Rhythm context, alternate mechanisms, contributors, contraindications, and readiness were reviewed.' : 'Context review was absent or preceded stability.', atTick: context?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'record-stable-regular-narrow-vagal-intent') { const ordered = context && vagal && vagalResponse && context.tick <= vagal.tick && vagal.tick < vagalResponse.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Coached vagal intent was followed by an elapsed, still-stable nonconversion review.' : 'Vagal intent or its elapsed response review was missing or out of order.', atTick: vagalResponse?.tick ?? vagal?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'record-stable-regular-narrow-adenosine-intent') { const ordered = vagalResponse && adenosine && vagalResponse.tick <= adenosine.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Protocol-bounded adenosine intent followed nonconversion and readiness review without a dose or delivery claim.' : 'Adenosine intent was absent or preceded the observed vagal response.', atTick: adenosine?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = adenosine && reassessment && adenosine.tick < reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Elapsed whole-patient reassessment preserved mechanism uncertainty, recurrence planning, triggers, and follow-up ownership.' : 'Final reassessment was absent or did not follow adenosine intent after elapsed time.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

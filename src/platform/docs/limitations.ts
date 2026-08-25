@@ -2813,6 +2813,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['post-infarction-cardiogenic-shock-escalation'],
   },
   {
+    id: 'stable-regular-narrow-rhythm-context-and-response-are-authored',
+    headline: 'The regular narrow rhythm, current stability, context, nonconversion, and later sinus response are authored teaching facts.',
+    simplification: 'One monitored record supplies fixed rhythm, pressure, perfusion, symptom, contraindication, readiness, and response snapshots without live acquisition.',
+    whereItMisleads: 'Treating the teaching trace as a diagnostic ECG, rate as a stability test, or conversion as proof of AVNRT, cure, recurrence risk, or prognosis.',
+    correctUnderstanding: 'Real care verifies rhythm and repeatedly integrates whole-patient stability, mechanism alternatives, causes, contraindications, response, adverse effects, preferences, and recurrence.',
+    briefIn: ['regular-narrow-complex-tachycardia'],
+  },
+  {
+    id: 'stable-regular-narrow-controls-record-review-and-treatment-intent-only',
+    headline: 'The controls record review, monitored readiness, vagal and adenosine intent, response, and follow-up; they do not perform treatment.',
+    simplification: 'Six clicks stand in for clinical assessment, monitored preparation, coached maneuver, medication planning, observation, communication, and follow-up.',
+    whereItMisleads: 'Equating button order with examination, ECG interpretation, IV placement, maneuver quality, drug preparation or delivery, communication, or cardiology competence.',
+    correctUnderstanding: 'Actual care requires qualified teams, verified findings, real monitoring and access, patient-specific contraindication review, safe treatment delivery, and repeated reassessment.',
+    briefIn: ['regular-narrow-complex-tachycardia'],
+  },
+  {
+    id: 'no-live-regular-narrow-ecg-diagnosis-drug-cardioversion-ablation-or-outcome',
+    headline: 'The lab does not interpret an ECG, diagnose a mechanism, perform a maneuver, deliver medication, cardiovert, ablate, or predict outcome.',
+    simplification: 'No live examination, ECG, laboratory test, vagal effort, access, dose, drug, shock, procedure, disposition, recurrence, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Copying the fictional values, assuming universal adenosine suitability, treating nonconversion or conversion as diagnostic, or inferring durable success.',
+    correctUnderstanding: 'Use current resuscitation and rhythm guidance, local protocols, qualified judgment, patient preferences, and longitudinal cardiology care for real tachycardia.',
+    briefIn: ['regular-narrow-complex-tachycardia'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

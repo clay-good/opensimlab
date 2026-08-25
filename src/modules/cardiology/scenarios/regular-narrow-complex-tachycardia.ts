@@ -1,0 +1,61 @@
+/** Stable regular narrow-complex tachycardia recognition and bounded acute intent. */
+
+import type { Scenario } from '@anesthesia/scenarios/types';
+
+export const REGULAR_NARROW_COMPLEX_TACHYCARDIA: Scenario = {
+  schemaVersion: 1,
+  metadata: {
+    id: 'regular-narrow-complex-tachycardia', version: '0.1.0', maturity: 'draft',
+    title: 'Regular narrow-complex tachycardia', author: 'Open Sim Lab',
+    license: 'CC BY-SA 4.0', estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
+      { id: 'reconcile-stable-regular-narrow-tachycardia', statement: 'Reconcile the fixed regular narrow-complex rhythm with current whole-patient stability without using rate alone.', measure: 'Pressure, mentation, perfusion, ischemia, heart failure, and syncope were reviewed with rhythm.' },
+      { id: 'review-stable-regular-narrow-context', statement: 'Review abrupt onset, fixed ECG description, prior episodes, medications, contributors, and alternate regular narrow mechanisms without premature closure.', measure: 'The rhythm stayed descriptive while mechanism and reversible contributors remained open.' },
+      { id: 'record-stable-regular-narrow-vagal-intent', statement: 'Record coached vagal-maneuver intent and reassess the authored nonconversion.', measure: 'A bounded first-line intent preceded medication intent without claiming maneuver performance.' },
+      { id: 'record-stable-regular-narrow-adenosine-intent', statement: 'Record protocol-bounded adenosine intent after contraindication, access, monitoring, and resuscitation-readiness review.', measure: 'No dose, delivery, mechanism diagnosis, or guaranteed conversion was supplied.' },
+      { id: 'reassess-stable-regular-narrow-trajectory', statement: 'After elapsed time, reassess the fixed rhythm and whole patient, then record recurrence safety-net and rhythm follow-up ownership.', measure: 'Conversion did not erase mechanism, recurrence, or longitudinal shared-decision work.' },
+    ],
+    clinicalReview: { reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED',
+      competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01',
+      contentVersion: '0.1.0', sources: [
+        'Wigginton JG, et al. Part 9: Adult Advanced Life Support: 2025 American Heart Association Guidelines for CPR and ECC. Circulation. 2025;152(suppl 2):S538-S577.',
+        'American Heart Association. Adult Tachyarrhythmia With a Pulse Algorithm. 2025.',
+        'Page RL, Joglar JA, Caldwell MA, et al. 2015 ACC/AHA/HRS Guideline for the Management of Adult Patients With Supraventricular Tachycardia. Circulation. 2016;133:e506-e574.',
+      ] },
+    limitations: ['stable-regular-narrow-rhythm-context-and-response-are-authored',
+      'stable-regular-narrow-controls-record-review-and-treatment-intent-only',
+      'no-live-regular-narrow-ecg-diagnosis-drug-cardioversion-ablation-or-outcome'],
+  },
+  patient: { ageYears: 42, sex: 'female', heightCm: 168, weightKg: 68, asaClass: 2,
+    diagnosis: 'Authored stable regular narrow-complex tachycardia; mechanism remains open',
+    procedure: 'Rhythm stability and bounded acute-response review',
+    comorbidities: ['Mild intermittent asthma without current bronchospasm'],
+    medications: ['No AV-nodal agent reported'], allergies: ['No known drug allergies'],
+    fasting: 'Urgent rhythm visit; fasting state not relevant to this lesson',
+    baseline: { heartRateBpm: 176, meanArterialMmHg: 93, strokeVolumeMl: 48,
+      hemoglobinGPerDl: 13.2, bloodVolumeMl: 4700, coreTemperatureC: 36.8,
+      arterialStiffness: 1.05, baroreflexGain: 0.85, fixedStrokeVolume: false },
+    airway: { difficulty: 0.1, difficultMaskVentilation: false,
+      assessment: 'Alert, speaking comfortably, with no fixed airway concern' },
+    respiratory: { profile: 'healthy' } },
+  equipment: { monitoring: ['ecg', 'nibp', 'pulse-oximetry', 'temperature'],
+    ventilator: { mode: 'manual', fio2: 0.21, tidalVolumeMl: 450,
+      respiratoryRateBpm: 18, delivering: false } },
+  formulary: [],
+  timeline: [
+    { id: 'stable-regular-narrow-rhythm', type: 'rhythm-change', target: 'svt', atTick: 0,
+      severity: 'warning', message: 'The teaching monitor shows a very regular narrow-complex tachycardia.' },
+    { id: 'stable-regular-narrow-presentation', type: 'narrative',
+      target: 'regular-narrow-complex-tachycardia', atTick: 0, severity: 'warning',
+      message: 'A 42-year-old woman in an urgent cardiology unit reports abrupt palpitations beginning 40 minutes ago. A fixed diagnostic 12-lead report describes a regular narrow-complex tachycardia at 176/min with QRS 82 ms and no clearly visible P waves; it does not establish one mechanism. BP is 124/78 mmHg, SpO₂ 98% on room air, RR 18/min, and she is alert with warm perfusion. There is no authored hypotension, altered mentation, shock, ischemic discomfort, acute heart failure, or syncope. Prior brief self-terminating episodes are reported; a prior sinus-rhythm ECG has no authored pre-excitation.' },
+    { id: 'stable-regular-narrow-boundary', type: 'narrative',
+      target: 'regular-narrow-complex-tachycardia-boundary', atTick: 0, severity: 'advisory',
+      message: 'Reconcile rhythm and current stability, then review abrupt onset, prior episodes, medications, contributors, contraindications, and alternate regular narrow mechanisms. Record coached vagal-maneuver intent; the fixed rhythm does not convert. After reassessment, record protocol-bounded adenosine intent only with access, monitoring, and resuscitation readiness. After elapsed time, the authored rhythm converts to sinus at 88/min with BP 122/76 mmHg and improved palpitations. Instability at any point changes the pathway toward immediate synchronized-cardioversion capability. Examination, live ECG or test acquisition or interpretation, causal diagnosis, maneuver performance, medication selection, dose, prescribing or delivery, cardioversion, ablation, disposition, recurrence prediction, prognosis, and outcome are not simulated.' },
+  ],
+  debrief: { rubric: [
+    { id: 'stable-regular-narrow-stability', objectiveId: 'reconcile-stable-regular-narrow-tachycardia', question: 'Which rhythm and whole-patient findings supported a stable pathway now, and which changes would alter it?' },
+    { id: 'stable-regular-narrow-context', objectiveId: 'review-stable-regular-narrow-context', question: 'Which context and alternatives kept the rhythm description from becoming a premature mechanism diagnosis?' },
+    { id: 'stable-regular-narrow-vagal', objectiveId: 'record-stable-regular-narrow-vagal-intent', question: 'Why did coached vagal intent come first, and what did the fixed nonconversion establish?' },
+    { id: 'stable-regular-narrow-adenosine', objectiveId: 'record-stable-regular-narrow-adenosine-intent', question: 'Which safety context bounded adenosine intent without choosing a dose or claiming delivery?' },
+    { id: 'stable-regular-narrow-follow-up', objectiveId: 'reassess-stable-regular-narrow-trajectory', question: 'What changed after elapsed reassessment, and what recurrence and rhythm follow-up work remained?' },
+  ] },
+};

@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 88 reports post-PCI shock escalation. */
-export const WORKER_PROTOCOL_VERSION = 88;
+/** Bumped whenever the message shape changes incompatibly. Version 89 reports stable narrow-tachycardia state. */
+export const WORKER_PROTOCOL_VERSION = 89;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -671,6 +671,17 @@ export interface EquipmentSnapshot {
       readonly handoffAtTick: number | null;
       readonly pressureAloneUsed: false;
       readonly routineDeviceSelected: false;
+      readonly treatmentDelivered: false;
+    };
+    readonly stableNarrowTachycardiaAssessment?: {
+      readonly stabilityAtTick: number | null;
+      readonly contextAtTick: number | null;
+      readonly vagalAtTick: number | null;
+      readonly vagalResponseAtTick: number | null;
+      readonly adenosineAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+      readonly hemodynamicallyStable: true;
+      readonly mechanismProven: false;
       readonly treatmentDelivered: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */

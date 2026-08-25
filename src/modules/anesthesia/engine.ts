@@ -546,6 +546,12 @@ export class AnesthesiaEngine {
   private postInfarctionShockTransferAtTick: number | null = null;
   private postInfarctionShockBridgeAtTick: number | null = null;
   private postInfarctionShockHandoffAtTick: number | null = null;
+  private stableNarrowStabilityAtTick: number | null = null;
+  private stableNarrowContextAtTick: number | null = null;
+  private stableNarrowVagalAtTick: number | null = null;
+  private stableNarrowVagalResponseAtTick: number | null = null;
+  private stableNarrowAdenosineAtTick: number | null = null;
+  private stableNarrowReassessmentAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -4308,6 +4314,57 @@ export class AnesthesiaEngine {
         this.log('warning', 'assessment', `post-infarction-shock-handoff-recorded-${this.currentTick}`, 'Elapsed fixed reassessment shows MAP 67 mmHg, but drowsiness, mottling, oliguria, lactate 5.1 mmol/L, and congestion persist. Shock is not resolved. Perfusion, open causes, support adequacy, organ risk, transport readiness, owners, and change triggers were handed off.', { shockResolved: false, ownerNamed: true, outcomePredicted: false });
         break;
       }
+      case 'stable-narrow-tachycardia-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'regular-narrow-complex-tachycardia');
+        const valid = ['reconcile-stable-regular-narrow-tachycardia',
+          'review-stable-regular-narrow-context', 'record-stable-regular-narrow-vagal-intent',
+          'review-stable-regular-narrow-vagal-response',
+          'record-stable-regular-narrow-adenosine-intent',
+          'reassess-stable-regular-narrow-trajectory'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `stable-narrow-tachycardia-response-refused-${this.currentTick}`, supported ? 'The stable regular-narrow action was not one of the listed choices. Nothing changed.' : 'These stable regular-narrow choices are available only in the declared lesson.'); break; }
+        if (response === 'reconcile-stable-regular-narrow-tachycardia') {
+          if (this.stableNarrowStabilityAtTick !== null) { this.log('warning', 'assessment', `stable-narrow-tachycardia-stability-refused-${this.currentTick}`, 'The rhythm and whole-patient stability have already been reconciled.'); break; }
+          this.stableNarrowStabilityAtTick = this.currentTick;
+          this.log('warning', 'assessment', `stable-narrow-tachycardia-stability-reconciled-${this.currentTick}`, 'The fixed 12-lead report describes a regular narrow rhythm at 176/min. BP 124/78 mmHg, alert mentation, warm perfusion, and no authored shock, ischemic discomfort, acute heart failure, or syncope support a stable pathway now. Heart rate alone did not define instability.', { hemodynamicallyStable: true, instabilityDefinedByRateAlone: false });
+          break;
+        }
+        if (this.stableNarrowStabilityAtTick === null) { this.log('warning', 'assessment', `stable-narrow-tachycardia-order-refused-${this.currentTick}`, 'Reconcile rhythm and whole-patient stability before the monitored pathway.'); break; }
+        if (response === 'review-stable-regular-narrow-context') {
+          if (this.stableNarrowContextAtTick !== null) { this.log('warning', 'assessment', `stable-narrow-tachycardia-context-refused-${this.currentTick}`, 'The rhythm context, contributors, contraindications, and readiness have already been reviewed.'); break; }
+          this.stableNarrowContextAtTick = this.currentTick;
+          this.log('warning', 'assessment', `stable-narrow-tachycardia-context-reviewed-${this.currentTick}`, 'Abrupt onset, prior episodes, fixed ECG description, prior sinus ECG, medications, stimulants, reversible contributors, active bronchospasm, conduction disease, transplant context, access, continuous rhythm/pressure/oximetry, and resuscitation readiness were reviewed. The phenotype does not prove AVNRT, AVRT, atrial tachycardia, or flutter.', { mechanismProven: false, routineOxygenSelected: false, resuscitationReady: true });
+          break;
+        }
+        if (this.stableNarrowContextAtTick === null) { this.log('warning', 'assessment', `stable-narrow-tachycardia-context-order-refused-${this.currentTick}`, 'Review context and monitored readiness before vagal intent.'); break; }
+        if (response === 'record-stable-regular-narrow-vagal-intent') {
+          if (this.stableNarrowVagalAtTick !== null) { this.log('warning', 'assessment', `stable-narrow-tachycardia-vagal-refused-${this.currentTick}`, 'The coached vagal-maneuver intent has already been recorded.'); break; }
+          this.stableNarrowVagalAtTick = this.currentTick;
+          this.log('warning', 'assessment', `stable-narrow-tachycardia-vagal-intent-recorded-${this.currentTick}`, 'Coached modified-Valsalva intent was recorded while the patient remained stable and monitored. Physical performance, effort quality, carotid massage, and psychomotor competence are not simulated.', { intentOnly: true, carotidMassage: false });
+          break;
+        }
+        if (response === 'review-stable-regular-narrow-vagal-response') {
+          if (this.stableNarrowVagalAtTick === null || this.currentTick <= this.stableNarrowVagalAtTick) { this.log('warning', 'assessment', `stable-narrow-tachycardia-vagal-response-order-refused-${this.currentTick}`, 'Record vagal intent, allow an engine tick, then review the authored response.'); break; }
+          if (this.stableNarrowVagalResponseAtTick !== null) { this.log('warning', 'assessment', `stable-narrow-tachycardia-vagal-response-refused-${this.currentTick}`, 'The authored vagal response has already been reviewed.'); break; }
+          this.stableNarrowVagalResponseAtTick = this.currentTick;
+          this.log('warning', 'assessment', `stable-narrow-tachycardia-vagal-response-reviewed-${this.currentTick}`, 'Fixed response: regular narrow-complex tachycardia persists at 174/min with BP 123/77 mmHg, alert mentation, warm perfusion, and no new instability. Nonconversion does not establish one mechanism.', { converted: false, hemodynamicallyStable: true, mechanismProven: false });
+          break;
+        }
+        if (this.stableNarrowVagalResponseAtTick === null) { this.log('warning', 'assessment', `stable-narrow-tachycardia-adenosine-order-refused-${this.currentTick}`, 'Review the elapsed vagal nonresponse before adenosine intent.'); break; }
+        if (response === 'record-stable-regular-narrow-adenosine-intent') {
+          if (this.stableNarrowAdenosineAtTick !== null) { this.log('warning', 'assessment', `stable-narrow-tachycardia-adenosine-refused-${this.currentTick}`, 'The protocol-bounded adenosine intent has already been recorded.'); break; }
+          this.stableNarrowAdenosineAtTick = this.currentTick;
+          this.log('warning', 'assessment', `stable-narrow-tachycardia-adenosine-intent-recorded-${this.currentTick}`, 'Protocol-bounded adenosine intent was recorded for the authored stable regular narrow rhythm after contraindication, access, monitoring, and resuscitation-readiness review. No dose, preparation, delivery, exact mechanism, or guaranteed conversion was supplied.', { intentOnly: true, doseSelected: false, treatmentDelivered: false, mechanismProven: false });
+          break;
+        }
+        if (this.stableNarrowAdenosineAtTick === null || this.currentTick <= this.stableNarrowAdenosineAtTick) { this.log('warning', 'assessment', `stable-narrow-tachycardia-reassessment-order-refused-${this.currentTick}`, 'Record adenosine intent, allow an engine tick, then reassess the authored trajectory.'); break; }
+        if (this.stableNarrowReassessmentAtTick !== null) { this.log('warning', 'assessment', `stable-narrow-tachycardia-reassessment-refused-${this.currentTick}`, 'The fixed rhythm response and follow-up have already been reassessed.'); break; }
+        this.stableNarrowReassessmentAtTick = this.currentTick;
+        this.rhythm = 'sinus';
+        this.log('warning', 'assessment', `stable-narrow-tachycardia-trajectory-reassessed-${this.currentTick}`, 'Fixed reassessment: sinus rhythm 88/min, BP 122/76 mmHg, improved palpitations, alert mentation, and warm perfusion. Rhythm capture, adverse effects, recurrence and instability triggers, patient-taught vagal strategy, owner, and cardiology/electrophysiology follow-up were recorded. Conversion did not prove one mechanism or guarantee cure.', { converted: true, mechanismProven: false, ownerNamed: true, outcomePredicted: false });
+        break;
+      }
       case 'aspiration-risk-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
@@ -7048,6 +7105,14 @@ export class AnesthesiaEngine {
         meanArterialMmHg: 96, coreTemperatureC: 36.7 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'regular-narrow-complex-tachycardia')) {
+      const reassessed = this.stableNarrowReassessmentAtTick !== null;
+      crisisState = { ...crisisState, heartRateBpm: reassessed ? 88 : 176,
+        respiratoryRateBpm: 18, spo2Percent: 98, etco2MmHg: 36,
+        systolicMmHg: reassessed ? 122 : 124, diastolicMmHg: reassessed ? 76 : 78,
+        meanArterialMmHg: reassessed ? 91 : 93, coreTemperatureC: 36.8 };
+    }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'unstable-narrow-complex-tachycardia')) {
       const cardioverted = this.unstableNarrowTachycardiaCardiovertedAtTick !== null;
       crisisState = { ...crisisState, heartRateBpm: cardioverted ? 92 : 188,
@@ -7933,6 +7998,20 @@ export class AnesthesiaEngine {
               handoffAtTick: this.postInfarctionShockHandoffAtTick,
               pressureAloneUsed: false as const,
               routineDeviceSelected: false as const,
+              treatmentDelivered: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'regular-narrow-complex-tachycardia') ? {
+            stableNarrowTachycardiaAssessment: {
+              stabilityAtTick: this.stableNarrowStabilityAtTick,
+              contextAtTick: this.stableNarrowContextAtTick,
+              vagalAtTick: this.stableNarrowVagalAtTick,
+              vagalResponseAtTick: this.stableNarrowVagalResponseAtTick,
+              adenosineAtTick: this.stableNarrowAdenosineAtTick,
+              reassessmentAtTick: this.stableNarrowReassessmentAtTick,
+              hemodynamicallyStable: true as const,
+              mechanismProven: false as const,
               treatmentDelivered: false as const,
             },
           } : {}),
