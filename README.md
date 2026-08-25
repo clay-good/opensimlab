@@ -340,6 +340,12 @@ already been removed. The learner recruits airway help, delivers high-concentrat
 continuous positive pressure, holds a jaw thrust, and confirms modeled gas-flow recovery. The slice
 does not model laryngospasm, edema, aspiration, airway adjuncts, reintubation, pulmonary edema,
 recurrent obstruction, or team performance.
+Slice 38 adds the thirty-fifth authored scenario, opioid-induced ventilatory impairment. A fixed
+postoperative opioid exposure produces difficult arousal and a slow-rate, relatively preserved-
+breath pattern while supplemental oxygen initially leaves saturation reassuring. The learner
+recruits help, supports ventilation, holds further opioid, records dose-free naloxone titration
+intent, and checks spontaneous recovery. Morphine pharmacokinetics, pain, sedation-scale technique,
+naloxone dosing, withdrawal, recurrent depression, and monitoring disposition are absent.
 
 ## Running it
 

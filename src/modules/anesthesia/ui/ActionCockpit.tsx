@@ -153,6 +153,11 @@ export interface ActionCockpitProps {
         | 'continue-support-and-reassess' | null;
       readonly decidedAtTick: number | null;
     };
+    readonly opioidVentilatoryResponse?: {
+      readonly severity: number;
+      readonly furtherOpioidHeldAtTick: number | null;
+      readonly naloxoneIntentAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -234,6 +239,9 @@ export interface ActionCockpitProps {
     action: 'review-quantitative-recovery' | 'review-awake-airway-protection'
       | 'review-spontaneous-gas-exchange' | 'review-airway-risk-and-rescue'
       | 'ready-for-planned-awake-extubation' | 'continue-support-and-reassess',
+  ) => void;
+  readonly onOpioidVentilatoryResponse?: (
+    response: 'hold-further-opioid' | 'record-naloxone-titration',
   ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
@@ -342,7 +350,8 @@ export const NOT_IN_THIS_BUILD =
 
 export function ActionCockpit(props: ActionCockpitProps) {
   const [tray, setTray] = useState<TrayId>(() => props.scenario.timeline.some(
-    (event) => event.type === 'upper-airway-obstruction',
+    (event) => event.type === 'upper-airway-obstruction'
+      || event.type === 'opioid-ventilatory-impairment',
   ) ? 'airway' : props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'tension-pneumothorax'
       || (event.type === 'narrative' && [
@@ -363,6 +372,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
   );
   const hasUpperAirwayObstructionResponse = props.scenario.timeline.some(
     (event) => event.type === 'upper-airway-obstruction',
+  );
+  const hasOpioidVentilatoryResponse = props.scenario.timeline.some(
+    (event) => event.type === 'opioid-ventilatory-impairment',
   );
   const hasEpinephrineResponse = hasAnaphylaxisResponse || hasLastResponse;
   const hasNonMaternalCrisisResponse = hasEpinephrineResponse || hasHypermetabolicResponse
@@ -490,8 +502,12 @@ export function ActionCockpit(props: ActionCockpitProps) {
             supraglotticInsertionSecondsRemaining={props.supraglotticInsertionSecondsRemaining}
             helpRequestedAtTick={props.helpRequestedAtTick}
             showDifficultAirwayRescue={hasDifficultAirwayResponse}
-            showAirwayHelp={hasDifficultAirwayResponse || hasUpperAirwayObstructionResponse}
-            showLaryngoscopy={!hasUpperAirwayObstructionResponse}
+            showAirwayHelp={hasDifficultAirwayResponse || hasUpperAirwayObstructionResponse
+              || hasOpioidVentilatoryResponse}
+            showLaryngoscopy={!hasUpperAirwayObstructionResponse && !hasOpioidVentilatoryResponse}
+            showAirwayManeuver={!hasOpioidVentilatoryResponse}
+            showOpioidVentilatoryResponse={hasOpioidVentilatoryResponse}
+            opioidVentilatoryResponse={props.resuscitation.opioidVentilatoryResponse}
             showCapnographyLine={props.scenario.timeline.some(
               (event) => event.type === 'artifact' && event.target === 'sampling-line-obstruction',
             )}
@@ -506,6 +522,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
             onCallForHelp={props.onCallForHelp}
             onAirwayDevice={props.onAirwayDevice}
             onCapnographyLine={props.onCapnographyLine ?? (() => {})}
+            onOpioidVentilatoryResponse={props.onOpioidVentilatoryResponse ?? (() => {})}
           />
         )}
         {tray === 'monitor' && hasArterialLineFault && (
@@ -2232,9 +2249,12 @@ function AirwayTray({
   ventilator, intubated, attempts, lastGrade, attemptInProgress, attemptSecondsRemaining,
   jawThrustCpapSecondsRemaining, device, supraglotticInsertionSecondsRemaining,
   helpRequestedAtTick, showDifficultAirwayRescue, showAirwayHelp, showLaryngoscopy,
+  showAirwayManeuver,
+  showOpioidVentilatoryResponse, opioidVentilatoryResponse,
   region, onVentilator, onLaryngoscopy,
   onAirwayManeuver, onCallForHelp, onAirwayDevice,
   showCapnographyLine, capnographyLine, onCapnographyLine,
+  onOpioidVentilatoryResponse,
   actualBodyWeightKg,
 }: {
   ventilator: ActionCockpitProps['ventilator'];
@@ -2250,6 +2270,9 @@ function AirwayTray({
   showDifficultAirwayRescue: boolean;
   showAirwayHelp: boolean;
   showLaryngoscopy: boolean;
+  showAirwayManeuver: boolean;
+  showOpioidVentilatoryResponse: boolean;
+  opioidVentilatoryResponse: ActionCockpitProps['resuscitation']['opioidVentilatoryResponse'];
   showCapnographyLine: boolean;
   capnographyLine: CapnographyLineStatus;
   actualBodyWeightKg: number;
@@ -2260,6 +2283,9 @@ function AirwayTray({
   onCallForHelp: () => void;
   onAirwayDevice: (device: 'supraglottic-airway') => void;
   onCapnographyLine: (action: 'cross-check-ventilation' | 'reconnect') => void;
+  onOpioidVentilatoryResponse: (
+    response: 'hold-further-opioid' | 'record-naloxone-titration',
+  ) => void;
 }) {
   const [pendingCapnographyReconnect, setPendingCapnographyReconnect] = useState(false);
   const holdingAirway = jawThrustCpapSecondsRemaining > 0;
@@ -2362,13 +2388,15 @@ function AirwayTray({
       <section>
         <h3 className="field__label">Airway</h3>
         <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
-          <Button
-            aria-describedby="jaw-thrust-cpap-status"
-            disabled={holdingAirway}
-            onClick={() => onAirwayManeuver('jaw-thrust-cpap')}
-          >
-            Apply jaw thrust + continuous positive pressure
-          </Button>
+          {showAirwayManeuver && (
+            <Button
+              aria-describedby="jaw-thrust-cpap-status"
+              disabled={holdingAirway}
+              onClick={() => onAirwayManeuver('jaw-thrust-cpap')}
+            >
+              Apply jaw thrust + continuous positive pressure
+            </Button>
+          )}
           {showLaryngoscopy && (
             <>
               <Button
@@ -2386,13 +2414,15 @@ function AirwayTray({
             </>
           )}
         </div>
-        <p id="jaw-thrust-cpap-status" className="field__hint">
-          {holdingAirway
-            ? ventilator.delivering
-              ? `Jaw thrust and continuous positive pressure in progress: ${Math.ceil(jawThrustCpapSecondsRemaining)} simulated seconds remaining.`
-              : `Jaw thrust hold in progress: ${Math.ceil(jawThrustCpapSecondsRemaining)} simulated seconds remaining. The ventilator is not delivering positive pressure.`
-            : `Applies a fixed ${JAW_THRUST_CPAP_SECONDS}-second teaching-model hold, not a recommended clinical duration. Assess its effect from gas movement and the capnogram.`}
-        </p>
+        {showAirwayManeuver && (
+          <p id="jaw-thrust-cpap-status" className="field__hint">
+            {holdingAirway
+              ? ventilator.delivering
+                ? `Jaw thrust and continuous positive pressure in progress: ${Math.ceil(jawThrustCpapSecondsRemaining)} simulated seconds remaining.`
+                : `Jaw thrust hold in progress: ${Math.ceil(jawThrustCpapSecondsRemaining)} simulated seconds remaining. The ventilator is not delivering positive pressure.`
+              : `Applies a fixed ${JAW_THRUST_CPAP_SECONDS}-second teaching-model hold, not a recommended clinical duration. Assess its effect from gas movement and the capnogram.`}
+          </p>
+        )}
         {showLaryngoscopy && (
           <p className="field__hint">
             {attemptInProgress
@@ -2440,6 +2470,45 @@ function AirwayTray({
                   : 'Insertion takes a fixed 15 simulated seconds in this teaching model.'}
               </p>
             )}
+          </section>
+        )}
+        {showOpioidVentilatoryResponse && (
+          <section className="card" aria-labelledby="opioid-ventilatory-response-title"
+            style={{ marginBlockStart: 'var(--space-3)' }}>
+            <h4 id="opioid-ventilatory-response-title" className="field__label">
+              Opioid ventilatory response
+            </h4>
+            <p className="field__hint">
+              Hold further opioid, support ventilation, and record patient-specific naloxone
+              titration intent. This screen supplies no naloxone dose or administration model.
+            </p>
+            <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+              <Button
+                className="opioid-response__action"
+                disabled={(opioidVentilatoryResponse?.severity ?? 0) <= 0.05
+                  || opioidVentilatoryResponse?.furtherOpioidHeldAtTick != null}
+                onClick={() => onOpioidVentilatoryResponse('hold-further-opioid')}
+              >
+                Hold further opioid
+              </Button>
+              <Button
+                className="opioid-response__action"
+                disabled={opioidVentilatoryResponse?.furtherOpioidHeldAtTick == null
+                  || opioidVentilatoryResponse?.naloxoneIntentAtTick != null}
+                onClick={() => onOpioidVentilatoryResponse('record-naloxone-titration')}
+              >
+                Record naloxone titration intent
+              </Button>
+            </div>
+            <p className="field__hint" role="status">
+              {opioidVentilatoryResponse?.naloxoneIntentAtTick != null
+                ? 'Naloxone titration intent recorded. Continue ventilatory support and reassessment.'
+                : opioidVentilatoryResponse?.furtherOpioidHeldAtTick != null
+                  ? 'Further opioid held. Reversal intent is available.'
+                  : (opioidVentilatoryResponse?.severity ?? 0) > 0.05
+                    ? 'Ventilatory impairment active. No opioid hold recorded.'
+                    : 'No active modeled opioid ventilatory impairment.'}
+            </p>
           </section>
         )}
         <p className="reading__aside">

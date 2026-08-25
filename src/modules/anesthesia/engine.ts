@@ -32,6 +32,7 @@ import {
   RESPIRATORY_PROFILES, VirtualPatient, baselineSvr, healthyChildRespiratoryProfile,
   JAW_THRUST_CPAP_SECONDS, neuromuscularState, stepLaryngospasm,
   stepUpperAirwayObstruction,
+  stepOpioidVentilatoryImpairment,
   qualitativeTwitchAssessment, rocuroniumEffectSiteForTrainOfFourRatio,
   type LaryngoscopyResult, type PatientProfile, type PatientState, type VentilatorSettings,
 } from './physiology';
@@ -40,7 +41,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.32';
+export const ENGINE_VERSION = '0.1.0-alpha.33';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -336,6 +337,10 @@ export class AnesthesiaEngine {
   /** Persistent functional closure set by the scenario, 0 fully patent to 1 fully closed. */
   private upperAirwayClosureFraction = 0;
   private postExtubationObstructionSeverity = 0;
+  private opioidVentilatoryImpairmentSeverity = 0;
+  private opioidVentilatoryImpairmentTarget = 0;
+  private furtherOpioidHeldAtTick: number | null = null;
+  private naloxoneIntentAtTick: number | null = null;
   /** Exclusive tick at which the bounded held airway maneuver ends. */
   private jawThrustCpapUntilTick = 0;
   /** Current lower-airway obstruction, retained for truthful equipment/accessibility output. */
@@ -1622,6 +1627,46 @@ export class AnesthesiaEngine {
           { maneuver: 'jaw-thrust-cpap', durationSeconds: JAW_THRUST_CPAP_SECONDS });
         break;
       }
+      case 'opioid-ventilatory-response': {
+        const active = this.opioidVentilatoryImpairmentSeverity > 0.05
+          || this.opioidVentilatoryImpairmentTarget > 0.05;
+        const response = action.payload.response;
+        if (!active || !['hold-further-opioid', 'record-naloxone-titration'].includes(String(response))) {
+          this.log('warning', 'drug', `opioid-response-refused-${this.currentTick}`,
+            !active
+              ? 'No active modeled opioid ventilatory impairment is available for this response.'
+              : 'The opioid ventilatory response was not one of the listed choices. Nothing changed.');
+          break;
+        }
+        if (response === 'hold-further-opioid') {
+          if (this.furtherOpioidHeldAtTick !== null) {
+            this.log('warning', 'drug', `opioid-hold-refused-${this.currentTick}`,
+              'Further opioid has already been held in this teaching response.');
+            break;
+          }
+          this.furtherOpioidHeldAtTick = this.currentTick;
+          this.log('warning', 'drug', `further-opioid-held-${this.currentTick}`,
+            'Further opioid administration held. The prior exposure is a fixed scenario fact; no morphine pharmacokinetics or pain response is modeled.');
+          break;
+        }
+        if (this.furtherOpioidHeldAtTick === null) {
+          this.log('warning', 'drug', `naloxone-order-refused-${this.currentTick}`,
+            'Hold further opioid before recording naloxone titration intent.');
+          break;
+        }
+        if (this.naloxoneIntentAtTick !== null) {
+          this.log('warning', 'drug', `naloxone-intent-refused-${this.currentTick}`,
+            'Naloxone titration intent has already been recorded.');
+          break;
+        }
+        this.naloxoneIntentAtTick = this.currentTick;
+        this.opioidVentilatoryImpairmentTarget = 0;
+        this.log('warning', 'drug', `naloxone-titration-intent-${this.currentTick}`,
+          'Naloxone titration intent recorded. Dose, route, administration, analgesia, withdrawal, recurrence, and individual response are not modeled.', {
+            doseModeled: false, teachingTrajectory: true,
+          });
+        break;
+      }
       case 'silence-alarm': {
         this.alarmEngine.silence(String(action.payload.alarmId), this.currentTick, TICKS_PER_SECOND);
         break;
@@ -2081,6 +2126,19 @@ export class AnesthesiaEngine {
         return;
       }
 
+      case 'opioid-ventilatory-impairment': {
+        const severity = event.value;
+        if (typeof severity !== 'number' || !Number.isFinite(severity)
+          || severity < 0 || severity > 1) {
+          this.log('warning', 'scenario', `incomplete-event-${event.id}-${this.currentTick}`,
+            `Timeline event "${event.id}" has an invalid opioid ventilatory impairment severity. It must be a finite number from 0 to 1, so the event had no effect.`);
+          return;
+        }
+        this.opioidVentilatoryImpairmentSeverity = severity;
+        this.opioidVentilatoryImpairmentTarget = severity;
+        return;
+      }
+
       case 'anaphylaxis': {
         const severity = event.value;
         if (event.target !== 'cefazolin' || typeof severity !== 'number'
@@ -2486,6 +2544,11 @@ export class AnesthesiaEngine {
       },
       1 / TICKS_PER_SECOND,
     );
+    this.opioidVentilatoryImpairmentSeverity = stepOpioidVentilatoryImpairment(
+      this.opioidVentilatoryImpairmentSeverity,
+      this.opioidVentilatoryImpairmentTarget,
+      1 / TICKS_PER_SECOND,
+    );
     const result = this.patient.tick(
       {
         propofolCe, remifentanilCe, rocuroniumCe,
@@ -2496,6 +2559,10 @@ export class AnesthesiaEngine {
         surgicalStimulus: stimulus, obstructionFraction: obstruction, airwayDeliveryFraction,
         upperAirwayClosureFraction: this.upperAirwayClosureFraction,
         upperAirwayObstructionFraction: this.postExtubationObstructionSeverity,
+        spontaneousRespiratoryRateFraction:
+          1 - 0.9 * this.opioidVentilatoryImpairmentSeverity,
+        spontaneousTidalVolumeFraction:
+          1 - 0.2 * this.opioidVentilatoryImpairmentSeverity,
         bloodLossMl, crystalloidMl,
         packedRedCellVolumeMl, packedRedCellHemoglobinG, freshFrozenPlasmaVolumeMl,
         anaphylaxisFraction: unopposedAnaphylaxis, capillaryLeakMl,
@@ -2906,6 +2973,11 @@ export class AnesthesiaEngine {
           airwayPlanReviewedAtTick: this.extubationAirwayPlanReviewedAtTick,
           decision: this.extubationReadinessDecision,
           decidedAtTick: this.extubationReadinessDecidedAtTick,
+        },
+        opioidVentilatoryResponse: {
+          severity: this.opioidVentilatoryImpairmentSeverity,
+          furtherOpioidHeldAtTick: this.furtherOpioidHeldAtTick,
+          naloxoneIntentAtTick: this.naloxoneIntentAtTick,
         },
         neuromuscularReversalFraction: this.neuromuscularReversalFraction,
         postTetanicCount: this.postTetanicCount,

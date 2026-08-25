@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ActionCockpit, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { POST_EXTUBATION_OBSTRUCTION } from '@anesthesia/scenarios/post-extubation-obstruction';
+import { OPIOID_INDUCED_VENTILATORY_IMPAIRMENT } from '@anesthesia/scenarios/opioid-induced-ventilatory-impairment';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 
 describe('Requirement: bounded upper-airway support is operable without naming the diagnosis', () => {
@@ -29,6 +30,10 @@ describe('Requirement: bounded upper-airway support is operable without naming t
     delivering = true,
     scenario: ActionCockpitProps['scenario'] = ROUTINE_INDUCTION,
     onCallForHelp = vi.fn(),
+    opioidVentilatoryResponse?: NonNullable<
+      ActionCockpitProps['resuscitation']['opioidVentilatoryResponse']
+    >,
+    onOpioidVentilatoryResponse = vi.fn(),
   ) => {
     const props: ActionCockpitProps = {
       scenario,
@@ -40,6 +45,7 @@ describe('Requirement: bounded upper-airway support is operable without naming t
         lastEpinephrineTick: null, crystalloidTotalMl: 0,
         dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
         lastDantroleneTick: null, activeCooling: false,
+        opioidVentilatoryResponse,
       },
       lastExposure: null,
       syringeRemaining: {},
@@ -61,6 +67,7 @@ describe('Requirement: bounded upper-airway support is operable without naming t
       onLaryngoscopy: () => {},
       onAirwayManeuver,
       onCallForHelp, onAirwayDevice: () => {},
+      onOpioidVentilatoryResponse,
       onEpinephrine: () => {},
       onDantrolene: () => {},
       onActiveCooling: () => {},
@@ -118,5 +125,28 @@ describe('Requirement: bounded upper-airway support is operable without naming t
     expect(container.textContent).not.toContain('No attempt yet');
     act(() => button('Call for help')!.click());
     expect(onCallForHelp).toHaveBeenCalledOnce();
+  });
+
+  it('offers an ordered opioid hold and dose-free naloxone intent in the focused airway tray', () => {
+    const onResponse = vi.fn();
+    renderCockpit(0, vi.fn(), false, OPIOID_INDUCED_VENTILATORY_IMPAIRMENT, vi.fn(), {
+      severity: 0.8, furtherOpioidHeldAtTick: null, naloxoneIntentAtTick: null,
+    }, onResponse);
+
+    expect(button('Direct laryngoscopy')).toBeUndefined();
+    expect(button('Apply jaw thrust + continuous positive pressure')).toBeUndefined();
+    expect(button('Hold further opioid')!.classList).toContain('opioid-response__action');
+    expect(button('Hold further opioid')!.disabled).toBe(false);
+    expect(button('Record naloxone titration intent')!.disabled).toBe(true);
+    expect(container.textContent).toContain('supplies no naloxone dose');
+    act(() => button('Hold further opioid')!.click());
+    expect(onResponse).toHaveBeenCalledWith('hold-further-opioid');
+
+    renderCockpit(0, vi.fn(), false, OPIOID_INDUCED_VENTILATORY_IMPAIRMENT, vi.fn(), {
+      severity: 0.7, furtherOpioidHeldAtTick: 120, naloxoneIntentAtTick: null,
+    }, onResponse);
+    expect(button('Record naloxone titration intent')!.disabled).toBe(false);
+    act(() => button('Record naloxone titration intent')!.click());
+    expect(onResponse).toHaveBeenCalledWith('record-naloxone-titration');
   });
 });

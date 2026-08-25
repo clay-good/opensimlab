@@ -185,6 +185,12 @@ describe('Requirement: Sacrifice Order Is Explicit', () => {
 });
 
 describe('Requirement: A Vital Reads As One Number With One Unit', () => {
+  it('keeps capnography-derived respiratory rate visible as a ventilation vital', () => {
+    expect(TILES).toContainEqual(expect.objectContaining({
+      field: 'respiratoryRateBpm', name: 'RR', traceToken: '--capno', asaCategory: 'ventilation',
+    }));
+  });
+
   it('gives a tile in the phone strip room for its unit', () => {
     // At 96px `92 mmHg` rendered as `92 mmH`, with the `g` painted under the
     // next tile's background — on two of the readings a learner watches most.

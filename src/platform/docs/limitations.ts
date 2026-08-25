@@ -1180,6 +1180,39 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['post-extubation-obstruction'],
   },
   {
+    id: 'opioid-ventilatory-impairment-is-a-fixed-central-drive-model',
+    headline: 'This lesson isolates a fixed central-drive depression pattern; it does not model the full OIVI triad or an individual opioid exposure.',
+    simplification: 'One event lowers spontaneous rate much more than breath size while the airway '
+      + 'remains patent and supplemental oxygen initially supports saturation.',
+    whereItMisleads: 'Inferring morphine dose, pharmacokinetics, arterial carbon dioxide, sedation '
+      + 'score, probability, or excluding upper-airway obstruction and other depressants.',
+    correctUnderstanding: 'OIVI can combine central depression, reduced upper-airway tone, and '
+      + 'sedation. Detection and treatment depend on the whole patient, exposure, and trends.',
+    briefIn: ['opioid-induced-ventilatory-impairment'],
+  },
+  {
+    id: 'naloxone-is-intent-not-dose-or-pharmacology',
+    headline: 'Naloxone is an escalation intent here, not a dose recommendation, administration simulation, or predicted response.',
+    simplification: 'An accepted intent lowers the central-drive impairment along one deterministic '
+      + 'curve after further opioid is held.',
+    whereItMisleads: 'Transferring a response time, selecting a dose or route, or assuming reversal '
+      + 'preserves analgesia and avoids withdrawal, adverse effects, or recurrent depression.',
+    correctUnderstanding: 'Naloxone use is titrated to the patient and clinical severity while '
+      + 'ventilation is supported; response and recurrence require continued reassessment.',
+    briefIn: ['opioid-induced-ventilatory-impairment'],
+  },
+  {
+    id: 'no-pain-withdrawal-recurrence-or-monitoring-workflow',
+    headline: 'The scenario stops at initial spontaneous recovery; pain, withdrawal, repeated reversal, and ongoing monitoring workflow are absent.',
+    simplification: 'A fixed exposure, one opioid hold, one reversal intent, machine support, and a '
+      + 'brief spontaneous reassessment form the complete browser path.',
+    whereItMisleads: 'Treating the recovered trace as safe discharge, assuming the opioid effect '
+      + 'cannot outlast reversal, or ignoring analgesia and other causes of sedation.',
+    correctUnderstanding: 'Initial improvement does not end care. Continued observation, repeat '
+      + 'assessment, analgesia planning, and escalation depend on patient-specific risk and response.',
+    briefIn: ['opioid-induced-ventilatory-impairment'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

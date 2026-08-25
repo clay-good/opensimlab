@@ -26,7 +26,7 @@ describe('Requirement: exhausted circle-system absorbent produces bounded rebrea
   it('validates, registers, maps every objective, and starts established maintenance settings', () => {
     expect(validateScenario(SCENARIO)).toEqual([]);
     expect(SCENARIOS).toContain(SCENARIO);
-    expect(SCENARIOS).toHaveLength(34);
+    expect(SCENARIOS).toHaveLength(35);
     expect(SCENARIO.timeline).toContainEqual(expect.objectContaining({
       type: 'equipment-failure', target: 'co2-absorbent-exhaustion', atTick: ONSET,
     }));

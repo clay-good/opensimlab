@@ -452,6 +452,11 @@ export function objectiveFindings(
     'recognize-post-extubation-obstruction': 'capnogram-morphology',
     'support-post-extubation-airway': 'preoxygenation-and-safe-apnea-time',
     'confirm-post-extubation-recovery': 'capnogram-morphology',
+    'recognize-opioid-ventilatory-impairment': 'capnogram-morphology',
+    'support-opioid-impaired-ventilation': 'preoxygenation-and-safe-apnea-time',
+    'prevent-further-opioid-harm': 'hypnotic-opioid-synergy',
+    'escalate-opioid-reversal': 'hypnotic-opioid-synergy',
+    'reassess-opioid-ventilatory-recovery': 'capnogram-morphology',
     'recognize-hemorrhage': 'vasodilation-versus-hypovolemia',
     'temporize-volume-loss': 'vasodilation-versus-hypovolemia',
     'avoid-full-dose-induction': 'hysteresis-and-effect-site-lag',
@@ -2782,6 +2787,100 @@ export function objectiveFindings(
           ? `Predicted depth reached ${lightest.toFixed(0)} while train-of-four remained suppressed. This marks modeled awareness risk, not measured consciousness or recall.`
           : `Predicted depth peaked at ${lightest.toFixed(0)} without a recorded interval above 60 while train-of-four was suppressed.`,
         atTick: risk?.tick ?? failureTick,
+      } satisfies ObjectiveFinding;
+    }
+
+    if ([
+      'recognize-opioid-ventilatory-impairment', 'support-opioid-impaired-ventilation',
+      'prevent-further-opioid-harm', 'escalate-opioid-reversal',
+      'reassess-opioid-ventilatory-recovery',
+    ].includes(objective.id)) {
+      const onset = scenario.timeline.find(
+        (event) => event.type === 'opioid-ventilatory-impairment',
+      )?.atTick;
+      if (onset === undefined || (history.at(-1)?.tick ?? 0) < onset) return {
+        ...base, outcome: 'not-exercised',
+        finding: 'The session ended before the scripted opioid ventilatory impairment began.',
+      } satisfies ObjectiveFinding;
+      const help = log.find((event) => event.tick >= onset
+        && event.eventId.startsWith('airway-help-requested-'));
+      if (objective.id === 'recognize-opioid-ventilatory-impairment') {
+        const delay = help ? (help.tick - onset) / TICKS_PER_SECOND : null;
+        return {
+          ...base,
+          outcome: delay === null ? 'not-met' : delay <= 30 ? 'met' : delay <= 60 ? 'partly-met' : 'not-met',
+          finding: delay === null
+            ? 'No accepted help request followed the difficult-arousal and depressed-ventilation pattern.'
+            : `Help was requested ${delay.toFixed(0)} seconds after the pattern began. This records escalation timing, not sedation-scale technique, communication, or team arrival.`,
+          atTick: help?.tick ?? onset,
+        } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'support-opioid-impaired-ventilation') {
+        const windowEnd = onset + 90 * TICKS_PER_SECOND;
+        let fio2 = scenario.equipment.ventilator.fio2;
+        let delivering = scenario.equipment.ventilator.delivering;
+        let tidal = scenario.equipment.ventilator.tidalVolumeMl;
+        let rate = scenario.equipment.ventilator.respiratoryRateBpm;
+        let achievedAt: number | null = null;
+        for (const action of actions.filter((entry) => entry.type === 'ventilator'
+          && entry.tick >= onset && entry.tick <= windowEnd).sort((a, b) => a.tick - b.tick)) {
+          if (action.payload.fio2 !== undefined) fio2 = Number(action.payload.fio2);
+          if (action.payload.tidalVolumeMl !== undefined) tidal = Number(action.payload.tidalVolumeMl);
+          if (action.payload.respiratoryRateBpm !== undefined) rate = Number(action.payload.respiratoryRateBpm);
+          if (typeof action.payload.delivering === 'boolean') delivering = action.payload.delivering;
+          if (achievedAt === null && fio2 >= 0.95 && delivering && tidal > 0 && rate > 0) {
+            achievedAt = action.tick;
+          }
+        }
+        const delay = achievedAt === null ? null : (achievedAt - onset) / TICKS_PER_SECOND;
+        return {
+          ...base,
+          outcome: delay === null ? 'not-met' : delay <= 45 ? 'met' : delay <= 90 ? 'partly-met' : 'not-met',
+          finding: delay === null
+            ? 'The trace did not establish active breath delivery with at least 95% oxygen during the response window.'
+            : `Active breath delivery with at least 95% oxygen began ${delay.toFixed(0)} seconds after onset. This records machine controls, not mask technique or airway examination.`,
+          atTick: achievedAt ?? windowEnd,
+        } satisfies ObjectiveFinding;
+      }
+      const held = log.find((event) => event.eventId.startsWith('further-opioid-held-'));
+      const naloxone = log.find((event) => event.eventId.startsWith('naloxone-titration-intent-'));
+      if (objective.id === 'prevent-further-opioid-harm') return {
+        ...base, outcome: held && (!naloxone || held.tick <= naloxone.tick) ? 'met' : 'not-met',
+        finding: held
+          ? 'Further opioid was held before accepted reversal intent. The prior exposure and pain response are fixed, unmodeled facts.'
+          : 'No accepted hold on further opioid was recorded.',
+        atTick: held?.tick ?? onset,
+      } satisfies ObjectiveFinding;
+      if (objective.id === 'escalate-opioid-reversal') return {
+        ...base, outcome: naloxone ? 'met' : 'not-met',
+        finding: naloxone
+          ? 'Naloxone titration intent was accepted after the opioid hold. No dose, administration, analgesia, withdrawal, or recurrence is inferred.'
+          : 'No accepted naloxone titration intent was recorded.',
+        atTick: naloxone?.tick ?? onset,
+      } satisfies ObjectiveFinding;
+      if (!naloxone) return {
+        ...base, outcome: 'not-met',
+        finding: 'Recovery was not credited because no accepted naloxone titration intent preceded it.',
+        atTick: history.at(-1)?.tick ?? onset,
+      } satisfies ObjectiveFinding;
+      const spontaneousCheck = actions.find((action) => action.tick >= naloxone.tick
+        && action.type === 'ventilator' && action.payload.delivering === false);
+      if (!spontaneousCheck) return {
+        ...base, outcome: 'not-met',
+        finding: 'No supported-to-spontaneous reassessment was recorded after reversal intent, so spontaneous recovery was not inferred from delivered breaths.',
+        atTick: history.at(-1)?.tick ?? naloxone.tick,
+      } satisfies ObjectiveFinding;
+      const recovered = history.find((entry) => entry.tick >= spontaneousCheck.tick
+        && (entry.state.respiratoryRateBpm ?? 0) >= 10
+        && (entry.state.tidalVolumeMl ?? 0) >= 400
+        && (entry.state.etco2MmHg ?? 0) > 0
+        && (entry.state.spo2Percent ?? 0) >= 94);
+      return {
+        ...base, outcome: recovered ? 'met' : 'not-met',
+        finding: recovered
+          ? `Spontaneous rate recovered to ${(recovered.state.respiratoryRateBpm ?? 0).toFixed(0)}/min with tidal volume ${(recovered.state.tidalVolumeMl ?? 0).toFixed(0)} mL, end-tidal carbon dioxide ${(recovered.state.etco2MmHg ?? 0).toFixed(0)} mmHg, and oxygen saturation ${(recovered.state.spo2Percent ?? 0).toFixed(0)}%. Continued monitoring and recurrent depression remain outside this trace.`
+          : 'Spontaneous rate, breath size, carbon dioxide, and oxygenation had not all reached the declared recovery endpoints before the session ended.',
+        atTick: recovered?.tick ?? history.at(-1)?.tick ?? onset,
       } satisfies ObjectiveFinding;
     }
 

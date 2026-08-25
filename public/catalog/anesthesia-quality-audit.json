@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 34,
+  "scenarioCount": 35,
   "playableScenarioCount": 0,
   "scenarios": [
     {
@@ -1223,6 +1223,42 @@
           "status": "missing",
           "evidence": [
             "No version-bound state-space-verification record exists for post-extubation-obstruction 0.1.0."
+          ]
+        }
+      ],
+      "playable": false
+    },
+    {
+      "scenarioId": "opioid-induced-ventilatory-impairment",
+      "contentVersion": "0.1.0",
+      "completionComplete": false,
+      "qualityRecords": [
+        {
+          "kind": "training-value",
+          "status": "missing",
+          "evidence": [
+            "No version-bound training-value record exists for opioid-induced-ventilatory-impairment 0.1.0."
+          ]
+        },
+        {
+          "kind": "authored-defaults",
+          "status": "missing",
+          "evidence": [
+            "No version-bound authored-defaults record exists for opioid-induced-ventilatory-impairment 0.1.0."
+          ]
+        },
+        {
+          "kind": "scenario-hazard",
+          "status": "missing",
+          "evidence": [
+            "No version-bound scenario-hazard record exists for opioid-induced-ventilatory-impairment 0.1.0."
+          ]
+        },
+        {
+          "kind": "state-space-verification",
+          "status": "missing",
+          "evidence": [
+            "No version-bound state-space-verification record exists for opioid-induced-ventilatory-impairment 0.1.0."
           ]
         }
       ],

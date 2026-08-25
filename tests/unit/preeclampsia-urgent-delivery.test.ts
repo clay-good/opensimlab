@@ -21,7 +21,7 @@ describe('bounded preeclampsia response before urgent delivery', () => {
   it('validates, registers the 28th scenario, cites current guidance, and maps every objective', () => {
     expect(validateScenario(SCENARIO)).toEqual([]);
     expect(SCENARIOS).toContain(SCENARIO);
-    expect(SCENARIOS).toHaveLength(34);
+    expect(SCENARIOS).toHaveLength(35);
     expect(SCENARIO.metadata.clinicalReview.sources.join(' ')).toContain('reaffirmed 2026');
     const mappings = SCENARIO_MAPPINGS.filter((entry) => entry.scenarioId === SCENARIO.metadata.id);
     expect(new Set(mappings.map((entry) => entry.frameworkId))).toEqual(new Set([

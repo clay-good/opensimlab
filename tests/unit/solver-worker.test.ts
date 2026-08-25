@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: post-extubation-obstruction state has protocol version 30', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(30);
+  it('Scenario: opioid-induced-ventilatory-impairment state has protocol version 31', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(31);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

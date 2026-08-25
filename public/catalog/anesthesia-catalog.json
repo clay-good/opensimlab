@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "scenarioCount": 34,
+  "scenarioCount": 35,
   "scenarios": [
     {
       "id": "routine-induction",
@@ -750,6 +750,29 @@
         "Confirm that gas movement, capnography, and oxygenation recover after initial support."
       ],
       "searchText": "post-extubation-obstruction post-extubation obstruction umbilical hernia laparoscopic umbilical hernia repair recognize obstructed inspiratory effort after extubation as an upper-airway emergency. airway help was requested within 30 seconds of the scripted obstructed-breathing pattern. restore upper-airway patency with a held jaw thrust, continuous positive pressure, and 100% oxygen. the combined maneuver began with active breath delivery and at least 95% oxygen within 45 seconds of onset. confirm that gas movement, capnography, and oxygenation recover after initial support. modeled airway patency returned to at least 95% with tidal volume and end-tidal carbon dioxide present."
+    },
+    {
+      "id": "opioid-induced-ventilatory-impairment",
+      "path": "/anesthesia/scenario/opioid-induced-ventilatory-impairment",
+      "title": "Opioid-induced ventilatory impairment",
+      "contentVersion": "0.1.0",
+      "estimatedMinutes": 7,
+      "difficulty": "intermediate",
+      "maturity": "draft",
+      "environment": "operating-room",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "closed_loop_physiology",
+      "objectives": [
+        "Recognize advancing sedation and depressed ventilation before oxygen saturation becomes the only signal.",
+        "Keep the airway patent and support ventilation while definitive reversal is prepared.",
+        "Hold further opioid instead of chasing a pain score during advancing sedation.",
+        "Record patient-specific naloxone titration intent without treating one reversal as the end of monitoring.",
+        "Reassess respiratory rate, tidal volume, carbon dioxide, and oxygenation together."
+      ],
+      "searchText": "opioid-induced-ventilatory-impairment opioid-induced ventilatory impairment severe knee osteoarthritis total knee arthroplasty recognize advancing sedation and depressed ventilation before oxygen saturation becomes the only signal. help was requested within 30 seconds of the fixed difficult-arousal, low-rate, rising-carbon-dioxide pattern. keep the airway patent and support ventilation while definitive reversal is prepared. active breath delivery with at least 95% oxygen was established within 45 seconds of onset. hold further opioid instead of chasing a pain score during advancing sedation. the fixed further-opioid hold was recorded before reversal intent. record patient-specific naloxone titration intent without treating one reversal as the end of monitoring. naloxone titration intent was accepted after further opioid was held. reassess respiratory rate, tidal volume, carbon dioxide, and oxygenation together. spontaneous rate recovered to at least 10/min with tidal volume and end-tidal carbon dioxide present."
     }
   ],
   "preparationPathCount": 10,
@@ -822,7 +845,8 @@
         "difficult-airway-supraglottic-rescue",
         "repeated-laryngoscopy-harm",
         "extubation-readiness",
-        "post-extubation-obstruction"
+        "post-extubation-obstruction",
+        "opioid-induced-ventilatory-impairment"
       ],
       "prerequisites": [
         "Basic induction controls."
@@ -838,7 +862,7 @@
         "Nurse anesthesia learner"
       ],
       "limitations": "This path rehearses screen-observable decisions and physiology. It does not assess psychomotor technique, physical examination, or team performance.",
-      "estimatedMinutes": 60
+      "estimatedMinutes": 67
     },
     {
       "id": "shock-perfusion",

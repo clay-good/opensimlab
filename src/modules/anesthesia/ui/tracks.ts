@@ -71,6 +71,7 @@ export const TILES: readonly TileDefinition[] = [
   { field: 'heartRateBpm', name: 'HR', traceToken: '--ecg', lowLimit: 45, highLimit: 120, asaCategory: 'circulation', invalidReason: 'No organized rhythm' },
   { field: 'meanArterialMmHg', name: 'MAP', traceToken: '--arterial', lowLimit: 55, asaCategory: 'circulation', invalidReason: 'No pulsatile flow' },
   { field: 'etco2MmHg', name: 'EtCO₂', traceToken: '--capno', lowLimit: 20, highLimit: 55, asaCategory: 'ventilation' },
+  { field: 'respiratoryRateBpm', name: 'RR', traceToken: '--capno', asaCategory: 'ventilation' },
   { field: 'spo2Percent', name: 'SpO₂', traceToken: '--spo2', lowLimit: 90, asaCategory: 'oxygenation', invalidReason: 'Probe not reading' },
   { field: 'depthIndex', name: 'Depth', traceToken: '--neuro', lowLimit: 30, highLimit: 60, asaCategory: 'other' },
   { field: 'coreTemperatureC', name: 'Temp', traceToken: '--arterial', asaCategory: 'temperature' },

@@ -30,6 +30,7 @@ export * from './airway';
 export * from './neuromuscular';
 export * from './laryngospasm';
 export * from './upper-airway-obstruction';
+export * from './opioid-ventilatory-impairment';
 export { AttributionRecorder } from './attribution';
 
 /** One tick, in minutes. */
@@ -123,6 +124,10 @@ export interface ScenarioDrive {
   readonly localAnestheticToxicityFraction?: number;
   /** Remaining spontaneous breathing drive during a high central neuraxial block teaching course. */
   readonly spontaneousVentilationFraction?: number;
+  /** Additional multiplier on spontaneous rate, used by the bounded OIVI state. */
+  readonly spontaneousRespiratoryRateFraction?: number;
+  /** Additional multiplier on spontaneous breath size, used separately from rate. */
+  readonly spontaneousTidalVolumeFraction?: number;
 }
 
 export interface TickResult {
@@ -512,9 +517,11 @@ export class VirtualPatient {
       scenario.spontaneousVentilationFraction ?? 1, 0, 1,
     );
     const rateDrive = clamp(1 - hypnoticDepression - opioidDepression, 0, 1)
-      * neuromuscular.respiratoryMuscleFraction * spontaneousVentilationFraction;
+      * neuromuscular.respiratoryMuscleFraction * spontaneousVentilationFraction
+      * clamp(scenario.spontaneousRespiratoryRateFraction ?? 1, 0, 1);
     const tidalDrive = clamp(1 - hypnoticDepression - 0.2 * opioidDepression, 0, 1)
-      * neuromuscular.respiratoryMuscleFraction * spontaneousVentilationFraction;
+      * neuromuscular.respiratoryMuscleFraction * spontaneousVentilationFraction
+      * clamp(scenario.spontaneousTidalVolumeFraction ?? 1, 0, 1);
     const delivering = ventilator.delivering;
     const commandedTidal = delivering
       ? ventilator.tidalVolumeMl

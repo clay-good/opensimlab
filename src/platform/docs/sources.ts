@@ -1162,6 +1162,34 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-21',
   },
   {
+    id: 'levy-opioid-harm-2021',
+    pmid: '33027841',
+    authors: 'Levy N, Quinlan J, El-Boghdadly K, et al',
+    title: 'An international multidisciplinary consensus statement on the prevention of opioid-related harm in adult surgical patients',
+    publication: 'Anaesthesia',
+    year: 2021,
+    locator: '76:520-36',
+    usedFor: 'The postoperative OIVI lesson: advancing sedation plus reduced ventilation matter; '
+      + 'supplemental oxygen can delay hypoxemia; central-drive depression is only one component; '
+      + 'all postoperative opioid recipients need risk-aware monitoring and early response.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-24',
+  },
+  {
+    id: 'jansen-oird-2024',
+    pmid: '38375496',
+    authors: 'Jansen SC, Dahan A',
+    title: 'Opioid-induced respiratory depression',
+    publication: 'BJA Education',
+    year: 2024,
+    locator: '24:100-6',
+    usedFor: 'The reversal boundary: naloxone is first-line pharmacologic reversal for serious '
+      + 'opioid ventilatory depression, but dose, analgesia loss, withdrawal, duration mismatch, '
+      + 'and recurrent depression require patient-specific care absent from this simulator.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-24',
+  },
+  {
     id: 'schwid-2001',
     pmid: '11302037',
     authors: 'Schwid HA, Rooke GA, Michalowski P, Ross BK',

@@ -52,6 +52,7 @@ describe('scenario catalog query', () => {
       'routine-induction', 'rapid-desaturation', 'laryngospasm-after-airway-stimulation',
       'difficult-airway-supraglottic-rescue', 'repeated-laryngoscopy-harm',
       'extubation-readiness', 'post-extubation-obstruction',
+      'opioid-induced-ventilatory-impairment',
     ]);
   });
 });

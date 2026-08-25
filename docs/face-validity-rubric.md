@@ -103,6 +103,7 @@ Reviewers run the routine induction themselves before answering.
 | B49 | In the delayed-emergence lesson, the ordered support, exposure, metabolic, and neurologic reviews are clinically coherent; the fixed focal finding clearly changes urgency without implying a diagnosis, treatment, or outcome | | |
 | B50 | In the extubation-readiness lesson, a ratio above 0.90 remains only one checkpoint; awake airway protection, spontaneous gas exchange, airway risk, and rescue planning integrate clearly without implying tube-removal skill or outcome | | |
 | B51 | In the post-extubation-obstruction lesson, soft-tissue collapse is visibly distinct from laryngospasm and bronchospasm; help, oxygen, continuous positive pressure, a held jaw thrust, and recovery are inspectable without implying a complete rescue algorithm or individual response time | | |
+| B52 | In the opioid-induced-ventilatory-impairment lesson, advancing sedation and a slow-rate/preserved-breath pattern appear before hypoxemia; help, ventilatory support, an opioid hold, dose-free naloxone intent, and spontaneous reassessment are inspectable without implying complete reversal or safe disposition | | |
 | B45 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response

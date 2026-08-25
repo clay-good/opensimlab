@@ -184,7 +184,7 @@
   display: grid;
   grid-template-columns: minmax(0, 72fr) minmax(0, 28fr);
   /* The single row is bounded by the region, not by its content. Without this the
-   * implicit row is `auto`, the seven vital tiles ask for their natural 688 px,
+   * implicit row is `auto`, the vital tiles ask for more than the available height,
    * and both columns overflow the monitor and sit on top of the action tray. */
   grid-template-rows: minmax(0, 1fr);
   min-block-size: 0;
@@ -276,6 +276,7 @@
  * 40px compact control density, so these need an explicit WCAG target floor. */
 .crisis-drug__action { min-block-size: 44px; }
 .airway-rescue__action { min-block-size: 44px; }
+.opioid-response__action { min-block-size: 44px; }
 .model-detail__action { min-block-size: 44px; }
 .model-detail__identity { overflow-wrap: anywhere; }
 

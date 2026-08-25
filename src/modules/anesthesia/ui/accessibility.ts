@@ -148,11 +148,12 @@ export function stateSummary(
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
     const spec = FIELDS[tile.field];
-    if (options.invalid.has(tile.field)) {
+    const value = state[tile.field];
+    if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
       lines.push(`${spec.label}: not measurable. ${tile.invalidReason ?? ''}`.trim());
       continue;
     }
-    lines.push(`${spec.label}: ${state[tile.field].toFixed(spec.precision)} ${spec.unit}`.trim());
+    lines.push(`${spec.label}: ${value.toFixed(spec.precision)} ${spec.unit}`.trim());
     if (tile.field === 'trainOfFourRatio') {
       lines.push(`Train-of-four count: ${state.trainOfFourCount.toFixed(0)} of 4.`);
       if (state.trainOfFourCount === 4 && state.trainOfFourRatio >= 0.4

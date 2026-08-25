@@ -43,6 +43,7 @@ import { EMERGENCE_WITH_RESIDUAL_BLOCKADE } from './emergence-with-residual-bloc
 import { DELAYED_EMERGENCE_DIFFERENTIAL } from './delayed-emergence-differential';
 import { EXTUBATION_READINESS } from './extubation-readiness';
 import { POST_EXTUBATION_OBSTRUCTION } from './post-extubation-obstruction';
+import { OPIOID_INDUCED_VENTILATORY_IMPAIRMENT } from './opioid-induced-ventilatory-impairment';
 
 export const SCENARIOS: readonly Scenario[] = [
   ROUTINE_INDUCTION,
@@ -79,6 +80,7 @@ export const SCENARIOS: readonly Scenario[] = [
   DELAYED_EMERGENCE_DIFFERENTIAL,
   EXTUBATION_READINESS,
   POST_EXTUBATION_OBSTRUCTION,
+  OPIOID_INDUCED_VENTILATORY_IMPAIRMENT,
 ];
 
 /** The scenario a learner meets first. */

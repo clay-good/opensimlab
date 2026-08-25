@@ -560,3 +560,17 @@
   inspection, and full CI.
 - [ ] Add airway adjuncts, position controls, laryngospasm, edema, aspiration, reintubation,
   post-obstructive pulmonary edema, recurrence, prolonged monitoring, or team performance.
+
+## Slice 38: bounded opioid-induced ventilatory impairment
+
+- [x] Check in an evidence brief covering the OIVI triad, advancing sedation, imperfect oxygen and
+  respiratory-rate surrogates, ventilatory support, naloxone reversal, and recurrence boundaries.
+- [x] Add a thirty-fifth authored postoperative scenario with a patent airway and a dedicated
+  slow-rate/relatively preserved-breath central-drive trajectory.
+- [x] Add help, active ventilation and oxygen, ordered opioid hold, dose-free naloxone intent, and
+  supported-to-spontaneous reassessment with deterministic replay and debrief evidence.
+- [x] Reject unsupported, duplicate, out-of-order, hostile, and inactive response requests.
+- [x] Complete curriculum mapping, preparation path, limitations, catalog, SEO, responsive browser
+  inspection, and full CI.
+- [ ] Add opioid or naloxone pharmacokinetics, dose or route, pain, sedation-scale technique,
+  co-sedatives, withdrawal, recurrent depression, repeated reversal, or monitoring disposition.

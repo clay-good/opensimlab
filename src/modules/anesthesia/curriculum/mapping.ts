@@ -1200,6 +1200,21 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'pc-airway-management',
     objectiveIds: ['recognize-post-extubation-obstruction', 'support-post-extubation-airway', 'confirm-post-extubation-recovery'],
   },
+  {
+    scenarioId: 'opioid-induced-ventilatory-impairment', frameworkId: 'nbcrna-nce',
+    domainId: 'advanced-principles',
+    objectiveIds: ['recognize-opioid-ventilatory-impairment', 'support-opioid-impaired-ventilation', 'prevent-further-opioid-harm', 'escalate-opioid-reversal', 'reassess-opioid-ventilatory-recovery'],
+  },
+  {
+    scenarioId: 'opioid-induced-ventilatory-impairment', frameworkId: 'coa-standards',
+    domainId: 'clinical-decision-making',
+    objectiveIds: ['recognize-opioid-ventilatory-impairment', 'support-opioid-impaired-ventilation', 'prevent-further-opioid-harm', 'escalate-opioid-reversal', 'reassess-opioid-ventilatory-recovery'],
+  },
+  {
+    scenarioId: 'opioid-induced-ventilatory-impairment', frameworkId: 'acgme-anesthesiology-milestones-2',
+    domainId: 'pc-crisis-management',
+    objectiveIds: ['recognize-opioid-ventilatory-impairment', 'support-opioid-impaired-ventilation', 'prevent-further-opioid-harm', 'escalate-opioid-reversal', 'reassess-opioid-ventilatory-recovery'],
+  },
 ];
 
 export interface DomainCoverage {

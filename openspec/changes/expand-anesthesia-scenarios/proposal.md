@@ -38,6 +38,9 @@ removal, procedural technique, advanced at-risk strategies, rescue performance, 
 The thirty-seventh adds immediate post-extubation soft-tissue obstruction with a live, bounded
 gas-flow recovery trajectory, while keeping laryngospasm, edema, adjuncts, reintubation,
 complications, recurrence, and team performance outside the model.
+The thirty-eighth adds postoperative opioid-induced ventilatory impairment with advancing sedation,
+central-drive depression, active support, an opioid hold, dose-free naloxone intent, and spontaneous
+reassessment without morphine or naloxone pharmacology, pain, withdrawal, recurrence, or disposition.
 
 ## What changes
 
@@ -261,3 +264,8 @@ already been removed. A dedicated soft-tissue obstruction state remains distinct
 and bronchospasm; accepted help escalation, high-concentration oxygen, continuous positive pressure,
 and a held jaw thrust restore modeled gas flow. The response rate is a teaching trajectory, not an
 individual prediction or a complete post-extubation airway algorithm.
+The thirty-eighth adds the thirty-fifth authored scenario and isolates central ventilatory-drive
+depression from the preceding upper-airway lesson. Difficult arousal, a slow-rate/relatively
+preserved-breath pattern, active ventilation, opioid-hold intent, dose-free naloxone escalation, and
+spontaneous reassessment are inspectable. Exposure pharmacokinetics, analgesia, dosing, withdrawal,
+recurrent depression, and monitoring disposition remain excluded.

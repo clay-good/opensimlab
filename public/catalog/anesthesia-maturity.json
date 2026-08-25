@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "recordCount": 49,
+  "recordCount": 50,
   "records": [
     {
       "recordId": "scenario:routine-induction@0.1.0",
@@ -375,6 +375,17 @@
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#post-extubation-obstruction@0.1.0",
         "/catalog/anesthesia-quality-audit.json#post-extubation-obstruction@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:opioid-induced-ventilatory-impairment@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "opioid-induced-ventilatory-impairment",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#opioid-induced-ventilatory-impairment@0.1.0",
+        "/catalog/anesthesia-quality-audit.json#opioid-induced-ventilatory-impairment@0.1.0"
       ]
     },
     {

@@ -628,3 +628,17 @@ holds the existing jaw-thrust/continuous-pressure maneuver, and confirms modeled
 capnography, and oxygenation recovery. The deterministic response is explicitly a bounded teaching
 trajectory. Airway adjuncts, laryngospasm, edema, aspiration, reintubation, pulmonary edema,
 recurrence, continued monitoring, and team performance remain excluded.
+
+## Slice 38: bounded opioid-induced ventilatory impairment
+
+The thirty-fifth authored scenario begins in postoperative recovery after a fixed opioid exposure.
+A dedicated central-drive state lowers spontaneous respiratory rate much more than tidal volume,
+while the airway remains patent and supplemental oxygen initially supports saturation. This keeps
+the lesson distinct from post-extubation soft-tissue obstruction.
+
+The expert path recognizes difficult arousal and ventilation change, recruits help, establishes
+active breath delivery with high-concentration oxygen, holds further opioid, records naloxone
+titration intent, and confirms spontaneous recovery only after delivered breaths stop. The exposure,
+severity, and reversal curve are teaching fixtures. Morphine and naloxone pharmacology, dose and
+route, pain, sedation-scale technique, co-sedatives, withdrawal, recurrent depression, and continued
+monitoring or disposition are not modeled.

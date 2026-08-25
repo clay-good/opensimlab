@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 30 reports post-extubation obstruction state. */
-export const WORKER_PROTOCOL_VERSION = 30;
+/** Bumped whenever the message shape changes incompatibly. Version 31 reports bounded OIVI response state. */
+export const WORKER_PROTOCOL_VERSION = 31;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -318,6 +318,12 @@ export interface EquipmentSnapshot {
       readonly decision: 'ready-for-planned-awake-extubation'
         | 'continue-support-and-reassess' | null;
       readonly decidedAtTick: number | null;
+    };
+    /** Bounded postoperative opioid-induced ventilatory impairment response. */
+    readonly opioidVentilatoryResponse?: {
+      readonly severity: number;
+      readonly furtherOpioidHeldAtTick: number | null;
+      readonly naloxoneIntentAtTick: number | null;
     };
     /** Accepted quantitative neuromuscular-reversal teaching state. */
     readonly neuromuscularReversalFraction?: number;

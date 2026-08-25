@@ -48,6 +48,7 @@ export const PREPARATION_PATHS: readonly PreparationPathDefinition[] = [
       'routine-induction', 'rapid-desaturation', 'laryngospasm-after-airway-stimulation',
       'difficult-airway-supraglottic-rescue', 'repeated-laryngoscopy-harm',
       'extubation-readiness', 'post-extubation-obstruction',
+      'opioid-induced-ventilatory-impairment',
     ],
     prerequisites: ['Basic induction controls.'],
     targetCompetencies: ['Preoxygenation', 'Airway rescue', 'Oxygenation reassessment'],
