@@ -919,6 +919,24 @@ MAP 67 mmHg while shock, source control, dose adequacy, durability, and outcome 
 lab does not inspect, measure, calculate, prime, purge, flush, bolus, program, prescribe, compound,
 deliver a drug, manipulate equipment, diagnose shock, determine disposition, or predict outcome.
 
+### Wave B critical-care slice 22: pulse-oximeter motion artifact
+
+The twenty-second critical-care slice begins with shivering and a pulse-oximeter display of 82%
+and pulse 132/min while ECG remains 86/min. The pleth is irregular and low amplitude at a cool,
+low-perfusion finger, yet the authored patient is awake, speaking clearly, breathing 16/min without
+visible distress, and has stable circulation and EtCO₂ 37 mmHg. Canonical modeled oxygenation
+remains 97%, separating patient, probe, pleth, numeric display, pulse rate, and alarm state.
+
+The focused tutor pairs “trust the signal, not just the number” with “corroborate, then reassess.”
+Learners recognize discordance, inspect pleth and pulse-rate coherence, review the declared probe,
+motion, temperature, and perfusion path, then corroborate the whole patient with a fixed arterial
+panel of SaO₂ 97% and PaO₂ 94 mmHg. A clean capnogram supports ventilation but explicitly does
+not exclude hypoxemia. Fixed clean-site reassessment restores a 97% display, pulse 86/min, and a
+regular stronger pleth without changing patient physiology or delivering treatment. True hypoxemia,
+dyshemoglobinemia, optical interference, venous pulsation, probe fault, and evolving illness remain
+open. The lab does not inspect or move a probe, examine, sample blood, configure a monitor, diagnose,
+deliver oxygen or treatment, determine disposition, or predict outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute

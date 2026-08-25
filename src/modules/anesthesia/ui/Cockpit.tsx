@@ -248,11 +248,16 @@ export function Cockpit({
     [equipment?.waveformArtifacts],
   );
   const displayedState = useMemo(() => {
-    if (!hasArterialLine || !session.state || arterialLine.displayedMeanArterialMmHg === null) {
-      return session.state;
-    }
-    return { ...session.state, meanArterialMmHg: arterialLine.displayedMeanArterialMmHg };
-  }, [hasArterialLine, session.state, arterialLine.displayedMeanArterialMmHg]);
+    if (!session.state) return session.state;
+    const pulseOx = equipment?.resuscitation.pulseOximeterArtifactAssessment;
+    return {
+      ...session.state,
+      ...(hasArterialLine && arterialLine.displayedMeanArterialMmHg !== null
+        ? { meanArterialMmHg: arterialLine.displayedMeanArterialMmHg } : {}),
+      ...(pulseOx ? { spo2Percent: pulseOx.displayedSpo2Percent } : {}),
+    };
+  }, [hasArterialLine, session.state, arterialLine.displayedMeanArterialMmHg,
+    equipment?.resuscitation.pulseOximeterArtifactAssessment]);
   const infusions = useMemo(
     () => (equipment?.drugs ?? [])
       .filter((drug) => drug.infusionRate > 0)
@@ -574,7 +579,9 @@ export function Cockpit({
           rhythm={rhythm}
           airwayPatencyFraction={airway.patencyFraction}
           bronchospasmSeverity={airway.bronchospasmSeverity}
-          ventilating={ventilator.delivering}
+          ventilating={ventilator.delivering || (airway.device !== 'tracheal-tube'
+            && (session.state?.respiratoryRateBpm ?? 0) > 0
+            && (session.state?.tidalVolumeMl ?? 0) > 0)}
           mechanicalPulse={mechanicalPulseFromState(session.state)}
           reducedMotion={reducedMotion}
           colorblindSafe={colorblindSafe}
@@ -850,6 +857,9 @@ export function Cockpit({
           })}
           onDelayedVasopressorDeliveryResponse={(action) => session.act({
             type: 'delayed-vasopressor-delivery-response', payload: { action },
+          })}
+          onPulseOximeterArtifactResponse={(action) => session.act({
+            type: 'pulse-oximeter-artifact-response', payload: { action },
           })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },

@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 79 reports delayed-delivery state. */
-export const WORKER_PROTOCOL_VERSION = 79;
+export const WORKER_PROTOCOL_VERSION = 80;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -569,6 +569,16 @@ export interface EquipmentSnapshot {
       readonly classifiedAtTick: number | null;
       readonly protocolAtTick: number | null;
       readonly reassessedAtTick: number | null;
+    };
+    readonly pulseOximeterArtifactAssessment?: {
+      readonly discordanceAtTick: number | null;
+      readonly plethAtTick: number | null;
+      readonly probePerfusionAtTick: number | null;
+      readonly corroboratedAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+      readonly displayedSpo2Percent: number;
+      readonly displayedPulseRateBpm: number;
+      readonly signalQuality: 'poor' | 'good';
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

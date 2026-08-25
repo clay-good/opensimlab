@@ -1430,6 +1430,20 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-25',
   },
   {
+    id: 'gehring-pulse-ox-motion-low-perfusion-2002',
+    pmid: '11749687',
+    authors: 'Gehring H, Hornberger C, Matz H, Konecny E, Schmucker P',
+    title: 'The effects of motion artifact and low perfusion on the performance of a new generation of pulse oximeters in volunteers undergoing hypoxemia',
+    publication: 'Respir Care',
+    year: 2002,
+    locator: '47:48-60',
+    usedFor: 'The pulse-oximeter artifact lesson boundary: motion and reduced perfusion can increase '
+      + 'faulty saturation and pulse-rate readings, and performance varies between devices and '
+      + 'conditions rather than following one universal error model.',
+    verifiedAgainst: NCBI,
+    verifiedOn: '2026-08-25',
+  },
+  {
     id: 'schwid-2001',
     pmid: '11302037',
     authors: 'Schwid HA, Rooke GA, Michalowski P, Ross BK',

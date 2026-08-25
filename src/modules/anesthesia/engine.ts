@@ -501,6 +501,11 @@ export class AnesthesiaEngine {
   private delayedVasopressorClassifiedAtTick: number | null = null;
   private delayedVasopressorProtocolAtTick: number | null = null;
   private delayedVasopressorReassessedAtTick: number | null = null;
+  private pulseOximeterDiscordanceAtTick: number | null = null;
+  private pulseOximeterPlethAtTick: number | null = null;
+  private pulseOximeterProbePerfusionAtTick: number | null = null;
+  private pulseOximeterCorroboratedAtTick: number | null = null;
+  private pulseOximeterReassessedAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -3882,6 +3887,49 @@ export class AnesthesiaEngine {
         this.log('critical', 'assessment', `vasopressor-delivery-reassessed-${this.currentTick}`, 'Fixed 5-minute response: documented drug arrival, MAP 67 mmHg, HR 108/min, refill 3 seconds, EtCO₂ 32 mmHg, unchanged SpO₂ 95% on FiO₂ 0.40, and temperature 38.9°C. Shock, source control, dose adequacy, line durability, later perfusion, and outcome remain open.', { deliveryDocumented: true, drugDeliveredByControl: false, outcomeProven: false });
         break;
       }
+      case 'pulse-oximeter-artifact-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pulse-oximeter-motion-artifact');
+        const valid = ['recognize-pulse-oximeter-discordance',
+          'inspect-pleth-and-pulse-rate-coherence', 'review-probe-motion-and-perfusion',
+          'corroborate-oxygenation-independently', 'reassess-pulse-oximeter-signal'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `pulse-ox-response-refused-${this.currentTick}`, supported ? 'The pulse-oximeter action was not one of the listed choices. Nothing changed.' : 'The bounded signal-quality choices are available only in the declared lesson.'); break; }
+        if (response === 'recognize-pulse-oximeter-discordance') {
+          if (this.pulseOximeterDiscordanceAtTick !== null) { this.log('warning', 'assessment', `pulse-ox-discordance-refused-${this.currentTick}`, 'The display-versus-patient discordance has already been reviewed.'); break; }
+          this.pulseOximeterDiscordanceAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pulse-ox-discordance-recognized-${this.currentTick}`, 'The isolated 82% display and oximeter pulse 132/min were separated from ECG 86/min, the whole patient, and canonical modeled oxygenation. Display, signal, alarm, perfusion, and patient remain distinct states.', { displayedSpo2Percent: 82, canonicalSpo2Percent: 97, displayedPulseRateBpm: 132, ecgRateBpm: 86 });
+          break;
+        }
+        if (this.pulseOximeterDiscordanceAtTick === null) { this.log('warning', 'assessment', `pulse-ox-discordance-order-refused-${this.currentTick}`, 'Recognize the display-versus-patient discordance before interrogating the signal path.'); break; }
+        if (response === 'inspect-pleth-and-pulse-rate-coherence') {
+          if (this.pulseOximeterPlethAtTick !== null) { this.log('warning', 'assessment', `pulse-ox-pleth-refused-${this.currentTick}`, 'Pleth quality and pulse-rate coherence have already been reviewed.'); break; }
+          this.pulseOximeterPlethAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pulse-ox-pleth-inspected-${this.currentTick}`, 'The fixed pleth is irregular and low amplitude, and its 132/min pulse does not match ECG 86/min. Signal quality is poor; this lowers confidence without diagnosing artifact.', { signalQuality: 'poor', pulseRateCoherent: false, diagnosisProven: false });
+          break;
+        }
+        if (this.pulseOximeterPlethAtTick === null) { this.log('warning', 'assessment', `pulse-ox-pleth-order-refused-${this.currentTick}`, 'Inspect pleth quality and pulse-rate coherence before reviewing the probe path.'); break; }
+        if (response === 'review-probe-motion-and-perfusion') {
+          if (this.pulseOximeterProbePerfusionAtTick !== null) { this.log('warning', 'assessment', `pulse-ox-probe-refused-${this.currentTick}`, 'The fixed probe, motion, temperature, and perfusion record has already been reviewed.'); break; }
+          this.pulseOximeterProbePerfusionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pulse-ox-probe-perfusion-reviewed-${this.currentTick}`, 'The fixed record declares shivering, a cool low-perfusion finger, intact but motion-affected probe contact, and no physical probe assessment. Motion and reduced local perfusion can degrade this signal, but alternatives remain open.', { motionPresent: true, localPerfusion: 'low', physicalAssessmentPerformed: false, alternativesOpen: true });
+          break;
+        }
+        if (this.pulseOximeterProbePerfusionAtTick === null) { this.log('warning', 'assessment', `pulse-ox-probe-order-refused-${this.currentTick}`, 'Review the declared probe, motion, temperature, and local perfusion before corroborating oxygenation.'); break; }
+        if (response === 'corroborate-oxygenation-independently') {
+          if (this.pulseOximeterCorroboratedAtTick !== null) { this.log('warning', 'assessment', `pulse-ox-corroboration-refused-${this.currentTick}`, 'The fixed independent oxygenation evidence has already been reviewed.'); break; }
+          this.pulseOximeterCorroboratedAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pulse-ox-oxygenation-corroborated-${this.currentTick}`, 'The awake, speaking patient, stable respiratory pattern and circulation, and fixed arterial panel SaO₂ 97%/PaO₂ 94 mmHg corroborate oxygenation in this authored state. EtCO₂ 37 mmHg supports ventilation but cannot exclude hypoxemia.', { sao2Percent: 97, pao2MmHg: 94, capnographyExcludesHypoxemia: false, arterialSampleObtainedByControl: false });
+          break;
+        }
+        if (this.pulseOximeterCorroboratedAtTick === null) { this.log('warning', 'assessment', `pulse-ox-corroboration-order-refused-${this.currentTick}`, 'Corroborate oxygenation before recording the clean-site reassessment.'); break; }
+        if (this.pulseOximeterReassessedAtTick !== null) { this.log('warning', 'assessment', `pulse-ox-reassessment-refused-${this.currentTick}`, 'The fixed clean-site response has already been recorded.'); break; }
+        this.pulseOximeterReassessedAtTick = this.currentTick;
+        this.artifacts.delete('pulse-oximeter-motion');
+        this.waveforms.setArtifact('pulse-oximeter-motion', false);
+        this.log('critical', 'assessment', `pulse-ox-signal-reassessed-${this.currentTick}`, 'Fixed clean-site reassessment: displayed SpO₂ 97%, pulse 86/min, and a regular stronger pleth now agree with unchanged ECG 86/min, MAP 76 mmHg, EtCO₂ 37 mmHg, RR 16/min, and patient observations. No oxygen or treatment was delivered; diagnosis, future signal durability, evolving illness, and outcome remain open.', { displayedSpo2Percent: 97, displayedPulseRateBpm: 86, signalQuality: 'good', treatmentDelivered: false, outcomeProven: false });
+        break;
+      }
       case 'aspiration-risk-assessment': {
         const supported = this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'aspiration-risk-recognition',
@@ -6751,6 +6799,12 @@ export class AnesthesiaEngine {
         systolicMmHg: reassessed ? 90 : 75, diastolicMmHg: reassessed ? 55 : 44,
         meanArterialMmHg: reassessed ? 67 : 54, coreTemperatureC: reassessed ? 38.9 : 39 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'pulse-oximeter-motion-artifact')) {
+      crisisState = { ...crisisState, heartRateBpm: 86, respiratoryRateBpm: 16,
+        spo2Percent: 97, etco2MmHg: 37, systolicMmHg: 108, diastolicMmHg: 60,
+        meanArterialMmHg: 76, coreTemperatureC: 36.4 };
+    }
 
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
@@ -7310,6 +7364,19 @@ export class AnesthesiaEngine {
           protocolAtTick: this.delayedVasopressorProtocolAtTick,
           reassessedAtTick: this.delayedVasopressorReassessedAtTick,
         },
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pulse-oximeter-motion-artifact') ? {
+            pulseOximeterArtifactAssessment: {
+              discordanceAtTick: this.pulseOximeterDiscordanceAtTick,
+              plethAtTick: this.pulseOximeterPlethAtTick,
+              probePerfusionAtTick: this.pulseOximeterProbePerfusionAtTick,
+              corroboratedAtTick: this.pulseOximeterCorroboratedAtTick,
+              reassessedAtTick: this.pulseOximeterReassessedAtTick,
+              displayedSpo2Percent: this.pulseOximeterReassessedAtTick === null ? 82 : 97,
+              displayedPulseRateBpm: this.pulseOximeterReassessedAtTick === null ? 132 : 86,
+              signalQuality: this.pulseOximeterReassessedAtTick === null ? 'poor' as const : 'good' as const,
+            },
+          } : {}),
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,
           classification: this.aspirationRiskClassification,
@@ -7439,6 +7506,7 @@ export class AnesthesiaEngine {
     // artifact treatment, and the waveform samples themselves remain damped.
     if (this.artifacts.has('electrocautery')) signals.add('ecg');
     if (this.artifacts.has('probe-displacement')) signals.add('pleth');
+    if (this.artifacts.has('pulse-oximeter-motion')) signals.add('pleth');
     if (this.artifacts.has('circuit-disconnection')) signals.add('capno');
     if (this.artifacts.has('esophageal-intubation')) signals.add('capno');
     if (this.artifacts.has('sampling-line-obstruction')) signals.add('capno');
@@ -7525,6 +7593,7 @@ export class AnesthesiaEngine {
     }
     if (this.artifacts.has('electrocautery')) parameters.add('heartRateBpm');
     if (this.artifacts.has('probe-displacement')) parameters.add('spo2Percent');
+    if (this.artifacts.has('pulse-oximeter-motion')) parameters.add('spo2Percent');
     if (this.artifacts.has('sampling-line-obstruction')) parameters.add('etco2MmHg');
     return parameters;
   }

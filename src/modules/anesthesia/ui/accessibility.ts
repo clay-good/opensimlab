@@ -312,8 +312,8 @@ export function waveformDescriptions(options: {
 
   const plethShape = !options.mechanicalPulse
     ? 'Non-pulsatile: no mechanical pulse is reaching the probe.'
-    : options.artifacts.has('probe-displacement')
-      ? 'Non-pulsatile: the probe is displaced.'
+    : options.artifacts.has('probe-displacement') || options.artifacts.has('pleth')
+      ? 'Artifact-affected: pulses are irregular, low amplitude, or absent. Signal quality is poor and the saturation reading is unreliable.'
       : options.perfusionIndex < 0.35
         ? 'Small, low-amplitude pulses. Signal quality is poor and the saturation reading is unreliable.'
         : 'Regular pulses with a clear upstroke and a dicrotic shoulder.';

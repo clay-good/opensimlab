@@ -3931,6 +3931,25 @@ export function objectiveFindings(
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Documented arrival and perfusion improved while shock, durability, and outcome remained open.' : 'Delivery and perfusion reassessment was absent or preceded the safety plan.', atTick: reassessed?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['recognize-pulse-oximeter-discordance', 'inspect-pleth-and-pulse-rate-coherence',
+      'review-probe-motion-and-perfusion', 'corroborate-oxygenation-independently',
+      'reassess-pulse-oximeter-signal'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pulse-oximeter-motion-artifact');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The pulse-oximeter motion-artifact lesson was not active.' } satisfies ObjectiveFinding;
+      const discordance = log.find((event) => /^pulse-ox-discordance-recognized-\d+$/.test(event.eventId));
+      const pleth = log.find((event) => /^pulse-ox-pleth-inspected-\d+$/.test(event.eventId));
+      const probe = log.find((event) => /^pulse-ox-probe-perfusion-reviewed-\d+$/.test(event.eventId));
+      const corroborated = log.find((event) => /^pulse-ox-oxygenation-corroborated-\d+$/.test(event.eventId));
+      const reassessed = log.find((event) => /^pulse-ox-signal-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'recognize-pulse-oximeter-discordance') return { ...base, outcome: discordance ? 'met' : 'not-met', finding: discordance ? 'The isolated display was separated from signal, alarm, perfusion, and patient oxygenation.' : 'The low display was not reconciled with the patient and independent signals.', atTick: discordance?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'inspect-pleth-and-pulse-rate-coherence') { const ordered = discordance && pleth && discordance.tick <= pleth.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Poor irregular pleth and pulse-rate mismatch lowered confidence without diagnosing artifact.' : 'Pleth and pulse-rate coherence review was absent or out of order.', atTick: pleth?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-probe-motion-and-perfusion') { const ordered = pleth && probe && pleth.tick <= probe.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The fixed probe, motion, temperature, and local-perfusion record was reviewed while alternatives stayed open.' : 'The probe and perfusion review was absent or preceded signal inspection.', atTick: probe?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'corroborate-oxygenation-independently') { const ordered = probe && corroborated && probe.tick <= corroborated.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Patient observations and fixed arterial oxygenation corroborated the authored state without overreading capnography.' : 'Independent oxygenation corroboration was absent or preceded the sensor-path review.', atTick: corroborated?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = corroborated && reassessed && corroborated.tick <= reassessed.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Display, pulse rate, and pleth became coherent while canonical physiology remained unchanged.' : 'Signal reassessment was absent or preceded independent corroboration.', atTick: reassessed?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;

@@ -501,6 +501,16 @@ export interface ActionCockpitProps {
       readonly protocolAtTick: number | null;
       readonly reassessedAtTick: number | null;
     };
+    readonly pulseOximeterArtifactAssessment?: {
+      readonly discordanceAtTick: number | null;
+      readonly plethAtTick: number | null;
+      readonly probePerfusionAtTick: number | null;
+      readonly corroboratedAtTick: number | null;
+      readonly reassessedAtTick: number | null;
+      readonly displayedSpo2Percent: number;
+      readonly displayedPulseRateBpm: number;
+      readonly signalQuality: 'poor' | 'good';
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -817,6 +827,11 @@ export interface ActionCockpitProps {
       | 'activate-vasopressor-startup-safety-plan'
       | 'reassess-vasopressor-delivery-and-perfusion',
   ) => void;
+  readonly onPulseOximeterArtifactResponse?: (
+    action: 'recognize-pulse-oximeter-discordance'
+      | 'inspect-pleth-and-pulse-rate-coherence' | 'review-probe-motion-and-perfusion'
+      | 'corroborate-oxygenation-independently' | 'reassess-pulse-oximeter-signal',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1024,6 +1039,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'delayed-vasopressor-delivery',
     ),
+    hasPulseOximeterArtifactResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'pulse-oximeter-motion-artifact',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1116,6 +1135,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'icu-handoff-with-hidden-deterioration')
       || (event.type === 'narrative' && event.target === 'ventilator-circuit-disconnection')
       || (event.type === 'narrative' && event.target === 'delayed-vasopressor-delivery')
+      || (event.type === 'narrative' && event.target === 'pulse-oximeter-motion-artifact')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1148,6 +1168,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasIcuHiddenDeteriorationHandoffResponse,
     hasVentilatorCircuitDisconnectionResponse,
     hasDelayedVasopressorDeliveryResponse,
+    hasPulseOximeterArtifactResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -1201,7 +1222,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasCriticalCareStatusEpilepticusResponse || hasPostArrestTemperatureResponse
     || hasIntracranialHypertensionResponse || hasAkiFluidOverloadResponse
     || hasSevereAcidemiaResponse || hasIcuHiddenDeteriorationHandoffResponse
-    || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse;
+    || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
+    || hasPulseOximeterArtifactResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -1229,8 +1251,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasCriticalCareStatusEpilepticusResponse || hasPostArrestTemperatureResponse
     || hasIntracranialHypertensionResponse || hasAkiFluidOverloadResponse
     || hasSevereAcidemiaResponse || hasIcuHiddenDeteriorationHandoffResponse
-    || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse;
-  const responseTray = hasDelayedVasopressorDeliveryResponse
+    || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
+    || hasPulseOximeterArtifactResponse;
+  const responseTray = hasPulseOximeterArtifactResponse
+    ? { id: 'crisis', label: 'Pulse-ox signal' } as const
+    : hasDelayedVasopressorDeliveryResponse
     ? { id: 'crisis', label: 'Vasopressor delivery' } as const
     : hasVentilatorCircuitDisconnectionResponse
     ? { id: 'crisis', label: 'Circuit disconnection' } as const
@@ -1374,6 +1399,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasIcuHiddenDeteriorationHandoffResponse
     || hasVentilatorCircuitDisconnectionResponse
     || hasDelayedVasopressorDeliveryResponse
+    || hasPulseOximeterArtifactResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1861,6 +1887,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <DelayedVasopressorDeliveryTray
                 assessment={props.resuscitation.delayedVasopressorDeliveryAssessment}
                 onAction={props.onDelayedVasopressorDeliveryResponse ?? (() => {})} />
+            )}
+            {hasPulseOximeterArtifactResponse && (
+              <PulseOximeterArtifactTray
+                assessment={props.resuscitation.pulseOximeterArtifactAssessment}
+                onAction={props.onPulseOximeterArtifactResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -5307,6 +5338,58 @@ function DelayedVasopressorDeliveryTray({ assessment, onAction }: {
             onClick={() => onAction('reassess-vasopressor-delivery-and-perfusion')}>Prove delivery + perfusion response</Button>
         </div>
         <p className="field__hint">This records a bounded protocol intent. It never calculates, primes, flushes, programs, or delivers a drug.</p>
+      </section>
+    </div>
+  );
+}
+
+function PulseOximeterArtifactTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['pulseOximeterArtifactAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onPulseOximeterArtifactResponse']>;
+}) {
+  const discordance = assessment?.discordanceAtTick != null;
+  const pleth = assessment?.plethAtTick != null;
+  const probe = assessment?.probePerfusionAtTick != null;
+  const corroborated = assessment?.corroboratedAtTick != null;
+  const reassessed = assessment?.reassessedAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="pulse-ox-signal-title">
+        <div id="pulse-ox-signal-title" className="syringe__name">Trust the signal, not just the number.</div>
+        <Badge kind="teaching">display · pleth · pulse · perfusion · patient</Badge>
+        <div className="syringe__meta">82% display · pulse 132 · ECG 86</div>
+        <p className="syringe__remaining" role="status">
+          {probe ? 'Motion + cool low-perfusion site reviewed · alternatives open'
+            : pleth ? 'Poor irregular pleth · pulse-rate mismatch confirmed'
+              : discordance ? 'Display ≠ patient · interrogate signal quality'
+                : 'Awake patient · stable breathing + circulation · isolated low display'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={discordance}
+            onClick={() => onAction('recognize-pulse-oximeter-discordance')}>Separate display from patient</Button>
+          <Button className="crisis-drug__action" disabled={!discordance || pleth}
+            onClick={() => onAction('inspect-pleth-and-pulse-rate-coherence')}>Inspect pleth + pulse-rate match</Button>
+          <Button className="crisis-drug__action" disabled={!pleth || probe}
+            onClick={() => onAction('review-probe-motion-and-perfusion')}>Review probe + motion + perfusion</Button>
+        </div>
+        <p className="field__hint">Signal confidence is part of the vital sign. Poor coherence lowers confidence; it does not diagnose artifact.</p>
+      </section>
+      <section className="syringe" aria-labelledby="pulse-ox-corroborate-title">
+        <div id="pulse-ox-corroborate-title" className="syringe__name">Corroborate, then reassess.</div>
+        <Badge kind="teaching">whole patient · arterial panel · trend · response</Badge>
+        <div className="syringe__meta">fixed SaO₂ 97% · PaO₂ 94 · EtCO₂ 37</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? '97% display · pulse 86 · coherent pleth · physiology unchanged'
+            : corroborated ? 'Oxygenation corroborated · clean-site reassessment due'
+              : 'A clean capnogram cannot exclude hypoxemia.'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!probe || corroborated}
+            onClick={() => onAction('corroborate-oxygenation-independently')}>Cross-check patient + arterial oxygenation</Button>
+          <Button className="crisis-drug__action" disabled={!corroborated || reassessed}
+            onClick={() => onAction('reassess-pulse-oximeter-signal')}>Reassess display + signal coherence</Button>
+        </div>
+        <p className="field__hint">If the patient is unstable, support and escalate in parallel. These controls inspect nothing and deliver no care.</p>
       </section>
     </div>
   );

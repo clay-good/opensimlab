@@ -148,6 +148,12 @@ export class WaveformEngine {
       probeDisplaced: this.artifacts.has('probe-displacement'),
     }, this.buffers.pleth);
 
+    if (this.artifacts.has('pulse-oximeter-motion')) {
+      for (let i = 0; i < this.buffers.pleth.length; i += 1) {
+        this.buffers.pleth[i] = (this.buffers.pleth[i] ?? 0) * 0.18 + this.rng.normal() * 0.06;
+      }
+    }
+
     // Electrocautery corrupts the electrocardiogram only. Every other trace stays
     // clean and consistent with the true state, which is the discrimination lesson.
     if (this.artifacts.has('electrocautery')) {

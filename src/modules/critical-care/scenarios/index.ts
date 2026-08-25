@@ -20,6 +20,7 @@ import { SEVERE_ACIDEMIA } from './severe-acidemia';
 import { ICU_HANDOFF_WITH_HIDDEN_DETERIORATION } from './icu-handoff-with-hidden-deterioration';
 import { VENTILATOR_CIRCUIT_DISCONNECTION } from './ventilator-circuit-disconnection';
 import { DELAYED_VASOPRESSOR_DELIVERY } from './delayed-vasopressor-delivery';
+import { PULSE_OXIMETER_MOTION_ARTIFACT } from './pulse-oximeter-motion-artifact';
 
 export const CRITICAL_CARE_SCENARIOS: readonly Scenario[] = [
   ARDS_LUNG_PROTECTIVE_VENTILATION,
@@ -43,6 +44,7 @@ export const CRITICAL_CARE_SCENARIOS: readonly Scenario[] = [
   ICU_HANDOFF_WITH_HIDDEN_DETERIORATION,
   VENTILATOR_CIRCUIT_DISCONNECTION,
   DELAYED_VASOPRESSOR_DELIVERY,
+  PULSE_OXIMETER_MOTION_ARTIFACT,
 ];
 export const DEFAULT_CRITICAL_CARE_SCENARIO_ID = ARDS_LUNG_PROTECTIVE_VENTILATION.metadata.id;
 

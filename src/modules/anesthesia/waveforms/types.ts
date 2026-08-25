@@ -93,6 +93,7 @@ export type ArtifactId =
   | 'arterial-transducer-misleveled'
   | 'electrocautery'
   | 'probe-displacement'
+  | 'pulse-oximeter-motion'
   | 'circuit-disconnection'
   | 'esophageal-intubation'
   | 'sampling-line-obstruction';

@@ -27,6 +27,41 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'pulse-oximeter-artifact-display-and-corroboration-are-authored',
+    headline: 'The false 82% display, poor pleth, pulse mismatch, arterial panel, and clean-site response are fixed teaching facts, not device predictions.',
+    simplification: 'One declared motion and low-local-perfusion state produces a fixed false 82% '
+      + 'display, pulse-rate mismatch, and noisy low-amplitude pleth while canonical oxygenation '
+      + 'remains stable. Real devices filter, delay, alarm, fail, and recover differently.',
+    whereItMisleads: 'Predicting how far or how fast a particular monitor will drift, or treating '
+      + 'a similar discordance as proof that the reading is artifact.',
+    correctUnderstanding: 'Judge the whole patient, signal quality, pulse-rate coherence, probe '
+      + 'site and perfusion, trend, and independent oxygenation evidence. Support an unstable '
+      + 'patient while checking the signal, and keep true hypoxemia and other limitations open.',
+    briefIn: ['pulse-oximeter-motion-artifact'],
+  },
+  {
+    id: 'pulse-oximeter-controls-record-review-intent-only',
+    headline: 'Pulse-oximeter controls reveal authored observations; they do not inspect, reposition, or validate a real probe or monitor.',
+    simplification: 'Button presses reveal fixed pleth, pulse-rate, probe-site, perfusion, patient, '
+      + 'arterial-panel, and reassessment facts without any physical action or device interaction.',
+    whereItMisleads: 'Using completion as evidence of probe-placement, perfusion-assessment, blood '
+      + 'sampling, monitor-configuration, or troubleshooting skill.',
+    correctUnderstanding: 'Those are physical and local-device competencies requiring supervised '
+      + 'practice, applicable instructions, and real equipment.',
+    briefIn: ['pulse-oximeter-motion-artifact'],
+  },
+  {
+    id: 'no-live-probe-assessment-arterial-sampling-diagnosis-treatment-or-outcome',
+    headline: 'The case does not examine the patient, sample blood, diagnose artifact or hypoxemia, deliver care, or predict outcome.',
+    simplification: 'All observations, arterial values, and the clean-site response are authored '
+      + 'proxies. No oxygen, treatment, escalation, or monitor action occurs.',
+    whereItMisleads: 'Reading the fixed arterial panel as a performed test, the improved display as '
+      + 'proof of diagnosis, or the stable patient as permission to delay support in real instability.',
+    correctUnderstanding: 'Clinical assessment, support, testing, diagnosis, treatment, and '
+      + 'reassessment occur in parallel according to the patient and local systems.',
+    briefIn: ['pulse-oximeter-motion-artifact'],
+  },
+  {
     id: 'crystalloid-volume-model',
     headline: 'Crystalloid retains a fixed 25% intravascular fraction here; redistribution, electrolytes, and fluid rate are not modeled.',
     simplification: 'A crystalloid bolus acts on the next simulation tick and exactly 25% remains '
