@@ -673,6 +673,26 @@ extubation readiness. The case does not examine, program a ventilator, acquire m
 change sedation, treat, extubate, select post-extubation support, determine disposition, or predict
 outcome.
 
+### Wave B critical-care slice 8: post-intubation hypotension
+
+The eighth critical-care slice begins 2 minutes after ICU intubation for pneumonia and septic shock.
+Invasive MAP has fallen from 68 to 46 mmHg despite a pulsatile arterial waveform; tachycardia, warm
+extremities, and 5-second capillary refill coexist with continuous capnography, reported bilateral
+ventilation, modest peak-to-plateau separation, complete expiration, and no reported external
+bleeding, rash, wheeze, or facial swelling. Learners validate pressure, pulse, and perfusion while
+calling experienced help, then review airway, ventilation, rhythm, bleeding, allergy, drug timing,
+positive-pressure transition, and obstructive, pump, vasodilated, and preload-sensitive alternatives.
+
+The focused tutor pairs “first, prove the pressure” with “support now; keep asking why.” An authored
+passive-leg-raise proxy raises stroke volume from 48 to 57 mL, supporting fluid responsiveness
+without proving one cause. Learners record concurrent norepinephrine intent toward an initial MAP
+near 65 mmHg and a cautious 250 mL balanced-crystalloid challenge with immediate reassessment, not
+a universal fluid-versus-vasopressor answer. The fixed 5-minute panel improves MAP, heart rate,
+perfusion, and stroke volume while leaving septic-shock and alternate-cause work open. The case does
+not examine, acquire pressure, perform ultrasound or passive leg raise, deliver fluid or drug,
+choose access or dose, change sedation or ventilation, diagnose, treat infection, determine
+disposition, or predict outcome.
+
 #### Cardiology: 17
 
 Stable chest-pain evaluation; STEMI recognition and first actions; NSTEMI risk reassessment; acute

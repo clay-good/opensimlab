@@ -808,6 +808,9 @@ export function Cockpit({
           onSpontaneousBreathingTrialResponse={(action) => session.act({
             type: 'spontaneous-breathing-trial-response', payload: { action },
           })}
+          onPostIntubationHypotensionResponse={(action) => session.act({
+            type: 'post-intubation-hypotension-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

@@ -2250,6 +2250,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     briefIn: ['spontaneous-breathing-trial'],
   },
   {
+    id: 'post-intubation-hypotension-findings-mechanism-and-response-are-authored',
+    headline: 'The pressure, perfusion, danger, dynamic-response, mechanism, and support panels are authored facts.',
+    simplification: 'One fixed septic adult develops severe hypotension after intubation, appears fluid responsive, and improves after a bounded support proxy.',
+    whereItMisleads: 'Treating the screen as examination, pressure acquisition, equipment inspection, ultrasound, passive leg raise, diagnosis, or response prediction.',
+    correctUnderstanding: 'Real assessment integrates signal validity, perfusion, airway and ventilation, timing, drugs, preload, tone, pump, obstruction, bleeding, allergy, and serial response.',
+    briefIn: ['post-intubation-hypotension'],
+  },
+  {
+    id: 'post-intubation-hypotension-fluid-vasopressor-and-assessment-controls-are-proxies',
+    headline: 'Help, dynamic assessment, fluid, vasopressor, and reassessment buttons record intents; they do not perform care.',
+    simplification: 'The interface enforces ordered reasoning without examining, performing a leg raise, choosing access or dose, administering fluid or drug, or changing ventilation.',
+    whereItMisleads: 'Equating button order with hemodynamic, airway, respiratory-therapy, prescribing, procedural, equipment, or ICU competence.',
+    correctUnderstanding: 'Use trained teams, immediate stabilization, cause-directed evaluation, individualized support, safe delivery systems, and frequent whole-patient reassessment.',
+    briefIn: ['post-intubation-hypotension'],
+  },
+  {
+    id: 'no-live-post-intubation-shock-diagnosis-prescribing-procedure-or-outcome',
+    headline: 'The case does not diagnose shock, choose universal fluid or vasopressor therapy, perform procedures, or predict outcome.',
+    simplification: 'Occult bleeding, pulmonary embolism, tension physiology, tamponade, pump failure, anaphylaxis, auto-PEEP, tube problems, drug effects, and septic trajectories are incomplete.',
+    whereItMisleads: 'Assuming timing proves one cause, giving unbounded fluid, copying a vasopressor plan, or stopping alternate-cause review when pressure improves.',
+    correctUnderstanding: 'Validate, stabilize, search rapidly, use dynamic and serial response to constrain support, and keep the underlying shock work open.',
+    briefIn: ['post-intubation-hypotension'],
+  },
+  {
     id: 'parameters-unverified',
     headline: 'No model parameter has been independently checked by a second person against a second source, so none carries the Published label.',
     simplification: 'Every pharmacology parameter in this build is transcribed from its primary '

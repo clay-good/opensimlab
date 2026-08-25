@@ -403,6 +403,13 @@ export interface ActionCockpitProps {
       readonly recoveryAtTick: number | null;
       readonly planAtTick: number | null;
     };
+    readonly postIntubationHypotensionAssessment?: {
+      readonly pressureAtTick: number | null;
+      readonly dangerAtTick: number | null;
+      readonly mechanismAtTick: number | null;
+      readonly supportAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -646,6 +653,11 @@ export interface ActionCockpitProps {
     action: 'review-sbt-readiness' | 'start-bounded-sbt' | 'recognize-sbt-failure'
       | 'stop-failed-sbt-and-recover' | 'plan-after-failed-sbt',
   ) => void;
+  readonly onPostIntubationHypotensionResponse?: (
+    action: 'validate-post-intubation-pressure-and-call-help'
+      | 'review-post-intubation-danger-pattern' | 'classify-post-intubation-hemodynamics'
+      | 'record-post-intubation-support-intent' | 'reassess-post-intubation-hypotension',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -807,6 +819,9 @@ export function crisisResponseAvailability(
     hasSpontaneousBreathingTrialResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'spontaneous-breathing-trial',
     ),
+    hasPostIntubationHypotensionResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'post-intubation-hypotension',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -885,6 +900,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'mucus-plugging')
       || (event.type === 'narrative' && event.target === 'unplanned-extubation')
       || (event.type === 'narrative' && event.target === 'spontaneous-breathing-trial')
+      || (event.type === 'narrative' && event.target === 'post-intubation-hypotension')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -903,6 +919,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasCopdExacerbationResponse, hasAutoPeepResponse, hasMucusPluggingResponse,
     hasUnplannedExtubationResponse,
     hasSpontaneousBreathingTrialResponse,
+    hasPostIntubationHypotensionResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -950,7 +967,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasTraumaPrimarySurveyResponse || hasAcuteAorticSyndromeResponse || hasArdsLungProtectiveResponse
     || hasEscalatingHypoxemiaResponse || hasVentilatorDyssynchronyResponse || hasAutoPeepResponse
     || hasMucusPluggingResponse || hasUnplannedExtubationResponse
-    || hasSpontaneousBreathingTrialResponse;
+    || hasSpontaneousBreathingTrialResponse || hasPostIntubationHypotensionResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -971,8 +988,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasHeatStrokeResponse || hasTraumaPrimarySurveyResponse || hasAcuteAorticSyndromeResponse
     || hasArdsLungProtectiveResponse || hasEscalatingHypoxemiaResponse
     || hasVentilatorDyssynchronyResponse || hasAutoPeepResponse || hasMucusPluggingResponse
-    || hasUnplannedExtubationResponse || hasSpontaneousBreathingTrialResponse;
-  const responseTray = hasSpontaneousBreathingTrialResponse
+    || hasUnplannedExtubationResponse || hasSpontaneousBreathingTrialResponse
+    || hasPostIntubationHypotensionResponse;
+  const responseTray = hasPostIntubationHypotensionResponse
+    ? { id: 'crisis', label: 'Post-intubation pressure' } as const
+    : hasSpontaneousBreathingTrialResponse
     ? { id: 'crisis', label: 'Breathing trial' } as const
     : hasUnplannedExtubationResponse
     ? { id: 'crisis', label: 'Unplanned extubation' } as const
@@ -1074,6 +1094,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasMucusPluggingResponse
     || hasUnplannedExtubationResponse
     || hasSpontaneousBreathingTrialResponse
+    || hasPostIntubationHypotensionResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -1495,6 +1516,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <SpontaneousBreathingTrialTray
                 assessment={props.resuscitation.spontaneousBreathingTrialAssessment}
                 onAction={props.onSpontaneousBreathingTrialResponse ?? (() => {})} />
+            )}
+            {hasPostIntubationHypotensionResponse && (
+              <PostIntubationHypotensionTray
+                assessment={props.resuscitation.postIntubationHypotensionAssessment}
+                onAction={props.onPostIntubationHypotensionResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -4214,6 +4240,58 @@ function SpontaneousBreathingTrialTray({ assessment, onAction }: {
             onClick={() => onAction('plan-after-failed-sbt')}>Review drivers + plan reassessment</Button>
         </div>
         <p className="field__hint">Do not push through failure. Even a future successful SBT still owes you a separate extubation-readiness decision.</p>
+      </section>
+    </div>
+  );
+}
+
+function PostIntubationHypotensionTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['postIntubationHypotensionAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onPostIntubationHypotensionResponse']>;
+}) {
+  const pressure = assessment?.pressureAtTick != null;
+  const danger = assessment?.dangerAtTick != null;
+  const mechanism = assessment?.mechanismAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const reassessed = assessment?.reassessmentAtTick != null;
+  return (
+    <div className="tray-grid">
+      <section className="syringe" aria-labelledby="post-intubation-prove-title">
+        <div id="post-intubation-prove-title" className="syringe__name">First, prove the pressure.</div>
+        <Badge kind="teaching">waveform · pulse · perfusion · trend</Badge>
+        <div className="syringe__meta">MAP 46 · HR 120 · refill 5 s · warm · sinus</div>
+        <p className="syringe__remaining" role="status">
+          {mechanism ? 'Mixed vasodilation + preload sensitivity · alternatives stay open'
+            : danger ? 'Immediate danger panel reviewed · classify the shape'
+              : pressure ? 'Pressure validated · trace the post-intubation system'
+                : 'Validate · support · call experienced help'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={pressure}
+            onClick={() => onAction('validate-post-intubation-pressure-and-call-help')}>Validate pressure + call help</Button>
+          <Button className="crisis-drug__action" disabled={!pressure || danger}
+            onClick={() => onAction('review-post-intubation-danger-pattern')}>Check airway + lungs + rhythm + bleeding</Button>
+          <Button className="crisis-drug__action" disabled={!danger || mechanism}
+            onClick={() => onAction('classify-post-intubation-hemodynamics')}>Review dynamic response + classify</Button>
+        </div>
+        <p className="field__hint">Timing narrows the search; it does not name the cause. Keep preload, tone, pump, obstruction, bleeding, allergy, drugs, and equipment visible.</p>
+      </section>
+      <section className="syringe" aria-labelledby="post-intubation-support-title">
+        <div id="post-intubation-support-title" className="syringe__name">Support now. Keep asking why.</div>
+        <Badge kind="teaching">tone · cautious volume · MAP guardrail · reassess</Badge>
+        <div className="syringe__meta">norepinephrine intent · 250 mL balanced challenge · MAP near 65</div>
+        <p className="syringe__remaining" role="status">
+          {reassessed ? 'MAP + perfusion improved · septic-shock work remains open'
+            : support ? 'Concurrent bounded support recorded · response due'
+              : 'Mechanism review pending'}
+        </p>
+        <div className="syringe__presets">
+          <Button className="crisis-drug__action" disabled={!mechanism || support}
+            onClick={() => onAction('record-post-intubation-support-intent')}>Record concurrent bounded support</Button>
+          <Button className="crisis-drug__action" disabled={!support || reassessed}
+            onClick={() => onAction('reassess-post-intubation-hypotension')}>Review 5-minute whole-patient response</Button>
+        </div>
+        <p className="field__hint">This is not a universal fluid-versus-vasopressor answer. Dynamic response and repeated lung, gas, pressure, and perfusion checks constrain both.</p>
       </section>
     </div>
   );

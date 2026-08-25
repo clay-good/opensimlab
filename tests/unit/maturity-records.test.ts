@@ -71,6 +71,9 @@ describe('exact-version maturity records', () => {
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'spontaneous-breathing-trial', '0.1.0',
     )?.status).toBe('draft');
+    expect(maturityFor(
+      criticalCareCatalog, 'scenario', 'post-intubation-hypotension', '0.1.0',
+    )?.status).toBe('draft');
   });
 
   it('never applies a record to a different content version', () => {

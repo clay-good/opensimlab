@@ -431,6 +431,11 @@ export class AnesthesiaEngine {
   private sbtFailureAtTick: number | null = null;
   private sbtRecoveryAtTick: number | null = null;
   private sbtPlanAtTick: number | null = null;
+  private postIntubationPressureAtTick: number | null = null;
+  private postIntubationDangerAtTick: number | null = null;
+  private postIntubationMechanismAtTick: number | null = null;
+  private postIntubationSupportAtTick: number | null = null;
+  private postIntubationReassessmentAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -3098,6 +3103,58 @@ export class AnesthesiaEngine {
         this.sbtPlanAtTick = this.currentTick;
         this.log('advisory', 'assessment', `sbt-plan-recorded-${this.currentTick}`,
           'Respiratory load, weakness, fluid and cardiac load, pain, anxiety, sedation, nutrition, electrolytes, sleep, and secretions were handed off for review before another standardized daily assessment. Extubation was not recorded: even a successful SBT would require separate airway-protection, secretion, neurologic, risk, goals-of-care, and post-extubation-support decisions.', { reversibleDriversReview: true, repeatStandardizedAssessment: true, extubation: false, sbtSuccessEqualsExtubationReadiness: false });
+        break;
+      }
+      case 'post-intubation-hypotension-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'post-intubation-hypotension');
+        const valid = ['validate-post-intubation-pressure-and-call-help',
+          'review-post-intubation-danger-pattern', 'classify-post-intubation-hemodynamics',
+          'record-post-intubation-support-intent',
+          'reassess-post-intubation-hypotension'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `post-intubation-hypotension-response-refused-${this.currentTick}`,
+            supported ? 'The post-intubation hypotension action was not one of the listed choices. Nothing changed.'
+              : 'The bounded post-intubation hypotension choices are available only in the declared lesson.');
+          break;
+        }
+        if (response === 'validate-post-intubation-pressure-and-call-help') {
+          if (this.postIntubationPressureAtTick !== null) { this.log('warning', 'assessment', `post-intubation-pressure-refused-${this.currentTick}`, 'Pressure validation and experienced help have already been recorded.'); break; }
+          this.postIntubationPressureAtTick = this.currentTick;
+          this.log('critical', 'assessment', `post-intubation-pressure-validated-${this.currentTick}`,
+            'A pulsatile invasive MAP of 46 mmHg, central pulse, 5-second capillary refill, warm extremities, and unchanged severe hypotension were confirmed while senior ICU and bedside help were called. Pressure acquisition, examination, and team arrival are not simulated.', { mapMmHg: 46, pulsePresent: true, capillaryRefillSeconds: 5, warmExtremities: true, seniorHelp: true });
+          break;
+        }
+        if (this.postIntubationPressureAtTick === null) { this.log('warning', 'assessment', `post-intubation-pressure-order-refused-${this.currentTick}`, 'Validate severe hypotension and call experienced help before classifying its mechanism.'); break; }
+        if (response === 'review-post-intubation-danger-pattern') {
+          if (this.postIntubationDangerAtTick !== null) { this.log('warning', 'assessment', `post-intubation-danger-refused-${this.currentTick}`, 'The fixed immediate-danger panel has already been reviewed.'); break; }
+          this.postIntubationDangerAtTick = this.currentTick;
+          this.log('critical', 'assessment', `post-intubation-danger-reviewed-${this.currentTick}`,
+            'Fixed panel: continuous capnogram, SpO₂ 95%, reported bilateral ventilation, peak pressure 27 cm H₂O, plateau 21 cm H₂O, expiratory flow reaching zero, sinus tachycardia, no external bleeding, and no new rash, wheeze, or facial swelling. The timing, recent drugs, positive-pressure transition, sepsis, volume history, pump, and obstructive alternatives remain under review.', { continuousCapnogram: true, bilateralVentilation: true, peakPressureCmH2O: 27, plateauPressureCmH2O: 21, expiratoryFlowReachesZero: true, sinusRhythm: true, externalBleeding: false, allergicPattern: false });
+          break;
+        }
+        if (this.postIntubationDangerAtTick === null) { this.log('warning', 'assessment', `post-intubation-danger-order-refused-${this.currentTick}`, 'Review immediate airway, ventilation, rhythm, bleeding, allergy, pump, and obstructive alternatives first.'); break; }
+        if (response === 'classify-post-intubation-hemodynamics') {
+          if (this.postIntubationMechanismAtTick !== null) { this.log('warning', 'assessment', `post-intubation-mechanism-refused-${this.currentTick}`, 'The bounded hemodynamic pattern has already been classified.'); break; }
+          this.postIntubationMechanismAtTick = this.currentTick;
+          this.log('critical', 'assessment', `post-intubation-mechanism-classified-${this.currentTick}`,
+            'A fixed passive-leg-raise proxy raises stroke volume from 48 to 57 mL while the lung panel remains clear. Together with warm shock, sepsis, recent induction, and positive-pressure transition, this supports mixed vasodilation and preload sensitivity; it does not diagnose one cause or exclude pump, obstructive, occult bleeding, drug, or equipment problems.', { strokeVolumeBeforeMl: 48, strokeVolumeAfterMl: 57, strokeVolumeIncreasePercent: 19, fluidResponsiveProxy: true, classification: 'mixed-vasodilated-preload-sensitive' });
+          break;
+        }
+        if (this.postIntubationMechanismAtTick === null) { this.log('warning', 'assessment', `post-intubation-mechanism-order-refused-${this.currentTick}`, 'Classify the whole hemodynamic pattern before recording support.'); break; }
+        if (response === 'record-post-intubation-support-intent') {
+          if (this.postIntubationSupportAtTick !== null) { this.log('warning', 'assessment', `post-intubation-support-refused-${this.currentTick}`, 'The bounded hemodynamic support intent has already been recorded.'); break; }
+          this.postIntubationSupportAtTick = this.currentTick;
+          this.log('critical', 'assessment', `post-intubation-support-recorded-${this.currentTick}`,
+            'Concurrent norepinephrine intent toward an initial MAP near 65 mmHg and a cautious 250 mL balanced-crystalloid challenge were recorded with immediate pressure, perfusion, dynamic-response, lung, and gas-exchange reassessment. No access, concentration, rate, dose, pump, fluid, or drug delivery is simulated.', { intentOnly: true, norepinephrine: true, initialMapTargetMmHg: 65, balancedCrystalloidChallengeMl: 250, concurrentSupport: true });
+          break;
+        }
+        if (this.postIntubationSupportAtTick === null) { this.log('warning', 'assessment', `post-intubation-support-order-refused-${this.currentTick}`, 'Record cause-linked support before reviewing the fixed response.'); break; }
+        if (this.postIntubationReassessmentAtTick !== null) { this.log('warning', 'assessment', `post-intubation-reassessment-refused-${this.currentTick}`, 'The fixed support-response panel has already been reviewed.'); break; }
+        this.postIntubationReassessmentAtTick = this.currentTick;
+        this.log('critical', 'assessment', `post-intubation-response-reassessed-${this.currentTick}`,
+          'Fixed response after 5 minutes: MAP is 67 mmHg, HR 108/min, capillary refill 3 seconds, stroke volume 58 mL, SpO₂ 96%, peak pressure 27 cm H₂O, plateau 21 cm H₂O, and lungs remain clear without a new oxygenation penalty. Ongoing septic-shock resuscitation, serial perfusion, source treatment, and alternate-cause review remain open.', { reassessmentMinutes: 5, mapMmHg: 67, heartRateBpm: 108, capillaryRefillSeconds: 3, strokeVolumeMl: 58, spo2Percent: 96, lungsRemainClear: true });
         break;
       }
       case 'aspiration-risk-assessment': {
@@ -6300,6 +6357,13 @@ export class AnesthesiaEngine {
           failureAtTick: this.sbtFailureAtTick,
           recoveryAtTick: this.sbtRecoveryAtTick,
           planAtTick: this.sbtPlanAtTick,
+        },
+        postIntubationHypotensionAssessment: {
+          pressureAtTick: this.postIntubationPressureAtTick,
+          dangerAtTick: this.postIntubationDangerAtTick,
+          mechanismAtTick: this.postIntubationMechanismAtTick,
+          supportAtTick: this.postIntubationSupportAtTick,
+          reassessmentAtTick: this.postIntubationReassessmentAtTick,
         },
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,

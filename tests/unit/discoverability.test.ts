@@ -314,6 +314,8 @@ describe('Requirement: Modules Directory Is Honest About What Exists', () => {
       .toMatchObject({ indexable: true, heading: 'Unplanned extubation' });
     expect(routeFor('/critical-care/scenario/spontaneous-breathing-trial'))
       .toMatchObject({ indexable: true, heading: 'Spontaneous-breathing trial' });
+    expect(routeFor('/critical-care/scenario/post-intubation-hypotension'))
+      .toMatchObject({ indexable: true, heading: 'Post-intubation hypotension' });
   });
 
   it('Requirement: Modules Declare Their Own Physiological Timescale', () => {

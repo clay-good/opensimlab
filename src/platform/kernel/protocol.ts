@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 65 reports spontaneous-breathing-trial state. */
-export const WORKER_PROTOCOL_VERSION = 65;
+/** Bumped whenever the message shape changes incompatibly. Version 66 reports post-intubation-hypotension state. */
+export const WORKER_PROTOCOL_VERSION = 66;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -471,6 +471,13 @@ export interface EquipmentSnapshot {
       readonly failureAtTick: number | null;
       readonly recoveryAtTick: number | null;
       readonly planAtTick: number | null;
+    };
+    readonly postIntubationHypotensionAssessment?: {
+      readonly pressureAtTick: number | null;
+      readonly dangerAtTick: number | null;
+      readonly mechanismAtTick: number | null;
+      readonly supportAtTick: number | null;
+      readonly reassessmentAtTick: number | null;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

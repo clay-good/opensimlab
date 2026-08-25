@@ -140,7 +140,8 @@ Reviewers run the routine induction themselves before answering.
 | B86 | In the mucus-plugging lesson, coarse central sounds, visible tracheal-tube secretion, a sawtooth flow graphic, high peak-to-plateau pressure separation, focal reduced air entry, and hypoxemia lead to support and help, convergent indication review, preoxygenated as-needed shallow-first suction intent without routine saline, a partial fixed response, and escalation of persistent focal physiology without making bronchoscopy routine or implying examination, equipment, suction, imaging, bronchoscopy, respiratory-therapy, procedural, disposition, or outcome competence | | |
 | B87 | In the unplanned-extubation lesson, visible tube displacement, severe work, weak airway protection, hypoxemia, respiratory acidemia, and declining alertness lead to immediate oxygen support and experienced help, a whole-patient tolerance assessment, case-specific failure classification, prompt skilled reintubation intent without noninvasive-support delay, reported placement and response confirmation, and non-punitive prevention handoff without implying examination, monitoring, oxygenation, ventilation, prescribing, airway, investigation, disposition, or outcome competence | | |
 | B88 | In the spontaneous-breathing-trial lesson, an improving cause, low oxygen support, stable circulation, wakefulness, spontaneous effort, cough, and manageable secretions lead to a standardized readiness review without requiring RSBI, an authored pressure-supported trial without increasing FiO₂, convergent intolerance recognition, prompt restoration of prior support, fixed recovery reassessment, and reversible-driver planning without equating SBT success with extubation readiness or implying examination, monitoring, ventilator, prescribing, treatment, airway, disposition, or outcome competence | | |
-| B89 | Overall: does this patient behave like a patient? | | |
+| B89 | In the post-intubation-hypotension lesson, confirmed severe hypotension with impaired perfusion, preserved airway and ventilation signals, warm extremities, and a positive authored passive-leg-raise proxy lead to immediate help, a structured alternate-cause review, bounded mixed vasodilated and preload-sensitive classification, concurrent norepinephrine and cautious balanced-crystalloid intent, and fixed 5-minute reassessment without claiming a universal fluid-versus-vasopressor answer or implying examination, pressure acquisition, ultrasound, passive-leg-raise, fluid, prescribing, drug delivery, ventilator, sedation, diagnosis, infection-treatment, disposition, or outcome competence | | |
+| B90 | Overall: does this patient behave like a patient? | | |
 
 ## Section C — Free response
 
@@ -296,4 +297,8 @@ So that reviewers spend their attention on what this review is for:
 - The spontaneous-breathing-trial case uses fixed readiness, trial, intolerance, recovery, and
   planning panels. It does not examine, program a ventilator, acquire data, sample, treat, extubate,
   select post-extubation support, determine disposition, or predict outcome.
+- The post-intubation-hypotension case uses fixed pressure, danger, dynamic-response, support, and
+  reassessment panels. It does not examine, acquire pressure, perform ultrasound or passive leg
+  raise, deliver fluid or vasopressor, select access or dose, change sedation or ventilation,
+  diagnose shock, treat infection, determine disposition, or predict outcome.
 - Nothing here has been clinically reviewed before — you are the first.

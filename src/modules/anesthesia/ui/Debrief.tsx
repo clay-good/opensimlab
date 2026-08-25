@@ -3390,6 +3390,47 @@ export function objectiveFindings(
         : 'The next-step plan was absent or preceded recovery.', atTick: plan?.tick ?? 0 } satisfies ObjectiveFinding;
     }
 
+    if (['validate-post-intubation-pressure-and-call-help',
+      'review-post-intubation-danger-pattern', 'classify-post-intubation-hemodynamics',
+      'record-post-intubation-support-intent',
+      'reassess-post-intubation-hypotension'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'post-intubation-hypotension');
+      if (!supported) return { ...base, outcome: 'not-exercised',
+        finding: 'The post-intubation hypotension vignette was not active.' } satisfies ObjectiveFinding;
+      const pressure = log.find((event) => /^post-intubation-pressure-validated-\d+$/.test(event.eventId));
+      const danger = log.find((event) => /^post-intubation-danger-reviewed-\d+$/.test(event.eventId));
+      const mechanism = log.find((event) => /^post-intubation-mechanism-classified-\d+$/.test(event.eventId));
+      const support = log.find((event) => /^post-intubation-support-recorded-\d+$/.test(event.eventId));
+      const reassessment = log.find((event) => /^post-intubation-response-reassessed-\d+$/.test(event.eventId));
+      if (objective.id === 'validate-post-intubation-pressure-and-call-help') return { ...base,
+        outcome: pressure ? 'met' : 'not-met', finding: pressure
+          ? 'Severe pulsatile hypotension and impaired perfusion were validated while experienced help was called.'
+          : 'Pressure validation, perfusion review, or help was absent.', atTick: pressure?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-post-intubation-danger-pattern') {
+        const ordered = pressure && danger && pressure.tick <= danger.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Airway, ventilation, pressures, flow, rhythm, bleeding, allergy, pump, and obstruction followed validation.'
+          : 'The immediate-danger review was absent or out of order.', atTick: danger?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'classify-post-intubation-hemodynamics') {
+        const ordered = danger && mechanism && danger.tick <= mechanism.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'The dynamic proxy and whole-patient panel supported mixed vasodilation and preload sensitivity without diagnostic closure.'
+          : 'Mechanism classification was absent or preceded the danger review.', atTick: mechanism?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      if (objective.id === 'record-post-intubation-support-intent') {
+        const ordered = mechanism && support && mechanism.tick <= support.tick;
+        return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+          ? 'Concurrent norepinephrine and cautious balanced-crystalloid intent used a MAP and reassessment guardrail.'
+          : 'Cause-linked support was absent or preceded classification.', atTick: support?.tick ?? 0 } satisfies ObjectiveFinding;
+      }
+      const ordered = support && reassessment && support.tick <= reassessment.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered
+        ? 'Pressure, perfusion, dynamic response, lungs, and gas exchange improved while septic-shock work stayed open.'
+        : 'Whole-patient reassessment was absent or preceded support.', atTick: reassessment?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+
     if (objective.id === 'read-the-capnogram'
       || objective.id === 'deepen-before-reaching-for-anything-else') {
       const onset = scenario.timeline.find((event) => event.id === 'bronchospasm-onset')?.atTick;
