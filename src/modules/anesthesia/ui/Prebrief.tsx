@@ -30,7 +30,7 @@ export const FICTION_CONTRACT =
 export interface PrebriefProps {
   readonly scenario: Scenario;
   readonly region: RegionProfile;
-  readonly environment?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics';
+  readonly environment?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology';
   readonly onStart: () => void;
   /**
    * Offered only where the demonstration was authored. A "watch this" control on
@@ -54,7 +54,7 @@ export function Prebrief({ scenario, region, environment = 'anesthesia', onStart
       )}
       <h1>{scenario.metadata.title}</h1>
       <p>{patient.ageYears}-year-old {patientPersonNoun(patient)}, {patient.weightKg} kg
-        {environment === 'cardiology' || environment === 'respiratory-medicine' || environment === 'pediatrics'
+        {environment === 'cardiology' || environment === 'respiratory-medicine' || environment === 'pediatrics' || environment === 'neurology'
           ? `, for ${patient.procedure}.`
           : `, ASA ${patient.asaClass}, for ${patient.procedure}.`}</p>
 
@@ -77,7 +77,7 @@ export function Prebrief({ scenario, region, environment = 'anesthesia', onStart
 
       <section>
         <h2>The patient</h2>
-        {environment === 'respiratory-medicine' || environment === 'pediatrics' ? (
+        {environment === 'respiratory-medicine' || environment === 'pediatrics' || environment === 'neurology' ? (
           <ul>
             <li>{patient.diagnosis}.</li>
             <li>Current authored reassessment: {patient.baseline.heartRateBpm} bpm and mean arterial pressure{' '}
@@ -142,6 +142,17 @@ export function Prebrief({ scenario, region, environment = 'anesthesia', onStart
             <p>
               Qualified findings and support are authored. This lab practices recognition,
               escalation, reassessment, and handoff, not diagnosis, dosing, device use, or procedures.
+            </p>
+          </>
+        ) : environment === 'neurology' ? (
+          <>
+            <p>
+              The supplied neurological record, patient priorities, and monitor stay visible while the
+              focused reassessment opens below. Pause freely and follow function and trajectory at your own pace.
+            </p>
+            <p>
+              Qualified findings and fixed reports are authored. This lab practices functional recognition,
+              escalation, reassessment, and handoff, not examination, scoring, diagnosis, prescribing, treatment, or disposition.
             </p>
           </>
         ) : (

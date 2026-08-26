@@ -1993,6 +1993,32 @@ meconium-stained transition; preterm respiratory distress; neonatal hypoglycemia
 thermoregulation failure; delivery-room-to-NICU handoff; tension pneumothorax during respiratory
 support with asymmetric ventilation and rapid cardiopulmonary deterioration.
 
+### Wave E neurology slice 1: minor nondisabling acute ischemic stroke
+
+The first Neurology lab is a function-based minor-stroke decision boundary, not another disabling
+large-vessel-occlusion reperfusion lesson. A 62-year-old right-handed, independently living retired
+teacher has 95 minutes of persistent left cheek and arm sensory loss. A supplied qualified
+examination reports no weakness, aphasia, visual loss, neglect, ataxia, gait impairment, or swallowing
+concern and preserves walking, dressing, toileting, eating, writing, phone use, and normal
+communication. Supplied NIHSS is 1 for sensation, but the patient-specific qualified discussion—not
+the score alone—describes the deficit as nondisabling to date and explicitly revisable. Fixed CT
+reports no hemorrhage or established large infarct, and fixed CTA reports no large-vessel occlusion or
+flow-limiting stenosis.
+
+The learner reconciles the clock, deficit, individualized function, physiology, and whole patient;
+reviews supplied imaging, open mimics, and immediate threats; recognizes the nondisabling boundary
+without relying on NIHSS alone; and records qualified antiplatelet-strategy and neurological-
+surveillance intent. A strict later report preserves the isolated sensory deficit without spread or a
+new neurological finding before another elapsed etiology, recurrence, prevention, rehabilitation,
+and active-risk handoff. No treatment is reported delivered, and no treatment effect is claimed. The
+lab does not take a history; examine; calculate a score; measure glucose or pressure; acquire or
+interpret imaging, ECG, laboratory, swallowing, or other tests; diagnose stroke, disability,
+etiology, or a mimic; adjudicate eligibility; select, prescribe, prepare, dose, route, or deliver an
+antiplatelet, thrombolytic, blood-pressure therapy, or other drug; perform reperfusion or another
+procedure; prescribe rehabilitation; determine admission or discharge; predict prognosis; or report
+outcome. The Emergency Medicine lesson retains disabling left-M1 stroke, exact thrombolytic intent,
+and thrombectomy transfer; the next Neurology slice retains LVO escalation.
+
 #### Neurology: 15
 
 Acute ischemic stroke; large-vessel-occlusion escalation; intracranial hemorrhage; subarachnoid

@@ -4946,6 +4946,32 @@ export function objectiveFindings(
       const ordered = laterSafety && handoff && laterSafety.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved the supplied record, unresolved safeguarding concern, medical alternatives, privacy boundaries, immediate safety, open questions, and named owners without alleging a person responsible or claiming diagnosis, legal finding, placement, disposition, prognosis, or outcome.' : 'The unresolved safeguarding-risk handoff was absent or did not follow the safety checkpoint after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-neurology-minor-stroke-clock-deficit-function-and-whole-patient',
+      'review-neurology-minor-stroke-imaging-mimics-and-immediate-threats',
+      'recognize-neurology-minor-nondisabling-stroke-boundary-without-score-alone',
+      'record-neurology-minor-stroke-qualified-antiplatelet-and-surveillance-intent',
+      'review-neurology-minor-stroke-later-neurologic-trajectory',
+      'handoff-neurology-minor-stroke-etiology-recurrence-and-secondary-prevention-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'minor-nondisabling-acute-ischemic-stroke'
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'minor-nondisabling-acute-ischemic-stroke-reassessment')
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'minor-nondisabling-acute-ischemic-stroke-reassessment-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neurology minor-stroke lesson was not active.' } satisfies ObjectiveFinding;
+      const reconciled = log.find((event) => /^neurology-minor-stroke-trajectory-reconciled-\d+$/.test(event.eventId));
+      const imaging = log.find((event) => /^neurology-minor-stroke-imaging-and-threats-reviewed-\d+$/.test(event.eventId));
+      const disability = log.find((event) => /^neurology-minor-stroke-nondisabling-boundary-recognized-\d+$/.test(event.eventId));
+      const strategy = log.find((event) => /^neurology-minor-stroke-qualified-strategy-recorded-\d+$/.test(event.eventId));
+      const later = log.find((event) => /^neurology-minor-stroke-later-trajectory-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^neurology-minor-stroke-active-risk-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-neurology-minor-stroke-clock-deficit-function-and-whole-patient') return { ...base, outcome: reconciled ? 'met' : 'not-met', finding: reconciled ? 'The supplied symptom clock, focal sensory deficit, individualized function, physiology, and whole-patient state were connected without learner history, examination, score calculation, diagnosis, disability adjudication, or treatment.' : 'The minor-stroke clock, deficit, and individualized function were not reconciled.', atTick: reconciled?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-neurology-minor-stroke-imaging-mimics-and-immediate-threats') { const ordered = reconciled && imaging && reconciled.tick <= imaging.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Fixed imaging, glucose, physiology, open mimics, and immediate threats were reviewed without learner acquisition, interpretation, diagnosis, or mimic exclusion.' : 'The supplied imaging and immediate-threat review was absent or preceded trajectory review.', atTick: imaging?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'recognize-neurology-minor-nondisabling-stroke-boundary-without-score-alone') { const ordered = imaging && disability && imaging.tick <= disability.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The persistent deficit was recognized as individually nondisabling to date from patient-specific function rather than NIHSS alone.' : 'Functional-boundary recognition was absent or preceded the supplied safety-context review.', atTick: disability?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'record-neurology-minor-stroke-qualified-antiplatelet-and-surveillance-intent') { const ordered = disability && strategy && disability.tick <= strategy.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Qualified antiplatelet-strategy and neurological-surveillance ownership were recorded without learner product, dose, duration, route, access, prescription, delivery, or treatment controls.' : 'Qualified strategy and surveillance ownership were absent or preceded functional-boundary recognition.', atTick: strategy?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-neurology-minor-stroke-later-neurologic-trajectory') { const ordered = strategy && later && strategy.tick < later.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed surveillance, the fixed persistent sensory deficit and absence of new reported danger were reviewed without claiming treatment effect, infarct resolution, complete recovery, or durable control.' : 'The later neurologic trajectory was absent or did not follow qualified strategy after elapsed time.', atTick: later?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = later && handoff && later.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved open etiology, rhythm surveillance, vascular-risk review, individualized prevention, rehabilitation need, recurrence risk, disposition, and named ownership without claiming prognosis or outcome.' : 'The active-risk handoff was absent or did not follow later reassessment after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

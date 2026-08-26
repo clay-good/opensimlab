@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 132 reports pediatric injury-safeguarding reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 132;
+/** Bumped whenever the message shape changes incompatibly. Version 133 reports Neurology minor-stroke reassessment state. */
+export const WORKER_PROTOCOL_VERSION = 133;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1617,6 +1617,75 @@ export interface EquipmentSnapshot {
       readonly legalReportingCompleted: false;
       readonly custodyDetermined: false;
       readonly durableSafetyProven: false;
+      readonly dischargeReadinessProven: false;
+      readonly dispositionDetermined: false;
+      readonly prognosisPredicted: false;
+      readonly outcomePredicted: false;
+    };
+    readonly neurologyMinorStrokeAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly threatsAtTick: number | null;
+      readonly boundaryAtTick: number | null;
+      readonly intentAtTick: number | null;
+      readonly laterAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true;
+      readonly spontaneousBreathingAuthored: true;
+      readonly persistentFocalDeficitAuthored: true;
+      readonly individualizedFunctionIntactAuthored: true;
+      readonly fixedImagingAuthored: true;
+      readonly suppliedGlucoseAuthored: true;
+      readonly nondisablingBoundaryAuthored: boolean;
+      readonly boundaryRevisable: true;
+      readonly qualifiedAntiplateletStrategyIntentActive: boolean;
+      readonly qualifiedNeurologicSurveillanceActive: boolean;
+      readonly laterPersistentDeficitWithoutSpreadAuthored: boolean;
+      readonly patientHistoryTakenByLearner: false;
+      readonly patientExaminedByLearner: false;
+      readonly neurologicExamPerformedByLearner: false;
+      readonly scoreCalculatedByLearner: false;
+      readonly disabilityAdjudicatedByLearner: false;
+      readonly clockDeterminedByLearner: false;
+      readonly glucoseAcquiredByLearner: false;
+      readonly bloodPressureAcquiredByLearner: false;
+      readonly testAcquiredByLearner: false;
+      readonly testInterpretedByLearner: false;
+      readonly imagingAcquiredByLearner: false;
+      readonly imagingInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false;
+      readonly strokeMimicExcluded: false;
+      readonly thrombolysisEligibilityDeterminedByLearner: false;
+      readonly antiplateletEligibilityDeterminedByLearner: false;
+      readonly productSelectedByLearner: false;
+      readonly combinationSelectedByLearner: false;
+      readonly drugSelectedByLearner: false;
+      readonly doseSelectedByLearner: false;
+      readonly durationSelectedByLearner: false;
+      readonly concentrationSelectedByLearner: false;
+      readonly routeSelectedByLearner: false;
+      readonly accessPlacedByLearner: false;
+      readonly prescriptionCreatedByLearner: false;
+      readonly medicationPreparedByLearner: false;
+      readonly medicationDeliveredByLearner: false;
+      readonly bloodPressureTargetSelectedByLearner: false;
+      readonly reperfusionSelectedByLearner: false;
+      readonly reperfusionPerformedByLearner: false;
+      readonly deviceSelectedByLearner: false;
+      readonly procedurePerformedByLearner: false;
+      readonly swallowAssessmentPerformedByLearner: false;
+      readonly dietSelectedByLearner: false;
+      readonly rehabilitationSelectedByLearner: false;
+      readonly dispositionDeterminedByLearner: false;
+      readonly treatmentDeliveredByLearner: false;
+      readonly strokeMechanismProven: false;
+      readonly etiologyProven: false;
+      readonly treatmentEffectProven: false;
+      readonly infarctResolutionProven: false;
+      readonly hemorrhagicTransformationExcluded: false;
+      readonly deteriorationExcluded: false;
+      readonly durableNeurologicStabilityProven: false;
+      readonly completeRecoveryProven: false;
+      readonly lowRecurrenceRiskProven: false;
       readonly dischargeReadinessProven: false;
       readonly dispositionDetermined: false;
       readonly prognosisPredicted: false;

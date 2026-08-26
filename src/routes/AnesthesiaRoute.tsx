@@ -56,13 +56,16 @@ import {
 import {
   PEDIATRICS_SCENARIOS, DEFAULT_PEDIATRICS_SCENARIO_ID, getPediatricsScenario,
 } from '../modules/pediatrics/scenarios';
+import {
+  NEUROLOGY_SCENARIOS, DEFAULT_NEUROLOGY_SCENARIO_ID, getNeurologyScenario,
+} from '../modules/neurology/scenarios';
 import { APP_VERSION } from '@platform/governance/status';
 import { ScenarioProblemReport } from '@platform/reporting/ScenarioProblemReport';
 import { SITE_ORIGIN } from './site-metadata';
 
 interface ClinicalModuleConfig {
-  readonly id: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics';
-  readonly basePath: '/anesthesia' | '/emergency-medicine' | '/critical-care' | '/cardiology' | '/respiratory-medicine' | '/pediatrics';
+  readonly id: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology';
+  readonly basePath: '/anesthesia' | '/emergency-medicine' | '/critical-care' | '/cardiology' | '/respiratory-medicine' | '/pediatrics' | '/neurology';
   readonly heading: string;
   readonly catalogIntroduction: string;
   readonly catalogStatus: string;
@@ -118,6 +121,14 @@ const PEDIATRICS_CONFIG: ClinicalModuleConfig = {
   catalogStatus: `${PEDIATRICS_SCENARIOS.length} of 16 bounded Pediatrics labs is playable.`,
   scenarios: PEDIATRICS_SCENARIOS, defaultScenarioId: DEFAULT_PEDIATRICS_SCENARIO_ID,
   getScenario: getPediatricsScenario,
+};
+
+const NEUROLOGY_CONFIG: ClinicalModuleConfig = {
+  id: 'neurology', basePath: '/neurology', heading: 'Neurology simulator',
+  catalogIntroduction: 'Calm neurological rehearsals for reading function, change, and uncertainty. Follow the trajectory, involve the right team, and leave unresolved risk visible.',
+  catalogStatus: `${NEUROLOGY_SCENARIOS.length} of 15 bounded Neurology labs is playable.`,
+  scenarios: NEUROLOGY_SCENARIOS, defaultScenarioId: DEFAULT_NEUROLOGY_SCENARIO_ID,
+  getScenario: getNeurologyScenario,
 };
 
 /**
@@ -448,6 +459,10 @@ export function RespiratoryMedicineRoute({ path }: { path: string }) {
 
 export function PediatricsRoute({ path }: { path: string }) {
   return <ClinicalModuleRoute path={path} config={PEDIATRICS_CONFIG} />;
+}
+
+export function NeurologyRoute({ path }: { path: string }) {
+  return <ClinicalModuleRoute path={path} config={NEUROLOGY_CONFIG} />;
 }
 
 /**

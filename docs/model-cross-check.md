@@ -161,6 +161,12 @@ Recorded here rather than silently carried:
   injury mechanism, bruise age, abuse, perpetrator identity, credibility, screening-rule performance,
   medical alternatives, reporting completion, legal action, custody, disposition, prognosis, or
   outcome.
+  Minor nondisabling acute ischemic stroke overlays fixed symptom timing, sensory deficit,
+  patient-specific function, NIHSS, CT, CTA, physiology, qualified strategy ownership, and strict-
+  later neurological trajectory on the healthy adult scaffold; it does not validate cerebral
+  ischemia, infarct evolution, neurological examination, NIHSS, disability, imaging, glucose,
+  antiplatelet or thrombolytic pharmacology, reperfusion, treatment effect, etiology, recurrence,
+  rehabilitation need, disposition, prognosis, or outcome.
 
 ## Concentration-time checks, 2026-08-23
 

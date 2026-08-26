@@ -1100,6 +1100,11 @@ export interface ActionCockpitProps {
       readonly safeguardingAtTick: number | null; readonly alternativesAtTick: number | null;
       readonly laterSafetyAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly neurologyMinorStrokeAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly threatsAtTick: number | null;
+      readonly boundaryAtTick: number | null; readonly intentAtTick: number | null;
+      readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1808,6 +1813,14 @@ export interface ActionCockpitProps {
       | 'review-pediatric-injury-later-safety-state'
       | 'handoff-pediatric-injury-unresolved-safeguarding-risk',
   ) => void;
+  readonly onNeurologyMinorStrokeResponse?: (
+    action: 'reconcile-neurology-minor-stroke-clock-deficit-function-and-whole-patient'
+      | 'review-neurology-minor-stroke-imaging-mimics-and-immediate-threats'
+      | 'recognize-neurology-minor-nondisabling-stroke-boundary-without-score-alone'
+      | 'record-neurology-minor-stroke-qualified-antiplatelet-and-surveillance-intent'
+      | 'review-neurology-minor-stroke-later-neurologic-trajectory'
+      | 'handoff-neurology-minor-stroke-etiology-recurrence-and-secondary-prevention-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2219,6 +2232,12 @@ export function crisisResponseAvailability(
         && event.target === 'pediatric-injury-safeguarding-escalation-reassessment')
       && scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'pediatric-injury-safeguarding-escalation-reassessment-boundary'),
+    hasNeurologyMinorStrokeResponse:
+      scenario.metadata.id === 'minor-nondisabling-acute-ischemic-stroke'
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'minor-nondisabling-acute-ischemic-stroke-reassessment')
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'minor-nondisabling-acute-ischemic-stroke-reassessment-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2390,6 +2409,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'pediatric-foreign-body-airway-obstruction-reassessment')
       || (event.type === 'narrative'
         && event.target === 'pediatric-injury-safeguarding-escalation-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'minor-nondisabling-acute-ischemic-stroke-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2462,6 +2483,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasPediatricBradycardicArrestResponse,
     hasPediatricForeignBodyAirwayObstructionResponse,
     hasPediatricInjurySafeguardingResponse,
+    hasNeurologyMinorStrokeResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2539,7 +2561,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPediatricHypoglycemicSeizureResponse || hasPediatricFebrileSeizureResponse
     || hasPediatricStatusEpilepticusResponse || hasPediatricAnaphylaxisResponse
     || hasPediatricSupraventricularTachycardiaResponse || hasPediatricBradycardicArrestResponse
-    || hasPediatricForeignBodyAirwayObstructionResponse || hasPediatricInjurySafeguardingResponse;
+    || hasPediatricForeignBodyAirwayObstructionResponse || hasPediatricInjurySafeguardingResponse
+    || hasNeurologyMinorStrokeResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2570,7 +2593,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasPediatricInjurySafeguardingResponse
+  const responseTray = hasNeurologyMinorStrokeResponse
+    ? { id: 'crisis', label: 'Minor-stroke reassessment' } as const
+    : hasPediatricInjurySafeguardingResponse
     ? { id: 'crisis', label: 'Pediatric safeguarding reassessment' } as const
     : hasPediatricForeignBodyAirwayObstructionResponse
     ? { id: 'crisis', label: 'Pediatric airway-obstruction reassessment' } as const
@@ -2863,6 +2888,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPediatricBradycardicArrestResponse
     || hasPediatricForeignBodyAirwayObstructionResponse
     || hasPediatricInjurySafeguardingResponse
+    || hasNeurologyMinorStrokeResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3589,6 +3615,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <PediatricInjurySafeguardingTray
                 assessment={props.resuscitation.pediatricInjurySafeguardingAssessment}
                 onAction={props.onPediatricInjurySafeguardingResponse ?? (() => {})} />
+            )}
+            {hasNeurologyMinorStrokeResponse && (
+              <NeurologyMinorStrokeTray
+                assessment={props.resuscitation.neurologyMinorStrokeAssessment}
+                onAction={props.onNeurologyMinorStrokeResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -9357,6 +9388,61 @@ function PediatricInjurySafeguardingTray({ assessment, onAction }: {
           onClick={() => onAction('handoff-pediatric-injury-unresolved-safeguarding-risk')}>Hand off concern + open questions</Button>}
       </div>
       <p className="field__hint">Team involvement does not prove abuse, identify a person responsible, establish a legal finding, close medical alternatives, or determine placement, disposition, prognosis, or outcome. Information remains need-to-know rather than absolutely confidential.</p>
+    </section>
+  </div>;
+}
+
+function NeurologyMinorStrokeTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyMinorStrokeAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNeurologyMinorStrokeResponse']>;
+}) {
+  const reconciled = assessment?.trajectoryAtTick != null;
+  const imaging = assessment?.threatsAtTick != null;
+  const disability = assessment?.boundaryAtTick != null;
+  const strategy = assessment?.intentAtTick != null;
+  const later = assessment?.laterAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="neurology-minor-stroke-function-title">
+      <div id="neurology-minor-stroke-function-title" className="syringe__name">Function, not one score.</div>
+      <Badge kind="teaching">clock · focal change · patient priorities · imaging · threats · function</Badge>
+      <div className="syringe__meta">62 years · awake · supplied NIHSS 1 · independent function preserved</div>
+      <p className="syringe__remaining">
+        {strategy ? 'Qualified strategy and neurological surveillance are owned'
+          : disability ? 'The deficit is individually nondisabling to date · record qualified ownership'
+            : imaging ? 'Fixed imaging and immediate threats reviewed · connect the deficit to this patient’s function'
+              : reconciled ? 'The clock and functional story are clear · review the supplied safety context'
+                : 'Begin with what changed, when it changed, and what it changes for her.'}
+      </p>
+      <div className="syringe__presets">
+        {!reconciled && <Button className="crisis-drug__action"
+          onClick={() => onAction('reconcile-neurology-minor-stroke-clock-deficit-function-and-whole-patient')}>Review clock + deficit + function</Button>}
+        {reconciled && !imaging && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-neurology-minor-stroke-imaging-mimics-and-immediate-threats')}>Review imaging + immediate threats</Button>}
+        {imaging && !disability && <Button className="crisis-drug__action"
+          onClick={() => onAction('recognize-neurology-minor-nondisabling-stroke-boundary-without-score-alone')}>Recognize the functional boundary</Button>}
+        {disability && !strategy && <Button className="crisis-drug__action"
+          onClick={() => onAction('record-neurology-minor-stroke-qualified-antiplatelet-and-surveillance-intent')}>Record qualified strategy + surveillance</Button>}
+      </div>
+      <p className="field__hint">The supplied score supports description, not the decision by itself. Qualified stroke clinicians own examination, diagnosis, eligibility, prescribing, treatment, and disposition; this surface exposes none of those controls.</p>
+    </section>
+    <section className="syringe" aria-labelledby="neurology-minor-stroke-trajectory-title">
+      <div id="neurology-minor-stroke-trajectory-title" className="syringe__name">Trajectory keeps the plan honest.</div>
+      <Badge kind="teaching">serial deficit · new danger · physiology · etiology · recurrence · ownership</Badge>
+      <div className="syringe__meta">fixed later report · sensory change persists · cause remains open</div>
+      <p className="syringe__remaining" role="status">
+        {handoff ? 'Persistent deficit, open cause, recurrence risk, and owners handed off.'
+          : later ? 'No new deficit is reported. Stability does not close cause or recurrence risk.'
+            : strategy ? 'Qualified strategy is recorded. Review the fixed later neurologic report.'
+              : 'Complete the functional review and qualified ownership before reassessment.'}
+      </p>
+      <div className="syringe__presets">
+        {strategy && !later && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-neurology-minor-stroke-later-neurologic-trajectory')}>Review the later neurologic report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action"
+          onClick={() => onAction('handoff-neurology-minor-stroke-etiology-recurrence-and-secondary-prevention-risk')}>Hand off cause + recurrence risk</Button>}
+      </div>
+      <p className="field__hint">Short-window stability does not establish treatment effect, infarct resolution, complete recovery, durable control, low recurrence risk, disposition, prognosis, or outcome.</p>
     </section>
   </div>;
 }

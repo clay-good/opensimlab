@@ -1496,6 +1496,17 @@
         "GB"
       ],
       "fidelityClass": "state_transition"
+    },
+    {
+      "scenarioId": "minor-nondisabling-acute-ischemic-stroke",
+      "contentVersion": "0.1.0",
+      "moduleId": "neurology",
+      "maturity": "draft",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition"
     }
   ]
 }

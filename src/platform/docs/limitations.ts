@@ -3839,6 +3839,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use direct patient findings, objective records, qualified multidisciplinary safeguarding and medical teams, applicable local law and procedures, child-centered communication, immediate-safety planning, and locally governed reporting and information sharing.',
     briefIn: ['pediatric-injury-safeguarding-escalation'],
   },
+  {
+    id: 'minor-nondisabling-stroke-deficit-function-imaging-care-and-later-state-are-authored',
+    headline: 'The clock, deficit, individualized function, imaging, physiology, care context, and later trajectory are authored.',
+    simplification: 'Fixed qualified reports stand in for history, neurological and functional examination, NIHSS, glucose, CT and CTA, disability review, mimic assessment, treatment-strategy review, surveillance, and serial reassessment.',
+    whereItMisleads: 'Treating the fictional values, NIHSS, functional statements, imaging, negative snapshots, nondisabling label, strict-later stability, or care intent as learner-acquired evidence, universal disability classification, diagnosis, eligibility decision, treatment effect, or predicted course.',
+    correctUnderstanding: 'Real care requires immediate verified stroke-system assessment, patient-specific function and goals, direct examination, appropriate imaging and testing, qualified treatment decisions, and continuous neurological and whole-patient reassessment.',
+    briefIn: ['minor-nondisabling-acute-ischemic-stroke'],
+  },
+  {
+    id: 'minor-nondisabling-stroke-controls-reconcile-review-recognize-record-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, fixed-context review, individualized boundary recognition, qualified intent, reassessment, and handoff only.',
+    simplification: 'Six accepted actions stand in for experienced stroke neurology, emergency, nursing, pharmacy, radiology, rehabilitation, and prevention assessment, treatment planning, monitoring, escalation, and handoff.',
+    whereItMisleads: 'Equating button order with examination, NIHSS or disability assessment, imaging interpretation, diagnosis, mimic exclusion, prescribing, drug delivery, reperfusion adjudication, surveillance skill, rehabilitation assessment, disposition, or stroke competence.',
+    correctUnderstanding: 'Actual care requires the patient, trained stroke teams, current local pathways, verified patient-specific data, individualized disability assessment rather than score alone, qualified treatment, and continuous change-triggered reassessment.',
+    briefIn: ['minor-nondisabling-acute-ischemic-stroke'],
+  },
+  {
+    id: 'no-live-minor-stroke-exam-score-imaging-drug-reperfusion-procedure-disposition-or-outcome',
+    headline: 'The lab does not examine, score, image, choose or deliver a drug, perform reperfusion, decide disposition, or report outcome.',
+    simplification: 'No live history, neurological or functional examination, NIHSS calculation, glucose or pressure measurement, CT, CTA, ECG, laboratory or swallowing-test acquisition or interpretation, diagnosis, mimic exclusion, disability or eligibility adjudication, antiplatelet product, combination, dose, duration, route, access, prescription, preparation or delivery, thrombolytic, blood-pressure treatment, EVT, procedure, rehabilitation prescription, admission, discharge, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Treating low NIHSS or a sensory syndrome as automatically nondisabling, treating no LVO as low risk, copying fictional values into care, assuming one antiplatelet strategy is universal, reading short-window stability as resolution, treating normal CT as ischemic-stroke exclusion, or using completion as clinical competence.',
+    correctUnderstanding: 'Use verified patient findings, individualized functional consequences and preferences, current stroke guidance, qualified teams, patient-specific bleeding and etiologic context, appropriate imaging and testing, and repeated neurological surveillance.',
+    briefIn: ['minor-nondisabling-acute-ischemic-stroke'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

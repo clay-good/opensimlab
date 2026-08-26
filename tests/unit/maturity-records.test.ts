@@ -11,6 +11,7 @@ import { CRITICAL_CARE_SCENARIOS } from '../../src/modules/critical-care/scenari
 import { CARDIOLOGY_SCENARIOS } from '../../src/modules/cardiology/scenarios';
 import { RESPIRATORY_MEDICINE_SCENARIOS } from '../../src/modules/respiratory-medicine/scenarios';
 import { PEDIATRICS_SCENARIOS } from '../../src/modules/pediatrics/scenarios';
+import { NEUROLOGY_SCENARIOS } from '../../src/modules/neurology/scenarios';
 import { buildScenarioQualityCatalog } from '@platform/catalog/scenario-quality';
 import {
   buildMaturityCatalog, MATURITY_RECORD_SCHEMA, MATURITY_STATUSES,
@@ -53,6 +54,12 @@ const pediatricsCompletion = buildModuleCompletionCatalog(
 const pediatricsCatalog = buildMaturityCatalog(
   pediatricsCompletion, buildScenarioQualityCatalog(pediatricsCompletion),
 );
+const neurologyCompletion = buildModuleCompletionCatalog(
+  NEUROLOGY_SCENARIOS, ENGINE_VERSION, 'neurology', 'ward', 'state_transition',
+);
+const neurologyCatalog = buildMaturityCatalog(
+  neurologyCompletion, buildScenarioQualityCatalog(neurologyCompletion),
+);
 
 describe('exact-version maturity records', () => {
   it('supports the complete public vocabulary and records every clinical item honestly', () => {
@@ -63,7 +70,7 @@ describe('exact-version maturity records', () => {
     expect(validateMaturityCatalog(catalog)).toEqual([]);
     expect(catalog.recordCount + emergencyCatalog.recordCount + criticalCareCatalog.recordCount
       + cardiologyCatalog.recordCount + respiratoryMedicineCatalog.recordCount
-      + pediatricsCatalog.recordCount)
+      + pediatricsCatalog.recordCount + neurologyCatalog.recordCount)
       .toBe(reviewableItems().length);
     expect(catalog.recordCount).toBe(54);
     expect(catalog.records.every((record) => record.status === 'draft')).toBe(true);
@@ -85,6 +92,9 @@ describe('exact-version maturity records', () => {
     )?.status).toBe('draft');
     expect(maturityFor(
       pediatricsCatalog, 'scenario', 'pediatric-respiratory-distress', '0.1.0',
+    )?.status).toBe('draft');
+    expect(maturityFor(
+      neurologyCatalog, 'scenario', 'minor-nondisabling-acute-ischemic-stroke', '0.1.0',
     )?.status).toBe('draft');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'ventilator-dyssynchrony', '0.1.0',

@@ -12,6 +12,7 @@ import { CRITICAL_CARE_SCENARIOS } from '../src/modules/critical-care/scenarios'
 import { CARDIOLOGY_SCENARIOS } from '../src/modules/cardiology/scenarios';
 import { RESPIRATORY_MEDICINE_SCENARIOS } from '../src/modules/respiratory-medicine/scenarios';
 import { PEDIATRICS_SCENARIOS } from '../src/modules/pediatrics/scenarios';
+import { NEUROLOGY_SCENARIOS } from '../src/modules/neurology/scenarios';
 import { buildScenarioQualityCatalog } from '@platform/catalog/scenario-quality';
 import {
   buildMaturityCatalog, maturityFor, type MaturitySubjectKind,
@@ -81,6 +82,11 @@ function main(): void {
   );
   const pediatricsQuality = buildScenarioQualityCatalog(pediatricsCompletion);
   const pediatricsMaturity = buildMaturityCatalog(pediatricsCompletion, pediatricsQuality);
+  const neurologyCompletion = buildModuleCompletionCatalog(
+    NEUROLOGY_SCENARIOS, ENGINE_VERSION, 'neurology', 'ward', 'state_transition',
+  );
+  const neurologyQuality = buildScenarioQualityCatalog(neurologyCompletion);
+  const neurologyMaturity = buildMaturityCatalog(neurologyCompletion, neurologyQuality);
   const moduleCatalogs = [
     { completion, quality, maturity },
     { completion: emergencyCompletion, quality: emergencyQuality, maturity: emergencyMaturity },
@@ -89,6 +95,7 @@ function main(): void {
     { completion: respiratoryMedicineCompletion, quality: respiratoryMedicineQuality,
       maturity: respiratoryMedicineMaturity },
     { completion: pediatricsCompletion, quality: pediatricsQuality, maturity: pediatricsMaturity },
+    { completion: neurologyCompletion, quality: neurologyQuality, maturity: neurologyMaturity },
   ];
   const validation = buildValidationReport();
   const evidenceOptions = {

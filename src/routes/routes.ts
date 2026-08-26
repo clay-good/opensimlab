@@ -14,6 +14,7 @@ import { CRITICAL_CARE_SCENARIOS } from '../modules/critical-care/scenarios';
 import { CARDIOLOGY_SCENARIOS } from '../modules/cardiology/scenarios';
 import { RESPIRATORY_MEDICINE_SCENARIOS } from '../modules/respiratory-medicine/scenarios';
 import { PEDIATRICS_SCENARIOS } from '../modules/pediatrics/scenarios';
+import { NEUROLOGY_SCENARIOS } from '../modules/neurology/scenarios';
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { ROOT_ROUTE, formatTitle } from './site-metadata';
 import type { RouteMetadata } from './site-metadata';
@@ -162,6 +163,23 @@ export const ROUTES: readonly RouteMetadata[] = [
   },
   ...PEDIATRICS_SCENARIOS.map((scenario) => ({
     path: `/pediatrics/scenario/${scenario.metadata.id}`,
+    title: formatTitle(scenario.metadata.title.length > 44
+      ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
+    description: scenarioDescription(scenario),
+    indexable: true,
+    structuredData: ['LearningResource'] as const,
+    heading: scenario.metadata.title,
+  })),
+  {
+    path: '/neurology',
+    title: formatTitle('Neurology simulator'),
+    description: 'Practice calm neurological pattern recognition, functional assessment, serial reassessment, escalation, and handoff across acute neurological change.',
+    indexable: true,
+    structuredData: ['SoftwareApplication'],
+    heading: 'Neurology simulator',
+  },
+  ...NEUROLOGY_SCENARIOS.map((scenario) => ({
+    path: `/neurology/scenario/${scenario.metadata.id}`,
     title: formatTitle(scenario.metadata.title.length > 44
       ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
     description: scenarioDescription(scenario),

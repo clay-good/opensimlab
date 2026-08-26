@@ -379,6 +379,15 @@ credited toward the catalog until every item in the completion contract passes.
     diagnosis, credibility judgment, confrontation, referral or report submission, jurisdiction or
     law selection, custody action, procedure, treatment, disposition, prognosis, or outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
+  - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
+    reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and
+    no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later
+    persistent-but-not-worsened sensory trajectory, and another elapsed etiology, recurrence,
+    prevention, rehabilitation, and active-risk handoff without learner examination, scoring,
+    imaging or test acquisition or interpretation, diagnosis, disability or eligibility
+    adjudication, antiplatelet product, combination, dose, duration, route, access, prescription,
+    preparation or delivery, thrombolytic, blood-pressure treatment, reperfusion, procedure,
+    rehabilitation prescription, disposition, prognosis, treatment-effect, or outcome controls.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.

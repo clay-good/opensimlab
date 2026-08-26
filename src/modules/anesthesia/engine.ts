@@ -289,6 +289,14 @@ const PEDIATRIC_INJURY_SAFEGUARDING_BLOCKED_ACTION_TYPES = new Set([
   'undifferentiated-shock-assessment', 'septic-shock-assessment',
   'septic-shock-resuscitation-response', 'emergency-anaphylaxis-response',
 ]);
+const NEUROLOGY_MINOR_STROKE_BLOCKED_ACTION_TYPES = new Set([
+  ...HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES,
+  'acute-ischemic-stroke-response', 'intracranial-hemorrhage-response',
+  'intracranial-hypertension-response', 'status-epilepticus-response',
+  'critical-care-status-epilepticus-response', 'hyponatremia-response',
+  'glycemic-response', 'hypoglycemic-response', 'acute-aortic-syndrome-response',
+  'pediatric-status-epilepticus-response', 'pediatric-hypoglycemic-seizure-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1036,6 +1044,12 @@ export class AnesthesiaEngine {
   private pediatricSafeguardingAlternativesAtTick: number | null = null;
   private pediatricSafeguardingLaterSafetyAtTick: number | null = null;
   private pediatricSafeguardingHandoffAtTick: number | null = null;
+  private neurologyMinorStrokeTrajectoryAtTick: number | null = null;
+  private neurologyMinorStrokeThreatsAtTick: number | null = null;
+  private neurologyMinorStrokeBoundaryAtTick: number | null = null;
+  private neurologyMinorStrokeIntentAtTick: number | null = null;
+  private neurologyMinorStrokeLaterAtTick: number | null = null;
+  private neurologyMinorStrokeHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1593,6 +1607,21 @@ export class AnesthesiaEngine {
       this.log('warning', 'assessment',
         `pediatric-safeguarding-generic-action-refused-${this.currentTick}`,
         'This safeguarding lesson exposes no generic examination, interview, free text, photograph, body map, test, imaging, diagnosis, report filing, agency, jurisdiction, confrontation, separation, custody, treatment, procedure, disposition, or adjacent-scenario action. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const neurologyMinorStroke = this.scenario.metadata.id
+      === 'minor-nondisabling-acute-ischemic-stroke'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'minor-nondisabling-acute-ischemic-stroke-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'minor-nondisabling-acute-ischemic-stroke-reassessment-boundary');
+    if (neurologyMinorStroke && NEUROLOGY_MINOR_STROKE_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment',
+        `neurology-minor-stroke-generic-action-refused-${this.currentTick}`,
+        'This Neurology lesson exposes no generic thrombolysis, antiplatelet, medication, dose, '
+        + 'route, blood-pressure, imaging, glucose, airway, fluid, device, procedure, adult ED '
+        + 'stroke, critical-care neurologic, or adjacent-scenario action. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -8037,6 +8066,172 @@ export class AnesthesiaEngine {
             outcomePredicted: false });
         break;
       }
+      case 'minor-nondisabling-acute-ischemic-stroke-response': {
+        const response = typeof action.payload.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id
+          === 'minor-nondisabling-acute-ischemic-stroke'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'minor-nondisabling-acute-ischemic-stroke-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'minor-nondisabling-acute-ischemic-stroke-reassessment-boundary');
+        const valid = [
+          'reconcile-neurology-minor-stroke-clock-deficit-function-and-whole-patient',
+          'review-neurology-minor-stroke-imaging-mimics-and-immediate-threats',
+          'recognize-neurology-minor-nondisabling-stroke-boundary-without-score-alone',
+          'record-neurology-minor-stroke-qualified-antiplatelet-and-surveillance-intent',
+          'review-neurology-minor-stroke-later-neurologic-trajectory',
+          'handoff-neurology-minor-stroke-etiology-recurrence-and-secondary-prevention-risk',
+        ].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment',
+            `neurology-minor-stroke-response-refused-${this.currentTick}`,
+            supported
+              ? 'The minor-stroke action was not one of the listed choices. No supplied or injected text was retained.'
+              : 'These minor-stroke choices are available only in the exact declared Neurology lesson.');
+          break;
+        }
+        if (response
+          === 'reconcile-neurology-minor-stroke-clock-deficit-function-and-whole-patient') {
+          if (this.neurologyMinorStrokeTrajectoryAtTick !== null) {
+            this.log('warning', 'assessment',
+              `neurology-minor-stroke-trajectory-refused-${this.currentTick}`,
+              'The supplied clock, deficit, function, physiology, and whole-patient facts were already reconciled.');
+            break;
+          }
+          this.neurologyMinorStrokeTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `neurology-minor-stroke-trajectory-reconciled-${this.currentTick}`,
+            'The supplied record describes abrupt persistent left cheek and arm sensory change, intact individualized function, stable breathing and circulation, and a qualified score. The learner did not take a history, examine, calculate a score, diagnose, adjudicate disability, or deliver treatment.',
+            { persistentFocalDeficitAuthored: true, individualizedFunctionIntactAuthored: true,
+              patientExaminedByLearner: false, scoreCalculatedByLearner: false,
+              diagnosisMadeByLearner: false, treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.neurologyMinorStrokeTrajectoryAtTick === null) {
+          this.log('warning', 'assessment',
+            `neurology-minor-stroke-trajectory-order-refused-${this.currentTick}`,
+            'Reconcile the supplied trajectory before reviewing imaging and immediate threats.');
+          break;
+        }
+        if (response === 'review-neurology-minor-stroke-imaging-mimics-and-immediate-threats') {
+          if (this.neurologyMinorStrokeThreatsAtTick !== null) {
+            this.log('warning', 'assessment',
+              `neurology-minor-stroke-threats-refused-${this.currentTick}`,
+              'The fixed imaging, mimics, physiology, and immediate-threat boundary was already reviewed.');
+            break;
+          }
+          this.neurologyMinorStrokeThreatsAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `neurology-minor-stroke-imaging-and-threats-reviewed-${this.currentTick}`,
+            'Fixed CT, CTA, glucose, physiology, and immediate-threat facts were reviewed. Imaging and glucose were not acquired or interpreted by the learner, and stroke mechanism, etiology, mimics, hemorrhagic transformation, and future deterioration remain open.',
+            { fixedImagingAuthored: true, suppliedGlucoseAuthored: true,
+              testAcquiredByLearner: false, imagingInterpretedByLearner: false,
+              strokeMimicExcluded: false, strokeMechanismProven: false });
+          break;
+        }
+        if (this.neurologyMinorStrokeThreatsAtTick === null) {
+          this.log('warning', 'assessment',
+            `neurology-minor-stroke-threats-order-refused-${this.currentTick}`,
+            'Review the fixed imaging, mimics, and immediate-threat boundary first.');
+          break;
+        }
+        if (response
+          === 'recognize-neurology-minor-nondisabling-stroke-boundary-without-score-alone') {
+          if (this.neurologyMinorStrokeBoundaryAtTick !== null) {
+            this.log('warning', 'assessment',
+              `neurology-minor-stroke-boundary-refused-${this.currentTick}`,
+              'The individualized minor nondisabling boundary was already recognized.');
+            break;
+          }
+          this.neurologyMinorStrokeBoundaryAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `neurology-minor-stroke-nondisabling-boundary-recognized-${this.currentTick}`,
+            'The supplied persistent sensory deficit and preserved patient-specific activities support an individually nondisabling description to date, without treating NIHSS alone as a universal rule. That boundary remains revisable and is not a learner diagnosis or eligibility decision.',
+            { nondisablingBoundaryAuthored: true, boundaryRevisable: true,
+              scoreAloneUsed: false, disabilityAdjudicatedByLearner: false,
+              thrombolysisEligibilityDeterminedByLearner: false });
+          break;
+        }
+        if (this.neurologyMinorStrokeBoundaryAtTick === null) {
+          this.log('warning', 'assessment',
+            `neurology-minor-stroke-boundary-order-refused-${this.currentTick}`,
+            'Recognize the individualized, revisable functional boundary before recording qualified intent.');
+          break;
+        }
+        if (response
+          === 'record-neurology-minor-stroke-qualified-antiplatelet-and-surveillance-intent') {
+          if (this.neurologyMinorStrokeIntentAtTick !== null) {
+            this.log('warning', 'assessment',
+              `neurology-minor-stroke-intent-refused-${this.currentTick}`,
+              'Qualified antiplatelet-strategy and surveillance intent was already recorded.');
+            break;
+          }
+          this.neurologyMinorStrokeIntentAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `neurology-minor-stroke-qualified-strategy-recorded-${this.currentTick}`,
+            'Qualified teams now own individualized antiplatelet-strategy review and neurological surveillance. The learner did not select a product, combination, dose, duration, route, access, prescription, blood-pressure target, treatment, reperfusion, or procedure.',
+            { qualifiedAntiplateletStrategyIntentActive: true,
+              qualifiedNeurologicSurveillanceActive: true,
+              drugSelectedByLearner: false, doseSelectedByLearner: false,
+              treatmentDeliveredByLearner: false, procedurePerformedByLearner: false });
+          break;
+        }
+        if (this.neurologyMinorStrokeIntentAtTick === null) {
+          this.log('warning', 'assessment',
+            `neurology-minor-stroke-intent-order-refused-${this.currentTick}`,
+            'Record qualified strategy and surveillance intent before reviewing the later report.');
+          break;
+        }
+        if (response === 'review-neurology-minor-stroke-later-neurologic-trajectory') {
+          if (this.currentTick <= this.neurologyMinorStrokeIntentAtTick) {
+            this.log('warning', 'assessment',
+              `neurology-minor-stroke-later-time-refused-${this.currentTick}`,
+              'Allow elapsed simulated time before reviewing the fixed later neurological report.');
+            break;
+          }
+          if (this.neurologyMinorStrokeLaterAtTick !== null) {
+            this.log('warning', 'assessment',
+              `neurology-minor-stroke-later-refused-${this.currentTick}`,
+              'The fixed later neurological report was already reviewed.');
+            break;
+          }
+          this.neurologyMinorStrokeLaterAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `neurology-minor-stroke-later-trajectory-reviewed-${this.currentTick}`,
+            'At the fixed later report, the same sensory deficit persists without spread or a new authored deficit, and qualified ownership remains active. Short-window stability does not prove treatment effect, infarct resolution, durable stability, complete recovery, or low recurrence risk.',
+            { laterPersistentDeficitWithoutSpreadAuthored: true,
+              qualifiedNeurologicSurveillanceActive: true, treatmentEffectProven: false,
+              infarctResolutionProven: false, durableNeurologicStabilityProven: false,
+              completeRecoveryProven: false, lowRecurrenceRiskProven: false });
+          break;
+        }
+        if (this.neurologyMinorStrokeLaterAtTick === null) {
+          this.log('warning', 'assessment',
+            `neurology-minor-stroke-later-order-refused-${this.currentTick}`,
+            'Review the fixed later neurological trajectory before handoff.');
+          break;
+        }
+        if (this.currentTick <= this.neurologyMinorStrokeLaterAtTick) {
+          this.log('warning', 'assessment',
+            `neurology-minor-stroke-handoff-time-refused-${this.currentTick}`,
+            'Allow another simulated tick before handing off active risk.');
+          break;
+        }
+        if (this.neurologyMinorStrokeHandoffAtTick !== null) {
+          this.log('warning', 'assessment',
+            `neurology-minor-stroke-handoff-refused-${this.currentTick}`,
+            'The etiology, recurrence, secondary-prevention, and active-risk handoff was already recorded.');
+          break;
+        }
+        this.neurologyMinorStrokeHandoffAtTick = this.currentTick;
+        this.log('critical', 'assessment',
+          `neurology-minor-stroke-active-risk-handoff-recorded-${this.currentTick}`,
+          'The supplied clock, focal sensory deficit, individualized functional boundary, fixed imaging and physiology, qualified surveillance, and unresolved etiology, recurrence, secondary-prevention, rehabilitation, and disposition work were handed off. Cause, treatment effect, durable stability, complete recovery, disposition, prognosis, and outcome remain undeclared.',
+          { strokeMechanismProven: false, treatmentEffectProven: false,
+            durableNeurologicStabilityProven: false, completeRecoveryProven: false,
+            dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false });
+        break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -11076,6 +11271,21 @@ export class AnesthesiaEngine {
         meanArterialMmHg: later ? 74 : 72,
         coreTemperatureC: 36.8 };
     }
+    if (this.scenario.metadata.id === 'minor-nondisabling-acute-ischemic-stroke'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'minor-nondisabling-acute-ischemic-stroke-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'minor-nondisabling-acute-ischemic-stroke-reassessment-boundary')) {
+      const later = this.neurologyMinorStrokeLaterAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: later ? 76 : 78,
+        respiratoryRateBpm: 16,
+        spo2Percent: 98,
+        systolicMmHg: later ? 150 : 156,
+        diastolicMmHg: later ? 84 : 88,
+        meanArterialMmHg: later ? 106 : 111,
+        coreTemperatureC: 36.8 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -13373,6 +13583,84 @@ export class AnesthesiaEngine {
               legalReportingCompleted: false as const,
               custodyDetermined: false as const,
               durableSafetyProven: false as const,
+              dischargeReadinessProven: false as const,
+              dispositionDetermined: false as const,
+              prognosisPredicted: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'minor-nondisabling-acute-ischemic-stroke'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'minor-nondisabling-acute-ischemic-stroke-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'minor-nondisabling-acute-ischemic-stroke-reassessment-boundary') ? {
+            neurologyMinorStrokeAssessment: {
+              trajectoryAtTick: this.neurologyMinorStrokeTrajectoryAtTick,
+              threatsAtTick: this.neurologyMinorStrokeThreatsAtTick,
+              boundaryAtTick: this.neurologyMinorStrokeBoundaryAtTick,
+              intentAtTick: this.neurologyMinorStrokeIntentAtTick,
+              laterAtTick: this.neurologyMinorStrokeLaterAtTick,
+              handoffAtTick: this.neurologyMinorStrokeHandoffAtTick,
+              initialPulsePresent: true as const,
+              spontaneousBreathingAuthored: true as const,
+              persistentFocalDeficitAuthored: true as const,
+              individualizedFunctionIntactAuthored: true as const,
+              fixedImagingAuthored: true as const,
+              suppliedGlucoseAuthored: true as const,
+              nondisablingBoundaryAuthored: this.neurologyMinorStrokeBoundaryAtTick !== null,
+              boundaryRevisable: true as const,
+              qualifiedAntiplateletStrategyIntentActive:
+                this.neurologyMinorStrokeIntentAtTick !== null,
+              qualifiedNeurologicSurveillanceActive:
+                this.neurologyMinorStrokeIntentAtTick !== null,
+              laterPersistentDeficitWithoutSpreadAuthored:
+                this.neurologyMinorStrokeLaterAtTick !== null,
+              patientHistoryTakenByLearner: false as const,
+              patientExaminedByLearner: false as const,
+              neurologicExamPerformedByLearner: false as const,
+              scoreCalculatedByLearner: false as const,
+              disabilityAdjudicatedByLearner: false as const,
+              clockDeterminedByLearner: false as const,
+              glucoseAcquiredByLearner: false as const,
+              bloodPressureAcquiredByLearner: false as const,
+              testAcquiredByLearner: false as const,
+              testInterpretedByLearner: false as const,
+              imagingAcquiredByLearner: false as const,
+              imagingInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const,
+              strokeMimicExcluded: false as const,
+              thrombolysisEligibilityDeterminedByLearner: false as const,
+              antiplateletEligibilityDeterminedByLearner: false as const,
+              productSelectedByLearner: false as const,
+              combinationSelectedByLearner: false as const,
+              drugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const,
+              durationSelectedByLearner: false as const,
+              concentrationSelectedByLearner: false as const,
+              routeSelectedByLearner: false as const,
+              accessPlacedByLearner: false as const,
+              prescriptionCreatedByLearner: false as const,
+              medicationPreparedByLearner: false as const,
+              medicationDeliveredByLearner: false as const,
+              bloodPressureTargetSelectedByLearner: false as const,
+              reperfusionSelectedByLearner: false as const,
+              reperfusionPerformedByLearner: false as const,
+              deviceSelectedByLearner: false as const,
+              procedurePerformedByLearner: false as const,
+              swallowAssessmentPerformedByLearner: false as const,
+              dietSelectedByLearner: false as const,
+              rehabilitationSelectedByLearner: false as const,
+              dispositionDeterminedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              strokeMechanismProven: false as const,
+              etiologyProven: false as const,
+              treatmentEffectProven: false as const,
+              infarctResolutionProven: false as const,
+              hemorrhagicTransformationExcluded: false as const,
+              deteriorationExcluded: false as const,
+              durableNeurologicStabilityProven: false as const,
+              completeRecoveryProven: false as const,
+              lowRecurrenceRiskProven: false as const,
               dischargeReadinessProven: false as const,
               dispositionDetermined: false as const,
               prognosisPredicted: false as const,

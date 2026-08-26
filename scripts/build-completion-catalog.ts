@@ -12,6 +12,7 @@ import { CRITICAL_CARE_SCENARIOS } from '../src/modules/critical-care/scenarios'
 import { CARDIOLOGY_SCENARIOS } from '../src/modules/cardiology/scenarios';
 import { RESPIRATORY_MEDICINE_SCENARIOS } from '../src/modules/respiratory-medicine/scenarios';
 import { PEDIATRICS_SCENARIOS } from '../src/modules/pediatrics/scenarios';
+import { NEUROLOGY_SCENARIOS } from '../src/modules/neurology/scenarios';
 import { SCENARIO_COMPLETION_SCHEMA } from '@platform/catalog/scenario-completion';
 import { buildScenarioQualityCatalog, QUALITY_SCHEMAS } from '@platform/catalog/scenario-quality';
 import { buildMaturityCatalog, MATURITY_RECORD_SCHEMA } from '@platform/catalog/maturity';
@@ -59,10 +60,14 @@ const pediatricsCompletion = buildModuleCompletionCatalog(
   PEDIATRICS_SCENARIOS, ENGINE_VERSION, 'pediatrics', 'emergency-department', 'state_transition',
 );
 const pediatricsQuality = buildScenarioQualityCatalog(pediatricsCompletion);
+const neurologyCompletion = buildModuleCompletionCatalog(
+  NEUROLOGY_SCENARIOS, ENGINE_VERSION, 'neurology', 'ward', 'state_transition',
+);
+const neurologyQuality = buildScenarioQualityCatalog(neurologyCompletion);
 const reportCatalog = {
   schemaVersion: 1,
   scenarios: [completion, emergencyCompletion, criticalCareCompletion, cardiologyCompletion,
-    respiratoryMedicineCompletion, pediatricsCompletion]
+    respiratoryMedicineCompletion, pediatricsCompletion, neurologyCompletion]
     .flatMap((catalog) => catalog.scenarios)
     .map((scenario) => ({
       scenarioId: scenario.scenarioId,
@@ -137,6 +142,10 @@ writeFileSync(join(target, 'pediatrics-completion-audit.json'),
   `${JSON.stringify(pediatricsCompletion, null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'pediatrics-quality-audit.json'),
   `${JSON.stringify(pediatricsQuality, null, 2)}\n`, 'utf8');
+writeFileSync(join(target, 'neurology-completion-audit.json'),
+  `${JSON.stringify(neurologyCompletion, null, 2)}\n`, 'utf8');
+writeFileSync(join(target, 'neurology-quality-audit.json'),
+  `${JSON.stringify(neurologyQuality, null, 2)}\n`, 'utf8');
 writeFileSync(
   join(target, 'maturity-record.schema.json'),
   `${JSON.stringify(MATURITY_RECORD_SCHEMA, null, 2)}\n`,
@@ -160,9 +169,11 @@ writeFileSync(join(target, 'respiratory-medicine-maturity.json'),
   `${JSON.stringify(buildMaturityCatalog(respiratoryMedicineCompletion, respiratoryMedicineQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'pediatrics-maturity.json'),
   `${JSON.stringify(buildMaturityCatalog(pediatricsCompletion, pediatricsQuality), null, 2)}\n`, 'utf8');
+writeFileSync(join(target, 'neurology-maturity.json'),
+  `${JSON.stringify(buildMaturityCatalog(neurologyCompletion, neurologyQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'asset-licenses.json'), `${JSON.stringify(ASSET_LICENSE_MANIFEST, null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'evidence-sources.json'), `${JSON.stringify(buildEvidenceSourceManifest(SOURCES), null, 2)}\n`, 'utf8');
 
 process.stdout.write(
-  `catalog: audited ${SCENARIOS.length} anesthesia, ${EMERGENCY_MEDICINE_SCENARIOS.length} emergency medicine, ${CRITICAL_CARE_SCENARIOS.length} critical care, ${CARDIOLOGY_SCENARIOS.length} cardiology, ${RESPIRATORY_MEDICINE_SCENARIOS.length} respiratory medicine, and ${PEDIATRICS_SCENARIOS.length} pediatrics scenarios\n`,
+  `catalog: audited ${SCENARIOS.length} anesthesia, ${EMERGENCY_MEDICINE_SCENARIOS.length} emergency medicine, ${CRITICAL_CARE_SCENARIOS.length} critical care, ${CARDIOLOGY_SCENARIOS.length} cardiology, ${RESPIRATORY_MEDICINE_SCENARIOS.length} respiratory medicine, ${PEDIATRICS_SCENARIOS.length} pediatrics, and ${NEUROLOGY_SCENARIOS.length} neurology scenarios\n`,
 );

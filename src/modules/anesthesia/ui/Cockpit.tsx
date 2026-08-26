@@ -56,7 +56,7 @@ export interface CockpitProps {
   /** Hand the session back to the learner, wherever the demonstration got to. */
   readonly onTakeControls?: (() => void) | undefined;
   readonly onEnd: () => void;
-  readonly moduleId?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics';
+  readonly moduleId?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology';
 }
 
 export function depthConfidenceFor(
@@ -614,7 +614,7 @@ export function Cockpit({
         <AnalysisRegion
           scenario={scenario}
           moduleId={moduleId}
-          initialTab={moduleId === 'respiratory-medicine' || moduleId === 'pediatrics'
+          initialTab={moduleId === 'respiratory-medicine' || moduleId === 'pediatrics' || moduleId === 'neurology'
             ? 'patient' : 'concentrations'}
           history={session.history}
           concentrations={session.concentrations}
@@ -1021,6 +1021,9 @@ export function Cockpit({
           })}
           onPediatricInjurySafeguardingResponse={(action) => session.act({
             type: 'pediatric-injury-safeguarding-escalation-response', payload: { action },
+          })}
+          onNeurologyMinorStrokeResponse={(action) => session.act({
+            type: 'minor-nondisabling-acute-ischemic-stroke-response', payload: { action },
           })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },

@@ -108,6 +108,21 @@ export const MODULES: readonly ModuleDeclaration[] = [
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
+    id: 'neurology',
+    route: 'neurology',
+    displayName: 'Neurology',
+    description:
+      'Practice calm neurological pattern recognition, serial reassessment, escalation, and handoff across acute brain, spinal cord, neuromuscular, and autonomic emergencies.',
+    audience: 'Medical students, residents, nurses, and acute-care trainees assessing neurological change.',
+    prerequisites: 'Basic neurological assessment and cardiovascular and respiratory physiology.',
+    status: 'available',
+    plannedScope:
+      'Fifteen bounded neurology rehearsals spanning acute stroke, seizures, central and peripheral '
+      + 'neuromuscular decline, infection, raised pressure, spinal emergencies, delirium, and '
+      + 'autonomic dysreflexia.',
+    timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
+  },
+  {
     id: 'oncology',
     route: 'oncology',
     displayName: 'Oncology',

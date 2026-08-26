@@ -22,9 +22,13 @@ describe('scenario report contract', () => {
     const catalog = JSON.parse(readFileSync(
       join(process.cwd(), 'workers/reports/src/report-catalog.generated.json'), 'utf8',
     )) as { scenarios: { moduleId: string; scenarioId: string; contentVersion: string }[] };
-    expect(catalog.scenarios).toHaveLength(136);
+    expect(catalog.scenarios).toHaveLength(137);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(136);
+      .toBe(137);
+    expect(catalog.scenarios).toContainEqual(expect.objectContaining({
+      moduleId: 'neurology', scenarioId: 'minor-nondisabling-acute-ischemic-stroke',
+      contentVersion: '0.1.0',
+    }));
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-respiratory-distress',
       contentVersion: '0.1.0',
@@ -84,6 +88,25 @@ describe('scenario report contract', () => {
       moduleId: 'pediatrics', scenarioId: 'pediatric-injury-safeguarding-escalation',
       contentVersion: '0.1.0',
     }));
+  });
+
+  it('accepts the exact neurology context and rejects module or URL drift', () => {
+    const neurology: ScenarioReportContext = {
+      ...context, moduleId: 'neurology',
+      scenarioId: 'minor-nondisabling-acute-ischemic-stroke',
+      canonicalUrl:
+        'https://opensimlab.com/neurology/scenario/minor-nondisabling-acute-ischemic-stroke',
+      fidelityClass: 'state_transition', simulatedTick: 12,
+    };
+    const report = buildScenarioReportRequest(
+      neurology, 'clinical-content', 'The function wording may need review.', 'token');
+    expect(validateReportPayload(report)).toMatchObject({ ok: true });
+    expect(validateReportPayload({ ...report, module_id: 'emergency-medicine' }))
+      .toEqual({ ok: false, status: 400 });
+    expect(validateReportPayload({ ...report, canonical_url: `${neurology.canonicalUrl}?tick=12` }))
+      .toEqual({ ok: false, status: 403 });
+    expect(validateReportPayload({ ...report, canonical_url: `${neurology.canonicalUrl}#review` }))
+      .toEqual({ ok: false, status: 403 });
   });
 
   it('normalizes and bounds the optional note to exactly 160 characters', () => {
