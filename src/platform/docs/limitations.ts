@@ -3407,6 +3407,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, current respiratory-support guidance, qualified staff, local pathways and rescue capacity, patient preferences, and continuous patient-specific reassessment.',
     briefIn: ['high-flow-nasal-oxygen-escalation'],
   },
+  {
+    id: 'oxygen-device-failure-presentation-path-and-response-are-authored',
+    headline: 'The transport state, saturation trend, portable-source path, alternate support, and 3-minute response are authored.',
+    simplification: 'Fixed reports stand in for whole-person assessment, pulse-oximetry quality review, oxygen-delivery tracing, qualified equipment checks, alternate support, and serial reassessment.',
+    whereItMisleads: 'Treating the fictional depleted source as learner diagnosis, assuming every saturation fall is an equipment problem, or inferring that an attached interface and selected number prove oxygen delivery.',
+    correctUnderstanding: 'Real care starts with the patient, corroborates the signal, supports oxygenation without delaying for a label, and uses qualified context-specific review of the complete delivery path and alternate causes.',
+    briefIn: ['oxygen-device-failure'],
+  },
+  {
+    id: 'oxygen-device-failure-controls-review-bridge-restore-reassess-and-handoff-only',
+    headline: 'The controls record review, urgent bridge intent, fixed path review, checked restoration intent, reassessment, and handoff only.',
+    simplification: 'Six clicks stand in for immediate team response, patient assessment, equipment-independent backup, source-to-patient troubleshooting, oxygen-delivery verification, transport planning, incident learning, and communication.',
+    whereItMisleads: 'Equating button order with oxygen administration, equipment inspection or operation, cylinder handling, repair, technical competence, transport clearance, or multidisciplinary performance.',
+    correctUnderstanding: 'Actual care requires the patient, trained clinical and technical teams, local device-specific procedures, verified oxygen sources and reserves, continuous monitoring, backup plans, and repeated reassessment.',
+    briefIn: ['oxygen-device-failure'],
+  },
+  {
+    id: 'no-live-cylinder-inspection-operation-oxygen-delivery-repair-transport-decision-or-outcome',
+    headline: 'The lab does not inspect or operate oxygen equipment, deliver oxygen, repair a device, clear transport, or predict outcome.',
+    simplification: 'No live examination, saturation or flow measurement, blood gas, imaging, diagnosis, cylinder-duration calculation, valve or connector handling, source, interface, flow, FiO\u2082, target, prescription, oxygen, ventilation, drug, procedure, repair, transport, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values or steps as equipment instructions or using completion as evidence of oxygen-delivery, cylinder, technical, clinical, transport, disposition, or prognostic competence.',
+    correctUnderstanding: 'Use verified patient data, trained staff, current guidance, manufacturer instructions, local medical-gas and transport systems, independent backup, and patient-specific reassessment.',
+    briefIn: ['oxygen-device-failure'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

@@ -959,6 +959,9 @@ export function Cockpit({
           onHighFlowOxygenEscalationResponse={(action) => session.act({
             type: 'high-flow-nasal-oxygen-escalation-response', payload: { action },
           })}
+          onOxygenDeviceFailureResponse={(action) => session.act({
+            type: 'oxygen-device-failure-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

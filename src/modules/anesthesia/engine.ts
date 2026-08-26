@@ -107,6 +107,15 @@ const HIGH_FLOW_OXYGEN_ESCALATION_BLOCKED_ACTION_TYPES = new Set([
   'unplanned-extubation-response', 'bronchiectasis-mucus-plugging-response',
   'oxygen-device-failure-response',
 ]);
+const OXYGEN_DEVICE_FAILURE_BLOCKED_ACTION_TYPES = new Set([
+  ...[...HIGH_FLOW_OXYGEN_ESCALATION_BLOCKED_ACTION_TYPES]
+    .filter((type) => type !== 'oxygen-device-failure-response'),
+  'high-flow-nasal-oxygen-escalation-response',
+  'ventilator-circuit-disconnection-response', 'pulse-oximeter-artifact-response',
+  'acute-pulmonary-edema-respiratory-support-response',
+  'copd-exacerbation-transition-response', 'opioid-ventilatory-response',
+  'opioid-toxicity-response', 'mucus-plugging-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -735,6 +744,13 @@ export class AnesthesiaEngine {
   private highFlowOxygenGuardsAtTick: number | null = null;
   private highFlowOxygenHandoffAtTick: number | null = null;
   private highFlowOxygenLastUnsupportedChoice: 'conventional' | 'bilevel' | 'resolved' | 'reduced-monitoring' | null = null;
+  private oxygenDeviceFailureReconciledAtTick: number | null = null;
+  private oxygenDeviceFailureBridgeAtTick: number | null = null;
+  private oxygenDeviceFailurePathAtTick: number | null = null;
+  private oxygenDeviceFailureRestorationAtTick: number | null = null;
+  private oxygenDeviceFailureResponseAtTick: number | null = null;
+  private oxygenDeviceFailureHandoffAtTick: number | null = null;
+  private oxygenDeviceFailureLastUnsupportedChoice: 'blood-gas' | 'continue-transport' | 'increase-source' | 'reseat-cannula' | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1099,6 +1115,14 @@ export class AnesthesiaEngine {
     if (highFlowOxygen && HIGH_FLOW_OXYGEN_ESCALATION_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `high-flow-oxygen-escalation-generic-action-refused-${this.currentTick}`,
         'This escalation lesson does not expose generic medication, oxygen, airway, ventilator, procedure, device-fault, or adjacent-crisis actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const oxygenDeviceFailure = this.scenario.timeline.some((event) =>
+      event.type === 'narrative' && event.target === 'oxygen-device-failure');
+    if (oxygenDeviceFailure && OXYGEN_DEVICE_FAILURE_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `oxygen-device-failure-generic-action-refused-${this.currentTick}`,
+        'This portable-source lesson does not expose generic medication, oxygen-setting, airway, ventilator, alarm, equipment-manipulation, or adjacent-crisis actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -5705,6 +5729,75 @@ export class AnesthesiaEngine {
         this.highFlowOxygenHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `high-flow-oxygen-escalation-handoff-recorded-${this.currentTick}`, 'Active reported high-flow support, the partial 30-minute response, unresolved bilateral air-space disease, diagnostic and empiric-treatment work, serial reassessment, failure triggers, rescue readiness, preferences, and named respiratory and critical-care owners were handed off. No weaning, intubation, disposition, prognosis, durable success, or outcome was determined.', { durableSuccessProven: false, intubationPerformedByLearner: false, dispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'oxygen-device-failure-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'oxygen-device-failure');
+        const valid = ['reconcile-oxygen-device-failure-patient-signal-and-delivery',
+          'activate-oxygen-device-failure-immediate-bridge-and-help',
+          'wait-for-oxygen-device-failure-blood-gas', 'continue-oxygen-device-failure-transport',
+          'review-oxygen-device-failure-source-to-patient-path',
+          'record-oxygen-device-failure-restoration-and-backup-intent',
+          'increase-depleted-oxygen-source-control', 'reseat-patent-oxygen-interface',
+          'review-oxygen-device-failure-delivery-and-patient-response',
+          'handoff-oxygen-device-failure-reassessment'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `oxygen-device-failure-response-refused-${this.currentTick}`, supported ? 'That portable oxygen source action is not available. Nothing changed.' : 'These portable oxygen source choices are available only in the declared Respiratory Medicine lesson.'); break; }
+        if (response === 'reconcile-oxygen-device-failure-patient-signal-and-delivery') {
+          if (this.oxygenDeviceFailureReconciledAtTick !== null) { this.log('warning', 'assessment', `oxygen-device-failure-reconciliation-refused-${this.currentTick}`, 'The person, signal, breathing, circulation, prior support, and expected delivery were already reconciled.'); break; }
+          this.oxygenDeviceFailureReconciledAtTick = this.currentTick;
+          this.log('critical', 'assessment', `oxygen-device-failure-patient-delivery-reconciled-${this.currentTick}`, 'The frightened short-sentence patient, rising work and rate, tachycardia, strong pulse-coherent saturation fall, spontaneous breathing, warm perfusion, and verified earlier support were reconciled. The attached cannula and selected flow were not treated as proof of delivered oxygen.', { trueHypoxemiaAuthored: true, pulseSignalCoherentAuthored: true, patientExaminedByLearner: false, monitorInterpretedByLearner: false }); break;
+        }
+        if (this.oxygenDeviceFailureReconciledAtTick === null) { this.log('warning', 'assessment', `oxygen-device-failure-reconciliation-order-refused-${this.currentTick}`, 'Reconcile the person, credible signal, spontaneous breathing, circulation, prior support, and expected delivery before choosing the immediate response.'); break; }
+        if (response === 'wait-for-oxygen-device-failure-blood-gas' || response === 'continue-oxygen-device-failure-transport') {
+          this.oxygenDeviceFailureLastUnsupportedChoice = response === 'wait-for-oxygen-device-failure-blood-gas'
+            ? 'blood-gas' : 'continue-transport';
+          this.log('warning', 'assessment', `oxygen-device-failure-bridge-not-selected-${this.currentTick}`,
+            response === 'wait-for-oxygen-device-failure-blood-gas'
+              ? 'The patient change and signal are credible; verified support cannot wait for another test. Nothing changed.'
+              : 'Pause transport and restore reliable oxygen delivery before continuing. Nothing changed.',
+            { unsupportedChoice: this.oxygenDeviceFailureLastUnsupportedChoice, patientStateChanged: false }); break;
+        }
+        if (response === 'activate-oxygen-device-failure-immediate-bridge-and-help') {
+          if (this.oxygenDeviceFailureBridgeAtTick !== null) { this.log('warning', 'assessment', `oxygen-device-failure-bridge-refused-${this.currentTick}`, 'Experienced help and a separate verified oxygen bridge were already activated.'); break; }
+          this.oxygenDeviceFailureBridgeAtTick = this.currentTick;
+          this.oxygenDeviceFailureLastUnsupportedChoice = null;
+          this.log('critical', 'assessment', `oxygen-device-failure-bridge-activated-${this.currentTick}`, 'Experienced respiratory and nursing help plus immediate oxygen from a separate verified source were activated before waiting for a final equipment label. Qualified staff deliver the bridge off-screen; the learner did not choose or operate a source, device, interface, flow, oxygen fraction, target, or treatment.', { alternateSourceIntentRecorded: true, sourceSelectedByLearner: false, oxygenDeliveredByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.oxygenDeviceFailureBridgeAtTick === null) { this.log('warning', 'assessment', `oxygen-device-failure-bridge-order-refused-${this.currentTick}`, 'Activate immediate experienced help and oxygen from a separate verified source before troubleshooting the original path.'); break; }
+        if (response === 'review-oxygen-device-failure-source-to-patient-path') {
+          if (this.oxygenDeviceFailurePathAtTick !== null) { this.log('warning', 'assessment', `oxygen-device-failure-path-refused-${this.currentTick}`, 'The fixed source-to-patient path was already reviewed.'); break; }
+          this.oxygenDeviceFailurePathAtTick = this.currentTick;
+          this.log('warning', 'assessment', `oxygen-device-failure-path-reviewed-${this.currentTick}`, 'Fixed qualified review: the cannula is positioned, tubing and cannula are patent and unkinked, the portable source has no remaining pressure, and no oxygen flows downstream despite the selector position. The patient remained spontaneously breathing with otherwise unchanged bilateral findings. No learner inspection, manipulation, device operation, repair, or blame occurred.', { portableCylinderNoFlowAuthored: true, deviceInspectedByLearner: false, connectionHandledByLearner: false, repairPerformedByLearner: false }); break;
+        }
+        if (this.oxygenDeviceFailurePathAtTick === null) { this.log('warning', 'assessment', `oxygen-device-failure-path-order-refused-${this.currentTick}`, 'Review the fixed source-to-patient path before recording restoration from a checked source.'); break; }
+        if (response === 'increase-depleted-oxygen-source-control' || response === 'reseat-patent-oxygen-interface') {
+          this.oxygenDeviceFailureLastUnsupportedChoice = response === 'increase-depleted-oxygen-source-control'
+            ? 'increase-source' : 'reseat-cannula';
+          this.log('warning', 'assessment', `oxygen-device-failure-restoration-not-selected-${this.currentTick}`,
+            response === 'increase-depleted-oxygen-source-control'
+              ? 'A depleted source cannot deliver the intended oxygen by selecting a higher number. Nothing changed.'
+              : 'The cannula is already positioned and patent; the fixed interruption is upstream. Nothing changed.',
+            { unsupportedChoice: this.oxygenDeviceFailureLastUnsupportedChoice, patientStateChanged: false }); break;
+        }
+        if (response === 'record-oxygen-device-failure-restoration-and-backup-intent') {
+          if (this.oxygenDeviceFailureRestorationAtTick !== null) { this.log('warning', 'assessment', `oxygen-device-failure-restoration-refused-${this.currentTick}`, 'Qualified restoration from a checked replacement source with independent backup was already recorded.'); break; }
+          this.oxygenDeviceFailureRestorationAtTick = this.currentTick;
+          this.oxygenDeviceFailureLastUnsupportedChoice = null;
+          this.log('warning', 'assessment', `oxygen-device-failure-restoration-intent-recorded-${this.currentTick}`, 'Qualified staff restored the established prescribed oxygen pathway from a checked replacement transport source and confirmed an independent backup off-screen. No cylinder, valve, regulator, flowmeter, tubing, cannula, connector, flow, oxygen fraction, target, prescription, repair, or treatment technique was selected, handled, or operated by the learner.', { restorationIntentRecorded: true, independentBackupAuthored: true, sourceSelectedByLearner: false, deviceOperatedByLearner: false, oxygenDeliveredByLearner: false }); break;
+        }
+        if (this.oxygenDeviceFailureRestorationAtTick === null) { this.log('warning', 'assessment', `oxygen-device-failure-restoration-order-refused-${this.currentTick}`, 'Record qualified restoration from a checked replacement source with independent backup before reviewing the authored response.'); break; }
+        if (response === 'review-oxygen-device-failure-delivery-and-patient-response') {
+          if (this.currentTick <= this.oxygenDeviceFailureRestorationAtTick) { this.log('warning', 'assessment', `oxygen-device-failure-response-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before reviewing restored delivery and the fixed 3-minute response.'); break; }
+          if (this.oxygenDeviceFailureResponseAtTick !== null) { this.log('warning', 'assessment', `oxygen-device-failure-delivery-response-refused-${this.currentTick}`, 'The fixed delivery and 3-minute whole-person response were already reviewed.'); break; }
+          this.oxygenDeviceFailureResponseAtTick = this.currentTick;
+          this.log('warning', 'assessment', `oxygen-device-failure-response-reviewed-${this.currentTick}`, 'Fixed qualified 3-minute report: oxygen flow is confirmed at the patient from the checked replacement source; she remains alert with longer sentences, less distress, RR 24/min, HR 94/min, stable BP 126/74 mmHg, pulse-coherent SpO\u2082 92%, and warm perfusion. This supports restored delivery toward baseline, not resolution of lung disease, transport readiness, durable restoration, disposition, or outcome.', { deliveryConfirmedAuthored: true, responseAuthored: true, durableRestorationProven: false, dispositionDetermined: false, outcomePredicted: false }); break;
+        }
+        if (this.oxygenDeviceFailureResponseAtTick === null) { this.log('warning', 'assessment', `oxygen-device-failure-response-order-refused-${this.currentTick}`, 'Review the fixed restored-delivery and whole-person response before handoff.'); break; }
+        if (this.currentTick <= this.oxygenDeviceFailureResponseAtTick) { this.log('warning', 'assessment', `oxygen-device-failure-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off the active oxygen and transport-system risk.'); break; }
+        if (this.oxygenDeviceFailureHandoffAtTick !== null) { this.log('warning', 'assessment', `oxygen-device-failure-handoff-refused-${this.currentTick}`, 'The oxygen source and transport-safety handoff was already recorded.'); break; }
+        this.oxygenDeviceFailureHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `oxygen-device-failure-handoff-recorded-${this.currentTick}`, 'The active oxygen need, currently verified source, documented reserve, independent backup, monitoring, partial response, open clinical causes, failed-source isolation and local incident learning, transport-readiness question, and respiratory, nursing, transport, and technical owners were handed off without blame. No transport decision, disposition, prognosis, durable restoration, or outcome was determined.', { durableRestorationProven: false, transportReadinessDetermined: false, dispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -8498,6 +8591,15 @@ export class AnesthesiaEngine {
         diastolicMmHg: 72, meanArterialMmHg: reviewed ? 88 : 89,
         coreTemperatureC: 38.1 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'oxygen-device-failure')) {
+      const reviewed = this.oxygenDeviceFailureResponseAtTick !== null;
+      crisisState = { ...crisisState, heartRateBpm: reviewed ? 94 : 106,
+        respiratoryRateBpm: reviewed ? 24 : 30, spo2Percent: reviewed ? 92 : 84,
+        etco2MmHg: reviewed ? 35 : 34, systolicMmHg: reviewed ? 126 : 130,
+        diastolicMmHg: reviewed ? 74 : 76, meanArterialMmHg: reviewed ? 91 : 94,
+        coreTemperatureC: 36.9 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -9998,6 +10100,31 @@ export class AnesthesiaEngine {
               treatmentDeliveredByLearner: false as const, intubationPerformedByLearner: false as const,
               durableSuccessProven: false as const, dispositionDetermined: false as const,
               outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'oxygen-device-failure') ? {
+            oxygenDeviceFailureAssessment: {
+              reconciledAtTick: this.oxygenDeviceFailureReconciledAtTick,
+              bridgeAtTick: this.oxygenDeviceFailureBridgeAtTick,
+              pathAtTick: this.oxygenDeviceFailurePathAtTick,
+              restorationAtTick: this.oxygenDeviceFailureRestorationAtTick,
+              responseAtTick: this.oxygenDeviceFailureResponseAtTick,
+              handoffAtTick: this.oxygenDeviceFailureHandoffAtTick,
+              lastUnsupportedChoice: this.oxygenDeviceFailureLastUnsupportedChoice,
+              initialPulsePresent: true as const, spontaneousBreathingAuthored: true as const,
+              trueHypoxemiaAuthored: true as const, pulseSignalCoherentAuthored: true as const,
+              deliveredOxygenFailureAuthored: true as const, ventilationFailureAuthored: false as const,
+              portableCylinderNoFlowAuthored: this.oxygenDeviceFailurePathAtTick !== null,
+              alternateSourceIntentRecorded: this.oxygenDeviceFailureBridgeAtTick !== null,
+              patientExaminedByLearner: false as const, monitorInterpretedByLearner: false as const,
+              deviceInspectedByLearner: false as const, sourceSelectedByLearner: false as const,
+              interfaceSelectedByLearner: false as const, flowSelectedByLearner: false as const,
+              fio2SelectedByLearner: false as const, oxygenTargetSelectedByLearner: false as const,
+              oxygenDeliveredByLearner: false as const, deviceOperatedByLearner: false as const,
+              connectionHandledByLearner: false as const, repairPerformedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const, durableRestorationProven: false as const,
+              dispositionDetermined: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

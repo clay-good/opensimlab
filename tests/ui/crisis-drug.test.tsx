@@ -183,6 +183,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       hasObesityHypoventilationResponse: false,
       hasNoninvasiveVentilationSelectionResponse: false,
       hasHighFlowOxygenEscalationResponse: false,
+      hasOxygenDeviceFailureResponse: false,
       hasPulmonaryEmbolismResponse: false,
       hasStemiResponse: false,
       hasUnstableNarrowTachycardiaResponse: false,

@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 114 reports HFNO-escalation reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 114;
+export const WORKER_PROTOCOL_VERSION = 115;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1050,6 +1050,24 @@ export interface EquipmentSnapshot {
       readonly oxygenTargetSelectedByLearner: false; readonly deviceOperatedByLearner: false;
       readonly oxygenDeliveredByLearner: false; readonly treatmentDeliveredByLearner: false;
       readonly intubationPerformedByLearner: false; readonly durableSuccessProven: false;
+      readonly dispositionDetermined: false; readonly outcomePredicted: false;
+    };
+    readonly oxygenDeviceFailureAssessment?: {
+      readonly reconciledAtTick: number | null; readonly bridgeAtTick: number | null;
+      readonly pathAtTick: number | null; readonly restorationAtTick: number | null;
+      readonly responseAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly lastUnsupportedChoice: 'blood-gas' | 'continue-transport' | 'increase-source' | 'reseat-cannula' | null;
+      readonly initialPulsePresent: true; readonly spontaneousBreathingAuthored: true;
+      readonly trueHypoxemiaAuthored: true; readonly pulseSignalCoherentAuthored: true;
+      readonly deliveredOxygenFailureAuthored: true; readonly ventilationFailureAuthored: false;
+      readonly portableCylinderNoFlowAuthored: boolean; readonly alternateSourceIntentRecorded: boolean;
+      readonly patientExaminedByLearner: false; readonly monitorInterpretedByLearner: false;
+      readonly deviceInspectedByLearner: false; readonly sourceSelectedByLearner: false;
+      readonly interfaceSelectedByLearner: false; readonly flowSelectedByLearner: false;
+      readonly fio2SelectedByLearner: false; readonly oxygenTargetSelectedByLearner: false;
+      readonly oxygenDeliveredByLearner: false; readonly deviceOperatedByLearner: false;
+      readonly connectionHandledByLearner: false; readonly repairPerformedByLearner: false;
+      readonly treatmentDeliveredByLearner: false; readonly durableRestorationProven: false;
       readonly dispositionDetermined: false; readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */

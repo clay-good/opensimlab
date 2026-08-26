@@ -961,6 +961,24 @@ export interface ActionCockpitProps {
       readonly intubationPerformedByLearner: false; readonly durableSuccessProven: false;
       readonly dispositionDetermined: false; readonly outcomePredicted: false;
     };
+    readonly oxygenDeviceFailureAssessment?: {
+      readonly reconciledAtTick: number | null; readonly bridgeAtTick: number | null;
+      readonly pathAtTick: number | null; readonly restorationAtTick: number | null;
+      readonly responseAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly lastUnsupportedChoice: 'blood-gas' | 'continue-transport' | 'increase-source' | 'reseat-cannula' | null;
+      readonly initialPulsePresent: true; readonly spontaneousBreathingAuthored: true;
+      readonly trueHypoxemiaAuthored: true; readonly pulseSignalCoherentAuthored: true;
+      readonly deliveredOxygenFailureAuthored: true; readonly ventilationFailureAuthored: false;
+      readonly portableCylinderNoFlowAuthored: boolean; readonly alternateSourceIntentRecorded: boolean;
+      readonly patientExaminedByLearner: false; readonly monitorInterpretedByLearner: false;
+      readonly deviceInspectedByLearner: false; readonly sourceSelectedByLearner: false;
+      readonly interfaceSelectedByLearner: false; readonly flowSelectedByLearner: false;
+      readonly fio2SelectedByLearner: false; readonly oxygenTargetSelectedByLearner: false;
+      readonly oxygenDeliveredByLearner: false; readonly deviceOperatedByLearner: false;
+      readonly connectionHandledByLearner: false; readonly repairPerformedByLearner: false;
+      readonly treatmentDeliveredByLearner: false; readonly durableRestorationProven: false;
+      readonly dispositionDetermined: false; readonly outcomePredicted: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1502,6 +1520,16 @@ export interface ActionCockpitProps {
       | 'mark-high-flow-respiratory-failure-resolved' | 'reduce-high-flow-monitoring'
       | 'handoff-high-flow-oxygen-escalation',
   ) => void;
+  readonly onOxygenDeviceFailureResponse?: (
+    action: 'reconcile-oxygen-device-failure-patient-signal-and-delivery'
+      | 'activate-oxygen-device-failure-immediate-bridge-and-help'
+      | 'wait-for-oxygen-device-failure-blood-gas' | 'continue-oxygen-device-failure-transport'
+      | 'review-oxygen-device-failure-source-to-patient-path'
+      | 'record-oxygen-device-failure-restoration-and-backup-intent'
+      | 'increase-depleted-oxygen-source-control' | 'reseat-patent-oxygen-interface'
+      | 'review-oxygen-device-failure-delivery-and-patient-response'
+      | 'handoff-oxygen-device-failure-reassessment',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1835,6 +1863,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'high-flow-nasal-oxygen-escalation',
     ),
+    hasOxygenDeviceFailureResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'oxygen-device-failure',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1974,6 +2006,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'noninvasive-ventilation-selection')
       || (event.type === 'narrative'
         && event.target === 'high-flow-nasal-oxygen-escalation')
+      || (event.type === 'narrative'
+        && event.target === 'oxygen-device-failure')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2032,6 +2066,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasBronchiectasisMucusPluggingResponse, hasChronicOpioidHypoventilationResponse,
     hasNeuromuscularRespiratoryFailureResponse, hasObesityHypoventilationResponse,
     hasNoninvasiveVentilationSelectionResponse, hasHighFlowOxygenEscalationResponse,
+    hasOxygenDeviceFailureResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2101,7 +2136,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasLargePleuralEffusionResponse || hasBronchiectasisMucusPluggingResponse
     || hasChronicOpioidHypoventilationResponse || hasNeuromuscularRespiratoryFailureResponse
     || hasObesityHypoventilationResponse || hasNoninvasiveVentilationSelectionResponse
-    || hasHighFlowOxygenEscalationResponse;
+    || hasHighFlowOxygenEscalationResponse || hasOxygenDeviceFailureResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2132,7 +2167,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasHighFlowOxygenEscalationResponse
+  const responseTray = hasOxygenDeviceFailureResponse
+    ? { id: 'crisis', label: 'Portable oxygen path' } as const
+    : hasHighFlowOxygenEscalationResponse
     ? { id: 'crisis', label: 'High-flow escalation' } as const
     : hasNoninvasiveVentilationSelectionResponse
     ? { id: 'crisis', label: 'NIV selection' } as const
@@ -2375,6 +2412,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasObesityHypoventilationResponse
     || hasNoninvasiveVentilationSelectionResponse
     || hasHighFlowOxygenEscalationResponse
+    || hasOxygenDeviceFailureResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3014,6 +3052,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <HighFlowOxygenEscalationTray
                 assessment={props.resuscitation.highFlowOxygenEscalationAssessment}
                 onAction={props.onHighFlowOxygenEscalationResponse ?? (() => {})} />
+            )}
+            {hasOxygenDeviceFailureResponse && (
+              <OxygenDeviceFailureTray
+                assessment={props.resuscitation.oxygenDeviceFailureAssessment}
+                onAction={props.onOxygenDeviceFailureResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -7688,6 +7731,72 @@ function HighFlowOxygenEscalationTray({ assessment, onAction }: {
           onClick={() => onAction('handoff-high-flow-oxygen-escalation')}>Hand off active support + rescue plan</Button>}
       </div>
       <p className="field__hint">Worsening alertness, airway protection, work, oxygenation, ventilation, hemodynamics, tolerance, secretions, or another cause prompts immediate experienced reassessment. HFNO must not delay escalation.</p>
+    </section>
+  </div>;
+}
+
+function OxygenDeviceFailureTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['oxygenDeviceFailureAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onOxygenDeviceFailureResponse']>;
+}) {
+  const reconciled = assessment?.reconciledAtTick != null;
+  const bridge = assessment?.bridgeAtTick != null;
+  const path = assessment?.pathAtTick != null;
+  const restoration = assessment?.restorationAtTick != null;
+  const response = assessment?.responseAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  const unsupportedChoice = assessment?.lastUnsupportedChoice;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="oxygen-device-failure-recognition-title">
+      <div id="oxygen-device-failure-recognition-title" className="syringe__name">Confirm the person. Then follow the oxygen.</div>
+      <Badge kind="teaching">person · pleth · breathing · circulation · source · path</Badge>
+      <div className="syringe__meta">SpO₂ 93 → 84% · RR 20 → 30 · spontaneous breathing</div>
+      <p className="syringe__remaining" role="status">
+        {path ? 'No oxygen leaves the depleted source · correct the fixed upstream interruption'
+          : bridge ? 'Verified backup active · trace the original source-to-patient path'
+            : unsupportedChoice === 'blood-gas' ? 'The change is credible · support cannot wait for another test'
+              : unsupportedChoice === 'continue-transport' ? 'Pause transport · restore reliable delivery before moving'
+                : reconciled ? 'Hypoxemia is credible · bridge before naming the fault'
+                  : 'Begin with the person, not the cylinder'}
+      </p>
+      <div className="syringe__presets">
+        {!reconciled && <Button className="crisis-drug__action"
+          onClick={() => onAction('reconcile-oxygen-device-failure-patient-signal-and-delivery')}>Review patient + signal</Button>}
+        {reconciled && !bridge && <>
+          <Button className="crisis-drug__action" onClick={() => onAction('activate-oxygen-device-failure-immediate-bridge-and-help')}>Bridge to verified backup oxygen</Button>
+          <Button className="crisis-drug__action" onClick={() => onAction('wait-for-oxygen-device-failure-blood-gas')}>Wait for a blood gas</Button>
+          <Button className="crisis-drug__action" onClick={() => onAction('continue-oxygen-device-failure-transport')}>Keep transport moving</Button>
+        </>}
+        {bridge && !path && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-oxygen-device-failure-source-to-patient-path')}>Trace patient-to-source path</Button>}
+      </div>
+      <p className="field__hint">The patient comes before troubleshooting. Qualified staff provide the separate verified bridge off-screen; no oxygen source, device, interface, flow, target, or treatment is selected or delivered here.</p>
+    </section>
+    <section className="syringe" aria-labelledby="oxygen-device-failure-restoration-title">
+      <div id="oxygen-device-failure-restoration-title" className="syringe__name">Restored flow still needs proof.</div>
+      <Badge kind="teaching">verified source · prescribed pathway · response · reserve · backup</Badge>
+      <div className="syringe__meta">delivery at patient · whole-person trend · transport ownership</div>
+      <p className="syringe__remaining" role="status">
+        {handoff ? 'Source, reserve, backup, monitoring, and response handed off'
+          : response ? 'Oxygenation and work are returning toward baseline · handoff remains'
+            : restoration ? 'Established pathway restored · advance time for proof'
+              : unsupportedChoice === 'increase-source' ? 'A depleted source cannot deliver oxygen by selecting a higher number'
+                : unsupportedChoice === 'reseat-cannula' ? 'The cannula is patent · the fixed interruption is upstream'
+                  : path ? 'Correct the fixed upstream interruption with a checked source'
+                    : 'Bridge support and source-to-patient review come first'}
+      </p>
+      <div className="syringe__presets">
+        {path && !restoration && <>
+          <Button className="crisis-drug__action" onClick={() => onAction('record-oxygen-device-failure-restoration-and-backup-intent')}>Use checked replacement source</Button>
+          <Button className="crisis-drug__action" onClick={() => onAction('increase-depleted-oxygen-source-control')}>Turn the depleted source higher</Button>
+          <Button className="crisis-drug__action" onClick={() => onAction('reseat-patent-oxygen-interface')}>Reseat the patent cannula</Button>
+        </>}
+        {restoration && !response && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-oxygen-device-failure-delivery-and-patient-response')}>Review 3-minute response</Button>}
+        {response && !handoff && <Button className="crisis-drug__action"
+          onClick={() => onAction('handoff-oxygen-device-failure-reassessment')}>Hand off source + reserve check</Button>}
+      </div>
+      <p className="field__hint">A fixed early response does not resolve the lung disease or declare transport safe. Handoff keeps the verified source, documented reserve, independent backup, monitoring, failed-source isolation, and named owners visible without blame.</p>
     </section>
   </div>;
 }

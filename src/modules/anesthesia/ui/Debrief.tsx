@@ -4511,6 +4511,26 @@ export function objectiveFindings(
       const ordered = guards && handoff && guards.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved active support, partial response, unresolved cause work, failure triggers, rescue readiness, preferences, and named owners without inventing weaning, disposition, or outcome.' : 'The active-support handoff was absent or did not follow the failure-guard review after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-oxygen-device-failure-patient-signal-and-delivery',
+      'activate-oxygen-device-failure-immediate-bridge-and-help',
+      'review-oxygen-device-failure-source-to-patient-path',
+      'record-oxygen-device-failure-restoration-and-backup-intent',
+      'review-oxygen-device-failure-delivery-and-patient-response',
+      'handoff-oxygen-device-failure-reassessment'].includes(objective.id)) {
+      const reconciled = log.find((event) => /^oxygen-device-failure-patient-delivery-reconciled-\d+$/.test(event.eventId));
+      const bridge = log.find((event) => /^oxygen-device-failure-bridge-activated-\d+$/.test(event.eventId));
+      const path = log.find((event) => /^oxygen-device-failure-path-reviewed-\d+$/.test(event.eventId));
+      const restoration = log.find((event) => /^oxygen-device-failure-restoration-intent-recorded-\d+$/.test(event.eventId));
+      const response = log.find((event) => /^oxygen-device-failure-response-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^oxygen-device-failure-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-oxygen-device-failure-patient-signal-and-delivery') return { ...base, outcome: reconciled ? 'met' : 'not-met', finding: reconciled ? 'The person, pulse-coherent saturation fall, spontaneous breathing, circulation, prior verified support, and expected delivery were reconciled without trusting an attached cannula or selected number.' : 'The credible patient and oxygen-delivery change was not reconciled.', atTick: reconciled?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'activate-oxygen-device-failure-immediate-bridge-and-help') { const ordered = reconciled && bridge && reconciled.tick <= bridge.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Immediate experienced help and team-delivered oxygen from a separate verified source preceded troubleshooting or another test.' : 'The verified bridge was absent or preceded patient-and-signal reconciliation.', atTick: bridge?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-oxygen-device-failure-source-to-patient-path') { const ordered = bridge && path && bridge.tick <= path.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After bridge support, the fixed full-path review localized no flow from a depleted portable source without learner inspection, manipulation, repair, or blame.' : 'The full delivery-path review was absent or preceded immediate bridge support.', atTick: path?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'record-oxygen-device-failure-restoration-and-backup-intent') { const ordered = path && restoration && path.tick <= restoration.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Qualified restoration from a checked replacement source with independent backup was recorded without learner device, flow, oxygen, repair, or treatment operation.' : 'Checked restoration and backup intent was absent or preceded path localization.', atTick: restoration?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-oxygen-device-failure-delivery-and-patient-response') { const ordered = restoration && response && restoration.tick < response.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed time, fixed flow-at-patient confirmation and whole-person improvement supported restored delivery without proving durable restoration or transport readiness.' : 'The response review was absent or did not follow restoration after elapsed time.', atTick: response?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = response && handoff && response.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed systems-focused handoff preserved oxygen need, verified source, reserve, backup, monitoring, response, failed-source learning, open causes, and named owners without blame or an outcome claim.' : 'The source and transport-safety handoff was absent or did not follow response review after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

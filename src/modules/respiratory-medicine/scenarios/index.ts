@@ -12,6 +12,7 @@ import { NEUROMUSCULAR_RESPIRATORY_FAILURE_REASSESSMENT } from './neuromuscular-
 import { OBESITY_HYPOVENTILATION_REASSESSMENT } from './obesity-hypoventilation-reassessment';
 import { NONINVASIVE_VENTILATION_SELECTION } from './noninvasive-ventilation-selection';
 import { HIGH_FLOW_NASAL_OXYGEN_ESCALATION } from './high-flow-nasal-oxygen-escalation';
+import { OXYGEN_DEVICE_FAILURE } from './oxygen-device-failure';
 
 export const RESPIRATORY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   ACUTE_SEVERE_ASTHMA,
@@ -27,6 +28,7 @@ export const RESPIRATORY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   OBESITY_HYPOVENTILATION_REASSESSMENT,
   NONINVASIVE_VENTILATION_SELECTION,
   HIGH_FLOW_NASAL_OXYGEN_ESCALATION,
+  OXYGEN_DEVICE_FAILURE,
 ];
 export const DEFAULT_RESPIRATORY_MEDICINE_SCENARIO_ID = ACUTE_SEVERE_ASTHMA.metadata.id;
 

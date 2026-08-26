@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: HFNO escalation reassessment has protocol version 114', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(114);
+  it('Scenario: portable oxygen source reassessment has protocol version 115', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(115);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

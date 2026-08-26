@@ -1298,6 +1298,17 @@
         "GB"
       ],
       "fidelityClass": "state_transition"
+    },
+    {
+      "scenarioId": "oxygen-device-failure",
+      "contentVersion": "0.1.0",
+      "moduleId": "respiratory-medicine",
+      "maturity": "draft",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition"
     }
   ]
 }

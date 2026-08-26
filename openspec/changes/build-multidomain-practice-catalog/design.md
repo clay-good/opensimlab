@@ -1579,6 +1579,31 @@ cycle; perform proning or another procedure; decide weaning, disposition, or pro
 durable success or outcome. It is distinct from the preceding acidotic hypercapnic COPD NIV lab and
 the acute pulmonary-edema support-failure lesson.
 
+### Wave C respiratory-medicine slice 14: portable oxygen source failure
+
+The fourteenth respiratory-medicine slice is a patient-and-system-safety lesson during
+intrahospital transport, not oxygen-device training. A 67-year-old woman with fibrotic interstitial
+lung disease was alert and stable at SpO\u2082 93% on verified ward oxygen before departure. Four
+minutes after transfer to a portable source, she is frightened and dyspneic in short sentences with
+RR 30/min, HR 106/min, and a strong regular pleth accompanying SpO\u2082 84%, while spontaneous
+breathing and warm perfusion remain. An attached cannula, selected 4 L/min, and nominal monitor
+FiO\u2082 are explicitly not proof of delivered oxygen.
+
+Learners reconcile the credible person-and-signal change before choosing among an immediate verified
+oxygen bridge with experienced help, waiting for another gas, and continuing transport. The 2
+alternatives provide calm, nonmutating explanations. Support precedes troubleshooting. A fixed
+qualified source-to-patient review then reports a positioned patent cannula and tubing but no
+remaining pressure or downstream flow from the portable source. Learners record qualified
+restoration of the established pathway from a checked replacement source with independent backup,
+then review a strictly elapsed fixed 3-minute delivery and whole-person response before another
+elapsed systems-focused handoff. The lesson does not examine; measure saturation or flow; acquire or
+interpret tests; diagnose; inspect, handle, connect, replace, repair, or operate a cylinder, valve,
+regulator, flowmeter, tubing, cannula, or device; calculate cylinder duration; choose a source,
+device, interface, flow, FiO\u2082, target, prescription, drug, ventilation, or treatment; deliver
+oxygen; perform a procedure; decide transport readiness, disposition, or prognosis; or predict
+durable restoration or outcome. It is distinct from pulse-oximeter artifact, ventilator-circuit
+disconnection, HFNO escalation, and clinical support failure.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic
