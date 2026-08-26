@@ -524,6 +524,11 @@ const OBSTETRICS_MATERNAL_ARREST_BLOCKED_ACTION_TYPES = new Set([
   'rhythm',
   'rhythm-change',
 ]);
+const OBSTETRICS_SHOULDER_DYSTOCIA_BLOCKED_ACTION_TYPES = new Set([
+  ...OBSTETRICS_MATERNAL_ARREST_BLOCKED_ACTION_TYPES,
+  'maternal-cardiac-arrest-response',
+  'postpartum-hemorrhage-uterine-atony-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1493,6 +1498,12 @@ export class AnesthesiaEngine {
   private obstetricsMaternalArrestReadinessAtTick: number | null = null;
   private obstetricsMaternalArrestReassessmentAtTick: number | null = null;
   private obstetricsMaternalArrestHandoffAtTick: number | null = null;
+  private obstetricsShoulderDystociaSupportAtTick: number | null = null;
+  private obstetricsShoulderDystociaContextAtTick: number | null = null;
+  private obstetricsShoulderDystociaSafetyAtTick: number | null = null;
+  private obstetricsShoulderDystociaEscalationAtTick: number | null = null;
+  private obstetricsShoulderDystociaReassessmentAtTick: number | null = null;
+  private obstetricsShoulderDystociaHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2440,6 +2451,14 @@ export class AnesthesiaEngine {
     if (obstetricsMaternalArrest && OBSTETRICS_MATERNAL_ARREST_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `obstetrics-maternal-arrest-generic-action-refused-${this.currentTick}`,
         'This Obstetrics lesson exposes no generic pulse or rhythm assessment, examination, monitoring, CPR, uterine displacement, oxygen, ventilation, airway, access, fluid, blood, drug, dose, route, shock, pacing, fetal monitoring, ECMO, delivery, procedure, transfer, termination, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const obstetricsShoulderDystocia = this.scenario.metadata.id === 'shoulder-dystocia-cognitive-sequence'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'shoulder-dystocia-cognitive-sequence-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'shoulder-dystocia-cognitive-sequence-transition-boundary').length === 1;
+    if (obstetricsShoulderDystocia && OBSTETRICS_SHOULDER_DYSTOCIA_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `obstetrics-shoulder-dystocia-generic-action-refused-${this.currentTick}`,
+        'This Obstetrics lesson exposes no generic examination, traction, pushing, positioning, pressure, maneuver, episiotomy, delivery, newborn care, oxygen, airway, fluid, blood, drug, dose, route, procedure, transport, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -11015,6 +11034,33 @@ export class AnesthesiaEngine {
         if (this.obstetricsMaternalArrestHandoffAtTick !== null) break;
         this.obstetricsMaternalArrestHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-maternal-arrest-active-risk-handoff-recorded-${this.currentTick}`, 'Active maternal resuscitation, unresolved cause, in-progress delivery risk, hemorrhage, newborn readiness, resource-dependent rescue, neurologic uncertainty, family and staff support, termination, disposition, prognosis, and maternal or newborn outcome uncertainty were handed off.', { deliveryCompleted: false, roscOccurred: false, terminationDecisionMade: false, maternalOutcomePredicted: false, newbornOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'shoulder-dystocia-cognitive-sequence-response': {
+        const response = typeof action.payload?.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'shoulder-dystocia-cognitive-sequence'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'shoulder-dystocia-cognitive-sequence-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'shoulder-dystocia-cognitive-sequence-transition-boundary').length === 1;
+        const actions = ['activate-obstetrics-shoulder-dystocia-emergency-response-head-delivery-clock-leader-timekeeper-newborn-and-support-roles',
+          'reconcile-obstetrics-shoulder-dystocia-head-delivery-gentle-traction-failure-position-pushing-and-whole-person',
+          'review-obstetrics-shoulder-dystocia-stop-pushing-no-fundal-pressure-no-forceful-traction-and-first-line-position-boundary',
+          'review-obstetrics-shoulder-dystocia-qualified-escalation-maneuvers-episiotomy-access-rescue-and-documentation-boundary',
+          'review-obstetrics-shoulder-dystocia-fixed-qualified-delivery-and-immediate-risk-report',
+          'handoff-obstetrics-shoulder-dystocia-maternal-newborn-injury-hemorrhage-support-documentation-and-outcome-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `obstetrics-shoulder-dystocia-response-refused-${this.currentTick}`, supported ? 'The shoulder-dystocia action was not listed. No supplied or injected text was retained.' : 'These shoulder-dystocia choices are available only in the exact declared Obstetrics lesson.'); break; }
+        if (response === actions[0]) { if (this.obstetricsShoulderDystociaSupportAtTick !== null) break; this.obstetricsShoulderDystociaSupportAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-shoulder-dystocia-support-activated-${this.currentTick}`, 'Shoulder dystocia was named, the head-delivery clock started, and qualified obstetric, midwifery or nursing, anesthesia, newborn, leadership, timekeeping, documentation, communication, dignity, family, and staff-support ownership was activated now. No learner examination, positioning, pressure, traction, maneuver, delivery, newborn-care, drug, or procedure action occurred.'); break; }
+        if (this.obstetricsShoulderDystociaSupportAtTick === null) { this.log('warning', 'assessment', `obstetrics-shoulder-dystocia-support-order-refused-${this.currentTick}`, 'Activate the prepared shoulder-dystocia response and head-delivery clock now before further review.'); break; }
+        if (response === actions[1]) { if (this.obstetricsShoulderDystociaContextAtTick !== null) break; this.obstetricsShoulderDystociaContextAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-shoulder-dystocia-context-reconciled-${this.currentTick}`, 'Head-delivery time, retraction, failed routine gentle axial traction, undelivered shoulders and body, maternal position, pushing, physiology, distress, communication, support, and the whole person were connected without learner examination, traction, positioning, maneuver, or diagnosis.'); break; }
+        if (this.obstetricsShoulderDystociaContextAtTick === null) { this.log('warning', 'assessment', `obstetrics-shoulder-dystocia-context-order-refused-${this.currentTick}`, 'Connect the supplied head-delivery, gentle-traction, position, pushing, and whole-person facts before sequence review.'); break; }
+        if (response === actions[2]) { if (this.obstetricsShoulderDystociaSafetyAtTick !== null) break; this.obstetricsShoulderDystociaSafetyAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-shoulder-dystocia-safety-reviewed-${this.currentTick}`, 'Qualified teams discourage pushing while repositioning and avoid fundal pressure, forceful head traction, and unplanned external rotation. Case-specific first-line positional options, including McRoberts with or without suprapubic pressure or all-fours when appropriate, were reviewed without learner positioning, pressure, traction, or maneuver performance.'); break; }
+        if (this.obstetricsShoulderDystociaSafetyAtTick === null) { this.log('warning', 'assessment', `obstetrics-shoulder-dystocia-safety-order-refused-${this.currentTick}`, 'Review the immediate harm-reduction and first-line position boundaries before qualified escalation.'); break; }
+        if (response === actions[3]) { if (this.obstetricsShoulderDystociaEscalationAtTick !== null) break; this.obstetricsShoulderDystociaEscalationAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-shoulder-dystocia-escalation-reviewed-${this.currentTick}`, 'A flexible case-specific progression to experienced internal rotation, posterior-arm or posterior-shoulder delivery, another position, and rare rescue options was reviewed without repeated ineffective attempts or a universal order. Episiotomy was preserved as possible access for internal maneuvers, not treatment of bony impaction. Newborn readiness and contemporaneous timing, maneuver, personnel and outcome documentation continued in parallel.'); break; }
+        if (this.obstetricsShoulderDystociaEscalationAtTick === null) { this.log('warning', 'assessment', `obstetrics-shoulder-dystocia-escalation-order-refused-${this.currentTick}`, 'Review qualified escalation, episiotomy-as-access, rescue, newborn-readiness, and documentation boundaries before the fixed report.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.obstetricsShoulderDystociaEscalationAtTick) { this.log('warning', 'assessment', `obstetrics-shoulder-dystocia-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed qualified-team birth report.'); break; } if (this.obstetricsShoulderDystociaReassessmentAtTick !== null) break; this.obstetricsShoulderDystociaReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-shoulder-dystocia-delivery-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report at 2 minutes 10 seconds after head delivery: McRoberts positioning with suprapubic pressure did not release the shoulder. An experienced operator then selected posterior-arm delivery for the supplied position and completed birth. This is a case-specific authored sequence, not a universal order or learner procedure. The newborn transferred immediately to the prepared qualified team; condition, resuscitation, injury, cord gases and outcome are not supplied. Maternal bleeding, uterine tone, genital-tract or perineal injury, pain, trauma and longer-term outcome remain unresolved.', { deliveryPerformedByLearner: false, newbornCarePerformedByLearner: false, treatmentEffectProven: false, maternalInjuryDetermined: false, newbornInjuryDetermined: false, outcomePredicted: false }); break; }
+        if (this.obstetricsShoulderDystociaReassessmentAtTick === null) { this.log('warning', 'assessment', `obstetrics-shoulder-dystocia-handoff-order-refused-${this.currentTick}`, 'Review the fixed qualified-team delivery and immediate-risk report before handoff.'); break; }
+        if (this.currentTick <= this.obstetricsShoulderDystociaReassessmentAtTick) { this.log('warning', 'assessment', `obstetrics-shoulder-dystocia-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.obstetricsShoulderDystociaHandoffAtTick !== null) break;
+        this.obstetricsShoulderDystociaHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-shoulder-dystocia-active-risk-handoff-recorded-${this.currentTick}`, 'Maternal hemorrhage, uterine tone, genital-tract and perineal injury, bladder and pelvic injury, pain, psychological trauma, newborn ventilation and resuscitation, neurologic and musculoskeletal injury, cord-gas and examination review, family and staff support, complete contemporaneous documentation, multidisciplinary review, future-birth counseling, prognosis, and maternal or newborn outcome uncertainty were handed off.', { safetyDispositionDetermined: false, maternalInjuryDetermined: false, newbornInjuryDetermined: false, maternalOutcomePredicted: false, newbornOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -13955,6 +14001,16 @@ export class AnesthesiaEngine {
       crisisState = { ...crisisState, heartRateBpm: this.obstetricsMaternalArrestReassessmentAtTick !== null ? 42 : 48,
         respiratoryRateBpm: 0, spo2Percent: 0, systolicMmHg: 0, diastolicMmHg: 0,
         meanArterialMmHg: 0, coreTemperatureC: 36.8 };
+    }
+    if (this.scenario.metadata.id === 'shoulder-dystocia-cognitive-sequence'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'shoulder-dystocia-cognitive-sequence-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'shoulder-dystocia-cognitive-sequence-transition-boundary').length === 1) {
+      crisisState = { ...crisisState,
+        heartRateBpm: this.obstetricsShoulderDystociaReassessmentAtTick !== null ? 102 : 104,
+        respiratoryRateBpm: this.obstetricsShoulderDystociaReassessmentAtTick !== null ? 20 : 22,
+        spo2Percent: 98, systolicMmHg: 118, diastolicMmHg: 66,
+        meanArterialMmHg: 83, coreTemperatureC: 36.8 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -18073,6 +18129,30 @@ export class AnesthesiaEngine {
               deliverySelectedByLearner: false as const, deliveryPerformedByLearner: false as const,
               deliveryCompleted: false as const, roscOccurred: false as const,
               treatmentEffectProven: false as const, terminationDecisionMade: false as const,
+              safetyDispositionDetermined: false as const, maternalOutcomePredicted: false as const,
+              newbornOutcomePredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'shoulder-dystocia-cognitive-sequence'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'shoulder-dystocia-cognitive-sequence-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'shoulder-dystocia-cognitive-sequence-transition-boundary').length === 1 ? {
+            obstetricsShoulderDystociaAssessment: {
+              supportAtTick: this.obstetricsShoulderDystociaSupportAtTick,
+              contextAtTick: this.obstetricsShoulderDystociaContextAtTick,
+              safetyAtTick: this.obstetricsShoulderDystociaSafetyAtTick,
+              escalationAtTick: this.obstetricsShoulderDystociaEscalationAtTick,
+              reassessmentAtTick: this.obstetricsShoulderDystociaReassessmentAtTick,
+              handoffAtTick: this.obstetricsShoulderDystociaHandoffAtTick,
+              authoredShoulderDystocia: true as const,
+              authoredCaseSpecificDeliveryCompleted: this.obstetricsShoulderDystociaReassessmentAtTick !== null,
+              patientExaminedByLearner: false as const, tractionAppliedByLearner: false as const,
+              pushingDirectedByLearner: false as const, positionChangedByLearner: false as const,
+              pressureAppliedByLearner: false as const, maneuverPerformedByLearner: false as const,
+              episiotomySelectedByLearner: false as const, deliveryPerformedByLearner: false as const,
+              newbornCarePerformedByLearner: false as const, drugDoseRouteSelectedByLearner: false as const,
+              procedureSelectedByLearner: false as const, maternalInjuryDetermined: false as const,
+              newbornInjuryDetermined: false as const, treatmentEffectProven: false as const,
               safetyDispositionDetermined: false as const, maternalOutcomePredicted: false as const,
               newbornOutcomePredicted: false as const, outcomePredicted: false as const,
             },

@@ -2110,6 +2110,23 @@ rhythm assessment, CPR, uterine displacement, airway, access, monitoring, drug, 
 blood, fetal monitoring, ECMO, delivery, procedure, transfer, termination, disposition, prognosis,
 or maternal/newborn outcome control.
 
+### Wave D obstetrics slice 8: shoulder-dystocia cognitive sequence
+
+The eighth lab opens 20 seconds after the fetal head has delivered at 40 weeks 1 day. Qualified
+staff supply retraction against the perineum and failure of routine gentle axial traction to deliver
+the anterior shoulder. The learner names the emergency, activates the prepared team and head-
+delivery clock, connects the supplied facts and whole person, and reviews the stop-pushing,
+no-fundal-pressure, no-forceful-traction and first-line-position boundaries before considering
+qualified escalation, newborn readiness, communication and contemporaneous documentation.
+
+The lab avoids a rigid mnemonic or universal maneuver order. A fixed case-specific report at
+2 minutes 10 seconds states that qualified McRoberts positioning with suprapubic pressure did not
+release the shoulder and an experienced operator then selected posterior-arm delivery for the
+supplied position and completed birth. Newborn condition, resuscitation, injury and outcome, plus
+maternal bleeding, injury, pain, trauma and outcome remain unresolved. Six controls expose no
+learner examination, traction, pushing, positioning, pressure, maneuver, episiotomy, delivery,
+newborn care, drug, dose, procedure, injury determination, disposition or outcome decision.
+
 #### Neonatology: 11
 
 Term newborn transition; neonatal apnea; ineffective ventilation correction; neonatal bradycardia;

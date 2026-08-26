@@ -2789,6 +2789,23 @@ export interface EquipmentSnapshot {
       readonly safetyDispositionDetermined: false; readonly maternalOutcomePredicted: false;
       readonly newbornOutcomePredicted: false; readonly outcomePredicted: false;
     };
+    readonly obstetricsShoulderDystociaAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly safetyAtTick: number | null; readonly escalationAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly authoredShoulderDystocia: true;
+      readonly authoredCaseSpecificDeliveryCompleted: boolean;
+      readonly patientExaminedByLearner: false; readonly tractionAppliedByLearner: false;
+      readonly pushingDirectedByLearner: false; readonly positionChangedByLearner: false;
+      readonly pressureAppliedByLearner: false; readonly maneuverPerformedByLearner: false;
+      readonly episiotomySelectedByLearner: false; readonly deliveryPerformedByLearner: false;
+      readonly newbornCarePerformedByLearner: false;
+      readonly drugDoseRouteSelectedByLearner: false; readonly procedureSelectedByLearner: false;
+      readonly maternalInjuryDetermined: false; readonly newbornInjuryDetermined: false;
+      readonly treatmentEffectProven: false; readonly safetyDispositionDetermined: false;
+      readonly maternalOutcomePredicted: false; readonly newbornOutcomePredicted: false;
+      readonly outcomePredicted: false;
+    };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {
       readonly cuesReviewedAtTick: number | null;

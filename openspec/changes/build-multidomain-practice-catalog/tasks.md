@@ -446,6 +446,14 @@ credited toward the catalog until every item in the completion contract passes.
     pulse or rhythm assessment, CPR, uterine displacement, airway, access, monitoring, drug, dose,
     shock, fluid, blood, fetal monitoring, ECMO, delivery, procedure, transfer, termination,
     disposition, prognosis, or maternal/newborn outcome controls.
+  - [x] Obstetrics slice 8/15 adds one authored shoulder-dystocia cognitive sequence beginning after
+    head delivery and failed gentle axial traction; immediate prepared-team, clock, leadership,
+    timekeeping, newborn, communication and support ownership; explicit no-fundal-pressure and
+    no-forceful-traction boundaries; flexible case-specific first-line and qualified escalation
+    review; a fixed completed-birth report without a universal maneuver order; and maternal/newborn
+    injury, hemorrhage, documentation, support and outcome handoff without learner examination,
+    traction, pushing, positioning, pressure, maneuver, episiotomy, delivery, newborn care, drug,
+    dose, procedure, injury determination, disposition or outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

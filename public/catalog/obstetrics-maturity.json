@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "obstetrics",
-  "recordCount": 7,
+  "recordCount": 8,
   "records": [
     {
       "recordId": "scenario:postpartum-hemorrhage-uterine-atony@0.1.0",
@@ -78,6 +78,17 @@
       "evidence": [
         "/catalog/obstetrics-completion-audit.json#maternal-cardiac-arrest-coordinated-response@0.1.0",
         "/catalog/obstetrics-quality-audit.json#maternal-cardiac-arrest-coordinated-response@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:shoulder-dystocia-cognitive-sequence@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "shoulder-dystocia-cognitive-sequence",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/obstetrics-completion-audit.json#shoulder-dystocia-cognitive-sequence@0.1.0",
+        "/catalog/obstetrics-quality-audit.json#shoulder-dystocia-cognitive-sequence@0.1.0"
       ]
     }
   ]

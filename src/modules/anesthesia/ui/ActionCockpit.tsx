@@ -1285,6 +1285,11 @@ export interface ActionCockpitProps {
       readonly modificationsAtTick: number | null; readonly readinessAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly obstetricsShoulderDystociaAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly safetyAtTick: number | null; readonly escalationAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2289,6 +2294,14 @@ export interface ActionCockpitProps {
       | 'review-obstetrics-maternal-arrest-fixed-minute-four-active-resuscitation-and-delivery-readiness-report'
       | 'handoff-obstetrics-maternal-arrest-active-arrest-cause-procedure-hemorrhage-newborn-family-and-outcome-risk',
   ) => void;
+  readonly onObstetricsShoulderDystociaResponse?: (
+    action: 'activate-obstetrics-shoulder-dystocia-emergency-response-head-delivery-clock-leader-timekeeper-newborn-and-support-roles'
+      | 'reconcile-obstetrics-shoulder-dystocia-head-delivery-gentle-traction-failure-position-pushing-and-whole-person'
+      | 'review-obstetrics-shoulder-dystocia-stop-pushing-no-fundal-pressure-no-forceful-traction-and-first-line-position-boundary'
+      | 'review-obstetrics-shoulder-dystocia-qualified-escalation-maneuvers-episiotomy-access-rescue-and-documentation-boundary'
+      | 'review-obstetrics-shoulder-dystocia-fixed-qualified-delivery-and-immediate-risk-report'
+      | 'handoff-obstetrics-shoulder-dystocia-maternal-newborn-injury-hemorrhage-support-documentation-and-outcome-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2327,6 +2340,11 @@ export function crisisResponseAvailability(
     && scenario.timeline.every((event) => event.type === 'narrative')
     && scenario.timeline.filter((event) => event.target === 'maternal-cardiac-arrest-coordinated-response-transition').length === 1
     && scenario.timeline.filter((event) => event.target === 'maternal-cardiac-arrest-coordinated-response-transition-boundary').length === 1;
+  const hasObstetricsShoulderDystociaResponse =
+    scenario.metadata.id === 'shoulder-dystocia-cognitive-sequence'
+    && scenario.timeline.every((event) => event.type === 'narrative')
+    && scenario.timeline.filter((event) => event.target === 'shoulder-dystocia-cognitive-sequence-transition').length === 1
+    && scenario.timeline.filter((event) => event.target === 'shoulder-dystocia-cognitive-sequence-transition-boundary').length === 1;
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -2876,6 +2894,7 @@ export function crisisResponseAvailability(
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'suspected-amniotic-fluid-embolism-pattern-transition')
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'suspected-amniotic-fluid-embolism-pattern-transition-boundary'),
     hasObstetricsMaternalArrestResponse,
+    hasObstetricsShoulderDystociaResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3097,6 +3116,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'eclampsia-first-seizure-response-transition')
       || (event.type === 'narrative' && event.target === 'suspected-amniotic-fluid-embolism-pattern-transition')
       || (event.type === 'narrative' && event.target === 'maternal-cardiac-arrest-coordinated-response-transition')
+      || (event.type === 'narrative' && event.target === 'shoulder-dystocia-cognitive-sequence-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3206,6 +3226,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasObstetricsEclampsiaResponse,
     hasObstetricsAfeResponse,
     hasObstetricsMaternalArrestResponse,
+    hasObstetricsShoulderDystociaResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3342,8 +3363,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasObstetricsEclampsiaResponse
     || hasObstetricsAfeResponse
     || hasObstetricsMaternalArrestResponse
+    || hasObstetricsShoulderDystociaResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasObstetricsMaternalArrestResponse
+  const responseTray = hasObstetricsShoulderDystociaResponse
+    ? { id: 'crisis', label: 'Birth + sequence' } as const
+    : hasObstetricsMaternalArrestResponse
     ? { id: 'crisis', label: 'Arrest + pregnancy' } as const
     : hasObstetricsAfeResponse
     ? { id: 'crisis', label: 'Breathing + circulation' } as const
@@ -3732,6 +3756,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasObstetricsEclampsiaResponse
     || hasObstetricsAfeResponse
     || hasObstetricsMaternalArrestResponse
+    || hasObstetricsShoulderDystociaResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -4625,6 +4650,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasObstetricsMaternalArrestResponse && (
               <ObstetricsMaternalArrestTray assessment={props.resuscitation.obstetricsMaternalArrestAssessment}
                 onAction={props.onObstetricsMaternalArrestResponse ?? (() => {})} />
+            )}
+            {hasObstetricsShoulderDystociaResponse && (
+              <ObstetricsShoulderDystociaTray assessment={props.resuscitation.obstetricsShoulderDystociaAssessment}
+                onAction={props.onObstetricsShoulderDystociaResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -11646,6 +11675,38 @@ function ObstetricsMaternalArrestTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-maternal-arrest-fixed-minute-four-active-resuscitation-and-delivery-readiness-report')}>Review the minute-4 report</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-obstetrics-maternal-arrest-active-arrest-cause-procedure-hemorrhage-newborn-family-and-outcome-risk')}>Hand off active maternal + newborn risk</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function ObstetricsShoulderDystociaTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['obstetricsShoulderDystociaAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onObstetricsShoulderDystociaResponse']>;
+}) {
+  const support = assessment?.supportAtTick != null;
+  const context = assessment?.contextAtTick != null;
+  const safety = assessment?.safetyAtTick != null;
+  const escalation = assessment?.escalationAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="obstetrics-shoulder-dystocia-now-title">
+      <div id="obstetrics-shoulder-dystocia-now-title" className="syringe__name">Slow the room down. Start the clock.</div>
+      <p className="syringe__remaining">Name the emergency, bring the right people in, and protect against force. The learner surface keeps every physical maneuver with the qualified birth team.</p>
+      <div className="crisis-drug__actions">
+        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-obstetrics-shoulder-dystocia-emergency-response-head-delivery-clock-leader-timekeeper-newborn-and-support-roles')}>Activate response + head clock</Button>}
+        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-obstetrics-shoulder-dystocia-head-delivery-gentle-traction-failure-position-pushing-and-whole-person')}>Connect head delivery + whole person</Button>}
+        {context && !safety && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-shoulder-dystocia-stop-pushing-no-fundal-pressure-no-forceful-traction-and-first-line-position-boundary')}>Review protect-from-force boundaries</Button>}
+        {safety && !escalation && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-shoulder-dystocia-qualified-escalation-maneuvers-episiotomy-access-rescue-and-documentation-boundary')}>Review flexible qualified sequence</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="obstetrics-shoulder-dystocia-later-title">
+      <div id="obstetrics-shoulder-dystocia-later-title" className="syringe__name">The birth ends. The care does not.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Maternal and newborn injury, hemorrhage, trauma, documentation, support, review, and outcome risks handed off.' : reassessment ? 'Birth is complete in the authored report. Maternal and newborn condition, injury, resuscitation, support, and outcomes remain open.' : escalation ? 'The qualified team is working through a case-specific sequence. Review the fixed report after time passes.' : support ? 'The response is active. Connect the facts, protect against force, and review a flexible qualified sequence.' : 'Start with a calm declaration and a visible clock. You can pause or leave this practice at any time.'}</p>
+      <div className="crisis-drug__actions">
+        {escalation && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-shoulder-dystocia-fixed-qualified-delivery-and-immediate-risk-report')}>Review the fixed birth report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-obstetrics-shoulder-dystocia-maternal-newborn-injury-hemorrhage-support-documentation-and-outcome-risk')}>Hand off maternal + newborn risk</Button>}
       </div>
     </section>
   </>;

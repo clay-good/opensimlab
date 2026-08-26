@@ -1155,6 +1155,9 @@ export function Cockpit({
           onObstetricsMaternalArrestResponse={(action) => session.act({
             type: 'maternal-cardiac-arrest-response', payload: { action },
           })}
+          onObstetricsShoulderDystociaResponse={(action) => session.act({
+            type: 'shoulder-dystocia-cognitive-sequence-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

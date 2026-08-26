@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 271,
+  "sourceCount": 274,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -819,6 +819,51 @@
       "locator": "2025 bundle; readiness, response, reporting and systems learning, and respectful-care domains",
       "usedFor": "Multidisciplinary pregnancy-heart readiness, coordinated response, respectful communication, support-network inclusion, and systems-learning context around the maternal cardiac-arrest rehearsal.",
       "verifiedAgainst": "https://saferbirth.org/psbs/cardiac-conditions-in-obstetric-care/",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "acog-shoulder-dystocia-178-2017",
+      "currency": {
+        "lastAmended": "2024-01-01",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "American College of Obstetricians and Gynecologists",
+      "title": "Shoulder Dystocia",
+      "publication": "Practice Bulletin No. 178",
+      "year": 2017,
+      "locator": "abstract and clinical guidance; reaffirmed 2024",
+      "usedFor": "The unpredictable-emergency, systematic team response, simulation, and documentation boundaries; risk factors are not used to prove or exclude the event.",
+      "verifiedAgainst": "https://www.acog.org/clinical/clinical-guidance/practice-bulletin/articles/2017/05/shoulder-dystocia",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "rcog-shoulder-dystocia-42-2012",
+      "currency": {
+        "lastAmended": "2012-03-28",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "Royal College of Obstetricians and Gynaecologists",
+      "title": "Shoulder Dystocia",
+      "publication": "Green-top Guideline No. 42",
+      "year": 2012,
+      "locator": "pages 1-18, definition, management, complications, training, and documentation sections",
+      "usedFor": "The definition after head delivery and failed gentle traction, the nonmandatory nature of a proposed 60-second objective definition, maternal and newborn risk, systematic response, and documentation context.",
+      "verifiedAgainst": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/shoulder-dystocia-green-top-guideline-no-42/",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "dggg-oeggg-sggg-shoulder-dystocia-2024",
+      "currency": {
+        "lastAmended": "2024-10-01",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "DGGG, OEGGG and SGGG",
+      "title": "Shoulder Dystocia",
+      "publication": "S2k Guideline, AWMF Registry No. 015/098",
+      "year": 2024,
+      "locator": "sections 5.1-5.3, logistics and first- and second-line maneuvers",
+      "usedFor": "Early communication and experienced leadership, stopping pushing during repositioning, no fundal pressure or forced traction, discontinuing oxytocin, flexible case-specific first-line choices, and McRoberts with or without suprapubic pressure.",
+      "verifiedAgainst": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11802195/",
       "verifiedOn": "2026-08-26"
     },
     {

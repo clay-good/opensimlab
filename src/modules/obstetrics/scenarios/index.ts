@@ -6,6 +6,7 @@ import { POSTPARTUM_SEVERE_PREECLAMPSIA_WARNING_SIGNS } from './postpartum-sever
 import { ECLAMPSIA_FIRST_SEIZURE_RESPONSE } from './eclampsia-first-seizure-response';
 import { SUSPECTED_AMNIOTIC_FLUID_EMBOLISM_PATTERN } from './suspected-amniotic-fluid-embolism-pattern';
 import { MATERNAL_CARDIAC_ARREST_COORDINATED_RESPONSE } from './maternal-cardiac-arrest-coordinated-response';
+import { SHOULDER_DYSTOCIA_COGNITIVE_SEQUENCE } from './shoulder-dystocia-cognitive-sequence';
 
 export const OBSTETRICS_SCENARIOS: readonly Scenario[] = [
   POSTPARTUM_HEMORRHAGE_UTERINE_ATONY,
@@ -15,6 +16,7 @@ export const OBSTETRICS_SCENARIOS: readonly Scenario[] = [
   ECLAMPSIA_FIRST_SEIZURE_RESPONSE,
   SUSPECTED_AMNIOTIC_FLUID_EMBOLISM_PATTERN,
   MATERNAL_CARDIAC_ARREST_COORDINATED_RESPONSE,
+  SHOULDER_DYSTOCIA_COGNITIVE_SEQUENCE,
 ];
 export const DEFAULT_OBSTETRICS_SCENARIO_ID = POSTPARTUM_HEMORRHAGE_UTERINE_ATONY.metadata.id;
 

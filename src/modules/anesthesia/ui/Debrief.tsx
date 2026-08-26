@@ -5150,6 +5150,31 @@ export function objectiveFindings(
         || (index === 5 && !!support && support.tick < event.tick));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, preceded coordinated activation, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['activate-obstetrics-shoulder-dystocia-emergency-response-head-delivery-clock-leader-timekeeper-newborn-and-support-roles',
+      'reconcile-obstetrics-shoulder-dystocia-head-delivery-gentle-traction-failure-position-pushing-and-whole-person',
+      'review-obstetrics-shoulder-dystocia-stop-pushing-no-fundal-pressure-no-forceful-traction-and-first-line-position-boundary',
+      'review-obstetrics-shoulder-dystocia-qualified-escalation-maneuvers-episiotomy-access-rescue-and-documentation-boundary',
+      'review-obstetrics-shoulder-dystocia-fixed-qualified-delivery-and-immediate-risk-report',
+      'handoff-obstetrics-shoulder-dystocia-maternal-newborn-injury-hemorrhage-support-documentation-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'shoulder-dystocia-cognitive-sequence'
+        && scenario.timeline.every((event) => event.type === 'narrative')
+        && scenario.timeline.filter((event) => event.target === 'shoulder-dystocia-cognitive-sequence-transition').length === 1
+        && scenario.timeline.filter((event) => event.target === 'shoulder-dystocia-cognitive-sequence-transition-boundary').length === 1;
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Obstetrics shoulder-dystocia lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['support-activated', 'The shoulder-dystocia response, head-delivery clock, qualified leadership, timekeeping, newborn, documentation, communication, dignity, family, and staff-support ownership was activated first.'],
+        ['context-reconciled', 'Head delivery, failed gentle traction, undelivered shoulders and body, position, pushing, physiology, distress, support, and the whole person were connected.'],
+        ['safety-reviewed', 'Stop-pushing, no-fundal-pressure, no-forceful-traction, no-unplanned-rotation, and case-specific first-line position boundaries were reviewed.'],
+        ['escalation-reviewed', 'Flexible qualified internal, posterior-arm or shoulder, positional, rescue, episiotomy-as-access, newborn-readiness, and documentation boundaries were reviewed without a universal order.'],
+        ['delivery-report-reviewed', 'The fixed case-specific qualified birth report was reviewed without learner-procedure, universal-sequence, injury, treatment-effect, or outcome claims.'],
+        ['active-risk-handoff-recorded', 'Maternal and newborn injury, hemorrhage, pain, trauma, support, documentation, review, prognosis, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^obstetrics-shoulder-dystocia-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^obstetrics-shoulder-dystocia-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-obstetrics-sepsis-postpartum-clock-infection-organ-dysfunction-and-whole-person',
       'recognize-obstetrics-maternal-sepsis-emergency-without-fever-score-source-or-single-value-closure',
       'activate-obstetrics-sepsis-obstetric-critical-care-anesthesia-nursing-pharmacy-microbiology-source-newborn-and-dignity-ownership',

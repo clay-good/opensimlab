@@ -4727,6 +4727,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified direct findings, current local protocols and trained multidisciplinary teams. Pregnancy modifies team roles and selected resuscitation steps but does not replace standard advanced life support or turn one authored rhythm into a fixed future course.',
     briefIn: ['maternal-cardiac-arrest-coordinated-response'],
   },
+  {
+    id: 'shoulder-dystocia-head-delivery-traction-failure-qualified-maneuvers-and-resolution-are-authored',
+    headline: 'Head delivery, failed gentle traction, qualified maneuvers, completed birth, and every maternal or newborn report are authored.',
+    simplification: 'Fixed reports stand in for direct obstetric assessment, emergency declaration, positioning, traction, pressure, internal findings, maneuvers, delivery, newborn transfer, examination, resuscitation, injury review, maternal assessment, and documentation.',
+    whereItMisleads: 'Treating the fixed 2-minute-10-second case, selected posterior-arm delivery, stable maternal monitor, or absent newborn report as a universal sequence, deadline, treatment effect, proof of no injury, prognosis, or learner-acquired skill.',
+    correctUnderstanding: 'Shoulder dystocia is unpredictable and requires rapid trained teamwork, situation-specific maneuvers, avoidance of force and fundal pressure, contemporaneous documentation, newborn readiness, and serial maternal and newborn assessment.',
+    briefIn: ['shoulder-dystocia-cognitive-sequence'],
+  },
+  {
+    id: 'shoulder-dystocia-controls-activate-reconcile-review-reassess-and-handoff-only',
+    headline: 'The controls activate the team and clock, reconcile context, review safety and escalation, read a fixed report, and hand off only.',
+    simplification: 'Six actions stand in for simultaneous qualified birth-team, anesthesia, newborn, leadership, timekeeping, documentation, communication, dignity, family, staff-support, post-birth assessment, review, and handoff work.',
+    whereItMisleads: 'Equating button order with diagnosis, positioning, traction, pressure, maneuver choice or performance, episiotomy, birth, newborn resuscitation, injury assessment, documentation quality, or team competence.',
+    correctUnderstanding: 'Real response is physical, time-sensitive, flexible, and team-based. Cognitive rehearsal complements but cannot replace hands-on multidisciplinary simulation and assessed psychomotor practice.',
+    briefIn: ['shoulder-dystocia-cognitive-sequence'],
+  },
+  {
+    id: 'no-live-shoulder-dystocia-exam-traction-pressure-position-maneuver-procedure-injury-or-outcome',
+    headline: 'The lab does not examine, pull, push, position, apply pressure, perform a maneuver or birth, assess injury, determine disposition, or report outcome.',
+    simplification: 'No live maternal, fetal, newborn, pelvic or birth assessment; traction, pushing, McRoberts, suprapubic or fundal pressure, all-fours positioning, internal rotation, posterior arm or shoulder delivery, episiotomy, rare rescue, drug, dose, anesthesia, neonatal resuscitation, cord gas, hemorrhage, injury, repair, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Using the rehearsal as maneuver instructions, delaying immediate trained help for a click or time threshold, repeating an ineffective maneuver, copying the fixed sequence into another birth, or reading completion as procedural competence.',
+    correctUnderstanding: 'Use direct findings, a current local protocol, trained multidisciplinary teams, situation-specific maneuver selection, respectful communication, and hands-on simulation with qualified feedback.',
+    briefIn: ['shoulder-dystocia-cognitive-sequence'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {
