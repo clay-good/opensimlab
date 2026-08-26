@@ -4491,6 +4491,26 @@ export function objectiveFindings(
       const ordered = guards && handoff && guards.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved active support, partial response, unresolved causes, failure triggers, rescue readiness, preferences, and named owners without inventing weaning, disposition, or outcome.' : 'The active-support handoff was absent or did not follow the failure-guard review after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-high-flow-oxygen-conventional-support-trajectory',
+      'review-high-flow-oxygen-suitability-and-rescue-readiness',
+      'select-high-flow-nasal-oxygen-escalation',
+      'review-high-flow-oxygen-early-response',
+      'preserve-high-flow-oxygen-monitoring-and-failure-guards',
+      'handoff-high-flow-oxygen-escalation'].includes(objective.id)) {
+      const trajectory = log.find((event) => /^high-flow-oxygen-escalation-trajectory-reconciled-\d+$/.test(event.eventId));
+      const suitability = log.find((event) => /^high-flow-oxygen-escalation-suitability-reviewed-\d+$/.test(event.eventId));
+      const selection = log.find((event) => /^high-flow-oxygen-escalation-selected-\d+$/.test(event.eventId));
+      const response = log.find((event) => /^high-flow-oxygen-escalation-early-response-reviewed-\d+$/.test(event.eventId));
+      const guards = log.find((event) => /^high-flow-oxygen-escalation-guards-preserved-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^high-flow-oxygen-escalation-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-high-flow-oxygen-conventional-support-trajectory') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'Verified conventional support, pulse-coherent hypoxemia, work, gas exchange, mentation, and perfusion were reconciled without inventing a precise delivered oxygen dose or learner testing.' : 'The whole trajectory on verified conventional oxygen was not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-high-flow-oxygen-suitability-and-rescue-readiness') { const ordered = trajectory && suitability && trajectory.tick <= suitability.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Current airway, cooperation, secretion, emesis, facial, hemodynamic, preference, monitoring, and rescue facts supported a closely monitored trial without becoming an absolute checklist.' : 'Suitability and rescue review was absent or preceded trajectory review.', atTick: suitability?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'select-high-flow-nasal-oxygen-escalation') { const ordered = suitability && selection && suitability.tick <= selection.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'HFNO was selected as the support goal for de novo nonhypercapnic hypoxemic failure while source, device, cannula, flow, oxygen fraction, operation, and treatment remained with qualified staff.' : 'HFNO selection was absent or bypassed suitability and rescue review.', atTick: selection?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-high-flow-oxygen-early-response') { const ordered = selection && response && selection.tick < response.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed time, the fixed whole-patient and gas panel showed useful early improvement while substantial support and active risk remained.' : 'The early-response review was absent or did not follow support selection after elapsed time.', atTick: response?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'preserve-high-flow-oxygen-monitoring-and-failure-guards') { const ordered = response && guards && response.tick <= guards.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Mentation, airway protection, work, oxygenation, ventilation, hemodynamics, tolerance, secretions, open causes, and airway-capable rescue remained active continuation and failure guards.' : 'Monitoring and failure guards were absent or preceded the early-response review.', atTick: guards?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = guards && handoff && guards.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved active support, partial response, unresolved cause work, failure triggers, rescue readiness, preferences, and named owners without inventing weaning, disposition, or outcome.' : 'The active-support handoff was absent or did not follow the failure-guard review after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

@@ -1556,6 +1556,29 @@ device; perform a procedure; decide a ceiling of care, weaning, disposition, or 
 outcome. It is distinct from initial COPD treatment, day-3 recovery readiness, pulmonary-edema NIV
 failure, chronic OHS or neuromuscular support planning, and the later HFNC-escalation lab.
 
+### Wave C respiratory-medicine slice 13: high-flow nasal oxygen escalation
+
+The thirteenth respiratory-medicine slice is a bounded support-selection lesson for de novo
+nonhypercapnic hypoxemic respiratory failure, not oxygen-device training. A 52-year-old man remains
+alert and cooperative but in short phrases with accessory-muscle use, RR 34/min, pulse-coherent
+SpO₂ 88%, and a fixed gas of pH 7.46, PaCO₂ 31 mmHg, and PaO₂ 55 mmHg after 20 minutes of
+verified functioning reservoir-mask oxygen. The nominal monitor FiO₂ is an authored display proxy,
+not a precise delivered fraction, so the lesson does not calculate a PaO₂/FiO₂ ratio or ROX index.
+
+Learners reconcile the inadequate conventional-support trajectory and fixed suitability, preference,
+monitoring, and airway-rescue facts before choosing among a closely monitored high-flow nasal oxygen
+trial, unchanged conventional oxygen, and bilevel NIV first. The 2 alternatives provide calm,
+nonmutating explanations. After strictly elapsed time, a fixed 30-minute report shows improved speech,
+work, respiratory rate, oxygenation, and gas exchange without proving resolution or durable success.
+Learners preserve whole-patient failure triggers and rapid airway-capable reassessment, then complete
+another strictly elapsed handoff. The lesson does not examine; acquire or interpret tests; diagnose;
+calculate ROX or a PaO₂/FiO₂ ratio; select or deliver oxygen, medication, suction, mask ventilation,
+intubation, or treatment; choose or operate a source, device, cannula, fit, flow, temperature,
+humidification, FiO₂, oxygen target, NIV mode, interface, pressure, PEEP, backup rate, trigger, or
+cycle; perform proning or another procedure; decide weaning, disposition, or prognosis; or predict
+durable success or outcome. It is distinct from the preceding acidotic hypercapnic COPD NIV lab and
+the acute pulmonary-edema support-failure lesson.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

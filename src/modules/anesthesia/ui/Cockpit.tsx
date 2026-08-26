@@ -956,6 +956,9 @@ export function Cockpit({
           onNoninvasiveVentilationSelectionResponse={(action) => session.act({
             type: 'noninvasive-ventilation-selection-response', payload: { action },
           })}
+          onHighFlowOxygenEscalationResponse={(action) => session.act({
+            type: 'high-flow-nasal-oxygen-escalation-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

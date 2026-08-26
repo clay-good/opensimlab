@@ -99,6 +99,14 @@ const NONINVASIVE_VENTILATION_SELECTION_BLOCKED_ACTION_TYPES = new Set([
   'acute-pulmonary-edema-response', 'obesity-hypoventilation-response',
   'neuromuscular-respiratory-failure-response',
 ]);
+const HIGH_FLOW_OXYGEN_ESCALATION_BLOCKED_ACTION_TYPES = new Set([
+  ...NONINVASIVE_VENTILATION_SELECTION_BLOCKED_ACTION_TYPES,
+  'noninvasive-ventilation-selection-response',
+  'community-acquired-pneumonia-hypoxemia-response',
+  'acute-severe-asthma-response', 'escalating-hypoxemia-response',
+  'unplanned-extubation-response', 'bronchiectasis-mucus-plugging-response',
+  'oxygen-device-failure-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -720,6 +728,13 @@ export class AnesthesiaEngine {
   private nivSelectionFailureGuardsAtTick: number | null = null;
   private nivSelectionHandoffAtTick: number | null = null;
   private nivSelectionLastUnsupportedChoice: 'cpap' | 'high-flow' | null = null;
+  private highFlowOxygenTrajectoryAtTick: number | null = null;
+  private highFlowOxygenSuitabilityAtTick: number | null = null;
+  private highFlowOxygenSelectionAtTick: number | null = null;
+  private highFlowOxygenResponseAtTick: number | null = null;
+  private highFlowOxygenGuardsAtTick: number | null = null;
+  private highFlowOxygenHandoffAtTick: number | null = null;
+  private highFlowOxygenLastUnsupportedChoice: 'conventional' | 'bilevel' | 'resolved' | 'reduced-monitoring' | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1076,6 +1091,14 @@ export class AnesthesiaEngine {
     if (nivSelection && NONINVASIVE_VENTILATION_SELECTION_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `noninvasive-ventilation-selection-generic-action-refused-${this.currentTick}`,
         'This selection lesson does not expose generic medication, oxygen, mask, airway, ventilator, procedure, rhythm, artifact, or adjacent-crisis actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const highFlowOxygen = this.scenario.timeline.some((event) =>
+      event.type === 'narrative' && event.target === 'high-flow-nasal-oxygen-escalation');
+    if (highFlowOxygen && HIGH_FLOW_OXYGEN_ESCALATION_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `high-flow-oxygen-escalation-generic-action-refused-${this.currentTick}`,
+        'This escalation lesson does not expose generic medication, oxygen, airway, ventilator, procedure, device-fault, or adjacent-crisis actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -5614,6 +5637,74 @@ export class AnesthesiaEngine {
         this.nivSelectionHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `noninvasive-ventilation-selection-handoff-recorded-${this.currentTick}`, 'Active reported bilevel support, the partial first-hour response, COPD and alternative-cause work, controlled oxygen, serial reassessment, tolerance and secretion review, failure triggers, rescue readiness, preferences, and named owners were handed off. No weaning, intubation, disposition, prognosis, durable success, or outcome was determined.', { durableNivSuccessProven: false, intubationPerformedByLearner: false, dispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'high-flow-nasal-oxygen-escalation-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'high-flow-nasal-oxygen-escalation');
+        const valid = ['reconcile-high-flow-oxygen-conventional-support-trajectory',
+          'review-high-flow-oxygen-suitability-and-rescue-readiness',
+          'select-high-flow-nasal-oxygen-escalation', 'continue-conventional-oxygen',
+          'select-bilevel-niv-first', 'review-high-flow-oxygen-early-response',
+          'preserve-high-flow-oxygen-monitoring-and-failure-guards',
+          'mark-high-flow-respiratory-failure-resolved', 'reduce-high-flow-monitoring',
+          'handoff-high-flow-oxygen-escalation'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `high-flow-oxygen-escalation-response-refused-${this.currentTick}`, supported ? 'That high-flow escalation action is not available. Nothing changed.' : 'These high-flow escalation choices are available only in the declared Respiratory Medicine lesson.'); break; }
+        if (response === 'reconcile-high-flow-oxygen-conventional-support-trajectory') {
+          if (this.highFlowOxygenTrajectoryAtTick !== null) { this.log('warning', 'assessment', `high-flow-oxygen-escalation-trajectory-refused-${this.currentTick}`, 'The baseline, conventional support, signal, work, gas exchange, mentation, and perfusion trajectory was already reconciled.'); break; }
+          this.highFlowOxygenTrajectoryAtTick = this.currentTick;
+          this.log('warning', 'assessment', `high-flow-oxygen-escalation-trajectory-reconciled-${this.currentTick}`, 'Baseline function, verified functioning reservoir-mask oxygen, pulse-coherent hypoxemia, respiratory work, fixed gas, mentation, and perfusion were reconciled. The reservoir-mask flow and nominal FiO₂ proxy were not treated as a precise delivered oxygen dose or used to calculate a ratio.', { conventionalOxygenFunctionAuthored: true, acuteHypoxemicRespiratoryFailureAuthored: true, patientExaminedByLearner: false, bloodGasInterpretedByLearner: false, oxygenDeliveredByLearner: false }); break;
+        }
+        if (this.highFlowOxygenTrajectoryAtTick === null) { this.log('warning', 'assessment', `high-flow-oxygen-escalation-trajectory-order-refused-${this.currentTick}`, 'Reconcile the whole trajectory on verified conventional oxygen before reviewing suitability or selecting support.'); break; }
+        if (response === 'review-high-flow-oxygen-suitability-and-rescue-readiness') {
+          if (this.highFlowOxygenSuitabilityAtTick !== null) { this.log('warning', 'assessment', `high-flow-oxygen-escalation-suitability-refused-${this.currentTick}`, 'Current suitability, preferences, monitoring, and rescue readiness were already reviewed.'); break; }
+          this.highFlowOxygenSuitabilityAtTick = this.currentTick;
+          this.log('warning', 'assessment', `high-flow-oxygen-escalation-suitability-reviewed-${this.currentTick}`, 'The fixed airway, cooperation, secretion, emesis, face, hemodynamic, mentation, deterioration, preference, observation, and rescue-access facts supported a closely monitored HFNO trial in this case. They were not treated as learner examination, permanent exclusions, or an absolute checklist.', { immediateAirwayFailureAuthored: false, acuteHypercapnicAcidosisAuthored: false, patientExaminedByLearner: false, rescuePlanAuthored: true }); break;
+        }
+        if (this.highFlowOxygenSuitabilityAtTick === null) { this.log('warning', 'assessment', `high-flow-oxygen-escalation-suitability-order-refused-${this.currentTick}`, 'Review current suitability, preference, monitoring, and airway-capable rescue readiness before choosing support.'); break; }
+        if (response === 'continue-conventional-oxygen' || response === 'select-bilevel-niv-first') {
+          this.highFlowOxygenLastUnsupportedChoice = response === 'continue-conventional-oxygen'
+            ? 'conventional' : 'bilevel';
+          this.log('warning', 'assessment', `high-flow-oxygen-escalation-support-not-selected-${this.currentTick}`,
+            response === 'continue-conventional-oxygen'
+              ? 'Oxygenation and work remain inadequate on the documented functioning conventional support. The patient did not change.'
+              : 'NIV or CPAP can be reasonable in selected acute hypoxemic failure; this authored nonhypercapnic person-preference case follows the strong HFNO pathway with close rescue monitoring. The patient did not change.',
+            { unsupportedChoice: this.highFlowOxygenLastUnsupportedChoice, patientStateChanged: false }); break;
+        }
+        if (response === 'select-high-flow-nasal-oxygen-escalation') {
+          if (this.highFlowOxygenSelectionAtTick !== null) { this.log('warning', 'assessment', `high-flow-oxygen-escalation-selection-refused-${this.currentTick}`, 'A closely monitored HFNO trial was already selected.'); break; }
+          this.highFlowOxygenSelectionAtTick = this.currentTick;
+          this.highFlowOxygenLastUnsupportedChoice = null;
+          this.log('warning', 'assessment', `high-flow-oxygen-escalation-selected-${this.currentTick}`, 'A closely monitored high-flow nasal oxygen trial was selected for the authored de novo nonhypercapnic hypoxemic-failure pattern. Qualified staff own the source, device, cannula, fit, flow, temperature, humidification, oxygen fraction, target, application, operation, treatment, and rapid rescue.', { highFlowTrialIntentRecorded: true, deviceSelectedByLearner: false, flowSelectedByLearner: false, fio2SelectedByLearner: false, deviceOperatedByLearner: false, oxygenDeliveredByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.highFlowOxygenSelectionAtTick === null) { this.log('warning', 'assessment', `high-flow-oxygen-escalation-selection-order-refused-${this.currentTick}`, 'Select the closely monitored HFNO trial before reviewing an authored response.'); break; }
+        if (response === 'review-high-flow-oxygen-early-response') {
+          if (this.currentTick <= this.highFlowOxygenSelectionAtTick) { this.log('warning', 'assessment', `high-flow-oxygen-escalation-response-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before reviewing the fixed 30-minute response.'); break; }
+          if (this.highFlowOxygenResponseAtTick !== null) { this.log('warning', 'assessment', `high-flow-oxygen-escalation-early-response-refused-${this.currentTick}`, 'The fixed 30-minute response was already reviewed.'); break; }
+          this.highFlowOxygenResponseAtTick = this.currentTick;
+          this.log('warning', 'assessment', `high-flow-oxygen-escalation-early-response-reviewed-${this.currentTick}`, 'Fixed experienced-team 30-minute report: alert with longer sentences, less accessory use, RR 26/min, HR 98/min, stable pressure, pulse-coherent SpO₂ 94% on reported high-flow support, pH 7.44, PaCO₂ 34 mmHg, PaO₂ 72 mmHg, and bicarbonate 23 mmol/L. Substantial oxygen support remains necessary. This is useful early improvement, not resolution, durable success, disposition, or outcome.', { responseAuthored: true, highFlowDeliveredByLearner: false, durableSuccessProven: false, outcomePredicted: false }); break;
+        }
+        if (this.highFlowOxygenResponseAtTick === null) { this.log('warning', 'assessment', `high-flow-oxygen-escalation-response-order-refused-${this.currentTick}`, 'Review the fixed 30-minute response before deciding how to continue monitoring.'); break; }
+        if (response === 'mark-high-flow-respiratory-failure-resolved' || response === 'reduce-high-flow-monitoring') {
+          this.highFlowOxygenLastUnsupportedChoice = response === 'mark-high-flow-respiratory-failure-resolved'
+            ? 'resolved' : 'reduced-monitoring';
+          this.log('warning', 'assessment', `high-flow-oxygen-escalation-continuation-not-selected-${this.currentTick}`,
+            response === 'mark-high-flow-respiratory-failure-resolved'
+              ? 'The early response is partial; substantial support and active respiratory risk remain. Nothing changed.'
+              : 'Early improvement does not remove the need for close reassessment and rapid airway-capable escalation. Nothing changed.',
+            { unsupportedChoice: this.highFlowOxygenLastUnsupportedChoice, patientStateChanged: false }); break;
+        }
+        if (response === 'preserve-high-flow-oxygen-monitoring-and-failure-guards') {
+          if (this.highFlowOxygenGuardsAtTick !== null) { this.log('warning', 'assessment', `high-flow-oxygen-escalation-guards-refused-${this.currentTick}`, 'Monitored continuation, failure triggers, and rapid rescue readiness were already recorded.'); break; }
+          this.highFlowOxygenGuardsAtTick = this.currentTick;
+          this.highFlowOxygenLastUnsupportedChoice = null;
+          this.log('warning', 'assessment', `high-flow-oxygen-escalation-guards-preserved-${this.currentTick}`, 'Monitored continuation preserved mentation, airway protection, work, oxygenation, ventilation, hemodynamics, tolerance, secretions, open causes, preferences, and rapid airway-capable reassessment as active failure guards. HFNO must not delay escalation when the whole trajectory worsens. No setting, NIV detour, intubation, procedure, treatment, or outcome was chosen.', { durableSuccessProven: false, intubationPerformedByLearner: false, treatmentDeliveredByLearner: false, outcomePredicted: false }); break;
+        }
+        if (this.highFlowOxygenGuardsAtTick === null) { this.log('warning', 'assessment', `high-flow-oxygen-escalation-handoff-order-refused-${this.currentTick}`, 'Preserve monitored continuation, failure triggers, and rescue readiness before handoff.'); break; }
+        if (this.currentTick <= this.highFlowOxygenGuardsAtTick) { this.log('warning', 'assessment', `high-flow-oxygen-escalation-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off active support and rescue work.'); break; }
+        if (this.highFlowOxygenHandoffAtTick !== null) { this.log('warning', 'assessment', `high-flow-oxygen-escalation-handoff-refused-${this.currentTick}`, 'The active-support handoff was already recorded.'); break; }
+        this.highFlowOxygenHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `high-flow-oxygen-escalation-handoff-recorded-${this.currentTick}`, 'Active reported high-flow support, the partial 30-minute response, unresolved bilateral air-space disease, diagnostic and empiric-treatment work, serial reassessment, failure triggers, rescue readiness, preferences, and named respiratory and critical-care owners were handed off. No weaning, intubation, disposition, prognosis, durable success, or outcome was determined.', { durableSuccessProven: false, intubationPerformedByLearner: false, dispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -8398,6 +8489,15 @@ export class AnesthesiaEngine {
         diastolicMmHg: reviewed ? 74 : 76, meanArterialMmHg: reviewed ? 91 : 93,
         coreTemperatureC: 37.2 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'high-flow-nasal-oxygen-escalation')) {
+      const reviewed = this.highFlowOxygenResponseAtTick !== null;
+      crisisState = { ...crisisState, heartRateBpm: reviewed ? 98 : 110,
+        respiratoryRateBpm: reviewed ? 26 : 34, spo2Percent: reviewed ? 94 : 88,
+        etco2MmHg: reviewed ? 32 : 30, systolicMmHg: reviewed ? 120 : 122,
+        diastolicMmHg: 72, meanArterialMmHg: reviewed ? 88 : 89,
+        coreTemperatureC: 38.1 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -9871,6 +9971,33 @@ export class AnesthesiaEngine {
               drugSelectedByLearner: false as const, treatmentDeliveredByLearner: false as const,
               intubationPerformedByLearner: false as const, durableNivSuccessProven: false as const,
               dispositionDetermined: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'high-flow-nasal-oxygen-escalation') ? {
+            highFlowOxygenEscalationAssessment: {
+              trajectoryAtTick: this.highFlowOxygenTrajectoryAtTick,
+              suitabilityAtTick: this.highFlowOxygenSuitabilityAtTick,
+              selectionAtTick: this.highFlowOxygenSelectionAtTick,
+              responseAtTick: this.highFlowOxygenResponseAtTick,
+              guardsAtTick: this.highFlowOxygenGuardsAtTick,
+              handoffAtTick: this.highFlowOxygenHandoffAtTick,
+              lastUnsupportedChoice: this.highFlowOxygenLastUnsupportedChoice,
+              initialPulsePresent: true as const, spontaneousBreathingAuthored: true as const,
+              acuteHypoxemicRespiratoryFailureAuthored: true as const,
+              acuteHypercapnicAcidosisAuthored: false as const,
+              conventionalOxygenFunctionAuthored: true as const,
+              immediateAirwayFailureAuthored: false as const,
+              highFlowTrialIntentRecorded: this.highFlowOxygenSelectionAtTick !== null,
+              patientExaminedByLearner: false as const, bloodGasAcquiredByLearner: false as const,
+              bloodGasInterpretedByLearner: false as const, imagingAcquiredByLearner: false as const,
+              deviceInspectedByLearner: false as const, deviceSelectedByLearner: false as const,
+              cannulaSelectedByLearner: false as const, flowSelectedByLearner: false as const,
+              fio2SelectedByLearner: false as const, oxygenTargetSelectedByLearner: false as const,
+              deviceOperatedByLearner: false as const, oxygenDeliveredByLearner: false as const,
+              treatmentDeliveredByLearner: false as const, intubationPerformedByLearner: false as const,
+              durableSuccessProven: false as const, dispositionDetermined: false as const,
+              outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

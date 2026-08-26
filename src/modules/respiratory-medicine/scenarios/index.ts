@@ -11,6 +11,7 @@ import { CHRONIC_OPIOID_RELATED_HYPOVENTILATION_REASSESSMENT } from './chronic-o
 import { NEUROMUSCULAR_RESPIRATORY_FAILURE_REASSESSMENT } from './neuromuscular-respiratory-failure-reassessment';
 import { OBESITY_HYPOVENTILATION_REASSESSMENT } from './obesity-hypoventilation-reassessment';
 import { NONINVASIVE_VENTILATION_SELECTION } from './noninvasive-ventilation-selection';
+import { HIGH_FLOW_NASAL_OXYGEN_ESCALATION } from './high-flow-nasal-oxygen-escalation';
 
 export const RESPIRATORY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   ACUTE_SEVERE_ASTHMA,
@@ -25,6 +26,7 @@ export const RESPIRATORY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   NEUROMUSCULAR_RESPIRATORY_FAILURE_REASSESSMENT,
   OBESITY_HYPOVENTILATION_REASSESSMENT,
   NONINVASIVE_VENTILATION_SELECTION,
+  HIGH_FLOW_NASAL_OXYGEN_ESCALATION,
 ];
 export const DEFAULT_RESPIRATORY_MEDICINE_SCENARIO_ID = ACUTE_SEVERE_ASTHMA.metadata.id;
 

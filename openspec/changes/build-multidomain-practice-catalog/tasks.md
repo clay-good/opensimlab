@@ -231,7 +231,7 @@ credited toward the catalog until every item in the completion contract passes.
   symptomatic bradycardia, complete heart block, torsades de pointes, hyperkalemic conduction
   disturbance, pericardial tamponade, right-ventricular infarction, hypertensive emergency, and
   pacemaker capture failure, and transcutaneous pacing mechanical-capture reassessment. Respiratory
-  medicine is live with 12 of 15 scenarios: acute severe asthma reassessment after documented initial
+  medicine is live with 13 of 15 scenarios: acute severe asthma reassessment after documented initial
   therapy, COPD exacerbation recovery-versus-readiness transition reassessment, hypoxemic
   community-acquired pneumonia reassessment, and persistent dyspnea after pulmonary embolism with
   bounded CTEPD evidence review, expert referral, and unresolved-work handoff, and acute pulmonary
@@ -255,7 +255,12 @@ credited toward the catalog until every item in the completion contract passes.
   treatment, and bilevel NIV selection for persistent acute-on-chronic acidotic hypercapnic COPD
   after verified initial care, with calm nonmutating modality feedback, a strictly elapsed fixed
   first-hour response, explicit continuation and failure guards, and another elapsed active-support
-  handoff without choosing a device, interface, setting, oxygen target, intubation, or treatment.
+  handoff without choosing a device, interface, setting, oxygen target, intubation, or treatment, and
+  high-flow nasal oxygen selection for persistent de novo nonhypercapnic hypoxemia after verified
+  conventional oxygen, with calm nonmutating modality feedback, a strictly elapsed fixed 30-minute
+  response, explicit continuation and whole-patient failure guards, and another elapsed active-support
+  handoff without calculating ROX or a PaO₂/FiO₂ ratio or choosing equipment, settings, oxygen,
+  intubation, or treatment.
 - [ ] Wave D: complete 16 pediatric, 15 obstetric, and 11 neonatal scenarios.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.

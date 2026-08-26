@@ -1,0 +1,63 @@
+/** De novo nonhypercapnic hypoxemia, with bounded HFNO selection and reassessment. */
+
+import type { Scenario } from '@anesthesia/scenarios/types';
+
+export const HIGH_FLOW_NASAL_OXYGEN_ESCALATION: Scenario = {
+  schemaVersion: 1,
+  metadata: {
+    id: 'high-flow-nasal-oxygen-escalation', version: '0.1.0', maturity: 'draft',
+    title: 'High-flow nasal oxygen escalation', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
+    estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
+      { id: 'reconcile-high-flow-oxygen-conventional-support-trajectory', statement: 'Reconcile the authored baseline, verified conventional oxygen, signal quality, work, gas exchange, mentation, and perfusion trajectory.', measure: 'Persistent acute hypoxemia was recognized without treating a reservoir-mask flow or estimated oxygen fraction as a precise delivered dose.' },
+      { id: 'review-high-flow-oxygen-suitability-and-rescue-readiness', statement: 'Review the fixed whole-patient suitability, preferences, monitoring environment, and airway-capable rescue readiness.', measure: 'Airway protection, cooperation, secretions, emesis, face, hemodynamics, deterioration, observation, and rescue access remained contextual rather than an absolute checklist.' },
+      { id: 'select-high-flow-nasal-oxygen-escalation', statement: 'Select a closely monitored high-flow nasal oxygen trial for the authored de novo nonhypercapnic hypoxemic-failure pattern.', measure: 'HFNO was distinguished from unchanged conventional oxygen and conditionally reasonable NIV without selecting hardware, cannula, flow, temperature, oxygen fraction, or treatment technique.' },
+      { id: 'review-high-flow-oxygen-early-response', statement: 'After elapsed time, review the fixed experienced-team 30-minute whole-patient and blood-gas response.', measure: 'Useful early improvement remained partial and did not prove resolution, durable success, safe disposition, or outcome.' },
+      { id: 'preserve-high-flow-oxygen-monitoring-and-failure-guards', statement: 'Record monitored continuation with explicit deterioration triggers and rapid airway-capable reassessment.', measure: 'Mentation, airway protection, work, oxygenation, ventilation, hemodynamics, tolerance, secretions, and alternate causes stayed active without delaying rescue.' },
+      { id: 'handoff-high-flow-oxygen-escalation', statement: 'After another elapsed interval, hand off active support, partial response, open cause, failure triggers, rescue readiness, and named owners.', measure: 'The handoff preserved active risk without inventing weaning, disposition, prognosis, or outcome.' },
+    ],
+    clinicalReview: { reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED',
+      competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01',
+      contentVersion: '0.1.0', sources: [
+        'Goel NN, Ferreyro BL, Pitre T, et al. Noninvasive Respiratory Support for Adult Patients with Acute Respiratory Failure: An Official American Thoracic Society Clinical Practice Guideline. Am J Respir Crit Care Med. 2026. PMID 42371750. doi:10.1093/ajrccm/aamag302.',
+        'Oczkowski S, Ergan B, Bos L, et al. ERS clinical practice guidelines: high-flow nasal cannula in acute respiratory failure. Eur Respir J. 2022;59:2101574. PMID 34649974. doi:10.1183/13993003.01574-2021.',
+      ] },
+    limitations: ['high-flow-oxygen-presentation-support-and-response-are-authored',
+      'high-flow-oxygen-controls-review-select-monitor-and-handoff-only',
+      'no-live-hfno-device-settings-operation-treatment-intubation-disposition-or-outcome'],
+  },
+  patient: { ageYears: 52, sex: 'male', heightCm: 178, weightKg: 79, asaClass: 4,
+    diagnosis: 'Authored de novo acute nonhypercapnic hypoxemic respiratory failure with unresolved bilateral inflammatory air-space disease',
+    procedure: 'High-flow nasal oxygen selection and early reassessment',
+    comorbidities: ['No established chronic lung disease', 'No established heart failure'],
+    medications: ['Experienced-team diagnostic and empiric treatment are not represented'],
+    allergies: ['No known drug allergies'],
+    fasting: 'Not a substitute for the authored airway, emesis, preferences, and rescue review',
+    baseline: { heartRateBpm: 110, meanArterialMmHg: 89, strokeVolumeMl: 63,
+      hemoglobinGPerDl: 13.8, bloodVolumeMl: 5000, coreTemperatureC: 38.1,
+      arterialStiffness: 1, baroreflexGain: 1, fixedStrokeVolume: false },
+    airway: { difficulty: 0.1, difficultMaskVentilation: false,
+      assessment: 'Awake, cooperative, patent upper airway, short phrases, and managing current secretions in the fixed experienced-team report' },
+    respiratory: { profile: 'moderately-ill' } },
+  equipment: { monitoring: ['ecg', 'nibp', 'pulse-oximetry', 'temperature'],
+    ventilator: { mode: 'manual', fio2: 0.5, tidalVolumeMl: 390,
+      respiratoryRateBpm: 34, freshGasFlowLPerMin: 0.5, delivering: false } },
+  formulary: [],
+  timeline: [
+    { id: 'high-flow-oxygen-escalation-trajectory', type: 'narrative', target: 'high-flow-nasal-oxygen-escalation', atTick: 0, severity: 'warning',
+      message: 'A 52-year-old music teacher who normally walks to work has 4 days of fever, cough, and worsening dyspnea. Qualified reports describe new bilateral inflammatory air-space opacities without a hydrostatic pulmonary-edema pattern, pneumothorax, or large effusion. Diagnostic and empiric-treatment ownership is already active, but pathogen and exact cause remain unresolved. He has no established COPD, heart failure, obesity hypoventilation, neuromuscular disease, chronic opioid exposure, home respiratory support, or recent extubation.' },
+    { id: 'high-flow-oxygen-escalation-current-state', type: 'narrative', target: 'high-flow-nasal-oxygen-escalation', atTick: 0, severity: 'warning',
+      message: 'After 20 minutes of verified functioning reservoir-mask oxygen reported at 15 L/min, he remains alert, cooperative, and in short phrases with accessory-muscle use, HR 110/min, RR 34/min, BP 122/72 mmHg (MAP 89), pulse-coherent SpO₂ 88%, and warm perfusion. A fixed gas reports pH 7.46, PaCO₂ 31 mmHg, PaO₂ 55 mmHg, and bicarbonate 22 mmol/L. The monitor uses a nominal FiO₂ 0.50 proxy only; delivered reservoir-mask FiO₂ is uncertain, so no PaO₂/FiO₂ ratio or oxygen dose is calculated. The whole trajectory supports escalation beyond unchanged conventional oxygen without an acidotic hypercapnic or cardiogenic-edema pattern.' },
+    { id: 'high-flow-oxygen-escalation-suitability', type: 'narrative', target: 'high-flow-nasal-oxygen-escalation', atTick: 0, severity: 'advisory',
+      message: 'The fixed experienced-team suitability report describes a patent upper airway, current secretion handling, cooperation, and no active emesis, hematemesis, facial injury, untreated pneumothorax, apnea, arrest, severe agitation, loss of airway protection, shock, or immediate-deterioration pattern. His preference for a nasal interface is documented, continuous observation and serial reassessment are available, and an airway-capable rescue plan is active. These snapshots support a closely monitored trial in this case; they are not learner examination, permanent exclusions, or an absolute checklist.' },
+    { id: 'high-flow-oxygen-escalation-boundary', type: 'narrative', target: 'high-flow-nasal-oxygen-escalation-boundary', atTick: 0, severity: 'advisory',
+      message: 'Reconcile the inadequate trajectory on verified conventional oxygen, then review suitability and rescue readiness. Select the support goal: a closely monitored high-flow nasal oxygen trial follows the strong guideline pathway for this authored de novo hypoxemic pattern; unchanged conventional oxygen remains inadequate, while NIV or CPAP can be reasonable in selected acute hypoxemic failure but is not this case-specific first choice. Qualified staff apply and individualize HFNO off-screen. After elapsed time, review the fixed 30-minute response, preserve continuation and failure guards, then complete another strictly elapsed handoff. The controls do not examine; acquire or interpret blood gas, imaging, oximetry, capnography, or another test; diagnose; calculate ROX or a PaO₂/FiO₂ ratio; select or deliver oxygen, medication, suction, mask ventilation, intubation, or treatment; choose a source, device, cannula, fit, flow, temperature, humidification, FiO₂, oxygen target, NIV mode, interface, pressure, PEEP, backup rate, trigger, or cycle; operate respiratory equipment; perform proning or another procedure; determine disposition or prognosis; or predict durable success or outcome.' },
+  ],
+  debrief: { rubric: [
+    { id: 'high-flow-oxygen-escalation-trajectory', objectiveId: 'reconcile-high-flow-oxygen-conventional-support-trajectory', question: 'Which whole-patient findings showed that verified conventional oxygen remained behind the need?' },
+    { id: 'high-flow-oxygen-escalation-suitability', objectiveId: 'review-high-flow-oxygen-suitability-and-rescue-readiness', question: 'Which current suitability, preference, monitoring, and rescue facts supported a monitored trial without forming an absolute checklist?' },
+    { id: 'high-flow-oxygen-escalation-choice', objectiveId: 'select-high-flow-nasal-oxygen-escalation', question: 'Why did HFNO fit this de novo nonhypercapnic hypoxemic pattern better than unchanged conventional oxygen or bilevel NIV first?' },
+    { id: 'high-flow-oxygen-escalation-response', objectiveId: 'review-high-flow-oxygen-early-response', question: 'Which fixed 30-minute whole-patient and gas changes showed useful improvement without proving durable success?' },
+    { id: 'high-flow-oxygen-escalation-guards', objectiveId: 'preserve-high-flow-oxygen-monitoring-and-failure-guards', question: 'Which deterioration triggers and rescue conditions remained active during monitored continuation?' },
+    { id: 'high-flow-oxygen-escalation-handoff', objectiveId: 'handoff-high-flow-oxygen-escalation', question: 'Which active support, partial response, cause work, failure triggers, rescue work, and owners remained unresolved?' },
+  ] },
+};

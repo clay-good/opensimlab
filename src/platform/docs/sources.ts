@@ -2050,6 +2050,18 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/42371750/',
     verifiedOn: '2026-08-25',
   },
+  {
+    id: 'oczkowski-ers-high-flow-guideline-2022',
+    pmid: '34649974',
+    authors: 'Oczkowski S, Ergan B, Bos L, et al',
+    title: 'ERS clinical practice guidelines: high-flow nasal cannula in acute respiratory failure',
+    publication: 'European Respiratory Journal',
+    year: 2022,
+    locator: '59:2101574; doi:10.1183/13993003.01574-2021; hypoxemic acute respiratory failure recommendations',
+    usedFor: 'The HFNO escalation boundary: prefer HFNC over conventional oxygen in acute hypoxemic respiratory failure, consider it over NIV in selected de novo hypoxemia, use NIV first in COPD hypercapnic failure, and avoid prolonging failing noninvasive support.',
+    verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/34649974/',
+    verifiedOn: '2026-08-25',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

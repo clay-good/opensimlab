@@ -3383,6 +3383,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, current respiratory-support guidance, qualified staff, local pathways and rescue capacity, patient preferences, and continuous patient-specific reassessment.',
     briefIn: ['noninvasive-ventilation-selection'],
   },
+  {
+    id: 'high-flow-oxygen-presentation-support-and-response-are-authored',
+    headline: 'The bilateral air-space disease, conventional oxygen, suitability findings, gases, qualified HFNO delivery, and 30-minute response are authored.',
+    simplification: 'Fixed reports stand in for history, examination, oxygen-source and device verification, blood-gas and imaging acquisition and interpretation, preferences, monitoring, rescue preparation, qualified HFNO application, tolerance, and serial reassessment.',
+    whereItMisleads: 'Treating reservoir-mask flow as precise delivered FiO₂, calculating a false ratio from it, or using one saturation, gas, respiratory rate, ROX value, suitability fact, or early change as a universal support, failure, intubation, success, or disposition rule.',
+    correctUnderstanding: 'Real support selection integrates verified delivery, whole-patient trajectory, cause, airway protection, work, gas exchange, hemodynamics, preferences, local capability, repeated response, and rapid rescue access.',
+    briefIn: ['high-flow-nasal-oxygen-escalation'],
+  },
+  {
+    id: 'high-flow-oxygen-controls-review-select-monitor-and-handoff-only',
+    headline: 'The controls record review, bounded HFNO intent, reassessment, failure guards, and handoff only.',
+    simplification: 'Six accepted actions and 4 nonmutating teaching choices stand in for multidisciplinary assessment, support selection, qualified delivery, continuous monitoring, serial blood gases, rescue planning, and communication.',
+    whereItMisleads: 'Equating button choice or order with examination, test interpretation, device selection or operation, HFNO application, oxygen titration, treatment, intubation judgment, or acute respiratory-care competence.',
+    correctUnderstanding: 'Actual care requires the patient, experienced respiratory and airway-capable teams, current guidance, local protocols and equipment, patient-specific setup and tolerance work, and repeated bedside reassessment.',
+    briefIn: ['high-flow-nasal-oxygen-escalation'],
+  },
+  {
+    id: 'no-live-hfno-device-settings-operation-treatment-intubation-disposition-or-outcome',
+    headline: 'The lab does not choose HFNO hardware or settings, operate a device, deliver oxygen or treatment, intubate, determine disposition, or predict outcome.',
+    simplification: 'No live examination, blood gas, imaging, oximetry, capnography, source or device check, cannula or fit, flow, temperature, humidification, FiO₂, oxygen target, ROX or ratio calculation, NIV setting, medication, suction, proning, mask ventilation, intubation, procedure, treatment, weaning, disposition, prognosis, durable success, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values as prescriptions or universal thresholds, or using completion as evidence of clinical, testing, device, airway, treatment, disposition, or prognostic competence.',
+    correctUnderstanding: 'Use verified patient data, current respiratory-support guidance, qualified staff, local pathways and rescue capacity, patient preferences, and continuous patient-specific reassessment.',
+    briefIn: ['high-flow-nasal-oxygen-escalation'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

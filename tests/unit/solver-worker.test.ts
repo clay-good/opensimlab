@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: NIV selection reassessment has protocol version 113', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(113);
+  it('Scenario: HFNO escalation reassessment has protocol version 114', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(114);
   });
 
   it('Scenario: init reports ready before any step runs', () => {
