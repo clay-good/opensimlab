@@ -3503,6 +3503,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, current bronchiolitis guidance, local resources, qualified teams, caregiver input, and patient-specific reassessment; context-dependent exceptions remain real clinical decisions.',
     briefIn: ['bronchiolitis'],
   },
+  {
+    id: 'croup-presentation-severity-treatment-intent-and-serial-response-are-authored',
+    headline: 'The child, croup pattern, severity, qualified care, early improvement, and later recurrence are authored.',
+    simplification: 'Fixed reports and scenario-specific snapshots stand in for caregiver history, appearance and breathing assessment, pulse oximetry, qualified treatment, observation, and serial bedside review.',
+    whereItMisleads: 'Treating the fictional age, saturation, respiratory rate, stridor, recession, treatment response, or recurrence timing as a universal threshold, learner-acquired finding, or validated croup physiology.',
+    correctUnderstanding: 'Real croup care integrates verified history, behavior, voice, stridor at rest, work and quality of breathing, air entry, color, perfusion, signal quality, dangerous alternatives, caregiver context, trajectory, local guidance, and repeated qualified review.',
+    briefIn: ['croup'],
+  },
+  {
+    id: 'croup-controls-reconcile-prioritize-reassess-escalate-and-handoff-only',
+    headline: 'The controls record calm whole-child review, qualified care ownership, timed reassessment, recurrence escalation, and handoff only.',
+    simplification: 'Six accepted actions and 4 nonmutating teaching choices stand in for caregiver-centered care, experienced pediatric and airway support, standard qualified treatment, observation, alternative-diagnosis awareness, and handoff.',
+    whereItMisleads: 'Equating button order with examination, diagnosis, medication delivery, nebulizer or oxygen operation, airway skill, treatment, team performance, caregiver communication, or pediatric competence.',
+    correctUnderstanding: 'Actual care requires the child and caregiver, trained pediatric and airway-capable teams, current local guidance, patient-specific support, and continuous reassessment.',
+    briefIn: ['croup'],
+  },
+  {
+    id: 'no-live-croup-exam-test-drug-dose-route-device-airway-procedure-treatment-or-disposition',
+    headline: 'The lab does not examine or test a child, choose or deliver a drug or device, perform airway care, determine disposition, or predict outcome.',
+    simplification: 'No live mouth or throat examination, severity score, oximetry, imaging, swab, laboratory test, diagnosis, drug, dose, route, concentration, repeat interval, oxygen target, flow, interface, nebulizer, humidification, airway maneuver, ventilation, intubation, procedure, treatment, admission, discharge, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values or timing into care, treating supplied negatives as permanently excluded, or using completion as evidence of clinical, medication, device, airway, procedural, disposition, or prognostic competence.',
+    correctUnderstanding: 'Use verified patient data, current croup guidance, local medication and airway systems, qualified teams, caregiver input, and patient-specific reassessment; poor response or red flags change the pathway.',
+    briefIn: ['croup'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

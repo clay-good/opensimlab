@@ -1026,6 +1026,13 @@ export interface ActionCockpitProps {
       readonly lastUnsupportedChoice: 'radiograph-first' | 'single-saturation'
         | 'routine-albuterol' | 'routine-antibiotic' | 'discharge-on-saturation' | null;
     };
+    readonly croupAssessment?: {
+      readonly patternAtTick: number | null; readonly severityAtTick: number | null;
+      readonly treatmentIntentAtTick: number | null; readonly earlyResponseAtTick: number | null;
+      readonly recurrenceAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly lastUnsupportedChoice: 'albuterol' | 'radiograph' | 'discharge-early'
+        | 'normal-saturation' | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1614,6 +1621,18 @@ export interface ActionCockpitProps {
       | 'review-bronchiolitis-later-response'
       | 'handoff-bronchiolitis-active-risk',
   ) => void;
+  readonly onCroupResponse?: (
+    action: 'reconcile-croup-whole-child-upper-airway-pattern'
+      | 'review-croup-severity-and-alternative-red-flags'
+      | 'record-croup-minimal-distress-support-and-qualified-treatment-intent'
+      | 'select-croup-albuterol-for-stridor'
+      | 'wait-for-croup-neck-radiograph'
+      | 'review-croup-early-response'
+      | 'discharge-croup-after-early-response'
+      | 'treat-croup-normal-saturation-as-low-risk'
+      | 'review-croup-recurrence-and-preserve-airway-readiness'
+      | 'handoff-croup-active-upper-airway-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1962,6 +1981,9 @@ export function crisisResponseAvailability(
     hasBronchiolitisResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'bronchiolitis-reassessment',
     ),
+    hasCroupResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'croup-reassessment',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2108,6 +2130,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative'
         && event.target === 'pediatric-respiratory-distress-reassessment')
       || (event.type === 'narrative' && event.target === 'bronchiolitis-reassessment')
+      || (event.type === 'narrative' && event.target === 'croup-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2167,7 +2190,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeuromuscularRespiratoryFailureResponse, hasObesityHypoventilationResponse,
     hasNoninvasiveVentilationSelectionResponse, hasHighFlowOxygenEscalationResponse,
     hasOxygenDeviceFailureResponse, hasAcuteTracheostomyObstructionResponse,
-    hasPediatricRespiratoryDistressResponse, hasBronchiolitisResponse,
+    hasPediatricRespiratoryDistressResponse, hasBronchiolitisResponse, hasCroupResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2239,7 +2262,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasObesityHypoventilationResponse || hasNoninvasiveVentilationSelectionResponse
     || hasHighFlowOxygenEscalationResponse || hasOxygenDeviceFailureResponse
     || hasAcuteTracheostomyObstructionResponse || hasPediatricRespiratoryDistressResponse
-    || hasBronchiolitisResponse;
+    || hasBronchiolitisResponse || hasCroupResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2270,7 +2293,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasBronchiolitisResponse
+  const responseTray = hasCroupResponse
+    ? { id: 'crisis', label: 'Croup reassessment' } as const
+    : hasBronchiolitisResponse
     ? { id: 'crisis', label: 'Bronchiolitis reassessment' } as const
     : hasPediatricRespiratoryDistressResponse
     ? { id: 'crisis', label: 'Whole-child reassessment' } as const
@@ -2524,7 +2549,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasOxygenDeviceFailureResponse
     || hasAcuteTracheostomyObstructionResponse
     || hasPediatricRespiratoryDistressResponse
-    || hasBronchiolitisResponse
+    || hasBronchiolitisResponse || hasCroupResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3183,6 +3208,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasBronchiolitisResponse && (
               <BronchiolitisTray assessment={props.resuscitation.bronchiolitisAssessment}
                 onAction={props.onBronchiolitisResponse ?? (() => {})} />
+            )}
+            {hasCroupResponse && (
+              <CroupTray assessment={props.resuscitation.croupAssessment}
+                onAction={props.onCroupResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -8138,6 +8167,78 @@ function BronchiolitisTray({ assessment, onAction }: {
           onClick={() => onAction('handoff-bronchiolitis-active-risk')}>Hand off active bronchiolitis risk</Button>}
       </div>
       <p className="field__hint">Partial improvement does not prove oral readiness, room-air stability, resolution, discharge readiness, or durable outcome.</p>
+    </section>
+  </div>;
+}
+
+function CroupTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['croupAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onCroupResponse']>;
+}) {
+  const pattern = assessment?.patternAtTick != null;
+  const severity = assessment?.severityAtTick != null;
+  const treatment = assessment?.treatmentIntentAtTick != null;
+  const early = assessment?.earlyResponseAtTick != null;
+  const recurrence = assessment?.recurrenceAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  const unsupported = assessment?.lastUnsupportedChoice;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="croup-pattern-title">
+      <div id="croup-pattern-title" className="syringe__name">Make calm part of care.</div>
+      <Badge kind="teaching">caregiver · voice · stridor · work · behavior</Badge>
+      <div className="syringe__meta">3 years · 15 kg · SpO₂ 96% on room air</div>
+      <p className="syringe__remaining" role="status">
+        {treatment ? 'Child calm with caregiver · qualified care underway'
+          : unsupported === 'albuterol' ? 'Upper-airway stridor is not lower-airway bronchospasm'
+            : unsupported === 'radiograph' ? 'Typical croup support does not wait for routine imaging'
+              : severity ? 'Whole-child severity clear · record qualified support'
+                : pattern ? 'Pattern reconciled · keep dangerous alternatives open'
+                  : 'Start with the whole child, not stridor loudness or one number'}
+      </p>
+      <div className="syringe__presets">
+        {!pattern && <Button className="crisis-drug__action"
+          onClick={() => onAction('reconcile-croup-whole-child-upper-airway-pattern')}>Review the upper-airway pattern</Button>}
+        {pattern && !severity && <>
+          <Button className="crisis-drug__action"
+            onClick={() => onAction('review-croup-severity-and-alternative-red-flags')}>Review severity + red flags</Button>
+          <Button className="crisis-drug__action"
+            onClick={() => onAction('select-croup-albuterol-for-stridor')}>Try albuterol for stridor</Button>
+          <Button className="crisis-drug__action"
+            onClick={() => onAction('wait-for-croup-neck-radiograph')}>Wait for a neck X-ray</Button>
+        </>}
+        {severity && !treatment && <Button className="crisis-drug__action"
+          onClick={() => onAction('record-croup-minimal-distress-support-and-qualified-treatment-intent')}>Keep calm + activate qualified care</Button>}
+      </div>
+      <p className="field__hint">Keep her with her caregiver in a position of comfort. Qualified staff own medicine and airway care off-screen; no examination, dose, route, device, setting, or procedure is selected here.</p>
+    </section>
+    <section className="syringe" aria-labelledby="croup-response-title">
+      <div id="croup-response-title" className="syringe__name">Improvement needs time.</div>
+      <Badge kind="teaching">early response · recurrence · airway readiness</Badge>
+      <div className="syringe__meta">fixed 20-minute response · fixed later observation</div>
+      <p className="syringe__remaining" role="status">
+        {handoff ? 'Recurrence, timing, triggers, and owners handed off'
+          : recurrence ? 'Stridor at rest recurred · hand off active risk'
+            : unsupported === 'discharge-early' ? 'Early improvement does not prove discharge readiness'
+              : unsupported === 'normal-saturation' ? 'Normal saturation does not settle airway severity'
+                : early ? 'Early improvement is temporary · review the later observation'
+                  : treatment ? 'Review the whole child after elapsed qualified care'
+                    : 'First keep the child calm and activate qualified care'}
+      </p>
+      <div className="syringe__presets">
+        {treatment && !early && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-croup-early-response')}>Review the early response</Button>}
+        {early && !recurrence && <>
+          <Button className="crisis-drug__action"
+            onClick={() => onAction('review-croup-recurrence-and-preserve-airway-readiness')}>Review the later observation</Button>
+          <Button className="crisis-drug__action"
+            onClick={() => onAction('discharge-croup-after-early-response')}>Discharge after early improvement</Button>
+          <Button className="crisis-drug__action"
+            onClick={() => onAction('treat-croup-normal-saturation-as-low-risk')}>Treat SpO₂ 97% as low risk</Button>
+        </>}
+        {recurrence && !handoff && <Button className="crisis-drug__action"
+          onClick={() => onAction('handoff-croup-active-upper-airway-risk')}>Hand off active upper-airway risk</Button>}
+      </div>
+      <p className="field__hint">Review voice, stridor at calm rest, work, behavior, color, and breathing together. Recurrence renews experienced ownership; it does not select a repeat treatment, airway procedure, or disposition.</p>
     </section>
   </div>;
 }

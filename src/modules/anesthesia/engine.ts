@@ -41,7 +41,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.44';
+export const ENGINE_VERSION = '0.1.0-alpha.45';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -137,6 +137,13 @@ const BRONCHIOLITIS_BLOCKED_ACTION_TYPES = new Set([
     .filter((type) => type !== 'bronchiolitis-response'),
   'pediatric-respiratory-distress-response', 'opioid-toxicity-response',
   'bronchiectasis-mucus-plugging-response', 'ventilator-circuit-disconnection-response',
+]);
+const CROUP_BLOCKED_ACTION_TYPES = new Set([
+  ...[...PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES]
+    .filter((type) => type !== 'croup-response'),
+  'pediatric-respiratory-distress-response', 'bronchiolitis-response',
+  'opioid-toxicity-response', 'bronchiectasis-mucus-plugging-response',
+  'ventilator-circuit-disconnection-response',
 ]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
@@ -797,6 +804,14 @@ export class AnesthesiaEngine {
   private bronchiolitisHandoffAtTick: number | null = null;
   private bronchiolitisLastUnsupportedChoice: 'radiograph-first' | 'single-saturation'
     | 'routine-albuterol' | 'routine-antibiotic' | 'discharge-on-saturation' | null = null;
+  private croupPatternAtTick: number | null = null;
+  private croupSeverityAtTick: number | null = null;
+  private croupTreatmentIntentAtTick: number | null = null;
+  private croupEarlyResponseAtTick: number | null = null;
+  private croupRecurrenceAtTick: number | null = null;
+  private croupHandoffAtTick: number | null = null;
+  private croupLastUnsupportedChoice: 'albuterol' | 'radiograph' | 'discharge-early'
+    | 'normal-saturation' | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1199,6 +1214,14 @@ export class AnesthesiaEngine {
     if (bronchiolitis && BRONCHIOLITIS_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `bronchiolitis-generic-action-refused-${this.currentTick}`,
         'This infant bronchiolitis lesson does not expose generic medication, oxygen-device, fluid, suction, airway, ventilator, procedure, alarm, or adjacent-crisis actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const croup = this.scenario.timeline.some((event) =>
+      event.type === 'narrative' && event.target === 'croup-reassessment');
+    if (croup && CROUP_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `croup-generic-action-refused-${this.currentTick}`,
+        'This croup lesson does not expose generic medication, oxygen-device, airway, ventilator, procedure, test, alarm, or adjacent-crisis actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -6075,6 +6098,65 @@ export class AnesthesiaEngine {
         this.bronchiolitisHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `bronchiolitis-handoff-recorded-${this.currentTick}`, 'The illness-day trajectory, current qualified support, work of breathing, feeding and hydration risk, apnea and fatigue triggers, contextual alternative-diagnosis guards, caregiver communication, and named pediatric and nursing owners were handed off. No resolution, discharge readiness, disposition, prognosis, or outcome was declared.', { durableRecoveryProven: false, dischargeReadinessProven: false, dispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'croup-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.metadata.id === 'croup'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'croup-reassessment');
+        const valid = ['reconcile-croup-whole-child-upper-airway-pattern',
+          'review-croup-severity-and-alternative-red-flags',
+          'record-croup-minimal-distress-support-and-qualified-treatment-intent',
+          'select-croup-albuterol-for-stridor', 'wait-for-croup-neck-radiograph',
+          'review-croup-early-response', 'discharge-croup-after-early-response',
+          'treat-croup-normal-saturation-as-low-risk',
+          'review-croup-recurrence-and-preserve-airway-readiness',
+          'handoff-croup-active-upper-airway-risk'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `croup-response-refused-${this.currentTick}`, supported ? 'That croup response is not available. Nothing changed.' : 'These croup choices are available only in the declared Pediatrics lesson.'); break; }
+        if (response === 'reconcile-croup-whole-child-upper-airway-pattern') {
+          if (this.croupPatternAtTick !== null) { this.log('warning', 'assessment', `croup-pattern-refused-${this.currentTick}`, 'The fixed whole-child upper-airway pattern was already reconciled.'); break; }
+          this.croupPatternAtTick = this.currentTick;
+          this.log('critical', 'assessment', `croup-upper-airway-pattern-reconciled-${this.currentTick}`, 'Fixed qualified reports were reconciled across the coryzal trajectory, bark, hoarse voice, inspiratory stridor at calm rest, moderate recession, mentation, perfusion, and clean pulse-coherent room-air oxygenation. Preserved SpO2 does not remove upper-airway risk because hypoxemia can be late. The learner did not examine, measure, diagnose, or interpret a test.', { initialPulsePresent: true, spontaneousBreathingAuthored: true, patientExaminedByLearner: false, diagnosisMadeByLearner: false }); break;
+        }
+        if (this.croupPatternAtTick === null) { this.log('warning', 'assessment', `croup-pattern-order-refused-${this.currentTick}`, 'Reconcile the supplied whole-child upper-airway pattern before choosing the next priority.'); break; }
+        if (response === 'select-croup-albuterol-for-stridor' || response === 'wait-for-croup-neck-radiograph') {
+          this.croupLastUnsupportedChoice = response === 'select-croup-albuterol-for-stridor' ? 'albuterol' : 'radiograph';
+          this.log('warning', 'assessment', `croup-severity-choice-not-selected-${this.currentTick}`, response === 'select-croup-albuterol-for-stridor' ? 'This is an authored upper-airway stridor pattern, not a lower-airway bronchospasm response. Nothing changed.' : 'Typical croup is assessed clinically. Routine imaging should not delay calm whole-child support; investigate when a specific alternative changes the question. Nothing changed.', { unsupportedChoice: this.croupLastUnsupportedChoice, patientStateChanged: false }); break;
+        }
+        if (response === 'review-croup-severity-and-alternative-red-flags') {
+          if (this.croupSeverityAtTick !== null) { this.log('warning', 'assessment', `croup-severity-refused-${this.currentTick}`, 'Whole-child severity and alternative red flags were already reviewed.'); break; }
+          this.croupSeverityAtTick = this.currentTick; this.croupLastUnsupportedChoice = null;
+          this.log('critical', 'assessment', `croup-severity-alternatives-reviewed-${this.currentTick}`, 'Stridor at calm rest, moderate recession, behavior, voice, color, perfusion, and breathing were reviewed together. Loudness and preserved saturation were not used alone. Abrupt choking or asymmetry, allergy features, and drooling, dysphagia, toxicity, high fever, neck signs, or poor response remain contextual triggers to reopen dangerous alternatives.', { croupWorkingPatternAuthored: true, alternativesPermanentlyExcluded: false, diagnosisMadeByLearner: false }); break;
+        }
+        if (this.croupSeverityAtTick === null) { this.log('warning', 'assessment', `croup-severity-order-refused-${this.currentTick}`, 'Review whole-child severity and alternative red flags before recording qualified support.'); break; }
+        if (response === 'record-croup-minimal-distress-support-and-qualified-treatment-intent') {
+          if (this.croupTreatmentIntentAtTick !== null) { this.log('warning', 'assessment', `croup-treatment-intent-refused-${this.currentTick}`, 'Minimal-distress support and qualified treatment intent were already recorded.'); break; }
+          this.croupTreatmentIntentAtTick = this.currentTick; this.croupLastUnsupportedChoice = null;
+          this.log('critical', 'assessment', `croup-qualified-treatment-intent-recorded-${this.currentTick}`, 'The child stays with her caregiver in her position of comfort with minimal handling while experienced pediatric and airway-capable staff provide monitoring and clinician-selected corticosteroid plus nebulized epinephrine care. The learner recorded qualified-team intent only and selected no drug, dose, route, concentration, repeat interval, oxygen target, device, flow, nebulizer, airway maneuver, procedure, or treatment.', { experiencedTreatmentAuthored: true, treatmentDeliveredByLearner: false, drugDeliveredByLearner: false, deviceOperatedByLearner: false }); break;
+        }
+        if (this.croupTreatmentIntentAtTick === null) { this.log('warning', 'assessment', `croup-treatment-intent-order-refused-${this.currentTick}`, 'Record caregiver-centered minimal-distress support and qualified-team treatment intent before reviewing response.'); break; }
+        if (response === 'review-croup-early-response') {
+          if (this.currentTick <= this.croupTreatmentIntentAtTick) { this.log('warning', 'assessment', `croup-early-response-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before reviewing the fixed early response.'); break; }
+          if (this.croupEarlyResponseAtTick !== null) { this.log('warning', 'assessment', `croup-early-response-refused-${this.currentTick}`, 'The fixed early whole-child response was already reviewed.'); break; }
+          this.croupEarlyResponseAtTick = this.currentTick;
+          this.log('warning', 'assessment', `croup-early-response-reviewed-${this.currentTick}`, 'Fixed qualified 20-minute report: she is alert and calmer, HR 138/min, RR 26/min, and room-air SpO2 97%. There is no stridor at calm rest, only occasional stridor with crying, and recession is mild; bark and hoarseness persist. This expected early improvement is temporary and does not establish cure, durable resolution, or discharge readiness.', { durableRecoveryProven: false, dischargeReadinessProven: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.croupEarlyResponseAtTick === null) { this.log('warning', 'assessment', `croup-early-response-order-refused-${this.currentTick}`, 'Review the fixed early whole-child response after elapsed qualified care.'); break; }
+        if (response === 'discharge-croup-after-early-response' || response === 'treat-croup-normal-saturation-as-low-risk') {
+          this.croupLastUnsupportedChoice = response === 'discharge-croup-after-early-response' ? 'discharge-early' : 'normal-saturation';
+          this.log('warning', 'assessment', `croup-recurrence-choice-not-selected-${this.currentTick}`, response === 'discharge-croup-after-early-response' ? 'Early improvement after reported nebulized epinephrine is not durable recovery or discharge readiness. Elapsed observation and recurrence-free whole-child reassessment still matter. Nothing changed.' : 'Normal saturation does not establish low upper-airway risk; hypoxemia can be late. Reassess behavior, stridor at rest, work, color, and air entry together. Nothing changed.', { unsupportedChoice: this.croupLastUnsupportedChoice, patientStateChanged: false }); break;
+        }
+        if (response === 'review-croup-recurrence-and-preserve-airway-readiness') {
+          if (this.currentTick <= this.croupEarlyResponseAtTick) { this.log('warning', 'assessment', `croup-recurrence-time-refused-${this.currentTick}`, 'Allow more simulated time before reviewing the fixed later recurrence panel.'); break; }
+          if (this.croupRecurrenceAtTick !== null) { this.log('warning', 'assessment', `croup-recurrence-refused-${this.currentTick}`, 'The fixed later recurrence and airway readiness were already reviewed.'); break; }
+          this.croupRecurrenceAtTick = this.currentTick; this.croupLastUnsupportedChoice = null;
+          this.log('critical', 'assessment', `croup-recurrence-readiness-reviewed-${this.currentTick}`, 'Fixed qualified later report: mild inspiratory stridor has recurred at calm rest with mild tracheal tug and recession. She remains alert with normal color, HR 130/min, RR 30/min, BP 96/60 mmHg, and room-air SpO2 96%. Experienced pediatric and airway-capable ownership was renewed. No automatic redose, airway intervention, disposition, or outcome was selected.', { recurrenceAuthored: true, airwayReadinessPreserved: true, treatmentDeliveredByLearner: false, dispositionDetermined: false }); break;
+        }
+        if (this.croupRecurrenceAtTick === null) { this.log('warning', 'assessment', `croup-recurrence-order-refused-${this.currentTick}`, 'Review the strictly later recurrence panel before handoff.'); break; }
+        if (this.currentTick <= this.croupRecurrenceAtTick) { this.log('warning', 'assessment', `croup-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off the active upper-airway risk.'); break; }
+        if (this.croupHandoffAtTick !== null) { this.log('warning', 'assessment', `croup-handoff-refused-${this.currentTick}`, 'The croup active-risk handoff was already recorded.'); break; }
+        this.croupHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `croup-handoff-recorded-${this.currentTick}`, 'The whole-child trajectory, caregiver-centered support, time since reported qualified care, early improvement, recurrent stridor at rest, open mimics, deterioration triggers, monitoring, and named pediatric, nursing, and airway owners were handed off. No durable recovery, discharge readiness, disposition, prognosis, or outcome was declared.', { durableRecoveryProven: false, dischargeReadinessProven: false, dispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -8917,6 +8999,20 @@ export class AnesthesiaEngine {
         meanArterialMmHg: later ? 68 : 67,
         coreTemperatureC: 38 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'croup-reassessment')) {
+      const early = this.croupEarlyResponseAtTick !== null;
+      const recurrence = this.croupRecurrenceAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: recurrence ? 130 : early ? 138 : 132,
+        respiratoryRateBpm: recurrence ? 30 : early ? 26 : 34,
+        spo2Percent: recurrence ? 96 : early ? 97 : 96,
+        etco2MmHg: 36,
+        systolicMmHg: recurrence ? 96 : early ? 98 : 96,
+        diastolicMmHg: recurrence ? 60 : early ? 62 : 58,
+        meanArterialMmHg: recurrence ? 72 : early ? 74 : 71,
+        coreTemperatureC: 37.8 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -10541,6 +10637,39 @@ export class AnesthesiaEngine {
               procedurePerformedByLearner: false as const, treatmentDeliveredByLearner: false as const,
               durableRecoveryProven: false as const, dischargeReadinessProven: false as const,
               dispositionDetermined: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'croup-reassessment') ? {
+            croupAssessment: {
+              patternAtTick: this.croupPatternAtTick,
+              severityAtTick: this.croupSeverityAtTick,
+              treatmentIntentAtTick: this.croupTreatmentIntentAtTick,
+              earlyResponseAtTick: this.croupEarlyResponseAtTick,
+              recurrenceAtTick: this.croupRecurrenceAtTick,
+              handoffAtTick: this.croupHandoffAtTick,
+              lastUnsupportedChoice: this.croupLastUnsupportedChoice,
+              initialPulsePresent: true as const, spontaneousBreathingAuthored: true as const,
+              croupWorkingPatternAuthored: true as const, stridorAtRestAuthored: true as const,
+              preservedRoomAirOxygenationAuthored: true as const,
+              abruptChokingAuthored: false as const, lowerAirwayPatternAuthored: false as const,
+              droolingOrToxicAppearanceAuthored: false as const,
+              experiencedTreatmentAuthored: this.croupTreatmentIntentAtTick !== null,
+              recurrenceAuthored: this.croupRecurrenceAtTick !== null,
+              patientExaminedByLearner: false as const, monitorInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const, testAcquiredByLearner: false as const,
+              imagingAcquiredByLearner: false as const, drugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const, routeSelectedByLearner: false as const,
+              concentrationSelectedByLearner: false as const,
+              oxygenSelectedByLearner: false as const, deviceSelectedByLearner: false as const,
+              flowSelectedByLearner: false as const, nebulizerOperatedByLearner: false as const,
+              airwayManeuverPerformedByLearner: false as const,
+              ventilationDeliveredByLearner: false as const,
+              intubationPerformedByLearner: false as const,
+              procedurePerformedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const, durableRecoveryProven: false as const,
+              dischargeReadinessProven: false as const, dispositionDetermined: false as const,
+              outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

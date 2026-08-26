@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "pediatrics",
-  "recordCount": 2,
+  "recordCount": 3,
   "records": [
     {
       "recordId": "scenario:pediatric-respiratory-distress@0.1.0",
@@ -23,6 +23,17 @@
       "evidence": [
         "/catalog/pediatrics-completion-audit.json#bronchiolitis@0.1.0",
         "/catalog/pediatrics-quality-audit.json#bronchiolitis@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:croup@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "croup",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/pediatrics-completion-audit.json#croup@0.1.0",
+        "/catalog/pediatrics-quality-audit.json#croup@0.1.0"
       ]
     }
   ]

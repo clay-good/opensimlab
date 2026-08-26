@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 117 reports pediatric respiratory-distress reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 118;
+export const WORKER_PROTOCOL_VERSION = 119;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1140,6 +1140,29 @@ export interface EquipmentSnapshot {
       readonly feedingDeliveredByLearner: false; readonly fluidRouteSelectedByLearner: false;
       readonly fluidDeliveredByLearner: false; readonly suctionPerformedByLearner: false;
       readonly drugDeliveredByLearner: false; readonly ventilationDeliveredByLearner: false;
+      readonly procedurePerformedByLearner: false; readonly treatmentDeliveredByLearner: false;
+      readonly durableRecoveryProven: false; readonly dischargeReadinessProven: false;
+      readonly dispositionDetermined: false; readonly outcomePredicted: false;
+    };
+    readonly croupAssessment?: {
+      readonly patternAtTick: number | null; readonly severityAtTick: number | null;
+      readonly treatmentIntentAtTick: number | null; readonly earlyResponseAtTick: number | null;
+      readonly recurrenceAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly lastUnsupportedChoice: 'albuterol' | 'radiograph' | 'discharge-early'
+        | 'normal-saturation' | null;
+      readonly initialPulsePresent: true; readonly spontaneousBreathingAuthored: true;
+      readonly croupWorkingPatternAuthored: true; readonly stridorAtRestAuthored: true;
+      readonly preservedRoomAirOxygenationAuthored: true; readonly abruptChokingAuthored: false;
+      readonly lowerAirwayPatternAuthored: false; readonly droolingOrToxicAppearanceAuthored: false;
+      readonly experiencedTreatmentAuthored: boolean; readonly recurrenceAuthored: boolean;
+      readonly patientExaminedByLearner: false; readonly monitorInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly testAcquiredByLearner: false;
+      readonly imagingAcquiredByLearner: false; readonly drugSelectedByLearner: false;
+      readonly doseSelectedByLearner: false; readonly routeSelectedByLearner: false;
+      readonly concentrationSelectedByLearner: false; readonly oxygenSelectedByLearner: false;
+      readonly deviceSelectedByLearner: false; readonly flowSelectedByLearner: false;
+      readonly nebulizerOperatedByLearner: false; readonly airwayManeuverPerformedByLearner: false;
+      readonly ventilationDeliveredByLearner: false; readonly intubationPerformedByLearner: false;
       readonly procedurePerformedByLearner: false; readonly treatmentDeliveredByLearner: false;
       readonly durableRecoveryProven: false; readonly dischargeReadinessProven: false;
       readonly dispositionDetermined: false; readonly outcomePredicted: false;

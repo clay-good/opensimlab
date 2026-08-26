@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 164,
+  "sourceCount": 167,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -2092,6 +2092,47 @@
       "locator": "134:e1474-e1502; doi:10.1542/peds.2014-2742; historical guideline context",
       "usedFor": "Historical North American context for clinical diagnosis, risk factors, nonroutine imaging and medicines, and supported hydration; current WHO and NICE guidance take precedence.",
       "verifiedAgainst": "https://publications.aap.org/pediatrics/article/134/5/e1474/75848/Clinical-Practice-Guideline-The-Diagnosis",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "cps-acute-management-croup-2026",
+      "currency": {
+        "lastAmended": "2026-03-06",
+        "checkedAt": "2026-08-25"
+      },
+      "authors": "Canadian Paediatric Society, Acute Care Committee",
+      "title": "Acute management of croup in the emergency department",
+      "publication": "Canadian Paediatric Society position statement",
+      "year": 2026,
+      "locator": "Updated 2026-03-06; severity, minimizing distress, corticosteroids, nebulized epinephrine, time course, observation, and differential diagnosis",
+      "usedFor": "The calm whole-child severity, qualified-treatment, early-response, recurrence, and active-risk handoff boundary.",
+      "verifiedAgainst": "https://cps.ca/en/documents/position/acute-management-of-croup",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "rch-croup-guideline-2024",
+      "currency": {
+        "lastAmended": "2024-09-01",
+        "checkedAt": "2026-08-25"
+      },
+      "authors": "Royal Children's Hospital Melbourne",
+      "title": "Clinical Practice Guidelines: Croup (Laryngotracheobronchitis)",
+      "publication": "Royal Children's Hospital Melbourne Clinical Practice Guidelines",
+      "year": 2024,
+      "locator": "Updated 2024-09; key points, severity, investigations, management, observation, and disposition considerations",
+      "usedFor": "Caregiver-centered minimal-distress care, whole-child severity rather than loudness, hypoxia as a late sign, nonroutine tests, airway help, and reassessment.",
+      "verifiedAgainst": "https://www.rch.org.au/clinicalguide/guideline_index/Croup_Laryngotracheobronchitis/",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "aregbesola-cochrane-glucocorticoids-croup-2023",
+      "authors": "Aregbesola A, Tam CM, Kothari A, Le M-L, Ragheb M, Klassen TP",
+      "title": "Glucocorticoids for croup in children",
+      "publication": "Cochrane Database of Systematic Reviews",
+      "year": 2023,
+      "locator": "Issue 1:CD001955; doi:10.1002/14651858.CD001955.pub5",
+      "usedFor": "Evidence for qualified-team corticosteroid intent and the explicit boundary against teaching a universal learner-selected dose or route.",
+      "verifiedAgainst": "https://doi.org/10.1002/14651858.CD001955.pub5",
       "verifiedOn": "2026-08-25"
     }
   ]

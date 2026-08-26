@@ -7,11 +7,13 @@ nurse anesthetists — anywhere in the world, on any device, with or without a n
 
 Respiratory Medicine is now playable at `/respiratory-medicine` with all 15 bounded labs: acute severe asthma, post-exacerbation COPD recovery-versus-readiness, hypoxemic community-acquired pneumonia, persistent dyspnea after pulmonary embolism, progressive respiratory failure during initial support for acute pulmonary edema, post-drainage reassessment after a spontaneous tension pneumothorax, symptom-limited evaluation of a large unilateral pleural effusion, bronchiectasis mucus plugging with persistent focal collapse after individualized airway clearance, chronic prescribed-opioid exposure with fixed attended sleep-related hypoventilation evidence and shared follow-through, progressive neuromuscular respiratory failure in established ALS with patient-centered escalation and ownership, obesity hypoventilation with fixed awake hypercapnia and attended sleep evidence, bilevel NIV selection for acute acidotic hypercapnic COPD, high-flow nasal oxygen escalation with calm support choices and an active rescue boundary, a portable oxygen source interruption during transport with immediate verified bridge support and systems-focused handoff, and acute obstruction of a declared removable tracheostomy inner cannula with anatomy-first oxygenation, qualified restoration, reassessment, and active-risk handoff.
 
-Pediatrics is now playable at `/pediatrics`, beginning with 2 of 16 bounded labs. Pediatric
+Pediatrics is now playable at `/pediatrics`, beginning with 3 of 16 bounded labs. Pediatric
 respiratory distress teaches whole-child recognition and fatigue escalation. Infant bronchiolitis
 adds illness-day, feeding, hydration, apnea-risk, and supportive-care reassessment while keeping
 routine imaging, low-value medicine, oxygen-device, fluid-route, suction, treatment, and disposition
-controls out of the learner surface.
+controls out of the learner surface. Croup adds calm caregiver-centered upper-airway assessment,
+qualified-team care intent, time-aware response review, and recurrence escalation without exposing
+drug, dose, device, airway-procedure, or disposition controls.
 
 The goal is not a tech demo. It is the best anesthesia education on the internet: the
 thing a student opens the night before their first day in the OR and comes out of

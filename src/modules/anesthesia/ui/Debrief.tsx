@@ -4600,6 +4600,29 @@ export function objectiveFindings(
       const ordered = later && handoff && later.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved current support, feeding and hydration risk, apnea and fatigue triggers, caregiver communication, and named owners without claiming disposition or outcome.' : 'The active-risk handoff was absent or did not follow the later response after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-croup-whole-child-upper-airway-pattern',
+      'review-croup-severity-and-alternative-red-flags',
+      'record-croup-minimal-distress-support-and-qualified-treatment-intent',
+      'review-croup-early-response',
+      'review-croup-recurrence-and-preserve-airway-readiness',
+      'handoff-croup-active-upper-airway-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'croup' && scenario.timeline.some(
+        (event) => event.type === 'narrative' && event.target === 'croup-reassessment');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The croup lesson was not active.' } satisfies ObjectiveFinding;
+      const pattern = log.find((event) => /^croup-upper-airway-pattern-reconciled-\d+$/.test(event.eventId));
+      const severity = log.find((event) => /^croup-severity-alternatives-reviewed-\d+$/.test(event.eventId));
+      const treatment = log.find((event) => /^croup-qualified-treatment-intent-recorded-\d+$/.test(event.eventId));
+      const early = log.find((event) => /^croup-early-response-reviewed-\d+$/.test(event.eventId));
+      const recurrence = log.find((event) => /^croup-recurrence-readiness-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^croup-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-croup-whole-child-upper-airway-pattern') return { ...base, outcome: pattern ? 'met' : 'not-met', finding: pattern ? 'The supplied prodrome, bark, voice, stridor at calm rest, work, behavior, perfusion, and preserved oxygenation were reconciled without learner examination, testing, or diagnosis.' : 'The fixed whole-child upper-airway pattern was not reconciled.', atTick: pattern?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-croup-severity-and-alternative-red-flags') { const ordered = pattern && severity && pattern.tick <= severity.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Whole-child severity and alternative red flags followed pattern review without relying on loudness, saturation, or one score.' : 'Severity and alternative review was absent or preceded the upper-airway pattern.', atTick: severity?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'record-croup-minimal-distress-support-and-qualified-treatment-intent') { const ordered = severity && treatment && severity.tick <= treatment.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Caregiver-centered minimal-distress care and qualified-team treatment intent were recorded without learner drug, dose, route, device, procedure, or treatment delivery.' : 'Qualified calm support was absent or preceded severity review.', atTick: treatment?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-croup-early-response') { const ordered = treatment && early && treatment.tick < early.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed qualified care, early whole-child improvement was reviewed without declaring cure, durable recovery, or discharge readiness.' : 'The early response was absent or did not follow qualified care after elapsed time.', atTick: early?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-croup-recurrence-and-preserve-airway-readiness') { const ordered = early && recurrence && early.tick < recurrence.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Strictly later recurrent stridor at rest renewed pediatric and airway-capable ownership without automatic treatment, procedure, or disposition.' : 'The recurrence review was absent or did not follow the early response after elapsed time.', atTick: recurrence?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = recurrence && handoff && recurrence.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved treatment timing, recurrence, open mimics, deterioration triggers, monitoring, and named owners without claiming durable recovery, disposition, or outcome.' : 'The active upper-airway-risk handoff was absent or did not follow recurrence review after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

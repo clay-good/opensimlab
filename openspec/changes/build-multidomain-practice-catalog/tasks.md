@@ -280,6 +280,11 @@ credited toward the catalog until every item in the completion contract passes.
     a strictly elapsed partial response; contextual restraint of routine imaging and low-value
     medicines; and active-risk handoff without device, route, dose, suction, treatment, or
     disposition controls.
+  - [x] Pediatrics slice 3/16 adds one authored 3-year-old croup reassessment with calm
+    caregiver-centered support, whole-child upper-airway severity and alternative-red-flag review,
+    qualified-team corticosteroid and nebulized epinephrine intent, a strictly elapsed early
+    response, later recurrent stridor at rest, and active-risk handoff without learner drug, dose,
+    device, airway-procedure, treatment, or disposition controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing

@@ -1668,6 +1668,24 @@ not examine, diagnose, identify a virus, acquire or interpret tests, select or d
 feeding, fluids, medicines, suction, ventilation, a procedure, or treatment, determine disposition,
 or predict durable recovery or outcome.
 
+### Wave D pediatrics slice 3: croup
+
+The third Pediatrics lab is a calm upper-airway reassessment, distinct from generic respiratory
+failure and infant lower-airway disease. A previously well 3-year-old girl weighing 15 kg has a
+coryzal prodrome followed by bark, hoarseness, inspiratory stridor at calm rest, moderate recession,
+and clean pulse-coherent room-air SpO₂ 96% while alert, warm, perfused, and consolable with her
+caregiver. Learners reconcile the supplied whole-child pattern and dangerous-alternative guards,
+then keep the child with her caregiver, minimize handling, and record experienced pediatric and
+airway-capable support plus qualified-team corticosteroid and nebulized epinephrine intent.
+
+A strictly elapsed fixed 20-minute report removes stridor at calm rest while bark and hoarseness
+persist. Another strictly later observation shows mild recurrent stridor at rest and recession,
+renewing experienced ownership before an elapsed active-risk handoff. Albuterol, routine imaging,
+discharge after early improvement, and reassurance from normal saturation are calm nonmutating
+choices. The lab does not examine the throat; diagnose; acquire or interpret tests; select or
+deliver a drug, dose, route, concentration, repeat interval, oxygen interface or setting, nebulizer,
+airway maneuver, ventilation, procedure, or treatment; decide disposition; or predict outcome.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic
