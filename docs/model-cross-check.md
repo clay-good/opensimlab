@@ -167,6 +167,12 @@ Recorded here rather than silently carried:
   ischemia, infarct evolution, neurological examination, NIHSS, disability, imaging, glucose,
   antiplatelet or thrombolytic pharmacology, reperfusion, treatment effect, etiology, recurrence,
   rehabilitation need, disposition, prognosis, or outcome.
+  Late-window basilar artery occlusion escalation overlays fixed timing, posterior neurological
+  findings, NIHSS, prestroke function, CT, CTA, pc-ASPECTS, physiology, qualified endovascular and
+  airway-capable ownership, and strict-later surveillance on the healthy adult scaffold; it does
+  not validate cerebral ischemia, examination, scoring, imaging, eligibility, airway safety,
+  transfer, thrombectomy, reperfusion, treatment effect, etiology, disposition, prognosis, or
+  outcome.
 
 ## Concentration-time checks, 2026-08-23
 

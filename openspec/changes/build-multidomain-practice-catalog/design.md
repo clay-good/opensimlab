@@ -2019,6 +2019,24 @@ procedure; prescribe rehabilitation; determine admission or discharge; predict p
 outcome. The Emergency Medicine lesson retains disabling left-M1 stroke, exact thrombolytic intent,
 and thrombectomy transfer; the next Neurology slice retains LVO escalation.
 
+### Wave E neurology slice 2: late-window basilar artery occlusion escalation
+
+The second Neurology lab owns posterior-circulation LVO escalation, not another early anterior
+thrombolysis lesson. A previously independent 74-year-old man has 10 hours of diplopia, vertigo,
+severe dysarthria, and left-sided weakness. Supplied examination, NIHSS 14, prestroke modified
+Rankin Scale 0, CT without hemorrhage and with pc-ASPECTS 8, and CTA with mid-basilar occlusion are
+authored selection facts. Present cough and secretion handling do not close the airway risk created
+by bulbar findings and fluctuating alertness.
+
+The learner serially reconciles the trajectory, reviews fixed evidence and open mimics, recognizes
+the qualified thrombectomy-escalation boundary, and activates endovascular and airway-capable
+ownership without waiting for a treatment decision or response. A strict later persistent-deficit
+report precedes another elapsed handoff of clocks, imaging, thrombolysis review, etiology, airway
+risk, procedure, complications, disposition, and unresolved outcome. No history, examination,
+score calculation, testing, imaging interpretation, diagnosis, eligibility adjudication, drug,
+blood-pressure target, airway management, transfer mechanics, thrombectomy, reperfusion grade,
+procedure, treatment, disposition, prognosis, or outcome is controlled or claimed.
+
 #### Neurology: 15
 
 Acute ischemic stroke; large-vessel-occlusion escalation; intracranial hemorrhage; subarachnoid

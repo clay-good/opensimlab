@@ -1025,6 +1025,9 @@ export function Cockpit({
           onNeurologyMinorStrokeResponse={(action) => session.act({
             type: 'minor-nondisabling-acute-ischemic-stroke-response', payload: { action },
           })}
+          onNeurologyBasilarLvoResponse={(action) => session.act({
+            type: 'basilar-artery-occlusion-escalation-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

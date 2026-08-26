@@ -297,6 +297,14 @@ const NEUROLOGY_MINOR_STROKE_BLOCKED_ACTION_TYPES = new Set([
   'glycemic-response', 'hypoglycemic-response', 'acute-aortic-syndrome-response',
   'pediatric-status-epilepticus-response', 'pediatric-hypoglycemic-seizure-response',
 ]);
+const NEUROLOGY_BASILAR_LVO_BLOCKED_ACTION_TYPES = new Set([
+  ...HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES,
+  'acute-ischemic-stroke-response', 'minor-nondisabling-acute-ischemic-stroke-response',
+  'intracranial-hemorrhage-response', 'intracranial-hypertension-response',
+  'status-epilepticus-response', 'critical-care-status-epilepticus-response',
+  'hyponatremia-response', 'glycemic-response', 'acute-aortic-syndrome-response',
+  'pediatric-status-epilepticus-response', 'pediatric-hypoglycemic-seizure-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1050,6 +1058,12 @@ export class AnesthesiaEngine {
   private neurologyMinorStrokeIntentAtTick: number | null = null;
   private neurologyMinorStrokeLaterAtTick: number | null = null;
   private neurologyMinorStrokeHandoffAtTick: number | null = null;
+  private neurologyBasilarLvoTrajectoryAtTick: number | null = null;
+  private neurologyBasilarLvoImagingAtTick: number | null = null;
+  private neurologyBasilarLvoBoundaryAtTick: number | null = null;
+  private neurologyBasilarLvoActivationAtTick: number | null = null;
+  private neurologyBasilarLvoLaterAtTick: number | null = null;
+  private neurologyBasilarLvoHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1622,6 +1636,20 @@ export class AnesthesiaEngine {
         'This Neurology lesson exposes no generic thrombolysis, antiplatelet, medication, dose, '
         + 'route, blood-pressure, imaging, glucose, airway, fluid, device, procedure, adult ED '
         + 'stroke, critical-care neurologic, or adjacent-scenario action. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const neurologyBasilarLvo = this.scenario.metadata.id === 'basilar-artery-occlusion-escalation'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'basilar-artery-occlusion-escalation-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'basilar-artery-occlusion-escalation-reassessment-boundary');
+    if (neurologyBasilarLvo && NEUROLOGY_BASILAR_LVO_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment',
+        `neurology-basilar-lvo-generic-action-refused-${this.currentTick}`,
+        'This Neurology lesson exposes no generic thrombolysis, antiplatelet, medication, dose, '
+        + 'route, blood-pressure, imaging, airway, fluid, device, procedure, adult ED stroke, '
+        + 'critical-care neurologic, or adjacent-scenario action. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -8232,6 +8260,171 @@ export class AnesthesiaEngine {
             dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false });
         break;
       }
+      case 'basilar-artery-occlusion-escalation-response': {
+        const response = typeof action.payload.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'basilar-artery-occlusion-escalation'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'basilar-artery-occlusion-escalation-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'basilar-artery-occlusion-escalation-reassessment-boundary');
+        const valid = [
+          'reconcile-neurology-basilar-lvo-clock-posterior-syndrome-and-whole-patient',
+          'review-neurology-basilar-lvo-imaging-selection-and-open-mimics',
+          'recognize-neurology-basilar-lvo-thrombectomy-escalation-boundary',
+          'activate-neurology-basilar-lvo-qualified-endovascular-and-airway-capable-ownership',
+          'review-neurology-basilar-lvo-strict-later-neurologic-and-airway-trajectory',
+          'handoff-neurology-basilar-lvo-clocks-imaging-deterioration-and-unresolved-outcome',
+        ].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment',
+            `neurology-basilar-lvo-response-refused-${this.currentTick}`,
+            supported
+              ? 'The basilar-LVO action was not one of the listed choices. No supplied or injected text was retained.'
+              : 'These basilar-LVO choices are available only in the exact declared Neurology lesson.');
+          break;
+        }
+        if (response
+          === 'reconcile-neurology-basilar-lvo-clock-posterior-syndrome-and-whole-patient') {
+          if (this.neurologyBasilarLvoTrajectoryAtTick !== null) {
+            this.log('warning', 'assessment',
+              `neurology-basilar-lvo-trajectory-refused-${this.currentTick}`,
+              'The supplied clock, posterior syndrome, physiology, and whole-patient state were already reconciled.');
+            break;
+          }
+          this.neurologyBasilarLvoTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `neurology-basilar-lvo-trajectory-reconciled-${this.currentTick}`,
+            'The supplied record establishes an acute disabling posterior-circulation syndrome with stable breathing and circulation. The learner did not take a history, examine, score, diagnose, select treatment, or predict outcome.',
+            { posteriorCirculationSyndromeAuthored: true, disablingDeficitAuthored: true,
+              patientExaminedByLearner: false, scoreCalculatedByLearner: false,
+              diagnosisMadeByLearner: false, treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.neurologyBasilarLvoTrajectoryAtTick === null) {
+          this.log('warning', 'assessment',
+            `neurology-basilar-lvo-trajectory-order-refused-${this.currentTick}`,
+            'Reconcile the supplied clock and posterior syndrome before reviewing imaging.');
+          break;
+        }
+        if (response === 'review-neurology-basilar-lvo-imaging-selection-and-open-mimics') {
+          if (this.neurologyBasilarLvoImagingAtTick !== null) {
+            this.log('warning', 'assessment',
+              `neurology-basilar-lvo-imaging-refused-${this.currentTick}`,
+              'The fixed imaging, selection context, immediate threats, and open mimics were already reviewed.');
+            break;
+          }
+          this.neurologyBasilarLvoImagingAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `neurology-basilar-lvo-imaging-and-selection-reviewed-${this.currentTick}`,
+            'Fixed brain and vessel imaging, qualified selection context, physiology, and open mimics were reviewed. The learner did not acquire or interpret imaging, adjudicate eligibility, select a device, or exclude a mimic.',
+            { basilarOcclusionAuthored: true, fixedImagingAuthored: true,
+              imagingAcquiredByLearner: false, imagingInterpretedByLearner: false,
+              eligibilityDeterminedByLearner: false, strokeMimicExcluded: false });
+          break;
+        }
+        if (this.neurologyBasilarLvoImagingAtTick === null) {
+          this.log('warning', 'assessment',
+            `neurology-basilar-lvo-imaging-order-refused-${this.currentTick}`,
+            'Review fixed imaging, selection context, immediate threats, and open mimics first.');
+          break;
+        }
+        if (response === 'recognize-neurology-basilar-lvo-thrombectomy-escalation-boundary') {
+          if (this.neurologyBasilarLvoBoundaryAtTick !== null) {
+            this.log('warning', 'assessment',
+              `neurology-basilar-lvo-boundary-refused-${this.currentTick}`,
+              'The qualified thrombectomy-escalation boundary was already recognized.');
+            break;
+          }
+          this.neurologyBasilarLvoBoundaryAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `neurology-basilar-lvo-escalation-boundary-recognized-${this.currentTick}`,
+            'The supplied disabling syndrome and fixed basilar occlusion require immediate qualified endovascular escalation without using a score, single cutoff, or observed treatment response alone. This is not learner eligibility adjudication or procedure selection.',
+            { thrombectomyEscalationBoundaryAuthored: true, scoreAloneUsed: false,
+              singleCutoffUsed: false, treatmentResponseRequired: false,
+              eligibilityDeterminedByLearner: false, procedureSelectedByLearner: false });
+          break;
+        }
+        if (this.neurologyBasilarLvoBoundaryAtTick === null) {
+          this.log('warning', 'assessment',
+            `neurology-basilar-lvo-boundary-order-refused-${this.currentTick}`,
+            'Recognize the qualified thrombectomy-escalation boundary before activating ownership.');
+          break;
+        }
+        if (response
+          === 'activate-neurology-basilar-lvo-qualified-endovascular-and-airway-capable-ownership') {
+          if (this.neurologyBasilarLvoActivationAtTick !== null) {
+            this.log('warning', 'assessment',
+              `neurology-basilar-lvo-activation-refused-${this.currentTick}`,
+              'Qualified endovascular and airway-capable ownership is already active.');
+            break;
+          }
+          this.neurologyBasilarLvoActivationAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `neurology-basilar-lvo-qualified-ownership-activated-${this.currentTick}`,
+            'Qualified stroke, endovascular, transfer, and airway-capable teams now own escalation and surveillance. The learner did not select or deliver thrombolysis, blood-pressure therapy, transport, airway care, device, thrombectomy, anesthesia, or another procedure.',
+            { qualifiedEndovascularOwnershipActive: true,
+              qualifiedAirwayCapableOwnershipActive: true,
+              drugSelectedByLearner: false, deviceSelectedByLearner: false,
+              procedurePerformedByLearner: false, treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.neurologyBasilarLvoActivationAtTick === null) {
+          this.log('warning', 'assessment',
+            `neurology-basilar-lvo-activation-order-refused-${this.currentTick}`,
+            'Activate qualified endovascular and airway-capable ownership before later review.');
+          break;
+        }
+        if (response
+          === 'review-neurology-basilar-lvo-strict-later-neurologic-and-airway-trajectory') {
+          if (this.currentTick <= this.neurologyBasilarLvoActivationAtTick) {
+            this.log('warning', 'assessment',
+              `neurology-basilar-lvo-later-time-refused-${this.currentTick}`,
+              'Allow elapsed simulated time before reviewing the fixed later trajectory.');
+            break;
+          }
+          if (this.neurologyBasilarLvoLaterAtTick !== null) {
+            this.log('warning', 'assessment',
+              `neurology-basilar-lvo-later-refused-${this.currentTick}`,
+              'The fixed later neurologic and airway trajectory was already reviewed.');
+            break;
+          }
+          this.neurologyBasilarLvoLaterAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `neurology-basilar-lvo-later-trajectory-reviewed-${this.currentTick}`,
+            'The fixed later report preserves the posterior neurologic syndrome, spontaneous breathing, and qualified ownership. Short-window physiology does not prove vessel opening, reperfusion, treatment effect, durable airway protection, neurologic recovery, or outcome.',
+            { laterPosteriorSyndromePersistsAuthored: true,
+              qualifiedEndovascularOwnershipActive: true, vesselPatencyProven: false,
+              reperfusionProven: false, treatmentEffectProven: false,
+              durableAirwayProtectionProven: false, neurologicRecoveryProven: false });
+          break;
+        }
+        if (this.neurologyBasilarLvoLaterAtTick === null) {
+          this.log('warning', 'assessment',
+            `neurology-basilar-lvo-later-order-refused-${this.currentTick}`,
+            'Review the fixed later neurologic and airway trajectory before handoff.');
+          break;
+        }
+        if (this.currentTick <= this.neurologyBasilarLvoLaterAtTick) {
+          this.log('warning', 'assessment',
+            `neurology-basilar-lvo-handoff-time-refused-${this.currentTick}`,
+            'Allow another simulated tick before handing off unresolved active risk.');
+          break;
+        }
+        if (this.neurologyBasilarLvoHandoffAtTick !== null) {
+          this.log('warning', 'assessment',
+            `neurology-basilar-lvo-handoff-refused-${this.currentTick}`,
+            'The clocks, imaging, deterioration, and unresolved-outcome handoff was already recorded.');
+          break;
+        }
+        this.neurologyBasilarLvoHandoffAtTick = this.currentTick;
+        this.log('critical', 'assessment',
+          `neurology-basilar-lvo-active-risk-handoff-recorded-${this.currentTick}`,
+          'The supplied clocks, posterior syndrome, fixed imaging, qualified escalation, neurologic and airway surveillance, deterioration risk, and unresolved reperfusion and outcome work were handed off. Treatment, vessel patency, reperfusion, durable recovery, disposition, prognosis, and outcome remain undeclared.',
+          { vesselPatencyProven: false, reperfusionProven: false,
+            treatmentEffectProven: false, durableNeurologicRecoveryProven: false,
+            dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false });
+        break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -11286,6 +11479,21 @@ export class AnesthesiaEngine {
         meanArterialMmHg: later ? 106 : 111,
         coreTemperatureC: 36.8 };
     }
+    if (this.scenario.metadata.id === 'basilar-artery-occlusion-escalation'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'basilar-artery-occlusion-escalation-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'basilar-artery-occlusion-escalation-reassessment-boundary')) {
+      const later = this.neurologyBasilarLvoLaterAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: later ? 86 : 84,
+        respiratoryRateBpm: 20,
+        spo2Percent: later ? 95 : 96,
+        systolicMmHg: later ? 166 : 174,
+        diastolicMmHg: later ? 92 : 96,
+        meanArterialMmHg: later ? 117 : 122,
+        coreTemperatureC: 36.8 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -13661,6 +13869,69 @@ export class AnesthesiaEngine {
               durableNeurologicStabilityProven: false as const,
               completeRecoveryProven: false as const,
               lowRecurrenceRiskProven: false as const,
+              dischargeReadinessProven: false as const,
+              dispositionDetermined: false as const,
+              prognosisPredicted: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'basilar-artery-occlusion-escalation'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'basilar-artery-occlusion-escalation-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'basilar-artery-occlusion-escalation-reassessment-boundary') ? {
+            neurologyBasilarLvoAssessment: {
+              trajectoryAtTick: this.neurologyBasilarLvoTrajectoryAtTick,
+              imagingAtTick: this.neurologyBasilarLvoImagingAtTick,
+              boundaryAtTick: this.neurologyBasilarLvoBoundaryAtTick,
+              activationAtTick: this.neurologyBasilarLvoActivationAtTick,
+              laterAtTick: this.neurologyBasilarLvoLaterAtTick,
+              handoffAtTick: this.neurologyBasilarLvoHandoffAtTick,
+              initialPulsePresent: true as const,
+              spontaneousBreathingAuthored: true as const,
+              posteriorCirculationSyndromeAuthored: true as const,
+              disablingDeficitAuthored: true as const,
+              basilarOcclusionAuthored: true as const,
+              fixedImagingAuthored: true as const,
+              thrombectomyEscalationBoundaryAuthored:
+                this.neurologyBasilarLvoBoundaryAtTick !== null,
+              qualifiedEndovascularOwnershipActive:
+                this.neurologyBasilarLvoActivationAtTick !== null,
+              qualifiedAirwayCapableOwnershipActive:
+                this.neurologyBasilarLvoActivationAtTick !== null,
+              laterPosteriorSyndromePersistsAuthored:
+                this.neurologyBasilarLvoLaterAtTick !== null,
+              patientHistoryTakenByLearner: false as const,
+              patientExaminedByLearner: false as const,
+              neurologicExamPerformedByLearner: false as const,
+              scoreCalculatedByLearner: false as const,
+              clockDeterminedByLearner: false as const,
+              imagingAcquiredByLearner: false as const,
+              imagingInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const,
+              strokeMimicExcluded: false as const,
+              eligibilityDeterminedByLearner: false as const,
+              thrombolysisSelectedByLearner: false as const,
+              drugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const,
+              routeSelectedByLearner: false as const,
+              accessPlacedByLearner: false as const,
+              medicationDeliveredByLearner: false as const,
+              bloodPressureTargetSelectedByLearner: false as const,
+              transportSelectedByLearner: false as const,
+              airwayDeviceSelectedByLearner: false as const,
+              airwayProcedurePerformedByLearner: false as const,
+              anesthesiaSelectedByLearner: false as const,
+              thrombectomyDeviceSelectedByLearner: false as const,
+              procedureSelectedByLearner: false as const,
+              procedurePerformedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              vesselPatencyProven: false as const,
+              reperfusionProven: false as const,
+              treatmentEffectProven: false as const,
+              durableAirwayProtectionProven: false as const,
+              durableNeurologicRecoveryProven: false as const,
+              deteriorationExcluded: false as const,
               dischargeReadinessProven: false as const,
               dispositionDetermined: false as const,
               prognosisPredicted: false as const,

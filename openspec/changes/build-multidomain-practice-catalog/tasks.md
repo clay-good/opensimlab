@@ -388,6 +388,13 @@ credited toward the catalog until every item in the completion contract passes.
     adjudication, antiplatelet product, combination, dose, duration, route, access, prescription,
     preparation or delivery, thrombolytic, blood-pressure treatment, reperfusion, procedure,
     rehabilitation prescription, disposition, prognosis, treatment-effect, or outcome controls.
+  - [x] Neurology slice 2/15 adds one authored late-window basilar-artery-occlusion escalation with a
+    10-hour posterior syndrome, supplied baseline function, NIHSS, CT, CTA, and pc-ASPECTS context,
+    immediate qualified endovascular and airway-capable ownership, strict later surveillance, and
+    another elapsed unresolved-risk handoff without learner examination, scoring, imaging or test
+    acquisition or interpretation, diagnosis, eligibility adjudication, drug, dose, route,
+    blood-pressure target, airway device, transfer, thrombectomy, reperfusion grading, procedure,
+    treatment, disposition, prognosis, treatment-effect, or outcome controls.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.

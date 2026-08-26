@@ -1507,6 +1507,17 @@
         "GB"
       ],
       "fidelityClass": "state_transition"
+    },
+    {
+      "scenarioId": "basilar-artery-occlusion-escalation",
+      "contentVersion": "0.1.0",
+      "moduleId": "neurology",
+      "maturity": "draft",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition"
     }
   ]
 }

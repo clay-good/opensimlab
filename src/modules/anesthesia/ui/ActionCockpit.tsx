@@ -1105,6 +1105,11 @@ export interface ActionCockpitProps {
       readonly boundaryAtTick: number | null; readonly intentAtTick: number | null;
       readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly neurologyBasilarLvoAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly imagingAtTick: number | null;
+      readonly boundaryAtTick: number | null; readonly activationAtTick: number | null;
+      readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1821,6 +1826,14 @@ export interface ActionCockpitProps {
       | 'review-neurology-minor-stroke-later-neurologic-trajectory'
       | 'handoff-neurology-minor-stroke-etiology-recurrence-and-secondary-prevention-risk',
   ) => void;
+  readonly onNeurologyBasilarLvoResponse?: (
+    action: 'reconcile-neurology-basilar-lvo-clock-posterior-syndrome-and-whole-patient'
+      | 'review-neurology-basilar-lvo-imaging-selection-and-open-mimics'
+      | 'recognize-neurology-basilar-lvo-thrombectomy-escalation-boundary'
+      | 'activate-neurology-basilar-lvo-qualified-endovascular-and-airway-capable-ownership'
+      | 'review-neurology-basilar-lvo-strict-later-neurologic-and-airway-trajectory'
+      | 'handoff-neurology-basilar-lvo-clocks-imaging-deterioration-and-unresolved-outcome',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2238,6 +2251,12 @@ export function crisisResponseAvailability(
         && event.target === 'minor-nondisabling-acute-ischemic-stroke-reassessment')
       && scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'minor-nondisabling-acute-ischemic-stroke-reassessment-boundary'),
+    hasNeurologyBasilarLvoResponse:
+      scenario.metadata.id === 'basilar-artery-occlusion-escalation'
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'basilar-artery-occlusion-escalation-reassessment')
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'basilar-artery-occlusion-escalation-reassessment-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2411,6 +2430,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'pediatric-injury-safeguarding-escalation-reassessment')
       || (event.type === 'narrative'
         && event.target === 'minor-nondisabling-acute-ischemic-stroke-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'basilar-artery-occlusion-escalation-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2484,6 +2505,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasPediatricForeignBodyAirwayObstructionResponse,
     hasPediatricInjurySafeguardingResponse,
     hasNeurologyMinorStrokeResponse,
+    hasNeurologyBasilarLvoResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2562,7 +2584,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPediatricStatusEpilepticusResponse || hasPediatricAnaphylaxisResponse
     || hasPediatricSupraventricularTachycardiaResponse || hasPediatricBradycardicArrestResponse
     || hasPediatricForeignBodyAirwayObstructionResponse || hasPediatricInjurySafeguardingResponse
-    || hasNeurologyMinorStrokeResponse;
+    || hasNeurologyMinorStrokeResponse || hasNeurologyBasilarLvoResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2593,7 +2615,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasNeurologyMinorStrokeResponse
+  const responseTray = hasNeurologyBasilarLvoResponse
+    ? { id: 'crisis', label: 'Basilar LVO reassessment' } as const
+    : hasNeurologyMinorStrokeResponse
     ? { id: 'crisis', label: 'Minor-stroke reassessment' } as const
     : hasPediatricInjurySafeguardingResponse
     ? { id: 'crisis', label: 'Pediatric safeguarding reassessment' } as const
@@ -2889,6 +2913,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPediatricForeignBodyAirwayObstructionResponse
     || hasPediatricInjurySafeguardingResponse
     || hasNeurologyMinorStrokeResponse
+    || hasNeurologyBasilarLvoResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3620,6 +3645,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <NeurologyMinorStrokeTray
                 assessment={props.resuscitation.neurologyMinorStrokeAssessment}
                 onAction={props.onNeurologyMinorStrokeResponse ?? (() => {})} />
+            )}
+            {hasNeurologyBasilarLvoResponse && (
+              <NeurologyBasilarLvoTray
+                assessment={props.resuscitation.neurologyBasilarLvoAssessment}
+                onAction={props.onNeurologyBasilarLvoResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -9443,6 +9473,61 @@ function NeurologyMinorStrokeTray({ assessment, onAction }: {
           onClick={() => onAction('handoff-neurology-minor-stroke-etiology-recurrence-and-secondary-prevention-risk')}>Hand off cause + recurrence risk</Button>}
       </div>
       <p className="field__hint">Short-window stability does not establish treatment effect, infarct resolution, complete recovery, durable control, low recurrence risk, disposition, prognosis, or outcome.</p>
+    </section>
+  </div>;
+}
+
+function NeurologyBasilarLvoTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyBasilarLvoAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNeurologyBasilarLvoResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const imaging = assessment?.imagingAtTick != null;
+  const boundary = assessment?.boundaryAtTick != null;
+  const activation = assessment?.activationAtTick != null;
+  const later = assessment?.laterAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="neurology-basilar-lvo-recognition-title">
+      <div id="neurology-basilar-lvo-recognition-title" className="syringe__name">Posterior signs still need speed.</div>
+      <Badge kind="teaching">clock · posterior syndrome · CT · CTA · selection · airway watch</Badge>
+      <div className="syringe__meta">fixed posterior-circulation record · basilar occlusion supplied</div>
+      <p className="syringe__remaining">
+        {activation ? 'Qualified EVT and airway-capable ownership are active'
+          : boundary ? 'Escalation boundary clear · activate qualified ownership'
+            : imaging ? 'Fixed imaging and selection context reviewed · recognize the escalation boundary'
+              : trajectory ? 'Clock and posterior syndrome reconciled · review the supplied imaging context'
+                : 'Start with the clock, posterior pattern, physiology, and whole patient.'}
+      </p>
+      <div className="syringe__presets">
+        {!trajectory && <Button className="crisis-drug__action"
+          onClick={() => onAction('reconcile-neurology-basilar-lvo-clock-posterior-syndrome-and-whole-patient')}>Review clock + posterior syndrome</Button>}
+        {trajectory && !imaging && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-neurology-basilar-lvo-imaging-selection-and-open-mimics')}>Review fixed imaging + selection context</Button>}
+        {imaging && !boundary && <Button className="crisis-drug__action"
+          onClick={() => onAction('recognize-neurology-basilar-lvo-thrombectomy-escalation-boundary')}>Recognize the escalation boundary</Button>}
+        {boundary && !activation && <Button className="crisis-drug__action"
+          onClick={() => onAction('activate-neurology-basilar-lvo-qualified-endovascular-and-airway-capable-ownership')}>Activate qualified EVT + airway ownership</Button>}
+      </div>
+      <p className="field__hint">The examination, score, imaging, and selection context are supplied. Qualified stroke, endovascular, transfer, and airway-capable teams own eligibility, treatment, procedures, transport, and deterioration support.</p>
+    </section>
+    <section className="syringe" aria-labelledby="neurology-basilar-lvo-handoff-title">
+      <div id="neurology-basilar-lvo-handoff-title" className="syringe__name">The handoff keeps every risk open.</div>
+      <Badge kind="teaching">neurologic change · airway risk · clocks · imaging · owners · uncertainty</Badge>
+      <div className="syringe__meta">fixed later report · reperfusion and outcome remain open</div>
+      <p className="syringe__remaining" role="status">
+        {handoff ? 'Clocks, imaging context, deterioration risk, and owners handed off.'
+          : later ? 'The posterior syndrome persists. Airway risk and outcome remain open.'
+            : activation ? 'Qualified ownership is active. Review the fixed later neurologic report.'
+              : 'Complete recognition and qualified escalation before reassessment.'}
+      </p>
+      <div className="syringe__presets">
+        {activation && !later && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-neurology-basilar-lvo-strict-later-neurologic-and-airway-trajectory')}>Review the later neurologic report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action"
+          onClick={() => onAction('handoff-neurology-basilar-lvo-clocks-imaging-deterioration-and-unresolved-outcome')}>Hand off clocks + active risk</Button>}
+      </div>
+      <p className="field__hint">The later report does not establish reperfusion, treatment effect, durable airway protection, neurological recovery, transfer completion, disposition, prognosis, or outcome.</p>
     </section>
   </div>;
 }

@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 133 reports Neurology minor-stroke reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 133;
+/** Bumped whenever the message shape changes incompatibly. Version 134 reports Neurology basilar-LVO escalation state. */
+export const WORKER_PROTOCOL_VERSION = 134;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1686,6 +1686,59 @@ export interface EquipmentSnapshot {
       readonly durableNeurologicStabilityProven: false;
       readonly completeRecoveryProven: false;
       readonly lowRecurrenceRiskProven: false;
+      readonly dischargeReadinessProven: false;
+      readonly dispositionDetermined: false;
+      readonly prognosisPredicted: false;
+      readonly outcomePredicted: false;
+    };
+    readonly neurologyBasilarLvoAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly imagingAtTick: number | null;
+      readonly boundaryAtTick: number | null;
+      readonly activationAtTick: number | null;
+      readonly laterAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true;
+      readonly spontaneousBreathingAuthored: true;
+      readonly posteriorCirculationSyndromeAuthored: true;
+      readonly disablingDeficitAuthored: true;
+      readonly basilarOcclusionAuthored: true;
+      readonly fixedImagingAuthored: true;
+      readonly thrombectomyEscalationBoundaryAuthored: boolean;
+      readonly qualifiedEndovascularOwnershipActive: boolean;
+      readonly qualifiedAirwayCapableOwnershipActive: boolean;
+      readonly laterPosteriorSyndromePersistsAuthored: boolean;
+      readonly patientHistoryTakenByLearner: false;
+      readonly patientExaminedByLearner: false;
+      readonly neurologicExamPerformedByLearner: false;
+      readonly scoreCalculatedByLearner: false;
+      readonly clockDeterminedByLearner: false;
+      readonly imagingAcquiredByLearner: false;
+      readonly imagingInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false;
+      readonly strokeMimicExcluded: false;
+      readonly eligibilityDeterminedByLearner: false;
+      readonly thrombolysisSelectedByLearner: false;
+      readonly drugSelectedByLearner: false;
+      readonly doseSelectedByLearner: false;
+      readonly routeSelectedByLearner: false;
+      readonly accessPlacedByLearner: false;
+      readonly medicationDeliveredByLearner: false;
+      readonly bloodPressureTargetSelectedByLearner: false;
+      readonly transportSelectedByLearner: false;
+      readonly airwayDeviceSelectedByLearner: false;
+      readonly airwayProcedurePerformedByLearner: false;
+      readonly anesthesiaSelectedByLearner: false;
+      readonly thrombectomyDeviceSelectedByLearner: false;
+      readonly procedureSelectedByLearner: false;
+      readonly procedurePerformedByLearner: false;
+      readonly treatmentDeliveredByLearner: false;
+      readonly vesselPatencyProven: false;
+      readonly reperfusionProven: false;
+      readonly treatmentEffectProven: false;
+      readonly durableAirwayProtectionProven: false;
+      readonly durableNeurologicRecoveryProven: false;
+      readonly deteriorationExcluded: false;
       readonly dischargeReadinessProven: false;
       readonly dispositionDetermined: false;
       readonly prognosisPredicted: false;

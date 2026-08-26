@@ -4972,6 +4972,32 @@ export function objectiveFindings(
       const ordered = later && handoff && later.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved open etiology, rhythm surveillance, vascular-risk review, individualized prevention, rehabilitation need, recurrence risk, disposition, and named ownership without claiming prognosis or outcome.' : 'The active-risk handoff was absent or did not follow later reassessment after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-neurology-basilar-lvo-clock-posterior-syndrome-and-whole-patient',
+      'review-neurology-basilar-lvo-imaging-selection-and-open-mimics',
+      'recognize-neurology-basilar-lvo-thrombectomy-escalation-boundary',
+      'activate-neurology-basilar-lvo-qualified-endovascular-and-airway-capable-ownership',
+      'review-neurology-basilar-lvo-strict-later-neurologic-and-airway-trajectory',
+      'handoff-neurology-basilar-lvo-clocks-imaging-deterioration-and-unresolved-outcome'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'basilar-artery-occlusion-escalation'
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'basilar-artery-occlusion-escalation-reassessment')
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'basilar-artery-occlusion-escalation-reassessment-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neurology basilar-LVO escalation lesson was not active.' } satisfies ObjectiveFinding;
+      const trajectory = log.find((event) => /^neurology-basilar-lvo-trajectory-reconciled-\d+$/.test(event.eventId));
+      const imaging = log.find((event) => /^neurology-basilar-lvo-imaging-and-selection-reviewed-\d+$/.test(event.eventId));
+      const boundary = log.find((event) => /^neurology-basilar-lvo-escalation-boundary-recognized-\d+$/.test(event.eventId));
+      const activation = log.find((event) => /^neurology-basilar-lvo-qualified-ownership-activated-\d+$/.test(event.eventId));
+      const later = log.find((event) => /^neurology-basilar-lvo-later-trajectory-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^neurology-basilar-lvo-active-risk-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-neurology-basilar-lvo-clock-posterior-syndrome-and-whole-patient') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'The supplied clock, posterior-circulation syndrome, physiology, functional loss, and whole-patient state were reconciled without learner history, examination, score calculation, diagnosis, or treatment.' : 'The basilar-LVO clock and posterior syndrome were not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-neurology-basilar-lvo-imaging-selection-and-open-mimics') { const ordered = trajectory && imaging && trajectory.tick <= imaging.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Fixed CT, vascular imaging, selection context, physiology, open mimics, and immediate threats were reviewed without learner acquisition, interpretation, eligibility adjudication, or mimic exclusion.' : 'The supplied imaging and selection-context review was absent or preceded trajectory review.', atTick: imaging?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'recognize-neurology-basilar-lvo-thrombectomy-escalation-boundary') { const ordered = imaging && boundary && imaging.tick <= boundary.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The basilar-occlusion escalation boundary was recognized from the combined fixed syndrome and imaging context without claiming treatment eligibility or outcome.' : 'The escalation boundary was absent or preceded the supplied imaging review.', atTick: boundary?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-neurology-basilar-lvo-qualified-endovascular-and-airway-capable-ownership') { const ordered = boundary && activation && boundary.tick <= activation.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Qualified endovascular, stroke, transfer, and airway-capable ownership was activated without learner drug, dose, blood-pressure, airway-device, transport, thrombectomy-device, procedure, or treatment controls.' : 'Qualified endovascular and airway-capable ownership was absent or preceded escalation recognition.', atTick: activation?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-neurology-basilar-lvo-strict-later-neurologic-and-airway-trajectory') { const ordered = activation && later && activation.tick < later.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed qualified work, the fixed neurologic and airway trajectory was reviewed without claiming reperfusion, treatment effect, durable airway protection, recovery, transfer completion, or outcome.' : 'The later neurologic report was absent or did not follow qualified activation after elapsed time.', atTick: later?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = later && handoff && later.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved clocks, fixed imaging context, neurologic and airway deterioration risk, unresolved treatment and outcome, and named owners without claiming procedure, transfer completion, prognosis, or outcome.' : 'The active-risk handoff was absent or did not follow later reassessment after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

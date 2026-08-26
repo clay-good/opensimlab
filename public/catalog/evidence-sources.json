@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 203,
+  "sourceCount": 205,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -2593,8 +2593,8 @@
       "title": "2026 Guideline for the Early Management of Patients With Acute Ischemic Stroke",
       "publication": "Stroke",
       "year": 2026,
-      "locator": "57:e317-e473; doi:10.1161/STR.0000000000000513; section 4.6.1, Table 4, nondisabling-deficit recommendation and supportive text",
-      "usedFor": "The individualized disabling-versus-nondisabling boundary, warning that NIHSS alone is insufficient, nonthrombolytic minor-stroke pathway, early antiplatelet-strategy ownership, and neurological surveillance context.",
+      "locator": "57:e317-e473; doi:10.1161/STR.0000000000000513; sections 4.6.1 and 4.7.3, Table 4, nondisabling-deficit and posterior-circulation recommendations and supportive text",
+      "usedFor": "The individualized disabling-versus-nondisabling boundary, warning that NIHSS alone is insufficient, nonthrombolytic minor-stroke pathway, early antiplatelet-strategy ownership, neurological surveillance, and the selected basilar-occlusion EVT-within-24-hours escalation boundary.",
       "verifiedAgainst": "https://www.ahajournals.org/doi/10.1161/STR.0000000000000513",
       "verifiedOn": "2026-08-26"
     },
@@ -2623,6 +2623,32 @@
       "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/29998337/",
       "verifiedOn": "2026-08-26",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/29998337/"
+    },
+    {
+      "id": "attention-basilar-thrombectomy-2022",
+      "pmid": "36239644",
+      "authors": "Tao C, Nogueira RG, Zhu Y, et al",
+      "title": "Trial of Endovascular Treatment of Acute Basilar-Artery Occlusion",
+      "publication": "New England Journal of Medicine",
+      "year": 2022,
+      "locator": "387:1361-1372; doi:10.1056/NEJMoa2206317; eligibility, primary and safety outcomes, and trial limitations",
+      "usedFor": "Randomized evidence that selected patients with basilar occlusion within 12 hours had better functional outcomes with EVT, while preserving procedural, hemorrhage, selected-population, and China-setting limitations.",
+      "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/36239644/",
+      "verifiedOn": "2026-08-26",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/36239644/"
+    },
+    {
+      "id": "baoche-basilar-thrombectomy-2022",
+      "pmid": "36239645",
+      "authors": "Jovin TG, Li C, Wu L, et al",
+      "title": "Trial of Thrombectomy 6 to 24 Hours after Stroke Due to Basilar-Artery Occlusion",
+      "publication": "New England Journal of Medicine",
+      "year": 2022,
+      "locator": "387:1373-1384; doi:10.1056/NEJMoa2207576; eligibility, primary and safety outcomes, and trial limitations",
+      "usedFor": "Randomized evidence supporting qualified EVT escalation for selected basilar occlusion 6 to 24 hours after onset, with procedural, hemorrhage, selected-population, early-stop, and China-setting limits.",
+      "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/36239645/",
+      "verifiedOn": "2026-08-26",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/36239645/"
     }
   ]
 }

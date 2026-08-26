@@ -3863,6 +3863,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient findings, individualized functional consequences and preferences, current stroke guidance, qualified teams, patient-specific bleeding and etiologic context, appropriate imaging and testing, and repeated neurological surveillance.',
     briefIn: ['minor-nondisabling-acute-ischemic-stroke'],
   },
+  {
+    id: 'basilar-lvo-clock-neurologic-imaging-selection-and-later-state-are-authored',
+    headline: 'The clock, neurological findings, imaging, selection context, care ownership, and later state are authored.',
+    simplification: 'Fixed qualified reports stand in for history, examination, NIHSS and mRS, glucose, CT, CTA, pc-ASPECTS, mimic review, endovascular and airway planning, and serial reassessment.',
+    whereItMisleads: 'Treating fictional values, scores, imaging, negative snapshots, secretion handling, ownership, or later persistence as learner-acquired evidence, diagnosis, eligibility, treatment effect, durable airway safety, or predicted course.',
+    correctUnderstanding: 'Real care requires immediate verified stroke-system assessment, direct examination, appropriate imaging, qualified individualized reperfusion and airway decisions, and continuous neurological and whole-patient reassessment.',
+    briefIn: ['basilar-artery-occlusion-escalation'],
+  },
+  {
+    id: 'basilar-lvo-controls-reconcile-review-recognize-activate-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, fixed-evidence review, escalation recognition, qualified ownership, reassessment, and handoff only.',
+    simplification: 'Six accepted actions stand in for experienced stroke neurology, emergency, nursing, neuroradiology, neurointerventional, airway, critical-care, and transport assessment, treatment planning, monitoring, escalation, and handoff.',
+    whereItMisleads: 'Equating button order with examination, score or imaging interpretation, eligibility adjudication, airway management, transfer, thrombectomy, reperfusion assessment, team performance, disposition, or stroke competence.',
+    correctUnderstanding: 'Actual care requires the patient, trained teams, current local pathways, verified patient-specific data, qualified treatment decisions, rapid endovascular access, and continuous change-triggered reassessment.',
+    briefIn: ['basilar-artery-occlusion-escalation'],
+  },
+  {
+    id: 'no-live-basilar-lvo-exam-score-imaging-drug-airway-transfer-thrombectomy-reperfusion-disposition-or-outcome',
+    headline: 'The lab does not examine, score, image, choose a drug, manage an airway, transfer, perform thrombectomy, or report outcome.',
+    simplification: 'No live history, examination, NIHSS, mRS or pc-ASPECTS calculation, glucose or pressure measurement, imaging or test acquisition or interpretation, diagnosis, eligibility adjudication, drug, dose, route, blood-pressure target, airway device, transport, EVT technique, reperfusion grade, procedure, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Using supplied selection facts as universal eligibility, delaying escalation for a treatment response, treating current secretion handling as durable airway safety, treating negative snapshots as exclusions, copying fictional values into care, or using completion as clinical competence.',
+    correctUnderstanding: 'Use verified patient findings, current stroke guidance, qualified multidisciplinary teams, local systems, individualized benefit-risk decisions, prompt endovascular escalation, airway readiness, and repeated surveillance.',
+    briefIn: ['basilar-artery-occlusion-escalation'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

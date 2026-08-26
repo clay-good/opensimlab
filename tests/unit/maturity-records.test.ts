@@ -97,6 +97,9 @@ describe('exact-version maturity records', () => {
       neurologyCatalog, 'scenario', 'minor-nondisabling-acute-ischemic-stroke', '0.1.0',
     )?.status).toBe('draft');
     expect(maturityFor(
+      neurologyCatalog, 'scenario', 'basilar-artery-occlusion-escalation', '0.1.0',
+    )?.status).toBe('draft');
+    expect(maturityFor(
       criticalCareCatalog, 'scenario', 'ventilator-dyssynchrony', '0.1.0',
     )?.status).toBe('draft');
     expect(maturityFor(
