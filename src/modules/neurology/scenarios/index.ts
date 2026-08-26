@@ -4,6 +4,7 @@ import { BASILAR_ARTERY_OCCLUSION_ESCALATION } from './basilar-artery-occlusion-
 import { FOCAL_MOTOR_STATUS_EPILEPTICUS_ESCALATION } from './focal-motor-status-epilepticus-escalation';
 import { MINOR_NONDISABLING_ACUTE_ISCHEMIC_STROKE } from './minor-nondisabling-acute-ischemic-stroke';
 import { NONCONVULSIVE_STATUS_EPILEPTICUS_RECOGNITION } from './nonconvulsive-status-epilepticus-recognition';
+import { MYASTHENIC_CRISIS_ESCALATION } from './myasthenic-crisis-escalation';
 import { SPONTANEOUS_CEREBELLAR_INTRACEREBRAL_HEMORRHAGE } from './spontaneous-cerebellar-intracerebral-hemorrhage';
 
 export const NEUROLOGY_SCENARIOS: readonly Scenario[] = [
@@ -13,6 +14,7 @@ export const NEUROLOGY_SCENARIOS: readonly Scenario[] = [
   ANEURYSMAL_SUBARACHNOID_HEMORRHAGE_DETERIORATION,
   FOCAL_MOTOR_STATUS_EPILEPTICUS_ESCALATION,
   NONCONVULSIVE_STATUS_EPILEPTICUS_RECOGNITION,
+  MYASTHENIC_CRISIS_ESCALATION,
 ];
 export const DEFAULT_NEUROLOGY_SCENARIO_ID = MINOR_NONDISABLING_ACUTE_ISCHEMIC_STROKE.metadata.id;
 

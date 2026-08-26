@@ -5094,6 +5094,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-neurology-myasthenic-crisis-clock-fatigability-bulbar-respiratory-and-whole-patient',
+      'recognize-neurology-impending-myasthenic-crisis-without-spo2-or-single-cutoff-reassurance',
+      'activate-neurology-myasthenic-crisis-qualified-neurocritical-and-airway-capable-ownership',
+      'review-neurology-myasthenic-crisis-secretion-aspiration-infection-medication-and-alternative-causes',
+      'review-neurology-myasthenic-crisis-strict-later-bulbar-ventilatory-and-supplied-airway-trajectory',
+      'handoff-neurology-myasthenic-crisis-trigger-treatment-weaning-recurrence-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'myasthenic-crisis-escalation'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'myasthenic-crisis-escalation-reassessment')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'myasthenic-crisis-escalation-reassessment-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neurology myasthenic-crisis lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'The rapid fatigable, bulbar, respiratory, mechanics, infection, physiology, and whole-patient trajectory was reconciled.'],
+        ['impending-boundary-recognized', 'Impending crisis was recognized from multimodal decline without saturation, carbon dioxide, or one mechanics cutoff being used alone.'],
+        ['qualified-ownership-activated', 'Qualified neurological, neurocritical, respiratory, nursing, and airway-capable ownership was activated.'],
+        ['safety-and-causes-reviewed', 'Secretion, aspiration, infection, medication, test-quality, and alternative-cause risks were reviewed without trigger closure.'],
+        ['manifest-trajectory-reviewed', 'The elapsed worsening bulbar and ventilatory report plus supplied invasive-ventilation requirement established the authored manifest-crisis transition.'],
+        ['active-risk-handoff-recorded', 'Crisis status, airway, open trigger and treatment, complications, weaning, recurrence, recovery, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^neurology-myasthenic-crisis-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^neurology-myasthenic-crisis-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

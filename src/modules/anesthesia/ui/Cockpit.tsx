@@ -1040,6 +1040,9 @@ export function Cockpit({
           onNeurologyNcseResponse={(action) => session.act({
             type: 'nonconvulsive-status-epilepticus-recognition-response', payload: { action },
           })}
+          onNeurologyMyasthenicCrisisResponse={(action) => session.act({
+            type: 'myasthenic-crisis-escalation-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

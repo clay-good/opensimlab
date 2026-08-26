@@ -432,6 +432,15 @@ credited toward the catalog until every item in the completion contract passes.
     imaging or laboratory acquisition or interpretation, diagnosis, drug, dose, route, access,
     oxygen, airway device, procedure, treatment, seizure control, disposition, prognosis, or outcome
     controls.
+  - [x] Neurology slice 7/15 adds one authored 45-year-old with established generalized myasthenia
+    and a 36-hour rapid fatigable bulbar and respiratory decline, requiring multimodal impending-
+    crisis recognition without saturation, carbon dioxide, or one mechanics cutoff, qualified
+    neurocritical and airway-capable ownership, parallel secretion, aspiration, infection,
+    medication, test-quality, and alternative-cause review, a strict later supplied invasive-
+    ventilation requirement establishing manifest crisis, and another elapsed active-risk handoff
+    without learner examination, mechanics or test acquisition or interpretation, diagnosis, drug,
+    dose, route, IVIG, plasma exchange, antimicrobial, oxygen, ventilation, suction, airway device,
+    procedure, treatment, weaning, disposition, prognosis, or outcome controls.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.

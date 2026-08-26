@@ -337,6 +337,12 @@ const NEUROLOGY_NCSE_BLOCKED_ACTION_TYPES = new Set([
   ...NEUROLOGY_FOCAL_MOTOR_STATUS_BLOCKED_ACTION_TYPES,
   'focal-motor-status-epilepticus-escalation-response',
 ]);
+const NEUROLOGY_MYASTHENIC_CRISIS_BLOCKED_ACTION_TYPES = new Set([
+  ...NEUROLOGY_NCSE_BLOCKED_ACTION_TYPES,
+  'nonconvulsive-status-epilepticus-recognition-response',
+  'neuromuscular-respiratory-failure-response', 'neuromuscular-reversal',
+  'airway-device', 'laryngoscopy', 'ventilator', 'bolus', 'infusion',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1120,6 +1126,12 @@ export class AnesthesiaEngine {
   private neurologyNcseAlternativesAtTick: number | null = null;
   private neurologyNcseLaterAtTick: number | null = null;
   private neurologyNcseHandoffAtTick: number | null = null;
+  private neurologyMyasthenicCrisisTrajectoryAtTick: number | null = null;
+  private neurologyMyasthenicCrisisRecognitionAtTick: number | null = null;
+  private neurologyMyasthenicCrisisOwnershipAtTick: number | null = null;
+  private neurologyMyasthenicCrisisCausesAtTick: number | null = null;
+  private neurologyMyasthenicCrisisLaterAtTick: number | null = null;
+  private neurologyMyasthenicCrisisHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1766,6 +1778,21 @@ export class AnesthesiaEngine {
         'This Neurology lesson exposes no generic seizure, stroke, glucose, sodium, drug, dose, '
         + 'route, access, oxygen, airway, monitoring, EEG, imaging, laboratory, infusion, anesthetic, '
         + 'procedure, ICU, pediatric, or adjacent-scenario action. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const neurologyMyasthenicCrisis = this.scenario.metadata.id === 'myasthenic-crisis-escalation'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'myasthenic-crisis-escalation-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'myasthenic-crisis-escalation-reassessment-boundary');
+    if (neurologyMyasthenicCrisis
+      && NEUROLOGY_MYASTHENIC_CRISIS_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment',
+        `neurology-myasthenic-crisis-generic-action-refused-${this.currentTick}`,
+        'This Neurology lesson exposes no generic oxygen, ventilation, airway, drug, dose, route, '
+        + 'access, IVIG, plasma exchange, antimicrobial, suction, test, procedure, reversal, ALS, '
+        + 'seizure, stroke, or adjacent-scenario action. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -9111,6 +9138,111 @@ export class AnesthesiaEngine {
             dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false });
         break;
       }
+      case 'myasthenic-crisis-escalation-response': {
+        const response = typeof action.payload.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'myasthenic-crisis-escalation'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'myasthenic-crisis-escalation-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'myasthenic-crisis-escalation-reassessment-boundary');
+        const actions = [
+          'reconcile-neurology-myasthenic-crisis-clock-fatigability-bulbar-respiratory-and-whole-patient',
+          'recognize-neurology-impending-myasthenic-crisis-without-spo2-or-single-cutoff-reassurance',
+          'activate-neurology-myasthenic-crisis-qualified-neurocritical-and-airway-capable-ownership',
+          'review-neurology-myasthenic-crisis-secretion-aspiration-infection-medication-and-alternative-causes',
+          'review-neurology-myasthenic-crisis-strict-later-bulbar-ventilatory-and-supplied-airway-trajectory',
+          'handoff-neurology-myasthenic-crisis-trigger-treatment-weaning-recurrence-and-active-risk',
+        ] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) {
+          this.log('warning', 'assessment', `neurology-myasthenic-crisis-response-refused-${this.currentTick}`,
+            supported ? 'The myasthenic-crisis action was not listed. No supplied or injected text was retained.'
+              : 'These myasthenic-crisis choices are available only in the exact declared Neurology lesson.');
+          break;
+        }
+        if (response === actions[0]) {
+          if (this.neurologyMyasthenicCrisisTrajectoryAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-myasthenic-crisis-trajectory-refused-${this.currentTick}`, 'The supplied rapid fatigable, bulbar, respiratory, mechanics, and whole-patient trajectory was already reconciled.'); break;
+          }
+          this.neurologyMyasthenicCrisisTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-myasthenic-crisis-trajectory-reconciled-${this.currentTick}`,
+            'The supplied 36-hour record connects rapid fatigable ocular, facial, neck, speech, cough, secretion, and breathing decline with serial mechanics, fever, gas exchange, and stable perfusion. The learner did not take a history, examine, test, diagnose, or treat.',
+            { rapidFatigableWeaknessAuthored: true, bulbarWeaknessAuthored: true,
+              patientExaminedByLearner: false, respiratoryMechanicsAcquiredByLearner: false,
+              treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.neurologyMyasthenicCrisisTrajectoryAtTick === null) {
+          this.log('warning', 'assessment', `neurology-myasthenic-crisis-trajectory-order-refused-${this.currentTick}`, 'Reconcile the rapid whole-patient trajectory first.'); break;
+        }
+        if (response === actions[1]) {
+          if (this.neurologyMyasthenicCrisisRecognitionAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-myasthenic-crisis-recognition-refused-${this.currentTick}`, 'Impending myasthenic crisis was already recognized.'); break;
+          }
+          this.neurologyMyasthenicCrisisRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-myasthenic-crisis-impending-boundary-recognized-${this.currentTick}`,
+            'Rapid multimodal bulbar and ventilatory deterioration establishes an impending-crisis boundary despite preserved SpO2 and near-normal carbon dioxide. No single mechanics, gas, speech, or oxygenation value was used as a universal intubation threshold.',
+            { impendingCrisisRecognized: true, saturationUsedAlone: false,
+              singleCutoffUsed: false, diagnosisMadeByLearner: false }); break;
+        }
+        if (this.neurologyMyasthenicCrisisRecognitionAtTick === null) {
+          this.log('warning', 'assessment', `neurology-myasthenic-crisis-recognition-order-refused-${this.currentTick}`, 'Recognize the impending-crisis boundary before activating ownership.'); break;
+        }
+        if (response === actions[2]) {
+          if (this.neurologyMyasthenicCrisisOwnershipAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-myasthenic-crisis-ownership-refused-${this.currentTick}`, 'Qualified neurological, respiratory, critical-care, and airway ownership is already active.'); break;
+          }
+          this.neurologyMyasthenicCrisisOwnershipAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-myasthenic-crisis-qualified-ownership-activated-${this.currentTick}`,
+            'Qualified neurology, neurocritical, respiratory, nursing, and airway-capable teams now own serial assessment and individualized rescue. The learner selected no oxygen, ventilation, device, drug, dose, route, access, procedure, or treatment.',
+            { qualifiedNeurocriticalOwnershipActive: true, qualifiedAirwayOwnershipActive: true,
+              ventilationSelectedByLearner: false, airwayProcedurePerformedByLearner: false,
+              treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.neurologyMyasthenicCrisisOwnershipAtTick === null) {
+          this.log('warning', 'assessment', `neurology-myasthenic-crisis-ownership-order-refused-${this.currentTick}`, 'Activate qualified neurocritical and airway-capable ownership before cause review.'); break;
+        }
+        if (response === actions[3]) {
+          if (this.neurologyMyasthenicCrisisCausesAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-myasthenic-crisis-causes-refused-${this.currentTick}`, 'Secretion, aspiration, infection, medication, testing, and alternative causes were already reviewed.'); break;
+          }
+          this.neurologyMyasthenicCrisisCausesAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-myasthenic-crisis-safety-and-causes-reviewed-${this.currentTick}`,
+            'Secretion and aspiration risk, possible respiratory infection, medication exposures, test quality, metabolic, pulmonary, cardiac, central, and other neuromuscular causes remain active. The basilar opacity does not prove one trigger, and no test, diagnosis, drug, suction, or treatment was performed.',
+            { causesReviewed: true, triggerProven: false, imagingAcquiredByLearner: false,
+              medicationDeliveredByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.neurologyMyasthenicCrisisCausesAtTick === null) {
+          this.log('warning', 'assessment', `neurology-myasthenic-crisis-causes-order-refused-${this.currentTick}`, 'Review airway safety and open causes before the later report.'); break;
+        }
+        if (response === actions[4]) {
+          if (this.currentTick <= this.neurologyMyasthenicCrisisCausesAtTick) {
+            this.log('warning', 'assessment', `neurology-myasthenic-crisis-later-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before reviewing the fixed later crisis report.'); break;
+          }
+          if (this.neurologyMyasthenicCrisisLaterAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-myasthenic-crisis-later-refused-${this.currentTick}`, 'The fixed later bulbar, respiratory, and supplied-airway trajectory was already reviewed.'); break;
+          }
+          this.neurologyMyasthenicCrisisLaterAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-myasthenic-crisis-manifest-trajectory-reviewed-${this.currentTick}`,
+            'The strict later report shows one-word speech, absent head lift, barely audible cough, worsening secretion handling, persistent abdominal paradox, rising carbon dioxide, and further mechanics decline. Qualified-team invasive ventilation for bulbar and ventilatory insufficiency establishes the authored manifest-crisis transition. The learner did not manage the airway or ventilation.',
+            { laterManifestCrisisAuthored: true, suppliedInvasiveVentilationAuthored: true,
+              airwayProcedurePerformedByLearner: false, ventilationSelectedByLearner: false,
+              triggerProven: false, treatmentEffectProven: false }); break;
+        }
+        if (this.neurologyMyasthenicCrisisLaterAtTick === null) {
+          this.log('warning', 'assessment', `neurology-myasthenic-crisis-later-order-refused-${this.currentTick}`, 'Review the fixed later crisis and supplied-airway trajectory before handoff.'); break;
+        }
+        if (this.currentTick <= this.neurologyMyasthenicCrisisLaterAtTick) {
+          this.log('warning', 'assessment', `neurology-myasthenic-crisis-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off active crisis risk.'); break;
+        }
+        if (this.neurologyMyasthenicCrisisHandoffAtTick !== null) {
+          this.log('warning', 'assessment', `neurology-myasthenic-crisis-handoff-refused-${this.currentTick}`, 'The crisis, trigger, treatment, airway, weaning, and recurrence handoff was already recorded.'); break;
+        }
+        this.neurologyMyasthenicCrisisHandoffAtTick = this.currentTick;
+        this.log('critical', 'assessment', `neurology-myasthenic-crisis-active-risk-handoff-recorded-${this.currentTick}`,
+          'Manifest crisis, supplied airway status, open trigger and alternatives, individualized rapid-acting and precipitant treatment, complications, ventilator and weaning course, extubation risk, recurrence, recovery, disposition, prognosis, and outcome uncertainty were handed off.',
+          { triggerProven: false, treatmentEffectProven: false, weaningSuccessProven: false,
+            durableNeurologicRecoveryProven: false, dispositionDetermined: false,
+            prognosisPredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -12242,6 +12374,21 @@ export class AnesthesiaEngine {
         meanArterialMmHg: later ? 99 : 102,
         coreTemperatureC: later ? 37.0 : 36.9 };
     }
+    if (this.scenario.metadata.id === 'myasthenic-crisis-escalation'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'myasthenic-crisis-escalation-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'myasthenic-crisis-escalation-reassessment-boundary')) {
+      const later = this.neurologyMyasthenicCrisisLaterAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: later ? 112 : 104,
+        respiratoryRateBpm: later ? 30 : 22,
+        spo2Percent: later ? 95 : 97,
+        systolicMmHg: later ? 124 : 128,
+        diastolicMmHg: later ? 74 : 76,
+        meanArterialMmHg: later ? 91 : 94,
+        coreTemperatureC: later ? 38.3 : 38.1 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -14942,6 +15089,52 @@ export class AnesthesiaEngine {
               durableElectrographicControlProven: false as const,
               durableNeurologicRecoveryProven: false as const,
               durableAirwayProtectionProven: false as const,
+              dispositionDetermined: false as const,
+              prognosisPredicted: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'myasthenic-crisis-escalation'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'myasthenic-crisis-escalation-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'myasthenic-crisis-escalation-reassessment-boundary') ? {
+            neurologyMyasthenicCrisisAssessment: {
+              trajectoryAtTick: this.neurologyMyasthenicCrisisTrajectoryAtTick,
+              recognitionAtTick: this.neurologyMyasthenicCrisisRecognitionAtTick,
+              ownershipAtTick: this.neurologyMyasthenicCrisisOwnershipAtTick,
+              causesAtTick: this.neurologyMyasthenicCrisisCausesAtTick,
+              laterAtTick: this.neurologyMyasthenicCrisisLaterAtTick,
+              handoffAtTick: this.neurologyMyasthenicCrisisHandoffAtTick,
+              rapidFatigableWeaknessAuthored: true as const,
+              bulbarWeaknessAuthored: true as const,
+              spontaneousBreathingAuthored: true as const,
+              impendingCrisisRecognized: this.neurologyMyasthenicCrisisRecognitionAtTick !== null,
+              qualifiedNeurocriticalOwnershipActive: this.neurologyMyasthenicCrisisOwnershipAtTick !== null,
+              qualifiedAirwayOwnershipActive: this.neurologyMyasthenicCrisisOwnershipAtTick !== null,
+              laterManifestCrisisAuthored: this.neurologyMyasthenicCrisisLaterAtTick !== null,
+              suppliedInvasiveVentilationAuthored: this.neurologyMyasthenicCrisisLaterAtTick !== null,
+              patientHistoryTakenByLearner: false as const,
+              patientExaminedByLearner: false as const,
+              respiratoryMechanicsAcquiredByLearner: false as const,
+              bloodGasAcquiredByLearner: false as const,
+              imagingAcquiredByLearner: false as const,
+              laboratoryTestAcquiredByLearner: false as const,
+              diagnosisMadeByLearner: false as const,
+              drugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const,
+              routeSelectedByLearner: false as const,
+              accessPlacedByLearner: false as const,
+              medicationDeliveredByLearner: false as const,
+              oxygenSelectedByLearner: false as const,
+              ventilationSelectedByLearner: false as const,
+              airwayDeviceSelectedByLearner: false as const,
+              airwayProcedurePerformedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              triggerProven: false as const,
+              treatmentEffectProven: false as const,
+              weaningSuccessProven: false as const,
+              durableNeurologicRecoveryProven: false as const,
               dispositionDetermined: false as const,
               prognosisPredicted: false as const,
               outcomePredicted: false as const,

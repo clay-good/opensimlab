@@ -2119,6 +2119,21 @@ glucose, sodium, imaging, laboratory data, or EEG; diagnose clinically; select o
 dose, route, access, oxygen, airway device, procedure, or treatment; determine seizure control,
 disposition, or prognosis; or predict outcome.
 
+### Wave E neurology slice 7: myasthenic crisis escalation
+
+The seventh Neurology lab owns rapid fatigable bulbar and respiratory deterioration in established
+generalized myasthenia, distinct from the slow ALS trajectory and home-support planning in
+Respiratory Medicine. The learner integrates the 36-hour course, serial qualified FVC and MIP,
+speech, cough, secretion handling, neck weakness, paradoxical breathing, gases, infection context,
+and whole patient without using saturation, carbon dioxide, or one mechanics cutoff alone. Qualified
+neurological, neurocritical, respiratory, nursing, and airway-capable ownership begins before the
+strict later report supplies worse bulbar and ventilatory function and qualified-team invasive
+ventilation, establishing the authored manifest-crisis transition. Another elapsed handoff keeps the
+trigger, individualized rapid-acting and precipitant treatment, complications, ventilator course,
+weaning, recurrence, recovery, disposition, prognosis, and outcome unresolved. No learner history,
+examination, test, diagnosis, drug, IVIG, plasma exchange, antimicrobial, oxygen, ventilation,
+suction, airway device, procedure, treatment, disposition, prognosis, or outcome control exists.
+
 #### Neurology: 15
 
 Acute ischemic stroke; large-vessel-occlusion escalation; intracranial hemorrhage; subarachnoid

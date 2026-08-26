@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "neurology",
-  "recordCount": 6,
+  "recordCount": 7,
   "records": [
     {
       "recordId": "scenario:minor-nondisabling-acute-ischemic-stroke@0.1.0",
@@ -67,6 +67,17 @@
       "evidence": [
         "/catalog/neurology-completion-audit.json#nonconvulsive-status-epilepticus-recognition@0.1.0",
         "/catalog/neurology-quality-audit.json#nonconvulsive-status-epilepticus-recognition@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:myasthenic-crisis-escalation@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "myasthenic-crisis-escalation",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/neurology-completion-audit.json#myasthenic-crisis-escalation@0.1.0",
+        "/catalog/neurology-quality-audit.json#myasthenic-crisis-escalation@0.1.0"
       ]
     }
   ]

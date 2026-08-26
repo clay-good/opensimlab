@@ -196,6 +196,12 @@ Recorded here rather than silently carried:
   scaffold; it does not validate seizure generation, examination, clinical-only diagnosis, EEG
   acquisition or interpretation, airway safety, medication or procedure effects, cause, seizure
   control, recovery, disposition, prognosis, or outcome.
+  Myasthenic crisis escalation overlays fixed rapid fatigable weakness, bulbar and respiratory
+  findings, serial mechanics, gases, infection context, qualified multidisciplinary ownership, and
+  a strict-later supplied invasive-ventilation requirement on the healthy adult scaffold; it does
+  not validate myasthenic weakness, respiratory mechanics, gas exchange, infection, airway or
+  ventilation management, medicine effects, treatment response, weaning, recovery, prognosis, or
+  outcome.
 
 ## Concentration-time checks, 2026-08-23
 

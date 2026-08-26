@@ -22,9 +22,9 @@ describe('scenario report contract', () => {
     const catalog = JSON.parse(readFileSync(
       join(process.cwd(), 'workers/reports/src/report-catalog.generated.json'), 'utf8',
     )) as { scenarios: { moduleId: string; scenarioId: string; contentVersion: string }[] };
-    expect(catalog.scenarios).toHaveLength(142);
+    expect(catalog.scenarios).toHaveLength(143);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(142);
+      .toBe(143);
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'neurology', scenarioId: 'basilar-artery-occlusion-escalation',
       contentVersion: '0.1.0',
@@ -39,6 +39,10 @@ describe('scenario report contract', () => {
     }));
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'neurology', scenarioId: 'nonconvulsive-status-epilepticus-recognition',
+      contentVersion: '0.1.0',
+    }));
+    expect(catalog.scenarios).toContainEqual(expect.objectContaining({
+      moduleId: 'neurology', scenarioId: 'myasthenic-crisis-escalation',
       contentVersion: '0.1.0',
     }));
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
@@ -362,6 +366,21 @@ describe('scenario report contract', () => {
     expect(validateReportPayload({ ...report, canonical_url: `${neurology.canonicalUrl}?tick=12` }))
       .toEqual({ ok: false, status: 403 });
     expect(validateReportPayload({ ...report, canonical_url: `${neurology.canonicalUrl}#tick-12` }))
+      .toEqual({ ok: false, status: 403 });
+  });
+
+  it('accepts the exact Neurology myasthenic-crisis context and rejects drift', () => {
+    const neurology: ScenarioReportContext = {
+      ...context, moduleId: 'neurology', scenarioId: 'myasthenic-crisis-escalation',
+      canonicalUrl: 'https://opensimlab.com/neurology/scenario/myasthenic-crisis-escalation',
+      fidelityClass: 'state_transition', simulatedTick: 12,
+    };
+    const report = buildScenarioReportRequest(
+      neurology, 'clinical-content', 'The respiratory trajectory may need review.', 'token');
+    expect(validateReportPayload(report)).toMatchObject({ ok: true });
+    expect(validateReportPayload({ ...report, scenario_id: 'myasthenic-crisis' }))
+      .toEqual({ ok: false, status: 400 });
+    expect(validateReportPayload({ ...report, canonical_url: `${neurology.canonicalUrl}?tick=12` }))
       .toEqual({ ok: false, status: 403 });
   });
 

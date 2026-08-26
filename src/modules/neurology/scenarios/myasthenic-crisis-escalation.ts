@@ -1,0 +1,66 @@
+/** Rapid myasthenic bulbar and respiratory deterioration with a supplied crisis transition. */
+
+import type { Scenario } from '@anesthesia/scenarios/types';
+
+export const MYASTHENIC_CRISIS_ESCALATION: Scenario = {
+  schemaVersion: 1,
+  metadata: {
+    id: 'myasthenic-crisis-escalation', version: '0.1.0', maturity: 'draft',
+    title: 'Myasthenic crisis escalation', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
+    estimatedMinutes: 7, difficulty: 'advanced', objectives: [
+      { id: 'reconcile-neurology-myasthenic-crisis-clock-fatigability-bulbar-respiratory-and-whole-patient', statement: 'Reconcile the rapid clock, fatigable weakness, bulbar and respiratory trajectory, supplied measurements, physiology, and whole-patient state.', measure: 'The 36-hour decline, serial speech, cough, secretion, neck, breathing, FVC and MIP reports, infection context, gas exchange, and perfusion were connected without learner history, examination, testing, diagnosis, or treatment.' },
+      { id: 'recognize-neurology-impending-myasthenic-crisis-without-spo2-or-single-cutoff-reassurance', statement: 'Recognize impending myasthenic crisis without reassurance from oxygen saturation, carbon dioxide, or one respiratory-mechanics cutoff.', measure: 'Rapid multimodal bulbar and ventilatory decline triggered recognition before hypoxemia, severe hypercapnia, or one universal threshold.' },
+      { id: 'activate-neurology-myasthenic-crisis-qualified-neurocritical-and-airway-capable-ownership', statement: 'Activate qualified neurology, neurocritical, respiratory, nursing, and airway-capable ownership.', measure: 'Named ownership followed recognition without learner oxygen, support-device, airway, ventilation, medicine, dose, route, access, or procedure controls.' },
+      { id: 'review-neurology-myasthenic-crisis-secretion-aspiration-infection-medication-and-alternative-causes', statement: 'Review secretion and aspiration safety, infection, medication exposures, testing limits, and alternative causes in parallel.', measure: 'The likely infectious trigger remained a supplied possibility while aspiration, medication, metabolic, pulmonary, cardiac, central, and other neuromuscular contributors stayed open.' },
+      { id: 'review-neurology-myasthenic-crisis-strict-later-bulbar-ventilatory-and-supplied-airway-trajectory', statement: 'At a strict later report, review worsening bulbar and ventilatory function with the supplied qualified-airway trajectory.', measure: 'Further weakness and qualified-team initiation of invasive ventilation established the authored manifest-crisis transition without learner procedure, causal, treatment-effect, or outcome claims.' },
+      { id: 'handoff-neurology-myasthenic-crisis-trigger-treatment-weaning-recurrence-and-active-risk', statement: 'After another elapsed interval, hand off crisis status, trigger, treatment, airway, weaning, recurrence, and active risk.', measure: 'The handoff preserved open cause, individualized rapid-acting and precipitant treatment, complications, ventilator course, extubation readiness, recurrence, recovery, disposition, prognosis, and outcome.' },
+    ],
+    clinicalReview: { reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED',
+      competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01',
+      contentVersion: '0.1.0', sources: [
+        'Sanders DB, Wolfe GI, Benatar M, et al. International consensus guidance for management of myasthenia gravis: Executive summary. Neurology. 2016;87:419-425. doi:10.1212/WNL.0000000000002790.',
+        'Claytor B, Cho SM, Li Y. Myasthenic crisis. Muscle Nerve. 2023;68:8-19. doi:10.1002/mus.27832.',
+        'McKenzie ED, Kromm JA, Mobach T, et al. Risk Stratification and Management of Acute Respiratory Failure in Patients With Neuromuscular Disease. Crit Care Med. 2024;52:1781-1789. doi:10.1097/CCM.0000000000006417.',
+      ] },
+    limitations: ['myasthenic-crisis-clock-weakness-mechanics-trigger-and-later-airway-state-are-authored',
+      'myasthenic-crisis-controls-reconcile-recognize-activate-review-reassess-and-handoff-only',
+      'no-live-myasthenia-exam-mechanics-test-diagnosis-drug-ventilation-airway-procedure-or-outcome'],
+  },
+  patient: {
+    ageYears: 45, sex: 'female', heightCm: 165, weightKg: 64, asaClass: 4,
+    diagnosis: 'Authored rapid generalized-myasthenia bulbar and respiratory deterioration',
+    procedure: 'calm impending-crisis recognition, qualified airway ownership, later crisis review, and active-risk handoff',
+    comorbidities: ['Established AChR-antibody-positive generalized myasthenia gravis'],
+    medications: ['Usual myasthenia regimen under qualified reconciliation'],
+    allergies: ['No known drug allergies'], fasting: 'Not established during acute neurological evaluation',
+    baseline: { heartRateBpm: 104, meanArterialMmHg: 94, strokeVolumeMl: 60,
+      hemoglobinGPerDl: 13.1, bloodVolumeMl: 4_400, coreTemperatureC: 38.1,
+      arterialStiffness: 1.0, baroreflexGain: 0.85, fixedStrokeVolume: false },
+    airway: { difficulty: 0.2, difficultMaskVentilation: false,
+      assessment: 'Spontaneous breathing with weak cough, nasal short-phrase speech, impaired secretion handling, and supplied fatigable bulbar weakness' },
+    respiratory: { profile: 'moderately-ill' },
+  },
+  equipment: { monitoring: ['ecg', 'nibp', 'pulse-oximetry', 'temperature'], airwayDevice: 'facemask',
+    ventilator: { mode: 'manual', fio2: 0.21, tidalVolumeMl: 340, respiratoryRateBpm: 22,
+      freshGasFlowLPerMin: 0.5, delivering: false } },
+  formulary: [],
+  timeline: [
+    { id: 'myasthenic-crisis-escalation-presentation', type: 'narrative',
+      target: 'myasthenic-crisis-escalation-reassessment', atTick: 0, severity: 'critical',
+      message: 'A previously independent 45-year-old woman with established AChR-antibody-positive generalized myasthenia has 36 hours of rapidly worsening fatigable diplopia, ptosis, nasal speech, chewing difficulty, head drop, breathlessness while speaking, weak cough, and difficulty clearing saliva after 3 days of fever and productive cough. A qualified examination report describes preserved alertness and sensation, fatigable ocular and facial weakness, neck flexion weakness, short-phrase speech that fades with repetition, shallow breathing with intermittent supine abdominal paradox, weak cough, and pooled oral secretions without stridor or unilateral absent breath sounds. T 38.1°C, HR 104/min, shallow RR 22/min, BP 128/76 mmHg (MAP 94), pulse-coherent room-air SpO2 97%, warm perfusion, and refill 2 seconds are supplied.' },
+    { id: 'myasthenic-crisis-escalation-evidence', type: 'narrative',
+      target: 'myasthenic-crisis-escalation-reassessment', atTick: 0, severity: 'warning',
+      message: 'Qualified serial reports show FVC falling from 2.4 L to 1.4 L and MIP changing from -38 to -22 cmH2O over 6 hours, with acceptable interface and repeatability documented for this case. A fixed room-air blood gas reports pH 7.39, PaCO2 41 mmHg, PaO2 82 mmHg, and bicarbonate 24 mmol/L. Preserved saturation and near-normal carbon dioxide do not establish respiratory or bulbar safety. No one FVC, MIP, speech, count, gas, or oxygenation value is a universal isolated intubation threshold. A fixed radiograph reports a new right basilar airspace opacity that could reflect infection or aspiration; cause and microbiology remain open.' },
+    { id: 'myasthenic-crisis-escalation-boundary', type: 'narrative',
+      target: 'myasthenic-crisis-escalation-reassessment-boundary', atTick: 0, severity: 'warning',
+      message: 'Reconcile the clock, fatigability, bulbar and respiratory trajectory, supplied mechanics, physiology, and whole patient; recognize impending myasthenic crisis without waiting for desaturation, marked hypercapnia, or one cutoff; activate qualified neurology, neurocritical, respiratory, nursing, and airway-capable ownership; and review secretion and aspiration safety, infection, medication exposures, test reliability, metabolic, pulmonary, cardiac, central, and other neuromuscular alternatives in parallel. At a strict fixed 30-minute report, speech has fallen to one word, head lift is absent, cough is barely audible, saliva requires continuous experienced-team management, abdominal paradox is persistent, and breathing is shallow at RR 30/min while pulse-coherent SpO2 remains 95%. Repeat qualified FVC is 0.9 L, MIP is -14 cmH2O, and room-air blood gas is pH 7.34, PaCO2 49 mmHg, PaO2 77 mmHg, and bicarbonate 26 mmol/L. The qualified airway team documents that bulbar and ventilatory insufficiency now require invasive ventilation and performs the airway and ventilation care outside the learner surface. This supplied ventilation requirement establishes the authored manifest-crisis transition; it does not prove one trigger, treatment response, weaning course, or outcome. After another elapsed interval, hand off crisis status, airway, trigger and alternative causes, individualized rapid-acting and precipitant treatment, complications, ventilator and weaning course, extubation risk, recurrence, recovery, disposition, prognosis, and outcome uncertainty. The controls do not take history; examine; count; acquire or interpret monitoring, oximetry, capnography, blood gas, FVC, VC, MIP, MEP, imaging, laboratory, microbiology, electrodiagnostic, antibody, swallowing, cough, secretion, or other tests; diagnose; verify medication; select or deliver oxygen, noninvasive or invasive ventilation, interface, mode, setting, drug, IVIG, plasma exchange, antimicrobial, dose, route, access, nutrition, suction, or treatment; manage an airway; intubate; perform a procedure; determine disposition or prognosis; or predict response or outcome.' },
+  ],
+  debrief: { rubric: [
+    { id: 'myasthenic-crisis-trajectory', objectiveId: 'reconcile-neurology-myasthenic-crisis-clock-fatigability-bulbar-respiratory-and-whole-patient', question: 'Which rapid fatigable, bulbar, respiratory, mechanics, gas, infection, and whole-patient changes established the trajectory?' },
+    { id: 'myasthenic-crisis-recognition', objectiveId: 'recognize-neurology-impending-myasthenic-crisis-without-spo2-or-single-cutoff-reassurance', question: 'Why did preserved oxygen saturation, near-normal carbon dioxide, and no single mechanics value fail to make this safe?' },
+    { id: 'myasthenic-crisis-ownership', objectiveId: 'activate-neurology-myasthenic-crisis-qualified-neurocritical-and-airway-capable-ownership', question: 'Why did qualified neurological, respiratory, neurocritical, and airway-capable ownership need to start early?' },
+    { id: 'myasthenic-crisis-causes', objectiveId: 'review-neurology-myasthenic-crisis-secretion-aspiration-infection-medication-and-alternative-causes', question: 'Which secretion, aspiration, infection, medication, testing, and alternative-cause concerns remained active?' },
+    { id: 'myasthenic-crisis-later', objectiveId: 'review-neurology-myasthenic-crisis-strict-later-bulbar-ventilatory-and-supplied-airway-trajectory', question: 'What established the authored transition from impending to manifest crisis, and what remained unresolved?' },
+    { id: 'myasthenic-crisis-handoff', objectiveId: 'handoff-neurology-myasthenic-crisis-trigger-treatment-weaning-recurrence-and-active-risk', question: 'Which airway, trigger, treatment, complication, weaning, recurrence, recovery, and outcome risks required handoff?' },
+  ] },
+};

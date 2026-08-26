@@ -3983,6 +3983,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use direct verified findings, qualified EEG and airway-capable teams, current guidance and local protocols, appropriate monitoring and tests, individualized treatment decisions, and continuous reassessment.',
     briefIn: ['nonconvulsive-status-epilepticus-recognition'],
   },
+  {
+    id: 'myasthenic-crisis-clock-weakness-mechanics-trigger-and-later-airway-state-are-authored',
+    headline: 'The clock, fatigable weakness, bulbar and respiratory findings, mechanics, likely trigger, and later airway state are authored.',
+    simplification: 'Fixed reports stand in for history, examination, oximetry, blood gas, serial FVC and MIP, imaging, medication reconciliation, secretion and swallowing assessment, trigger evaluation, airway management, ventilation, and reassessment.',
+    whereItMisleads: 'Treating fictional serial values, preserved saturation, basilar opacity, supplied ventilation requirement, or named ownership as learner-acquired evidence, one universal threshold, proven trigger, treatment effect, or predicted course.',
+    correctUnderstanding: 'Real care requires immediate serial multimodal assessment, verified data, qualified neurological and airway-capable teams, patient-specific airway and treatment decisions, cause evaluation, and continuous reassessment.',
+    briefIn: ['myasthenic-crisis-escalation'],
+  },
+  {
+    id: 'myasthenic-crisis-controls-reconcile-recognize-activate-review-reassess-and-handoff-only',
+    headline: 'The controls record trajectory reconciliation, impending-crisis recognition, qualified ownership, cause review, later crisis review, and handoff only.',
+    simplification: 'Six accepted actions stand in for neurological, neurocritical, respiratory, nursing, airway, pharmacy, laboratory, imaging, infectious, swallowing, ventilation, treatment, and handoff work.',
+    whereItMisleads: 'Equating button order with examination, respiratory testing, diagnosis, airway or ventilator management, IVIG or plasma exchange selection, procedure, team performance, weaning, disposition, or competence.',
+    correctUnderstanding: 'Actual care requires the patient, trained teams, current local pathways, verified serial findings, individualized airway and treatment choices, and continuous reassessment.',
+    briefIn: ['myasthenic-crisis-escalation'],
+  },
+  {
+    id: 'no-live-myasthenia-exam-mechanics-test-diagnosis-drug-ventilation-airway-procedure-or-outcome',
+    headline: 'The lab does not examine, measure mechanics, test, diagnose, prescribe, ventilate, manage an airway, perform a procedure, or report outcome.',
+    simplification: 'No live history, examination, count, oximetry, capnography, blood gas, FVC, MIP, imaging, laboratory, microbiology, electrodiagnostic, antibody, swallowing, cough or secretion test, diagnosis, medicine, dose, route, access, oxygen, ventilation, suction, airway device, procedure, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Waiting for desaturation or severe hypercapnia, using one mechanics cutoff, treating an opacity as a proven trigger, copying fictional values into care, or reading completion as airway or crisis competence.',
+    correctUnderstanding: 'Use direct verified serial findings, qualified neurology, critical-care, respiratory and airway teams, current guidance and local protocols, individualized treatment, and continuous reassessment.',
+    briefIn: ['myasthenic-crisis-escalation'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

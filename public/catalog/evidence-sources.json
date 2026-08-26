@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 214,
+  "sourceCount": 216,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -2778,6 +2778,32 @@
       "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/27571157/",
       "verifiedOn": "2026-08-26",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/27571157/"
+    },
+    {
+      "id": "international-mg-consensus-2016",
+      "pmid": "27358333",
+      "authors": "Sanders DB, Wolfe GI, Benatar M, et al",
+      "title": "International consensus guidance for management of myasthenia gravis: Executive summary",
+      "publication": "Neurology",
+      "year": 2016,
+      "locator": "87:419-425; doi:10.1212/WNL.0000000000002790; definitions of impending and manifest crisis and crisis-management guidance",
+      "usedFor": "The distinction between rapid worsening that could lead to crisis and manifest crisis defined by ventilatory support required for respiratory or bulbar compromise.",
+      "verifiedAgainst": "https://www.neurology.org/doi/10.1212/WNL.0000000000002790",
+      "verifiedOn": "2026-08-26",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/27358333/"
+    },
+    {
+      "id": "acute-neuromuscular-respiratory-risk-2024",
+      "pmid": "39297721",
+      "authors": "McKenzie ED, Kromm JA, Mobach T, et al",
+      "title": "Risk Stratification and Management of Acute Respiratory Failure in Patients With Neuromuscular Disease",
+      "publication": "Critical Care Medicine",
+      "year": 2024,
+      "locator": "52:1781-1789; doi:10.1097/CCM.0000000000006417; multimodal serial assessment, airway risk, and limitations of individual prediction tools",
+      "usedFor": "Integration of trajectory, bulbar findings, neck weakness, paradoxical breathing, cough, and serial pulmonary-function evidence without one universal mechanics, gas, or saturation cutoff.",
+      "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/39297721/",
+      "verifiedOn": "2026-08-26",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/39297721/"
     }
   ]
 }

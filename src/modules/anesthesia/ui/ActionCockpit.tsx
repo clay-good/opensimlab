@@ -1130,6 +1130,11 @@ export interface ActionCockpitProps {
       readonly ownershipAtTick: number | null; readonly alternativesAtTick: number | null;
       readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly neurologyMyasthenicCrisisAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly ownershipAtTick: number | null; readonly causesAtTick: number | null;
+      readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1886,6 +1891,14 @@ export interface ActionCockpitProps {
       | 'review-neurology-ncse-strict-later-qualified-eeg-and-clinical-trajectory'
       | 'handoff-neurology-ncse-cause-treatment-recurrence-and-active-risk',
   ) => void;
+  readonly onNeurologyMyasthenicCrisisResponse?: (
+    action: 'reconcile-neurology-myasthenic-crisis-clock-fatigability-bulbar-respiratory-and-whole-patient'
+      | 'recognize-neurology-impending-myasthenic-crisis-without-spo2-or-single-cutoff-reassurance'
+      | 'activate-neurology-myasthenic-crisis-qualified-neurocritical-and-airway-capable-ownership'
+      | 'review-neurology-myasthenic-crisis-secretion-aspiration-infection-medication-and-alternative-causes'
+      | 'review-neurology-myasthenic-crisis-strict-later-bulbar-ventilatory-and-supplied-airway-trajectory'
+      | 'handoff-neurology-myasthenic-crisis-trigger-treatment-weaning-recurrence-and-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2333,6 +2346,12 @@ export function crisisResponseAvailability(
         && event.target === 'nonconvulsive-status-epilepticus-recognition-reassessment')
       && scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'nonconvulsive-status-epilepticus-recognition-reassessment-boundary'),
+    hasNeurologyMyasthenicCrisisResponse:
+      scenario.metadata.id === 'myasthenic-crisis-escalation'
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'myasthenic-crisis-escalation-reassessment')
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'myasthenic-crisis-escalation-reassessment-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2516,6 +2535,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'focal-motor-status-epilepticus-escalation-reassessment')
       || (event.type === 'narrative'
         && event.target === 'nonconvulsive-status-epilepticus-recognition-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'myasthenic-crisis-escalation-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2594,6 +2615,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeurologyAsahDeteriorationResponse,
     hasNeurologyFocalMotorStatusResponse,
     hasNeurologyNcseResponse,
+    hasNeurologyMyasthenicCrisisResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2674,7 +2696,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPediatricForeignBodyAirwayObstructionResponse || hasPediatricInjurySafeguardingResponse
     || hasNeurologyMinorStrokeResponse || hasNeurologyBasilarLvoResponse
     || hasNeurologyCerebellarIchResponse || hasNeurologyAsahDeteriorationResponse
-    || hasNeurologyFocalMotorStatusResponse || hasNeurologyNcseResponse;
+    || hasNeurologyFocalMotorStatusResponse || hasNeurologyNcseResponse
+    || hasNeurologyMyasthenicCrisisResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2705,7 +2728,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasNeurologyNcseResponse
+  const responseTray = hasNeurologyMyasthenicCrisisResponse
+    ? { id: 'crisis', label: 'Myasthenic crisis escalation' } as const
+    : hasNeurologyNcseResponse
     ? { id: 'crisis', label: 'Nonconvulsive status recognition' } as const
     : hasNeurologyFocalMotorStatusResponse
     ? { id: 'crisis', label: 'Focal motor status reassessment' } as const
@@ -3016,6 +3041,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeurologyAsahDeteriorationResponse
     || hasNeurologyFocalMotorStatusResponse
     || hasNeurologyNcseResponse
+    || hasNeurologyMyasthenicCrisisResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3772,6 +3798,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <NeurologyNcseTray
                 assessment={props.resuscitation.neurologyNcseAssessment}
                 onAction={props.onNeurologyNcseResponse ?? (() => {})} />
+            )}
+            {hasNeurologyMyasthenicCrisisResponse && (
+              <NeurologyMyasthenicCrisisTray
+                assessment={props.resuscitation.neurologyMyasthenicCrisisAssessment}
+                onAction={props.onNeurologyMyasthenicCrisisResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -9790,6 +9821,42 @@ function NeurologyNcseTray({ assessment, onAction }: {
         {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-ncse-cause-treatment-recurrence-and-active-risk')}>Hand off status + open risk</Button>}
       </div>
       <p className="field__hint">The supplied specialist report is fixed scenario evidence, not a raw tracing or an interpretation exercise. It does not supply cause, treatment choice, response, recurrence, prognosis, or outcome.</p>
+    </section>
+  </div>;
+}
+
+function NeurologyMyasthenicCrisisTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyMyasthenicCrisisAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNeurologyMyasthenicCrisisResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const ownership = assessment?.ownershipAtTick != null;
+  const causes = assessment?.causesAtTick != null;
+  const later = assessment?.laterAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="neurology-myasthenic-crisis-pattern-title">
+      <div id="neurology-myasthenic-crisis-pattern-title" className="syringe__name">Watch work, not just oxygen.</div>
+      <div className="syringe__meta">45 years · 36-hour decline · weak cough + bulbar fatigue · SpO2 97%</div>
+      <p className="syringe__remaining">{causes ? 'Airway safety, likely trigger, test limits, and open causes reviewed.' : ownership ? 'Qualified neurocritical and airway ownership is active · complete the cause review' : recognition ? 'Impending crisis recognized · activate qualified ownership' : trajectory ? 'Rapid multimodal bulbar and ventilatory decline is clear.' : 'Begin with the clock, fatigability, bulbar function, breathing, and whole patient.'}</p>
+      <div className="syringe__presets">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neurology-myasthenic-crisis-clock-fatigability-bulbar-respiratory-and-whole-patient')}>Review rapid weakness trajectory</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-neurology-impending-myasthenic-crisis-without-spo2-or-single-cutoff-reassurance')}>Recognize impending crisis</Button>}
+        {recognition && !ownership && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-myasthenic-crisis-qualified-neurocritical-and-airway-capable-ownership')}>Activate airway-ready ownership</Button>}
+        {ownership && !causes && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-myasthenic-crisis-secretion-aspiration-infection-medication-and-alternative-causes')}>Review safety + open causes</Button>}
+      </div>
+      <p className="field__hint">No single saturation, gas, FVC, MIP, speech, or count value decides the airway. Experienced teams integrate serial respiratory and bulbar function. This lab exposes no learner test, oxygen, ventilation, drug, dose, suction, airway, or procedure control.</p>
+    </section>
+    <section className="syringe" aria-labelledby="neurology-myasthenic-crisis-later-title">
+      <div id="neurology-myasthenic-crisis-later-title" className="syringe__name">Crisis is a clinical transition.</div>
+      <div className="syringe__meta">fixed minute-30 report · worse bulbar + ventilatory function · supplied invasive ventilation</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Manifest crisis, airway status, open trigger, treatment, weaning, and recurrence risk handed off.' : later ? 'Qualified-team ventilation establishes the authored manifest-crisis transition. Trigger, response, weaning, and outcome remain open.' : causes ? 'Qualified ownership is active. Review the fixed later bulbar and respiratory report.' : 'Complete recognition, ownership, and safety review before reassessment.'}</p>
+      <div className="syringe__presets">
+        {causes && !later && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-myasthenic-crisis-strict-later-bulbar-ventilatory-and-supplied-airway-trajectory')}>Review the minute-30 crisis report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-myasthenic-crisis-trigger-treatment-weaning-recurrence-and-active-risk')}>Hand off crisis + open risk</Button>}
+      </div>
+      <p className="field__hint">The airway and ventilation course is a fixed qualified-team report, not a learner-performed procedure. It supplies no trigger certainty, treatment choice, response, extubation readiness, recovery, prognosis, or outcome.</p>
     </section>
   </div>;
 }
