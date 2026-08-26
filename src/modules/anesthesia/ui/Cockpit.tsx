@@ -1109,6 +1109,9 @@ export function Cockpit({
           onToxicologyDelayedLastResponse={(action) => session.act({
             type: 'delayed-local-anesthetic-cns-cardiac-toxicity-response', payload: { action },
           })}
+          onToxicologyOpioidXylazineResponse={(action) => session.act({
+            type: 'opioid-xylazine-persistent-sedation-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

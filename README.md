@@ -187,6 +187,16 @@ refractory-rescue ownership; bounded rescue intent; strict elapsed reassessment;
 handoff. It exposes no learner catheter or pump handling, diagnosis, oxygen or ventilator setting,
 seizure treatment, lipid dose, cardiac treatment, ECLS operation, procedure, disposition, or outcome
 control, and remains separate from Anesthesia's immediate-injection dosing lab.
+Its fifteenth lab, opioid poisoning where breathing can improve before sedation does, begins after
+reported community naloxone and rescue breathing with severe hypoventilation, hypoxemia, hypercapnia,
+persistent sedation, bradycardia, hypotension, and hypothermia after an unknown powder exposure. It
+keeps possible non-opioid adulterant effects open without treating pupils, naloxone response,
+routine screening, wounds, or street-drug context as diagnostic; adds qualified respiratory,
+toxicology, addiction, wound, harm-reduction, and dignity-centered ownership; excludes veterinary
+antagonists; and requires a strict elapsed respiratory report plus whole-horizon handoff. It exposes
+no learner examination, product identification, toxicology-screen interpretation, airway or oxygen
+setting, drug or dose, wound or withdrawal treatment, observation decision, disposition, or outcome
+control, and remains separate from the existing acute, postoperative, and chronic opioid labs.
 
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage

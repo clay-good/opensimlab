@@ -5661,6 +5661,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-toxicology-opioid-xylazine-exposure-rescue-breathing-sedation-perfusion-and-whole-patient',
+      'recognize-toxicology-opioid-xylazine-opioid-emergency-and-possible-adulterant-without-pupil-naloxone-response-or-screen-only-closure',
+      'activate-toxicology-opioid-xylazine-ventilation-oxygen-monitoring-toxicology-addiction-wound-and-dignity-ownership',
+      'review-toxicology-opioid-xylazine-supplied-respiratory-response-circulation-temperature-glucose-ecg-screen-wound-and-differential-boundary',
+      'record-toxicology-opioid-xylazine-bounded-qualified-continued-support-opioid-antagonist-symptomatic-care-no-veterinary-antagonist-and-strict-later-review',
+      'handoff-toxicology-opioid-xylazine-recurrent-depression-persistent-sedation-shock-hypothermia-wound-withdrawal-addiction-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'opioid-xylazine-persistent-sedation'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'opioid-xylazine-persistent-sedation-transition')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'opioid-xylazine-persistent-sedation-transition-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Toxicology opioid-adulterant lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'Exposure uncertainty, prehospital rescue, breathing, gas exchange, sedation, perfusion, temperature, and whole-patient state were reconciled.'],
+        ['pattern-recognized', 'The opioid-compatible respiratory emergency and possible adulterant pattern was recognized without pupil-, response-, routine-screen-, wound-, single-agent-, or diagnostic closure.'],
+        ['support-activated', 'Respiratory, toxicology, addiction, wound, harm-reduction, and dignity-centered ownership were activated.'],
+        ['evidence-reviewed', 'Supplied respiratory, circulation, temperature, glucose, ECG, blood-gas, chemistry, routine-screen, skin, coingestion, and differential evidence were reviewed without learner interpretation or delivery.'],
+        ['intent-and-reassessment-recorded', 'Bounded qualified continued support, opioid-antagonist, symptomatic-care, no-veterinary-antagonist, and surveillance intent plus the elapsed report were recorded without dosing, delivery, agent, resistance, causal, recovery, or durable-safety claims.'],
+        ['active-risk-handoff-recorded', 'Recurrent respiratory, pulmonary, sedation, perfusion, temperature, skin, withdrawal, co-exposure, addiction, harm-reduction, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^toxicology-opioid-xylazine-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^toxicology-opioid-xylazine-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-af-rvr-rhythm-and-stability', 'review-af-rvr-context-and-triggers',
       'record-af-rvr-rate-control-intent', 'record-af-rvr-stroke-prevention-intent',
       'reassess-af-rvr-trajectory-and-follow-up'].includes(objective.id)) {

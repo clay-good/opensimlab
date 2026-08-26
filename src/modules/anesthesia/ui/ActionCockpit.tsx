@@ -1245,6 +1245,11 @@ export interface ActionCockpitProps {
       readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly toxicologyOpioidXylazineAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2185,6 +2190,14 @@ export interface ActionCockpitProps {
       | 'record-toxicology-delayed-last-bounded-qualified-source-airway-seizure-lipid-acid-base-modified-resuscitation-and-ecls-intent-with-strict-later-review'
       | 'handoff-toxicology-delayed-last-recurrent-seizure-arrhythmia-shock-airway-acidemia-source-lipid-and-refractory-risk',
   ) => void;
+  readonly onToxicologyOpioidXylazineResponse?: (
+    action: 'reconcile-toxicology-opioid-xylazine-exposure-rescue-breathing-sedation-perfusion-and-whole-patient'
+      | 'recognize-toxicology-opioid-xylazine-opioid-emergency-and-possible-adulterant-without-pupil-naloxone-response-or-screen-only-closure'
+      | 'activate-toxicology-opioid-xylazine-ventilation-oxygen-monitoring-toxicology-addiction-wound-and-dignity-ownership'
+      | 'review-toxicology-opioid-xylazine-supplied-respiratory-response-circulation-temperature-glucose-ecg-screen-wound-and-differential-boundary'
+      | 'record-toxicology-opioid-xylazine-bounded-qualified-continued-support-opioid-antagonist-symptomatic-care-no-veterinary-antagonist-and-strict-later-review'
+      | 'handoff-toxicology-opioid-xylazine-recurrent-depression-persistent-sedation-shock-hypothermia-wound-withdrawal-addiction-and-outcome-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2738,6 +2751,10 @@ export function crisisResponseAvailability(
       scenario.metadata.id === 'delayed-local-anesthetic-cns-cardiac-toxicity'
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'delayed-local-anesthetic-cns-cardiac-toxicity-transition')
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'delayed-local-anesthetic-cns-cardiac-toxicity-transition-boundary'),
+    hasToxicologyOpioidXylazineResponse:
+      scenario.metadata.id === 'opioid-xylazine-persistent-sedation'
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'opioid-xylazine-persistent-sedation-transition')
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'opioid-xylazine-persistent-sedation-transition-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2951,6 +2968,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'sympathomimetic-hyperadrenergic-hyperthermia-transition')
       || (event.type === 'narrative' && event.target === 'methanol-visual-acidosis-gaps-transition')
       || (event.type === 'narrative' && event.target === 'delayed-local-anesthetic-cns-cardiac-toxicity-transition')
+      || (event.type === 'narrative' && event.target === 'opioid-xylazine-persistent-sedation-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3052,6 +3070,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasToxicologySympathomimeticResponse,
     hasToxicologyMethanolResponse,
     hasToxicologyDelayedLastResponse,
+    hasToxicologyOpioidXylazineResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3180,8 +3199,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasToxicologySympathomimeticResponse
     || hasToxicologyMethanolResponse
     || hasToxicologyDelayedLastResponse
+    || hasToxicologyOpioidXylazineResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasToxicologyDelayedLastResponse
+  const responseTray = hasToxicologyOpioidXylazineResponse
+    ? { id: 'crisis', label: 'Breathing + sedation' } as const
+    : hasToxicologyDelayedLastResponse
     ? { id: 'crisis', label: 'Delayed LAST' } as const
     : hasToxicologyMethanolResponse
     ? { id: 'crisis', label: 'Methanol clues' } as const
@@ -4408,6 +4430,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasToxicologyDelayedLastResponse && (
               <ToxicologyDelayedLastTray assessment={props.resuscitation.toxicologyDelayedLastAssessment}
                 onAction={props.onToxicologyDelayedLastResponse ?? (() => {})} />
+            )}
+            {hasToxicologyOpioidXylazineResponse && (
+              <ToxicologyOpioidXylazineTray assessment={props.resuscitation.toxicologyOpioidXylazineAssessment}
+                onAction={props.onToxicologyOpioidXylazineResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -11173,6 +11199,38 @@ function ToxicologyDelayedLastTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-delayed-last-bounded-qualified-source-airway-seizure-lipid-acid-base-modified-resuscitation-and-ecls-intent-with-strict-later-review')}>Record rescue intent + reassess</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-delayed-last-recurrent-seizure-arrhythmia-shock-airway-acidemia-source-lipid-and-refractory-risk')}>Hand off what can return</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function ToxicologyOpioidXylazineTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyOpioidXylazineAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onToxicologyOpioidXylazineResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const evidence = assessment?.evidenceAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="toxicology-opioid-xylazine-early-title">
+      <div id="toxicology-opioid-xylazine-early-title" className="syringe__name">Restore breathing. Keep the differential open.</div>
+      <p className="syringe__remaining">Begin with the unknown exposure, bystander rescue, breathing, carbon dioxide, sedation, pupils, perfusion, temperature, and the whole person.</p>
+      <div className="crisis-drug__actions">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-toxicology-opioid-xylazine-exposure-rescue-breathing-sedation-perfusion-and-whole-patient')}>Connect rescue + patient</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-toxicology-opioid-xylazine-opioid-emergency-and-possible-adulterant-without-pupil-naloxone-response-or-screen-only-closure')}>Act without overcalling</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-toxicology-opioid-xylazine-ventilation-oxygen-monitoring-toxicology-addiction-wound-and-dignity-ownership')}>Bring care around the person</Button>}
+        {support && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-toxicology-opioid-xylazine-supplied-respiratory-response-circulation-temperature-glucose-ecg-screen-wound-and-differential-boundary')}>Review response + hidden harm</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="toxicology-opioid-xylazine-later-title">
+      <div id="toxicology-opioid-xylazine-later-title" className="syringe__name">Better breathing is progress, not proof.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Recurrent depression, sedation, perfusion, temperature, skin, withdrawal, co-exposure, addiction, harm-reduction, and outcome uncertainty handed off.' : reassessment ? 'Breathing and gas exchange improved while sedation persisted. Agent identity, naloxone resistance, recovery, treatment effect, and durable safety remain unproven.' : evidence ? 'Respiratory, circulation, temperature, glucose, ECG, routine-screen, skin, coingestion, and differential evidence stay coupled. Record qualified intent after time passes.' : support ? 'Respiratory, toxicology, addiction, wound, and dignity-centered ownership are active. Review the supplied evidence.' : 'Recognize the actionable opioid emergency and possible co-exposure before the supportive-care boundary.'}</p>
+      <div className="crisis-drug__actions">
+        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-opioid-xylazine-bounded-qualified-continued-support-opioid-antagonist-symptomatic-care-no-veterinary-antagonist-and-strict-later-review')}>Record support + reassess</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-opioid-xylazine-recurrent-depression-persistent-sedation-shock-hypothermia-wound-withdrawal-addiction-and-outcome-risk')}>Hand off the whole horizon</Button>}
       </div>
     </section>
   </>;

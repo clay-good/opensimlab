@@ -2550,6 +2550,25 @@ another elapsed active-risk handoff. The canonical state is not a source-deliver
 diagnostic, seizure, ECG, acid-base, lipid-response, airway, resuscitation, ECLS, or individualized-
 response model.
 
+### Wave F toxicology slice 15: opioid poisoning with persistent sedation
+
+The fifteenth Toxicology lab owns the uncertainty after an opioid-compatible respiratory emergency
+partly improves while sedation and cardiovascular depression persist, rather than duplicating
+Emergency Medicine's immediate fentanyl rescue and recurrence, Anesthesia's postoperative rescue,
+or Respiratory Medicine's chronic sleep-related hypoventilation. A 44-year-old woman is found beside
+an unlabeled powder after reported community naloxone and rescue breathing with RR 6/min, SpO2 84%,
+end-tidal CO2 62 mmHg, HR 50/min, BP 86/48 mmHg, T 35.5°C, deep sedation and supplied 2 mm pupils.
+The learner recognizes an actionable opioid-compatible respiratory emergency while possible
+non-opioid adulterant effects remain open; activates qualified respiratory, toxicology, addiction,
+wound, harm-reduction and dignity-centered ownership; and reviews supplied physiology, routine-
+screen limits, skin, coingestion and competing causes. Bounded continued airway, ventilation,
+oxygenation, opioid-antagonist, perfusion, temperature, glucose, aspiration, rhabdomyolysis and
+surveillance intent exposes no product, dose, route, device setting, procedure, or delivery, and no
+veterinary alpha-2 antagonist is selected. A strict elapsed report with RR 14/min, SpO2 97%,
+end-tidal CO2 43 mmHg and persistent drowsiness precedes another elapsed active-risk handoff. The
+canonical state is not an exposure-identification, toxicology-screen, respiratory, naloxone-response,
+xylazine, wound, withdrawal, addiction, disposition, or individualized-response model.
+
 #### Hematology and oncology: 11
 
 Neutropenic fever; tumor-lysis syndrome; hyperleukocytosis pattern; sickle-cell acute chest syndrome;

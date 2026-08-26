@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: delayed Toxicology LAST state has protocol version 161', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(161);
+  it('Scenario: Toxicology opioid-adulterant state has protocol version 162', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(162);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

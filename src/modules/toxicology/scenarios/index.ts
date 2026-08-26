@@ -13,6 +13,7 @@ import { SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS } from './serotonin-toxicity-hyp
 import { SYMPATHOMIMETIC_HYPERADRENERGIC_HYPERTHERMIA } from './sympathomimetic-hyperadrenergic-hyperthermia';
 import { METHANOL_VISUAL_ACIDOSIS_GAPS } from './methanol-visual-acidosis-gaps';
 import { DELAYED_LOCAL_ANESTHETIC_CNS_CARDIAC_TOXICITY } from './delayed-local-anesthetic-cns-cardiac-toxicity';
+import { OPIOID_XYLAZINE_PERSISTENT_SEDATION } from './opioid-xylazine-persistent-sedation';
 
 export const TOXICOLOGY_SCENARIOS: readonly Scenario[] = [
   METHEMOGLOBINEMIA_SATURATION_GAP,
@@ -29,6 +30,7 @@ export const TOXICOLOGY_SCENARIOS: readonly Scenario[] = [
   SYMPATHOMIMETIC_HYPERADRENERGIC_HYPERTHERMIA,
   METHANOL_VISUAL_ACIDOSIS_GAPS,
   DELAYED_LOCAL_ANESTHETIC_CNS_CARDIAC_TOXICITY,
+  OPIOID_XYLAZINE_PERSISTENT_SEDATION,
 ];
 export const DEFAULT_TOXICOLOGY_SCENARIO_ID = METHEMOGLOBINEMIA_SATURATION_GAP.metadata.id;
 

@@ -737,6 +737,21 @@ credited toward the catalog until every item in the completion contract passes.
     catheter, pump or line handling, diagnosis, oxygen, ventilation, seizure care, lipid, fluid,
     buffer, vasopressor, antiarrhythmic, drug, dose, rate, target, route, access, airway, pacing,
     cardioversion, ECLS, procedure, safety disposition, prognosis, or outcome control exists.
+  - [x] Toxicology slice 15/15 adds opioid poisoning with persistent sedation after reported
+    community naloxone and rescue breathing. The learner reconciles unknown exposure, prehospital
+    rescue, severe hypoventilation, hypoxemia, hypercapnia, sedation, pupils, bradycardia,
+    hypotension, hypothermia, and whole-patient state; recognizes an opioid-compatible respiratory
+    emergency with possible non-opioid adulterant effects without pupil-, naloxone-response-,
+    routine-screen-, wound- or single-agent closure; activates qualified respiratory, toxicology,
+    addiction, wound, harm-reduction and dignity-centered ownership; reviews supplied respiratory,
+    circulatory, temperature, glucose, ECG, blood-gas, chemistry, routine-screen, skin, coingestion
+    and competing-cause boundaries; records bounded continued-support and opioid-antagonist intent
+    while excluding veterinary antagonists; then reviews a strict elapsed respiratory report before
+    another elapsed active-risk handoff. No learner history, examination, monitoring, ECG, blood-gas,
+    chemistry, toxicology-screen or skin acquisition or interpretation, product identification,
+    diagnosis, oxygen, ventilation, opioid or veterinary antagonist, fluid, vasopressor, glucose,
+    rewarming, wound or withdrawal care, drug, dose, rate, target, route, access, airway, transport,
+    procedure, observation, disposition, prognosis, or outcome control exists.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.
 - [ ] After every wave, verify the exact cumulative count, distinctness, capability reuse, path and

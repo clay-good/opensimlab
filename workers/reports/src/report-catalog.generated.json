@@ -1815,6 +1815,17 @@
         "GB"
       ],
       "fidelityClass": "state_transition"
+    },
+    {
+      "scenarioId": "opioid-xylazine-persistent-sedation",
+      "contentVersion": "0.1.0",
+      "moduleId": "toxicology",
+      "maturity": "draft",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition"
     }
   ]
 }

@@ -437,6 +437,11 @@ const TOXICOLOGY_DELAYED_LAST_BLOCKED_ACTION_TYPES = new Set([
   'methanol-visual-acidosis-gaps-response',
   'local-anesthetic-systemic-toxicity-response',
 ]);
+const TOXICOLOGY_OPIOID_XYLAZINE_BLOCKED_ACTION_TYPES = new Set([
+  ...TOXICOLOGY_DELAYED_LAST_BLOCKED_ACTION_TYPES,
+  'delayed-local-anesthetic-cns-cardiac-toxicity-response',
+  'opioid-toxicity-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1358,6 +1363,12 @@ export class AnesthesiaEngine {
   private toxicologyDelayedLastEvidenceAtTick: number | null = null;
   private toxicologyDelayedLastReassessmentAtTick: number | null = null;
   private toxicologyDelayedLastHandoffAtTick: number | null = null;
+  private toxicologyOpioidXylazineTrajectoryAtTick: number | null = null;
+  private toxicologyOpioidXylazineRecognitionAtTick: number | null = null;
+  private toxicologyOpioidXylazineSupportAtTick: number | null = null;
+  private toxicologyOpioidXylazineEvidenceAtTick: number | null = null;
+  private toxicologyOpioidXylazineReassessmentAtTick: number | null = null;
+  private toxicologyOpioidXylazineHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2244,6 +2255,15 @@ export class AnesthesiaEngine {
         'This Toxicology lesson exposes no generic examination, monitoring, ECG, blood-gas, laboratory or source-delivery interpretation, catheter handling, '
         + 'oxygen, ventilation, seizure care, lipid, fluid, buffer, vasopressor, antiarrhythmic, drug, dose, route, access, infusion, airway, pacing, cardioversion, '
         + 'ECLS, transport, procedure, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const toxicologyOpioidXylazine = this.scenario.metadata.id === 'opioid-xylazine-persistent-sedation'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'opioid-xylazine-persistent-sedation-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'opioid-xylazine-persistent-sedation-transition-boundary');
+    if (toxicologyOpioidXylazine && TOXICOLOGY_OPIOID_XYLAZINE_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `toxicology-opioid-xylazine-generic-action-refused-${this.currentTick}`,
+        'This Toxicology lesson exposes no generic examination, monitoring, ECG, blood-gas, laboratory, toxicology-screen or skin interpretation, product identification, '
+        + 'oxygen, ventilation, opioid or veterinary antagonist, fluid, vasopressor, glucose, rewarming, wound care, drug, dose, route, access, airway, transport, '
+        + 'procedure, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -10614,6 +10634,32 @@ export class AnesthesiaEngine {
         if (this.toxicologyDelayedLastHandoffAtTick !== null) break;
         this.toxicologyDelayedLastHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-delayed-last-active-risk-handoff-recorded-${this.currentTick}`, 'Recurrent seizure, dysrhythmia, conduction delay, shock, airway, acidemia, electrolyte, source-delivery, lipid-complication, ECLS, recurrence, safety, disposition, prognosis, and outcome uncertainty were handed off.', { safetyDispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'opioid-xylazine-persistent-sedation-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'opioid-xylazine-persistent-sedation'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'opioid-xylazine-persistent-sedation-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'opioid-xylazine-persistent-sedation-transition-boundary');
+        const actions = ['reconcile-toxicology-opioid-xylazine-exposure-rescue-breathing-sedation-perfusion-and-whole-patient',
+          'recognize-toxicology-opioid-xylazine-opioid-emergency-and-possible-adulterant-without-pupil-naloxone-response-or-screen-only-closure',
+          'activate-toxicology-opioid-xylazine-ventilation-oxygen-monitoring-toxicology-addiction-wound-and-dignity-ownership',
+          'review-toxicology-opioid-xylazine-supplied-respiratory-response-circulation-temperature-glucose-ecg-screen-wound-and-differential-boundary',
+          'record-toxicology-opioid-xylazine-bounded-qualified-continued-support-opioid-antagonist-symptomatic-care-no-veterinary-antagonist-and-strict-later-review',
+          'handoff-toxicology-opioid-xylazine-recurrent-depression-persistent-sedation-shock-hypothermia-wound-withdrawal-addiction-and-outcome-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `toxicology-opioid-xylazine-response-refused-${this.currentTick}`, supported ? 'The opioid-adulterant action was not listed. No supplied or injected text was retained.' : 'These opioid-adulterant choices are available only in the exact declared Toxicology lesson.'); break; }
+        if (response === actions[0]) { if (this.toxicologyOpioidXylazineTrajectoryAtTick !== null) break; this.toxicologyOpioidXylazineTrajectoryAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-opioid-xylazine-trajectory-reconciled-${this.currentTick}`, 'Unknown-powder exposure, bystander naloxone and rescue breathing, hypoventilation, hypoxemia, hypercapnia, sedation, pupils, bradycardia, hypotension, hypothermia, and whole-patient state were connected without learner history, examination, monitoring, testing, or diagnosis.', { exposureUncertain: true, prehospitalRescueAuthored: true, patientHistoryTakenByLearner: false, patientExaminedByLearner: false }); break; }
+        if (this.toxicologyOpioidXylazineTrajectoryAtTick === null) { this.log('warning', 'assessment', `toxicology-opioid-xylazine-trajectory-order-refused-${this.currentTick}`, 'Reconcile exposure uncertainty, rescue, breathing, sedation, perfusion, temperature, and whole patient first.'); break; }
+        if (response === actions[1]) { if (this.toxicologyOpioidXylazineRecognitionAtTick !== null) break; this.toxicologyOpioidXylazineRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-opioid-xylazine-pattern-recognized-${this.currentTick}`, 'The authored state supports an opioid-compatible respiratory emergency with possible non-opioid adulterant effects. Pupils, naloxone response, persistent sedation, routine screening, wounds, street-drug context, or one vital sign does not identify an agent, prove naloxone resistance, exclude alternatives, or establish eligibility.', { opioidEmergencyAndPossibleAdulterantPatternRecognized: true, diagnosisMadeByLearner: false, adulterantConfirmedByLearner: false }); break; }
+        if (this.toxicologyOpioidXylazineRecognitionAtTick === null) { this.log('warning', 'assessment', `toxicology-opioid-xylazine-recognition-order-refused-${this.currentTick}`, 'Recognize the opioid respiratory emergency and possible co-exposure without single-clue closure before support or evidence review.'); break; }
+        if (response === actions[2]) { if (this.toxicologyOpioidXylazineSupportAtTick !== null) break; this.toxicologyOpioidXylazineSupportAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-opioid-xylazine-support-activated-${this.currentTick}`, 'Emergency, airway, respiratory, nursing, monitoring, poison-center or medical-toxicology, addiction, wound, harm-reduction, and dignity-centered ownership were recorded without learner examination, oxygen, ventilation, drug, dose, route, access, wound care, or disposition.', { qualifiedSupportActive: true, treatmentSelectedByLearner: false }); break; }
+        if (this.toxicologyOpioidXylazineSupportAtTick === null) { this.log('warning', 'assessment', `toxicology-opioid-xylazine-support-order-refused-${this.currentTick}`, 'Activate qualified respiratory, toxicology, addiction, wound, and dignity-centered ownership before evidence review.'); break; }
+        if (response === actions[3]) { if (this.toxicologyOpioidXylazineEvidenceAtTick !== null) break; this.toxicologyOpioidXylazineEvidenceAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-opioid-xylazine-evidence-reviewed-${this.currentTick}`, 'Supplied prehospital care, breathing, gas exchange, perfusion, temperature, glucose, ECG, blood-gas, chemistry, routine-screen limitation, skin, coingestion, and competing-cause boundaries were integrated without learner acquisition, interpretation, diagnosis, exclusion, product identification, or eligibility.', { respiratoryCirculatoryTemperatureScreenSkinAndDifferentialEvidenceAuthored: true, diagnosisMadeByLearner: false }); break; }
+        if (this.toxicologyOpioidXylazineEvidenceAtTick === null) { this.log('warning', 'assessment', `toxicology-opioid-xylazine-evidence-order-refused-${this.currentTick}`, 'Review supplied respiratory, circulation, temperature, glucose, ECG, screening, skin, coingestion, and differential evidence before qualified intent.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.toxicologyOpioidXylazineEvidenceAtTick) { this.log('warning', 'assessment', `toxicology-opioid-xylazine-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before qualified intent and strict later review.'); break; } if (this.toxicologyOpioidXylazineReassessmentAtTick !== null) break; this.toxicologyOpioidXylazineReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-opioid-xylazine-intent-and-reassessment-recorded-${this.currentTick}`, 'Qualified continued airway support, oxygenation and ventilation, opioid-antagonist intent for possible opioid effects, perfusion, temperature and glucose support, aspiration and rhabdomyolysis review, serial reassessment, and supportive care were recorded without product, dose, rate, target, route, access, airway setting, fluid, vasopressor, rewarming method, wound product, procedure, or delivery. Veterinary alpha-2 antagonists remain excluded. Strict 10-minute report: sinus rhythm 54, BP 90/52 (MAP 65), RR 14, SpO2 97% on supplied support, end-tidal CO2 43, and persistent drowsiness localizing to pressure without answering. Agent identity, treatment effect, recovery, and durable safety remain unproven.', { qualifiedIntentRecorded: true, veterinaryAntagonistSelectedByLearner: false, treatmentDeliveredByLearner: false, treatmentEffectProven: false }); break; }
+        if (this.toxicologyOpioidXylazineReassessmentAtTick === null) { this.log('warning', 'assessment', `toxicology-opioid-xylazine-handoff-order-refused-${this.currentTick}`, 'Review the strict later respiratory and sedation report before handoff.'); break; }
+        if (this.currentTick <= this.toxicologyOpioidXylazineReassessmentAtTick) { this.log('warning', 'assessment', `toxicology-opioid-xylazine-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.toxicologyOpioidXylazineHandoffAtTick !== null) break;
+        this.toxicologyOpioidXylazineHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-opioid-xylazine-active-risk-handoff-recorded-${this.currentTick}`, 'Recurrent respiratory depression, aspiration, pulmonary injury, persistent sedation, bradycardia, hypotension, hypothermia, skin and wound care, withdrawal, co-exposure, specialized testing, addiction treatment, harm reduction, safety, disposition, prognosis, and outcome uncertainty were handed off.', { safetyDispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -13468,6 +13514,18 @@ export class AnesthesiaEngine {
         diastolicMmHg: this.toxicologyDelayedLastReassessmentAtTick !== null ? 64 : 46,
         meanArterialMmHg: this.toxicologyDelayedLastReassessmentAtTick !== null ? 77 : 58,
         coreTemperatureC: 36.7 };
+    }
+    if (this.scenario.metadata.id === 'opioid-xylazine-persistent-sedation'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'opioid-xylazine-persistent-sedation-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'opioid-xylazine-persistent-sedation-transition-boundary')) {
+      crisisState = { ...crisisState, heartRateBpm: this.toxicologyOpioidXylazineReassessmentAtTick !== null ? 54 : 50,
+        respiratoryRateBpm: this.toxicologyOpioidXylazineReassessmentAtTick !== null ? 14 : 6,
+        spo2Percent: this.toxicologyOpioidXylazineReassessmentAtTick !== null ? 97 : 84,
+        etco2MmHg: this.toxicologyOpioidXylazineReassessmentAtTick !== null ? 43 : 62,
+        systolicMmHg: this.toxicologyOpioidXylazineReassessmentAtTick !== null ? 90 : 86,
+        diastolicMmHg: this.toxicologyOpioidXylazineReassessmentAtTick !== null ? 52 : 48,
+        meanArterialMmHg: this.toxicologyOpioidXylazineReassessmentAtTick !== null ? 65 : 61,
+        coreTemperatureC: 35.5 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -17341,6 +17399,33 @@ export class AnesthesiaEngine {
               acidBaseSafetyProven: false as const, electrolyteSafetyProven: false as const, lipidSafetyProven: false as const,
               sourceCompletenessProven: false as const, treatmentEffectProven: false as const, safetyDispositionDetermined: false as const,
               dispositionDetermined: false as const, prognosisPredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'opioid-xylazine-persistent-sedation'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'opioid-xylazine-persistent-sedation-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'opioid-xylazine-persistent-sedation-transition-boundary') ? {
+            toxicologyOpioidXylazineAssessment: {
+              trajectoryAtTick: this.toxicologyOpioidXylazineTrajectoryAtTick, recognitionAtTick: this.toxicologyOpioidXylazineRecognitionAtTick,
+              supportAtTick: this.toxicologyOpioidXylazineSupportAtTick, evidenceAtTick: this.toxicologyOpioidXylazineEvidenceAtTick,
+              reassessmentAtTick: this.toxicologyOpioidXylazineReassessmentAtTick, handoffAtTick: this.toxicologyOpioidXylazineHandoffAtTick,
+              opioidEmergencyPersistentSedationAndPossibleAdulterantPatternAuthored: true as const,
+              opioidEmergencyAndPossibleAdulterantPatternRecognized: this.toxicologyOpioidXylazineRecognitionAtTick !== null,
+              qualifiedSupportActive: this.toxicologyOpioidXylazineSupportAtTick !== null,
+              respiratoryCirculatoryTemperatureScreenSkinAndDifferentialEvidenceReviewed: this.toxicologyOpioidXylazineEvidenceAtTick !== null,
+              qualifiedContinuedSupportOpioidAntagonistSymptomaticCareAndNoVeterinaryAntagonistIntentRecorded: this.toxicologyOpioidXylazineReassessmentAtTick !== null,
+              responseStateAuthored: this.toxicologyOpioidXylazineReassessmentAtTick !== null,
+              patientHistoryTakenByLearner: false as const, patientExaminedByLearner: false as const, monitoringAcquiredByLearner: false as const,
+              ecgAcquiredByLearner: false as const, ecgInterpretedByLearner: false as const, bloodSampleAcquiredByLearner: false as const,
+              toxicologyScreenInterpretedByLearner: false as const, skinExaminedByLearner: false as const, streetProductIdentifiedByLearner: false as const,
+              diagnosisMadeByLearner: false as const, alternativeExcludedByLearner: false as const, oxygenSelectedByLearner: false as const,
+              ventilationSelectedByLearner: false as const, opioidAntagonistSelectedByLearner: false as const, veterinaryAntagonistSelectedByLearner: false as const,
+              drugSelectedByLearner: false as const, doseSelectedByLearner: false as const, routeSelectedByLearner: false as const,
+              airwaySelectedByLearner: false as const, woundCareSelectedByLearner: false as const, treatmentDeliveredByLearner: false as const,
+              adulterantConfirmedByLearner: false as const, naloxoneResistanceProven: false as const, durableVentilationProven: false as const,
+              durablePerfusionProven: false as const, neurologicRecoveryProven: false as const, airwayRecoveryProven: false as const,
+              aspirationExcluded: false as const, pulmonarySafetyProven: false as const, temperatureSafetyProven: false as const,
+              woundSafetyProven: false as const, withdrawalSafetyProven: false as const, treatmentEffectProven: false as const,
+              safetyDispositionDetermined: false as const, dispositionDetermined: false as const, prognosisPredicted: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "toxicology",
-  "recordCount": 14,
+  "recordCount": 15,
   "records": [
     {
       "recordId": "scenario:methemoglobinemia-saturation-gap@0.1.0",
@@ -155,6 +155,17 @@
       "evidence": [
         "/catalog/toxicology-completion-audit.json#delayed-local-anesthetic-cns-cardiac-toxicity@0.1.0",
         "/catalog/toxicology-quality-audit.json#delayed-local-anesthetic-cns-cardiac-toxicity@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:opioid-xylazine-persistent-sedation@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "opioid-xylazine-persistent-sedation",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/toxicology-completion-audit.json#opioid-xylazine-persistent-sedation@0.1.0",
+        "/catalog/toxicology-quality-audit.json#opioid-xylazine-persistent-sedation@0.1.0"
       ]
     }
   ]

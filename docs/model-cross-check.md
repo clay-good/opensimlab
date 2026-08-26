@@ -278,6 +278,14 @@ Recorded here rather than silently carried:
   calibrations grounded in the ASRA practice advisory and current AHA guidance, not a source-
   delivery, pharmacokinetic, diagnostic, seizure, ECG, perfusion, lipid-response, airway,
   resuscitation, ECLS, or individualized-response model.
+  Opioid poisoning with persistent sedation uses fixed canonical presentation and elapsed-response
+  states: reported community naloxone and rescue breathing after an unknown powder exposure, HR
+  50/min, BP 86/48 mmHg, RR 6/min, SpO2 84%, end-tidal CO2 62 mmHg, T 35.5°C and deep sedation, then
+  qualified continued respiratory and supportive care with HR 54/min, BP 90/52 mmHg, RR 14/min,
+  SpO2 97%, end-tidal CO2 43 mmHg and persistent drowsiness. These are teaching calibrations grounded
+  in current CDC and FDA xylazine guidance, not an exposure-identification, respiratory, blood-gas,
+  toxicology-screen, opioid-antagonist, xylazine, wound, withdrawal, addiction, or individualized-
+  response model.
   Salicylate where the falling number can be worse uses fixed canonical presentation and elapsed-
   deterioration states: supplied salicylate 52 mg/dL, pH 7.45, PCO2 23 mmHg, bicarbonate 16 mmol/L,
   anion gap 20 mmol/L and potassium 3.2 mmol/L, then salicylate 46 mg/dL, pH 7.32, PCO2 25 mmHg,

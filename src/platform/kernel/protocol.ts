@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 161 reports delayed Toxicology LAST state. */
-export const WORKER_PROTOCOL_VERSION = 161;
+/** Bumped whenever the message shape changes incompatibly. Version 162 reports Toxicology opioid-adulterant state. */
+export const WORKER_PROTOCOL_VERSION = 162;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2572,6 +2572,35 @@ export interface EquipmentSnapshot {
       readonly lipidSafetyProven: false; readonly sourceCompletenessProven: false;
       readonly treatmentEffectProven: false; readonly safetyDispositionDetermined: false;
       readonly dispositionDetermined: false; readonly prognosisPredicted: false; readonly outcomePredicted: false;
+    };
+    readonly toxicologyOpioidXylazineAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly opioidEmergencyPersistentSedationAndPossibleAdulterantPatternAuthored: true;
+      readonly opioidEmergencyAndPossibleAdulterantPatternRecognized: boolean;
+      readonly qualifiedSupportActive: boolean;
+      readonly respiratoryCirculatoryTemperatureScreenSkinAndDifferentialEvidenceReviewed: boolean;
+      readonly qualifiedContinuedSupportOpioidAntagonistSymptomaticCareAndNoVeterinaryAntagonistIntentRecorded: boolean;
+      readonly responseStateAuthored: boolean; readonly patientHistoryTakenByLearner: false;
+      readonly patientExaminedByLearner: false; readonly monitoringAcquiredByLearner: false;
+      readonly ecgAcquiredByLearner: false; readonly ecgInterpretedByLearner: false;
+      readonly bloodSampleAcquiredByLearner: false; readonly toxicologyScreenInterpretedByLearner: false;
+      readonly skinExaminedByLearner: false; readonly streetProductIdentifiedByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly alternativeExcludedByLearner: false;
+      readonly oxygenSelectedByLearner: false; readonly ventilationSelectedByLearner: false;
+      readonly opioidAntagonistSelectedByLearner: false; readonly veterinaryAntagonistSelectedByLearner: false;
+      readonly drugSelectedByLearner: false; readonly doseSelectedByLearner: false;
+      readonly routeSelectedByLearner: false; readonly airwaySelectedByLearner: false;
+      readonly woundCareSelectedByLearner: false; readonly treatmentDeliveredByLearner: false;
+      readonly adulterantConfirmedByLearner: false; readonly naloxoneResistanceProven: false;
+      readonly durableVentilationProven: false; readonly durablePerfusionProven: false;
+      readonly neurologicRecoveryProven: false; readonly airwayRecoveryProven: false;
+      readonly aspirationExcluded: false; readonly pulmonarySafetyProven: false;
+      readonly temperatureSafetyProven: false; readonly woundSafetyProven: false;
+      readonly withdrawalSafetyProven: false; readonly treatmentEffectProven: false;
+      readonly safetyDispositionDetermined: false; readonly dispositionDetermined: false;
+      readonly prognosisPredicted: false; readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

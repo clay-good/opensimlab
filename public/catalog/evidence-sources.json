@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 255,
+  "sourceCount": 257,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -737,6 +737,28 @@
       "locator": "Local Anesthetics recommendations and recommendation-specific supportive text; doi:10.1161/CIR.0000000000001380",
       "usedFor": "Concurrent prevention of hypoxia and acidemia, benzodiazepine seizure care, early 20% lipid-emulsion rescue, sodium-channel and refractory-cardiotoxicity context, and ECLS contingency; no dose or device setting is exposed in the Toxicology controls.",
       "verifiedAgainst": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-and-pediatric-special-circumstances-of-resuscitation",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "cdc-xylazine-clinical-management-2024",
+      "authors": "Centers for Disease Control and Prevention",
+      "title": "Xylazine: Clinical Management and Harm Reduction Strategies for Patients",
+      "publication": "CDC Overdose Prevention",
+      "year": 2024,
+      "locator": "July 2024, Actions for Overdose Involving Xylazine and Clinical Management sections",
+      "usedFor": "The possible-adulterant boundary: give naloxone for suspected opioid effects, continue respiratory and symptomatic support, assess hypotension and wounds, involve toxicology or addiction expertise, and do not interpret persistent sedation as proof of naloxone failure or a specific co-exposure.",
+      "verifiedAgainst": "https://www.cdc.gov/overdose-prevention/media/pdfs/2024/07/Xylazine-Clinical-Management-and-Harm-Reduction.pdf",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "fda-xylazine-illicit-drug-alert-2022",
+      "authors": "US Food and Drug Administration",
+      "title": "FDA alerts health care professionals of risks to patients exposed to xylazine in illicit drugs",
+      "publication": "FDA Drug Safety Communication",
+      "year": 2022,
+      "locator": "Recommendations for health care professionals, November 8, 2022",
+      "usedFor": "The routine-screen and reversal boundary: xylazine can complicate opioid overdose, is not detected on routine toxicology screens, may not respond to naloxone, has no approved human reversal agent, and veterinary reversal agents are not known to be safe or effective in people and should not be used.",
+      "verifiedAgainst": "https://www.fda.gov/drugs/drug-alerts-and-statements/fda-alerts-health-care-professionals-risks-patients-exposed-xylazine-illicit-drugs",
       "verifiedOn": "2026-08-26"
     },
     {

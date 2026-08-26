@@ -19,6 +19,7 @@ import { SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS } from '../../src/modules/toxico
 import { SYMPATHOMIMETIC_HYPERADRENERGIC_HYPERTHERMIA } from '../../src/modules/toxicology/scenarios/sympathomimetic-hyperadrenergic-hyperthermia';
 import { METHANOL_VISUAL_ACIDOSIS_GAPS } from '../../src/modules/toxicology/scenarios/methanol-visual-acidosis-gaps';
 import { DELAYED_LOCAL_ANESTHETIC_CNS_CARDIAC_TOXICITY } from '../../src/modules/toxicology/scenarios/delayed-local-anesthetic-cns-cardiac-toxicity';
+import { OPIOID_XYLAZINE_PERSISTENT_SEDATION } from '../../src/modules/toxicology/scenarios/opioid-xylazine-persistent-sedation';
 
 describe('Toxicology module user-facing foundation', () => {
   const cockpitMarkup = (
@@ -92,6 +93,8 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('Serotonin toxicity: cool the heat, follow the clonus');
     expect(markup).toContain('href="/toxicology/scenario/sympathomimetic-hyperadrenergic-hyperthermia"');
     expect(markup).toContain('Sympathomimetic toxicity: calm the surge, protect the person');
+    expect(markup).toContain('href="/toxicology/scenario/opioid-xylazine-persistent-sedation"');
+    expect(markup).toContain('Opioid poisoning: breathing can improve before sedation does');
   });
 
   it('briefs the bounded poisoning rehearsal without dose or diagnostic claims', () => {
@@ -403,6 +406,27 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('The quiet cues were part of the crisis.');
     expect(markup).toContain('Connect source + evolution');
     expect(markup).not.toMatch(/mg\/kg|mL\/kg|lipid dose|oxygen setting|ventilator setting|epinephrine dose|ECLS setting/i);
+    expect(markup).not.toContain('<input');
+    expect(markup).not.toContain('<select');
+  });
+
+  it('prerenders and opens the opioid-adulterant lab on its calm breathing-first tray', () => {
+    const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/opioid-xylazine-persistent-sedation' }));
+    expect(page).toContain('<h1>Opioid poisoning: breathing can improve before sedation does</h1>');
+    expect(page).toContain('pupil-, naloxone-response-, or screen-only closure');
+    expect(crisisResponseAvailability(OPIOID_XYLAZINE_PERSISTENT_SEDATION, []))
+      .toMatchObject({ hasToxicologyOpioidXylazineResponse: true });
+    expect(crisisResponseAvailability({ ...OPIOID_XYLAZINE_PERSISTENT_SEDATION,
+      metadata: { ...OPIOID_XYLAZINE_PERSISTENT_SEDATION.metadata, id: 'opioid-xylazine-clone' } }, []))
+      .toMatchObject({ hasToxicologyOpioidXylazineResponse: false });
+    const markup = cockpitMarkup(OPIOID_XYLAZINE_PERSISTENT_SEDATION, {
+      toxicologyOpioidXylazineAssessment: { trajectoryAtTick: null, recognitionAtTick: null,
+        supportAtTick: null, evidenceAtTick: null, reassessmentAtTick: null, handoffAtTick: null },
+    });
+    expect(markup).toContain('Breathing + sedation');
+    expect(markup).toContain('Restore breathing. Keep the differential open.');
+    expect(markup).toContain('Connect rescue + patient');
+    expect(markup).not.toMatch(/naloxone dose|oxygen setting|ventilator setting|veterinary antagonist dose|wound product/i);
     expect(markup).not.toContain('<input');
     expect(markup).not.toContain('<select');
   });

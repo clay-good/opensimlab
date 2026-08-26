@@ -4535,6 +4535,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use the complete verified source and clock plus serial CNS, seizure, airway, ECG, perfusion, acid-base, electrolyte, coingestion, competing-cause, treatment and response trajectory under qualified toxicology and resuscitation ownership.',
     briefIn: ['delayed-local-anesthetic-cns-cardiac-toxicity'],
   },
+  {
+    id: 'opioid-xylazine-exposure-rescue-response-and-coexposure-pattern-are-authored',
+    headline: 'The unknown exposure, prehospital rescue, persistent-sedation pattern, and later respiratory report are authored.',
+    simplification: 'Fixed reports and canonical monitor states stand in for history, examination, product verification, breathing and airway assessment, ECG, blood-gas, chemistry, toxicology screening, skin review, qualified supportive care, and reassessment.',
+    whereItMisleads: 'Treating fictional pupils, wounds, routine screening, naloxone exposure, persistent sedation, cardiovascular depression, or later respiratory improvement as learner evidence, proof of one agent, naloxone resistance, treatment effect, durable recovery, or predicted course.',
+    correctUnderstanding: 'Real care requires immediate airway and breathing support plus serial neurologic, respiratory, perfusion, temperature, skin, co-exposure, withdrawal and complication assessment under qualified emergency and toxicology ownership.',
+    briefIn: ['opioid-xylazine-persistent-sedation'],
+  },
+  {
+    id: 'opioid-xylazine-controls-reconcile-recognize-support-review-intent-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, pattern recognition, qualified ownership, evidence review, bounded intent, reassessment, and handoff only.',
+    simplification: 'Six actions stand in for emergency, airway, respiratory, nursing, monitoring, toxicology, addiction, wound, supportive, surveillance, harm-reduction and handoff work.',
+    whereItMisleads: 'Equating button order with history, examination, product identification, monitoring or test interpretation, diagnosis, airway or breathing care, prescribing, wound care, addiction care, disposition, recovery, or competence.',
+    correctUnderstanding: 'Actual care requires trained teams, immediate effective ventilation, current opioid-overdose protocols, continued supportive care for persistent effects, individualized complication and withdrawal care, and compassionate addiction and harm-reduction follow-through.',
+    briefIn: ['opioid-xylazine-persistent-sedation'],
+  },
+  {
+    id: 'no-live-opioid-xylazine-exam-airway-oxygen-drug-screen-wound-withdrawal-disposition-or-outcome',
+    headline: 'The lab does not examine, ventilate, give oxygen or naloxone, identify an adulterant, treat a wound or withdrawal, determine disposition, or report outcome.',
+    simplification: 'No live history, examination, monitoring, ECG, blood gas, chemistry, toxicology screening, skin assessment, product identification, diagnosis, differential exclusion, oxygen, ventilation, opioid antagonist, veterinary antagonist, fluid, vasopressor, glucose, rewarming, wound care, drug, dose, rate, target, route, access, airway, transport, procedure, observation, disposition, prognosis, safety decision, or outcome is modeled.',
+    whereItMisleads: 'Using pupils, naloxone response, persistent sedation, wounds, routine screening, street-drug context or one vital sign alone; copying fictional values into care; choosing a drug, airway, wound or withdrawal treatment from this rehearsal; attributing the fixed report; or reading completion as competence.',
+    correctUnderstanding: 'Use the complete verified exposure and rescue history plus serial breathing, oxygenation, ventilation, neurologic, perfusion, temperature, skin, coingestion, competing-cause, complication, withdrawal, treatment and response trajectory under qualified emergency, toxicology and addiction ownership.',
+    briefIn: ['opioid-xylazine-persistent-sedation'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {
