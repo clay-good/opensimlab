@@ -116,6 +116,11 @@ const OXYGEN_DEVICE_FAILURE_BLOCKED_ACTION_TYPES = new Set([
   'copd-exacerbation-transition-response', 'opioid-ventilatory-response',
   'opioid-toxicity-response', 'mucus-plugging-response',
 ]);
+const ACUTE_TRACHEOSTOMY_OBSTRUCTION_BLOCKED_ACTION_TYPES = new Set([
+  ...OXYGEN_DEVICE_FAILURE_BLOCKED_ACTION_TYPES, 'oxygen-device-failure-response',
+  'high-flow-nasal-oxygen-escalation-response', 'endotracheal-tube-migration-response',
+  'bronchiectasis-mucus-plugging-response', 'unplanned-extubation-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -751,6 +756,15 @@ export class AnesthesiaEngine {
   private oxygenDeviceFailureResponseAtTick: number | null = null;
   private oxygenDeviceFailureHandoffAtTick: number | null = null;
   private oxygenDeviceFailureLastUnsupportedChoice: 'blood-gas' | 'continue-transport' | 'increase-source' | 'reseat-cannula' | null = null;
+  private acuteTracheostomyObstructionRecognitionAtTick: number | null = null;
+  private acuteTracheostomyObstructionSupportAtTick: number | null = null;
+  private acuteTracheostomyObstructionPathwayAtTick: number | null = null;
+  private acuteTracheostomyObstructionInnerCannulaAtTick: number | null = null;
+  private acuteTracheostomyObstructionRestorationAtTick: number | null = null;
+  private acuteTracheostomyObstructionHandoffAtTick: number | null = null;
+  private acuteTracheostomyObstructionLastUnsupportedChoice: 'imaging' | 'unverified-ventilation' | 'force-catheter' | 'whole-tube' | null = null;
+  /** Canonical gas-flow state for the scenario's declared tracheostomy path. */
+  private tracheostomyPatencyFraction = 1;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -858,6 +872,10 @@ export class AnesthesiaEngine {
     this.scenario = options.scenario;
     this.practiceRegion = options.practiceRegion;
     this.seed = options.seed;
+    if (options.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'acute-tracheostomy-obstruction-reassessment')) {
+      this.tracheostomyPatencyFraction = 0.08;
+    }
     this.rng = createRng(options.seed, 'session');
     this.configuredResidualRocuroniumCe = options.scenario.equipment.startingTrainOfFourRatio === undefined
       ? 0
@@ -1123,6 +1141,15 @@ export class AnesthesiaEngine {
     if (oxygenDeviceFailure && OXYGEN_DEVICE_FAILURE_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `oxygen-device-failure-generic-action-refused-${this.currentTick}`,
         'This portable-source lesson does not expose generic medication, oxygen-setting, airway, ventilator, alarm, equipment-manipulation, or adjacent-crisis actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const acuteTracheostomyObstruction = this.scenario.timeline.some((event) =>
+      event.type === 'narrative' && event.target === 'acute-tracheostomy-obstruction-reassessment');
+    if (acuteTracheostomyObstruction
+      && ACUTE_TRACHEOSTOMY_OBSTRUCTION_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `acute-tracheostomy-obstruction-generic-action-refused-${this.currentTick}`,
+        'This tracheostomy-patency lesson does not expose generic oxygen, airway, suction, device, ventilator, medication, procedure, alarm, or adjacent-crisis actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -5798,6 +5825,76 @@ export class AnesthesiaEngine {
         this.oxygenDeviceFailureHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `oxygen-device-failure-handoff-recorded-${this.currentTick}`, 'The active oxygen need, currently verified source, documented reserve, independent backup, monitoring, partial response, open clinical causes, failed-source isolation and local incident learning, transport-readiness question, and respiratory, nursing, transport, and technical owners were handed off without blame. No transport decision, disposition, prognosis, durable restoration, or outcome was determined.', { durableRestorationProven: false, transportReadinessDetermined: false, dispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'acute-tracheostomy-obstruction-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'acute-tracheostomy-obstruction-reassessment');
+        const valid = ['reconcile-acute-tracheostomy-obstruction-anatomy-and-patency',
+          'activate-acute-tracheostomy-obstruction-help-and-oxygenation',
+          'wait-for-acute-tracheostomy-obstruction-imaging',
+          'ventilate-through-unverified-tracheostomy',
+          'review-acute-tracheostomy-obstruction-device-pathway',
+          'record-acute-tracheostomy-obstruction-inner-cannula-removal',
+          'force-acute-tracheostomy-obstruction-catheter',
+          'replace-whole-tracheostomy-first',
+          'reassess-acute-tracheostomy-obstruction-restoration',
+          'handoff-acute-tracheostomy-obstruction-reassessment'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `acute-tracheostomy-obstruction-response-refused-${this.currentTick}`, supported ? 'That tracheostomy-patency action is not available. Nothing changed.' : 'These tracheostomy-patency choices are available only in the declared Respiratory Medicine lesson.'); break; }
+        if (response === 'reconcile-acute-tracheostomy-obstruction-anatomy-and-patency') {
+          if (this.acuteTracheostomyObstructionRecognitionAtTick !== null) { this.log('warning', 'assessment', `acute-tracheostomy-obstruction-recognition-refused-${this.currentTick}`, 'The person, pulse, breathing, anatomy, device, and patency findings were already reconciled.'); break; }
+          this.acuteTracheostomyObstructionRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `acute-tracheostomy-obstruction-anatomy-patency-reconciled-${this.currentTick}`, 'The clean-pleth hypoxemia, distress, pulse, spontaneous effort, scant tracheostomy airflow, faint oral airflow, absent tracheostomy waveform, and unchanged external appearance were reconciled with the bedhead plan: this is a tracheostomy, not a laryngectomy, and the native upper airway is documented patent. The combined evidence supports urgent patency failure; absent capnography alone was not treated as diagnostic.', { patientExaminedByLearner: false, monitorInterpretedByLearner: false, laryngectomyAuthored: false, patentUpperAirwayAuthored: true }); break;
+        }
+        if (this.acuteTracheostomyObstructionRecognitionAtTick === null) { this.log('warning', 'assessment', `acute-tracheostomy-obstruction-recognition-order-refused-${this.currentTick}`, 'Reconcile the person, pulse, breathing, airway anatomy, declared device, and converging patency evidence first.'); break; }
+        if (response === 'wait-for-acute-tracheostomy-obstruction-imaging' || response === 'ventilate-through-unverified-tracheostomy') {
+          this.acuteTracheostomyObstructionLastUnsupportedChoice = response === 'wait-for-acute-tracheostomy-obstruction-imaging' ? 'imaging' : 'unverified-ventilation';
+          this.log('warning', 'assessment', `acute-tracheostomy-obstruction-support-not-selected-${this.currentTick}`,
+            response === 'wait-for-acute-tracheostomy-obstruction-imaging'
+              ? 'Urgent oxygenation and airway-expert help cannot wait for imaging. Nothing changed.'
+              : 'Do not trial positive pressure through an unverified tracheostomy path. Activate expert help and oxygenation to the declared possible airways. Nothing changed.',
+            { unsupportedChoice: this.acuteTracheostomyObstructionLastUnsupportedChoice, patientStateChanged: false }); break;
+        }
+        if (response === 'activate-acute-tracheostomy-obstruction-help-and-oxygenation') {
+          if (this.acuteTracheostomyObstructionSupportAtTick !== null) { this.log('warning', 'assessment', `acute-tracheostomy-obstruction-support-refused-${this.currentTick}`, 'Airway-expert help and oxygenation to face and tracheostomy were already recorded.'); break; }
+          this.acuteTracheostomyObstructionSupportAtTick = this.currentTick;
+          this.acuteTracheostomyObstructionLastUnsupportedChoice = null;
+          this.log('critical', 'assessment', `acute-tracheostomy-obstruction-help-oxygenation-activated-${this.currentTick}`, 'Resuscitation, respiratory, and airway-expert help plus team-delivered oxygen to both face and tracheostomy were activated because this exact patient has a tracheostomy and a documented patent native upper airway. The learner did not select or deliver oxygen, choose settings, ventilate, or manipulate an airway.', { dualRouteOxygenIntentRecorded: true, oxygenSelectedByLearner: false, oxygenDeliveredByLearner: false, ventilationDeliveredByLearner: false }); break;
+        }
+        if (this.acuteTracheostomyObstructionSupportAtTick === null) { this.log('warning', 'assessment', `acute-tracheostomy-obstruction-support-order-refused-${this.currentTick}`, 'Activate immediate expert help and team-delivered oxygenation before reviewing the device pathway.'); break; }
+        if (response === 'review-acute-tracheostomy-obstruction-device-pathway') {
+          if (this.acuteTracheostomyObstructionPathwayAtTick !== null) { this.log('warning', 'assessment', `acute-tracheostomy-obstruction-pathway-refused-${this.currentTick}`, 'The declared device pathway was already reviewed.'); break; }
+          this.acuteTracheostomyObstructionPathwayAtTick = this.currentTick;
+          this.log('warning', 'assessment', `acute-tracheostomy-obstruction-device-pathway-reviewed-${this.currentTick}`, 'Fixed qualified review for this established cuffless dual-cannula tracheostomy: no cap or speaking valve is present; the removable inner cannula is occluded by thick dried secretion; the outer tube and external appearance remain unchanged. This finding was supplied by experienced staff without learner inspection, catheter passage, suction, or device handling and does not generalize to another airway or device.', { innerCannulaObstructionAuthored: true, deviceInspectedByLearner: false, catheterPassedByLearner: false, suctionPerformedByLearner: false }); break;
+        }
+        if (this.acuteTracheostomyObstructionPathwayAtTick === null) { this.log('warning', 'assessment', `acute-tracheostomy-obstruction-pathway-order-refused-${this.currentTick}`, 'Review the fixed qualified pathway for this declared tracheostomy before recording its bounded correction.'); break; }
+        if (response === 'force-acute-tracheostomy-obstruction-catheter' || response === 'replace-whole-tracheostomy-first') {
+          this.acuteTracheostomyObstructionLastUnsupportedChoice = response === 'force-acute-tracheostomy-obstruction-catheter' ? 'force-catheter' : 'whole-tube';
+          this.log('warning', 'assessment', `acute-tracheostomy-obstruction-correction-not-selected-${this.currentTick}`,
+            response === 'force-acute-tracheostomy-obstruction-catheter'
+              ? 'Do not force a catheter past resistance. Use the declared removable-inner-cannula branch with experienced staff. Nothing changed.'
+              : 'Whole-tube removal or exchange is not the first bounded branch for this declared isolated inner-cannula obstruction. Nothing changed.',
+            { unsupportedChoice: this.acuteTracheostomyObstructionLastUnsupportedChoice, patientStateChanged: false }); break;
+        }
+        if (response === 'record-acute-tracheostomy-obstruction-inner-cannula-removal') {
+          if (this.acuteTracheostomyObstructionInnerCannulaAtTick !== null) { this.log('warning', 'assessment', `acute-tracheostomy-obstruction-inner-cannula-refused-${this.currentTick}`, 'Experienced-team inner-cannula removal was already recorded.'); break; }
+          this.acuteTracheostomyObstructionInnerCannulaAtTick = this.currentTick;
+          this.acuteTracheostomyObstructionLastUnsupportedChoice = null;
+          this.tracheostomyPatencyFraction = 1;
+          this.log('critical', 'assessment', `acute-tracheostomy-obstruction-inner-cannula-recorded-${this.currentTick}`, 'Experienced airway and respiratory staff removed the occluded removable inner cannula off-screen while the outer tracheostomy tube remained in place. A catheter then passed freely through the outer tube, airflow and waveform carbon dioxide returned, and the team supplied a patent inner cannula. The learner did not handle a device, pass a catheter, suction, change a cuff, remove or exchange the tube, ventilate, intubate, or perform a procedure.', { expertDevicePathwayRecorded: true, tracheostomyPatencyFraction: this.tracheostomyPatencyFraction, innerCannulaHandledByLearner: false, catheterPassedByLearner: false, suctionPerformedByLearner: false, procedurePerformedByLearner: false }); break;
+        }
+        if (this.acuteTracheostomyObstructionInnerCannulaAtTick === null) { this.log('warning', 'assessment', `acute-tracheostomy-obstruction-correction-order-refused-${this.currentTick}`, 'Record the experienced-team correction for this declared inner-cannula obstruction before reviewing restoration.'); break; }
+        if (response === 'reassess-acute-tracheostomy-obstruction-restoration') {
+          if (this.currentTick <= this.acuteTracheostomyObstructionInnerCannulaAtTick) { this.log('warning', 'assessment', `acute-tracheostomy-obstruction-restoration-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before reviewing the fixed 2-minute restoration report.'); break; }
+          if (this.acuteTracheostomyObstructionRestorationAtTick !== null) { this.log('warning', 'assessment', `acute-tracheostomy-obstruction-restoration-refused-${this.currentTick}`, 'The fixed 2-minute restoration report was already reviewed.'); break; }
+          this.acuteTracheostomyObstructionRestorationAtTick = this.currentTick;
+          this.log('warning', 'assessment', `acute-tracheostomy-obstruction-restoration-reviewed-${this.currentTick}`, 'Fixed qualified 2-minute report: he is awake and calmer with baseline communication returning, improved chest movement and tracheostomy airflow, HR 94/min, RR 22/min, BP 132/78 mmHg, clean-pleth SpO\u2082 95%, and continuous tracheostomy waveform CO\u2082 at 38 mmHg. This supports immediate restored patency, not durable resolution or exclusion of deeper secretion, recurrence, displacement, pulmonary disease, or another cause.', { immediatePatencyRestoredAuthored: true, durablePatencyProven: false, outcomePredicted: false }); break;
+        }
+        if (this.acuteTracheostomyObstructionRestorationAtTick === null) { this.log('warning', 'assessment', `acute-tracheostomy-obstruction-restoration-order-refused-${this.currentTick}`, 'Review the fixed whole-person and gas-path restoration after elapsed time before handoff.'); break; }
+        if (this.currentTick <= this.acuteTracheostomyObstructionRestorationAtTick) { this.log('warning', 'assessment', `acute-tracheostomy-obstruction-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off the active airway risk.'); break; }
+        if (this.acuteTracheostomyObstructionHandoffAtTick !== null) { this.log('warning', 'assessment', `acute-tracheostomy-obstruction-handoff-refused-${this.currentTick}`, 'The active airway-risk handoff was already recorded.'); break; }
+        this.acuteTracheostomyObstructionHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `acute-tracheostomy-obstruction-handoff-recorded-${this.currentTick}`, 'The tracheostomy-versus-laryngectomy anatomy, device and stoma facts, current gas path, obstruction and qualified correction, partial response, recurrence triggers, humidification and secretion review, emergency plan, ready equipment, and named respiratory, nursing, and airway owners were handed off. No durable resolution, disposition, prognosis, or outcome was declared.', { durablePatencyProven: false, dispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -8600,6 +8697,19 @@ export class AnesthesiaEngine {
         diastolicMmHg: reviewed ? 74 : 76, meanArterialMmHg: reviewed ? 91 : 94,
         coreTemperatureC: 36.9 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'acute-tracheostomy-obstruction-reassessment')) {
+      const blocked = 1 - this.tracheostomyPatencyFraction;
+      crisisState = { ...crisisState,
+        heartRateBpm: 94 + 24 * blocked,
+        respiratoryRateBpm: 22 + 12 * blocked,
+        spo2Percent: 95 - 13 * blocked,
+        etco2MmHg: 38 * this.tracheostomyPatencyFraction,
+        systolicMmHg: 132 + 14 * blocked,
+        diastolicMmHg: 78 + 6 * blocked,
+        meanArterialMmHg: 96 + 9 * blocked,
+        coreTemperatureC: 37.1 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -9123,6 +9233,20 @@ export class AnesthesiaEngine {
           0, Math.ceil((this.jawThrustCpapUntilTick - this.currentTick) / TICKS_PER_SECOND),
         ),
       },
+      ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'acute-tracheostomy-obstruction-reassessment') ? {
+          tracheostomy: {
+            present: true as const,
+            device: 'cuffless-dual-cannula' as const,
+            stoma: 'established' as const,
+            nativeUpperAirway: 'patent' as const,
+            innerCannula: this.acuteTracheostomyObstructionInnerCannulaAtTick === null
+              ? 'obstructed' as const : 'removed-by-qualified-team' as const,
+            patencyFraction: this.tracheostomyPatencyFraction,
+            airflow: this.tracheostomyPatencyFraction < 0.5 ? 'scant' as const : 'restored' as const,
+            continuousCapnography: this.tracheostomyPatencyFraction >= 0.5,
+          },
+        } : {}),
       ...(this.scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'endotracheal-tube-migration-after-repositioning') ? {
           trachealTubePosition: {
@@ -10124,6 +10248,35 @@ export class AnesthesiaEngine {
               oxygenDeliveredByLearner: false as const, deviceOperatedByLearner: false as const,
               connectionHandledByLearner: false as const, repairPerformedByLearner: false as const,
               treatmentDeliveredByLearner: false as const, durableRestorationProven: false as const,
+              dispositionDetermined: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'acute-tracheostomy-obstruction-reassessment') ? {
+            acuteTracheostomyObstructionAssessment: {
+              recognitionAtTick: this.acuteTracheostomyObstructionRecognitionAtTick,
+              supportAtTick: this.acuteTracheostomyObstructionSupportAtTick,
+              devicePathwayAtTick: this.acuteTracheostomyObstructionPathwayAtTick,
+              innerCannulaAtTick: this.acuteTracheostomyObstructionInnerCannulaAtTick,
+              restorationAtTick: this.acuteTracheostomyObstructionRestorationAtTick,
+              handoffAtTick: this.acuteTracheostomyObstructionHandoffAtTick,
+              lastUnsupportedChoice: this.acuteTracheostomyObstructionLastUnsupportedChoice,
+              initialPulsePresent: true as const, spontaneousBreathingAuthored: true as const,
+              tracheostomyPresentAuthored: true as const, laryngectomyAuthored: false as const,
+              patentUpperAirwayAuthored: true as const, matureStomaAuthored: true as const,
+              removableInnerCannulaAuthored: true as const,
+              innerCannulaObstructionAuthored: this.acuteTracheostomyObstructionPathwayAtTick !== null,
+              dualRouteOxygenIntentRecorded: this.acuteTracheostomyObstructionSupportAtTick !== null,
+              expertDevicePathwayRecorded: this.acuteTracheostomyObstructionInnerCannulaAtTick !== null,
+              patientExaminedByLearner: false as const, monitorInterpretedByLearner: false as const,
+              deviceInspectedByLearner: false as const, catheterPassedByLearner: false as const,
+              suctionPerformedByLearner: false as const, innerCannulaHandledByLearner: false as const,
+              tracheostomyTubeHandledByLearner: false as const, cuffChangedByLearner: false as const,
+              oxygenSelectedByLearner: false as const, oxygenDeliveredByLearner: false as const,
+              ventilationDeliveredByLearner: false as const,
+              intubationPerformedByLearner: false as const,
+              procedurePerformedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const, durablePatencyProven: false as const,
               dispositionDetermined: false as const, outcomePredicted: false as const,
             },
           } : {}),

@@ -1604,6 +1604,29 @@ oxygen; perform a procedure; decide transport readiness, disposition, or prognos
 durable restoration or outcome. It is distinct from pulse-oximeter artifact, ventilator-circuit
 disconnection, HFNO escalation, and clinical support failure.
 
+### Wave C respiratory-medicine slice 15: acute tracheostomy obstruction
+
+The fifteenth respiratory-medicine slice is an anatomy-first artificial-airway emergency lesson,
+not suction or tube-change training. A 64-year-old man with an established cuffless dual-cannula
+tracheostomy, documented patent native upper airway, spontaneous breathing, and no ventilator
+dependence deteriorates from clean-pleth SpO₂ 96% and RR 18/min to agitation, one-word
+communication, marked effort, RR 34/min, HR 118/min, and clean-pleth SpO₂ 82%. Fixed qualified
+findings report scant tracheostomy airflow, faint oral airflow, absent tracheostomy waveform carbon
+dioxide, a pulse, and no external source or tubing fault. Absent capnography is not diagnostic alone.
+
+Learners reconcile the tracheostomy-versus-laryngectomy anatomy and converging patency evidence,
+then choose immediate expert help and qualified oxygenation to face and tracheostomy instead of
+waiting for imaging or trialing ventilation through an unverified path. A fixed review localizes an
+occluded removable inner cannula. Learners connect an experienced-team inner-cannula action while
+the outer tube remains in place; the canonical tracheostomy gas path, capnography, oxygenation, and
+ventilation respond. A strictly elapsed fixed 2-minute whole-person report and another elapsed
+active-risk handoff follow. The lesson does not examine; acquire or interpret tests; diagnose;
+select or deliver oxygen, ventilation, humidification, drugs, or treatment; handle a cap, valve,
+cannula, catheter, cuff, or tube; suction; exchange a tube; ventilate; intubate; perform bronchoscopy
+or another procedure; decide disposition or prognosis; or predict durable resolution or outcome.
+It does not generalize to laryngectomy, a fresh stoma, another device, upper-airway obstruction,
+ventilator dependence, or arrest.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

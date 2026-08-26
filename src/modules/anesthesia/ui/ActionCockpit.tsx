@@ -979,6 +979,26 @@ export interface ActionCockpitProps {
       readonly treatmentDeliveredByLearner: false; readonly durableRestorationProven: false;
       readonly dispositionDetermined: false; readonly outcomePredicted: false;
     };
+    readonly acuteTracheostomyObstructionAssessment?: {
+      readonly recognitionAtTick: number | null; readonly supportAtTick: number | null;
+      readonly devicePathwayAtTick: number | null; readonly innerCannulaAtTick: number | null;
+      readonly restorationAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly lastUnsupportedChoice: 'imaging' | 'unverified-ventilation' | 'force-catheter' | 'whole-tube' | null;
+      readonly initialPulsePresent: true; readonly spontaneousBreathingAuthored: true;
+      readonly tracheostomyPresentAuthored: true; readonly laryngectomyAuthored: false;
+      readonly patentUpperAirwayAuthored: true; readonly matureStomaAuthored: true;
+      readonly removableInnerCannulaAuthored: true; readonly innerCannulaObstructionAuthored: boolean;
+      readonly dualRouteOxygenIntentRecorded: boolean; readonly expertDevicePathwayRecorded: boolean;
+      readonly patientExaminedByLearner: false; readonly monitorInterpretedByLearner: false;
+      readonly deviceInspectedByLearner: false; readonly catheterPassedByLearner: false;
+      readonly suctionPerformedByLearner: false; readonly innerCannulaHandledByLearner: false;
+      readonly tracheostomyTubeHandledByLearner: false; readonly cuffChangedByLearner: false;
+      readonly oxygenSelectedByLearner: false; readonly oxygenDeliveredByLearner: false;
+      readonly ventilationDeliveredByLearner: false; readonly intubationPerformedByLearner: false;
+      readonly procedurePerformedByLearner: false; readonly treatmentDeliveredByLearner: false;
+      readonly durablePatencyProven: false; readonly dispositionDetermined: false;
+      readonly outcomePredicted: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1530,6 +1550,18 @@ export interface ActionCockpitProps {
       | 'review-oxygen-device-failure-delivery-and-patient-response'
       | 'handoff-oxygen-device-failure-reassessment',
   ) => void;
+  readonly onAcuteTracheostomyObstructionResponse?: (
+    action: 'reconcile-acute-tracheostomy-obstruction-anatomy-and-patency'
+      | 'activate-acute-tracheostomy-obstruction-help-and-oxygenation'
+      | 'wait-for-acute-tracheostomy-obstruction-imaging'
+      | 'ventilate-through-unverified-tracheostomy'
+      | 'review-acute-tracheostomy-obstruction-device-pathway'
+      | 'record-acute-tracheostomy-obstruction-inner-cannula-removal'
+      | 'force-acute-tracheostomy-obstruction-catheter'
+      | 'replace-whole-tracheostomy-first'
+      | 'reassess-acute-tracheostomy-obstruction-restoration'
+      | 'handoff-acute-tracheostomy-obstruction-reassessment',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1867,6 +1899,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'oxygen-device-failure',
     ),
+    hasAcuteTracheostomyObstructionResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'acute-tracheostomy-obstruction-reassessment',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2008,6 +2044,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'high-flow-nasal-oxygen-escalation')
       || (event.type === 'narrative'
         && event.target === 'oxygen-device-failure')
+      || (event.type === 'narrative'
+        && event.target === 'acute-tracheostomy-obstruction-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2066,7 +2104,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasBronchiectasisMucusPluggingResponse, hasChronicOpioidHypoventilationResponse,
     hasNeuromuscularRespiratoryFailureResponse, hasObesityHypoventilationResponse,
     hasNoninvasiveVentilationSelectionResponse, hasHighFlowOxygenEscalationResponse,
-    hasOxygenDeviceFailureResponse,
+    hasOxygenDeviceFailureResponse, hasAcuteTracheostomyObstructionResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2136,7 +2174,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasLargePleuralEffusionResponse || hasBronchiectasisMucusPluggingResponse
     || hasChronicOpioidHypoventilationResponse || hasNeuromuscularRespiratoryFailureResponse
     || hasObesityHypoventilationResponse || hasNoninvasiveVentilationSelectionResponse
-    || hasHighFlowOxygenEscalationResponse || hasOxygenDeviceFailureResponse;
+    || hasHighFlowOxygenEscalationResponse || hasOxygenDeviceFailureResponse
+    || hasAcuteTracheostomyObstructionResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2167,7 +2206,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasOxygenDeviceFailureResponse
+  const responseTray = hasAcuteTracheostomyObstructionResponse
+    ? { id: 'crisis', label: 'Tracheostomy airflow' } as const
+    : hasOxygenDeviceFailureResponse
     ? { id: 'crisis', label: 'Portable oxygen path' } as const
     : hasHighFlowOxygenEscalationResponse
     ? { id: 'crisis', label: 'High-flow escalation' } as const
@@ -2413,6 +2454,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNoninvasiveVentilationSelectionResponse
     || hasHighFlowOxygenEscalationResponse
     || hasOxygenDeviceFailureResponse
+    || hasAcuteTracheostomyObstructionResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3057,6 +3099,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <OxygenDeviceFailureTray
                 assessment={props.resuscitation.oxygenDeviceFailureAssessment}
                 onAction={props.onOxygenDeviceFailureResponse ?? (() => {})} />
+            )}
+            {hasAcuteTracheostomyObstructionResponse && (
+              <AcuteTracheostomyObstructionTray
+                assessment={props.resuscitation.acuteTracheostomyObstructionAssessment}
+                onAction={props.onAcuteTracheostomyObstructionResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -7797,6 +7844,72 @@ function OxygenDeviceFailureTray({ assessment, onAction }: {
           onClick={() => onAction('handoff-oxygen-device-failure-reassessment')}>Hand off source + reserve check</Button>}
       </div>
       <p className="field__hint">A fixed early response does not resolve the lung disease or declare transport safe. Handoff keeps the verified source, documented reserve, independent backup, monitoring, failed-source isolation, and named owners visible without blame.</p>
+    </section>
+  </div>;
+}
+
+function AcuteTracheostomyObstructionTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['acuteTracheostomyObstructionAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onAcuteTracheostomyObstructionResponse']>;
+}) {
+  const recognition = assessment?.recognitionAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const pathway = assessment?.devicePathwayAtTick != null;
+  const correction = assessment?.innerCannulaAtTick != null;
+  const restoration = assessment?.restorationAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  const unsupported = assessment?.lastUnsupportedChoice;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="tracheostomy-obstruction-person-title">
+      <div id="tracheostomy-obstruction-person-title" className="syringe__name">The person comes before the tube.</div>
+      <Badge kind="teaching">tracheostomy · not laryngectomy · upper airway patent</Badge>
+      <div className="syringe__meta">SpO₂ 96 → 82% · RR 18 → 34 · pulse + spontaneous effort</div>
+      <p className="syringe__remaining" role="status">
+        {pathway ? 'Declared inner-cannula branch confirmed · restore the gas path with qualified help'
+          : support ? 'Both possible airways supported · review this declared device path'
+            : unsupported === 'imaging' ? 'Oxygenation and expert help cannot wait for imaging'
+              : unsupported === 'unverified-ventilation' ? 'Do not ventilate through an unverified path'
+                : recognition ? 'Urgent patency failure · help and oxygenation come first'
+                  : 'Start with anatomy, pulse, breathing, airflow, and signal'}
+      </p>
+      <div className="syringe__presets">
+        {!recognition && <Button className="crisis-drug__action"
+          onClick={() => onAction('reconcile-acute-tracheostomy-obstruction-anatomy-and-patency')}>Review person + airway map</Button>}
+        {recognition && !support && <>
+          <Button className="crisis-drug__action" onClick={() => onAction('activate-acute-tracheostomy-obstruction-help-and-oxygenation')}>Call airway help + support both routes</Button>
+          <Button className="crisis-drug__action" onClick={() => onAction('wait-for-acute-tracheostomy-obstruction-imaging')}>Wait for imaging</Button>
+          <Button className="crisis-drug__action" onClick={() => onAction('ventilate-through-unverified-tracheostomy')}>Ventilate through the tube now</Button>
+        </>}
+        {support && !pathway && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-acute-tracheostomy-obstruction-device-pathway')}>Review declared device pathway</Button>}
+      </div>
+      <p className="field__hint">This exact case has a tracheostomy, a documented patent native upper airway, and ongoing spontaneous breathing. Qualified staff deliver oxygen to face and tracheostomy off-screen; this does not generalize to laryngectomy.</p>
+    </section>
+    <section className="syringe" aria-labelledby="tracheostomy-obstruction-restoration-title">
+      <div id="tracheostomy-obstruction-restoration-title" className="syringe__name">Restore airflow. Then prove it.</div>
+      <Badge kind="teaching">declared device · expert action · airflow · waveform · recurrence</Badge>
+      <div className="syringe__meta">cuffless dual-cannula · established stoma · outer tube retained</div>
+      <p className="syringe__remaining" role="status">
+        {handoff ? 'Airway state, recurrence risk, plan, equipment, and owners handed off'
+          : restoration ? 'Immediate patency restored · durable risk remains'
+            : correction ? 'Canonical gas path restored · advance time for whole-person proof'
+              : unsupported === 'force-catheter' ? 'Never force past resistance'
+                : unsupported === 'whole-tube' ? 'Use the simpler declared inner-cannula branch first'
+                  : pathway ? 'Connect the qualified inner-cannula action'
+                    : 'Support and device review come first'}
+      </p>
+      <div className="syringe__presets">
+        {pathway && !correction && <>
+          <Button className="crisis-drug__action" onClick={() => onAction('record-acute-tracheostomy-obstruction-inner-cannula-removal')}>Connect qualified inner-cannula action</Button>
+          <Button className="crisis-drug__action" onClick={() => onAction('force-acute-tracheostomy-obstruction-catheter')}>Force the catheter through</Button>
+          <Button className="crisis-drug__action" onClick={() => onAction('replace-whole-tracheostomy-first')}>Replace the whole tube first</Button>
+        </>}
+        {correction && !restoration && <Button className="crisis-drug__action"
+          onClick={() => onAction('reassess-acute-tracheostomy-obstruction-restoration')}>Review 2-minute response</Button>}
+        {restoration && !handoff && <Button className="crisis-drug__action"
+          onClick={() => onAction('handoff-acute-tracheostomy-obstruction-reassessment')}>Hand off active airway risk</Button>}
+      </div>
+      <p className="field__hint">The learner does not inspect, handle, remove, suction, exchange, ventilate, or intubate. Worsening or unresolved obstruction continues down the local emergency pathway outside this bounded lesson.</p>
     </section>
   </div>;
 }

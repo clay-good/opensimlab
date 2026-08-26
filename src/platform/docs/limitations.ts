@@ -3431,6 +3431,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, trained staff, current guidance, manufacturer instructions, local medical-gas and transport systems, independent backup, and patient-specific reassessment.',
     briefIn: ['oxygen-device-failure'],
   },
+  {
+    id: 'acute-tracheostomy-obstruction-anatomy-device-path-and-response-are-authored',
+    headline: 'The airway anatomy, declared tracheostomy, obstruction, qualified device pathway, canonical gas flow, and response are authored.',
+    simplification: 'Fixed reports and one scenario-scoped patency state stand in for bedhead-plan review, whole-person assessment, device identification, airflow and waveform assessment, experienced-team airway care, and serial reassessment.',
+    whereItMisleads: 'Treating absent capnography alone as diagnostic, the fictional inner-cannula obstruction as learner diagnosis, the restored path as durable safety, or this branch as applicable to laryngectomy or every tracheostomy.',
+    correctUnderstanding: 'Real care requires verified anatomy and device facts, the patient and both possible airways, qualified teams, current local emergency algorithms, continuous oxygenation, and repeated reassessment.',
+    briefIn: ['acute-tracheostomy-obstruction'],
+  },
+  {
+    id: 'acute-tracheostomy-obstruction-controls-review-support-qualified-restoration-reassess-and-handoff-only',
+    headline: 'The controls record anatomy and patency review, urgent support, a fixed device branch, qualified restoration, reassessment, and handoff only.',
+    simplification: 'Six clicks and 4 nonmutating teaching choices stand in for emergency team activation, oxygenation of both possible airways, patient- and device-specific review, experienced airway care, recurrence planning, and communication.',
+    whereItMisleads: 'Equating button order with examination, oxygen delivery, capnography interpretation, device inspection or handling, catheter passage, suction, ventilation, tube exchange, procedure, or multidisciplinary competence.',
+    correctUnderstanding: 'Actual care requires the patient, trained respiratory and airway teams, the current local algorithm, patient-specific anatomy and equipment, oxygenation, immediate rescue capacity, and repeated review.',
+    briefIn: ['acute-tracheostomy-obstruction'],
+  },
+  {
+    id: 'no-laryngectomy-fresh-stoma-device-generalization-live-airway-care-procedure-or-outcome',
+    headline: 'The lab does not generalize to laryngectomy or other airway devices, provide live airway care, perform a procedure, or predict outcome.',
+    simplification: 'No live examination, oximetry, capnography, imaging, diagnosis, oxygen or humidification selection, cap or valve removal, cannula or tube handling, catheter passage, suction, cuff change, tube exchange, face or stoma ventilation, intubation, bronchoscopy, treatment, disposition, prognosis, durable resolution, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional findings or actions into another airway, or using completion as evidence of clinical, respiratory, device, suction, airway, procedural, treatment, disposition, or prognostic competence.',
+    correctUnderstanding: 'Distinguish tracheostomy from laryngectomy, verify stoma maturity, tube design, cuff and upper-airway facts, and use current device- and patient-specific emergency guidance with qualified teams.',
+    briefIn: ['acute-tracheostomy-obstruction'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

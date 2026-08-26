@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 114 reports HFNO-escalation reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 115;
+export const WORKER_PROTOCOL_VERSION = 116;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -200,6 +200,18 @@ export interface EquipmentSnapshot {
     readonly peakPressureCmH2O: number;
     readonly plateauPressureCmH2O: number;
     readonly peepCmH2O: number;
+    readonly continuousCapnography: boolean;
+  };
+  /** Scenario-scoped tracheostomy gas path, kept distinct from an oral tracheal tube. */
+  readonly tracheostomy?: {
+    readonly present: true;
+    readonly device: 'cuffless-dual-cannula';
+    readonly stoma: 'established';
+    readonly nativeUpperAirway: 'patent';
+    readonly innerCannula: 'obstructed' | 'removed-by-qualified-team';
+    /** Fraction of the declared tracheostomy gas path that is patent. */
+    readonly patencyFraction: number;
+    readonly airflow: 'scant' | 'restored';
     readonly continuousCapnography: boolean;
   };
   /** The physical delivery path for the propofol infusion. */
@@ -1069,6 +1081,26 @@ export interface EquipmentSnapshot {
       readonly connectionHandledByLearner: false; readonly repairPerformedByLearner: false;
       readonly treatmentDeliveredByLearner: false; readonly durableRestorationProven: false;
       readonly dispositionDetermined: false; readonly outcomePredicted: false;
+    };
+    readonly acuteTracheostomyObstructionAssessment?: {
+      readonly recognitionAtTick: number | null; readonly supportAtTick: number | null;
+      readonly devicePathwayAtTick: number | null; readonly innerCannulaAtTick: number | null;
+      readonly restorationAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly lastUnsupportedChoice: 'imaging' | 'unverified-ventilation' | 'force-catheter' | 'whole-tube' | null;
+      readonly initialPulsePresent: true; readonly spontaneousBreathingAuthored: true;
+      readonly tracheostomyPresentAuthored: true; readonly laryngectomyAuthored: false;
+      readonly patentUpperAirwayAuthored: true; readonly matureStomaAuthored: true;
+      readonly removableInnerCannulaAuthored: true; readonly innerCannulaObstructionAuthored: boolean;
+      readonly dualRouteOxygenIntentRecorded: boolean; readonly expertDevicePathwayRecorded: boolean;
+      readonly patientExaminedByLearner: false; readonly monitorInterpretedByLearner: false;
+      readonly deviceInspectedByLearner: false; readonly catheterPassedByLearner: false;
+      readonly suctionPerformedByLearner: false; readonly innerCannulaHandledByLearner: false;
+      readonly tracheostomyTubeHandledByLearner: false; readonly cuffChangedByLearner: false;
+      readonly oxygenSelectedByLearner: false; readonly oxygenDeliveredByLearner: false;
+      readonly ventilationDeliveredByLearner: false; readonly intubationPerformedByLearner: false;
+      readonly procedurePerformedByLearner: false; readonly treatmentDeliveredByLearner: false;
+      readonly durablePatencyProven: false; readonly dispositionDetermined: false;
+      readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

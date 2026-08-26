@@ -22,6 +22,7 @@ const obesityHypoventilationScenarioId = 'obesity-hypoventilation-reassessment';
 const noninvasiveVentilationSelectionScenarioId = 'noninvasive-ventilation-selection';
 const highFlowOxygenEscalationScenarioId = 'high-flow-nasal-oxygen-escalation';
 const oxygenDeviceFailureScenarioId = 'oxygen-device-failure';
+const acuteTracheostomyObstructionScenarioId = 'acute-tracheostomy-obstruction';
 const modulePath = `/${moduleId}`;
 const scenarioPath = `${modulePath}/scenario/${scenarioId}`;
 
@@ -34,7 +35,7 @@ function json(path: string): unknown {
 }
 
 describe('respiratory medicine module foundation', () => {
-  it('registers one available specialty module and fourteen honest scenarios', () => {
+  it('registers one available specialty module and fifteen honest scenarios', () => {
     const module = MODULES.find((entry) => entry.id === moduleId);
     expect(module).toMatchObject({
       id: moduleId,
@@ -67,6 +68,7 @@ describe('respiratory medicine module foundation', () => {
     expect(index).toContain('NONINVASIVE_VENTILATION_SELECTION');
     expect(index).toContain('HIGH_FLOW_NASAL_OXYGEN_ESCALATION');
     expect(index).toContain('OXYGEN_DEVICE_FAILURE');
+    expect(index).toContain('ACUTE_TRACHEOSTOMY_OBSTRUCTION');
   });
 
   it('publishes distinct, canonical, indexable module and scenario routes', () => {
@@ -84,7 +86,7 @@ describe('respiratory medicine module foundation', () => {
     expect(canonicalUrl(scenarioPath))
       .toBe('https://opensimlab.com/respiratory-medicine/scenario/acute-severe-asthma');
     expect(ROUTES.filter((route) => route.path.startsWith(`${modulePath}/scenario/`)))
-      .toHaveLength(14);
+      .toHaveLength(15);
     expect(new Set(ROUTES.map((route) => route.path)).size).toBe(ROUTES.length);
     expect(new Set(ROUTES.map((route) => route.title)).size).toBe(ROUTES.length);
   });
@@ -125,7 +127,7 @@ describe('respiratory medicine module foundation', () => {
         scenarioId,
         contentVersion: '0.1.0',
       }));
-      expect(catalog.scenarios.filter((entry) => entry.moduleId === moduleId)).toHaveLength(14);
+      expect(catalog.scenarios.filter((entry) => entry.moduleId === moduleId)).toHaveLength(15);
       expect(catalog.scenarios).toContainEqual(expect.objectContaining({
         moduleId, scenarioId: transitionScenarioId, contentVersion: '0.1.0',
       }));
@@ -165,6 +167,9 @@ describe('respiratory medicine module foundation', () => {
       expect(catalog.scenarios).toContainEqual(expect.objectContaining({
         moduleId, scenarioId: oxygenDeviceFailureScenarioId, contentVersion: '0.1.0',
       }));
+      expect(catalog.scenarios).toContainEqual(expect.objectContaining({
+        moduleId, scenarioId: acuteTracheostomyObstructionScenarioId, contentVersion: '0.1.0',
+      }));
     }
   });
 
@@ -183,7 +188,7 @@ describe('respiratory medicine module foundation', () => {
       moduleId: string; scenarioCount: number;
       scenarios: Array<{ scenarioId: string; moduleId: string }>;
     };
-    expect(completion).toMatchObject({ moduleId, scenarioCount: 14 });
+    expect(completion).toMatchObject({ moduleId, scenarioCount: 15 });
     expect(completion.scenarios).toEqual(expect.arrayContaining([
       expect.objectContaining({ scenarioId, moduleId }),
       expect.objectContaining({ scenarioId: transitionScenarioId, moduleId }),
@@ -198,17 +203,18 @@ describe('respiratory medicine module foundation', () => {
       expect.objectContaining({ scenarioId: noninvasiveVentilationSelectionScenarioId, moduleId }),
       expect.objectContaining({ scenarioId: highFlowOxygenEscalationScenarioId, moduleId }),
       expect.objectContaining({ scenarioId: oxygenDeviceFailureScenarioId, moduleId }),
+      expect.objectContaining({ scenarioId: acuteTracheostomyObstructionScenarioId, moduleId }),
     ]));
 
     const quality = json('public/catalog/respiratory-medicine-quality-audit.json') as {
       moduleId: string; scenarioCount: number;
     };
-    expect(quality).toMatchObject({ moduleId, scenarioCount: 14 });
+    expect(quality).toMatchObject({ moduleId, scenarioCount: 15 });
     const maturity = json('public/catalog/respiratory-medicine-maturity.json') as {
       moduleId: string; recordCount: number;
       records: Array<{ subjectKind: string; subjectId: string; status: string }>;
     };
-    expect(maturity).toMatchObject({ moduleId, recordCount: 14 });
+    expect(maturity).toMatchObject({ moduleId, recordCount: 15 });
     expect(maturity.records).toContainEqual(expect.objectContaining({
       subjectKind: 'scenario', subjectId: scenarioId, status: 'draft',
     }));
@@ -241,6 +247,9 @@ describe('respiratory medicine module foundation', () => {
     }));
     expect(maturity.records).toContainEqual(expect.objectContaining({
       subjectKind: 'scenario', subjectId: oxygenDeviceFailureScenarioId, status: 'draft',
+    }));
+    expect(maturity.records).toContainEqual(expect.objectContaining({
+      subjectKind: 'scenario', subjectId: acuteTracheostomyObstructionScenarioId, status: 'draft',
     }));
   });
 

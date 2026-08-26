@@ -123,6 +123,16 @@ describe('Requirement: Screen Reader Access To Live Physiology', () => {
     expect(descriptions[2]?.description).toBe('No waveform: no gas is moving.');
   });
 
+  it('describes a nearly obstructed tracheostomy gas path instead of a normal capnogram', () => {
+    const descriptions = waveformDescriptions({
+      rhythm: 'sinus', bronchospasmSeverity: 0, airwayPatencyFraction: 1, perfusionIndex: 0.8,
+      artifacts: new Set(), ventilating: true, mechanicalPulse: true,
+      tracheostomyPatencyFraction: 0.08,
+    });
+    expect(descriptions[2]?.description).toMatch(/minimal intermittent.*tracheostomy.*nearly obstructed/i);
+    expect(descriptions[2]?.description).not.toMatch(/normal rectangular/i);
+  });
+
   it('describes normal baseline pulses from patient state even before ventilation starts', () => {
     const engine = new AnesthesiaEngine({
       scenario: ROUTINE_INDUCTION, seed: 7, practiceRegion: 'US',

@@ -292,6 +292,7 @@ export function waveformDescriptions(options: {
   readonly perfusionIndex: number;
   readonly artifacts: ReadonlySet<string>;
   readonly capnographySampleObstructed?: boolean;
+  readonly tracheostomyPatencyFraction?: number;
   readonly arterialDamped?: boolean;
   readonly inspiredCo2MmHg?: number;
   readonly ventilating: boolean;
@@ -302,6 +303,9 @@ export function waveformDescriptions(options: {
   const capnoShape = options.capnographySampleObstructed
     || options.artifacts.has('sampling-line-obstruction')
     ? 'No sampled waveform: the carbon-dioxide sampling line is obstructed. This is a monitoring problem; cross-check ventilation independently.'
+    : options.tracheostomyPatencyFraction !== undefined
+      && options.tracheostomyPatencyFraction < 0.5
+      ? 'Minimal intermittent sampled carbon dioxide: the declared tracheostomy gas path is nearly obstructed. Reconcile the person, both possible airways, and device-specific patency evidence.'
     : !options.ventilating || options.airwayPatencyFraction <= 0.05
       ? 'No waveform: no gas is moving.'
     : (options.inspiredCo2MmHg ?? 0) >= 0.5

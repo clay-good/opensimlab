@@ -224,14 +224,14 @@ credited toward the catalog until every item in the completion contract passes.
   the shared deterministic
   session, monitor, transcript, action, and debrief frame and are completion-audited, prerendered,
   available offline, and explicitly bounded.
-- [ ] Wave C: complete 17 cardiology and 15 respiratory-medicine scenarios. Cardiology is live with
+- [x] Wave C: complete 17 cardiology and 15 respiratory-medicine scenarios. Cardiology is live with
   all 17 scenarios: stable chest-pain evaluation, STEMI recognition and first actions, NSTEMI risk
   reassessment, acute decompensated heart failure, post-infarction cardiogenic-shock escalation,
   atrial fibrillation with rapid response, regular narrow-complex tachycardia, wide-complex tachycardia,
   symptomatic bradycardia, complete heart block, torsades de pointes, hyperkalemic conduction
   disturbance, pericardial tamponade, right-ventricular infarction, hypertensive emergency, and
   pacemaker capture failure, and transcutaneous pacing mechanical-capture reassessment. Respiratory
-  medicine is live with 14 of 15 scenarios: acute severe asthma reassessment after documented initial
+  medicine is live with all 15 scenarios: acute severe asthma reassessment after documented initial
   therapy, COPD exacerbation recovery-versus-readiness transition reassessment, hypoxemic
   community-acquired pneumonia reassessment, and persistent dyspnea after pulmonary embolism with
   bounded CTEPD evidence review, expert referral, and unresolved-work handoff, and acute pulmonary
@@ -265,6 +265,11 @@ credited toward the catalog until every item in the completion contract passes.
   fixed source-to-patient localization, checked replacement and independent-backup intent, a
   strictly elapsed response, and another elapsed systems-focused handoff without cylinder math,
   device operation, oxygen delivery, blame, transport clearance, or outcome claims.
+  The final lab adds acute obstruction of a declared removable tracheostomy inner cannula with
+  anatomy-first recognition, expert help and oxygenation to both possible airways, a canonical
+  tracheostomy gas-path correction by qualified staff, a strictly elapsed response, and another
+  elapsed active-risk handoff without teaching suction, tube exchange, ventilation, or laryngectomy
+  care.
 - [ ] Wave D: complete 16 pediatric, 15 obstetric, and 11 neonatal scenarios.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.

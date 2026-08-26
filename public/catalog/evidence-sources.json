@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 155,
+  "sourceCount": 158,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -1964,6 +1964,47 @@
       "usedFor": "The equipment-agnostic source-to-patient boundary: oxygen safety spans source, storage, distribution, regulation, delivery, monitoring, maintenance, and backup rather than one control or proprietary device.",
       "verifiedAgainst": "https://www.who.int/publications/i/item/9789240101616",
       "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "ntsp-patent-upper-airway-algorithm-2024",
+      "currency": {
+        "lastAmended": "2024-01-01",
+        "checkedAt": "2026-08-25"
+      },
+      "authors": "National Tracheostomy Safety Project",
+      "title": "Emergency tracheostomy management: patent upper airway",
+      "publication": "National Tracheostomy Safety Project",
+      "year": 2024,
+      "locator": "GREEN one-page emergency algorithm; review date 2024-01-01",
+      "usedFor": "The anatomy-first acute tracheostomy boundary: call airway-expert help, assess both possible airways, provide oxygen to face and tracheostomy when the patient is breathing, use waveform capnography, and follow the declared inner-tube and patency branch before more invasive rescue.",
+      "verifiedAgainst": "https://tracheostomy.org.uk/storage/files/NTSP_GREEN_Tracheostomy_Algorithm.pdf",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "mcgrath-tracheostomy-emergency-guideline-2012",
+      "pmid": "22731935",
+      "authors": "McGrath BA, Bates L, Atkinson D, Moore JA; National Tracheostomy Safety Project",
+      "title": "Multidisciplinary guidelines for the management of tracheostomy and laryngectomy airway emergencies",
+      "publication": "Anaesthesia",
+      "year": 2012,
+      "locator": "67:1025-1041; doi:10.1111/j.1365-2044.2012.07217.x",
+      "usedFor": "The 2-airway emergency rationale and negative-transfer boundary: distinguish tracheostomy from laryngectomy, prioritize oxygenation and early expert help, and use sequential reversible-device checks without assuming one pathway fits every airway.",
+      "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/22731935/",
+      "verifiedOn": "2026-08-25",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/22731935/"
+    },
+    {
+      "id": "aarc-adult-tracheostomy-acute-care-2021",
+      "pmid": "32962998",
+      "authors": "Mussa CC, Gomaa D, Rowley DD, Schmidt U, Ginier E, Strickland SL",
+      "title": "AARC Clinical Practice Guideline: Management of Adult Patients with Tracheostomy in the Acute Care Setting",
+      "publication": "Respiratory Care",
+      "year": 2021,
+      "locator": "66:156-169; doi:10.4187/respcare.08206",
+      "usedFor": "The systems-and-handoff boundary: expert-approved tracheostomy bundles and multidisciplinary tracheostomy teams reduce adverse events and support explicit equipment, emergency-plan, and ownership work.",
+      "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/32962998/",
+      "verifiedOn": "2026-08-25",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/32962998/"
     }
   ]
 }

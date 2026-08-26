@@ -398,13 +398,15 @@ export function Cockpit({
       perfusionIndex: session.state?.perfusionIndex ?? 0.8,
       artifacts: waveformArtifacts,
       capnographySampleObstructed: capnographyLine.obstructed,
+      tracheostomyPatencyFraction: equipment?.tracheostomy?.patencyFraction,
       arterialDamped: arterialLine.dynamicResponse === 'overdamped',
       inspiredCo2MmHg: breathingCircuit.inspiredCo2MmHg,
       ventilating: (session.state?.respiratoryRateBpm ?? 0) > 0,
       mechanicalPulse: mechanicalPulseFromState(session.state),
     }).map((entry) => `${entry.label}: ${entry.description}`).join(' '));
   }, [session.state, speak, rhythm, waveformArtifacts, airway, capnographyLine.obstructed,
-    arterialLine.dynamicResponse, breathingCircuit.inspiredCo2MmHg, ventilator.delivering]);
+    arterialLine.dynamicResponse, breathingCircuit.inspiredCo2MmHg, ventilator.delivering,
+    equipment?.tracheostomy?.patencyFraction]);
 
   useEffect(() => {
     if (arterialLine.mislevelingCm > 0 || arterialLine.dynamicResponse === 'overdamped') {
@@ -574,6 +576,7 @@ export function Cockpit({
           artifactParameters={artifactParameters}
           waveformArtifacts={waveformArtifacts}
           capnographySampleObstructed={capnographyLine.obstructed}
+          tracheostomyPatencyFraction={equipment?.tracheostomy?.patencyFraction}
           inspiredCo2MmHg={breathingCircuit.inspiredCo2MmHg}
           arterialDamped={arterialLine.dynamicResponse === 'overdamped'}
           rhythm={rhythm}
@@ -961,6 +964,9 @@ export function Cockpit({
           })}
           onOxygenDeviceFailureResponse={(action) => session.act({
             type: 'oxygen-device-failure-response', payload: { action },
+          })}
+          onAcuteTracheostomyObstructionResponse={(action) => session.act({
+            type: 'acute-tracheostomy-obstruction-response', payload: { action },
           })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },

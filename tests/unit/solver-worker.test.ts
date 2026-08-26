@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: portable oxygen source reassessment has protocol version 115', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(115);
+  it('Scenario: tracheostomy patency state has protocol version 116', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(116);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

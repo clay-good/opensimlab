@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "respiratory-medicine",
-  "recordCount": 14,
+  "recordCount": 15,
   "records": [
     {
       "recordId": "scenario:acute-severe-asthma@0.1.0",
@@ -155,6 +155,17 @@
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#oxygen-device-failure@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#oxygen-device-failure@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:acute-tracheostomy-obstruction@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "acute-tracheostomy-obstruction",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/respiratory-medicine-completion-audit.json#acute-tracheostomy-obstruction@0.1.0",
+        "/catalog/respiratory-medicine-quality-audit.json#acute-tracheostomy-obstruction@0.1.0"
       ]
     }
   ]

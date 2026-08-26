@@ -13,6 +13,7 @@ import { OBESITY_HYPOVENTILATION_REASSESSMENT } from './obesity-hypoventilation-
 import { NONINVASIVE_VENTILATION_SELECTION } from './noninvasive-ventilation-selection';
 import { HIGH_FLOW_NASAL_OXYGEN_ESCALATION } from './high-flow-nasal-oxygen-escalation';
 import { OXYGEN_DEVICE_FAILURE } from './oxygen-device-failure';
+import { ACUTE_TRACHEOSTOMY_OBSTRUCTION } from './acute-tracheostomy-obstruction';
 
 export const RESPIRATORY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   ACUTE_SEVERE_ASTHMA,
@@ -29,6 +30,7 @@ export const RESPIRATORY_MEDICINE_SCENARIOS: readonly Scenario[] = [
   NONINVASIVE_VENTILATION_SELECTION,
   HIGH_FLOW_NASAL_OXYGEN_ESCALATION,
   OXYGEN_DEVICE_FAILURE,
+  ACUTE_TRACHEOSTOMY_OBSTRUCTION,
 ];
 export const DEFAULT_RESPIRATORY_MEDICINE_SCENARIO_ID = ACUTE_SEVERE_ASTHMA.metadata.id;
 

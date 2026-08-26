@@ -4531,6 +4531,29 @@ export function objectiveFindings(
       const ordered = response && handoff && response.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed systems-focused handoff preserved oxygen need, verified source, reserve, backup, monitoring, response, failed-source learning, open causes, and named owners without blame or an outcome claim.' : 'The source and transport-safety handoff was absent or did not follow response review after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-acute-tracheostomy-obstruction-anatomy-and-patency',
+      'activate-acute-tracheostomy-obstruction-help-and-oxygenation',
+      'review-acute-tracheostomy-obstruction-device-pathway',
+      'record-acute-tracheostomy-obstruction-inner-cannula-removal',
+      'reassess-acute-tracheostomy-obstruction-restoration',
+      'handoff-acute-tracheostomy-obstruction-reassessment'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'acute-tracheostomy-obstruction-reassessment');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The acute-tracheostomy-obstruction lesson was not active.' } satisfies ObjectiveFinding;
+      const recognition = log.find((event) => /^acute-tracheostomy-obstruction-anatomy-patency-reconciled-\d+$/.test(event.eventId));
+      const support = log.find((event) => /^acute-tracheostomy-obstruction-help-oxygenation-activated-\d+$/.test(event.eventId));
+      const pathway = log.find((event) => /^acute-tracheostomy-obstruction-device-pathway-reviewed-\d+$/.test(event.eventId));
+      const correction = log.find((event) => /^acute-tracheostomy-obstruction-inner-cannula-recorded-\d+$/.test(event.eventId));
+      const restoration = log.find((event) => /^acute-tracheostomy-obstruction-restoration-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^acute-tracheostomy-obstruction-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-acute-tracheostomy-obstruction-anatomy-and-patency') return { ...base, outcome: recognition ? 'met' : 'not-met', finding: recognition ? 'The person, pulse, spontaneous breathing, tracheostomy-versus-laryngectomy anatomy, patent upper airway, declared device, airflow, and independent signals were reconciled without making absent capnography diagnostic alone.' : 'The person, airway map, and converging patency evidence were not reconciled.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'activate-acute-tracheostomy-obstruction-help-and-oxygenation') { const ordered = recognition && support && recognition.tick <= support.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Immediate airway-expert help and qualified oxygenation to face and tracheostomy preceded imaging or prolonged troubleshooting for this exact patent-upper-airway case.' : 'Expert help and dual-route oxygenation were absent or preceded airway reconciliation.', atTick: support?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-acute-tracheostomy-obstruction-device-pathway') { const ordered = support && pathway && support.tick <= pathway.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The fixed qualified review localized an occluded removable inner cannula in this declared device without learner inspection, catheter passage, suction, manipulation, or generalization.' : 'The declared-device review was absent or preceded immediate support.', atTick: pathway?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'record-acute-tracheostomy-obstruction-inner-cannula-removal') { const ordered = pathway && correction && pathway.tick <= correction.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Experienced staff restored the canonical tracheostomy gas path through the bounded inner-cannula branch while all device handling and procedural skill remained off-screen.' : 'The qualified inner-cannula action was absent or preceded the device review.', atTick: correction?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'reassess-acute-tracheostomy-obstruction-restoration') { const ordered = correction && restoration && correction.tick < restoration.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed time, whole-person, airflow, oxygenation, and waveform improvement supported immediate restored patency without proving durable resolution.' : 'The restoration review was absent or did not follow the qualified correction after elapsed time.', atTick: restoration?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = restoration && handoff && restoration.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved airway anatomy, device and stoma facts, recurrence risk, secretion and humidification work, emergency readiness, and named owners without declaring disposition or outcome.' : 'The active airway-risk handoff was absent or did not follow restoration review after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {
