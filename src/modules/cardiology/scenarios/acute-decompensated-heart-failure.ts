@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const ACUTE_DECOMPENSATED_HEART_FAILURE: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'acute-decompensated-heart-failure', version: '0.1.0', maturity: 'draft',
+    id: 'acute-decompensated-heart-failure', version: '0.1.0', maturity: 'preview',
     title: 'Acute decompensated heart failure', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'reconcile-heart-failure-congestion-and-perfusion', statement: 'Reconcile the authored congestion, oxygenation, pressure, and perfusion trajectory after admission.', measure: 'Current status was read as a whole rather than from weight, creatinine, or one symptom alone.' },

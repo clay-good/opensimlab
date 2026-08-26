@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'pediatric-supraventricular-tachycardia', version: '0.1.0', maturity: 'draft',
+    id: 'pediatric-supraventricular-tachycardia', version: '0.1.0', maturity: 'preview',
     title: 'Pediatric supraventricular tachycardia with perfusion compromise', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       {

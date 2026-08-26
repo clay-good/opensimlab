@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const ACUTE_KIDNEY_INJURY_WITH_FLUID_OVERLOAD: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'acute-kidney-injury-with-fluid-overload', version: '0.1.0', maturity: 'draft',
+    id: 'acute-kidney-injury-with-fluid-overload', version: '0.1.0', maturity: 'preview',
     title: 'Acute kidney injury with fluid overload', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 8, difficulty: 'advanced', objectives: [
       { id: 'recognize-aki-fluid-overload', statement: 'Recognize severe AKI with harmful fluid accumulation and organ dysfunction.', measure: 'Urine, fluid, weight, respiratory, perfusion, electrolyte, acid-base, and uremic trends triggered critical-care and nephrology help.' },

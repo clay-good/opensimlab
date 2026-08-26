@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const NONINVASIVE_VENTILATION_SELECTION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'noninvasive-ventilation-selection', version: '0.1.0', maturity: 'draft',
+    id: 'noninvasive-ventilation-selection', version: '0.1.0', maturity: 'preview',
     title: 'Bilevel NIV selection in acute COPD', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'reconcile-noninvasive-ventilation-selection-treatment-and-trajectory', statement: 'Reconcile the authored baseline, arrival state, verified initial COPD care, and persistent whole-patient respiratory-acidosis trajectory.', measure: 'The change after initial care was recognized without granting examination, test interpretation, prescribing, or treatment-delivery skill.' },

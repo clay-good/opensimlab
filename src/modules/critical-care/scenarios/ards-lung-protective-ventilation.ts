@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const ARDS_LUNG_PROTECTIVE_VENTILATION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'ards-lung-protective-ventilation', version: '0.1.0', maturity: 'draft',
+    id: 'ards-lung-protective-ventilation', version: '0.1.0', maturity: 'preview',
     title: 'ARDS lung-protective ventilation', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 10, difficulty: 'intermediate', objectives: [
       { id: 'review-ards-ventilation-baseline', statement: 'Review oxygenation, mechanics, current delivered tidal volume, plateau pressure, and the declared ARDS context before changing support.', measure: 'The initial gas-exchange and ventilator panel was integrated without treating saturation alone.' },

@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const SEVERE_ACIDEMIA: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'severe-acidemia', version: '0.1.0', maturity: 'draft',
+    id: 'severe-acidemia', version: '0.1.0', maturity: 'preview',
     title: 'Severe acidemia', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'advanced', objectives: [
       { id: 'recognize-severe-acidemia', statement: 'Recognize severe mixed acidemia with cardiovascular, respiratory, electrolyte, and kidney risk.', measure: 'pH, PaCO₂, bicarbonate, lactate, potassium, ECG, perfusion, ventilation, and kidney trends triggered experienced help.' },

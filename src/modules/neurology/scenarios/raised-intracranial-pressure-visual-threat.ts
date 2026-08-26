@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const RAISED_INTRACRANIAL_PRESSURE_VISUAL_THREAT: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'raised-intracranial-pressure-visual-threat', version: '0.1.0', maturity: 'draft',
+    id: 'raised-intracranial-pressure-visual-threat', version: '0.1.0', maturity: 'preview',
     title: 'Raised intracranial pressure with visual threat', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 7, difficulty: 'advanced', objectives: [
       { id: 'reconcile-neurology-raised-icp-headache-visual-tinnitus-diplopia-and-whole-patient', statement: 'Reconcile the headache, visual, tinnitus, diplopia, neurological, physiological, and whole-patient clock.', measure: 'The subacute raised-pressure syndrome and urgent visual threat were recognized without learner history, examination, diagnosis, or demographic shortcut.' },

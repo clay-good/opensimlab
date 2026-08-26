@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const PERSISTENT_VF_ARREST: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'persistent-vf-arrest', version: '0.1.0', maturity: 'draft',
+    id: 'persistent-vf-arrest', version: '0.1.0', maturity: 'preview',
     title: 'Persistent VF arrest', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'advanced',
     objectives: [

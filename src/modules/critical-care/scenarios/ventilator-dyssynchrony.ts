@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const VENTILATOR_DYSSYNCHRONY: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'ventilator-dyssynchrony', version: '0.1.0', maturity: 'draft',
+    id: 'ventilator-dyssynchrony', version: '0.1.0', maturity: 'preview',
     title: 'Ventilator dyssynchrony', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 9, difficulty: 'intermediate', objectives: [
       { id: 'review-dyssynchrony-patient-and-graphics', statement: 'Integrate patient effort with pressure, flow, volume, and delivered-breath observations.', measure: 'The fixed scooping, premature cycling, double triggering, and stacked volume were reviewed together.' },

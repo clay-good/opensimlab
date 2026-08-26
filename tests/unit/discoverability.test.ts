@@ -13,7 +13,7 @@ import {
 } from '@platform/docs/structured-data';
 import {
   CONTENT_SECTIONS, FOOTER_LINKS, FORBIDDEN_MARKETING_WORDS, ONE_LINE_DESCRIPTION, QUESTIONS,
-  SUGGESTED_CITATION, THREE_FACTS,
+  READY_MODULE_COUNT, READY_SCENARIO_COUNT, SUGGESTED_CITATION, THREE_FACTS,
 } from '@landing/content';
 import { heroStaticSvg } from '@landing/hero';
 import { SCENARIOS } from '@anesthesia/scenarios';
@@ -24,6 +24,7 @@ import { RESPIRATORY_MEDICINE_SCENARIOS } from '../../src/modules/respiratory-me
 import { PEDIATRICS_SCENARIOS } from '../../src/modules/pediatrics/scenarios';
 import { NEUROLOGY_SCENARIOS } from '../../src/modules/neurology/scenarios';
 import { TOXICOLOGY_SCENARIOS } from '../../src/modules/toxicology/scenarios';
+import { OBSTETRICS_SCENARIOS } from '../../src/modules/obstetrics/scenarios';
 import { Landing } from '@landing/Landing';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -171,6 +172,15 @@ describe('Requirement: One Screen, One Action', () => {
     expect(ONE_LINE_DESCRIPTION).toContain('medical students');
     expect(ONE_LINE_DESCRIPTION).toContain('nurse anesthetists');
     expect(ONE_LINE_DESCRIPTION).toContain('free');
+    expect(ONE_LINE_DESCRIPTION).toContain(`${READY_SCENARIO_COUNT}`);
+    expect(ONE_LINE_DESCRIPTION).toContain(`${READY_MODULE_COUNT} specialties`);
+    expect(READY_MODULE_COUNT).toBe(availableModules().length);
+    expect(READY_SCENARIO_COUNT).toBe(
+      SCENARIOS.length + EMERGENCY_MEDICINE_SCENARIOS.length + CRITICAL_CARE_SCENARIOS.length
+      + CARDIOLOGY_SCENARIOS.length + RESPIRATORY_MEDICINE_SCENARIOS.length
+      + PEDIATRICS_SCENARIOS.length + NEUROLOGY_SCENARIOS.length
+      + TOXICOLOGY_SCENARIOS.length + OBSTETRICS_SCENARIOS.length,
+    );
     for (const word of FORBIDDEN_MARKETING_WORDS) {
       expect(ONE_LINE_DESCRIPTION.toLowerCase(), `contains "${word}"`).not.toContain(word.toLowerCase());
     }
@@ -540,7 +550,7 @@ describe('Requirement: One Screen, One Action', () => {
   it('Scenario: exactly one primary action, naming its destination', () => {
     const primaries = [...landing.matchAll(/className="button button--primary"/g)];
     expect(primaries).toHaveLength(1);
-    expect(landing).toContain('Open the anesthesia simulator');
+    expect(landing).toContain('Practice anesthesia—free');
     expect(landing).toContain('href="/anesthesia"');
     const markup = renderToStaticMarkup(createElement(Landing));
     expect(markup).toContain('class="button button--primary" href="/anesthesia"');
@@ -549,6 +559,7 @@ describe('Requirement: One Screen, One Action', () => {
   it('Scenario: the front door names every module and promises no date', () => {
     const markup = renderToStaticMarkup(createElement(Landing));
     for (const module of MODULES) expect(markup).toContain(module.displayName);
+    expect(markup).toContain('Ready to practice:');
     expect(markup).toContain('planned. No dates.');
     const directory = /<p class="landing__modules">([\s\S]*?)<\/p>/.exec(markup)?.[1] ?? '';
     const availableCount = MODULES.filter((module) => module.status === 'available').length;

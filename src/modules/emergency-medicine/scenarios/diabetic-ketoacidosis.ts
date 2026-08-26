@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const DIABETIC_KETOACIDOSIS: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'diabetic-ketoacidosis', version: '0.1.0', maturity: 'draft',
+    id: 'diabetic-ketoacidosis', version: '0.1.0', maturity: 'preview',
     title: 'Diabetic ketoacidosis', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 10, difficulty: 'intermediate', objectives: [
       { id: 'recognize-moderate-dka', statement: 'Recognize DKA from diabetes or hyperglycemia, ketonemia, and metabolic acidosis while reviewing severity and precipitant.', measure: 'The fixed triad, dehydration, potassium, mental status, and failed infusion set were integrated.' },

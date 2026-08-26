@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const ESCALATING_HYPOXEMIA: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'escalating-hypoxemia', version: '0.1.0', maturity: 'draft',
+    id: 'escalating-hypoxemia', version: '0.1.0', maturity: 'preview',
     title: 'Escalating hypoxemia', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 9, difficulty: 'intermediate', objectives: [
       { id: 'validate-hypoxemia-signal', statement: 'Treat the saturation decline as urgent while corroborating signal quality, trend, and the fixed arterial panel.', measure: 'A coherent pleth and matching PaO₂ established a credible decline rather than a monitor-only diagnosis.' },

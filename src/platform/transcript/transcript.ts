@@ -21,8 +21,9 @@ export const TRANSCRIPT_FORMAT_VERSION = 1;
  * (platform/safety-and-scope → Exports carry the statement).
  */
 export const NOT_FOR_CLINICAL_USE =
-  'Open Sim Lab is an educational simulator. It is not a clinical decision-support '
-  + 'tool, not a dosing calculator, and not validated for any decision affecting a real patient.';
+  'Open Sim Lab is an educational simulator, not for clinical use. It is not a clinical '
+  + 'decision-support tool, not a dosing calculator, and is not validated for any decision affecting '
+  + 'a real patient.';
 
 export interface TranscriptVersions {
   readonly engine: string;

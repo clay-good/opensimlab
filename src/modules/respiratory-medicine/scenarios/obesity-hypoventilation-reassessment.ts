@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const OBESITY_HYPOVENTILATION_REASSESSMENT: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'obesity-hypoventilation-reassessment', version: '0.1.0', maturity: 'draft',
+    id: 'obesity-hypoventilation-reassessment', version: '0.1.0', maturity: 'preview',
     title: 'Obesity hypoventilation reassessment', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'reconcile-obesity-hypoventilation-phenotype-and-trajectory', statement: 'Reconcile the authored symptoms, daytime function, breathing, oxygenation, perfusion, and current safety without reducing the person to body size.', measure: 'The quiet clinic state and longitudinal concern were separated from acute respiratory failure without granting examination or diagnosis skill.' },

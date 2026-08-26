@@ -8,7 +8,7 @@
       "subjectKind": "scenario",
       "subjectId": "stable-chest-pain-evaluation",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/cardiology-completion-audit.json#stable-chest-pain-evaluation@0.1.0",
         "/catalog/cardiology-quality-audit.json#stable-chest-pain-evaluation@0.1.0"
@@ -19,7 +19,7 @@
       "subjectKind": "scenario",
       "subjectId": "stemi-recognition-and-first-actions",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/cardiology-completion-audit.json#stemi-recognition-and-first-actions@0.1.0",
         "/catalog/cardiology-quality-audit.json#stemi-recognition-and-first-actions@0.1.0"
@@ -30,7 +30,7 @@
       "subjectKind": "scenario",
       "subjectId": "nstemi-risk-reassessment",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/cardiology-completion-audit.json#nstemi-risk-reassessment@0.1.0",
         "/catalog/cardiology-quality-audit.json#nstemi-risk-reassessment@0.1.0"
@@ -41,7 +41,7 @@
       "subjectKind": "scenario",
       "subjectId": "acute-decompensated-heart-failure",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/cardiology-completion-audit.json#acute-decompensated-heart-failure@0.1.0",
         "/catalog/cardiology-quality-audit.json#acute-decompensated-heart-failure@0.1.0"
@@ -52,7 +52,7 @@
       "subjectKind": "scenario",
       "subjectId": "post-infarction-cardiogenic-shock-escalation",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/cardiology-completion-audit.json#post-infarction-cardiogenic-shock-escalation@0.1.0",
         "/catalog/cardiology-quality-audit.json#post-infarction-cardiogenic-shock-escalation@0.1.0"
@@ -63,7 +63,7 @@
       "subjectKind": "scenario",
       "subjectId": "atrial-fibrillation-with-rapid-response",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/cardiology-completion-audit.json#atrial-fibrillation-with-rapid-response@0.1.0",
         "/catalog/cardiology-quality-audit.json#atrial-fibrillation-with-rapid-response@0.1.0"
@@ -74,7 +74,7 @@
       "subjectKind": "scenario",
       "subjectId": "regular-narrow-complex-tachycardia",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/cardiology-completion-audit.json#regular-narrow-complex-tachycardia@0.1.0",
         "/catalog/cardiology-quality-audit.json#regular-narrow-complex-tachycardia@0.1.0"
@@ -85,7 +85,7 @@
       "subjectKind": "scenario",
       "subjectId": "wide-complex-tachycardia",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/cardiology-completion-audit.json#wide-complex-tachycardia@0.1.0",
         "/catalog/cardiology-quality-audit.json#wide-complex-tachycardia@0.1.0"
@@ -96,7 +96,7 @@
       "subjectKind": "scenario",
       "subjectId": "symptomatic-sinus-bradycardia-reassessment",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/cardiology-completion-audit.json#symptomatic-sinus-bradycardia-reassessment@0.1.0",
         "/catalog/cardiology-quality-audit.json#symptomatic-sinus-bradycardia-reassessment@0.1.0"
@@ -107,7 +107,7 @@
       "subjectKind": "scenario",
       "subjectId": "complete-heart-block",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/cardiology-completion-audit.json#complete-heart-block@0.1.0",
         "/catalog/cardiology-quality-audit.json#complete-heart-block@0.1.0"
@@ -118,7 +118,7 @@
       "subjectKind": "scenario",
       "subjectId": "torsades-de-pointes",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/cardiology-completion-audit.json#torsades-de-pointes@0.1.0",
         "/catalog/cardiology-quality-audit.json#torsades-de-pointes@0.1.0"
@@ -129,7 +129,7 @@
       "subjectKind": "scenario",
       "subjectId": "hyperkalemic-conduction-disturbance",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/cardiology-completion-audit.json#hyperkalemic-conduction-disturbance@0.1.0",
         "/catalog/cardiology-quality-audit.json#hyperkalemic-conduction-disturbance@0.1.0"
@@ -140,7 +140,7 @@
       "subjectKind": "scenario",
       "subjectId": "pericardial-tamponade",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/cardiology-completion-audit.json#pericardial-tamponade@0.1.0",
         "/catalog/cardiology-quality-audit.json#pericardial-tamponade@0.1.0"
@@ -151,7 +151,7 @@
       "subjectKind": "scenario",
       "subjectId": "right-ventricular-infarction",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/cardiology-completion-audit.json#right-ventricular-infarction@0.1.0",
         "/catalog/cardiology-quality-audit.json#right-ventricular-infarction@0.1.0"
@@ -162,7 +162,7 @@
       "subjectKind": "scenario",
       "subjectId": "hypertensive-emergency",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/cardiology-completion-audit.json#hypertensive-emergency@0.1.0",
         "/catalog/cardiology-quality-audit.json#hypertensive-emergency@0.1.0"
@@ -173,7 +173,7 @@
       "subjectKind": "scenario",
       "subjectId": "pacemaker-capture-failure",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/cardiology-completion-audit.json#pacemaker-capture-failure@0.1.0",
         "/catalog/cardiology-quality-audit.json#pacemaker-capture-failure@0.1.0"
@@ -184,7 +184,7 @@
       "subjectKind": "scenario",
       "subjectId": "transcutaneous-pacing-mechanical-capture-reassessment",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/cardiology-completion-audit.json#transcutaneous-pacing-mechanical-capture-reassessment@0.1.0",
         "/catalog/cardiology-quality-audit.json#transcutaneous-pacing-mechanical-capture-reassessment@0.1.0"

@@ -5,7 +5,7 @@ import type { Scenario } from './types';
 export const OPIOID_INDUCED_VENTILATORY_IMPAIRMENT: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'opioid-induced-ventilatory-impairment', version: '0.1.0', maturity: 'draft',
+    id: 'opioid-induced-ventilatory-impairment', version: '0.1.0', maturity: 'preview',
     title: 'Opioid-induced ventilatory impairment', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 7, difficulty: 'intermediate',
     objectives: [

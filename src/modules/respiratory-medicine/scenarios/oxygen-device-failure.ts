@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const OXYGEN_DEVICE_FAILURE: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'oxygen-device-failure', version: '0.1.0', maturity: 'draft',
+    id: 'oxygen-device-failure', version: '0.1.0', maturity: 'preview',
     title: 'Portable oxygen source failure', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 7, difficulty: 'intermediate', objectives: [
       { id: 'reconcile-oxygen-device-failure-patient-signal-and-delivery', statement: 'Reconcile the authored person, pulse-coherent saturation trend, spontaneous breathing, circulation, and expected oxygen delivery.', measure: 'True deterioration was recognized without treating an attached cannula or selected flow as proof that oxygen reached the patient.' },

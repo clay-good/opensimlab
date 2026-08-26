@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const PEDIATRIC_DEHYDRATION_WITH_HYPOVOLEMIA: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'pediatric-dehydration-with-hypovolemia', version: '0.1.0', maturity: 'draft',
+    id: 'pediatric-dehydration-with-hypovolemia', version: '0.1.0', maturity: 'preview',
     title: 'Pediatric dehydration with hypovolemia', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       {

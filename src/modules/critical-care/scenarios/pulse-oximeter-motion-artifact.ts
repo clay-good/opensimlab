@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const PULSE_OXIMETER_MOTION_ARTIFACT: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'pulse-oximeter-motion-artifact', version: '0.1.0', maturity: 'draft',
+    id: 'pulse-oximeter-motion-artifact', version: '0.1.0', maturity: 'preview',
     title: 'Pulse-oximeter motion artifact', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 7, difficulty: 'intermediate', objectives: [
       { id: 'recognize-pulse-oximeter-discordance', statement: 'Cross-check an isolated saturation against signal quality and the patient.', measure: 'The displayed saturation, ECG rate, pleth quality, perfusion, and patient were separated before escalation.' },

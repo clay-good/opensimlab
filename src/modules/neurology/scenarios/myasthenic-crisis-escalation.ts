@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const MYASTHENIC_CRISIS_ESCALATION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'myasthenic-crisis-escalation', version: '0.1.0', maturity: 'draft',
+    id: 'myasthenic-crisis-escalation', version: '0.1.0', maturity: 'preview',
     title: 'Myasthenic crisis escalation', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 7, difficulty: 'advanced', objectives: [
       { id: 'reconcile-neurology-myasthenic-crisis-clock-fatigability-bulbar-respiratory-and-whole-patient', statement: 'Reconcile the rapid clock, fatigable weakness, bulbar and respiratory trajectory, supplied measurements, physiology, and whole-patient state.', measure: 'The 36-hour decline, serial speech, cough, secretion, neck, breathing, FVC and MIP reports, infection context, gas exchange, and perfusion were connected without learner history, examination, testing, diagnosis, or treatment.' },

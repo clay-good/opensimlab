@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const CARDIAC_TAMPONADE: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'cardiac-tamponade', version: '0.1.0', maturity: 'draft',
+    id: 'cardiac-tamponade', version: '0.1.0', maturity: 'preview',
     title: 'Cardiac tamponade', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 7, difficulty: 'advanced',
     objectives: [

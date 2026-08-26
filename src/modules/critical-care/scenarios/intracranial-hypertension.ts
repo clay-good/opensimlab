@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const INTRACRANIAL_HYPERTENSION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'intracranial-hypertension', version: '0.1.0', maturity: 'draft',
+    id: 'intracranial-hypertension', version: '0.1.0', maturity: 'preview',
     title: 'Intracranial hypertension', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'advanced', objectives: [
       { id: 'recognize-intracranial-hypertension', statement: 'Recognize sustained intracranial hypertension with inadequate cerebral perfusion.', measure: 'The ICP, CPP, examination, and imaging pattern triggered neurocritical and neurosurgical help.' },

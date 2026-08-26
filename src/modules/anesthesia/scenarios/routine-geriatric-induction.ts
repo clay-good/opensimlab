@@ -5,7 +5,7 @@ import type { Scenario } from './types';
 export const ROUTINE_GERIATRIC_INDUCTION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'routine-geriatric-induction', version: '0.1.0', maturity: 'draft',
+    id: 'routine-geriatric-induction', version: '0.1.0', maturity: 'preview',
     title: 'Routine geriatric intravenous induction', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 8, difficulty: 'introductory',
     objectives: [

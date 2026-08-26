@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const SPONTANEOUS_TENSION_PNEUMOTHORAX_POST_DRAINAGE_REASSESSMENT: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'spontaneous-tension-pneumothorax-post-drainage-reassessment', version: '0.1.0', maturity: 'draft',
+    id: 'spontaneous-tension-pneumothorax-post-drainage-reassessment', version: '0.1.0', maturity: 'preview',
     title: 'After tension pneumothorax drainage', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'reconcile-spontaneous-tension-pneumothorax-trajectory-and-prior-care', statement: 'Reconcile the authored spontaneous tension-pneumothorax presentation, experienced-team emergency drainage, and current trajectory.', measure: 'The tension event and reported response were reviewed without crediting the learner with diagnosis, examination, drainage, oxygen, or treatment.' },

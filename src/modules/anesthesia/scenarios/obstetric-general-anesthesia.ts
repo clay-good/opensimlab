@@ -13,7 +13,7 @@ export const OBSTETRIC_GENERAL_ANESTHESIA: Scenario = {
   metadata: {
     id: 'obstetric-general-anesthesia',
     version: '0.1.0',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Obstetric general anesthesia',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

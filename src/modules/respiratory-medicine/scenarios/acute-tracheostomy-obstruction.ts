@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const ACUTE_TRACHEOSTOMY_OBSTRUCTION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'acute-tracheostomy-obstruction', version: '0.1.0', maturity: 'draft',
+    id: 'acute-tracheostomy-obstruction', version: '0.1.0', maturity: 'preview',
     title: 'Acute tracheostomy obstruction', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 7, difficulty: 'advanced', objectives: [
       { id: 'reconcile-acute-tracheostomy-obstruction-anatomy-and-patency', statement: 'Reconcile the authored tracheostomy-versus-laryngectomy anatomy, patent native upper airway, pulse, spontaneous breathing, and converging patency findings.', measure: 'Urgent tracheostomy patency failure was recognized without treating absent waveform capnography alone as diagnostic or generalizing to a different airway.' },

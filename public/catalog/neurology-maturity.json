@@ -8,7 +8,7 @@
       "subjectKind": "scenario",
       "subjectId": "minor-nondisabling-acute-ischemic-stroke",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/neurology-completion-audit.json#minor-nondisabling-acute-ischemic-stroke@0.1.0",
         "/catalog/neurology-quality-audit.json#minor-nondisabling-acute-ischemic-stroke@0.1.0"
@@ -19,7 +19,7 @@
       "subjectKind": "scenario",
       "subjectId": "basilar-artery-occlusion-escalation",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/neurology-completion-audit.json#basilar-artery-occlusion-escalation@0.1.0",
         "/catalog/neurology-quality-audit.json#basilar-artery-occlusion-escalation@0.1.0"
@@ -30,7 +30,7 @@
       "subjectKind": "scenario",
       "subjectId": "spontaneous-cerebellar-intracerebral-hemorrhage",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/neurology-completion-audit.json#spontaneous-cerebellar-intracerebral-hemorrhage@0.1.0",
         "/catalog/neurology-quality-audit.json#spontaneous-cerebellar-intracerebral-hemorrhage@0.1.0"
@@ -41,7 +41,7 @@
       "subjectKind": "scenario",
       "subjectId": "aneurysmal-subarachnoid-hemorrhage-deterioration",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/neurology-completion-audit.json#aneurysmal-subarachnoid-hemorrhage-deterioration@0.1.0",
         "/catalog/neurology-quality-audit.json#aneurysmal-subarachnoid-hemorrhage-deterioration@0.1.0"
@@ -52,7 +52,7 @@
       "subjectKind": "scenario",
       "subjectId": "focal-motor-status-epilepticus-escalation",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/neurology-completion-audit.json#focal-motor-status-epilepticus-escalation@0.1.0",
         "/catalog/neurology-quality-audit.json#focal-motor-status-epilepticus-escalation@0.1.0"
@@ -63,7 +63,7 @@
       "subjectKind": "scenario",
       "subjectId": "nonconvulsive-status-epilepticus-recognition",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/neurology-completion-audit.json#nonconvulsive-status-epilepticus-recognition@0.1.0",
         "/catalog/neurology-quality-audit.json#nonconvulsive-status-epilepticus-recognition@0.1.0"
@@ -74,7 +74,7 @@
       "subjectKind": "scenario",
       "subjectId": "myasthenic-crisis-escalation",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/neurology-completion-audit.json#myasthenic-crisis-escalation@0.1.0",
         "/catalog/neurology-quality-audit.json#myasthenic-crisis-escalation@0.1.0"
@@ -85,7 +85,7 @@
       "subjectKind": "scenario",
       "subjectId": "guillain-barre-respiratory-decline",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/neurology-completion-audit.json#guillain-barre-respiratory-decline@0.1.0",
         "/catalog/neurology-quality-audit.json#guillain-barre-respiratory-decline@0.1.0"
@@ -96,7 +96,7 @@
       "subjectKind": "scenario",
       "subjectId": "acute-bacterial-meningitis-first-hour",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/neurology-completion-audit.json#acute-bacterial-meningitis-first-hour@0.1.0",
         "/catalog/neurology-quality-audit.json#acute-bacterial-meningitis-first-hour@0.1.0"
@@ -107,7 +107,7 @@
       "subjectKind": "scenario",
       "subjectId": "suspected-herpes-simplex-encephalitis",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/neurology-completion-audit.json#suspected-herpes-simplex-encephalitis@0.1.0",
         "/catalog/neurology-quality-audit.json#suspected-herpes-simplex-encephalitis@0.1.0"
@@ -118,7 +118,7 @@
       "subjectKind": "scenario",
       "subjectId": "raised-intracranial-pressure-visual-threat",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/neurology-completion-audit.json#raised-intracranial-pressure-visual-threat@0.1.0",
         "/catalog/neurology-quality-audit.json#raised-intracranial-pressure-visual-threat@0.1.0"
@@ -129,7 +129,7 @@
       "subjectKind": "scenario",
       "subjectId": "acute-transtentorial-herniation-pattern",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/neurology-completion-audit.json#acute-transtentorial-herniation-pattern@0.1.0",
         "/catalog/neurology-quality-audit.json#acute-transtentorial-herniation-pattern@0.1.0"
@@ -140,7 +140,7 @@
       "subjectKind": "scenario",
       "subjectId": "metastatic-spinal-cord-compression",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/neurology-completion-audit.json#metastatic-spinal-cord-compression@0.1.0",
         "/catalog/neurology-quality-audit.json#metastatic-spinal-cord-compression@0.1.0"
@@ -151,7 +151,7 @@
       "subjectKind": "scenario",
       "subjectId": "acute-delirium-reversible-causes",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/neurology-completion-audit.json#acute-delirium-reversible-causes@0.1.0",
         "/catalog/neurology-quality-audit.json#acute-delirium-reversible-causes@0.1.0"
@@ -162,7 +162,7 @@
       "subjectKind": "scenario",
       "subjectId": "autonomic-dysreflexia-authored-trigger",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/neurology-completion-audit.json#autonomic-dysreflexia-authored-trigger@0.1.0",
         "/catalog/neurology-quality-audit.json#autonomic-dysreflexia-authored-trigger@0.1.0"

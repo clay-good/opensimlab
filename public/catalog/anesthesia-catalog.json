@@ -10,7 +10,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 12,
       "difficulty": "introductory",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -33,7 +33,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 10,
       "difficulty": "intermediate",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -55,7 +55,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 12,
       "difficulty": "intermediate",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -77,7 +77,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 12,
       "difficulty": "intermediate",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -101,7 +101,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 9,
       "difficulty": "advanced",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -123,7 +123,7 @@
       "contentVersion": "0.2.0",
       "estimatedMinutes": 10,
       "difficulty": "intermediate",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -146,7 +146,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 10,
       "difficulty": "advanced",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -168,7 +168,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 8,
       "difficulty": "intermediate",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -190,7 +190,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 8,
       "difficulty": "advanced",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -212,7 +212,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 10,
       "difficulty": "advanced",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -234,7 +234,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 8,
       "difficulty": "introductory",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -256,7 +256,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 10,
       "difficulty": "advanced",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -278,7 +278,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 8,
       "difficulty": "advanced",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -300,7 +300,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 8,
       "difficulty": "advanced",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -322,7 +322,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 8,
       "difficulty": "advanced",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -344,7 +344,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 8,
       "difficulty": "advanced",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -366,7 +366,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 9,
       "difficulty": "advanced",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -389,7 +389,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 5,
       "difficulty": "introductory",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -410,7 +410,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 6,
       "difficulty": "advanced",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -431,7 +431,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 6,
       "difficulty": "intermediate",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -452,7 +452,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 8,
       "difficulty": "intermediate",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -473,7 +473,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 9,
       "difficulty": "introductory",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -494,7 +494,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 6,
       "difficulty": "intermediate",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -515,7 +515,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 8,
       "difficulty": "introductory",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -537,7 +537,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 8,
       "difficulty": "intermediate",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -559,7 +559,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 7,
       "difficulty": "introductory",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -580,7 +580,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 8,
       "difficulty": "intermediate",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -602,7 +602,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 8,
       "difficulty": "intermediate",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -624,7 +624,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 8,
       "difficulty": "advanced",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -647,7 +647,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 6,
       "difficulty": "intermediate",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -669,7 +669,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 5,
       "difficulty": "intermediate",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -691,7 +691,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 6,
       "difficulty": "advanced",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -714,7 +714,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 5,
       "difficulty": "intermediate",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -737,7 +737,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 6,
       "difficulty": "intermediate",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -758,7 +758,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 7,
       "difficulty": "intermediate",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -781,7 +781,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 9,
       "difficulty": "introductory",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -803,7 +803,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 8,
       "difficulty": "introductory",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -824,7 +824,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 8,
       "difficulty": "intermediate",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",
@@ -846,7 +846,7 @@
       "contentVersion": "0.1.0",
       "estimatedMinutes": 7,
       "difficulty": "introductory",
-      "maturity": "draft",
+      "maturity": "preview",
       "environment": "operating-room",
       "practiceRegions": [
         "US",

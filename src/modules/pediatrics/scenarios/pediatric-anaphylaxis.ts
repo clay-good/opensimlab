@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const PEDIATRIC_ANAPHYLAXIS: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'pediatric-anaphylaxis', version: '0.1.0', maturity: 'draft',
+    id: 'pediatric-anaphylaxis', version: '0.1.0', maturity: 'preview',
     title: 'Pediatric anaphylaxis after first-line care', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       {

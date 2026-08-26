@@ -8,7 +8,7 @@
       "subjectKind": "scenario",
       "subjectId": "undifferentiated-shock",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#undifferentiated-shock@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#undifferentiated-shock@0.1.0"
@@ -19,7 +19,7 @@
       "subjectKind": "scenario",
       "subjectId": "septic-shock",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#septic-shock@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#septic-shock@0.1.0"
@@ -30,7 +30,7 @@
       "subjectKind": "scenario",
       "subjectId": "hemorrhagic-shock",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#hemorrhagic-shock@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#hemorrhagic-shock@0.1.0"
@@ -41,7 +41,7 @@
       "subjectKind": "scenario",
       "subjectId": "obstructive-shock-tension-pneumothorax",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#obstructive-shock-tension-pneumothorax@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#obstructive-shock-tension-pneumothorax@0.1.0"
@@ -52,7 +52,7 @@
       "subjectKind": "scenario",
       "subjectId": "cardiac-tamponade",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#cardiac-tamponade@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#cardiac-tamponade@0.1.0"
@@ -63,7 +63,7 @@
       "subjectKind": "scenario",
       "subjectId": "anaphylaxis",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#anaphylaxis@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#anaphylaxis@0.1.0"
@@ -74,7 +74,7 @@
       "subjectKind": "scenario",
       "subjectId": "adult-asthma",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#adult-asthma@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#adult-asthma@0.1.0"
@@ -85,7 +85,7 @@
       "subjectKind": "scenario",
       "subjectId": "copd-exacerbation",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#copd-exacerbation@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#copd-exacerbation@0.1.0"
@@ -96,7 +96,7 @@
       "subjectKind": "scenario",
       "subjectId": "acute-pulmonary-edema",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#acute-pulmonary-edema@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#acute-pulmonary-edema@0.1.0"
@@ -107,7 +107,7 @@
       "subjectKind": "scenario",
       "subjectId": "pulmonary-embolism-deterioration",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#pulmonary-embolism-deterioration@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#pulmonary-embolism-deterioration@0.1.0"
@@ -118,7 +118,7 @@
       "subjectKind": "scenario",
       "subjectId": "stemi",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#stemi@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#stemi@0.1.0"
@@ -129,7 +129,7 @@
       "subjectKind": "scenario",
       "subjectId": "unstable-narrow-complex-tachycardia",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#unstable-narrow-complex-tachycardia@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#unstable-narrow-complex-tachycardia@0.1.0"
@@ -140,7 +140,7 @@
       "subjectKind": "scenario",
       "subjectId": "unstable-bradycardia",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#unstable-bradycardia@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#unstable-bradycardia@0.1.0"
@@ -151,7 +151,7 @@
       "subjectKind": "scenario",
       "subjectId": "persistent-vf-arrest",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#persistent-vf-arrest@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#persistent-vf-arrest@0.1.0"
@@ -162,7 +162,7 @@
       "subjectKind": "scenario",
       "subjectId": "pea-arrest",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#pea-arrest@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#pea-arrest@0.1.0"
@@ -173,7 +173,7 @@
       "subjectKind": "scenario",
       "subjectId": "status-epilepticus",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#status-epilepticus@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#status-epilepticus@0.1.0"
@@ -184,7 +184,7 @@
       "subjectKind": "scenario",
       "subjectId": "acute-ischemic-stroke",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#acute-ischemic-stroke@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#acute-ischemic-stroke@0.1.0"
@@ -195,7 +195,7 @@
       "subjectKind": "scenario",
       "subjectId": "intracranial-hemorrhage-deterioration",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#intracranial-hemorrhage-deterioration@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#intracranial-hemorrhage-deterioration@0.1.0"
@@ -206,7 +206,7 @@
       "subjectKind": "scenario",
       "subjectId": "diabetic-ketoacidosis",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#diabetic-ketoacidosis@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#diabetic-ketoacidosis@0.1.0"
@@ -217,7 +217,7 @@
       "subjectKind": "scenario",
       "subjectId": "hyperkalemia-with-ecg-change",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#hyperkalemia-with-ecg-change@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#hyperkalemia-with-ecg-change@0.1.0"
@@ -228,7 +228,7 @@
       "subjectKind": "scenario",
       "subjectId": "severe-hyponatremia-with-seizure",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#severe-hyponatremia-with-seizure@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#severe-hyponatremia-with-seizure@0.1.0"
@@ -239,7 +239,7 @@
       "subjectKind": "scenario",
       "subjectId": "opioid-toxicity",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#opioid-toxicity@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#opioid-toxicity@0.1.0"
@@ -250,7 +250,7 @@
       "subjectKind": "scenario",
       "subjectId": "exertional-heat-stroke",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#exertional-heat-stroke@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#exertional-heat-stroke@0.1.0"
@@ -261,7 +261,7 @@
       "subjectKind": "scenario",
       "subjectId": "trauma-primary-survey",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#trauma-primary-survey@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#trauma-primary-survey@0.1.0"
@@ -272,7 +272,7 @@
       "subjectKind": "scenario",
       "subjectId": "acute-aortic-syndrome",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#acute-aortic-syndrome@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#acute-aortic-syndrome@0.1.0"

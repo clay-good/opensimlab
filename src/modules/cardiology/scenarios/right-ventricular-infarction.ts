@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const RIGHT_VENTRICULAR_INFARCTION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'right-ventricular-infarction', version: '0.1.0', maturity: 'draft',
+    id: 'right-ventricular-infarction', version: '0.1.0', maturity: 'preview',
     title: 'Right-ventricular infarction', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'advanced', objectives: [
       { id: 'reconcile-right-ventricular-infarction', statement: 'Reconcile the acute inferior-STEMI trajectory with current pressure, perfusion, oxygenation, rhythm, and congestion before choosing a hemodynamic frame.', measure: 'The learner separated preload-sensitive hypotension from declared multi-organ shock and kept dangerous alternatives open.' },

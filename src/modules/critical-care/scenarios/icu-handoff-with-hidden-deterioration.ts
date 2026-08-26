@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const ICU_HANDOFF_WITH_HIDDEN_DETERIORATION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'icu-handoff-with-hidden-deterioration', version: '0.1.0', maturity: 'draft',
+    id: 'icu-handoff-with-hidden-deterioration', version: '0.1.0', maturity: 'preview',
     title: 'ICU handoff with hidden deterioration', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'establish-icu-handoff-readiness', statement: 'Establish receiver readiness, monitoring continuity, and responsibility boundaries.', measure: 'Shared attention, questions, and uninterrupted bedside responsibility were explicit before content transfer.' },

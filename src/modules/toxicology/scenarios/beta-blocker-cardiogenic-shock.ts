@@ -4,7 +4,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const BETA_BLOCKER_CARDIOGENIC_SHOCK: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'beta-blocker-cardiogenic-shock', version: '0.1.0', maturity: 'draft',
+    id: 'beta-blocker-cardiogenic-shock', version: '0.1.0', maturity: 'preview',
     title: 'Beta-blocker toxicity: perfusion is more than pulse rate', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 6, difficulty: 'advanced', objectives: [
       { id: 'reconcile-toxicology-beta-blocker-product-clock-pulse-perfusion-mentation-glucose-ecg-and-whole-patient', statement: 'Reconcile product, clock, pulse, perfusion, mentation, glucose, ECG, and the whole patient.', measure: 'The declared metoprolol exposure, 2-hour clock, bradycardia, shock, drowsiness, vomiting, low glucose, supplied ECG, oxygenation, and whole-patient state were connected without learner history, examination, monitoring, testing, ECG interpretation, or diagnosis.' },

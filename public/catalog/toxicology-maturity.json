@@ -8,7 +8,7 @@
       "subjectKind": "scenario",
       "subjectId": "methemoglobinemia-saturation-gap",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/toxicology-completion-audit.json#methemoglobinemia-saturation-gap@0.1.0",
         "/catalog/toxicology-quality-audit.json#methemoglobinemia-saturation-gap@0.1.0"
@@ -19,7 +19,7 @@
       "subjectKind": "scenario",
       "subjectId": "carbon-monoxide-reassuring-monitor",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/toxicology-completion-audit.json#carbon-monoxide-reassuring-monitor@0.1.0",
         "/catalog/toxicology-quality-audit.json#carbon-monoxide-reassuring-monitor@0.1.0"
@@ -30,7 +30,7 @@
       "subjectKind": "scenario",
       "subjectId": "acetaminophen-clock-and-nomogram",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/toxicology-completion-audit.json#acetaminophen-clock-and-nomogram@0.1.0",
         "/catalog/toxicology-quality-audit.json#acetaminophen-clock-and-nomogram@0.1.0"
@@ -41,7 +41,7 @@
       "subjectKind": "scenario",
       "subjectId": "salicylate-falling-number",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/toxicology-completion-audit.json#salicylate-falling-number@0.1.0",
         "/catalog/toxicology-quality-audit.json#salicylate-falling-number@0.1.0"
@@ -52,7 +52,7 @@
       "subjectKind": "scenario",
       "subjectId": "tricyclic-sodium-channel-cardiotoxicity",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/toxicology-completion-audit.json#tricyclic-sodium-channel-cardiotoxicity@0.1.0",
         "/catalog/toxicology-quality-audit.json#tricyclic-sodium-channel-cardiotoxicity@0.1.0"
@@ -63,7 +63,7 @@
       "subjectKind": "scenario",
       "subjectId": "beta-blocker-cardiogenic-shock",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/toxicology-completion-audit.json#beta-blocker-cardiogenic-shock@0.1.0",
         "/catalog/toxicology-quality-audit.json#beta-blocker-cardiogenic-shock@0.1.0"
@@ -74,7 +74,7 @@
       "subjectKind": "scenario",
       "subjectId": "calcium-channel-blocker-shock",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/toxicology-completion-audit.json#calcium-channel-blocker-shock@0.1.0",
         "/catalog/toxicology-quality-audit.json#calcium-channel-blocker-shock@0.1.0"
@@ -85,7 +85,7 @@
       "subjectKind": "scenario",
       "subjectId": "digoxin-rhythm-potassium",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/toxicology-completion-audit.json#digoxin-rhythm-potassium@0.1.0",
         "/catalog/toxicology-quality-audit.json#digoxin-rhythm-potassium@0.1.0"
@@ -96,7 +96,7 @@
       "subjectKind": "scenario",
       "subjectId": "cholinergic-pesticide-respiratory-failure",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/toxicology-completion-audit.json#cholinergic-pesticide-respiratory-failure@0.1.0",
         "/catalog/toxicology-quality-audit.json#cholinergic-pesticide-respiratory-failure@0.1.0"
@@ -107,7 +107,7 @@
       "subjectKind": "scenario",
       "subjectId": "anticholinergic-hyperthermia-delirium",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/toxicology-completion-audit.json#anticholinergic-hyperthermia-delirium@0.1.0",
         "/catalog/toxicology-quality-audit.json#anticholinergic-hyperthermia-delirium@0.1.0"
@@ -118,7 +118,7 @@
       "subjectKind": "scenario",
       "subjectId": "serotonin-toxicity-hyperthermia-clonus",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/toxicology-completion-audit.json#serotonin-toxicity-hyperthermia-clonus@0.1.0",
         "/catalog/toxicology-quality-audit.json#serotonin-toxicity-hyperthermia-clonus@0.1.0"
@@ -129,7 +129,7 @@
       "subjectKind": "scenario",
       "subjectId": "sympathomimetic-hyperadrenergic-hyperthermia",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/toxicology-completion-audit.json#sympathomimetic-hyperadrenergic-hyperthermia@0.1.0",
         "/catalog/toxicology-quality-audit.json#sympathomimetic-hyperadrenergic-hyperthermia@0.1.0"
@@ -140,7 +140,7 @@
       "subjectKind": "scenario",
       "subjectId": "methanol-visual-acidosis-gaps",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/toxicology-completion-audit.json#methanol-visual-acidosis-gaps@0.1.0",
         "/catalog/toxicology-quality-audit.json#methanol-visual-acidosis-gaps@0.1.0"
@@ -151,7 +151,7 @@
       "subjectKind": "scenario",
       "subjectId": "delayed-local-anesthetic-cns-cardiac-toxicity",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/toxicology-completion-audit.json#delayed-local-anesthetic-cns-cardiac-toxicity@0.1.0",
         "/catalog/toxicology-quality-audit.json#delayed-local-anesthetic-cns-cardiac-toxicity@0.1.0"
@@ -162,7 +162,7 @@
       "subjectKind": "scenario",
       "subjectId": "opioid-xylazine-persistent-sedation",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/toxicology-completion-audit.json#opioid-xylazine-persistent-sedation@0.1.0",
         "/catalog/toxicology-quality-audit.json#opioid-xylazine-persistent-sedation@0.1.0"

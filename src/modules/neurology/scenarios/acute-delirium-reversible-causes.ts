@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const ACUTE_DELIRIUM_REVERSIBLE_CAUSES: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'acute-delirium-reversible-causes', version: '0.1.0', maturity: 'draft',
+    id: 'acute-delirium-reversible-causes', version: '0.1.0', maturity: 'preview',
     title: 'Acute delirium with reversible causes', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 6, difficulty: 'intermediate', objectives: [
       { id: 'reconcile-neurology-delirium-baseline-clock-fluctuation-attention-perception-function-and-whole-patient', statement: 'Reconcile baseline, clock, fluctuation, attention, perception, function, and the whole patient.', measure: 'The hours-long departure from independently verified baseline was connected across hypoactive and restless periods without learner history, examination, scoring, diagnosis, or treatment.' },

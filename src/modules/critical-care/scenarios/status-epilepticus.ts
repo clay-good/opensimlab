@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const STATUS_EPILEPTICUS: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'status-epilepticus', version: '0.1.0', maturity: 'draft',
+    id: 'status-epilepticus', version: '0.1.0', maturity: 'preview',
     title: 'Refractory status epilepticus', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 9, difficulty: 'advanced', objectives: [
       { id: 'recognize-refractory-status-epilepticus', statement: 'Recognize refractory electrographic status after emergent and urgent therapy.', measure: 'Persistent EEG seizures and absent recovery triggered neurocritical-care escalation despite stopped convulsions.' },

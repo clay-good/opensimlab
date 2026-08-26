@@ -7,7 +7,7 @@ export const PNEUMOTHORAX_UNDER_POSITIVE_PRESSURE: Scenario = {
   metadata: {
     id: 'pneumothorax-under-positive-pressure',
     version: '0.1.0',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Pneumothorax under positive pressure',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

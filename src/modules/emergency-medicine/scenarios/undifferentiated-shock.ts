@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const UNDIFFERENTIATED_SHOCK: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'undifferentiated-shock', version: '0.1.0', maturity: 'draft',
+    id: 'undifferentiated-shock', version: '0.1.0', maturity: 'preview',
     title: 'Undifferentiated shock', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'introductory',
     objectives: [

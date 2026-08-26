@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const TRAUMA_PRIMARY_SURVEY: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'trauma-primary-survey', version: '0.1.0', maturity: 'draft',
+    id: 'trauma-primary-survey', version: '0.1.0', maturity: 'preview',
     title: 'Trauma primary survey', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 9, difficulty: 'intermediate', objectives: [
       { id: 'activate-structured-trauma-response', statement: 'Receive the fixed trauma handoff, activate the trauma and hemorrhage response, and commit to a repeated <C>ABCDE survey.', measure: 'Mechanism, time, injuries, signs, prior treatment, team readiness, and the ordered survey were integrated.' },

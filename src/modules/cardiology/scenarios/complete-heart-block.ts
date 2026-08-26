@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const COMPLETE_HEART_BLOCK: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'complete-heart-block', version: '0.1.0', maturity: 'draft',
+    id: 'complete-heart-block', version: '0.1.0', maturity: 'preview',
     title: 'Complete heart block', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'reconcile-complete-heart-block-stability', statement: 'Reconcile the fixed complete-AV-block report, mechanical pulse, recent presyncope, and current whole-patient stability.', measure: 'Atrial-ventricular dissociation and a palpable escape rhythm remained distinct from sinus bradycardia and current compromise.' },

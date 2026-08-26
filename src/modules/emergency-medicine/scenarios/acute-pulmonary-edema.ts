@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const ACUTE_PULMONARY_EDEMA: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'acute-pulmonary-edema', version: '0.1.0', maturity: 'draft',
+    id: 'acute-pulmonary-edema', version: '0.1.0', maturity: 'preview',
     title: 'Acute pulmonary edema', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 9, difficulty: 'introductory',
     objectives: [

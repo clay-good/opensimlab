@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const ANEURYSMAL_SUBARACHNOID_HEMORRHAGE_DETERIORATION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'aneurysmal-subarachnoid-hemorrhage-deterioration', version: '0.1.0', maturity: 'draft',
+    id: 'aneurysmal-subarachnoid-hemorrhage-deterioration', version: '0.1.0', maturity: 'preview',
     title: 'Aneurysmal SAH delayed deterioration', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 8, difficulty: 'advanced', objectives: [
       { id: 'reconcile-neurology-asah-day-aneurysm-status-new-deficit-and-whole-patient', statement: 'Reconcile the aSAH day, secured-aneurysm record, new deficit clock, physiology, and whole-patient state.', measure: 'The fixed day-7 context, earlier baseline, new focal findings, breathing, circulation, glucose, sodium, and aneurysm record were connected without learner history, examination, testing, diagnosis, or treatment.' },

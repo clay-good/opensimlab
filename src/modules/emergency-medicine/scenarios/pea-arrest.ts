@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const PEA_ARREST: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'pea-arrest', version: '0.1.0', maturity: 'draft', title: 'PEA arrest',
+    id: 'pea-arrest', version: '0.1.0', maturity: 'preview', title: 'PEA arrest',
     author: 'Open Sim Lab', license: 'CC BY-SA 4.0', estimatedMinutes: 7,
     difficulty: 'intermediate', objectives: [
       { id: 'resume-arrest-compressions', statement: 'Recognize organized electrical activity without a pulse and start chest compressions.', measure: 'Modeled 110/min chest compressions were accepted within 20 seconds of the PEA event.' },

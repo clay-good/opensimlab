@@ -5,7 +5,7 @@ import type { Scenario } from './types';
 export const POST_EXTUBATION_OBSTRUCTION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'post-extubation-obstruction', version: '0.1.0', maturity: 'draft',
+    id: 'post-extubation-obstruction', version: '0.1.0', maturity: 'preview',
     title: 'Post-extubation obstruction', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 6, difficulty: 'intermediate',
     objectives: [

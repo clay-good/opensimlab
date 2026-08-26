@@ -7,7 +7,7 @@ export const REPEATED_LARYNGOSCOPY_HARM: Scenario = {
   metadata: {
     id: 'repeated-laryngoscopy-harm',
     version: '0.1.0',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Known difficult airway: stop repeated attempts',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

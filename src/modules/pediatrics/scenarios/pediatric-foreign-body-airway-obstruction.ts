@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'pediatric-foreign-body-airway-obstruction', version: '0.1.0', maturity: 'draft',
+    id: 'pediatric-foreign-body-airway-obstruction', version: '0.1.0', maturity: 'preview',
     title: 'Pediatric foreign-body airway obstruction', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 7, difficulty: 'intermediate', objectives: [
       {

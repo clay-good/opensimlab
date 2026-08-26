@@ -5,7 +5,7 @@ import type { Scenario } from './types';
 export const ROUTINE_PEDIATRIC_INHALATIONAL_INDUCTION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'routine-pediatric-inhalational-induction', version: '0.1.0', maturity: 'draft',
+    id: 'routine-pediatric-inhalational-induction', version: '0.1.0', maturity: 'preview',
     title: 'Routine pediatric inhalational induction', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 7, difficulty: 'introductory',
     objectives: [

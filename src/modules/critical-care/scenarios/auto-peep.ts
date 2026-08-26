@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const AUTO_PEEP: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'auto-peep', version: '0.1.0', maturity: 'draft',
+    id: 'auto-peep', version: '0.1.0', maturity: 'preview',
     title: 'Auto-PEEP and dynamic hyperinflation', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 9, difficulty: 'intermediate', objectives: [
       { id: 'review-auto-peep-patient-and-flow', statement: 'Integrate the patient, expiratory flow-time graphic, delivered breathing pattern, pressures, gas exchange, and circulation.', measure: 'Persistent end-expiratory flow and a short expiratory interval were reviewed with the whole-patient pattern.' },

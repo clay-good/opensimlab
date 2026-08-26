@@ -4,7 +4,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'serotonin-toxicity-hyperthermia-clonus', version: '0.1.0', maturity: 'draft',
+    id: 'serotonin-toxicity-hyperthermia-clonus', version: '0.1.0', maturity: 'preview',
     title: 'Serotonin toxicity: cool the heat, follow the clonus', author: 'Open Sim Lab', license: 'CC BY-SA 4.0', estimatedMinutes: 6, difficulty: 'advanced',
     objectives: [
       { id: 'reconcile-toxicology-serotonin-agents-clock-mental-autonomic-neuromuscular-temperature-and-whole-patient', statement: 'Reconcile agents, clock, mental, autonomic, neuromuscular, temperature, and whole-patient findings.', measure: 'The declared linezolid-sertraline interaction, 6-hour clock, agitation, confusion, diaphoresis, diarrhea, clonus, hyperreflexia, tremor, hypertonicity, hyperthermia, tachycardia, supplied ECG and whole-patient state were connected without learner history, examination, monitoring, testing, or diagnosis.' },

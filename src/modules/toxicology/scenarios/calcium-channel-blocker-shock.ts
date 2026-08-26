@@ -4,7 +4,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const CALCIUM_CHANNEL_BLOCKER_SHOCK: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'calcium-channel-blocker-shock', version: '0.1.0', maturity: 'draft',
+    id: 'calcium-channel-blocker-shock', version: '0.1.0', maturity: 'preview',
     title: 'Calcium-channel blocker toxicity: read the glucose with the shock', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 6, difficulty: 'advanced', objectives: [
       { id: 'reconcile-toxicology-calcium-channel-blocker-product-formulation-clock-perfusion-rhythm-glucose-and-whole-patient', statement: 'Reconcile product, formulation, clock, perfusion, rhythm, glucose, and the whole patient.', measure: 'The declared extended-release diltiazem exposure, 5-hour clock, bradycardia, AV block, shock, drowsiness, hyperglycemia, supplied ECG, oxygenation, and whole-patient state were connected without learner history, examination, monitoring, testing, ECG interpretation, or diagnosis.' },

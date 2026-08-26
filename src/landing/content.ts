@@ -8,8 +8,12 @@
  * report and the limitations register do not support.
  */
 
+export const READY_SCENARIO_COUNT = 179;
+export const READY_MODULE_COUNT = 9;
+
 export const ONE_LINE_DESCRIPTION =
-  'A free, browser-based clinical simulator for medical students, residents, and nurse anesthetists.';
+  `Practice ${READY_SCENARIO_COUNT} interactive clinical scenarios across ${READY_MODULE_COUNT} specialties—free in your browser—`
+  + 'for medical students, residents, and nurse anesthetists.';
 
 /** Exactly three facts, chosen because they answer the objections a visitor has. */
 export interface SupportingFact {
@@ -24,7 +28,7 @@ export interface SupportingFact {
 export const THREE_FACTS: readonly SupportingFact[] = [
   {
     text: 'Free, with no account and nothing to install.',
-    short: 'No account',
+    short: 'Free. No account',
     linkLabel: 'Read what is stored on your device',
     href: '/privacy',
   },
@@ -36,7 +40,7 @@ export const THREE_FACTS: readonly SupportingFact[] = [
   },
   {
     text: 'The drug models come from published pharmacology, with citations you can check.',
-    short: 'Published pharmacology',
+    short: 'Cited pharmacology',
     linkLabel: 'Read the validation report',
     href: '/validation',
   },

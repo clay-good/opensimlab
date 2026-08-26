@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const OBSTRUCTIVE_SHOCK_TENSION_PNEUMOTHORAX: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'obstructive-shock-tension-pneumothorax', version: '0.1.0', maturity: 'draft',
+    id: 'obstructive-shock-tension-pneumothorax', version: '0.1.0', maturity: 'preview',
     title: 'Obstructive shock from tension pneumothorax', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 7, difficulty: 'intermediate',
     objectives: [

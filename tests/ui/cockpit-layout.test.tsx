@@ -367,7 +367,7 @@ describe('Requirement: Status Bar Contents', () => {
   });
 
   it('keeps the exact maturity record reachable without leaving the live session', () => {
-    expect(markup).toContain('Draft');
+    expect(markup).toContain('Preview');
     expect(markup).toContain(
       '/catalog/anesthesia-maturity.json#scenario:routine-induction@0.1.0',
     );

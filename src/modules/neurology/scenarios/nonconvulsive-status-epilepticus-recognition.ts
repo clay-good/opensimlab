@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const NONCONVULSIVE_STATUS_EPILEPTICUS_RECOGNITION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'nonconvulsive-status-epilepticus-recognition', version: '0.1.0', maturity: 'draft',
+    id: 'nonconvulsive-status-epilepticus-recognition', version: '0.1.0', maturity: 'preview',
     title: 'Nonconvulsive status epilepticus recognition', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 7, difficulty: 'advanced', objectives: [
       { id: 'reconcile-neurology-ncse-clock-fluctuation-subtle-signs-and-whole-patient', statement: 'Reconcile the supplied clock, fluctuating cognition and language, subtle recurrent signs, physiology, and whole-patient state.', measure: 'The fixed 95-minute trajectory, intermittent speech arrest, inattention, gaze deviation, breathing, circulation, glucose, sodium, and imaging record were connected without learner history, examination, monitoring, testing, diagnosis, or treatment.' },

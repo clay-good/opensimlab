@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const BRONCHIECTASIS_MUCUS_PLUGGING_REASSESSMENT: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'bronchiectasis-mucus-plugging-reassessment', version: '0.1.0', maturity: 'draft',
+    id: 'bronchiectasis-mucus-plugging-reassessment', version: '0.1.0', maturity: 'preview',
     title: 'Mucus plugging with focal collapse', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 9, difficulty: 'intermediate', objectives: [
       { id: 'reconcile-bronchiectasis-mucus-plugging-trajectory', statement: 'Reconcile the authored baseline, secretion-clearance change, current breathing, perfusion, cough, and focal examination claims.', measure: 'The whole-patient trajectory established urgent secretion-clearance failure without granting examination skill or making one finding diagnostic.' },

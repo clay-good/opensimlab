@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const LARGE_UNILATERAL_PLEURAL_EFFUSION_REASSESSMENT: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'large-unilateral-pleural-effusion-reassessment', version: '0.1.0', maturity: 'draft',
+    id: 'large-unilateral-pleural-effusion-reassessment', version: '0.1.0', maturity: 'preview',
     title: 'Large unilateral pleural effusion', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 9, difficulty: 'intermediate', objectives: [
       { id: 'reconcile-large-unilateral-pleural-effusion-trajectory', statement: 'Reconcile the authored symptom trajectory, current safety, unilateral examination claims, and fixed imaging pattern.', measure: 'The large unilateral effusion was held beside breathing and perfusion without making size alone an emergency threshold or granting examination or imaging skill.' },

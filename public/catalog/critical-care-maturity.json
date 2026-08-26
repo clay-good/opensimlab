@@ -8,7 +8,7 @@
       "subjectKind": "scenario",
       "subjectId": "ards-lung-protective-ventilation",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#ards-lung-protective-ventilation@0.1.0",
         "/catalog/critical-care-quality-audit.json#ards-lung-protective-ventilation@0.1.0"
@@ -19,7 +19,7 @@
       "subjectKind": "scenario",
       "subjectId": "escalating-hypoxemia",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#escalating-hypoxemia@0.1.0",
         "/catalog/critical-care-quality-audit.json#escalating-hypoxemia@0.1.0"
@@ -30,7 +30,7 @@
       "subjectKind": "scenario",
       "subjectId": "ventilator-dyssynchrony",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#ventilator-dyssynchrony@0.1.0",
         "/catalog/critical-care-quality-audit.json#ventilator-dyssynchrony@0.1.0"
@@ -41,7 +41,7 @@
       "subjectKind": "scenario",
       "subjectId": "auto-peep",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#auto-peep@0.1.0",
         "/catalog/critical-care-quality-audit.json#auto-peep@0.1.0"
@@ -52,7 +52,7 @@
       "subjectKind": "scenario",
       "subjectId": "mucus-plugging",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#mucus-plugging@0.1.0",
         "/catalog/critical-care-quality-audit.json#mucus-plugging@0.1.0"
@@ -63,7 +63,7 @@
       "subjectKind": "scenario",
       "subjectId": "unplanned-extubation",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#unplanned-extubation@0.1.0",
         "/catalog/critical-care-quality-audit.json#unplanned-extubation@0.1.0"
@@ -74,7 +74,7 @@
       "subjectKind": "scenario",
       "subjectId": "spontaneous-breathing-trial",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#spontaneous-breathing-trial@0.1.0",
         "/catalog/critical-care-quality-audit.json#spontaneous-breathing-trial@0.1.0"
@@ -85,7 +85,7 @@
       "subjectKind": "scenario",
       "subjectId": "post-intubation-hypotension",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#post-intubation-hypotension@0.1.0",
         "/catalog/critical-care-quality-audit.json#post-intubation-hypotension@0.1.0"
@@ -96,7 +96,7 @@
       "subjectKind": "scenario",
       "subjectId": "cardiogenic-shock",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#cardiogenic-shock@0.1.0",
         "/catalog/critical-care-quality-audit.json#cardiogenic-shock@0.1.0"
@@ -107,7 +107,7 @@
       "subjectKind": "scenario",
       "subjectId": "mixed-shock",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#mixed-shock@0.1.0",
         "/catalog/critical-care-quality-audit.json#mixed-shock@0.1.0"
@@ -118,7 +118,7 @@
       "subjectKind": "scenario",
       "subjectId": "right-ventricular-failure",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#right-ventricular-failure@0.1.0",
         "/catalog/critical-care-quality-audit.json#right-ventricular-failure@0.1.0"
@@ -129,7 +129,7 @@
       "subjectKind": "scenario",
       "subjectId": "massive-pulmonary-embolism",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#massive-pulmonary-embolism@0.1.0",
         "/catalog/critical-care-quality-audit.json#massive-pulmonary-embolism@0.1.0"
@@ -140,7 +140,7 @@
       "subjectKind": "scenario",
       "subjectId": "upper-gi-hemorrhage",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#upper-gi-hemorrhage@0.1.0",
         "/catalog/critical-care-quality-audit.json#upper-gi-hemorrhage@0.1.0"
@@ -151,7 +151,7 @@
       "subjectKind": "scenario",
       "subjectId": "status-epilepticus",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#status-epilepticus@0.1.0",
         "/catalog/critical-care-quality-audit.json#status-epilepticus@0.1.0"
@@ -162,7 +162,7 @@
       "subjectKind": "scenario",
       "subjectId": "targeted-temperature-management",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#targeted-temperature-management@0.1.0",
         "/catalog/critical-care-quality-audit.json#targeted-temperature-management@0.1.0"
@@ -173,7 +173,7 @@
       "subjectKind": "scenario",
       "subjectId": "intracranial-hypertension",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#intracranial-hypertension@0.1.0",
         "/catalog/critical-care-quality-audit.json#intracranial-hypertension@0.1.0"
@@ -184,7 +184,7 @@
       "subjectKind": "scenario",
       "subjectId": "acute-kidney-injury-with-fluid-overload",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#acute-kidney-injury-with-fluid-overload@0.1.0",
         "/catalog/critical-care-quality-audit.json#acute-kidney-injury-with-fluid-overload@0.1.0"
@@ -195,7 +195,7 @@
       "subjectKind": "scenario",
       "subjectId": "severe-acidemia",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#severe-acidemia@0.1.0",
         "/catalog/critical-care-quality-audit.json#severe-acidemia@0.1.0"
@@ -206,7 +206,7 @@
       "subjectKind": "scenario",
       "subjectId": "icu-handoff-with-hidden-deterioration",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#icu-handoff-with-hidden-deterioration@0.1.0",
         "/catalog/critical-care-quality-audit.json#icu-handoff-with-hidden-deterioration@0.1.0"
@@ -217,7 +217,7 @@
       "subjectKind": "scenario",
       "subjectId": "ventilator-circuit-disconnection",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#ventilator-circuit-disconnection@0.1.0",
         "/catalog/critical-care-quality-audit.json#ventilator-circuit-disconnection@0.1.0"
@@ -228,7 +228,7 @@
       "subjectKind": "scenario",
       "subjectId": "delayed-vasopressor-delivery",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#delayed-vasopressor-delivery@0.1.0",
         "/catalog/critical-care-quality-audit.json#delayed-vasopressor-delivery@0.1.0"
@@ -239,7 +239,7 @@
       "subjectKind": "scenario",
       "subjectId": "pulse-oximeter-motion-artifact",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#pulse-oximeter-motion-artifact@0.1.0",
         "/catalog/critical-care-quality-audit.json#pulse-oximeter-motion-artifact@0.1.0"
@@ -250,7 +250,7 @@
       "subjectKind": "scenario",
       "subjectId": "endotracheal-tube-migration-after-repositioning",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#endotracheal-tube-migration-after-repositioning@0.1.0",
         "/catalog/critical-care-quality-audit.json#endotracheal-tube-migration-after-repositioning@0.1.0"
@@ -261,7 +261,7 @@
       "subjectKind": "scenario",
       "subjectId": "septic-shock-resuscitation",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/critical-care-completion-audit.json#septic-shock-resuscitation@0.1.0",
         "/catalog/critical-care-quality-audit.json#septic-shock-resuscitation@0.1.0"

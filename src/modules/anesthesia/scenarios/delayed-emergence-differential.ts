@@ -5,7 +5,7 @@ import type { Scenario } from './types';
 export const DELAYED_EMERGENCE_DIFFERENTIAL: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'delayed-emergence-differential', version: '0.1.0', maturity: 'draft',
+    id: 'delayed-emergence-differential', version: '0.1.0', maturity: 'preview',
     title: 'Delayed emergence differential', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 6, difficulty: 'advanced',
     objectives: [

@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const ACUTE_BACTERIAL_MENINGITIS_FIRST_HOUR: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'acute-bacterial-meningitis-first-hour', version: '0.1.0', maturity: 'draft',
+    id: 'acute-bacterial-meningitis-first-hour', version: '0.1.0', maturity: 'preview',
     title: 'Acute bacterial meningitis first hour', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 7, difficulty: 'advanced', objectives: [
       { id: 'reconcile-neurology-meningitis-clock-meningeal-infection-neurologic-and-whole-patient', statement: 'Reconcile the acute clock, meningeal and infection pattern, neurological state, physiology, and whole patient.', measure: 'Headache, fever, photophobia, vomiting, neck stiffness, alertness, focal and seizure negatives, perfusion, supplied blood evidence, and alternatives were connected without learner history, examination, testing, diagnosis, or treatment.' },

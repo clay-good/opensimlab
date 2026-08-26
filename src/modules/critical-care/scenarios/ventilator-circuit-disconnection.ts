@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const VENTILATOR_CIRCUIT_DISCONNECTION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'ventilator-circuit-disconnection', version: '0.1.0', maturity: 'draft',
+    id: 'ventilator-circuit-disconnection', version: '0.1.0', maturity: 'preview',
     title: 'Ventilator circuit disconnection', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 7, difficulty: 'intermediate', objectives: [
       { id: 'recognize-ventilator-circuit-disconnection', statement: 'Recognize lost delivered ventilation despite unchanged commanded settings.', measure: 'The fixed alarm, exhaled volume, pressure, capnography, patient, pleth, and saturation were integrated.' },

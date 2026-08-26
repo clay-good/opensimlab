@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const TORSADES_DE_POINTES: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'torsades-de-pointes', version: '0.1.0', maturity: 'draft', title: 'Torsades de pointes',
+    id: 'torsades-de-pointes', version: '0.1.0', maturity: 'preview', title: 'Torsades de pointes',
     author: 'Open Sim Lab', license: 'CC BY-SA 4.0', estimatedMinutes: 8,
     difficulty: 'advanced', objectives: [
       { id: 'reconcile-torsades-pulse-and-pattern', statement: 'Reconcile the fixed sustained polymorphic VT report, mechanical pulse, compromise, and preceding long-QT context.', measure: 'Torsades remained distinct from monomorphic VT, VF, and a rate-only diagnosis.' },

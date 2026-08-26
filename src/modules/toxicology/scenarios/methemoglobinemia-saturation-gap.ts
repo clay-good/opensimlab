@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const METHEMOGLOBINEMIA_SATURATION_GAP: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'methemoglobinemia-saturation-gap', version: '0.1.0', maturity: 'draft',
+    id: 'methemoglobinemia-saturation-gap', version: '0.1.0', maturity: 'preview',
     title: 'Methemoglobinemia with a saturation gap', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 6, difficulty: 'advanced', objectives: [
       { id: 'reconcile-toxicology-methemoglobinemia-exposure-cyanosis-symptoms-pulse-ox-arterial-oxygen-and-whole-patient', statement: 'Reconcile the exposure, cyanosis, symptoms, pulse oximetry, arterial oxygen evidence, and whole patient.', measure: 'The documented benzocaine exposure, dusky appearance, dyspnea, headache, confusion, pulse-coherent SpO2 85%, PaO2 238 mmHg, and whole-patient state were connected without learner history, examination, monitoring, sampling, or calculation.' },

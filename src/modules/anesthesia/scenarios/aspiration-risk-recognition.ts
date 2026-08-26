@@ -7,7 +7,7 @@ export const ASPIRATION_RISK_RECOGNITION: Scenario = {
   metadata: {
     id: 'aspiration-risk-recognition',
     version: '0.1.0',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Aspiration-risk recognition',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

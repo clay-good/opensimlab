@@ -4,7 +4,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const POSTPARTUM_HEMORRHAGE_UTERINE_ATONY: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'postpartum-hemorrhage-uterine-atony', version: '0.1.0', maturity: 'draft',
+    id: 'postpartum-hemorrhage-uterine-atony', version: '0.1.0', maturity: 'preview',
     title: 'Postpartum hemorrhage: act early and keep every cause open', author: 'Open Sim Lab', license: 'CC BY-SA 4.0', estimatedMinutes: 7, difficulty: 'intermediate',
     objectives: [
       { id: 'reconcile-obstetrics-atony-hemorrhage-birth-clock-measured-loss-physiology-tone-and-whole-person', statement: 'Reconcile the birth clock, measured loss, physiology, uterine tone, and whole person.', measure: 'The fixed postpartum timing, 650 mL-and-rising measured loss, bleeding, symptoms, perfusion, uterine tone, and whole-person state were connected without learner measurement, examination, calculation, or diagnosis.' },

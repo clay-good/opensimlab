@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const HYPERTENSIVE_EMERGENCY: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'hypertensive-emergency', version: '0.1.0', maturity: 'draft',
+    id: 'hypertensive-emergency', version: '0.1.0', maturity: 'preview',
     title: 'Hypertensive emergency', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 9, difficulty: 'advanced', objectives: [
       { id: 'reconcile-hypertensive-emergency-measurement-and-trajectory', statement: 'Verify the authored measurement conditions and reconcile the repeated pressure, symptoms, medication interruption, and whole-patient trajectory.', measure: 'A correctly measured persistent pressure trajectory prompted urgent review without using the number alone.' },

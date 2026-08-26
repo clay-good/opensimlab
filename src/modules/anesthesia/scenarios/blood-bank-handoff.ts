@@ -5,7 +5,7 @@ import type { Scenario } from './types';
 export const BLOOD_BANK_HANDOFF: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'blood-bank-handoff', version: '0.1.0', maturity: 'draft',
+    id: 'blood-bank-handoff', version: '0.1.0', maturity: 'preview',
     title: 'Blood-bank handoff', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 6, difficulty: 'intermediate',
     objectives: [

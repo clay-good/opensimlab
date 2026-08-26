@@ -5,7 +5,7 @@ import type { Scenario } from './types';
 export const ARTERIAL_PRESSURE_TRANSDUCER_ARTIFACT: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'arterial-pressure-transducer-artifact', version: '0.1.0', maturity: 'draft',
+    id: 'arterial-pressure-transducer-artifact', version: '0.1.0', maturity: 'preview',
     title: 'Arterial-pressure transducer artifact', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 6, difficulty: 'intermediate',
     objectives: [

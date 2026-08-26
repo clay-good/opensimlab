@@ -4,7 +4,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'anticholinergic-hyperthermia-delirium', version: '0.1.0', maturity: 'draft',
+    id: 'anticholinergic-hyperthermia-delirium', version: '0.1.0', maturity: 'preview',
     title: 'Anticholinergic poisoning: cool the patient, not the clues', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 6, difficulty: 'advanced', objectives: [
       { id: 'reconcile-toxicology-anticholinergic-product-clock-delirium-temperature-dryness-retention-ecg-and-whole-patient', statement: 'Reconcile product, clock, delirium, temperature, dryness, retention, ECG, and the whole patient.', measure: 'The declared benztropine-only exposure, 3-hour clock, severe delirium, mydriasis, dry flushed skin and mucosa, urinary retention, reduced bowel sounds, hyperthermia, tachycardia, supplied ECG and whole-patient state were connected without learner history, examination, monitoring, testing, or diagnosis.' },

@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const NSTEMI_RISK_REASSESSMENT: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'nstemi-risk-reassessment', version: '0.1.0', maturity: 'draft',
+    id: 'nstemi-risk-reassessment', version: '0.1.0', maturity: 'preview',
     title: 'NSTEMI risk reassessment', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'reconcile-nstemi-serial-trajectory', statement: 'Reconcile symptoms, serial ECG reports, and the assay-bounded high-sensitivity-troponin change.', measure: 'The complete authored trajectory was reviewed rather than one isolated result.' },

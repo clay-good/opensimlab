@@ -20,7 +20,7 @@ export const RAPID_DESATURATION: Scenario = {
   metadata: {
     id: 'rapid-desaturation',
     version: '0.1.0',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Rapid desaturation in the obese patient',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const CARDIOGENIC_SHOCK: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'cardiogenic-shock', version: '0.1.0', maturity: 'draft',
+    id: 'cardiogenic-shock', version: '0.1.0', maturity: 'preview',
     title: 'Cardiogenic shock', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 9, difficulty: 'advanced', objectives: [
       { id: 'recognize-cardiogenic-shock-trajectory', statement: 'Recognize worsening hypoperfusion and activate experienced shock help.', measure: 'Brain, skin, kidney, lactate, pressure, and trajectory prompted multidisciplinary escalation.' },

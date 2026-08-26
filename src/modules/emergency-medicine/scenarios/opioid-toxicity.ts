@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const OPIOID_TOXICITY: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'opioid-toxicity', version: '0.1.0', maturity: 'draft',
+    id: 'opioid-toxicity', version: '0.1.0', maturity: 'preview',
     title: 'Opioid toxicity', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 9, difficulty: 'intermediate', objectives: [
       { id: 'recognize-opioid-respiratory-emergency', statement: 'Recognize suspected opioid toxicity from depressed responsiveness and ventilation while confirming a pulse and reviewing immediate mimics.', measure: 'The fixed breathing, oxygenation, carbon-dioxide, pupil, pulse, glucose, and exposure pattern was integrated without claiming diagnostic proof.' },

@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const INTRACRANIAL_HEMORRHAGE_DETERIORATION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'intracranial-hemorrhage-deterioration', version: '0.1.0', maturity: 'draft',
+    id: 'intracranial-hemorrhage-deterioration', version: '0.1.0', maturity: 'preview',
     title: 'Intracranial hemorrhage deterioration', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 9, difficulty: 'advanced', objectives: [
       { id: 'recognize-and-stabilize-deteriorating-ich', statement: 'Recognize neurologic deterioration, reassess airway, breathing, circulation, and glucose, and activate the hemorrhage pathway.', measure: 'The fixed serial change and immediate support needs led to pathway activation.' },

@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const BASILAR_ARTERY_OCCLUSION_ESCALATION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'basilar-artery-occlusion-escalation', version: '0.1.0', maturity: 'draft',
+    id: 'basilar-artery-occlusion-escalation', version: '0.1.0', maturity: 'preview',
     title: 'Late-window basilar occlusion escalation', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 8, difficulty: 'advanced', objectives: [
       { id: 'reconcile-neurology-basilar-lvo-clock-posterior-syndrome-and-whole-patient', statement: 'Connect the 10-hour clock, posterior-circulation syndrome, physiology, and whole-patient state.', measure: 'The fixed clock, deficits, baseline function, breathing, circulation, and glucose were reconciled without learner history, examination, scoring, testing, diagnosis, or treatment.' },

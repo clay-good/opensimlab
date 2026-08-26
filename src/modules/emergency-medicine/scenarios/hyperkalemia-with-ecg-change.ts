@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const HYPERKALEMIA_WITH_ECG_CHANGE: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'hyperkalemia-with-ecg-change', version: '0.1.0', maturity: 'draft',
+    id: 'hyperkalemia-with-ecg-change', version: '0.1.0', maturity: 'preview',
     title: 'Hyperkalemia with ECG change', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 9, difficulty: 'advanced', objectives: [
       { id: 'recognize-severe-hyperkalemia-toxicity', statement: 'Confirm severe hyperkalemia, review the ECG and whole-patient state, and identify reversible drivers.', measure: 'The fixed potassium, ECG toxicity, CKD, medication, and dehydration pattern was integrated.' },

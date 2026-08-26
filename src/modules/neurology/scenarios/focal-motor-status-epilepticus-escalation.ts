@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const FOCAL_MOTOR_STATUS_EPILEPTICUS_ESCALATION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'focal-motor-status-epilepticus-escalation', version: '0.1.0', maturity: 'draft',
+    id: 'focal-motor-status-epilepticus-escalation', version: '0.1.0', maturity: 'preview',
     title: 'Focal motor status epilepticus escalation', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 7, difficulty: 'advanced', objectives: [
       { id: 'reconcile-neurology-focal-motor-status-clock-semiology-recovery-and-whole-patient', statement: 'Reconcile the supplied clock, evolving visible motor pattern, recovery, physiology, and whole-patient state.', measure: 'The fixed focal-to-bilateral evolution, continuing unilateral clonus, absent meaningful recovery, breathing, circulation, oxygenation, glucose, and prior-care record were connected without learner history, examination, monitoring, testing, or treatment.' },

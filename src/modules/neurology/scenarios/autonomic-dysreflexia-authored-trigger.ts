@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const AUTONOMIC_DYSREFLEXIA_AUTHORED_TRIGGER: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'autonomic-dysreflexia-authored-trigger', version: '0.1.0', maturity: 'draft',
+    id: 'autonomic-dysreflexia-authored-trigger', version: '0.1.0', maturity: 'preview',
     title: 'Autonomic dysreflexia with an authored trigger', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 6, difficulty: 'advanced', objectives: [
       { id: 'reconcile-neurology-autonomic-dysreflexia-lesion-baseline-pressure-symptoms-rhythm-and-whole-patient', statement: 'Reconcile the lesion, usual pressure, acute symptoms, rhythm, and whole patient.', measure: 'The T4 injury, verified 98/62 mmHg baseline, severe relative pressure rise, headache, flushing, sweating, piloerection, and bradycardia were connected without learner history, examination, monitoring, or diagnosis.' },

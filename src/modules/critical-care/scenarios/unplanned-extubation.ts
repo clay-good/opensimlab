@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const UNPLANNED_EXTUBATION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'unplanned-extubation', version: '0.1.0', maturity: 'draft',
+    id: 'unplanned-extubation', version: '0.1.0', maturity: 'preview',
     title: 'Unplanned extubation', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'support-unplanned-extubation-and-call-help', statement: 'Support oxygenation and call experienced ICU and airway help after unplanned extubation.', measure: 'Immediate support and help preceded definitive-airway intent.' },

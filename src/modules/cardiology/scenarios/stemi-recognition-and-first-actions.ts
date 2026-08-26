@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const STEMI_RECOGNITION_AND_FIRST_ACTIONS: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'stemi-recognition-and-first-actions', version: '0.1.0', maturity: 'draft',
+    id: 'stemi-recognition-and-first-actions', version: '0.1.0', maturity: 'preview',
     title: 'STEMI recognition and first actions', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 7, difficulty: 'introductory', objectives: [
       { id: 'reconcile-clinic-stemi-pattern', statement: 'Reconcile the ongoing symptom trajectory with the fixed diagnostic 12-lead report.', measure: 'Onset, persistence, associated symptoms, ECG report, and current physiology were reviewed together.' },

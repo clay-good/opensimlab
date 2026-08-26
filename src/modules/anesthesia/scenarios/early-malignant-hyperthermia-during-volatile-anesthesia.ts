@@ -7,7 +7,7 @@ export const EARLY_MALIGNANT_HYPERTHERMIA_DURING_VOLATILE_ANESTHESIA: Scenario =
   metadata: {
     id: 'early-malignant-hyperthermia-during-volatile-anesthesia',
     version: '0.1.0',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Early malignant hyperthermia during volatile anesthesia',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

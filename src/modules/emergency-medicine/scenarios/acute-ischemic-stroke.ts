@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const ACUTE_ISCHEMIC_STROKE: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'acute-ischemic-stroke', version: '0.1.0', maturity: 'draft',
+    id: 'acute-ischemic-stroke', version: '0.1.0', maturity: 'preview',
     title: 'Acute ischemic stroke', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 9, difficulty: 'intermediate', objectives: [
       { id: 'recognize-and-activate-acute-stroke', statement: 'Recognize a disabling acute stroke pattern, establish last-known-well time, check glucose, and activate the stroke system.', measure: 'The fixed deficit, 70-minute clock, glucose, pressure, and immediate stroke activation were reviewed in order.' },

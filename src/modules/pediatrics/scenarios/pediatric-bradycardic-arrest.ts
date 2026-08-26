@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const PEDIATRIC_BRADYCARDIC_ARREST: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'pediatric-bradycardic-arrest', version: '0.1.0', maturity: 'draft',
+    id: 'pediatric-bradycardic-arrest', version: '0.1.0', maturity: 'preview',
     title: 'Pediatric bradycardic arrest transition', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 8, difficulty: 'advanced', objectives: [
       {

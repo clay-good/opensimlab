@@ -8,7 +8,7 @@
       "subjectKind": "scenario",
       "subjectId": "pediatric-respiratory-distress",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/pediatrics-completion-audit.json#pediatric-respiratory-distress@0.1.0",
         "/catalog/pediatrics-quality-audit.json#pediatric-respiratory-distress@0.1.0"
@@ -19,7 +19,7 @@
       "subjectKind": "scenario",
       "subjectId": "bronchiolitis",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/pediatrics-completion-audit.json#bronchiolitis@0.1.0",
         "/catalog/pediatrics-quality-audit.json#bronchiolitis@0.1.0"
@@ -30,7 +30,7 @@
       "subjectKind": "scenario",
       "subjectId": "croup",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/pediatrics-completion-audit.json#croup@0.1.0",
         "/catalog/pediatrics-quality-audit.json#croup@0.1.0"
@@ -41,7 +41,7 @@
       "subjectKind": "scenario",
       "subjectId": "pediatric-status-asthmaticus",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/pediatrics-completion-audit.json#pediatric-status-asthmaticus@0.1.0",
         "/catalog/pediatrics-quality-audit.json#pediatric-status-asthmaticus@0.1.0"
@@ -52,7 +52,7 @@
       "subjectKind": "scenario",
       "subjectId": "pediatric-sepsis",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/pediatrics-completion-audit.json#pediatric-sepsis@0.1.0",
         "/catalog/pediatrics-quality-audit.json#pediatric-sepsis@0.1.0"
@@ -63,7 +63,7 @@
       "subjectKind": "scenario",
       "subjectId": "pediatric-septic-shock",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/pediatrics-completion-audit.json#pediatric-septic-shock@0.1.0",
         "/catalog/pediatrics-quality-audit.json#pediatric-septic-shock@0.1.0"
@@ -74,7 +74,7 @@
       "subjectKind": "scenario",
       "subjectId": "pediatric-dehydration-with-hypovolemia",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/pediatrics-completion-audit.json#pediatric-dehydration-with-hypovolemia@0.1.0",
         "/catalog/pediatrics-quality-audit.json#pediatric-dehydration-with-hypovolemia@0.1.0"
@@ -85,7 +85,7 @@
       "subjectKind": "scenario",
       "subjectId": "pediatric-diabetic-ketoacidosis",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/pediatrics-completion-audit.json#pediatric-diabetic-ketoacidosis@0.1.0",
         "/catalog/pediatrics-quality-audit.json#pediatric-diabetic-ketoacidosis@0.1.0"
@@ -96,7 +96,7 @@
       "subjectKind": "scenario",
       "subjectId": "pediatric-hypoglycemic-seizure",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/pediatrics-completion-audit.json#pediatric-hypoglycemic-seizure@0.1.0",
         "/catalog/pediatrics-quality-audit.json#pediatric-hypoglycemic-seizure@0.1.0"
@@ -107,7 +107,7 @@
       "subjectKind": "scenario",
       "subjectId": "pediatric-febrile-seizure",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/pediatrics-completion-audit.json#pediatric-febrile-seizure@0.1.0",
         "/catalog/pediatrics-quality-audit.json#pediatric-febrile-seizure@0.1.0"
@@ -118,7 +118,7 @@
       "subjectKind": "scenario",
       "subjectId": "pediatric-status-epilepticus",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/pediatrics-completion-audit.json#pediatric-status-epilepticus@0.1.0",
         "/catalog/pediatrics-quality-audit.json#pediatric-status-epilepticus@0.1.0"
@@ -129,7 +129,7 @@
       "subjectKind": "scenario",
       "subjectId": "pediatric-anaphylaxis",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/pediatrics-completion-audit.json#pediatric-anaphylaxis@0.1.0",
         "/catalog/pediatrics-quality-audit.json#pediatric-anaphylaxis@0.1.0"
@@ -140,7 +140,7 @@
       "subjectKind": "scenario",
       "subjectId": "pediatric-supraventricular-tachycardia",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/pediatrics-completion-audit.json#pediatric-supraventricular-tachycardia@0.1.0",
         "/catalog/pediatrics-quality-audit.json#pediatric-supraventricular-tachycardia@0.1.0"
@@ -151,7 +151,7 @@
       "subjectKind": "scenario",
       "subjectId": "pediatric-bradycardic-arrest",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/pediatrics-completion-audit.json#pediatric-bradycardic-arrest@0.1.0",
         "/catalog/pediatrics-quality-audit.json#pediatric-bradycardic-arrest@0.1.0"
@@ -162,7 +162,7 @@
       "subjectKind": "scenario",
       "subjectId": "pediatric-foreign-body-airway-obstruction",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/pediatrics-completion-audit.json#pediatric-foreign-body-airway-obstruction@0.1.0",
         "/catalog/pediatrics-quality-audit.json#pediatric-foreign-body-airway-obstruction@0.1.0"
@@ -173,7 +173,7 @@
       "subjectKind": "scenario",
       "subjectId": "pediatric-injury-safeguarding-escalation",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/pediatrics-completion-audit.json#pediatric-injury-safeguarding-escalation@0.1.0",
         "/catalog/pediatrics-quality-audit.json#pediatric-injury-safeguarding-escalation@0.1.0"

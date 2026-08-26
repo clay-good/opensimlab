@@ -5,7 +5,7 @@ import type { Scenario } from './types';
 export const POSTOPERATIVE_HANDOFF: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'postoperative-handoff', version: '0.1.0', maturity: 'draft',
+    id: 'postoperative-handoff', version: '0.1.0', maturity: 'preview',
     title: 'Postoperative handoff', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 7, difficulty: 'introductory',
     objectives: [

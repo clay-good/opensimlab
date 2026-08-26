@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const COMMUNITY_ACQUIRED_PNEUMONIA_HYPOXEMIA_REASSESSMENT: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'community-acquired-pneumonia-hypoxemia-reassessment', version: '0.1.0', maturity: 'draft',
+    id: 'community-acquired-pneumonia-hypoxemia-reassessment', version: '0.1.0', maturity: 'preview',
     title: 'Hypoxemic community-acquired pneumonia', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'corroborate-and-support-cap-hypoxemia', statement: 'Corroborate the authored hypoxemia beside work of breathing, mentation, and perfusion, then record immediate support and experienced-help intent.', measure: 'Support intent did not wait for pathogen certainty and was not represented as learner-delivered oxygen or a device prescription.' },

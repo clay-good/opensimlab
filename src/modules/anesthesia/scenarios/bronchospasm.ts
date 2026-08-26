@@ -21,7 +21,7 @@ export const BRONCHOSPASM: Scenario = {
   metadata: {
     id: 'bronchospasm',
     version: '0.1.0',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Bronchospasm after intubation',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

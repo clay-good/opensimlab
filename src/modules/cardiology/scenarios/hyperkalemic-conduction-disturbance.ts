@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const HYPERKALEMIC_CONDUCTION_DISTURBANCE: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'hyperkalemic-conduction-disturbance', version: '0.1.0', maturity: 'draft',
+    id: 'hyperkalemic-conduction-disturbance', version: '0.1.0', maturity: 'preview',
     title: 'Hyperkalemic conduction disturbance', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 8, difficulty: 'advanced', objectives: [
       { id: 'reconcile-hyperkalemic-conduction-trajectory', statement: 'Reconcile the confirmed pretreatment hyperkalemia and conduction disturbance with the reported emergency treatment and current stable whole-patient state.', measure: 'The serial potassium, rhythm, QRS, pulse, perfusion, and reported-care facts were kept in the correct order without claiming one sole cause.' },

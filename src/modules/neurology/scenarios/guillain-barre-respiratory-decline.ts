@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const GUILLAIN_BARRE_RESPIRATORY_DECLINE: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'guillain-barre-respiratory-decline', version: '0.1.0', maturity: 'draft',
+    id: 'guillain-barre-respiratory-decline', version: '0.1.0', maturity: 'preview',
     title: 'Guillain-Barré respiratory decline', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 7, difficulty: 'advanced', objectives: [
       { id: 'reconcile-neurology-gbs-clock-ascending-weakness-bulbar-respiratory-autonomic-and-whole-patient', statement: 'Reconcile the clock, ascending weakness, bulbar and respiratory trajectory, autonomic variation, supplied evidence, and whole-patient state.', measure: 'Post-infectious timing, rapid functional loss, serial cough, swallowing, FVC, single-breath count, MIP, heart-rate and pressure reports, gas exchange, and perfusion were connected without learner history, examination, testing, diagnosis, or treatment.' },

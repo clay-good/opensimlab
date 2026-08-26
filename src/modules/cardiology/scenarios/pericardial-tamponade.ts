@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const PERICARDIAL_TAMPONADE: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'pericardial-tamponade', version: '0.1.0', maturity: 'draft',
+    id: 'pericardial-tamponade', version: '0.1.0', maturity: 'preview',
     title: 'Pericardial tamponade', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'advanced', objectives: [
       { id: 'reconcile-pericardial-tamponade-trajectory', statement: 'Reconcile the authored pre-drainage clinical and echocardiographic tamponade pattern with the current stable whole-patient state.', measure: 'Symptoms, perfusion, pressure, examination claims, imaging, drainage, and timing were kept in order without turning one finding into a universal diagnostic rule.' },

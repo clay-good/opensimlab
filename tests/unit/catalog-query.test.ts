@@ -21,12 +21,12 @@ describe('scenario catalog query', () => {
 
   it('combines difficulty, duration, and maturity filters', () => {
     const matches = filterCatalog(SCENARIOS, {
-      q: '', goal: 'all', difficulty: 'advanced', duration: 'under-10', maturity: 'draft',
+      q: '', goal: 'all', difficulty: 'advanced', duration: 'under-10', maturity: 'preview',
     });
     expect(matches.length).toBeGreaterThan(0);
     expect(matches.every((scenario) => scenario.metadata.difficulty === 'advanced')).toBe(true);
     expect(matches.every((scenario) => scenario.metadata.estimatedMinutes < 10)).toBe(true);
-    expect(matches.every((scenario) => scenario.metadata.maturity === 'draft')).toBe(true);
+    expect(matches.every((scenario) => scenario.metadata.maturity === 'preview')).toBe(true);
   });
 
   it('round-trips known URL state and omits defaults', () => {

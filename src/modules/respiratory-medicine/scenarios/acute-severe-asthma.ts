@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const ACUTE_SEVERE_ASTHMA: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'acute-severe-asthma', version: '0.1.0', maturity: 'draft',
+    id: 'acute-severe-asthma', version: '0.1.0', maturity: 'preview',
     title: 'Acute severe asthma: worsening after initial treatment', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'advanced', objectives: [
       { id: 'reconcile-acute-severe-asthma-treatment-and-trajectory', statement: 'Reconcile the verified initial therapy, earlier severity, and current whole-patient trajectory without mistaking a falling respiratory rate for improvement.', measure: 'Prior care and response were separated, and fatigue was interpreted beside mentation, speech, air movement, oxygenation, flow, and blood gas.' },

@@ -5,7 +5,7 @@
       "scenarioId": "routine-induction",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -16,7 +16,7 @@
       "scenarioId": "rapid-desaturation",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -27,7 +27,7 @@
       "scenarioId": "hypotension-after-induction",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -38,7 +38,7 @@
       "scenarioId": "bronchospasm",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -49,7 +49,7 @@
       "scenarioId": "unexpected-intraoperative-hemorrhage",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -60,7 +60,7 @@
       "scenarioId": "rapid-sequence-induction",
       "contentVersion": "0.2.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -71,7 +71,7 @@
       "scenarioId": "awareness-under-paralysis",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -82,7 +82,7 @@
       "scenarioId": "laryngospasm-after-airway-stimulation",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -93,7 +93,7 @@
       "scenarioId": "perioperative-anaphylaxis-after-antibiotic",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -104,7 +104,7 @@
       "scenarioId": "early-malignant-hyperthermia-during-volatile-anesthesia",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -115,7 +115,7 @@
       "scenarioId": "routine-pediatric-iv-induction",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -126,7 +126,7 @@
       "scenarioId": "difficult-airway-supraglottic-rescue",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -137,7 +137,7 @@
       "scenarioId": "local-anesthetic-systemic-toxicity",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -148,7 +148,7 @@
       "scenarioId": "persistent-vf-cardiac-arrest",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -159,7 +159,7 @@
       "scenarioId": "high-spinal-after-epidural-top-up",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -170,7 +170,7 @@
       "scenarioId": "venous-air-embolism-during-line-removal",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -181,7 +181,7 @@
       "scenarioId": "repeated-laryngoscopy-harm",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -192,7 +192,7 @@
       "scenarioId": "capnography-sampling-line-obstruction",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -203,7 +203,7 @@
       "scenarioId": "dilutional-coagulopathy",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -214,7 +214,7 @@
       "scenarioId": "arterial-pressure-transducer-artifact",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -225,7 +225,7 @@
       "scenarioId": "circle-system-rebreathing",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -236,7 +236,7 @@
       "scenarioId": "routine-inhalational-maintenance",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -247,7 +247,7 @@
       "scenarioId": "blood-bank-handoff",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -258,7 +258,7 @@
       "scenarioId": "routine-geriatric-induction",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -269,7 +269,7 @@
       "scenarioId": "quantitative-neuromuscular-reversal",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -280,7 +280,7 @@
       "scenarioId": "routine-pediatric-inhalational-induction",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -291,7 +291,7 @@
       "scenarioId": "obstetric-general-anesthesia",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -302,7 +302,7 @@
       "scenarioId": "preeclampsia-urgent-delivery",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -313,7 +313,7 @@
       "scenarioId": "pneumothorax-under-positive-pressure",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -324,7 +324,7 @@
       "scenarioId": "aspiration-risk-recognition",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -335,7 +335,7 @@
       "scenarioId": "emergence-with-residual-blockade",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -346,7 +346,7 @@
       "scenarioId": "delayed-emergence-differential",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -357,7 +357,7 @@
       "scenarioId": "extubation-readiness",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -368,7 +368,7 @@
       "scenarioId": "post-extubation-obstruction",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -379,7 +379,7 @@
       "scenarioId": "opioid-induced-ventilatory-impairment",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -390,7 +390,7 @@
       "scenarioId": "hypothermia-and-rewarming",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -401,7 +401,7 @@
       "scenarioId": "perioperative-hyperglycemia",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -412,7 +412,7 @@
       "scenarioId": "pacemaker-and-cautery-planning",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -423,7 +423,7 @@
       "scenarioId": "postoperative-handoff",
       "contentVersion": "0.1.0",
       "moduleId": "anesthesia",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -434,7 +434,7 @@
       "scenarioId": "undifferentiated-shock",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -445,7 +445,7 @@
       "scenarioId": "septic-shock",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -456,7 +456,7 @@
       "scenarioId": "hemorrhagic-shock",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -467,7 +467,7 @@
       "scenarioId": "obstructive-shock-tension-pneumothorax",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -478,7 +478,7 @@
       "scenarioId": "cardiac-tamponade",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -489,7 +489,7 @@
       "scenarioId": "anaphylaxis",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -500,7 +500,7 @@
       "scenarioId": "adult-asthma",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -511,7 +511,7 @@
       "scenarioId": "copd-exacerbation",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -522,7 +522,7 @@
       "scenarioId": "acute-pulmonary-edema",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -533,7 +533,7 @@
       "scenarioId": "pulmonary-embolism-deterioration",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -544,7 +544,7 @@
       "scenarioId": "stemi",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -555,7 +555,7 @@
       "scenarioId": "unstable-narrow-complex-tachycardia",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -566,7 +566,7 @@
       "scenarioId": "unstable-bradycardia",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -577,7 +577,7 @@
       "scenarioId": "persistent-vf-arrest",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -588,7 +588,7 @@
       "scenarioId": "pea-arrest",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -599,7 +599,7 @@
       "scenarioId": "status-epilepticus",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -610,7 +610,7 @@
       "scenarioId": "acute-ischemic-stroke",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -621,7 +621,7 @@
       "scenarioId": "intracranial-hemorrhage-deterioration",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -632,7 +632,7 @@
       "scenarioId": "diabetic-ketoacidosis",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -643,7 +643,7 @@
       "scenarioId": "hyperkalemia-with-ecg-change",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -654,7 +654,7 @@
       "scenarioId": "severe-hyponatremia-with-seizure",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -665,7 +665,7 @@
       "scenarioId": "opioid-toxicity",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -676,7 +676,7 @@
       "scenarioId": "exertional-heat-stroke",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -687,7 +687,7 @@
       "scenarioId": "trauma-primary-survey",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -698,7 +698,7 @@
       "scenarioId": "acute-aortic-syndrome",
       "contentVersion": "0.1.0",
       "moduleId": "emergency-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -709,7 +709,7 @@
       "scenarioId": "ards-lung-protective-ventilation",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -720,7 +720,7 @@
       "scenarioId": "escalating-hypoxemia",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -731,7 +731,7 @@
       "scenarioId": "ventilator-dyssynchrony",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -742,7 +742,7 @@
       "scenarioId": "auto-peep",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -753,7 +753,7 @@
       "scenarioId": "mucus-plugging",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -764,7 +764,7 @@
       "scenarioId": "unplanned-extubation",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -775,7 +775,7 @@
       "scenarioId": "spontaneous-breathing-trial",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -786,7 +786,7 @@
       "scenarioId": "post-intubation-hypotension",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -797,7 +797,7 @@
       "scenarioId": "cardiogenic-shock",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -808,7 +808,7 @@
       "scenarioId": "mixed-shock",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -819,7 +819,7 @@
       "scenarioId": "right-ventricular-failure",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -830,7 +830,7 @@
       "scenarioId": "massive-pulmonary-embolism",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -841,7 +841,7 @@
       "scenarioId": "upper-gi-hemorrhage",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -852,7 +852,7 @@
       "scenarioId": "status-epilepticus",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -863,7 +863,7 @@
       "scenarioId": "targeted-temperature-management",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -874,7 +874,7 @@
       "scenarioId": "intracranial-hypertension",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -885,7 +885,7 @@
       "scenarioId": "acute-kidney-injury-with-fluid-overload",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -896,7 +896,7 @@
       "scenarioId": "severe-acidemia",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -907,7 +907,7 @@
       "scenarioId": "icu-handoff-with-hidden-deterioration",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -918,7 +918,7 @@
       "scenarioId": "ventilator-circuit-disconnection",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -929,7 +929,7 @@
       "scenarioId": "delayed-vasopressor-delivery",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -940,7 +940,7 @@
       "scenarioId": "pulse-oximeter-motion-artifact",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -951,7 +951,7 @@
       "scenarioId": "endotracheal-tube-migration-after-repositioning",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -962,7 +962,7 @@
       "scenarioId": "septic-shock-resuscitation",
       "contentVersion": "0.1.0",
       "moduleId": "critical-care",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -973,7 +973,7 @@
       "scenarioId": "stable-chest-pain-evaluation",
       "contentVersion": "0.1.0",
       "moduleId": "cardiology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -984,7 +984,7 @@
       "scenarioId": "stemi-recognition-and-first-actions",
       "contentVersion": "0.1.0",
       "moduleId": "cardiology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -995,7 +995,7 @@
       "scenarioId": "nstemi-risk-reassessment",
       "contentVersion": "0.1.0",
       "moduleId": "cardiology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1006,7 +1006,7 @@
       "scenarioId": "acute-decompensated-heart-failure",
       "contentVersion": "0.1.0",
       "moduleId": "cardiology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1017,7 +1017,7 @@
       "scenarioId": "post-infarction-cardiogenic-shock-escalation",
       "contentVersion": "0.1.0",
       "moduleId": "cardiology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1028,7 +1028,7 @@
       "scenarioId": "atrial-fibrillation-with-rapid-response",
       "contentVersion": "0.1.0",
       "moduleId": "cardiology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1039,7 +1039,7 @@
       "scenarioId": "regular-narrow-complex-tachycardia",
       "contentVersion": "0.1.0",
       "moduleId": "cardiology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1050,7 +1050,7 @@
       "scenarioId": "wide-complex-tachycardia",
       "contentVersion": "0.1.0",
       "moduleId": "cardiology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1061,7 +1061,7 @@
       "scenarioId": "symptomatic-sinus-bradycardia-reassessment",
       "contentVersion": "0.1.0",
       "moduleId": "cardiology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1072,7 +1072,7 @@
       "scenarioId": "complete-heart-block",
       "contentVersion": "0.1.0",
       "moduleId": "cardiology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1083,7 +1083,7 @@
       "scenarioId": "torsades-de-pointes",
       "contentVersion": "0.1.0",
       "moduleId": "cardiology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1094,7 +1094,7 @@
       "scenarioId": "hyperkalemic-conduction-disturbance",
       "contentVersion": "0.1.0",
       "moduleId": "cardiology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1105,7 +1105,7 @@
       "scenarioId": "pericardial-tamponade",
       "contentVersion": "0.1.0",
       "moduleId": "cardiology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1116,7 +1116,7 @@
       "scenarioId": "right-ventricular-infarction",
       "contentVersion": "0.1.0",
       "moduleId": "cardiology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1127,7 +1127,7 @@
       "scenarioId": "hypertensive-emergency",
       "contentVersion": "0.1.0",
       "moduleId": "cardiology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1138,7 +1138,7 @@
       "scenarioId": "pacemaker-capture-failure",
       "contentVersion": "0.1.0",
       "moduleId": "cardiology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1149,7 +1149,7 @@
       "scenarioId": "transcutaneous-pacing-mechanical-capture-reassessment",
       "contentVersion": "0.1.0",
       "moduleId": "cardiology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1160,7 +1160,7 @@
       "scenarioId": "acute-severe-asthma",
       "contentVersion": "0.1.0",
       "moduleId": "respiratory-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1171,7 +1171,7 @@
       "scenarioId": "copd-exacerbation-transition-reassessment",
       "contentVersion": "0.1.0",
       "moduleId": "respiratory-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1182,7 +1182,7 @@
       "scenarioId": "community-acquired-pneumonia-hypoxemia-reassessment",
       "contentVersion": "0.1.0",
       "moduleId": "respiratory-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1193,7 +1193,7 @@
       "scenarioId": "post-pulmonary-embolism-persistent-dyspnea",
       "contentVersion": "0.1.0",
       "moduleId": "respiratory-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1204,7 +1204,7 @@
       "scenarioId": "acute-pulmonary-edema-respiratory-support-reassessment",
       "contentVersion": "0.1.0",
       "moduleId": "respiratory-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1215,7 +1215,7 @@
       "scenarioId": "spontaneous-tension-pneumothorax-post-drainage-reassessment",
       "contentVersion": "0.1.0",
       "moduleId": "respiratory-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1226,7 +1226,7 @@
       "scenarioId": "large-unilateral-pleural-effusion-reassessment",
       "contentVersion": "0.1.0",
       "moduleId": "respiratory-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1237,7 +1237,7 @@
       "scenarioId": "bronchiectasis-mucus-plugging-reassessment",
       "contentVersion": "0.1.0",
       "moduleId": "respiratory-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1248,7 +1248,7 @@
       "scenarioId": "chronic-opioid-related-hypoventilation-reassessment",
       "contentVersion": "0.1.0",
       "moduleId": "respiratory-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1259,7 +1259,7 @@
       "scenarioId": "neuromuscular-respiratory-failure-reassessment",
       "contentVersion": "0.1.0",
       "moduleId": "respiratory-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1270,7 +1270,7 @@
       "scenarioId": "obesity-hypoventilation-reassessment",
       "contentVersion": "0.1.0",
       "moduleId": "respiratory-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1281,7 +1281,7 @@
       "scenarioId": "noninvasive-ventilation-selection",
       "contentVersion": "0.1.0",
       "moduleId": "respiratory-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1292,7 +1292,7 @@
       "scenarioId": "high-flow-nasal-oxygen-escalation",
       "contentVersion": "0.1.0",
       "moduleId": "respiratory-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1303,7 +1303,7 @@
       "scenarioId": "oxygen-device-failure",
       "contentVersion": "0.1.0",
       "moduleId": "respiratory-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1314,7 +1314,7 @@
       "scenarioId": "acute-tracheostomy-obstruction",
       "contentVersion": "0.1.0",
       "moduleId": "respiratory-medicine",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1325,7 +1325,7 @@
       "scenarioId": "pediatric-respiratory-distress",
       "contentVersion": "0.1.0",
       "moduleId": "pediatrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1336,7 +1336,7 @@
       "scenarioId": "bronchiolitis",
       "contentVersion": "0.1.0",
       "moduleId": "pediatrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1347,7 +1347,7 @@
       "scenarioId": "croup",
       "contentVersion": "0.1.0",
       "moduleId": "pediatrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1358,7 +1358,7 @@
       "scenarioId": "pediatric-status-asthmaticus",
       "contentVersion": "0.1.0",
       "moduleId": "pediatrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1369,7 +1369,7 @@
       "scenarioId": "pediatric-sepsis",
       "contentVersion": "0.1.0",
       "moduleId": "pediatrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1380,7 +1380,7 @@
       "scenarioId": "pediatric-septic-shock",
       "contentVersion": "0.1.0",
       "moduleId": "pediatrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1391,7 +1391,7 @@
       "scenarioId": "pediatric-dehydration-with-hypovolemia",
       "contentVersion": "0.1.0",
       "moduleId": "pediatrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1402,7 +1402,7 @@
       "scenarioId": "pediatric-diabetic-ketoacidosis",
       "contentVersion": "0.1.0",
       "moduleId": "pediatrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1413,7 +1413,7 @@
       "scenarioId": "pediatric-hypoglycemic-seizure",
       "contentVersion": "0.1.0",
       "moduleId": "pediatrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1424,7 +1424,7 @@
       "scenarioId": "pediatric-febrile-seizure",
       "contentVersion": "0.1.0",
       "moduleId": "pediatrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1435,7 +1435,7 @@
       "scenarioId": "pediatric-status-epilepticus",
       "contentVersion": "0.1.0",
       "moduleId": "pediatrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1446,7 +1446,7 @@
       "scenarioId": "pediatric-anaphylaxis",
       "contentVersion": "0.1.0",
       "moduleId": "pediatrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1457,7 +1457,7 @@
       "scenarioId": "pediatric-supraventricular-tachycardia",
       "contentVersion": "0.1.0",
       "moduleId": "pediatrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1468,7 +1468,7 @@
       "scenarioId": "pediatric-bradycardic-arrest",
       "contentVersion": "0.1.0",
       "moduleId": "pediatrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1479,7 +1479,7 @@
       "scenarioId": "pediatric-foreign-body-airway-obstruction",
       "contentVersion": "0.1.0",
       "moduleId": "pediatrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1490,7 +1490,7 @@
       "scenarioId": "pediatric-injury-safeguarding-escalation",
       "contentVersion": "0.1.0",
       "moduleId": "pediatrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1501,7 +1501,7 @@
       "scenarioId": "minor-nondisabling-acute-ischemic-stroke",
       "contentVersion": "0.1.0",
       "moduleId": "neurology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1512,7 +1512,7 @@
       "scenarioId": "basilar-artery-occlusion-escalation",
       "contentVersion": "0.1.0",
       "moduleId": "neurology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1523,7 +1523,7 @@
       "scenarioId": "spontaneous-cerebellar-intracerebral-hemorrhage",
       "contentVersion": "0.1.0",
       "moduleId": "neurology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1534,7 +1534,7 @@
       "scenarioId": "aneurysmal-subarachnoid-hemorrhage-deterioration",
       "contentVersion": "0.1.0",
       "moduleId": "neurology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1545,7 +1545,7 @@
       "scenarioId": "focal-motor-status-epilepticus-escalation",
       "contentVersion": "0.1.0",
       "moduleId": "neurology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1556,7 +1556,7 @@
       "scenarioId": "nonconvulsive-status-epilepticus-recognition",
       "contentVersion": "0.1.0",
       "moduleId": "neurology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1567,7 +1567,7 @@
       "scenarioId": "myasthenic-crisis-escalation",
       "contentVersion": "0.1.0",
       "moduleId": "neurology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1578,7 +1578,7 @@
       "scenarioId": "guillain-barre-respiratory-decline",
       "contentVersion": "0.1.0",
       "moduleId": "neurology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1589,7 +1589,7 @@
       "scenarioId": "acute-bacterial-meningitis-first-hour",
       "contentVersion": "0.1.0",
       "moduleId": "neurology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1600,7 +1600,7 @@
       "scenarioId": "suspected-herpes-simplex-encephalitis",
       "contentVersion": "0.1.0",
       "moduleId": "neurology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1611,7 +1611,7 @@
       "scenarioId": "raised-intracranial-pressure-visual-threat",
       "contentVersion": "0.1.0",
       "moduleId": "neurology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1622,7 +1622,7 @@
       "scenarioId": "acute-transtentorial-herniation-pattern",
       "contentVersion": "0.1.0",
       "moduleId": "neurology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1633,7 +1633,7 @@
       "scenarioId": "metastatic-spinal-cord-compression",
       "contentVersion": "0.1.0",
       "moduleId": "neurology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1644,7 +1644,7 @@
       "scenarioId": "acute-delirium-reversible-causes",
       "contentVersion": "0.1.0",
       "moduleId": "neurology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1655,7 +1655,7 @@
       "scenarioId": "autonomic-dysreflexia-authored-trigger",
       "contentVersion": "0.1.0",
       "moduleId": "neurology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1666,7 +1666,7 @@
       "scenarioId": "methemoglobinemia-saturation-gap",
       "contentVersion": "0.1.0",
       "moduleId": "toxicology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1677,7 +1677,7 @@
       "scenarioId": "carbon-monoxide-reassuring-monitor",
       "contentVersion": "0.1.0",
       "moduleId": "toxicology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1688,7 +1688,7 @@
       "scenarioId": "acetaminophen-clock-and-nomogram",
       "contentVersion": "0.1.0",
       "moduleId": "toxicology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1699,7 +1699,7 @@
       "scenarioId": "salicylate-falling-number",
       "contentVersion": "0.1.0",
       "moduleId": "toxicology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1710,7 +1710,7 @@
       "scenarioId": "tricyclic-sodium-channel-cardiotoxicity",
       "contentVersion": "0.1.0",
       "moduleId": "toxicology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1721,7 +1721,7 @@
       "scenarioId": "beta-blocker-cardiogenic-shock",
       "contentVersion": "0.1.0",
       "moduleId": "toxicology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1732,7 +1732,7 @@
       "scenarioId": "calcium-channel-blocker-shock",
       "contentVersion": "0.1.0",
       "moduleId": "toxicology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1743,7 +1743,7 @@
       "scenarioId": "digoxin-rhythm-potassium",
       "contentVersion": "0.1.0",
       "moduleId": "toxicology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1754,7 +1754,7 @@
       "scenarioId": "cholinergic-pesticide-respiratory-failure",
       "contentVersion": "0.1.0",
       "moduleId": "toxicology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1765,7 +1765,7 @@
       "scenarioId": "anticholinergic-hyperthermia-delirium",
       "contentVersion": "0.1.0",
       "moduleId": "toxicology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1776,7 +1776,7 @@
       "scenarioId": "serotonin-toxicity-hyperthermia-clonus",
       "contentVersion": "0.1.0",
       "moduleId": "toxicology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1787,7 +1787,7 @@
       "scenarioId": "sympathomimetic-hyperadrenergic-hyperthermia",
       "contentVersion": "0.1.0",
       "moduleId": "toxicology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1798,7 +1798,7 @@
       "scenarioId": "methanol-visual-acidosis-gaps",
       "contentVersion": "0.1.0",
       "moduleId": "toxicology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1809,7 +1809,7 @@
       "scenarioId": "delayed-local-anesthetic-cns-cardiac-toxicity",
       "contentVersion": "0.1.0",
       "moduleId": "toxicology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1820,7 +1820,7 @@
       "scenarioId": "opioid-xylazine-persistent-sedation",
       "contentVersion": "0.1.0",
       "moduleId": "toxicology",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1831,7 +1831,7 @@
       "scenarioId": "postpartum-hemorrhage-uterine-atony",
       "contentVersion": "0.1.0",
       "moduleId": "obstetrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1842,7 +1842,7 @@
       "scenarioId": "maternal-sepsis-postpartum-deterioration",
       "contentVersion": "0.1.0",
       "moduleId": "obstetrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1853,7 +1853,7 @@
       "scenarioId": "concealed-placental-abruption-hemorrhage",
       "contentVersion": "0.1.0",
       "moduleId": "obstetrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1864,7 +1864,7 @@
       "scenarioId": "postpartum-severe-preeclampsia-warning-signs",
       "contentVersion": "0.1.0",
       "moduleId": "obstetrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1875,7 +1875,7 @@
       "scenarioId": "eclampsia-first-seizure-response",
       "contentVersion": "0.1.0",
       "moduleId": "obstetrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1886,7 +1886,7 @@
       "scenarioId": "suspected-amniotic-fluid-embolism-pattern",
       "contentVersion": "0.1.0",
       "moduleId": "obstetrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1897,7 +1897,7 @@
       "scenarioId": "maternal-cardiac-arrest-coordinated-response",
       "contentVersion": "0.1.0",
       "moduleId": "obstetrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1908,7 +1908,7 @@
       "scenarioId": "shoulder-dystocia-cognitive-sequence",
       "contentVersion": "0.1.0",
       "moduleId": "obstetrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1919,7 +1919,7 @@
       "scenarioId": "umbilical-cord-prolapse-urgent-birth-coordination",
       "contentVersion": "0.1.0",
       "moduleId": "obstetrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1930,7 +1930,7 @@
       "scenarioId": "suspected-uterine-rupture-recognition",
       "contentVersion": "0.1.0",
       "moduleId": "obstetrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1941,7 +1941,7 @@
       "scenarioId": "magnesium-sulfate-toxicity-recognition",
       "contentVersion": "0.1.0",
       "moduleId": "obstetrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1952,7 +1952,7 @@
       "scenarioId": "high-neuraxial-block-obstetric-coordination",
       "contentVersion": "0.1.0",
       "moduleId": "obstetrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"
@@ -1963,7 +1963,7 @@
       "scenarioId": "failed-obstetric-intubation-oxygenation-first",
       "contentVersion": "0.1.0",
       "moduleId": "obstetrics",
-      "maturity": "draft",
+      "maturity": "preview",
       "practiceRegions": [
         "US",
         "GB"

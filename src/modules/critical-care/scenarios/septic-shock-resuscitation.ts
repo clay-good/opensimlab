@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const SEPTIC_SHOCK_RESUSCITATION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'septic-shock-resuscitation', version: '0.1.0', maturity: 'draft',
+    id: 'septic-shock-resuscitation', version: '0.1.0', maturity: 'preview',
     title: 'Persistent septic-shock resuscitation', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'reconcile-septic-shock-resuscitation-so-far', statement: 'Reconcile prior treatment claims with the current patient response.', measure: 'Prior antimicrobial, fluid, vasopressor, and source-control intents and delivery claims remained separate from the present patient response.' },

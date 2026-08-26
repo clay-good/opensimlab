@@ -7,7 +7,7 @@ export const DILUTIONAL_COAGULOPATHY: Scenario = {
   metadata: {
     id: 'dilutional-coagulopathy',
     version: '0.1.0',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Dilutional coagulopathy during ongoing bleeding',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

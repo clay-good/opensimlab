@@ -29,10 +29,10 @@ export function socialImageUrl(path: string): string {
 
 export const ROOT_ROUTE: RouteMetadata = {
   path: '/',
-  title: formatTitle('Free clinical simulator'),
+  title: formatTitle('Free clinical simulation practice'),
   description:
-    'A free, browser-based clinical simulator for medical students, residents and nurse '
-    + 'anesthetists. No account, works offline, pharmacology with citations.',
+    'Practice 179 free clinical simulation scenarios across anesthesia, emergency medicine, '
+    + 'cardiology, critical care, pediatrics, and more—no account required.',
   indexable: true,
   structuredData: ['WebSite', 'Organization'],
   heading: 'Open Sim Lab',

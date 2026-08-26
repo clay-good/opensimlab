@@ -4,7 +4,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const TRICYCLIC_SODIUM_CHANNEL_CARDIOTOXICITY: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'tricyclic-sodium-channel-cardiotoxicity', version: '0.1.0', maturity: 'draft',
+    id: 'tricyclic-sodium-channel-cardiotoxicity', version: '0.1.0', maturity: 'preview',
     title: 'Tricyclic toxicity: read the whole electrical pattern', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 6, difficulty: 'advanced', objectives: [
       { id: 'reconcile-toxicology-tricyclic-product-clock-cns-seizure-perfusion-ecg-and-whole-patient', statement: 'Reconcile product, clock, CNS, seizure, perfusion, ECG, and the whole patient.', measure: 'The declared amitriptyline exposure, 90-minute clock, anticholinergic clues, confusion, stopped seizure, hypotension, tachycardia, supplied ECG, oxygenation, and whole-patient state were connected without learner history, examination, monitoring, ECG interpretation, or diagnosis.' },

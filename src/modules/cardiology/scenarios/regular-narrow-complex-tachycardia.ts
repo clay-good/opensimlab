@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const REGULAR_NARROW_COMPLEX_TACHYCARDIA: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'regular-narrow-complex-tachycardia', version: '0.1.0', maturity: 'draft',
+    id: 'regular-narrow-complex-tachycardia', version: '0.1.0', maturity: 'preview',
     title: 'Regular narrow-complex tachycardia', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'reconcile-stable-regular-narrow-tachycardia', statement: 'Reconcile the fixed regular narrow-complex rhythm with current whole-patient stability without using rate alone.', measure: 'Pressure, mentation, perfusion, ischemia, heart failure, and syncope were reviewed with rhythm.' },

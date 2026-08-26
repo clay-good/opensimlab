@@ -190,67 +190,67 @@ describe('Pediatrics module foundation', () => {
     expect(maturity).toMatchObject({ recordCount: 16 });
     expect(reports.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-respiratory-distress',
-      contentVersion: '0.1.0', maturity: 'draft',
+      contentVersion: '0.1.0', maturity: 'preview',
     }));
     expect(reports.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'bronchiolitis',
-      contentVersion: '0.1.0', maturity: 'draft',
+      contentVersion: '0.1.0', maturity: 'preview',
     }));
     expect(reports.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'croup',
-      contentVersion: '0.1.0', maturity: 'draft',
+      contentVersion: '0.1.0', maturity: 'preview',
     }));
     expect(reports.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-status-asthmaticus',
-      contentVersion: '0.1.0', maturity: 'draft',
+      contentVersion: '0.1.0', maturity: 'preview',
     }));
     expect(reports.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-sepsis',
-      contentVersion: '0.1.0', maturity: 'draft',
+      contentVersion: '0.1.0', maturity: 'preview',
     }));
     expect(reports.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-septic-shock',
-      contentVersion: '0.1.0', maturity: 'draft',
+      contentVersion: '0.1.0', maturity: 'preview',
     }));
     expect(reports.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-dehydration-with-hypovolemia',
-      contentVersion: '0.1.0', maturity: 'draft',
+      contentVersion: '0.1.0', maturity: 'preview',
     }));
     expect(reports.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-diabetic-ketoacidosis',
-      contentVersion: '0.1.0', maturity: 'draft',
+      contentVersion: '0.1.0', maturity: 'preview',
     }));
     expect(reports.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-hypoglycemic-seizure',
-      contentVersion: '0.1.0', maturity: 'draft',
+      contentVersion: '0.1.0', maturity: 'preview',
     }));
     expect(reports.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-febrile-seizure',
-      contentVersion: '0.1.0', maturity: 'draft',
+      contentVersion: '0.1.0', maturity: 'preview',
     }));
     expect(reports.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-status-epilepticus',
-      contentVersion: '0.1.0', maturity: 'draft',
+      contentVersion: '0.1.0', maturity: 'preview',
     }));
     expect(reports.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-anaphylaxis',
-      contentVersion: '0.1.0', maturity: 'draft',
+      contentVersion: '0.1.0', maturity: 'preview',
     }));
     expect(reports.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-supraventricular-tachycardia',
-      contentVersion: '0.1.0', maturity: 'draft',
+      contentVersion: '0.1.0', maturity: 'preview',
     }));
     expect(reports.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-bradycardic-arrest',
-      contentVersion: '0.1.0', maturity: 'draft',
+      contentVersion: '0.1.0', maturity: 'preview',
     }));
     expect(reports.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-foreign-body-airway-obstruction',
-      contentVersion: '0.1.0', maturity: 'draft',
+      contentVersion: '0.1.0', maturity: 'preview',
     }));
     expect(reports.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-injury-safeguarding-escalation',
-      contentVersion: '0.1.0', maturity: 'draft',
+      contentVersion: '0.1.0', maturity: 'preview',
     }));
     expect(reviewableItems()).toContainEqual(expect.objectContaining({
       id: 'pediatric-respiratory-distress', domains: ['pediatrics'],

@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const PACEMAKER_CAPTURE_FAILURE: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'pacemaker-capture-failure', version: '0.1.0', maturity: 'draft',
+    id: 'pacemaker-capture-failure', version: '0.1.0', maturity: 'preview',
     title: 'Pacemaker capture failure', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 9, difficulty: 'advanced', objectives: [
       { id: 'reconcile-pacemaker-capture-failure-pulse-and-pattern', statement: 'Reconcile symptoms, pulse, perfusion, pacing artifacts, QRS complexes, and mechanical signals before naming capture failure.', measure: 'Electrical artifacts were separated from electrical and mechanical capture without treating the monitor rate as proof.' },

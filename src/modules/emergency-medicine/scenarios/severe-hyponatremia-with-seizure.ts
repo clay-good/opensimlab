@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const SEVERE_HYPONATREMIA_WITH_SEIZURE: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'severe-hyponatremia-with-seizure', version: '0.1.0', maturity: 'draft',
+    id: 'severe-hyponatremia-with-seizure', version: '0.1.0', maturity: 'preview',
     title: 'Severe hyponatremia with seizure', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 9, difficulty: 'advanced', objectives: [
       { id: 'recognize-severe-symptomatic-hyponatremia', statement: 'Recognize severe symptomatic hypotonic hyponatremia from the seizure, depressed alertness, confirmed sodium, glucose, and osmolality.', measure: 'The fixed neurologic and biochemical emergency was integrated without waiting for full cause classification.' },

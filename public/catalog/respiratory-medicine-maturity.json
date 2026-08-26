@@ -8,7 +8,7 @@
       "subjectKind": "scenario",
       "subjectId": "acute-severe-asthma",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#acute-severe-asthma@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#acute-severe-asthma@0.1.0"
@@ -19,7 +19,7 @@
       "subjectKind": "scenario",
       "subjectId": "copd-exacerbation-transition-reassessment",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#copd-exacerbation-transition-reassessment@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#copd-exacerbation-transition-reassessment@0.1.0"
@@ -30,7 +30,7 @@
       "subjectKind": "scenario",
       "subjectId": "community-acquired-pneumonia-hypoxemia-reassessment",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#community-acquired-pneumonia-hypoxemia-reassessment@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#community-acquired-pneumonia-hypoxemia-reassessment@0.1.0"
@@ -41,7 +41,7 @@
       "subjectKind": "scenario",
       "subjectId": "post-pulmonary-embolism-persistent-dyspnea",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#post-pulmonary-embolism-persistent-dyspnea@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#post-pulmonary-embolism-persistent-dyspnea@0.1.0"
@@ -52,7 +52,7 @@
       "subjectKind": "scenario",
       "subjectId": "acute-pulmonary-edema-respiratory-support-reassessment",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#acute-pulmonary-edema-respiratory-support-reassessment@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#acute-pulmonary-edema-respiratory-support-reassessment@0.1.0"
@@ -63,7 +63,7 @@
       "subjectKind": "scenario",
       "subjectId": "spontaneous-tension-pneumothorax-post-drainage-reassessment",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#spontaneous-tension-pneumothorax-post-drainage-reassessment@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#spontaneous-tension-pneumothorax-post-drainage-reassessment@0.1.0"
@@ -74,7 +74,7 @@
       "subjectKind": "scenario",
       "subjectId": "large-unilateral-pleural-effusion-reassessment",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#large-unilateral-pleural-effusion-reassessment@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#large-unilateral-pleural-effusion-reassessment@0.1.0"
@@ -85,7 +85,7 @@
       "subjectKind": "scenario",
       "subjectId": "bronchiectasis-mucus-plugging-reassessment",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#bronchiectasis-mucus-plugging-reassessment@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#bronchiectasis-mucus-plugging-reassessment@0.1.0"
@@ -96,7 +96,7 @@
       "subjectKind": "scenario",
       "subjectId": "chronic-opioid-related-hypoventilation-reassessment",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#chronic-opioid-related-hypoventilation-reassessment@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#chronic-opioid-related-hypoventilation-reassessment@0.1.0"
@@ -107,7 +107,7 @@
       "subjectKind": "scenario",
       "subjectId": "neuromuscular-respiratory-failure-reassessment",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#neuromuscular-respiratory-failure-reassessment@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#neuromuscular-respiratory-failure-reassessment@0.1.0"
@@ -118,7 +118,7 @@
       "subjectKind": "scenario",
       "subjectId": "obesity-hypoventilation-reassessment",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#obesity-hypoventilation-reassessment@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#obesity-hypoventilation-reassessment@0.1.0"
@@ -129,7 +129,7 @@
       "subjectKind": "scenario",
       "subjectId": "noninvasive-ventilation-selection",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#noninvasive-ventilation-selection@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#noninvasive-ventilation-selection@0.1.0"
@@ -140,7 +140,7 @@
       "subjectKind": "scenario",
       "subjectId": "high-flow-nasal-oxygen-escalation",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#high-flow-nasal-oxygen-escalation@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#high-flow-nasal-oxygen-escalation@0.1.0"
@@ -151,7 +151,7 @@
       "subjectKind": "scenario",
       "subjectId": "oxygen-device-failure",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#oxygen-device-failure@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#oxygen-device-failure@0.1.0"
@@ -162,7 +162,7 @@
       "subjectKind": "scenario",
       "subjectId": "acute-tracheostomy-obstruction",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#acute-tracheostomy-obstruction@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#acute-tracheostomy-obstruction@0.1.0"

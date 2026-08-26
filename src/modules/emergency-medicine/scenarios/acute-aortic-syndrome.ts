@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const ACUTE_AORTIC_SYNDROME: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'acute-aortic-syndrome', version: '0.1.0', maturity: 'draft',
+    id: 'acute-aortic-syndrome', version: '0.1.0', maturity: 'preview',
     title: 'Acute aortic syndrome', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'advanced', objectives: [
       { id: 'assess-aortic-presentation-without-closure', statement: 'Integrate abrupt maximal-at-onset chest-to-back pain with a plausible coronary alternative without leaking a definitive diagnosis.', measure: 'The initial history, ECG, bilateral pressures, pulses, perfusion, and neurologic baseline were reviewed together.' },

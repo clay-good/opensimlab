@@ -4,7 +4,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const OPIOID_XYLAZINE_PERSISTENT_SEDATION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'opioid-xylazine-persistent-sedation', version: '0.1.0', maturity: 'draft',
+    id: 'opioid-xylazine-persistent-sedation', version: '0.1.0', maturity: 'preview',
     title: 'Opioid poisoning: breathing can improve before sedation does', author: 'Open Sim Lab', license: 'CC BY-SA 4.0', estimatedMinutes: 6, difficulty: 'advanced',
     objectives: [
       { id: 'reconcile-toxicology-opioid-xylazine-exposure-rescue-breathing-sedation-perfusion-and-whole-patient', statement: 'Reconcile exposure uncertainty, prehospital rescue, breathing, sedation, perfusion, and the whole patient.', measure: 'Unknown-powder exposure, bystander naloxone and rescue breathing, severe hypoventilation, hypoxemia, hypercapnia, persistent sedation, bradycardia, hypotension, hypothermia, pupils and whole-patient state were connected without learner history, examination, monitoring, testing, or diagnosis.' },

@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const METASTATIC_SPINAL_CORD_COMPRESSION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'metastatic-spinal-cord-compression', version: '0.1.0', maturity: 'draft',
+    id: 'metastatic-spinal-cord-compression', version: '0.1.0', maturity: 'preview',
     title: 'Metastatic spinal cord compression', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 6, difficulty: 'advanced', objectives: [
       { id: 'reconcile-neurology-mscc-cancer-pain-motor-sensory-bladder-and-whole-patient-clock', statement: 'Reconcile the cancer, pain, motor, sensory, bladder, and whole-patient clock.', measure: 'Progressive movement-sensitive thoracic pain, bilateral upper-motor-neuron leg findings, a sensory level, and urinary dysfunction were connected without learner history or examination.' },

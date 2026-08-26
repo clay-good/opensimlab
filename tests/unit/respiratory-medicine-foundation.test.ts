@@ -216,40 +216,40 @@ describe('respiratory medicine module foundation', () => {
     };
     expect(maturity).toMatchObject({ moduleId, recordCount: 15 });
     expect(maturity.records).toContainEqual(expect.objectContaining({
-      subjectKind: 'scenario', subjectId: scenarioId, status: 'draft',
+      subjectKind: 'scenario', subjectId: scenarioId, status: 'preview',
     }));
     expect(maturity.records).toContainEqual(expect.objectContaining({
-      subjectKind: 'scenario', subjectId: transitionScenarioId, status: 'draft',
+      subjectKind: 'scenario', subjectId: transitionScenarioId, status: 'preview',
     }));
     expect(maturity.records).toContainEqual(expect.objectContaining({
-      subjectKind: 'scenario', subjectId: capScenarioId, status: 'draft',
+      subjectKind: 'scenario', subjectId: capScenarioId, status: 'preview',
     }));
     expect(maturity.records).toContainEqual(expect.objectContaining({
-      subjectKind: 'scenario', subjectId: postPeScenarioId, status: 'draft',
+      subjectKind: 'scenario', subjectId: postPeScenarioId, status: 'preview',
     }));
     expect(maturity.records).toContainEqual(expect.objectContaining({
-      subjectKind: 'scenario', subjectId: apeSupportScenarioId, status: 'draft',
+      subjectKind: 'scenario', subjectId: apeSupportScenarioId, status: 'preview',
     }));
     expect(maturity.records).toContainEqual(expect.objectContaining({
-      subjectKind: 'scenario', subjectId: chronicOpioidHypoventilationScenarioId, status: 'draft',
+      subjectKind: 'scenario', subjectId: chronicOpioidHypoventilationScenarioId, status: 'preview',
     }));
     expect(maturity.records).toContainEqual(expect.objectContaining({
-      subjectKind: 'scenario', subjectId: neuromuscularRespiratoryFailureScenarioId, status: 'draft',
+      subjectKind: 'scenario', subjectId: neuromuscularRespiratoryFailureScenarioId, status: 'preview',
     }));
     expect(maturity.records).toContainEqual(expect.objectContaining({
-      subjectKind: 'scenario', subjectId: obesityHypoventilationScenarioId, status: 'draft',
+      subjectKind: 'scenario', subjectId: obesityHypoventilationScenarioId, status: 'preview',
     }));
     expect(maturity.records).toContainEqual(expect.objectContaining({
-      subjectKind: 'scenario', subjectId: noninvasiveVentilationSelectionScenarioId, status: 'draft',
+      subjectKind: 'scenario', subjectId: noninvasiveVentilationSelectionScenarioId, status: 'preview',
     }));
     expect(maturity.records).toContainEqual(expect.objectContaining({
-      subjectKind: 'scenario', subjectId: highFlowOxygenEscalationScenarioId, status: 'draft',
+      subjectKind: 'scenario', subjectId: highFlowOxygenEscalationScenarioId, status: 'preview',
     }));
     expect(maturity.records).toContainEqual(expect.objectContaining({
-      subjectKind: 'scenario', subjectId: oxygenDeviceFailureScenarioId, status: 'draft',
+      subjectKind: 'scenario', subjectId: oxygenDeviceFailureScenarioId, status: 'preview',
     }));
     expect(maturity.records).toContainEqual(expect.objectContaining({
-      subjectKind: 'scenario', subjectId: acuteTracheostomyObstructionScenarioId, status: 'draft',
+      subjectKind: 'scenario', subjectId: acuteTracheostomyObstructionScenarioId, status: 'preview',
     }));
   });
 

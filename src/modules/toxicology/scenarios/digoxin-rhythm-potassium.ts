@@ -4,7 +4,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const DIGOXIN_RHYTHM_POTASSIUM: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'digoxin-rhythm-potassium', version: '0.1.0', maturity: 'draft',
+    id: 'digoxin-rhythm-potassium', version: '0.1.0', maturity: 'preview',
     title: 'Digoxin toxicity: read the rhythm and potassium together', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 6, difficulty: 'advanced', objectives: [
       { id: 'reconcile-toxicology-digoxin-product-clock-gi-visual-perfusion-rhythm-potassium-and-whole-patient', statement: 'Reconcile product, clock, GI and visual clues, perfusion, rhythm, potassium, and the whole patient.', measure: 'The declared acute digoxin exposure, 7-hour clock, vomiting, visual disturbance, bradycardia, AV block, shock, hyperkalemia, supplied ECG, oxygenation, and whole-patient state were connected without learner history, examination, monitoring, testing, ECG interpretation, or diagnosis.' },

@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const CHRONIC_OPIOID_RELATED_HYPOVENTILATION_REASSESSMENT: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'chronic-opioid-related-hypoventilation-reassessment', version: '0.1.0', maturity: 'draft',
+    id: 'chronic-opioid-related-hypoventilation-reassessment', version: '0.1.0', maturity: 'preview',
     title: 'Chronic opioid-related hypoventilation', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'reconcile-chronic-opioid-related-hypoventilation-exposure-and-trajectory', statement: 'Reconcile the authored chronic prescribed-opioid exposure, sleep symptoms, daytime function, breathing, oxygenation, and perfusion.', measure: 'The longitudinal pattern was recognized without recasting a stable clinic visit as acute overdose or proving opioid-only causality.' },

@@ -4,7 +4,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const SALICYLATE_FALLING_NUMBER: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'salicylate-falling-number', version: '0.1.0', maturity: 'draft',
+    id: 'salicylate-falling-number', version: '0.1.0', maturity: 'preview',
     title: 'Salicylate: the falling number can be worse', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 6, difficulty: 'advanced', objectives: [
       { id: 'reconcile-toxicology-salicylate-product-exposure-clock-symptoms-breathing-and-whole-patient', statement: 'Reconcile product, exposure clock, symptoms, breathing, and the whole patient.', measure: 'The supplied acute aspirin exposure, 7-hour clock, vomiting, tinnitus, diaphoresis, tachypnea, volume-depletion clues, stable oxygenation, and whole-patient state were connected without learner history, examination, monitoring, sampling, or calculation.' },

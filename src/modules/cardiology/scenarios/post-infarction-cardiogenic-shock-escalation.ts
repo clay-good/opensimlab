@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const POST_INFARCTION_CARDIOGENIC_SHOCK_ESCALATION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'post-infarction-cardiogenic-shock-escalation', version: '0.1.0', maturity: 'draft',
+    id: 'post-infarction-cardiogenic-shock-escalation', version: '0.1.0', maturity: 'preview',
     title: 'Cardiogenic shock escalation', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 9, difficulty: 'advanced', objectives: [
       { id: 'reconcile-post-infarction-shock-trajectory', statement: 'Recognize persistent post-PCI shock from the serial brain, skin, kidney, lactate, congestion, and pressure trajectory rather than pressure alone.', measure: 'Failure to improve prompted renewed shock-system escalation.' },

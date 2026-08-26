@@ -7,7 +7,7 @@ export const EMERGENCE_WITH_RESIDUAL_BLOCKADE: Scenario = {
   metadata: {
     id: 'emergence-with-residual-blockade',
     version: '0.1.0',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Emergence with residual blockade',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

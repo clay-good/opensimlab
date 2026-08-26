@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const MIXED_SHOCK: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'mixed-shock', version: '0.1.0', maturity: 'draft', title: 'Mixed shock',
+    id: 'mixed-shock', version: '0.1.0', maturity: 'preview', title: 'Mixed shock',
     author: 'Open Sim Lab', license: 'CC BY-SA 4.0', estimatedMinutes: 9,
     difficulty: 'advanced', objectives: [
       { id: 'recognize-mixed-shock-discordance', statement: 'Recognize worsening shock with discordant cardiac and vasodilatory clues and activate experienced help.', measure: 'Perfusion, congestion, infection, trajectory, and treatment context prompted escalation.' },

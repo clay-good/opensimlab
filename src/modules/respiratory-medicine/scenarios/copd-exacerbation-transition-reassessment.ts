@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const COPD_EXACERBATION_TRANSITION_REASSESSMENT: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'copd-exacerbation-transition-reassessment', version: '0.1.0', maturity: 'draft',
+    id: 'copd-exacerbation-transition-reassessment', version: '0.1.0', maturity: 'preview',
     title: 'COPD exacerbation: recovery and transition reassessment', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'reconcile-copd-exacerbation-recovery-and-readiness', statement: 'Reconcile verified hospital treatment with baseline, admission, and current symptoms, physiology, function, and support.', measure: 'Improvement was separated from readiness, and prior care was not attributed to the learner.' },

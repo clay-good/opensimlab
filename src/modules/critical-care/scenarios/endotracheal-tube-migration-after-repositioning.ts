@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const ENDOTRACHEAL_TUBE_MIGRATION_AFTER_REPOSITIONING: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'endotracheal-tube-migration-after-repositioning', version: '0.1.0', maturity: 'draft',
+    id: 'endotracheal-tube-migration-after-repositioning', version: '0.1.0', maturity: 'preview',
     title: 'Post-turn endotracheal tube migration', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 7, difficulty: 'intermediate', objectives: [
       { id: 'recognize-post-repositioning-ventilation-change', statement: 'Recognize the immediate ventilation and gas-exchange change after repositioning.', measure: 'The temporal change, patient, exhaled volume, pressure, capnography, and oxygenation were integrated.' },

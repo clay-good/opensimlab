@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const PEDIATRIC_FEBRILE_SEIZURE: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'pediatric-febrile-seizure', version: '0.1.0', maturity: 'draft',
+    id: 'pediatric-febrile-seizure', version: '0.1.0', maturity: 'preview',
     title: 'Pediatric febrile seizure', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'introductory', objectives: [
       {

@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const ATRIAL_FIBRILLATION_WITH_RAPID_RESPONSE: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'atrial-fibrillation-with-rapid-response', version: '0.1.0', maturity: 'draft',
+    id: 'atrial-fibrillation-with-rapid-response', version: '0.1.0', maturity: 'preview',
     title: 'Atrial fibrillation with rapid response', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'reconcile-af-rvr-rhythm-and-stability', statement: 'Reconcile the authored irregular narrow-complex rhythm report with current hemodynamics, perfusion, ischemia, and heart-failure features.', measure: 'The learner separated stable rapid AF from an unstable tachycardia pathway without using heart rate alone.' },

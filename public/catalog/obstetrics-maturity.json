@@ -8,7 +8,7 @@
       "subjectKind": "scenario",
       "subjectId": "postpartum-hemorrhage-uterine-atony",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/obstetrics-completion-audit.json#postpartum-hemorrhage-uterine-atony@0.1.0",
         "/catalog/obstetrics-quality-audit.json#postpartum-hemorrhage-uterine-atony@0.1.0"
@@ -19,7 +19,7 @@
       "subjectKind": "scenario",
       "subjectId": "maternal-sepsis-postpartum-deterioration",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/obstetrics-completion-audit.json#maternal-sepsis-postpartum-deterioration@0.1.0",
         "/catalog/obstetrics-quality-audit.json#maternal-sepsis-postpartum-deterioration@0.1.0"
@@ -30,7 +30,7 @@
       "subjectKind": "scenario",
       "subjectId": "concealed-placental-abruption-hemorrhage",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/obstetrics-completion-audit.json#concealed-placental-abruption-hemorrhage@0.1.0",
         "/catalog/obstetrics-quality-audit.json#concealed-placental-abruption-hemorrhage@0.1.0"
@@ -41,7 +41,7 @@
       "subjectKind": "scenario",
       "subjectId": "postpartum-severe-preeclampsia-warning-signs",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/obstetrics-completion-audit.json#postpartum-severe-preeclampsia-warning-signs@0.1.0",
         "/catalog/obstetrics-quality-audit.json#postpartum-severe-preeclampsia-warning-signs@0.1.0"
@@ -52,7 +52,7 @@
       "subjectKind": "scenario",
       "subjectId": "eclampsia-first-seizure-response",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/obstetrics-completion-audit.json#eclampsia-first-seizure-response@0.1.0",
         "/catalog/obstetrics-quality-audit.json#eclampsia-first-seizure-response@0.1.0"
@@ -63,7 +63,7 @@
       "subjectKind": "scenario",
       "subjectId": "suspected-amniotic-fluid-embolism-pattern",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/obstetrics-completion-audit.json#suspected-amniotic-fluid-embolism-pattern@0.1.0",
         "/catalog/obstetrics-quality-audit.json#suspected-amniotic-fluid-embolism-pattern@0.1.0"
@@ -74,7 +74,7 @@
       "subjectKind": "scenario",
       "subjectId": "maternal-cardiac-arrest-coordinated-response",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/obstetrics-completion-audit.json#maternal-cardiac-arrest-coordinated-response@0.1.0",
         "/catalog/obstetrics-quality-audit.json#maternal-cardiac-arrest-coordinated-response@0.1.0"
@@ -85,7 +85,7 @@
       "subjectKind": "scenario",
       "subjectId": "shoulder-dystocia-cognitive-sequence",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/obstetrics-completion-audit.json#shoulder-dystocia-cognitive-sequence@0.1.0",
         "/catalog/obstetrics-quality-audit.json#shoulder-dystocia-cognitive-sequence@0.1.0"
@@ -96,7 +96,7 @@
       "subjectKind": "scenario",
       "subjectId": "umbilical-cord-prolapse-urgent-birth-coordination",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/obstetrics-completion-audit.json#umbilical-cord-prolapse-urgent-birth-coordination@0.1.0",
         "/catalog/obstetrics-quality-audit.json#umbilical-cord-prolapse-urgent-birth-coordination@0.1.0"
@@ -107,7 +107,7 @@
       "subjectKind": "scenario",
       "subjectId": "suspected-uterine-rupture-recognition",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/obstetrics-completion-audit.json#suspected-uterine-rupture-recognition@0.1.0",
         "/catalog/obstetrics-quality-audit.json#suspected-uterine-rupture-recognition@0.1.0"
@@ -118,7 +118,7 @@
       "subjectKind": "scenario",
       "subjectId": "magnesium-sulfate-toxicity-recognition",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/obstetrics-completion-audit.json#magnesium-sulfate-toxicity-recognition@0.1.0",
         "/catalog/obstetrics-quality-audit.json#magnesium-sulfate-toxicity-recognition@0.1.0"
@@ -129,7 +129,7 @@
       "subjectKind": "scenario",
       "subjectId": "high-neuraxial-block-obstetric-coordination",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/obstetrics-completion-audit.json#high-neuraxial-block-obstetric-coordination@0.1.0",
         "/catalog/obstetrics-quality-audit.json#high-neuraxial-block-obstetric-coordination@0.1.0"
@@ -140,7 +140,7 @@
       "subjectKind": "scenario",
       "subjectId": "failed-obstetric-intubation-oxygenation-first",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/obstetrics-completion-audit.json#failed-obstetric-intubation-oxygenation-first@0.1.0",
         "/catalog/obstetrics-quality-audit.json#failed-obstetric-intubation-oxygenation-first@0.1.0"

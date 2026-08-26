@@ -20,7 +20,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -146,7 +146,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -272,7 +272,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -398,7 +398,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -524,7 +524,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -650,7 +650,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -776,7 +776,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -902,7 +902,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -1028,7 +1028,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -1154,7 +1154,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -1280,7 +1280,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -1406,7 +1406,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -1532,7 +1532,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -1658,7 +1658,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -1784,7 +1784,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -1910,7 +1910,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -2036,7 +2036,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -2162,7 +2162,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -2288,7 +2288,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -2414,7 +2414,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -2540,7 +2540,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -2666,7 +2666,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -2792,7 +2792,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -2918,7 +2918,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {
@@ -3044,7 +3044,7 @@
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
       "capabilityVersion": "0.1.0-alpha.48",
-      "maturity": "draft",
+      "maturity": "preview",
       "complete": false,
       "requirements": [
         {

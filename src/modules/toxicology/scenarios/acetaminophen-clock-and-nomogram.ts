@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const ACETAMINOPHEN_CLOCK_AND_NOMOGRAM: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'acetaminophen-clock-and-nomogram', version: '0.1.0', maturity: 'draft',
+    id: 'acetaminophen-clock-and-nomogram', version: '0.1.0', maturity: 'preview',
     title: 'Acetaminophen: the clock changes the meaning', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 6, difficulty: 'advanced', objectives: [
       { id: 'reconcile-toxicology-acetaminophen-product-ingestion-window-clock-symptoms-and-whole-patient', statement: 'Reconcile the product, ingestion window, clock, symptoms, and whole patient.', measure: 'The supplied immediate-release acetaminophen-only exposure, witnessed completion time, 6-hour clock, nausea, stable physiology, unreliable reported quantity, and whole-patient state were connected without learner history, examination, monitoring, sampling, or calculation.' },

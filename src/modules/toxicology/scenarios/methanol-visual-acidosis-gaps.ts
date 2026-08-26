@@ -4,7 +4,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const METHANOL_VISUAL_ACIDOSIS_GAPS: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'methanol-visual-acidosis-gaps', version: '0.1.0', maturity: 'draft',
+    id: 'methanol-visual-acidosis-gaps', version: '0.1.0', maturity: 'preview',
     title: 'Methanol toxicity: the gaps are clues, not answers', author: 'Open Sim Lab', license: 'CC BY-SA 4.0', estimatedMinutes: 6, difficulty: 'advanced',
     objectives: [
       { id: 'reconcile-toxicology-methanol-source-clock-vision-acid-base-gaps-and-whole-patient', statement: 'Reconcile source, clock, vision, acid-base, gaps, and whole-patient findings.', measure: 'The declared windshield-washer-fluid exposure, 14-hour clock, visual symptoms, tachypnea, confusion, supplied acid-base state, anion gap, osmolar context and whole-patient state were connected without learner history, examination, monitoring, testing, calculation, interpretation, or diagnosis.' },

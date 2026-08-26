@@ -5,7 +5,7 @@ import type { Scenario } from './types';
 export const HYPOTHERMIA_AND_REWARMING: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'hypothermia-and-rewarming', version: '0.1.0', maturity: 'draft',
+    id: 'hypothermia-and-rewarming', version: '0.1.0', maturity: 'preview',
     title: 'Hypothermia and rewarming', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 9, difficulty: 'introductory',
     objectives: [

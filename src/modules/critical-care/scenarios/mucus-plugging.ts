@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const MUCUS_PLUGGING: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'mucus-plugging', version: '0.1.0', maturity: 'draft',
+    id: 'mucus-plugging', version: '0.1.0', maturity: 'preview',
     title: 'Mucus plugging', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'support-mucus-plugging-and-call-help', statement: 'Support oxygenation and call respiratory-therapy and senior help while assessing abrupt airway resistance.', measure: 'Support and help preceded airway-clearance intent.' },

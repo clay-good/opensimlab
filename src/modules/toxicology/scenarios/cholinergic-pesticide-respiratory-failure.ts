@@ -4,7 +4,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const CHOLINERGIC_PESTICIDE_RESPIRATORY_FAILURE: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'cholinergic-pesticide-respiratory-failure', version: '0.1.0', maturity: 'draft',
+    id: 'cholinergic-pesticide-respiratory-failure', version: '0.1.0', maturity: 'preview',
     title: 'Cholinergic poisoning: protect the team, then clear the air', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 6, difficulty: 'advanced', objectives: [
       { id: 'reconcile-toxicology-cholinergic-product-route-secondary-contamination-secretions-breathing-weakness-cns-and-whole-patient', statement: 'Reconcile product, route, secondary contamination, secretions, breathing, weakness, CNS, and the whole patient.', measure: 'The declared organophosphate exposure, wet clothing, miosis, secretions, bronchospasm, hypoxemia, bradycardia, vomiting, fasciculations, weakness, confusion, and whole-patient state were connected without learner history, examination, monitoring, testing, or diagnosis.' },

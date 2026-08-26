@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const HIGH_FLOW_NASAL_OXYGEN_ESCALATION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'high-flow-nasal-oxygen-escalation', version: '0.1.0', maturity: 'draft',
+    id: 'high-flow-nasal-oxygen-escalation', version: '0.1.0', maturity: 'preview',
     title: 'High-flow nasal oxygen escalation', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'reconcile-high-flow-oxygen-conventional-support-trajectory', statement: 'Reconcile the authored baseline, verified conventional oxygen, signal quality, work, gas exchange, mentation, and perfusion trajectory.', measure: 'Persistent acute hypoxemia was recognized without treating a reservoir-mask flow or estimated oxygen fraction as a precise delivered dose.' },

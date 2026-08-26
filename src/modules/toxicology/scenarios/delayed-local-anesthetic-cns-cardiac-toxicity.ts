@@ -4,7 +4,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const DELAYED_LOCAL_ANESTHETIC_CNS_CARDIAC_TOXICITY: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'delayed-local-anesthetic-cns-cardiac-toxicity', version: '0.1.0', maturity: 'draft',
+    id: 'delayed-local-anesthetic-cns-cardiac-toxicity', version: '0.1.0', maturity: 'preview',
     title: 'Local anesthetic toxicity: quiet warnings can turn fast', author: 'Open Sim Lab', license: 'CC BY-SA 4.0', estimatedMinutes: 6, difficulty: 'advanced',
     objectives: [
       { id: 'reconcile-toxicology-delayed-last-source-clock-prodrome-seizure-cardiac-and-whole-patient', statement: 'Reconcile source, clock, prodrome, seizure, cardiac, and whole-patient findings.', measure: 'The declared continuous ropivacaine catheter, 38-hour clock, metallic taste, tinnitus, perioral tingling, dysarthria, agitation, seizure, drowsiness, bradycardia, hypotension, supplied ECG and whole-patient state were connected without learner history, examination, monitoring, testing, or diagnosis.' },

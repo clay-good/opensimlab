@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const PEDIATRIC_RESPIRATORY_DISTRESS: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'pediatric-respiratory-distress', version: '0.1.0', maturity: 'draft',
+    id: 'pediatric-respiratory-distress', version: '0.1.0', maturity: 'preview',
     title: 'Pediatric respiratory distress', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'introductory', objectives: [
       {

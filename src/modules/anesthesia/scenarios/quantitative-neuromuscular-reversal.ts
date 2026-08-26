@@ -5,7 +5,7 @@ import type { Scenario } from './types';
 export const QUANTITATIVE_NEUROMUSCULAR_REVERSAL: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'quantitative-neuromuscular-reversal', version: '0.1.0', maturity: 'draft',
+    id: 'quantitative-neuromuscular-reversal', version: '0.1.0', maturity: 'preview',
     title: 'Quantitative neuromuscular reversal', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 8, difficulty: 'intermediate',
     objectives: [

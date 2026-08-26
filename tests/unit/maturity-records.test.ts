@@ -88,132 +88,135 @@ describe('exact-version maturity records', () => {
       + obstetricsCatalog.recordCount)
       .toBe(reviewableItems().length);
     expect(catalog.recordCount).toBe(54);
-    expect(catalog.records.every((record) => record.status === 'draft')).toBe(true);
+    expect(catalog.records.filter((record) => record.subjectKind === 'scenario')
+      .every((record) => record.status === 'preview')).toBe(true);
+    expect(catalog.records.filter((record) => record.subjectKind !== 'scenario')
+      .every((record) => record.status === 'draft')).toBe(true);
     expect(maturityFor(catalog, 'explanation', 'hysteresis-and-effect-site-lag', '0.1.0'))
       .toBeDefined();
     expect(maturityFor(catalog, 'drug-card', 'propofol', '0.1.0')).toBeDefined();
     expect(maturityFor(catalog, 'practice-region', 'US', '0.1.0')).toBeDefined();
     expect(maturityFor(
       emergencyCatalog, 'scenario', 'undifferentiated-shock', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'ards-lung-protective-ventilation', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'escalating-hypoxemia', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       cardiologyCatalog, 'scenario', 'stable-chest-pain-evaluation', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       pediatricsCatalog, 'scenario', 'pediatric-respiratory-distress', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       neurologyCatalog, 'scenario', 'minor-nondisabling-acute-ischemic-stroke', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       neurologyCatalog, 'scenario', 'basilar-artery-occlusion-escalation', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       toxicologyCatalog, 'scenario', 'methemoglobinemia-saturation-gap', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       toxicologyCatalog, 'scenario', 'carbon-monoxide-reassuring-monitor', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       toxicologyCatalog, 'scenario', 'acetaminophen-clock-and-nomogram', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       toxicologyCatalog, 'scenario', 'salicylate-falling-number', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       toxicologyCatalog, 'scenario', 'tricyclic-sodium-channel-cardiotoxicity', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       toxicologyCatalog, 'scenario', 'beta-blocker-cardiogenic-shock', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       toxicologyCatalog, 'scenario', 'calcium-channel-blocker-shock', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       toxicologyCatalog, 'scenario', 'digoxin-rhythm-potassium', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       toxicologyCatalog, 'scenario', 'cholinergic-pesticide-respiratory-failure', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'ventilator-dyssynchrony', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'auto-peep', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'mucus-plugging', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'unplanned-extubation', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'spontaneous-breathing-trial', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'post-intubation-hypotension', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'cardiogenic-shock', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'mixed-shock', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'right-ventricular-failure', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'massive-pulmonary-embolism', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'upper-gi-hemorrhage', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'status-epilepticus', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'targeted-temperature-management', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'intracranial-hypertension', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'acute-kidney-injury-with-fluid-overload', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'severe-acidemia', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'icu-handoff-with-hidden-deterioration', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'ventilator-circuit-disconnection', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'delayed-vasopressor-delivery', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'pulse-oximeter-motion-artifact', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'endotracheal-tube-migration-after-repositioning', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'septic-shock-resuscitation', '0.1.0',
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
   });
 
   it('never applies a record to a different content version', () => {
     const current = SCENARIOS[0]!;
     expect(maturityFor(
       catalog, 'scenario', current.metadata.id, current.metadata.version,
-    )?.status).toBe('draft');
+    )?.status).toBe('preview');
     expect(maturityFor(catalog, 'scenario', current.metadata.id, '99.0.0')).toBeUndefined();
     expect(() => buildMaturityCatalog(completion, {
       ...quality, scenarios: quality.scenarios.slice(1),

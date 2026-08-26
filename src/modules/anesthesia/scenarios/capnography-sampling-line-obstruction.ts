@@ -7,7 +7,7 @@ export const CAPNOGRAPHY_SAMPLING_LINE_OBSTRUCTION: Scenario = {
   metadata: {
     id: 'capnography-sampling-line-obstruction',
     version: '0.1.0',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Capnography sampling-line obstruction',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

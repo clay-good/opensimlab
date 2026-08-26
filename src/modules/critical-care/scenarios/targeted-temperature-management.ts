@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const TARGETED_TEMPERATURE_MANAGEMENT: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'targeted-temperature-management', version: '0.1.0', maturity: 'draft',
+    id: 'targeted-temperature-management', version: '0.1.0', maturity: 'preview',
     title: 'Post-arrest temperature control', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'advanced', objectives: [
       { id: 'recognize-post-arrest-temperature-control', statement: 'Recognize the indication for temperature control after ROSC without making an early prognosis.', measure: 'Unresponsiveness to verbal commands triggered protocolized temperature control and post-arrest help.' },

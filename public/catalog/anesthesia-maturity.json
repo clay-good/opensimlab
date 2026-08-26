@@ -8,7 +8,7 @@
       "subjectKind": "scenario",
       "subjectId": "routine-induction",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#routine-induction@0.1.0",
         "/catalog/anesthesia-quality-audit.json#routine-induction@0.1.0"
@@ -19,7 +19,7 @@
       "subjectKind": "scenario",
       "subjectId": "rapid-desaturation",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#rapid-desaturation@0.1.0",
         "/catalog/anesthesia-quality-audit.json#rapid-desaturation@0.1.0"
@@ -30,7 +30,7 @@
       "subjectKind": "scenario",
       "subjectId": "hypotension-after-induction",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#hypotension-after-induction@0.1.0",
         "/catalog/anesthesia-quality-audit.json#hypotension-after-induction@0.1.0"
@@ -41,7 +41,7 @@
       "subjectKind": "scenario",
       "subjectId": "bronchospasm",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#bronchospasm@0.1.0",
         "/catalog/anesthesia-quality-audit.json#bronchospasm@0.1.0"
@@ -52,7 +52,7 @@
       "subjectKind": "scenario",
       "subjectId": "unexpected-intraoperative-hemorrhage",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#unexpected-intraoperative-hemorrhage@0.1.0",
         "/catalog/anesthesia-quality-audit.json#unexpected-intraoperative-hemorrhage@0.1.0"
@@ -63,7 +63,7 @@
       "subjectKind": "scenario",
       "subjectId": "rapid-sequence-induction",
       "contentVersion": "0.2.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#rapid-sequence-induction@0.2.0",
         "/catalog/anesthesia-quality-audit.json#rapid-sequence-induction@0.2.0"
@@ -74,7 +74,7 @@
       "subjectKind": "scenario",
       "subjectId": "awareness-under-paralysis",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#awareness-under-paralysis@0.1.0",
         "/catalog/anesthesia-quality-audit.json#awareness-under-paralysis@0.1.0"
@@ -85,7 +85,7 @@
       "subjectKind": "scenario",
       "subjectId": "laryngospasm-after-airway-stimulation",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#laryngospasm-after-airway-stimulation@0.1.0",
         "/catalog/anesthesia-quality-audit.json#laryngospasm-after-airway-stimulation@0.1.0"
@@ -96,7 +96,7 @@
       "subjectKind": "scenario",
       "subjectId": "perioperative-anaphylaxis-after-antibiotic",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#perioperative-anaphylaxis-after-antibiotic@0.1.0",
         "/catalog/anesthesia-quality-audit.json#perioperative-anaphylaxis-after-antibiotic@0.1.0"
@@ -107,7 +107,7 @@
       "subjectKind": "scenario",
       "subjectId": "early-malignant-hyperthermia-during-volatile-anesthesia",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#early-malignant-hyperthermia-during-volatile-anesthesia@0.1.0",
         "/catalog/anesthesia-quality-audit.json#early-malignant-hyperthermia-during-volatile-anesthesia@0.1.0"
@@ -118,7 +118,7 @@
       "subjectKind": "scenario",
       "subjectId": "routine-pediatric-iv-induction",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#routine-pediatric-iv-induction@0.1.0",
         "/catalog/anesthesia-quality-audit.json#routine-pediatric-iv-induction@0.1.0"
@@ -129,7 +129,7 @@
       "subjectKind": "scenario",
       "subjectId": "difficult-airway-supraglottic-rescue",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#difficult-airway-supraglottic-rescue@0.1.0",
         "/catalog/anesthesia-quality-audit.json#difficult-airway-supraglottic-rescue@0.1.0"
@@ -140,7 +140,7 @@
       "subjectKind": "scenario",
       "subjectId": "local-anesthetic-systemic-toxicity",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#local-anesthetic-systemic-toxicity@0.1.0",
         "/catalog/anesthesia-quality-audit.json#local-anesthetic-systemic-toxicity@0.1.0"
@@ -151,7 +151,7 @@
       "subjectKind": "scenario",
       "subjectId": "persistent-vf-cardiac-arrest",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#persistent-vf-cardiac-arrest@0.1.0",
         "/catalog/anesthesia-quality-audit.json#persistent-vf-cardiac-arrest@0.1.0"
@@ -162,7 +162,7 @@
       "subjectKind": "scenario",
       "subjectId": "high-spinal-after-epidural-top-up",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#high-spinal-after-epidural-top-up@0.1.0",
         "/catalog/anesthesia-quality-audit.json#high-spinal-after-epidural-top-up@0.1.0"
@@ -173,7 +173,7 @@
       "subjectKind": "scenario",
       "subjectId": "venous-air-embolism-during-line-removal",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#venous-air-embolism-during-line-removal@0.1.0",
         "/catalog/anesthesia-quality-audit.json#venous-air-embolism-during-line-removal@0.1.0"
@@ -184,7 +184,7 @@
       "subjectKind": "scenario",
       "subjectId": "repeated-laryngoscopy-harm",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#repeated-laryngoscopy-harm@0.1.0",
         "/catalog/anesthesia-quality-audit.json#repeated-laryngoscopy-harm@0.1.0"
@@ -195,7 +195,7 @@
       "subjectKind": "scenario",
       "subjectId": "capnography-sampling-line-obstruction",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#capnography-sampling-line-obstruction@0.1.0",
         "/catalog/anesthesia-quality-audit.json#capnography-sampling-line-obstruction@0.1.0"
@@ -206,7 +206,7 @@
       "subjectKind": "scenario",
       "subjectId": "dilutional-coagulopathy",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#dilutional-coagulopathy@0.1.0",
         "/catalog/anesthesia-quality-audit.json#dilutional-coagulopathy@0.1.0"
@@ -217,7 +217,7 @@
       "subjectKind": "scenario",
       "subjectId": "arterial-pressure-transducer-artifact",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#arterial-pressure-transducer-artifact@0.1.0",
         "/catalog/anesthesia-quality-audit.json#arterial-pressure-transducer-artifact@0.1.0"
@@ -228,7 +228,7 @@
       "subjectKind": "scenario",
       "subjectId": "circle-system-rebreathing",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#circle-system-rebreathing@0.1.0",
         "/catalog/anesthesia-quality-audit.json#circle-system-rebreathing@0.1.0"
@@ -239,7 +239,7 @@
       "subjectKind": "scenario",
       "subjectId": "routine-inhalational-maintenance",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#routine-inhalational-maintenance@0.1.0",
         "/catalog/anesthesia-quality-audit.json#routine-inhalational-maintenance@0.1.0"
@@ -250,7 +250,7 @@
       "subjectKind": "scenario",
       "subjectId": "blood-bank-handoff",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#blood-bank-handoff@0.1.0",
         "/catalog/anesthesia-quality-audit.json#blood-bank-handoff@0.1.0"
@@ -261,7 +261,7 @@
       "subjectKind": "scenario",
       "subjectId": "routine-geriatric-induction",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#routine-geriatric-induction@0.1.0",
         "/catalog/anesthesia-quality-audit.json#routine-geriatric-induction@0.1.0"
@@ -272,7 +272,7 @@
       "subjectKind": "scenario",
       "subjectId": "quantitative-neuromuscular-reversal",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#quantitative-neuromuscular-reversal@0.1.0",
         "/catalog/anesthesia-quality-audit.json#quantitative-neuromuscular-reversal@0.1.0"
@@ -283,7 +283,7 @@
       "subjectKind": "scenario",
       "subjectId": "routine-pediatric-inhalational-induction",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#routine-pediatric-inhalational-induction@0.1.0",
         "/catalog/anesthesia-quality-audit.json#routine-pediatric-inhalational-induction@0.1.0"
@@ -294,7 +294,7 @@
       "subjectKind": "scenario",
       "subjectId": "obstetric-general-anesthesia",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#obstetric-general-anesthesia@0.1.0",
         "/catalog/anesthesia-quality-audit.json#obstetric-general-anesthesia@0.1.0"
@@ -305,7 +305,7 @@
       "subjectKind": "scenario",
       "subjectId": "preeclampsia-urgent-delivery",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#preeclampsia-urgent-delivery@0.1.0",
         "/catalog/anesthesia-quality-audit.json#preeclampsia-urgent-delivery@0.1.0"
@@ -316,7 +316,7 @@
       "subjectKind": "scenario",
       "subjectId": "pneumothorax-under-positive-pressure",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#pneumothorax-under-positive-pressure@0.1.0",
         "/catalog/anesthesia-quality-audit.json#pneumothorax-under-positive-pressure@0.1.0"
@@ -327,7 +327,7 @@
       "subjectKind": "scenario",
       "subjectId": "aspiration-risk-recognition",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#aspiration-risk-recognition@0.1.0",
         "/catalog/anesthesia-quality-audit.json#aspiration-risk-recognition@0.1.0"
@@ -338,7 +338,7 @@
       "subjectKind": "scenario",
       "subjectId": "emergence-with-residual-blockade",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#emergence-with-residual-blockade@0.1.0",
         "/catalog/anesthesia-quality-audit.json#emergence-with-residual-blockade@0.1.0"
@@ -349,7 +349,7 @@
       "subjectKind": "scenario",
       "subjectId": "delayed-emergence-differential",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#delayed-emergence-differential@0.1.0",
         "/catalog/anesthesia-quality-audit.json#delayed-emergence-differential@0.1.0"
@@ -360,7 +360,7 @@
       "subjectKind": "scenario",
       "subjectId": "extubation-readiness",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#extubation-readiness@0.1.0",
         "/catalog/anesthesia-quality-audit.json#extubation-readiness@0.1.0"
@@ -371,7 +371,7 @@
       "subjectKind": "scenario",
       "subjectId": "post-extubation-obstruction",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#post-extubation-obstruction@0.1.0",
         "/catalog/anesthesia-quality-audit.json#post-extubation-obstruction@0.1.0"
@@ -382,7 +382,7 @@
       "subjectKind": "scenario",
       "subjectId": "opioid-induced-ventilatory-impairment",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#opioid-induced-ventilatory-impairment@0.1.0",
         "/catalog/anesthesia-quality-audit.json#opioid-induced-ventilatory-impairment@0.1.0"
@@ -393,7 +393,7 @@
       "subjectKind": "scenario",
       "subjectId": "hypothermia-and-rewarming",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#hypothermia-and-rewarming@0.1.0",
         "/catalog/anesthesia-quality-audit.json#hypothermia-and-rewarming@0.1.0"
@@ -404,7 +404,7 @@
       "subjectKind": "scenario",
       "subjectId": "perioperative-hyperglycemia",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#perioperative-hyperglycemia@0.1.0",
         "/catalog/anesthesia-quality-audit.json#perioperative-hyperglycemia@0.1.0"
@@ -415,7 +415,7 @@
       "subjectKind": "scenario",
       "subjectId": "pacemaker-and-cautery-planning",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#pacemaker-and-cautery-planning@0.1.0",
         "/catalog/anesthesia-quality-audit.json#pacemaker-and-cautery-planning@0.1.0"
@@ -426,7 +426,7 @@
       "subjectKind": "scenario",
       "subjectId": "postoperative-handoff",
       "contentVersion": "0.1.0",
-      "status": "draft",
+      "status": "preview",
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#postoperative-handoff@0.1.0",
         "/catalog/anesthesia-quality-audit.json#postoperative-handoff@0.1.0"

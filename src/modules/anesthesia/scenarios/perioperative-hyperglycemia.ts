@@ -5,7 +5,7 @@ import type { Scenario } from './types';
 export const PERIOPERATIVE_HYPERGLYCEMIA: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'perioperative-hyperglycemia', version: '0.1.0', maturity: 'draft',
+    id: 'perioperative-hyperglycemia', version: '0.1.0', maturity: 'preview',
     title: 'Perioperative hyperglycemia', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'introductory',
     objectives: [

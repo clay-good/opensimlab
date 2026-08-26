@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const STATUS_EPILEPTICUS: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'status-epilepticus', version: '0.1.0', maturity: 'draft',
+    id: 'status-epilepticus', version: '0.1.0', maturity: 'preview',
     title: 'Status epilepticus', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'recognize-convulsive-status-epilepticus', statement: 'Recognize generalized convulsive status epilepticus from seizure type, duration, and absent recovery.', measure: 'Ongoing generalized convulsions beyond 5 minutes without recovery were reviewed with airway, breathing, circulation, and glucose status.' },

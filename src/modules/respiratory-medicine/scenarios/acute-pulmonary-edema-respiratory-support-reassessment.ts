@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const ACUTE_PULMONARY_EDEMA_RESPIRATORY_SUPPORT_REASSESSMENT: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'acute-pulmonary-edema-respiratory-support-reassessment', version: '0.1.0', maturity: 'draft',
+    id: 'acute-pulmonary-edema-respiratory-support-reassessment', version: '0.1.0', maturity: 'preview',
     title: 'Pulmonary edema support reassessment', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'reconcile-ape-initial-care-and-trajectory', statement: 'Reconcile the authored acute pulmonary edema presentation, experienced-team initial care, and serial respiratory trajectory.', measure: 'Delivered care and worsening physiology were reviewed without attributing treatment or examination skill to the learner.' },

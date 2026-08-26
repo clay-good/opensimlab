@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const POST_PULMONARY_EMBOLISM_PERSISTENT_DYSPNEA: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'post-pulmonary-embolism-persistent-dyspnea', version: '0.1.0', maturity: 'draft',
+    id: 'post-pulmonary-embolism-persistent-dyspnea', version: '0.1.0', maturity: 'preview',
     title: 'Persistent dyspnea after pulmonary embolism', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'reconcile-post-pe-symptoms-and-anticoagulation-course', statement: 'Reconcile the confirmed acute PE, at least 3 months of verified therapeutic anticoagulation, prior function, and persistent symptom trajectory.', measure: 'The authored course was separated from learner prescribing, adherence verification, and a claim of resolution.' },

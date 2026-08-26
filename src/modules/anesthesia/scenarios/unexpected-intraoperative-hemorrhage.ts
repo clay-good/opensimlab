@@ -16,7 +16,7 @@ export const UNEXPECTED_INTRAOPERATIVE_HEMORRHAGE: Scenario = {
   metadata: {
     id: 'unexpected-intraoperative-hemorrhage',
     version: '0.1.0',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Unexpected intraoperative hemorrhage',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

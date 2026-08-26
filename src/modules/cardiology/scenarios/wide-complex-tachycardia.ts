@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const WIDE_COMPLEX_TACHYCARDIA: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'wide-complex-tachycardia', version: '0.1.0', maturity: 'draft',
+    id: 'wide-complex-tachycardia', version: '0.1.0', maturity: 'preview',
     title: 'Wide-complex tachycardia', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 9, difficulty: 'advanced', objectives: [
       { id: 'reconcile-stable-wide-complex-tachycardia', statement: 'Confirm the authored pulse and reconcile the regular monomorphic wide rhythm with revisable whole-patient stability.', measure: 'Rate alone did not define stability, and deterioration triggers stayed explicit.' },

@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const MINOR_NONDISABLING_ACUTE_ISCHEMIC_STROKE: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'minor-nondisabling-acute-ischemic-stroke', version: '0.1.0', maturity: 'draft',
+    id: 'minor-nondisabling-acute-ischemic-stroke', version: '0.1.0', maturity: 'preview',
     title: 'Minor nondisabling acute ischemic stroke', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       {

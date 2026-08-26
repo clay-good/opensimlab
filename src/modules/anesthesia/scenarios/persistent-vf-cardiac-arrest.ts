@@ -7,7 +7,7 @@ export const PERSISTENT_VF_CARDIAC_ARREST: Scenario = {
   metadata: {
     id: 'persistent-vf-cardiac-arrest',
     version: '0.1.0',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Persistent ventricular-fibrillation cardiac arrest',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

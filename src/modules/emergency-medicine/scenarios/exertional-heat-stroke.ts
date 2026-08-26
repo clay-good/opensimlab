@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const EXERTIONAL_HEAT_STROKE: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'exertional-heat-stroke', version: '0.1.0', maturity: 'draft',
+    id: 'exertional-heat-stroke', version: '0.1.0', maturity: 'preview',
     title: 'Exertional heat stroke', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'recognize-exertional-heat-stroke', statement: 'Recognize exertional heat stroke from CNS dysfunction and an elevated rectal core temperature while reviewing immediate mimics.', measure: 'The fixed exertion, neurologic, temperature, glucose, sodium, trauma, and medication pattern was integrated.' },

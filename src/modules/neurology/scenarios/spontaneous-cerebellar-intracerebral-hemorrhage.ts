@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const SPONTANEOUS_CEREBELLAR_INTRACEREBRAL_HEMORRHAGE: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'spontaneous-cerebellar-intracerebral-hemorrhage', version: '0.1.0', maturity: 'draft',
+    id: 'spontaneous-cerebellar-intracerebral-hemorrhage', version: '0.1.0', maturity: 'preview',
     title: 'Spontaneous cerebellar ICH escalation', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 8, difficulty: 'advanced', objectives: [
       { id: 'reconcile-neurology-cerebellar-ich-clock-deficit-alertness-and-whole-patient', statement: 'Connect the clock, posterior-fossa deficits, alertness, physiology, and whole-patient state.', measure: 'The fixed symptom clock, neurological findings, breathing, circulation, glucose, and baseline function were reconciled without learner history, examination, testing, diagnosis, or treatment.' },

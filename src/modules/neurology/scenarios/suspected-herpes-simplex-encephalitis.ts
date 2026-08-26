@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const SUSPECTED_HERPES_SIMPLEX_ENCEPHALITIS: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'suspected-herpes-simplex-encephalitis', version: '0.1.0', maturity: 'draft',
+    id: 'suspected-herpes-simplex-encephalitis', version: '0.1.0', maturity: 'preview',
     title: 'Suspected herpes simplex encephalitis', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 7, difficulty: 'advanced', objectives: [
       { id: 'reconcile-neurology-encephalitis-clock-cognition-language-focal-seizure-and-whole-patient', statement: 'Reconcile the fever clock, altered cognition and behavior, language change, focal seizure, physiology, and whole patient.', measure: 'Parenchymal brain dysfunction was distinguished from uncomplicated meningitis, postictal state, delirium, stroke, toxic-metabolic, autoimmune, and other causes without learner history, examination, testing, diagnosis, or treatment.' },

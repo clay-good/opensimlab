@@ -4,7 +4,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const SYMPATHOMIMETIC_HYPERADRENERGIC_HYPERTHERMIA: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'sympathomimetic-hyperadrenergic-hyperthermia', version: '0.1.0', maturity: 'draft',
+    id: 'sympathomimetic-hyperadrenergic-hyperthermia', version: '0.1.0', maturity: 'preview',
     title: 'Sympathomimetic toxicity: calm the surge, protect the person', author: 'Open Sim Lab', license: 'CC BY-SA 4.0', estimatedMinutes: 6, difficulty: 'advanced',
     objectives: [
       { id: 'reconcile-toxicology-sympathomimetic-exposure-clock-agitation-autonomic-temperature-and-whole-patient', statement: 'Reconcile exposure, clock, agitation, autonomic, temperature, and whole-patient findings.', measure: 'The declared methamphetamine exposure, 70-minute clock, hypervigilance, paranoia, motor agitation, diaphoresis, mydriasis, hyperthermia, tachycardia, hypertension, supplied ECG and whole-patient state were connected without learner history, examination, monitoring, testing, or diagnosis.' },

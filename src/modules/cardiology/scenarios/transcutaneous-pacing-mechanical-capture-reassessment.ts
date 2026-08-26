@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const TRANSCUTANEOUS_PACING_MECHANICAL_CAPTURE_REASSESSMENT: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'transcutaneous-pacing-mechanical-capture-reassessment', version: '0.1.0', maturity: 'draft',
+    id: 'transcutaneous-pacing-mechanical-capture-reassessment', version: '0.1.0', maturity: 'preview',
     title: 'Transcutaneous pacing mechanical capture reassessment', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 9, difficulty: 'advanced', objectives: [
       { id: 'reconcile-transcutaneous-pacing-electrical-and-mechanical-capture', statement: 'Reconcile the fixed pacing artifacts, paced QRS and T-wave complexes, central pulse assessment, pleth, arterial waveform, pressure, and perfusion.', measure: 'Authored electrical capture remained distinct from absent mechanical capture and pulse loss.' },

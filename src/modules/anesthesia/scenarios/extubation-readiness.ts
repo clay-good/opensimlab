@@ -5,7 +5,7 @@ import type { Scenario } from './types';
 export const EXTUBATION_READINESS: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'extubation-readiness', version: '0.1.0', maturity: 'draft',
+    id: 'extubation-readiness', version: '0.1.0', maturity: 'preview',
     title: 'Extubation readiness', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 5, difficulty: 'intermediate',
     objectives: [

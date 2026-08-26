@@ -7,7 +7,7 @@ export const DIFFICULT_AIRWAY_SUPRAGLOTTIC_RESCUE: Scenario = {
   metadata: {
     id: 'difficult-airway-supraglottic-rescue',
     version: '0.1.0',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Difficult airway: supraglottic rescue',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

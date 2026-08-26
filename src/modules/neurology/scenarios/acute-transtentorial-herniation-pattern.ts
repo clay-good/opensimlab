@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const ACUTE_TRANSTENTORIAL_HERNIATION_PATTERN: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'acute-transtentorial-herniation-pattern', version: '0.1.0', maturity: 'draft',
+    id: 'acute-transtentorial-herniation-pattern', version: '0.1.0', maturity: 'preview',
     title: 'Acute transtentorial herniation pattern', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 6, difficulty: 'advanced', objectives: [
       { id: 'reconcile-neurology-herniation-clock-consciousness-pupils-motor-physiology-and-whole-patient', statement: 'Reconcile the consciousness, pupil, motor, respiratory, circulatory, structural, and whole-patient clock.', measure: 'The rapid multidomain decline was connected without learner history, examination, scoring, monitoring, imaging, diagnosis, or treatment.' },

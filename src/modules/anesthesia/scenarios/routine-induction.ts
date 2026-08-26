@@ -18,7 +18,7 @@ export const ROUTINE_INDUCTION: Scenario = {
   metadata: {
     id: 'routine-induction',
     version: '0.1.0',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Routine induction of general anaesthesia',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

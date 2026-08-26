@@ -79,7 +79,7 @@ export function Landing() {
 
         <div className="landing__action">
           <a className="button button--primary" href="/anesthesia">
-            Open the anesthesia simulator
+            Practice anesthesia—free
           </a>
           {/* The shortest path to the thing this simulator does that a textbook
               cannot. It used to be four clicks from here — front door, module
@@ -103,6 +103,7 @@ export function Landing() {
         {/* The module directory, compact and unambiguous. Each planned module's
             scope lives on its own route, which is one click from here. */}
         <p className="landing__modules">
+          <span>Ready to practice: </span>
           {available.map((module, index) => (
             <span key={module.id}>
               {index > 0 && <span aria-hidden="true"> · </span>}

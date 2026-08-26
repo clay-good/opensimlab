@@ -20,7 +20,7 @@ export const HYPOTENSION_AFTER_INDUCTION: Scenario = {
   metadata: {
     id: 'hypotension-after-induction',
     version: '0.1.0',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Hypotension after induction',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

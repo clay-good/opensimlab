@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const UPPER_GI_HEMORRHAGE: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'upper-gi-hemorrhage', version: '0.1.0', maturity: 'draft',
+    id: 'upper-gi-hemorrhage', version: '0.1.0', maturity: 'preview',
     title: 'Upper GI hemorrhage', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'advanced', objectives: [
       { id: 'recognize-recurrent-upper-gi-hemorrhage', statement: 'Recognize recurrent upper GI bleeding and activate experienced help.', measure: 'The fixed rebleeding and shock pattern prompted GI, hemorrhage, and critical-care escalation.' },

@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const PEDIATRIC_SEPTIC_SHOCK: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'pediatric-septic-shock', version: '0.1.0', maturity: 'draft',
+    id: 'pediatric-septic-shock', version: '0.1.0', maturity: 'preview',
     title: 'Pediatric septic shock', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 9, difficulty: 'advanced', objectives: [
       {

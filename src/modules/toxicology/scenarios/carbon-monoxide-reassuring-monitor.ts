@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const CARBON_MONOXIDE_REASSURING_MONITOR: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'carbon-monoxide-reassuring-monitor', version: '0.1.0', maturity: 'draft',
+    id: 'carbon-monoxide-reassuring-monitor', version: '0.1.0', maturity: 'preview',
     title: 'Carbon monoxide with a reassuring monitor', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 6, difficulty: 'advanced', objectives: [
       { id: 'reconcile-toxicology-carbon-monoxide-shared-exposure-clock-syncope-symptoms-pulse-ox-and-whole-patient', statement: 'Reconcile the shared exposure, clock, syncope, symptoms, conventional pulse oximetry, and whole patient.', measure: 'The documented enclosed-space generator exposure, similarly symptomatic partner, transient loss of consciousness, headache, nausea, confusion, conventional SpO2 99%, elapsed time, and whole-patient state were connected without learner history, examination, monitoring, sampling, or calculation.' },

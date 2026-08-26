@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const SPONTANEOUS_BREATHING_TRIAL: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'spontaneous-breathing-trial', version: '0.1.0', maturity: 'draft',
+    id: 'spontaneous-breathing-trial', version: '0.1.0', maturity: 'preview',
     title: 'Spontaneous-breathing trial', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'review-sbt-readiness', statement: 'Review spontaneous-breathing-trial readiness without requiring RSBI.', measure: 'Improving cause, oxygenation, circulation, alertness, and spontaneous effort were reviewed.' },

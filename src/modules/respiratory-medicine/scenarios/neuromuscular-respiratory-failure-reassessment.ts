@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const NEUROMUSCULAR_RESPIRATORY_FAILURE_REASSESSMENT: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'neuromuscular-respiratory-failure-reassessment', version: '0.1.0', maturity: 'draft',
+    id: 'neuromuscular-respiratory-failure-reassessment', version: '0.1.0', maturity: 'preview',
     title: 'Neuromuscular respiratory failure', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 9, difficulty: 'intermediate', objectives: [
       { id: 'reconcile-neuromuscular-respiratory-failure-trajectory', statement: 'Reconcile the authored functional baseline, symptom progression, breathing, cough, bulbar, gas-exchange, and perfusion trajectory.', measure: 'Serial whole-patient change was recognized without granting examination or respiratory-test skill.' },

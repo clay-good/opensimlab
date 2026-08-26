@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const STEMI: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'stemi', version: '0.1.0', maturity: 'draft', title: 'STEMI',
+    id: 'stemi', version: '0.1.0', maturity: 'preview', title: 'STEMI',
     author: 'Open Sim Lab', license: 'CC BY-SA 4.0', estimatedMinutes: 8,
     difficulty: 'introductory',
     objectives: [

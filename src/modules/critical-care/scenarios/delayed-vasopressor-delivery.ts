@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const DELAYED_VASOPRESSOR_DELIVERY: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'delayed-vasopressor-delivery', version: '0.1.0', maturity: 'draft',
+    id: 'delayed-vasopressor-delivery', version: '0.1.0', maturity: 'preview',
     title: 'Delayed vasopressor delivery', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'review-vasopressor-command-delivery-discordance', statement: 'Recognize that a running pump command does not prove vasopressor delivery to the patient.', measure: 'Persistent shock, the event log, and the fixed delivery record were reconciled.' },

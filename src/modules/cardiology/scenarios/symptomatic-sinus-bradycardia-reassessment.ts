@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const SYMPTOMATIC_SINUS_BRADYCARDIA_REASSESSMENT: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'symptomatic-sinus-bradycardia-reassessment', version: '0.1.0', maturity: 'draft',
+    id: 'symptomatic-sinus-bradycardia-reassessment', version: '0.1.0', maturity: 'preview',
     title: 'Symptomatic bradycardia', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       { id: 'reconcile-symptomatic-bradycardia-stability', statement: 'Reconcile the sinus bradycardia, pulse, chronic symptoms, and present whole-patient stability without using rate alone.', measure: 'Chronic symptom burden remained distinct from acute cardiopulmonary compromise and its change triggers.' },

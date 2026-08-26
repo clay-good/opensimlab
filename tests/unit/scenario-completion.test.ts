@@ -30,7 +30,7 @@ describe('machine-readable scenario completion contract', () => {
       .toBe('missing');
     expect(routine.requirements.find((entry) => entry.id === 'report-control-coverage')?.evidence[0])
       .toContain('not yet implemented');
-    expect(routine.maturity).toBe('draft');
+    expect(routine.maturity).toBe('preview');
   });
 
   it('rejects duplicate ids, missing requirements, dishonest counts, and unknown enums', () => {

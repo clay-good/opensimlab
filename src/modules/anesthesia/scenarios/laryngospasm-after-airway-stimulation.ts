@@ -13,7 +13,7 @@ export const LARYNGOSPASM_AFTER_AIRWAY_STIMULATION: Scenario = {
   metadata: {
     id: 'laryngospasm-after-airway-stimulation',
     version: '0.1.0',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Laryngospasm after airway stimulation',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

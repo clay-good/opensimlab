@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const PEDIATRIC_STATUS_ASTHMATICUS: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'pediatric-status-asthmaticus', version: '0.1.0', maturity: 'draft',
+    id: 'pediatric-status-asthmaticus', version: '0.1.0', maturity: 'preview',
     title: 'Pediatric status asthmaticus after initial care', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
       {

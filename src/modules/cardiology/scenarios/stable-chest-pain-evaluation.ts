@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const STABLE_CHEST_PAIN_EVALUATION: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'stable-chest-pain-evaluation', version: '0.1.0', maturity: 'draft',
+    id: 'stable-chest-pain-evaluation', version: '0.1.0', maturity: 'preview',
     title: 'Stable chest-pain evaluation', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 7, difficulty: 'introductory', objectives: [
       { id: 'verify-stable-chest-pain-trajectory', statement: 'Verify stability and screen the fixed history for acute or changing features.', measure: 'Duration, trigger, relief, recent change, rest symptoms, associated features, and acute escalation triggers were reviewed.' },

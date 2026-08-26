@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const RIGHT_VENTRICULAR_FAILURE: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'right-ventricular-failure', version: '0.1.0', maturity: 'draft',
+    id: 'right-ventricular-failure', version: '0.1.0', maturity: 'preview',
     title: 'Right ventricular failure', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 9, difficulty: 'advanced', objectives: [
       { id: 'recognize-rv-failure-trajectory', statement: 'Recognize RV failure from congestion and underperfusion, then activate specialist shock help.', measure: 'The whole-patient trajectory, rather than pressure alone, prompted escalation.' },

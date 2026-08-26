@@ -7,7 +7,7 @@ export const PREECLAMPSIA_URGENT_DELIVERY: Scenario = {
   metadata: {
     id: 'preeclampsia-urgent-delivery',
     version: '0.1.0',
-    maturity: 'draft',
+    maturity: 'preview',
     title: 'Preeclampsia before urgent delivery',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',

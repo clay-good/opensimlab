@@ -5,7 +5,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 export const MASSIVE_PULMONARY_EMBOLISM: Scenario = {
   schemaVersion: 1,
   metadata: {
-    id: 'massive-pulmonary-embolism', version: '0.1.0', maturity: 'draft',
+    id: 'massive-pulmonary-embolism', version: '0.1.0', maturity: 'preview',
     title: 'Massive pulmonary embolism', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 9, difficulty: 'advanced', objectives: [
       { id: 'recognize-refractory-pe-shock', statement: 'Recognize refractory PE shock and activate PERT plus ECMO-capable rescue.', measure: 'The fixed Category E2R trajectory prompted immediate multidisciplinary rescue escalation.' },
