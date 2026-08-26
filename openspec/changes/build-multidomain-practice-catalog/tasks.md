@@ -470,6 +470,15 @@ credited toward the catalog until every item in the completion contract passes.
     hemorrhage, surgical, fertility and communication readiness; a fixed worsening laparotomy-start
     report; and active-risk handoff without learner examination, CTG interpretation, diagnosis,
     resuscitation, drug, dose, anesthesia, delivery, surgery, hysterectomy, disposition or outcome.
+  - [x] Obstetrics slice 11/15 adds one authored postpartum magnesium-sulfate toxicity pattern after
+    documented seizure-prophylaxis exposure with oliguria, rising creatinine, drowsiness, weakness,
+    reflex loss and respiratory depression; immediate airway-capable obstetric, critical-care,
+    pharmacy, renal, newborn, communication and support ownership; explicit level-unit and
+    alternative-cause boundaries; parallel qualified source-stop, ventilation, calcium-antidote and
+    monitoring readiness; a fixed partial-response report; and active-risk handoff without learner
+    examination, monitoring or laboratory interpretation, diagnosis, infusion operation, airway or
+    seizure care, oxygen, ventilation, calcium or other drug, dose, route, procedure, newborn
+    assessment, disposition or outcome.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

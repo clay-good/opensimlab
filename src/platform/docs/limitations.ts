@@ -4799,6 +4799,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified direct findings, continuous qualified fetal and maternal assessment, current local protocols, immediate multidisciplinary response, operative confirmation, situation-specific resuscitation and surgery, respectful communication, and hands-on simulation with qualified feedback.',
     briefIn: ['suspected-uterine-rupture-recognition'],
   },
+  {
+    id: 'magnesium-toxicity-exposure-renal-reflex-respiratory-level-and-response-reports-are-authored',
+    headline: 'Magnesium exposure, renal decline, examination, respiratory pattern, level, and 5-minute response are authored.',
+    simplification: 'Fixed reports stand in for medication reconciliation, infusion inspection, urine measurement, renal and electrolyte testing, airway and breathing assessment, reflex and neurological examination, ECG review, source control, respiratory support, calcium antidote, newborn consideration, communication, and serial reassessment.',
+    whereItMisleads: 'Treating the supplied infusion history, urine output, creatinine, magnesium level, absent reflexes, monitor values, or partial respiratory change as learner findings, a universal toxicity threshold, calcium effect, complete reversal, safe restart, newborn safety, prognosis, or outcome.',
+    correctUnderstanding: 'Recognize magnesium toxicity from the whole evolving clinical and exposure pattern. Direct assessment, source control, airway and ventilation support, antidote use, monitoring, renal review, newborn consideration, and alternatives remain qualified team care.',
+    briefIn: ['magnesium-sulfate-toxicity-recognition'],
+  },
+  {
+    id: 'magnesium-toxicity-controls-activate-reconcile-review-reassess-and-handoff-only',
+    headline: 'The controls activate qualified help, connect supplied findings, review uncertainty and readiness, read a fixed report, and hand off only.',
+    simplification: 'Six actions stand in for simultaneous qualified obstetric, nursing, anesthesia and airway, critical-care, pharmacy, laboratory, renal, newborn, leadership, timekeeping, documentation, communication, dignity, family, staff-support, review, and handoff work.',
+    whereItMisleads: 'Equating button order with examination, monitoring or laboratory interpretation, diagnosis, infusion operation, airway management, ventilation, calcium selection or delivery, medication safety, newborn assessment, documentation quality, or competence.',
+    correctUnderstanding: 'Real response is concurrent, physical, time-critical, team-based, and locally protocolized. Cognitive sequence practice cannot replace direct care or hands-on multidisciplinary simulation with qualified feedback.',
+    briefIn: ['magnesium-sulfate-toxicity-recognition'],
+  },
+  {
+    id: 'no-live-magnesium-toxicity-exam-monitor-lab-interpretation-infusion-change-airway-drug-procedure-or-outcome',
+    headline: 'The lab does not examine, interpret monitoring or tests, operate an infusion, manage an airway, give calcium or another drug, assess a newborn, determine disposition, or report outcome.',
+    simplification: 'No live medication, pump, line, urine, fluid-balance, respiratory, airway, reflex, neurological, cardiovascular, postpartum, newborn, ECG, magnesium, renal, electrolyte, glucose, gas, imaging or other assessment; infusion stop or restart, oxygen, ventilation, airway device, calcium, fluid, diuretic, drug, dose, concentration, rate, route, target, access, seizure care, dialysis, procedure, transfer, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Using the rehearsal as toxicity diagnosis, serum-threshold, infusion, airway, ventilation, antidote, dose, renal-replacement, seizure, newborn, or disposition instructions; delaying immediate trained response for a click; or reading completion as competence.',
+    correctUnderstanding: 'Use verified direct findings, exact medication and unit reconciliation, current local protocols, immediate airway-capable multidisciplinary response, qualified antidote and renal decisions, serial reassessment, respectful communication, and hands-on simulation.',
+    briefIn: ['magnesium-sulfate-toxicity-recognition'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

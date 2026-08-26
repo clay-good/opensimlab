@@ -1164,6 +1164,9 @@ export function Cockpit({
           onObstetricsUterineRuptureResponse={(action) => session.act({
             type: 'suspected-uterine-rupture-recognition-response', payload: { action },
           })}
+          onObstetricsMagnesiumToxicityResponse={(action) => session.act({
+            type: 'magnesium-sulfate-toxicity-recognition-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

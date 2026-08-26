@@ -2167,6 +2167,25 @@ or outcome. Six controls expose no learner examination, monitoring interpretatio
 infusion change, oxygen, fluid, blood, drug, dose, route, target, anesthesia, birth, surgery,
 hysterectomy, procedure, disposition or outcome control.
 
+### Wave D obstetrics slice 11: magnesium-sulfate toxicity recognition
+
+The eleventh lab opens 12 hours postpartum after caesarean birth for severe preeclampsia. A documented
+magnesium load and maintenance infusion are followed by oliguria, rising creatinine, progressive
+drowsiness, slurred speech, weakness, absent patellar reflexes and shallow bradypnea. Qualified staff
+have already stopped and isolated the infusion. A supplied pre-stop magnesium result is reconciled in
+mg/dL, mmol/L and mEq/L as supporting evidence, not a substitute for direct whole-person assessment.
+
+The learner activates obstetric, airway-capable anesthesia, critical-care, nursing, pharmacy,
+laboratory, renal, newborn, leadership, communication, dignity and support ownership; connects the
+exposure, clearance, respiratory, reflex, neurological and whole-person pattern; reviews unit and
+alternative-cause boundaries; and reviews qualified source-stop, airway, ventilation, calcium-
+antidote, monitoring, renal, newborn and support readiness. A fixed 5-minute report supplies ongoing
+qualified support and only partial respiratory change, then preserves reversal, clearance, renal,
+preeclampsia, seizure, newborn, disposition and outcome uncertainty. Six controls expose no learner
+examination, measurement, monitor or test acquisition or interpretation, diagnosis, infusion
+operation, oxygen, ventilation, airway care, calcium or other drug, dose, concentration, route, rate,
+target, seizure care, procedure, newborn assessment, disposition or outcome control.
+
 #### Neonatology: 11
 
 Term newborn transition; neonatal apnea; ineffective ventilation correction; neonatal bradycardia;

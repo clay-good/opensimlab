@@ -9,6 +9,7 @@ import { MATERNAL_CARDIAC_ARREST_COORDINATED_RESPONSE } from './maternal-cardiac
 import { SHOULDER_DYSTOCIA_COGNITIVE_SEQUENCE } from './shoulder-dystocia-cognitive-sequence';
 import { UMBILICAL_CORD_PROLAPSE_URGENT_BIRTH_COORDINATION } from './umbilical-cord-prolapse-urgent-birth-coordination';
 import { SUSPECTED_UTERINE_RUPTURE_RECOGNITION } from './suspected-uterine-rupture-recognition';
+import { MAGNESIUM_SULFATE_TOXICITY_RECOGNITION } from './magnesium-sulfate-toxicity-recognition';
 
 export const OBSTETRICS_SCENARIOS: readonly Scenario[] = [
   POSTPARTUM_HEMORRHAGE_UTERINE_ATONY,
@@ -21,6 +22,7 @@ export const OBSTETRICS_SCENARIOS: readonly Scenario[] = [
   SHOULDER_DYSTOCIA_COGNITIVE_SEQUENCE,
   UMBILICAL_CORD_PROLAPSE_URGENT_BIRTH_COORDINATION,
   SUSPECTED_UTERINE_RUPTURE_RECOGNITION,
+  MAGNESIUM_SULFATE_TOXICITY_RECOGNITION,
 ];
 export const DEFAULT_OBSTETRICS_SCENARIO_ID = POSTPARTUM_HEMORRHAGE_UTERINE_ATONY.metadata.id;
 

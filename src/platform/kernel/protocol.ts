@@ -2839,6 +2839,24 @@ export interface EquipmentSnapshot {
       readonly maternalOutcomePredicted: false; readonly newbornOutcomePredicted: false;
       readonly outcomePredicted: false;
     };
+    readonly obstetricsMagnesiumToxicityAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly uncertaintyAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly authoredMagnesiumToxicityPattern: true; readonly authoredQualifiedPartialResponse: boolean;
+      readonly patientExaminedByLearner: false; readonly monitoringInterpretedByLearner: false;
+      readonly laboratoryInterpretedByLearner: false; readonly diagnosisMadeByLearner: false;
+      readonly infusionChangedByLearner: false; readonly airwayManagedByLearner: false;
+      readonly oxygenDeliveredByLearner: false; readonly ventilationDeliveredByLearner: false;
+      readonly antidoteSelectedOrDeliveredByLearner: false;
+      readonly drugDoseConcentrationRouteRateTargetSelectedByLearner: false;
+      readonly seizureCarePerformedByLearner: false; readonly newbornAssessedByLearner: false;
+      readonly procedurePerformedByLearner: false; readonly completeReversalProven: false;
+      readonly magnesiumClearanceProven: false; readonly renalRecoveryProven: false;
+      readonly treatmentEffectProven: false; readonly newbornSafetyProven: false;
+      readonly safetyDispositionDetermined: false; readonly maternalOutcomePredicted: false;
+      readonly newbornOutcomePredicted: false; readonly outcomePredicted: false;
+    };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {
       readonly cuesReviewedAtTick: number | null;

@@ -537,6 +537,10 @@ const OBSTETRICS_UTERINE_RUPTURE_BLOCKED_ACTION_TYPES = new Set([
   ...OBSTETRICS_CORD_PROLAPSE_BLOCKED_ACTION_TYPES,
   'umbilical-cord-prolapse-urgent-birth-coordination-response',
 ]);
+const OBSTETRICS_MAGNESIUM_TOXICITY_BLOCKED_ACTION_TYPES = new Set([
+  ...OBSTETRICS_UTERINE_RUPTURE_BLOCKED_ACTION_TYPES,
+  'suspected-uterine-rupture-recognition-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1524,6 +1528,12 @@ export class AnesthesiaEngine {
   private obstetricsUterineRuptureReadinessAtTick: number | null = null;
   private obstetricsUterineRuptureReassessmentAtTick: number | null = null;
   private obstetricsUterineRuptureHandoffAtTick: number | null = null;
+  private obstetricsMagnesiumToxicitySupportAtTick: number | null = null;
+  private obstetricsMagnesiumToxicityContextAtTick: number | null = null;
+  private obstetricsMagnesiumToxicityUncertaintyAtTick: number | null = null;
+  private obstetricsMagnesiumToxicityReadinessAtTick: number | null = null;
+  private obstetricsMagnesiumToxicityReassessmentAtTick: number | null = null;
+  private obstetricsMagnesiumToxicityHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2495,6 +2505,14 @@ export class AnesthesiaEngine {
     if (obstetricsUterineRupture && OBSTETRICS_UTERINE_RUPTURE_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `obstetrics-uterine-rupture-generic-action-refused-${this.currentTick}`,
         'This Obstetrics lesson exposes no generic examination, CTG interpretation, diagnosis, infusion change, oxygen, airway, fluid, blood, drug, dose, anesthesia, delivery, laparotomy, repair, hysterectomy, procedure, transport, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const obstetricsMagnesiumToxicity = this.scenario.metadata.id === 'magnesium-sulfate-toxicity-recognition'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'magnesium-sulfate-toxicity-recognition-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'magnesium-sulfate-toxicity-recognition-transition-boundary').length === 1;
+    if (obstetricsMagnesiumToxicity && OBSTETRICS_MAGNESIUM_TOXICITY_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `obstetrics-magnesium-toxicity-generic-action-refused-${this.currentTick}`,
+        'This Obstetrics lesson exposes no generic examination, monitoring or laboratory interpretation, diagnosis, infusion operation, oxygen, airway, ventilation, fluid, calcium or other drug, dose, route, seizure care, newborn assessment, procedure, transport, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -11151,6 +11169,33 @@ export class AnesthesiaEngine {
         if (this.obstetricsUterineRuptureHandoffAtTick !== null) break;
         this.obstetricsUterineRuptureHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-uterine-rupture-active-risk-handoff-recorded-${this.currentTick}`, 'Active maternal shock, concealed and visible hemorrhage, coagulation and transfusion risk, fetal hypoxia, operative confirmation, anesthesia, delivery, repair or hysterectomy, urinary and adjacent-organ injury, newborn resuscitation and neurologic uncertainty, fertility, documentation, incident review, explanation, family and staff support, psychological follow-up, prognosis, and maternal or newborn outcome uncertainty were handed off.', { ruptureOperativelyConfirmed: false, deliveryCompleted: false, hemostasisProven: false, hysterectomyDetermined: false, safetyDispositionDetermined: false, maternalOutcomePredicted: false, newbornOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'magnesium-sulfate-toxicity-recognition-response': {
+        const response = typeof action.payload?.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'magnesium-sulfate-toxicity-recognition'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'magnesium-sulfate-toxicity-recognition-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'magnesium-sulfate-toxicity-recognition-transition-boundary').length === 1;
+        const actions = ['activate-obstetrics-magnesium-toxicity-airway-anesthesia-critical-care-pharmacy-and-support-response',
+          'reconcile-obstetrics-magnesium-toxicity-exposure-renal-respiratory-reflex-neurologic-and-whole-person',
+          'review-obstetrics-magnesium-toxicity-multisignal-level-unit-and-alternative-cause-boundaries',
+          'review-obstetrics-magnesium-toxicity-source-stop-airway-ventilation-antidote-monitoring-newborn-and-support-readiness',
+          'review-obstetrics-magnesium-toxicity-fixed-five-minute-qualified-response-report',
+          'handoff-obstetrics-magnesium-toxicity-respiratory-renal-preeclampsia-medication-newborn-support-and-outcome-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `obstetrics-magnesium-toxicity-response-refused-${this.currentTick}`, supported ? 'The magnesium-toxicity action was not listed. No supplied or injected text was retained.' : 'These magnesium-toxicity choices are available only in the exact declared Obstetrics lesson.'); break; }
+        if (response === actions[0]) { if (this.obstetricsMagnesiumToxicitySupportAtTick !== null) break; this.obstetricsMagnesiumToxicitySupportAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-magnesium-toxicity-support-activated-${this.currentTick}`, 'The quiet respiratory and neuromuscular magnesium-toxicity pattern was named and qualified obstetric, anesthesia and airway, critical-care, nursing, pharmacy, laboratory, renal, newborn, leadership, documentation, communication, dignity, family, and staff-support ownership was activated. No learner examination, infusion change, airway care, ventilation, drug, dose, or procedure occurred.'); break; }
+        if (this.obstetricsMagnesiumToxicitySupportAtTick === null) { this.log('warning', 'assessment', `obstetrics-magnesium-toxicity-support-order-refused-${this.currentTick}`, 'Activate the prepared airway-capable magnesium-toxicity response before further review.'); break; }
+        if (response === actions[1]) { if (this.obstetricsMagnesiumToxicityContextAtTick !== null) break; this.obstetricsMagnesiumToxicityContextAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-magnesium-toxicity-context-reconciled-${this.currentTick}`, 'Documented magnesium exposure, oliguria, rising creatinine, respiratory depression, absent reflexes, weakness, drowsiness, speech, pressure, rhythm, postpartum preeclampsia, newborn separation, distress, support, and the whole person were connected without learner examination, monitoring or laboratory interpretation, diagnosis, or treatment.'); break; }
+        if (this.obstetricsMagnesiumToxicityContextAtTick === null) { this.log('warning', 'assessment', `obstetrics-magnesium-toxicity-context-order-refused-${this.currentTick}`, 'Connect the supplied exposure, clearance, breathing, reflex, neurological, postpartum, and whole-person facts before uncertainty review.'); break; }
+        if (response === actions[2]) { if (this.obstetricsMagnesiumToxicityUncertaintyAtTick !== null) break; this.obstetricsMagnesiumToxicityUncertaintyAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-magnesium-toxicity-uncertainty-reviewed-${this.currentTick}`, 'The magnesium result was reconciled as 11.8 mg/dL, 4.85 mmol/L, and 9.7 mEq/L and used only with the multisignal clinical pattern. Opioid or sedative effect, high neuraxial block, stroke or hemorrhage, recurrent preeclampsia or eclampsia, sepsis, pulmonary edema, embolism, hemorrhage, metabolic, neuromuscular, and other causes stayed open without diagnostic closure or delay.'); break; }
+        if (this.obstetricsMagnesiumToxicityUncertaintyAtTick === null) { this.log('warning', 'assessment', `obstetrics-magnesium-toxicity-uncertainty-order-refused-${this.currentTick}`, 'Review the multisignal, unit, serum-level, renal-clearance, and alternative-cause boundaries before readiness.'); break; }
+        if (response === actions[3]) { if (this.obstetricsMagnesiumToxicityReadinessAtTick !== null) break; this.obstetricsMagnesiumToxicityReadinessAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-magnesium-toxicity-readiness-reviewed-${this.currentTick}`, 'Qualified source stop and line isolation, airway and ventilation support, calcium-antidote readiness, ECG and respiratory surveillance, renal and electrolyte review, recurrent-seizure and preeclampsia care, newborn consideration, explanation, documentation, incident review, and family and staff support were reviewed as parallel work. No learner infusion, airway, oxygen, ventilation, calcium, drug, dose, newborn, or procedure action occurred.'); break; }
+        if (this.obstetricsMagnesiumToxicityReadinessAtTick === null) { this.log('warning', 'assessment', `obstetrics-magnesium-toxicity-readiness-order-refused-${this.currentTick}`, 'Review qualified source-stop, airway, ventilation, antidote, monitoring, renal, newborn, communication, and support readiness before the fixed report.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.obstetricsMagnesiumToxicityReadinessAtTick) { this.log('warning', 'assessment', `obstetrics-magnesium-toxicity-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed qualified-team response report.'); break; } if (this.obstetricsMagnesiumToxicityReassessmentAtTick !== null) break; this.obstetricsMagnesiumToxicityReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-magnesium-toxicity-five-minute-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report 5 minutes after activation: the infusion remains isolated, airway-capable support is underway, and calcium antidote has started per local protocol. RR is 12/min, support-coherent SpO2 98%, HR 66/min, and BP 110/68 mmHg (MAP 82); drowsiness, shallow breathing, weakness, and absent patellar reflexes persist. Complete reversal, magnesium clearance, renal recovery, recurrent seizure risk, preeclampsia course, newborn state, disposition, and outcomes remain unresolved.', { infusionChangedByLearner: false, ventilationDeliveredByLearner: false, antidoteSelectedOrDeliveredByLearner: false, completeReversalProven: false, treatmentEffectProven: false, newbornSafetyProven: false, outcomePredicted: false }); break; }
+        if (this.obstetricsMagnesiumToxicityReassessmentAtTick === null) { this.log('warning', 'assessment', `obstetrics-magnesium-toxicity-handoff-order-refused-${this.currentTick}`, 'Review the fixed 5-minute qualified response report before active-risk handoff.'); break; }
+        if (this.currentTick <= this.obstetricsMagnesiumToxicityReassessmentAtTick) { this.log('warning', 'assessment', `obstetrics-magnesium-toxicity-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.obstetricsMagnesiumToxicityHandoffAtTick !== null) break;
+        this.obstetricsMagnesiumToxicityHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-magnesium-toxicity-active-risk-handoff-recorded-${this.currentTick}`, 'Respiratory failure and arrest risk, neuromuscular weakness, rhythm and pressure risk, magnesium rebound and clearance, renal injury and replacement-therapy uncertainty, fluid and electrolyte state, recurrent seizure and preeclampsia risk, medication reconciliation, newborn exposure and assessment, explanation, family and staff support, incident review, psychological follow-up, disposition, prognosis, and maternal or newborn outcome uncertainty were handed off.', { completeReversalProven: false, magnesiumClearanceProven: false, renalRecoveryProven: false, newbornSafetyProven: false, safetyDispositionDetermined: false, maternalOutcomePredicted: false, newbornOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -14122,6 +14167,19 @@ export class AnesthesiaEngine {
         diastolicMmHg: this.obstetricsUterineRuptureReassessmentAtTick !== null ? 50 : 58,
         meanArterialMmHg: this.obstetricsUterineRuptureReassessmentAtTick !== null ? 62 : 71,
         coreTemperatureC: 36.8 };
+    }
+    if (this.scenario.metadata.id === 'magnesium-sulfate-toxicity-recognition'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'magnesium-sulfate-toxicity-recognition-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'magnesium-sulfate-toxicity-recognition-transition-boundary').length === 1) {
+      crisisState = { ...crisisState,
+        heartRateBpm: this.obstetricsMagnesiumToxicityReassessmentAtTick !== null ? 66 : 62,
+        respiratoryRateBpm: this.obstetricsMagnesiumToxicityReassessmentAtTick !== null ? 12 : 9,
+        spo2Percent: this.obstetricsMagnesiumToxicityReassessmentAtTick !== null ? 98 : 94,
+        systolicMmHg: this.obstetricsMagnesiumToxicityReassessmentAtTick !== null ? 110 : 112,
+        diastolicMmHg: 68,
+        meanArterialMmHg: this.obstetricsMagnesiumToxicityReassessmentAtTick !== null ? 82 : 83,
+        coreTemperatureC: 36.7 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -18315,6 +18373,32 @@ export class AnesthesiaEngine {
               safetyDispositionDetermined: false as const, fertilityOutcomePredicted: false as const,
               maternalOutcomePredicted: false as const, newbornOutcomePredicted: false as const,
               outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'magnesium-sulfate-toxicity-recognition'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'magnesium-sulfate-toxicity-recognition-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'magnesium-sulfate-toxicity-recognition-transition-boundary').length === 1 ? {
+            obstetricsMagnesiumToxicityAssessment: {
+              supportAtTick: this.obstetricsMagnesiumToxicitySupportAtTick,
+              contextAtTick: this.obstetricsMagnesiumToxicityContextAtTick,
+              uncertaintyAtTick: this.obstetricsMagnesiumToxicityUncertaintyAtTick,
+              readinessAtTick: this.obstetricsMagnesiumToxicityReadinessAtTick,
+              reassessmentAtTick: this.obstetricsMagnesiumToxicityReassessmentAtTick,
+              handoffAtTick: this.obstetricsMagnesiumToxicityHandoffAtTick,
+              authoredMagnesiumToxicityPattern: true as const,
+              authoredQualifiedPartialResponse: this.obstetricsMagnesiumToxicityReassessmentAtTick !== null,
+              patientExaminedByLearner: false as const, monitoringInterpretedByLearner: false as const,
+              laboratoryInterpretedByLearner: false as const, diagnosisMadeByLearner: false as const,
+              infusionChangedByLearner: false as const, airwayManagedByLearner: false as const,
+              oxygenDeliveredByLearner: false as const, ventilationDeliveredByLearner: false as const,
+              antidoteSelectedOrDeliveredByLearner: false as const, drugDoseConcentrationRouteRateTargetSelectedByLearner: false as const,
+              seizureCarePerformedByLearner: false as const, newbornAssessedByLearner: false as const,
+              procedurePerformedByLearner: false as const, completeReversalProven: false as const,
+              magnesiumClearanceProven: false as const, renalRecoveryProven: false as const,
+              treatmentEffectProven: false as const, newbornSafetyProven: false as const,
+              safetyDispositionDetermined: false as const, maternalOutcomePredicted: false as const,
+              newbornOutcomePredicted: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

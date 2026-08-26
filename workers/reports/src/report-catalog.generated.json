@@ -1936,6 +1936,17 @@
         "GB"
       ],
       "fidelityClass": "state_transition"
+    },
+    {
+      "scenarioId": "magnesium-sulfate-toxicity-recognition",
+      "contentVersion": "0.1.0",
+      "moduleId": "obstetrics",
+      "maturity": "draft",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition"
     }
   ]
 }

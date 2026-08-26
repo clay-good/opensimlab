@@ -5225,6 +5225,31 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['activate-obstetrics-magnesium-toxicity-airway-anesthesia-critical-care-pharmacy-and-support-response',
+      'reconcile-obstetrics-magnesium-toxicity-exposure-renal-respiratory-reflex-neurologic-and-whole-person',
+      'review-obstetrics-magnesium-toxicity-multisignal-level-unit-and-alternative-cause-boundaries',
+      'review-obstetrics-magnesium-toxicity-source-stop-airway-ventilation-antidote-monitoring-newborn-and-support-readiness',
+      'review-obstetrics-magnesium-toxicity-fixed-five-minute-qualified-response-report',
+      'handoff-obstetrics-magnesium-toxicity-respiratory-renal-preeclampsia-medication-newborn-support-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'magnesium-sulfate-toxicity-recognition'
+        && scenario.timeline.every((event) => event.type === 'narrative')
+        && scenario.timeline.filter((event) => event.target === 'magnesium-sulfate-toxicity-recognition-transition').length === 1
+        && scenario.timeline.filter((event) => event.target === 'magnesium-sulfate-toxicity-recognition-transition-boundary').length === 1;
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Obstetrics magnesium-toxicity lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['support-activated', 'Airway-capable obstetric, critical-care, pharmacy, laboratory, renal, newborn, communication, dignity, family, and support ownership was activated first.'],
+        ['context-reconciled', 'Exposure, renal clearance, breathing, reflexes, weakness, neurological state, postpartum disease, newborn separation, and the whole person were connected.'],
+        ['uncertainty-reviewed', 'The unit-reconciled level supported but did not replace the multisignal pattern, while dangerous postpartum, medication, airway, neurological, metabolic, and cardiopulmonary alternatives remained open.'],
+        ['readiness-reviewed', 'Qualified source stop, airway, ventilation, antidote, monitoring, renal, preeclampsia, newborn, communication, documentation, and support readiness was reviewed.'],
+        ['five-minute-report-reviewed', 'The fixed partial-response report was reviewed without learner-treatment, complete-reversal, clearance, recovery, newborn-safety, disposition, or outcome claims.'],
+        ['active-risk-handoff-recorded', 'Respiratory, neuromuscular, rhythm, renal, recurrent-toxicity, preeclampsia, medication, newborn, support, review, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^obstetrics-magnesium-toxicity-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^obstetrics-magnesium-toxicity-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-obstetrics-sepsis-postpartum-clock-infection-organ-dysfunction-and-whole-person',
       'recognize-obstetrics-maternal-sepsis-emergency-without-fever-score-source-or-single-value-closure',
       'activate-obstetrics-sepsis-obstetric-critical-care-anesthesia-nursing-pharmacy-microbiology-source-newborn-and-dignity-ownership',

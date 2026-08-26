@@ -1245,6 +1245,16 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-26',
   },
   {
+    id: 'dailymed-magnesium-sulfate-dextrose-2026',
+    currency: { lastAmended: '2026-01-01', checkedAt: '2026-08-26' },
+    authors: 'U.S. National Library of Medicine',
+    title: 'Magnesium Sulfate in Dextrose injection, for intravenous use', publication: 'DailyMed current prescribing information', year: 2026,
+    locator: 'warnings and precautions 5.2, renal impairment 8.6, and overdosage 10',
+    usedFor: 'Renal excretion and increased toxicity risk with impaired clearance; the coupled deep-tendon-reflex, respiratory, weakness, blood-pressure, conduction, paralysis, and arrest toxicity spectrum; and the boundary that a serum level supports but does not replace clinical assessment.',
+    verifiedAgainst: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=8da9c33f-e3cd-4026-b034-2b964401b346',
+    verifiedOn: '2026-08-26',
+  },
+  {
     id: 'wses-aast-thoracic-trauma-2025',
     pmid: '41094688',
     currency: {
