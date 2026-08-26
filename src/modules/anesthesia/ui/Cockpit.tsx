@@ -1127,6 +1127,9 @@ export function Cockpit({
           onObstetricsEclampsiaResponse={(action) => session.act({
             type: 'eclampsia-first-seizure-response', payload: { action },
           })}
+          onObstetricsAfeResponse={(action) => session.act({
+            type: 'suspected-amniotic-fluid-embolism-pattern-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

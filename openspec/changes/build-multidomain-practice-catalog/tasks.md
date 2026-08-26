@@ -427,6 +427,16 @@ credited toward the catalog until every item in the completion contract passes.
     seizure first aid, examination, measurement, testing, diagnosis, magnesium or other drug, dose,
     route, airway, anesthesia, birth, procedure, disposition, treatment effect, or maternal/newborn
     outcome controls.
+  - [x] Obstetrics slice 6/15 adds one authored pulse-present rapid maternal cardiorespiratory-
+    collapse-and-coagulopathy pattern 4 minutes after birth and placental delivery, with breathing
+    and circulation deterioration preceding diffuse bleeding, a supplied firm uterus, immediate
+    coordinated obstetric, anesthesia, critical-care, cardiopulmonary, hemorrhage, newborn and
+    dignity-centered ownership, dangerous alternatives left open, a fixed 12-minute report that
+    preserves a pulse and unresolved shock, hypoxemia, bleeding and coagulation risk, and active-risk
+    handoff without learner examination, measurement, test interpretation, diagnosis, research-
+    criteria scoring, oxygen, ventilation, airway, fluid, vasoactive, blood, coagulation, drug, dose,
+    route, CPR, defibrillation, ECMO, delivery, procedure, disposition, treatment effect, durable
+    control, or maternal/newborn outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

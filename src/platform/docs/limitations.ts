@@ -4679,6 +4679,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use direct serial maternal, neurologic, airway, pulmonary, pressure, organ and fetal evidence with current local protocols and qualified obstetric, anesthesia, critical-care, nursing, pharmacy, fetal, neonatal, diagnostic, communication, and support ownership.',
     briefIn: ['eclampsia-first-seizure-response'],
   },
+  {
+    id: 'afe-birth-cardiorespiratory-coagulopathy-and-later-reports-are-authored',
+    headline: 'The birth clock, cardiorespiratory collapse, bleeding, coagulation, newborn, and later reports are authored.',
+    simplification: 'Fixed reports stand in for direct history, pulse and perfusion assessment, examination, monitoring, loss and uterine assessment, laboratory and cardiopulmonary evaluation, qualified emergency care, and reassessment.',
+    whereItMisleads: 'Treating fictional timing, vitals, loss, uterine tone, coagulation, hemoglobin, lactate, oxygenation, responsiveness, or pulse as learner evidence, a confirmed diagnosis, a treatment effect, durable control, disposition, or predicted course.',
+    correctUnderstanding: 'Sudden peripartum cardiorespiratory collapse with evolving coagulopathy requires immediate coordinated support and parallel evaluation; suspected amniotic fluid embolism remains a clinical pattern with dangerous alternatives and no single confirmatory test.',
+    briefIn: ['suspected-amniotic-fluid-embolism-pattern'],
+  },
+  {
+    id: 'afe-controls-reconcile-recognize-activate-review-reassess-and-handoff-only',
+    headline: 'The controls activate coordinated help, reconcile, recognize, review, reassess, and hand off only.',
+    simplification: 'Six actions stand in for simultaneous qualified cardiopulmonary, obstetric, anesthesia, critical-care, hemorrhage, coagulation, blood-bank, laboratory, newborn, communication, dignity, family, staff-support, surveillance, and handoff work.',
+    whereItMisleads: 'Equating button order with examination, monitoring, diagnostic testing, AFE confirmation, research-criteria scoring, oxygenation, ventilation, circulation support, transfusion, coagulation treatment, procedure, arrest care, recovery, or competence.',
+    correctUnderstanding: 'Actual response is simultaneous and team-based: activate qualified help first, support airway, breathing and circulation, prepare for arrest, assess and manage coagulation and hemorrhage early, keep alternative causes open, and reassess serially.',
+    briefIn: ['suspected-amniotic-fluid-embolism-pattern'],
+  },
+  {
+    id: 'no-live-afe-exam-test-diagnosis-treatment-airway-blood-arrest-delivery-procedure-disposition-or-outcome',
+    headline: 'The lab does not examine or test, diagnose AFE, deliver treatment, perform arrest care or a procedure, determine disposition, or report outcome.',
+    simplification: 'No live pulse, airway, breathing, circulation, uterus, genital tract, placenta, loss, monitoring, ECG, echo, laboratory, imaging, DIC score, diagnosis, differential exclusion, oxygen, ventilation, airway, fluid, vasoactive, pulmonary vasodilator, uterotonic, tranexamic acid, blood or coagulation product, drug, dose, route, target, access, CPR, defibrillation, ECMO, delivery, surgery, transfer, disposition, fertility, prognosis, or maternal or newborn outcome is modeled.',
+    whereItMisleads: 'Delaying qualified response for diagnostic certainty; copying fictional values into care; applying research criteria as a bedside score; selecting a product, device, dose, airway, arrest step, delivery, procedure, or disposition from this rehearsal; or reading completion as competence.',
+    correctUnderstanding: 'Use direct serial whole-patient evidence, current local maternal-collapse, hemorrhage and arrest pathways, and qualified obstetric, anesthesia, critical-care, cardiopulmonary, blood-bank, laboratory, newborn, communication, and support ownership.',
+    briefIn: ['suspected-amniotic-fluid-embolism-pattern'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

@@ -5094,6 +5094,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['activate-obstetrics-afe-coordinated-obstetric-anesthesia-critical-care-cardiopulmonary-hemorrhage-newborn-and-dignity-response',
+      'reconcile-obstetrics-afe-birth-clock-symptom-order-cardiorespiratory-state-bleeding-coagulation-newborn-and-whole-person',
+      'recognize-obstetrics-afe-rapid-maternal-collapse-and-coagulopathy-pattern-without-diagnostic-closure',
+      'review-obstetrics-afe-supplied-cardiac-pulmonary-hemorrhage-coagulation-uterine-anesthetic-thrombotic-infectious-allergic-and-competing-cause-boundary',
+      'review-obstetrics-afe-fixed-later-breathing-circulation-bleeding-coagulation-and-support-report',
+      'handoff-obstetrics-afe-hypoxemia-shock-coagulopathy-bleeding-arrest-procedure-newborn-family-support-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'suspected-amniotic-fluid-embolism-pattern'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'suspected-amniotic-fluid-embolism-pattern-transition')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'suspected-amniotic-fluid-embolism-pattern-transition-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Obstetrics suspected-amniotic-fluid-embolism-pattern lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['support-activated', 'Coordinated qualified cardiopulmonary, hemorrhage, coagulation, obstetric, anesthesia, newborn, communication, dignity, family, and staff-support ownership was activated first.'],
+        ['trajectory-reconciled', 'Birth timing, symptom order, cardiorespiratory state, early bleeding, coagulation, newborn context, and whole-person state were connected.'],
+        ['pattern-recognized', 'A life-threatening pulse-present maternal-collapse-and-coagulopathy pattern compatible with suspected AFE was recognized while dangerous alternatives remained open.'],
+        ['evidence-reviewed', 'Supplied cardiac, pulmonary, hemorrhage, coagulation, uterine, anesthetic, thrombotic, infectious, allergic, and other cause boundaries were reviewed.'],
+        ['later-report-reviewed', 'The fixed report authored as 12 minutes after activation was reviewed as persistent shock, respiratory compromise, and progressive coagulopathy and hemorrhage without treatment-effect or recovery claims.'],
+        ['active-risk-handoff-recorded', 'Hypoxemia, shock, coagulopathy, bleeding, arrest, procedure, newborn, family, staff-support, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^obstetrics-afe-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const support = log.find(({ eventId }) => /^obstetrics-afe-support-activated-\d+$/.test(eventId));
+      const ordered = !!event && (index === 0 || (!!support && (index >= 4 ? support.tick < event.tick : support.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, preceded coordinated activation, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-obstetrics-sepsis-postpartum-clock-infection-organ-dysfunction-and-whole-person',
       'recognize-obstetrics-maternal-sepsis-emergency-without-fever-score-source-or-single-value-closure',
       'activate-obstetrics-sepsis-obstetric-critical-care-anesthesia-nursing-pharmacy-microbiology-source-newborn-and-dignity-ownership',

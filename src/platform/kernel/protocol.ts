@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 166 reports postpartum severe-preeclampsia state. */
-export const WORKER_PROTOCOL_VERSION = 167;
+export const WORKER_PROTOCOL_VERSION = 168;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2739,6 +2739,33 @@ export interface EquipmentSnapshot {
       readonly treatmentEffectProven: false; readonly durableSeizureControlProven: false;
       readonly durablePressureControlProven: false; readonly neurologicRecoveryProven: false;
       readonly organRecoveryProven: false; readonly fetalSafetyProven: false;
+      readonly safetyDispositionDetermined: false; readonly maternalOutcomePredicted: false;
+      readonly newbornOutcomePredicted: false; readonly outcomePredicted: false;
+    };
+    readonly obstetricsAfeAssessment?: {
+      readonly supportAtTick: number | null; readonly trajectoryAtTick: number | null;
+      readonly recognitionAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly pulsePresentCardiorespiratoryCollapsePrecedingCoagulopathyPatternAuthored: true;
+      readonly qualifiedSupportActive: boolean;
+      readonly suspectedAfePatternRecognizedWithoutClosure: boolean;
+      readonly cardiopulmonaryHemorrhageCoagulationAndDifferentialEvidenceReviewed: boolean;
+      readonly fixedLaterPersistentShockRespiratoryCompromiseAndProgressiveCoagulopathyReportReviewed: boolean;
+      readonly pulseAssessedByLearner: false; readonly patientExaminedByLearner: false;
+      readonly bloodLossMeasuredByLearner: false; readonly uterusOrGenitalTractAssessedByLearner: false;
+      readonly monitoringInterpretedByLearner: false; readonly laboratoryAcquiredByLearner: false;
+      readonly laboratoryInterpretedByLearner: false; readonly dicScoreCalculatedByLearner: false;
+      readonly imagingOrEchoAcquiredByLearner: false; readonly imagingOrEchoInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly alternativeExcludedByLearner: false;
+      readonly oxygenOrVentilationSelectedByLearner: false; readonly airwaySelectedByLearner: false;
+      readonly fluidOrVasoactiveSelectedByLearner: false;
+      readonly bloodOrCoagulationProductSelectedByLearner: false;
+      readonly drugDoseRouteOrTargetSelectedByLearner: false;
+      readonly cprOrDefibrillationPerformedByLearner: false; readonly ecmoSelectedByLearner: false;
+      readonly deliveryOrProcedureSelectedByLearner: false; readonly treatmentDeliveredByLearner: false;
+      readonly cardiacArrestOccurred: false; readonly treatmentEffectProven: false;
+      readonly respiratoryRecoveryProven: false; readonly hemodynamicRecoveryProven: false;
+      readonly bleedingControlProven: false; readonly coagulopathyControlProven: false;
       readonly safetyDispositionDetermined: false; readonly maternalOutcomePredicted: false;
       readonly newbornOutcomePredicted: false; readonly outcomePredicted: false;
     };

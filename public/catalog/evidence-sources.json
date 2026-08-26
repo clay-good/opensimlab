@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 265,
+  "sourceCount": 268,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -3369,6 +3369,47 @@
       "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/38669101/",
       "verifiedOn": "2026-08-26",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/38669101/"
+    },
+    {
+      "id": "smfm-amniotic-fluid-embolism-checklist-2026",
+      "currency": {
+        "lastAmended": "2026-08-12",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "Society for Maternal-Fetal Medicine Patient Safety and Quality Committee",
+      "title": "Checklist for initial management of amniotic fluid embolism—Updated 2026",
+      "publication": "Pregnancy",
+      "year": 2026,
+      "locator": "2(5):e70364; doi:10.1002/pmf2.70364; initial management and implementation sections",
+      "usedFor": "The sudden peripartum cardiorespiratory-collapse pattern, low-clutter cognitive aid, coordinated response, separate arrest pathway, hemorrhage and coagulopathy readiness, and patient, family, and staff support boundaries.",
+      "verifiedAgainst": "https://obgyn.onlinelibrary.wiley.com/doi/full/10.1002/pmf2.70364",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "smfm-amniotic-fluid-embolism-guideline-2016",
+      "pmid": "26987420",
+      "authors": "Society for Maternal-Fetal Medicine; Pacheco LD, Saade G, Hankins GDV, Clark SL",
+      "title": "Amniotic fluid embolism: diagnosis and management",
+      "publication": "American Journal of Obstetrics and Gynecology",
+      "year": 2016,
+      "locator": "215(2):B16-B24; doi:10.1016/j.ajog.2016.03.012; recommendations 1-7",
+      "usedFor": "Clinical differential recognition, absence of a confirmatory laboratory test, multidisciplinary care, cardiopulmonary support, avoidance of excessive fluid, and early coagulation and bleeding assessment boundaries.",
+      "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/26987420/",
+      "verifiedOn": "2026-08-26",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/26987420/"
+    },
+    {
+      "id": "clark-amniotic-fluid-embolism-research-definition-2016",
+      "pmid": "27372270",
+      "authors": "Clark SL, Romero R, Dildy GA, et al",
+      "title": "Proposed diagnostic criteria for the case definition of amniotic fluid embolism in research studies",
+      "publication": "American Journal of Obstetrics and Gynecology",
+      "year": 2016,
+      "locator": "215(4):408-412; doi:10.1016/j.ajog.2016.06.037; proposed research case definition",
+      "usedFor": "Face-checking the classic combined cardiorespiratory and overt-DIC phenotype while preserving that the criteria are for consistent research reporting, not learner-applied bedside diagnosis.",
+      "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/27372270/",
+      "verifiedOn": "2026-08-26",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/27372270/"
     },
     {
       "id": "who-figo-icm-postpartum-hemorrhage-2025",

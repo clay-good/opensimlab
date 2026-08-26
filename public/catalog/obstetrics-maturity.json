@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "obstetrics",
-  "recordCount": 5,
+  "recordCount": 6,
   "records": [
     {
       "recordId": "scenario:postpartum-hemorrhage-uterine-atony@0.1.0",
@@ -56,6 +56,17 @@
       "evidence": [
         "/catalog/obstetrics-completion-audit.json#eclampsia-first-seizure-response@0.1.0",
         "/catalog/obstetrics-quality-audit.json#eclampsia-first-seizure-response@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:suspected-amniotic-fluid-embolism-pattern@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "suspected-amniotic-fluid-embolism-pattern",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/obstetrics-completion-audit.json#suspected-amniotic-fluid-embolism-pattern@0.1.0",
+        "/catalog/obstetrics-quality-audit.json#suspected-amniotic-fluid-embolism-pattern@0.1.0"
       ]
     }
   ]

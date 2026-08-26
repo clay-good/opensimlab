@@ -46,7 +46,7 @@ const lastState = () => {
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
   it('Scenario: Obstetrics postpartum severe-preeclampsia state has protocol version 166', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(167);
+    expect(WORKER_PROTOCOL_VERSION).toBe(168);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

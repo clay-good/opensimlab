@@ -483,6 +483,38 @@ const OBSTETRICS_ECLAMPSIA_BLOCKED_ACTION_TYPES = new Set([
   'airway-maneuver',
   'laryngoscopy',
 ]);
+const OBSTETRICS_AFE_BLOCKED_ACTION_TYPES = new Set([
+  ...OBSTETRICS_ECLAMPSIA_BLOCKED_ACTION_TYPES,
+  'eclampsia-first-seizure-response',
+  'undifferentiated-shock-assessment',
+  'septic-shock-assessment',
+  'septic-shock-response',
+  'septic-shock-resuscitation-response',
+  'hemorrhagic-shock-assessment',
+  'hemorrhagic-shock-response',
+  'cardiogenic-shock-response',
+  'mixed-shock-response',
+  'right-ventricular-failure-response',
+  'post-infarction-shock-response',
+  'pulmonary-embolism-deterioration-response',
+  'massive-pulmonary-embolism-response',
+  'post-pulmonary-embolism-persistent-dyspnea-response',
+  'acute-pulmonary-edema-response',
+  'acute-pulmonary-edema-respiratory-support-response',
+  'escalating-hypoxemia-response',
+  'ards-lung-protective-response',
+  'high-flow-nasal-oxygen-escalation-response',
+  'noninvasive-ventilation-selection-response',
+  'oxygen-device-failure-response',
+  'ventilator-circuit-disconnection-response',
+  'endotracheal-tube-migration-response',
+  'emergency-anaphylaxis-response',
+  'venous-air-embolism-response',
+  'high-spinal-response',
+  'upper-gi-hemorrhage-response',
+  'post-arrest-temperature-response',
+  'pediatric-bradycardic-arrest-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1440,6 +1472,12 @@ export class AnesthesiaEngine {
   private obstetricsEclampsiaEvidenceAtTick: number | null = null;
   private obstetricsEclampsiaReassessmentAtTick: number | null = null;
   private obstetricsEclampsiaHandoffAtTick: number | null = null;
+  private obstetricsAfeTrajectoryAtTick: number | null = null;
+  private obstetricsAfeRecognitionAtTick: number | null = null;
+  private obstetricsAfeSupportAtTick: number | null = null;
+  private obstetricsAfeEvidenceAtTick: number | null = null;
+  private obstetricsAfeReassessmentAtTick: number | null = null;
+  private obstetricsAfeHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2372,6 +2410,13 @@ export class AnesthesiaEngine {
     if (obstetricsEclampsia && OBSTETRICS_ECLAMPSIA_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `obstetrics-eclampsia-generic-action-refused-${this.currentTick}`,
         'This Obstetrics lesson exposes no generic examination, monitoring interpretation, glucose, laboratory, imaging, magnesium, antihypertensive, antiseizure drug, dose, route, access, oxygen, airway, seizure, anesthesia, delivery, procedure, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const obstetricsAfe = this.scenario.metadata.id === 'suspected-amniotic-fluid-embolism-pattern'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'suspected-amniotic-fluid-embolism-pattern-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'suspected-amniotic-fluid-embolism-pattern-transition-boundary');
+    if (obstetricsAfe && OBSTETRICS_AFE_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `obstetrics-afe-generic-action-refused-${this.currentTick}`,
+        'This Obstetrics lesson exposes no generic examination, monitoring, blood-loss, uterine, laboratory, imaging, DIC score, diagnosis, oxygen, ventilation, airway, fluid, vasoactive, blood, coagulation, drug, dose, route, access, CPR, defibrillation, ECMO, delivery, procedure, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -10898,6 +10943,30 @@ export class AnesthesiaEngine {
         if (this.obstetricsEclampsiaHandoffAtTick !== null) break;
         this.obstetricsEclampsiaHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-eclampsia-active-risk-handoff-recorded-${this.currentTick}`, 'Recurrent seizure, airway and aspiration, stroke and other neurologic causes, severe pressure, pulmonary edema, platelet, liver and kidney injury, magnesium surveillance, fetal trajectory, individualized birth planning after maternal stabilization, postpartum recurrence, support, prognosis, and maternal or newborn outcome uncertainty were handed off.', { safetyDispositionDetermined: false, deliveryPerformedByLearner: false, maternalOutcomePredicted: false, newbornOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'suspected-amniotic-fluid-embolism-pattern-response': {
+        const response = typeof action.payload?.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'suspected-amniotic-fluid-embolism-pattern'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'suspected-amniotic-fluid-embolism-pattern-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'suspected-amniotic-fluid-embolism-pattern-transition-boundary');
+        const actions = ['activate-obstetrics-afe-coordinated-obstetric-anesthesia-critical-care-cardiopulmonary-hemorrhage-newborn-and-dignity-response',
+          'reconcile-obstetrics-afe-birth-clock-symptom-order-cardiorespiratory-state-bleeding-coagulation-newborn-and-whole-person',
+          'recognize-obstetrics-afe-rapid-maternal-collapse-and-coagulopathy-pattern-without-diagnostic-closure',
+          'review-obstetrics-afe-supplied-cardiac-pulmonary-hemorrhage-coagulation-uterine-anesthetic-thrombotic-infectious-allergic-and-competing-cause-boundary',
+          'review-obstetrics-afe-fixed-later-breathing-circulation-bleeding-coagulation-and-support-report',
+          'handoff-obstetrics-afe-hypoxemia-shock-coagulopathy-bleeding-arrest-procedure-newborn-family-support-and-outcome-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `obstetrics-afe-response-refused-${this.currentTick}`, supported ? 'The suspected-AFE action was not listed. No supplied or injected text was retained.' : 'These suspected-AFE choices are available only in the exact declared Obstetrics lesson.'); break; }
+        if (response === actions[0]) { if (this.obstetricsAfeSupportAtTick !== null) break; this.obstetricsAfeSupportAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-afe-support-activated-${this.currentTick}`, 'Qualified obstetric, anesthesia, nursing, critical-care, respiratory, cardiology, pharmacy, blood-bank, laboratory, operating-room, newborn, communication, dignity, family, and staff-support ownership was activated now for parallel oxygenation and ventilation, hemodynamic and right-heart-sensitive support, arrest readiness, coagulation and hemorrhage response. No learner maneuver, product, dose, target, route, treatment, delivery, or procedure selection occurred.'); break; }
+        if (this.obstetricsAfeSupportAtTick === null) { this.log('warning', 'assessment', `obstetrics-afe-support-order-refused-${this.currentTick}`, 'Activate coordinated qualified maternal-collapse, hemorrhage, newborn, and support ownership now before further review.'); break; }
+        if (response === actions[1]) { if (this.obstetricsAfeTrajectoryAtTick !== null) break; this.obstetricsAfeTrajectoryAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-afe-trajectory-reconciled-${this.currentTick}`, 'The birth clock, abrupt breathing and circulation change, alertness, early loss, coagulation, newborn context, support needs, and whole person were connected without learner examination, measurement, calculation, interpretation, or diagnosis.'); break; }
+        if (response === actions[2]) { if (this.obstetricsAfeRecognitionAtTick !== null) break; this.obstetricsAfeRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-afe-pattern-recognized-${this.currentTick}`, 'The sudden postpartum cardiorespiratory collapse with a central pulse preceding major visible bleeding, with early coagulopathy, established a supplied life-threatening pattern compatible with suspected amniotic fluid embolism while thrombotic, cardiac, anesthetic, allergic, infectious, hemorrhagic, and other causes remained open.', { diagnosisMadeByLearner: false }); break; }
+        if (response === actions[3]) { if (this.obstetricsAfeEvidenceAtTick !== null) break; this.obstetricsAfeEvidenceAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-afe-evidence-reviewed-${this.currentTick}`, 'Supplied timing, breathing, oxygenation, circulation, pulse, perfusion, bleeding, uterine, platelet, fibrinogen, coagulation, hemoglobin, lactate, newborn, cardiac, pulmonary, thrombotic, anesthetic, allergic, infectious, hemorrhagic, and other cause boundaries were integrated without learner acquisition, interpretation, score, diagnosis, exclusion, treatment, or eligibility determination.'); break; }
+        if (this.obstetricsAfeTrajectoryAtTick === null || this.obstetricsAfeRecognitionAtTick === null || this.obstetricsAfeEvidenceAtTick === null) { this.log('warning', 'assessment', `obstetrics-afe-review-order-refused-${this.currentTick}`, 'After activating help, connect the whole pattern, recognize it without diagnostic closure, and review supplied evidence before the later report.'); break; }
+        if (response === actions[4]) { const prior = Math.max(this.obstetricsAfeTrajectoryAtTick, this.obstetricsAfeRecognitionAtTick, this.obstetricsAfeEvidenceAtTick); if (this.currentTick <= prior) { this.log('warning', 'assessment', `obstetrics-afe-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed later qualified-team report.'); break; } if (this.obstetricsAfeReassessmentAtTick !== null) break; this.obstetricsAfeReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-afe-later-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report, authored as 12 minutes after activation: a central pulse remains, HR 124, BP 86/50 (MAP 62), RR 28, pulse-coherent SpO2 94% on unspecified qualified support, and temperature 36.7 C. She opens her eyes to voice but does not reliably follow commands; perfusion remains cool and mottled. Cumulative vaginal loss is 850 mL and rising, the uterus remains firm, vascular-access sites ooze, platelets are 44, fibrinogen 72, PT 23.4 seconds, INR 2.2, aPTT 68 seconds, hemoglobin 8.8, and lactate 6.0. This is persistent shock, respiratory compromise, and progressive coagulopathy and hemorrhage, not recovery; cause, procedures, durable control, and outcomes remain unresolved.', { treatmentDeliveredByLearner: false, treatmentEffectProven: false, cardiacArrestOccurred: false, outcomePredicted: false }); break; }
+        if (this.obstetricsAfeReassessmentAtTick === null) { this.log('warning', 'assessment', `obstetrics-afe-handoff-order-refused-${this.currentTick}`, 'Review the fixed later cardiopulmonary, bleeding, and coagulation report before handoff.'); break; }
+        if (this.currentTick <= this.obstetricsAfeReassessmentAtTick) { this.log('warning', 'assessment', `obstetrics-afe-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.obstetricsAfeHandoffAtTick !== null) break;
+        this.obstetricsAfeHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-afe-active-risk-handoff-recorded-${this.currentTick}`, 'Hypoxemia, shock, right-heart and other cardiopulmonary causes, progressive coagulopathy and hemorrhage, arrest readiness, procedure and critical-care needs, newborn continuity, family and staff support, neurologic recovery, fertility, prognosis, and maternal or newborn outcome uncertainty were handed off.', { safetyDispositionDetermined: false, maternalOutcomePredicted: false, newbornOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -13819,6 +13888,17 @@ export class AnesthesiaEngine {
         diastolicMmHg: this.obstetricsEclampsiaReassessmentAtTick !== null ? 100 : 118,
         meanArterialMmHg: this.obstetricsEclampsiaReassessmentAtTick !== null ? 118 : 137,
         coreTemperatureC: 36.8 };
+    }
+    if (this.scenario.metadata.id === 'suspected-amniotic-fluid-embolism-pattern'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'suspected-amniotic-fluid-embolism-pattern-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'suspected-amniotic-fluid-embolism-pattern-transition-boundary')) {
+      crisisState = { ...crisisState, heartRateBpm: this.obstetricsAfeReassessmentAtTick !== null ? 124 : 132,
+        respiratoryRateBpm: this.obstetricsAfeReassessmentAtTick !== null ? 28 : 34,
+        spo2Percent: this.obstetricsAfeReassessmentAtTick !== null ? 94 : 78,
+        systolicMmHg: this.obstetricsAfeReassessmentAtTick !== null ? 86 : 74,
+        diastolicMmHg: this.obstetricsAfeReassessmentAtTick !== null ? 50 : 42,
+        meanArterialMmHg: this.obstetricsAfeReassessmentAtTick !== null ? 62 : 53,
+        coreTemperatureC: this.obstetricsAfeReassessmentAtTick !== null ? 36.7 : 36.8 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -17882,6 +17962,36 @@ export class AnesthesiaEngine {
               organRecoveryProven: false as const, fetalSafetyProven: false as const,
               safetyDispositionDetermined: false as const, maternalOutcomePredicted: false as const,
               newbornOutcomePredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'suspected-amniotic-fluid-embolism-pattern'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'suspected-amniotic-fluid-embolism-pattern-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'suspected-amniotic-fluid-embolism-pattern-transition-boundary') ? {
+            obstetricsAfeAssessment: {
+              supportAtTick: this.obstetricsAfeSupportAtTick, trajectoryAtTick: this.obstetricsAfeTrajectoryAtTick,
+              recognitionAtTick: this.obstetricsAfeRecognitionAtTick, evidenceAtTick: this.obstetricsAfeEvidenceAtTick,
+              reassessmentAtTick: this.obstetricsAfeReassessmentAtTick, handoffAtTick: this.obstetricsAfeHandoffAtTick,
+              pulsePresentCardiorespiratoryCollapsePrecedingCoagulopathyPatternAuthored: true as const,
+              qualifiedSupportActive: this.obstetricsAfeSupportAtTick !== null,
+              suspectedAfePatternRecognizedWithoutClosure: this.obstetricsAfeRecognitionAtTick !== null,
+              cardiopulmonaryHemorrhageCoagulationAndDifferentialEvidenceReviewed: this.obstetricsAfeEvidenceAtTick !== null,
+              fixedLaterPersistentShockRespiratoryCompromiseAndProgressiveCoagulopathyReportReviewed: this.obstetricsAfeReassessmentAtTick !== null,
+              pulseAssessedByLearner: false as const, patientExaminedByLearner: false as const,
+              bloodLossMeasuredByLearner: false as const, uterusOrGenitalTractAssessedByLearner: false as const,
+              monitoringInterpretedByLearner: false as const, laboratoryAcquiredByLearner: false as const,
+              laboratoryInterpretedByLearner: false as const, dicScoreCalculatedByLearner: false as const,
+              imagingOrEchoAcquiredByLearner: false as const, imagingOrEchoInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const, alternativeExcludedByLearner: false as const,
+              oxygenOrVentilationSelectedByLearner: false as const, airwaySelectedByLearner: false as const,
+              fluidOrVasoactiveSelectedByLearner: false as const, bloodOrCoagulationProductSelectedByLearner: false as const,
+              drugDoseRouteOrTargetSelectedByLearner: false as const, cprOrDefibrillationPerformedByLearner: false as const,
+              ecmoSelectedByLearner: false as const, deliveryOrProcedureSelectedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const, cardiacArrestOccurred: false as const,
+              treatmentEffectProven: false as const, respiratoryRecoveryProven: false as const,
+              hemodynamicRecoveryProven: false as const, bleedingControlProven: false as const,
+              coagulopathyControlProven: false as const, safetyDispositionDetermined: false as const,
+              maternalOutcomePredicted: false as const, newbornOutcomePredicted: false as const,
+              outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

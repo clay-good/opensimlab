@@ -2073,6 +2073,24 @@ measurement, examination, fetal or test interpretation, diagnosis, magnesium or 
 rate, target, route, access, airway, anesthesia, birth, procedure, disposition, treatment effect,
 durable control, fetal safety, or maternal/newborn outcome.
 
+### Wave D obstetrics slice 6: suspected amniotic-fluid-embolism pattern
+
+The sixth lab opens 12 minutes after birth and placental delivery, 8 minutes after abrupt dyspnea,
+hypoxemia, hypotension and reduced responsiveness began before major visible bleeding.
+A central pulse remains present. Supplied firm uterine tone and coagulation findings keep this
+whole-body cardiorespiratory-and-coagulopathy pattern distinct from the bleeding-first atony lab,
+while pulmonary thromboembolism, air embolism, cardiac disease, anesthetic complication,
+anaphylaxis, sepsis, hemorrhage and other causes remain open. Research-reporting criteria are not
+presented as a bedside diagnostic score.
+
+Six controls first activate coordinated qualified maternal and newborn response, then record birth-
+clock and sequence reconciliation, nonexclusive rapid maternal-collapse recognition, supplied-evidence
+review, a fixed report authored as 12 minutes after activation with a pulse still present, and
+active-risk handoff. The lab exposes no learner examination, measurement, test interpretation,
+diagnosis, oxygen, ventilation, airway, fluid, vasopressor, pulmonary vasodilator, uterotonic,
+blood component, coagulation therapy, drug, dose, route, CPR, defibrillation, ECMO, delivery,
+procedure, disposition, treatment-effect, durable-control or maternal/newborn outcome control.
+
 #### Neonatology: 11
 
 Term newborn transition; neonatal apnea; ineffective ventilation correction; neonatal bradycardia;
