@@ -2531,6 +2531,25 @@ blurred vision and confusion precedes another elapsed active-risk handoff. The c
 an exposure, gap-calculation, acid-base, osmolality, concentration, visual, antidote-response,
 extracorporeal, airway, renal, or individualized-response model.
 
+### Wave F toxicology slice 14: delayed local-anesthetic CNS-cardiac toxicity
+
+The fourteenth Toxicology lab owns delayed, variable LAST recognition after a continuous infusion
+rather than duplicating Anesthesia's immediate injection crisis and explicit lipid arithmetic. The
+learner reconciles a 38-hour continuous ropivacaine-catheter source, 12-minute metallic-taste,
+tinnitus, perioral-tingling, dysarthria and agitation prodrome, generalized seizure, drowsiness,
+shallow breathing, HR 48/min, BP 82/46 mmHg, QRS 124 ms and ventricular ectopy; recognizes the
+coupled CNS, respiratory, conduction and perfusion pattern without classic-sequence-, clock-,
+symptom-, seizure- or ECG-only closure; activates qualified source, airway, seizure, cardiac,
+toxicology, lipid and refractory-rescue ownership; and reviews source-delivery, blood-gas,
+electrolyte, coingestion and competing causes. Bounded qualified source cessation, oxygenation and
+ventilation, seizure care, 20% lipid, acid-base support, LAST-modified resuscitation, surveillance
+and ECLS intent exposes no catheter handling, method, product detail, dose, formula, threshold, rate,
+target, route, access, airway setting, rhythm intervention, circuit, procedure, or delivery. A strict
+elapsed report with sinus rhythm 76/min, BP 104/64 mmHg, QRS 104 ms and persistent drowsiness precedes
+another elapsed active-risk handoff. The canonical state is not a source-delivery, pharmacokinetic,
+diagnostic, seizure, ECG, acid-base, lipid-response, airway, resuscitation, ECLS, or individualized-
+response model.
+
 #### Hematology and oncology: 11
 
 Neutropenic fever; tumor-lysis syndrome; hyperleukocytosis pattern; sickle-cell acute chest syndrome;

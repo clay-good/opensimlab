@@ -12,6 +12,7 @@ import { ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM } from './anticholinergic-hyperth
 import { SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS } from './serotonin-toxicity-hyperthermia-clonus';
 import { SYMPATHOMIMETIC_HYPERADRENERGIC_HYPERTHERMIA } from './sympathomimetic-hyperadrenergic-hyperthermia';
 import { METHANOL_VISUAL_ACIDOSIS_GAPS } from './methanol-visual-acidosis-gaps';
+import { DELAYED_LOCAL_ANESTHETIC_CNS_CARDIAC_TOXICITY } from './delayed-local-anesthetic-cns-cardiac-toxicity';
 
 export const TOXICOLOGY_SCENARIOS: readonly Scenario[] = [
   METHEMOGLOBINEMIA_SATURATION_GAP,
@@ -27,6 +28,7 @@ export const TOXICOLOGY_SCENARIOS: readonly Scenario[] = [
   SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS,
   SYMPATHOMIMETIC_HYPERADRENERGIC_HYPERTHERMIA,
   METHANOL_VISUAL_ACIDOSIS_GAPS,
+  DELAYED_LOCAL_ANESTHETIC_CNS_CARDIAC_TOXICITY,
 ];
 export const DEFAULT_TOXICOLOGY_SCENARIO_ID = METHEMOGLOBINEMIA_SATURATION_GAP.metadata.id;
 

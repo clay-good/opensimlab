@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 160 reports Toxicology methanol state. */
-export const WORKER_PROTOCOL_VERSION = 160;
+/** Bumped whenever the message shape changes incompatibly. Version 161 reports delayed Toxicology LAST state. */
+export const WORKER_PROTOCOL_VERSION = 161;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2546,6 +2546,32 @@ export interface EquipmentSnapshot {
       readonly exposureCompletenessProven: false; readonly treatmentEffectProven: false;
       readonly safetyDispositionDetermined: false; readonly dispositionDetermined: false;
       readonly prognosisPredicted: false; readonly outcomePredicted: false;
+    };
+    readonly toxicologyDelayedLastAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly delayedSourceCnsCardiacPatternAuthored: true; readonly delayedLastPatternRecognized: boolean;
+      readonly qualifiedSupportActive: boolean; readonly sourceCnsEcgPerfusionAcidBaseElectrolyteAndDifferentialEvidenceReviewed: boolean;
+      readonly qualifiedSourceAirwaySeizureLipidAcidBaseModifiedResuscitationAndEclsIntentRecorded: boolean;
+      readonly responseStateAuthored: boolean; readonly patientHistoryTakenByLearner: false;
+      readonly patientExaminedByLearner: false; readonly monitoringAcquiredByLearner: false;
+      readonly ecgAcquiredByLearner: false; readonly ecgInterpretedByLearner: false;
+      readonly bloodSampleAcquiredByLearner: false; readonly sourceDeliveryInterpretedByLearner: false;
+      readonly catheterHandledByLearner: false; readonly diagnosisMadeByLearner: false;
+      readonly alternativeExcludedByLearner: false; readonly oxygenSelectedByLearner: false;
+      readonly ventilationSelectedByLearner: false; readonly seizureCareSelectedByLearner: false;
+      readonly lipidSelectedByLearner: false; readonly drugSelectedByLearner: false;
+      readonly doseSelectedByLearner: false; readonly routeSelectedByLearner: false;
+      readonly airwaySelectedByLearner: false; readonly rhythmCareSelectedByLearner: false;
+      readonly eclsSelectedByLearner: false; readonly treatmentDeliveredByLearner: false;
+      readonly rescueEligibilityDetermined: false; readonly durableSeizureControlProven: false;
+      readonly durableRhythmStabilityProven: false; readonly durablePerfusionStabilityProven: false;
+      readonly neurologicRecoveryProven: false; readonly airwayRecoveryProven: false;
+      readonly acidBaseSafetyProven: false; readonly electrolyteSafetyProven: false;
+      readonly lipidSafetyProven: false; readonly sourceCompletenessProven: false;
+      readonly treatmentEffectProven: false; readonly safetyDispositionDetermined: false;
+      readonly dispositionDetermined: false; readonly prognosisPredicted: false; readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

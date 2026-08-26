@@ -1106,6 +1106,9 @@ export function Cockpit({
           onToxicologyMethanolResponse={(action) => session.act({
             type: 'methanol-visual-acidosis-gaps-response', payload: { action },
           })}
+          onToxicologyDelayedLastResponse={(action) => session.act({
+            type: 'delayed-local-anesthetic-cns-cardiac-toxicity-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

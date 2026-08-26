@@ -723,6 +723,20 @@ credited toward the catalog until every item in the completion contract passes.
     acquisition or interpretation, calculation, diagnosis, differential exclusion, antidote,
     cofactor, fluid, buffer, electrolyte, drug, dose, rate, target, route, access, infusion, airway,
     ventilation, dialysis, procedure, safety disposition, prognosis, or outcome control exists.
+  - [x] Toxicology slice 14/15 adds delayed local-anesthetic systemic toxicity after a declared
+    continuous ropivacaine catheter. The learner reconciles a 38-hour source clock, short subjective
+    prodrome, seizure, drowsiness, shallow breathing, bradycardia, hypotension, QRS prolongation and
+    ventricular ectopy; recognizes the variable coupled CNS-cardiac pattern without classic-
+    sequence-, clock-, symptom-, seizure- or ECG-only closure; activates qualified source, airway,
+    seizure, cardiac, toxicology, lipid and ECLS ownership; reviews source-delivery, CNS, ECG,
+    perfusion, acid-base, electrolyte, coingestion and competing-cause boundaries; records bounded
+    qualified source cessation, oxygenation and ventilation, seizure, 20% lipid, acid-base,
+    LAST-modified resuscitation, surveillance and refractory-rescue intent; then reviews a strict
+    elapsed report before another elapsed active-risk handoff. No learner history, examination,
+    monitoring, ECG, blood-gas, laboratory or source-delivery acquisition or interpretation,
+    catheter, pump or line handling, diagnosis, oxygen, ventilation, seizure care, lipid, fluid,
+    buffer, vasopressor, antiarrhythmic, drug, dose, rate, target, route, access, airway, pacing,
+    cardioversion, ECLS, procedure, safety disposition, prognosis, or outcome control exists.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.
 - [ ] After every wave, verify the exact cumulative count, distinctness, capability reuse, path and

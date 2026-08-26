@@ -1240,6 +1240,11 @@ export interface ActionCockpitProps {
       readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly toxicologyDelayedLastAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2172,6 +2177,14 @@ export interface ActionCockpitProps {
       | 'record-toxicology-methanol-bounded-qualified-source-antidote-cofactor-acid-base-extracorporeal-surveillance-and-airway-intent-with-strict-later-review'
       | 'handoff-toxicology-methanol-rebound-acidosis-vision-neurologic-airway-renal-electrolyte-coingestion-and-active-risk',
   ) => void;
+  readonly onToxicologyDelayedLastResponse?: (
+    action: 'reconcile-toxicology-delayed-last-source-clock-prodrome-seizure-cardiac-and-whole-patient'
+      | 'recognize-toxicology-delayed-last-coupled-pattern-without-classic-sequence-clock-symptom-or-ecg-only-closure'
+      | 'activate-toxicology-delayed-last-source-airway-seizure-cardiac-toxicology-lipid-and-refractory-rescue-ownership'
+      | 'review-toxicology-delayed-last-supplied-source-delivery-cns-ecg-perfusion-acid-base-electrolyte-and-differential-boundary'
+      | 'record-toxicology-delayed-last-bounded-qualified-source-airway-seizure-lipid-acid-base-modified-resuscitation-and-ecls-intent-with-strict-later-review'
+      | 'handoff-toxicology-delayed-last-recurrent-seizure-arrhythmia-shock-airway-acidemia-source-lipid-and-refractory-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2721,6 +2734,10 @@ export function crisisResponseAvailability(
       scenario.metadata.id === 'methanol-visual-acidosis-gaps'
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methanol-visual-acidosis-gaps-transition')
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methanol-visual-acidosis-gaps-transition-boundary'),
+    hasToxicologyDelayedLastResponse:
+      scenario.metadata.id === 'delayed-local-anesthetic-cns-cardiac-toxicity'
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'delayed-local-anesthetic-cns-cardiac-toxicity-transition')
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'delayed-local-anesthetic-cns-cardiac-toxicity-transition-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2933,6 +2950,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'serotonin-toxicity-hyperthermia-clonus-transition')
       || (event.type === 'narrative' && event.target === 'sympathomimetic-hyperadrenergic-hyperthermia-transition')
       || (event.type === 'narrative' && event.target === 'methanol-visual-acidosis-gaps-transition')
+      || (event.type === 'narrative' && event.target === 'delayed-local-anesthetic-cns-cardiac-toxicity-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3033,6 +3051,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasToxicologySerotoninResponse,
     hasToxicologySympathomimeticResponse,
     hasToxicologyMethanolResponse,
+    hasToxicologyDelayedLastResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3160,8 +3179,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasToxicologySerotoninResponse
     || hasToxicologySympathomimeticResponse
     || hasToxicologyMethanolResponse
+    || hasToxicologyDelayedLastResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasToxicologyMethanolResponse
+  const responseTray = hasToxicologyDelayedLastResponse
+    ? { id: 'crisis', label: 'Delayed LAST' } as const
+    : hasToxicologyMethanolResponse
     ? { id: 'crisis', label: 'Methanol clues' } as const
     : hasToxicologySympathomimeticResponse
     ? { id: 'crisis', label: 'Stimulant surge' } as const
@@ -4382,6 +4404,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasToxicologyMethanolResponse && (
               <ToxicologyMethanolTray assessment={props.resuscitation.toxicologyMethanolAssessment}
                 onAction={props.onToxicologyMethanolResponse ?? (() => {})} />
+            )}
+            {hasToxicologyDelayedLastResponse && (
+              <ToxicologyDelayedLastTray assessment={props.resuscitation.toxicologyDelayedLastAssessment}
+                onAction={props.onToxicologyDelayedLastResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -11115,6 +11141,38 @@ function ToxicologyMethanolTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-methanol-bounded-qualified-source-antidote-cofactor-acid-base-extracorporeal-surveillance-and-airway-intent-with-strict-later-review')}>Record rescue intent + reassess</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-methanol-rebound-acidosis-vision-neurologic-airway-renal-electrolyte-coingestion-and-active-risk')}>Hand off what stays open</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function ToxicologyDelayedLastTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyDelayedLastAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onToxicologyDelayedLastResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const evidence = assessment?.evidenceAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="toxicology-delayed-last-early-title">
+      <div id="toxicology-delayed-last-early-title" className="syringe__name">The quiet cues were part of the crisis.</div>
+      <p className="syringe__remaining">Begin with source, long clock, short prodrome, seizure, breathing, conduction, perfusion, and the whole person.</p>
+      <div className="crisis-drug__actions">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-toxicology-delayed-last-source-clock-prodrome-seizure-cardiac-and-whole-patient')}>Connect source + evolution</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-toxicology-delayed-last-coupled-pattern-without-classic-sequence-clock-symptom-or-ecg-only-closure')}>Recognize the whole pattern</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-toxicology-delayed-last-source-airway-seizure-cardiac-toxicology-lipid-and-refractory-rescue-ownership')}>Bring rescue owners together</Button>}
+        {support && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-toxicology-delayed-last-supplied-source-delivery-cns-ecg-perfusion-acid-base-electrolyte-and-differential-boundary')}>Review source + hidden harm</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="toxicology-delayed-last-later-title">
+      <div id="toxicology-delayed-last-later-title" className="syringe__name">A steadier rhythm is a checkpoint, not an ending.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Seizure, rhythm, conduction, perfusion, airway, acid-base, source, lipid, refractory-rescue, and outcome uncertainty handed off.' : reassessment ? 'Rhythm, pressure, breathing, and QRS improved. Durable seizure control, recovery, source completeness, lipid safety, and treatment effect remain unproven.' : evidence ? 'Source-delivery, CNS, ECG, perfusion, acid-base, electrolyte, coingestion, and differential evidence stay coupled. Record qualified intent after time passes.' : support ? 'Source, airway, seizure, cardiac, toxicology, lipid, and refractory-rescue ownership are active. Review the supplied evidence.' : 'Complete whole-pattern recognition and qualified ownership before the rescue-boundary review.'}</p>
+      <div className="crisis-drug__actions">
+        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-delayed-last-bounded-qualified-source-airway-seizure-lipid-acid-base-modified-resuscitation-and-ecls-intent-with-strict-later-review')}>Record rescue intent + reassess</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-delayed-last-recurrent-seizure-arrhythmia-shock-airway-acidemia-source-lipid-and-refractory-risk')}>Hand off what can return</Button>}
       </div>
     </section>
   </>;

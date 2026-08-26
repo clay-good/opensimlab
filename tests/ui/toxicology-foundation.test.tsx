@@ -18,6 +18,7 @@ import { ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM } from '../../src/modules/toxicol
 import { SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS } from '../../src/modules/toxicology/scenarios/serotonin-toxicity-hyperthermia-clonus';
 import { SYMPATHOMIMETIC_HYPERADRENERGIC_HYPERTHERMIA } from '../../src/modules/toxicology/scenarios/sympathomimetic-hyperadrenergic-hyperthermia';
 import { METHANOL_VISUAL_ACIDOSIS_GAPS } from '../../src/modules/toxicology/scenarios/methanol-visual-acidosis-gaps';
+import { DELAYED_LOCAL_ANESTHETIC_CNS_CARDIAC_TOXICITY } from '../../src/modules/toxicology/scenarios/delayed-local-anesthetic-cns-cardiac-toxicity';
 
 describe('Toxicology module user-facing foundation', () => {
   const cockpitMarkup = (
@@ -381,6 +382,27 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('Two gaps. One whole story.');
     expect(markup).toContain('Connect source + trajectory');
     expect(markup).not.toMatch(/mg\/kg|fomepizole dose|folate dose|dialysis threshold|osmolar formula|airway setting/i);
+    expect(markup).not.toContain('<input');
+    expect(markup).not.toContain('<select');
+  });
+
+  it('prerenders and opens delayed LAST on its calm trajectory-first tray', () => {
+    const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/delayed-local-anesthetic-cns-cardiac-toxicity' }));
+    expect(page).toContain('<h1>Local anesthetic toxicity: quiet warnings can turn fast</h1>');
+    expect(page).toContain('classic-sequence-, clock-, symptom-, or ECG-only closure');
+    expect(crisisResponseAvailability(DELAYED_LOCAL_ANESTHETIC_CNS_CARDIAC_TOXICITY, []))
+      .toMatchObject({ hasToxicologyDelayedLastResponse: true });
+    expect(crisisResponseAvailability({ ...DELAYED_LOCAL_ANESTHETIC_CNS_CARDIAC_TOXICITY,
+      metadata: { ...DELAYED_LOCAL_ANESTHETIC_CNS_CARDIAC_TOXICITY.metadata, id: 'delayed-last-clone' } }, []))
+      .toMatchObject({ hasToxicologyDelayedLastResponse: false });
+    const markup = cockpitMarkup(DELAYED_LOCAL_ANESTHETIC_CNS_CARDIAC_TOXICITY, {
+      toxicologyDelayedLastAssessment: { trajectoryAtTick: null, recognitionAtTick: null,
+        supportAtTick: null, evidenceAtTick: null, reassessmentAtTick: null, handoffAtTick: null },
+    });
+    expect(markup).toContain('Delayed LAST');
+    expect(markup).toContain('The quiet cues were part of the crisis.');
+    expect(markup).toContain('Connect source + evolution');
+    expect(markup).not.toMatch(/mg\/kg|mL\/kg|lipid dose|oxygen setting|ventilator setting|epinephrine dose|ECLS setting/i);
     expect(markup).not.toContain('<input');
     expect(markup).not.toContain('<select');
   });

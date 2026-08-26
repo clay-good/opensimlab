@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 253,
+  "sourceCount": 255,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -714,6 +714,30 @@
       "verifiedAgainst": "NCBI E-utilities record, field by field",
       "verifiedOn": "2026-08-20",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/33148630/"
+    },
+    {
+      "id": "asra-last-practice-advisory-2018",
+      "pmid": "29356773",
+      "authors": "Neal JM, Barrington MJ, Fettiplace MR, et al",
+      "title": "The Third American Society of Regional Anesthesia and Pain Medicine Practice Advisory on Local Anesthetic Systemic Toxicity: Executive Summary 2017",
+      "publication": "Reg Anesth Pain Med",
+      "year": 2018,
+      "locator": "43(2):113-123; doi:10.1097/AAP.0000000000000720; Tables 3-4 and delayed-presentation discussion",
+      "usedFor": "Variable and atypical CNS-cardiac presentation; delayed onset beyond 15 minutes and occasionally beyond an hour; continuous-infusion risk after 1-4 days; prodromal, seizure, conduction, contractility and perfusion findings; and the boundary that one classic sequence or symptom does not diagnose LAST.",
+      "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/29356773/",
+      "verifiedOn": "2026-08-26",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/29356773/"
+    },
+    {
+      "id": "aha-local-anesthetics-2025",
+      "authors": "American Heart Association",
+      "title": "Part 10: Adult and Pediatric Special Circumstances of Resuscitation",
+      "publication": "2025 Guidelines for CPR and ECC",
+      "year": 2025,
+      "locator": "Local Anesthetics recommendations and recommendation-specific supportive text; doi:10.1161/CIR.0000000000001380",
+      "usedFor": "Concurrent prevention of hypoxia and acidemia, benzodiazepine seizure care, early 20% lipid-emulsion rescue, sodium-channel and refractory-cardiotoxicity context, and ECLS contingency; no dose or device setting is exposed in the Toxicology controls.",
+      "verifiedAgainst": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-and-pediatric-special-circumstances-of-resuscitation",
+      "verifiedOn": "2026-08-26"
     },
     {
       "id": "aha-adult-cardiac-arrest-2025",

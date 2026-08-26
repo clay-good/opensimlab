@@ -269,6 +269,15 @@ Recorded here rather than silently carried:
   recommendations and the current DailyMed fomepizole label, not an exposure, gap-calculation,
   acid-base, osmolar, concentration, visual, neurologic, antidote-response, dialysis, airway, renal,
   or individualized-response model.
+  Delayed local-anesthetic CNS-cardiac toxicity uses fixed canonical presentation and elapsed-
+  response states: a 38-hour continuous ropivacaine-catheter source, 12-minute metallic-taste,
+  tinnitus, perioral-tingling, dysarthria and agitation prodrome, generalized seizure, HR 48/min,
+  BP 82/46 mmHg, RR 10/min, SpO2 92%, QRS 124 ms and ventricular ectopy, then qualified source,
+  airway, seizure, lipid, acid-base, modified-resuscitation and ECLS intent with sinus rhythm
+  76/min, BP 104/64 mmHg, RR 16/min, SpO2 98%, QRS 104 ms and arousable drowsiness. These are teaching
+  calibrations grounded in the ASRA practice advisory and current AHA guidance, not a source-
+  delivery, pharmacokinetic, diagnostic, seizure, ECG, perfusion, lipid-response, airway,
+  resuscitation, ECLS, or individualized-response model.
   Salicylate where the falling number can be worse uses fixed canonical presentation and elapsed-
   deterioration states: supplied salicylate 52 mg/dL, pH 7.45, PCO2 23 mmHg, bicarbonate 16 mmol/L,
   anion gap 20 mmol/L and potassium 3.2 mmol/L, then salicylate 46 mg/dL, pH 7.32, PCO2 25 mmHg,

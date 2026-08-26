@@ -4511,6 +4511,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use the complete verified exposure and clock plus serial visual, neurologic, airway, acid-base, osmolar, electrolyte, renal, coingestion, competing-cause, treatment and response trajectory under qualified toxicology, critical-care and nephrology ownership.',
     briefIn: ['methanol-visual-acidosis-gaps'],
   },
+  {
+    id: 'delayed-last-source-cns-cardiac-pattern-and-response-are-authored',
+    headline: 'The catheter source, delayed CNS-cardiac pattern, and later response are authored.',
+    simplification: 'Fixed reports and canonical monitor states stand in for history, examination, source and pump verification, seizure and airway assessment, ECG, blood-gas, electrolyte and laboratory acquisition or interpretation, qualified rescue care, and reassessment.',
+    whereItMisleads: 'Treating the fictional catheter, timing, prodrome, seizure, breathing, ECG, perfusion, lipid intent, or later improvement as learner evidence, a universal sequence or threshold, treatment effect, durable seizure or rhythm control, source completeness, recovery, or predicted course.',
+    correctUnderstanding: 'Real care requires direct serial source-delivery, airway, neurologic, seizure, rhythm, conduction, perfusion, acid-base, electrolyte, coexposure and competing-cause assessment with qualified toxicology, resuscitation, pharmacy and refractory-rescue ownership.',
+    briefIn: ['delayed-local-anesthetic-cns-cardiac-toxicity'],
+  },
+  {
+    id: 'delayed-last-controls-reconcile-recognize-support-review-intent-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, pattern recognition, qualified ownership, evidence review, bounded intent, reassessment, and handoff only.',
+    simplification: 'Six actions stand in for emergency, critical-care, nursing, pharmacy, source, airway, seizure, cardiac, poison-center or medical-toxicology, lipid, acid-base, surveillance, ECLS and handoff work.',
+    whereItMisleads: 'Equating button order with catheter or pump inspection, history, examination, monitoring or test interpretation, diagnosis, prescribing, airway or rhythm care, rescue eligibility or delivery, disposition, recovery, or competence.',
+    correctUnderstanding: 'Actual care requires trained teams, immediate verified source control, current local LAST protocols and cognitive aids, individualized airway, seizure, lipid and modified-resuscitation care, refractory rescue, and serial reassessment.',
+    briefIn: ['delayed-local-anesthetic-cns-cardiac-toxicity'],
+  },
+  {
+    id: 'no-live-delayed-last-diagnosis-catheter-airway-seizure-lipid-resuscitation-ecls-or-outcome',
+    headline: 'The lab does not diagnose LAST, handle a catheter, manage an airway or seizure, dose lipid, perform resuscitation or ECLS, or report outcome.',
+    simplification: 'No live history, examination, monitoring, ECG, blood gas, laboratory or source-delivery test, diagnosis, differential exclusion, catheter, reservoir, pump or line handling, oxygen, ventilation, seizure care, lipid, fluid, buffer, vasopressor, antiarrhythmic, drug, dose, rate, target, route, access, airway, pacing, cardioversion, ECLS, transport, procedure, disposition, prognosis, safety decision, or outcome is modeled.',
+    whereItMisleads: 'Using a classic sequence, clock, symptom, seizure, ECG interval, drug record or laboratory value alone; copying fictional values into care; choosing catheter, oxygen, seizure, lipid, cardiac or ECLS treatment from this rehearsal; attributing the fixed response; or reading completion as competence.',
+    correctUnderstanding: 'Use the complete verified source and clock plus serial CNS, seizure, airway, ECG, perfusion, acid-base, electrolyte, coingestion, competing-cause, treatment and response trajectory under qualified toxicology and resuscitation ownership.',
+    briefIn: ['delayed-local-anesthetic-cns-cardiac-toxicity'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

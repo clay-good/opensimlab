@@ -432,6 +432,11 @@ const TOXICOLOGY_METHANOL_BLOCKED_ACTION_TYPES = new Set([
   ...TOXICOLOGY_SYMPATHOMIMETIC_BLOCKED_ACTION_TYPES,
   'sympathomimetic-hyperadrenergic-hyperthermia-response',
 ]);
+const TOXICOLOGY_DELAYED_LAST_BLOCKED_ACTION_TYPES = new Set([
+  ...TOXICOLOGY_METHANOL_BLOCKED_ACTION_TYPES,
+  'methanol-visual-acidosis-gaps-response',
+  'local-anesthetic-systemic-toxicity-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1347,6 +1352,12 @@ export class AnesthesiaEngine {
   private toxicologyMethanolEvidenceAtTick: number | null = null;
   private toxicologyMethanolReassessmentAtTick: number | null = null;
   private toxicologyMethanolHandoffAtTick: number | null = null;
+  private toxicologyDelayedLastTrajectoryAtTick: number | null = null;
+  private toxicologyDelayedLastRecognitionAtTick: number | null = null;
+  private toxicologyDelayedLastSupportAtTick: number | null = null;
+  private toxicologyDelayedLastEvidenceAtTick: number | null = null;
+  private toxicologyDelayedLastReassessmentAtTick: number | null = null;
+  private toxicologyDelayedLastHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2224,6 +2235,15 @@ export class AnesthesiaEngine {
         'This Toxicology lesson exposes no generic examination, monitoring, ECG, blood-gas, chemistry, osmolality or concentration interpretation, '
         + 'calculation, fluid, buffer, electrolyte, fomepizole, folate, drug, dose, route, access, infusion, airway, ventilation, dialysis, transport, '
         + 'procedure, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const toxicologyDelayedLast = this.scenario.metadata.id === 'delayed-local-anesthetic-cns-cardiac-toxicity'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'delayed-local-anesthetic-cns-cardiac-toxicity-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'delayed-local-anesthetic-cns-cardiac-toxicity-transition-boundary');
+    if (toxicologyDelayedLast && TOXICOLOGY_DELAYED_LAST_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `toxicology-delayed-last-generic-action-refused-${this.currentTick}`,
+        'This Toxicology lesson exposes no generic examination, monitoring, ECG, blood-gas, laboratory or source-delivery interpretation, catheter handling, '
+        + 'oxygen, ventilation, seizure care, lipid, fluid, buffer, vasopressor, antiarrhythmic, drug, dose, route, access, infusion, airway, pacing, cardioversion, '
+        + 'ECLS, transport, procedure, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -10568,6 +10588,32 @@ export class AnesthesiaEngine {
         if (this.toxicologyMethanolHandoffAtTick !== null) break;
         this.toxicologyMethanolHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-methanol-active-risk-handoff-recorded-${this.currentTick}`, 'Recurrent or worsening acidosis, visual and neurologic injury, airway, renal, electrolyte, coingestion, exposure completeness, extracorporeal care, recurrence, safety, disposition, prognosis, and outcome uncertainty were handed off.', { safetyDispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'delayed-local-anesthetic-cns-cardiac-toxicity-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'delayed-local-anesthetic-cns-cardiac-toxicity'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'delayed-local-anesthetic-cns-cardiac-toxicity-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'delayed-local-anesthetic-cns-cardiac-toxicity-transition-boundary');
+        const actions = ['reconcile-toxicology-delayed-last-source-clock-prodrome-seizure-cardiac-and-whole-patient',
+          'recognize-toxicology-delayed-last-coupled-pattern-without-classic-sequence-clock-symptom-or-ecg-only-closure',
+          'activate-toxicology-delayed-last-source-airway-seizure-cardiac-toxicology-lipid-and-refractory-rescue-ownership',
+          'review-toxicology-delayed-last-supplied-source-delivery-cns-ecg-perfusion-acid-base-electrolyte-and-differential-boundary',
+          'record-toxicology-delayed-last-bounded-qualified-source-airway-seizure-lipid-acid-base-modified-resuscitation-and-ecls-intent-with-strict-later-review',
+          'handoff-toxicology-delayed-last-recurrent-seizure-arrhythmia-shock-airway-acidemia-source-lipid-and-refractory-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `toxicology-delayed-last-response-refused-${this.currentTick}`, supported ? 'The delayed-LAST action was not listed. No supplied or injected text was retained.' : 'These delayed-LAST choices are available only in the exact declared Toxicology lesson.'); break; }
+        if (response === actions[0]) { if (this.toxicologyDelayedLastTrajectoryAtTick !== null) break; this.toxicologyDelayedLastTrajectoryAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-delayed-last-trajectory-reconciled-${this.currentTick}`, 'Declared continuous ropivacaine catheter, 38-hour clock, 12-minute prodrome, metallic taste, tinnitus, perioral tingling, dysarthria, agitation, seizure, drowsiness, shallow breathing, bradycardia, hypotension, supplied ECG, and whole-patient state were connected without learner history, examination, monitoring, testing, or diagnosis.', { exposureAuthored: true, hoursSinceCatheterPlacement: 38, patientHistoryTakenByLearner: false, patientExaminedByLearner: false }); break; }
+        if (this.toxicologyDelayedLastTrajectoryAtTick === null) { this.log('warning', 'assessment', `toxicology-delayed-last-trajectory-order-refused-${this.currentTick}`, 'Reconcile source, clock, prodrome, seizure, cardiac findings, and whole patient first.'); break; }
+        if (response === actions[1]) { if (this.toxicologyDelayedLastRecognitionAtTick !== null) break; this.toxicologyDelayedLastRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-delayed-last-pattern-recognized-${this.currentTick}`, 'Declared exposure plus evolving CNS, conduction, respiratory and perfusion findings form an authored delayed-LAST pattern. No classic sequence, clock, prodrome, seizure, ECG interval, drug record, or laboratory value alone diagnoses, excludes alternatives, grades severity, or establishes rescue eligibility.', { delayedLastPatternRecognized: true, diagnosisMadeByLearner: false }); break; }
+        if (this.toxicologyDelayedLastRecognitionAtTick === null) { this.log('warning', 'assessment', `toxicology-delayed-last-recognition-order-refused-${this.currentTick}`, 'Recognize the coupled variable CNS, conduction, respiratory, and perfusion pattern before support or evidence review.'); break; }
+        if (response === actions[2]) { if (this.toxicologyDelayedLastSupportAtTick !== null) break; this.toxicologyDelayedLastSupportAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-delayed-last-support-activated-${this.currentTick}`, 'Emergency, critical-care, nursing, pharmacy, source-cessation, airway, seizure, cardiac, poison-center or medical-toxicology, lipid-rescue, and ECLS ownership were recorded without learner catheter handling, drug, dose, route, access, airway, rhythm, circuit, or procedure.', { qualifiedSupportActive: true, treatmentSelectedByLearner: false }); break; }
+        if (this.toxicologyDelayedLastSupportAtTick === null) { this.log('warning', 'assessment', `toxicology-delayed-last-support-order-refused-${this.currentTick}`, 'Activate qualified source, airway, seizure, cardiac, toxicology, lipid, and refractory-rescue ownership before evidence review.'); break; }
+        if (response === actions[3]) { if (this.toxicologyDelayedLastEvidenceAtTick !== null) break; this.toxicologyDelayedLastEvidenceAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-delayed-last-evidence-reviewed-${this.currentTick}`, 'Supplied catheter record, prodrome, seizure, mental state, breathing, ECG, perfusion, blood-gas, electrolyte, coingestion, source-delivery, and competing-cause boundaries were integrated without learner acquisition, calculation, interpretation, diagnosis, exclusion, or eligibility.', { sourceCnsEcgPerfusionAcidBaseElectrolyteAndDifferentialEvidenceAuthored: true, diagnosisMadeByLearner: false }); break; }
+        if (this.toxicologyDelayedLastEvidenceAtTick === null) { this.log('warning', 'assessment', `toxicology-delayed-last-evidence-order-refused-${this.currentTick}`, 'Review supplied source-delivery, CNS, ECG, perfusion, acid-base, electrolyte, coingestion, and differential evidence before qualified intent.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.toxicologyDelayedLastEvidenceAtTick) { this.log('warning', 'assessment', `toxicology-delayed-last-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before qualified intent and strict later review.'); break; } if (this.toxicologyDelayedLastReassessmentAtTick !== null) break; this.toxicologyDelayedLastReassessmentAtTick = this.currentTick; this.rhythm = 'sinus'; this.log('critical', 'assessment', `toxicology-delayed-last-intent-and-reassessment-recorded-${this.currentTick}`, 'Qualified source cessation, oxygenation and ventilation, benzodiazepine seizure care, 20% lipid emulsion, acid-base support, LAST-modified resuscitation, serial surveillance, and ECLS contingency were recorded without method, product detail, dose, formula, threshold, rate, target, route, access, airway setting, rhythm intervention, circuit, or delivery. Strict 20-minute report: sinus rhythm 76, BP 104/64 (MAP 77), RR 16, SpO2 98% on supplied support, QRS 104, arousable drowsiness, and no recurrent visible seizure. Treatment effect and durable safety remain unproven.', { qualifiedIntentRecorded: true, treatmentDeliveredByLearner: false, treatmentEffectProven: false }); break; }
+        if (this.toxicologyDelayedLastReassessmentAtTick === null) { this.log('warning', 'assessment', `toxicology-delayed-last-handoff-order-refused-${this.currentTick}`, 'Review the strict later report before handoff.'); break; }
+        if (this.currentTick <= this.toxicologyDelayedLastReassessmentAtTick) { this.log('warning', 'assessment', `toxicology-delayed-last-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.toxicologyDelayedLastHandoffAtTick !== null) break;
+        this.toxicologyDelayedLastHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-delayed-last-active-risk-handoff-recorded-${this.currentTick}`, 'Recurrent seizure, dysrhythmia, conduction delay, shock, airway, acidemia, electrolyte, source-delivery, lipid-complication, ECLS, recurrence, safety, disposition, prognosis, and outcome uncertainty were handed off.', { safetyDispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -13411,6 +13457,17 @@ export class AnesthesiaEngine {
         diastolicMmHg: this.toxicologyMethanolReassessmentAtTick !== null ? 70 : 68,
         meanArterialMmHg: this.toxicologyMethanolReassessmentAtTick !== null ? 84 : 82,
         coreTemperatureC: 36.6 };
+    }
+    if (this.scenario.metadata.id === 'delayed-local-anesthetic-cns-cardiac-toxicity'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'delayed-local-anesthetic-cns-cardiac-toxicity-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'delayed-local-anesthetic-cns-cardiac-toxicity-transition-boundary')) {
+      crisisState = { ...crisisState, heartRateBpm: this.toxicologyDelayedLastReassessmentAtTick !== null ? 76 : 48,
+        respiratoryRateBpm: this.toxicologyDelayedLastReassessmentAtTick !== null ? 16 : 10,
+        spo2Percent: this.toxicologyDelayedLastReassessmentAtTick !== null ? 98 : 92,
+        systolicMmHg: this.toxicologyDelayedLastReassessmentAtTick !== null ? 104 : 82,
+        diastolicMmHg: this.toxicologyDelayedLastReassessmentAtTick !== null ? 64 : 46,
+        meanArterialMmHg: this.toxicologyDelayedLastReassessmentAtTick !== null ? 77 : 58,
+        coreTemperatureC: 36.7 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -17257,6 +17314,32 @@ export class AnesthesiaEngine {
               toxinClearanceProven: false as const, durableAcidBaseControlProven: false as const, visualRecoveryProven: false as const,
               neurologicRecoveryProven: false as const, renalSafetyProven: false as const, electrolyteSafetyProven: false as const,
               exposureCompletenessProven: false as const, treatmentEffectProven: false as const, safetyDispositionDetermined: false as const,
+              dispositionDetermined: false as const, prognosisPredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'delayed-local-anesthetic-cns-cardiac-toxicity'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'delayed-local-anesthetic-cns-cardiac-toxicity-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'delayed-local-anesthetic-cns-cardiac-toxicity-transition-boundary') ? {
+            toxicologyDelayedLastAssessment: {
+              trajectoryAtTick: this.toxicologyDelayedLastTrajectoryAtTick, recognitionAtTick: this.toxicologyDelayedLastRecognitionAtTick,
+              supportAtTick: this.toxicologyDelayedLastSupportAtTick, evidenceAtTick: this.toxicologyDelayedLastEvidenceAtTick,
+              reassessmentAtTick: this.toxicologyDelayedLastReassessmentAtTick, handoffAtTick: this.toxicologyDelayedLastHandoffAtTick,
+              delayedSourceCnsCardiacPatternAuthored: true as const, delayedLastPatternRecognized: this.toxicologyDelayedLastRecognitionAtTick !== null,
+              qualifiedSupportActive: this.toxicologyDelayedLastSupportAtTick !== null,
+              sourceCnsEcgPerfusionAcidBaseElectrolyteAndDifferentialEvidenceReviewed: this.toxicologyDelayedLastEvidenceAtTick !== null,
+              qualifiedSourceAirwaySeizureLipidAcidBaseModifiedResuscitationAndEclsIntentRecorded: this.toxicologyDelayedLastReassessmentAtTick !== null,
+              responseStateAuthored: this.toxicologyDelayedLastReassessmentAtTick !== null,
+              patientHistoryTakenByLearner: false as const, patientExaminedByLearner: false as const, monitoringAcquiredByLearner: false as const,
+              ecgAcquiredByLearner: false as const, ecgInterpretedByLearner: false as const, bloodSampleAcquiredByLearner: false as const,
+              sourceDeliveryInterpretedByLearner: false as const, catheterHandledByLearner: false as const, diagnosisMadeByLearner: false as const,
+              alternativeExcludedByLearner: false as const, oxygenSelectedByLearner: false as const, ventilationSelectedByLearner: false as const,
+              seizureCareSelectedByLearner: false as const, lipidSelectedByLearner: false as const, drugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const, routeSelectedByLearner: false as const, airwaySelectedByLearner: false as const,
+              rhythmCareSelectedByLearner: false as const, eclsSelectedByLearner: false as const, treatmentDeliveredByLearner: false as const,
+              rescueEligibilityDetermined: false as const, durableSeizureControlProven: false as const, durableRhythmStabilityProven: false as const,
+              durablePerfusionStabilityProven: false as const, neurologicRecoveryProven: false as const, airwayRecoveryProven: false as const,
+              acidBaseSafetyProven: false as const, electrolyteSafetyProven: false as const, lipidSafetyProven: false as const,
+              sourceCompletenessProven: false as const, treatmentEffectProven: false as const, safetyDispositionDetermined: false as const,
               dispositionDetermined: false as const, prognosisPredicted: false as const, outcomePredicted: false as const,
             },
           } : {}),

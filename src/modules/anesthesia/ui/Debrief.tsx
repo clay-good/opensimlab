@@ -5637,6 +5637,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-toxicology-delayed-last-source-clock-prodrome-seizure-cardiac-and-whole-patient',
+      'recognize-toxicology-delayed-last-coupled-pattern-without-classic-sequence-clock-symptom-or-ecg-only-closure',
+      'activate-toxicology-delayed-last-source-airway-seizure-cardiac-toxicology-lipid-and-refractory-rescue-ownership',
+      'review-toxicology-delayed-last-supplied-source-delivery-cns-ecg-perfusion-acid-base-electrolyte-and-differential-boundary',
+      'record-toxicology-delayed-last-bounded-qualified-source-airway-seizure-lipid-acid-base-modified-resuscitation-and-ecls-intent-with-strict-later-review',
+      'handoff-toxicology-delayed-last-recurrent-seizure-arrhythmia-shock-airway-acidemia-source-lipid-and-refractory-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'delayed-local-anesthetic-cns-cardiac-toxicity'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'delayed-local-anesthetic-cns-cardiac-toxicity-transition')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'delayed-local-anesthetic-cns-cardiac-toxicity-transition-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Toxicology delayed-LAST lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'Source, clocks, prodrome, seizure, breathing, cardiac, perfusion, and whole-patient state were reconciled.'],
+        ['pattern-recognized', 'The coupled variable LAST pattern was recognized without classic-sequence-, clock-, symptom-, seizure-, ECG-, or diagnostic closure.'],
+        ['support-activated', 'Source, airway, seizure, cardiac, toxicology, lipid, and refractory-rescue ownership were activated.'],
+        ['evidence-reviewed', 'Supplied source-delivery, CNS, ECG, perfusion, acid-base, electrolyte, coingestion, and differential evidence were reviewed without learner interpretation or delivery.'],
+        ['intent-and-reassessment-recorded', 'Bounded qualified source, airway, seizure, lipid, acid-base, modified-resuscitation, surveillance, and ECLS intent plus the elapsed report were recorded without dosing, delivery, eligibility, causal, or durable-safety claims.'],
+        ['active-risk-handoff-recorded', 'Recurrent seizure, rhythm, shock, airway, acid-base, source, lipid, refractory-rescue, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^toxicology-delayed-last-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^toxicology-delayed-last-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-af-rvr-rhythm-and-stability', 'review-af-rvr-context-and-triggers',
       'record-af-rvr-rate-control-intent', 'record-af-rvr-stroke-prevention-intent',
       'reassess-af-rvr-trajectory-and-follow-up'].includes(objective.id)) {

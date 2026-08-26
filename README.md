@@ -179,6 +179,14 @@ electrolyte, surveillance and extracorporeal intent; strict elapsed reassessment
 visual and neurologic findings; and active-risk handoff. It exposes no learner gap calculation,
 diagnosis, threshold, antidote dose, airway operation, dialysis choice, procedure, disposition, or
 outcome control.
+Its fourteenth lab, delayed local-anesthetic systemic toxicity where quiet warnings can turn fast,
+couples a 38-hour continuous ropivacaine-catheter source with a short metallic-taste, tinnitus,
+perioral-tingling, dysarthria and agitation prodrome, generalized seizure, respiratory depression,
+conduction delay and shock. It adds qualified source, airway, seizure, cardiac, toxicology, lipid and
+refractory-rescue ownership; bounded rescue intent; strict elapsed reassessment; and recurrence-risk
+handoff. It exposes no learner catheter or pump handling, diagnosis, oxygen or ventilator setting,
+seizure treatment, lipid dose, cardiac treatment, ECLS operation, procedure, disposition, or outcome
+control, and remains separate from Anesthesia's immediate-injection dosing lab.
 
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage

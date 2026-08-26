@@ -22,9 +22,9 @@ describe('scenario report contract', () => {
     const catalog = JSON.parse(readFileSync(
       join(process.cwd(), 'workers/reports/src/report-catalog.generated.json'), 'utf8',
     )) as { scenarios: { moduleId: string; scenarioId: string; contentVersion: string }[] };
-    expect(catalog.scenarios).toHaveLength(164);
+    expect(catalog.scenarios).toHaveLength(165);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(164);
+      .toBe(165);
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'toxicology', scenarioId: 'methemoglobinemia-saturation-gap',
       contentVersion: '0.1.0',
@@ -75,6 +75,10 @@ describe('scenario report contract', () => {
     }));
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'toxicology', scenarioId: 'methanol-visual-acidosis-gaps',
+      contentVersion: '0.1.0',
+    }));
+    expect(catalog.scenarios).toContainEqual(expect.objectContaining({
+      moduleId: 'toxicology', scenarioId: 'delayed-local-anesthetic-cns-cardiac-toxicity',
       contentVersion: '0.1.0',
     }));
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
