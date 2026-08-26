@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 142 reports Neurology encephalitis state. */
-export const WORKER_PROTOCOL_VERSION = 142;
+/** Bumped whenever the message shape changes incompatibly. Version 143 reports Neurology raised-ICP visual-threat state. */
+export const WORKER_PROTOCOL_VERSION = 143;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2128,6 +2128,33 @@ export interface EquipmentSnapshot {
       readonly medicationDeliveredByLearner: false;
       readonly treatmentEffectProven: false;
       readonly durableNeurologicStabilityProven: false;
+      readonly dispositionDetermined: false;
+      readonly prognosisPredicted: false;
+      readonly outcomePredicted: false;
+    };
+    readonly neurologyRaisedIcpAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly ownershipAtTick: number | null;
+      readonly eyesAtTick: number | null;
+      readonly diagnosticsAtTick: number | null;
+      readonly laterAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly raisedPressureVisualSyndromeAuthored: true;
+      readonly qualifiedOwnershipActive: boolean;
+      readonly confirmedPapilledemaReviewed: boolean;
+      readonly qualifiedDiagnosticsReviewed: boolean;
+      readonly laterVisualFieldDeteriorationAuthored: boolean;
+      readonly patientHistoryTakenByLearner: false;
+      readonly patientExaminedByLearner: false;
+      readonly ophthalmicTestInterpretedByLearner: false;
+      readonly imagingInterpretedByLearner: false;
+      readonly lumbarPuncturePerformedByLearner: false;
+      readonly diagnosisMadeByLearner: false;
+      readonly drugSelectedByLearner: false;
+      readonly procedureSelectedByLearner: false;
+      readonly treatmentDeliveredByLearner: false;
+      readonly visualRescueProven: false;
+      readonly herniationAuthored: false;
       readonly dispositionDetermined: false;
       readonly prognosisPredicted: false;
       readonly outcomePredicted: false;

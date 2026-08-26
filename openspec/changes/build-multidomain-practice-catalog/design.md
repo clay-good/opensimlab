@@ -2187,6 +2187,20 @@ history, examination, test acquisition or interpretation, diagnosis, drug, dose,
 oxygen, airway, LP, imaging, EEG, procedure, treatment, disposition, prognosis, or outcome control
 exists.
 
+### Wave E neurology slice 11: raised intracranial pressure with visual threat
+
+The eleventh Neurology lab owns subacute papilledema, secondary-cause exclusion, serial visual
+function, and imminent sight-threat escalation rather than duplicating Critical Care's monitored
+post-TBI ICP treatment or the next acute herniation lab. The learner reconciles headache, pulsatile
+tinnitus, transient visual obscurations, diplopia, stable neurology, and specialist-confirmed
+papilledema; activates qualified neurological, neuro-ophthalmic, imaging, and procedure ownership;
+reviews supplied photography, OCT, fields, MRI, venography, LP, CSF, opening pressure, and secondary
+causes without demographics or one cutoff establishing diagnosis; then reviews a strict 24-hour
+field decline despite preserved acuity before an elapsed sight-rescue, disease, headache,
+surveillance, and active-risk handoff. No learner examination, test interpretation, diagnosis, drug,
+dose, route, access, LP, procedure selection, treatment, visual rescue, disposition, prognosis, or
+outcome control exists, and no herniation pattern is authored.
+
 #### Neurology: 15
 
 Acute ischemic stroke; large-vessel-occlusion escalation; intracranial hemorrhage; subarachnoid

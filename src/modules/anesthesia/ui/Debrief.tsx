@@ -5190,6 +5190,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-neurology-raised-icp-headache-visual-tinnitus-diplopia-and-whole-patient',
+      'activate-neurology-raised-icp-qualified-neurology-neuro-ophthalmology-imaging-and-procedure-ownership',
+      'review-neurology-raised-icp-confirmed-papilledema-visual-function-and-pseudopapilledema-boundary',
+      'review-neurology-raised-icp-mri-venography-lp-secondary-cause-and-diagnostic-boundary',
+      'review-neurology-raised-icp-strict-later-worsening-visual-field-and-imminent-sight-threat',
+      'handoff-neurology-raised-icp-vision-rescue-cause-disease-headache-follow-up-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'raised-intracranial-pressure-visual-threat'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'raised-intracranial-pressure-visual-threat-reassessment')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'raised-intracranial-pressure-visual-threat-reassessment-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neurology raised-pressure visual-threat lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'The headache, transient-visual, tinnitus, diplopia, neurological, physiological, and whole-patient clock was reconciled.'],
+        ['qualified-ownership-activated', 'Qualified neurology, neuro-ophthalmology, imaging, procedure, nursing, and pharmacy ownership was activated.'],
+        ['papilledema-and-vision-reviewed', 'Confirmed papilledema and supplied acuity, color, pupil, motility, imaging, OCT, and visual-field function were reviewed.'],
+        ['diagnostic-boundary-reviewed', 'MRI, venography, LP, CSF, opening-pressure, and secondary-cause boundaries were reviewed without one-value closure.'],
+        ['later-visual-threat-reviewed', 'Elapsed reliable visual-field deterioration established imminent sight risk despite preserved central acuity and stable neurology.'],
+        ['active-risk-handoff-recorded', 'Sight rescue, secondary causes, disease modification, headache, diplopia, surveillance, recurrence, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^neurology-raised-icp-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^neurology-raised-icp-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

@@ -4079,6 +4079,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use direct verified serial findings, qualified neurological, infection, neurocritical, airway, laboratory and neurophysiology teams, current guidance and local protocols, individualized diagnostics and treatment, and continuous reassessment.',
     briefIn: ['suspected-herpes-simplex-encephalitis'],
   },
+  {
+    id: 'raised-icp-clock-eye-exam-fields-imaging-lp-care-and-later-state-are-authored',
+    headline: 'The clock, eye and neurological examinations, visual fields, imaging, LP, qualified care, and later state are authored.',
+    simplification: 'Fixed specialist reports stand in for history, examination, fundus photography, OCT, perimetry, MRI, venography, laboratory tests, LP safety, opening pressure, CSF, qualified initial care, and reassessment.',
+    whereItMisleads: 'Treating fictional papilledema, visual fields, imaging exclusions, one opening pressure, demographics, or supplied care as learner evidence, a proven idiopathic cause, treatment effect, or predicted course.',
+    correctUnderstanding: 'Real care requires verified specialist assessment, urgent secondary-cause exclusion, pressure interpreted in full context, serial visual function, individualized treatment, and continuous reassessment.',
+    briefIn: ['raised-intracranial-pressure-visual-threat'],
+  },
+  {
+    id: 'raised-icp-controls-reconcile-activate-review-reassess-and-handoff-only',
+    headline: 'The controls record trajectory reconciliation, qualified ownership, eye and diagnostic review, later visual-threat review, and handoff only.',
+    simplification: 'Six actions stand in for neurology, neuro-ophthalmology, radiology, procedural, nursing, pharmacy, disease, headache, and follow-up work.',
+    whereItMisleads: 'Equating button order with examination, testing, diagnosis, LP, prescribing, procedure selection, treatment, visual rescue, disposition, or competence.',
+    correctUnderstanding: 'Actual care requires the patient, trained teams, verified serial findings, current local pathways, individualized decisions, and continuous reassessment.',
+    briefIn: ['raised-intracranial-pressure-visual-threat'],
+  },
+  {
+    id: 'no-live-raised-icp-exam-test-imaging-lp-diagnosis-drug-procedure-or-outcome',
+    headline: 'The lab does not examine, test, image, perform LP, diagnose, prescribe, perform a procedure, treat, or report outcome.',
+    simplification: 'No live eye or neurological examination, fundus, OCT, field, MRI, venography, blood, CSF, pressure or another test, diagnosis, drug, dose, route, access, weight or headache treatment, LP, fenestration, CSF diversion, stenting, procedure, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Relying on acuity alone, using demographics or one pressure cutoff as diagnosis, copying fictional values into care, or reading completion as sight-preservation competence.',
+    correctUnderstanding: 'Use direct verified serial visual and neurological findings, qualified multidisciplinary teams, current guidance and local protocols, individualized cause and treatment decisions, and continuous reassessment.',
+    briefIn: ['raised-intracranial-pressure-visual-threat'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

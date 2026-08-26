@@ -220,6 +220,11 @@ Recorded here rather than silently carried:
   validate encephalitis physiology or diagnosis, examination, CSF or PCR testing, imaging or EEG
   interpretation, antiviral or antiseizure effects, repeat-test timing, recovery, prognosis, or
   outcome.
+  Raised intracranial pressure with visual threat overlays fixed headache and visual symptoms,
+  specialist eye findings, fields, MRI, venography, LP, qualified care, and strict-later field
+  deterioration on the healthy adult scaffold; it does not validate pressure physiology, eye or
+  neurological examination, testing, diagnosis, medicine or procedure effects, visual rescue,
+  recovery, prognosis, or outcome.
 
 ## Concentration-time checks, 2026-08-23
 

@@ -1150,6 +1150,11 @@ export interface ActionCockpitProps {
       readonly treatmentAtTick: number | null; readonly diagnosticsAtTick: number | null;
       readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly neurologyRaisedIcpAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly ownershipAtTick: number | null;
+      readonly eyesAtTick: number | null; readonly diagnosticsAtTick: number | null;
+      readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1938,6 +1943,14 @@ export interface ActionCockpitProps {
       | 'review-neurology-encephalitis-strict-later-early-negative-hsv-pcr-and-clinical-trajectory'
       | 'handoff-neurology-encephalitis-repeat-testing-antiviral-seizure-autoimmune-and-active-risk',
   ) => void;
+  readonly onNeurologyRaisedIcpResponse?: (
+    action: 'reconcile-neurology-raised-icp-headache-visual-tinnitus-diplopia-and-whole-patient'
+      | 'activate-neurology-raised-icp-qualified-neurology-neuro-ophthalmology-imaging-and-procedure-ownership'
+      | 'review-neurology-raised-icp-confirmed-papilledema-visual-function-and-pseudopapilledema-boundary'
+      | 'review-neurology-raised-icp-mri-venography-lp-secondary-cause-and-diagnostic-boundary'
+      | 'review-neurology-raised-icp-strict-later-worsening-visual-field-and-imminent-sight-threat'
+      | 'handoff-neurology-raised-icp-vision-rescue-cause-disease-headache-follow-up-and-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2409,6 +2422,12 @@ export function crisisResponseAvailability(
         && event.target === 'suspected-herpes-simplex-encephalitis-reassessment')
       && scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'suspected-herpes-simplex-encephalitis-reassessment-boundary'),
+    hasNeurologyRaisedIcpResponse:
+      scenario.metadata.id === 'raised-intracranial-pressure-visual-threat'
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'raised-intracranial-pressure-visual-threat-reassessment')
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'raised-intracranial-pressure-visual-threat-reassessment-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2600,6 +2619,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'acute-bacterial-meningitis-first-hour-reassessment')
       || (event.type === 'narrative'
         && event.target === 'suspected-herpes-simplex-encephalitis-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'raised-intracranial-pressure-visual-threat-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2682,6 +2703,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeurologyGbsResponse,
     hasNeurologyMeningitisResponse,
     hasNeurologyEncephalitisResponse,
+    hasNeurologyRaisedIcpResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2764,7 +2786,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeurologyCerebellarIchResponse || hasNeurologyAsahDeteriorationResponse
     || hasNeurologyFocalMotorStatusResponse || hasNeurologyNcseResponse
     || hasNeurologyMyasthenicCrisisResponse || hasNeurologyGbsResponse
-    || hasNeurologyMeningitisResponse || hasNeurologyEncephalitisResponse;
+    || hasNeurologyMeningitisResponse || hasNeurologyEncephalitisResponse
+    || hasNeurologyRaisedIcpResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2795,7 +2818,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasNeurologyEncephalitisResponse
+  const responseTray = hasNeurologyRaisedIcpResponse
+    ? { id: 'crisis', label: 'Raised pressure + vision' } as const
+    : hasNeurologyEncephalitisResponse
     ? { id: 'crisis', label: 'Encephalitis reassessment' } as const
     : hasNeurologyMeningitisResponse
     ? { id: 'crisis', label: 'Meningitis first hour' } as const
@@ -3118,6 +3143,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeurologyGbsResponse
     || hasNeurologyMeningitisResponse
     || hasNeurologyEncephalitisResponse
+    || hasNeurologyRaisedIcpResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3894,6 +3920,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <NeurologyEncephalitisTray
                 assessment={props.resuscitation.neurologyEncephalitisAssessment}
                 onAction={props.onNeurologyEncephalitisResponse ?? (() => {})} />
+            )}
+            {hasNeurologyRaisedIcpResponse && (
+              <NeurologyRaisedIcpTray
+                assessment={props.resuscitation.neurologyRaisedIcpAssessment}
+                onAction={props.onNeurologyRaisedIcpResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -10051,6 +10082,38 @@ function NeurologyEncephalitisTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {diagnostics && !later && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-encephalitis-strict-later-early-negative-hsv-pcr-and-clinical-trajectory')}>Review the 4-hour report</Button>}
         {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-encephalitis-repeat-testing-antiviral-seizure-autoimmune-and-active-risk')}>Hand off repeat testing + risk</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function NeurologyRaisedIcpTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyRaisedIcpAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNeurologyRaisedIcpResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const ownership = assessment?.ownershipAtTick != null;
+  const eyes = assessment?.eyesAtTick != null;
+  const diagnostics = assessment?.diagnosticsAtTick != null;
+  const later = assessment?.laterAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="neurology-raised-icp-early-title">
+      <div id="neurology-raised-icp-early-title" className="syringe__name">Protect the whole field.</div>
+      <p className="syringe__remaining">Central acuity can stay sharp while papilledema quietly threatens peripheral vision.</p>
+      <div className="crisis-drug__actions">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neurology-raised-icp-headache-visual-tinnitus-diplopia-and-whole-patient')}>Review the pressure clock</Button>}
+        {trajectory && !ownership && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-raised-icp-qualified-neurology-neuro-ophthalmology-imaging-and-procedure-ownership')}>Activate vision + brain owners</Button>}
+        {ownership && !eyes && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-raised-icp-confirmed-papilledema-visual-function-and-pseudopapilledema-boundary')}>Review papilledema + fields</Button>}
+        {eyes && !diagnostics && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-raised-icp-mri-venography-lp-secondary-cause-and-diagnostic-boundary')}>Review MRI + veins + LP</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="neurology-raised-icp-later-title">
+      <div id="neurology-raised-icp-later-title" className="syringe__name">Sharp center, narrowing world.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Sight rescue, secondary causes, disease, headache, surveillance, and outcome uncertainty handed off.' : later ? 'The fields worsened despite 20/20 acuity. Urgent qualified sight-preservation review is open.' : diagnostics ? 'Papilledema and raised pressure are supplied. Review the fixed 24-hour visual report after time passes.' : 'Complete the clock, owners, eye evidence, and diagnostic boundaries before reassessment.'}</p>
+      <div className="crisis-drug__actions">
+        {diagnostics && !later && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-raised-icp-strict-later-worsening-visual-field-and-imminent-sight-threat')}>Review the 24-hour fields</Button>}
+        {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-raised-icp-vision-rescue-cause-disease-headache-follow-up-and-active-risk')}>Hand off sight + active risk</Button>}
       </div>
     </section>
   </>;

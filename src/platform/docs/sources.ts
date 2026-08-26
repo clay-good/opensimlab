@@ -2854,6 +2854,26 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'https://www.idsociety.org/practice-guideline/encephalitis/',
     verifiedOn: '2026-08-26',
   },
+  {
+    id: 'iih-consensus-guideline-2018', pmid: '29903905',
+    authors: 'Mollan SP, Davies B, Silver NC, et al',
+    title: 'Idiopathic intracranial hypertension: consensus guidelines on management',
+    publication: 'Journal of Neurology, Neurosurgery & Psychiatry', year: 2018,
+    locator: '89:1088-1100; doi:10.1136/jnnp-2017-317440; papilledema investigation, visual monitoring, secondary-cause exclusion, and imminent visual-loss escalation',
+    usedFor: 'Specialist papilledema confirmation, formal visual function, urgent MRI with venography, properly performed LP in context, and urgent qualified surgical escalation when visual function declines.',
+    verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/29903905/',
+    verifiedOn: '2026-08-26',
+  },
+  {
+    id: 'iih-diagnosis-management-update-2020', pmid: '32675143',
+    authors: 'Wakerley BR, Mollan SP, Sinclair AJ',
+    title: 'Idiopathic intracranial hypertension: Update on diagnosis and management',
+    publication: 'Clinical Medicine', year: 2020,
+    locator: '20:384-388; doi:10.7861/clinmed.2020-0232; diagnostic criteria, pressure grey zone, visual assessment, and fulminant visual-loss boundary',
+    usedFor: 'The no-demographic-shortcut and no-single-pressure-cutoff boundary, imaging plus venography, normal CSF context, and urgent sight-preservation escalation for rapid visual decline.',
+    verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/32675143/',
+    verifiedOn: '2026-08-26',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

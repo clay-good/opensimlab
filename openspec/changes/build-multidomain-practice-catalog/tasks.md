@@ -477,6 +477,16 @@ credited toward the catalog until every item in the completion contract passes.
     active-risk handoff. No learner history, examination, test acquisition or interpretation,
     diagnosis, drug, dose, route, access, oxygen, fluid, airway, LP, imaging, EEG, procedure,
     treatment, durable stability, disposition, prognosis, or outcome control exists.
+  - [x] Neurology slice 11/15 adds one authored stable alert 31-year-old with 5 weeks of new
+    pressure-pattern headache, pulsatile tinnitus and transient visual obscurations plus 3 days of
+    diplopia, specialist-confirmed bilateral papilledema and sixth-nerve palsy, supplied visual
+    function, MRI and venography exclusions, and qualified LP opening pressure 34 cm CSF with normal
+    composition. The learner reviews the syndrome without demographic or one-value closure,
+    activates qualified ownership, reviews eye and diagnostic boundaries, then reviews a strict
+    24-hour worsening visual field despite preserved 20/20 acuity before another elapsed urgent
+    sight-rescue and active-risk handoff without learner examination, testing, interpretation,
+    diagnosis, drug, dose, route, access, LP, procedure, treatment, herniation, visual rescue,
+    disposition, prognosis, or outcome control.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.

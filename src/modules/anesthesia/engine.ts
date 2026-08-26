@@ -359,6 +359,10 @@ const NEUROLOGY_ENCEPHALITIS_BLOCKED_ACTION_TYPES = new Set([
   'focal-motor-status-epilepticus-escalation-response',
   'nonconvulsive-status-epilepticus-recognition-response',
 ]);
+const NEUROLOGY_RAISED_ICP_BLOCKED_ACTION_TYPES = new Set([
+  ...NEUROLOGY_ENCEPHALITIS_BLOCKED_ACTION_TYPES,
+  'suspected-herpes-simplex-encephalitis-response', 'intracranial-hypertension-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1166,6 +1170,12 @@ export class AnesthesiaEngine {
   private neurologyEncephalitisDiagnosticsAtTick: number | null = null;
   private neurologyEncephalitisLaterAtTick: number | null = null;
   private neurologyEncephalitisHandoffAtTick: number | null = null;
+  private neurologyRaisedIcpTrajectoryAtTick: number | null = null;
+  private neurologyRaisedIcpOwnershipAtTick: number | null = null;
+  private neurologyRaisedIcpEyesAtTick: number | null = null;
+  private neurologyRaisedIcpDiagnosticsAtTick: number | null = null;
+  private neurologyRaisedIcpLaterAtTick: number | null = null;
+  private neurologyRaisedIcpHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1873,6 +1883,18 @@ export class AnesthesiaEngine {
         + 'meningitis, status-epilepticus, or adjacent-scenario action. Nothing changed.',
         { actionType: action.type });
       return;
+    }
+    const neurologyRaisedIcp = this.scenario.metadata.id
+      === 'raised-intracranial-pressure-visual-threat'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'raised-intracranial-pressure-visual-threat-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'raised-intracranial-pressure-visual-threat-reassessment-boundary');
+    if (neurologyRaisedIcp && NEUROLOGY_RAISED_ICP_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `neurology-raised-icp-generic-action-refused-${this.currentTick}`,
+        'This Neurology lesson exposes no generic pressure, hyperosmolar, drug, dose, route, access, '
+        + 'eye examination, imaging, venography, LP, shunt, fenestration, stent, herniation, or '
+        + 'adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -9632,6 +9654,71 @@ export class AnesthesiaEngine {
             durableNeurologicStabilityProven: false, dispositionDetermined: false,
             prognosisPredicted: false, outcomePredicted: false }); break;
       }
+      case 'raised-intracranial-pressure-visual-threat-response': {
+        const response = typeof action.payload.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'raised-intracranial-pressure-visual-threat'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'raised-intracranial-pressure-visual-threat-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'raised-intracranial-pressure-visual-threat-reassessment-boundary');
+        const actions = [
+          'reconcile-neurology-raised-icp-headache-visual-tinnitus-diplopia-and-whole-patient',
+          'activate-neurology-raised-icp-qualified-neurology-neuro-ophthalmology-imaging-and-procedure-ownership',
+          'review-neurology-raised-icp-confirmed-papilledema-visual-function-and-pseudopapilledema-boundary',
+          'review-neurology-raised-icp-mri-venography-lp-secondary-cause-and-diagnostic-boundary',
+          'review-neurology-raised-icp-strict-later-worsening-visual-field-and-imminent-sight-threat',
+          'handoff-neurology-raised-icp-vision-rescue-cause-disease-headache-follow-up-and-active-risk',
+        ] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) {
+          this.log('warning', 'assessment', `neurology-raised-icp-response-refused-${this.currentTick}`,
+            supported ? 'The raised-pressure action was not listed. No supplied or injected text was retained.' : 'These raised-pressure choices are available only in the exact declared Neurology lesson.'); break;
+        }
+        if (response === actions[0]) {
+          if (this.neurologyRaisedIcpTrajectoryAtTick !== null) { this.log('warning', 'assessment', `neurology-raised-icp-trajectory-refused-${this.currentTick}`, 'The supplied raised-pressure trajectory was already reconciled.'); break; }
+          this.neurologyRaisedIcpTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-raised-icp-trajectory-reconciled-${this.currentTick}`,
+            'The supplied 5-week new pressure-pattern headache, pulsatile tinnitus, transient visual obscurations, and new diplopia connect to specialist-confirmed papilledema and a sixth-nerve palsy while alert nonfocal neurology and stable physiology remain. Demographics do not establish the cause. The learner did not take history, examine, test, diagnose, or treat.',
+            { raisedPressureVisualSyndromeAuthored: true, patientHistoryTakenByLearner: false, patientExaminedByLearner: false, diagnosisMadeByLearner: false }); break;
+        }
+        if (this.neurologyRaisedIcpTrajectoryAtTick === null) { this.log('warning', 'assessment', `neurology-raised-icp-trajectory-order-refused-${this.currentTick}`, 'Reconcile the whole-patient trajectory first.'); break; }
+        if (response === actions[1]) {
+          if (this.neurologyRaisedIcpOwnershipAtTick !== null) { this.log('warning', 'assessment', `neurology-raised-icp-ownership-refused-${this.currentTick}`, 'Qualified neurological, neuro-ophthalmic, imaging, and procedure ownership is already active.'); break; }
+          this.neurologyRaisedIcpOwnershipAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-raised-icp-qualified-ownership-activated-${this.currentTick}`,
+            'Qualified neurology, neuro-ophthalmology, radiology, procedure-capable, nursing, and pharmacy teams own visual function, papilledema confirmation, secondary causes, imaging, LP safety, deterioration, and rescue. The learner selected no test, drug, dose, route, access, or procedure.',
+            { qualifiedOwnershipActive: true, procedureSelectedByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.neurologyRaisedIcpOwnershipAtTick === null) { this.log('warning', 'assessment', `neurology-raised-icp-ownership-order-refused-${this.currentTick}`, 'Activate qualified ownership before specialist evidence review.'); break; }
+        if (response === actions[2]) {
+          if (this.neurologyRaisedIcpEyesAtTick !== null) { this.log('warning', 'assessment', `neurology-raised-icp-eyes-refused-${this.currentTick}`, 'The confirmed papilledema and visual-function boundary was already reviewed.'); break; }
+          this.neurologyRaisedIcpEyesAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-raised-icp-papilledema-and-vision-reviewed-${this.currentTick}`,
+            'A qualified neuro-ophthalmologist confirms bilateral papilledema rather than pseudopapilledema and supplies acuity, color, pupils, motility, photography, OCT, and reliable fields. Preserved 20/20 central acuity does not exclude peripheral visual loss. The learner performed or interpreted no eye examination, image, OCT, or field test.',
+            { confirmedPapilledemaReviewed: true, patientExaminedByLearner: false, ophthalmicTestInterpretedByLearner: false }); break;
+        }
+        if (this.neurologyRaisedIcpEyesAtTick === null) { this.log('warning', 'assessment', `neurology-raised-icp-eyes-order-refused-${this.currentTick}`, 'Review confirmed papilledema and visual function before the diagnostic boundary.'); break; }
+        if (response === actions[3]) {
+          if (this.neurologyRaisedIcpDiagnosticsAtTick !== null) { this.log('warning', 'assessment', `neurology-raised-icp-diagnostics-refused-${this.currentTick}`, 'The supplied imaging, venography, LP, and secondary-cause boundary was already reviewed.'); break; }
+          this.neurologyRaisedIcpDiagnosticsAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-raised-icp-diagnostic-boundary-reviewed-${this.currentTick}`,
+            'Qualified MRI and venography exclude the authored mass, hydrocephalus, meningeal, hemorrhagic, infarct, and cerebral-venous-thrombosis alternatives. A qualified properly positioned LP supplies opening pressure 34 cm CSF with normal composition. The integrated pattern strongly supports raised pressure, but one value, supportive imaging signs, and demographics are not diagnostic alone; secondary causes remain qualified work. No learner imaging, LP, pressure, CSF, or diagnosis occurred.',
+            { qualifiedDiagnosticsReviewed: true, imagingInterpretedByLearner: false, lumbarPuncturePerformedByLearner: false, diagnosisMadeByLearner: false }); break;
+        }
+        if (this.neurologyRaisedIcpDiagnosticsAtTick === null) { this.log('warning', 'assessment', `neurology-raised-icp-diagnostics-order-refused-${this.currentTick}`, 'Review imaging, venography, LP, and secondary causes before the later visual report.'); break; }
+        if (response === actions[4]) {
+          if (this.currentTick <= this.neurologyRaisedIcpDiagnosticsAtTick) { this.log('warning', 'assessment', `neurology-raised-icp-later-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before reviewing the fixed 24-hour visual report.'); break; }
+          if (this.neurologyRaisedIcpLaterAtTick !== null) { this.log('warning', 'assessment', `neurology-raised-icp-later-refused-${this.currentTick}`, 'The fixed visual-field trajectory was already reviewed.'); break; }
+          this.neurologyRaisedIcpLaterAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-raised-icp-later-visual-threat-reviewed-${this.currentTick}`,
+            'At the strict 24-hour report, reliable automated fields have worsened to moderate bilateral inferior-nasal constriction despite preserved 20/20 acuity and stable GCS 15. Objective field loss establishes an imminent sight threat requiring urgent qualified surgical sight-preservation review. No herniation pattern, learner test interpretation, procedure choice, treatment, or visual rescue is claimed.',
+            { laterVisualFieldDeteriorationAuthored: true, herniationAuthored: false, ophthalmicTestInterpretedByLearner: false, procedureSelectedByLearner: false, visualRescueProven: false }); break;
+        }
+        if (this.neurologyRaisedIcpLaterAtTick === null) { this.log('warning', 'assessment', `neurology-raised-icp-later-order-refused-${this.currentTick}`, 'Review the fixed later visual-field threat before handoff.'); break; }
+        if (this.currentTick <= this.neurologyRaisedIcpLaterAtTick) { this.log('warning', 'assessment', `neurology-raised-icp-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off active visual risk.'); break; }
+        if (this.neurologyRaisedIcpHandoffAtTick !== null) { this.log('warning', 'assessment', `neurology-raised-icp-handoff-refused-${this.currentTick}`, 'The vision-rescue and active-risk handoff was already recorded.'); break; }
+        this.neurologyRaisedIcpHandoffAtTick = this.currentTick;
+        this.log('critical', 'assessment', `neurology-raised-icp-active-risk-handoff-recorded-${this.currentTick}`,
+          'Visual fields and papilledema, urgent rescue selection, secondary causes, individualized disease modification and medicine safety, headache disability and medication overuse, diplopia, recurrence, follow-up, disposition, prognosis, and outcome uncertainty were handed off. No learner procedure, treatment, visual rescue, disposition, prognosis, or outcome is claimed.',
+          { procedureSelectedByLearner: false, treatmentDeliveredByLearner: false, visualRescueProven: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -12823,6 +12910,13 @@ export class AnesthesiaEngine {
         meanArterialMmHg: later ? 89 : 91,
         coreTemperatureC: later ? 38.5 : 38.8 };
     }
+    if (this.scenario.metadata.id === 'raised-intracranial-pressure-visual-threat'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'raised-intracranial-pressure-visual-threat-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'raised-intracranial-pressure-visual-threat-reassessment-boundary')) {
+      crisisState = { ...crisisState, heartRateBpm: 82, respiratoryRateBpm: 16,
+        spo2Percent: 99, systolicMmHg: 132, diastolicMmHg: 78,
+        meanArterialMmHg: 96, coreTemperatureC: 36.8 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -15708,6 +15802,37 @@ export class AnesthesiaEngine {
               medicationDeliveredByLearner: false as const,
               treatmentEffectProven: false as const,
               durableNeurologicStabilityProven: false as const,
+              dispositionDetermined: false as const,
+              prognosisPredicted: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'raised-intracranial-pressure-visual-threat'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'raised-intracranial-pressure-visual-threat-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'raised-intracranial-pressure-visual-threat-reassessment-boundary') ? {
+            neurologyRaisedIcpAssessment: {
+              trajectoryAtTick: this.neurologyRaisedIcpTrajectoryAtTick,
+              ownershipAtTick: this.neurologyRaisedIcpOwnershipAtTick,
+              eyesAtTick: this.neurologyRaisedIcpEyesAtTick,
+              diagnosticsAtTick: this.neurologyRaisedIcpDiagnosticsAtTick,
+              laterAtTick: this.neurologyRaisedIcpLaterAtTick,
+              handoffAtTick: this.neurologyRaisedIcpHandoffAtTick,
+              raisedPressureVisualSyndromeAuthored: true as const,
+              qualifiedOwnershipActive: this.neurologyRaisedIcpOwnershipAtTick !== null,
+              confirmedPapilledemaReviewed: this.neurologyRaisedIcpEyesAtTick !== null,
+              qualifiedDiagnosticsReviewed: this.neurologyRaisedIcpDiagnosticsAtTick !== null,
+              laterVisualFieldDeteriorationAuthored: this.neurologyRaisedIcpLaterAtTick !== null,
+              patientHistoryTakenByLearner: false as const,
+              patientExaminedByLearner: false as const,
+              ophthalmicTestInterpretedByLearner: false as const,
+              imagingInterpretedByLearner: false as const,
+              lumbarPuncturePerformedByLearner: false as const,
+              diagnosisMadeByLearner: false as const,
+              drugSelectedByLearner: false as const,
+              procedureSelectedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              visualRescueProven: false as const,
+              herniationAuthored: false as const,
               dispositionDetermined: false as const,
               prognosisPredicted: false as const,
               outcomePredicted: false as const,
