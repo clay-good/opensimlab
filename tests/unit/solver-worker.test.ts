@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Toxicology sympathomimetic state has protocol version 159', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(159);
+  it('Scenario: Toxicology methanol state has protocol version 160', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(160);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

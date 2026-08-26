@@ -4487,6 +4487,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use the complete verified exposure and clock, serial mental, psychiatric, autonomic, airway, temperature, cardiac, renal, CK, coingestion, competing-cause, supportive-care and response trajectory under qualified toxicology and resuscitation ownership.',
     briefIn: ['sympathomimetic-hyperadrenergic-hyperthermia'],
   },
+  {
+    id: 'methanol-exposure-visual-acidosis-gaps-and-response-are-authored',
+    headline: 'The methanol source, visual-acidosis pattern, complementary gaps, and later response are authored.',
+    simplification: 'Fixed reports and canonical monitor states stand in for history, examination, exposure verification, visual and neurologic assessment, blood-gas, chemistry, osmolality, ethanol, renal, ECG, concentration and laboratory acquisition or interpretation, qualified care, and reassessment.',
+    whereItMisleads: 'Treating the fictional source, timing, symptom, pH, anion gap, osmolar gap, concentration context, antidote intent, extracorporeal preparation, or later improvement as learner evidence, a diagnostic shortcut, universal threshold, treatment effect, clearance, recovery, or predicted course.',
+    correctUnderstanding: 'Real care requires verified serial airway, neurologic, visual, acid-base, osmolar, electrolyte, renal, exposure, coingestion and competing-cause assessment with poison-center or medical-toxicology, critical-care and nephrology ownership.',
+    briefIn: ['methanol-visual-acidosis-gaps'],
+  },
+  {
+    id: 'methanol-controls-reconcile-recognize-support-review-intent-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, pattern recognition, qualified ownership, evidence review, bounded intent, reassessment, and handoff only.',
+    simplification: 'Six actions stand in for emergency, critical-care, nursing, pharmacy, airway, toxicology, laboratory, nephrology or extracorporeal, ophthalmic, antidote, cofactor, acid-base, electrolyte, surveillance, and handoff work.',
+    whereItMisleads: 'Equating button order with history, examination, blood-gas or laboratory interpretation, gap calculation, diagnosis, differential exclusion, prescribing, airway care, extracorporeal eligibility or delivery, disposition, recovery, or competence.',
+    correctUnderstanding: 'Actual care requires trained teams, current local protocols, verified data, individualized antidote and supportive care, urgent specialist extracorporeal decisions, and serial visual, neurologic, metabolic, renal and airway reassessment.',
+    briefIn: ['methanol-visual-acidosis-gaps'],
+  },
+  {
+    id: 'no-live-methanol-diagnosis-calculation-antidote-acid-base-airway-dialysis-or-outcome',
+    headline: 'The lab does not diagnose methanol poisoning, calculate a gap, prescribe an antidote, manage acid-base or airway care, select dialysis, or report outcome.',
+    simplification: 'No live history, examination, monitoring, ECG, blood gas, chemistry, osmolality, concentration or another test, calculation, diagnosis, differential exclusion, source control, antidote, cofactor, fluid, buffer, electrolyte, drug, dose, rate, target, route, access, infusion, airway, ventilation, transport, extracorporeal modality, procedure, stopping decision, disposition, prognosis, safety decision, or outcome is modeled.',
+    whereItMisleads: 'Using one source, symptom, pH, concentration or gap alone; copying fictional values into care; choosing an antidote, dose, buffer, airway or extracorporeal threshold from this rehearsal; attributing the fixed response; or reading completion as competence.',
+    correctUnderstanding: 'Use the complete verified exposure and clock plus serial visual, neurologic, airway, acid-base, osmolar, electrolyte, renal, coingestion, competing-cause, treatment and response trajectory under qualified toxicology, critical-care and nephrology ownership.',
+    briefIn: ['methanol-visual-acidosis-gaps'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

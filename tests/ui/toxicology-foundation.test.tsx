@@ -17,6 +17,7 @@ import { CHOLINERGIC_PESTICIDE_RESPIRATORY_FAILURE } from '../../src/modules/tox
 import { ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM } from '../../src/modules/toxicology/scenarios/anticholinergic-hyperthermia-delirium';
 import { SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS } from '../../src/modules/toxicology/scenarios/serotonin-toxicity-hyperthermia-clonus';
 import { SYMPATHOMIMETIC_HYPERADRENERGIC_HYPERTHERMIA } from '../../src/modules/toxicology/scenarios/sympathomimetic-hyperadrenergic-hyperthermia';
+import { METHANOL_VISUAL_ACIDOSIS_GAPS } from '../../src/modules/toxicology/scenarios/methanol-visual-acidosis-gaps';
 
 describe('Toxicology module user-facing foundation', () => {
   const cockpitMarkup = (
@@ -359,6 +360,27 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('Lower the heat. Lower the threat.');
     expect(markup).toContain('Connect exposure + surge');
     expect(markup).not.toMatch(/mg\/kg|cooling rate|ice bath|restraint type|sedative dose|antihypertensive dose|airway setting/i);
+    expect(markup).not.toContain('<input');
+    expect(markup).not.toContain('<select');
+  });
+
+  it('prerenders and opens the methanol lab on its calm complementary-clues tray', () => {
+    const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/methanol-visual-acidosis-gaps' }));
+    expect(page).toContain('<h1>Methanol toxicity: the gaps are clues, not answers</h1>');
+    expect(page).toContain('source-, vision-, anion-gap-, osmolar-gap-, or level-only closure');
+    expect(crisisResponseAvailability(METHANOL_VISUAL_ACIDOSIS_GAPS, []))
+      .toMatchObject({ hasToxicologyMethanolResponse: true });
+    expect(crisisResponseAvailability({ ...METHANOL_VISUAL_ACIDOSIS_GAPS,
+      metadata: { ...METHANOL_VISUAL_ACIDOSIS_GAPS.metadata, id: 'methanol-clone' } }, []))
+      .toMatchObject({ hasToxicologyMethanolResponse: false });
+    const markup = cockpitMarkup(METHANOL_VISUAL_ACIDOSIS_GAPS, {
+      toxicologyMethanolAssessment: { trajectoryAtTick: null, recognitionAtTick: null,
+        supportAtTick: null, evidenceAtTick: null, reassessmentAtTick: null, handoffAtTick: null },
+    });
+    expect(markup).toContain('Methanol clues');
+    expect(markup).toContain('Two gaps. One whole story.');
+    expect(markup).toContain('Connect source + trajectory');
+    expect(markup).not.toMatch(/mg\/kg|fomepizole dose|folate dose|dialysis threshold|osmolar formula|airway setting/i);
     expect(markup).not.toContain('<input');
     expect(markup).not.toContain('<select');
   });

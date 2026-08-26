@@ -260,6 +260,15 @@ Recorded here rather than silently carried:
   teaching calibrations grounded in current consensus and ACMT guidance, not an absorption,
   metabolism, nomogram-calculation, liver-injury, acetylcysteine-pharmacology, automatic-stopping, or
   individualized-response model.
+  Methanol visual-acidosis toxicity uses fixed canonical presentation and elapsed-response states:
+  HR 118/min, BP 110/68 mmHg, RR 30/min, SpO2 98%, blurred snowfield-like vision, confusion,
+  pH 7.19, bicarbonate 7 mmol/L, authored anion gap 31 mmol/L, measured osmolality 322 mOsm/kg and
+  authored osmolar gap 31 mOsm/kg, then qualified source, antidote, cofactor, acid-base and
+  extracorporeal intent with pH 7.27, HR 106/min, BP 112/70 mmHg, RR 26/min, persistent blurred
+  vision and arousable confusion. These are teaching calibrations grounded in EXTRIP methanol
+  recommendations and the current DailyMed fomepizole label, not an exposure, gap-calculation,
+  acid-base, osmolar, concentration, visual, neurologic, antidote-response, dialysis, airway, renal,
+  or individualized-response model.
   Salicylate where the falling number can be worse uses fixed canonical presentation and elapsed-
   deterioration states: supplied salicylate 52 mg/dL, pH 7.45, PCO2 23 mmHg, bicarbonate 16 mmol/L,
   anion gap 20 mmol/L and potassium 3.2 mmol/L, then salicylate 46 mg/dL, pH 7.32, PCO2 25 mmHg,

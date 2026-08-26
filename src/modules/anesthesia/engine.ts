@@ -428,6 +428,10 @@ const TOXICOLOGY_SYMPATHOMIMETIC_BLOCKED_ACTION_TYPES = new Set([
   ...TOXICOLOGY_SEROTONIN_BLOCKED_ACTION_TYPES,
   'serotonin-toxicity-hyperthermia-clonus-response',
 ]);
+const TOXICOLOGY_METHANOL_BLOCKED_ACTION_TYPES = new Set([
+  ...TOXICOLOGY_SYMPATHOMIMETIC_BLOCKED_ACTION_TYPES,
+  'sympathomimetic-hyperadrenergic-hyperthermia-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1337,6 +1341,12 @@ export class AnesthesiaEngine {
   private toxicologySympathomimeticEvidenceAtTick: number | null = null;
   private toxicologySympathomimeticReassessmentAtTick: number | null = null;
   private toxicologySympathomimeticHandoffAtTick: number | null = null;
+  private toxicologyMethanolTrajectoryAtTick: number | null = null;
+  private toxicologyMethanolRecognitionAtTick: number | null = null;
+  private toxicologyMethanolSupportAtTick: number | null = null;
+  private toxicologyMethanolEvidenceAtTick: number | null = null;
+  private toxicologyMethanolReassessmentAtTick: number | null = null;
+  private toxicologyMethanolHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2204,6 +2214,15 @@ export class AnesthesiaEngine {
       this.log('warning', 'assessment', `toxicology-sympathomimetic-generic-action-refused-${this.currentTick}`,
         'This Toxicology lesson exposes no generic examination, monitoring, ECG, temperature, toxicology-screen, blood-gas, CK or laboratory interpretation, '
         + 'restraint, cooling, fluid, sedation, antihypertensive, vasodilator, drug, dose, route, access, infusion, airway, ventilation, transport, '
+        + 'procedure, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const toxicologyMethanol = this.scenario.metadata.id === 'methanol-visual-acidosis-gaps'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methanol-visual-acidosis-gaps-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methanol-visual-acidosis-gaps-transition-boundary');
+    if (toxicologyMethanol && TOXICOLOGY_METHANOL_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `toxicology-methanol-generic-action-refused-${this.currentTick}`,
+        'This Toxicology lesson exposes no generic examination, monitoring, ECG, blood-gas, chemistry, osmolality or concentration interpretation, '
+        + 'calculation, fluid, buffer, electrolyte, fomepizole, folate, drug, dose, route, access, infusion, airway, ventilation, dialysis, transport, '
         + 'procedure, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
@@ -10523,6 +10542,32 @@ export class AnesthesiaEngine {
         if (this.toxicologySympathomimeticHandoffAtTick !== null) break;
         this.toxicologySympathomimeticHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-sympathomimetic-active-risk-handoff-recorded-${this.currentTick}`, 'Rebound agitation, psychosis, suicidality, hypertension, ischemia, arrhythmia, hyperthermia, airway, renal and CK injury, seizure, coingestion, recurrence, safety, disposition, prognosis, and outcome uncertainty were handed off.', { safetyDispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'methanol-visual-acidosis-gaps-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'methanol-visual-acidosis-gaps'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methanol-visual-acidosis-gaps-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methanol-visual-acidosis-gaps-transition-boundary');
+        const actions = ['reconcile-toxicology-methanol-source-clock-vision-acid-base-gaps-and-whole-patient',
+          'recognize-toxicology-methanol-coupled-pattern-without-source-vision-anion-osmolar-or-level-only-closure',
+          'activate-toxicology-methanol-resuscitation-airway-antidote-extracorporeal-toxicology-laboratory-and-vision-ownership',
+          'review-toxicology-methanol-supplied-acid-base-osmolar-electrolyte-renal-visual-coingestion-and-differential-boundary',
+          'record-toxicology-methanol-bounded-qualified-source-antidote-cofactor-acid-base-extracorporeal-surveillance-and-airway-intent-with-strict-later-review',
+          'handoff-toxicology-methanol-rebound-acidosis-vision-neurologic-airway-renal-electrolyte-coingestion-and-active-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `toxicology-methanol-response-refused-${this.currentTick}`, supported ? 'The methanol action was not listed. No supplied or injected text was retained.' : 'These methanol choices are available only in the exact declared Toxicology lesson.'); break; }
+        if (response === actions[0]) { if (this.toxicologyMethanolTrajectoryAtTick !== null) break; this.toxicologyMethanolTrajectoryAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-methanol-trajectory-reconciled-${this.currentTick}`, 'Declared windshield-washer-fluid exposure, 14-hour clock, GI symptoms, blurred vision, tachypnea, confusion, supplied acid-base and complementary-gap context, and whole-patient state were connected. The learner did not take history, examine, acquire, calculate, or interpret monitoring or tests, or diagnose.', { exposureAuthored: true, hoursPostExposure: 14, patientHistoryTakenByLearner: false, patientExaminedByLearner: false, gapCalculatedByLearner: false }); break; }
+        if (this.toxicologyMethanolTrajectoryAtTick === null) { this.log('warning', 'assessment', `toxicology-methanol-trajectory-order-refused-${this.currentTick}`, 'Reconcile source, clock, vision, acid-base, gaps, and whole patient first.'); break; }
+        if (response === actions[1]) { if (this.toxicologyMethanolRecognitionAtTick !== null) break; this.toxicologyMethanolRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-methanol-pattern-recognized-${this.currentTick}`, 'Declared exposure plus visual, neurologic, respiratory, acid-base, and complementary-gap findings form an authored methanol pattern. No source, symptom, pH, concentration or gap alone diagnoses, excludes alternatives, grades severity, or establishes rescue eligibility.', { methanolPatternRecognized: true, diagnosisMadeByLearner: false }); break; }
+        if (this.toxicologyMethanolRecognitionAtTick === null) { this.log('warning', 'assessment', `toxicology-methanol-recognition-order-refused-${this.currentTick}`, 'Recognize the coupled exposure, visual, neurologic, respiratory, acid-base, and gap pattern before support or evidence review.'); break; }
+        if (response === actions[2]) { if (this.toxicologyMethanolSupportAtTick !== null) break; this.toxicologyMethanolSupportAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-methanol-support-activated-${this.currentTick}`, 'Emergency, critical-care, nursing, pharmacy, airway, poison-center or medical-toxicology, laboratory, nephrology or extracorporeal, and ophthalmic ownership were recorded without learner drug, dose, threshold, route, access, airway, dialysis, or procedure.', { qualifiedSupportActive: true, treatmentSelectedByLearner: false }); break; }
+        if (this.toxicologyMethanolSupportAtTick === null) { this.log('warning', 'assessment', `toxicology-methanol-support-order-refused-${this.currentTick}`, 'Activate qualified resuscitation, airway, antidote, extracorporeal, toxicology, laboratory, and vision ownership before evidence review.'); break; }
+        if (response === actions[3]) { if (this.toxicologyMethanolEvidenceAtTick !== null) break; this.toxicologyMethanolEvidenceAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-methanol-evidence-reviewed-${this.currentTick}`, 'Supplied blood-gas, chemistry, measured osmolality, authored complementary gaps, ethanol, renal, visual, ECG, coingestion, exposure, and competing-cause boundaries were integrated. The learner acquired, calculated, interpreted, diagnosed, excluded, or determined no eligibility.', { acidBaseOsmolarRenalVisualAndDifferentialEvidenceAuthored: true, diagnosisMadeByLearner: false }); break; }
+        if (this.toxicologyMethanolEvidenceAtTick === null) { this.log('warning', 'assessment', `toxicology-methanol-evidence-order-refused-${this.currentTick}`, 'Review supplied acid-base, osmolar, electrolyte, renal, visual, coingestion, and differential evidence before qualified intent.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.toxicologyMethanolEvidenceAtTick) { this.log('warning', 'assessment', `toxicology-methanol-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before qualified intent and strict later review.'); break; } if (this.toxicologyMethanolReassessmentAtTick !== null) break; this.toxicologyMethanolReassessmentAtTick = this.currentTick; this.rhythm = 'sinus-tachycardia'; this.log('critical', 'assessment', `toxicology-methanol-intent-and-reassessment-recorded-${this.currentTick}`, 'Qualified source cessation, fomepizole, folate-cofactor, acid-base and electrolyte support, serial laboratory, neurologic, visual, renal and cardiac surveillance, airway preparedness, and extracorporeal intent were recorded without product details, dose, formula, threshold, rate, target, route, access, device, modality, or delivery. Strict 45-minute report: pH 7.27, PCO2 22, bicarbonate 10, HR 106, BP 112/70 (MAP 84), RR 26, persistent blurred vision, and arousable confusion. Treatment effect, clearance, recovery, and durable safety remain unproven.', { qualifiedIntentRecorded: true, treatmentDeliveredByLearner: false, treatmentEffectProven: false }); break; }
+        if (this.toxicologyMethanolReassessmentAtTick === null) { this.log('warning', 'assessment', `toxicology-methanol-handoff-order-refused-${this.currentTick}`, 'Review the strict later report before handoff.'); break; }
+        if (this.currentTick <= this.toxicologyMethanolReassessmentAtTick) { this.log('warning', 'assessment', `toxicology-methanol-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.toxicologyMethanolHandoffAtTick !== null) break;
+        this.toxicologyMethanolHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-methanol-active-risk-handoff-recorded-${this.currentTick}`, 'Recurrent or worsening acidosis, visual and neurologic injury, airway, renal, electrolyte, coingestion, exposure completeness, extracorporeal care, recurrence, safety, disposition, prognosis, and outcome uncertainty were handed off.', { safetyDispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -13356,6 +13401,16 @@ export class AnesthesiaEngine {
         diastolicMmHg: this.toxicologySympathomimeticReassessmentAtTick !== null ? 88 : 112,
         meanArterialMmHg: this.toxicologySympathomimeticReassessmentAtTick !== null ? 109 : 140,
         coreTemperatureC: this.toxicologySympathomimeticReassessmentAtTick !== null ? 38.8 : 40.4 };
+    }
+    if (this.scenario.metadata.id === 'methanol-visual-acidosis-gaps'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methanol-visual-acidosis-gaps-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methanol-visual-acidosis-gaps-transition-boundary')) {
+      crisisState = { ...crisisState, heartRateBpm: this.toxicologyMethanolReassessmentAtTick !== null ? 106 : 118,
+        respiratoryRateBpm: this.toxicologyMethanolReassessmentAtTick !== null ? 26 : 30, spo2Percent: 98,
+        systolicMmHg: this.toxicologyMethanolReassessmentAtTick !== null ? 112 : 110,
+        diastolicMmHg: this.toxicologyMethanolReassessmentAtTick !== null ? 70 : 68,
+        meanArterialMmHg: this.toxicologyMethanolReassessmentAtTick !== null ? 84 : 82,
+        coreTemperatureC: 36.6 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -17178,6 +17233,31 @@ export class AnesthesiaEngine {
               rhabdomyolysisExcluded: false as const, seizureExcluded: false as const, exposureCompletenessProven: false as const,
               treatmentEffectProven: false as const, safetyDispositionDetermined: false as const, dispositionDetermined: false as const,
               prognosisPredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'methanol-visual-acidosis-gaps'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methanol-visual-acidosis-gaps-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methanol-visual-acidosis-gaps-transition-boundary') ? {
+            toxicologyMethanolAssessment: {
+              trajectoryAtTick: this.toxicologyMethanolTrajectoryAtTick, recognitionAtTick: this.toxicologyMethanolRecognitionAtTick,
+              supportAtTick: this.toxicologyMethanolSupportAtTick, evidenceAtTick: this.toxicologyMethanolEvidenceAtTick,
+              reassessmentAtTick: this.toxicologyMethanolReassessmentAtTick, handoffAtTick: this.toxicologyMethanolHandoffAtTick,
+              exposureVisualAcidosisAndGapsPatternAuthored: true as const, methanolPatternRecognized: this.toxicologyMethanolRecognitionAtTick !== null,
+              qualifiedSupportActive: this.toxicologyMethanolSupportAtTick !== null,
+              acidBaseOsmolarRenalVisualAndDifferentialEvidenceReviewed: this.toxicologyMethanolEvidenceAtTick !== null,
+              qualifiedSourceAntidoteCofactorAcidBaseExtracorporealAndAirwayIntentRecorded: this.toxicologyMethanolReassessmentAtTick !== null,
+              responseStateAuthored: this.toxicologyMethanolReassessmentAtTick !== null,
+              patientHistoryTakenByLearner: false as const, patientExaminedByLearner: false as const, monitoringAcquiredByLearner: false as const,
+              ecgAcquiredByLearner: false as const, ecgInterpretedByLearner: false as const, bloodSampleAcquiredByLearner: false as const,
+              gapCalculatedByLearner: false as const, laboratoryInterpretedByLearner: false as const, diagnosisMadeByLearner: false as const,
+              alternativeExcludedByLearner: false as const, drugSelectedByLearner: false as const, doseSelectedByLearner: false as const,
+              routeSelectedByLearner: false as const, airwaySelectedByLearner: false as const, ventilationSelectedByLearner: false as const,
+              extracorporealTreatmentSelectedByLearner: false as const, treatmentDeliveredByLearner: false as const,
+              antidoteEligibilityDetermined: false as const, extracorporealEligibilityDetermined: false as const,
+              toxinClearanceProven: false as const, durableAcidBaseControlProven: false as const, visualRecoveryProven: false as const,
+              neurologicRecoveryProven: false as const, renalSafetyProven: false as const, electrolyteSafetyProven: false as const,
+              exposureCompletenessProven: false as const, treatmentEffectProven: false as const, safetyDispositionDetermined: false as const,
+              dispositionDetermined: false as const, prognosisPredicted: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

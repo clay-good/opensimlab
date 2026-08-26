@@ -5613,6 +5613,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-toxicology-methanol-source-clock-vision-acid-base-gaps-and-whole-patient',
+      'recognize-toxicology-methanol-coupled-pattern-without-source-vision-anion-osmolar-or-level-only-closure',
+      'activate-toxicology-methanol-resuscitation-airway-antidote-extracorporeal-toxicology-laboratory-and-vision-ownership',
+      'review-toxicology-methanol-supplied-acid-base-osmolar-electrolyte-renal-visual-coingestion-and-differential-boundary',
+      'record-toxicology-methanol-bounded-qualified-source-antidote-cofactor-acid-base-extracorporeal-surveillance-and-airway-intent-with-strict-later-review',
+      'handoff-toxicology-methanol-rebound-acidosis-vision-neurologic-airway-renal-electrolyte-coingestion-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'methanol-visual-acidosis-gaps'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methanol-visual-acidosis-gaps-transition')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methanol-visual-acidosis-gaps-transition-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Toxicology methanol lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'Source, clock, vision, acid-base, complementary gaps, and whole-patient state were reconciled.'],
+        ['pattern-recognized', 'The coupled methanol pattern was recognized without source-, visual-, gap-, concentration-, or diagnostic closure.'],
+        ['support-activated', 'Resuscitation, airway, antidote, extracorporeal, toxicology, laboratory, and vision ownership were activated.'],
+        ['evidence-reviewed', 'Supplied acid-base, osmolar, electrolyte, renal, visual, coingestion, exposure, and differential evidence were reviewed without learner calculation, interpretation, or delivery.'],
+        ['intent-and-reassessment-recorded', 'Bounded qualified source, antidote, cofactor, acid-base, extracorporeal, surveillance, and airway intent plus the elapsed report were recorded without dosing, threshold, delivery, eligibility, clearance, causal, or durable-safety claims.'],
+        ['active-risk-handoff-recorded', 'Recurrent acid-base, visual, neurologic, airway, renal, electrolyte, exposure, coingestion, extracorporeal, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^toxicology-methanol-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^toxicology-methanol-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-af-rvr-rhythm-and-stability', 'review-af-rvr-context-and-triggers',
       'record-af-rvr-rate-control-intent', 'record-af-rvr-stroke-prevention-intent',
       'reassess-af-rvr-trajectory-and-follow-up'].includes(objective.id)) {

@@ -11,6 +11,7 @@ import { CHOLINERGIC_PESTICIDE_RESPIRATORY_FAILURE } from './cholinergic-pestici
 import { ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM } from './anticholinergic-hyperthermia-delirium';
 import { SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS } from './serotonin-toxicity-hyperthermia-clonus';
 import { SYMPATHOMIMETIC_HYPERADRENERGIC_HYPERTHERMIA } from './sympathomimetic-hyperadrenergic-hyperthermia';
+import { METHANOL_VISUAL_ACIDOSIS_GAPS } from './methanol-visual-acidosis-gaps';
 
 export const TOXICOLOGY_SCENARIOS: readonly Scenario[] = [
   METHEMOGLOBINEMIA_SATURATION_GAP,
@@ -25,6 +26,7 @@ export const TOXICOLOGY_SCENARIOS: readonly Scenario[] = [
   ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM,
   SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS,
   SYMPATHOMIMETIC_HYPERADRENERGIC_HYPERTHERMIA,
+  METHANOL_VISUAL_ACIDOSIS_GAPS,
 ];
 export const DEFAULT_TOXICOLOGY_SCENARIO_ID = METHEMOGLOBINEMIA_SATURATION_GAP.metadata.id;
 

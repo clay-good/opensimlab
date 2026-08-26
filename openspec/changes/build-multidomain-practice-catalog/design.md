@@ -2512,6 +2512,25 @@ handoff. The canonical state is not an exposure, toxicology-screen, thermoregula
 cardiovascular, psychiatric, renal, CK, cooling, sedation, adjunct-response, airway, or individualized-
 response model.
 
+### Wave F toxicology slice 13: methanol visual acidosis and complementary gaps
+
+The thirteenth Toxicology lab owns the coupled source, delayed visual, neurologic, respiratory,
+acid-base, osmolar, renal, antidote-intent and extracorporeal-escalation pattern of a declared
+windshield-washer-fluid ingestion. It remains distinct from the generic severe-acidemia lab by
+making source, clock and visual injury central, and from salicylate by supplying no mixed primary
+respiratory alkalosis or falling-concentration trajectory. The learner reconciles a 14-hour clock,
+blurred vision, tachypnea, confusion, pH 7.19, bicarbonate 7 mmol/L, authored anion gap 31 mmol/L,
+measured osmolality 322 mOsm/kg and authored osmolar gap 31 mOsm/kg; recognizes the coupled pattern
+without source-, vision-, gap- or concentration-only closure; activates qualified resuscitation,
+airway, toxicology, laboratory, nephrology or extracorporeal, pharmacy and ophthalmic ownership; and
+reviews coingestion and competing metabolic, renal, toxic and visual causes. Bounded qualified
+source cessation, fomepizole, cofactor, acid-base and electrolyte support, serial surveillance,
+airway preparedness and extracorporeal intent exposes no formula, threshold, product detail, dose,
+route, access, modality, procedure, or delivery. A strict elapsed report with pH 7.27 and persistent
+blurred vision and confusion precedes another elapsed active-risk handoff. The canonical state is not
+an exposure, gap-calculation, acid-base, osmolality, concentration, visual, antidote-response,
+extracorporeal, airway, renal, or individualized-response model.
+
 #### Hematology and oncology: 11
 
 Neutropenic fever; tumor-lysis syndrome; hyperleukocytosis pattern; sickle-cell acute chest syndrome;

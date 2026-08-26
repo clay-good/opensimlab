@@ -710,6 +710,19 @@ credited toward the catalog until every item in the completion contract passes.
     restraint, cooling, fluid, sedation, cardiovascular therapy, drug, dose, rate, target, route,
     access, infusion, airway, ventilation, procedure, safety disposition, prognosis, or outcome
     control exists.
+  - [x] Toxicology slice 13/15 adds declared methanol visual-acidosis toxicity. The learner reconciles
+    a windshield-washer-fluid exposure, 14-hour clock, visual symptoms, tachypnea, confusion,
+    high-anion-gap metabolic acidosis, measured osmolality and authored complementary gaps;
+    recognizes the coupled pattern without source-, vision-, anion-gap-, osmolar-gap- or level-only
+    closure; activates qualified resuscitation, airway, antidote, extracorporeal, toxicology,
+    laboratory, nephrology and ophthalmic ownership; reviews acid-base, osmolar, electrolyte, renal,
+    visual, coingestion and competing-cause boundaries; records bounded qualified source,
+    fomepizole, cofactor, acid-base, electrolyte, surveillance, airway and extracorporeal intent;
+    then reviews a strict elapsed report before another elapsed active-risk handoff. No learner
+    history, examination, monitoring, ECG, blood-gas, chemistry, osmolality, concentration or test
+    acquisition or interpretation, calculation, diagnosis, differential exclusion, antidote,
+    cofactor, fluid, buffer, electrolyte, drug, dose, rate, target, route, access, infusion, airway,
+    ventilation, dialysis, procedure, safety disposition, prognosis, or outcome control exists.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.
 - [ ] After every wave, verify the exact cumulative count, distinctness, capability reuse, path and

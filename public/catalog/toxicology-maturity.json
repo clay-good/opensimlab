@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "toxicology",
-  "recordCount": 12,
+  "recordCount": 13,
   "records": [
     {
       "recordId": "scenario:methemoglobinemia-saturation-gap@0.1.0",
@@ -133,6 +133,17 @@
       "evidence": [
         "/catalog/toxicology-completion-audit.json#sympathomimetic-hyperadrenergic-hyperthermia@0.1.0",
         "/catalog/toxicology-quality-audit.json#sympathomimetic-hyperadrenergic-hyperthermia@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:methanol-visual-acidosis-gaps@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "methanol-visual-acidosis-gaps",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/toxicology-completion-audit.json#methanol-visual-acidosis-gaps@0.1.0",
+        "/catalog/toxicology-quality-audit.json#methanol-visual-acidosis-gaps@0.1.0"
       ]
     }
   ]

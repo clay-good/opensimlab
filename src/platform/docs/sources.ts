@@ -3140,6 +3140,23 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-26',
   },
   {
+    id: 'extrip-methanol-2015', pmid: '25493973',
+    authors: 'Roberts DM, Yates C, Megarbane B, et al; EXTRIP Work Group',
+    title: 'Recommendations for the role of extracorporeal treatments in the management of acute methanol poisoning: a systematic review and consensus statement',
+    publication: 'Critical Care Medicine', year: 2015, locator: '43(2):461-472; doi:10.1097/CCM.0000000000000708; abstract recommendations and conclusion',
+    usedFor: 'Visual deficits and metabolic acidosis as severe methanol features; urgent antidote and extracorporeal-team escalation; serial exposure and toxicity monitoring; and the boundary that an osmolar gap may inform but does not independently decide care.',
+    verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/25493973/',
+    verifiedOn: '2026-08-26',
+  },
+  {
+    id: 'dailymed-fomepizole-911312e2',
+    authors: 'US National Library of Medicine', title: 'Fomepizole injection prescribing information',
+    publication: 'DailyMed', year: 2021, locator: 'Set ID 911312e2-3a7c-4c97-88a8-b8d92cd12923; Indications and Usage; Dosage and Administration',
+    usedFor: 'Fomepizole indication for suspected methanol poisoning and suspicion based on exposure history, anion-gap metabolic acidosis, increased osmolar gap, or visual disturbances; no dose or threshold is exposed in learner controls.',
+    verifiedAgainst: 'https://dailymed.nlm.nih.gov/dailymed/getFile.cfm?setid=911312e2-3a7c-4c97-88a8-b8d92cd12923',
+    verifiedOn: '2026-08-26',
+  },
+  {
     id: 'dunkley-hunter-serotonin-criteria-2003', pmid: '12925718',
     authors: 'Dunkley EJC, Isbister GK, Sibbritt D, Dawson AH, Whyte IM',
     title: 'The Hunter Serotonin Toxicity Criteria: simple and accurate diagnostic decision rules for serotonin toxicity',

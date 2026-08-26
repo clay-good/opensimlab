@@ -170,6 +170,15 @@ bounded GABAergic sedation and persistent-hyperadrenergic adjunct intent, strict
 pressure and mental-state reassessment, and medical and psychiatric active-risk handoff. It exposes no
 learner diagnosis, restraint, cooling method, sedative or cardiovascular product or dose, airway
 operation, procedure, disposition, or outcome control.
+Its thirteenth lab, methanol toxicity where two gaps are complementary clues rather than answers,
+couples a declared windshield-washer-fluid exposure and 14-hour clock with blurred vision,
+tachypnea, confusion, high-anion-gap metabolic acidosis, increased measured osmolality, and supplied
+anion and osmolar gaps. It adds qualified resuscitation, airway, antidote, extracorporeal, toxicology,
+laboratory, renal and ophthalmic ownership; bounded source, fomepizole, cofactor, acid-base,
+electrolyte, surveillance and extracorporeal intent; strict elapsed reassessment with persistent
+visual and neurologic findings; and active-risk handoff. It exposes no learner gap calculation,
+diagnosis, threshold, antidote dose, airway operation, dialysis choice, procedure, disposition, or
+outcome control.
 
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
