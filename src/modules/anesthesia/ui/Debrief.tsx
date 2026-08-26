@@ -5238,6 +5238,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-neurology-mscc-cancer-pain-motor-sensory-bladder-and-whole-patient-clock',
+      'recognize-neurology-mscc-oncologic-emergency-before-imaging-confirmation',
+      'activate-neurology-mscc-qualified-spinal-oncology-radiology-nursing-and-rehabilitation-ownership',
+      'review-neurology-mscc-stability-movement-whole-spine-mri-corticosteroid-and-definitive-care-boundary',
+      'review-neurology-mscc-strict-later-qualified-mri-and-unresolved-function-trajectory',
+      'handoff-neurology-mscc-level-stability-function-bladder-definitive-care-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'metastatic-spinal-cord-compression'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'metastatic-spinal-cord-compression-reassessment')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'metastatic-spinal-cord-compression-reassessment-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neurology metastatic cord-compression lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'The cancer, pain, bilateral pyramidal motor, sensory-level, gait, bladder, and whole-patient clock was reconciled.'],
+        ['emergency-recognized', 'Suspected metastatic cord compression was recognized as an oncologic emergency before imaging confirmation.'],
+        ['qualified-ownership-activated', 'Qualified spinal, oncology, radiology, radiotherapy, nursing, pharmacy, rehabilitation, pain, bladder, skin, and thrombosis-prevention ownership was activated.'],
+        ['care-boundary-reviewed', 'Stability, movement, whole-spine MRI, early corticosteroid, supportive, and definitive-care boundaries were reviewed without a universal recipe.'],
+        ['later-mri-reviewed', 'Elapsed qualified MRI confirmed T6 epidural compression while function, response, definitive care, and outcome remained unresolved.'],
+        ['active-risk-handoff-recorded', 'Level, stability, function, bladder, pain, cancer, definitive care, complications, rehabilitation, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^neurology-mscc-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^neurology-mscc-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

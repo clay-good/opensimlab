@@ -10,6 +10,7 @@ import { ACUTE_BACTERIAL_MENINGITIS_FIRST_HOUR } from './acute-bacterial-meningi
 import { SUSPECTED_HERPES_SIMPLEX_ENCEPHALITIS } from './suspected-herpes-simplex-encephalitis';
 import { RAISED_INTRACRANIAL_PRESSURE_VISUAL_THREAT } from './raised-intracranial-pressure-visual-threat';
 import { ACUTE_TRANSTENTORIAL_HERNIATION_PATTERN } from './acute-transtentorial-herniation-pattern';
+import { METASTATIC_SPINAL_CORD_COMPRESSION } from './metastatic-spinal-cord-compression';
 import { SPONTANEOUS_CEREBELLAR_INTRACEREBRAL_HEMORRHAGE } from './spontaneous-cerebellar-intracerebral-hemorrhage';
 
 export const NEUROLOGY_SCENARIOS: readonly Scenario[] = [
@@ -25,6 +26,7 @@ export const NEUROLOGY_SCENARIOS: readonly Scenario[] = [
   SUSPECTED_HERPES_SIMPLEX_ENCEPHALITIS,
   RAISED_INTRACRANIAL_PRESSURE_VISUAL_THREAT,
   ACUTE_TRANSTENTORIAL_HERNIATION_PATTERN,
+  METASTATIC_SPINAL_CORD_COMPRESSION,
 ];
 export const DEFAULT_NEUROLOGY_SCENARIO_ID = MINOR_NONDISABLING_ACUTE_ISCHEMIC_STROKE.metadata.id;
 

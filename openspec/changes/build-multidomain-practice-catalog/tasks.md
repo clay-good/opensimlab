@@ -498,6 +498,19 @@ credited toward the catalog until every item in the completion contract passes.
     handoff without learner examination, scoring, monitoring, imaging interpretation, diagnosis,
     airway management, oxygen, ventilation, drug, dose, route, access, drain, decompression,
     procedure, treatment effect, recovery, disposition, prognosis, or outcome control.
+  - [x] Neurology slice 13/15 adds one authored previously independent 68-year-old with metastatic
+    prostate cancer, progressive movement-sensitive thoracic pain, 48 hours of bilateral pyramidal
+    leg weakness, gait loss, a T8 sensory level, and urinary dysfunction. The learner reconciles the
+    cord-level clock, recognizes suspected metastatic cord compression as an oncologic emergency
+    before imaging confirmation, activates qualified spinal, oncology, radiology, radiotherapy,
+    nursing, pharmacy, rehabilitation, pain, bladder, skin, and thrombosis-prevention ownership,
+    reviews individualized stability, movement, whole-spine MRI, early corticosteroid, supportive,
+    and definitive-care boundaries, then reviews a strict 4-hour qualified MRI confirming T6
+    epidural compression with persistent deficits before another elapsed level, stability,
+    function, bladder, cancer, definitive-care, complication, rehabilitation, and active-risk
+    handoff without learner history, examination, gait testing, movement, imaging acquisition or
+    interpretation, diagnosis, drug, dose, route, access, catheter, surgery, radiotherapy, biopsy,
+    procedure, treatment effect, recovery, disposition, prognosis, or outcome control.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.

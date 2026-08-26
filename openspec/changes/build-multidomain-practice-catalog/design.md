@@ -2214,6 +2214,21 @@ the pupil still nonreactive before an elapsed active-risk handoff. No learner ex
 monitoring, imaging, diagnosis, airway management, oxygen, ventilation, drug, dose, route, access,
 drain, surgery, procedure, treatment, recovery, disposition, prognosis, or outcome control exists.
 
+### Wave E neurology slice 13: metastatic spinal cord compression
+
+The thirteenth Neurology lab owns cord-level localization and emergency escalation in a patient with
+known cancer rather than duplicating trauma, neuraxial high block, peripheral inflammatory weakness,
+future cauda-equina recognition, or future oncology treatment planning. The learner reconciles
+progressive movement-sensitive thoracic pain, bilateral pyramidal leg weakness, a T8 sensory level,
+gait loss, and urinary dysfunction; recognizes suspected metastatic cord compression before imaging
+confirmation; activates qualified spinal, oncology, radiology, radiotherapy, nursing, pharmacy,
+rehabilitation, pain, bladder, skin, and thrombosis-prevention ownership; reviews individualized
+stability, movement, whole-spine MRI, early corticosteroid, supportive, and definitive-care
+boundaries; then reviews a strict 4-hour qualified MRI confirming T6 epidural compression with
+persistent deficits before an elapsed active-risk handoff. No learner history, examination, gait
+testing, movement, imaging, diagnosis, drug, dose, route, access, catheter, surgery, radiotherapy,
+biopsy, procedure, treatment effect, recovery, disposition, prognosis, or outcome control exists.
+
 #### Neurology: 15
 
 Acute ischemic stroke; large-vessel-occlusion escalation; intracranial hemorrhage; subarachnoid

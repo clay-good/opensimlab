@@ -4127,6 +4127,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use the whole evolving pattern, direct verified assessment, immediate qualified rescue, patient-specific medical and surgical decisions, continuous reassessment, and definitive source control.',
     briefIn: ['acute-transtentorial-herniation-pattern'],
   },
+  {
+    id: 'mscc-clock-exam-imaging-care-and-later-state-are-authored',
+    headline: 'The cancer, pain, neurological, bladder, imaging, qualified-care, and later reports are authored.',
+    simplification: 'Fixed reports stand in for history, motor, reflex, sensory, gait and bladder examination, monitoring, stability assessment, whole-spine MRI, qualified early care, and reassessment.',
+    whereItMisleads: 'Treating fictional findings, one symptom, supplied MRI, movement precautions, corticosteroid care, or persistent function as learner evidence, a universal diagnosis, treatment effect, recovery, or predicted course.',
+    correctUnderstanding: 'Real care requires immediate direct reassessment, verified serial neurological findings, qualified spinal and oncology teams, current local pathways, individualized protection and treatment, and definitive care.',
+    briefIn: ['metastatic-spinal-cord-compression'],
+  },
+  {
+    id: 'mscc-controls-reconcile-recognize-activate-review-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, emergency recognition, qualified ownership, boundary review, later-report review, and handoff only.',
+    simplification: 'Six actions stand in for spinal, oncology, radiology, radiotherapy, nursing, pharmacy, rehabilitation, pain, bladder, skin, thrombosis-prevention, and handoff work.',
+    whereItMisleads: 'Equating button order with examination, movement or immobilization, diagnosis, prescribing, imaging, catheterization, surgery, radiotherapy, disposition, or competence.',
+    correctUnderstanding: 'Actual care requires the patient, trained teams, verified serial findings, current local protocols, individualized medical and definitive decisions, and continuous reassessment.',
+    briefIn: ['metastatic-spinal-cord-compression'],
+  },
+  {
+    id: 'no-live-mscc-history-exam-movement-imaging-diagnosis-drug-procedure-or-outcome',
+    headline: 'The lab does not examine, move, image, diagnose, prescribe, perform a procedure, treat, or report outcome.',
+    simplification: 'No live history, motor, sensory, reflex, gait, stability or bladder examination, monitoring, MRI, pathology, staging or another test, diagnosis, movement, immobilization, corticosteroid or other drug, dose, route, access, catheter, surgery, radiotherapy, biopsy, procedure, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Waiting for imaging despite a converging emergency pattern, treating one symptom as proof, copying fictional values into care, applying one movement or treatment recipe universally, or reading completion as competence.',
+    correctUnderstanding: 'Use the whole evolving cord-level pattern, direct verified assessment, immediate qualified escalation, patient-specific protection and medical care, continuous reassessment, and definitive multidisciplinary treatment.',
+    briefIn: ['metastatic-spinal-cord-compression'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

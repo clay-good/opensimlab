@@ -368,6 +368,10 @@ const NEUROLOGY_HERNIATION_BLOCKED_ACTION_TYPES = new Set([
   'raised-intracranial-pressure-visual-threat-response', 'airway-device', 'laryngoscopy',
   'ventilator', 'bolus', 'infusion',
 ]);
+const NEUROLOGY_MSCC_BLOCKED_ACTION_TYPES = new Set([
+  ...NEUROLOGY_HERNIATION_BLOCKED_ACTION_TYPES,
+  'acute-transtentorial-herniation-pattern-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1187,6 +1191,12 @@ export class AnesthesiaEngine {
   private neurologyHerniationBoundaryAtTick: number | null = null;
   private neurologyHerniationLaterAtTick: number | null = null;
   private neurologyHerniationHandoffAtTick: number | null = null;
+  private neurologyMsccTrajectoryAtTick: number | null = null;
+  private neurologyMsccRecognitionAtTick: number | null = null;
+  private neurologyMsccOwnershipAtTick: number | null = null;
+  private neurologyMsccBoundaryAtTick: number | null = null;
+  private neurologyMsccLaterAtTick: number | null = null;
+  private neurologyMsccHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1918,6 +1928,17 @@ export class AnesthesiaEngine {
         'This Neurology lesson exposes no generic airway, ventilation, oxygen, pressure, '
         + 'hyperosmolar, drug, dose, route, access, imaging, drain, surgery, procedure, raised-ICP, '
         + 'hemorrhage, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const neurologyMscc = this.scenario.metadata.id === 'metastatic-spinal-cord-compression'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'metastatic-spinal-cord-compression-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'metastatic-spinal-cord-compression-reassessment-boundary');
+    if (neurologyMscc && NEUROLOGY_MSCC_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `neurology-mscc-generic-action-refused-${this.currentTick}`,
+        'This Neurology lesson exposes no generic movement, immobilization, corticosteroid, drug, '
+        + 'dose, route, access, imaging, bladder, surgery, radiotherapy, procedure, herniation, or '
+        + 'adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -9807,6 +9828,71 @@ export class AnesthesiaEngine {
           'The structural lesion, consciousness, pupils, motor trajectory, airway and ventilation, perfusion, pressure strategy, seizure risk, definitive surgery, complications, recurrence, rehabilitation, disposition, prognosis, and outcome uncertainty were handed off.',
           { treatmentEffectProven: false, neurologicRecoveryProven: false, durablePressureControlProven: false, definitiveSourceControlProven: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
       }
+      case 'metastatic-spinal-cord-compression-response': {
+        const response = typeof action.payload.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'metastatic-spinal-cord-compression'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'metastatic-spinal-cord-compression-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'metastatic-spinal-cord-compression-reassessment-boundary');
+        const actions = [
+          'reconcile-neurology-mscc-cancer-pain-motor-sensory-bladder-and-whole-patient-clock',
+          'recognize-neurology-mscc-oncologic-emergency-before-imaging-confirmation',
+          'activate-neurology-mscc-qualified-spinal-oncology-radiology-nursing-and-rehabilitation-ownership',
+          'review-neurology-mscc-stability-movement-whole-spine-mri-corticosteroid-and-definitive-care-boundary',
+          'review-neurology-mscc-strict-later-qualified-mri-and-unresolved-function-trajectory',
+          'handoff-neurology-mscc-level-stability-function-bladder-definitive-care-and-active-risk',
+        ] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) {
+          this.log('warning', 'assessment', `neurology-mscc-response-refused-${this.currentTick}`,
+            supported ? 'The cord-compression action was not listed. No supplied or injected text was retained.' : 'These cord-compression choices are available only in the exact declared Neurology lesson.'); break;
+        }
+        if (response === actions[0]) {
+          if (this.neurologyMsccTrajectoryAtTick !== null) { this.log('warning', 'assessment', `neurology-mscc-trajectory-refused-${this.currentTick}`, 'The supplied whole-patient trajectory was already reconciled.'); break; }
+          this.neurologyMsccTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-mscc-trajectory-reconciled-${this.currentTick}`,
+            'Known metastatic cancer connects progressive movement-sensitive thoracic pain with bilateral upper-motor-neuron leg weakness, gait loss, a T8 sensory level, and urinary dysfunction. The learner did not take history, examine, test gait, move, image, diagnose, or treat.',
+            { suspectedMetastaticSpinalCordCompressionAuthored: true, patientHistoryTakenByLearner: false, patientExaminedByLearner: false, patientMovedByLearner: false }); break;
+        }
+        if (this.neurologyMsccTrajectoryAtTick === null) { this.log('warning', 'assessment', `neurology-mscc-trajectory-order-refused-${this.currentTick}`, 'Reconcile the whole-patient cord trajectory first.'); break; }
+        if (response === actions[1]) {
+          if (this.neurologyMsccRecognitionAtTick !== null) { this.log('warning', 'assessment', `neurology-mscc-recognition-refused-${this.currentTick}`, 'The suspected cord-compression emergency was already recognized.'); break; }
+          this.neurologyMsccRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-mscc-emergency-recognized-${this.currentTick}`,
+            'Cancer plus progressive pain, bilateral pyramidal weakness, sensory level, gait loss, and bladder dysfunction establish suspected metastatic cord compression as an oncologic emergency before imaging confirmation. No isolated feature is sufficient alone.',
+            { emergencyRecognizedBeforeImaging: true, imagingInterpretedByLearner: false, diagnosisMadeByLearner: false }); break;
+        }
+        if (this.neurologyMsccRecognitionAtTick === null) { this.log('warning', 'assessment', `neurology-mscc-recognition-order-refused-${this.currentTick}`, 'Recognize the suspected oncologic emergency before activating owners.'); break; }
+        if (response === actions[2]) {
+          if (this.neurologyMsccOwnershipAtTick !== null) { this.log('warning', 'assessment', `neurology-mscc-ownership-refused-${this.currentTick}`, 'Qualified cord-compression ownership is already active.'); break; }
+          this.neurologyMsccOwnershipAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-mscc-qualified-ownership-activated-${this.currentTick}`,
+            'Qualified spinal surgery, oncology, radiology, radiotherapy, nursing, pharmacy, rehabilitation, pain, bladder, skin, and thrombosis-prevention owners now coordinate in parallel.',
+            { qualifiedOwnershipActive: true, drugSelectedByLearner: false, imagingOrderedByLearner: false, procedureSelectedByLearner: false }); break;
+        }
+        if (this.neurologyMsccOwnershipAtTick === null) { this.log('warning', 'assessment', `neurology-mscc-ownership-order-refused-${this.currentTick}`, 'Activate qualified owners before reviewing the care boundary.'); break; }
+        if (response === actions[3]) {
+          if (this.neurologyMsccBoundaryAtTick !== null) { this.log('warning', 'assessment', `neurology-mscc-boundary-refused-${this.currentTick}`, 'The stability, imaging, early-care, and definitive-care boundary was already reviewed.'); break; }
+          this.neurologyMsccBoundaryAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-mscc-care-boundary-reviewed-${this.currentTick}`,
+            'Qualified teams own individualized stability and movement precautions, whole-spine MRI, guideline-directed early corticosteroid care, pain and bladder support, skin and thrombosis prevention, and definitive surgery or radiotherapy decisions. No universal movement technique, drug, dose, route, operation, or radiotherapy plan is taught.',
+            { qualifiedCareBoundaryReviewed: true, patientMovedByLearner: false, doseSelectedByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.neurologyMsccBoundaryAtTick === null) { this.log('warning', 'assessment', `neurology-mscc-boundary-order-refused-${this.currentTick}`, 'Review the qualified care boundary before the later report.'); break; }
+        if (response === actions[4]) {
+          if (this.currentTick <= this.neurologyMsccBoundaryAtTick) { this.log('warning', 'assessment', `neurology-mscc-later-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before reviewing the fixed 4-hour report.'); break; }
+          if (this.neurologyMsccLaterAtTick !== null) { this.log('warning', 'assessment', `neurology-mscc-later-refused-${this.currentTick}`, 'The fixed qualified MRI and functional trajectory was already reviewed.'); break; }
+          this.neurologyMsccLaterAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-mscc-later-mri-reviewed-${this.currentTick}`,
+            'At 4 hours, qualified whole-spine MRI reports metastatic T6 epidural extension, severe cord compression, and focal cord signal change. Hip flexion remains 3/5, the T8 sensory level persists, and team-managed urinary retention is reported. Treatment effect, recovery, definitive intervention, disposition, and outcome remain unresolved.',
+            { laterQualifiedMriAuthored: true, imagingInterpretedByLearner: false, treatmentEffectProven: false, neurologicRecoveryProven: false, definitiveTreatmentProven: false }); break;
+        }
+        if (this.neurologyMsccLaterAtTick === null) { this.log('warning', 'assessment', `neurology-mscc-later-order-refused-${this.currentTick}`, 'Review the fixed later MRI and function report before handoff.'); break; }
+        if (this.currentTick <= this.neurologyMsccLaterAtTick) { this.log('warning', 'assessment', `neurology-mscc-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off active cord risk.'); break; }
+        if (this.neurologyMsccHandoffAtTick !== null) { this.log('warning', 'assessment', `neurology-mscc-handoff-refused-${this.currentTick}`, 'The level, stability, function, bladder, definitive-care, and active-risk handoff was already recorded.'); break; }
+        this.neurologyMsccHandoffAtTick = this.currentTick;
+        this.log('critical', 'assessment', `neurology-mscc-active-risk-handoff-recorded-${this.currentTick}`,
+          'Lesion level, stability, motor and sensory trajectory, bladder and pain care, cancer extent and pathology, definitive surgery or radiotherapy, skin and thrombosis risks, rehabilitation, disposition, prognosis, and outcome uncertainty were handed off.',
+          { treatmentEffectProven: false, neurologicRecoveryProven: false, definitiveTreatmentProven: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -15955,6 +16041,39 @@ export class AnesthesiaEngine {
               neurologicRecoveryProven: false as const,
               durablePressureControlProven: false as const,
               definitiveSourceControlProven: false as const,
+              dispositionDetermined: false as const,
+              prognosisPredicted: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'metastatic-spinal-cord-compression'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'metastatic-spinal-cord-compression-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'metastatic-spinal-cord-compression-reassessment-boundary') ? {
+            neurologyMsccAssessment: {
+              trajectoryAtTick: this.neurologyMsccTrajectoryAtTick,
+              recognitionAtTick: this.neurologyMsccRecognitionAtTick,
+              ownershipAtTick: this.neurologyMsccOwnershipAtTick,
+              boundaryAtTick: this.neurologyMsccBoundaryAtTick,
+              laterAtTick: this.neurologyMsccLaterAtTick,
+              handoffAtTick: this.neurologyMsccHandoffAtTick,
+              suspectedMetastaticSpinalCordCompressionAuthored: true as const,
+              emergencyRecognizedBeforeImaging: this.neurologyMsccRecognitionAtTick !== null,
+              qualifiedOwnershipActive: this.neurologyMsccOwnershipAtTick !== null,
+              qualifiedCareBoundaryReviewed: this.neurologyMsccBoundaryAtTick !== null,
+              laterQualifiedMriAuthored: this.neurologyMsccLaterAtTick !== null,
+              patientHistoryTakenByLearner: false as const,
+              patientExaminedByLearner: false as const,
+              patientMovedByLearner: false as const,
+              imagingOrderedByLearner: false as const,
+              imagingInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const,
+              drugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const,
+              procedureSelectedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              treatmentEffectProven: false as const,
+              neurologicRecoveryProven: false as const,
+              definitiveTreatmentProven: false as const,
               dispositionDetermined: false as const,
               prognosisPredicted: false as const,
               outcomePredicted: false as const,

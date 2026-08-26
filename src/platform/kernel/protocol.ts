@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 144 reports Neurology acute-herniation state. */
-export const WORKER_PROTOCOL_VERSION = 144;
+/** Bumped whenever the message shape changes incompatibly. Version 145 reports Neurology cord-compression state. */
+export const WORKER_PROTOCOL_VERSION = 145;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2185,6 +2185,35 @@ export interface EquipmentSnapshot {
       readonly neurologicRecoveryProven: false;
       readonly durablePressureControlProven: false;
       readonly definitiveSourceControlProven: false;
+      readonly dispositionDetermined: false;
+      readonly prognosisPredicted: false;
+      readonly outcomePredicted: false;
+    };
+    readonly neurologyMsccAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly recognitionAtTick: number | null;
+      readonly ownershipAtTick: number | null;
+      readonly boundaryAtTick: number | null;
+      readonly laterAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly suspectedMetastaticSpinalCordCompressionAuthored: true;
+      readonly emergencyRecognizedBeforeImaging: boolean;
+      readonly qualifiedOwnershipActive: boolean;
+      readonly qualifiedCareBoundaryReviewed: boolean;
+      readonly laterQualifiedMriAuthored: boolean;
+      readonly patientHistoryTakenByLearner: false;
+      readonly patientExaminedByLearner: false;
+      readonly patientMovedByLearner: false;
+      readonly imagingOrderedByLearner: false;
+      readonly imagingInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false;
+      readonly drugSelectedByLearner: false;
+      readonly doseSelectedByLearner: false;
+      readonly procedureSelectedByLearner: false;
+      readonly treatmentDeliveredByLearner: false;
+      readonly treatmentEffectProven: false;
+      readonly neurologicRecoveryProven: false;
+      readonly definitiveTreatmentProven: false;
       readonly dispositionDetermined: false;
       readonly prognosisPredicted: false;
       readonly outcomePredicted: false;

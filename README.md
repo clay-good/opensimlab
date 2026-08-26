@@ -78,7 +78,7 @@ screening-rule calculation, abuse or perpetrator diagnosis, confrontation, refer
 submission, jurisdiction selection, custody action, procedure, treatment, disposition, or outcome
 controls.
 
-Wave E Neurology catalog work now includes 12 of 15 bounded labs. Minor nondisabling acute ischemic
+Wave E Neurology catalog work now includes 13 of 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later
 neurological trajectory, and elapsed etiology, recurrence, secondary-prevention, and active-risk
@@ -149,6 +149,15 @@ and elapsed lesion, airway, pressure, seizure, surgery, complication, and active
 examination, scoring, monitoring, imaging interpretation, diagnosis, airway management, drug, dose,
 route, access, drain, decompression, procedure, treatment-effect, recovery, disposition, prognosis,
 or outcome controls.
+Metastatic spinal cord compression adds a known-cancer context with progressive movement-sensitive
+thoracic pain, bilateral pyramidal leg weakness, a T8 sensory level, gait loss, and urinary
+dysfunction; recognition as an oncologic emergency before imaging confirmation; immediate qualified
+spinal, oncology, imaging, nursing, and rehabilitation ownership; a strict 4-hour qualified
+whole-spine MRI confirming T6 epidural compression with persistent deficits; and elapsed level,
+stability, function, bladder, definitive-care, complication, rehabilitation, and active-risk handoff
+without history, examination, movement, imaging interpretation, diagnosis, drug, dose, route,
+access, catheter, surgery, radiotherapy, procedure, treatment-effect, recovery, disposition,
+prognosis, or outcome controls.
 
 The goal is not a tech demo. It is the best anesthesia education on the internet: the
 thing a student opens the night before their first day in the OR and comes out of

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "neurology",
-  "recordCount": 12,
+  "recordCount": 13,
   "records": [
     {
       "recordId": "scenario:minor-nondisabling-acute-ischemic-stroke@0.1.0",
@@ -133,6 +133,17 @@
       "evidence": [
         "/catalog/neurology-completion-audit.json#acute-transtentorial-herniation-pattern@0.1.0",
         "/catalog/neurology-quality-audit.json#acute-transtentorial-herniation-pattern@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:metastatic-spinal-cord-compression@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "metastatic-spinal-cord-compression",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/neurology-completion-audit.json#metastatic-spinal-cord-compression@0.1.0",
+        "/catalog/neurology-quality-audit.json#metastatic-spinal-cord-compression@0.1.0"
       ]
     }
   ]
