@@ -462,6 +462,14 @@ credited toward the catalog until every item in the completion contract passes.
     report; and active-risk handoff without learner examination, monitoring interpretation, cord
     handling or replacement, presenting-part elevation, bladder filling, positioning, medication,
     anesthesia, delivery, newborn care, disposition or outcome controls.
+  - [x] Obstetrics slice 10/15 adds one authored suspected uterine-rupture pattern during labour
+    after prior caesarean birth with persistent between-contraction pain, abrupt fetal-heart change,
+    loss of station, cessation of uterine activity, bleeding and evolving maternal compromise;
+    immediate category-1 surgical, anesthesia, blood, newborn, communication and support ownership;
+    explicit nonclassic-triad and diagnostic-uncertainty boundaries; parallel maternal-fetal,
+    hemorrhage, surgical, fertility and communication readiness; a fixed worsening laparotomy-start
+    report; and active-risk handoff without learner examination, CTG interpretation, diagnosis,
+    resuscitation, drug, dose, anesthesia, delivery, surgery, hysterectomy, disposition or outcome.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

@@ -1925,6 +1925,17 @@
         "GB"
       ],
       "fidelityClass": "state_transition"
+    },
+    {
+      "scenarioId": "suspected-uterine-rupture-recognition",
+      "contentVersion": "0.1.0",
+      "moduleId": "obstetrics",
+      "maturity": "draft",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition"
     }
   ]
 }

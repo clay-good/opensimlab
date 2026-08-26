@@ -8,6 +8,7 @@ import { SUSPECTED_AMNIOTIC_FLUID_EMBOLISM_PATTERN } from './suspected-amniotic-
 import { MATERNAL_CARDIAC_ARREST_COORDINATED_RESPONSE } from './maternal-cardiac-arrest-coordinated-response';
 import { SHOULDER_DYSTOCIA_COGNITIVE_SEQUENCE } from './shoulder-dystocia-cognitive-sequence';
 import { UMBILICAL_CORD_PROLAPSE_URGENT_BIRTH_COORDINATION } from './umbilical-cord-prolapse-urgent-birth-coordination';
+import { SUSPECTED_UTERINE_RUPTURE_RECOGNITION } from './suspected-uterine-rupture-recognition';
 
 export const OBSTETRICS_SCENARIOS: readonly Scenario[] = [
   POSTPARTUM_HEMORRHAGE_UTERINE_ATONY,
@@ -19,6 +20,7 @@ export const OBSTETRICS_SCENARIOS: readonly Scenario[] = [
   MATERNAL_CARDIAC_ARREST_COORDINATED_RESPONSE,
   SHOULDER_DYSTOCIA_COGNITIVE_SEQUENCE,
   UMBILICAL_CORD_PROLAPSE_URGENT_BIRTH_COORDINATION,
+  SUSPECTED_UTERINE_RUPTURE_RECOGNITION,
 ];
 export const DEFAULT_OBSTETRICS_SCENARIO_ID = POSTPARTUM_HEMORRHAGE_UTERINE_ATONY.metadata.id;
 

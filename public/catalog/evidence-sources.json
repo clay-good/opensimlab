@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 277,
+  "sourceCount": 280,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -909,6 +909,51 @@
       "locator": "recommendations, acute events and interpretation principles; updated March 2026",
       "usedFor": "The boundary that fetal monitoring informs but does not alone diagnose the whole clinical state, and that an acute event such as cord prolapse requires expedited qualified birth planning.",
       "verifiedAgainst": "https://www.nice.org.uk/guidance/ng229/chapter/recommendations",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "rcog-birth-after-previous-caesarean-45-2015",
+      "currency": {
+        "lastAmended": "2015-10-01",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "Royal College of Obstetricians and Gynaecologists",
+      "title": "Birth After Previous Caesarean Birth",
+      "publication": "Green-top Guideline No. 45",
+      "year": 2015,
+      "locator": "pages 13-15, intrapartum monitoring, uterine-rupture features, diagnosis, and emergency response",
+      "usedFor": "Continuous fetal monitoring during planned vaginal birth after caesarean; the multisignal rupture pattern, frequent abnormal fetal-heart finding, uncommon classic triad, and need for early recognition, immediate surgical capability, neonatal readiness, expeditious laparotomy, and resuscitation.",
+      "verifiedAgainst": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/birth-after-previous-caesarean-birth-green-top-guideline-no-45/",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "nice-caesarean-birth-ng192-2021",
+      "currency": {
+        "lastAmended": "2025-06-19",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "National Institute for Health and Care Excellence",
+      "title": "Caesarean birth",
+      "publication": "NICE guideline NG192",
+      "year": 2021,
+      "locator": "recommendations 1.4.31-1.4.33, urgency classification and timing",
+      "usedFor": "Suspected uterine rupture as a category-1 immediate threat, with birth as soon as possible and in most situations within 30 minutes while still accounting for maternal and fetal condition and avoiding harm from unsafe haste.",
+      "verifiedAgainst": "https://www.nice.org.uk/guidance/ng192/chapter/recommendations",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "acog-vbac-205-2019",
+      "currency": {
+        "lastAmended": "2024-01-01",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "American College of Obstetricians and Gynecologists",
+      "title": "Vaginal Birth After Cesarean Delivery",
+      "publication": "Practice Bulletin No. 205",
+      "year": 2019,
+      "locator": "abstract and clinical guidance; reaffirmed 2024",
+      "usedFor": "The broader individualized labour-after-caesarean counseling and management context; the public abstract is not used for a numeric rupture-risk estimate or a treatment instruction.",
+      "verifiedAgainst": "https://www.acog.org/clinical/clinical-guidance/practice-bulletin/articles/2019/02/vaginal-birth-after-cesarean-delivery",
       "verifiedOn": "2026-08-26"
     },
     {

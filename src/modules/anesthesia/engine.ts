@@ -533,6 +533,10 @@ const OBSTETRICS_CORD_PROLAPSE_BLOCKED_ACTION_TYPES = new Set([
   ...OBSTETRICS_SHOULDER_DYSTOCIA_BLOCKED_ACTION_TYPES,
   'shoulder-dystocia-cognitive-sequence-response',
 ]);
+const OBSTETRICS_UTERINE_RUPTURE_BLOCKED_ACTION_TYPES = new Set([
+  ...OBSTETRICS_CORD_PROLAPSE_BLOCKED_ACTION_TYPES,
+  'umbilical-cord-prolapse-urgent-birth-coordination-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1514,6 +1518,12 @@ export class AnesthesiaEngine {
   private obstetricsCordProlapseBirthPlanAtTick: number | null = null;
   private obstetricsCordProlapseReassessmentAtTick: number | null = null;
   private obstetricsCordProlapseHandoffAtTick: number | null = null;
+  private obstetricsUterineRuptureSupportAtTick: number | null = null;
+  private obstetricsUterineRuptureContextAtTick: number | null = null;
+  private obstetricsUterineRuptureUncertaintyAtTick: number | null = null;
+  private obstetricsUterineRuptureReadinessAtTick: number | null = null;
+  private obstetricsUterineRuptureReassessmentAtTick: number | null = null;
+  private obstetricsUterineRuptureHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2477,6 +2487,14 @@ export class AnesthesiaEngine {
     if (obstetricsCordProlapse && OBSTETRICS_CORD_PROLAPSE_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `obstetrics-cord-prolapse-generic-action-refused-${this.currentTick}`,
         'This Obstetrics lesson exposes no generic examination, fetal-monitor interpretation, cord handling or replacement, presenting-part elevation, bladder filling, positioning, oxygen, airway, fluid, blood, tocolytic, drug, dose, anesthesia, delivery, newborn care, procedure, transport, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const obstetricsUterineRupture = this.scenario.metadata.id === 'suspected-uterine-rupture-recognition'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'suspected-uterine-rupture-recognition-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'suspected-uterine-rupture-recognition-transition-boundary').length === 1;
+    if (obstetricsUterineRupture && OBSTETRICS_UTERINE_RUPTURE_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `obstetrics-uterine-rupture-generic-action-refused-${this.currentTick}`,
+        'This Obstetrics lesson exposes no generic examination, CTG interpretation, diagnosis, infusion change, oxygen, airway, fluid, blood, drug, dose, anesthesia, delivery, laparotomy, repair, hysterectomy, procedure, transport, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -11106,6 +11124,33 @@ export class AnesthesiaEngine {
         if (this.obstetricsCordProlapseHandoffAtTick !== null) break;
         this.obstetricsCordProlapseHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-cord-prolapse-active-risk-handoff-recorded-${this.currentTick}`, 'Persistent fetal compromise, cord compression and vasospasm risk, ongoing qualified elevation and surveillance, maternal positioning and safety, theatre transfer, anesthesia, birth, newborn resuscitation, cord gases, neurologic uncertainty, documentation, incident review, explanation, family and staff support, psychological follow-up, prognosis, and maternal or newborn outcome uncertainty were handed off.', { fetalRecoveryProven: false, deliveryCompleted: false, safetyDispositionDetermined: false, maternalOutcomePredicted: false, newbornOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'suspected-uterine-rupture-recognition-response': {
+        const response = typeof action.payload?.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'suspected-uterine-rupture-recognition'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'suspected-uterine-rupture-recognition-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'suspected-uterine-rupture-recognition-transition-boundary').length === 1;
+        const actions = ['activate-obstetrics-suspected-uterine-rupture-category-one-surgery-anesthesia-blood-newborn-and-support-response',
+          'reconcile-obstetrics-suspected-uterine-rupture-scar-pain-fetal-heart-station-activity-bleeding-and-whole-person',
+          'review-obstetrics-suspected-uterine-rupture-multisignal-nonclassic-triad-and-alternative-cause-boundaries',
+          'review-obstetrics-suspected-uterine-rupture-parallel-maternal-fetal-surgical-hemorrhage-fertility-and-communication-readiness',
+          'review-obstetrics-suspected-uterine-rupture-fixed-worsening-and-laparotomy-start-report',
+          'handoff-obstetrics-suspected-uterine-rupture-maternal-fetal-hemorrhage-surgery-newborn-fertility-support-and-outcome-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `obstetrics-uterine-rupture-response-refused-${this.currentTick}`, supported ? 'The suspected-rupture action was not listed. No supplied or injected text was retained.' : 'These suspected-rupture choices are available only in the exact declared Obstetrics lesson.'); break; }
+        if (response === actions[0]) { if (this.obstetricsUterineRuptureSupportAtTick !== null) break; this.obstetricsUterineRuptureSupportAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-uterine-rupture-support-activated-${this.currentTick}`, 'The suspected uterine-rupture immediate-threat pattern was named and qualified senior obstetric, category-1 theatre, anesthesia, nursing, blood-bank and hemorrhage, newborn, leadership, timekeeping, documentation, communication, dignity, family, and staff-support ownership was activated. No learner examination, CTG interpretation, diagnosis, resuscitation, anesthesia, delivery, surgery, drug, or procedure occurred.'); break; }
+        if (this.obstetricsUterineRuptureSupportAtTick === null) { this.log('warning', 'assessment', `obstetrics-uterine-rupture-support-order-refused-${this.currentTick}`, 'Activate the prepared suspected-rupture surgical, maternal, fetal, hemorrhage, newborn, and support response before further review.'); break; }
+        if (response === actions[1]) { if (this.obstetricsUterineRuptureContextAtTick !== null) break; this.obstetricsUterineRuptureContextAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-uterine-rupture-context-reconciled-${this.currentTick}`, 'Prior uterine scar, persistent between-contraction pain, abrupt fetal-heart change, station loss, cessation of uterine activity, bleeding, tenderness, maternal compromise, distress, communication, support, and the whole person were connected without learner examination, monitoring interpretation, diagnosis, or procedure.'); break; }
+        if (this.obstetricsUterineRuptureContextAtTick === null) { this.log('warning', 'assessment', `obstetrics-uterine-rupture-context-order-refused-${this.currentTick}`, 'Connect the supplied scar, pain, fetal-heart, station, uterine-activity, bleeding, maternal, and whole-person facts before uncertainty review.'); break; }
+        if (response === actions[2]) { if (this.obstetricsUterineRuptureUncertaintyAtTick !== null) break; this.obstetricsUterineRuptureUncertaintyAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-uterine-rupture-uncertainty-reviewed-${this.currentTick}`, 'The multisignal pattern remained highly concerning for rupture without operative confirmation. The uncommon classic triad, nonspecific CTG, concealed bleeding, scar dehiscence, placental abruption, cord and fetal events, vascular emergencies, and non-obstetric causes were reviewed without diagnostic closure or delay to qualified response.'); break; }
+        if (this.obstetricsUterineRuptureUncertaintyAtTick === null) { this.log('warning', 'assessment', `obstetrics-uterine-rupture-uncertainty-order-refused-${this.currentTick}`, 'Review the multisignal, nonclassic-triad, operative-confirmation, and alternative-cause boundaries before readiness.'); break; }
+        if (response === actions[3]) { if (this.obstetricsUterineRuptureReadinessAtTick !== null) break; this.obstetricsUterineRuptureReadinessAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-uterine-rupture-readiness-reviewed-${this.currentTick}`, 'Qualified maternal resuscitation, continuous fetal surveillance, surgical access, anesthesia, blood and hemorrhage readiness, neonatal resuscitation, explanation, consent, possible repair or hysterectomy, fertility implications, documentation, review, and family and staff support were reviewed as parallel work. No learner treatment, anesthetic, birth, operation, hysterectomy, fertility, or outcome decision occurred.'); break; }
+        if (this.obstetricsUterineRuptureReadinessAtTick === null) { this.log('warning', 'assessment', `obstetrics-uterine-rupture-readiness-order-refused-${this.currentTick}`, 'Review parallel maternal-fetal, surgical, hemorrhage, anesthesia, newborn, fertility, communication, and support readiness before the fixed report.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.obstetricsUterineRuptureReadinessAtTick) { this.log('warning', 'assessment', `obstetrics-uterine-rupture-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed worsening and laparotomy-start report.'); break; } if (this.obstetricsUterineRuptureReassessmentAtTick !== null) break; this.obstetricsUterineRuptureReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-uterine-rupture-laparotomy-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report 7 minutes after activation: HR 126/min, BP 86/50 mmHg (MAP 62), persistent fetal bradycardia at 68/min, increasing abdominal distension, and 110 mL cumulative visible bleeding. Emergency laparotomy with caesarean birth is beginning in theatre. Rupture, bleeding source and extent, fetal location, delivery, repair, hysterectomy, hemostasis, newborn state, maternal state, fertility, disposition, and outcomes are not yet supplied.', { ruptureOperativelyConfirmed: false, deliveryPerformedByLearner: false, surgeryPerformedByLearner: false, hysterectomyDetermined: false, hemostasisProven: false, fetalRecoveryProven: false, treatmentEffectProven: false, outcomePredicted: false }); break; }
+        if (this.obstetricsUterineRuptureReassessmentAtTick === null) { this.log('warning', 'assessment', `obstetrics-uterine-rupture-handoff-order-refused-${this.currentTick}`, 'Review the fixed worsening and laparotomy-start report before active-risk handoff.'); break; }
+        if (this.currentTick <= this.obstetricsUterineRuptureReassessmentAtTick) { this.log('warning', 'assessment', `obstetrics-uterine-rupture-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.obstetricsUterineRuptureHandoffAtTick !== null) break;
+        this.obstetricsUterineRuptureHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-uterine-rupture-active-risk-handoff-recorded-${this.currentTick}`, 'Active maternal shock, concealed and visible hemorrhage, coagulation and transfusion risk, fetal hypoxia, operative confirmation, anesthesia, delivery, repair or hysterectomy, urinary and adjacent-organ injury, newborn resuscitation and neurologic uncertainty, fertility, documentation, incident review, explanation, family and staff support, psychological follow-up, prognosis, and maternal or newborn outcome uncertainty were handed off.', { ruptureOperativelyConfirmed: false, deliveryCompleted: false, hemostasisProven: false, hysterectomyDetermined: false, safetyDispositionDetermined: false, maternalOutcomePredicted: false, newbornOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -14064,6 +14109,19 @@ export class AnesthesiaEngine {
       crisisState = { ...crisisState, heartRateBpm: 96, respiratoryRateBpm: 20,
         spo2Percent: 99, systolicMmHg: 122, diastolicMmHg: 72,
         meanArterialMmHg: 89, coreTemperatureC: 36.8 };
+    }
+    if (this.scenario.metadata.id === 'suspected-uterine-rupture-recognition'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'suspected-uterine-rupture-recognition-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'suspected-uterine-rupture-recognition-transition-boundary').length === 1) {
+      crisisState = { ...crisisState,
+        heartRateBpm: this.obstetricsUterineRuptureReassessmentAtTick !== null ? 126 : 118,
+        respiratoryRateBpm: this.obstetricsUterineRuptureReassessmentAtTick !== null ? 26 : 24,
+        spo2Percent: 98,
+        systolicMmHg: this.obstetricsUterineRuptureReassessmentAtTick !== null ? 86 : 96,
+        diastolicMmHg: this.obstetricsUterineRuptureReassessmentAtTick !== null ? 50 : 58,
+        meanArterialMmHg: this.obstetricsUterineRuptureReassessmentAtTick !== null ? 62 : 71,
+        coreTemperatureC: 36.8 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -18232,6 +18290,31 @@ export class AnesthesiaEngine {
               fetalRecoveryProven: false as const, treatmentEffectProven: false as const,
               safetyDispositionDetermined: false as const, maternalOutcomePredicted: false as const,
               newbornOutcomePredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'suspected-uterine-rupture-recognition'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'suspected-uterine-rupture-recognition-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'suspected-uterine-rupture-recognition-transition-boundary').length === 1 ? {
+            obstetricsUterineRuptureAssessment: {
+              supportAtTick: this.obstetricsUterineRuptureSupportAtTick,
+              contextAtTick: this.obstetricsUterineRuptureContextAtTick,
+              uncertaintyAtTick: this.obstetricsUterineRuptureUncertaintyAtTick,
+              readinessAtTick: this.obstetricsUterineRuptureReadinessAtTick,
+              reassessmentAtTick: this.obstetricsUterineRuptureReassessmentAtTick,
+              handoffAtTick: this.obstetricsUterineRuptureHandoffAtTick,
+              authoredSuspectedUterineRupture: true as const, authoredWorseningMaternalFetalPattern: this.obstetricsUterineRuptureReassessmentAtTick !== null,
+              patientExaminedByLearner: false as const, fetalMonitoringInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const, infusionChangedByLearner: false as const,
+              resuscitationDeliveredByLearner: false as const, drugDoseRouteTargetSelectedByLearner: false as const,
+              anesthesiaSelectedByLearner: false as const, deliveryPerformedByLearner: false as const,
+              surgeryPerformedByLearner: false as const, repairSelectedByLearner: false as const,
+              hysterectomyDeterminedByLearner: false as const, newbornCarePerformedByLearner: false as const,
+              ruptureOperativelyConfirmed: false as const, hemostasisProven: false as const,
+              fetalRecoveryProven: false as const, treatmentEffectProven: false as const,
+              safetyDispositionDetermined: false as const, fertilityOutcomePredicted: false as const,
+              maternalOutcomePredicted: false as const, newbornOutcomePredicted: false as const,
+              outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

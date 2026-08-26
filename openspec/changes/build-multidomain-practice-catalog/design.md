@@ -2146,6 +2146,27 @@ outcome. Six controls expose no learner examination, fetal-monitor interpretatio
 handling or replacement, presenting-part elevation, bladder filling, positioning, tocolytic, drug,
 dose, anesthesia, birth-mode decision, delivery, newborn care, disposition or outcome control.
 
+### Wave D obstetrics slice 10: suspected uterine-rupture recognition
+
+The tenth lab opens during planned labour after one prior low-transverse caesarean birth. Qualified
+reports supply sudden severe pain persisting between contractions, a prolonged fetal deceleration,
+loss of station, cessation of previously efficient uterine activity, new bleeding, scar-area
+tenderness, and evolving maternal compromise. Previously running oxytocin has already been stopped.
+The learner activates category-1 surgical, anesthesia, blood, newborn, leadership, documentation,
+communication, dignity and support ownership first, then connects the multisystem pattern without
+waiting for a classic triad or treating one CTG feature as diagnostic.
+
+Rupture remains suspected until operative confirmation. Placental, cord, fetal, vascular, surgical
+and non-obstetric causes remain open while qualified maternal resuscitation, fetal surveillance,
+surgical access, anesthesia, hemorrhage readiness, newborn resuscitation, explanation, consent,
+repair-or-hysterectomy and fertility planning proceed in parallel. A fixed report 7 minutes after
+activation supplies worsening maternal circulation, persistent fetal bradycardia, increasing
+abdominal distension and the start of emergency laparotomy with caesarean birth, but stops before
+operative findings, delivery, hemostasis, repair, hysterectomy, newborn state, fertility, disposition
+or outcome. Six controls expose no learner examination, monitoring interpretation, diagnosis,
+infusion change, oxygen, fluid, blood, drug, dose, route, target, anesthesia, birth, surgery,
+hysterectomy, procedure, disposition or outcome control.
+
 #### Neonatology: 11
 
 Term newborn transition; neonatal apnea; ineffective ventilation correction; neonatal bradycardia;

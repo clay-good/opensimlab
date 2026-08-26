@@ -1161,6 +1161,9 @@ export function Cockpit({
           onObstetricsCordProlapseResponse={(action) => session.act({
             type: 'umbilical-cord-prolapse-urgent-birth-coordination-response', payload: { action },
           })}
+          onObstetricsUterineRuptureResponse={(action) => session.act({
+            type: 'suspected-uterine-rupture-recognition-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

@@ -1295,6 +1295,11 @@ export interface ActionCockpitProps {
       readonly bridgeAtTick: number | null; readonly birthPlanAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly obstetricsUterineRuptureAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly uncertaintyAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2315,6 +2320,14 @@ export interface ActionCockpitProps {
       | 'review-obstetrics-cord-prolapse-fixed-persistent-fetal-compromise-and-theatre-transfer-report'
       | 'handoff-obstetrics-cord-prolapse-fetal-maternal-theatre-newborn-support-documentation-and-outcome-risk',
   ) => void;
+  readonly onObstetricsUterineRuptureResponse?: (
+    action: 'activate-obstetrics-suspected-uterine-rupture-category-one-surgery-anesthesia-blood-newborn-and-support-response'
+      | 'reconcile-obstetrics-suspected-uterine-rupture-scar-pain-fetal-heart-station-activity-bleeding-and-whole-person'
+      | 'review-obstetrics-suspected-uterine-rupture-multisignal-nonclassic-triad-and-alternative-cause-boundaries'
+      | 'review-obstetrics-suspected-uterine-rupture-parallel-maternal-fetal-surgical-hemorrhage-fertility-and-communication-readiness'
+      | 'review-obstetrics-suspected-uterine-rupture-fixed-worsening-and-laparotomy-start-report'
+      | 'handoff-obstetrics-suspected-uterine-rupture-maternal-fetal-hemorrhage-surgery-newborn-fertility-support-and-outcome-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2363,6 +2376,11 @@ export function crisisResponseAvailability(
     && scenario.timeline.every((event) => event.type === 'narrative')
     && scenario.timeline.filter((event) => event.target === 'umbilical-cord-prolapse-urgent-birth-coordination-transition').length === 1
     && scenario.timeline.filter((event) => event.target === 'umbilical-cord-prolapse-urgent-birth-coordination-transition-boundary').length === 1;
+  const hasObstetricsUterineRuptureResponse =
+    scenario.metadata.id === 'suspected-uterine-rupture-recognition'
+    && scenario.timeline.every((event) => event.type === 'narrative')
+    && scenario.timeline.filter((event) => event.target === 'suspected-uterine-rupture-recognition-transition').length === 1
+    && scenario.timeline.filter((event) => event.target === 'suspected-uterine-rupture-recognition-transition-boundary').length === 1;
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -2914,6 +2932,7 @@ export function crisisResponseAvailability(
     hasObstetricsMaternalArrestResponse,
     hasObstetricsShoulderDystociaResponse,
     hasObstetricsCordProlapseResponse,
+    hasObstetricsUterineRuptureResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3137,6 +3156,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'maternal-cardiac-arrest-coordinated-response-transition')
       || (event.type === 'narrative' && event.target === 'shoulder-dystocia-cognitive-sequence-transition')
       || (event.type === 'narrative' && event.target === 'umbilical-cord-prolapse-urgent-birth-coordination-transition')
+      || (event.type === 'narrative' && event.target === 'suspected-uterine-rupture-recognition-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3248,6 +3268,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasObstetricsMaternalArrestResponse,
     hasObstetricsShoulderDystociaResponse,
     hasObstetricsCordProlapseResponse,
+    hasObstetricsUterineRuptureResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3386,8 +3407,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasObstetricsMaternalArrestResponse
     || hasObstetricsShoulderDystociaResponse
     || hasObstetricsCordProlapseResponse
+    || hasObstetricsUterineRuptureResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasObstetricsCordProlapseResponse
+  const responseTray = hasObstetricsUterineRuptureResponse
+    ? { id: 'crisis', label: 'Pattern + surgery' } as const
+    : hasObstetricsCordProlapseResponse
     ? { id: 'crisis', label: 'Protect + prepare' } as const
     : hasObstetricsShoulderDystociaResponse
     ? { id: 'crisis', label: 'Birth + sequence' } as const
@@ -3782,6 +3806,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasObstetricsMaternalArrestResponse
     || hasObstetricsShoulderDystociaResponse
     || hasObstetricsCordProlapseResponse
+    || hasObstetricsUterineRuptureResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -4683,6 +4708,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasObstetricsCordProlapseResponse && (
               <ObstetricsCordProlapseTray assessment={props.resuscitation.obstetricsCordProlapseAssessment}
                 onAction={props.onObstetricsCordProlapseResponse ?? (() => {})} />
+            )}
+            {hasObstetricsUterineRuptureResponse && (
+              <ObstetricsUterineRuptureTray assessment={props.resuscitation.obstetricsUterineRuptureAssessment}
+                onAction={props.onObstetricsUterineRuptureResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -11768,6 +11797,38 @@ function ObstetricsCordProlapseTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {birthPlan && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-cord-prolapse-fixed-persistent-fetal-compromise-and-theatre-transfer-report')}>Review the fixed transfer report</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-obstetrics-cord-prolapse-fetal-maternal-theatre-newborn-support-documentation-and-outcome-risk')}>Hand off maternal + fetal risk</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function ObstetricsUterineRuptureTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['obstetricsUterineRuptureAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onObstetricsUterineRuptureResponse']>;
+}) {
+  const support = assessment?.supportAtTick != null;
+  const context = assessment?.contextAtTick != null;
+  const uncertainty = assessment?.uncertaintyAtTick != null;
+  const readiness = assessment?.readinessAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="obstetrics-uterine-rupture-now-title">
+      <div id="obstetrics-uterine-rupture-now-title" className="syringe__name">Act on the pattern. Keep the diagnosis honest.</div>
+      <p className="syringe__remaining">Bring surgery, blood, anesthesia, and newborn care together now. The learner surface keeps treatment and every operation with the qualified team.</p>
+      <div className="crisis-drug__actions">
+        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-obstetrics-suspected-uterine-rupture-category-one-surgery-anesthesia-blood-newborn-and-support-response')}>Activate suspected-rupture response</Button>}
+        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-obstetrics-suspected-uterine-rupture-scar-pain-fetal-heart-station-activity-bleeding-and-whole-person')}>Connect the whole pattern</Button>}
+        {context && !uncertainty && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-suspected-uterine-rupture-multisignal-nonclassic-triad-and-alternative-cause-boundaries')}>Review uncertainty + alternatives</Button>}
+        {uncertainty && !readiness && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-suspected-uterine-rupture-parallel-maternal-fetal-surgical-hemorrhage-fertility-and-communication-readiness')}>Review parallel readiness</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="obstetrics-uterine-rupture-later-title">
+      <div id="obstetrics-uterine-rupture-later-title" className="syringe__name">The operation answers what the monitor cannot.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Maternal, fetal, hemorrhage, surgery, newborn, fertility, support, and outcome risks handed off.' : reassessment ? 'Laparotomy begins in the fixed report. Findings, birth, hemostasis, fertility, and outcomes remain open.' : readiness ? 'The qualified team is preparing simultaneous maternal, fetal, surgical, blood, and newborn care. Review the fixed report after time passes.' : support ? 'The response is active. Connect the whole pattern without waiting for a classic triad or diagnostic certainty.' : 'Start with a calm declaration and immediate shared ownership. You can pause or leave this practice at any time.'}</p>
+      <div className="crisis-drug__actions">
+        {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-suspected-uterine-rupture-fixed-worsening-and-laparotomy-start-report')}>Review the fixed theatre report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-obstetrics-suspected-uterine-rupture-maternal-fetal-hemorrhage-surgery-newborn-fertility-support-and-outcome-risk')}>Hand off maternal + fetal risk</Button>}
       </div>
     </section>
   </>;

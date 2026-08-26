@@ -5200,6 +5200,31 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['activate-obstetrics-suspected-uterine-rupture-category-one-surgery-anesthesia-blood-newborn-and-support-response',
+      'reconcile-obstetrics-suspected-uterine-rupture-scar-pain-fetal-heart-station-activity-bleeding-and-whole-person',
+      'review-obstetrics-suspected-uterine-rupture-multisignal-nonclassic-triad-and-alternative-cause-boundaries',
+      'review-obstetrics-suspected-uterine-rupture-parallel-maternal-fetal-surgical-hemorrhage-fertility-and-communication-readiness',
+      'review-obstetrics-suspected-uterine-rupture-fixed-worsening-and-laparotomy-start-report',
+      'handoff-obstetrics-suspected-uterine-rupture-maternal-fetal-hemorrhage-surgery-newborn-fertility-support-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'suspected-uterine-rupture-recognition'
+        && scenario.timeline.every((event) => event.type === 'narrative')
+        && scenario.timeline.filter((event) => event.target === 'suspected-uterine-rupture-recognition-transition').length === 1
+        && scenario.timeline.filter((event) => event.target === 'suspected-uterine-rupture-recognition-transition-boundary').length === 1;
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Obstetrics suspected-uterine-rupture lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['support-activated', 'The suspected-rupture category-1 surgical, anesthesia, blood, newborn, leadership, documentation, communication, dignity, family, and support response was activated first.'],
+        ['context-reconciled', 'Prior scar, persistent pain, fetal-heart change, station loss, altered uterine activity, bleeding, maternal compromise, distress, and support were connected.'],
+        ['uncertainty-reviewed', 'The multisignal pattern, uncommon classic triad, need for operative confirmation, and dangerous alternatives were reviewed without diagnostic closure or delay.'],
+        ['readiness-reviewed', 'Parallel maternal, fetal, surgical, anesthesia, hemorrhage, newborn, repair-or-hysterectomy, fertility, communication, documentation, and support readiness was reviewed.'],
+        ['laparotomy-report-reviewed', 'The fixed worsening and laparotomy-start report was reviewed without operative-confirmation, learner-treatment, delivery, hemostasis, fetal-recovery, fertility, or outcome claims.'],
+        ['active-risk-handoff-recorded', 'Maternal shock, hemorrhage, fetal hypoxia, surgery, anesthesia, birth, newborn, adjacent-organ, fertility, support, review, prognosis, and outcomes were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^obstetrics-uterine-rupture-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^obstetrics-uterine-rupture-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-obstetrics-sepsis-postpartum-clock-infection-organ-dysfunction-and-whole-person',
       'recognize-obstetrics-maternal-sepsis-emergency-without-fever-score-source-or-single-value-closure',
       'activate-obstetrics-sepsis-obstetric-critical-care-anesthesia-nursing-pharmacy-microbiology-source-newborn-and-dignity-ownership',

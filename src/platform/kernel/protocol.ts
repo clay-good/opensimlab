@@ -2822,6 +2822,23 @@ export interface EquipmentSnapshot {
       readonly safetyDispositionDetermined: false; readonly maternalOutcomePredicted: false;
       readonly newbornOutcomePredicted: false; readonly outcomePredicted: false;
     };
+    readonly obstetricsUterineRuptureAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly uncertaintyAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly authoredSuspectedUterineRupture: true; readonly authoredWorseningMaternalFetalPattern: boolean;
+      readonly patientExaminedByLearner: false; readonly fetalMonitoringInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly infusionChangedByLearner: false;
+      readonly resuscitationDeliveredByLearner: false; readonly drugDoseRouteTargetSelectedByLearner: false;
+      readonly anesthesiaSelectedByLearner: false; readonly deliveryPerformedByLearner: false;
+      readonly surgeryPerformedByLearner: false; readonly repairSelectedByLearner: false;
+      readonly hysterectomyDeterminedByLearner: false; readonly newbornCarePerformedByLearner: false;
+      readonly ruptureOperativelyConfirmed: false; readonly hemostasisProven: false;
+      readonly fetalRecoveryProven: false; readonly treatmentEffectProven: false;
+      readonly safetyDispositionDetermined: false; readonly fertilityOutcomePredicted: false;
+      readonly maternalOutcomePredicted: false; readonly newbornOutcomePredicted: false;
+      readonly outcomePredicted: false;
+    };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {
       readonly cuesReviewedAtTick: number | null;

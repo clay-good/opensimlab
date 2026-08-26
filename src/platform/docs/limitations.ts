@@ -4775,6 +4775,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified direct findings, continuous qualified fetal assessment, the current local cord-prolapse protocol, trained multidisciplinary teams, temporary pressure relief without avoidable birth delay, case-specific birth and anesthesia planning, and hands-on simulation with qualified feedback.',
     briefIn: ['umbilical-cord-prolapse-urgent-birth-coordination'],
   },
+  {
+    id: 'suspected-uterine-rupture-scar-multisignal-trajectory-and-laparotomy-report-are-authored',
+    headline: 'Scar history, pain, fetal-heart change, station loss, altered contractions, bleeding, maternal trajectory, and laparotomy-start report are authored.',
+    simplification: 'Fixed reports stand in for direct maternal and fetal assessment, examination, CTG acquisition and interpretation, labour progress, bleeding and shock assessment, resuscitation, transfer, anesthesia, operative findings, birth, newborn care, documentation, explanation, and support.',
+    whereItMisleads: 'Treating the supplied values, 7-minute trajectory, small visible loss, or start of laparotomy as learner findings, diagnostic proof, total hemorrhage, treatment effect, a universal time target, fetal location, completed birth, prognosis, or outcome.',
+    correctUnderstanding: 'Suspected rupture is a clinical emergency recognized from the whole evolving pattern. Qualified maternal support, fetal surveillance, surgical access, anesthesia, hemorrhage readiness, newborn care, communication, and operative confirmation proceed together.',
+    briefIn: ['suspected-uterine-rupture-recognition'],
+  },
+  {
+    id: 'suspected-uterine-rupture-controls-activate-reconcile-review-reassess-and-handoff-only',
+    headline: 'The controls activate the response, connect supplied signals, review uncertainty and parallel readiness, read a fixed report, and hand off only.',
+    simplification: 'Six actions stand in for simultaneous qualified obstetric, midwifery or nursing, theatre, anesthesia, blood-bank, hemorrhage, newborn, leadership, timekeeping, documentation, communication, dignity, family, staff-support, operative, post-birth, review, and handoff work.',
+    whereItMisleads: 'Equating button order with examination, CTG interpretation, diagnosis, resuscitation, infusion change, anesthesia, operation, delivery, repair, hysterectomy, newborn care, documentation quality, or team competence.',
+    correctUnderstanding: 'Real response is concurrent, physical, time-critical, team-based, and locally rehearsed. Cognitive sequence practice cannot replace direct care or hands-on multidisciplinary simulation with qualified feedback.',
+    briefIn: ['suspected-uterine-rupture-recognition'],
+  },
+  {
+    id: 'no-live-uterine-rupture-exam-monitor-interpretation-diagnosis-resuscitation-anesthesia-delivery-surgery-or-outcome',
+    headline: 'The lab does not examine, interpret fetal monitoring, diagnose rupture, resuscitate, select anesthesia, perform birth or surgery, determine fertility or disposition, or report outcome.',
+    simplification: 'No live maternal, fetal, abdominal, scar, cervical, presenting-part, contraction, CTG, ultrasound, blood, urine, laboratory, operative, newborn, neurologic, injury, or fertility assessment; infusion change, oxygen, fluid, blood, drug, dose, route, target, access, anesthesia, caesarean birth, laparotomy, repair, hysterectomy, neonatal resuscitation, transfer, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Using the rehearsal as examination, monitoring, resuscitation, anesthesia, delivery, surgical, fertility, or newborn-care instructions; delaying immediate trained response for diagnostic certainty or a click; underestimating concealed bleeding; or reading completion as competence.',
+    correctUnderstanding: 'Use verified direct findings, continuous qualified fetal and maternal assessment, current local protocols, immediate multidisciplinary response, operative confirmation, situation-specific resuscitation and surgery, respectful communication, and hands-on simulation with qualified feedback.',
+    briefIn: ['suspected-uterine-rupture-recognition'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {
