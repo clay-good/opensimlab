@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 161,
+  "sourceCount": 164,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -2048,6 +2048,51 @@
       "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/36661420/",
       "verifiedOn": "2026-08-25",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/36661420/"
+    },
+    {
+      "id": "who-childhood-bronchiolitis-guideline-2026",
+      "currency": {
+        "lastAmended": "2026-05-07",
+        "checkedAt": "2026-08-25"
+      },
+      "authors": "World Health Organization",
+      "title": "WHO consolidated guidelines for the management of common childhood illness: management of asthma in children and adolescents and bronchiolitis in infants and young children",
+      "publication": "World Health Organization",
+      "year": 2026,
+      "locator": "ISBN 978-92-4-012268-0; bronchiolitis diagnosis, severity, admission, investigations, and supportive management",
+      "usedFor": "The current global bronchiolitis boundary: integrate severity, feeding, risk factors, hypoxemia, supportive care, and context-sensitive escalation rather than using one number or a routine treatment bundle.",
+      "verifiedAgainst": "https://www.who.int/publications/i/item/9789240122680",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "nice-bronchiolitis-ng9-2021",
+      "currency": {
+        "lastAmended": "2025-11-01",
+        "checkedAt": "2026-08-25"
+      },
+      "authors": "National Institute for Health and Care Excellence",
+      "title": "Bronchiolitis in children: diagnosis and management",
+      "publication": "NICE guideline NG9",
+      "year": 2021,
+      "locator": "Recommendations 1.1-1.6; updated 2021, minor update 2025",
+      "usedFor": "Whole-child admission and management factors, feeding and hydration review, pulse-oximetry limitations, nonroutine tests and medicines, and the contextual suction boundary.",
+      "verifiedAgainst": "https://www.nice.org.uk/guidance/ng9/chapter/Recommendations",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "ralston-aap-bronchiolitis-guideline-2014",
+      "currency": {
+        "lastAmended": "2014-10-27",
+        "checkedAt": "2026-08-25"
+      },
+      "authors": "Ralston SL, Lieberthal AS, Meissner HC, et al",
+      "title": "Clinical Practice Guideline: The Diagnosis, Management, and Prevention of Bronchiolitis",
+      "publication": "Pediatrics",
+      "year": 2014,
+      "locator": "134:e1474-e1502; doi:10.1542/peds.2014-2742; historical guideline context",
+      "usedFor": "Historical North American context for clinical diagnosis, risk factors, nonroutine imaging and medicines, and supported hydration; current WHO and NICE guidance take precedence.",
+      "verifiedAgainst": "https://publications.aap.org/pediatrics/article/134/5/e1474/75848/Clinical-Practice-Guideline-The-Diagnosis",
+      "verifiedOn": "2026-08-25"
     }
   ]
 }

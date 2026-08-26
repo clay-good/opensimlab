@@ -96,8 +96,9 @@ Recorded here rather than silently carried:
   less tachycardia than the textbook class II picture.
 - Ventricular tachycardia morphology degenerates toward a continuous undulation at high
   rates, which would undermine a VT-versus-VF discrimination lesson.
-- The healthy-child respiratory profile is bounded to one source-composed teaching patient;
-  pediatric disease, developmental hemodynamics, and broader age-specific validation remain absent.
+- The healthy-child respiratory profile is bounded to the exact bundled 6-year-old, 20 kg teaching
+  patient and the bronchiolitis scenario's exact 1-year-old, 10 kg scaffold; pediatric disease,
+  developmental hemodynamics, and broader age-specific validation remain absent.
 
 ## Concentration-time checks, 2026-08-23
 

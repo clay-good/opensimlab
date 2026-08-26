@@ -3479,6 +3479,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, current pediatric guidance, weight- and context-specific local systems, qualified teams, caregiver input, and repeated patient-specific reassessment.',
     briefIn: ['pediatric-respiratory-distress'],
   },
+  {
+    id: 'bronchiolitis-infant-presentation-working-diagnosis-support-and-trajectory-are-authored',
+    headline: 'The child, illness day, clinical pattern, feeding and hydration reports, support, and response are authored.',
+    simplification: 'Fixed reports and scenario-specific snapshots stand in for caregiver history, examination, pulse oximetry, clinical diagnosis, qualified support, feeding and hydration assessment, and serial bedside review.',
+    whereItMisleads: 'Treating the fictional age, saturation, respiratory rate, intake, urine frequency, diffuse findings, or response as a universal threshold, learner-acquired finding, or validated bronchiolitis physiology.',
+    correctUnderstanding: 'Real bronchiolitis care integrates verified history, examination, signal quality, age and comorbidity risk, work of breathing, feeding, hydration, apnea, circulation, caregiver context, trajectory, and repeated qualified review.',
+    briefIn: ['bronchiolitis'],
+  },
+  {
+    id: 'bronchiolitis-controls-prioritize-reassess-escalate-and-handoff-only',
+    headline: 'The controls record whole-infant review, supportive-care ownership, reassessment, contextual restraint, and handoff only.',
+    simplification: 'Six accepted actions and 5 nonmutating teaching choices stand in for experienced pediatric support, oxygenation, monitoring, feeding and hydration review, contextual treatment restraint, caregiver communication, and handoff.',
+    whereItMisleads: 'Equating button order with diagnosis, oxygen delivery, feeding or fluid support, suction, treatment, team performance, caregiver communication, or pediatric competence.',
+    correctUnderstanding: 'Actual care requires the child and caregiver, trained pediatric teams, current local guidance, patient-specific support, and repeated reassessment.',
+    briefIn: ['bronchiolitis'],
+  },
+  {
+    id: 'no-live-bronchiolitis-exam-test-device-fluid-route-medicine-treatment-or-disposition',
+    headline: 'The lab does not examine or test a child, choose a device, route, medicine, or suction technique, deliver treatment, determine disposition, or predict outcome.',
+    simplification: 'No live examination, viral attribution, oximetry, imaging, laboratory test, oxygen device, flow, FiO2, target, feeding route, fluid type, rate or volume, medicine, dose, nebulized therapy, suction, chest physiotherapy, ventilation, airway procedure, treatment, admission, discharge, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values or contextual restraint into care, treating an absent current feature as permanently excluded, or using completion as evidence of clinical, equipment, medication, suction, treatment, disposition, or prognostic competence.',
+    correctUnderstanding: 'Use verified patient data, current bronchiolitis guidance, local resources, qualified teams, caregiver input, and patient-specific reassessment; context-dependent exceptions remain real clinical decisions.',
+    briefIn: ['bronchiolitis'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

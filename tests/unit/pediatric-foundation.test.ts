@@ -99,6 +99,16 @@ describe('Requirement: bounded healthy-child respiratory physiology', () => {
     expect(profile.spontaneousRespiratoryRateBpm).toBe(29);
   });
 
+  it('keeps the bronchiolitis 1-year-old, 10 kg scaffold finite and source-composed', () => {
+    const profile = healthyChildRespiratoryProfile(1, 10);
+    expect(profile.frcLitres).toBeCloseTo(9.51 * 10 ** 1.31 / 1000, 12);
+    expect(profile.vo2LitresPerMin).toBeGreaterThan(0);
+    expect(profile.vco2LitresPerMin).toBeGreaterThan(0);
+    expect(profile.deadSpaceMl).toBeGreaterThan(0);
+    expect(profile.spontaneousTidalVolumeMl).toBe(60);
+    expect(profile.spontaneousRespiratoryRateBpm).toBe(38);
+  });
+
   it('does not alter any adult respiratory constant', () => {
     expect(RESPIRATORY_PROFILES.healthy).toEqual({
       frcLitres: 2.5, vo2LitresPerMin: 0.25, vco2LitresPerMin: 0.2, deadSpaceMl: 150,

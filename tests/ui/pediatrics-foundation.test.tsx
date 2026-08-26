@@ -7,12 +7,14 @@ import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PEDIATRIC_RESPIRATORY_DISTRESS as SCENARIO } from '../../src/modules/pediatrics/scenarios/pediatric-respiratory-distress';
 
 describe('Pediatrics module user-facing foundation', () => {
-  it('renders a calm index with one child-focused scenario and shared navigation', () => {
+  it('renders a calm index with two child-focused scenarios and shared navigation', () => {
     const markup = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/pediatrics' }));
     expect(markup).toContain('<h1>Pediatrics simulator</h1>');
     expect(markup).toContain('href="/pediatrics" aria-current="page"');
     expect(markup).toContain('href="/pediatrics/scenario/pediatric-respiratory-distress"');
     expect(markup).toContain('Pediatric respiratory distress');
+    expect(markup).toContain('href="/pediatrics/scenario/bronchiolitis"');
+    expect(markup).toContain('Bronchiolitis');
   });
 
   it('briefs the bounded child without perioperative ASA language or treatment claims', () => {

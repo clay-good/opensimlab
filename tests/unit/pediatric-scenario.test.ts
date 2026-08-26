@@ -43,6 +43,13 @@ describe('Requirement: bounded routine pediatric intravenous induction scenario'
     expect(validateScenario(unsupported)).toEqual(expect.arrayContaining([
       expect.objectContaining({ rule: 'supported-profile' }),
     ]));
+    const undeclaredToddler = {
+      ...SCENARIO,
+      patient: { ...SCENARIO.patient, ageYears: 1, weightKg: 10 },
+    };
+    expect(validateScenario(undeclaredToddler)).toEqual(expect.arrayContaining([
+      expect.objectContaining({ rule: 'supported-profile' }),
+    ]));
   });
 
   it('carries the pediatric kinetic, respiratory, preoxygenation, and dosing sources', () => {

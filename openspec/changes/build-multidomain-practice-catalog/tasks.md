@@ -275,6 +275,11 @@ credited toward the catalog until every item in the completion contract passes.
     respiratory-distress lab with whole-child recognition, experienced support, a misleading early
     saturation improvement, a strictly later fatigue pattern, airway-capable rescue ownership, and
     elapsed active-risk handoff without disease-specific treatment, device, dose, or procedure controls.
+  - [x] Pediatrics slice 2/16 adds one authored 12-month-old bronchiolitis reassessment with
+    illness-day, feeding, hydration, and apnea-risk review; experienced supportive-care ownership;
+    a strictly elapsed partial response; contextual restraint of routine imaging and low-value
+    medicines; and active-risk handoff without device, route, dose, suction, treatment, or
+    disposition controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing

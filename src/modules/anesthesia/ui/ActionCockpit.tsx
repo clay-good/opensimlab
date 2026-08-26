@@ -1019,6 +1019,13 @@ export interface ActionCockpitProps {
       readonly treatmentDeliveredByLearner: false; readonly durableRecoveryProven: false;
       readonly dispositionDetermined: false; readonly outcomePredicted: false;
     };
+    readonly bronchiolitisAssessment?: {
+      readonly recognitionAtTick: number | null; readonly patternAtTick: number | null;
+      readonly supportAtTick: number | null; readonly feedingHydrationAtTick: number | null;
+      readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly lastUnsupportedChoice: 'radiograph-first' | 'single-saturation'
+        | 'routine-albuterol' | 'routine-antibiotic' | 'discharge-on-saturation' | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1594,6 +1601,19 @@ export interface ActionCockpitProps {
       | 'activate-pediatric-respiratory-failure-rescue'
       | 'handoff-pediatric-respiratory-distress-reassessment',
   ) => void;
+  readonly onBronchiolitisResponse?: (
+    action: 'reconcile-bronchiolitis-risk-and-trajectory'
+      | 'recognize-bronchiolitis-supportive-care-pattern'
+      | 'wait-for-bronchiolitis-routine-radiograph'
+      | 'observe-bronchiolitis-saturation-alone'
+      | 'activate-bronchiolitis-oxygenation-and-monitoring'
+      | 'select-routine-bronchiolitis-albuterol'
+      | 'start-routine-bronchiolitis-antibiotic'
+      | 'review-bronchiolitis-feeding-and-hydration'
+      | 'discharge-bronchiolitis-on-saturation-alone'
+      | 'review-bronchiolitis-later-response'
+      | 'handoff-bronchiolitis-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1939,6 +1959,9 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'pediatric-respiratory-distress-reassessment',
     ),
+    hasBronchiolitisResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative' && event.target === 'bronchiolitis-reassessment',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2084,6 +2107,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'acute-tracheostomy-obstruction-reassessment')
       || (event.type === 'narrative'
         && event.target === 'pediatric-respiratory-distress-reassessment')
+      || (event.type === 'narrative' && event.target === 'bronchiolitis-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2143,7 +2167,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeuromuscularRespiratoryFailureResponse, hasObesityHypoventilationResponse,
     hasNoninvasiveVentilationSelectionResponse, hasHighFlowOxygenEscalationResponse,
     hasOxygenDeviceFailureResponse, hasAcuteTracheostomyObstructionResponse,
-    hasPediatricRespiratoryDistressResponse,
+    hasPediatricRespiratoryDistressResponse, hasBronchiolitisResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2214,7 +2238,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasChronicOpioidHypoventilationResponse || hasNeuromuscularRespiratoryFailureResponse
     || hasObesityHypoventilationResponse || hasNoninvasiveVentilationSelectionResponse
     || hasHighFlowOxygenEscalationResponse || hasOxygenDeviceFailureResponse
-    || hasAcuteTracheostomyObstructionResponse || hasPediatricRespiratoryDistressResponse;
+    || hasAcuteTracheostomyObstructionResponse || hasPediatricRespiratoryDistressResponse
+    || hasBronchiolitisResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2245,7 +2270,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasPediatricRespiratoryDistressResponse
+  const responseTray = hasBronchiolitisResponse
+    ? { id: 'crisis', label: 'Bronchiolitis reassessment' } as const
+    : hasPediatricRespiratoryDistressResponse
     ? { id: 'crisis', label: 'Whole-child reassessment' } as const
     : hasAcuteTracheostomyObstructionResponse
     ? { id: 'crisis', label: 'Tracheostomy airflow' } as const
@@ -2497,6 +2524,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasOxygenDeviceFailureResponse
     || hasAcuteTracheostomyObstructionResponse
     || hasPediatricRespiratoryDistressResponse
+    || hasBronchiolitisResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3151,6 +3179,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <PediatricRespiratoryDistressTray
                 assessment={props.resuscitation.pediatricRespiratoryDistressAssessment}
                 onAction={props.onPediatricRespiratoryDistressResponse ?? (() => {})} />
+            )}
+            {hasBronchiolitisResponse && (
+              <BronchiolitisTray assessment={props.resuscitation.bronchiolitisAssessment}
+                onAction={props.onBronchiolitisResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -8031,6 +8063,81 @@ function PediatricRespiratoryDistressTray({ assessment, onAction }: {
           onClick={() => onAction('handoff-pediatric-respiratory-distress-reassessment')}>Hand off active breathing risk</Button>}
       </div>
       <p className="field__hint">The falling rate and quieter effort come with worsening mentation and air movement. This authored panel triggers rescue ownership; it does not diagnose a cause or predict outcome.</p>
+    </section>
+  </div>;
+}
+
+function BronchiolitisTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['bronchiolitisAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onBronchiolitisResponse']>;
+}) {
+  const recognition = assessment?.recognitionAtTick != null;
+  const pattern = assessment?.patternAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const feeding = assessment?.feedingHydrationAtTick != null;
+  const later = assessment?.laterResponseAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  const unsupported = assessment?.lastUnsupportedChoice;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="bronchiolitis-pattern-title">
+      <div id="bronchiolitis-pattern-title" className="syringe__name">Read the whole infant.</div>
+      <Badge kind="teaching">illness day · breathing · feeding · hydration</Badge>
+      <div className="syringe__meta">12 months · 10 kg · first wheezing illness</div>
+      <p className="syringe__remaining" role="status">
+        {support ? 'Experienced support active · keep feeding and hydration visible'
+          : unsupported === 'radiograph-first' ? 'A typical clinical pattern does not wait for routine imaging'
+            : unsupported === 'single-saturation' ? 'One saturation cannot summarize the infant'
+              : pattern ? 'Clinical pattern recorded · activate qualified support'
+                : recognition ? 'Severity trajectory reconciled · keep low-value care out'
+                  : 'Start with age, illness day, breathing, intake, urine, and perfusion'}
+      </p>
+      <div className="syringe__presets">
+        {!recognition && <Button className="crisis-drug__action"
+          onClick={() => onAction('reconcile-bronchiolitis-risk-and-trajectory')}>Review the whole-infant trajectory</Button>}
+        {recognition && !pattern && <>
+          <Button className="crisis-drug__action"
+            onClick={() => onAction('recognize-bronchiolitis-supportive-care-pattern')}>Record the supplied clinical pattern</Button>
+          <Button className="crisis-drug__action"
+            onClick={() => onAction('wait-for-bronchiolitis-routine-radiograph')}>Wait for a routine chest X-ray</Button>
+          <Button className="crisis-drug__action"
+            onClick={() => onAction('observe-bronchiolitis-saturation-alone')}>Watch the saturation alone</Button>
+        </>}
+        {pattern && !support && <>
+          <Button className="crisis-drug__action"
+            onClick={() => onAction('activate-bronchiolitis-oxygenation-and-monitoring')}>Activate experienced supportive care</Button>
+          <Button className="crisis-drug__action"
+            onClick={() => onAction('select-routine-bronchiolitis-albuterol')}>Try routine albuterol</Button>
+          <Button className="crisis-drug__action"
+            onClick={() => onAction('start-routine-bronchiolitis-antibiotic')}>Start routine antibiotics</Button>
+        </>}
+      </div>
+      <p className="field__hint">Qualified support happens off-screen. No examination, test, oxygen setting, medicine, suction, feeding route, fluid, or treatment is selected here.</p>
+    </section>
+    <section className="syringe" aria-labelledby="bronchiolitis-reassessment-title">
+      <div id="bronchiolitis-reassessment-title" className="syringe__name">Keep every lane in view.</div>
+      <Badge kind="teaching">oxygenation · effort · intake · apnea risk</Badge>
+      <div className="syringe__meta">partial response · unresolved feeding · active handoff</div>
+      <p className="syringe__remaining" role="status">
+        {handoff ? 'Trajectory, support, feeding risk, triggers, and owners handed off'
+          : later ? 'Partial stabilization · hand off unresolved risk'
+            : unsupported === 'discharge-on-saturation' ? 'A better saturation does not prove discharge readiness'
+              : feeding ? 'Feeding and hydration risk persist · review the one-hour response'
+                : support ? 'Review feeding and hydration after elapsed support'
+                  : 'First reconcile the pattern and activate support'}
+      </p>
+      <div className="syringe__presets">
+        {support && !feeding && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-bronchiolitis-feeding-and-hydration')}>Review feeding and hydration</Button>}
+        {feeding && !later && <>
+          <Button className="crisis-drug__action"
+            onClick={() => onAction('review-bronchiolitis-later-response')}>Review the one-hour response</Button>
+          <Button className="crisis-drug__action"
+            onClick={() => onAction('discharge-bronchiolitis-on-saturation-alone')}>Discharge from saturation alone</Button>
+        </>}
+        {later && !handoff && <Button className="crisis-drug__action"
+          onClick={() => onAction('handoff-bronchiolitis-active-risk')}>Hand off active bronchiolitis risk</Button>}
+      </div>
+      <p className="field__hint">Partial improvement does not prove oral readiness, room-air stability, resolution, discharge readiness, or durable outcome.</p>
     </section>
   </div>;
 }

@@ -1648,6 +1648,26 @@ procedure, or treatment; calculate a score; determine disposition or prognosis; 
 or outcome. Bronchiolitis, croup, status asthmaticus, infection, sepsis, anaphylaxis, aspiration,
 foreign-body obstruction, and other causes remain open for later distinct labs.
 
+### Wave D pediatrics slice 2: bronchiolitis
+
+The second Pediatrics lab is a cause-consistent supportive-care reassessment, not another fatigue
+or airway-rescue branch. A previously well 12-month-old boy weighing 10 kg is on illness day 4 with
+the qualified clinical pattern of bronchiolitis, persistent clean-pleth SpO₂ 88%, diffuse crackles
+and wheeze, moderate recession, intake near 40% of usual, and reduced wet diapers, while remaining
+awake, perfused, spontaneously breathing, and free of current apnea. Learners reconcile the fixed
+trajectory, record the supplied clinical pattern, and activate experienced-team oxygenation,
+monitoring, feeding, and hydration review without choosing a test, device, setting, medicine, route,
+volume, suction technique, or treatment.
+
+After elapsed time, improved SpO₂ does not overrule persistent work of breathing or inadequate safe
+intake. A strictly later fixed one-hour report shows partial stabilization only, followed by an
+elapsed handoff of respiratory, feeding, hydration, apnea, fatigue, caregiver, and ownership risks.
+Routine radiography, saturation-only observation, albuterol, antibiotics, and discharge from one
+number are calm nonmutating choices; the copy preserves context-dependent exceptions. The lab does
+not examine, diagnose, identify a virus, acquire or interpret tests, select or deliver oxygen,
+feeding, fluids, medicines, suction, ventilation, a procedure, or treatment, determine disposition,
+or predict durable recovery or outcome.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

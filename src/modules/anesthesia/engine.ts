@@ -41,7 +41,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.43';
+export const ENGINE_VERSION = '0.1.0-alpha.44';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -131,6 +131,12 @@ const PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES = new Set([
   'unplanned-extubation-response', 'endotracheal-tube-migration-response',
   'bronchiolitis-response', 'croup-response', 'pediatric-status-asthmaticus-response',
   'pediatric-foreign-body-airway-obstruction-response',
+]);
+const BRONCHIOLITIS_BLOCKED_ACTION_TYPES = new Set([
+  ...[...PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES]
+    .filter((type) => type !== 'bronchiolitis-response'),
+  'pediatric-respiratory-distress-response', 'opioid-toxicity-response',
+  'bronchiectasis-mucus-plugging-response', 'ventilator-circuit-disconnection-response',
 ]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
@@ -783,6 +789,14 @@ export class AnesthesiaEngine {
   private pediatricRespiratoryDistressRescueAtTick: number | null = null;
   private pediatricRespiratoryDistressHandoffAtTick: number | null = null;
   private pediatricRespiratoryDistressLastUnsupportedChoice: 'history-first' | 'imaging-first' | 'single-number' | 'falling-rate' | null = null;
+  private bronchiolitisRecognitionAtTick: number | null = null;
+  private bronchiolitisPatternAtTick: number | null = null;
+  private bronchiolitisSupportAtTick: number | null = null;
+  private bronchiolitisFeedingHydrationAtTick: number | null = null;
+  private bronchiolitisLaterResponseAtTick: number | null = null;
+  private bronchiolitisHandoffAtTick: number | null = null;
+  private bronchiolitisLastUnsupportedChoice: 'radiograph-first' | 'single-saturation'
+    | 'routine-albuterol' | 'routine-antibiotic' | 'discharge-on-saturation' | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1177,6 +1191,14 @@ export class AnesthesiaEngine {
       && PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `pediatric-respiratory-distress-generic-action-refused-${this.currentTick}`,
         'This whole-child lesson does not expose generic medication, oxygen-device, airway, ventilator, procedure, alarm, disease-specific, or adjacent-crisis actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const bronchiolitis = this.scenario.timeline.some((event) =>
+      event.type === 'narrative' && event.target === 'bronchiolitis-reassessment');
+    if (bronchiolitis && BRONCHIOLITIS_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `bronchiolitis-generic-action-refused-${this.currentTick}`,
+        'This infant bronchiolitis lesson does not expose generic medication, oxygen-device, fluid, suction, airway, ventilator, procedure, alarm, or adjacent-crisis actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -5988,6 +6010,71 @@ export class AnesthesiaEngine {
         this.pediatricRespiratoryDistressHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `pediatric-respiratory-distress-handoff-recorded-${this.currentTick}`, 'The caregiver context, whole-child trajectory, qualified support, worsening mentation and breathing, open causes, active rescue work, deterioration triggers, and named pediatric, respiratory, nursing, and airway owners were handed off. No diagnosis, durable recovery, disposition, prognosis, or outcome was declared.', { durableRecoveryProven: false, dispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'bronchiolitis-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'bronchiolitis-reassessment');
+        const valid = ['reconcile-bronchiolitis-risk-and-trajectory',
+          'recognize-bronchiolitis-supportive-care-pattern',
+          'wait-for-bronchiolitis-routine-radiograph', 'observe-bronchiolitis-saturation-alone',
+          'activate-bronchiolitis-oxygenation-and-monitoring',
+          'select-routine-bronchiolitis-albuterol', 'start-routine-bronchiolitis-antibiotic',
+          'review-bronchiolitis-feeding-and-hydration',
+          'discharge-bronchiolitis-on-saturation-alone',
+          'review-bronchiolitis-later-response',
+          'handoff-bronchiolitis-active-risk'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `bronchiolitis-response-refused-${this.currentTick}`, supported ? 'That bronchiolitis response is not available. Nothing changed.' : 'These bronchiolitis choices are available only in the declared Pediatrics lesson.'); break; }
+        if (response === 'reconcile-bronchiolitis-risk-and-trajectory') {
+          if (this.bronchiolitisRecognitionAtTick !== null) { this.log('warning', 'assessment', `bronchiolitis-recognition-refused-${this.currentTick}`, 'The fixed whole-infant trajectory was already reconciled.'); break; }
+          this.bronchiolitisRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `bronchiolitis-risk-trajectory-reconciled-${this.currentTick}`, 'Fixed qualified reports were reconciled across illness day, breathing, oxygenation, feeding, hydration, and circulation: a 12-month-old with a first coryzal wheezing illness, diffuse bilateral findings, moderate recession, persistent clean-pleth hypoxemia, and inadequate intake, with preserved perfusion, spontaneous breathing, and no current apnea. The learner did not examine, measure, interpret a test, or diagnose.', { initialPulsePresent: true, spontaneousBreathingAuthored: true, patientExaminedByLearner: false, diagnosisMadeByLearner: false }); break;
+        }
+        if (this.bronchiolitisRecognitionAtTick === null) { this.log('warning', 'assessment', `bronchiolitis-recognition-order-refused-${this.currentTick}`, 'Review the supplied whole-infant trajectory before choosing the next priority.'); break; }
+        if (response === 'wait-for-bronchiolitis-routine-radiograph' || response === 'observe-bronchiolitis-saturation-alone') {
+          this.bronchiolitisLastUnsupportedChoice = response === 'wait-for-bronchiolitis-routine-radiograph' ? 'radiograph-first' : 'single-saturation';
+          this.log('warning', 'assessment', `bronchiolitis-pattern-not-selected-${this.currentTick}`, response === 'wait-for-bronchiolitis-routine-radiograph' ? 'Typical bronchiolitis is a supplied clinical pattern in this lab. Routine imaging should not delay whole-infant support; exceptions remain context dependent. Nothing changed.' : 'Oxygen saturation is one lane. Work of breathing, feeding, hydration, apnea risk, and circulation remain active. Nothing changed.', { unsupportedChoice: this.bronchiolitisLastUnsupportedChoice, patientStateChanged: false }); break;
+        }
+        if (response === 'recognize-bronchiolitis-supportive-care-pattern') {
+          if (this.bronchiolitisPatternAtTick !== null) { this.log('warning', 'assessment', `bronchiolitis-pattern-refused-${this.currentTick}`, 'The supplied clinical pattern and support need were already recorded.'); break; }
+          this.bronchiolitisPatternAtTick = this.currentTick;
+          this.bronchiolitisLastUnsupportedChoice = null;
+          this.log('critical', 'assessment', `bronchiolitis-supportive-pattern-recognized-${this.currentTick}`, 'The qualified team\'s clinical bronchiolitis working pattern and hospital-support need were recorded from the supplied history and examination. Routine imaging, etiologic testing, bronchodilator, steroid, antibiotic, nebulized therapy, chest physiotherapy, and suction were not selected for this fixed uncomplicated branch; exceptions remain open when a specific alternative or secretion-related problem is suspected.', { bronchiolitisWorkingPatternAuthored: true, diagnosisMadeByLearner: false, testAcquiredByLearner: false, drugDeliveredByLearner: false }); break;
+        }
+        if (this.bronchiolitisPatternAtTick === null) { this.log('warning', 'assessment', `bronchiolitis-pattern-order-refused-${this.currentTick}`, 'Record the supplied clinical pattern and support need before activating the qualified pathway.'); break; }
+        if (response === 'select-routine-bronchiolitis-albuterol' || response === 'start-routine-bronchiolitis-antibiotic') {
+          this.bronchiolitisLastUnsupportedChoice = response === 'select-routine-bronchiolitis-albuterol' ? 'routine-albuterol' : 'routine-antibiotic';
+          this.log('warning', 'assessment', `bronchiolitis-routine-treatment-not-selected-${this.currentTick}`, response === 'select-routine-bronchiolitis-albuterol' ? 'Wheeze alone does not establish asthma in this first infant episode. Keep the supportive bronchiolitis pathway; context-dependent exceptions remain outside this lab. Nothing changed.' : 'No bacterial focus is authored. Keep bacterial coinfection open without routine antibacterial treatment. Nothing changed.', { unsupportedChoice: this.bronchiolitisLastUnsupportedChoice, patientStateChanged: false }); break;
+        }
+        if (response === 'activate-bronchiolitis-oxygenation-and-monitoring') {
+          if (this.bronchiolitisSupportAtTick !== null) { this.log('warning', 'assessment', `bronchiolitis-support-refused-${this.currentTick}`, 'Experienced-team oxygenation and monitoring were already activated.'); break; }
+          this.bronchiolitisSupportAtTick = this.currentTick;
+          this.bronchiolitisLastUnsupportedChoice = null;
+          this.log('critical', 'assessment', `bronchiolitis-oxygenation-monitoring-activated-${this.currentTick}`, 'Experienced pediatric staff activated standard oxygenation, monitoring, minimal-handling care, and feeding and hydration review. The learner did not choose or deliver an oxygen interface, flow, fraction, target, suction, feeding route, fluid, medicine, ventilation, procedure, or treatment.', { experiencedSupportActivated: true, oxygenDeliveredByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.bronchiolitisSupportAtTick === null) { this.log('warning', 'assessment', `bronchiolitis-support-order-refused-${this.currentTick}`, 'Activate experienced-team oxygenation and monitoring before reviewing feeding and hydration risk.'); break; }
+        if (response === 'review-bronchiolitis-feeding-and-hydration') {
+          if (this.currentTick <= this.bronchiolitisSupportAtTick) { this.log('warning', 'assessment', `bronchiolitis-feeding-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before reviewing feeding and hydration risk.'); break; }
+          if (this.bronchiolitisFeedingHydrationAtTick !== null) { this.log('warning', 'assessment', `bronchiolitis-feeding-refused-${this.currentTick}`, 'Feeding and hydration risk were already reviewed.'); break; }
+          this.bronchiolitisFeedingHydrationAtTick = this.currentTick;
+          this.log('warning', 'assessment', `bronchiolitis-feeding-hydration-reviewed-${this.currentTick}`, 'Fixed early report: clean-pleth SpO2 is 93% on authored experienced-team support, but moderate recession, tachypnea, diffuse findings, fatigue with feeds, intake near 40% of usual, and low urine frequency persist. Qualified staff own supported hydration and feeding assessment; the learner did not choose a route, fluid, rate, volume, feed, suction, or treatment.', { singleNumberRecoveryProven: false, feedingDeliveredByLearner: false, fluidDeliveredByLearner: false }); break;
+        }
+        if (this.bronchiolitisFeedingHydrationAtTick === null) { this.log('warning', 'assessment', `bronchiolitis-feeding-order-refused-${this.currentTick}`, 'Review feeding and hydration after elapsed support before opening the later panel.'); break; }
+        if (response === 'discharge-bronchiolitis-on-saturation-alone') {
+          this.bronchiolitisLastUnsupportedChoice = 'discharge-on-saturation';
+          this.log('warning', 'assessment', `bronchiolitis-discharge-not-selected-${this.currentTick}`, 'A higher saturation does not establish safe feeding, resolved work of breathing, room-air stability, discharge readiness, or durable recovery. Nothing changed.', { unsupportedChoice: 'discharge-on-saturation', patientStateChanged: false }); break;
+        }
+        if (response === 'review-bronchiolitis-later-response') {
+          if (this.currentTick <= this.bronchiolitisFeedingHydrationAtTick) { this.log('warning', 'assessment', `bronchiolitis-later-time-refused-${this.currentTick}`, 'Allow more simulated time before reviewing the fixed one-hour response.'); break; }
+          if (this.bronchiolitisLaterResponseAtTick !== null) { this.log('warning', 'assessment', `bronchiolitis-later-refused-${this.currentTick}`, 'The fixed one-hour response was already reviewed.'); break; }
+          this.bronchiolitisLaterResponseAtTick = this.currentTick;
+          this.log('warning', 'assessment', `bronchiolitis-later-response-reviewed-${this.currentTick}`, 'Fixed qualified one-hour report: he is awake and more settled with milder recession, equal bilateral air entry, HR 142/min, RR 48/min, BP 92/56 mmHg, and clean-pleth SpO2 93% on unchanged authored support. Diffuse findings and inadequate intake persist, with no apnea. This is partial stabilization, not resolution, oral readiness, discharge readiness, or durable outcome.', { durableRecoveryProven: false, dischargeReadinessProven: false, outcomePredicted: false }); break;
+        }
+        if (this.bronchiolitisLaterResponseAtTick === null) { this.log('warning', 'assessment', `bronchiolitis-later-order-refused-${this.currentTick}`, 'Review the strictly later whole-infant response before handoff.'); break; }
+        if (this.currentTick <= this.bronchiolitisLaterResponseAtTick) { this.log('warning', 'assessment', `bronchiolitis-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off the active risk.'); break; }
+        if (this.bronchiolitisHandoffAtTick !== null) { this.log('warning', 'assessment', `bronchiolitis-handoff-refused-${this.currentTick}`, 'The bronchiolitis active-risk handoff was already recorded.'); break; }
+        this.bronchiolitisHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `bronchiolitis-handoff-recorded-${this.currentTick}`, 'The illness-day trajectory, current qualified support, work of breathing, feeding and hydration risk, apnea and fatigue triggers, contextual alternative-diagnosis guards, caregiver communication, and named pediatric and nursing owners were handed off. No resolution, discharge readiness, disposition, prognosis, or outcome was declared.', { durableRecoveryProven: false, dischargeReadinessProven: false, dispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -8817,6 +8904,19 @@ export class AnesthesiaEngine {
         meanArterialMmHg: later ? 73 : 79,
         coreTemperatureC: 37.7 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'bronchiolitis-reassessment')) {
+      const later = this.bronchiolitisLaterResponseAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: later ? 142 : 156,
+        respiratoryRateBpm: later ? 48 : 58,
+        spo2Percent: later ? 93 : 88,
+        etco2MmHg: later ? 34 : 32,
+        systolicMmHg: 92,
+        diastolicMmHg: later ? 56 : 54,
+        meanArterialMmHg: later ? 68 : 67,
+        coreTemperatureC: 38 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -10412,6 +10512,34 @@ export class AnesthesiaEngine {
               intubationPerformedByLearner: false as const, drugDeliveredByLearner: false as const,
               fluidDeliveredByLearner: false as const, procedurePerformedByLearner: false as const,
               treatmentDeliveredByLearner: false as const, durableRecoveryProven: false as const,
+              dispositionDetermined: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'bronchiolitis-reassessment') ? {
+            bronchiolitisAssessment: {
+              recognitionAtTick: this.bronchiolitisRecognitionAtTick,
+              patternAtTick: this.bronchiolitisPatternAtTick,
+              supportAtTick: this.bronchiolitisSupportAtTick,
+              feedingHydrationAtTick: this.bronchiolitisFeedingHydrationAtTick,
+              laterResponseAtTick: this.bronchiolitisLaterResponseAtTick,
+              handoffAtTick: this.bronchiolitisHandoffAtTick,
+              lastUnsupportedChoice: this.bronchiolitisLastUnsupportedChoice,
+              initialPulsePresent: true as const, spontaneousBreathingAuthored: true as const,
+              bronchiolitisWorkingPatternAuthored: true as const, hypoxemiaAuthored: true as const,
+              poorIntakeAuthored: true as const, preservedPerfusionAuthored: true as const,
+              currentApneaAuthored: false as const,
+              experiencedSupportActivated: this.bronchiolitisSupportAtTick !== null,
+              patientExaminedByLearner: false as const, monitorInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const, testAcquiredByLearner: false as const,
+              oxygenSelectedByLearner: false as const, oxygenDeliveredByLearner: false as const,
+              deviceSelectedByLearner: false as const, flowSelectedByLearner: false as const,
+              fio2SelectedByLearner: false as const, oxygenTargetSelectedByLearner: false as const,
+              feedingDeliveredByLearner: false as const, fluidRouteSelectedByLearner: false as const,
+              fluidDeliveredByLearner: false as const, suctionPerformedByLearner: false as const,
+              drugDeliveredByLearner: false as const, ventilationDeliveredByLearner: false as const,
+              procedurePerformedByLearner: false as const, treatmentDeliveredByLearner: false as const,
+              durableRecoveryProven: false as const, dischargeReadinessProven: false as const,
               dispositionDetermined: false as const, outcomePredicted: false as const,
             },
           } : {}),

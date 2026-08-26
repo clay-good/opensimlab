@@ -4577,6 +4577,29 @@ export function objectiveFindings(
       const ordered = rescue && handoff && rescue.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved caregiver context, active support, the whole-child trajectory, open causes, deterioration triggers, rescue work, and named owners without claiming diagnosis, durable recovery, disposition, or outcome.' : 'The active-risk handoff was absent or did not follow rescue activation after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-bronchiolitis-risk-and-trajectory',
+      'recognize-bronchiolitis-supportive-care-pattern',
+      'activate-bronchiolitis-oxygenation-and-monitoring',
+      'review-bronchiolitis-feeding-and-hydration',
+      'review-bronchiolitis-later-response',
+      'handoff-bronchiolitis-active-risk'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'bronchiolitis-reassessment');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The bronchiolitis lesson was not active.' } satisfies ObjectiveFinding;
+      const recognition = log.find((event) => /^bronchiolitis-risk-trajectory-reconciled-\d+$/.test(event.eventId));
+      const pattern = log.find((event) => /^bronchiolitis-supportive-pattern-recognized-\d+$/.test(event.eventId));
+      const support = log.find((event) => /^bronchiolitis-oxygenation-monitoring-activated-\d+$/.test(event.eventId));
+      const feeding = log.find((event) => /^bronchiolitis-feeding-hydration-reviewed-\d+$/.test(event.eventId));
+      const later = log.find((event) => /^bronchiolitis-later-response-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^bronchiolitis-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-bronchiolitis-risk-and-trajectory') return { ...base, outcome: recognition ? 'met' : 'not-met', finding: recognition ? 'Illness day, breathing, oxygenation, feeding, hydration, circulation, and current apnea status were reconciled from fixed reports without learner examination or diagnosis.' : 'The supplied whole-infant trajectory was not reconciled.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'recognize-bronchiolitis-supportive-care-pattern') { const ordered = recognition && pattern && recognition.tick <= pattern.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The team-supplied bronchiolitis pattern and support need followed whole-infant review without routine testing, etiologic certainty, or learner treatment.' : 'The supplied clinical pattern was absent or preceded whole-infant review.', atTick: pattern?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-bronchiolitis-oxygenation-and-monitoring') { const ordered = pattern && support && pattern.tick <= support.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Experienced-team oxygenation, monitoring, and feeding and hydration review were activated without learner device, setting, route, medicine, or treatment selection.' : 'Qualified support was absent or preceded recognition of the support need.', atTick: support?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-bronchiolitis-feeding-and-hydration') { const ordered = support && feeding && support.tick < feeding.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed support, improved saturation was weighed beside persistent work of breathing and inadequate safe oral intake.' : 'Feeding and hydration review was absent or did not follow support after elapsed time.', atTick: feeding?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-bronchiolitis-later-response') { const ordered = feeding && later && feeding.tick < later.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The strictly later partial response was reviewed without declaring oral readiness, room-air stability, discharge readiness, resolution, or outcome.' : 'The later response was absent or did not follow feeding and hydration review after elapsed time.', atTick: later?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = later && handoff && later.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved current support, feeding and hydration risk, apnea and fatigue triggers, caregiver communication, and named owners without claiming disposition or outcome.' : 'The active-risk handoff was absent or did not follow the later response after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 117 reports pediatric respiratory-distress reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 117;
+export const WORKER_PROTOCOL_VERSION = 118;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1120,6 +1120,28 @@ export interface EquipmentSnapshot {
       readonly intubationPerformedByLearner: false; readonly drugDeliveredByLearner: false;
       readonly fluidDeliveredByLearner: false; readonly procedurePerformedByLearner: false;
       readonly treatmentDeliveredByLearner: false; readonly durableRecoveryProven: false;
+      readonly dispositionDetermined: false; readonly outcomePredicted: false;
+    };
+    readonly bronchiolitisAssessment?: {
+      readonly recognitionAtTick: number | null; readonly patternAtTick: number | null;
+      readonly supportAtTick: number | null; readonly feedingHydrationAtTick: number | null;
+      readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly lastUnsupportedChoice: 'radiograph-first' | 'single-saturation'
+        | 'routine-albuterol' | 'routine-antibiotic' | 'discharge-on-saturation' | null;
+      readonly initialPulsePresent: true; readonly spontaneousBreathingAuthored: true;
+      readonly bronchiolitisWorkingPatternAuthored: true; readonly hypoxemiaAuthored: true;
+      readonly poorIntakeAuthored: true; readonly preservedPerfusionAuthored: true;
+      readonly currentApneaAuthored: false; readonly experiencedSupportActivated: boolean;
+      readonly patientExaminedByLearner: false; readonly monitorInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly testAcquiredByLearner: false;
+      readonly oxygenSelectedByLearner: false; readonly oxygenDeliveredByLearner: false;
+      readonly deviceSelectedByLearner: false; readonly flowSelectedByLearner: false;
+      readonly fio2SelectedByLearner: false; readonly oxygenTargetSelectedByLearner: false;
+      readonly feedingDeliveredByLearner: false; readonly fluidRouteSelectedByLearner: false;
+      readonly fluidDeliveredByLearner: false; readonly suctionPerformedByLearner: false;
+      readonly drugDeliveredByLearner: false; readonly ventilationDeliveredByLearner: false;
+      readonly procedurePerformedByLearner: false; readonly treatmentDeliveredByLearner: false;
+      readonly durableRecoveryProven: false; readonly dischargeReadinessProven: false;
       readonly dispositionDetermined: false; readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */

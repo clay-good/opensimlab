@@ -405,13 +405,14 @@ export function validateScenarioSemantics(scenario: unknown): ValidationError[] 
   const objectiveIds = new Set(
     ((metadata?.objectives as { id: string }[] | undefined) ?? []).map((o) => o.id),
   );
-  if (respiratory?.profile === 'healthy-child'
-    && (patient?.ageYears !== 6 || patient?.weightKg !== 20)) {
+  const supportedHealthyChild = (patient?.ageYears === 6 && patient?.weightKg === 20)
+    || (metadata?.id === 'bronchiolitis' && patient?.ageYears === 1 && patient?.weightKg === 10);
+  if (respiratory?.profile === 'healthy-child' && !supportedHealthyChild) {
     errors.push({
       pointer: '/patient/respiratory/profile', rule: 'supported-profile',
-      message: 'The healthy-child respiratory profile is currently validated only for the bundled '
-        + '6-year-old, 20 kg teaching patient. Use that exact age and weight or author another '
-        + 'explicitly sourced respiratory profile.',
+      message: 'The healthy-child respiratory profile is currently bounded to the bundled '
+        + '6-year-old, 20 kg teaching patient and the bronchiolitis scenario\'s exact 1-year-old, '
+        + '10 kg fixture. Use one declared fixture or author another explicitly sourced profile.',
     });
   }
   (debrief?.rubric ?? []).forEach((item, index) => {
