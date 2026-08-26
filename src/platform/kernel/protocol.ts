@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 125 reports pediatric hypoglycemic-seizure reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 125;
+/** Bumped whenever the message shape changes incompatibly. Version 126 reports pediatric febrile-seizure reassessment state. */
+export const WORKER_PROTOCOL_VERSION = 126;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1333,6 +1333,34 @@ export interface EquipmentSnapshot {
       readonly durableEuglycemiaProven: false; readonly neurologicRecoveryProven: false;
       readonly recurrenceExcluded: false; readonly dispositionDetermined: false;
       readonly outcomePredicted: false;
+    };
+    readonly pediatricFebrileSeizureAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly careAtTick: number | null; readonly safetyAtTick: number | null;
+      readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true; readonly spontaneousBreathingAuthored: true;
+      readonly stoppedSeizureAuthored: true; readonly feverAuthored: true;
+      readonly statusEpilepticusAuthored: false; readonly qualifiedCareOwnershipActive: boolean;
+      readonly qualifiedSafetyReviewActive: boolean; readonly laterReportAuthored: boolean;
+      readonly patientExaminedByLearner: false; readonly temperatureAcquiredByLearner: false;
+      readonly testAcquiredByLearner: false; readonly testInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly classificationMadeByLearner: false;
+      readonly lumbarPuncturePerformedByLearner: false; readonly eegAcquiredByLearner: false;
+      readonly imagingAcquiredByLearner: false; readonly drugSelectedByLearner: false;
+      readonly antipyreticSelectedByLearner: false;
+      readonly anticonvulsantSelectedByLearner: false;
+      readonly antimicrobialSelectedByLearner: false; readonly doseSelectedByLearner: false;
+      readonly concentrationSelectedByLearner: false; readonly routeSelectedByLearner: false;
+      readonly volumeSelectedByLearner: false; readonly rateSelectedByLearner: false;
+      readonly accessPlacedByLearner: false; readonly deviceSelectedByLearner: false;
+      readonly drugDeliveredByLearner: false; readonly airwayManeuverPerformedByLearner: false;
+      readonly procedurePerformedByLearner: false; readonly treatmentDeliveredByLearner: false;
+      readonly simpleFebrileSeizureFinallyProven: false; readonly benignCourseProven: false;
+      readonly seizureCauseProven: false; readonly cnsInfectionExcluded: false;
+      readonly seriousInfectionExcluded: false;
+      readonly treatmentEffectProven: false; readonly durableRecoveryProven: false;
+      readonly recurrenceExcluded: false; readonly dischargeReadinessProven: false;
+      readonly dispositionDetermined: false; readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "pediatrics",
-  "recordCount": 9,
+  "recordCount": 10,
   "records": [
     {
       "recordId": "scenario:pediatric-respiratory-distress@0.1.0",
@@ -100,6 +100,17 @@
       "evidence": [
         "/catalog/pediatrics-completion-audit.json#pediatric-hypoglycemic-seizure@0.1.0",
         "/catalog/pediatrics-quality-audit.json#pediatric-hypoglycemic-seizure@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:pediatric-febrile-seizure@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "pediatric-febrile-seizure",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/pediatrics-completion-audit.json#pediatric-febrile-seizure@0.1.0",
+        "/catalog/pediatrics-quality-audit.json#pediatric-febrile-seizure@0.1.0"
       ]
     }
   ]

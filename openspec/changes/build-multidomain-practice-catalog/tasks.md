@@ -325,6 +325,14 @@ credited toward the catalog until every item in the completion contract passes.
     elapsed active-risk handoff without learner examination, glucose acquisition or interpretation,
     diagnosis, glucose, glucagon, carbohydrate, anticonvulsant, route, concentration, dose, access,
     airway, device, procedure, treatment, or disposition controls.
+  - [x] Pediatrics slice 10/16 adds one authored 2-year-old febrile-seizure recovery
+    reassessment after a brief stopped bilateral generalized event, with provisional simple
+    features to date, qualified fever-source and serious-illness ownership in parallel with
+    infection, recurrence, complex-feature, alternative-cause, caregiver-safety, and escalation
+    review, a strictly elapsed improving-but-unresolved report, and elapsed active-risk handoff
+    without learner examination, seizure timing, routine testing, diagnosis, drug, dose, route,
+    access, airway, device, procedure, treatment, communication-performance, or disposition
+    controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing

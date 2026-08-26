@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: pediatric hypoglycemic-seizure state has protocol version 125', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(125);
+  it('Scenario: pediatric febrile-seizure state has protocol version 126', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(126);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

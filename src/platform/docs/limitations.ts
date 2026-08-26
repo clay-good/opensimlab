@@ -3671,6 +3671,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, current pediatric hypoglycemia and seizure guidance, local rescue systems, qualified teams, caregiver and safeguarding context, repeated neurological and glucose reassessment, and cause-directed evaluation.',
     briefIn: ['pediatric-hypoglycemic-seizure'],
   },
+  {
+    id: 'pediatric-febrile-seizure-presentation-care-and-response-are-authored',
+    headline: 'The child, fever, stopped seizure, qualified care, negative snapshots, and serial recovery are authored.',
+    simplification: 'Fixed reports stand in for caregiver history, seizure characterization, examination, temperature and physiological monitoring, fever-source and serious-illness assessment, recovery observation, recurrence surveillance, caregiver education, and escalation.',
+    whereItMisleads: 'Treating the fictional event, values, negative findings, recovery timing, or temperature change as learner-acquired evidence, modeled physiology, causal treatment effect, confirmed simple classification, or serious-infection exclusion.',
+    correctUnderstanding: 'Real care integrates verified event history, whole-child and neurological examination, fever source, immunization and antimicrobial context, serious-illness red flags, locally indicated tests and treatment, serial return to baseline, recurrence, and caregiver needs.',
+    briefIn: ['pediatric-febrile-seizure'],
+  },
+  {
+    id: 'pediatric-febrile-seizure-controls-reconcile-recognize-coordinate-review-reassess-and-handoff-only',
+    headline: 'The controls record event review, provisional pattern recognition, parallel qualified care and safety review, reassessment, and handoff only.',
+    simplification: 'Six accepted actions stand in for experienced pediatric, nursing, infection, neurological, airway-capable, safeguarding, and caregiver assessment, support, education, escalation, and handoff.',
+    whereItMisleads: 'Equating button order with examination, seizure timing, diagnosis, testing, prescribing, treatment, first-aid skill, team performance, caregiver communication, disposition, or pediatric competence.',
+    correctUnderstanding: 'Actual care requires the child and caregiver, qualified teams, current fever and seizure guidance, patient-specific serious-illness assessment, locally indicated care, observation of recovery, recurrence planning, and safety-netting.',
+    briefIn: ['pediatric-febrile-seizure'],
+  },
+  {
+    id: 'no-live-pediatric-febrile-seizure-exam-test-drug-airway-treatment-or-disposition',
+    headline: 'The lab does not examine, test, treat fever or seizure, assess first aid, determine disposition, or predict outcome.',
+    simplification: 'No live examination, temperature measurement, seizure timing, glucose, urine, blood, culture, lumbar puncture, EEG, ECG or imaging acquisition or interpretation, diagnosis, antipyretic, antimicrobial, antiseizure or rescue medicine, fluid, oxygen, dose, route, access, device, airway maneuver, procedure, treatment, caregiver communication, admission, discharge, prognosis, recurrence, recovery, or outcome is modeled.',
+    whereItMisleads: 'Calling the event confirmed simple or benign, treating fixed negatives as exclusions, using temperature response to judge serious illness, assuming prophylaxis prevents recurrence, copying values into care, or using completion as evidence of clinical or communication competence.',
+    correctUnderstanding: 'Use verified patient data, current pediatric fever and seizure guidance, qualified fever-source and dangerous-cause assessment, patient-specific testing and treatment when indicated, repeated neurological reassessment, caregiver education, and escalation for complex features or serious illness.',
+    briefIn: ['pediatric-febrile-seizure'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

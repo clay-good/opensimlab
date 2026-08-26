@@ -417,7 +417,9 @@ export function validateScenarioSemantics(scenario: unknown): ValidationError[] 
     || (metadata?.id === 'pediatric-diabetic-ketoacidosis'
       && patient?.ageYears === 9 && patient?.weightKg === 30)
     || (metadata?.id === 'pediatric-hypoglycemic-seizure'
-      && patient?.ageYears === 5 && patient?.weightKg === 18);
+      && patient?.ageYears === 5 && patient?.weightKg === 18)
+    || (metadata?.id === 'pediatric-febrile-seizure'
+      && patient?.ageYears === 2 && patient?.weightKg === 12);
   if (respiratory?.profile === 'healthy-child' && !supportedHealthyChild) {
     errors.push({
       pointer: '/patient/respiratory/profile', rule: 'supported-profile',
@@ -428,7 +430,8 @@ export function validateScenarioSemantics(scenario: unknown): ValidationError[] 
         + 'septic-shock scenario\'s exact 4-year-old, 16 kg fixture, and the pediatric '
         + 'dehydration scenario\'s exact 2-year-old, 12 kg fixture, and the pediatric DKA '
         + 'scenario\'s exact 9-year-old, 30 kg fixture, and the pediatric hypoglycemic-seizure '
-        + 'scenario\'s exact 5-year-old, 18 kg fixture. Use one '
+        + 'scenario\'s exact 5-year-old, 18 kg fixture, and the pediatric febrile-seizure '
+        + 'scenario\'s exact 2-year-old, 12 kg fixture. Use one '
         + 'declared fixture or author another explicitly sourced profile.',
     });
   }

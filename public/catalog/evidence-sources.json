@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 181,
+  "sourceCount": 183,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -2031,8 +2031,8 @@
       "title": "Paediatric emergency triage, assessment and treatment: care of critically-ill children",
       "publication": "World Health Organization",
       "year": 2016,
-      "locator": "Updated guideline; ISBN 978-92-4-151021-9; Recommendation 1.1 and emergency signs",
-      "usedFor": "The rapid whole-child triage boundary: severe respiratory distress and reduced consciousness are emergency signs, pulse oximetry augments assessment, and hypoxemia requires urgent experienced support.",
+      "locator": "Updated guideline; ISBN 978-92-4-151021-9; Recommendation 1.1 and emergency signs; section 3.3.4 and Recommendation 3.4",
+      "usedFor": "The rapid whole-child triage boundary: severe respiratory distress and reduced consciousness are emergency signs, pulse oximetry augments assessment, and hypoxemia requires urgent experienced support; and the febrile-seizure boundary against prophylactic intermittent antipyretics, intermittent antiseizure medicines, or continuous antiseizure medicines.",
       "verifiedAgainst": "https://www.who.int/publications/i/item/9789241510219",
       "verifiedOn": "2026-08-25"
     },
@@ -2328,6 +2328,33 @@
       "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/36537534/",
       "verifiedOn": "2026-08-25",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/36537534/"
+    },
+    {
+      "id": "rch-pediatric-febrile-seizure-current",
+      "authors": "Royal Children's Hospital Melbourne",
+      "title": "Clinical Practice Guideline: Febrile seizure",
+      "publication": "Royal Children's Hospital Melbourne Clinical Practice Guidelines",
+      "year": 2026,
+      "locator": "Current web guideline, last updated February 2026; background, assessment, classification, investigations, treatment, discharge, and follow-up sections",
+      "unpinned": true,
+      "usedFor": "The age, fever, event, recovery, focality and recurrence features; simple-feature versus complex-feature boundary; fever-source and serious-illness assessment; targeted-testing boundary; recurrence education; and requirement to return to neurological baseline.",
+      "verifiedAgainst": "current page: https://www.rch.org.au/clinicalguide/guideline_index/Febrile_seizure/",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "nice-fever-under-five-ng143-2021",
+      "currency": {
+        "lastAmended": "2021-11-26",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "National Institute for Health and Care Excellence",
+      "title": "Fever in under 5s: assessment and initial management",
+      "publication": "NICE guideline NG143",
+      "year": 2019,
+      "locator": "Published 2019-11-07; last updated 2021-11-26; last reviewed 2025-04-30; recommendations 1.2, 1.5.12-1.5.15, 1.6.1-1.6.6, and 1.7.2-1.7.3",
+      "usedFor": "The airway-breathing-circulation-consciousness and sepsis-first fever review, whole-child serious-illness assessment, observation and safety-net context, and nonclaims that antipyretics prevent febrile convulsions or that temperature response distinguishes serious illness.",
+      "verifiedAgainst": "https://www.nice.org.uk/guidance/ng143/chapter/recommendations",
+      "verifiedOn": "2026-08-26"
     }
   ]
 }

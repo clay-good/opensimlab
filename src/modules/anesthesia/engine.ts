@@ -135,6 +135,7 @@ const PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES = new Set([
   'pediatric-dehydration-response',
   'pediatric-diabetic-ketoacidosis-response',
   'pediatric-hypoglycemic-seizure-response',
+  'pediatric-febrile-seizure-response',
   'pediatric-foreign-body-airway-obstruction-response',
 ]);
 const BRONCHIOLITIS_BLOCKED_ACTION_TYPES = new Set([
@@ -209,6 +210,18 @@ const PEDIATRIC_HYPOGLYCEMIC_SEIZURE_BLOCKED_ACTION_TYPES = new Set([
   'glycemic-response', 'hyponatremia-response', 'intracranial-hypertension-response',
   'status-epilepticus-response', 'critical-care-status-epilepticus-response',
   'opioid-toxicity-response', 'emergency-anaphylaxis-response',
+]);
+const PEDIATRIC_FEBRILE_SEIZURE_BLOCKED_ACTION_TYPES = new Set([
+  ...[...PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES]
+    .filter((type) => type !== 'pediatric-febrile-seizure-response'),
+  'pediatric-respiratory-distress-response', 'bronchiolitis-response', 'croup-response',
+  'pediatric-status-asthmaticus-response', 'pediatric-sepsis-response',
+  'pediatric-septic-shock-response', 'pediatric-dehydration-response',
+  'pediatric-diabetic-ketoacidosis-response', 'pediatric-hypoglycemic-seizure-response',
+  'diabetic-ketoacidosis-response', 'glycemic-response', 'hyponatremia-response',
+  'intracranial-hypertension-response', 'status-epilepticus-response',
+  'critical-care-status-epilepticus-response', 'opioid-toxicity-response',
+  'emergency-anaphylaxis-response',
 ]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
@@ -915,6 +928,12 @@ export class AnesthesiaEngine {
   private pediatricHypoglycemicSeizureSafetyAtTick: number | null = null;
   private pediatricHypoglycemicSeizureLaterResponseAtTick: number | null = null;
   private pediatricHypoglycemicSeizureHandoffAtTick: number | null = null;
+  private pediatricFebrileSeizureTrajectoryAtTick: number | null = null;
+  private pediatricFebrileSeizureRecognitionAtTick: number | null = null;
+  private pediatricFebrileSeizureCareAtTick: number | null = null;
+  private pediatricFebrileSeizureSafetyAtTick: number | null = null;
+  private pediatricFebrileSeizureLaterResponseAtTick: number | null = null;
+  private pediatricFebrileSeizureHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1390,6 +1409,17 @@ export class AnesthesiaEngine {
       this.log('warning', 'assessment',
         `pediatric-hypoglycemic-seizure-generic-action-refused-${this.currentTick}`,
         'This pediatric hypoglycemic-seizure lesson does not expose generic glucose, medication, fluid, oxygen-device, airway, ventilator, procedure, test, alarm, neurologic-crisis, or adjacent-scenario actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const pediatricFebrileSeizure = this.scenario.metadata.id === 'pediatric-febrile-seizure'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-febrile-seizure-reassessment');
+    if (pediatricFebrileSeizure
+      && PEDIATRIC_FEBRILE_SEIZURE_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment',
+        `pediatric-febrile-seizure-generic-action-refused-${this.currentTick}`,
+        'This pediatric febrile-seizure lesson does not expose generic testing, medication, fluid, cooling, oxygen-device, airway, ventilator, procedure, alarm, neurologic-crisis, infection, or adjacent-scenario actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -6739,6 +6769,168 @@ export class AnesthesiaEngine {
             recurrenceExcluded: false, dispositionDetermined: false, outcomePredicted: false });
         break;
       }
+      case 'pediatric-febrile-seizure-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.metadata.id === 'pediatric-febrile-seizure'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-febrile-seizure-reassessment');
+        const valid = ['reconcile-pediatric-febrile-seizure-event-recovery-and-fever',
+          'recognize-pediatric-febrile-seizure-pattern-and-danger-boundary',
+          'activate-pediatric-febrile-seizure-qualified-care-ownership',
+          'review-pediatric-febrile-seizure-infection-recurrence-and-alternatives',
+          'review-pediatric-febrile-seizure-later-response',
+          'handoff-pediatric-febrile-seizure-active-risk'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment',
+            `pediatric-febrile-seizure-response-refused-${this.currentTick}`,
+            supported ? 'The pediatric febrile-seizure action was not one of the listed choices. Nothing changed.'
+              : 'These pediatric febrile-seizure choices are available only in the exact declared Pediatrics lesson.');
+          break;
+        }
+        if (response === 'reconcile-pediatric-febrile-seizure-event-recovery-and-fever') {
+          if (this.pediatricFebrileSeizureTrajectoryAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-febrile-seizure-trajectory-refused-${this.currentTick}`,
+              'The supplied event, recovery, fever, and whole-child trajectory was already reconciled.');
+            break;
+          }
+          this.pediatricFebrileSeizureTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-febrile-seizure-trajectory-reconciled-${this.currentTick}`,
+            'The supplied report reconciles a stopped seizure, current recovery, fever, spontaneous breathing, pulse-coherent oxygenation, circulation, and the whole-child state. Temperature is 39.0°C, HR 150/min, RR 30/min, BP 94/58 mmHg (MAP 70), and room-air SpO2 98%. No examination, temperature acquisition, test, diagnosis, procedure, or treatment was performed by the learner.',
+            { stoppedSeizureAuthored: true, feverAuthored: true, initialPulsePresent: true,
+              spontaneousBreathingAuthored: true, patientExaminedByLearner: false,
+              temperatureAcquiredByLearner: false, testAcquiredByLearner: false });
+          break;
+        }
+        if (this.pediatricFebrileSeizureTrajectoryAtTick === null) {
+          this.log('warning', 'assessment',
+            `pediatric-febrile-seizure-trajectory-order-refused-${this.currentTick}`,
+            'Reconcile the supplied event, recovery, fever, and whole-child trajectory first.');
+          break;
+        }
+        if (response === 'recognize-pediatric-febrile-seizure-pattern-and-danger-boundary') {
+          if (this.pediatricFebrileSeizureRecognitionAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-febrile-seizure-recognition-refused-${this.currentTick}`,
+              'The authored febrile-seizure pattern and danger boundary were already reviewed.');
+            break;
+          }
+          this.pediatricFebrileSeizureRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-febrile-seizure-pattern-recognized-${this.currentTick}`,
+            'The supplied stopped seizure, fever, recovery, and current whole-child findings have simple features to date. That bounded pattern is not a final simple or benign diagnosis and does not exclude central-nervous-system infection, serious infection, another seizure cause, deterioration, or recurrence. The learner made no diagnosis or classification.',
+            { simpleFebrileSeizureFinallyProven: false, benignCourseProven: false,
+              seizureCauseProven: false, cnsInfectionExcluded: false,
+              seriousInfectionExcluded: false, diagnosisMadeByLearner: false,
+              classificationMadeByLearner: false });
+          break;
+        }
+        if (this.pediatricFebrileSeizureRecognitionAtTick === null) {
+          this.log('warning', 'assessment',
+            `pediatric-febrile-seizure-recognition-order-refused-${this.currentTick}`,
+            'Review the authored febrile-seizure pattern and danger boundary before care or safety work.');
+          break;
+        }
+        if (response === 'activate-pediatric-febrile-seizure-qualified-care-ownership') {
+          if (this.pediatricFebrileSeizureCareAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-febrile-seizure-care-refused-${this.currentTick}`,
+              'Qualified pediatric care and reassessment ownership is already active.');
+            break;
+          }
+          this.pediatricFebrileSeizureCareAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-febrile-seizure-qualified-care-activated-${this.currentTick}`,
+            'Experienced pediatric and nursing teams now own comfort, hydration and intake context, observation, repeated whole-child and neurological reassessment, airway and recurrence contingencies, fever-source evaluation, escalation, and caregiver communication. The learner acquired no test and selected or delivered no antipyretic, anticonvulsant, antimicrobial, drug, dose, route, fluid, device, airway maneuver, procedure, or treatment.',
+            { qualifiedCareOwnershipActive: true, testAcquiredByLearner: false,
+              antipyreticSelectedByLearner: false, anticonvulsantSelectedByLearner: false,
+              antimicrobialSelectedByLearner: false, treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (response === 'review-pediatric-febrile-seizure-infection-recurrence-and-alternatives') {
+          if (this.pediatricFebrileSeizureSafetyAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-febrile-seizure-safety-refused-${this.currentTick}`,
+              'Infection, recurrence, and alternative-cause safety review is already active.');
+            break;
+          }
+          this.pediatricFebrileSeizureSafetyAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-febrile-seizure-safety-reviewed-${this.currentTick}`,
+            'Experienced teams retain ownership of serial appearance, interaction, neurological state, meningism and focal findings, breathing, circulation, hydration, rash, source, immunization and medicine context, recurrence, prolonged or focal seizure triggers, infection, ingestion, trauma, metabolic and other alternatives, and escalation. Current negative findings are snapshots, not permanent exclusions. The learner examined no child, interpreted no test, performed no lumbar puncture, EEG, or imaging, and determined no disposition.',
+            { qualifiedSafetyReviewActive: true, patientExaminedByLearner: false,
+              testInterpretedByLearner: false, lumbarPuncturePerformedByLearner: false,
+              eegAcquiredByLearner: false, imagingAcquiredByLearner: false,
+              cnsInfectionExcluded: false, seriousInfectionExcluded: false,
+              dispositionDetermined: false });
+          break;
+        }
+        const parallelAt = Math.max(this.pediatricFebrileSeizureCareAtTick ?? -1,
+          this.pediatricFebrileSeizureSafetyAtTick ?? -1);
+        if (this.pediatricFebrileSeizureCareAtTick === null
+          || this.pediatricFebrileSeizureSafetyAtTick === null) {
+          this.log('warning', 'assessment',
+            `pediatric-febrile-seizure-parallel-care-order-refused-${this.currentTick}`,
+            'Keep qualified care ownership and infection-recurrence safety review active in parallel before opening the later report.');
+          break;
+        }
+        if (response === 'review-pediatric-febrile-seizure-later-response') {
+          if (this.currentTick <= parallelAt) {
+            this.log('warning', 'assessment',
+              `pediatric-febrile-seizure-later-time-refused-${this.currentTick}`,
+              'Allow elapsed simulated time after both care and safety ownership are active.');
+            break;
+          }
+          if (this.pediatricFebrileSeizureLaterResponseAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-febrile-seizure-later-response-refused-${this.currentTick}`,
+              'The fixed later pediatric febrile-seizure report was already reviewed.');
+            break;
+          }
+          this.pediatricFebrileSeizureLaterResponseAtTick = this.currentTick;
+          this.log('warning', 'assessment',
+            `pediatric-febrile-seizure-later-response-reviewed-${this.currentTick}`,
+            'Fixed qualified minute-30 report: he is awake and interactive, recognizes his caregiver, uses age-appropriate words and play, moves and reaches symmetrically, and remains mildly tired, with no recurrent seizure or focal finding. Temperature is 38.7°C, HR 126/min, RR 24/min, BP 96/60 mmHg (MAP 72), room-air SpO2 99%, warm normal-volume pulses, and capillary refill 2 seconds. This authored checkpoint does not finally prove a simple or benign diagnosis, cause, central-nervous-system or serious-infection exclusion, treatment effect, durable recovery, freedom from recurrence, discharge readiness, disposition, or outcome.',
+            { laterReportAuthored: true, recurrentSeizureAuthored: false,
+              simpleFebrileSeizureFinallyProven: false, benignCourseProven: false,
+              seizureCauseProven: false, cnsInfectionExcluded: false,
+              seriousInfectionExcluded: false, treatmentEffectProven: false,
+              durableRecoveryProven: false, recurrenceExcluded: false,
+              dischargeReadinessProven: false, dispositionDetermined: false,
+              outcomePredicted: false });
+          break;
+        }
+        if (this.pediatricFebrileSeizureLaterResponseAtTick === null) {
+          this.log('warning', 'assessment',
+            `pediatric-febrile-seizure-later-order-refused-${this.currentTick}`,
+            'Review the fixed later whole-child and recurrence report after elapsed qualified care.');
+          break;
+        }
+        if (this.currentTick <= this.pediatricFebrileSeizureLaterResponseAtTick) {
+          this.log('warning', 'assessment',
+            `pediatric-febrile-seizure-handoff-time-refused-${this.currentTick}`,
+            'Allow another simulated tick before handing off active febrile-seizure risk.');
+          break;
+        }
+        if (this.pediatricFebrileSeizureHandoffAtTick !== null) {
+          this.log('warning', 'assessment',
+            `pediatric-febrile-seizure-handoff-refused-${this.currentTick}`,
+            'The active pediatric febrile-seizure handoff was already recorded.');
+          break;
+        }
+        this.pediatricFebrileSeizureHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment',
+          `pediatric-febrile-seizure-handoff-recorded-${this.currentTick}`,
+          'The event and recovery trajectory, fever and source work, neurological and whole-child surveillance, recurrence and airway contingencies, infection and alternative-cause review, caregiver context, escalation triggers, and named qualified ownership were handed off. A simple or benign diagnosis, cause, central-nervous-system or serious-infection exclusion, treatment effect, durable recovery, recurrence exclusion, discharge readiness, disposition, prognosis, and outcome remain undeclared.',
+          { simpleFebrileSeizureFinallyProven: false, benignCourseProven: false,
+            seizureCauseProven: false, cnsInfectionExcluded: false,
+            seriousInfectionExcluded: false, treatmentEffectProven: false,
+            durableRecoveryProven: false, recurrenceExcluded: false,
+            dischargeReadinessProven: false, dispositionDetermined: false,
+            outcomePredicted: false });
+        break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -9678,6 +9870,19 @@ export class AnesthesiaEngine {
         meanArterialMmHg: later ? 76 : 74,
         coreTemperatureC: later ? 36.7 : 36.6 };
     }
+    if (this.scenario.metadata.id === 'pediatric-febrile-seizure'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-febrile-seizure-reassessment')) {
+      const later = this.pediatricFebrileSeizureLaterResponseAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: later ? 126 : 150,
+        respiratoryRateBpm: later ? 24 : 30,
+        spo2Percent: later ? 99 : 98,
+        systolicMmHg: later ? 96 : 94,
+        diastolicMmHg: later ? 60 : 58,
+        meanArterialMmHg: later ? 72 : 70,
+        coreTemperatureC: later ? 38.7 : 39.0 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -11595,6 +11800,49 @@ export class AnesthesiaEngine {
               recurrenceExcluded: false as const,
               dispositionDetermined: false as const,
               outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'pediatric-febrile-seizure'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-febrile-seizure-reassessment') ? {
+            pediatricFebrileSeizureAssessment: {
+              trajectoryAtTick: this.pediatricFebrileSeizureTrajectoryAtTick,
+              recognitionAtTick: this.pediatricFebrileSeizureRecognitionAtTick,
+              careAtTick: this.pediatricFebrileSeizureCareAtTick,
+              safetyAtTick: this.pediatricFebrileSeizureSafetyAtTick,
+              laterResponseAtTick: this.pediatricFebrileSeizureLaterResponseAtTick,
+              handoffAtTick: this.pediatricFebrileSeizureHandoffAtTick,
+              initialPulsePresent: true as const, spontaneousBreathingAuthored: true as const,
+              stoppedSeizureAuthored: true as const, feverAuthored: true as const,
+              statusEpilepticusAuthored: false as const,
+              qualifiedCareOwnershipActive: this.pediatricFebrileSeizureCareAtTick !== null,
+              qualifiedSafetyReviewActive: this.pediatricFebrileSeizureSafetyAtTick !== null,
+              laterReportAuthored: this.pediatricFebrileSeizureLaterResponseAtTick !== null,
+              patientExaminedByLearner: false as const,
+              temperatureAcquiredByLearner: false as const,
+              testAcquiredByLearner: false as const, testInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const,
+              classificationMadeByLearner: false as const,
+              lumbarPuncturePerformedByLearner: false as const,
+              eegAcquiredByLearner: false as const, imagingAcquiredByLearner: false as const,
+              drugSelectedByLearner: false as const,
+              antipyreticSelectedByLearner: false as const,
+              anticonvulsantSelectedByLearner: false as const,
+              antimicrobialSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const,
+              concentrationSelectedByLearner: false as const,
+              routeSelectedByLearner: false as const, volumeSelectedByLearner: false as const,
+              rateSelectedByLearner: false as const, accessPlacedByLearner: false as const,
+              deviceSelectedByLearner: false as const, drugDeliveredByLearner: false as const,
+              airwayManeuverPerformedByLearner: false as const,
+              procedurePerformedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              simpleFebrileSeizureFinallyProven: false as const,
+              benignCourseProven: false as const, seizureCauseProven: false as const,
+              cnsInfectionExcluded: false as const, seriousInfectionExcluded: false as const,
+              treatmentEffectProven: false as const, durableRecoveryProven: false as const,
+              recurrenceExcluded: false as const, dischargeReadinessProven: false as const,
+              dispositionDetermined: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

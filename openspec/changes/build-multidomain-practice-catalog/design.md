@@ -1807,6 +1807,29 @@ dose, access, infusion, feeding, oxygen, device, airway maneuver, procedure, or 
 determine disposition or prognosis; or prove causal treatment effect, durable euglycemia,
 neurological recovery, etiologic closure, recurrence exclusion, or outcome.
 
+### Wave D pediatrics slice 10: febrile seizure recovery and danger boundary
+
+The tenth Pediatrics lab is a recovery and serious-illness reassessment after a brief stopped
+febrile seizure, not active status treatment or a declaration that fever is benign. A previously
+well, reportedly developmentally typical 2-year-old boy weighing 12 kg has 12 hours of fever,
+rhinorrhea, and mildly reduced drinking before a first bilateral generalized convulsion lasting
+about 3 minutes. It stops spontaneously before the learner surface without rescue medicine. He is
+sleepy and clingy but responsive to his caregiver, breathing spontaneously, symmetrically moving,
+warm and perfused, with temperature 39.0°C, HR 150/min, RR 30/min, BP 94/58 mmHg, and room-air
+SpO₂ 98%. No routine glucose or other test is supplied.
+
+The learner reconciles the event, recovery, fever, and whole-child state; recognizes a
+febrile-seizure pattern with simple features to date while dangerous alternatives remain open;
+and activates qualified fever-source and serious-illness care in parallel with infection,
+recurrence, complex-feature, alternative-cause, caregiver-safety, and escalation review. A
+strictly elapsed minute-30 report shows return to age-appropriate interaction with persistent fever
+and no recurrent seizure or focal finding so far before another elapsed active-risk handoff. The
+lab does not examine, measure, time, test, diagnose, choose or deliver an antipyretic,
+antimicrobial, antiseizure or rescue medicine, fluid, oxygen, dose, route, access, device, airway
+maneuver, procedure, or treatment; assess caregiver communication or first-aid performance;
+determine disposition or prognosis; or prove confirmed simple classification, treatment effect,
+fever source, CNS-infection exclusion, durable recovery, recurrence exclusion, or outcome.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

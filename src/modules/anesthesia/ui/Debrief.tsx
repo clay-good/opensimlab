@@ -4768,6 +4768,30 @@ export function objectiveFindings(
       const ordered = later && handoff && later.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved seizure and recovery timing, glucose trajectory, recurrence and cause risk, caregiver context, escalation triggers, and named owners without claiming recovery, etiology, discharge, or outcome.' : 'The active pediatric hypoglycemia handoff was absent or did not follow the later response after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-pediatric-febrile-seizure-event-recovery-and-fever',
+      'recognize-pediatric-febrile-seizure-pattern-and-danger-boundary',
+      'activate-pediatric-febrile-seizure-qualified-care-ownership',
+      'review-pediatric-febrile-seizure-infection-recurrence-and-alternatives',
+      'review-pediatric-febrile-seizure-later-response',
+      'handoff-pediatric-febrile-seizure-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'pediatric-febrile-seizure'
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pediatric-febrile-seizure-reassessment');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The pediatric febrile-seizure lesson was not active.' } satisfies ObjectiveFinding;
+      const trajectory = log.find((event) => /^pediatric-febrile-seizure-trajectory-reconciled-\d+$/.test(event.eventId));
+      const recognition = log.find((event) => /^pediatric-febrile-seizure-pattern-recognized-\d+$/.test(event.eventId));
+      const care = log.find((event) => /^pediatric-febrile-seizure-qualified-care-activated-\d+$/.test(event.eventId));
+      const safety = log.find((event) => /^pediatric-febrile-seizure-safety-reviewed-\d+$/.test(event.eventId));
+      const later = log.find((event) => /^pediatric-febrile-seizure-later-response-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^pediatric-febrile-seizure-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-pediatric-febrile-seizure-event-recovery-and-fever') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'The supplied seizure, fever, recovery, breathing, and perfusion trajectory was reconciled without learner examination, testing, diagnosis, or treatment.' : 'The fixed pediatric febrile-seizure trajectory was not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'recognize-pediatric-febrile-seizure-pattern-and-danger-boundary') { const ordered = trajectory && recognition && trajectory.tick <= recognition.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The authored febrile-seizure pattern was recognized while serious infection, alternative causes, and the danger boundary remained open.' : 'Febrile-seizure pattern recognition was absent or preceded trajectory review.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-pediatric-febrile-seizure-qualified-care-ownership') { const ordered = recognition && care && recognition.tick <= care.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Qualified observation, reassessment, escalation, and caregiver-communication ownership was activated without learner test, drug, dose, route, device, procedure, treatment, or disposition selection.' : 'Qualified observation ownership was absent or preceded recognition.', atTick: care?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-febrile-seizure-infection-recurrence-and-alternatives') { const ordered = recognition && safety && recognition.tick <= safety.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Serious infection, recovery, recurrence, airway safety, and alternative causes were reviewed in parallel without learner examination, testing, diagnosis, treatment, or disposition.' : 'Red-flag and recurrence review was absent or preceded recognition.', atTick: safety?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-febrile-seizure-later-response') { const parallelAt = Math.max(care?.tick ?? -1, safety?.tick ?? -1); const ordered = care && safety && later && parallelAt < later.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed parallel care, fixed improvement was separated from a benign cause, serious-infection exclusion, recurrence prediction, durable neurological recovery, and disposition.' : 'The later response was absent or did not follow both observation and safety ownership after elapsed time.', atTick: later?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = later && handoff && later.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved recovery, infection and alternative-cause review, recurrence risk, caregiver guidance, escalation triggers, and named owners without claiming cure, discharge, or outcome.' : 'The active pediatric febrile-seizure handoff was absent or did not follow the later response after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

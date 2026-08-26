@@ -7,7 +7,7 @@ import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PEDIATRIC_RESPIRATORY_DISTRESS as SCENARIO } from '../../src/modules/pediatrics/scenarios/pediatric-respiratory-distress';
 
 describe('Pediatrics module user-facing foundation', () => {
-  it('renders a calm index with nine child-focused scenarios and shared navigation', () => {
+  it('renders a calm index with ten child-focused scenarios and shared navigation', () => {
     const markup = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/pediatrics' }));
     expect(markup).toContain('<h1>Pediatrics simulator</h1>');
     expect(markup).toContain('href="/pediatrics" aria-current="page"');
@@ -30,6 +30,8 @@ describe('Pediatrics module user-facing foundation', () => {
     expect(markup).toContain('Pediatric diabetic ketoacidosis');
     expect(markup).toContain('href="/pediatrics/scenario/pediatric-hypoglycemic-seizure"');
     expect(markup).toContain('Pediatric hypoglycemic seizure');
+    expect(markup).toContain('href="/pediatrics/scenario/pediatric-febrile-seizure"');
+    expect(markup).toContain('Pediatric febrile seizure');
   });
 
   it('briefs the bounded child without perioperative ASA language or treatment claims', () => {
