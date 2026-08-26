@@ -14,6 +14,7 @@ import { RESPIRATORY_MEDICINE_SCENARIOS } from '../src/modules/respiratory-medic
 import { PEDIATRICS_SCENARIOS } from '../src/modules/pediatrics/scenarios';
 import { NEUROLOGY_SCENARIOS } from '../src/modules/neurology/scenarios';
 import { TOXICOLOGY_SCENARIOS } from '../src/modules/toxicology/scenarios';
+import { OBSTETRICS_SCENARIOS } from '../src/modules/obstetrics/scenarios';
 import { SCENARIO_COMPLETION_SCHEMA } from '@platform/catalog/scenario-completion';
 import { buildScenarioQualityCatalog, QUALITY_SCHEMAS } from '@platform/catalog/scenario-quality';
 import { buildMaturityCatalog, MATURITY_RECORD_SCHEMA } from '@platform/catalog/maturity';
@@ -69,10 +70,15 @@ const toxicologyCompletion = buildModuleCompletionCatalog(
   TOXICOLOGY_SCENARIOS, ENGINE_VERSION, 'toxicology', 'emergency-department', 'state_transition',
 );
 const toxicologyQuality = buildScenarioQualityCatalog(toxicologyCompletion);
+const obstetricsCompletion = buildModuleCompletionCatalog(
+  OBSTETRICS_SCENARIOS, ENGINE_VERSION, 'obstetrics', 'delivery-room', 'state_transition',
+);
+const obstetricsQuality = buildScenarioQualityCatalog(obstetricsCompletion);
 const reportCatalog = {
   schemaVersion: 1,
   scenarios: [completion, emergencyCompletion, criticalCareCompletion, cardiologyCompletion,
-    respiratoryMedicineCompletion, pediatricsCompletion, neurologyCompletion, toxicologyCompletion]
+    respiratoryMedicineCompletion, pediatricsCompletion, neurologyCompletion, toxicologyCompletion,
+    obstetricsCompletion]
     .flatMap((catalog) => catalog.scenarios)
     .map((scenario) => ({
       scenarioId: scenario.scenarioId,
@@ -155,6 +161,10 @@ writeFileSync(join(target, 'toxicology-completion-audit.json'),
   `${JSON.stringify(toxicologyCompletion, null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'toxicology-quality-audit.json'),
   `${JSON.stringify(toxicologyQuality, null, 2)}\n`, 'utf8');
+writeFileSync(join(target, 'obstetrics-completion-audit.json'),
+  `${JSON.stringify(obstetricsCompletion, null, 2)}\n`, 'utf8');
+writeFileSync(join(target, 'obstetrics-quality-audit.json'),
+  `${JSON.stringify(obstetricsQuality, null, 2)}\n`, 'utf8');
 writeFileSync(
   join(target, 'maturity-record.schema.json'),
   `${JSON.stringify(MATURITY_RECORD_SCHEMA, null, 2)}\n`,
@@ -182,9 +192,11 @@ writeFileSync(join(target, 'neurology-maturity.json'),
   `${JSON.stringify(buildMaturityCatalog(neurologyCompletion, neurologyQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'toxicology-maturity.json'),
   `${JSON.stringify(buildMaturityCatalog(toxicologyCompletion, toxicologyQuality), null, 2)}\n`, 'utf8');
+writeFileSync(join(target, 'obstetrics-maturity.json'),
+  `${JSON.stringify(buildMaturityCatalog(obstetricsCompletion, obstetricsQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'asset-licenses.json'), `${JSON.stringify(ASSET_LICENSE_MANIFEST, null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'evidence-sources.json'), `${JSON.stringify(buildEvidenceSourceManifest(SOURCES), null, 2)}\n`, 'utf8');
 
 process.stdout.write(
-  `catalog: audited ${SCENARIOS.length} anesthesia, ${EMERGENCY_MEDICINE_SCENARIOS.length} emergency medicine, ${CRITICAL_CARE_SCENARIOS.length} critical care, ${CARDIOLOGY_SCENARIOS.length} cardiology, ${RESPIRATORY_MEDICINE_SCENARIOS.length} respiratory medicine, ${PEDIATRICS_SCENARIOS.length} pediatrics, ${NEUROLOGY_SCENARIOS.length} neurology, and ${TOXICOLOGY_SCENARIOS.length} toxicology scenarios\n`,
+  `catalog: audited ${SCENARIOS.length} anesthesia, ${EMERGENCY_MEDICINE_SCENARIOS.length} emergency medicine, ${CRITICAL_CARE_SCENARIOS.length} critical care, ${CARDIOLOGY_SCENARIOS.length} cardiology, ${RESPIRATORY_MEDICINE_SCENARIOS.length} respiratory medicine, ${PEDIATRICS_SCENARIOS.length} pediatrics, ${NEUROLOGY_SCENARIOS.length} neurology, ${TOXICOLOGY_SCENARIOS.length} toxicology, and ${OBSTETRICS_SCENARIOS.length} obstetrics scenarios\n`,
 );

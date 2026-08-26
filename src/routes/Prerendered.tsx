@@ -44,6 +44,9 @@ import {
 import {
   TOXICOLOGY_SCENARIOS, DEFAULT_TOXICOLOGY_SCENARIO_ID, getToxicologyScenario,
 } from '../modules/toxicology/scenarios';
+import {
+  OBSTETRICS_SCENARIOS, DEFAULT_OBSTETRICS_SCENARIO_ID, getObstetricsScenario,
+} from '../modules/obstetrics/scenarios';
 import type { Scenario } from '@anesthesia/scenarios/types';
 
 export function PrerenderedBody({ path }: { path: string }) {
@@ -129,6 +132,15 @@ export function PrerenderedBody({ path }: { path: string }) {
     <ScenarioMarkup path={path} basePath="/toxicology"
       defaultScenarioId={DEFAULT_TOXICOLOGY_SCENARIO_ID}
       getScenario={getToxicologyScenario} />
+  );
+  if (path === '/obstetrics') return (
+    <ModuleMarkup moduleId="obstetrics" basePath="/obstetrics"
+      heading="Obstetrics simulator" scenarios={OBSTETRICS_SCENARIOS} />
+  );
+  if (path.startsWith('/obstetrics/scenario/')) return (
+    <ScenarioMarkup path={path} basePath="/obstetrics"
+      defaultScenarioId={DEFAULT_OBSTETRICS_SCENARIO_ID}
+      getScenario={getObstetricsScenario} />
   );
   // The simulator route deliberately renders something different on the client —
   // the acknowledgement gate — so its prerendered markup is the crawler's copy

@@ -198,6 +198,15 @@ no learner examination, product identification, toxicology-screen interpretation
 setting, drug or dose, wound or withdrawal treatment, observation decision, disposition, or outcome
 control, and remains separate from the existing acute, postoperative, and chronic opioid labs.
 
+Wave D Obstetrics now opens with a calm postpartum-hemorrhage-from-atony lab. Eight minutes after a
+term vaginal birth, supplied measured loss is 650 mL and rising with active bleeding, dizziness,
+tachycardia, borderline pressure, and a boggy enlarged uterus. The learner acts before a late
+threshold, keeps trauma, tissue, thrombin and concealed bleeding open, brings obstetric, anesthesia,
+nursing, blood-bank, operating-room, newborn-support and dignity-centered ownership together, then
+records bounded qualified MOTIVE-bundle intent and reviews a strict elapsed report. No learner
+blood-loss calculation, examination, drug or dose, fluid or blood component, massage technique,
+procedure, surgery, disposition, fertility, or maternal/newborn outcome control is exposed.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

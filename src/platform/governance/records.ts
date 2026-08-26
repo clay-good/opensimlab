@@ -18,6 +18,7 @@ import { RESPIRATORY_MEDICINE_SCENARIOS } from '../../modules/respiratory-medici
 import { PEDIATRICS_SCENARIOS } from '../../modules/pediatrics/scenarios';
 import { NEUROLOGY_SCENARIOS } from '../../modules/neurology/scenarios';
 import { TOXICOLOGY_SCENARIOS } from '../../modules/toxicology/scenarios';
+import { OBSTETRICS_SCENARIOS } from '../../modules/obstetrics/scenarios';
 import type { MaturitySubjectInput } from '@platform/catalog/maturity';
 
 /**
@@ -92,6 +93,12 @@ export function reviewableItems(): ReviewableItem[] {
     items.push({ id: scenario.metadata.id, kind: 'scenario',
       contentVersion: scenario.metadata.version, review: scenario.metadata.clinicalReview,
       domains: ['toxicology'] });
+  }
+
+  for (const scenario of OBSTETRICS_SCENARIOS) {
+    items.push({ id: scenario.metadata.id, kind: 'scenario',
+      contentVersion: scenario.metadata.version, review: scenario.metadata.clinicalReview,
+      domains: ['obstetrics'] });
   }
 
   for (const explainer of EXPLAINERS) {

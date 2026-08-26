@@ -16,6 +16,7 @@ import { RESPIRATORY_MEDICINE_SCENARIOS } from '../modules/respiratory-medicine/
 import { PEDIATRICS_SCENARIOS } from '../modules/pediatrics/scenarios';
 import { NEUROLOGY_SCENARIOS } from '../modules/neurology/scenarios';
 import { TOXICOLOGY_SCENARIOS } from '../modules/toxicology/scenarios';
+import { OBSTETRICS_SCENARIOS } from '../modules/obstetrics/scenarios';
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { ROOT_ROUTE, formatTitle } from './site-metadata';
 import type { RouteMetadata } from './site-metadata';
@@ -198,6 +199,23 @@ export const ROUTES: readonly RouteMetadata[] = [
   },
   ...TOXICOLOGY_SCENARIOS.map((scenario) => ({
     path: `/toxicology/scenario/${scenario.metadata.id}`,
+    title: formatTitle(scenario.metadata.title.length > 44
+      ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
+    description: scenarioDescription(scenario),
+    indexable: true,
+    structuredData: ['LearningResource'] as const,
+    heading: scenario.metadata.title,
+  })),
+  {
+    path: '/obstetrics',
+    title: formatTitle('Obstetrics simulator'),
+    description: 'Practice calm recognition, coordinated response, serial reassessment, and handoff across delivery-room and postpartum obstetric emergencies.',
+    indexable: true,
+    structuredData: ['SoftwareApplication'],
+    heading: 'Obstetrics simulator',
+  },
+  ...OBSTETRICS_SCENARIOS.map((scenario) => ({
+    path: `/obstetrics/scenario/${scenario.metadata.id}`,
     title: formatTitle(scenario.metadata.title.length > 44
       ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
     description: scenarioDescription(scenario),

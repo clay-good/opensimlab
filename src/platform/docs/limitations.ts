@@ -4559,6 +4559,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use the complete verified exposure and rescue history plus serial breathing, oxygenation, ventilation, neurologic, perfusion, temperature, skin, coingestion, competing-cause, complication, withdrawal, treatment and response trajectory under qualified emergency, toxicology and addiction ownership.',
     briefIn: ['opioid-xylazine-persistent-sedation'],
   },
+  {
+    id: 'obstetric-atony-birth-loss-tone-and-response-pattern-are-authored',
+    headline: 'The birth clock, measured loss, uterine-tone pattern, physiology, and later response are authored.',
+    simplification: 'Fixed reports and canonical monitor states stand in for birth-record review, objective blood-loss measurement, history, examination, uterine and placental assessment, genital-tract and coagulation evaluation, laboratory acquisition, qualified bundled care, and reassessment.',
+    whereItMisleads: 'Treating the fictional 650 mL loss, boggy uterus, placental report, vital signs, firmer uterus, or slower bleeding as learner evidence, a universal diagnostic threshold, one proven cause, treatment effect, durable hemostasis, recovery, or predicted course.',
+    correctUnderstanding: 'Real care requires immediate objective loss and whole-patient assessment, parallel review of tone, trauma, tissue, thrombin, rupture, inversion and concealed bleeding, current local hemorrhage protocols, and serial response under qualified multidisciplinary ownership.',
+    briefIn: ['postpartum-hemorrhage-uterine-atony'],
+  },
+  {
+    id: 'obstetric-atony-controls-reconcile-recognize-support-review-intent-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, pattern recognition, qualified ownership, evidence review, bounded intent, reassessment, and handoff only.',
+    simplification: 'Six actions stand in for obstetric, anesthesia, nursing, monitoring, blood-bank, operating-room, newborn-support, privacy, pain, communication, bundled-care, surveillance, escalation, and handoff work.',
+    whereItMisleads: 'Equating button order with blood-loss measurement, history, examination, uterine or placental assessment, laboratory interpretation, diagnosis, prescribing, massage, fluid or blood delivery, procedure, disposition, recovery, or competence.',
+    correctUnderstanding: 'Actual care requires trained teams, objective measurement, current local protocols, simultaneous resuscitation and cause control, individualized medication and blood decisions, procedural escalation when needed, respectful communication, and serial maternal and newborn reassessment.',
+    briefIn: ['postpartum-hemorrhage-uterine-atony'],
+  },
+  {
+    id: 'no-live-obstetric-atony-measurement-exam-drug-fluid-blood-procedure-disposition-or-outcome',
+    headline: 'The lab does not measure blood loss, examine a patient, give a drug, fluid or blood, perform a procedure, determine disposition, or report outcome.',
+    simplification: 'No live history, blood-loss measurement, examination, uterine tone, placental or genital-tract assessment, monitoring or laboratory interpretation, calculation, diagnosis, differential exclusion, massage, oxygen, fluid, blood component, uterotonic, tranexamic acid, drug, dose, rate, route, access, device, tamponade, procedure, surgery, hysterectomy, transport, disposition, prognosis, fertility, safety decision, or maternal or newborn outcome is modeled.',
+    whereItMisleads: 'Waiting for one threshold despite abnormal physiology; using tone, placenta, bleeding or one vital sign alone; copying fictional values into care; choosing medication, blood, massage or procedural care from this rehearsal; attributing the fixed response; or reading completion as competence.',
+    correctUnderstanding: 'Use verified serial objective loss, symptoms, perfusion, temperature, uterine, placental, genital-tract, coagulation, laboratory, concealed-bleeding, treatment and response evidence under qualified obstetric hemorrhage, anesthesia, nursing, blood-bank, operative and newborn-support ownership.',
+    briefIn: ['postpartum-hemorrhage-uterine-atony'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

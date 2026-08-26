@@ -56,7 +56,7 @@ export interface CockpitProps {
   /** Hand the session back to the learner, wherever the demonstration got to. */
   readonly onTakeControls?: (() => void) | undefined;
   readonly onEnd: () => void;
-  readonly moduleId?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology';
+  readonly moduleId?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics';
 }
 
 export function depthConfidenceFor(
@@ -1111,6 +1111,9 @@ export function Cockpit({
           })}
           onToxicologyOpioidXylazineResponse={(action) => session.act({
             type: 'opioid-xylazine-persistent-sedation-response', payload: { action },
+          })}
+          onObstetricsAtonyResponse={(action) => session.act({
+            type: 'postpartum-hemorrhage-uterine-atony-response', payload: { action },
           })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },

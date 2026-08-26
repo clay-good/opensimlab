@@ -1826,6 +1826,17 @@
         "GB"
       ],
       "fidelityClass": "state_transition"
+    },
+    {
+      "scenarioId": "postpartum-hemorrhage-uterine-atony",
+      "contentVersion": "0.1.0",
+      "moduleId": "obstetrics",
+      "maturity": "draft",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition"
     }
   ]
 }

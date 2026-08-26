@@ -29,6 +29,7 @@ export const SITE_BAR_LINKS: readonly SiteBarLink[] = [
   { href: '/pediatrics', label: 'Pediatrics' },
   { href: '/neurology', label: 'Neurology' },
   { href: '/toxicology', label: 'Toxicology' },
+  { href: '/obstetrics', label: 'Obstetrics' },
   { href: '/about', label: 'About' },
   { href: '/validation', label: 'Validation' },
   { href: '/governance', label: 'Governance' },

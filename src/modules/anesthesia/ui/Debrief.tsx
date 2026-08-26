@@ -5685,6 +5685,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-obstetrics-atony-hemorrhage-birth-clock-measured-loss-physiology-tone-and-whole-person',
+      'recognize-obstetrics-atony-postpartum-hemorrhage-and-atony-pattern-without-threshold-tone-or-single-cause-closure',
+      'activate-obstetrics-atony-hemorrhage-obstetric-anesthesia-nursing-blood-bank-operating-room-and-dignity-ownership',
+      'review-obstetrics-atony-supplied-tone-placenta-tract-coagulation-perfusion-and-competing-cause-boundary',
+      'record-obstetrics-atony-bounded-qualified-motive-bundle-escalation-intent-and-strict-later-review',
+      'handoff-obstetrics-atony-recurrent-bleeding-shock-coagulopathy-blood-procedure-newborn-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'postpartum-hemorrhage-uterine-atony'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-hemorrhage-uterine-atony-transition')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-hemorrhage-uterine-atony-transition-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Obstetrics atony-hemorrhage lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'Birth timing, objective loss, symptoms, bleeding, perfusion, uterine tone, and whole-person state were reconciled.'],
+        ['pattern-recognized', 'The early postpartum hemorrhage and supplied atony pattern were recognized without threshold-, vital-sign-, tone-, placental-, single-cause-, or diagnostic closure.'],
+        ['support-activated', 'Obstetric hemorrhage, anesthesia, nursing, monitoring, blood-bank, operating-room, newborn-support, pain, privacy, communication, and dignity-centered ownership were activated.'],
+        ['evidence-reviewed', 'Supplied tone, gross placental report, genital-tract and coagulation uncertainty, perfusion, laboratory boundaries, and competing causes were reviewed without learner examination or interpretation.'],
+        ['intent-and-reassessment-recorded', 'Bounded qualified MOTIVE-bundle, surveillance, blood-bank, and escalation intent plus the elapsed report were recorded without product, dose, route, technique, procedure, delivery, treatment-effect, or durable-control claims.'],
+        ['active-risk-handoff-recorded', 'Recurrent bleeding, shock, coagulation, concealed bleeding, blood-bank, operative, dignity, newborn, fertility, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^obstetrics-atony-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^obstetrics-atony-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-af-rvr-rhythm-and-stability', 'review-af-rvr-context-and-triggers',
       'record-af-rvr-rate-control-intent', 'record-af-rvr-stroke-prevention-intent',
       'reassess-af-rvr-trajectory-and-follow-up'].includes(objective.id)) {

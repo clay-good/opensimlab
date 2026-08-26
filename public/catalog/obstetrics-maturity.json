@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "moduleId": "obstetrics",
+  "recordCount": 1,
+  "records": [
+    {
+      "recordId": "scenario:postpartum-hemorrhage-uterine-atony@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "postpartum-hemorrhage-uterine-atony",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/obstetrics-completion-audit.json#postpartum-hemorrhage-uterine-atony@0.1.0",
+        "/catalog/obstetrics-quality-audit.json#postpartum-hemorrhage-uterine-atony@0.1.0"
+      ]
+    }
+  ]
+}

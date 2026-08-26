@@ -62,13 +62,16 @@ import {
 import {
   TOXICOLOGY_SCENARIOS, DEFAULT_TOXICOLOGY_SCENARIO_ID, getToxicologyScenario,
 } from '../modules/toxicology/scenarios';
+import {
+  OBSTETRICS_SCENARIOS, DEFAULT_OBSTETRICS_SCENARIO_ID, getObstetricsScenario,
+} from '../modules/obstetrics/scenarios';
 import { APP_VERSION } from '@platform/governance/status';
 import { ScenarioProblemReport } from '@platform/reporting/ScenarioProblemReport';
 import { SITE_ORIGIN } from './site-metadata';
 
 interface ClinicalModuleConfig {
-  readonly id: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology';
-  readonly basePath: '/anesthesia' | '/emergency-medicine' | '/critical-care' | '/cardiology' | '/respiratory-medicine' | '/pediatrics' | '/neurology' | '/toxicology';
+  readonly id: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics';
+  readonly basePath: '/anesthesia' | '/emergency-medicine' | '/critical-care' | '/cardiology' | '/respiratory-medicine' | '/pediatrics' | '/neurology' | '/toxicology' | '/obstetrics';
   readonly heading: string;
   readonly catalogIntroduction: string;
   readonly catalogStatus: string;
@@ -140,6 +143,14 @@ const TOXICOLOGY_CONFIG: ClinicalModuleConfig = {
   catalogStatus: `${TOXICOLOGY_SCENARIOS.length} of 15 bounded Toxicology labs is playable.`,
   scenarios: TOXICOLOGY_SCENARIOS, defaultScenarioId: DEFAULT_TOXICOLOGY_SCENARIO_ID,
   getScenario: getToxicologyScenario,
+};
+
+const OBSTETRICS_CONFIG: ClinicalModuleConfig = {
+  id: 'obstetrics', basePath: '/obstetrics', heading: 'Obstetrics simulator',
+  catalogIntroduction: 'Calm delivery-room rehearsals for recognizing change early, bringing the right team together, and protecting the whole family through reassessment and handoff.',
+  catalogStatus: `${OBSTETRICS_SCENARIOS.length} of 15 bounded Obstetrics labs is playable.`,
+  scenarios: OBSTETRICS_SCENARIOS, defaultScenarioId: DEFAULT_OBSTETRICS_SCENARIO_ID,
+  getScenario: getObstetricsScenario,
 };
 
 /**
@@ -478,6 +489,10 @@ export function NeurologyRoute({ path }: { path: string }) {
 
 export function ToxicologyRoute({ path }: { path: string }) {
   return <ClinicalModuleRoute path={path} config={TOXICOLOGY_CONFIG} />;
+}
+
+export function ObstetricsRoute({ path }: { path: string }) {
+  return <ClinicalModuleRoute path={path} config={OBSTETRICS_CONFIG} />;
 }
 
 /**

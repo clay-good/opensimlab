@@ -1250,6 +1250,11 @@ export interface ActionCockpitProps {
       readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly obstetricsAtonyAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2198,6 +2203,14 @@ export interface ActionCockpitProps {
       | 'record-toxicology-opioid-xylazine-bounded-qualified-continued-support-opioid-antagonist-symptomatic-care-no-veterinary-antagonist-and-strict-later-review'
       | 'handoff-toxicology-opioid-xylazine-recurrent-depression-persistent-sedation-shock-hypothermia-wound-withdrawal-addiction-and-outcome-risk',
   ) => void;
+  readonly onObstetricsAtonyResponse?: (
+    action: 'reconcile-obstetrics-atony-hemorrhage-birth-clock-measured-loss-physiology-tone-and-whole-person'
+      | 'recognize-obstetrics-atony-postpartum-hemorrhage-and-atony-pattern-without-threshold-tone-or-single-cause-closure'
+      | 'activate-obstetrics-atony-hemorrhage-obstetric-anesthesia-nursing-blood-bank-operating-room-and-dignity-ownership'
+      | 'review-obstetrics-atony-supplied-tone-placenta-tract-coagulation-perfusion-and-competing-cause-boundary'
+      | 'record-obstetrics-atony-bounded-qualified-motive-bundle-escalation-intent-and-strict-later-review'
+      | 'handoff-obstetrics-atony-recurrent-bleeding-shock-coagulopathy-blood-procedure-newborn-and-outcome-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2755,6 +2768,10 @@ export function crisisResponseAvailability(
       scenario.metadata.id === 'opioid-xylazine-persistent-sedation'
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'opioid-xylazine-persistent-sedation-transition')
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'opioid-xylazine-persistent-sedation-transition-boundary'),
+    hasObstetricsAtonyResponse:
+      scenario.metadata.id === 'postpartum-hemorrhage-uterine-atony'
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-hemorrhage-uterine-atony-transition')
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-hemorrhage-uterine-atony-transition-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2969,6 +2986,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'methanol-visual-acidosis-gaps-transition')
       || (event.type === 'narrative' && event.target === 'delayed-local-anesthetic-cns-cardiac-toxicity-transition')
       || (event.type === 'narrative' && event.target === 'opioid-xylazine-persistent-sedation-transition')
+      || (event.type === 'narrative' && event.target === 'postpartum-hemorrhage-uterine-atony-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3071,6 +3089,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasToxicologyMethanolResponse,
     hasToxicologyDelayedLastResponse,
     hasToxicologyOpioidXylazineResponse,
+    hasObstetricsAtonyResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3200,8 +3219,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasToxicologyMethanolResponse
     || hasToxicologyDelayedLastResponse
     || hasToxicologyOpioidXylazineResponse
+    || hasObstetricsAtonyResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasToxicologyOpioidXylazineResponse
+  const responseTray = hasObstetricsAtonyResponse
+    ? { id: 'crisis', label: 'Bleeding + tone' } as const
+    : hasToxicologyOpioidXylazineResponse
     ? { id: 'crisis', label: 'Breathing + sedation' } as const
     : hasToxicologyDelayedLastResponse
     ? { id: 'crisis', label: 'Delayed LAST' } as const
@@ -3569,6 +3591,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeurologyMsccResponse
     || hasNeurologyDeliriumResponse
     || hasNeurologyAutonomicDysreflexiaResponse
+    || hasObstetricsAtonyResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -4434,6 +4457,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasToxicologyOpioidXylazineResponse && (
               <ToxicologyOpioidXylazineTray assessment={props.resuscitation.toxicologyOpioidXylazineAssessment}
                 onAction={props.onToxicologyOpioidXylazineResponse ?? (() => {})} />
+            )}
+            {hasObstetricsAtonyResponse && (
+              <ObstetricsAtonyTray assessment={props.resuscitation.obstetricsAtonyAssessment}
+                onAction={props.onObstetricsAtonyResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -11231,6 +11258,38 @@ function ToxicologyOpioidXylazineTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-opioid-xylazine-bounded-qualified-continued-support-opioid-antagonist-symptomatic-care-no-veterinary-antagonist-and-strict-later-review')}>Record support + reassess</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-opioid-xylazine-recurrent-depression-persistent-sedation-shock-hypothermia-wound-withdrawal-addiction-and-outcome-risk')}>Hand off the whole horizon</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function ObstetricsAtonyTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['obstetricsAtonyAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onObstetricsAtonyResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const evidence = assessment?.evidenceAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="obstetrics-atony-early-title">
+      <div id="obstetrics-atony-early-title" className="syringe__name">See the bleeding early. Bring calm around it.</div>
+      <p className="syringe__remaining">Begin with the birth clock, measured loss, symptoms, perfusion, uterine tone, and the whole person. One clue never gets to close every cause.</p>
+      <div className="crisis-drug__actions">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-obstetrics-atony-hemorrhage-birth-clock-measured-loss-physiology-tone-and-whole-person')}>Connect birth + whole person</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-obstetrics-atony-postpartum-hemorrhage-and-atony-pattern-without-threshold-tone-or-single-cause-closure')}>Act early, keep causes open</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-obstetrics-atony-hemorrhage-obstetric-anesthesia-nursing-blood-bank-operating-room-and-dignity-ownership')}>Bring the room together</Button>}
+        {support && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-atony-supplied-tone-placenta-tract-coagulation-perfusion-and-competing-cause-boundary')}>Review tone + hidden causes</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="obstetrics-atony-later-title">
+      <div id="obstetrics-atony-later-title" className="syringe__name">Slower bleeding is a checkpoint, not closure.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Recurrent bleeding, shock, coagulation, blood-bank, operative, dignity, newborn, fertility, and outcome uncertainty handed off.' : reassessment ? 'Pressure, pulse, uterine tone, and visible bleeding improved. Cumulative loss, hidden bleeding, durable control, treatment effect, and outcome remain open.' : evidence ? 'Tone, placenta, tract, coagulation, perfusion, laboratory, and competing-cause evidence stay coupled. Record bounded bundled intent after time passes.' : support ? 'Hemorrhage, resuscitation, blood-bank, escalation, newborn-support, and dignity-centered ownership are active. Review the supplied evidence.' : 'Recognize the early actionable hemorrhage and atony pattern before the bundled-care boundary.'}</p>
+      <div className="crisis-drug__actions">
+        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-obstetrics-atony-bounded-qualified-motive-bundle-escalation-intent-and-strict-later-review')}>Record bundle + reassess</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-obstetrics-atony-recurrent-bleeding-shock-coagulopathy-blood-procedure-newborn-and-outcome-risk')}>Hand off what stays open</Button>}
       </div>
     </section>
   </>;

@@ -213,7 +213,7 @@ describe('Requirement: The Hero Is The Product Running', () => {
 describe('Requirement: Modules Directory Is Honest About What Exists', () => {
   it('Scenario: Available and planned are visually distinct, with no date', () => {
     expect(availableModules().map((module) => module.id))
-      .toEqual(['anesthesia', 'emergency-medicine', 'cardiology', 'respiratory-medicine', 'pediatrics', 'neurology', 'toxicology', 'critical-care']);
+      .toEqual(['anesthesia', 'emergency-medicine', 'cardiology', 'respiratory-medicine', 'pediatrics', 'neurology', 'toxicology', 'obstetrics', 'critical-care']);
     expect(plannedModules().length).toBeGreaterThanOrEqual(1);
     for (const module of plannedModules()) {
       expect(module.plannedScope, `${module.id} needs a description of its scope`).toBeTruthy();

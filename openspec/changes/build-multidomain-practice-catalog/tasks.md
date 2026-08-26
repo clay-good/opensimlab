@@ -385,6 +385,14 @@ credited toward the catalog until every item in the completion contract passes.
     imaging, abuse or perpetrator
     diagnosis, credibility judgment, confrontation, referral or report submission, jurisdiction or
     law selection, custody action, procedure, treatment, disposition, prognosis, or outcome controls.
+  - [x] Obstetrics slice 1/15 adds the available module foundation and one authored early postpartum-
+    hemorrhage-from-atony presentation 8 minutes after vaginal birth, with objective 650 mL-and-
+    rising loss, abnormal physiology, a supplied boggy uterus, threshold-independent recognition,
+    open trauma, tissue, thrombin and concealed-bleeding causes, immediate multidisciplinary and
+    dignity-centered ownership, bounded qualified MOTIVE-bundle intent, a strict elapsed partial-
+    improvement report, and another elapsed active-risk handoff without learner measurement,
+    calculation, examination, diagnosis, drug, dose, route, fluid, blood component, massage,
+    tamponade, procedure, surgery, disposition, fertility, or maternal/newborn outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

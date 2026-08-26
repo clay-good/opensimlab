@@ -12,6 +12,7 @@ export const PUBLIC_CATALOG_ARTIFACTS = [
   '/catalog/pediatrics-completion-audit.json',
   '/catalog/neurology-completion-audit.json',
   '/catalog/toxicology-completion-audit.json',
+  '/catalog/obstetrics-completion-audit.json',
   '/catalog/training-value.schema.json',
   '/catalog/authored-defaults.schema.json',
   '/catalog/scenario-hazard.schema.json',
@@ -24,6 +25,7 @@ export const PUBLIC_CATALOG_ARTIFACTS = [
   '/catalog/pediatrics-quality-audit.json',
   '/catalog/neurology-quality-audit.json',
   '/catalog/toxicology-quality-audit.json',
+  '/catalog/obstetrics-quality-audit.json',
   '/catalog/maturity-record.schema.json',
   '/catalog/anesthesia-maturity.json',
   '/catalog/emergency-medicine-maturity.json',
@@ -33,6 +35,7 @@ export const PUBLIC_CATALOG_ARTIFACTS = [
   '/catalog/pediatrics-maturity.json',
   '/catalog/neurology-maturity.json',
   '/catalog/toxicology-maturity.json',
+  '/catalog/obstetrics-maturity.json',
   '/catalog/asset-licenses.json',
   '/catalog/evidence-sources.json',
 ] as const;

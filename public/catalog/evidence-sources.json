@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 257,
+  "sourceCount": 259,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -3347,6 +3347,32 @@
       "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/38669101/",
       "verifiedOn": "2026-08-26",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/38669101/"
+    },
+    {
+      "id": "who-figo-icm-postpartum-hemorrhage-2025",
+      "currency": {
+        "lastAmended": "2025-10-05",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "World Health Organization, International Federation of Gynecology and Obstetrics, and International Confederation of Midwives",
+      "title": "Consolidated guidelines for the prevention, diagnosis and treatment of postpartum haemorrhage",
+      "publication": "World Health Organization",
+      "year": 2025,
+      "locator": "Diagnostic criteria and immediate MOTIVE treatment-bundle recommendations; WHO joint release lines 94-107",
+      "usedFor": "Objective blood-loss assessment, action at 300 mL plus abnormal vital signs or at 500 mL, immediate bundled massage, oxytocic, tranexamic-acid, IV-fluid, genital-tract examination and escalation intent, and persistent-bleeding blood or operative escalation boundary.",
+      "verifiedAgainst": "https://www.who.int/news/item/05-10-2025-global-health-agencies-issue-new-recommendations-to-help-end-deaths-from-postpartum-haemorrhage",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "acog-postpartum-hemorrhage-183-2024",
+      "authors": "American College of Obstetricians and Gynecologists",
+      "title": "Practice Bulletin No. 183: Postpartum Hemorrhage",
+      "publication": "Obstetrics and Gynecology",
+      "year": 2017,
+      "locator": "Reaffirmed 2024; abstract definition, morbidity, atony epidemiology, and standardized-bundle purpose",
+      "usedFor": "US cumulative-loss or hypovolemia definition context, uterine atony as a major cause, severe-morbidity and coagulopathy boundaries, and standardized multidisciplinary response ownership.",
+      "verifiedAgainst": "https://www.acog.org/clinical/clinical-guidance/practice-bulletin/articles/2017/10/postpartum-hemorrhage",
+      "verifiedOn": "2026-08-26"
     }
   ]
 }

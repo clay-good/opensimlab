@@ -19,6 +19,7 @@ import { getRespiratoryMedicineScenario } from '../../modules/respiratory-medici
 import { getPediatricsScenario } from '../../modules/pediatrics/scenarios';
 import { getNeurologyScenario } from '../../modules/neurology/scenarios';
 import { getToxicologyScenario } from '../../modules/toxicology/scenarios';
+import { getObstetricsScenario } from '../../modules/obstetrics/scenarios';
 import { ONE_LINE_DESCRIPTION } from '@landing/content';
 import { SITE_NAME, SITE_ORIGIN, canonicalUrl } from '@routes/routes';
 
@@ -80,7 +81,7 @@ export function softwareApplicationJsonLd(path = '/anesthesia'): JsonLd {
  * the site does not make.
  */
 type ScenarioModuleRoute = 'anesthesia' | 'emergency-medicine' | 'critical-care'
-  | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology';
+  | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics';
 
 export function learningResourceJsonLd(
   scenarioId: string = DEFAULT_SCENARIO_ID,
@@ -100,6 +101,8 @@ export function learningResourceJsonLd(
               ? getNeurologyScenario(scenarioId)
               : moduleRoute === 'toxicology'
                 ? getToxicologyScenario(scenarioId)
+                : moduleRoute === 'obstetrics'
+                  ? getObstetricsScenario(scenarioId)
             : getScenario(scenarioId);
   if (!scenario) throw new Error(`No scenario with id ${scenarioId}`);
   return {
@@ -121,7 +124,7 @@ export function learningResourceJsonLd(
 export function structuredDataFor(types: readonly string[], path?: string): JsonLd[] {
   const out: JsonLd[] = [];
   const scenarioMatch = path?.match(
-    /^\/(anesthesia|emergency-medicine|critical-care|cardiology|respiratory-medicine|pediatrics|neurology|toxicology)\/scenario\/([^/]+)$/,
+    /^\/(anesthesia|emergency-medicine|critical-care|cardiology|respiratory-medicine|pediatrics|neurology|toxicology|obstetrics)\/scenario\/([^/]+)$/,
   );
   const moduleRoute = scenarioMatch?.[1] as ScenarioModuleRoute | undefined;
   const scenarioId = scenarioMatch?.[2];

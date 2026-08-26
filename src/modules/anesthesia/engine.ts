@@ -442,6 +442,11 @@ const TOXICOLOGY_OPIOID_XYLAZINE_BLOCKED_ACTION_TYPES = new Set([
   'delayed-local-anesthetic-cns-cardiac-toxicity-response',
   'opioid-toxicity-response',
 ]);
+const OBSTETRICS_ATONY_BLOCKED_ACTION_TYPES = new Set([
+  ...TOXICOLOGY_OPIOID_XYLAZINE_BLOCKED_ACTION_TYPES,
+  'opioid-xylazine-persistent-sedation-response',
+  'hemorrhagic-shock-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1369,6 +1374,12 @@ export class AnesthesiaEngine {
   private toxicologyOpioidXylazineEvidenceAtTick: number | null = null;
   private toxicologyOpioidXylazineReassessmentAtTick: number | null = null;
   private toxicologyOpioidXylazineHandoffAtTick: number | null = null;
+  private obstetricsAtonyTrajectoryAtTick: number | null = null;
+  private obstetricsAtonyRecognitionAtTick: number | null = null;
+  private obstetricsAtonySupportAtTick: number | null = null;
+  private obstetricsAtonyEvidenceAtTick: number | null = null;
+  private obstetricsAtonyReassessmentAtTick: number | null = null;
+  private obstetricsAtonyHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2264,6 +2275,15 @@ export class AnesthesiaEngine {
         'This Toxicology lesson exposes no generic examination, monitoring, ECG, blood-gas, laboratory, toxicology-screen or skin interpretation, product identification, '
         + 'oxygen, ventilation, opioid or veterinary antagonist, fluid, vasopressor, glucose, rewarming, wound care, drug, dose, route, access, airway, transport, '
         + 'procedure, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const obstetricsAtony = this.scenario.metadata.id === 'postpartum-hemorrhage-uterine-atony'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-hemorrhage-uterine-atony-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-hemorrhage-uterine-atony-transition-boundary');
+    if (obstetricsAtony && OBSTETRICS_ATONY_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `obstetrics-atony-generic-action-refused-${this.currentTick}`,
+        'This Obstetrics lesson exposes no generic blood-loss measurement, examination, monitoring, laboratory or placental interpretation, calculation, '
+        + 'massage, oxygen, fluid, blood component, uterotonic, tranexamic acid, drug, dose, route, access, device, tamponade, transport, procedure, surgery, '
+        + 'hysterectomy, delivery, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -10660,6 +10680,32 @@ export class AnesthesiaEngine {
         if (this.toxicologyOpioidXylazineHandoffAtTick !== null) break;
         this.toxicologyOpioidXylazineHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-opioid-xylazine-active-risk-handoff-recorded-${this.currentTick}`, 'Recurrent respiratory depression, aspiration, pulmonary injury, persistent sedation, bradycardia, hypotension, hypothermia, skin and wound care, withdrawal, co-exposure, specialized testing, addiction treatment, harm reduction, safety, disposition, prognosis, and outcome uncertainty were handed off.', { safetyDispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'postpartum-hemorrhage-uterine-atony-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'postpartum-hemorrhage-uterine-atony'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-hemorrhage-uterine-atony-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-hemorrhage-uterine-atony-transition-boundary');
+        const actions = ['reconcile-obstetrics-atony-hemorrhage-birth-clock-measured-loss-physiology-tone-and-whole-person',
+          'recognize-obstetrics-atony-postpartum-hemorrhage-and-atony-pattern-without-threshold-tone-or-single-cause-closure',
+          'activate-obstetrics-atony-hemorrhage-obstetric-anesthesia-nursing-blood-bank-operating-room-and-dignity-ownership',
+          'review-obstetrics-atony-supplied-tone-placenta-tract-coagulation-perfusion-and-competing-cause-boundary',
+          'record-obstetrics-atony-bounded-qualified-motive-bundle-escalation-intent-and-strict-later-review',
+          'handoff-obstetrics-atony-recurrent-bleeding-shock-coagulopathy-blood-procedure-newborn-and-outcome-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `obstetrics-atony-response-refused-${this.currentTick}`, supported ? 'The atony-hemorrhage action was not listed. No supplied or injected text was retained.' : 'These atony-hemorrhage choices are available only in the exact declared Obstetrics lesson.'); break; }
+        if (response === actions[0]) { if (this.obstetricsAtonyTrajectoryAtTick !== null) break; this.obstetricsAtonyTrajectoryAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-atony-trajectory-reconciled-${this.currentTick}`, 'Eight-minute postpartum clock, 650 mL-and-rising measured loss, active bleeding, dizziness, pallor, tachycardia, borderline pressure, supplied boggy enlarged uterus, and whole-person state were connected without learner measurement, examination, calculation, monitoring, testing, or diagnosis.', { birthAndLossPatternAuthored: true, bloodLossMeasuredByLearner: false, patientExaminedByLearner: false }); break; }
+        if (this.obstetricsAtonyTrajectoryAtTick === null) { this.log('warning', 'assessment', `obstetrics-atony-trajectory-order-refused-${this.currentTick}`, 'Reconcile the birth clock, measured loss, physiology, uterine tone, and whole person first.'); break; }
+        if (response === actions[1]) { if (this.obstetricsAtonyRecognitionAtTick !== null) break; this.obstetricsAtonyRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-atony-pattern-recognized-${this.currentTick}`, 'The authored state is actionable postpartum hemorrhage with a supplied uterine-atony pattern. No blood-loss threshold, vital sign, uterine finding, placental report, response, or single cause closes trauma, tissue, thrombin, rupture, inversion, or concealed bleeding.', { postpartumHemorrhageAndAtonyPatternRecognized: true, diagnosisMadeByLearner: false, alternativeExcludedByLearner: false }); break; }
+        if (this.obstetricsAtonyRecognitionAtTick === null) { this.log('warning', 'assessment', `obstetrics-atony-recognition-order-refused-${this.currentTick}`, 'Recognize the actionable hemorrhage and atony pattern without threshold or single-cause closure before support or evidence review.'); break; }
+        if (response === actions[2]) { if (this.obstetricsAtonySupportAtTick !== null) break; this.obstetricsAtonySupportAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-atony-support-activated-${this.currentTick}`, 'Obstetric hemorrhage, anesthesia, nursing, monitoring, blood-bank, operating-room, newborn-support, pain, privacy, communication, and dignity-centered ownership were recorded without learner examination, drug, dose, route, access, fluid, blood, procedure, or disposition.', { qualifiedSupportActive: true, treatmentSelectedByLearner: false }); break; }
+        if (this.obstetricsAtonySupportAtTick === null) { this.log('warning', 'assessment', `obstetrics-atony-support-order-refused-${this.currentTick}`, 'Activate qualified hemorrhage, resuscitation, blood-bank, escalation, newborn-support, and dignity-centered ownership before evidence review.'); break; }
+        if (response === actions[3]) { if (this.obstetricsAtonyEvidenceAtTick !== null) break; this.obstetricsAtonyEvidenceAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-atony-evidence-reviewed-${this.currentTick}`, 'Supplied uterine tone, gross placental report, active bleeding, symptoms, perfusion, genital-tract and coagulation uncertainty, laboratory boundary, and competing causes were integrated without learner examination, acquisition, calculation, interpretation, diagnosis, exclusion, or treatment eligibility.', { uterinePlacentalTractCoagPerfusionAndDifferentialEvidenceAuthored: true, diagnosisMadeByLearner: false }); break; }
+        if (this.obstetricsAtonyEvidenceAtTick === null) { this.log('warning', 'assessment', `obstetrics-atony-evidence-order-refused-${this.currentTick}`, 'Review supplied tone, placental, genital-tract, coagulation, perfusion, laboratory, and competing-cause evidence before qualified intent.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.obstetricsAtonyEvidenceAtTick) { this.log('warning', 'assessment', `obstetrics-atony-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before bundled intent and strict later review.'); break; } if (this.obstetricsAtonyReassessmentAtTick !== null) break; this.obstetricsAtonyReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-atony-intent-and-reassessment-recorded-${this.currentTick}`, 'Qualified massage, oxytocic, tranexamic-acid, IV-fluid, vaginal and genital-tract examination, serial surveillance, blood-bank readiness, and escalation intent were recorded as the MOTIVE bundle without learner product, dose, formula, threshold, rate, route, access, technique, device, procedure, delivery, or treatment effect. Strict 10-minute report: HR 104, BP 102/64 (MAP 77), RR 20, SpO2 99% on supplied support, temperature 36.7 C, a firmer uterus, and visibly slower bleeding. Cumulative loss, coagulation, hidden bleeding, durable control, transfusion or procedure need, recovery, and outcome remain unproven.', { qualifiedMotiveBundleAndEscalationIntentRecorded: true, treatmentDeliveredByLearner: false, treatmentEffectProven: false }); break; }
+        if (this.obstetricsAtonyReassessmentAtTick === null) { this.log('warning', 'assessment', `obstetrics-atony-handoff-order-refused-${this.currentTick}`, 'Review the strict later bleeding, uterine, and physiology report before handoff.'); break; }
+        if (this.currentTick <= this.obstetricsAtonyReassessmentAtTick) { this.log('warning', 'assessment', `obstetrics-atony-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.obstetricsAtonyHandoffAtTick !== null) break;
+        this.obstetricsAtonyHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-atony-active-risk-handoff-recorded-${this.currentTick}`, 'Cumulative and recurrent bleeding, shock, coagulopathy, hypothermia, concealed bleeding, blood-bank and operative escalation, pain, privacy, communication, feeding and newborn support, disposition, fertility, recovery, prognosis, and outcome uncertainty were handed off.', { safetyDispositionDetermined: false, fertilityOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -13526,6 +13572,17 @@ export class AnesthesiaEngine {
         diastolicMmHg: this.toxicologyOpioidXylazineReassessmentAtTick !== null ? 52 : 48,
         meanArterialMmHg: this.toxicologyOpioidXylazineReassessmentAtTick !== null ? 65 : 61,
         coreTemperatureC: 35.5 };
+    }
+    if (this.scenario.metadata.id === 'postpartum-hemorrhage-uterine-atony'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-hemorrhage-uterine-atony-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-hemorrhage-uterine-atony-transition-boundary')) {
+      crisisState = { ...crisisState, heartRateBpm: this.obstetricsAtonyReassessmentAtTick !== null ? 104 : 118,
+        respiratoryRateBpm: this.obstetricsAtonyReassessmentAtTick !== null ? 20 : 24,
+        spo2Percent: this.obstetricsAtonyReassessmentAtTick !== null ? 99 : 98,
+        systolicMmHg: this.obstetricsAtonyReassessmentAtTick !== null ? 102 : 94,
+        diastolicMmHg: this.obstetricsAtonyReassessmentAtTick !== null ? 64 : 58,
+        meanArterialMmHg: this.obstetricsAtonyReassessmentAtTick !== null ? 77 : 70,
+        coreTemperatureC: 36.7 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -17426,6 +17483,41 @@ export class AnesthesiaEngine {
               aspirationExcluded: false as const, pulmonarySafetyProven: false as const, temperatureSafetyProven: false as const,
               woundSafetyProven: false as const, withdrawalSafetyProven: false as const, treatmentEffectProven: false as const,
               safetyDispositionDetermined: false as const, dispositionDetermined: false as const, prognosisPredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'postpartum-hemorrhage-uterine-atony'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-hemorrhage-uterine-atony-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-hemorrhage-uterine-atony-transition-boundary') ? {
+            obstetricsAtonyAssessment: {
+              trajectoryAtTick: this.obstetricsAtonyTrajectoryAtTick, recognitionAtTick: this.obstetricsAtonyRecognitionAtTick,
+              supportAtTick: this.obstetricsAtonySupportAtTick, evidenceAtTick: this.obstetricsAtonyEvidenceAtTick,
+              reassessmentAtTick: this.obstetricsAtonyReassessmentAtTick, handoffAtTick: this.obstetricsAtonyHandoffAtTick,
+              postpartumHemorrhageAndAtonyPatternAuthored: true as const,
+              postpartumHemorrhageAndAtonyPatternRecognized: this.obstetricsAtonyRecognitionAtTick !== null,
+              qualifiedSupportActive: this.obstetricsAtonySupportAtTick !== null,
+              uterinePlacentalTractCoagPerfusionAndDifferentialEvidenceReviewed: this.obstetricsAtonyEvidenceAtTick !== null,
+              qualifiedMotiveBundleAndEscalationIntentRecorded: this.obstetricsAtonyReassessmentAtTick !== null,
+              responseStateAuthored: this.obstetricsAtonyReassessmentAtTick !== null,
+              bloodLossMeasuredByLearner: false as const, bloodLossCalculatedByLearner: false as const,
+              patientHistoryTakenByLearner: false as const, patientExaminedByLearner: false as const,
+              uterineToneExaminedByLearner: false as const, placentaExaminedByLearner: false as const,
+              genitalTractExaminedByLearner: false as const, monitoringAcquiredByLearner: false as const,
+              bloodSampleAcquiredByLearner: false as const, coagulationInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const, alternativeExcludedByLearner: false as const,
+              massageSelectedByLearner: false as const, uterotonicSelectedByLearner: false as const,
+              tranexamicAcidSelectedByLearner: false as const, fluidSelectedByLearner: false as const,
+              bloodComponentSelectedByLearner: false as const, oxygenSelectedByLearner: false as const,
+              drugSelectedByLearner: false as const, doseSelectedByLearner: false as const,
+              routeSelectedByLearner: false as const, accessSelectedByLearner: false as const,
+              tamponadeSelectedByLearner: false as const, procedureSelectedByLearner: false as const,
+              surgerySelectedByLearner: false as const, hysterectomySelectedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const, durableHemostasisProven: false as const,
+              coagulationSafetyProven: false as const, concealedBleedingExcluded: false as const,
+              transfusionNeedDetermined: false as const, procedureNeedDetermined: false as const,
+              treatmentEffectProven: false as const, fertilityOutcomePredicted: false as const,
+              safetyDispositionDetermined: false as const, dispositionDetermined: false as const,
+              prognosisPredicted: false as const, maternalOutcomePredicted: false as const,
+              newbornOutcomePredicted: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

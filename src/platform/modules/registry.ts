@@ -136,6 +136,19 @@ export const MODULES: readonly ModuleDeclaration[] = [
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
+    id: 'obstetrics',
+    route: 'obstetrics',
+    displayName: 'Obstetrics',
+    description: 'Practice calm recognition, coordinated response, reassessment, and handoff across delivery-room and postpartum emergencies.',
+    audience: 'Medical students, residents, midwives, nurses, and acute-care trainees supporting pregnancy and birth.',
+    prerequisites: 'Basic obstetric assessment and cardiovascular and respiratory physiology.',
+    status: 'available',
+    plannedScope:
+      'Fifteen bounded obstetric rehearsals spanning postpartum hemorrhage, hypertensive and seizure '
+      + 'emergencies, sepsis, collapse, delivery-room escalation, medication safety, airway risk, and maternal-newborn handoff.',
+    timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
+  },
+  {
     id: 'oncology',
     route: 'oncology',
     displayName: 'Oncology',

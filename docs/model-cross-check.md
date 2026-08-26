@@ -286,6 +286,14 @@ Recorded here rather than silently carried:
   in current CDC and FDA xylazine guidance, not an exposure-identification, respiratory, blood-gas,
   toxicology-screen, opioid-antagonist, xylazine, wound, withdrawal, addiction, or individualized-
   response model.
+  Postpartum hemorrhage from uterine atony uses fixed canonical presentation and elapsed-response
+  states: 8 minutes after vaginal birth with qualified measured loss 650 mL and rising, active
+  bleeding, a boggy enlarged uterus, HR 118/min, BP 94/58 mmHg, RR 24/min, SpO2 98% and dizziness,
+  then qualified bundled care with HR 104/min, BP 102/64 mmHg, RR 20/min, SpO2 99%, a firmer uterus
+  and visibly slower bleeding. These are teaching calibrations grounded in 2025 WHO/FIGO/ICM and
+  reaffirmed ACOG guidance, not a blood-loss, uterine-contractility, coagulation, medication,
+  transfusion, procedural, fertility, maternal-outcome, newborn-outcome, or individualized-response
+  model.
   Salicylate where the falling number can be worse uses fixed canonical presentation and elapsed-
   deterioration states: supplied salicylate 52 mg/dL, pH 7.45, PCO2 23 mmHg, bicarbonate 16 mmol/L,
   anion gap 20 mmol/L and potassium 3.2 mmol/L, then salicylate 46 mg/dL, pH 7.32, PCO2 25 mmHg,

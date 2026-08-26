@@ -1986,6 +1986,26 @@ high neuraxial block; failed airway in pregnancy; maternal-to-neonatal resuscita
 oxytocin-associated uterine tachysystole with a deteriorating fetal-heart-rate pattern and recovery
 after corrective simulated actions.
 
+### Wave D obstetrics slice 1: postpartum hemorrhage from uterine atony
+
+The first Obstetrics lab opens 8 minutes after an uncomplicated term vaginal birth with qualified
+measured blood loss of 650 mL and rising, active vaginal bleeding, a supplied boggy enlarged uterus,
+HR 118/min, BP 94/58 mmHg, dizziness, pallor, and preserved conversation. It uses the 2025
+WHO/FIGO/ICM early objective-detection and MOTIVE-bundle guidance while preserving ACOG's US
+definition context as regional context rather than a reason to wait. The learner reconciles the
+birth clock, measured loss, physiology, uterine tone and whole person; recognizes actionable
+postpartum hemorrhage and an atony pattern without threshold-, tone- or single-cause closure;
+activates obstetric, anesthesia, nursing, blood-bank, operating-room, newborn-support, pain,
+privacy, communication and dignity-centered ownership; and reviews supplied placental,
+genital-tract, coagulation, perfusion, laboratory and competing-cause boundaries.
+
+Bounded qualified massage, oxytocic, tranexamic-acid, IV-fluid, examination and escalation intent
+is recorded only as the MOTIVE bundle. No product, dose, route, rate, access, technique, fluid,
+blood component, device, procedure or delivery is exposed. A strict elapsed report with HR 104/min,
+BP 102/64 mmHg, RR 20/min, a firmer uterus and visibly slower bleeding precedes another elapsed
+active-risk handoff. The canonical state is not a blood-loss, uterine-contractility, coagulation,
+drug-response, transfusion, procedural, fertility, maternal-outcome or newborn-outcome model.
+
 #### Neonatology: 11
 
 Term newborn transition; neonatal apnea; ineffective ventilation correction; neonatal bradycardia;
