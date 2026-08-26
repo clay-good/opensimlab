@@ -313,6 +313,16 @@ Recorded here rather than silently carried:
   and the NLM anticholinergic-toxicity review, not an exposure, receptor, thermoregulation, delirium,
   ECG, renal, CK, urinary, cooling, sedation, antidote-response, airway, or individualized-response
   model.
+  Serotonin toxicity with hyperthermia and clonus uses fixed canonical presentation and elapsed-
+  response states: HR 128/min, BP 146/84 mmHg, RR 26/min, SpO2 97%, core T 40.1°C, agitation,
+  confusion, diaphoresis, tremor, ocular and inducible ankle clonus, lower-limb hyperreflexia and
+  increased tone, hyperactive bowel sounds, diarrhea, QRS 88 ms, lactate 3.8 mmol/L, creatinine
+  1.0 mg/dL and CK 640 U/L, then qualified source cessation, cooling, support and sedation with
+  T 38.7°C, HR 104/min, BP 132/76 mmHg and calmer mentation while clonus and hyperreflexia persist.
+  These are teaching calibrations grounded in the primary Hunter-criteria study, the current
+  linezolid label and current AHA drug-related hyperthermia guidance, not an exposure, diagnostic-
+  rule, thermoregulation, neuromuscular, gastrointestinal, ECG, renal, CK, cooling, sedation,
+  antagonist-response, airway, or individualized-response model.
 
 ## Concentration-time checks, 2026-08-23
 

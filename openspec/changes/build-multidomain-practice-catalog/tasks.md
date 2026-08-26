@@ -678,6 +678,23 @@ credited toward the catalog until every item in the completion contract passes.
     cooling, fluid, restraint, catheter, sedation, physostigmine, drug, dose, rate, target, route,
     access, infusion, airway, ventilation, procedure, safety disposition, prognosis, or outcome
     control exists.
+  - [x] Toxicology slice 11/15 adds declared serotonin toxicity with hyperthermia and clonus. The
+    learner reconciles a first linezolid dose during stable sertraline therapy, a 6-hour clock,
+    agitation, confusion, diaphoresis, tremor, ocular and inducible ankle clonus, lower-limb
+    hyperreflexia and increased tone, hyperactive bowel sounds, diarrhea, sinus tachycardia, core
+    T 40.1°C, supplied normal-width QRS, acid-base, lactate, renal and CK evidence; recognizes the
+    coupled mental, autonomic and neuromuscular pattern without Hunter-, clonus-, temperature- or
+    medication-list-only closure; activates qualified source cessation, cooling, resuscitation,
+    airway, toxicology, monitoring, renal and compassionate-safety ownership; reviews infection,
+    coingestion, seizure, rhabdomyolysis and competing-syndrome boundaries; records bounded qualified
+    source cessation, cooling, support, sedation, seizure, serial laboratory, airway-preparedness and
+    specialist serotonin-antagonist rescue intent; then reviews a strict elapsed fixed cooling report
+    with persistent clonus and hyperreflexia before another elapsed rebound-hyperthermia, rigidity,
+    seizure, rhabdomyolysis, coingestion, airway and active-risk handoff. No learner history,
+    examination, monitoring, ECG, temperature, blood-gas, chemistry, CK or test acquisition or
+    interpretation, rule calculation, diagnosis, differential exclusion, cooling, fluid, sedation,
+    serotonin antagonist, drug, dose, rate, target, route, access, infusion, airway, ventilation,
+    procedure, safety disposition, prognosis, or outcome control exists.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.
 - [ ] After every wave, verify the exact cumulative count, distinctness, capability reuse, path and

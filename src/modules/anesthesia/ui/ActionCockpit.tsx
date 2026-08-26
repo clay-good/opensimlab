@@ -1225,6 +1225,11 @@ export interface ActionCockpitProps {
       readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly toxicologySerotoninAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2133,6 +2138,14 @@ export interface ActionCockpitProps {
       | 'record-toxicology-anticholinergic-bounded-qualified-cooling-support-sedation-seizure-surveillance-and-physostigmine-eligibility-intent-with-strict-later-review'
       | 'handoff-toxicology-anticholinergic-rebound-delirium-hyperthermia-retention-rhabdomyolysis-seizure-coingestion-and-active-risk',
   ) => void;
+  readonly onToxicologySerotoninResponse?: (
+    action: 'reconcile-toxicology-serotonin-agents-clock-mental-autonomic-neuromuscular-temperature-and-whole-patient'
+      | 'recognize-toxicology-serotonin-coupled-pattern-without-hunter-clonus-temperature-or-medication-list-only-closure'
+      | 'activate-toxicology-serotonin-resuscitation-cooling-airway-toxicology-monitoring-and-compassionate-safety-ownership'
+      | 'review-toxicology-serotonin-supplied-cns-autonomic-neuromuscular-temperature-ecg-renal-ck-and-differential-boundary'
+      | 'record-toxicology-serotonin-bounded-qualified-source-cessation-cooling-support-sedation-seizure-surveillance-airway-and-antagonist-intent-with-strict-later-review'
+      | 'handoff-toxicology-serotonin-rebound-hyperthermia-clonus-rigidity-seizure-rhabdomyolysis-coingestion-airway-and-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2670,6 +2683,10 @@ export function crisisResponseAvailability(
       scenario.metadata.id === 'anticholinergic-hyperthermia-delirium'
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'anticholinergic-hyperthermia-delirium-transition')
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'anticholinergic-hyperthermia-delirium-transition-boundary'),
+    hasToxicologySerotoninResponse:
+      scenario.metadata.id === 'serotonin-toxicity-hyperthermia-clonus'
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'serotonin-toxicity-hyperthermia-clonus-transition')
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'serotonin-toxicity-hyperthermia-clonus-transition-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2879,6 +2896,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'digoxin-rhythm-potassium-transition')
       || (event.type === 'narrative' && event.target === 'cholinergic-pesticide-respiratory-failure-transition')
       || (event.type === 'narrative' && event.target === 'anticholinergic-hyperthermia-delirium-transition')
+      || (event.type === 'narrative' && event.target === 'serotonin-toxicity-hyperthermia-clonus-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2976,6 +2994,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasToxicologyDigoxinResponse,
     hasToxicologyCholinergicResponse,
     hasToxicologyAnticholinergicResponse,
+    hasToxicologySerotoninResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3100,8 +3119,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasToxicologyDigoxinResponse
     || hasToxicologyCholinergicResponse
     || hasToxicologyAnticholinergicResponse
+    || hasToxicologySerotoninResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasToxicologyAnticholinergicResponse
+  const responseTray = hasToxicologySerotoninResponse
+    ? { id: 'crisis', label: 'Serotonin heat' } as const
+    : hasToxicologyAnticholinergicResponse
     ? { id: 'crisis', label: 'Anticholinergic heat' } as const
     : hasToxicologyCholinergicResponse
     ? { id: 'crisis', label: 'Cholinergic crisis' } as const
@@ -4304,6 +4326,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasToxicologyAnticholinergicResponse && (
               <ToxicologyAnticholinergicTray assessment={props.resuscitation.toxicologyAnticholinergicAssessment}
                 onAction={props.onToxicologyAnticholinergicResponse ?? (() => {})} />
+            )}
+            {hasToxicologySerotoninResponse && (
+              <ToxicologySerotoninTray assessment={props.resuscitation.toxicologySerotoninAssessment}
+                onAction={props.onToxicologySerotoninResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -10941,6 +10967,38 @@ function ToxicologyAnticholinergicTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-anticholinergic-bounded-qualified-cooling-support-sedation-seizure-surveillance-and-physostigmine-eligibility-intent-with-strict-later-review')}>Record support intent + reassess</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-anticholinergic-rebound-delirium-hyperthermia-retention-rhabdomyolysis-seizure-coingestion-and-active-risk')}>Hand off what can rebound</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function ToxicologySerotoninTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologySerotoninAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onToxicologySerotoninResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const evidence = assessment?.evidenceAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="toxicology-serotonin-early-title">
+      <div id="toxicology-serotonin-early-title" className="syringe__name">Follow the clonus, not just the thermometer.</div>
+      <p className="syringe__remaining">Begin with agents, clock, mind, sweating, bowel activity, clonus, reflexes, tone, temperature, and whole person.</p>
+      <div className="crisis-drug__actions">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-toxicology-serotonin-agents-clock-mental-autonomic-neuromuscular-temperature-and-whole-patient')}>Connect interaction + pattern</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-toxicology-serotonin-coupled-pattern-without-hunter-clonus-temperature-or-medication-list-only-closure')}>Recognize the whole pattern</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-toxicology-serotonin-resuscitation-cooling-airway-toxicology-monitoring-and-compassionate-safety-ownership')}>Build a calm rescue circle</Button>}
+        {support && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-toxicology-serotonin-supplied-cns-autonomic-neuromuscular-temperature-ecg-renal-ck-and-differential-boundary')}>Review clonus + hidden harm</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="toxicology-serotonin-later-title">
+      <div id="toxicology-serotonin-later-title" className="syringe__name">Cooler is better. Persistent clonus keeps the story open.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Temperature, clonus, rigidity, airway, renal and CK injury, seizure, coingestion, safety, and outcome uncertainty handed off.' : reassessment ? 'Temperature and agitation improved while clonus and hyperreflexia persisted. Durable cooling and neuromuscular recovery remain unproven.' : evidence ? 'CNS, autonomic, neuromuscular, temperature, ECG, renal, CK, coingestion, and differential evidence stay coupled. Record qualified intent after time passes.' : support ? 'Cooling, resuscitation, airway, toxicology, renal, monitoring, and compassionate safety ownership are active. Review the supplied evidence.' : 'Complete whole-pattern recognition and support ownership before rescue-boundary review.'}</p>
+      <div className="crisis-drug__actions">
+        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-serotonin-bounded-qualified-source-cessation-cooling-support-sedation-seizure-surveillance-airway-and-antagonist-intent-with-strict-later-review')}>Record rescue intent + reassess</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-serotonin-rebound-hyperthermia-clonus-rigidity-seizure-rhabdomyolysis-coingestion-airway-and-active-risk')}>Hand off what can rebound</Button>}
       </div>
     </section>
   </>;

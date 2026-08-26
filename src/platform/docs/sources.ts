@@ -3139,6 +3139,27 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'https://www.ncbi.nlm.nih.gov/books/NBK534798/',
     verifiedOn: '2026-08-26',
   },
+  {
+    id: 'dunkley-hunter-serotonin-criteria-2003', pmid: '12925718',
+    authors: 'Dunkley EJC, Isbister GK, Sibbritt D, Dawson AH, Whyte IM',
+    title: 'The Hunter Serotonin Toxicity Criteria: simple and accurate diagnostic decision rules for serotonin toxicity',
+    publication: 'QJM: An International Journal of Medicine', year: 2003,
+    locator: '96(9):635-642; doi:10.1093/qjmed/hcg109; cohort, decision rules, and life-threatening-case limitations',
+    usedFor: 'Coupled serotonergic exposure, clonus, agitation, diaphoresis, tremor, hyperreflexia, hypertonicity and temperature findings, and the explicit boundary that a rule or single finding is not learner diagnosis.',
+    verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/12925718/',
+    verifiedOn: '2026-08-26',
+  },
+  {
+    id: 'dailymed-linezolid-serotonin-2026',
+    currency: { lastAmended: '2026-07-09', checkedAt: '2026-08-26' },
+    authors: 'US National Library of Medicine, DailyMed',
+    title: 'Linezolid tablets prescribing information',
+    publication: 'DailyMed', year: 2026,
+    locator: 'Set ID 374af2a7-d994-40bd-a86a-cd9038d0b72c; Warnings and Precautions 5.3, Serotonin Syndrome',
+    usedFor: 'Declared linezolid-sertraline interaction, monitoring for serotonin-syndrome findings, clinically appropriate implicated-agent cessation, and supportive-treatment boundary.',
+    verifiedAgainst: 'https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=374af2a7-d994-40bd-a86a-cd9038d0b72c',
+    verifiedOn: '2026-08-26',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

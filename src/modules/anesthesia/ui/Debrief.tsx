@@ -5565,6 +5565,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-toxicology-serotonin-agents-clock-mental-autonomic-neuromuscular-temperature-and-whole-patient',
+      'recognize-toxicology-serotonin-coupled-pattern-without-hunter-clonus-temperature-or-medication-list-only-closure',
+      'activate-toxicology-serotonin-resuscitation-cooling-airway-toxicology-monitoring-and-compassionate-safety-ownership',
+      'review-toxicology-serotonin-supplied-cns-autonomic-neuromuscular-temperature-ecg-renal-ck-and-differential-boundary',
+      'record-toxicology-serotonin-bounded-qualified-source-cessation-cooling-support-sedation-seizure-surveillance-airway-and-antagonist-intent-with-strict-later-review',
+      'handoff-toxicology-serotonin-rebound-hyperthermia-clonus-rigidity-seizure-rhabdomyolysis-coingestion-airway-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'serotonin-toxicity-hyperthermia-clonus'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'serotonin-toxicity-hyperthermia-clonus-transition')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'serotonin-toxicity-hyperthermia-clonus-transition-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Toxicology serotonin-toxicity lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'Agents, clock, mental, autonomic, neuromuscular, temperature, and whole-patient state were reconciled.'],
+        ['pattern-recognized', 'The coupled serotonergic pattern was recognized without Hunter-, clonus-, temperature-, medication-list-, or diagnostic closure.'],
+        ['support-activated', 'Resuscitation, cooling, airway, toxicology, monitoring, renal, and compassionate safety ownership were activated.'],
+        ['evidence-reviewed', 'Supplied CNS, autonomic, neuromuscular, temperature, ECG, renal, CK, coingestion, interaction, and differential evidence were reviewed without learner interpretation or delivery.'],
+        ['intent-and-reassessment-recorded', 'Bounded qualified source, cooling, support, sedation, surveillance, airway, and antagonist-rescue intent plus the elapsed report were recorded without selection, dosing, delivery, eligibility, causal, or durable-safety claims.'],
+        ['active-risk-handoff-recorded', 'Serial temperature, clonus, tone, airway, renal and CK injury, seizure, coingestion, safety, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^toxicology-serotonin-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^toxicology-serotonin-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-af-rvr-rhythm-and-stability', 'review-af-rvr-context-and-triggers',
       'record-af-rvr-rate-control-intent', 'record-af-rvr-stroke-prevention-intent',
       'reassess-af-rvr-trajectory-and-follow-up'].includes(objective.id)) {

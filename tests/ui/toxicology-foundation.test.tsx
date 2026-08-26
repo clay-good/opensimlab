@@ -15,6 +15,7 @@ import { CALCIUM_CHANNEL_BLOCKER_SHOCK } from '../../src/modules/toxicology/scen
 import { DIGOXIN_RHYTHM_POTASSIUM } from '../../src/modules/toxicology/scenarios/digoxin-rhythm-potassium';
 import { CHOLINERGIC_PESTICIDE_RESPIRATORY_FAILURE } from '../../src/modules/toxicology/scenarios/cholinergic-pesticide-respiratory-failure';
 import { ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM } from '../../src/modules/toxicology/scenarios/anticholinergic-hyperthermia-delirium';
+import { SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS } from '../../src/modules/toxicology/scenarios/serotonin-toxicity-hyperthermia-clonus';
 
 describe('Toxicology module user-facing foundation', () => {
   const cockpitMarkup = (
@@ -56,6 +57,7 @@ describe('Toxicology module user-facing foundation', () => {
     onToxicologyDigoxinResponse: () => {},
     onToxicologyCholinergicResponse: () => {},
     onToxicologyAnticholinergicResponse: () => {},
+    onToxicologySerotoninResponse: () => {},
   } satisfies ActionCockpitProps));
 
   it('renders a calm module index with shared navigation and the exact first lab', () => {
@@ -82,6 +84,8 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('Cholinergic poisoning: protect the team, then clear the air');
     expect(markup).toContain('href="/toxicology/scenario/anticholinergic-hyperthermia-delirium"');
     expect(markup).toContain('Anticholinergic poisoning: cool the patient, not the clues');
+    expect(markup).toContain('href="/toxicology/scenario/serotonin-toxicity-hyperthermia-clonus"');
+    expect(markup).toContain('Serotonin toxicity: cool the heat, follow the clonus');
   });
 
   it('briefs the bounded poisoning rehearsal without dose or diagnostic claims', () => {
@@ -309,6 +313,27 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('Cool the patient. Keep the differential warm.');
     expect(markup).toContain('Connect heat + delirium');
     expect(markup).not.toMatch(/mg\/kg|cooling rate|ice bath|restraint type|catheter size|physostigmine dose/i);
+    expect(markup).not.toContain('<input');
+    expect(markup).not.toContain('<select');
+  });
+
+  it('prerenders and opens the serotonin lab on its calm clonus-first tray', () => {
+    const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/serotonin-toxicity-hyperthermia-clonus' }));
+    expect(page).toContain('<h1>Serotonin toxicity: cool the heat, follow the clonus</h1>');
+    expect(page).toContain('Hunter-, clonus-, temperature-, or medication-list-only closure');
+    expect(crisisResponseAvailability(SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS, []))
+      .toMatchObject({ hasToxicologySerotoninResponse: true });
+    expect(crisisResponseAvailability({ ...SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS,
+      metadata: { ...SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS.metadata, id: 'serotonin-clone' } }, []))
+      .toMatchObject({ hasToxicologySerotoninResponse: false });
+    const markup = cockpitMarkup(SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS, {
+      toxicologySerotoninAssessment: { trajectoryAtTick: null, recognitionAtTick: null,
+        supportAtTick: null, evidenceAtTick: null, reassessmentAtTick: null, handoffAtTick: null },
+    });
+    expect(markup).toContain('Serotonin heat');
+    expect(markup).toContain('Follow the clonus, not just the thermometer.');
+    expect(markup).toContain('Connect interaction + pattern');
+    expect(markup).not.toMatch(/mg\/kg|cooling rate|ice bath|sedative dose|cyproheptadine dose|airway setting/i);
     expect(markup).not.toContain('<input');
     expect(markup).not.toContain('<select');
   });

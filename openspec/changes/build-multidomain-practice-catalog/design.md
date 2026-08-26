@@ -2468,6 +2468,28 @@ rebound, hyperthermia, renal, CK, seizure, coingestion and active-risk handoff. 
 not an exposure, receptor, thermoregulation, delirium, ECG, renal, CK, urinary, cooling, sedation,
 antidote-response, airway, or individualized-response model.
 
+### Wave F toxicology slice 11: serotonin toxicity with hyperthermia and clonus
+
+The eleventh Toxicology lab owns the coupled serotonergic interaction, mental-status, autonomic,
+neuromuscular, hyperthermia, gastrointestinal, complication-surveillance, supportive-care, and
+specialist-rescue pattern of a declared first linezolid dose during stable sertraline therapy rather
+than duplicating anticholinergic, sympathomimetic, cholinergic, tricyclic, neuroleptic-malignant,
+malignant-hyperthermia, or generic heat-illness labs. The learner reconciles a 6-hour clock,
+agitation, confusion, diaphoresis, tremor, ocular and inducible ankle clonus, lower-limb
+hyperreflexia and increased tone, hyperactive bowel sounds, diarrhea, HR 128/min, T 40.1°C,
+supplied QRS 88 ms, acid-base, lactate, renal and CK evidence; recognizes the coupled whole-patient
+pattern without Hunter-, clonus-, temperature-, or medication-list-only closure; activates qualified
+source cessation, rapid cooling, resuscitation, airway, toxicology, monitoring, renal and
+compassionate-safety ownership; and reviews infection, coingestion, seizure, rhabdomyolysis and
+competing-syndrome boundaries. Bounded qualified source cessation, cooling and support, sedation or
+seizure care if needed, serial temperature, renal and CK surveillance, airway preparedness, and
+specialist-led serotonin-antagonist rescue intent exposes no method, product, dose, rate, target,
+route, access, airway, or delivery. A strict elapsed fixed cooling and neuromuscular report with
+persistent clonus and hyperreflexia precedes another elapsed rebound-hyperthermia, rigidity, seizure,
+rhabdomyolysis, coingestion, airway and active-risk handoff. The canonical state is not an exposure,
+diagnostic-rule, thermoregulation, neuromuscular, gastrointestinal, ECG, renal, CK, cooling, sedation,
+antagonist-response, airway, or individualized-response model.
+
 #### Hematology and oncology: 11
 
 Neutropenic fever; tumor-lysis syndrome; hyperleukocytosis pattern; sickle-cell acute chest syndrome;

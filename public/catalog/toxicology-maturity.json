@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "toxicology",
-  "recordCount": 10,
+  "recordCount": 11,
   "records": [
     {
       "recordId": "scenario:methemoglobinemia-saturation-gap@0.1.0",
@@ -111,6 +111,17 @@
       "evidence": [
         "/catalog/toxicology-completion-audit.json#anticholinergic-hyperthermia-delirium@0.1.0",
         "/catalog/toxicology-quality-audit.json#anticholinergic-hyperthermia-delirium@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:serotonin-toxicity-hyperthermia-clonus@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "serotonin-toxicity-hyperthermia-clonus",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/toxicology-completion-audit.json#serotonin-toxicity-hyperthermia-clonus@0.1.0",
+        "/catalog/toxicology-quality-audit.json#serotonin-toxicity-hyperthermia-clonus@0.1.0"
       ]
     }
   ]

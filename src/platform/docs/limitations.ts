@@ -4439,6 +4439,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use the complete verified product and clock, serial CNS, airway, temperature, sweating, neuromuscular, ECG, urinary, renal, CK, coingestion, exposure-purity, competing-cause, supportive-care and response trajectory under qualified toxicology and resuscitation ownership.',
     briefIn: ['anticholinergic-hyperthermia-delirium'],
   },
+  {
+    id: 'serotonin-interaction-mental-autonomic-neuromuscular-hyperthermia-and-response-are-authored',
+    headline: 'The interaction, mental, autonomic, neuromuscular, hyperthermia, and later response are authored.',
+    simplification: 'Fixed reports and canonical monitor states stand in for history, examination, medication reconciliation, core-temperature measurement, ECG, renal, CK and laboratory acquisition and interpretation, qualified supportive care, and reassessment.',
+    whereItMisleads: 'Treating fictional interaction completeness, clonus, reflexes, sweating, bowel activity, tone, temperature, pulse, QRS, CK, source cessation, cooling, sedation, or later improvement as learner evidence, a universal diagnostic rule, rescue eligibility, treatment effect, durable cooling, neuromuscular recovery, or predicted course.',
+    correctUnderstanding: 'Real care requires direct serial airway, mental-state, core-temperature, autonomic, neuromuscular, cardiac, renal, muscle-injury, exposure, coingestion, competing-cause and organ assessment with poison-center or medical-toxicology and resuscitation-team ownership.',
+    briefIn: ['serotonin-toxicity-hyperthermia-clonus'],
+  },
+  {
+    id: 'serotonin-controls-reconcile-recognize-support-review-intent-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, pattern recognition, qualified ownership, evidence review, bounded intent, reassessment, and handoff only.',
+    simplification: 'Six actions stand in for emergency, toxicology, critical-care, nursing, pharmacy, cooling, airway, monitoring, laboratory, renal, sedation, seizure, rescue, compassionate-safety, surveillance, and handoff work.',
+    whereItMisleads: 'Equating button order with history, examination, medication reconciliation, Hunter-rule application, temperature, ECG or laboratory interpretation, diagnosis, differential exclusion, cooling, restraint, prescribing, airway care, rescue eligibility or delivery, disposition, or competence.',
+    correctUnderstanding: 'Actual care requires trained teams, rapid verified cooling and resuscitation, least-restrictive compassionate safety, current local protocols, individualized source, supportive, agitation and seizure care, specialist rescue decisions, and serial neuromuscular reassessment.',
+    briefIn: ['serotonin-toxicity-hyperthermia-clonus'],
+  },
+  {
+    id: 'no-live-serotonin-diagnosis-cooling-sedation-antagonist-airway-seizure-care-or-outcome',
+    headline: 'The lab does not diagnose serotonin toxicity, cool or sedate a patient, prescribe an antagonist, manage an airway or seizure, or report outcome.',
+    simplification: 'No live history, examination, monitoring, ECG, temperature, blood gas, chemistry, CK or another test, medication reconciliation, diagnosis, differential exclusion, cooling, fluid, restraint, sedation, cyproheptadine, drug, dose, rate, target, route, access, infusion, airway, ventilation, neuromuscular blocker, transport, procedure, disposition, prognosis, safety decision, or outcome is modeled.',
+    whereItMisleads: 'Using one Hunter rule, clonus finding, temperature, pulse, medication list, ECG interval, laboratory value, or interaction statement alone; copying fictional values into care; selecting a cooling method, restraint, sedative, antagonist, airway, neuromuscular blocker, or seizure treatment from this rehearsal; attributing the fixed response; or reading completion as competence.',
+    correctUnderstanding: 'Use the complete verified exposure and clock, serial CNS, autonomic, neuromuscular, airway, temperature, ECG, renal, CK, coingestion, competing-cause, supportive-care and response trajectory under qualified toxicology and resuscitation ownership.',
+    briefIn: ['serotonin-toxicity-hyperthermia-clonus'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

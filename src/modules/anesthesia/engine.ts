@@ -420,6 +420,10 @@ const TOXICOLOGY_ANTICHOLINERGIC_BLOCKED_ACTION_TYPES = new Set([
   ...TOXICOLOGY_CHOLINERGIC_BLOCKED_ACTION_TYPES,
   'cholinergic-pesticide-respiratory-failure-response',
 ]);
+const TOXICOLOGY_SEROTONIN_BLOCKED_ACTION_TYPES = new Set([
+  ...TOXICOLOGY_ANTICHOLINERGIC_BLOCKED_ACTION_TYPES,
+  'anticholinergic-hyperthermia-delirium-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1317,6 +1321,12 @@ export class AnesthesiaEngine {
   private toxicologyAnticholinergicEvidenceAtTick: number | null = null;
   private toxicologyAnticholinergicReassessmentAtTick: number | null = null;
   private toxicologyAnticholinergicHandoffAtTick: number | null = null;
+  private toxicologySerotoninTrajectoryAtTick: number | null = null;
+  private toxicologySerotoninRecognitionAtTick: number | null = null;
+  private toxicologySerotoninSupportAtTick: number | null = null;
+  private toxicologySerotoninEvidenceAtTick: number | null = null;
+  private toxicologySerotoninReassessmentAtTick: number | null = null;
+  private toxicologySerotoninHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2167,6 +2177,15 @@ export class AnesthesiaEngine {
         'This Toxicology lesson exposes no generic examination, monitoring, ECG, temperature, blood-gas, CK, urine or laboratory interpretation, '
         + 'cooling, fluid, restraint, catheter, sedation, physostigmine, drug, dose, route, access, infusion, airway, ventilation, transport, '
         + 'procedure, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const toxicologySerotonin = this.scenario.metadata.id === 'serotonin-toxicity-hyperthermia-clonus'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'serotonin-toxicity-hyperthermia-clonus-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'serotonin-toxicity-hyperthermia-clonus-transition-boundary');
+    if (toxicologySerotonin && TOXICOLOGY_SEROTONIN_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `toxicology-serotonin-generic-action-refused-${this.currentTick}`,
+        'This Toxicology lesson exposes no generic examination, monitoring, ECG, temperature, blood-gas, CK or laboratory interpretation, '
+        + 'cooling, fluid, restraint, sedation, cyproheptadine, drug, dose, route, access, infusion, airway, ventilation, neuromuscular blocker, '
+        + 'transport, procedure, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -10433,6 +10452,32 @@ export class AnesthesiaEngine {
         if (this.toxicologyAnticholinergicHandoffAtTick !== null) { this.log('warning', 'assessment', `toxicology-anticholinergic-handoff-refused-${this.currentTick}`, 'The rebound delirium, hyperthermia, retention, rhabdomyolysis, seizure, coingestion, and active-risk handoff was already recorded.'); break; }
         this.toxicologyAnticholinergicHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-anticholinergic-active-risk-handoff-recorded-${this.currentTick}`, 'Serial temperature, mental state, airway, ECG, urine output and retention, renal state, CK and rhabdomyolysis risk, seizure, coingestion, exposure purity, rebound toxicity, supportive and antidote contingencies, compassionate safety, disposition, prognosis, and outcome uncertainty were handed off.', { durableTemperatureControlProven: false, renalSafetyProven: false, rhabdomyolysisExcluded: false, seizureExcluded: false, exposurePurityProven: false, safetyDispositionDetermined: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
       }
+      case 'serotonin-toxicity-hyperthermia-clonus-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'serotonin-toxicity-hyperthermia-clonus'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'serotonin-toxicity-hyperthermia-clonus-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'serotonin-toxicity-hyperthermia-clonus-transition-boundary');
+        const actions = ['reconcile-toxicology-serotonin-agents-clock-mental-autonomic-neuromuscular-temperature-and-whole-patient',
+          'recognize-toxicology-serotonin-coupled-pattern-without-hunter-clonus-temperature-or-medication-list-only-closure',
+          'activate-toxicology-serotonin-resuscitation-cooling-airway-toxicology-monitoring-and-compassionate-safety-ownership',
+          'review-toxicology-serotonin-supplied-cns-autonomic-neuromuscular-temperature-ecg-renal-ck-and-differential-boundary',
+          'record-toxicology-serotonin-bounded-qualified-source-cessation-cooling-support-sedation-seizure-surveillance-airway-and-antagonist-intent-with-strict-later-review',
+          'handoff-toxicology-serotonin-rebound-hyperthermia-clonus-rigidity-seizure-rhabdomyolysis-coingestion-airway-and-active-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `toxicology-serotonin-response-refused-${this.currentTick}`, supported ? 'The serotonin-toxicity action was not listed. No supplied or injected text was retained.' : 'These serotonin-toxicity choices are available only in the exact declared Toxicology lesson.'); break; }
+        if (response === actions[0]) { if (this.toxicologySerotoninTrajectoryAtTick !== null) { this.log('warning', 'assessment', `toxicology-serotonin-trajectory-refused-${this.currentTick}`, 'The agents, clock, mental, autonomic, neuromuscular, temperature, and whole-patient state were already reconciled.'); break; } this.toxicologySerotoninTrajectoryAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-serotonin-trajectory-reconciled-${this.currentTick}`, 'Declared linezolid-sertraline interaction, 6-hour clock, agitation, confusion, diaphoresis, diarrhea, clonus, hyperreflexia, tremor, increased tone, hyperthermia, tachycardia, supplied ECG, and whole-patient state were connected. The learner did not take history, examine, acquire or interpret monitoring or tests, or diagnose.', { interactionAuthored: true, hoursPostFirstLinezolidDose: 6, patientHistoryTakenByLearner: false, patientExaminedByLearner: false }); break; }
+        if (this.toxicologySerotoninTrajectoryAtTick === null) { this.log('warning', 'assessment', `toxicology-serotonin-trajectory-order-refused-${this.currentTick}`, 'Reconcile agents, clock, mental, autonomic, neuromuscular, temperature, and whole patient first.'); break; }
+        if (response === actions[1]) { if (this.toxicologySerotoninRecognitionAtTick !== null) { this.log('warning', 'assessment', `toxicology-serotonin-recognition-refused-${this.currentTick}`, 'The coupled serotonergic pattern and single-cue boundary were already recognized.'); break; } this.toxicologySerotoninRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-serotonin-pattern-recognized-${this.currentTick}`, 'Declared interaction plus mental-state, autonomic, and neuromuscular findings form an authored serotonin-toxicity pattern. One Hunter rule, clonus finding, temperature, pulse, medication list, ECG interval, or laboratory value alone neither diagnoses nor grades the case.', { serotoninPatternRecognized: true, mentalPatternRecognized: true, autonomicPatternRecognized: true, neuromuscularPatternRecognized: true, hunterRuleUsedAlone: false, diagnosisMadeByLearner: false }); break; }
+        if (this.toxicologySerotoninRecognitionAtTick === null) { this.log('warning', 'assessment', `toxicology-serotonin-recognition-order-refused-${this.currentTick}`, 'Recognize the coupled mental, autonomic, and neuromuscular pattern before support or evidence review.'); break; }
+        if (response === actions[2]) { if (this.toxicologySerotoninSupportAtTick !== null) { this.log('warning', 'assessment', `toxicology-serotonin-support-refused-${this.currentTick}`, 'Qualified resuscitation, cooling, airway, toxicology, monitoring, and compassionate safety ownership are already active.'); break; } this.toxicologySerotoninSupportAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-serotonin-support-activated-${this.currentTick}`, 'Emergency, critical-care, nursing, pharmacy, rapid-cooling, airway, poison-center or medical-toxicology, laboratory, renal, monitoring, and compassionate-safety ownership were recorded. The learner selected or performed no restraint, cooling method, drug, dose, route, access, airway, or procedure.', { qualifiedSupportActive: true, qualifiedCoolingOwnershipActive: true, qualifiedAirwayOwnershipActive: true, compassionateSafetyOwnershipActive: true, treatmentSelectedByLearner: false }); break; }
+        if (this.toxicologySerotoninSupportAtTick === null) { this.log('warning', 'assessment', `toxicology-serotonin-support-order-refused-${this.currentTick}`, 'Activate qualified resuscitation, cooling, airway, toxicology, monitoring, and safety ownership before evidence review.'); break; }
+        if (response === actions[3]) { if (this.toxicologySerotoninEvidenceAtTick !== null) { this.log('warning', 'assessment', `toxicology-serotonin-evidence-refused-${this.currentTick}`, 'The supplied CNS, autonomic, neuromuscular, temperature, ECG, renal, CK, coingestion, and differential boundary was already reviewed.'); break; } this.toxicologySerotoninEvidenceAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-serotonin-evidence-reviewed-${this.currentTick}`, 'Supplied agitation, confusion, diaphoresis, diarrhea, ocular and inducible clonus, lower-limb hyperreflexia, tremor, increased leg tone, T 40.1 C, sinus tachycardia 128, QRS 88, pH 7.34, bicarbonate 19, lactate 3.8, sodium 140, potassium 3.9, glucose 116, creatinine 1.0, CK 640, coingestion limits, interaction uncertainty, and competing-syndrome boundaries were integrated. The learner acquired, calculated, interpreted, selected, delivered, diagnosed, excluded, or determined no eligibility.', { cnsAutonomicNeuromuscularTemperatureEcgRenalCkAndDifferentialEvidenceAuthored: true, ecgInterpretedByLearner: false, diagnosisMadeByLearner: false, alternativeExcludedByLearner: false, rescueEligibilityDetermined: false }); break; }
+        if (this.toxicologySerotoninEvidenceAtTick === null) { this.log('warning', 'assessment', `toxicology-serotonin-evidence-order-refused-${this.currentTick}`, 'Review supplied CNS, autonomic, neuromuscular, temperature, ECG, renal, CK, coingestion, and differential evidence before qualified intent.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.toxicologySerotoninEvidenceAtTick) { this.log('warning', 'assessment', `toxicology-serotonin-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before qualified source, cooling, support, sedation, surveillance, airway, and rescue intent and strict later review.'); break; } if (this.toxicologySerotoninReassessmentAtTick !== null) { this.log('warning', 'assessment', `toxicology-serotonin-reassessment-refused-${this.currentTick}`, 'Qualified intent with the strict later report was already reviewed.'); break; } this.toxicologySerotoninReassessmentAtTick = this.currentTick; this.rhythm = 'sinus-tachycardia'; this.log('critical', 'assessment', `toxicology-serotonin-intent-and-reassessment-recorded-${this.currentTick}`, 'Qualified implicated-agent cessation, rapid cooling and support, sedation or seizure care if needed, serial temperature, renal and CK surveillance, airway preparedness, and specialist-led serotonin-antagonist rescue intent were recorded without method, product, dose, rate, target, route, access, device, neuromuscular blocker, or delivery. Strict 30-minute report: implicated agents stopped; active cooling, supportive care and qualified sedation reported; T 38.7 C, HR 104, BP 132/76 (MAP 95), mentation calmer, while inducible clonus and hyperreflexia persist. This does not prove individualized treatment effect, exposure completeness, durable temperature control, neuromuscular recovery, renal safety, rhabdomyolysis or seizure exclusion, disposition, or outcome.', { qualifiedSourceCessationIntentRecorded: true, qualifiedCoolingSupportIntentRecorded: true, qualifiedSedationSeizureIntentRecorded: true, qualifiedTemperatureRenalCkSurveillanceRecorded: true, qualifiedAirwayPreparednessRecorded: true, qualifiedSerotoninAntagonistRescueIntentRecorded: true, treatmentDeliveredByLearner: false, rescueEligibilityDetermined: false, treatmentEffectProven: false }); break; }
+        if (this.toxicologySerotoninReassessmentAtTick === null) { this.log('warning', 'assessment', `toxicology-serotonin-handoff-order-refused-${this.currentTick}`, 'Record bounded qualified intent and review the strict later report before handoff.'); break; }
+        if (this.currentTick <= this.toxicologySerotoninReassessmentAtTick) { this.log('warning', 'assessment', `toxicology-serotonin-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off recurrent temperature, neuromuscular, airway, renal, CK, seizure, and coingestion risk.'); break; }
+        if (this.toxicologySerotoninHandoffAtTick !== null) { this.log('warning', 'assessment', `toxicology-serotonin-handoff-refused-${this.currentTick}`, 'The recurrent hyperthermia, clonus, rigidity, seizure, rhabdomyolysis, coingestion, airway, and active-risk handoff was already recorded.'); break; }
+        this.toxicologySerotoninHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-serotonin-active-risk-handoff-recorded-${this.currentTick}`, 'Serial temperature, mental state, clonus, reflexes and tone, airway, ECG, renal state, CK and rhabdomyolysis risk, seizure, coingestion, exposure completeness, rebound toxicity, supportive and rescue contingencies, compassionate safety, disposition, prognosis, and outcome uncertainty were handed off.', { durableTemperatureControlProven: false, neuromuscularRecoveryProven: false, renalSafetyProven: false, rhabdomyolysisExcluded: false, seizureExcluded: false, exposureCompletenessProven: false, safetyDispositionDetermined: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -13246,6 +13291,16 @@ export class AnesthesiaEngine {
         diastolicMmHg: this.toxicologyAnticholinergicReassessmentAtTick !== null ? 72 : 78,
         meanArterialMmHg: this.toxicologyAnticholinergicReassessmentAtTick !== null ? 89 : 96,
         coreTemperatureC: this.toxicologyAnticholinergicReassessmentAtTick !== null ? 38.6 : 40.3 };
+    }
+    if (this.scenario.metadata.id === 'serotonin-toxicity-hyperthermia-clonus'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'serotonin-toxicity-hyperthermia-clonus-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'serotonin-toxicity-hyperthermia-clonus-transition-boundary')) {
+      crisisState = { ...crisisState, heartRateBpm: this.toxicologySerotoninReassessmentAtTick !== null ? 104 : 128,
+        respiratoryRateBpm: this.toxicologySerotoninReassessmentAtTick !== null ? 20 : 26, spo2Percent: 97,
+        systolicMmHg: this.toxicologySerotoninReassessmentAtTick !== null ? 132 : 146,
+        diastolicMmHg: this.toxicologySerotoninReassessmentAtTick !== null ? 76 : 84,
+        meanArterialMmHg: this.toxicologySerotoninReassessmentAtTick !== null ? 95 : 105,
+        coreTemperatureC: this.toxicologySerotoninReassessmentAtTick !== null ? 38.7 : 40.1 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -17008,6 +17063,35 @@ export class AnesthesiaEngine {
               renalSafetyProven: false as const, rhabdomyolysisExcluded: false as const, seizureExcluded: false as const,
               exposurePurityProven: false as const, treatmentEffectProven: false as const, safetyDispositionDetermined: false as const,
               dispositionDetermined: false as const, prognosisPredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'serotonin-toxicity-hyperthermia-clonus'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'serotonin-toxicity-hyperthermia-clonus-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'serotonin-toxicity-hyperthermia-clonus-transition-boundary') ? {
+            toxicologySerotoninAssessment: {
+              trajectoryAtTick: this.toxicologySerotoninTrajectoryAtTick, recognitionAtTick: this.toxicologySerotoninRecognitionAtTick,
+              supportAtTick: this.toxicologySerotoninSupportAtTick, evidenceAtTick: this.toxicologySerotoninEvidenceAtTick,
+              reassessmentAtTick: this.toxicologySerotoninReassessmentAtTick, handoffAtTick: this.toxicologySerotoninHandoffAtTick,
+              interactionMentalAutonomicNeuromuscularHyperthermiaPatternAuthored: true as const, serotoninPatternRecognized: this.toxicologySerotoninRecognitionAtTick !== null,
+              qualifiedSupportActive: this.toxicologySerotoninSupportAtTick !== null,
+              cnsAutonomicNeuromuscularTemperatureEcgRenalCkAndDifferentialEvidenceReviewed: this.toxicologySerotoninEvidenceAtTick !== null,
+              qualifiedSourceCessationIntentRecorded: this.toxicologySerotoninReassessmentAtTick !== null,
+              qualifiedCoolingSupportIntentRecorded: this.toxicologySerotoninReassessmentAtTick !== null,
+              qualifiedSedationSeizureIntentRecorded: this.toxicologySerotoninReassessmentAtTick !== null,
+              qualifiedTemperatureRenalCkSurveillanceRecorded: this.toxicologySerotoninReassessmentAtTick !== null,
+              qualifiedAirwayPreparednessRecorded: this.toxicologySerotoninReassessmentAtTick !== null,
+              qualifiedSerotoninAntagonistRescueIntentRecorded: this.toxicologySerotoninReassessmentAtTick !== null,
+              responseStateAuthored: this.toxicologySerotoninReassessmentAtTick !== null,
+              patientHistoryTakenByLearner: false as const, patientExaminedByLearner: false as const, monitoringAcquiredByLearner: false as const,
+              ecgAcquiredByLearner: false as const, ecgInterpretedByLearner: false as const, temperatureMeasuredByLearner: false as const,
+              bloodSampleAcquiredByLearner: false as const, diagnosisMadeByLearner: false as const, alternativeExcludedByLearner: false as const,
+              coolingSelectedByLearner: false as const, restraintSelectedByLearner: false as const, fluidSelectedByLearner: false as const,
+              drugSelectedByLearner: false as const, doseSelectedByLearner: false as const, routeSelectedByLearner: false as const,
+              airwaySelectedByLearner: false as const, ventilationSelectedByLearner: false as const, neuromuscularBlockerSelectedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const, rescueEligibilityDetermined: false as const, durableTemperatureControlProven: false as const,
+              neuromuscularRecoveryProven: false as const, renalSafetyProven: false as const, rhabdomyolysisExcluded: false as const,
+              seizureExcluded: false as const, exposureCompletenessProven: false as const, treatmentEffectProven: false as const,
+              safetyDispositionDetermined: false as const, dispositionDetermined: false as const, prognosisPredicted: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

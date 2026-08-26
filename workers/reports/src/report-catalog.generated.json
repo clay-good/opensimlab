@@ -1771,6 +1771,17 @@
         "GB"
       ],
       "fidelityClass": "state_transition"
+    },
+    {
+      "scenarioId": "serotonin-toxicity-hyperthermia-clonus",
+      "contentVersion": "0.1.0",
+      "moduleId": "toxicology",
+      "maturity": "draft",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition"
     }
   ]
 }

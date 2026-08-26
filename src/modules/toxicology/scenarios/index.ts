@@ -9,6 +9,7 @@ import { CALCIUM_CHANNEL_BLOCKER_SHOCK } from './calcium-channel-blocker-shock';
 import { DIGOXIN_RHYTHM_POTASSIUM } from './digoxin-rhythm-potassium';
 import { CHOLINERGIC_PESTICIDE_RESPIRATORY_FAILURE } from './cholinergic-pesticide-respiratory-failure';
 import { ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM } from './anticholinergic-hyperthermia-delirium';
+import { SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS } from './serotonin-toxicity-hyperthermia-clonus';
 
 export const TOXICOLOGY_SCENARIOS: readonly Scenario[] = [
   METHEMOGLOBINEMIA_SATURATION_GAP,
@@ -21,6 +22,7 @@ export const TOXICOLOGY_SCENARIOS: readonly Scenario[] = [
   DIGOXIN_RHYTHM_POTASSIUM,
   CHOLINERGIC_PESTICIDE_RESPIRATORY_FAILURE,
   ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM,
+  SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS,
 ];
 export const DEFAULT_TOXICOLOGY_SCENARIO_ID = METHEMOGLOBINEMIA_SATURATION_GAP.metadata.id;
 

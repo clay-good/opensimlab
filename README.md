@@ -152,6 +152,15 @@ sedation, seizure, surveillance and toxicologist-led physostigmine-eligibility i
 temperature and mental-state reassessment, and rebound-risk handoff. It exposes no learner diagnosis,
 cooling method, restraint, catheter, sedative, physostigmine product or dose, airway operation,
 procedure, disposition, or outcome control.
+Its eleventh lab, serotonin toxicity where clonus keeps the story visible as temperature falls,
+couples a declared linezolid-sertraline interaction with agitation, diaphoresis, tremor, ocular and
+inducible ankle clonus, lower-limb hyperreflexia and tone, hyperactive bowel sounds, diarrhea,
+life-threatening hyperthermia, and supplied ECG, renal and CK evidence. It adds qualified source
+cessation, cooling, supportive and compassionate-safety ownership, bounded sedation, seizure,
+surveillance, airway-preparedness and specialist serotonin-antagonist rescue intent, strict elapsed
+temperature and neuromuscular reassessment, and rebound-risk handoff. It exposes no learner diagnosis,
+cooling method, sedative, antagonist product or dose, airway operation, procedure, disposition, or
+outcome control.
 
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
