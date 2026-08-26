@@ -203,6 +203,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       hasPediatricSupraventricularTachycardiaResponse: false,
       hasPediatricBradycardicArrestResponse: false,
       hasPediatricForeignBodyAirwayObstructionResponse: false,
+      hasPediatricInjurySafeguardingResponse: false,
       hasPulmonaryEmbolismResponse: false,
       hasStemiResponse: false,
       hasUnstableNarrowTachycardiaResponse: false,

@@ -14,6 +14,9 @@ import { MODULES } from '@platform/modules/registry';
 import { DEFAULT_SCENARIO_ID, getScenario } from '@anesthesia/scenarios';
 import { getEmergencyMedicineScenario } from '../../modules/emergency-medicine/scenarios';
 import { getCriticalCareScenario } from '../../modules/critical-care/scenarios';
+import { getCardiologyScenario } from '../../modules/cardiology/scenarios';
+import { getRespiratoryMedicineScenario } from '../../modules/respiratory-medicine/scenarios';
+import { getPediatricsScenario } from '../../modules/pediatrics/scenarios';
 import { ONE_LINE_DESCRIPTION } from '@landing/content';
 import { SITE_NAME, SITE_ORIGIN, canonicalUrl } from '@routes/routes';
 
@@ -74,7 +77,8 @@ export function softwareApplicationJsonLd(path = '/anesthesia'): JsonLd {
  * because emitting the same description on every briefing route would be a claim
  * the site does not make.
  */
-type ScenarioModuleRoute = 'anesthesia' | 'emergency-medicine' | 'critical-care';
+type ScenarioModuleRoute = 'anesthesia' | 'emergency-medicine' | 'critical-care'
+  | 'cardiology' | 'respiratory-medicine' | 'pediatrics';
 
 export function learningResourceJsonLd(
   scenarioId: string = DEFAULT_SCENARIO_ID,
@@ -84,7 +88,13 @@ export function learningResourceJsonLd(
     ? getEmergencyMedicineScenario(scenarioId)
     : moduleRoute === 'critical-care'
       ? getCriticalCareScenario(scenarioId)
-      : getScenario(scenarioId);
+      : moduleRoute === 'cardiology'
+        ? getCardiologyScenario(scenarioId)
+        : moduleRoute === 'respiratory-medicine'
+          ? getRespiratoryMedicineScenario(scenarioId)
+          : moduleRoute === 'pediatrics'
+            ? getPediatricsScenario(scenarioId)
+            : getScenario(scenarioId);
   if (!scenario) throw new Error(`No scenario with id ${scenarioId}`);
   return {
     '@context': 'https://schema.org',
@@ -105,7 +115,7 @@ export function learningResourceJsonLd(
 export function structuredDataFor(types: readonly string[], path?: string): JsonLd[] {
   const out: JsonLd[] = [];
   const scenarioMatch = path?.match(
-    /^\/(anesthesia|emergency-medicine|critical-care)\/scenario\/([^/]+)$/,
+    /^\/(anesthesia|emergency-medicine|critical-care|cardiology|respiratory-medicine|pediatrics)\/scenario\/([^/]+)$/,
   );
   const moduleRoute = scenarioMatch?.[1] as ScenarioModuleRoute | undefined;
   const scenarioId = scenarioMatch?.[2];

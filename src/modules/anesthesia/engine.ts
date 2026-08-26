@@ -278,6 +278,17 @@ const PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION_BLOCKED_ACTION_TYPES = new Set([
   'opioid-toxicity-response', 'adult-asthma-response', 'acute-severe-asthma-response',
   'emergency-anaphylaxis-response',
 ]);
+const PEDIATRIC_INJURY_SAFEGUARDING_BLOCKED_ACTION_TYPES = new Set([
+  ...[...PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES]
+    .filter((type) => type !== 'pediatric-injury-safeguarding-escalation-response'),
+  'pediatric-foreign-body-airway-obstruction-response',
+  'pediatric-bradycardic-arrest-response', 'pediatric-anaphylaxis-response',
+  'pediatric-sepsis-response', 'pediatric-septic-shock-response',
+  'pediatric-dehydration-response', 'pediatric-status-epilepticus-response',
+  'trauma-primary-survey-response', 'hemorrhagic-shock-assessment',
+  'undifferentiated-shock-assessment', 'septic-shock-assessment',
+  'septic-shock-resuscitation-response', 'emergency-anaphylaxis-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1019,6 +1030,12 @@ export class AnesthesiaEngine {
   private pediatricFbaoResponsivePathwayAtTick: number | null = null;
   private pediatricFbaoUnresponsivePathwayAtTick: number | null = null;
   private pediatricFbaoHandoffAtTick: number | null = null;
+  private pediatricSafeguardingTrajectoryAtTick: number | null = null;
+  private pediatricSafeguardingConcernAtTick: number | null = null;
+  private pediatricSafeguardingOwnershipAtTick: number | null = null;
+  private pediatricSafeguardingAlternativesAtTick: number | null = null;
+  private pediatricSafeguardingLaterSafetyAtTick: number | null = null;
+  private pediatricSafeguardingHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1562,6 +1579,20 @@ export class AnesthesiaEngine {
       && PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `pediatric-fbao-generic-action-refused-${this.currentTick}`,
         'This pediatric foreign-body airway-obstruction lesson exposes no generic airway maneuver, ventilation, oxygen, laryngoscopy, device, suction, medication, fluid, compression, arrest-drug, shock, rhythm, adult-airway, or adjacent-scenario action. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const pediatricSafeguarding = this.scenario.metadata.id
+      === 'pediatric-injury-safeguarding-escalation'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-injury-safeguarding-escalation-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-injury-safeguarding-escalation-reassessment-boundary');
+    if (pediatricSafeguarding
+      && PEDIATRIC_INJURY_SAFEGUARDING_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment',
+        `pediatric-safeguarding-generic-action-refused-${this.currentTick}`,
+        'This safeguarding lesson exposes no generic examination, interview, free text, photograph, body map, test, imaging, diagnosis, report filing, agency, jurisdiction, confrontation, separation, custody, treatment, procedure, disposition, or adjacent-scenario action. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -7840,6 +7871,172 @@ export class AnesthesiaEngine {
             prognosisPredicted: false, outcomePredicted: false });
         break;
       }
+      case 'pediatric-injury-safeguarding-escalation-response': {
+        const response = typeof action.payload.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id
+          === 'pediatric-injury-safeguarding-escalation'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-injury-safeguarding-escalation-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-injury-safeguarding-escalation-reassessment-boundary');
+        const valid = ['reconcile-pediatric-injury-development-history-and-whole-child',
+          'recognize-pediatric-injury-safeguarding-concern-without-diagnosis',
+          'activate-pediatric-injury-qualified-safeguarding-and-immediate-safety-ownership',
+          'review-pediatric-injury-medical-alternatives-and-information-boundary',
+          'review-pediatric-injury-later-safety-state',
+          'handoff-pediatric-injury-unresolved-safeguarding-risk'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment',
+            `pediatric-safeguarding-response-refused-${this.currentTick}`,
+            supported
+              ? 'The safeguarding action was not one of the listed choices. No supplied or injected sensitive text was retained.'
+              : 'These safeguarding choices are available only in the exact declared Pediatrics lesson.');
+          break;
+        }
+        if (response === 'reconcile-pediatric-injury-development-history-and-whole-child') {
+          if (this.pediatricSafeguardingTrajectoryAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-safeguarding-trajectory-refused-${this.currentTick}`,
+              'The supplied development, history, injury, physiology, immediate-safety, and whole-child facts were already reconciled.');
+            break;
+          }
+          this.pediatricSafeguardingTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-safeguarding-trajectory-reconciled-${this.currentTick}`,
+            'The supplied record describes a mobile 2-year-old with stable breathing and circulation, fixed objective injury locations, and a summarized mechanism that does not adequately account for the full distribution. No name, verbatim disclosure, learner examination, interview, photograph, diagnosis, credibility judgment, or treatment is recorded.',
+            { stablePhysiologyAuthored: true, independentlyMobileAuthored: true,
+              concerningInjuryPatternAuthored: true,
+              suppliedHistoryDevelopmentMismatchAuthored: true,
+              identifyingInformationCollected: false, freeTextDisclosureCollected: false,
+              patientExaminedByLearner: false, diagnosisMadeByLearner: false });
+          break;
+        }
+        if (this.pediatricSafeguardingTrajectoryAtTick === null) {
+          this.log('warning', 'assessment',
+            `pediatric-safeguarding-trajectory-order-refused-${this.currentTick}`,
+            'Reconcile the supplied whole-child record before recognizing concern.');
+          break;
+        }
+        if (response === 'recognize-pediatric-injury-safeguarding-concern-without-diagnosis') {
+          if (this.pediatricSafeguardingConcernAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-safeguarding-concern-refused-${this.currentTick}`,
+              'The supplied safeguarding concern was already recognized without diagnostic closure.');
+            break;
+          }
+          this.pediatricSafeguardingConcernAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-safeguarding-concern-recognized-${this.currentTick}`,
+            'The supplied injury distribution and explanation boundary require qualified medical and safeguarding evaluation. This is concern recognition, not an abuse diagnosis, perpetrator attribution, caregiver credibility ruling, medical-mimic exclusion, or legal conclusion.',
+            { safeguardingConcernAuthored: true, abuseFinallyProven: false,
+              perpetratorIdentified: false, caregiverCredibilityDetermined: false,
+              medicalMimicExcluded: false, diagnosisMadeByLearner: false });
+          break;
+        }
+        if (this.pediatricSafeguardingConcernAtTick === null) {
+          this.log('warning', 'assessment',
+            `pediatric-safeguarding-concern-order-refused-${this.currentTick}`,
+            'Recognize the supplied concern without diagnosis before activating qualified care.');
+          break;
+        }
+        if (response
+          === 'activate-pediatric-injury-qualified-safeguarding-and-immediate-safety-ownership') {
+          if (this.pediatricSafeguardingOwnershipAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-safeguarding-ownership-refused-${this.currentTick}`,
+              'Qualified safeguarding and immediate-safety ownership are already active.');
+            break;
+          }
+          this.pediatricSafeguardingOwnershipAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-safeguarding-qualified-ownership-activated-${this.currentTick}`,
+            'Qualified pediatric and safeguarding teams now own immediate safety, protected assessment, and locally governed escalation. The learner did not interview, confront, separate, identify, contact an agency, choose a jurisdiction, file a report, determine custody or disposition, or perform treatment.',
+            { qualifiedSafeguardingOwnershipActive: true,
+              qualifiedImmediateSafetyOwnershipActive: true,
+              agencyContactedByLearner: false, reportSubmittedByLearner: false,
+              jurisdictionSelectedByLearner: false, dispositionDetermined: false });
+          break;
+        }
+        if (this.pediatricSafeguardingOwnershipAtTick === null) {
+          this.log('warning', 'assessment',
+            `pediatric-safeguarding-ownership-order-refused-${this.currentTick}`,
+            'Activate qualified safeguarding and immediate-safety ownership before reviewing alternatives.');
+          break;
+        }
+        if (response === 'review-pediatric-injury-medical-alternatives-and-information-boundary') {
+          if (this.pediatricSafeguardingAlternativesAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-safeguarding-alternatives-refused-${this.currentTick}`,
+              'The medical-alternative and information boundary was already reviewed.');
+            break;
+          }
+          this.pediatricSafeguardingAlternativesAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-safeguarding-alternatives-and-information-boundary-reviewed-${this.currentTick}`,
+            'Injury needs, accidental and medical alternatives, occult injury, history limits, need-to-know information sharing, other-child risk, and the local safeguarding pathway remain qualified-team work. No sensitive free text, identity, disclosure, image, test, diagnosis, referral, legal action, or disposition is learner-generated.',
+            { medicalAlternativesRemainOpen: true, occultInjuryExcluded: false,
+              identifyingInformationCollected: false, freeTextDisclosureCollected: false,
+              testAcquiredByLearner: false, imagingAcquiredByLearner: false,
+              reportingThresholdDeterminedByLearner: false });
+          break;
+        }
+        if (this.pediatricSafeguardingAlternativesAtTick === null) {
+          this.log('warning', 'assessment',
+            `pediatric-safeguarding-alternatives-order-refused-${this.currentTick}`,
+            'Review the open medical alternatives and protected-information boundary first.');
+          break;
+        }
+        if (response === 'review-pediatric-injury-later-safety-state') {
+          if (this.currentTick <= this.pediatricSafeguardingAlternativesAtTick) {
+            this.log('warning', 'assessment',
+              `pediatric-safeguarding-later-safety-time-refused-${this.currentTick}`,
+              'Allow elapsed simulated time before reviewing the fixed later safety state.');
+            break;
+          }
+          if (this.pediatricSafeguardingLaterSafetyAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-safeguarding-later-safety-refused-${this.currentTick}`,
+              'The fixed later safety state was already reviewed.');
+            break;
+          }
+          this.pediatricSafeguardingLaterSafetyAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-safeguarding-later-safety-reviewed-${this.currentTick}`,
+            'At the fixed later checkpoint the child remains physiologically stable in a supervised clinical setting with named qualified ownership. Stability does not prove safety, exclude occult injury or a medical alternative, establish abuse, complete a referral, or determine discharge or outcome.',
+            { laterChildRemainsInQualifiedCareAuthored: true,
+              stablePhysiologyAuthored: true, immediateSafetyProven: false,
+              occultInjuryExcluded: false, abuseFinallyProven: false,
+              dischargeReadinessProven: false, outcomePredicted: false });
+          break;
+        }
+        if (this.pediatricSafeguardingLaterSafetyAtTick === null) {
+          this.log('warning', 'assessment',
+            `pediatric-safeguarding-later-safety-order-refused-${this.currentTick}`,
+            'Review the fixed later safety state before handoff.');
+          break;
+        }
+        if (this.currentTick <= this.pediatricSafeguardingLaterSafetyAtTick) {
+          this.log('warning', 'assessment',
+            `pediatric-safeguarding-handoff-time-refused-${this.currentTick}`,
+            'Allow another simulated tick before handing off unresolved safeguarding risk.');
+          break;
+        }
+        if (this.pediatricSafeguardingHandoffAtTick !== null) {
+          this.log('warning', 'assessment',
+            `pediatric-safeguarding-handoff-refused-${this.currentTick}`,
+            'The unresolved safeguarding-risk handoff was already recorded.');
+          break;
+        }
+        this.pediatricSafeguardingHandoffAtTick = this.currentTick;
+        this.log('critical', 'assessment',
+          `pediatric-safeguarding-unresolved-risk-handoff-recorded-${this.currentTick}`,
+          'The supplied facts, concern without diagnosis, protected qualified ownership, open medical alternatives, information boundary, immediate-safety work, and local escalation remain active at handoff. Abuse, perpetrator identity, legal action, custody, durable safety, disposition, prognosis, and outcome remain undeclared.',
+          { abuseFinallyProven: false, perpetratorIdentified: false,
+            immediateSafetyProven: false, futureHarmExcluded: false,
+            dispositionDetermined: false, prognosisPredicted: false,
+            outcomePredicted: false });
+        break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -10864,6 +11061,21 @@ export class AnesthesiaEngine {
         meanArterialMmHg: unresponsive ? 0 : severeResponsive ? 73 : 76,
         coreTemperatureC: 36.7 };
     }
+    if (this.scenario.metadata.id === 'pediatric-injury-safeguarding-escalation'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-injury-safeguarding-escalation-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-injury-safeguarding-escalation-reassessment-boundary')) {
+      const later = this.pediatricSafeguardingLaterSafetyAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: later ? 104 : 108,
+        respiratoryRateBpm: 22,
+        spo2Percent: 99,
+        systolicMmHg: later ? 98 : 96,
+        diastolicMmHg: later ? 62 : 60,
+        meanArterialMmHg: later ? 74 : 72,
+        coreTemperatureC: 36.8 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -13080,6 +13292,90 @@ export class AnesthesiaEngine {
               durableRecoveryProven: false as const, recurrenceExcluded: false as const,
               dischargeReadinessProven: false as const,
               dispositionDetermined: false as const, prognosisPredicted: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'pediatric-injury-safeguarding-escalation'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-injury-safeguarding-escalation-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-injury-safeguarding-escalation-reassessment-boundary') ? {
+            pediatricInjurySafeguardingAssessment: {
+              trajectoryAtTick: this.pediatricSafeguardingTrajectoryAtTick,
+              concernAtTick: this.pediatricSafeguardingConcernAtTick,
+              safeguardingAtTick: this.pediatricSafeguardingOwnershipAtTick,
+              alternativesAtTick: this.pediatricSafeguardingAlternativesAtTick,
+              laterSafetyAtTick: this.pediatricSafeguardingLaterSafetyAtTick,
+              handoffAtTick: this.pediatricSafeguardingHandoffAtTick,
+              initialPulsePresent: true as const,
+              spontaneousBreathingAuthored: true as const,
+              stablePhysiologyAuthored: true as const,
+              independentlyMobileAuthored: true as const,
+              concerningInjuryPatternAuthored: true as const,
+              suppliedHistoryDevelopmentMismatchAuthored: true as const,
+              safeguardingConcernAuthored: this.pediatricSafeguardingConcernAtTick !== null,
+              qualifiedSafeguardingOwnershipActive:
+                this.pediatricSafeguardingOwnershipAtTick !== null,
+              qualifiedImmediateSafetyOwnershipActive:
+                this.pediatricSafeguardingOwnershipAtTick !== null,
+              medicalAlternativesRemainOpen: true as const,
+              laterChildRemainsInQualifiedCareAuthored:
+                this.pediatricSafeguardingLaterSafetyAtTick !== null,
+              patientExaminedByLearner: false as const,
+              developmentAssessedByLearner: false as const,
+              historyTakenByLearner: false as const,
+              caregiverInterviewedByLearner: false as const,
+              disclosureSolicitedByLearner: false as const,
+              identifyingInformationCollected: false as const,
+              freeTextDisclosureCollected: false as const,
+              bruiseIdentifiedByLearner: false as const,
+              bruiseDatedByLearner: false as const,
+              photographCapturedByLearner: false as const,
+              bodyMapCreatedByLearner: false as const,
+              screeningRuleCalculatedByLearner: false as const,
+              testAcquiredByLearner: false as const,
+              testInterpretedByLearner: false as const,
+              imagingAcquiredByLearner: false as const,
+              imagingInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const,
+              abuseDiagnosedByLearner: false as const,
+              perpetratorNamedByLearner: false as const,
+              caregiverCredibilityJudgedByLearner: false as const,
+              caregiverConfrontedByLearner: false as const,
+              caregiverSeparatedByLearner: false as const,
+              reportingThresholdDeterminedByLearner: false as const,
+              jurisdictionSelectedByLearner: false as const,
+              agencySelectedByLearner: false as const,
+              agencyContactedByLearner: false as const,
+              referralSubmittedByLearner: false as const,
+              reportSubmittedByLearner: false as const,
+              custodyActionSelectedByLearner: false as const,
+              childRemovedByLearner: false as const,
+              safetyPlanDeterminedByLearner: false as const,
+              monitoringAcquiredByLearner: false as const,
+              drugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const,
+              routeSelectedByLearner: false as const,
+              accessPlacedByLearner: false as const,
+              fluidSelectedByLearner: false as const,
+              oxygenSelectedByLearner: false as const,
+              deviceSelectedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              procedurePerformedByLearner: false as const,
+              abuseFinallyProven: false as const,
+              perpetratorIdentified: false as const,
+              caregiverCredibilityDetermined: false as const,
+              medicalMimicExcluded: false as const,
+              occultInjuryExcluded: false as const,
+              immediateSafetyProven: false as const,
+              futureHarmExcluded: false as const,
+              referralCompletionProven: false as const,
+              legalReportingCompleted: false as const,
+              custodyDetermined: false as const,
+              durableSafetyProven: false as const,
+              dischargeReadinessProven: false as const,
+              dispositionDetermined: false as const,
+              prognosisPredicted: false as const,
               outcomePredicted: false as const,
             },
           } : {}),

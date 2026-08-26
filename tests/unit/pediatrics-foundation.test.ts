@@ -12,11 +12,11 @@ import {
 const json = (path: string) => JSON.parse(readFileSync(join(process.cwd(), path), 'utf8'));
 
 describe('Pediatrics module foundation', () => {
-  it('registers fifteen available, bounded labs behind an exact module contract', () => {
+  it('registers sixteen available, bounded labs behind an exact module contract', () => {
     expect(getModule('pediatrics')).toMatchObject({
       route: 'pediatrics', displayName: 'Pediatrics', status: 'available',
     });
-    expect(PEDIATRICS_SCENARIOS).toHaveLength(15);
+    expect(PEDIATRICS_SCENARIOS).toHaveLength(16);
     expect(DEFAULT_PEDIATRICS_SCENARIO_ID).toBe('pediatric-respiratory-distress');
     expect(getPediatricsScenario(DEFAULT_PEDIATRICS_SCENARIO_ID))
       .toBe(PEDIATRICS_SCENARIOS[0]);
@@ -47,6 +47,8 @@ describe('Pediatrics module foundation', () => {
       '/pediatrics/scenario/pediatric-bradycardic-arrest')!;
     const foreignBodyAirwayObstructionRoute = routeFor(
       '/pediatrics/scenario/pediatric-foreign-body-airway-obstruction')!;
+    const safeguardingRoute = routeFor(
+      '/pediatrics/scenario/pediatric-injury-safeguarding-escalation')!;
     expect(moduleRoute).toMatchObject({ indexable: true, heading: 'Pediatrics simulator',
       structuredData: ['SoftwareApplication'] });
     expect(scenarioRoute).toMatchObject({ indexable: true,
@@ -168,6 +170,14 @@ describe('Pediatrics module foundation', () => {
     expect(foreignBodyAirwayObstructionRoute.description.length).toBeLessThanOrEqual(160);
     expect(canonicalUrl(foreignBodyAirwayObstructionRoute.path)).toBe(
       'https://opensimlab.com/pediatrics/scenario/pediatric-foreign-body-airway-obstruction');
+    expect(safeguardingRoute).toMatchObject({ indexable: true,
+      heading: 'Pediatric safeguarding concern', structuredData: ['LearningResource'] });
+    expect(safeguardingRoute.description).toBe(
+      'A 2-year-old girl for calm injury-history reconciliation, safeguarding concern recognition, qualified escalation, and protected handoff.',
+    );
+    expect(safeguardingRoute.description.length).toBeLessThanOrEqual(160);
+    expect(canonicalUrl(safeguardingRoute.path)).toBe(
+      'https://opensimlab.com/pediatrics/scenario/pediatric-injury-safeguarding-escalation');
   });
 
   it('publishes exact completion, quality, maturity, and report records', () => {
@@ -175,9 +185,9 @@ describe('Pediatrics module foundation', () => {
     const quality = json('public/catalog/pediatrics-quality-audit.json');
     const maturity = json('public/catalog/pediatrics-maturity.json');
     const reports = json('public/catalog/scenario-report-catalog.json');
-    expect(completion).toMatchObject({ moduleId: 'pediatrics', scenarioCount: 15 });
-    expect(quality).toMatchObject({ scenarioCount: 15 });
-    expect(maturity).toMatchObject({ recordCount: 15 });
+    expect(completion).toMatchObject({ moduleId: 'pediatrics', scenarioCount: 16 });
+    expect(quality).toMatchObject({ scenarioCount: 16 });
+    expect(maturity).toMatchObject({ recordCount: 16 });
     expect(reports.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-respiratory-distress',
       contentVersion: '0.1.0', maturity: 'draft',
@@ -238,6 +248,10 @@ describe('Pediatrics module foundation', () => {
       moduleId: 'pediatrics', scenarioId: 'pediatric-foreign-body-airway-obstruction',
       contentVersion: '0.1.0', maturity: 'draft',
     }));
+    expect(reports.scenarios).toContainEqual(expect.objectContaining({
+      moduleId: 'pediatrics', scenarioId: 'pediatric-injury-safeguarding-escalation',
+      contentVersion: '0.1.0', maturity: 'draft',
+    }));
     expect(reviewableItems()).toContainEqual(expect.objectContaining({
       id: 'pediatric-respiratory-distress', domains: ['pediatrics'],
     }));
@@ -282,6 +296,9 @@ describe('Pediatrics module foundation', () => {
     }));
     expect(reviewableItems()).toContainEqual(expect.objectContaining({
       id: 'pediatric-foreign-body-airway-obstruction', domains: ['pediatrics'],
+    }));
+    expect(reviewableItems()).toContainEqual(expect.objectContaining({
+      id: 'pediatric-injury-safeguarding-escalation', domains: ['pediatrics'],
     }));
   });
 });

@@ -1944,12 +1944,38 @@ disposition, recovery, ROSC, or outcome controls. Because AHA and European/UK gu
 opening sequence after unresponsiveness, the learner surface records qualified pathway ownership
 rather than presenting one sequence as universal.
 
+### Wave D pediatrics slice 16: safeguarding concern
+
+The sixteenth Pediatrics lab owns recognition and protected escalation when a stable child's supplied
+injury pattern is not adequately explained, without diagnosing abuse. A previously well, reportedly
+developmentally typical and independently mobile 2-year-old girl weighing 12 kg has a reported single
+forward trip onto carpet. She is awake, interactive, warm, and physiologically stable. A fixed
+qualified examination supplies one posterior-ear bruise, three similarly shaped clustered lateral-
+torso bruises, and two anterior-shin bruises. A fixed experienced-team statement says the single fall
+does not adequately account for the ear and torso distribution. This establishes a safeguarding
+concern requiring further evaluation, not abuse, perpetrator identity, or a credibility ruling.
+
+The learner reconciles development, history, injuries, immediate safety, physiology, and the whole
+child; recognizes concern without diagnosis; activates qualified pediatric safeguarding and
+immediate-safety ownership; then reviews injury needs, medical alternatives, history limits,
+information sharing, and the local-pathway boundary. A strict later report preserves
+stable physiology in a supervised clinical setting with named ownership while injury assessment,
+medical alternatives, information gathering, immediate safety, other-child risk, and locally
+governed multi-agency work remain active before another elapsed unresolved-risk handoff. The lab does
+not examine or interview; identify, measure, photograph, map, or date bruises; calculate
+TEN-4-FACESp; acquire or interpret tests or imaging; diagnose abuse; identify a perpetrator; judge
+credibility; confront or separate a caregiver; collect clinical or sensitive free text through the
+scenario action controls; submit a referral or
+report; select jurisdiction or law; decide custody or disposition; perform a procedure; treat;
+predict prognosis; or report outcome. Stable physiology does not establish reassurance or discharge
+readiness, and reporting duties remain locally governed.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic
 shock; dehydration with hypovolemia; diabetic ketoacidosis; hypoglycemic seizure; febrile seizure;
 status epilepticus; anaphylaxis; supraventricular tachycardia; bradycardic arrest; foreign-body airway
-obstruction; nonaccidental-injury escalation boundary.
+obstruction; safeguarding concern escalation boundary.
 
 #### Obstetrics: 15
 

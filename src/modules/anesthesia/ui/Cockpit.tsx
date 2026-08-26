@@ -1019,6 +1019,9 @@ export function Cockpit({
           onPediatricForeignBodyAirwayObstructionResponse={(action) => session.act({
             type: 'pediatric-foreign-body-airway-obstruction-response', payload: { action },
           })}
+          onPediatricInjurySafeguardingResponse={(action) => session.act({
+            type: 'pediatric-injury-safeguarding-escalation-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

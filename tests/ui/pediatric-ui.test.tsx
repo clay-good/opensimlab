@@ -19,6 +19,7 @@ import { PEDIATRIC_STATUS_EPILEPTICUS } from '../../src/modules/pediatrics/scena
 import { PEDIATRIC_ANAPHYLAXIS } from '../../src/modules/pediatrics/scenarios/pediatric-anaphylaxis';
 import { PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA } from '../../src/modules/pediatrics/scenarios/pediatric-supraventricular-tachycardia';
 import { PEDIATRIC_BRADYCARDIC_ARREST } from '../../src/modules/pediatrics/scenarios/pediatric-bradycardic-arrest';
+import { PEDIATRIC_INJURY_SAFEGUARDING_ESCALATION } from '../../src/modules/pediatrics/scenarios/pediatric-injury-safeguarding-escalation';
 import { PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION } from '../../src/modules/pediatrics/scenarios/pediatric-foreign-body-airway-obstruction';
 import { PrerenderedBody } from '../../src/routes/Prerendered';
 import { ROUTES } from '../../src/routes/routes';
@@ -711,6 +712,111 @@ describe('Requirement: pediatric foreign-body obstruction keeps one calm action 
           event.target === target ? { ...event, target: `${target}-suffix` } : event) };
       expect(crisisResponseAvailability(drifted, [])
         .hasPediatricForeignBodyAirwayObstructionResponse).toBe(false);
+    }
+  });
+});
+
+describe('Requirement: pediatric safeguarding stays calm, bounded, and input-free', () => {
+  let container: HTMLDivElement; let root: Root;
+  beforeEach(() => {
+    (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+    document.documentElement.style.width = '320px';
+    container = document.createElement('div'); document.body.appendChild(container);
+    const style = document.createElement('style');
+    style.dataset.testStyles = 'pediatric-safeguarding-ui';
+    style.textContent = [readFileSync(join(process.cwd(), 'src/platform/ui/components.css'), 'utf8'),
+      readFileSync(join(process.cwd(), 'src/modules/anesthesia/ui/cockpit.css'), 'utf8')].join('\n');
+    document.head.appendChild(style); root = createRoot(container);
+  });
+  afterEach(() => {
+    act(() => root.unmount()); container.remove(); document.documentElement.style.width = '';
+    document.querySelector('style[data-test-styles="pediatric-safeguarding-ui"]')?.remove();
+  });
+
+  const assessment = (step = 0) => ({
+    trajectoryAtTick: step > 0 ? 1 : null, concernAtTick: step > 1 ? 2 : null,
+    safeguardingAtTick: step > 2 ? 3 : null, alternativesAtTick: step > 3 ? 4 : null,
+    laterSafetyAtTick: step > 4 ? 5 : null, handoffAtTick: step > 5 ? 6 : null,
+  });
+  function safeguardingProps(step = 0, onAction = vi.fn()): ActionCockpitProps {
+    return { scenario: PEDIATRIC_INJURY_SAFEGUARDING_ESCALATION, region: UNITED_STATES,
+      infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+        lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0,
+        dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false,
+        pediatricInjurySafeguardingAssessment: assessment(step) }, lastExposure: null,
+      syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 84,
+        respiratoryRateBpm: 22, fio2: 0.21, peep: 0, delivering: false,
+        sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 }, intubated: false,
+      airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0,
+      airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0,
+      helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {},
+      onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {},
+      onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {},
+      onCallForHelp: () => {}, onAirwayDevice: () => {}, onEpinephrine: () => {},
+      onDantrolene: () => {}, onActiveCooling: () => {},
+      onPediatricInjurySafeguardingResponse: onAction, onDrugCard: () => {} };
+  }
+
+  it('shows one calm action at every stage in two labelled cards', () => {
+    const labels = ['Review child + supplied record', 'Recognize concern without diagnosing',
+      'Activate qualified safeguarding care', 'Review alternatives + privacy',
+      'Review the team safety checkpoint', 'Hand off concern + open questions'];
+    const statuses = ['Recognition, qualified ownership, and privacy review proceed in order.',
+      'Recognition, qualified ownership, and privacy review proceed in order.',
+      'Recognition, qualified ownership, and privacy review proceed in order.',
+      'Qualified safeguarding ownership is active · complete the protected-record review',
+      'Review the fixed multidisciplinary safety checkpoint.',
+      'Qualified safety coordination remains active. Diagnosis, legal outcome, and disposition remain open.',
+      'Active concern, privacy boundaries, and owners handed off.'];
+    for (let step = 0; step <= labels.length; step += 1) {
+      act(() => root.render(createElement(ActionCockpit, safeguardingProps(step))));
+      const cards = [...container.querySelectorAll('.tray-grid > section.syringe')];
+      expect(cards).toHaveLength(2);
+      expect(cards.map((card) => card.getAttribute('aria-labelledby'))).toEqual([
+        'pediatric-safeguarding-pattern-title', 'pediatric-safeguarding-plan-title']);
+      const liveStatuses = container.querySelectorAll('[role="status"]');
+      expect(liveStatuses).toHaveLength(1);
+      expect(liveStatuses[0]?.textContent?.trim()).toBe(statuses[step]);
+      const buttons = [...container.querySelectorAll('.tray-grid button')];
+      expect(buttons).toHaveLength([1, 1, 1, 1, 1, 1, 0][step]!);
+      if (step < labels.length) expect(buttons[0]?.textContent?.trim()).toBe(labels[step]);
+      for (const action of buttons) expect(getComputedStyle(action).minBlockSize).toBe('44px');
+    }
+    expect(container.textContent).toContain('2 years · 12 kg · medically stable · supplied record');
+  });
+
+  it('dispatches the exact action while exposing no forensic or reporting input', () => {
+    const onAction = vi.fn();
+    act(() => root.render(createElement(ActionCockpit, safeguardingProps(1, onAction))));
+    act(() => [...container.querySelectorAll('button')]
+      .find((entry) => entry.textContent?.trim() === 'Recognize concern without diagnosing')
+      ?.click());
+    expect(onAction).toHaveBeenCalledWith(
+      'recognize-pediatric-injury-safeguarding-concern-without-diagnosis');
+    act(() => root.render(createElement(ActionCockpit, safeguardingProps(5))));
+    expect(container.querySelectorAll('.tray-grid input, .tray-grid textarea, .tray-grid select'))
+      .toHaveLength(0);
+    const labels = [...container.querySelectorAll('.tray-grid button')]
+      .map((entry) => entry.textContent ?? '').join(' ');
+    expect(labels).not.toMatch(/interview|question child|confront|accuse|photograph|body map|report to|CPS|police|law enforcement|remove child|placement|discharge/i);
+    expect(container.textContent).toContain('does not prove abuse');
+  });
+
+  it('requires the exact safeguarding scenario and both narrative targets', () => {
+    expect(crisisResponseAvailability(PEDIATRIC_INJURY_SAFEGUARDING_ESCALATION, [])
+      .hasPediatricInjurySafeguardingResponse).toBe(true);
+    const wrongId = { ...PEDIATRIC_INJURY_SAFEGUARDING_ESCALATION, metadata: {
+      ...PEDIATRIC_INJURY_SAFEGUARDING_ESCALATION.metadata, id: 'not-safeguarding' } };
+    expect(crisisResponseAvailability(wrongId, []).hasPediatricInjurySafeguardingResponse)
+      .toBe(false);
+    for (const target of ['pediatric-injury-safeguarding-escalation-reassessment',
+      'pediatric-injury-safeguarding-escalation-reassessment-boundary']) {
+      const drifted = { ...PEDIATRIC_INJURY_SAFEGUARDING_ESCALATION,
+        timeline: PEDIATRIC_INJURY_SAFEGUARDING_ESCALATION.timeline.map((event) =>
+          event.target === target ? { ...event, target: `${target}-suffix` } : event) };
+      expect(crisisResponseAvailability(drifted, []).hasPediatricInjurySafeguardingResponse)
+        .toBe(false);
     }
   });
 });

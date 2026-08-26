@@ -1485,6 +1485,17 @@
         "GB"
       ],
       "fidelityClass": "state_transition"
+    },
+    {
+      "scenarioId": "pediatric-injury-safeguarding-escalation",
+      "contentVersion": "0.1.0",
+      "moduleId": "pediatrics",
+      "maturity": "draft",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition"
     }
   ]
 }

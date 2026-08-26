@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: pediatric foreign-body airway-obstruction state has protocol version 131', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(131);
+  it('Scenario: pediatric injury-safeguarding state has protocol version 132', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(132);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

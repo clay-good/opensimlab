@@ -3815,6 +3815,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use direct patient findings, current local pediatric resuscitation guidance, qualified responders, effective-cough surveillance without harmful early maneuvers, rapid severe-obstruction care, and immediate unresponsive-child CPR and airway-check care.',
     briefIn: ['pediatric-foreign-body-airway-obstruction'],
   },
+  {
+    id: 'pediatric-injury-safeguarding-history-injuries-safety-and-later-state-are-authored',
+    headline: 'The history, development, injuries, medical snapshots, safety state, qualified ownership, and later report are authored.',
+    simplification: 'Fixed reports stand in for child-centered history, whole-child and skin examination, injury documentation, medical assessment, immediate-safety review, information gathering, safeguarding consultation, and serial reassessment.',
+    whereItMisleads: 'Treating the fictional history, injury locations or sizes, negative snapshots, unsuitable-explanation statement, later stability, or named ownership as learner-acquired evidence, confirmed abuse, perpetrator attribution, a credibility ruling, occult-harm exclusion, or predicted outcome.',
+    correctUnderstanding: 'Real care requires direct child-centered assessment, objective documentation, medical and injury evaluation, immediate-safety work, qualified safeguarding expertise, locally governed information sharing, and patient-specific reassessment without premature diagnosis.',
+    briefIn: ['pediatric-injury-safeguarding-escalation'],
+  },
+  {
+    id: 'pediatric-injury-safeguarding-controls-reconcile-recognize-activate-review-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, concern recognition, qualified ownership, bounded review, later safety review, and handoff only.',
+    simplification: 'Six accepted actions stand in for experienced pediatric, emergency, nursing, child-protection, safeguarding, social-care, laboratory, imaging, legal, and caregiver assessment, support, information gathering, escalation, and handoff.',
+    whereItMisleads: 'Equating button order with examination, interviewing, documentation quality, bruise recognition or dating, screening-rule use, diagnosis, investigation, referral, reporting, legal compliance, caregiver communication, team performance, disposition, or safeguarding competence.',
+    correctUnderstanding: 'Actual care requires the child, trained teams, current local safeguarding procedures and law, verified patient-specific information, qualified medical and safety assessment, careful communication, appropriate information sharing, and continuous protected ownership.',
+    briefIn: ['pediatric-injury-safeguarding-escalation'],
+  },
+  {
+    id: 'no-live-pediatric-injury-safeguarding-exam-interview-diagnosis-reporting-procedure-disposition-or-outcome',
+    headline: 'The lab does not examine or interview, diagnose abuse, submit a report, perform a procedure, decide disposition, or report outcome.',
+    simplification: 'No live examination, interview, sensitive free text, photography, body map, bruise identification or dating, TEN-4-FACESp calculation, test or imaging acquisition or interpretation, diagnosis, perpetrator identification, credibility judgment, confrontation, caregiver separation, referral or report submission, jurisdiction or law selection, custody action, procedure, treatment, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Diagnosing abuse from a screening pattern, treating stable physiology as reassurance, inferring bruise age from color, treating fixed negatives as exclusions, confronting a caregiver, assuming one universal mandatory-reporting rule, or using completion as clinical or safeguarding competence.',
+    correctUnderstanding: 'Use direct patient findings, objective records, qualified multidisciplinary safeguarding and medical teams, applicable local law and procedures, child-centered communication, immediate-safety planning, and locally governed reporting and information sharing.',
+    briefIn: ['pediatric-injury-safeguarding-escalation'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

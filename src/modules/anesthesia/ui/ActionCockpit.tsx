@@ -1095,6 +1095,11 @@ export interface ActionCockpitProps {
       readonly severeResponsiveAtTick: number | null; readonly responsivePathwayAtTick: number | null;
       readonly unresponsivePathwayAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly pediatricInjurySafeguardingAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly concernAtTick: number | null;
+      readonly safeguardingAtTick: number | null; readonly alternativesAtTick: number | null;
+      readonly laterSafetyAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1795,6 +1800,14 @@ export interface ActionCockpitProps {
       | 'activate-pediatric-foreign-body-airway-obstruction-unresponsive-cpr-pathway'
       | 'handoff-pediatric-foreign-body-airway-obstruction-active-risk',
   ) => void;
+  readonly onPediatricInjurySafeguardingResponse?: (
+    action: 'reconcile-pediatric-injury-development-history-and-whole-child'
+      | 'recognize-pediatric-injury-safeguarding-concern-without-diagnosis'
+      | 'activate-pediatric-injury-qualified-safeguarding-and-immediate-safety-ownership'
+      | 'review-pediatric-injury-medical-alternatives-and-information-boundary'
+      | 'review-pediatric-injury-later-safety-state'
+      | 'handoff-pediatric-injury-unresolved-safeguarding-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2200,6 +2213,12 @@ export function crisisResponseAvailability(
         && event.target === 'pediatric-foreign-body-airway-obstruction-reassessment')
       && scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'pediatric-foreign-body-airway-obstruction-reassessment-boundary'),
+    hasPediatricInjurySafeguardingResponse:
+      scenario.metadata.id === 'pediatric-injury-safeguarding-escalation'
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-injury-safeguarding-escalation-reassessment')
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-injury-safeguarding-escalation-reassessment-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2369,6 +2388,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'pediatric-bradycardic-arrest-reassessment')
       || (event.type === 'narrative'
         && event.target === 'pediatric-foreign-body-airway-obstruction-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'pediatric-injury-safeguarding-escalation-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2440,6 +2461,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasPediatricSupraventricularTachycardiaResponse,
     hasPediatricBradycardicArrestResponse,
     hasPediatricForeignBodyAirwayObstructionResponse,
+    hasPediatricInjurySafeguardingResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2517,7 +2539,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPediatricHypoglycemicSeizureResponse || hasPediatricFebrileSeizureResponse
     || hasPediatricStatusEpilepticusResponse || hasPediatricAnaphylaxisResponse
     || hasPediatricSupraventricularTachycardiaResponse || hasPediatricBradycardicArrestResponse
-    || hasPediatricForeignBodyAirwayObstructionResponse;
+    || hasPediatricForeignBodyAirwayObstructionResponse || hasPediatricInjurySafeguardingResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2548,7 +2570,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasPediatricForeignBodyAirwayObstructionResponse
+  const responseTray = hasPediatricInjurySafeguardingResponse
+    ? { id: 'crisis', label: 'Pediatric safeguarding reassessment' } as const
+    : hasPediatricForeignBodyAirwayObstructionResponse
     ? { id: 'crisis', label: 'Pediatric airway-obstruction reassessment' } as const
     : hasPediatricBradycardicArrestResponse
     ? { id: 'crisis', label: 'Pediatric bradycardic-arrest reassessment' } as const
@@ -2838,6 +2862,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPediatricSupraventricularTachycardiaResponse
     || hasPediatricBradycardicArrestResponse
     || hasPediatricForeignBodyAirwayObstructionResponse
+    || hasPediatricInjurySafeguardingResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3559,6 +3584,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <PediatricForeignBodyAirwayObstructionTray
                 assessment={props.resuscitation.pediatricForeignBodyAirwayObstructionAssessment}
                 onAction={props.onPediatricForeignBodyAirwayObstructionResponse ?? (() => {})} />
+            )}
+            {hasPediatricInjurySafeguardingResponse && (
+              <PediatricInjurySafeguardingTray
+                assessment={props.resuscitation.pediatricInjurySafeguardingAssessment}
+                onAction={props.onPediatricInjurySafeguardingResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -9271,6 +9301,62 @@ function PediatricForeignBodyAirwayObstructionTray({ assessment, onAction }: {
           onClick={() => onAction('handoff-pediatric-foreign-body-airway-obstruction-active-risk')}>Hand off active obstruction risk</Button>}
       </div>
       <p className="field__hint">The fixed transition does not prove object or location, pulse status, cardiac arrest, treatment modality or effect, clearance, neurological recovery, prognosis, or outcome. Only a visible object is reviewed; no blind sweep is exposed.</p>
+    </section>
+  </div>;
+}
+
+function PediatricInjurySafeguardingTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricInjurySafeguardingAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onPediatricInjurySafeguardingResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const concern = assessment?.concernAtTick != null;
+  const safeguarding = assessment?.safeguardingAtTick != null;
+  const alternatives = assessment?.alternativesAtTick != null;
+  const laterSafety = assessment?.laterSafetyAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="pediatric-safeguarding-pattern-title">
+      <div id="pediatric-safeguarding-pattern-title" className="syringe__name">Hold concern without closing the story.</div>
+      <Badge kind="teaching">injury · development · history · alternatives · privacy · uncertainty</Badge>
+      <div className="syringe__meta">2 years · 12 kg · medically stable · supplied record</div>
+      <p className="syringe__remaining">
+        {alternatives ? 'Privacy, alternatives, and source-aware documentation remain protected'
+          : safeguarding ? 'Qualified safeguarding care is active · review alternatives and information boundaries'
+            : concern ? 'A safeguarding concern is present · abuse is not diagnosed'
+              : trajectory ? 'Now separate observed facts from explanation and inference'
+                : 'Start with the child’s health, development, injuries, and supplied history.'}
+      </p>
+      <div className="syringe__presets">
+        {!trajectory && <Button className="crisis-drug__action"
+          onClick={() => onAction('reconcile-pediatric-injury-development-history-and-whole-child')}>Review child + supplied record</Button>}
+        {trajectory && !concern && <Button className="crisis-drug__action"
+          onClick={() => onAction('recognize-pediatric-injury-safeguarding-concern-without-diagnosis')}>Recognize concern without diagnosing</Button>}
+        {concern && !safeguarding && <Button className="crisis-drug__action"
+          onClick={() => onAction('activate-pediatric-injury-qualified-safeguarding-and-immediate-safety-ownership')}>Activate qualified safeguarding care</Button>}
+        {safeguarding && !alternatives && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-pediatric-injury-medical-alternatives-and-information-boundary')}>Review alternatives + privacy</Button>}
+      </div>
+      <p className="field__hint">Qualified pediatric, safeguarding, nursing, social-work, and locally appropriate protection teams own examination, history, private-conversation decisions, documentation, testing, immediate safety, communication, and local duties. The scenario actions expose no interview, clinical free text, diagnosis, confrontation, accusation, photograph, clinical report filing, agency, legal, placement, or disposition control.</p>
+    </section>
+    <section className="syringe" aria-labelledby="pediatric-safeguarding-plan-title">
+      <div id="pediatric-safeguarding-plan-title" className="syringe__name">Safety is shared work.</div>
+      <Badge kind="teaching">child voice · privacy · immediate safety · medical needs · owners · handoff</Badge>
+      <div className="syringe__meta">fixed team checkpoint · concern remains open</div>
+      <p className="syringe__remaining" role="status">
+        {handoff ? 'Active concern, privacy boundaries, and owners handed off.'
+          : laterSafety ? 'Qualified safety coordination remains active. Diagnosis, legal outcome, and disposition remain open.'
+            : alternatives ? 'Review the fixed multidisciplinary safety checkpoint.'
+              : safeguarding ? 'Qualified safeguarding ownership is active · complete the protected-record review'
+                : 'Recognition, qualified ownership, and privacy review proceed in order.'}
+      </p>
+      <div className="syringe__presets">
+        {alternatives && !laterSafety && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-pediatric-injury-later-safety-state')}>Review the team safety checkpoint</Button>}
+        {laterSafety && !handoff && <Button className="crisis-drug__action"
+          onClick={() => onAction('handoff-pediatric-injury-unresolved-safeguarding-risk')}>Hand off concern + open questions</Button>}
+      </div>
+      <p className="field__hint">Team involvement does not prove abuse, identify a person responsible, establish a legal finding, close medical alternatives, or determine placement, disposition, prognosis, or outcome. Information remains need-to-know rather than absolutely confidential.</p>
     </section>
   </div>;
 }

@@ -4920,6 +4920,32 @@ export function objectiveFindings(
       const ordered = unresponsive && handoff && unresponsive.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved active obstruction, responsiveness, breathing, visible-object boundaries, qualified resuscitation, and named owners while leaving object, pulse status, arrest, clearance, recovery, prognosis, and outcome open.' : 'The active pediatric airway-obstruction handoff was absent or did not follow unresponsive care after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-pediatric-injury-development-history-and-whole-child',
+      'recognize-pediatric-injury-safeguarding-concern-without-diagnosis',
+      'activate-pediatric-injury-qualified-safeguarding-and-immediate-safety-ownership',
+      'review-pediatric-injury-medical-alternatives-and-information-boundary',
+      'review-pediatric-injury-later-safety-state',
+      'handoff-pediatric-injury-unresolved-safeguarding-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'pediatric-injury-safeguarding-escalation'
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pediatric-injury-safeguarding-escalation-reassessment')
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pediatric-injury-safeguarding-escalation-reassessment-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The pediatric safeguarding lesson was not active.' } satisfies ObjectiveFinding;
+      const trajectory = log.find((event) => /^pediatric-safeguarding-trajectory-reconciled-\d+$/.test(event.eventId));
+      const concern = log.find((event) => /^pediatric-safeguarding-concern-recognized-\d+$/.test(event.eventId));
+      const safeguarding = log.find((event) => /^pediatric-safeguarding-qualified-ownership-activated-\d+$/.test(event.eventId));
+      const alternatives = log.find((event) => /^pediatric-safeguarding-alternatives-and-information-boundary-reviewed-\d+$/.test(event.eventId));
+      const laterSafety = log.find((event) => /^pediatric-safeguarding-later-safety-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^pediatric-safeguarding-unresolved-risk-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-pediatric-injury-development-history-and-whole-child') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'The supplied child health, injury, developmental, timing, history, and whole-child record was reconciled while observed facts remained separate from explanation and inference, without learner examination, questioning, diagnosis, or documentation.' : 'The pediatric injury and developmental trajectory was not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'recognize-pediatric-injury-safeguarding-concern-without-diagnosis') { const ordered = trajectory && concern && trajectory.tick <= concern.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'A safeguarding concern was recognized from the combined supplied record without treating one finding, an account difference, or developmental context as proof of abuse.' : 'Safeguarding concern recognition was absent or preceded trajectory review.', atTick: concern?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-pediatric-injury-qualified-safeguarding-and-immediate-safety-ownership') { const ordered = concern && safeguarding && concern.tick <= safeguarding.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Qualified pediatric safeguarding and immediate-safety ownership was activated without learner interview, confrontation, accusation, diagnosis, report filing, agency selection, legal conclusion, placement, or disposition.' : 'Qualified safeguarding ownership was absent or preceded concern recognition.', atTick: safeguarding?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-injury-medical-alternatives-and-information-boundary') { const ordered = safeguarding && alternatives && safeguarding.tick <= alternatives.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Medical alternatives, child-centered privacy, need-to-know information handling, and factual source-aware documentation boundaries were reviewed after qualified ownership, with no learner interview, test, photograph, record creation, or legal action.' : 'The alternatives and protected-information review was absent or preceded safeguarding ownership.', atTick: alternatives?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-injury-later-safety-state') { const ordered = alternatives && laterSafety && alternatives.tick < laterSafety.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed qualified work, the fixed multidisciplinary safety checkpoint preserved active concern and immediate safety while diagnosis, legal outcome, placement, disposition, and medical alternatives remained open.' : 'The safety checkpoint was absent or did not follow protected-information review after elapsed time.', atTick: laterSafety?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = laterSafety && handoff && laterSafety.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved the supplied record, unresolved safeguarding concern, medical alternatives, privacy boundaries, immediate safety, open questions, and named owners without alleging a person responsible or claiming diagnosis, legal finding, placement, disposition, prognosis, or outcome.' : 'The unresolved safeguarding-risk handoff was absent or did not follow the safety checkpoint after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

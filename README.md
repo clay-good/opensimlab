@@ -7,7 +7,7 @@ nurse anesthetists — anywhere in the world, on any device, with or without a n
 
 Respiratory Medicine is now playable at `/respiratory-medicine` with all 15 bounded labs: acute severe asthma, post-exacerbation COPD recovery-versus-readiness, hypoxemic community-acquired pneumonia, persistent dyspnea after pulmonary embolism, progressive respiratory failure during initial support for acute pulmonary edema, post-drainage reassessment after a spontaneous tension pneumothorax, symptom-limited evaluation of a large unilateral pleural effusion, bronchiectasis mucus plugging with persistent focal collapse after individualized airway clearance, chronic prescribed-opioid exposure with fixed attended sleep-related hypoventilation evidence and shared follow-through, progressive neuromuscular respiratory failure in established ALS with patient-centered escalation and ownership, obesity hypoventilation with fixed awake hypercapnia and attended sleep evidence, bilevel NIV selection for acute acidotic hypercapnic COPD, high-flow nasal oxygen escalation with calm support choices and an active rescue boundary, a portable oxygen source interruption during transport with immediate verified bridge support and systems-focused handoff, and acute obstruction of a declared removable tracheostomy inner cannula with anatomy-first oxygenation, qualified restoration, reassessment, and active-risk handoff.
 
-Pediatrics is now playable at `/pediatrics`, beginning with 15 of 16 bounded labs. Pediatric
+Pediatrics is now playable at `/pediatrics` with all 16 bounded labs. Pediatric
 respiratory distress teaches whole-child recognition and fatigue escalation. Infant bronchiolitis
 adds illness-day, feeding, hydration, apnea-risk, and supportive-care reassessment while keeping
 routine imaging, low-value medicine, oxygen-device, fluid-route, suction, treatment, and disposition
@@ -69,6 +69,14 @@ effective cough, a strictly later severe responsive obstruction, then an unrespo
 qualified age-appropriate pathway ownership, and active-risk handoff without exposing cough or pulse
 assessment, back blows, thrusts, sweeps, suction, ventilation, CPR mechanics, object removal, airway
 device, procedure, treatment, disposition, recovery, or outcome controls.
+Pediatric safeguarding concern adds stable whole-child, developmental, history, and supplied injury-
+distribution reconciliation, non-diagnostic concern recognition, immediate qualified safety and
+safeguarding ownership, medical-alternative and information-boundary review, and a timed protected
+handoff without scenario controls for examination, interviewing, bruise dating, photography, clinical
+or sensitive free text,
+screening-rule calculation, abuse or perpetrator diagnosis, confrontation, referral or report
+submission, jurisdiction selection, custody action, procedure, treatment, disposition, or outcome
+controls.
 
 The goal is not a tech demo. It is the best anesthesia education on the internet: the
 thing a student opens the night before their first day in the OR and comes out of

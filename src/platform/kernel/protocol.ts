@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 131 reports pediatric foreign-body airway-obstruction reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 131;
+/** Bumped whenever the message shape changes incompatibly. Version 132 reports pediatric injury-safeguarding reassessment state. */
+export const WORKER_PROTOCOL_VERSION = 132;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1542,6 +1542,81 @@ export interface EquipmentSnapshot {
       readonly roscReported: false;
       readonly durableRecoveryProven: false;
       readonly recurrenceExcluded: false;
+      readonly dischargeReadinessProven: false;
+      readonly dispositionDetermined: false;
+      readonly prognosisPredicted: false;
+      readonly outcomePredicted: false;
+    };
+    readonly pediatricInjurySafeguardingAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly concernAtTick: number | null;
+      readonly safeguardingAtTick: number | null;
+      readonly alternativesAtTick: number | null;
+      readonly laterSafetyAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true;
+      readonly spontaneousBreathingAuthored: true;
+      readonly stablePhysiologyAuthored: true;
+      readonly independentlyMobileAuthored: true;
+      readonly concerningInjuryPatternAuthored: true;
+      readonly suppliedHistoryDevelopmentMismatchAuthored: true;
+      readonly safeguardingConcernAuthored: boolean;
+      readonly qualifiedSafeguardingOwnershipActive: boolean;
+      readonly qualifiedImmediateSafetyOwnershipActive: boolean;
+      readonly medicalAlternativesRemainOpen: true;
+      readonly laterChildRemainsInQualifiedCareAuthored: boolean;
+      readonly patientExaminedByLearner: false;
+      readonly developmentAssessedByLearner: false;
+      readonly historyTakenByLearner: false;
+      readonly caregiverInterviewedByLearner: false;
+      readonly disclosureSolicitedByLearner: false;
+      readonly identifyingInformationCollected: false;
+      readonly freeTextDisclosureCollected: false;
+      readonly bruiseIdentifiedByLearner: false;
+      readonly bruiseDatedByLearner: false;
+      readonly photographCapturedByLearner: false;
+      readonly bodyMapCreatedByLearner: false;
+      readonly screeningRuleCalculatedByLearner: false;
+      readonly testAcquiredByLearner: false;
+      readonly testInterpretedByLearner: false;
+      readonly imagingAcquiredByLearner: false;
+      readonly imagingInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false;
+      readonly abuseDiagnosedByLearner: false;
+      readonly perpetratorNamedByLearner: false;
+      readonly caregiverCredibilityJudgedByLearner: false;
+      readonly caregiverConfrontedByLearner: false;
+      readonly caregiverSeparatedByLearner: false;
+      readonly reportingThresholdDeterminedByLearner: false;
+      readonly jurisdictionSelectedByLearner: false;
+      readonly agencySelectedByLearner: false;
+      readonly agencyContactedByLearner: false;
+      readonly referralSubmittedByLearner: false;
+      readonly reportSubmittedByLearner: false;
+      readonly custodyActionSelectedByLearner: false;
+      readonly childRemovedByLearner: false;
+      readonly safetyPlanDeterminedByLearner: false;
+      readonly monitoringAcquiredByLearner: false;
+      readonly drugSelectedByLearner: false;
+      readonly doseSelectedByLearner: false;
+      readonly routeSelectedByLearner: false;
+      readonly accessPlacedByLearner: false;
+      readonly fluidSelectedByLearner: false;
+      readonly oxygenSelectedByLearner: false;
+      readonly deviceSelectedByLearner: false;
+      readonly treatmentDeliveredByLearner: false;
+      readonly procedurePerformedByLearner: false;
+      readonly abuseFinallyProven: false;
+      readonly perpetratorIdentified: false;
+      readonly caregiverCredibilityDetermined: false;
+      readonly medicalMimicExcluded: false;
+      readonly occultInjuryExcluded: false;
+      readonly immediateSafetyProven: false;
+      readonly futureHarmExcluded: false;
+      readonly referralCompletionProven: false;
+      readonly legalReportingCompleted: false;
+      readonly custodyDetermined: false;
+      readonly durableSafetyProven: false;
       readonly dischargeReadinessProven: false;
       readonly dispositionDetermined: false;
       readonly prognosisPredicted: false;

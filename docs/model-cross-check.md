@@ -154,6 +154,13 @@ Recorded here rather than silently carried:
   it does not validate cough or airway physiology, object identity or location, oxygenation kinetics,
   obstruction progression, maneuver or CPR performance, treatment effect, removal, pulse status,
   recovery, ROSC, disposition, prognosis, or outcome.
+  Pediatric injury safeguarding escalation reuses the exact 2-year-old, 12 kg healthy-child
+  scaffold and overlays fixed development, history, objective injury distribution, physiological
+  stability, qualified safeguarding and immediate-safety ownership, and a strict-later protected
+  state; it does not validate injury, bruising, bleeding, occult-harm, safety, or recovery physiology,
+  injury mechanism, bruise age, abuse, perpetrator identity, credibility, screening-rule performance,
+  medical alternatives, reporting completion, legal action, custody, disposition, prognosis, or
+  outcome.
 
 ## Concentration-time checks, 2026-08-23
 

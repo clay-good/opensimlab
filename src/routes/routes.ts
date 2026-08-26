@@ -155,7 +155,7 @@ export const ROUTES: readonly RouteMetadata[] = [
   {
     path: '/pediatrics',
     title: formatTitle('Pediatrics simulator'),
-    description: 'Practice calm whole-child recognition, serial reassessment, escalation, and handoff across respiratory, circulatory, neurologic, and metabolic emergencies.',
+    description: 'Practice calm whole-child recognition, serial reassessment, escalation, and protected handoff across pediatric emergencies, resuscitation, and safeguarding.',
     indexable: true,
     structuredData: ['SoftwareApplication'],
     heading: 'Pediatrics simulator',

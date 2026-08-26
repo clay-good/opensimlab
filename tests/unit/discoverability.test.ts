@@ -145,6 +145,9 @@ describe('Requirement: Structured Data That Is Accurate', () => {
       { basePath: '/anesthesia', scenarios: SCENARIOS },
       { basePath: '/emergency-medicine', scenarios: EMERGENCY_MEDICINE_SCENARIOS },
       { basePath: '/critical-care', scenarios: CRITICAL_CARE_SCENARIOS },
+      { basePath: '/cardiology', scenarios: CARDIOLOGY_SCENARIOS },
+      { basePath: '/respiratory-medicine', scenarios: RESPIRATORY_MEDICINE_SCENARIOS },
+      { basePath: '/pediatrics', scenarios: PEDIATRICS_SCENARIOS },
     ] as const;
     for (const { basePath, scenarios } of modules) {
       for (const scenario of scenarios) {

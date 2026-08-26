@@ -368,6 +368,16 @@ credited toward the catalog until every item in the completion contract passes.
     examination, cough or pulse assessment, back blow, thrust, sweep, suction, oxygen, ventilation,
     compression, CPR-sequence, object removal, airway device, laryngoscopy, bronchoscopy, drug,
     procedure, treatment, disposition, recovery, ROSC, or outcome controls.
+  - [x] Pediatrics slice 16/16 completes the wave with one authored stable 2-year-old injury-
+    safeguarding presentation whose supplied ear and clustered lateral-torso bruises are not
+    adequately explained by one reported forward fall, requiring non-diagnostic concern recognition,
+    immediate qualified safeguarding and safety ownership, medical-alternative and information-
+    boundary review, a strictly elapsed protected safety state, and elapsed unresolved-risk handoff
+    without learner examination, interviewing, bruise identification or dating, photography, body
+    mapping, scenario-collected clinical or sensitive free text, screening-rule calculation, testing,
+    imaging, abuse or perpetrator
+    diagnosis, credibility judgment, confrontation, referral or report submission, jurisdiction or
+    law selection, custody action, procedure, treatment, disposition, prognosis, or outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing

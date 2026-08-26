@@ -22,9 +22,9 @@ describe('scenario report contract', () => {
     const catalog = JSON.parse(readFileSync(
       join(process.cwd(), 'workers/reports/src/report-catalog.generated.json'), 'utf8',
     )) as { scenarios: { moduleId: string; scenarioId: string; contentVersion: string }[] };
-    expect(catalog.scenarios).toHaveLength(135);
+    expect(catalog.scenarios).toHaveLength(136);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(135);
+      .toBe(136);
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-respiratory-distress',
       contentVersion: '0.1.0',
@@ -78,6 +78,10 @@ describe('scenario report contract', () => {
     }));
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-foreign-body-airway-obstruction',
+      contentVersion: '0.1.0',
+    }));
+    expect(catalog.scenarios).toContainEqual(expect.objectContaining({
+      moduleId: 'pediatrics', scenarioId: 'pediatric-injury-safeguarding-escalation',
       contentVersion: '0.1.0',
     }));
   });
@@ -246,6 +250,25 @@ describe('scenario report contract', () => {
       .toEqual({ ok: false, status: 400 });
     expect(validateReportPayload({ ...report, scenario_id: 'acute-tracheostomy-obstruction' }))
       .toEqual({ ok: false, status: 400 });
+    expect(validateReportPayload({ ...report, canonical_url: `${pediatric.canonicalUrl}?tick=12` }))
+      .toEqual({ ok: false, status: 403 });
+    expect(validateReportPayload({ ...report, canonical_url: `${pediatric.canonicalUrl}#tick-12` }))
+      .toEqual({ ok: false, status: 403 });
+  });
+
+  it('accepts the safeguarding scenario context without prefilled clinical narrative', () => {
+    const pediatric: ScenarioReportContext = {
+      ...context, moduleId: 'pediatrics',
+      scenarioId: 'pediatric-injury-safeguarding-escalation',
+      canonicalUrl:
+        'https://opensimlab.com/pediatrics/scenario/pediatric-injury-safeguarding-escalation',
+      fidelityClass: 'state_transition', simulatedTick: 12,
+    };
+    const report = buildScenarioReportRequest(pediatric, 'clinical-content', '', 'token');
+    expect(report.note).toBe('');
+    expect(validateReportPayload(report)).toMatchObject({ ok: true });
+    expect(validateReportPayload({ ...report, scenario_id: 'pediatric-bradycardic-arrest' }))
+      .toEqual({ ok: false, status: 403 });
     expect(validateReportPayload({ ...report, canonical_url: `${pediatric.canonicalUrl}?tick=12` }))
       .toEqual({ ok: false, status: 403 });
     expect(validateReportPayload({ ...report, canonical_url: `${pediatric.canonicalUrl}#tick-12` }))

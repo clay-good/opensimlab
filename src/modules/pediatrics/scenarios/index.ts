@@ -14,6 +14,7 @@ import { PEDIATRIC_ANAPHYLAXIS } from './pediatric-anaphylaxis';
 import { PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA } from './pediatric-supraventricular-tachycardia';
 import { PEDIATRIC_BRADYCARDIC_ARREST } from './pediatric-bradycardic-arrest';
 import { PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION } from './pediatric-foreign-body-airway-obstruction';
+import { PEDIATRIC_INJURY_SAFEGUARDING_ESCALATION } from './pediatric-injury-safeguarding-escalation';
 
 export const PEDIATRICS_SCENARIOS: readonly Scenario[] = [
   PEDIATRIC_RESPIRATORY_DISTRESS,
@@ -31,6 +32,7 @@ export const PEDIATRICS_SCENARIOS: readonly Scenario[] = [
   PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA,
   PEDIATRIC_BRADYCARDIC_ARREST,
   PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION,
+  PEDIATRIC_INJURY_SAFEGUARDING_ESCALATION,
 ];
 export const DEFAULT_PEDIATRICS_SCENARIO_ID = PEDIATRIC_RESPIRATORY_DISTRESS.metadata.id;
 
