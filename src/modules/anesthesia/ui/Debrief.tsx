@@ -5334,6 +5334,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-toxicology-carbon-monoxide-shared-exposure-clock-syncope-symptoms-pulse-ox-and-whole-patient',
+      'recognize-toxicology-carbon-monoxide-pattern-despite-reassuring-pulse-ox-without-single-value-closure',
+      'activate-toxicology-carbon-monoxide-source-safety-qualified-oxygen-monitoring-poison-center-and-emergency-ownership',
+      'review-toxicology-carbon-monoxide-supplied-cooximetry-neurologic-cardiac-and-severity-boundary',
+      'record-toxicology-carbon-monoxide-selected-patient-hyperbaric-consultation-and-strict-reassessment',
+      'handoff-toxicology-carbon-monoxide-delayed-neurologic-cardiac-exposure-followup-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'carbon-monoxide-reassuring-monitor'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'carbon-monoxide-reassuring-monitor-transition')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'carbon-monoxide-reassuring-monitor-transition-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Toxicology carbon-monoxide lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'Shared exposure, clock, syncope, symptoms, conventional pulse oximetry, and the whole patient were reconciled.'],
+        ['pattern-recognized', 'The urgent carbon-monoxide pattern was recognized despite reassuring pulse oximetry and without single-value closure.'],
+        ['support-activated', 'Source safety, qualified oxygen, monitoring, co-exposed-person escalation, and toxicology and emergency ownership were activated.'],
+        ['cooximetry-and-severity-reviewed', 'Supplied COHb, sample timing, neurologic and cardiac findings, and whole-patient severity were reviewed without treating COHb as a severity score.'],
+        ['consultation-and-reassessment-recorded', 'Selected-patient hyperbaric consultation and the elapsed fixed report were recorded without treatment selection, durable-recovery, or causal claims.'],
+        ['active-risk-handoff-recorded', 'Exposure, serial neurologic and cardiac evidence, delayed complications, follow-up, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^toxicology-carbon-monoxide-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^toxicology-carbon-monoxide-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

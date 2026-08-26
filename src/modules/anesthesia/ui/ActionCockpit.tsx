@@ -1180,6 +1180,11 @@ export interface ActionCockpitProps {
       readonly supportAtTick: number | null; readonly hazardsAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly toxicologyCarbonMonoxideAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly severityAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2016,6 +2021,14 @@ export interface ActionCockpitProps {
       | 'record-toxicology-methemoglobinemia-bounded-qualified-team-antidote-intent-and-strict-reassessment'
       | 'handoff-toxicology-methemoglobinemia-exposure-rebound-hemolysis-serotonin-rescue-and-active-risk',
   ) => void;
+  readonly onToxicologyCarbonMonoxideResponse?: (
+    action: 'reconcile-toxicology-carbon-monoxide-shared-exposure-clock-syncope-symptoms-pulse-ox-and-whole-patient'
+      | 'recognize-toxicology-carbon-monoxide-pattern-despite-reassuring-pulse-ox-without-single-value-closure'
+      | 'activate-toxicology-carbon-monoxide-source-safety-qualified-oxygen-monitoring-poison-center-and-emergency-ownership'
+      | 'review-toxicology-carbon-monoxide-supplied-cooximetry-neurologic-cardiac-and-severity-boundary'
+      | 'record-toxicology-carbon-monoxide-selected-patient-hyperbaric-consultation-and-strict-reassessment'
+      | 'handoff-toxicology-carbon-monoxide-delayed-neurologic-cardiac-exposure-followup-and-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2517,6 +2530,10 @@ export function crisisResponseAvailability(
       scenario.metadata.id === 'methemoglobinemia-saturation-gap'
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methemoglobinemia-saturation-gap-transition')
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methemoglobinemia-saturation-gap-transition-boundary'),
+    hasToxicologyCarbonMonoxideResponse:
+      scenario.metadata.id === 'carbon-monoxide-reassuring-monitor'
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'carbon-monoxide-reassuring-monitor-transition')
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'carbon-monoxide-reassuring-monitor-transition-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2717,6 +2734,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'acute-delirium-reversible-causes-reassessment')
       || (event.type === 'narrative' && event.target === 'autonomic-dysreflexia-authored-trigger-transition')
       || (event.type === 'narrative' && event.target === 'methemoglobinemia-saturation-gap-transition')
+      || (event.type === 'narrative' && event.target === 'carbon-monoxide-reassuring-monitor-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2805,6 +2823,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeurologyDeliriumResponse,
     hasNeurologyAutonomicDysreflexiaResponse,
     hasToxicologyMethemoglobinemiaResponse,
+    hasToxicologyCarbonMonoxideResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2920,8 +2939,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasToxicologyMethemoglobinemiaResponse
+    || hasToxicologyCarbonMonoxideResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasToxicologyMethemoglobinemiaResponse
+  const responseTray = hasToxicologyCarbonMonoxideResponse
+    ? { id: 'crisis', label: 'Hidden carbon monoxide' } as const
+    : hasToxicologyMethemoglobinemiaResponse
     ? { id: 'crisis', label: 'Dyshemoglobin pattern' } as const
     : hasNeurologyAutonomicDysreflexiaResponse
     ? { id: 'crisis', label: 'Autonomic dysreflexia' } as const
@@ -4067,6 +4089,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <ToxicologyMethemoglobinemiaTray
                 assessment={props.resuscitation.toxicologyMethemoglobinemiaAssessment}
                 onAction={props.onToxicologyMethemoglobinemiaResponse ?? (() => {})} />
+            )}
+            {hasToxicologyCarbonMonoxideResponse && (
+              <ToxicologyCarbonMonoxideTray
+                assessment={props.resuscitation.toxicologyCarbonMonoxideAssessment}
+                onAction={props.onToxicologyCarbonMonoxideResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -10416,6 +10443,38 @@ function ToxicologyMethemoglobinemiaTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {hazards && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-methemoglobinemia-bounded-qualified-team-antidote-intent-and-strict-reassessment')}>Record intent + reassess</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-methemoglobinemia-exposure-rebound-hemolysis-serotonin-rescue-and-active-risk')}>Hand off what stays open</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function ToxicologyCarbonMonoxideTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyCarbonMonoxideAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onToxicologyCarbonMonoxideResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const severity = assessment?.severityAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="toxicology-carbon-monoxide-early-title">
+      <div id="toxicology-carbon-monoxide-early-title" className="syringe__name">A calm monitor can still hide a poisoned patient.</div>
+      <p className="syringe__remaining">Begin with the shared exposure, clock, syncope, symptoms, conventional pulse oximetry, and whole person.</p>
+      <div className="crisis-drug__actions">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-toxicology-carbon-monoxide-shared-exposure-clock-syncope-symptoms-pulse-ox-and-whole-patient')}>Connect exposure + patient</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-toxicology-carbon-monoxide-pattern-despite-reassuring-pulse-ox-without-single-value-closure')}>See past the pulse ox</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-toxicology-carbon-monoxide-source-safety-qualified-oxygen-monitoring-poison-center-and-emergency-ownership')}>Make the scene + patient safe</Button>}
+        {support && !severity && <Button className="crisis-drug__action" onClick={() => onAction('review-toxicology-carbon-monoxide-supplied-cooximetry-neurologic-cardiac-and-severity-boundary')}>Read severity in context</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="toxicology-carbon-monoxide-later-title">
+      <div id="toxicology-carbon-monoxide-later-title" className="syringe__name">A lower number is progress, not permission to forget.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Exposure, serial neurologic and cardiac findings, delayed risk, follow-up, and outcome uncertainty handed off.' : reassessment ? 'Symptoms and COHb improved in the fixed report. Delayed neurologic and cardiac risk remain open.' : severity ? 'The COHb is contextual evidence, not a severity score. Record selected-patient consultation after time passes.' : support ? 'Source safety, oxygen, monitoring, and qualified ownership are active. Review the supplied severity evidence.' : 'Complete recognition and immediate support before consultation review.'}</p>
+      <div className="crisis-drug__actions">
+        {severity && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-carbon-monoxide-selected-patient-hyperbaric-consultation-and-strict-reassessment')}>Consult + reassess</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-carbon-monoxide-delayed-neurologic-cardiac-exposure-followup-and-active-risk')}>Hand off what can emerge</Button>}
       </div>
     </section>
   </>;

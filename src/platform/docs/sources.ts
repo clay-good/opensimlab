@@ -2979,6 +2979,28 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=4f222ee5-df03-46d5-a060-c63565b7186f',
     verifiedOn: '2026-08-26',
   },
+  {
+    id: 'cdc-carbon-monoxide-clinical-guidance-2024',
+    currency: { lastAmended: '2024-07-08', checkedAt: '2026-08-26' },
+    authors: 'Centers for Disease Control and Prevention',
+    title: 'Clinical Guidance for Carbon Monoxide Poisoning Following Disasters and Severe Weather',
+    publication: 'CDC Carbon Monoxide Poisoning', year: 2024,
+    locator: 'Updated 2024-07-08; recognition, diagnosis, management, confirmation, cardiac evaluation, and delayed-complication follow-up sections',
+    usedFor: 'Shared-exposure recognition, conventional pulse-oximetry limitation, timed co-oximetry context, whole-patient severity, oxygen and monitoring intent, hyperbaric consideration, cardiac surveillance, and delayed-neurologic follow-up.',
+    verifiedAgainst: 'https://www.cdc.gov/carbon-monoxide/hcp/clinical-guidance/index.html',
+    verifiedOn: '2026-08-26',
+  },
+  {
+    id: 'acep-carbon-monoxide-clinical-policy-2025',
+    currency: { lastAmended: '2025-04-01', checkedAt: '2026-08-26' },
+    authors: 'American College of Emergency Physicians Clinical Policies Committee',
+    title: 'A Critical Issue in the Management of Adult Patients Presenting to the Emergency Department With Acute Carbon Monoxide Poisoning',
+    publication: 'Annals of Emergency Medicine', year: 2025,
+    locator: '85:e45-e59; doi:10.1016/j.annemergmed.2024.12.005; patient-management recommendation and potential transport harms',
+    usedFor: 'Selected-patient hyperbaric consultation based on symptom severity, availability, distance, time, and transport risk without a universal treatment rule.',
+    verifiedAgainst: 'https://www.acep.org/siteassets/sites/acep/media/clinical-policies/final-cp-pdfs/carbonmonoxide3-cp.pdf',
+    verifiedOn: '2026-08-26',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

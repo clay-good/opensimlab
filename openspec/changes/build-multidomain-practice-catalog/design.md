@@ -2311,6 +2311,21 @@ another elapsed exposure, rebound, hemolysis, serotonin-syndrome, rescue, dispos
 handoff. The canonical state is a teaching fixture, not a dyshemoglobin chemistry or individualized
 treatment-response model.
 
+### Wave F toxicology slice 2: carbon monoxide with a reassuring monitor
+
+The second Toxicology lab owns shared combustion-exposure recognition when conventional pulse
+oximetry looks reassuring. The learner connects an attached-garage generator exposure, a similarly
+symptomatic partner, transient loss of consciousness, confusion, conventional SpO2 99%, elapsed time,
+and whole-patient state; recognizes an urgent suspected carbon-monoxide pattern without using pulse
+oximetry as exclusion or one COHb value as diagnosis or severity; activates source and co-exposed-
+person safety, continued qualified oxygen and monitoring, poison-center or medical-toxicology
+consultation, and emergency ownership; then reviews supplied COHb 28%, sample and oxygen timing,
+neurologic and cardiac findings, co-exposures, and alternatives. Hyperbaric care appears only as a
+selected-patient qualified consultation shaped by symptoms, severity, availability, distance, time,
+and transport risk. A strict elapsed fixed clinical and COHb response precedes another elapsed delayed-
+neurologic, cardiac, exposure, follow-up, disposition, and active-risk handoff. The canonical state is
+a teaching fixture, not a CO uptake, elimination, tissue-oxygen, or individualized-treatment model.
+
 #### Hematology and oncology: 11
 
 Neutropenic fever; tumor-lysis syndrome; hyperleukocytosis pattern; sickle-cell acute chest syndrome;

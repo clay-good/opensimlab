@@ -4223,6 +4223,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use direct verified clinical and co-oximetry evidence, poison-center or medical-toxicology guidance, patient-specific contraindication review, qualified treatment and rescue planning, and serial reassessment.',
     briefIn: ['methemoglobinemia-saturation-gap'],
   },
+  {
+    id: 'carbon-monoxide-exposure-cooximetry-clinical-transition-and-response-are-authored',
+    headline: 'The shared exposure, symptoms, conventional pulse oximetry, co-oximetry, and later response are authored.',
+    simplification: 'Fixed reports and canonical monitor states stand in for history, examination, exposure investigation, pulse-oximetry acquisition, blood sampling, co-oximetry, qualified oxygen, and reassessment.',
+    whereItMisleads: 'Treating a generator history, normal SpO2, COHb percentage, syncope, or later improvement as learner evidence, a universal diagnosis, a severity score, treatment effect, or predicted course.',
+    correctUnderstanding: 'Real care requires source safety, direct assessment of every exposed person, verified co-oximetry with elapsed-time context, serial neurologic and cardiac assessment, and individualized treatment.',
+    briefIn: ['carbon-monoxide-reassuring-monitor'],
+  },
+  {
+    id: 'carbon-monoxide-controls-reconcile-recognize-support-review-consult-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, recognition, source and patient safety, severity review, selected-patient consultation with reassessment, and handoff only.',
+    simplification: 'Six actions stand in for emergency, toxicology, poison-center, public-safety, nursing, respiratory, laboratory, cardiology, hyperbaric, transport, surveillance, and handoff work.',
+    whereItMisleads: 'Equating button order with examination, diagnosis, co-oximeter operation, oxygen delivery, hyperbaric eligibility, transport, treatment, disposition, or competence.',
+    correctUnderstanding: 'Actual care requires trained teams, verified serial findings, poison-center or medical-toxicology guidance, current local capability, individualized decisions, and continuous reassessment.',
+    briefIn: ['carbon-monoxide-reassuring-monitor'],
+  },
+  {
+    id: 'no-live-exposure-diagnosis-cooximetry-oxygen-selection-hyperbaric-eligibility-treatment-or-outcome',
+    headline: 'The lab does not investigate an exposure, examine, diagnose, operate co-oximetry, select oxygen or hyperbaric care, transfer, treat, or report outcome.',
+    simplification: 'No live history, examination, monitoring, blood sample, co-oximetry, laboratory, ECG, imaging or another test, diagnosis, oxygen interface or setting, drug, route, access, chamber, transport, procedure, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Using normal SpO2 to exclude poisoning, using one COHb value as a universal severity or hyperbaric threshold, copying fictional values into care, or reading improvement or completion as competence.',
+    correctUnderstanding: 'Use direct clinical evidence, verified timed co-oximetry, serial neurologic and cardiac assessment, source control, current specialist guidance, and patient-specific treatment and follow-up planning.',
+    briefIn: ['carbon-monoxide-reassuring-monitor'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

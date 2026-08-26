@@ -1672,6 +1672,17 @@
         "GB"
       ],
       "fidelityClass": "state_transition"
+    },
+    {
+      "scenarioId": "carbon-monoxide-reassuring-monitor",
+      "contentVersion": "0.1.0",
+      "moduleId": "toxicology",
+      "maturity": "draft",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition"
     }
   ]
 }

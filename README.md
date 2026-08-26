@@ -86,6 +86,13 @@ care ownership; keeps G6PD-deficiency hemolysis and serotonergic-drug hazards vi
 bounded qualified-team methylene-blue intent; and requires elapsed reassessment and active-risk
 handoff. It exposes no learner test acquisition, gas calculation, diagnosis, oxygen setting, drug,
 dose, route, infusion, treatment delivery, rescue procedure, disposition, or outcome control.
+Its second lab, carbon monoxide with a reassuring monitor, contrasts a documented shared generator-
+exhaust exposure, transient loss of consciousness, confusion, and conventional SpO2 99% with supplied
+COHb 28%. It makes source and co-exposed-person safety, qualified oxygen and monitoring, poison-center
+or medical-toxicology ownership, timed co-oximetry context, neurologic and cardiac surveillance,
+selected-patient hyperbaric consultation, elapsed reassessment, delayed neurologic risk, and follow-up
+visible without exposing an oxygen setting, universal COHb threshold, hyperbaric eligibility or
+treatment, chamber or transport choice, procedure, disposition, or outcome control.
 
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage

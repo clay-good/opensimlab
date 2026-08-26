@@ -110,6 +110,9 @@ describe('exact-version maturity records', () => {
       toxicologyCatalog, 'scenario', 'methemoglobinemia-saturation-gap', '0.1.0',
     )?.status).toBe('draft');
     expect(maturityFor(
+      toxicologyCatalog, 'scenario', 'carbon-monoxide-reassuring-monitor', '0.1.0',
+    )?.status).toBe('draft');
+    expect(maturityFor(
       criticalCareCatalog, 'scenario', 'ventilator-dyssynchrony', '0.1.0',
     )?.status).toBe('draft');
     expect(maturityFor(

@@ -6,20 +6,26 @@ import { Prebrief } from '@anesthesia/ui/Prebrief';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { METHEMOGLOBINEMIA_SATURATION_GAP as SCENARIO } from '../../src/modules/toxicology/scenarios/methemoglobinemia-saturation-gap';
+import { CARBON_MONOXIDE_REASSURING_MONITOR } from '../../src/modules/toxicology/scenarios/carbon-monoxide-reassuring-monitor';
 
 describe('Toxicology module user-facing foundation', () => {
-  const cockpitMarkup = () => renderToStaticMarkup(createElement(ActionCockpit, {
-    scenario: SCENARIO, region: UNITED_STATES, infusions: [],
+  const cockpitMarkup = (
+    scenario = SCENARIO,
+    assessment: Partial<ActionCockpitProps['resuscitation']> = {
+      toxicologyMethemoglobinemiaAssessment: {
+        trajectoryAtTick: null, recognitionAtTick: null, supportAtTick: null,
+        hazardsAtTick: null, reassessmentAtTick: null, handoffAtTick: null,
+      },
+    },
+  ) => renderToStaticMarkup(createElement(ActionCockpit, {
+    scenario, region: UNITED_STATES, infusions: [],
     hypnoticLine: { connected: true, inspected: false },
     resuscitation: {
       epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
       lastEpinephrineTick: null, crystalloidTotalMl: 0,
       dantroleneTotalMg: 0, dantroleneEffectFraction: 0,
       lastDantroleneTick: null, activeCooling: false,
-      toxicologyMethemoglobinemiaAssessment: {
-        trajectoryAtTick: null, recognitionAtTick: null, supportAtTick: null,
-        hazardsAtTick: null, reassessmentAtTick: null, handoffAtTick: null,
-      },
+      ...assessment,
     },
     lastExposure: null, syringeRemaining: {},
     ventilator: { mode: 'manual', tidalVolumeMl: 420, respiratoryRateBpm: 26,
@@ -33,6 +39,7 @@ describe('Toxicology module user-facing foundation', () => {
     onDantrolene: () => {}, onCallForHelp: () => {}, onAirwayDevice: () => {},
     onActiveCooling: () => {}, onDrugCard: () => {},
     onToxicologyMethemoglobinemiaResponse: () => {},
+    onToxicologyCarbonMonoxideResponse: () => {},
   } satisfies ActionCockpitProps));
 
   it('renders a calm module index with shared navigation and the exact first lab', () => {
@@ -41,6 +48,8 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('href="/toxicology" aria-current="page"');
     expect(markup).toContain('href="/toxicology/scenario/methemoglobinemia-saturation-gap"');
     expect(markup).toContain('Methemoglobinemia with a saturation gap');
+    expect(markup).toContain('href="/toxicology/scenario/carbon-monoxide-reassuring-monitor"');
+    expect(markup).toContain('Carbon monoxide with a reassuring monitor');
   });
 
   it('briefs the bounded poisoning rehearsal without dose or diagnostic claims', () => {
@@ -75,6 +84,27 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('The numbers disagree. The patient matters.');
     expect(markup).toContain('Connect the discordant clues');
     expect(markup).not.toMatch(/\bmg\/kg\b|exchange transfusion|hyperbaric/i);
+    expect(markup).not.toContain('<input');
+    expect(markup).not.toContain('<select');
+  });
+
+  it('prerenders and opens the carbon-monoxide lab on its calm hidden-hypoxia tray', () => {
+    const page = renderToStaticMarkup(createElement(PrerenderedBody, {
+      path: '/toxicology/scenario/carbon-monoxide-reassuring-monitor',
+    }));
+    expect(page).toContain('<h1>Carbon monoxide with a reassuring monitor</h1>');
+    expect(page).toContain('conventional pulse oximetry');
+    expect(crisisResponseAvailability(CARBON_MONOXIDE_REASSURING_MONITOR, []))
+      .toMatchObject({ hasToxicologyCarbonMonoxideResponse: true });
+    const markup = cockpitMarkup(CARBON_MONOXIDE_REASSURING_MONITOR, {
+      toxicologyCarbonMonoxideAssessment: {
+        trajectoryAtTick: null, recognitionAtTick: null, supportAtTick: null,
+        severityAtTick: null, reassessmentAtTick: null, handoffAtTick: null,
+      },
+    });
+    expect(markup).toContain('Hidden carbon monoxide');
+    expect(markup).toContain('A calm monitor can still hide a poisoned patient.');
+    expect(markup).toContain('Connect exposure + patient');
     expect(markup).not.toContain('<input');
     expect(markup).not.toContain('<select');
   });

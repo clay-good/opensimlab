@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 148 reports Toxicology methemoglobinemia state. */
-export const WORKER_PROTOCOL_VERSION = 148;
+/** Bumped whenever the message shape changes incompatibly. Version 149 reports Toxicology carbon-monoxide state. */
+export const WORKER_PROTOCOL_VERSION = 149;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2267,6 +2267,24 @@ export interface EquipmentSnapshot {
       readonly ongoingExposureExcluded: false; readonly rescueEligibilityDetermined: false;
       readonly dispositionDetermined: false; readonly prognosisPredicted: false;
       readonly outcomePredicted: false;
+    };
+    readonly toxicologyCarbonMonoxideAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly severityAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly exposurePatternAuthored: true; readonly carbonMonoxidePatternRecognized: boolean;
+      readonly qualifiedSupportActive: boolean; readonly cooximetryAndSeverityReviewed: boolean;
+      readonly qualifiedHyperbaricConsultationRecorded: boolean; readonly responseStateAuthored: boolean;
+      readonly patientHistoryTakenByLearner: false; readonly patientExaminedByLearner: false;
+      readonly monitoringAcquiredByLearner: false; readonly bloodSampleAcquiredByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly oxygenSelectedByLearner: false;
+      readonly drugSelectedByLearner: false; readonly routeSelectedByLearner: false;
+      readonly treatmentDeliveredByLearner: false; readonly hyperbaricTreatmentSelectedByLearner: false;
+      readonly hyperbaricEligibilityDetermined: false; readonly transportSelectedByLearner: false;
+      readonly treatmentEffectProven: false; readonly durableNeurologicRecoveryProven: false;
+      readonly delayedNeurologicComplicationsExcluded: false; readonly cardiacComplicationsExcluded: false;
+      readonly coexposureExcluded: false; readonly dispositionDetermined: false;
+      readonly prognosisPredicted: false; readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

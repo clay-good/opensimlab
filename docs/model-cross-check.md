@@ -248,6 +248,11 @@ Recorded here rather than silently carried:
   methemoglobin 32%, then clearer mentation, heart rate 98/min, and methemoglobin 8%. These are
   teaching calibrations grounded in toxicology guidance, not a dyshemoglobin chemistry, tissue-
   oxygen-delivery, methylene-blue kinetic, contraindication, or individualized response model.
+  Carbon monoxide with a reassuring monitor uses fixed canonical presentation and elapsed-response
+  states: conventional pulse-coherent SpO2 99% with supplied COHb 28%, then clearer orientation,
+  heart rate 92/min, respiratory rate 18/min, conventional SpO2 100%, and COHb 7%. These are teaching
+  calibrations grounded in current CDC and ACEP guidance, not a CO uptake, elimination, tissue-
+  oxygen-delivery, neurologic-injury, hyperbaric-benefit, or individualized response model.
 
 ## Concentration-time checks, 2026-08-23
 

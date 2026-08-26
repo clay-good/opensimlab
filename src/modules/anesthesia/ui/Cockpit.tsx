@@ -1070,6 +1070,9 @@ export function Cockpit({
           onToxicologyMethemoglobinemiaResponse={(action) => session.act({
             type: 'methemoglobinemia-saturation-gap-response', payload: { action },
           })}
+          onToxicologyCarbonMonoxideResponse={(action) => session.act({
+            type: 'carbon-monoxide-reassuring-monitor-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

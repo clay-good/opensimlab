@@ -384,6 +384,10 @@ const TOXICOLOGY_METHEMOGLOBINEMIA_BLOCKED_ACTION_TYPES = new Set([
   ...NEUROLOGY_AUTONOMIC_DYSREFLEXIA_BLOCKED_ACTION_TYPES,
   'autonomic-dysreflexia-authored-trigger-response',
 ]);
+const TOXICOLOGY_CARBON_MONOXIDE_BLOCKED_ACTION_TYPES = new Set([
+  ...TOXICOLOGY_METHEMOGLOBINEMIA_BLOCKED_ACTION_TYPES,
+  'methemoglobinemia-saturation-gap-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1227,6 +1231,12 @@ export class AnesthesiaEngine {
   private toxicologyMethemoglobinemiaHazardsAtTick: number | null = null;
   private toxicologyMethemoglobinemiaReassessmentAtTick: number | null = null;
   private toxicologyMethemoglobinemiaHandoffAtTick: number | null = null;
+  private toxicologyCarbonMonoxideTrajectoryAtTick: number | null = null;
+  private toxicologyCarbonMonoxideRecognitionAtTick: number | null = null;
+  private toxicologyCarbonMonoxideSupportAtTick: number | null = null;
+  private toxicologyCarbonMonoxideSeverityAtTick: number | null = null;
+  private toxicologyCarbonMonoxideReassessmentAtTick: number | null = null;
+  private toxicologyCarbonMonoxideHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1996,6 +2006,15 @@ export class AnesthesiaEngine {
         'This Toxicology lesson exposes no generic examination, monitoring, blood-gas, co-oximetry, '
         + 'oxygen, drug, dose, route, access, infusion, fluid, device, procedure, rescue, or adjacent-scenario '
         + 'action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const toxicologyCarbonMonoxide = this.scenario.metadata.id === 'carbon-monoxide-reassuring-monitor'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'carbon-monoxide-reassuring-monitor-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'carbon-monoxide-reassuring-monitor-transition-boundary');
+    if (toxicologyCarbonMonoxide && TOXICOLOGY_CARBON_MONOXIDE_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `toxicology-carbon-monoxide-generic-action-refused-${this.currentTick}`,
+        'This Toxicology lesson exposes no generic examination, monitoring, co-oximetry, oxygen, '
+        + 'drug, dose, route, access, infusion, fluid, device, hyperbaric, transport, procedure, or '
+        + 'adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -10028,6 +10047,32 @@ export class AnesthesiaEngine {
         if (this.toxicologyMethemoglobinemiaHandoffAtTick !== null) { this.log('warning', 'assessment', `toxicology-methemoglobinemia-handoff-refused-${this.currentTick}`, 'The exposure, rebound, hemolysis, serotonin, rescue, and active-risk handoff was already recorded.'); break; }
         this.toxicologyMethemoglobinemiaHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-methemoglobinemia-active-risk-handoff-recorded-${this.currentTick}`, 'Exposure and source control, serial symptoms and co-oximetry, G6PD and medication hazards, rebound and hemolysis surveillance, serotonin-syndrome risk, repeated treatment and rescue alternatives, disposition, prognosis, and outcome uncertainty were handed off.', { treatmentEffectProven: false, reboundExcluded: false, hemolysisExcluded: false, serotoninSyndromeExcluded: false, rescueEligibilityDetermined: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
       }
+      case 'carbon-monoxide-reassuring-monitor-response': {
+        const response = typeof action.payload.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'carbon-monoxide-reassuring-monitor'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'carbon-monoxide-reassuring-monitor-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'carbon-monoxide-reassuring-monitor-transition-boundary');
+        const actions = ['reconcile-toxicology-carbon-monoxide-shared-exposure-clock-syncope-symptoms-pulse-ox-and-whole-patient',
+          'recognize-toxicology-carbon-monoxide-pattern-despite-reassuring-pulse-ox-without-single-value-closure',
+          'activate-toxicology-carbon-monoxide-source-safety-qualified-oxygen-monitoring-poison-center-and-emergency-ownership',
+          'review-toxicology-carbon-monoxide-supplied-cooximetry-neurologic-cardiac-and-severity-boundary',
+          'record-toxicology-carbon-monoxide-selected-patient-hyperbaric-consultation-and-strict-reassessment',
+          'handoff-toxicology-carbon-monoxide-delayed-neurologic-cardiac-exposure-followup-and-active-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `toxicology-carbon-monoxide-response-refused-${this.currentTick}`, supported ? 'The carbon-monoxide action was not listed. No supplied or injected text was retained.' : 'These carbon-monoxide choices are available only in the exact declared Toxicology lesson.'); break; }
+        if (response === actions[0]) { if (this.toxicologyCarbonMonoxideTrajectoryAtTick !== null) { this.log('warning', 'assessment', `toxicology-carbon-monoxide-trajectory-refused-${this.currentTick}`, 'The shared exposure, clock, symptoms, conventional pulse oximetry, and whole-patient state were already reconciled.'); break; } this.toxicologyCarbonMonoxideTrajectoryAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-carbon-monoxide-trajectory-reconciled-${this.currentTick}`, 'Documented attached-garage generator exposure, similarly symptomatic partner, transient loss of consciousness, headache, nausea, confusion, conventional SpO2 99%, and elapsed exposure and oxygen timing were connected. The learner did not take history, examine, acquire monitoring or blood, test, calculate, or diagnose.', { sharedExposureAuthored: true, conventionalPulseOxPercent: 99, transientLossOfConsciousnessAuthored: true, patientHistoryTakenByLearner: false, patientExaminedByLearner: false }); break; }
+        if (this.toxicologyCarbonMonoxideTrajectoryAtTick === null) { this.log('warning', 'assessment', `toxicology-carbon-monoxide-trajectory-order-refused-${this.currentTick}`, 'Reconcile the shared exposure, clock, syncope, symptoms, conventional pulse oximetry, and whole patient first.'); break; }
+        if (response === actions[1]) { if (this.toxicologyCarbonMonoxideRecognitionAtTick !== null) { this.log('warning', 'assessment', `toxicology-carbon-monoxide-recognition-refused-${this.currentTick}`, 'The urgent carbon-monoxide pattern and diagnostic boundary were already recognized.'); break; } this.toxicologyCarbonMonoxideRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-carbon-monoxide-pattern-recognized-${this.currentTick}`, 'The shared combustion exposure, syncope, symptoms, and confusion support urgent suspected carbon-monoxide-pattern recognition despite conventional SpO2 99%. Pulse oximetry did not exclude poisoning and no single COHb value diagnosed or graded the patient; neurologic, cardiac, metabolic, toxic, traumatic, infectious, and other causes remain open.', { carbonMonoxidePatternRecognized: true, pulseOximetryTreatedAsExclusion: false, diagnosisMadeByLearner: false, alternativesClosed: false }); break; }
+        if (this.toxicologyCarbonMonoxideRecognitionAtTick === null) { this.log('warning', 'assessment', `toxicology-carbon-monoxide-recognition-order-refused-${this.currentTick}`, 'Recognize the urgent exposure and neurologic pattern before support or co-oximetry review.'); break; }
+        if (response === actions[2]) { if (this.toxicologyCarbonMonoxideSupportAtTick !== null) { this.log('warning', 'assessment', `toxicology-carbon-monoxide-support-refused-${this.currentTick}`, 'Source safety, oxygen, monitoring, co-exposed-person escalation, and qualified ownership are already active.'); break; } this.toxicologyCarbonMonoxideSupportAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-carbon-monoxide-support-activated-${this.currentTick}`, 'Removal from exposure, scene and co-exposed-person escalation, continued qualified high-concentration oxygen, continuous monitoring, poison-center or medical-toxicology consultation, and emergency ownership were recorded. The learner selected no oxygen setting, device, drug, access, transfer, chamber, or procedure.', { qualifiedSupportActive: true, coexposedPersonEscalationRecorded: true, oxygenSelectedByLearner: false, hyperbaricTreatmentSelectedByLearner: false }); break; }
+        if (this.toxicologyCarbonMonoxideSupportAtTick === null) { this.log('warning', 'assessment', `toxicology-carbon-monoxide-support-order-refused-${this.currentTick}`, 'Activate source safety, qualified oxygen, monitoring, and toxicology ownership before severity review.'); break; }
+        if (response === actions[3]) { if (this.toxicologyCarbonMonoxideSeverityAtTick !== null) { this.log('warning', 'assessment', `toxicology-carbon-monoxide-severity-refused-${this.currentTick}`, 'The supplied co-oximetry and neurologic, cardiac, and severity boundary were already reviewed.'); break; } this.toxicologyCarbonMonoxideSeverityAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-carbon-monoxide-cooximetry-and-severity-reviewed-${this.currentTick}`, 'Supplied COHb 28%, sample timing after removal and initial oxygen, transient loss of consciousness, confusion, glucose, ECG, exposure context, and elapsed time were integrated. COHb magnitude was not used as a severity score; serial neurologic and cardiac assessment, co-exposures, and alternatives remain qualified-team work.', { cooximetryAuthored: true, carboxyhemoglobinPercent: 28, cohbUsedAsSeverityScore: false, cardiacSafetyProven: false, coexposureExcluded: false }); break; }
+        if (this.toxicologyCarbonMonoxideSeverityAtTick === null) { this.log('warning', 'assessment', `toxicology-carbon-monoxide-severity-order-refused-${this.currentTick}`, 'Review supplied co-oximetry and the whole-patient severity boundary before hyperbaric consultation.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.toxicologyCarbonMonoxideSeverityAtTick) { this.log('warning', 'assessment', `toxicology-carbon-monoxide-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the selected-patient consultation and strict reassessment.'); break; } if (this.toxicologyCarbonMonoxideReassessmentAtTick !== null) { this.log('warning', 'assessment', `toxicology-carbon-monoxide-reassessment-refused-${this.currentTick}`, 'Selected-patient hyperbaric consultation and the strict later report were already reviewed.'); break; } this.toxicologyCarbonMonoxideReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-carbon-monoxide-consultation-and-reassessment-recorded-${this.currentTick}`, 'Qualified hyperbaric-center consultation was recorded as an individualized decision around symptoms, neurologic and cardiac involvement, severity, availability, transport risk, and elapsed time. No eligibility or treatment was selected. Strict later report: orientation clearer, headache and nausea easing, sinus rate 92/min, RR 18/min, conventional SpO2 100%, and COHb 7%. The fixed state does not prove treatment effect, hyperbaric benefit, complete clearance, durable neurologic recovery, cardiac safety, disposition, or outcome.', { qualifiedHyperbaricConsultationRecorded: true, laterCarboxyhemoglobinPercent: 7, hyperbaricTreatmentSelectedByLearner: false, treatmentEffectProven: false, durableNeurologicRecoveryProven: false }); break; }
+        if (this.toxicologyCarbonMonoxideReassessmentAtTick === null) { this.log('warning', 'assessment', `toxicology-carbon-monoxide-handoff-order-refused-${this.currentTick}`, 'Record selected-patient consultation and review the strict later report before handoff.'); break; }
+        if (this.currentTick <= this.toxicologyCarbonMonoxideReassessmentAtTick) { this.log('warning', 'assessment', `toxicology-carbon-monoxide-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off delayed neurologic and cardiac risk.'); break; }
+        if (this.toxicologyCarbonMonoxideHandoffAtTick !== null) { this.log('warning', 'assessment', `toxicology-carbon-monoxide-handoff-refused-${this.currentTick}`, 'The delayed neurologic, cardiac, exposure, follow-up, and active-risk handoff was already recorded.'); break; }
+        this.toxicologyCarbonMonoxideHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-carbon-monoxide-active-risk-handoff-recorded-${this.currentTick}`, 'Exposure and source safety, co-exposed people, serial symptoms and neurologic findings, serial co-oximetry with timing, cardiac surveillance, hyperbaric consultation status, delayed neurologic complications, follow-up, disposition, prognosis, and outcome uncertainty were handed off.', { treatmentEffectProven: false, delayedNeurologicComplicationsExcluded: false, cardiacComplicationsExcluded: false, coexposureExcluded: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -12764,6 +12809,17 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: this.toxicologyMethemoglobinemiaReassessmentAtTick !== null ? 20 : 26,
         spo2Percent: this.toxicologyMethemoglobinemiaReassessmentAtTick !== null ? 90 : 85,
         systolicMmHg: 112, diastolicMmHg: 68, meanArterialMmHg: 83, coreTemperatureC: 36.9 };
+    }
+    if (this.scenario.metadata.id === 'carbon-monoxide-reassuring-monitor'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'carbon-monoxide-reassuring-monitor-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'carbon-monoxide-reassuring-monitor-transition-boundary')) {
+      crisisState = { ...crisisState,
+        heartRateBpm: this.toxicologyCarbonMonoxideReassessmentAtTick !== null ? 92 : 112,
+        respiratoryRateBpm: this.toxicologyCarbonMonoxideReassessmentAtTick !== null ? 18 : 24,
+        spo2Percent: this.toxicologyCarbonMonoxideReassessmentAtTick !== null ? 100 : 99,
+        systolicMmHg: 118, diastolicMmHg: 74, meanArterialMmHg: 89, coreTemperatureC: 36.8 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -16309,6 +16365,34 @@ export class AnesthesiaEngine {
               ongoingExposureExcluded: false as const, rescueEligibilityDetermined: false as const,
               dispositionDetermined: false as const, prognosisPredicted: false as const,
               outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'carbon-monoxide-reassuring-monitor'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'carbon-monoxide-reassuring-monitor-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'carbon-monoxide-reassuring-monitor-transition-boundary') ? {
+            toxicologyCarbonMonoxideAssessment: {
+              trajectoryAtTick: this.toxicologyCarbonMonoxideTrajectoryAtTick,
+              recognitionAtTick: this.toxicologyCarbonMonoxideRecognitionAtTick,
+              supportAtTick: this.toxicologyCarbonMonoxideSupportAtTick,
+              severityAtTick: this.toxicologyCarbonMonoxideSeverityAtTick,
+              reassessmentAtTick: this.toxicologyCarbonMonoxideReassessmentAtTick,
+              handoffAtTick: this.toxicologyCarbonMonoxideHandoffAtTick,
+              exposurePatternAuthored: true as const,
+              carbonMonoxidePatternRecognized: this.toxicologyCarbonMonoxideRecognitionAtTick !== null,
+              qualifiedSupportActive: this.toxicologyCarbonMonoxideSupportAtTick !== null,
+              cooximetryAndSeverityReviewed: this.toxicologyCarbonMonoxideSeverityAtTick !== null,
+              qualifiedHyperbaricConsultationRecorded: this.toxicologyCarbonMonoxideReassessmentAtTick !== null,
+              responseStateAuthored: this.toxicologyCarbonMonoxideReassessmentAtTick !== null,
+              patientHistoryTakenByLearner: false as const, patientExaminedByLearner: false as const,
+              monitoringAcquiredByLearner: false as const, bloodSampleAcquiredByLearner: false as const,
+              diagnosisMadeByLearner: false as const, oxygenSelectedByLearner: false as const,
+              drugSelectedByLearner: false as const, routeSelectedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const, hyperbaricTreatmentSelectedByLearner: false as const,
+              hyperbaricEligibilityDetermined: false as const, transportSelectedByLearner: false as const,
+              treatmentEffectProven: false as const, durableNeurologicRecoveryProven: false as const,
+              delayedNeurologicComplicationsExcluded: false as const, cardiacComplicationsExcluded: false as const,
+              coexposureExcluded: false as const, dispositionDetermined: false as const,
+              prognosisPredicted: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

@@ -556,6 +556,18 @@ credited toward the catalog until every item in the completion contract passes.
     examination, monitoring or test acquisition, gas calculation, diagnosis, oxygen setting, drug,
     dose, route, access, infusion, treatment delivery, rescue procedure, disposition, prognosis, or
     outcome control exists.
+  - [x] Toxicology slice 2/15 adds carbon monoxide with a reassuring monitor. The learner reconciles
+    a documented shared generator-exhaust exposure, transient loss of consciousness, confusion,
+    conventional SpO2 99%, elapsed time, and the whole patient; recognizes that conventional pulse
+    oximetry cannot exclude poisoning and one supplied COHb value cannot independently grade severity;
+    activates source and co-exposed-person safety, qualified oxygen and monitoring, poison-center or
+    medical-toxicology consultation, and emergency ownership; reviews supplied COHb 28% with sample
+    timing plus neurologic and cardiac context; records selected-patient hyperbaric consultation; then
+    reviews a strict elapsed fixed symptom, heart-rate, respiratory-rate, and COHb response before
+    another elapsed delayed-neurologic, cardiac, exposure, follow-up, and active-risk handoff. No
+    learner history, examination, monitoring or test acquisition, diagnosis, oxygen setting, drug,
+    hyperbaric eligibility or treatment, chamber or transport selection, procedure, disposition,
+    prognosis, or outcome control exists.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.
 - [ ] After every wave, verify the exact cumulative count, distinctness, capability reuse, path and
