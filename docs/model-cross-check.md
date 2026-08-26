@@ -133,6 +133,11 @@ Recorded here rather than silently carried:
   glucose, immediate escalation boundary, and serial visible-response report; it does not validate
   seizure physiology, benzodiazepine or second-line drug effect, airway safety, electrographic
   control, neurological recovery, cause, recurrence, or outcome.
+  Pediatric anaphylaxis reuses the exact 6-year-old, 20 kg healthy-child scaffold and overlays a
+  fixed reported exposure, supplied first-line-care record, persistent airway-breathing-circulation
+  compromise, qualified repeat-care escalation, and serial partial-response report; it does not
+  validate anaphylaxis physiology, drug or support effect, diagnostic or trigger certainty,
+  resolution, recurrence, observation, referral, disposition, or outcome.
 
 ## Concentration-time checks, 2026-08-23
 

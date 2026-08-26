@@ -1075,6 +1075,11 @@ export interface ActionCockpitProps {
       readonly secondLineAtTick: number | null; readonly safetyAtTick: number | null;
       readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly pediatricAnaphylaxisAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly firstLineAtTick: number | null; readonly safetyAtTick: number | null;
+      readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1743,6 +1748,14 @@ export interface ActionCockpitProps {
       | 'review-pediatric-status-epilepticus-later-response'
       | 'handoff-pediatric-status-epilepticus-active-risk',
   ) => void;
+  readonly onPediatricAnaphylaxisResponse?: (
+    action: 'reconcile-pediatric-anaphylaxis-exposure-care-and-whole-child'
+      | 'recognize-pediatric-anaphylaxis-persistent-abc-compromise'
+      | 'activate-pediatric-anaphylaxis-qualified-repeat-first-line-and-resuscitation-ownership'
+      | 'review-pediatric-anaphylaxis-airway-asthma-causes-and-refractory-boundary'
+      | 'review-pediatric-anaphylaxis-later-response'
+      | 'handoff-pediatric-anaphylaxis-observation-allergy-and-caregiver-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2124,6 +2137,12 @@ export function crisisResponseAvailability(
       scenario.metadata.id === 'pediatric-status-epilepticus'
       && scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'pediatric-status-epilepticus-reassessment'),
+    hasPediatricAnaphylaxisResponse:
+      scenario.metadata.id === 'pediatric-anaphylaxis'
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-anaphylaxis-reassessment')
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-anaphylaxis-reassessment-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2285,6 +2304,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'pediatric-febrile-seizure-reassessment')
       || (event.type === 'narrative'
         && event.target === 'pediatric-status-epilepticus-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'pediatric-anaphylaxis-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2352,6 +2373,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasPediatricHypoglycemicSeizureResponse,
     hasPediatricFebrileSeizureResponse,
     hasPediatricStatusEpilepticusResponse,
+    hasPediatricAnaphylaxisResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2427,7 +2449,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPediatricSepsisResponse || hasPediatricSepticShockResponse
     || hasPediatricDehydrationResponse || hasPediatricDiabeticKetoacidosisResponse
     || hasPediatricHypoglycemicSeizureResponse || hasPediatricFebrileSeizureResponse
-    || hasPediatricStatusEpilepticusResponse;
+    || hasPediatricStatusEpilepticusResponse || hasPediatricAnaphylaxisResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2458,7 +2480,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasPediatricStatusEpilepticusResponse
+  const responseTray = hasPediatricAnaphylaxisResponse
+    ? { id: 'crisis', label: 'Pediatric anaphylaxis reassessment' } as const
+    : hasPediatricStatusEpilepticusResponse
     ? { id: 'crisis', label: 'Pediatric status-epilepticus reassessment' } as const
     : hasPediatricFebrileSeizureResponse
     ? { id: 'crisis', label: 'Pediatric febrile-seizure reassessment' } as const
@@ -2736,6 +2760,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPediatricHypoglycemicSeizureResponse
     || hasPediatricFebrileSeizureResponse
     || hasPediatricStatusEpilepticusResponse
+    || hasPediatricAnaphylaxisResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3437,6 +3462,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <PediatricStatusEpilepticusTray
                 assessment={props.resuscitation.pediatricStatusEpilepticusAssessment}
                 onAction={props.onPediatricStatusEpilepticusResponse ?? (() => {})} />
+            )}
+            {hasPediatricAnaphylaxisResponse && (
+              <PediatricAnaphylaxisTray
+                assessment={props.resuscitation.pediatricAnaphylaxisAssessment}
+                onAction={props.onPediatricAnaphylaxisResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -8927,6 +8957,62 @@ function PediatricStatusEpilepticusTray({ assessment, onAction }: {
           onClick={() => onAction('handoff-pediatric-status-epilepticus-active-risk')}>Hand off active status risk</Button>}
       </div>
       <p className="field__hint">Stopped visible movements do not prove electrographic seizure control, durable seizure control, neurological recovery, causal closure, discharge readiness, or outcome.</p>
+    </section>
+  </div>;
+}
+
+function PediatricAnaphylaxisTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricAnaphylaxisAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onPediatricAnaphylaxisResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const rescue = assessment?.firstLineAtTick != null;
+  const safety = assessment?.safetyAtTick != null;
+  const later = assessment?.laterResponseAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="pediatric-anaphylaxis-pattern-title">
+      <div id="pediatric-anaphylaxis-pattern-title" className="syringe__name">See the whole allergic pattern.</div>
+      <Badge kind="teaching">exposure · airway · breathing · gut · perfusion</Badge>
+      <div className="syringe__meta">6 years · 20 kg · first-line care reported · symptoms persist</div>
+      <p className="syringe__remaining">
+        {safety ? 'Airway, asthma, cause, and refractory-risk review remain active'
+          : rescue ? 'Qualified rescue is active · complete the safety review'
+            : recognition ? 'Persistent ABC compromise · qualified rescue matters now'
+              : trajectory ? 'Now recognize the persistent multisystem pattern'
+                : 'Start with the exposure, reported care, and whole child.'}
+      </p>
+      <div className="syringe__presets">
+        {!trajectory && <Button className="crisis-drug__action"
+          onClick={() => onAction('reconcile-pediatric-anaphylaxis-exposure-care-and-whole-child')}>Review exposure + whole-child trajectory</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action"
+          onClick={() => onAction('recognize-pediatric-anaphylaxis-persistent-abc-compromise')}>Recognize persistent ABC compromise</Button>}
+        {recognition && !rescue && <Button className="crisis-drug__action"
+          onClick={() => onAction('activate-pediatric-anaphylaxis-qualified-repeat-first-line-and-resuscitation-ownership')}>Activate qualified anaphylaxis rescue</Button>}
+        {rescue && !safety && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-pediatric-anaphylaxis-airway-asthma-causes-and-refractory-boundary')}>Review airway + asthma + causes</Button>}
+      </div>
+      <p className="field__hint">Experienced pediatric, allergy, nursing, pharmacy, and airway-capable teams own first-line medicine, circulation and airway support, monitoring, access, devices, cause review, and escalation. This surface exposes no learner product, drug, dose, route, interval, device, procedure, or treatment control.</p>
+    </section>
+    <section className="syringe" aria-labelledby="pediatric-anaphylaxis-response-title">
+      <div id="pediatric-anaphylaxis-response-title" className="syringe__name">Improvement needs watchfulness.</div>
+      <Badge kind="teaching">response · recurrence · cofactors · observation · ownership</Badge>
+      <div className="syringe__meta">fixed minute-18 report · active recurrence risk</div>
+      <p className="syringe__remaining" role="status">
+        {handoff ? 'Active anaphylaxis risk and owners handed off'
+          : later ? 'Partial improvement only. Recurrence and cause risk remain open.'
+            : safety ? 'Review the fixed response after elapsed qualified care'
+              : rescue ? 'Qualified rescue is active · complete airway and recurrence review'
+                : 'Qualified rescue comes first; safety review stays close.'}
+      </p>
+      <div className="syringe__presets">
+        {safety && !later && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-pediatric-anaphylaxis-later-response')}>Review the minute-18 response</Button>}
+        {later && !handoff && <Button className="crisis-drug__action"
+          onClick={() => onAction('handoff-pediatric-anaphylaxis-observation-allergy-and-caregiver-risk')}>Hand off active anaphylaxis risk</Button>}
+      </div>
+      <p className="field__hint">Partial improvement does not prove treatment effect, trigger, durable airway or circulatory recovery, refractory-risk closure, recurrence exclusion, discharge readiness, or outcome.</p>
     </section>
   </div>;
 }

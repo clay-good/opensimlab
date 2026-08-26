@@ -1853,6 +1853,29 @@ access, infusion, oxygen, suction, airway, procedure, or treatment, diagnose or 
 assess team performance, determine disposition or prognosis, or prove causal treatment effect,
 electrographic or durable seizure control, recovery, recurrence exclusion, or outcome.
 
+### Wave D pediatrics slice 12: anaphylaxis after first-line care
+
+The twelfth Pediatrics lab begins 5 minutes after one supplied qualified community first-line dose.
+A 6-year-old boy weighing 20 kg has mild asthma but no prior anaphylaxis. A witnessed insect sting is
+reported at minute 0, while species, allergen, and causal trigger remain unconfirmed. Despite
+qualified help, safe positioning, unspecified oxygen support, and one documented appropriate
+intramuscular epinephrine dose at minute 5, he has persistent cough and diffuse wheeze, hoarse
+one-to-two-word speech, repeated vomiting, pallor, drowsiness, weak pulses, and refill 4 seconds. A
+fixed minute-10 report supplies HR 148/min, RR 34/min, BP 78/42 mmHg, pulse-coherent SpO₂ 91% on
+supplied oxygen, and temperature 36.7°C. No typical skin findings are authored.
+
+The learner reconciles the reported exposure, supplied care, and whole-child state; recognizes
+persistent pediatric airway, breathing, and circulation compromise; activates qualified repeat
+first-line and resuscitation ownership; and then reviews airway, asthma overlap, open causes,
+circulation, and the refractory boundary. A strictly elapsed minute-18 report shows partial but
+incomplete improvement before another elapsed observation, allergy, recurrence, caregiver, and
+escalation-risk handoff. The lab does not examine or monitor the child, score criteria, confirm a
+diagnosis or trigger, verify or select a drug, concentration, dose, route, injector, access, oxygen
+interface or flow, fluid type, volume or rate, adjunct medicine, infusion, vasopressor, airway device
+or procedure, CPR, test, observation duration, prescription, training, referral, disposition, or
+prognosis, or prove causal treatment effect, resolution, durable response, recurrence exclusion, or
+outcome.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

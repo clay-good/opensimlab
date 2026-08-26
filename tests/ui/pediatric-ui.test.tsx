@@ -15,6 +15,7 @@ import { OBSTETRIC_GENERAL_ANESTHESIA } from '@anesthesia/scenarios/obstetric-ge
 import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PEDIATRIC_STATUS_EPILEPTICUS } from '../../src/modules/pediatrics/scenarios/pediatric-status-epilepticus';
+import { PEDIATRIC_ANAPHYLAXIS } from '../../src/modules/pediatrics/scenarios/pediatric-anaphylaxis';
 import { PrerenderedBody } from '../../src/routes/Prerendered';
 import { ROUTES } from '../../src/routes/routes';
 
@@ -269,6 +270,108 @@ describe('Requirement: pediatric status epilepticus stays calm and bounded on a 
       })) };
     expect(crisisResponseAvailability(wrongTarget, []).hasPediatricStatusEpilepticusResponse)
       .toBe(false);
+  });
+});
+
+describe('Requirement: pediatric anaphylaxis keeps one calm action at a time', () => {
+  let container: HTMLDivElement; let root: Root;
+  beforeEach(() => {
+    (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+    document.documentElement.style.width = '320px';
+    container = document.createElement('div'); document.body.appendChild(container);
+    const style = document.createElement('style'); style.dataset.testStyles = 'pediatric-anaphylaxis-ui';
+    style.textContent = [readFileSync(join(process.cwd(), 'src/platform/ui/components.css'), 'utf8'),
+      readFileSync(join(process.cwd(), 'src/modules/anesthesia/ui/cockpit.css'), 'utf8')].join('\n');
+    document.head.appendChild(style); root = createRoot(container);
+  });
+  afterEach(() => {
+    act(() => root.unmount()); container.remove(); document.documentElement.style.width = '';
+    document.querySelector('style[data-test-styles="pediatric-anaphylaxis-ui"]')?.remove();
+  });
+
+  const assessment = (step = 0) => ({
+    trajectoryAtTick: step > 0 ? 1 : null, recognitionAtTick: step > 1 ? 2 : null,
+    firstLineAtTick: step > 2 ? 3 : null, safetyAtTick: step > 3 ? 4 : null,
+    laterResponseAtTick: step > 4 ? 5 : null, handoffAtTick: step > 5 ? 6 : null,
+  });
+  function anaphylaxisProps(step = 0, onAction = vi.fn(), state = assessment(step)):
+  ActionCockpitProps {
+    return { scenario: PEDIATRIC_ANAPHYLAXIS, region: UNITED_STATES, infusions: [],
+      hypnoticLine: { connected: true, inspected: false }, resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+        lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0,
+        dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false,
+        pediatricAnaphylaxisAssessment: state }, lastExposure: null,
+      syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 120,
+        respiratoryRateBpm: 24, fio2: 0.21, peep: 0, delivering: false,
+        sevofluranePercent: 0, freshGasFlowLPerMin: 0 }, intubated: false,
+      airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0,
+      airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0,
+      helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {},
+      onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {},
+      onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {},
+      onCallForHelp: () => {}, onAirwayDevice: () => {}, onEpinephrine: () => {},
+      onDantrolene: () => {}, onActiveCooling: () => {},
+      onPediatricAnaphylaxisResponse: onAction, onDrugCard: () => {} };
+  }
+
+  it('shows exact serial action density with two cards and one live status', () => {
+    const labels = ['Review exposure + whole-child trajectory',
+      'Recognize persistent ABC compromise', 'Activate qualified anaphylaxis rescue',
+      'Review airway + asthma + causes', 'Review the minute-18 response',
+      'Hand off active anaphylaxis risk'];
+    const statuses = ['Qualified rescue comes first; safety review stays close.',
+      'Qualified rescue comes first; safety review stays close.',
+      'Qualified rescue comes first; safety review stays close.',
+      'Qualified rescue is active · complete airway and recurrence review',
+      'Review the fixed response after elapsed qualified care',
+      'Partial improvement only. Recurrence and cause risk remain open.',
+      'Active anaphylaxis risk and owners handed off'];
+    for (let step = 0; step <= labels.length; step += 1) {
+      act(() => root.render(createElement(ActionCockpit, anaphylaxisProps(step))));
+      const cards = [...container.querySelectorAll('.tray-grid > section.syringe')];
+      expect(cards).toHaveLength(2);
+      expect(cards.map((card) => card.getAttribute('aria-labelledby'))).toEqual([
+        'pediatric-anaphylaxis-pattern-title', 'pediatric-anaphylaxis-response-title']);
+      const liveStatuses = container.querySelectorAll('[role="status"]');
+      expect(liveStatuses).toHaveLength(1);
+      expect(liveStatuses[0]?.textContent?.trim()).toBe(statuses[step]);
+      const buttons = [...container.querySelectorAll('.tray-grid button')];
+      expect(buttons).toHaveLength([1, 1, 1, 1, 1, 1, 0][step]!);
+      if (step < labels.length) expect(buttons[0]?.textContent?.trim()).toBe(labels[step]);
+      for (const action of buttons) expect(getComputedStyle(action).minBlockSize).toBe('44px');
+    }
+    expect(container.textContent).toContain('exposure · airway · breathing · gut · perfusion');
+    expect(container.textContent).not.toContain('exposure · skin');
+  });
+
+  it('uses exact frozen actions without exposing a learner treatment recipe', () => {
+    const onAction = vi.fn();
+    act(() => root.render(createElement(ActionCockpit, anaphylaxisProps(2, onAction))));
+    const action = [...container.querySelectorAll('button')]
+      .find((entry) => entry.textContent?.trim() === 'Activate qualified anaphylaxis rescue');
+    act(() => action?.click());
+    expect(onAction).toHaveBeenCalledWith(
+      'activate-pediatric-anaphylaxis-qualified-repeat-first-line-and-resuscitation-ownership');
+    act(() => root.render(createElement(ActionCockpit, anaphylaxisProps(5))));
+    expect(container.textContent).toContain('Partial improvement only.');
+    expect(container.textContent).toContain('does not prove treatment effect');
+    expect(container.textContent).not.toMatch(/\b\d+(?:\.\d+)?\s*(?:mg|mcg|mL)\b|mg\/kg|epinephrine|adrenaline|autoinjector|intramuscular|intravenous|intraosseous|repeat in|oxygen flow|bolus/i);
+  });
+
+  it('requires exact scenario, reassessment target, and boundary target', () => {
+    expect(crisisResponseAvailability(PEDIATRIC_ANAPHYLAXIS, [])
+      .hasPediatricAnaphylaxisResponse).toBe(true);
+    const wrongId = { ...PEDIATRIC_ANAPHYLAXIS,
+      metadata: { ...PEDIATRIC_ANAPHYLAXIS.metadata, id: 'not-pediatric-anaphylaxis' } };
+    expect(crisisResponseAvailability(wrongId, []).hasPediatricAnaphylaxisResponse).toBe(false);
+    for (const target of ['pediatric-anaphylaxis-reassessment',
+      'pediatric-anaphylaxis-reassessment-boundary']) {
+      const drifted = { ...PEDIATRIC_ANAPHYLAXIS,
+        timeline: PEDIATRIC_ANAPHYLAXIS.timeline.map((event) => event.target === target
+          ? { ...event, target: `${target}-suffix` } : event) };
+      expect(crisisResponseAvailability(drifted, []).hasPediatricAnaphylaxisResponse).toBe(false);
+    }
   });
 });
 

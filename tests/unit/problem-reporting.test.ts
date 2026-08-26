@@ -22,9 +22,9 @@ describe('scenario report contract', () => {
     const catalog = JSON.parse(readFileSync(
       join(process.cwd(), 'workers/reports/src/report-catalog.generated.json'), 'utf8',
     )) as { scenarios: { moduleId: string; scenarioId: string; contentVersion: string }[] };
-    expect(catalog.scenarios).toHaveLength(131);
+    expect(catalog.scenarios).toHaveLength(132);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(131);
+      .toBe(132);
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-respiratory-distress',
       contentVersion: '0.1.0',
@@ -64,6 +64,9 @@ describe('scenario report contract', () => {
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-status-epilepticus',
       contentVersion: '0.1.0',
+    }));
+    expect(catalog.scenarios).toContainEqual(expect.objectContaining({
+      moduleId: 'pediatrics', scenarioId: 'pediatric-anaphylaxis', contentVersion: '0.1.0',
     }));
   });
 
@@ -150,6 +153,25 @@ describe('scenario report contract', () => {
       pediatric, 'clinical-content', 'The refractory-boundary wording may need review.', 'token');
     expect(validateReportPayload(report)).toMatchObject({ ok: true });
     expect(validateReportPayload({ ...report, module_id: 'emergency-medicine' }))
+      .toEqual({ ok: false, status: 400 });
+    expect(validateReportPayload({ ...report, canonical_url: `${pediatric.canonicalUrl}?tick=12` }))
+      .toEqual({ ok: false, status: 403 });
+    expect(validateReportPayload({ ...report, canonical_url: `${pediatric.canonicalUrl}#tick-12` }))
+      .toEqual({ ok: false, status: 403 });
+  });
+
+  it('accepts the exact pediatric anaphylaxis context and rejects identity or URL drift', () => {
+    const pediatric: ScenarioReportContext = {
+      ...context, moduleId: 'pediatrics', scenarioId: 'pediatric-anaphylaxis',
+      canonicalUrl: 'https://opensimlab.com/pediatrics/scenario/pediatric-anaphylaxis',
+      fidelityClass: 'state_transition', simulatedTick: 12,
+    };
+    const report = buildScenarioReportRequest(
+      pediatric, 'clinical-content', 'The airway-risk wording may need review.', 'token');
+    expect(validateReportPayload(report)).toMatchObject({ ok: true });
+    expect(validateReportPayload({ ...report, module_id: 'emergency-medicine' }))
+      .toEqual({ ok: false, status: 400 });
+    expect(validateReportPayload({ ...report, scenario_id: 'anaphylaxis' }))
       .toEqual({ ok: false, status: 400 });
     expect(validateReportPayload({ ...report, canonical_url: `${pediatric.canonicalUrl}?tick=12` }))
       .toEqual({ ok: false, status: 403 });

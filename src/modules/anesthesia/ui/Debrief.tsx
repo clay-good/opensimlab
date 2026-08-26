@@ -4816,6 +4816,32 @@ export function objectiveFindings(
       const ordered = later && handoff && later.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved the seizure clock, reported care, movement and recovery state, airway and glucose context, open causes, escalation triggers, and named owners without claiming durable control, recovery, discharge, or outcome.' : 'The active pediatric status-epilepticus handoff was absent or did not follow the later response after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-pediatric-anaphylaxis-exposure-care-and-whole-child',
+      'recognize-pediatric-anaphylaxis-persistent-abc-compromise',
+      'activate-pediatric-anaphylaxis-qualified-repeat-first-line-and-resuscitation-ownership',
+      'review-pediatric-anaphylaxis-airway-asthma-causes-and-refractory-boundary',
+      'review-pediatric-anaphylaxis-later-response',
+      'handoff-pediatric-anaphylaxis-observation-allergy-and-caregiver-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'pediatric-anaphylaxis'
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pediatric-anaphylaxis-reassessment')
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pediatric-anaphylaxis-reassessment-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The pediatric anaphylaxis lesson was not active.' } satisfies ObjectiveFinding;
+      const trajectory = log.find((event) => /^pediatric-anaphylaxis-trajectory-reconciled-\d+$/.test(event.eventId));
+      const recognition = log.find((event) => /^pediatric-anaphylaxis-persistent-abc-compromise-recognized-\d+$/.test(event.eventId));
+      const rescue = log.find((event) => /^pediatric-anaphylaxis-qualified-rescue-activated-\d+$/.test(event.eventId));
+      const safety = log.find((event) => /^pediatric-anaphylaxis-safety-reviewed-\d+$/.test(event.eventId));
+      const later = log.find((event) => /^pediatric-anaphylaxis-later-response-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^pediatric-anaphylaxis-active-risk-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-pediatric-anaphylaxis-exposure-care-and-whole-child') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'The supplied exposure, reported first-line care, skin, airway, breathing, gastrointestinal, and perfusion trajectory was reconciled without learner examination, monitoring, diagnosis, or treatment.' : 'The pediatric anaphylaxis trajectory was not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'recognize-pediatric-anaphylaxis-persistent-abc-compromise') { const ordered = trajectory && recognition && trajectory.tick <= recognition.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Persistent authored airway, breathing, and circulation compromise was recognized without relying on skin alone or proving the trigger.' : 'Persistent pediatric anaphylaxis recognition was absent or preceded trajectory review.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-pediatric-anaphylaxis-qualified-repeat-first-line-and-resuscitation-ownership') { const ordered = recognition && rescue && recognition.tick <= rescue.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Qualified repeat first-line and resuscitation ownership was activated without learner product, drug, dose, route, interval, access, oxygen, device, procedure, or treatment selection.' : 'Qualified anaphylaxis rescue was absent or preceded recognition.', atTick: rescue?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-anaphylaxis-airway-asthma-causes-and-refractory-boundary') { const ordered = rescue && safety && rescue.tick <= safety.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Airway, asthma, circulation, trigger and alternative causes, recurrence, and refractory-risk boundaries were reviewed after rescue ownership without learner examination, testing, treatment, or disposition.' : 'Anaphylaxis safety review was absent or preceded qualified rescue ownership.', atTick: safety?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-anaphylaxis-later-response') { const ordered = safety && later && safety.tick < later.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed qualified care, partial improvement was separated from treatment effect, trigger closure, durable airway or circulatory recovery, refractory-risk closure, recurrence exclusion, and disposition.' : 'The later response was absent or did not follow safety review after elapsed time.', atTick: later?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = later && handoff && later.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved exposure and reported-care timing, residual airway, breathing and circulation risk, allergy and cofactor work, observation, recurrence triggers, caregiver context, and named owners without claiming recovery, discharge, or outcome.' : 'The active pediatric anaphylaxis handoff was absent or did not follow the later response after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

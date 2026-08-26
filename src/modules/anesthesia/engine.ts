@@ -137,6 +137,7 @@ const PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES = new Set([
   'pediatric-hypoglycemic-seizure-response',
   'pediatric-febrile-seizure-response',
   'pediatric-status-epilepticus-response',
+  'pediatric-anaphylaxis-response',
   'pediatric-foreign-body-airway-obstruction-response',
 ]);
 const BRONCHIOLITIS_BLOCKED_ACTION_TYPES = new Set([
@@ -235,6 +236,16 @@ const PEDIATRIC_STATUS_EPILEPTICUS_BLOCKED_ACTION_TYPES = new Set([
   'critical-care-status-epilepticus-response', 'diabetic-ketoacidosis-response',
   'glycemic-response', 'hyponatremia-response', 'intracranial-hypertension-response',
   'opioid-toxicity-response', 'emergency-anaphylaxis-response',
+]);
+const PEDIATRIC_ANAPHYLAXIS_BLOCKED_ACTION_TYPES = new Set([
+  ...[...PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES]
+    .filter((type) => type !== 'pediatric-anaphylaxis-response'),
+  'pediatric-respiratory-distress-response', 'bronchiolitis-response', 'croup-response',
+  'pediatric-status-asthmaticus-response', 'pediatric-sepsis-response',
+  'pediatric-septic-shock-response', 'pediatric-status-epilepticus-response',
+  'pediatric-foreign-body-airway-obstruction-response', 'adult-asthma-response',
+  'acute-severe-asthma-response', 'opioid-toxicity-response',
+  'emergency-anaphylaxis-response',
 ]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
@@ -953,6 +964,12 @@ export class AnesthesiaEngine {
   private pediatricStatusEpilepticusSafetyAtTick: number | null = null;
   private pediatricStatusEpilepticusLaterResponseAtTick: number | null = null;
   private pediatricStatusEpilepticusHandoffAtTick: number | null = null;
+  private pediatricAnaphylaxisTrajectoryAtTick: number | null = null;
+  private pediatricAnaphylaxisRecognitionAtTick: number | null = null;
+  private pediatricAnaphylaxisFirstLineAtTick: number | null = null;
+  private pediatricAnaphylaxisSafetyAtTick: number | null = null;
+  private pediatricAnaphylaxisLaterResponseAtTick: number | null = null;
+  private pediatricAnaphylaxisHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1450,6 +1467,16 @@ export class AnesthesiaEngine {
       this.log('warning', 'assessment',
         `pediatric-status-epilepticus-generic-action-refused-${this.currentTick}`,
         'This pediatric status-epilepticus lesson exposes no generic seizure, medication, dose, route, access, oxygen-device, airway, ventilator, test, procedure, adult-status, refractory-status, or adjacent-scenario action. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const pediatricAnaphylaxis = this.scenario.metadata.id === 'pediatric-anaphylaxis'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-anaphylaxis-reassessment');
+    if (pediatricAnaphylaxis && PEDIATRIC_ANAPHYLAXIS_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment',
+        `pediatric-anaphylaxis-generic-action-refused-${this.currentTick}`,
+        'This pediatric anaphylaxis lesson exposes no generic epinephrine, medication, fluid, oxygen, airway, ventilator, device, procedure, adult-anaphylaxis, asthma, sepsis, or adjacent-scenario action. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -7116,6 +7143,154 @@ export class AnesthesiaEngine {
             outcomePredicted: false });
         break;
       }
+      case 'pediatric-anaphylaxis-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.metadata.id === 'pediatric-anaphylaxis'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-anaphylaxis-reassessment');
+        const valid = ['reconcile-pediatric-anaphylaxis-exposure-care-and-whole-child',
+          'recognize-pediatric-anaphylaxis-persistent-abc-compromise',
+          'activate-pediatric-anaphylaxis-qualified-repeat-first-line-and-resuscitation-ownership',
+          'review-pediatric-anaphylaxis-airway-asthma-causes-and-refractory-boundary',
+          'review-pediatric-anaphylaxis-later-response',
+          'handoff-pediatric-anaphylaxis-observation-allergy-and-caregiver-risk'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `pediatric-anaphylaxis-response-refused-${this.currentTick}`,
+            supported ? 'The pediatric anaphylaxis action was not one of the listed choices. Nothing changed.'
+              : 'These pediatric anaphylaxis choices are available only in the exact declared Pediatrics lesson.');
+          break;
+        }
+        if (response === 'reconcile-pediatric-anaphylaxis-exposure-care-and-whole-child') {
+          if (this.pediatricAnaphylaxisTrajectoryAtTick !== null) {
+            this.log('warning', 'assessment', `pediatric-anaphylaxis-trajectory-refused-${this.currentTick}`,
+              'The supplied exposure, qualified care, and whole-child trajectory were already reconciled.');
+            break;
+          }
+          this.pediatricAnaphylaxisTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-anaphylaxis-trajectory-reconciled-${this.currentTick}`,
+            'The supplied minute-10 record reconciles a witnessed insect sting, abrupt persistent cough and diffuse wheeze, hoarse one-to-two-word speech, repeated vomiting, drowsiness, hypotension, and poor perfusion with a present pulse and spontaneous breathing. HR is 148/min, RR 34/min, BP 78/42 mmHg (MAP 54), clean pulse-coherent SpO2 91% on unspecified qualified oxygen, and temperature 36.7°C. Qualified help, lying-flat positioning, and one appropriate first-line IM epinephrine treatment at minute 5 are authored. The species, allergen, and trigger remain unconfirmed, and the learner examined or verified none of this and selected or delivered no product, dose, route, interval, oxygen, fluid, device, airway action, procedure, or treatment.',
+            { plausibleExposureAuthored: true, multisystemCompromiseAuthored: true,
+              firstLineCareAuthored: true, initialPulsePresent: true,
+              spontaneousBreathingAuthored: true, patientExaminedByLearner: false,
+              exposureVerifiedByLearner: false, treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.pediatricAnaphylaxisTrajectoryAtTick === null) {
+          this.log('warning', 'assessment', `pediatric-anaphylaxis-trajectory-order-refused-${this.currentTick}`,
+            'Reconcile the supplied exposure, qualified care, and whole-child trajectory first.');
+          break;
+        }
+        if (response === 'recognize-pediatric-anaphylaxis-persistent-abc-compromise') {
+          if (this.pediatricAnaphylaxisRecognitionAtTick !== null) {
+            this.log('warning', 'assessment', `pediatric-anaphylaxis-recognition-refused-${this.currentTick}`,
+              'The authored pediatric anaphylaxis pattern and immediate-risk boundary were already recognized.');
+            break;
+          }
+          this.pediatricAnaphylaxisRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-anaphylaxis-persistent-abc-compromise-recognized-${this.currentTick}`,
+            'The abrupt plausible exposure plus breathing, gastrointestinal, circulatory, perfusion, and neurological compromise supports an authored pediatric anaphylaxis pattern requiring immediate qualified care even without hives or facial or tongue swelling. The learner made no final diagnosis or classification and proved neither trigger nor cause.',
+            { anaphylaxisFinallyProven: false, triggerConfirmed: false,
+              diagnosisMadeByLearner: false, classificationMadeByLearner: false });
+          break;
+        }
+        if (this.pediatricAnaphylaxisRecognitionAtTick === null) {
+          this.log('warning', 'assessment', `pediatric-anaphylaxis-recognition-order-refused-${this.currentTick}`,
+            'Recognize the authored pediatric anaphylaxis pattern and immediate-risk boundary first.');
+          break;
+        }
+        if (response === 'activate-pediatric-anaphylaxis-qualified-repeat-first-line-and-resuscitation-ownership') {
+          if (this.pediatricAnaphylaxisFirstLineAtTick !== null) {
+            this.log('warning', 'assessment', `pediatric-anaphylaxis-first-line-refused-${this.currentTick}`,
+              'Qualified pediatric first-line anaphylaxis and escalation ownership is already active.');
+            break;
+          }
+          this.pediatricAnaphylaxisFirstLineAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-anaphylaxis-qualified-rescue-activated-${this.currentTick}`,
+            'Experienced pediatric, emergency, nursing, pharmacy, airway-capable, and critical-care teams now own immediate first-line and repeat-care decisions, positioning, trigger avoidance, monitoring, oxygenation, circulation, airway readiness, and escalation. The learner selected, verified, prepared, or delivered no epinephrine product, concentration, dose, route, interval, access, fluid, oxygen, device, airway maneuver, procedure, or treatment.',
+            { qualifiedFirstLineOwnershipActive: true, epinephrineSelectedByLearner: false,
+              productSelectedByLearner: false, doseSelectedByLearner: false,
+              routeSelectedByLearner: false, treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.pediatricAnaphylaxisFirstLineAtTick === null) {
+          this.log('warning', 'assessment', `pediatric-anaphylaxis-first-line-order-refused-${this.currentTick}`,
+            'Activate immediate qualified first-line ownership before broader safety review.');
+          break;
+        }
+        if (response === 'review-pediatric-anaphylaxis-airway-asthma-causes-and-refractory-boundary') {
+          if (this.pediatricAnaphylaxisSafetyAtTick !== null) {
+            this.log('warning', 'assessment', `pediatric-anaphylaxis-safety-refused-${this.currentTick}`,
+              'Airway, circulation, trigger, alternative-cause, recurrence, and refractory-risk review is already active.');
+            break;
+          }
+          this.pediatricAnaphylaxisSafetyAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-anaphylaxis-safety-reviewed-${this.currentTick}`,
+            'Experienced teams retain ownership of repeated airway, breathing, circulation, perfusion, neurological, skin, gastrointestinal, and whole-child reassessment; trigger and alternative-cause work; medication response; recurrent or refractory deterioration; and escalation. Current negative findings are snapshots. The learner acquired or interpreted no monitoring or test, confirmed no trigger, performed no positioning, trigger removal, airway maneuver, procedure, or treatment, and determined no disposition.',
+            { qualifiedSafetyReviewActive: true, monitoringAcquiredByLearner: false,
+              testInterpretedByLearner: false, triggerConfirmed: false,
+              positioningPerformedByLearner: false, airwayManeuverPerformedByLearner: false,
+              procedurePerformedByLearner: false, dispositionDetermined: false });
+          break;
+        }
+        if (this.pediatricAnaphylaxisSafetyAtTick === null) {
+          this.log('warning', 'assessment', `pediatric-anaphylaxis-safety-order-refused-${this.currentTick}`,
+            'Review airway, circulation, trigger, alternative causes, and refractory risk before the later report.');
+          break;
+        }
+        if (response === 'review-pediatric-anaphylaxis-later-response') {
+          if (this.currentTick <= this.pediatricAnaphylaxisSafetyAtTick) {
+            this.log('warning', 'assessment', `pediatric-anaphylaxis-later-time-refused-${this.currentTick}`,
+              'Allow elapsed simulated time after qualified first-line and safety ownership are active.');
+            break;
+          }
+          if (this.pediatricAnaphylaxisLaterResponseAtTick !== null) {
+            this.log('warning', 'assessment', `pediatric-anaphylaxis-later-response-refused-${this.currentTick}`,
+              'The fixed later pediatric anaphylaxis report was already reviewed.');
+            break;
+          }
+          this.pediatricAnaphylaxisLaterResponseAtTick = this.currentTick;
+          this.log('warning', 'assessment',
+            `pediatric-anaphylaxis-later-response-reviewed-${this.currentTick}`,
+            'Fixed qualified minute-18 report: there has been no further vomiting since minute 11. He is alert, speaks in full short sentences with a clearer voice, and has reduced but persistent cough and wheeze. HR is 122/min, RR 24/min, BP 96/60 mmHg (MAP 72), clean pulse-coherent SpO2 97% on continued unspecified supplied oxygen, and temperature 36.7°C; he is warm with normal pulses and refill 2 seconds. No hives or swelling are reported. This checkpoint proves neither causal treatment effect, full or durable recovery, a final diagnosis, trigger confirmation, airway or shock resolution, refractory or biphasic exclusion, recurrence exclusion, disposition, nor outcome.',
+            { laterReportAuthored: true, treatmentEffectProven: false,
+              anaphylaxisFinallyProven: false, triggerConfirmed: false,
+              airwayRiskResolved: false, shockResolved: false,
+              refractoryAnaphylaxisExcluded: false, biphasicReactionExcluded: false,
+              recurrenceExcluded: false, durableRecoveryProven: false,
+              dispositionDetermined: false, outcomePredicted: false });
+          break;
+        }
+        if (this.pediatricAnaphylaxisLaterResponseAtTick === null) {
+          this.log('warning', 'assessment', `pediatric-anaphylaxis-later-order-refused-${this.currentTick}`,
+            'Review the fixed later whole-child report after elapsed qualified care.');
+          break;
+        }
+        if (this.currentTick <= this.pediatricAnaphylaxisLaterResponseAtTick) {
+          this.log('warning', 'assessment', `pediatric-anaphylaxis-handoff-time-refused-${this.currentTick}`,
+            'Allow another simulated tick before handing off active pediatric anaphylaxis risk.');
+          break;
+        }
+        if (this.pediatricAnaphylaxisHandoffAtTick !== null) {
+          this.log('warning', 'assessment', `pediatric-anaphylaxis-handoff-refused-${this.currentTick}`,
+            'The active pediatric anaphylaxis handoff was already recorded.');
+          break;
+        }
+        this.pediatricAnaphylaxisHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment',
+          `pediatric-anaphylaxis-active-risk-handoff-recorded-${this.currentTick}`,
+          'The exposure and whole-child trajectory, reported first-line care, airway and circulation surveillance, trigger and alternative-cause work, recurrent, refractory and biphasic contingencies, caregiver context, escalation triggers, and named ownership were handed off. Causal treatment effect, full or durable recovery, final diagnosis, trigger proof, airway or shock resolution, refractory or recurrence exclusion, discharge readiness, disposition, prognosis, and outcome remain undeclared.',
+          { treatmentEffectProven: false, durableRecoveryProven: false,
+            anaphylaxisFinallyProven: false, triggerConfirmed: false,
+            airwayRiskResolved: false, shockResolved: false,
+            refractoryAnaphylaxisExcluded: false, biphasicReactionExcluded: false,
+            recurrenceExcluded: false, dischargeReadinessProven: false,
+            dispositionDetermined: false, outcomePredicted: false });
+        break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -10081,6 +10256,19 @@ export class AnesthesiaEngine {
         meanArterialMmHg: later ? 78 : 81,
         coreTemperatureC: 37.2 };
     }
+    if (this.scenario.metadata.id === 'pediatric-anaphylaxis'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-anaphylaxis-reassessment')) {
+      const later = this.pediatricAnaphylaxisLaterResponseAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: later ? 122 : 148,
+        respiratoryRateBpm: later ? 24 : 34,
+        spo2Percent: later ? 97 : 91,
+        systolicMmHg: later ? 96 : 78,
+        diastolicMmHg: later ? 60 : 42,
+        meanArterialMmHg: later ? 72 : 54,
+        coreTemperatureC: 36.7 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -12086,6 +12274,51 @@ export class AnesthesiaEngine {
               dispositionDetermined: false as const, outcomePredicted: false as const,
             },
           } : {}),
+        ...(this.scenario.metadata.id === 'pediatric-anaphylaxis'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-anaphylaxis-reassessment') ? {
+            pediatricAnaphylaxisAssessment: {
+              trajectoryAtTick: this.pediatricAnaphylaxisTrajectoryAtTick,
+              recognitionAtTick: this.pediatricAnaphylaxisRecognitionAtTick,
+              firstLineAtTick: this.pediatricAnaphylaxisFirstLineAtTick,
+              safetyAtTick: this.pediatricAnaphylaxisSafetyAtTick,
+              laterResponseAtTick: this.pediatricAnaphylaxisLaterResponseAtTick,
+              handoffAtTick: this.pediatricAnaphylaxisHandoffAtTick,
+              initialPulsePresent: true as const, spontaneousBreathingAuthored: true as const,
+              plausibleExposureAuthored: true as const,
+              multisystemCompromiseAuthored: true as const,
+              firstLineCareAuthored: true as const,
+              qualifiedFirstLineOwnershipActive: this.pediatricAnaphylaxisFirstLineAtTick !== null,
+              qualifiedSafetyReviewActive: this.pediatricAnaphylaxisSafetyAtTick !== null,
+              laterReportAuthored: this.pediatricAnaphylaxisLaterResponseAtTick !== null,
+              patientExaminedByLearner: false as const,
+              exposureVerifiedByLearner: false as const,
+              monitoringAcquiredByLearner: false as const,
+              testAcquiredByLearner: false as const, testInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const,
+              classificationMadeByLearner: false as const,
+              positioningPerformedByLearner: false as const,
+              triggerRemovedByLearner: false as const, drugSelectedByLearner: false as const,
+              epinephrineSelectedByLearner: false as const,
+              productSelectedByLearner: false as const,
+              concentrationSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const, routeSelectedByLearner: false as const,
+              intervalSelectedByLearner: false as const, volumeSelectedByLearner: false as const,
+              rateSelectedByLearner: false as const, accessPlacedByLearner: false as const,
+              deviceSelectedByLearner: false as const, drugDeliveredByLearner: false as const,
+              oxygenDeliveredByLearner: false as const, fluidDeliveredByLearner: false as const,
+              airwayManeuverPerformedByLearner: false as const,
+              procedurePerformedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              anaphylaxisFinallyProven: false as const, triggerConfirmed: false as const,
+              treatmentEffectProven: false as const, airwayRiskResolved: false as const,
+              shockResolved: false as const, refractoryAnaphylaxisExcluded: false as const,
+              biphasicReactionExcluded: false as const, recurrenceExcluded: false as const,
+              durableRecoveryProven: false as const,
+              dischargeReadinessProven: false as const,
+              dispositionDetermined: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,
           classification: this.aspirationRiskClassification,
@@ -12298,6 +12531,12 @@ export class AnesthesiaEngine {
       if (this.pediatricStatusEpilepticusLaterResponseAtTick === null) {
         invalid.add('respiratoryRateBpm');
       }
+    }
+    if (this.scenario.metadata.id === 'pediatric-anaphylaxis'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-anaphylaxis-reassessment')) {
+      invalid.add('etco2MmHg');
+      invalid.add('fio2');
     }
     return invalid;
   }

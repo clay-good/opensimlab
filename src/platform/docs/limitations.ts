@@ -3719,6 +3719,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, current pediatric seizure guidance, local medication and airway systems, qualified teams, continuous reassessment, EEG when indicated, cause-directed evaluation and treatment, and appropriate critical-care escalation.',
     briefIn: ['pediatric-status-epilepticus'],
   },
+  {
+    id: 'pediatric-anaphylaxis-presentation-care-and-response-are-authored',
+    headline: 'The reported exposure, supplied first-line care, whole-child findings, escalation, and later response are authored.',
+    simplification: 'Fixed reports stand in for witness and caregiver history, exposure timing, examination, monitoring, first-line-care verification, active treatment, airway and circulation support, trigger and alternative-cause evaluation, and serial reassessment.',
+    whereItMisleads: 'Treating the fictional values, care times, prior-dose appropriateness, negative snapshots, or partial improvement as learner-acquired evidence, modeled physiology, diagnostic or trigger proof, causal treatment effect, durable resolution, or predicted recovery.',
+    correctUnderstanding: 'Real pediatric anaphylaxis requires immediate clinical assessment and treatment, verified exposure and care history, continuous airway-breathing-circulation support, frequent reassessment, qualified repeat and refractory care when needed, and post-event allergy and caregiver follow-through.',
+    briefIn: ['pediatric-anaphylaxis'],
+  },
+  {
+    id: 'pediatric-anaphylaxis-controls-reconcile-recognize-escalate-review-reassess-and-handoff-only',
+    headline: 'The controls record trajectory review, recognition, qualified escalation, safety review, reassessment, and handoff only.',
+    simplification: 'Six accepted actions stand in for experienced pediatric, emergency, nursing, pharmacy, airway-capable, critical-care, allergy, safeguarding, and caregiver assessment, treatment, monitoring, escalation, observation, planning, and handoff.',
+    whereItMisleads: 'Equating button order with examination, diagnostic criteria, trigger confirmation, prescribing, injection, oxygen or fluid delivery, airway skill, testing, team performance, caregiver communication, observation, referral, disposition, or pediatric anaphylaxis competence.',
+    correctUnderstanding: 'Actual care requires the child and caregiver, trained teams, current local pathways, immediate patient-specific first-line and supportive care, repeated assessment, escalation for persistent compromise, and risk-based observation and allergy follow-up.',
+    briefIn: ['pediatric-anaphylaxis'],
+  },
+  {
+    id: 'no-live-pediatric-anaphylaxis-exam-dose-device-treatment-observation-or-disposition',
+    headline: 'The lab does not examine, dose, inject, operate a device, treat, choose observation or disposition, or predict outcome.',
+    simplification: 'No live examination, monitoring, diagnosis, medicine, concentration, route, dose, weight calculation, injector or other device, preparation, injection, access, oxygen interface or flow, fluid type, volume or rate, bronchodilator, antihistamine, corticosteroid, infusion, vasopressor, airway maneuver or device, ventilation, CPR, tryptase, allergy test, procedure, observation duration, prescription, training, referral completion, admission, discharge, prognosis, recurrence, recovery, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional care into another child or region, delaying repeat escalation for additional review, using asthma medicine instead of urgent anaphylaxis care, treating absent skin findings as exclusion, reading improvement as resolution, or using completion as clinical or caregiver-communication competence.',
+    correctUnderstanding: 'Use verified patient data, current pediatric anaphylaxis and local resuscitation guidance, qualified medication and airway systems, continuous reassessment, escalation when symptoms persist, and risk-based observation, allergy referral, prescriptions, education, and safety planning.',
+    briefIn: ['pediatric-anaphylaxis'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

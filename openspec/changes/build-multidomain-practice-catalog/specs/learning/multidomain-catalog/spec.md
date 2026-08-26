@@ -41,6 +41,18 @@ honest count rather than waive a gate to reach 256.
 - **AND** it stops before learner drug selection or delivery, airway procedures, EEG interpretation,
   continuous anesthetic management, durable seizure-control claims, disposition, or outcome
 
+#### Scenario: Anaphylaxis labs own different settings and phases of care
+
+- **WHEN** pediatric anaphylaxis is added alongside adult emergency and perioperative lessons
+- **THEN** it begins after one supplied qualified community first-line dose and teaches recognition
+  of persistent pediatric airway, breathing, and circulation compromise, immediate qualified
+  repeat-care ownership, subsequent asthma-overlap and refractory-boundary review, reassessment, and
+  caregiver-centered active-risk handoff
+- **AND** it does not repeat the adult fixed dose and fluid actions or perioperative intravenous
+  treatment, ventilation, and fluid-delivery surface
+- **AND** it stops before learner dosing, injection or device operation, oxygen or fluid delivery,
+  airway procedures, observation-duration or disposition choice, referral completion, or outcome
+
 #### Scenario: Quality beats the target date
 
 - **WHEN** fewer than 256 planned scenarios pass every gate at release time

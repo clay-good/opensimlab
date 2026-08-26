@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 127 reports pediatric status-epilepticus reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 127;
+/** Bumped whenever the message shape changes incompatibly. Version 128 reports pediatric anaphylaxis reassessment state. */
+export const WORKER_PROTOCOL_VERSION = 128;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1386,6 +1386,34 @@ export interface EquipmentSnapshot {
       readonly electrographicSeizureControlProven: false;
       readonly durableSeizureControlProven: false; readonly neurologicRecoveryProven: false;
       readonly recurrenceExcluded: false; readonly dischargeReadinessProven: false;
+      readonly dispositionDetermined: false; readonly outcomePredicted: false;
+    };
+    readonly pediatricAnaphylaxisAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly firstLineAtTick: number | null; readonly safetyAtTick: number | null;
+      readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true; readonly spontaneousBreathingAuthored: true;
+      readonly plausibleExposureAuthored: true; readonly multisystemCompromiseAuthored: true;
+      readonly firstLineCareAuthored: true; readonly qualifiedFirstLineOwnershipActive: boolean;
+      readonly qualifiedSafetyReviewActive: boolean; readonly laterReportAuthored: boolean;
+      readonly patientExaminedByLearner: false; readonly exposureVerifiedByLearner: false;
+      readonly monitoringAcquiredByLearner: false; readonly testAcquiredByLearner: false;
+      readonly testInterpretedByLearner: false; readonly diagnosisMadeByLearner: false;
+      readonly classificationMadeByLearner: false; readonly positioningPerformedByLearner: false;
+      readonly triggerRemovedByLearner: false; readonly drugSelectedByLearner: false;
+      readonly epinephrineSelectedByLearner: false; readonly productSelectedByLearner: false;
+      readonly concentrationSelectedByLearner: false; readonly doseSelectedByLearner: false;
+      readonly routeSelectedByLearner: false; readonly intervalSelectedByLearner: false;
+      readonly volumeSelectedByLearner: false; readonly rateSelectedByLearner: false;
+      readonly accessPlacedByLearner: false; readonly deviceSelectedByLearner: false;
+      readonly drugDeliveredByLearner: false; readonly oxygenDeliveredByLearner: false;
+      readonly fluidDeliveredByLearner: false; readonly airwayManeuverPerformedByLearner: false;
+      readonly procedurePerformedByLearner: false; readonly treatmentDeliveredByLearner: false;
+      readonly anaphylaxisFinallyProven: false; readonly triggerConfirmed: false;
+      readonly treatmentEffectProven: false; readonly airwayRiskResolved: false;
+      readonly shockResolved: false; readonly refractoryAnaphylaxisExcluded: false;
+      readonly biphasicReactionExcluded: false; readonly recurrenceExcluded: false;
+      readonly durableRecoveryProven: false; readonly dischargeReadinessProven: false;
       readonly dispositionDetermined: false; readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
