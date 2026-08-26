@@ -4,6 +4,7 @@ export const REPORT_NOTE_LIMIT = 160;
 export const REPORT_ACTION = 'scenario-report';
 export const REPORT_CONTEXT_ACTION_LIMIT = 20;
 export const REPORT_CONTEXT_SNAPSHOT_LIMIT = 32;
+export const REPORT_CONTEXT_JSON_LIMIT = 16_384;
 
 export const REPORT_CATEGORIES = [
   ['clinical-content', 'Clinical content'],
@@ -81,6 +82,8 @@ export function buildScenarioReportRequest(
   turnstileToken: string,
   recentContext: ScenarioReportRecentContext | null = null,
 ): ScenarioReportRequest {
+  const boundedContext = recentContext
+    && JSON.stringify(recentContext).length <= REPORT_CONTEXT_JSON_LIMIT ? recentContext : null;
   return {
     module_id: context.moduleId,
     scenario_id: context.scenarioId,
@@ -93,7 +96,7 @@ export function buildScenarioReportRequest(
     canonical_url: context.canonicalUrl,
     category,
     note: note.trim().slice(0, REPORT_NOTE_LIMIT),
-    recent_context: recentContext,
+    recent_context: boundedContext,
     turnstile_token: turnstileToken,
   };
 }

@@ -100,15 +100,17 @@ npm run deploy:reports
 
 `REPORT_HASH_SECRET` must be at least 32 random characters. Turnstile must allow only
 `opensimlab.com`; the Worker independently requires the `scenario-report` action and hostname.
-Before enabling `REPORTING_ENABLED`, add a Cloudflare WAF rate rule for the exact POST route, run
+Before enabling `REPORTING_ENABLED`, add a Cloudflare WAF rate rule protecting both exact routes, run
 the test-key checklist against a non-production database, and inspect one bounded row. A generic
 `202` deliberately does not reveal whether a valid report was new, duplicated, or quota-dropped.
 
-Use the Free-plan-compatible WAF expression `http.request.uri.path eq "/api/reports"` with IP as
-the counting characteristic, a 10-second period, and mitigation after 10 requests. If the zone plan
-supports method and host fields, narrow it further to `POST` and `opensimlab.com`. Do not broaden it
-to all `/api/` traffic. Record one blocked flood in the private launch log before enabling reports;
-WAF counters may update a few seconds after detection, so this is a cost boundary rather than an
+Use the Free-plan-compatible expression `(http.request.uri.path eq "/api/reports" or
+http.request.uri.path eq "/api/reports/config")`, with IP as the counting characteristic, a
+10-second period, and mitigation after 10 requests. If the zone plan supports method and host
+fields, require `opensimlab.com` and narrow the expression to `(POST and /api/reports) or (GET and
+/api/reports/config)`. Do not broaden it to all `/api/` traffic. Record one blocked flood against
+each route in the private launch log. WAF counters may update a few seconds after detection, so
+this is a cost boundary rather than an
 exact concurrency lock.
 
 Cloudflare's current Turnstile test pair is safe only outside production: site key
@@ -133,7 +135,7 @@ Launch checklist:
   appears in source, build output, shell history, or Worker logs.
 - Deploy with `workers_dev`, preview URLs, and observability disabled; confirm only the 2 exact routes
   respond and every lookalike route returns `404`.
-- Demonstrate the exact-path WAF block, successful category-only report, opt-in context report,
+- Demonstrate both exact-path WAF blocks, successful category-only report, opt-in context report,
   same-day duplicate suppression, reporter/global quota behavior, and report-only failure when D1,
   Turnstile, or configuration is unavailable.
 - Query the inserted row with authenticated Wrangler tooling, verify that no token or raw address

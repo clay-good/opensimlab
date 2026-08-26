@@ -10,8 +10,10 @@ import {
 } from './client';
 import './reporting.css';
 
-export function ScenarioProblemReport({ context, onOpen, onClose }: {
+export function ScenarioProblemReport({ context, openRequest, onOpen, onClose }: {
   readonly context: ScenarioReportContext;
+  /** A changing request id opens the shared dialog from a nested scenario surface. */
+  readonly openRequest?: number;
   readonly onOpen?: () => void;
   readonly onClose?: () => void;
 }) {
@@ -25,6 +27,14 @@ export function ScenarioProblemReport({ context, onOpen, onClose }: {
   const [sent, setSent] = useState(false);
   const turnstileHost = useRef<HTMLDivElement>(null);
   const widget = useRef<{ api: TurnstileApi; id: string } | null>(null);
+  const onOpenRef = useRef(onOpen);
+  onOpenRef.current = onOpen;
+
+  useEffect(() => {
+    if (openRequest === undefined) return;
+    setOpen(true);
+    onOpenRef.current?.();
+  }, [openRequest]);
 
   useEffect(() => {
     if (!open || sent) return undefined;

@@ -138,7 +138,7 @@ credited toward the catalog until every item in the completion contract passes.
 
 - [x] Specify and implement the exact report request/response schemas and generated scenario report
   catalog.
-- [ ] Add one shared report control to prebrief, live, debrief, source, and limitation surfaces.
+- [x] Add one shared report control to prebrief, live, debrief, source, and limitation surfaces.
 - [x] Implement the accessible payload-preview dialog, category-only submission, optional 160-
   character note, and opt-in bounded recent context.
 - [x] Structurally exclude reflections, local history, progress, imported files, arbitrary storage,
@@ -154,7 +154,11 @@ credited toward the catalog until every item in the completion contract passes.
   commands.
 - [ ] Add a zone WAF rate-limit launch requirement, secret-handling runbook, test keys, cost model,
   live verification checklist, kill switch, and self-hosting behavior.
-- [ ] Test offline and report-service failures without disrupting the simulator.
+- [x] Test offline and report-service failures without disrupting the simulator.
+  The shared dialog now bounds config, submission, and lazy Turnstile waits; UI tests prove that
+  unavailable configuration and failed submission leave practice controls usable, while Worker
+  tests cover Siteverify outages and generic fail-closed D1 lookup/persistence errors. The complete
+  offline suite continues to prove that simulation assets and sessions have no API dependency.
 
 ## 6. Safe maintenance automation
 

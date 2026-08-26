@@ -336,8 +336,9 @@ function PrivacyBody() {
       </ul>
       <p id="problem-reports">
         A problem report you deliberately send is kept in a private correction queue for at most
-        30 days. Abuse-prevention counters are kept for at most 14 days. They contain no raw network
-        address, account, email, cookie, browser identity, or real-world time from your device.
+        30 days. Abuse-prevention counters are kept for at most 14 days. The client does not attach
+        your account, email, cookies, browser identity, or device time. The optional note is text you
+        supply, so please do not put sensitive information in it. Raw network addresses are not stored.
       </p>
 
       <h2>What leaves the device</h2>

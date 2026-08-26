@@ -13,6 +13,7 @@ const TURNSTILE_VERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/sit
 const MAX_TOKEN_LENGTH = 2048;
 const MAX_CONTEXT_ACTIONS = 20;
 const MAX_CONTEXT_SNAPSHOT_FIELDS = 32;
+export const MAX_CONTEXT_JSON_LENGTH = 16_384;
 const VERIFIED_GLOBAL_LIMIT = 400;
 const VERIFIED_REPORTER_LIMIT = 5;
 const ACCEPTED_GLOBAL_LIMIT = 200;
@@ -75,6 +76,7 @@ function safeContextRecord(value, limit, strings) {
 
 function validateRecentContext(value) {
   if (value === null) return true;
+  if (JSON.stringify(value).length > MAX_CONTEXT_JSON_LENGTH) return false;
   if (!exactKeys(value, ['seed', 'actions', 'snapshot'])
     || !Number.isSafeInteger(value.seed)
     || !Array.isArray(value.actions) || value.actions.length > MAX_CONTEXT_ACTIONS

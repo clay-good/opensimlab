@@ -765,7 +765,7 @@ bypass, and missing exact-version maturity records fail closed.
 
 Architecture tests keep tutor rules outside engine and session mutation paths. The same boundary
 also rejects any reporting code that reads browser storage, transcripts, reflections, or progress;
-reporting must receive an explicit bounded projection when it is implemented.
+the optional report service receives only an explicit, previewed, bounded projection after consent.
 Tutor, history, recommendation, and debrief surfaces are also barred from browser network
 primitives. CI rejects leaderboards, learner percentiles, streak mechanics, public performance,
 arbitrary point awards, and rewards tied to irrelevant speed; causal contributors and simulation

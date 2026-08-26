@@ -11,8 +11,9 @@ repository is public, use GitHub's private vulnerability-reporting form on the r
 tab. The repository is currently private and has no public security intake; invited collaborators
 should use the private Security tab rather than an issue.
 
-The in-product report service is specified but not implemented. It is not a security-reporting
-channel and no current control transmits a report.
+The optional in-product scenario report service is not a security-reporting channel. It remains
+disabled unless a deployment explicitly configures its isolated Worker, D1 database, Turnstile,
+and launch controls. Never put vulnerability details or secrets in its 160-character note.
 
 Include the affected commit/version, surface, impact, minimal reproduction, and suggested severity.
 Maintainers will acknowledge a usable report within 5 working days, avoid public disclosure while a

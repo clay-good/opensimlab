@@ -56,6 +56,8 @@ export interface CockpitProps {
   /** Hand the session back to the learner, wherever the demonstration got to. */
   readonly onTakeControls?: (() => void) | undefined;
   readonly onEnd: () => void;
+  readonly onReportSource?: () => void;
+  readonly onSourceVisibilityChange?: (open: boolean) => void;
   readonly moduleId?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics';
 }
 
@@ -139,7 +141,8 @@ const DEFAULT_RESUSCITATION = {
 } as const;
 
 export function Cockpit({
-  scenario, region, audio, demonstrating = false, onTakeControls, onEnd,
+  scenario, region, audio, demonstrating = false, onTakeControls, onEnd, onReportSource,
+  onSourceVisibilityChange,
   moduleId = 'anesthesia',
 }: CockpitProps) {
   const session = useSession();
@@ -159,6 +162,10 @@ export function Cockpit({
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [branchNoticeOpen, setBranchNoticeOpen] = useState(false);
   const [crisisInjectorOpen, setCrisisInjectorOpen] = useState(false);
+  useEffect(() => {
+    onSourceVisibilityChange?.(explainerId !== null || drugCardId !== null);
+    return () => onSourceVisibilityChange?.(false);
+  }, [drugCardId, explainerId, onSourceVisibilityChange]);
   // Sound is OFF until the learner asks for it, and nothing asks them.
   //
   // The pulse tone is genuinely useful — its pitch falls with saturation, which
@@ -1268,6 +1275,9 @@ export function Cockpit({
             ))}
             <p className="reading__aside">{getExplainer(explainerId).diagram.caption}</p>
             <p className="reading__aside">Reflects: {getExplainer(explainerId).reflects}</p>
+            {onReportSource && (
+              <Button compact variant="ghost" onClick={onReportSource}>Report a problem with this source</Button>
+            )}
             <UnreviewedMarker
               status={getExplainer(explainerId).maturity}
               subjectKind="explanation"
@@ -1290,7 +1300,12 @@ export function Cockpit({
 
       <Drawer open={drugCardId !== null} title={drugCardId ? (getDrugCard(drugCardId)?.name ?? '') : ''} onClose={() => setDrugCardId(null)}>
         {drugCardId && getDrugCard(drugCardId) && (
-          <DrugCardBody drugId={drugCardId} reviewMode={reviewMode} />
+          <>
+            <DrugCardBody drugId={drugCardId} reviewMode={reviewMode} />
+            {onReportSource && (
+              <Button compact variant="ghost" onClick={onReportSource}>Report a problem with this source</Button>
+            )}
+          </>
         )}
       </Drawer>
 

@@ -71,7 +71,7 @@ import { APP_VERSION } from '@platform/governance/status';
 import { ScenarioProblemReport } from '@platform/reporting/ScenarioProblemReport';
 import {
   REPORT_CONTEXT_ACTION_LIMIT, REPORT_CONTEXT_SNAPSHOT_LIMIT,
-  type ReportContextScalar, type ScenarioReportRecentContext,
+  type ReportContextScalar, type ReportSurface, type ScenarioReportRecentContext,
 } from '@platform/reporting/contracts';
 import { SITE_ORIGIN } from './site-metadata';
 
@@ -306,6 +306,16 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
   );
   const audio = useMemo(() => new SonificationEngine(), []);
   const reportWasRunning = useRef(false);
+  const reportRequestSequence = useRef(0);
+  const [reportRequest, setReportRequest] = useState<{
+    id: number;
+    surface: Extract<ReportSurface, 'source' | 'limitation'>;
+  } | null>(null);
+  const [sourceOpen, setSourceOpen] = useState(false);
+  const requestReport = (surface: Extract<ReportSurface, 'source' | 'limitation'>) => {
+    reportRequestSequence.current += 1;
+    setReportRequest({ id: reportRequestSequence.current, surface });
+  };
 
   const guess = useMemo(() => guessRegion(
     typeof navigator === 'undefined' ? ['en-GB'] : [...navigator.languages],
@@ -323,13 +333,14 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
         maturity: scenario.metadata.maturity,
         practiceRegion: region.id,
         fidelityClass: config.id === 'anesthesia' ? 'closed_loop_physiology' : 'state_transition',
-        surface: session.phase === 'ended'
+        surface: reportRequest?.surface ?? (sourceOpen ? 'source' : session.phase === 'ended'
           ? 'debrief'
-          : session.phase === 'briefing' || session.phase === 'idle' ? 'prebrief' : 'live',
+          : session.phase === 'briefing' || session.phase === 'idle' ? 'prebrief' : 'live'),
         simulatedTick: session.tick,
         canonicalUrl: `${SITE_ORIGIN}${config.basePath}/scenario/${scenario.metadata.id}`,
         collectRecentContext: () => collectReportRecentContext(session, assignment.seed),
       }}
+      {...(reportRequest ? { openRequest: reportRequest.id } : {})}
       onOpen={() => {
         reportWasRunning.current = session.transport === 'running';
         if (reportWasRunning.current) session.pause();
@@ -337,6 +348,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
       onClose={() => {
         if (reportWasRunning.current) session.play();
         reportWasRunning.current = false;
+        setReportRequest(null);
       }}
     />
   );
@@ -474,6 +486,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
           environment={config.id}
           guidance={session.guidance}
           onGuidance={session.setGuidance}
+          onReportLimitation={() => requestReport('limitation')}
           onStart={() => { setDemonstrating(false); session.play(); }}
           {...(config.id === 'anesthesia' && scenario.metadata.id === DEMONSTRATION_SCENARIO_ID
             ? { onWatch: () => { setDemonstrating(true); session.setSpeed(5); session.play(); } }
@@ -504,6 +517,8 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
       onTakeControls={() => { setDemonstrating(false); session.setSpeed(1); }}
       onEnd={session.end}
       moduleId={config.id}
+      onReportSource={() => requestReport('source')}
+      onSourceVisibilityChange={setSourceOpen}
     />
     {reportControl}
     </>

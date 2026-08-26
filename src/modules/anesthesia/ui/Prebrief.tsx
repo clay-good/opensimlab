@@ -41,9 +41,13 @@ export interface PrebriefProps {
   readonly assignmentLabel?: string;
   readonly guidance: 'guided' | 'coached' | 'unassisted';
   readonly onGuidance: (level: 'guided' | 'coached' | 'unassisted') => void;
+  readonly onReportLimitation?: () => void;
 }
 
-export function Prebrief({ scenario, region, environment = 'anesthesia', onStart, onWatch, guidance, onGuidance, assignmentLabel }: PrebriefProps) {
+export function Prebrief({
+  scenario, region, environment = 'anesthesia', onStart, onWatch, guidance, onGuidance,
+  assignmentLabel, onReportLimitation,
+}: PrebriefProps) {
   const patient = scenario.patient;
   return (
     <>
@@ -222,6 +226,11 @@ export function Prebrief({ scenario, region, environment = 'anesthesia', onStart
             <a href="/limitations">The limitations register explains where each of these would
             mislead you, and what the correct understanding is.</a>
           </p>
+          {onReportLimitation && (
+            <Button compact variant="ghost" onClick={onReportLimitation}>
+              Report a problem with these limitations
+            </Button>
+          )}
         </section>
       )}
 

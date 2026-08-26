@@ -2,7 +2,8 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 import {
-  REPORT_NOTE_LIMIT, buildScenarioReportRequest, noteMayContainRealPatientInformation,
+  REPORT_CONTEXT_JSON_LIMIT, REPORT_NOTE_LIMIT, buildScenarioReportRequest,
+  noteMayContainRealPatientInformation,
   type ScenarioReportContext,
 } from '@platform/reporting/contracts';
 import {
@@ -17,6 +18,47 @@ const context: ScenarioReportContext = {
 };
 
 const valid = () => buildScenarioReportRequest(context, 'clinical-content', 'Expected a different value.', 'token');
+
+function recentContextWithJsonLength(target: number) {
+  const recent = {
+    seed: 7,
+    actions: Array.from({ length: 20 }, (_, action) => ({
+      tick: action,
+      type: 'review-state',
+      outcome: 'accepted' as const,
+      payload: Object.fromEntries(Array.from({ length: 12 }, (__, field) => [
+        `field-${action}-${field}`.padEnd(80, 'k'), 'v'.repeat(80),
+      ])),
+    })),
+    snapshot: { patient: {}, equipment: {} },
+  };
+  let excess = JSON.stringify(recent).length - target;
+  for (const action of recent.actions) {
+    for (const key of Object.keys(action.payload)) {
+      if (excess <= 0) break;
+      const value = action.payload[key]!;
+      const removed = Math.min(excess, value.length - 1);
+      action.payload[key] = value.slice(0, -removed || undefined);
+      excess -= removed;
+    }
+  }
+  for (const [actionIndex, action] of recent.actions.entries()) {
+    for (const [fieldIndex, key] of Object.keys(action.payload).entries()) {
+      if (excess <= 0) break;
+      const minimumKey = `field-${actionIndex}-${fieldIndex}`;
+      const removed = Math.min(excess, key.length - minimumKey.length);
+      if (removed > 0) {
+        const shorterKey = key.slice(0, -removed);
+        action.payload[shorterKey] = action.payload[key]!;
+        delete action.payload[key];
+        excess -= removed;
+      }
+    }
+  }
+  expect(excess).toBe(0);
+  expect(JSON.stringify(recent)).toHaveLength(target);
+  return recent;
+}
 
 describe('scenario report contract', () => {
   it('publishes an exact-version server catalog for every current playable scenario', () => {
@@ -282,6 +324,67 @@ describe('scenario report contract', () => {
     expect(validateReportPayload(olderInstalledClient)).toMatchObject({
       ok: true, value: { recentContext: null },
     });
+  });
+
+  it('aligns the request and D1 context boundary before Turnstile or quota work', async () => {
+    const maximum = recentContextWithJsonLength(REPORT_CONTEXT_JSON_LIMIT);
+    expect(validateReportPayload({ ...valid(), recent_context: maximum })).toMatchObject({ ok: true });
+    expect(buildScenarioReportRequest(context, 'other', '', 'token', maximum).recent_context)
+      .toBe(maximum);
+
+    const oversized = recentContextWithJsonLength(REPORT_CONTEXT_JSON_LIMIT + 1);
+    expect(validateReportPayload({ ...valid(), recent_context: oversized }))
+      .toEqual({ ok: false, status: 400 });
+    expect(buildScenarioReportRequest(context, 'other', '', 'token', oversized).recent_context)
+      .toBeNull();
+
+    const prepare = vi.fn();
+    const fetcher = vi.fn();
+    vi.stubGlobal('fetch', fetcher);
+    let response = await handleRequest(new Request('https://opensimlab.com/api/reports', {
+      method: 'POST',
+      headers: {
+        Origin: 'https://opensimlab.com', 'Content-Type': 'application/json',
+        'CF-Connecting-IP': '192.0.2.1',
+      },
+      body: JSON.stringify({ ...valid(), recent_context: oversized }),
+    }), {
+      REPORTING_ENABLED: 'true', REPORTS_DB: { prepare }, TURNSTILE_SITE_KEY: 'site-key',
+      TURNSTILE_SECRET_KEY: 'secret', REPORT_HASH_SECRET: 'h'.repeat(32),
+      REPORT_ALLOWED_ORIGIN: 'https://opensimlab.com',
+    });
+    expect(response.status).toBe(400);
+    expect(prepare).not.toHaveBeenCalled();
+    expect(fetcher).not.toHaveBeenCalled();
+
+    const bindings: unknown[][] = [];
+    const statement = {
+      bind: vi.fn((...values: unknown[]) => { bindings.push(values); return statement; }),
+      first: vi.fn(async () => ({ global_count: 0, reporter_count: 0 })),
+    };
+    const database = {
+      prepare: vi.fn(() => statement),
+      batch: vi.fn(async () => []),
+    };
+    fetcher.mockResolvedValueOnce(Response.json({
+      success: true, action: 'scenario-report', hostname: 'opensimlab.com',
+    }));
+    response = await handleRequest(new Request('https://opensimlab.com/api/reports', {
+      method: 'POST',
+      headers: {
+        Origin: 'https://opensimlab.com', 'Content-Type': 'application/json',
+        'CF-Connecting-IP': '192.0.2.1',
+      },
+      body: JSON.stringify({ ...valid(), recent_context: maximum }),
+    }), {
+      REPORTING_ENABLED: 'true', REPORTS_DB: database, TURNSTILE_SITE_KEY: 'site-key',
+      TURNSTILE_SECRET_KEY: 'secret', REPORT_HASH_SECRET: 'h'.repeat(32),
+      REPORT_ALLOWED_ORIGIN: 'https://opensimlab.com',
+    });
+    expect(response.status).toBe(202);
+    expect(database.batch).toHaveBeenCalledOnce();
+    expect(bindings.flat()).toContain(JSON.stringify(maximum));
+    vi.unstubAllGlobals();
   });
 
   it('accepts the exact pediatric dehydration context and rejects module or URL drift', () => {
@@ -666,6 +769,19 @@ describe('scenario report contract', () => {
     expect(bypass).toBeLessThan(interception);
   });
 
+  it('inherits one shared correction door across every scenario surface', () => {
+    const route = readFileSync(join(process.cwd(), 'src/routes/AnesthesiaRoute.tsx'), 'utf8');
+    const prebrief = readFileSync(join(process.cwd(), 'src/modules/anesthesia/ui/Prebrief.tsx'), 'utf8');
+    const cockpit = readFileSync(join(process.cwd(), 'src/modules/anesthesia/ui/Cockpit.tsx'), 'utf8');
+    expect(route.match(/<ScenarioProblemReport/g)).toHaveLength(1);
+    expect(route).toContain("requestReport('limitation')");
+    expect(route).toContain("requestReport('source')");
+    expect(prebrief).toContain('Report a problem with these limitations');
+    expect(cockpit.match(/Report a problem with this source/g)).toHaveLength(2);
+    expect(route).toContain("sourceOpen ? 'source'");
+    expect(cockpit).toContain('onSourceVisibilityChange?.(explainerId !== null || drugCardId !== null)');
+  });
+
   it('requires Turnstile success, the scenario-report action, and the production hostname', async () => {
     const fetcher = vi.fn(async () => Response.json({
       success: true, action: 'scenario-report', hostname: 'opensimlab.com',
@@ -683,5 +799,60 @@ describe('scenario report contract', () => {
     await expect(verifyTurnstile(
       { turnstileToken: 'token' }, '192.0.2.1', { TURNSTILE_SECRET_KEY: 'secret' }, wrongAction,
     )).resolves.toBe(false);
+
+    for (const unavailable of [
+      vi.fn(async () => { throw new Error('network unavailable'); }),
+      vi.fn(async () => new Response('unavailable', { status: 503 })),
+      vi.fn(async () => new Response('{', { status: 200 })),
+      vi.fn(async () => Response.json({ success: false })),
+      vi.fn(async () => Response.json({
+        success: true, action: 'scenario-report', hostname: 'preview.opensimlab.com',
+      })),
+    ]) {
+      await expect(verifyTurnstile(
+        { turnstileToken: 'token' }, '192.0.2.1', { TURNSTILE_SECRET_KEY: 'secret' }, unavailable,
+      )).resolves.toBe(false);
+    }
+  });
+
+  it('returns only generic unavailability when D1 lookup or persistence fails', async () => {
+    const request = () => new Request('https://opensimlab.com/api/reports', {
+      method: 'POST',
+      headers: {
+        Origin: 'https://opensimlab.com', 'Content-Type': 'application/json',
+        'CF-Connecting-IP': '192.0.2.1',
+      },
+      body: JSON.stringify(valid()),
+    });
+    const baseEnv = {
+      REPORTING_ENABLED: 'true', TURNSTILE_SITE_KEY: 'site-key', TURNSTILE_SECRET_KEY: 'secret',
+      REPORT_HASH_SECRET: 'h'.repeat(32), REPORT_ALLOWED_ORIGIN: 'https://opensimlab.com',
+    };
+    const failedLookup = {
+      prepare: vi.fn(() => ({
+        bind: vi.fn(() => ({ first: vi.fn(async () => { throw new Error('D1 unavailable'); }) })),
+      })),
+    };
+    let response = await handleRequest(request(), { ...baseEnv, REPORTS_DB: failedLookup });
+    expect(response.status).toBe(503);
+    expect(await response.json()).toEqual({ ok: false });
+
+    const fetcher = vi.fn(async () => Response.json({
+      success: true, action: 'scenario-report', hostname: 'opensimlab.com',
+    }));
+    vi.stubGlobal('fetch', fetcher);
+    const statement = {
+      bind: vi.fn(function bind() { return statement; }),
+      first: vi.fn(async () => ({ global_count: 0, reporter_count: 0 })),
+    };
+    const failedPersistence = {
+      prepare: vi.fn(() => statement),
+      batch: vi.fn(async () => { throw new Error('D1 exhausted'); }),
+    };
+    response = await handleRequest(request(), { ...baseEnv, REPORTS_DB: failedPersistence });
+    expect(response.status).toBe(503);
+    expect(await response.json()).toEqual({ ok: false });
+    expect(fetcher).toHaveBeenCalledOnce();
+    vi.unstubAllGlobals();
   });
 });
