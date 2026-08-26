@@ -5070,6 +5070,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-neurology-ncse-clock-fluctuation-subtle-signs-and-whole-patient',
+      'recognize-neurology-ncse-suspicion-and-urgent-eeg-boundary-without-clinical-diagnosis',
+      'activate-neurology-ncse-qualified-neurology-eeg-and-airway-capable-ownership',
+      'review-neurology-ncse-airway-glucose-vascular-metabolic-toxic-and-infectious-alternatives',
+      'review-neurology-ncse-strict-later-qualified-eeg-and-clinical-trajectory',
+      'handoff-neurology-ncse-cause-treatment-recurrence-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'nonconvulsive-status-epilepticus-recognition'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'nonconvulsive-status-epilepticus-recognition-reassessment')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'nonconvulsive-status-epilepticus-recognition-reassessment-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neurology nonconvulsive-status lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'The clock, fluctuation, subtle signs, physiology, supplied tests, and whole patient were reconciled.'],
+        ['urgent-eeg-boundary-recognized', 'A nonconvulsive-seizure suspicion and urgent qualified-EEG boundary were recognized without a clinical-only diagnosis.'],
+        ['qualified-ownership-activated', 'Qualified neurology, EEG, resuscitation, and airway-capable ownership was activated.'],
+        ['safety-and-alternatives-reviewed', 'Airway, glucose, vascular, metabolic, toxic, infectious, medication, delirium, and other alternatives were reviewed.'],
+        ['qualified-eeg-and-clinical-trajectory-reviewed', 'The elapsed qualified electrographic-status report was integrated with the persistent clinical fluctuation without raw-EEG interpretation or treatment claim.'],
+        ['active-risk-handoff-recorded', 'Reported electrographic status, open cause and treatment, recurrence, recovery, airway risk, uncertainty, and owners were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^neurology-ncse-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^neurology-ncse-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

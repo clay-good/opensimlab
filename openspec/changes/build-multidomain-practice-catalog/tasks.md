@@ -421,6 +421,17 @@ credited toward the catalog until every item in the completion contract passes.
     diagnosis, drug, dose, route, access, oxygen, airway device, infusion, anesthetic, procedure,
     treatment, movement cessation, electrographic control, disposition, prognosis, or outcome
     controls.
+  - [x] Neurology slice 6/15 adds one authored 72-year-old 95-minute fluctuating language and
+    awareness pattern with intermittent speech arrest, inattention, and brief gaze deviation but no
+    convulsion or sustained clonus, requiring suspicion of a nonconvulsive seizure and urgent
+    qualified EEG without a clinical-only NCSE diagnosis, qualified neurology, neurophysiology,
+    resuscitation, and airway-capable ownership, parallel safety and alternative-cause review, a
+    strict later supplied 60-minute report of 24 minutes of evolving electrographic seizures that
+    meets the ACNS electrographic-status definition, and another elapsed active-risk handoff without
+    learner history, examination, seizure timing, monitoring, glucose or sodium acquisition, EEG,
+    imaging or laboratory acquisition or interpretation, diagnosis, drug, dose, route, access,
+    oxygen, airway device, procedure, treatment, seizure control, disposition, prognosis, or outcome
+    controls.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.

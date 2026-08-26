@@ -1125,6 +1125,11 @@ export interface ActionCockpitProps {
       readonly ownershipAtTick: number | null; readonly safetyAtTick: number | null;
       readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly neurologyNcseAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly suspicionAtTick: number | null;
+      readonly ownershipAtTick: number | null; readonly alternativesAtTick: number | null;
+      readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1873,6 +1878,14 @@ export interface ActionCockpitProps {
       | 'review-neurology-focal-motor-status-strict-later-visible-motor-trajectory'
       | 'handoff-neurology-focal-motor-status-recovery-cause-and-active-risk',
   ) => void;
+  readonly onNeurologyNcseResponse?: (
+    action: 'reconcile-neurology-ncse-clock-fluctuation-subtle-signs-and-whole-patient'
+      | 'recognize-neurology-ncse-suspicion-and-urgent-eeg-boundary-without-clinical-diagnosis'
+      | 'activate-neurology-ncse-qualified-neurology-eeg-and-airway-capable-ownership'
+      | 'review-neurology-ncse-airway-glucose-vascular-metabolic-toxic-and-infectious-alternatives'
+      | 'review-neurology-ncse-strict-later-qualified-eeg-and-clinical-trajectory'
+      | 'handoff-neurology-ncse-cause-treatment-recurrence-and-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2314,6 +2327,12 @@ export function crisisResponseAvailability(
         && event.target === 'focal-motor-status-epilepticus-escalation-reassessment')
       && scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'focal-motor-status-epilepticus-escalation-reassessment-boundary'),
+    hasNeurologyNcseResponse:
+      scenario.metadata.id === 'nonconvulsive-status-epilepticus-recognition'
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'nonconvulsive-status-epilepticus-recognition-reassessment')
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'nonconvulsive-status-epilepticus-recognition-reassessment-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2495,6 +2514,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'aneurysmal-subarachnoid-hemorrhage-deterioration-reassessment')
       || (event.type === 'narrative'
         && event.target === 'focal-motor-status-epilepticus-escalation-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'nonconvulsive-status-epilepticus-recognition-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2572,6 +2593,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeurologyCerebellarIchResponse,
     hasNeurologyAsahDeteriorationResponse,
     hasNeurologyFocalMotorStatusResponse,
+    hasNeurologyNcseResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2652,7 +2674,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPediatricForeignBodyAirwayObstructionResponse || hasPediatricInjurySafeguardingResponse
     || hasNeurologyMinorStrokeResponse || hasNeurologyBasilarLvoResponse
     || hasNeurologyCerebellarIchResponse || hasNeurologyAsahDeteriorationResponse
-    || hasNeurologyFocalMotorStatusResponse;
+    || hasNeurologyFocalMotorStatusResponse || hasNeurologyNcseResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2683,7 +2705,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasNeurologyFocalMotorStatusResponse
+  const responseTray = hasNeurologyNcseResponse
+    ? { id: 'crisis', label: 'Nonconvulsive status recognition' } as const
+    : hasNeurologyFocalMotorStatusResponse
     ? { id: 'crisis', label: 'Focal motor status reassessment' } as const
     : hasNeurologyAsahDeteriorationResponse
     ? { id: 'crisis', label: 'aSAH deterioration reassessment' } as const
@@ -2991,6 +3015,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeurologyCerebellarIchResponse
     || hasNeurologyAsahDeteriorationResponse
     || hasNeurologyFocalMotorStatusResponse
+    || hasNeurologyNcseResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3742,6 +3767,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <NeurologyFocalMotorStatusTray
                 assessment={props.resuscitation.neurologyFocalMotorStatusAssessment}
                 onAction={props.onNeurologyFocalMotorStatusResponse ?? (() => {})} />
+            )}
+            {hasNeurologyNcseResponse && (
+              <NeurologyNcseTray
+                assessment={props.resuscitation.neurologyNcseAssessment}
+                onAction={props.onNeurologyNcseResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -9724,6 +9754,42 @@ function NeurologyFocalMotorStatusTray({ assessment, onAction }: {
         {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-focal-motor-status-recovery-cause-and-active-risk')}>Hand off active status + cause risk</Button>}
       </div>
       <p className="field__hint">Persistent visible clonus does not supply a cause, EEG state, treatment effect, durable seizure control, recovery, prognosis, or outcome.</p>
+    </section>
+  </div>;
+}
+
+function NeurologyNcseTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyNcseAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNeurologyNcseResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const suspicion = assessment?.suspicionAtTick != null;
+  const ownership = assessment?.ownershipAtTick != null;
+  const alternatives = assessment?.alternativesAtTick != null;
+  const later = assessment?.laterAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="neurology-ncse-pattern-title">
+      <div id="neurology-ncse-pattern-title" className="syringe__name">Quiet can still mean seizure.</div>
+      <div className="syringe__meta">72 years · 95-minute fluctuation · speech arrest + gaze deviation · no convulsion</div>
+      <p className="syringe__remaining">{alternatives ? 'Whole-patient safety and open alternatives reviewed.' : ownership ? 'Qualified EEG ownership is active · complete the alternatives review' : suspicion ? 'Urgent EEG boundary recognized · activate qualified ownership' : trajectory ? 'The fluctuating pattern warrants urgent qualified EEG assessment.' : 'Begin with the clock, fluctuation, subtle signs, and whole patient.'}</p>
+      <div className="syringe__presets">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neurology-ncse-clock-fluctuation-subtle-signs-and-whole-patient')}>Review fluctuation + subtle signs</Button>}
+        {trajectory && !suspicion && <Button className="crisis-drug__action" onClick={() => onAction('recognize-neurology-ncse-suspicion-and-urgent-eeg-boundary-without-clinical-diagnosis')}>Recognize urgent EEG boundary</Button>}
+        {suspicion && !ownership && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-ncse-qualified-neurology-eeg-and-airway-capable-ownership')}>Activate qualified EEG ownership</Button>}
+        {ownership && !alternatives && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-ncse-airway-glucose-vascular-metabolic-toxic-and-infectious-alternatives')}>Review safety + alternatives</Button>}
+      </div>
+      <p className="field__hint">Experienced teams own airway support, urgent EEG acquisition and interpretation, cause evaluation, and treatment. This lab exposes no learner raw-EEG, drug, dose, route, access, oxygen, airway-device, imaging, laboratory, or procedure control.</p>
+    </section>
+    <section className="syringe" aria-labelledby="neurology-ncse-eeg-title">
+      <div id="neurology-ncse-eeg-title" className="syringe__name">EEG answers a clinical question.</div>
+      <div className="syringe__meta">fixed 60-minute report · 24-minute seizure burden · no motor correlate</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Electrographic status, clinical fluctuation, open causes, and owners handed off.' : later ? 'The qualified report meets the electrographic-status definition. Cause, treatment, response, recurrence, and outcome remain open.' : alternatives ? 'Qualified ownership is active. Review the fixed later EEG and clinical report.' : 'Complete suspicion, ownership, and alternatives review before reassessment.'}</p>
+      <div className="syringe__presets">
+        {alternatives && !later && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-ncse-strict-later-qualified-eeg-and-clinical-trajectory')}>Review qualified EEG report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-ncse-cause-treatment-recurrence-and-active-risk')}>Hand off status + open risk</Button>}
+      </div>
+      <p className="field__hint">The supplied specialist report is fixed scenario evidence, not a raw tracing or an interpretation exercise. It does not supply cause, treatment choice, response, recurrence, prognosis, or outcome.</p>
     </section>
   </div>;
 }

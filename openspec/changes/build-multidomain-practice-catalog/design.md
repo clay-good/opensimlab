@@ -2098,6 +2098,27 @@ nonconvulsive state; select or deliver a drug, dose, route, access, oxygen, airw
 anesthetic, procedure, or treatment; determine movement cessation, electrographic control,
 disposition, or prognosis; or predict outcome.
 
+### Wave E neurology slice 6: nonconvulsive status epilepticus recognition
+
+The sixth Neurology lab owns the earlier suspicion-to-qualified-EEG boundary in a patient without a
+reported prior convulsion. It remains separate from visible focal motor status and Critical Care's
+post-convulsive refractory electrographic-status treatment pathway. A previously independent
+72-year-old has 95 minutes of fluctuating language and interaction, recurrent speech arrest,
+inattention, and brief rightward gaze deviation without bilateral convulsion, sustained clonus, or
+meaningful return to baseline. Fixed CT and CTA do not close vascular or other alternatives.
+
+The learner reconciles the clock, subtle recurrent signs, physiology, supplied glucose and sodium,
+and whole patient; recognizes suspicion sufficient for urgent qualified EEG without diagnosing NCSE
+clinically; activates neurology, neurophysiology, resuscitation, and airway-capable ownership; and
+reviews safety and broad alternatives in parallel. A strict later supplied neurophysiologist report
+describes 24 minutes of evolving electrographic seizures in a 60-minute record and states that the
+ACNS electrographic-status definition is met, while fluctuation persists without a motor correlate.
+Another elapsed handoff preserves cause, treatment, recurrence, recovery, airway risk, disposition,
+and outcome as unresolved. The lab does not take a history; examine; monitor; acquire or interpret
+glucose, sodium, imaging, laboratory data, or EEG; diagnose clinically; select or deliver a drug,
+dose, route, access, oxygen, airway device, procedure, or treatment; determine seizure control,
+disposition, or prognosis; or predict outcome.
+
 #### Neurology: 15
 
 Acute ischemic stroke; large-vessel-occlusion escalation; intracranial hemorrhage; subarachnoid

@@ -333,6 +333,10 @@ const NEUROLOGY_FOCAL_MOTOR_STATUS_BLOCKED_ACTION_TYPES = new Set([
   'spontaneous-cerebellar-intracerebral-hemorrhage-response',
   'aneurysmal-subarachnoid-hemorrhage-deterioration-response',
 ]);
+const NEUROLOGY_NCSE_BLOCKED_ACTION_TYPES = new Set([
+  ...NEUROLOGY_FOCAL_MOTOR_STATUS_BLOCKED_ACTION_TYPES,
+  'focal-motor-status-epilepticus-escalation-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1110,6 +1114,12 @@ export class AnesthesiaEngine {
   private neurologyFocalMotorStatusSafetyAtTick: number | null = null;
   private neurologyFocalMotorStatusLaterAtTick: number | null = null;
   private neurologyFocalMotorStatusHandoffAtTick: number | null = null;
+  private neurologyNcseTrajectoryAtTick: number | null = null;
+  private neurologyNcseSuspicionAtTick: number | null = null;
+  private neurologyNcseOwnershipAtTick: number | null = null;
+  private neurologyNcseAlternativesAtTick: number | null = null;
+  private neurologyNcseLaterAtTick: number | null = null;
+  private neurologyNcseHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1744,6 +1754,19 @@ export class AnesthesiaEngine {
         'This Neurology lesson exposes no generic seizure drug, dose, route, access, oxygen, '
         + 'airway, monitoring, EEG, imaging, laboratory, procedure, adult ED, pediatric, ICU, '
         + 'or adjacent-scenario action. Nothing changed.', { actionType: action.type });
+      return;
+    }
+    const neurologyNcse = this.scenario.metadata.id === 'nonconvulsive-status-epilepticus-recognition'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'nonconvulsive-status-epilepticus-recognition-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'nonconvulsive-status-epilepticus-recognition-reassessment-boundary');
+    if (neurologyNcse && NEUROLOGY_NCSE_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `neurology-ncse-generic-action-refused-${this.currentTick}`,
+        'This Neurology lesson exposes no generic seizure, stroke, glucose, sodium, drug, dose, '
+        + 'route, access, oxygen, airway, monitoring, EEG, imaging, laboratory, infusion, anesthetic, '
+        + 'procedure, ICU, pediatric, or adjacent-scenario action. Nothing changed.',
+        { actionType: action.type });
       return;
     }
     switch (action.type) {
@@ -8962,6 +8985,132 @@ export class AnesthesiaEngine {
             dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false });
         break;
       }
+      case 'nonconvulsive-status-epilepticus-recognition-response': {
+        const response = typeof action.payload.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'nonconvulsive-status-epilepticus-recognition'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'nonconvulsive-status-epilepticus-recognition-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'nonconvulsive-status-epilepticus-recognition-reassessment-boundary');
+        const actions = [
+          'reconcile-neurology-ncse-clock-fluctuation-subtle-signs-and-whole-patient',
+          'recognize-neurology-ncse-suspicion-and-urgent-eeg-boundary-without-clinical-diagnosis',
+          'activate-neurology-ncse-qualified-neurology-eeg-and-airway-capable-ownership',
+          'review-neurology-ncse-airway-glucose-vascular-metabolic-toxic-and-infectious-alternatives',
+          'review-neurology-ncse-strict-later-qualified-eeg-and-clinical-trajectory',
+          'handoff-neurology-ncse-cause-treatment-recurrence-and-active-risk',
+        ] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) {
+          this.log('warning', 'assessment', `neurology-ncse-response-refused-${this.currentTick}`,
+            supported ? 'The nonconvulsive-status action was not listed. No supplied or injected text was retained.'
+              : 'These nonconvulsive-status choices are available only in the exact declared Neurology lesson.');
+          break;
+        }
+        if (response === actions[0]) {
+          if (this.neurologyNcseTrajectoryAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-ncse-trajectory-refused-${this.currentTick}`, 'The supplied clock, fluctuation, subtle signs, and whole-patient state were already reconciled.');
+            break;
+          }
+          this.neurologyNcseTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-ncse-trajectory-reconciled-${this.currentTick}`,
+            'The supplied 95-minute record shows fluctuating language, inattention, speech arrest, and brief gaze deviation without convulsion or meaningful return to baseline. Physiology, glucose, sodium, and fixed imaging are supplied. The learner did not take a history, examine, monitor, test, diagnose, or treat.',
+            { fluctuatingDysfunctionAuthored: true, noConvulsionAuthored: true,
+              meaningfulBaselineRecoveryAuthored: false, patientExaminedByLearner: false,
+              seizureTimedByLearner: false, treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.neurologyNcseTrajectoryAtTick === null) {
+          this.log('warning', 'assessment', `neurology-ncse-trajectory-order-refused-${this.currentTick}`, 'Reconcile the supplied clock, fluctuation, subtle signs, and whole patient first.');
+          break;
+        }
+        if (response === actions[1]) {
+          if (this.neurologyNcseSuspicionAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-ncse-suspicion-refused-${this.currentTick}`, 'The nonconvulsive-seizure suspicion and urgent-EEG boundary were already recognized.');
+            break;
+          }
+          this.neurologyNcseSuspicionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-ncse-urgent-eeg-boundary-recognized-${this.currentTick}`,
+            'Unexplained fluctuating dysfunction and subtle recurrent signs warrant urgent qualified EEG while dangerous alternatives remain active. Clinical features alone do not diagnose NCSE, exclude stroke or another cause, or determine treatment.',
+            { urgentEegBoundaryRecognized: true, clinicalOnlyNcseDiagnosisMade: false,
+              strokeExcluded: false, causeProven: false, treatmentSelected: false });
+          break;
+        }
+        if (this.neurologyNcseSuspicionAtTick === null) {
+          this.log('warning', 'assessment', `neurology-ncse-suspicion-order-refused-${this.currentTick}`, 'Recognize the suspicion and urgent qualified-EEG boundary before activating ownership.');
+          break;
+        }
+        if (response === actions[2]) {
+          if (this.neurologyNcseOwnershipAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-ncse-ownership-refused-${this.currentTick}`, 'Qualified neurology, EEG, resuscitation, and airway-capable ownership is already active.');
+            break;
+          }
+          this.neurologyNcseOwnershipAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-ncse-qualified-ownership-activated-${this.currentTick}`,
+            'Qualified neurology, neurophysiology, nursing, resuscitation, and airway-capable teams now own urgent EEG, clinical correlation, safety, and individualized decisions. The learner placed or interpreted no EEG and selected no drug, dose, route, access, oxygen, airway device, procedure, or treatment.',
+            { qualifiedNeurologyOwnershipActive: true, qualifiedEegOwnershipActive: true,
+              qualifiedAirwayOwnershipActive: true, eegPlacedByLearner: false,
+              rawEegInterpretedByLearner: false, treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.neurologyNcseOwnershipAtTick === null) {
+          this.log('warning', 'assessment', `neurology-ncse-ownership-order-refused-${this.currentTick}`, 'Activate qualified neurology, EEG, and airway-capable ownership before the alternatives review.');
+          break;
+        }
+        if (response === actions[3]) {
+          if (this.neurologyNcseAlternativesAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-ncse-alternatives-refused-${this.currentTick}`, 'Airway, glucose, vascular, metabolic, toxic, infectious, medication, and delirium alternatives were already reviewed.');
+            break;
+          }
+          this.neurologyNcseAlternativesAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-ncse-safety-and-alternatives-reviewed-${this.currentTick}`,
+            'Supplied breathing, pulse, perfusion, oxygenation, glucose, sodium, and imaging snapshots were integrated while ischemic, postictal, delirium, medication, toxic, metabolic, infectious, immune, structural, psychiatric, and other causes remain open. No examination, test, exclusion, diagnosis, or treatment was performed.',
+            { alternativesReviewed: true, glucoseAcquiredByLearner: false,
+              sodiumAcquiredByLearner: false, imagingInterpretedByLearner: false,
+              causeProven: false, treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.neurologyNcseAlternativesAtTick === null) {
+          this.log('warning', 'assessment', `neurology-ncse-alternatives-order-refused-${this.currentTick}`, 'Complete the whole-patient safety and alternatives review before the later report.');
+          break;
+        }
+        if (response === actions[4]) {
+          if (this.currentTick <= this.neurologyNcseAlternativesAtTick) {
+            this.log('warning', 'assessment', `neurology-ncse-later-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before reviewing the fixed qualified EEG report.');
+            break;
+          }
+          if (this.neurologyNcseLaterAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-ncse-later-refused-${this.currentTick}`, 'The fixed qualified EEG and clinical trajectory were already reviewed.');
+            break;
+          }
+          this.neurologyNcseLaterAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-ncse-qualified-eeg-and-clinical-trajectory-reviewed-${this.currentTick}`,
+            'A fixed qualified report describes recurrent evolving left temporal electrographic seizures totaling 24 minutes of a 60-minute record without a consistent motor correlate and states that the ACNS electrographic-status definition is met. Clinical fluctuation persists. The learner did not acquire or interpret raw EEG; cause, treatment, response, control, and outcome remain unresolved.',
+            { laterElectrographicStatusReportAuthored: true, reportedSeizureBurdenMinutes: 24,
+              reportedRecordingMinutes: 60, consistentMotorCorrelateAuthored: false,
+              eegAcquiredByLearner: false, rawEegInterpretedByLearner: false,
+              treatmentEffectProven: false, durableElectrographicControlProven: false });
+          break;
+        }
+        if (this.neurologyNcseLaterAtTick === null) {
+          this.log('warning', 'assessment', `neurology-ncse-later-order-refused-${this.currentTick}`, 'Review the fixed qualified EEG and clinical trajectory before handoff.');
+          break;
+        }
+        if (this.currentTick <= this.neurologyNcseLaterAtTick) {
+          this.log('warning', 'assessment', `neurology-ncse-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off active nonconvulsive-status risk.');
+          break;
+        }
+        if (this.neurologyNcseHandoffAtTick !== null) {
+          this.log('warning', 'assessment', `neurology-ncse-handoff-refused-${this.currentTick}`, 'The electrographic-status, cause, treatment, and active-risk handoff was already recorded.');
+          break;
+        }
+        this.neurologyNcseHandoffAtTick = this.currentTick;
+        this.log('critical', 'assessment', `neurology-ncse-active-risk-handoff-recorded-${this.currentTick}`,
+          'The fluctuating clinical trajectory, qualified electrographic-status report, airway and systemic risk, open causes, treatment choice, seizure burden, recurrence, recovery, disposition, prognosis, and outcome uncertainty were handed off. No learner EEG interpretation, cause, treatment effect, durable control, recovery, or outcome is claimed.',
+          { causeProven: false, treatmentEffectProven: false,
+            durableElectrographicControlProven: false, durableNeurologicRecoveryProven: false,
+            dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false });
+        break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -12078,6 +12227,21 @@ export class AnesthesiaEngine {
         meanArterialMmHg: later ? 95 : 97,
         coreTemperatureC: later ? 37.3 : 37.2 };
     }
+    if (this.scenario.metadata.id === 'nonconvulsive-status-epilepticus-recognition'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'nonconvulsive-status-epilepticus-recognition-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'nonconvulsive-status-epilepticus-recognition-reassessment-boundary')) {
+      const later = this.neurologyNcseLaterAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: later ? 92 : 88,
+        respiratoryRateBpm: later ? 18 : 17,
+        spo2Percent: later ? 96 : 97,
+        systolicMmHg: later ? 144 : 148,
+        diastolicMmHg: later ? 76 : 78,
+        meanArterialMmHg: later ? 99 : 102,
+        coreTemperatureC: later ? 37.0 : 36.9 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -14722,6 +14886,60 @@ export class AnesthesiaEngine {
               movementCessationProven: false as const,
               electrographicControlProven: false as const,
               treatmentEffectProven: false as const,
+              durableNeurologicRecoveryProven: false as const,
+              durableAirwayProtectionProven: false as const,
+              dispositionDetermined: false as const,
+              prognosisPredicted: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'nonconvulsive-status-epilepticus-recognition'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'nonconvulsive-status-epilepticus-recognition-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'nonconvulsive-status-epilepticus-recognition-reassessment-boundary') ? {
+            neurologyNcseAssessment: {
+              trajectoryAtTick: this.neurologyNcseTrajectoryAtTick,
+              suspicionAtTick: this.neurologyNcseSuspicionAtTick,
+              ownershipAtTick: this.neurologyNcseOwnershipAtTick,
+              alternativesAtTick: this.neurologyNcseAlternativesAtTick,
+              laterAtTick: this.neurologyNcseLaterAtTick,
+              handoffAtTick: this.neurologyNcseHandoffAtTick,
+              initialPulsePresent: true as const,
+              spontaneousBreathingAuthored: true as const,
+              fluctuatingDysfunctionAuthored: true as const,
+              noConvulsionAuthored: true as const,
+              urgentEegBoundaryRecognized: this.neurologyNcseSuspicionAtTick !== null,
+              qualifiedNeurologyOwnershipActive: this.neurologyNcseOwnershipAtTick !== null,
+              qualifiedEegOwnershipActive: this.neurologyNcseOwnershipAtTick !== null,
+              qualifiedAirwayOwnershipActive: this.neurologyNcseOwnershipAtTick !== null,
+              laterElectrographicStatusReportAuthored: this.neurologyNcseLaterAtTick !== null,
+              patientHistoryTakenByLearner: false as const,
+              patientExaminedByLearner: false as const,
+              seizureTimedByLearner: false as const,
+              monitoringAcquiredByLearner: false as const,
+              glucoseAcquiredByLearner: false as const,
+              sodiumAcquiredByLearner: false as const,
+              eegPlacedByLearner: false as const,
+              eegAcquiredByLearner: false as const,
+              rawEegInterpretedByLearner: false as const,
+              imagingAcquiredByLearner: false as const,
+              imagingInterpretedByLearner: false as const,
+              laboratoryTestAcquiredByLearner: false as const,
+              clinicalOnlyNcseDiagnosisMade: false as const,
+              drugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const,
+              routeSelectedByLearner: false as const,
+              accessPlacedByLearner: false as const,
+              medicationDeliveredByLearner: false as const,
+              oxygenSelectedByLearner: false as const,
+              airwayDeviceSelectedByLearner: false as const,
+              procedureSelectedByLearner: false as const,
+              procedurePerformedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              causeProven: false as const,
+              treatmentEffectProven: false as const,
+              durableElectrographicControlProven: false as const,
               durableNeurologicRecoveryProven: false as const,
               durableAirwayProtectionProven: false as const,
               dispositionDetermined: false as const,

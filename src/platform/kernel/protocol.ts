@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 137 reports Neurology focal-motor-status state. */
-export const WORKER_PROTOCOL_VERSION = 137;
+/** Bumped whenever the message shape changes incompatibly. Version 138 reports Neurology nonconvulsive-status state. */
+export const WORKER_PROTOCOL_VERSION = 138;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1921,6 +1921,54 @@ export interface EquipmentSnapshot {
       readonly movementCessationProven: false;
       readonly electrographicControlProven: false;
       readonly treatmentEffectProven: false;
+      readonly durableNeurologicRecoveryProven: false;
+      readonly durableAirwayProtectionProven: false;
+      readonly dispositionDetermined: false;
+      readonly prognosisPredicted: false;
+      readonly outcomePredicted: false;
+    };
+    readonly neurologyNcseAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly suspicionAtTick: number | null;
+      readonly ownershipAtTick: number | null;
+      readonly alternativesAtTick: number | null;
+      readonly laterAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true;
+      readonly spontaneousBreathingAuthored: true;
+      readonly fluctuatingDysfunctionAuthored: true;
+      readonly noConvulsionAuthored: true;
+      readonly urgentEegBoundaryRecognized: boolean;
+      readonly qualifiedNeurologyOwnershipActive: boolean;
+      readonly qualifiedEegOwnershipActive: boolean;
+      readonly qualifiedAirwayOwnershipActive: boolean;
+      readonly laterElectrographicStatusReportAuthored: boolean;
+      readonly patientHistoryTakenByLearner: false;
+      readonly patientExaminedByLearner: false;
+      readonly seizureTimedByLearner: false;
+      readonly monitoringAcquiredByLearner: false;
+      readonly glucoseAcquiredByLearner: false;
+      readonly sodiumAcquiredByLearner: false;
+      readonly eegPlacedByLearner: false;
+      readonly eegAcquiredByLearner: false;
+      readonly rawEegInterpretedByLearner: false;
+      readonly imagingAcquiredByLearner: false;
+      readonly imagingInterpretedByLearner: false;
+      readonly laboratoryTestAcquiredByLearner: false;
+      readonly clinicalOnlyNcseDiagnosisMade: false;
+      readonly drugSelectedByLearner: false;
+      readonly doseSelectedByLearner: false;
+      readonly routeSelectedByLearner: false;
+      readonly accessPlacedByLearner: false;
+      readonly medicationDeliveredByLearner: false;
+      readonly oxygenSelectedByLearner: false;
+      readonly airwayDeviceSelectedByLearner: false;
+      readonly procedureSelectedByLearner: false;
+      readonly procedurePerformedByLearner: false;
+      readonly treatmentDeliveredByLearner: false;
+      readonly causeProven: false;
+      readonly treatmentEffectProven: false;
+      readonly durableElectrographicControlProven: false;
       readonly durableNeurologicRecoveryProven: false;
       readonly durableAirwayProtectionProven: false;
       readonly dispositionDetermined: false;

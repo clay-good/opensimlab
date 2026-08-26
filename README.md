@@ -78,7 +78,7 @@ screening-rule calculation, abuse or perpetrator diagnosis, confrontation, refer
 submission, jurisdiction selection, custody action, procedure, treatment, disposition, or outcome
 controls.
 
-Wave E Neurology catalog work now includes 5 of 15 bounded labs. Minor nondisabling acute ischemic
+Wave E Neurology catalog work now includes 6 of 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later
 neurological trajectory, and elapsed etiology, recurrence, secondary-prevention, and active-risk
@@ -104,6 +104,12 @@ bilateral movement becomes less dramatic while visible unilateral clonus and abs
 with qualified seizure and airway-capable ownership, a strict minute-26 visible-motor report, and an
 elapsed active-risk handoff without examination, monitoring, EEG, drug, dose, route, oxygen, airway,
 imaging, laboratory, procedure, treatment, disposition, prognosis, or outcome controls.
+Nonconvulsive status epilepticus recognition adds a 95-minute unexplained fluctuating language and
+awareness pattern with intermittent speech arrest and gaze deviation but no convulsion, an urgent
+qualified-EEG boundary without clinical-only diagnosis, broad alternative-cause review, a strict
+later supplied neurophysiologist report meeting the electrographic-status definition, and elapsed
+active-risk handoff without examination, monitoring, raw-EEG interpretation, diagnosis, drug, dose,
+route, oxygen, airway, procedure, treatment, disposition, prognosis, or outcome controls.
 
 The goal is not a tech demo. It is the best anesthesia education on the internet: the
 thing a student opens the night before their first day in the OR and comes out of

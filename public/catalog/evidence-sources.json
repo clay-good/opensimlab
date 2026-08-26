@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 211,
+  "sourceCount": 214,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -2739,6 +2739,45 @@
       "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/38906639/",
       "verifiedOn": "2026-08-26",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/38906639/"
+    },
+    {
+      "id": "acns-continuous-eeg-indications-2015",
+      "pmid": "25626778",
+      "authors": "Herman ST, Abend NS, Bleck TP, et al",
+      "title": "Consensus Statement on Continuous EEG in Critically Ill Adults and Children, Part I: Indications",
+      "publication": "Journal of Clinical Neurophysiology",
+      "year": 2015,
+      "locator": "32:87-95; doi:10.1097/WNP.0000000000000166; section III.B on fluctuating or unexplained altered mental status and prompt monitoring when nonconvulsive seizures are suspected",
+      "usedFor": "The suspicion-to-urgent-qualified-EEG boundary for unexplained fluctuating language, awareness, and subtle recurrent signs, while preserving broad alternative causes and avoiding a clinical-only diagnosis.",
+      "verifiedAgainst": "https://www.acns.org/UserFiles/file/Consensus_Statement_on_Continuous_EEG_in.1.pdf",
+      "verifiedOn": "2026-08-26",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/25626778/"
+    },
+    {
+      "id": "acns-critical-care-eeg-terminology-2021",
+      "pmid": "33475321",
+      "authors": "Hirsch LJ, Fong MWK, Leitinger M, et al",
+      "title": "American Clinical Neurophysiology Society Standardized Critical Care EEG Terminology: 2021 Version",
+      "publication": "Journal of Clinical Neurophysiology",
+      "year": 2021,
+      "locator": "38:1-29; doi:10.1097/WNP.0000000000000806; electrographic seizure and electrographic-status definitions, including seizure burden of at least 20% in any 60-minute period",
+      "usedFor": "The fixed qualified report that 24 minutes of recurrent evolving electrographic seizures in 60 minutes meets the electrographic-status definition, without exposing raw-EEG interpretation or equating that report with cause, treatment, or outcome.",
+      "verifiedAgainst": "https://www.acns.org/UserFiles/file/ACNSStandardizedCriticalCareEEGTerminology_rev2021.pdf",
+      "verifiedOn": "2026-08-26",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/33475321/"
+    },
+    {
+      "id": "salzburg-ncse-validation-2016",
+      "pmid": "27571157",
+      "authors": "Leitinger M, Trinka E, Gardella E, et al",
+      "title": "Diagnostic accuracy of the Salzburg EEG criteria for non-convulsive status epilepticus: a retrospective study",
+      "publication": "Lancet Neurology",
+      "year": 2016,
+      "locator": "15:1054-1062; doi:10.1016/S1474-4422(16)30137-5; validation cohort, diagnostic-performance results, and clinical-correlation boundary",
+      "usedFor": "The evidence that structured EEG criteria can support qualified NCSE assessment while remaining context-dependent; the lab therefore supplies a specialist conclusion and does not teach learner interpretation of raw traces.",
+      "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/27571157/",
+      "verifiedOn": "2026-08-26",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/27571157/"
     }
   ]
 }

@@ -190,6 +190,12 @@ Recorded here rather than silently carried:
   strict-later persistent-clonus report on the healthy adult scaffold; it does not validate seizure
   generation, semiology assessment, a universal focal-status clock, airway safety, EEG state,
   medication or procedure effects, injury, cause, recovery, disposition, prognosis, or outcome.
+  Nonconvulsive status epilepticus recognition overlays fixed fluctuating language and awareness,
+  subtle recurrent signs, physiology, glucose, sodium, CT, CTA, qualified multidisciplinary
+  ownership, and a strict-later specialist electrographic-status report on the healthy adult
+  scaffold; it does not validate seizure generation, examination, clinical-only diagnosis, EEG
+  acquisition or interpretation, airway safety, medication or procedure effects, cause, seizure
+  control, recovery, disposition, prognosis, or outcome.
 
 ## Concentration-time checks, 2026-08-23
 

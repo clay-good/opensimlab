@@ -3959,6 +3959,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use direct verified findings, qualified seizure and airway-capable teams, current guidance and local protocols, appropriate monitoring and tests, individualized rescue decisions, and continuous reassessment.',
     briefIn: ['focal-motor-status-epilepticus-escalation'],
   },
+  {
+    id: 'ncse-clock-fluctuation-signs-imaging-eeg-and-later-state-are-authored',
+    headline: 'The clinical clock, fluctuation, subtle signs, tests, qualified EEG report, and later state are authored.',
+    simplification: 'Fixed reports stand in for witness history, examination, monitoring, glucose and sodium testing, CT and CTA, EEG placement and acquisition, specialist interpretation, clinical correlation, cause review, and serial reassessment.',
+    whereItMisleads: 'Treating the fictional fluctuation, gaze deviation, negative snapshots, seizure burden, qualified report, persistent symptoms, or named ownership as learner-acquired evidence, a universally diagnostic pattern, treatment response, or predicted course.',
+    correctUnderstanding: 'Real care requires immediate direct assessment, verified patient-specific data, qualified EEG interpretation in clinical context, broad cause evaluation, airway-capable support, individualized treatment, and continuous reassessment.',
+    briefIn: ['nonconvulsive-status-epilepticus-recognition'],
+  },
+  {
+    id: 'ncse-controls-reconcile-suspect-activate-review-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, suspicion, qualified ownership, alternatives review, report review, and handoff only.',
+    simplification: 'Six accepted actions stand in for experienced neurological, neurophysiology, emergency, resuscitation, airway, nursing, pharmacy, laboratory, imaging, and infectious evaluation, treatment, escalation, and handoff.',
+    whereItMisleads: 'Equating button order with examination, nonconvulsive-status diagnosis, EEG acquisition or interpretation, medication or airway management, procedure, team performance, disposition, or clinical competence.',
+    correctUnderstanding: 'Actual care requires the patient, trained teams, current local pathways, verified findings, individualized diagnosis and treatment, and continuous safety and neurological reassessment.',
+    briefIn: ['nonconvulsive-status-epilepticus-recognition'],
+  },
+  {
+    id: 'no-live-ncse-exam-monitor-test-eeg-interpretation-drug-airway-procedure-or-outcome',
+    headline: 'The lab does not examine, monitor, test, acquire or interpret EEG, prescribe, manage an airway, perform a procedure, or report outcome.',
+    simplification: 'No live history, examination, seizure timing, glucose, sodium or vital acquisition, monitoring, imaging, laboratory or EEG acquisition or interpretation, diagnosis, medicine, dose, route, access, oxygen, airway device, procedure, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Diagnosing NCSE from clinical features alone, treating a fixed EEG report as learner interpretation, treating negative CT or CTA snapshots as exclusions, copying fictional values into care, or using completion as competence.',
+    correctUnderstanding: 'Use direct verified findings, qualified EEG and airway-capable teams, current guidance and local protocols, appropriate monitoring and tests, individualized treatment decisions, and continuous reassessment.',
+    briefIn: ['nonconvulsive-status-epilepticus-recognition'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {
