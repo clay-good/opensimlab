@@ -632,6 +632,20 @@ credited toward the catalog until every item in the completion contract passes.
     glucose, electrolyte, fluid, drug, dose, rate, target, route, access, infusion, airway,
     ventilation, pacing, lipid, methylene blue, ECLS, procedure, safety disposition, prognosis, or
     outcome control exists.
+  - [x] Toxicology slice 8/15 adds declared acute digoxin rhythm-potassium toxicity. The learner
+    reconciles product, 7-hour clock, GI and visual clues, bradycardia, complete AV block,
+    ventricular ectopy, shock, hyperkalemia, supplied ECG, properly timed pre-antidote level,
+    acid-base, lactate, magnesium, renal and reported initial-care evidence; recognizes the whole
+    life-threatening digoxin pattern without level-only, rhythm-only, potassium-only or pacing-only
+    closure; activates toxicology, resuscitation, cardiac, electrolyte, airway, monitoring and
+    compassionate safety ownership; reviews coingestion, sample-timing, assay, antidote and rescue
+    boundaries; records bounded qualified immune-Fab, rhythm-potassium surveillance and rescue
+    intent; then reviews a strict elapsed fixed perfusion, rhythm and potassium report before another
+    elapsed arrhythmia, potassium-shift, renal, assay-interference, rescue and active-risk handoff.
+    No learner history, examination, monitoring, ECG, digoxin level or test acquisition or
+    interpretation, diagnosis, charcoal, glucose, electrolyte, fluid, Fab, vial count, drug, dose,
+    rate, target, route, access, infusion, airway, ventilation, pacing, dialysis, cardioversion,
+    antiarrhythmic, procedure, safety disposition, prognosis, or outcome control exists.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.
 - [ ] After every wave, verify the exact cumulative count, distinctness, capability reuse, path and

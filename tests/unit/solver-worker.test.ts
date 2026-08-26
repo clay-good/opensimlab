@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Toxicology calcium-channel-blocker state has protocol version 154', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(154);
+  it('Scenario: Toxicology digoxin state has protocol version 155', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(155);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

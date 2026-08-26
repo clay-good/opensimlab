@@ -2409,6 +2409,24 @@ prolonged-absorption, and active-risk handoff. The canonical state is not a toxi
 contractility, vascular, metabolic, insulin-response, pacing, decontamination, or refractory-rescue
 model.
 
+### Wave F toxicology slice 8: digoxin rhythm-potassium toxicity
+
+The eighth Toxicology lab owns the coupled GI, visual, electrical, perfusion, potassium, renal,
+sample-timing, and assay pattern of declared acute digoxin toxicity rather than duplicating intrinsic
+heart block, isolated hyperkalemia, therapeutic-drug monitoring, pacing, or calcium-channel-blocker
+toxicity. The learner reconciles the 7-hour exposure clock, vomiting, visual disturbance, drowsiness,
+HR 36/min, BP 76/42 mmHg, potassium 6.1 mmol/L, supplied complete AV block, ventricular ectopy,
+properly timed pre-antidote digoxin 8.6 ng/mL, acid-base, lactate, magnesium, renal, and reported
+initial-care evidence; recognizes life-threatening digoxin toxicity without level-only, rhythm-only,
+potassium-only, or pacing-only closure; activates toxicology, resuscitation, cardiac, electrolyte,
+airway, monitoring, and compassionate safety ownership; and reviews coingestion, sample-timing, assay,
+antidote, and rescue boundaries. Bounded qualified immune-Fab, rhythm-potassium surveillance, and
+rescue intent exposes no product, vial count, dose, rate, target, access, electrolyte, fluid, airway,
+pacing, dialysis, cardioversion, antiarrhythmic, or delivery. A strict elapsed fixed perfusion, rhythm,
+and potassium report precedes another elapsed recurrence, renal, assay-interference, and active-risk
+handoff. The canonical state is not a toxicokinetic, ion-pump, rhythm, potassium, Fab-response,
+assay, pacing, dialysis, or refractory-rescue model.
+
 #### Hematology and oncology: 11
 
 Neutropenic fever; tumor-lysis syndrome; hyperleukocytosis pattern; sickle-cell acute chest syndrome;

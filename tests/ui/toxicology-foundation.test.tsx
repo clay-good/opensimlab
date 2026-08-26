@@ -12,6 +12,7 @@ import { SALICYLATE_FALLING_NUMBER } from '../../src/modules/toxicology/scenario
 import { TRICYCLIC_SODIUM_CHANNEL_CARDIOTOXICITY } from '../../src/modules/toxicology/scenarios/tricyclic-sodium-channel-cardiotoxicity';
 import { BETA_BLOCKER_CARDIOGENIC_SHOCK } from '../../src/modules/toxicology/scenarios/beta-blocker-cardiogenic-shock';
 import { CALCIUM_CHANNEL_BLOCKER_SHOCK } from '../../src/modules/toxicology/scenarios/calcium-channel-blocker-shock';
+import { DIGOXIN_RHYTHM_POTASSIUM } from '../../src/modules/toxicology/scenarios/digoxin-rhythm-potassium';
 
 describe('Toxicology module user-facing foundation', () => {
   const cockpitMarkup = (
@@ -50,6 +51,7 @@ describe('Toxicology module user-facing foundation', () => {
     onToxicologyTricyclicResponse: () => {},
     onToxicologyBetaBlockerResponse: () => {},
     onToxicologyCalciumChannelBlockerResponse: () => {},
+    onToxicologyDigoxinResponse: () => {},
   } satisfies ActionCockpitProps));
 
   it('renders a calm module index with shared navigation and the exact first lab', () => {
@@ -70,6 +72,8 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('Beta-blocker toxicity: perfusion is more than pulse rate');
     expect(markup).toContain('href="/toxicology/scenario/calcium-channel-blocker-shock"');
     expect(markup).toContain('Calcium-channel blocker toxicity: read the glucose with the shock');
+    expect(markup).toContain('href="/toxicology/scenario/digoxin-rhythm-potassium"');
+    expect(markup).toContain('Digoxin toxicity: read the rhythm and potassium together');
   });
 
   it('briefs the bounded poisoning rehearsal without dose or diagnostic claims', () => {
@@ -234,6 +238,27 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('The high glucose belongs beside the slow rhythm.');
     expect(markup).toContain('Connect rhythm + glucose');
     expect(markup).not.toMatch(/units\/kg|mg\/kg|mL\/kg|pacing rate|decontamination window|ECLS/i);
+    expect(markup).not.toContain('<input');
+    expect(markup).not.toContain('<select');
+  });
+
+  it('prerenders and opens the digoxin lab on its calm rhythm-potassium tray', () => {
+    const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/digoxin-rhythm-potassium' }));
+    expect(page).toContain('<h1>Digoxin toxicity: read the rhythm and potassium together</h1>');
+    expect(page).toContain('level-, rhythm-, or potassium-only closure');
+    expect(crisisResponseAvailability(DIGOXIN_RHYTHM_POTASSIUM, []))
+      .toMatchObject({ hasToxicologyDigoxinResponse: true });
+    expect(crisisResponseAvailability({ ...DIGOXIN_RHYTHM_POTASSIUM,
+      metadata: { ...DIGOXIN_RHYTHM_POTASSIUM.metadata, id: 'digoxin-clone' } }, []))
+      .toMatchObject({ hasToxicologyDigoxinResponse: false });
+    const markup = cockpitMarkup(DIGOXIN_RHYTHM_POTASSIUM, {
+      toxicologyDigoxinAssessment: { trajectoryAtTick: null, recognitionAtTick: null,
+        supportAtTick: null, evidenceAtTick: null, reassessmentAtTick: null, handoffAtTick: null },
+    });
+    expect(markup).toContain('Digoxin pattern');
+    expect(markup).toContain('The rhythm and potassium tell one story.');
+    expect(markup).toContain('Connect rhythm + potassium');
+    expect(markup).not.toMatch(/vial count|mg\/kg|mL\/kg|pacing rate|dialysis threshold/i);
     expect(markup).not.toContain('<input');
     expect(markup).not.toContain('<select');
   });

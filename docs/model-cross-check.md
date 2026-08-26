@@ -287,6 +287,14 @@ Recorded here rather than silently carried:
   guidance and product labeling, not a toxicokinetic, ion-channel, conduction, contractility,
   vascular, metabolic, vasopressor, calcium, insulin/euglycemia, pacing, decontamination,
   refractory-rescue, or individualized-response model.
+  Digoxin rhythm-potassium toxicity uses fixed canonical presentation and elapsed-response states:
+  HR 36/min, BP 76/42 mmHg, complete AV block with atrial rate 84/min and ventricular escape 36/min,
+  pre-antidote digoxin 8.6 ng/mL drawn 7 hours after the last dose, potassium 6.1 mmol/L,
+  pH 7.32, lactate 3.4 mmol/L and creatinine 1.1 mg/dL, then sinus rhythm 62/min,
+  BP 100/62 mmHg, potassium 4.7 mmol/L and lactate 2.1 mmol/L without a post-Fab total digoxin
+  level. These are teaching calibrations grounded in current AHA guidance and product labeling, not
+  a toxicokinetic, ion-pump, rhythm, potassium, Fab-response, assay, pacing, dialysis, rescue, or
+  individualized-response model.
 
 ## Concentration-time checks, 2026-08-23
 

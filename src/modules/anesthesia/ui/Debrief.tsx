@@ -5493,6 +5493,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-toxicology-digoxin-product-clock-gi-visual-perfusion-rhythm-potassium-and-whole-patient',
+      'recognize-toxicology-digoxin-life-threatening-pattern-without-level-rhythm-or-potassium-only-closure',
+      'activate-toxicology-digoxin-poison-center-resuscitation-cardiac-electrolyte-airway-and-safety-ownership',
+      'review-toxicology-digoxin-supplied-ecg-level-timing-potassium-renal-coingestion-and-antidote-boundary',
+      'record-toxicology-digoxin-bounded-qualified-immune-fab-surveillance-and-rescue-intent-with-strict-later-review',
+      'handoff-toxicology-digoxin-recurrent-arrhythmia-potassium-shift-level-interference-renal-rescue-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'digoxin-rhythm-potassium'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'digoxin-rhythm-potassium-transition')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'digoxin-rhythm-potassium-transition-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Toxicology digoxin lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'Product, clock, GI and visual clues, perfusion, rhythm, potassium, supplied ECG, oxygenation, and whole-patient state were reconciled.'],
+        ['pattern-recognized', 'The life-threatening digoxin pattern was recognized without level-only, rhythm-only, potassium-only, pacing-only, or diagnostic closure.'],
+        ['support-activated', 'Toxicology, resuscitation, cardiac, electrolyte, airway, monitoring, and compassionate safety ownership were activated.'],
+        ['evidence-reviewed', 'Supplied ECG, pre-Fab level timing, potassium, renal, prior-care, coingestion, antidote, and rescue evidence were reviewed without learner interpretation or delivery.'],
+        ['intent-and-reassessment-recorded', 'Bounded qualified Fab, rhythm-potassium surveillance, and rescue intent plus the elapsed fixed report were recorded without dosing, delivery, eligibility, causal, or durable-safety claims.'],
+        ['active-risk-handoff-recorded', 'Serial rhythm, potassium, assay interference, renal state, coingestion, recurrence, rescue, safety, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^toxicology-digoxin-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^toxicology-digoxin-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-af-rvr-rhythm-and-stability', 'review-af-rvr-context-and-triggers',
       'record-af-rvr-rate-control-intent', 'record-af-rvr-stroke-prevention-intent',
       'reassess-af-rvr-trajectory-and-follow-up'].includes(objective.id)) {

@@ -4367,6 +4367,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use the complete verified product and formulation, serial rhythm, perfusion, contractility, vascular tone, CNS, glucose, electrolyte, acid-base, volume, renal, coingestion, prior-care, absorption, and response trajectory under qualified toxicology and resuscitation ownership.',
     briefIn: ['calcium-channel-blocker-shock'],
   },
+  {
+    id: 'digoxin-exposure-rhythm-potassium-level-prior-care-transition-and-response-are-authored',
+    headline: 'The exposure, rhythm-potassium pattern, level timing, prior care, and later response are authored.',
+    simplification: 'Fixed reports and canonical monitor states stand in for history, examination, exposure verification, ECG, digoxin-level and laboratory acquisition and interpretation, qualified resuscitation, and reassessment.',
+    whereItMisleads: 'Treating the fictional rhythm, pressure, potassium, timed level, prior-care response, or later improvement as learner evidence, a universal diagnostic threshold, treatment effect, durable stability, or predicted course.',
+    correctUnderstanding: 'Real care requires direct serial perfusion, rhythm, neurological, potassium, magnesium, acid-base, renal, assay, and organ assessment with poison-center or medical-toxicology and resuscitation-team ownership.',
+    briefIn: ['digoxin-rhythm-potassium'],
+  },
+  {
+    id: 'digoxin-controls-reconcile-recognize-support-review-intent-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, pattern recognition, qualified ownership, evidence review, bounded Fab intent, reassessment, and handoff only.',
+    simplification: 'Six actions stand in for emergency, toxicology, critical-care, nursing, pharmacy, cardiac, electrolyte, airway, perfusion, antidote, rescue, safety, surveillance, and handoff work.',
+    whereItMisleads: 'Equating button order with history, examination, ECG or level interpretation, diagnosis, prescribing, electrolyte management, pacing, antidote or rescue eligibility or delivery, disposition, or competence.',
+    correctUnderstanding: 'Actual care requires trained teams, continuous verified cardiac and perfusion surveillance, serial potassium and renal monitoring, correctly timed and assay-aware laboratory interpretation, current local protocols, individualized treatment, and reassessment.',
+    briefIn: ['digoxin-rhythm-potassium'],
+  },
+  {
+    id: 'no-live-digoxin-diagnosis-fab-dosing-electrolyte-pacing-dialysis-rescue-or-outcome',
+    headline: 'The lab does not diagnose poisoning, calculate or deliver Fab, prescribe electrolyte care, pace, dialyze, perform rescue, or report outcome.',
+    simplification: 'No live history, examination, monitoring, ECG, digoxin level, blood gas, chemistry or another test, diagnosis, charcoal, glucose, electrolyte, fluid, Fab, vial count, dose, rate, target, route, access, infusion, airway, ventilation, pacing, dialysis, cardioversion, antiarrhythmic, transport, procedure, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Using one rhythm, potassium, level, or exposure statement alone; copying fictional values into care; using a post-Fab total level as activity; selecting a product, vial count, electrolyte treatment, pacing, dialysis, or rescue from this rehearsal; attributing the fixed response; or reading completion as competence.',
+    correctUnderstanding: 'Use the complete verified product, clock, GI and visual, serial rhythm, perfusion, potassium, magnesium, acid-base, renal, coingestion, sample-timing, assay, prior-care, antidote, and response trajectory under qualified toxicology and resuscitation ownership.',
+    briefIn: ['digoxin-rhythm-potassium'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

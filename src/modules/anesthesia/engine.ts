@@ -408,6 +408,10 @@ const TOXICOLOGY_CALCIUM_CHANNEL_BLOCKER_BLOCKED_ACTION_TYPES = new Set([
   ...TOXICOLOGY_BETA_BLOCKER_BLOCKED_ACTION_TYPES,
   'beta-blocker-cardiogenic-shock-response',
 ]);
+const TOXICOLOGY_DIGOXIN_BLOCKED_ACTION_TYPES = new Set([
+  ...TOXICOLOGY_CALCIUM_CHANNEL_BLOCKER_BLOCKED_ACTION_TYPES,
+  'calcium-channel-blocker-shock-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1287,6 +1291,12 @@ export class AnesthesiaEngine {
   private toxicologyCalciumChannelBlockerEvidenceAtTick: number | null = null;
   private toxicologyCalciumChannelBlockerReassessmentAtTick: number | null = null;
   private toxicologyCalciumChannelBlockerHandoffAtTick: number | null = null;
+  private toxicologyDigoxinTrajectoryAtTick: number | null = null;
+  private toxicologyDigoxinRecognitionAtTick: number | null = null;
+  private toxicologyDigoxinSupportAtTick: number | null = null;
+  private toxicologyDigoxinEvidenceAtTick: number | null = null;
+  private toxicologyDigoxinReassessmentAtTick: number | null = null;
+  private toxicologyDigoxinHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2110,6 +2120,15 @@ export class AnesthesiaEngine {
         'This Toxicology lesson exposes no generic examination, monitoring, ECG, imaging or laboratory interpretation, '
         + 'decontamination, glucose, electrolyte, fluid, vasopressor, calcium, insulin, dose, route, access, infusion, airway, '
         + 'ventilation, pacing, lipid, methylene blue, ECLS, transport, procedure, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const toxicologyDigoxin = this.scenario.metadata.id === 'digoxin-rhythm-potassium'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'digoxin-rhythm-potassium-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'digoxin-rhythm-potassium-transition-boundary');
+    if (toxicologyDigoxin && TOXICOLOGY_DIGOXIN_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `toxicology-digoxin-generic-action-refused-${this.currentTick}`,
+        'This Toxicology lesson exposes no generic examination, monitoring, ECG, digoxin-level, blood-gas or laboratory interpretation, '
+        + 'charcoal, glucose, electrolyte, fluid, Fab, drug, vial count, dose, route, access, infusion, airway, ventilation, '
+        + 'pacing, dialysis, cardioversion, antiarrhythmic, transport, procedure, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -10298,6 +10317,32 @@ export class AnesthesiaEngine {
         if (this.toxicologyCalciumChannelBlockerHandoffAtTick !== null) { this.log('warning', 'assessment', `toxicology-calcium-channel-blocker-handoff-refused-${this.currentTick}`, 'The recurrent shock, AV-block, glucose, electrolyte, volume, absorption, rescue, and active-risk handoff was already recorded.'); break; }
         this.toxicologyCalciumChannelBlockerHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-calcium-channel-blocker-active-risk-handoff-recorded-${this.currentTick}`, 'Serial perfusion, rhythm and conduction, CNS state, glucose, potassium, acid-base, lactate, volume, prolonged absorption, coingestion, recurrent shock, airway and rescue contingencies, compassionate safety, disposition, prognosis, and outcome uncertainty were handed off.', { durablePerfusionStabilityProven: false, absorptionComplete: false, glucoseStabilityProven: false, electrolyteStabilityProven: false, coingestionExcluded: false, rescueEligibilityDetermined: false, safetyDispositionDetermined: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
       }
+      case 'digoxin-rhythm-potassium-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'digoxin-rhythm-potassium'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'digoxin-rhythm-potassium-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'digoxin-rhythm-potassium-transition-boundary');
+        const actions = ['reconcile-toxicology-digoxin-product-clock-gi-visual-perfusion-rhythm-potassium-and-whole-patient',
+          'recognize-toxicology-digoxin-life-threatening-pattern-without-level-rhythm-or-potassium-only-closure',
+          'activate-toxicology-digoxin-poison-center-resuscitation-cardiac-electrolyte-airway-and-safety-ownership',
+          'review-toxicology-digoxin-supplied-ecg-level-timing-potassium-renal-coingestion-and-antidote-boundary',
+          'record-toxicology-digoxin-bounded-qualified-immune-fab-surveillance-and-rescue-intent-with-strict-later-review',
+          'handoff-toxicology-digoxin-recurrent-arrhythmia-potassium-shift-level-interference-renal-rescue-and-active-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `toxicology-digoxin-response-refused-${this.currentTick}`, supported ? 'The digoxin action was not listed. No supplied or injected text was retained.' : 'These digoxin choices are available only in the exact declared Toxicology lesson.'); break; }
+        if (response === actions[0]) { if (this.toxicologyDigoxinTrajectoryAtTick !== null) { this.log('warning', 'assessment', `toxicology-digoxin-trajectory-refused-${this.currentTick}`, 'The product, clock, GI and visual clues, perfusion, rhythm, potassium, and whole-patient state were already reconciled.'); break; } this.toxicologyDigoxinTrajectoryAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-digoxin-trajectory-reconciled-${this.currentTick}`, 'Declared immediate-release digoxin exposure, 7-hour clock, vomiting, visual disturbance, bradycardia, complete AV block, shock, hyperkalemia, supplied ECG, oxygenation, and whole-patient state were connected. The learner did not take history, examine, acquire or interpret monitoring, ECG, or tests, or diagnose.', { exposureAuthored: true, hoursPostIngestion: 7, patientHistoryTakenByLearner: false, patientExaminedByLearner: false, ecgInterpretedByLearner: false }); break; }
+        if (this.toxicologyDigoxinTrajectoryAtTick === null) { this.log('warning', 'assessment', `toxicology-digoxin-trajectory-order-refused-${this.currentTick}`, 'Reconcile product, clock, GI and visual clues, perfusion, rhythm, potassium, and whole patient first.'); break; }
+        if (response === actions[1]) { if (this.toxicologyDigoxinRecognitionAtTick !== null) { this.log('warning', 'assessment', `toxicology-digoxin-recognition-refused-${this.currentTick}`, 'The life-threatening digoxin pattern and single-cue boundary were already recognized.'); break; } this.toxicologyDigoxinRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-digoxin-pattern-recognized-${this.currentTick}`, 'Declared exposure, GI and visual symptoms, bradycardia, complete AV block, hypotension, hyperkalemia, and the properly timed pre-antidote level form an authored life-threatening digoxin pattern. One level, rhythm, potassium value, or history statement alone neither diagnoses nor grades the case, and pacing alone does not neutralize digoxin.', { lifeThreateningDigoxinPatternRecognized: true, levelUsedAlone: false, rhythmUsedAlone: false, potassiumUsedAlone: false, pacingTreatedAsDefinitive: false, diagnosisMadeByLearner: false }); break; }
+        if (this.toxicologyDigoxinRecognitionAtTick === null) { this.log('warning', 'assessment', `toxicology-digoxin-recognition-order-refused-${this.currentTick}`, 'Recognize the whole life-threatening digoxin pattern before support or evidence review.'); break; }
+        if (response === actions[2]) { if (this.toxicologyDigoxinSupportAtTick !== null) { this.log('warning', 'assessment', `toxicology-digoxin-support-refused-${this.currentTick}`, 'Qualified toxicology, resuscitation, cardiac, electrolyte, airway, and safety ownership are already active.'); break; } this.toxicologyDigoxinSupportAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-digoxin-support-activated-${this.currentTick}`, 'Poison-center or medical-toxicology, emergency, critical-care, nursing, pharmacy, cardiac, electrolyte, airway-capable, continuous rhythm and perfusion monitoring, and compassionate safety ownership were recorded. The learner selected no drug, vial count, dose, route, access, airway, pacing, or procedure.', { qualifiedSupportActive: true, safetyOwnershipActive: true, treatmentSelectedByLearner: false }); break; }
+        if (this.toxicologyDigoxinSupportAtTick === null) { this.log('warning', 'assessment', `toxicology-digoxin-support-order-refused-${this.currentTick}`, 'Activate qualified toxicology, resuscitation, cardiac, electrolyte, airway, and safety ownership before evidence review.'); break; }
+        if (response === actions[3]) { if (this.toxicologyDigoxinEvidenceAtTick !== null) { this.log('warning', 'assessment', `toxicology-digoxin-evidence-refused-${this.currentTick}`, 'The supplied ECG, level timing, potassium, renal, coingestion, prior-care, antidote, and rescue boundary was already reviewed.'); break; } this.toxicologyDigoxinEvidenceAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-digoxin-evidence-reviewed-${this.currentTick}`, 'Supplied complete AV block, atrial rate 84, ventricular rate 36, QRS 108, ventricular ectopy without sustained VT, BP 76/42, pre-antidote digoxin 8.6 drawn 7 hours after the last dose, potassium 6.1, magnesium 1.9, pH 7.32, bicarbonate 19, lactate 3.4, glucose 103, creatinine 1.1, persistent shock after reported protocol-selected initial care, coingestion limits, antidote and rescue boundaries were integrated. The learner acquired, calculated, interpreted, selected, delivered, diagnosed, or determined no eligibility.', { ecgLevelAndLaboratoryEvidenceAuthored: true, sampleTimingAuthored: true, priorCareAuthored: true, ecgInterpretedByLearner: false, levelInterpretedByLearner: false, antidoteEligibilityDetermined: false }); break; }
+        if (this.toxicologyDigoxinEvidenceAtTick === null) { this.log('warning', 'assessment', `toxicology-digoxin-evidence-order-refused-${this.currentTick}`, 'Review supplied ECG, level timing, potassium, renal, coingestion, prior-care, antidote, and rescue evidence before qualified intent.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.toxicologyDigoxinEvidenceAtTick) { this.log('warning', 'assessment', `toxicology-digoxin-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before qualified Fab intent and strict later review.'); break; } if (this.toxicologyDigoxinReassessmentAtTick !== null) { this.log('warning', 'assessment', `toxicology-digoxin-reassessment-refused-${this.currentTick}`, 'Qualified Fab, surveillance, and rescue intent with the strict later report was already reviewed.'); break; } this.toxicologyDigoxinReassessmentAtTick = this.currentTick; this.rhythm = 'sinus'; this.log('critical', 'assessment', `toxicology-digoxin-intent-and-reassessment-recorded-${this.currentTick}`, 'Qualified-team digoxin-immune-Fab, serial rhythm-potassium surveillance, and refractory-arrhythmia rescue preparedness were recorded without product, vial count, dose, rate, target, access, electrolyte, fluid, airway, pacing, dialysis, cardioversion, antiarrhythmic, or delivery. Strict 60-minute report: clearer mentation, sinus rhythm 62/min, BP 100/62 (MAP 75), potassium 4.7, lactate 2.1, no sustained ventricular arrhythmia, and no new hypoxemia or pulmonary edema. Standard total digoxin level was not repeated because Fab can make it clinically misleading. This does not prove individualized treatment effect, durable perfusion, potassium stability, coingestant exclusion, disposition, or outcome.', { qualifiedImmuneFabIntentRecorded: true, qualifiedRhythmPotassiumSurveillanceRecorded: true, qualifiedRescuePreparednessRecorded: true, postFabTotalLevelUsed: false, treatmentDeliveredByLearner: false, rescueSelectedByLearner: false, treatmentEffectProven: false }); break; }
+        if (this.toxicologyDigoxinReassessmentAtTick === null) { this.log('warning', 'assessment', `toxicology-digoxin-handoff-order-refused-${this.currentTick}`, 'Record bounded qualified Fab and rescue intent and review the strict later report before handoff.'); break; }
+        if (this.currentTick <= this.toxicologyDigoxinReassessmentAtTick) { this.log('warning', 'assessment', `toxicology-digoxin-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off recurrent digoxin rhythm, potassium, assay, and renal risk.'); break; }
+        if (this.toxicologyDigoxinHandoffAtTick !== null) { this.log('warning', 'assessment', `toxicology-digoxin-handoff-refused-${this.currentTick}`, 'The recurrent arrhythmia, potassium-shift, level-interference, renal, rescue, and active-risk handoff was already recorded.'); break; }
+        this.toxicologyDigoxinHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-digoxin-active-risk-handoff-recorded-${this.currentTick}`, 'Serial perfusion, rhythm and conduction, CNS state, potassium and magnesium, acid-base, lactate, renal state, Fab-associated assay interference, coingestion, recurrent toxicity, airway and rescue contingencies, compassionate safety, disposition, prognosis, and outcome uncertainty were handed off.', { durablePerfusionStabilityProven: false, potassiumStabilityProven: false, assayInterferenceResolved: false, coingestionExcluded: false, rescueEligibilityDetermined: false, safetyDispositionDetermined: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -13083,6 +13128,14 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: 18, spo2Percent: 97, systolicMmHg: this.toxicologyCalciumChannelBlockerReassessmentAtTick !== null ? 96 : 68,
         diastolicMmHg: this.toxicologyCalciumChannelBlockerReassessmentAtTick !== null ? 58 : 36,
         meanArterialMmHg: this.toxicologyCalciumChannelBlockerReassessmentAtTick !== null ? 71 : 47, coreTemperatureC: 36.3 };
+    }
+    if (this.scenario.metadata.id === 'digoxin-rhythm-potassium'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'digoxin-rhythm-potassium-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'digoxin-rhythm-potassium-transition-boundary')) {
+      crisisState = { ...crisisState, heartRateBpm: this.toxicologyDigoxinReassessmentAtTick !== null ? 62 : 36,
+        respiratoryRateBpm: 18, spo2Percent: 98, systolicMmHg: this.toxicologyDigoxinReassessmentAtTick !== null ? 100 : 76,
+        diastolicMmHg: this.toxicologyDigoxinReassessmentAtTick !== null ? 62 : 42,
+        meanArterialMmHg: this.toxicologyDigoxinReassessmentAtTick !== null ? 75 : 53, coreTemperatureC: 36.4 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -16771,6 +16824,30 @@ export class AnesthesiaEngine {
               glucoseStabilityProven: false as const, electrolyteStabilityProven: false as const, coingestionExcluded: false as const,
               rescueEligibilityDetermined: false as const, treatmentEffectProven: false as const, safetyDispositionDetermined: false as const,
               dispositionDetermined: false as const, prognosisPredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'digoxin-rhythm-potassium'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'digoxin-rhythm-potassium-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'digoxin-rhythm-potassium-transition-boundary') ? {
+            toxicologyDigoxinAssessment: {
+              trajectoryAtTick: this.toxicologyDigoxinTrajectoryAtTick, recognitionAtTick: this.toxicologyDigoxinRecognitionAtTick,
+              supportAtTick: this.toxicologyDigoxinSupportAtTick, evidenceAtTick: this.toxicologyDigoxinEvidenceAtTick,
+              reassessmentAtTick: this.toxicologyDigoxinReassessmentAtTick, handoffAtTick: this.toxicologyDigoxinHandoffAtTick,
+              exposureRhythmPotassiumAndLevelPatternAuthored: true as const, lifeThreateningDigoxinPatternRecognized: this.toxicologyDigoxinRecognitionAtTick !== null,
+              qualifiedSupportActive: this.toxicologyDigoxinSupportAtTick !== null, ecgLevelTimingPotassiumRenalPriorCareAndAntidoteEvidenceReviewed: this.toxicologyDigoxinEvidenceAtTick !== null,
+              qualifiedImmuneFabIntentRecorded: this.toxicologyDigoxinReassessmentAtTick !== null, qualifiedRhythmPotassiumSurveillanceRecorded: this.toxicologyDigoxinReassessmentAtTick !== null,
+              qualifiedRescuePreparednessRecorded: this.toxicologyDigoxinReassessmentAtTick !== null, responseStateAuthored: this.toxicologyDigoxinReassessmentAtTick !== null,
+              patientHistoryTakenByLearner: false as const, patientExaminedByLearner: false as const, monitoringAcquiredByLearner: false as const,
+              ecgAcquiredByLearner: false as const, ecgInterpretedByLearner: false as const, bloodSampleAcquiredByLearner: false as const,
+              levelInterpretedByLearner: false as const, diagnosisMadeByLearner: false as const, decontaminationSelectedByLearner: false as const,
+              glucoseOrElectrolyteSelectedByLearner: false as const, fluidSelectedByLearner: false as const, drugSelectedByLearner: false as const,
+              vialCountSelectedByLearner: false as const, doseSelectedByLearner: false as const, routeSelectedByLearner: false as const,
+              airwaySelectedByLearner: false as const, ventilationSelectedByLearner: false as const, pacingSelectedByLearner: false as const,
+              dialysisSelectedByLearner: false as const, rescueSelectedByLearner: false as const, treatmentDeliveredByLearner: false as const,
+              durablePerfusionStabilityProven: false as const, potassiumStabilityProven: false as const, assayInterferenceResolved: false as const,
+              coingestionExcluded: false as const, antidoteEligibilityDetermined: false as const, rescueEligibilityDetermined: false as const,
+              treatmentEffectProven: false as const, safetyDispositionDetermined: false as const, dispositionDetermined: false as const,
+              prognosisPredicted: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

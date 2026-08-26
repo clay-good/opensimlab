@@ -1088,6 +1088,9 @@ export function Cockpit({
           onToxicologyCalciumChannelBlockerResponse={(action) => session.act({
             type: 'calcium-channel-blocker-shock-response', payload: { action },
           })}
+          onToxicologyDigoxinResponse={(action) => session.act({
+            type: 'digoxin-rhythm-potassium-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

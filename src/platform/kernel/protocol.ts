@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 154 reports Toxicology calcium-channel-blocker state. */
-export const WORKER_PROTOCOL_VERSION = 154;
+/** Bumped whenever the message shape changes incompatibly. Version 155 reports Toxicology digoxin state. */
+export const WORKER_PROTOCOL_VERSION = 155;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2396,6 +2396,31 @@ export interface EquipmentSnapshot {
       readonly treatmentEffectProven: false; readonly safetyDispositionDetermined: false;
       readonly dispositionDetermined: false; readonly prognosisPredicted: false;
       readonly outcomePredicted: false;
+    };
+    readonly toxicologyDigoxinAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly exposureRhythmPotassiumAndLevelPatternAuthored: true; readonly lifeThreateningDigoxinPatternRecognized: boolean;
+      readonly qualifiedSupportActive: boolean; readonly ecgLevelTimingPotassiumRenalPriorCareAndAntidoteEvidenceReviewed: boolean;
+      readonly qualifiedImmuneFabIntentRecorded: boolean; readonly qualifiedRhythmPotassiumSurveillanceRecorded: boolean;
+      readonly qualifiedRescuePreparednessRecorded: boolean; readonly responseStateAuthored: boolean;
+      readonly patientHistoryTakenByLearner: false; readonly patientExaminedByLearner: false;
+      readonly monitoringAcquiredByLearner: false; readonly ecgAcquiredByLearner: false;
+      readonly ecgInterpretedByLearner: false; readonly bloodSampleAcquiredByLearner: false;
+      readonly levelInterpretedByLearner: false; readonly diagnosisMadeByLearner: false;
+      readonly decontaminationSelectedByLearner: false; readonly glucoseOrElectrolyteSelectedByLearner: false;
+      readonly fluidSelectedByLearner: false; readonly drugSelectedByLearner: false;
+      readonly vialCountSelectedByLearner: false; readonly doseSelectedByLearner: false;
+      readonly routeSelectedByLearner: false; readonly airwaySelectedByLearner: false;
+      readonly ventilationSelectedByLearner: false; readonly pacingSelectedByLearner: false;
+      readonly dialysisSelectedByLearner: false; readonly rescueSelectedByLearner: false;
+      readonly treatmentDeliveredByLearner: false; readonly durablePerfusionStabilityProven: false;
+      readonly potassiumStabilityProven: false; readonly assayInterferenceResolved: false;
+      readonly coingestionExcluded: false; readonly antidoteEligibilityDetermined: false;
+      readonly rescueEligibilityDetermined: false; readonly treatmentEffectProven: false;
+      readonly safetyDispositionDetermined: false; readonly dispositionDetermined: false;
+      readonly prognosisPredicted: false; readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

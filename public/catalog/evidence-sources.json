@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 243,
+  "sourceCount": 245,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -2993,8 +2993,8 @@
       "title": "2023 American Heart Association Focused Update on the Management of Patients With Cardiac Arrest or Life-Threatening Toxicity Due to Poisoning",
       "publication": "Circulation",
       "year": 2023,
-      "locator": "148:e149-e184; doi:10.1161/CIR.0000000000001161; methemoglobinemia, sodium-channel-blocker, beta-blocker, and calcium-channel-blocker recommendations",
-      "usedFor": "Acquired methemoglobinemia treatment; tricyclic sodium-channel cardiotoxicity; beta-blocker shock recognition and rescue boundaries; and calcium-channel-blocker shock recognition, vasopressor, calcium, high-dose-insulin/euglycemia, surveillance, and refractory-rescue boundaries.",
+      "locator": "148:e149-e184; doi:10.1161/CIR.0000000000001161; methemoglobinemia, sodium-channel-blocker, beta-blocker, calcium-channel-blocker, and digoxin recommendations",
+      "usedFor": "Acquired methemoglobinemia treatment; tricyclic sodium-channel cardiotoxicity; beta-blocker and calcium-channel-blocker shock boundaries; and life-threatening digoxin recognition, immune-Fab, rhythm rescue, surveillance, and no-extracorporeal-removal boundaries.",
       "verifiedAgainst": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-and-pediatric-special-circumstances-of-resuscitation",
       "verifiedOn": "2026-08-26"
     },
@@ -3168,6 +3168,36 @@
       "locator": "Set ID 11b43a17-8038-462b-8902-259431ad5256; Overdosage section",
       "usedFor": "Extended-release exposure, bradycardia, hypotension, heart block, cardiac failure, supportive resuscitation context, and limited diltiazem dialyzability.",
       "verifiedAgainst": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=11b43a17-8038-462b-8902-259431ad5256",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "dailymed-digoxin-tablets-2025",
+      "currency": {
+        "lastAmended": "2025-03-06",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "US National Library of Medicine, DailyMed",
+      "title": "Digoxin tablets prescribing information",
+      "publication": "DailyMed",
+      "year": 2025,
+      "locator": "Set ID 42d079a7-def1-4220-b71f-db2651966ffe; Overdosage section",
+      "usedFor": "GI, visual, CNS, bradyarrhythmic, heart-block, ventricular-arrhythmia, and hyperkalemic overdose manifestations; monitoring; and immune-Fab boundary.",
+      "verifiedAgainst": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=42d079a7-def1-4220-b71f-db2651966ffe",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "dailymed-digifab-2025",
+      "currency": {
+        "lastAmended": "2025-01-24",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "US National Library of Medicine, DailyMed",
+      "title": "DigiFab digoxin immune Fab prescribing information",
+      "publication": "DailyMed",
+      "year": 2025,
+      "locator": "Set ID c05ee6a5-c98b-45f4-83fd-40781639d653; Warnings and Precautions 5.1 and Laboratory Tests 5.4",
+      "usedFor": "Life-threatening digoxin-toxicity indication, 6- to 8-hour serum-tissue equilibration, rapid potassium decline, serial monitoring, recurrence risk in renal failure, and misleading standard total digoxin levels after Fab.",
+      "verifiedAgainst": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=c05ee6a5-c98b-45f4-83fd-40781639d653",
       "verifiedOn": "2026-08-26"
     }
   ]

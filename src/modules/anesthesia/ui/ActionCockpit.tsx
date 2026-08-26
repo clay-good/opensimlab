@@ -1210,6 +1210,11 @@ export interface ActionCockpitProps {
       readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly toxicologyDigoxinAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2094,6 +2099,14 @@ export interface ActionCockpitProps {
       | 'record-toxicology-calcium-channel-blocker-bounded-qualified-vasopressor-calcium-insulin-euglycemia-and-rescue-intent-with-strict-later-review'
       | 'handoff-toxicology-calcium-channel-blocker-recurrent-shock-av-block-hyperglycemia-electrolyte-volume-rescue-and-active-risk',
   ) => void;
+  readonly onToxicologyDigoxinResponse?: (
+    action: 'reconcile-toxicology-digoxin-product-clock-gi-visual-perfusion-rhythm-potassium-and-whole-patient'
+      | 'recognize-toxicology-digoxin-life-threatening-pattern-without-level-rhythm-or-potassium-only-closure'
+      | 'activate-toxicology-digoxin-poison-center-resuscitation-cardiac-electrolyte-airway-and-safety-ownership'
+      | 'review-toxicology-digoxin-supplied-ecg-level-timing-potassium-renal-coingestion-and-antidote-boundary'
+      | 'record-toxicology-digoxin-bounded-qualified-immune-fab-surveillance-and-rescue-intent-with-strict-later-review'
+      | 'handoff-toxicology-digoxin-recurrent-arrhythmia-potassium-shift-level-interference-renal-rescue-and-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2619,6 +2632,10 @@ export function crisisResponseAvailability(
       scenario.metadata.id === 'calcium-channel-blocker-shock'
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'calcium-channel-blocker-shock-transition')
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'calcium-channel-blocker-shock-transition-boundary'),
+    hasToxicologyDigoxinResponse:
+      scenario.metadata.id === 'digoxin-rhythm-potassium'
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'digoxin-rhythm-potassium-transition')
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'digoxin-rhythm-potassium-transition-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2825,6 +2842,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'tricyclic-sodium-channel-cardiotoxicity-transition')
       || (event.type === 'narrative' && event.target === 'beta-blocker-cardiogenic-shock-transition')
       || (event.type === 'narrative' && event.target === 'calcium-channel-blocker-shock-transition')
+      || (event.type === 'narrative' && event.target === 'digoxin-rhythm-potassium-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2919,6 +2937,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasToxicologyTricyclicResponse,
     hasToxicologyBetaBlockerResponse,
     hasToxicologyCalciumChannelBlockerResponse,
+    hasToxicologyDigoxinResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3040,8 +3059,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasToxicologyTricyclicResponse
     || hasToxicologyBetaBlockerResponse
     || hasToxicologyCalciumChannelBlockerResponse
+    || hasToxicologyDigoxinResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasToxicologyCalciumChannelBlockerResponse
+  const responseTray = hasToxicologyDigoxinResponse
+    ? { id: 'crisis', label: 'Digoxin pattern' } as const
+    : hasToxicologyCalciumChannelBlockerResponse
     ? { id: 'crisis', label: 'CCB shock' } as const
     : hasToxicologyBetaBlockerResponse
     ? { id: 'crisis', label: 'Beta-blocker shock' } as const
@@ -4226,6 +4248,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasToxicologyCalciumChannelBlockerResponse && (
               <ToxicologyCalciumChannelBlockerTray assessment={props.resuscitation.toxicologyCalciumChannelBlockerAssessment}
                 onAction={props.onToxicologyCalciumChannelBlockerResponse ?? (() => {})} />
+            )}
+            {hasToxicologyDigoxinResponse && (
+              <ToxicologyDigoxinTray assessment={props.resuscitation.toxicologyDigoxinAssessment}
+                onAction={props.onToxicologyDigoxinResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -10767,6 +10793,38 @@ function ToxicologyCalciumChannelBlockerTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-calcium-channel-blocker-bounded-qualified-vasopressor-calcium-insulin-euglycemia-and-rescue-intent-with-strict-later-review')}>Record rescue intent + reassess</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-calcium-channel-blocker-recurrent-shock-av-block-hyperglycemia-electrolyte-volume-rescue-and-active-risk')}>Hand off delayed risk</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function ToxicologyDigoxinTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyDigoxinAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onToxicologyDigoxinResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const evidence = assessment?.evidenceAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="toxicology-digoxin-early-title">
+      <div id="toxicology-digoxin-early-title" className="syringe__name">The rhythm and potassium tell one story.</div>
+      <p className="syringe__remaining">Begin with product, clock, GI and visual clues, perfusion, rhythm, potassium, and whole person.</p>
+      <div className="crisis-drug__actions">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-toxicology-digoxin-product-clock-gi-visual-perfusion-rhythm-potassium-and-whole-patient')}>Connect rhythm + potassium</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-toxicology-digoxin-life-threatening-pattern-without-level-rhythm-or-potassium-only-closure')}>Recognize the whole pattern</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-toxicology-digoxin-poison-center-resuscitation-cardiac-electrolyte-airway-and-safety-ownership')}>Build the rescue circle</Button>}
+        {support && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-toxicology-digoxin-supplied-ecg-level-timing-potassium-renal-coingestion-and-antidote-boundary')}>Review timing + antidote</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="toxicology-digoxin-later-title">
+      <div id="toxicology-digoxin-later-title" className="syringe__name">After Fab, follow the patient, not a misleading total level.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Rhythm, potassium, assay interference, renal state, recurrence, rescue, safety, and outcome uncertainty handed off.' : reassessment ? 'The fixed perfusion, rhythm, mental-state, and potassium report improved. Durable stability and treatment effect remain unproven.' : evidence ? 'Perfusion, conduction, timed pre-Fab level, potassium, renal state, prior care, and antidote readiness stay coupled. Record qualified intent after time passes.' : support ? 'Qualified toxicology, resuscitation, cardiac, electrolyte, airway, and safety ownership are active. Review the supplied evidence.' : 'Complete whole-pattern recognition and rescue ownership before antidote-boundary review.'}</p>
+      <div className="crisis-drug__actions">
+        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-digoxin-bounded-qualified-immune-fab-surveillance-and-rescue-intent-with-strict-later-review')}>Record Fab intent + reassess</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-digoxin-recurrent-arrhythmia-potassium-shift-level-interference-renal-rescue-and-active-risk')}>Hand off what can recur</Button>}
       </div>
     </section>
   </>;

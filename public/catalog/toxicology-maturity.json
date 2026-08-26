@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "toxicology",
-  "recordCount": 7,
+  "recordCount": 8,
   "records": [
     {
       "recordId": "scenario:methemoglobinemia-saturation-gap@0.1.0",
@@ -78,6 +78,17 @@
       "evidence": [
         "/catalog/toxicology-completion-audit.json#calcium-channel-blocker-shock@0.1.0",
         "/catalog/toxicology-quality-audit.json#calcium-channel-blocker-shock@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:digoxin-rhythm-potassium@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "digoxin-rhythm-potassium",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/toxicology-completion-audit.json#digoxin-rhythm-potassium@0.1.0",
+        "/catalog/toxicology-quality-audit.json#digoxin-rhythm-potassium@0.1.0"
       ]
     }
   ]
