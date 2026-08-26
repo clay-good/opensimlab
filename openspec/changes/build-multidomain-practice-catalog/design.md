@@ -1751,6 +1751,26 @@ fluid total, MAP target, first-line vasoactive, access route, or response; exami
 diagnose, choose or deliver a drug, fluid, device, procedure, or treatment; determine disposition or
 prognosis; or predict recovery or outcome.
 
+### Wave D pediatrics slice 7: dehydration with compensated hypovolemia
+
+The seventh Pediatrics lab separates clinical dehydration with compensated volume depletion from
+current shock and from the preceding infection-associated cases. A previously well 2-year-old girl
+weighing 12 kg has 3 days of non-bloody watery diarrhea, vomiting, reduced intake and urine, and a
+reliable same-scale weight decline. Dry mucosa, absent tears, mildly sunken eyes, and reduced turgor
+support the supplied classification, while interactive mentation, warm normal-volume pulses,
+refill 2 seconds, and preserved blood pressure support the no-current-shock boundary. Weight change
+is one clue, not a learner-calculated dehydration percentage or intravascular deficit.
+
+The learner reconciles the fixed loss and whole-child trajectory, recognizes compensated
+dehydration with hypovolemia, and activates experienced rehydration ownership in parallel with
+ongoing-loss, tolerance, alternative-cause, caregiver, and escalation review. A strictly elapsed
+minute-60 report shows better interaction and hydration signs with one urine and another watery
+stool before another elapsed active-risk handoff. The lab does not examine or weigh; calculate a
+percentage, deficit, or maintenance requirement; acquire or interpret tests; diagnose; choose or
+deliver a solution, route, volume, rate, access, electrolyte, drug, feeding plan, device, procedure,
+or treatment; determine disposition or prognosis; or predict complete rehydration, recurrence,
+recovery, or outcome.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

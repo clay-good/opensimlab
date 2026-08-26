@@ -3599,6 +3599,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, current pediatric sepsis guidance, local antimicrobial and resuscitation systems, qualified source and organ-support teams, caregiver input, and repeated patient-specific reassessment with fluid stopped or changed when shock resolves or overload signs appear.',
     briefIn: ['pediatric-septic-shock'],
   },
+  {
+    id: 'pediatric-dehydration-losses-perfusion-care-and-response-are-authored',
+    headline: 'The child, losses, intake, weight history, hydration signs, qualified care, and serial response are authored.',
+    simplification: 'Fixed reports and scenario-specific snapshots stand in for caregiver history, examination, weighing, monitoring, oral tolerance, intake and output, laboratory review, rehydration support, and serial bedside reassessment.',
+    whereItMisleads: 'Treating the fictional age, weight change, heart rate, urine history, hydration signs, care timing, or response as a universal percentage, severity threshold, learner-acquired finding, causal treatment effect, or validated pediatric fluid physiology.',
+    correctUnderstanding: 'Real care integrates verified losses and intake, serial weights when reliable, consciousness, tears, mucosa, eyes, turgor, circulation, urine, oral tolerance, red flags, caregiver context, local guidance, and repeated qualified reassessment.',
+    briefIn: ['pediatric-dehydration-with-hypovolemia'],
+  },
+  {
+    id: 'pediatric-dehydration-controls-reconcile-recognize-coordinate-review-reassess-and-handoff-only',
+    headline: 'The controls record trajectory review, compensated-dehydration recognition, parallel qualified rehydration and safety ownership, reassessment, and handoff only.',
+    simplification: 'Six accepted actions stand in for experienced pediatric and nursing assessment, oral support, tolerance and loss monitoring, conditional tests and escalation, caregiver communication, and handoff.',
+    whereItMisleads: 'Equating button order with examination, weighing, diagnosis, percentage or deficit calculation, laboratory work, fluid or feeding delivery, access or device operation, treatment, team performance, caregiver communication, or pediatric competence.',
+    correctUnderstanding: 'Actual care requires the child and caregiver, trained pediatric teams, current local guidance, patient-specific rehydration and monitoring, and escalation when shock, deterioration, intolerance, or an alternative serious cause is present.',
+    briefIn: ['pediatric-dehydration-with-hypovolemia'],
+  },
+  {
+    id: 'no-live-pediatric-dehydration-exam-calculation-test-fluid-device-treatment-or-disposition',
+    headline: 'The lab does not examine, weigh, calculate, test, choose or deliver rehydration, determine disposition, or predict outcome.',
+    simplification: 'No live examination, weight measurement, dehydration score or percentage, deficit or maintenance calculation, glucose, electrolyte, renal, acid-base, urine, stool, culture or imaging acquisition or interpretation, diagnosis, oral or intravenous solution, route, bolus, volume, rate, electrolyte, glucose, access, device, drug, feeding plan, procedure, treatment, admission, discharge, prognosis, recurrence, recovery, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values into care, equating weight change with intravascular deficit, treating fixed negatives as permanent exclusions, assuming one universal fluid recipe, or using completion as evidence of clinical, prescribing, device, disposition, or prognostic competence.',
+    correctUnderstanding: 'Use verified patient data, current diarrhoea and pediatric fluid guidance, local rehydration systems, qualified teams, caregiver input, and repeated patient-specific reassessment; current no-shock findings do not remove the need to monitor for deterioration.',
+    briefIn: ['pediatric-dehydration-with-hypovolemia'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

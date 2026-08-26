@@ -12,11 +12,11 @@ import {
 const json = (path: string) => JSON.parse(readFileSync(join(process.cwd(), path), 'utf8'));
 
 describe('Pediatrics module foundation', () => {
-  it('registers six available, bounded labs behind an exact module contract', () => {
+  it('registers seven available, bounded labs behind an exact module contract', () => {
     expect(getModule('pediatrics')).toMatchObject({
       route: 'pediatrics', displayName: 'Pediatrics', status: 'available',
     });
-    expect(PEDIATRICS_SCENARIOS).toHaveLength(6);
+    expect(PEDIATRICS_SCENARIOS).toHaveLength(7);
     expect(DEFAULT_PEDIATRICS_SCENARIO_ID).toBe('pediatric-respiratory-distress');
     expect(getPediatricsScenario(DEFAULT_PEDIATRICS_SCENARIO_ID))
       .toBe(PEDIATRICS_SCENARIOS[0]);
@@ -31,6 +31,8 @@ describe('Pediatrics module foundation', () => {
       '/pediatrics/scenario/pediatric-status-asthmaticus')!;
     const sepsisRoute = routeFor('/pediatrics/scenario/pediatric-sepsis')!;
     const septicShockRoute = routeFor('/pediatrics/scenario/pediatric-septic-shock')!;
+    const dehydrationRoute = routeFor(
+      '/pediatrics/scenario/pediatric-dehydration-with-hypovolemia')!;
     expect(moduleRoute).toMatchObject({ indexable: true, heading: 'Pediatrics simulator',
       structuredData: ['SoftwareApplication'] });
     expect(scenarioRoute).toMatchObject({ indexable: true,
@@ -74,6 +76,15 @@ describe('Pediatrics module foundation', () => {
     expect(septicShockRoute.description).not.toMatch(/\.\.\.$/);
     expect(canonicalUrl(septicShockRoute.path))
       .toBe('https://opensimlab.com/pediatrics/scenario/pediatric-septic-shock');
+    expect(dehydrationRoute).toMatchObject({ indexable: true,
+      heading: 'Pediatric dehydration with hypovolemia',
+      structuredData: ['LearningResource'] });
+    expect(dehydrationRoute.description).toBe(
+      'A 2-year-old girl for calm pediatric dehydration and hypovolemia recognition, qualified rehydration coordination, serial reassessment, and active-risk handoff.',
+    );
+    expect(dehydrationRoute.description.length).toBeLessThanOrEqual(160);
+    expect(canonicalUrl(dehydrationRoute.path)).toBe(
+      'https://opensimlab.com/pediatrics/scenario/pediatric-dehydration-with-hypovolemia');
   });
 
   it('publishes exact completion, quality, maturity, and report records', () => {
@@ -81,9 +92,9 @@ describe('Pediatrics module foundation', () => {
     const quality = json('public/catalog/pediatrics-quality-audit.json');
     const maturity = json('public/catalog/pediatrics-maturity.json');
     const reports = json('public/catalog/scenario-report-catalog.json');
-    expect(completion).toMatchObject({ moduleId: 'pediatrics', scenarioCount: 6 });
-    expect(quality).toMatchObject({ scenarioCount: 6 });
-    expect(maturity).toMatchObject({ recordCount: 6 });
+    expect(completion).toMatchObject({ moduleId: 'pediatrics', scenarioCount: 7 });
+    expect(quality).toMatchObject({ scenarioCount: 7 });
+    expect(maturity).toMatchObject({ recordCount: 7 });
     expect(reports.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-respiratory-distress',
       contentVersion: '0.1.0', maturity: 'draft',
@@ -108,6 +119,10 @@ describe('Pediatrics module foundation', () => {
       moduleId: 'pediatrics', scenarioId: 'pediatric-septic-shock',
       contentVersion: '0.1.0', maturity: 'draft',
     }));
+    expect(reports.scenarios).toContainEqual(expect.objectContaining({
+      moduleId: 'pediatrics', scenarioId: 'pediatric-dehydration-with-hypovolemia',
+      contentVersion: '0.1.0', maturity: 'draft',
+    }));
     expect(reviewableItems()).toContainEqual(expect.objectContaining({
       id: 'pediatric-respiratory-distress', domains: ['pediatrics'],
     }));
@@ -125,6 +140,9 @@ describe('Pediatrics module foundation', () => {
     }));
     expect(reviewableItems()).toContainEqual(expect.objectContaining({
       id: 'pediatric-septic-shock', domains: ['pediatrics'],
+    }));
+    expect(reviewableItems()).toContainEqual(expect.objectContaining({
+      id: 'pediatric-dehydration-with-hypovolemia', domains: ['pediatrics'],
     }));
   });
 });

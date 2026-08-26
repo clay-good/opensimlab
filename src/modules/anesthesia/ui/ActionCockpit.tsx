@@ -1050,6 +1050,11 @@ export interface ActionCockpitProps {
       readonly rescueAtTick: number | null; readonly sourceAtTick: number | null;
       readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly pediatricDehydrationAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly rehydrationAtTick: number | null; readonly safetyAtTick: number | null;
+      readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1678,6 +1683,14 @@ export interface ActionCockpitProps {
       | 'review-pediatric-septic-shock-later-response'
       | 'handoff-pediatric-septic-shock-active-risk',
   ) => void;
+  readonly onPediatricDehydrationResponse?: (
+    action: 'reconcile-pediatric-dehydration-losses-and-perfusion'
+      | 'recognize-pediatric-dehydration-with-hypovolemia'
+      | 'activate-pediatric-dehydration-qualified-rehydration-ownership'
+      | 'review-pediatric-dehydration-ongoing-losses-and-safety'
+      | 'review-pediatric-dehydration-later-response'
+      | 'handoff-pediatric-dehydration-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2038,6 +2051,10 @@ export function crisisResponseAvailability(
     hasPediatricSepticShockResponse: scenario.metadata.id === 'pediatric-septic-shock'
       && scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'pediatric-septic-shock-reassessment'),
+    hasPediatricDehydrationResponse:
+      scenario.metadata.id === 'pediatric-dehydration-with-hypovolemia'
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-dehydration-with-hypovolemia-reassessment'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2189,6 +2206,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'pediatric-status-asthmaticus-reassessment')
       || (event.type === 'narrative' && event.target === 'pediatric-sepsis-reassessment')
       || (event.type === 'narrative' && event.target === 'pediatric-septic-shock-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'pediatric-dehydration-with-hypovolemia-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2251,6 +2270,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasPediatricRespiratoryDistressResponse, hasBronchiolitisResponse, hasCroupResponse,
     hasPediatricStatusAsthmaticusResponse, hasPediatricSepsisResponse,
     hasPediatricSepticShockResponse,
+    hasPediatricDehydrationResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2323,7 +2343,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasHighFlowOxygenEscalationResponse || hasOxygenDeviceFailureResponse
     || hasAcuteTracheostomyObstructionResponse || hasPediatricRespiratoryDistressResponse
     || hasBronchiolitisResponse || hasCroupResponse || hasPediatricStatusAsthmaticusResponse
-    || hasPediatricSepsisResponse || hasPediatricSepticShockResponse;
+    || hasPediatricSepsisResponse || hasPediatricSepticShockResponse
+    || hasPediatricDehydrationResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2354,7 +2375,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasPediatricSepticShockResponse
+  const responseTray = hasPediatricDehydrationResponse
+    ? { id: 'crisis', label: 'Pediatric dehydration reassessment' } as const
+    : hasPediatricSepticShockResponse
     ? { id: 'crisis', label: 'Pediatric septic-shock reassessment' } as const
     : hasPediatricSepsisResponse
     ? { id: 'crisis', label: 'Pediatric sepsis reassessment' } as const
@@ -2618,6 +2641,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPediatricRespiratoryDistressResponse
     || hasBronchiolitisResponse || hasCroupResponse || hasPediatricStatusAsthmaticusResponse
     || hasPediatricSepsisResponse || hasPediatricSepticShockResponse
+    || hasPediatricDehydrationResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3294,6 +3318,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <PediatricSepticShockTray
                 assessment={props.resuscitation.pediatricSepticShockAssessment}
                 onAction={props.onPediatricSepticShockResponse ?? (() => {})} />
+            )}
+            {hasPediatricDehydrationResponse && (
+              <PediatricDehydrationTray
+                assessment={props.resuscitation.pediatricDehydrationAssessment}
+                onAction={props.onPediatricDehydrationResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -8494,6 +8523,64 @@ function PediatricSepticShockTray({ assessment, onAction }: {
           onClick={() => onAction('handoff-pediatric-septic-shock-active-risk')}>Hand off active shock risk</Button>}
       </div>
       <p className="field__hint">One unnamed vasoactive and source planning remain qualified-team work. Better pressure or refill does not prove treatment effect, source control, durable recovery, or readiness to leave care.</p>
+    </section>
+  </div>;
+}
+
+function PediatricDehydrationTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricDehydrationAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onPediatricDehydrationResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const rehydration = assessment?.rehydrationAtTick != null;
+  const safety = assessment?.safetyAtTick != null;
+  const later = assessment?.laterResponseAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="pediatric-dehydration-pattern-title">
+      <div id="pediatric-dehydration-pattern-title" className="syringe__name">Read losses through the whole child.</div>
+      <Badge kind="teaching">intake · losses · mentation · hydration · urine</Badge>
+      <div className="syringe__meta">2 years · 12 kg · fixed gastrointestinal-loss trajectory</div>
+      <p className="syringe__remaining">
+        {rehydration && safety ? 'Rehydration and safety review are active together'
+          : safety ? 'Loss and safety review is active · rehydration ownership still matters'
+            : rehydration ? 'Rehydration ownership is active · keep safety review moving'
+              : recognition ? 'Compensated volume depletion · no current shock'
+                : trajectory ? 'Now separate dehydration from shock'
+                  : 'Start with the trajectory, not one sign or percentage.'}
+      </p>
+      <div className="syringe__presets">
+        {!trajectory && <Button className="crisis-drug__action"
+          onClick={() => onAction('reconcile-pediatric-dehydration-losses-and-perfusion')}>Review losses + whole child</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action"
+          onClick={() => onAction('recognize-pediatric-dehydration-with-hypovolemia')}>Recognize dehydration + hypovolemia</Button>}
+        {recognition && !rehydration && <Button className="crisis-drug__action"
+          onClick={() => onAction('activate-pediatric-dehydration-qualified-rehydration-ownership')}>Activate qualified rehydration</Button>}
+        {recognition && !safety && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-pediatric-dehydration-ongoing-losses-and-safety')}>Review losses + safety</Button>}
+      </div>
+      <p className="field__hint">Experienced teams own oral support, breastfeeding and phase-appropriate feeding, tests, access, route escalation, fluids, electrolytes, and monitoring. This lab exposes no percentage, deficit, maintenance, solution, route, volume, or rate control.</p>
+    </section>
+    <section className="syringe" aria-labelledby="pediatric-dehydration-response-title">
+      <div id="pediatric-dehydration-response-title" className="syringe__name">Reassess before you reassure.</div>
+      <Badge kind="teaching">hydration · tolerance · ongoing losses · ownership</Badge>
+      <div className="syringe__meta">fixed minute-60 report · improving, not resolved</div>
+      <p className="syringe__remaining" role="status">
+        {handoff ? 'Active rehydration and recurrence risk handed off'
+          : later ? 'Some signs improved. Completion is not established.'
+            : rehydration && safety ? 'Review the fixed report after elapsed parallel care'
+              : safety ? 'Safety review is active · activate rehydration ownership'
+                : rehydration ? 'Rehydration is active · review losses and safety'
+                  : 'Rehydration and safety review should move together.'}
+      </p>
+      <div className="syringe__presets">
+        {rehydration && safety && !later && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-pediatric-dehydration-later-response')}>Review the 60-minute report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action"
+          onClick={() => onAction('handoff-pediatric-dehydration-active-risk')}>Hand off active rehydration risk</Button>}
+      </div>
+      <p className="field__hint">Better interaction or hydration signs do not prove causal treatment effect, complete deficit correction, durable recovery, discharge readiness, or outcome.</p>
     </section>
   </div>;
 }

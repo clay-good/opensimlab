@@ -4695,6 +4695,30 @@ export function objectiveFindings(
       const ordered = later && handoff && later.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved shock, perfusion and congestion trends, fluid balance, vasoactive support, source work, failure triggers, caregiver context, and named owners without claiming recovery, disposition, or outcome.' : 'The active pediatric septic-shock handoff was absent or did not follow the later response after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-pediatric-dehydration-losses-and-perfusion',
+      'recognize-pediatric-dehydration-with-hypovolemia',
+      'activate-pediatric-dehydration-qualified-rehydration-ownership',
+      'review-pediatric-dehydration-ongoing-losses-and-safety',
+      'review-pediatric-dehydration-later-response',
+      'handoff-pediatric-dehydration-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'pediatric-dehydration-with-hypovolemia'
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pediatric-dehydration-with-hypovolemia-reassessment');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The pediatric dehydration-with-hypovolemia lesson was not active.' } satisfies ObjectiveFinding;
+      const trajectory = log.find((event) => /^pediatric-dehydration-trajectory-reconciled-\d+$/.test(event.eventId));
+      const recognition = log.find((event) => /^pediatric-dehydration-with-hypovolemia-recognized-\d+$/.test(event.eventId));
+      const rehydration = log.find((event) => /^pediatric-dehydration-qualified-rehydration-activated-\d+$/.test(event.eventId));
+      const safety = log.find((event) => /^pediatric-dehydration-losses-and-safety-reviewed-\d+$/.test(event.eventId));
+      const later = log.find((event) => /^pediatric-dehydration-later-response-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^pediatric-dehydration-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-pediatric-dehydration-losses-and-perfusion') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'The supplied intake, losses, urine, same-scale weight history, hydration signs, and whole-child trajectory were reconciled without learner examination, weighing, calculation, testing, diagnosis, or treatment.' : 'The fixed pediatric dehydration trajectory was not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'recognize-pediatric-dehydration-with-hypovolemia') { const ordered = trajectory && recognition && trajectory.tick <= recognition.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Compensated dehydration with hypovolemia was recognized from the whole pattern while preserved consciousness, warmth, pulse volume, refill, and pressure supported the no-current-shock boundary.' : 'Dehydration recognition was absent or preceded trajectory review.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-pediatric-dehydration-qualified-rehydration-ownership') { const ordered = recognition && rehydration && recognition.tick <= rehydration.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Qualified rehydration, tolerance, monitoring, laboratory, access, and escalation ownership was activated without learner solution, route, volume, rate, device, feeding, or treatment selection.' : 'Qualified rehydration ownership was absent or preceded recognition.', atTick: rehydration?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-dehydration-ongoing-losses-and-safety') { const ordered = recognition && safety && recognition.tick <= safety.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Ongoing losses, tolerance, urine, alternative serious causes, caregiver context, and escalation triggers were reviewed in parallel without learner testing, diagnosis, treatment, or disposition.' : 'Loss and safety review was absent or preceded recognition.', atTick: safety?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-dehydration-later-response') { const parallelAt = Math.max(rehydration?.tick ?? -1, safety?.tick ?? -1); const ordered = rehydration && safety && later && parallelAt < later.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed parallel care, partial improvement was separated from ongoing losses, incomplete intake and output evidence, causal treatment effect, complete deficit correction, durable recovery, and disposition.' : 'The later response was absent or did not follow both rehydration and safety ownership after elapsed time.', atTick: later?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = later && handoff && later.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved hydration signs, intake, output, losses, tolerance, conditional laboratory review, recurrence triggers, caregiver context, and named owners without claiming complete rehydration, discharge, or outcome.' : 'The active pediatric dehydration handoff was absent or did not follow the later response after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

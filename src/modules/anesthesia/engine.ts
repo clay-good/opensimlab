@@ -132,6 +132,7 @@ const PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES = new Set([
   'bronchiolitis-response', 'croup-response', 'pediatric-status-asthmaticus-response',
   'pediatric-sepsis-response',
   'pediatric-septic-shock-response',
+  'pediatric-dehydration-response',
   'pediatric-foreign-body-airway-obstruction-response',
 ]);
 const BRONCHIOLITIS_BLOCKED_ACTION_TYPES = new Set([
@@ -171,6 +172,17 @@ const PEDIATRIC_SEPTIC_SHOCK_BLOCKED_ACTION_TYPES = new Set([
   'septic-shock-assessment', 'septic-shock-resuscitation-response',
   'undifferentiated-shock-assessment', 'hemorrhagic-shock-assessment',
   'cardiogenic-shock-response', 'mixed-shock-response', 'post-infarction-shock-response',
+  'pediatric-foreign-body-airway-obstruction-response', 'emergency-anaphylaxis-response',
+]);
+const PEDIATRIC_DEHYDRATION_BLOCKED_ACTION_TYPES = new Set([
+  ...[...PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES]
+    .filter((type) => type !== 'pediatric-dehydration-response'),
+  'pediatric-respiratory-distress-response', 'bronchiolitis-response', 'croup-response',
+  'pediatric-status-asthmaticus-response', 'pediatric-sepsis-response',
+  'pediatric-septic-shock-response', 'septic-shock-assessment',
+  'septic-shock-resuscitation-response', 'undifferentiated-shock-assessment',
+  'hemorrhagic-shock-assessment', 'cardiogenic-shock-response', 'mixed-shock-response',
+  'post-infarction-shock-response', 'diabetic-ketoacidosis-response',
   'pediatric-foreign-body-airway-obstruction-response', 'emergency-anaphylaxis-response',
 ]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
@@ -860,6 +872,12 @@ export class AnesthesiaEngine {
   private pediatricSepticShockSourceAtTick: number | null = null;
   private pediatricSepticShockLaterResponseAtTick: number | null = null;
   private pediatricSepticShockHandoffAtTick: number | null = null;
+  private pediatricDehydrationTrajectoryAtTick: number | null = null;
+  private pediatricDehydrationRecognitionAtTick: number | null = null;
+  private pediatricDehydrationRehydrationAtTick: number | null = null;
+  private pediatricDehydrationSafetyAtTick: number | null = null;
+  private pediatricDehydrationLaterResponseAtTick: number | null = null;
+  private pediatricDehydrationHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1305,6 +1323,15 @@ export class AnesthesiaEngine {
     if (pediatricSepticShock && PEDIATRIC_SEPTIC_SHOCK_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `pediatric-septic-shock-generic-action-refused-${this.currentTick}`,
         'This pediatric septic-shock lesson does not expose generic medication, antimicrobial, fluid, vasoactive, oxygen-device, airway, ventilator, procedure, test, alarm, adult-shock, or adjacent-crisis actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const pediatricDehydration = this.scenario.metadata.id === 'pediatric-dehydration-with-hypovolemia'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-dehydration-with-hypovolemia-reassessment');
+    if (pediatricDehydration && PEDIATRIC_DEHYDRATION_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `pediatric-dehydration-generic-action-refused-${this.currentTick}`,
+        'This pediatric dehydration lesson does not expose generic medication, fluid, access, oxygen-device, airway, ventilator, procedure, test, alarm, shock, sepsis, DKA, anaphylaxis, or adjacent-crisis actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -6405,6 +6432,55 @@ export class AnesthesiaEngine {
         this.pediatricSepticShockHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `pediatric-septic-shock-handoff-recorded-${this.currentTick}`, 'Active shock, perfusion and congestion trends, fluid balance, one unnamed vasoactive, antimicrobial review, unresolved source and pathogen, source-control planning, failure triggers, caregiver context, and named pediatric, critical-care, nursing, pharmacy, laboratory, imaging, and surgical owners were handed off. No causal treatment effect, shock resolution, source control, durable recovery, disposition, prognosis, or outcome was declared.', { septicShockAuthored: true, sourceConfirmed: false, treatmentEffectProven: false, durableRecoveryProven: false, dischargeReadinessProven: false, dispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'pediatric-dehydration-response': {
+        const supported = this.scenario.metadata.id === 'pediatric-dehydration-with-hypovolemia'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-dehydration-with-hypovolemia-reassessment');
+        const response = String(action.payload.action ?? '');
+        const valid = ['reconcile-pediatric-dehydration-losses-and-perfusion',
+          'recognize-pediatric-dehydration-with-hypovolemia',
+          'activate-pediatric-dehydration-qualified-rehydration-ownership',
+          'review-pediatric-dehydration-ongoing-losses-and-safety',
+          'review-pediatric-dehydration-later-response',
+          'handoff-pediatric-dehydration-active-risk'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `pediatric-dehydration-response-refused-${this.currentTick}`, supported ? 'That pediatric dehydration response is not available. Nothing changed.' : 'These choices are available only in the declared pediatric dehydration-with-hypovolemia lesson.'); break; }
+        if (response === 'reconcile-pediatric-dehydration-losses-and-perfusion') {
+          if (this.pediatricDehydrationTrajectoryAtTick !== null) { this.log('warning', 'assessment', `pediatric-dehydration-trajectory-refused-${this.currentTick}`, 'The supplied losses, intake, weight, urine, hydration signs, and whole-child trajectory were already reconciled.'); break; }
+          this.pediatricDehydrationTrajectoryAtTick = this.currentTick;
+          this.log('warning', 'assessment', `pediatric-dehydration-trajectory-reconciled-${this.currentTick}`, 'The supplied watery losses, vomiting, reduced intake and urine, same-scale weight history, hydration signs, and current whole-child state were reconciled. Weight change was treated as one clue rather than a stand-alone dehydration percentage or intravascular deficit. The learner did not examine, weigh, calculate, test, diagnose, or deliver treatment.', { gastrointestinalLossesAuthored: true, reducedIntakeAuthored: true, dehydrationPercentageCalculatedByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.pediatricDehydrationTrajectoryAtTick === null) { this.log('warning', 'assessment', `pediatric-dehydration-trajectory-order-refused-${this.currentTick}`, 'Reconcile the supplied losses, intake, weight, urine, hydration signs, and whole-child trajectory first.'); break; }
+        if (response === 'recognize-pediatric-dehydration-with-hypovolemia') {
+          if (this.pediatricDehydrationRecognitionAtTick !== null) { this.log('warning', 'assessment', `pediatric-dehydration-recognition-refused-${this.currentTick}`, 'The compensated dehydration-with-hypovolemia pattern and no-shock boundary were already recognized.'); break; }
+          this.pediatricDehydrationRecognitionAtTick = this.currentTick;
+          this.log('warning', 'assessment', `pediatric-dehydration-with-hypovolemia-recognized-${this.currentTick}`, 'The supplied dry mucosa, absent tears, mildly sunken eyes, reduced turgor, reduced intake and urine, repeated losses, and weight history support authored clinical dehydration with compensated volume depletion. Interactive mentation, warm extremities, normal-volume pulses, refill 2 seconds, and preserved pressure argue against current shock. No single sign, score, or calculated percentage established the classification, and the learner did not diagnose or calculate it.', { dehydrationAuthored: true, hypovolemiaAuthored: true, shockAuthored: false, diagnosisMadeByLearner: false, dehydrationPercentageCalculatedByLearner: false }); break;
+        }
+        if (this.pediatricDehydrationRecognitionAtTick === null) { this.log('warning', 'assessment', `pediatric-dehydration-recognition-order-refused-${this.currentTick}`, 'Recognize the supplied compensated dehydration-with-hypovolemia pattern before coordinating rehydration or safety work.'); break; }
+        if (response === 'activate-pediatric-dehydration-qualified-rehydration-ownership') {
+          if (this.pediatricDehydrationRehydrationAtTick !== null) { this.log('warning', 'assessment', `pediatric-dehydration-rehydration-refused-${this.currentTick}`, 'Qualified rehydration and monitoring ownership is already active.'); break; }
+          this.pediatricDehydrationRehydrationAtTick = this.currentTick;
+          this.log('warning', 'assessment', `pediatric-dehydration-qualified-rehydration-activated-${this.currentTick}`, 'Experienced pediatric and nursing teams now own locally protocolized oral rehydration in small frequent amounts, breastfeeding and phase-appropriate feeding context, intake and output, tolerance, serial whole-child reassessment, and route escalation if deterioration or intolerance develops. Glucose, electrolytes, renal function, access, and replacement decisions remain qualified work when indicated. The learner selected or delivered no solution, route, volume, rate, access, device, drug, feeding plan, or treatment.', { qualifiedRehydrationOwnershipActive: true, oralRehydrationSelectedByLearner: false, fluidDeliveredByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (response === 'review-pediatric-dehydration-ongoing-losses-and-safety') {
+          if (this.pediatricDehydrationSafetyAtTick !== null) { this.log('warning', 'assessment', `pediatric-dehydration-safety-refused-${this.currentTick}`, 'Ongoing losses, tolerance, alternative causes, and escalation triggers were already reviewed.'); break; }
+          this.pediatricDehydrationSafetyAtTick = this.currentTick;
+          this.log('warning', 'assessment', `pediatric-dehydration-losses-and-safety-reviewed-${this.currentTick}`, 'Ongoing stool and emesis, oral tolerance, urine, hydration signs, consciousness, circulation, weight trend, glucose or electrolyte concern, caregiver reliability, and red flags for shock or an alternative serious cause remain under experienced review. Fixed negative findings are snapshots rather than permanent exclusions. The learner acquired or interpreted no test, diagnosed no cause, and selected no route, fluid, drug, feeding plan, escalation, or disposition.', { qualifiedSafetyReviewActive: true, alternativeCauseExcluded: false, testAcquiredByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        const parallelAt = Math.max(this.pediatricDehydrationRehydrationAtTick ?? -1,
+          this.pediatricDehydrationSafetyAtTick ?? -1);
+        if (this.pediatricDehydrationRehydrationAtTick === null || this.pediatricDehydrationSafetyAtTick === null) { this.log('warning', 'assessment', `pediatric-dehydration-parallel-care-order-refused-${this.currentTick}`, 'Keep qualified rehydration ownership and ongoing-loss safety review active in parallel before opening the later report.'); break; }
+        if (response === 'review-pediatric-dehydration-later-response') {
+          if (this.currentTick <= parallelAt) { this.log('warning', 'assessment', `pediatric-dehydration-later-time-refused-${this.currentTick}`, 'Allow elapsed simulated time after both rehydration and safety ownership are active.'); break; }
+          if (this.pediatricDehydrationLaterResponseAtTick !== null) { this.log('warning', 'assessment', `pediatric-dehydration-later-response-refused-${this.currentTick}`, 'The fixed later pediatric dehydration report was already reviewed.'); break; }
+          this.pediatricDehydrationLaterResponseAtTick = this.currentTick;
+          this.log('warning', 'assessment', `pediatric-dehydration-later-response-reviewed-${this.currentTick}`, 'Fixed qualified minute-60 report: she is alert, engaging, and tolerating small frequent oral rehydration amounts, with temperature 37.4°C, HR 116/min, RR 24/min, BP 92/58 mmHg (MAP 69), clean room-air SpO2 99%, tears present, a moistening mouth, less-sunken eyes, warm normal-volume pulses, and capillary refill 2 seconds. One urine and one further watery stool are reported, with no further emesis in the interval. No repeat weight, complete intake total, laboratory panel, full deficit correction, or route endpoint is supplied. This is partial improvement, not proven treatment effect, complete rehydration, durable recovery, discharge readiness, or disposition.', { laterReportAuthored: true, ongoingLossesAuthored: true, lowUrineOutputStillMonitored: true, treatmentEffectProven: false, durableRecoveryProven: false, dispositionDetermined: false }); break;
+        }
+        if (this.pediatricDehydrationLaterResponseAtTick === null) { this.log('warning', 'assessment', `pediatric-dehydration-later-order-refused-${this.currentTick}`, 'Review the fixed later whole-child hydration report after elapsed qualified care.'); break; }
+        if (this.currentTick <= this.pediatricDehydrationLaterResponseAtTick) { this.log('warning', 'assessment', `pediatric-dehydration-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off active pediatric dehydration risk.'); break; }
+        if (this.pediatricDehydrationHandoffAtTick !== null) { this.log('warning', 'assessment', `pediatric-dehydration-handoff-refused-${this.currentTick}`, 'The active pediatric dehydration handoff was already recorded.'); break; }
+        this.pediatricDehydrationHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `pediatric-dehydration-handoff-recorded-${this.currentTick}`, 'The loss and intake trajectory, hydration signs, no-current-shock findings, oral tolerance, urine and stool output, weight context, pending or conditional glucose and electrolyte review, recurrence and escalation triggers, caregiver context, and named pediatric and nursing owners were handed off. No causal treatment effect, completed deficit correction, durable recovery, discharge readiness, disposition, prognosis, recurrence, or outcome was declared.', { shockAuthored: false, treatmentEffectProven: false, durableRecoveryProven: false, dischargeReadinessProven: false, dispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -9303,6 +9379,20 @@ export class AnesthesiaEngine {
         meanArterialMmHg: later ? 60 : 43,
         coreTemperatureC: later ? 38.9 : 39.3 };
     }
+    if (this.scenario.metadata.id === 'pediatric-dehydration-with-hypovolemia'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-dehydration-with-hypovolemia-reassessment')) {
+      const later = this.pediatricDehydrationLaterResponseAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: later ? 116 : 138,
+        respiratoryRateBpm: later ? 24 : 28,
+        spo2Percent: 99,
+        etco2MmHg: later ? 37 : 35,
+        systolicMmHg: later ? 92 : 90,
+        diastolicMmHg: later ? 58 : 56,
+        meanArterialMmHg: later ? 69 : 67,
+        coreTemperatureC: later ? 37.4 : 37.6 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -11085,6 +11175,49 @@ export class AnesthesiaEngine {
               ventilationDeliveredByLearner: false as const,
               procedurePerformedByLearner: false as const,
               sourceControlPerformedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              treatmentEffectProven: false as const, durableRecoveryProven: false as const,
+              dischargeReadinessProven: false as const, dispositionDetermined: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'pediatric-dehydration-with-hypovolemia'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-dehydration-with-hypovolemia-reassessment') ? {
+            pediatricDehydrationAssessment: {
+              trajectoryAtTick: this.pediatricDehydrationTrajectoryAtTick,
+              recognitionAtTick: this.pediatricDehydrationRecognitionAtTick,
+              rehydrationAtTick: this.pediatricDehydrationRehydrationAtTick,
+              safetyAtTick: this.pediatricDehydrationSafetyAtTick,
+              laterResponseAtTick: this.pediatricDehydrationLaterResponseAtTick,
+              handoffAtTick: this.pediatricDehydrationHandoffAtTick,
+              initialPulsePresent: true as const, spontaneousBreathingAuthored: true as const,
+              gastrointestinalLossesAuthored: true as const, reducedIntakeAuthored: true as const,
+              clinicalDehydrationAuthored: true as const,
+              compensatedHypovolemiaAuthored: true as const, shockAuthored: false as const,
+              bleedingAuthored: false as const, sepsisAuthored: false as const,
+              diabeticKetoacidosisAuthored: false as const,
+              qualifiedRehydrationOwnershipActive:
+                this.pediatricDehydrationRehydrationAtTick !== null,
+              qualifiedSafetyReviewActive: this.pediatricDehydrationSafetyAtTick !== null,
+              laterReportAuthored: this.pediatricDehydrationLaterResponseAtTick !== null,
+              patientExaminedByLearner: false as const, patientWeighedByLearner: false as const,
+              dehydrationPercentageCalculatedByLearner: false as const,
+              fluidDeficitCalculatedByLearner: false as const,
+              maintenanceCalculatedByLearner: false as const,
+              testAcquiredByLearner: false as const, testInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const,
+              glucoseSelectedByLearner: false as const,
+              electrolyteSelectedByLearner: false as const,
+              drugSelectedByLearner: false as const, routeSelectedByLearner: false as const,
+              accessPlacedByLearner: false as const, fluidSelectedByLearner: false as const,
+              fluidVolumeSelectedByLearner: false as const,
+              fluidRateSelectedByLearner: false as const,
+              fluidDeliveredByLearner: false as const,
+              feedingPlanSelectedByLearner: false as const,
+              oxygenSelectedByLearner: false as const, deviceSelectedByLearner: false as const,
+              airwayManeuverPerformedByLearner: false as const,
+              procedurePerformedByLearner: false as const,
               treatmentDeliveredByLearner: false as const,
               treatmentEffectProven: false as const, durableRecoveryProven: false as const,
               dischargeReadinessProven: false as const, dispositionDetermined: false as const,

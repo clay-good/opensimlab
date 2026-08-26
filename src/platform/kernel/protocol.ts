@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 122 reports pediatric septic-shock reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 122;
+/** Bumped whenever the message shape changes incompatibly. Version 123 reports pediatric dehydration reassessment state. */
+export const WORKER_PROTOCOL_VERSION = 123;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1254,6 +1254,34 @@ export interface EquipmentSnapshot {
       readonly treatmentDeliveredByLearner: false; readonly treatmentEffectProven: false;
       readonly durableRecoveryProven: false; readonly dischargeReadinessProven: false;
       readonly dispositionDetermined: false; readonly outcomePredicted: false;
+    };
+    readonly pediatricDehydrationAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly rehydrationAtTick: number | null; readonly safetyAtTick: number | null;
+      readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true; readonly spontaneousBreathingAuthored: true;
+      readonly gastrointestinalLossesAuthored: true; readonly reducedIntakeAuthored: true;
+      readonly clinicalDehydrationAuthored: true; readonly compensatedHypovolemiaAuthored: true;
+      readonly shockAuthored: false; readonly bleedingAuthored: false;
+      readonly sepsisAuthored: false; readonly diabeticKetoacidosisAuthored: false;
+      readonly qualifiedRehydrationOwnershipActive: boolean;
+      readonly qualifiedSafetyReviewActive: boolean; readonly laterReportAuthored: boolean;
+      readonly patientExaminedByLearner: false; readonly patientWeighedByLearner: false;
+      readonly dehydrationPercentageCalculatedByLearner: false;
+      readonly fluidDeficitCalculatedByLearner: false;
+      readonly maintenanceCalculatedByLearner: false;
+      readonly testAcquiredByLearner: false; readonly testInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly glucoseSelectedByLearner: false;
+      readonly electrolyteSelectedByLearner: false; readonly drugSelectedByLearner: false;
+      readonly routeSelectedByLearner: false; readonly accessPlacedByLearner: false;
+      readonly fluidSelectedByLearner: false; readonly fluidVolumeSelectedByLearner: false;
+      readonly fluidRateSelectedByLearner: false; readonly fluidDeliveredByLearner: false;
+      readonly feedingPlanSelectedByLearner: false; readonly oxygenSelectedByLearner: false;
+      readonly deviceSelectedByLearner: false; readonly airwayManeuverPerformedByLearner: false;
+      readonly procedurePerformedByLearner: false; readonly treatmentDeliveredByLearner: false;
+      readonly treatmentEffectProven: false; readonly durableRecoveryProven: false;
+      readonly dischargeReadinessProven: false; readonly dispositionDetermined: false;
+      readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 170,
+  "sourceCount": 173,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -2174,6 +2174,51 @@
       "locator": "331:665-674; doi:10.1001/jama.2024.0179; criteria table, key concepts, and diagnostic-flow footnote",
       "usedFor": "The supplied classification boundaries: suspected infection plus a Phoenix Sepsis Score of at least 2 identifies pediatric sepsis; shock requires at least 1 cardiovascular point; age-specific MAP, lactate, vasoactive, and coagulation components are authored; Phoenix is not an early screening tool or learner calculator.",
       "verifiedAgainst": "https://jamanetwork.com/journals/jama/fullarticle/2814297",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "who-pediatric-diarrhoea-guideline-2024",
+      "currency": {
+        "lastAmended": "2024-12-31",
+        "checkedAt": "2026-08-25"
+      },
+      "authors": "World Health Organization",
+      "title": "Guideline on management of pneumonia and diarrhoea in children up to 10 years of age",
+      "publication": "World Health Organization",
+      "year": 2024,
+      "locator": "ISBN 978-92-4-010341-2; acute watery diarrhoea and oral rehydration recommendations",
+      "usedFor": "The qualified-team oral-rehydration boundary for acute watery diarrhoea with dehydration and the explicit separation of a general recommendation from a learner-selected product, composition, volume, frequency, route, or treatment.",
+      "verifiedAgainst": "https://www.who.int/publications/i/item/9789240103412",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "nice-pediatric-iv-fluids-ng29-2020",
+      "currency": {
+        "lastAmended": "2022-10-21",
+        "checkedAt": "2026-08-25"
+      },
+      "authors": "National Institute for Health and Care Excellence",
+      "title": "Intravenous fluid therapy in children and young people in hospital",
+      "publication": "NICE guideline NG29",
+      "year": 2015,
+      "locator": "Published 2015-12-09; last updated 2020-06-11; recommendation 1.3.1 amended 2022-10; recommendations 1.3.1-1.3.5",
+      "usedFor": "The escalation boundary: when intravenous resuscitation is required, current general hospital guidance uses a glucose-free isotonic crystalloid bolus with immediate reassessment; this lab exposes no bolus, solution, route, volume, or rate control.",
+      "verifiedAgainst": "https://www.nice.org.uk/guidance/ng29/chapter/recommendations",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "nice-gastroenteritis-under-five-cg84-2022",
+      "currency": {
+        "lastAmended": "2022-10-21",
+        "checkedAt": "2026-08-25"
+      },
+      "authors": "National Institute for Health and Care Excellence",
+      "title": "Diarrhoea and vomiting caused by gastroenteritis in under 5s: diagnosis and management",
+      "publication": "NICE clinical guideline CG84",
+      "year": 2009,
+      "locator": "Published 2009-04-22; recommendations 1.3.3.2-1.3.3.3 amended 2022-10; recommendations 1.2, 1.3, and 1.7",
+      "usedFor": "The whole-child clinical-dehydration and shock distinction, oral rehydration in small frequent amounts, tolerance and ongoing-loss monitoring, safety-net context, and conditional escalation when shock, deterioration, or persistent intolerance is present.",
+      "verifiedAgainst": "https://www.nice.org.uk/guidance/cg84/chapter/Recommendations",
       "verifiedOn": "2026-08-25"
     }
   ]

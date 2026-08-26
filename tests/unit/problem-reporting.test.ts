@@ -22,9 +22,9 @@ describe('scenario report contract', () => {
     const catalog = JSON.parse(readFileSync(
       join(process.cwd(), 'workers/reports/src/report-catalog.generated.json'), 'utf8',
     )) as { scenarios: { moduleId: string; scenarioId: string; contentVersion: string }[] };
-    expect(catalog.scenarios).toHaveLength(126);
+    expect(catalog.scenarios).toHaveLength(127);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(126);
+      .toBe(127);
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-respiratory-distress',
       contentVersion: '0.1.0',
@@ -45,6 +45,10 @@ describe('scenario report contract', () => {
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-septic-shock', contentVersion: '0.1.0',
     }));
+    expect(catalog.scenarios).toContainEqual(expect.objectContaining({
+      moduleId: 'pediatrics', scenarioId: 'pediatric-dehydration-with-hypovolemia',
+      contentVersion: '0.1.0',
+    }));
   });
 
   it('normalizes and bounds the optional note to exactly 160 characters', () => {
@@ -53,6 +57,22 @@ describe('scenario report contract', () => {
     expect(report.note).toHaveLength(160);
     expect(validateReportPayload(report)).toMatchObject({ ok: true });
     expect(validateReportPayload({ ...report, note: 'x'.repeat(161) })).toEqual({ ok: false, status: 400 });
+  });
+
+  it('accepts the exact pediatric dehydration context and rejects module or URL drift', () => {
+    const pediatric: ScenarioReportContext = {
+      ...context, moduleId: 'pediatrics', scenarioId: 'pediatric-dehydration-with-hypovolemia',
+      canonicalUrl:
+        'https://opensimlab.com/pediatrics/scenario/pediatric-dehydration-with-hypovolemia',
+      fidelityClass: 'state_transition', simulatedTick: 12,
+    };
+    const report = buildScenarioReportRequest(
+      pediatric, 'clinical-content', 'The urine history may need review.', 'token');
+    expect(validateReportPayload(report)).toMatchObject({ ok: true });
+    expect(validateReportPayload({ ...report, module_id: 'emergency-medicine' }))
+      .toEqual({ ok: false, status: 400 });
+    expect(validateReportPayload({ ...report, canonical_url: `${pediatric.canonicalUrl}?tick=12` }))
+      .toEqual({ ok: false, status: 403 });
   });
 
   it('rejects unknown fields, stale versions, learner-state URLs, unsafe text, and token overflow', () => {

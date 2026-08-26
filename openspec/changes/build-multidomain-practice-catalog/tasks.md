@@ -305,6 +305,13 @@ credited toward the catalog until every item in the completion contract passes.
     report, and elapsed active-risk handoff without learner examination, score calculation, testing,
     imaging interpretation, diagnosis, antimicrobial, fluid, dose, access, vasoactive, oxygen,
     device, procedure, treatment, or disposition controls.
+  - [x] Pediatrics slice 7/16 adds one authored 2-year-old compensated dehydration-with-
+    hypovolemia reassessment after acute watery gastrointestinal losses, with a reliable same-scale
+    weight history treated as context rather than a calculated deficit, explicit no-current-shock
+    findings, qualified rehydration ownership in parallel with ongoing-loss and safety review, a
+    strictly elapsed partial response, and elapsed active-risk handoff without learner examination,
+    weighing, percentage, deficit or maintenance calculation, testing, diagnosis, fluid, route,
+    volume, rate, access, electrolyte, feeding, device, treatment, or disposition controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing

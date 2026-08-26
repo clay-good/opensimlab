@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: pediatric septic-shock state has protocol version 122', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(122);
+  it('Scenario: pediatric dehydration state has protocol version 123', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(123);
   });
 
   it('Scenario: init reports ready before any step runs', () => {
