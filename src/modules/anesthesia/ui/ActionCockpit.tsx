@@ -1060,6 +1060,11 @@ export interface ActionCockpitProps {
       readonly careAtTick: number | null; readonly safetyAtTick: number | null;
       readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly pediatricHypoglycemicSeizureAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly rescueAtTick: number | null; readonly safetyAtTick: number | null;
+      readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1704,6 +1709,14 @@ export interface ActionCockpitProps {
       | 'review-pediatric-dka-later-response'
       | 'handoff-pediatric-dka-active-risk',
   ) => void;
+  readonly onPediatricHypoglycemicSeizureResponse?: (
+    action: 'reconcile-pediatric-hypoglycemic-seizure-whole-child-and-glucose'
+      | 'recognize-pediatric-hypoglycemic-seizure'
+      | 'activate-pediatric-hypoglycemic-seizure-qualified-rescue-ownership'
+      | 'review-pediatric-hypoglycemic-seizure-causes-and-recurrence-risk'
+      | 'review-pediatric-hypoglycemic-seizure-later-response'
+      | 'handoff-pediatric-hypoglycemic-seizure-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2073,6 +2086,10 @@ export function crisisResponseAvailability(
       scenario.metadata.id === 'pediatric-diabetic-ketoacidosis'
       && scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'pediatric-diabetic-ketoacidosis-reassessment'),
+    hasPediatricHypoglycemicSeizureResponse:
+      scenario.metadata.id === 'pediatric-hypoglycemic-seizure'
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-hypoglycemic-seizure-reassessment'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2228,6 +2245,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'pediatric-dehydration-with-hypovolemia-reassessment')
       || (event.type === 'narrative'
         && event.target === 'pediatric-diabetic-ketoacidosis-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'pediatric-hypoglycemic-seizure-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2292,6 +2311,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasPediatricSepticShockResponse,
     hasPediatricDehydrationResponse,
     hasPediatricDiabeticKetoacidosisResponse,
+    hasPediatricHypoglycemicSeizureResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2365,7 +2385,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasAcuteTracheostomyObstructionResponse || hasPediatricRespiratoryDistressResponse
     || hasBronchiolitisResponse || hasCroupResponse || hasPediatricStatusAsthmaticusResponse
     || hasPediatricSepsisResponse || hasPediatricSepticShockResponse
-    || hasPediatricDehydrationResponse || hasPediatricDiabeticKetoacidosisResponse;
+    || hasPediatricDehydrationResponse || hasPediatricDiabeticKetoacidosisResponse
+    || hasPediatricHypoglycemicSeizureResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2396,7 +2417,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasPediatricDiabeticKetoacidosisResponse
+  const responseTray = hasPediatricHypoglycemicSeizureResponse
+    ? { id: 'crisis', label: 'Pediatric hypoglycemia reassessment' } as const
+    : hasPediatricDiabeticKetoacidosisResponse
     ? { id: 'crisis', label: 'Pediatric DKA reassessment' } as const
     : hasPediatricDehydrationResponse
     ? { id: 'crisis', label: 'Pediatric dehydration reassessment' } as const
@@ -2665,6 +2688,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasBronchiolitisResponse || hasCroupResponse || hasPediatricStatusAsthmaticusResponse
     || hasPediatricSepsisResponse || hasPediatricSepticShockResponse
     || hasPediatricDehydrationResponse || hasPediatricDiabeticKetoacidosisResponse
+    || hasPediatricHypoglycemicSeizureResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3351,6 +3375,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <PediatricDiabeticKetoacidosisTray
                 assessment={props.resuscitation.pediatricDiabeticKetoacidosisAssessment}
                 onAction={props.onPediatricDiabeticKetoacidosisResponse ?? (() => {})} />
+            )}
+            {hasPediatricHypoglycemicSeizureResponse && (
+              <PediatricHypoglycemicSeizureTray
+                assessment={props.resuscitation.pediatricHypoglycemicSeizureAssessment}
+                onAction={props.onPediatricHypoglycemicSeizureResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -8667,6 +8696,64 @@ function PediatricDiabeticKetoacidosisTray({ assessment, onAction }: {
           onClick={() => onAction('handoff-pediatric-dka-active-risk')}>Hand off active DKA risk</Button>}
       </div>
       <p className="field__hint">Improving vitals or fixed laboratory trends do not prove treatment effect, biochemical resolution, cerebral-injury exclusion, durable recovery, discharge readiness, or outcome.</p>
+    </section>
+  </div>;
+}
+
+function PediatricHypoglycemicSeizureTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricHypoglycemicSeizureAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onPediatricHypoglycemicSeizureResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const rescue = assessment?.rescueAtTick != null;
+  const safety = assessment?.safetyAtTick != null;
+  const later = assessment?.laterResponseAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="pediatric-hypoglycemia-pattern-title">
+      <div id="pediatric-hypoglycemia-pattern-title" className="syringe__name">Read the seizure and the child.</div>
+      <Badge kind="teaching">seizure · glucose · breathing · perfusion · recovery</Badge>
+      <div className="syringe__meta">5 years · 18 kg · supplied glucose 34 mg/dL</div>
+      <p className="syringe__remaining">
+        {rescue && safety ? 'Qualified rescue and safety review are active together'
+          : safety ? 'Safety review is active · qualified glucose rescue still matters'
+            : rescue ? 'Qualified glucose rescue is active · keep safety review moving'
+              : recognition ? 'Hypoglycemic emergency authored · seizure has stopped'
+                : trajectory ? 'Now connect the fixed glucose to current neurologic risk'
+                  : 'Start with the event, whole child, and fixed glucose.'}
+      </p>
+      <div className="syringe__presets">
+        {!trajectory && <Button className="crisis-drug__action"
+          onClick={() => onAction('reconcile-pediatric-hypoglycemic-seizure-whole-child-and-glucose')}>Review seizure + fixed glucose</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action"
+          onClick={() => onAction('recognize-pediatric-hypoglycemic-seizure')}>Recognize hypoglycemic emergency</Button>}
+        {recognition && !rescue && <Button className="crisis-drug__action"
+          onClick={() => onAction('activate-pediatric-hypoglycemic-seizure-qualified-rescue-ownership')}>Activate qualified glucose rescue</Button>}
+        {recognition && !safety && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-pediatric-hypoglycemic-seizure-causes-and-recurrence-risk')}>Review recovery + cause risks</Button>}
+      </div>
+      <p className="field__hint">Experienced teams own serial glucose checks, glucose rescue, recurrence and cause review, access, airway and seizure support, and monitoring. Give nothing by mouth while consciousness is impaired. This lab exposes no learner test, drug, dose, concentration, route, access, device, airway, procedure, treatment, or disposition control.</p>
+    </section>
+    <section className="syringe" aria-labelledby="pediatric-hypoglycemia-response-title">
+      <div id="pediatric-hypoglycemia-response-title" className="syringe__name">Recovery needs another check.</div>
+      <Badge kind="teaching">mentation · recurrence · glucose · cause · ownership</Badge>
+      <div className="syringe__meta">fixed minute-20 report · cause remains open</div>
+      <p className="syringe__remaining" role="status">
+        {handoff ? 'Active recurrence and cause risk handed off'
+          : later ? 'Fixed glucose improved. Risk and cause remain open.'
+            : rescue && safety ? 'Review the fixed report after elapsed parallel care'
+              : safety ? 'Safety review is active · activate qualified glucose rescue'
+                : rescue ? 'Qualified rescue is active · review recovery and cause risks'
+                  : 'Qualified rescue and safety review should move together.'}
+      </p>
+      <div className="syringe__presets">
+        {rescue && safety && !later && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-pediatric-hypoglycemic-seizure-later-response')}>Review the 20-minute report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action"
+          onClick={() => onAction('handoff-pediatric-hypoglycemic-seizure-active-risk')}>Hand off recurrence + cause risk</Button>}
+      </div>
+      <p className="field__hint">The fixed minute-20 report does not prove treatment effect, durable euglycemia, neurological recovery, etiology, freedom from recurrence, discharge readiness, or outcome.</p>
     </section>
   </div>;
 }

@@ -1786,6 +1786,27 @@ another elapsed active-risk handoff. The lab exposes no examination, calculation
 fluid, insulin, glucose, electrolyte, access, pump, device, treatment, or disposition control and
 does not prove treatment effect, DKA resolution, cerebral-injury exclusion, recovery, or outcome.
 
+### Wave D pediatrics slice 9: hypoglycemic seizure after a brief stopped convulsion
+
+The ninth Pediatrics lab is an afebrile hypoglycemic-seizure reassessment rather than a generic
+status-epilepticus or febrile-seizure pathway. A previously well 5-year-old boy weighing 18 kg had
+a witnessed generalized convulsion lasting about 90 seconds that stopped before the learner
+surface opened. He is drowsy, localizes, opens his eyes to voice, breathes spontaneously, and is
+not safe to swallow. Warm normal-volume pulses, refill 2 seconds, preserved pressure, and room-air
+oxygenation accompany a supplied qualified glucose of 34 mg/dL. No fever, meningism, trauma,
+focal deficit, known diabetes, or reported insulin or glucose-lowering medicine exposure is
+authored, but these are snapshots and the cause remains open.
+
+The learner reconciles the stopped convulsion, whole-child state, airway safety, circulation, and
+glucose; recognizes supplied severe hypoglycemia; and activates immediate experienced rescue
+ownership in parallel with cause and recurrence-risk review. A strictly elapsed minute-20 report
+shows wakefulness, age-appropriate speech, no recurrent convulsion, glucose 86 mg/dL, and improved
+vital signs before another elapsed active-risk handoff. The lab does not examine, test, diagnose,
+choose or deliver glucose, glucagon, carbohydrate, fluid, anticonvulsant, route, concentration,
+dose, access, infusion, feeding, oxygen, device, airway maneuver, procedure, or treatment;
+determine disposition or prognosis; or prove causal treatment effect, durable euglycemia,
+neurological recovery, etiologic closure, recurrence exclusion, or outcome.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

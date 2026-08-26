@@ -463,7 +463,11 @@ describe('Requirement: Crawlability Basics', () => {
       expect(markup).toContain('aria-label="Site"');
       expect(markup).toContain('Review and sources');
       expect(markup).toContain('Not clinically reviewed');
-      for (const source of scenario.metadata.clinicalReview.sources) expect(markup).toContain(source);
+      for (const source of scenario.metadata.clinicalReview.sources) {
+        const renderedSource = renderToStaticMarkup(createElement('span', null, source))
+          .replace(/^<span>|<\/span>$/g, '');
+        expect(markup).toContain(renderedSource);
+      }
     }
   });
 

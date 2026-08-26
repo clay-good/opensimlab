@@ -318,6 +318,13 @@ credited toward the catalog until every item in the completion contract passes.
     and metabolic safety review, a strictly elapsed improving-but-unresolved report, and elapsed
     active-risk handoff without learner examination, calculation, testing, diagnosis, fluid,
     insulin, glucose, electrolyte, access, pump, device, treatment, or disposition controls.
+  - [x] Pediatrics slice 9/16 adds one authored afebrile 5-year-old hypoglycemic-seizure
+    reassessment after a brief generalized convulsion stopped before the learner surface, with a
+    supplied qualified glucose result, immediate qualified rescue ownership in parallel with open
+    cause and recurrence-risk review, a strictly elapsed improving-but-unresolved report, and
+    elapsed active-risk handoff without learner examination, glucose acquisition or interpretation,
+    diagnosis, glucose, glucagon, carbohydrate, anticonvulsant, route, concentration, dose, access,
+    airway, device, procedure, treatment, or disposition controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing

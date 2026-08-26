@@ -4744,6 +4744,30 @@ export function objectiveFindings(
       const ordered = later && handoff && later.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved whole-child and biochemical trends, neurological-metabolic surveillance, precipitant work, caregiver context, escalation triggers, and named owners without claiming resolution, discharge, or outcome.' : 'The active pediatric DKA handoff was absent or did not follow the later response after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-pediatric-hypoglycemic-seizure-whole-child-and-glucose',
+      'recognize-pediatric-hypoglycemic-seizure',
+      'activate-pediatric-hypoglycemic-seizure-qualified-rescue-ownership',
+      'review-pediatric-hypoglycemic-seizure-causes-and-recurrence-risk',
+      'review-pediatric-hypoglycemic-seizure-later-response',
+      'handoff-pediatric-hypoglycemic-seizure-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'pediatric-hypoglycemic-seizure'
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pediatric-hypoglycemic-seizure-reassessment');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The pediatric hypoglycemic-seizure lesson was not active.' } satisfies ObjectiveFinding;
+      const trajectory = log.find((event) => /^pediatric-hypoglycemic-seizure-trajectory-reconciled-\d+$/.test(event.eventId));
+      const recognition = log.find((event) => /^pediatric-hypoglycemic-seizure-recognized-\d+$/.test(event.eventId));
+      const rescue = log.find((event) => /^pediatric-hypoglycemic-seizure-qualified-rescue-activated-\d+$/.test(event.eventId));
+      const safety = log.find((event) => /^pediatric-hypoglycemic-seizure-safety-reviewed-\d+$/.test(event.eventId));
+      const later = log.find((event) => /^pediatric-hypoglycemic-seizure-later-response-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^pediatric-hypoglycemic-seizure-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-pediatric-hypoglycemic-seizure-whole-child-and-glucose') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'The supplied seizure, recovery, breathing, perfusion, and fixed glucose were reconciled without learner examination, testing, diagnosis, or treatment.' : 'The fixed pediatric hypoglycemic-seizure trajectory was not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'recognize-pediatric-hypoglycemic-seizure') { const ordered = trajectory && recognition && trajectory.tick <= recognition.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The authored hypoglycemic neurological emergency was recognized without treating seizure cessation as recovery or assigning one proven cause.' : 'Hypoglycemic-emergency recognition was absent or preceded trajectory review.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-pediatric-hypoglycemic-seizure-qualified-rescue-ownership') { const ordered = recognition && rescue && recognition.tick <= rescue.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Qualified glucose-rescue, monitoring, access, airway, seizure, and escalation ownership was activated without learner test, drug, dose, concentration, route, device, procedure, or treatment selection.' : 'Qualified glucose-rescue ownership was absent or preceded recognition.', atTick: rescue?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-hypoglycemic-seizure-causes-and-recurrence-risk') { const ordered = recognition && safety && recognition.tick <= safety.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Recovery, breathing, perfusion, recurrence, glucose, and open-cause risks were reviewed in parallel without learner examination, testing, diagnosis, treatment, or disposition.' : 'Recovery and cause-safety review was absent or preceded recognition.', atTick: safety?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-hypoglycemic-seizure-later-response') { const parallelAt = Math.max(rescue?.tick ?? -1, safety?.tick ?? -1); const ordered = rescue && safety && later && parallelAt < later.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed parallel care, the fixed glucose and neurological improvement were separated from treatment effect, durable euglycemia, neurological recovery, etiology, recurrence, and disposition.' : 'The later response was absent or did not follow both rescue and safety ownership after elapsed time.', atTick: later?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = later && handoff && later.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved seizure and recovery timing, glucose trajectory, recurrence and cause risk, caregiver context, escalation triggers, and named owners without claiming recovery, etiology, discharge, or outcome.' : 'The active pediatric hypoglycemia handoff was absent or did not follow the later response after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

@@ -101,7 +101,8 @@ Recorded here rather than silently carried:
   exact 3-year-old, 15 kg scaffold, and the pediatric status-asthmaticus scenario's exact
   10-year-old, 32 kg scaffold, and the pediatric septic-shock scenario's exact 4-year-old, 16 kg
   scaffold, the pediatric dehydration scenario's exact 2-year-old, 12 kg scaffold, and the
-  pediatric DKA scenario's exact 9-year-old, 30 kg scaffold; pediatric
+  pediatric DKA scenario's exact 9-year-old, 30 kg scaffold, and the pediatric hypoglycemic-seizure
+  scenario's exact 5-year-old, 18 kg scaffold; pediatric
   disease, upper- and lower-airway obstruction,
   developmental hemodynamics, and broader age-specific validation remain absent. Pediatric sepsis
   reuses the exact 6-year-old, 20 kg scaffold and overlays fixed infection, coagulation,
@@ -117,6 +118,10 @@ Recorded here rather than silently carried:
   qualified-care, neurological-safety, and serial-response reports on its source-composed child
   scaffold; it does not validate DKA physiology, laboratory kinetics, fluid or insulin treatment,
   electrolyte management, cerebral-injury exclusion, or treatment effect.
+  Pediatric hypoglycemic seizure overlays a fixed stopped convulsion, mentation, airway-safety,
+  glucose, qualified-care, recurrence-risk, and serial-response report on its source-composed child
+  scaffold; it does not validate seizure or glucose physiology, glucose kinetics, rescue effect,
+  neurological recovery, cause, or recurrence.
 
 ## Concentration-time checks, 2026-08-23
 

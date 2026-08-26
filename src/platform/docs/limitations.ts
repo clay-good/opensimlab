@@ -3647,6 +3647,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, current pediatric DKA guidance, local protocols, qualified teams, caregiver input, and repeated patient-specific neurological, circulatory, biochemical, electrolyte, renal, rhythm, input and output reassessment.',
     briefIn: ['pediatric-diabetic-ketoacidosis'],
   },
+  {
+    id: 'pediatric-hypoglycemic-seizure-presentation-care-glucose-and-response-are-authored',
+    headline: 'The child, stopped convulsion, glucose results, qualified care, and serial response are authored.',
+    simplification: 'Fixed reports and scenario-specific snapshots stand in for caregiver history, examination, monitoring, glucose acquisition and confirmation, airway-safety assessment, rescue, cause evaluation, and serial bedside reassessment.',
+    whereItMisleads: 'Treating the fictional age, glucose values, vital signs, care timing, or response as a universal threshold, learner-acquired finding, causal treatment effect, predicted glucose kinetics, or validated pediatric physiology.',
+    correctUnderstanding: 'Real care integrates verified whole-child and neurological assessment, airway and swallowing safety, confirmed glucose when feasible without delaying urgent care, repeated glucose and clinical reassessment, exposure and intake history, cause-directed testing, and qualified treatment.',
+    briefIn: ['pediatric-hypoglycemic-seizure'],
+  },
+  {
+    id: 'pediatric-hypoglycemic-seizure-controls-reconcile-recognize-coordinate-review-reassess-and-handoff-only',
+    headline: 'The controls record whole-child review, recognition, parallel qualified rescue and cause ownership, reassessment, and handoff only.',
+    simplification: 'Six accepted actions stand in for experienced pediatric, nursing, pharmacy, laboratory, airway-capable, endocrine, safeguarding, and caregiver assessment, rescue, monitoring, evaluation, escalation, and handoff.',
+    whereItMisleads: 'Equating button order with examination, glucose measurement or interpretation, diagnosis, prescribing, rescue delivery, airway skill, cause evaluation, team performance, caregiver communication, or pediatric competence.',
+    correctUnderstanding: 'Actual care requires the child and caregiver, trained pediatric teams, current local guidance, immediate patient-specific rescue, airway-safety and neurological monitoring, repeated glucose assessment, and investigation of unexplained or recurrent hypoglycemia.',
+    briefIn: ['pediatric-hypoglycemic-seizure'],
+  },
+  {
+    id: 'no-live-pediatric-hypoglycemic-seizure-exam-test-glucose-drug-airway-treatment-or-disposition',
+    headline: 'The lab does not examine, test, choose or deliver rescue, manage an airway or seizure, determine disposition, or predict outcome.',
+    simplification: 'No live examination, palpation, glucose or other specimen acquisition or interpretation, diagnosis, oral or parenteral glucose, dextrose, glucagon, carbohydrate, fluid, anticonvulsant, other drug, concentration, route, dose, rate, access, infusion, feeding plan, oxygen, device, airway maneuver, procedure, treatment, admission, discharge, prognosis, recurrence, recovery, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values into care, applying one glucose threshold without whole-child context, treating negative snapshots as permanent exclusions, assuming a universal rescue recipe, attributing improvement to one intervention, or using completion as evidence of clinical competence.',
+    correctUnderstanding: 'Use verified patient data, current pediatric hypoglycemia and seizure guidance, local rescue systems, qualified teams, caregiver and safeguarding context, repeated neurological and glucose reassessment, and cause-directed evaluation.',
+    briefIn: ['pediatric-hypoglycemic-seizure'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

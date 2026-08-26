@@ -134,6 +134,7 @@ const PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES = new Set([
   'pediatric-septic-shock-response',
   'pediatric-dehydration-response',
   'pediatric-diabetic-ketoacidosis-response',
+  'pediatric-hypoglycemic-seizure-response',
   'pediatric-foreign-body-airway-obstruction-response',
 ]);
 const BRONCHIOLITIS_BLOCKED_ACTION_TYPES = new Set([
@@ -197,6 +198,17 @@ const PEDIATRIC_DIABETIC_KETOACIDOSIS_BLOCKED_ACTION_TYPES = new Set([
   'aki-fluid-overload-response', 'septic-shock-assessment',
   'septic-shock-resuscitation-response', 'undifferentiated-shock-assessment',
   'pediatric-foreign-body-airway-obstruction-response', 'emergency-anaphylaxis-response',
+]);
+const PEDIATRIC_HYPOGLYCEMIC_SEIZURE_BLOCKED_ACTION_TYPES = new Set([
+  ...[...PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES]
+    .filter((type) => type !== 'pediatric-hypoglycemic-seizure-response'),
+  'pediatric-respiratory-distress-response', 'bronchiolitis-response', 'croup-response',
+  'pediatric-status-asthmaticus-response', 'pediatric-sepsis-response',
+  'pediatric-septic-shock-response', 'pediatric-dehydration-response',
+  'pediatric-diabetic-ketoacidosis-response', 'diabetic-ketoacidosis-response',
+  'glycemic-response', 'hyponatremia-response', 'intracranial-hypertension-response',
+  'status-epilepticus-response', 'critical-care-status-epilepticus-response',
+  'opioid-toxicity-response', 'emergency-anaphylaxis-response',
 ]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
@@ -897,6 +909,12 @@ export class AnesthesiaEngine {
   private pediatricDkaSafetyAtTick: number | null = null;
   private pediatricDkaLaterResponseAtTick: number | null = null;
   private pediatricDkaHandoffAtTick: number | null = null;
+  private pediatricHypoglycemicSeizureTrajectoryAtTick: number | null = null;
+  private pediatricHypoglycemicSeizureRecognitionAtTick: number | null = null;
+  private pediatricHypoglycemicSeizureRescueAtTick: number | null = null;
+  private pediatricHypoglycemicSeizureSafetyAtTick: number | null = null;
+  private pediatricHypoglycemicSeizureLaterResponseAtTick: number | null = null;
+  private pediatricHypoglycemicSeizureHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1360,6 +1378,18 @@ export class AnesthesiaEngine {
     if (pediatricDka && PEDIATRIC_DIABETIC_KETOACIDOSIS_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `pediatric-dka-generic-action-refused-${this.currentTick}`,
         'This pediatric DKA lesson does not expose generic fluid, insulin, electrolyte, medication, oxygen-device, airway, ventilator, procedure, test, alarm, shock, neurologic-crisis, adult-DKA, or adjacent-crisis actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const pediatricHypoglycemicSeizure =
+      this.scenario.metadata.id === 'pediatric-hypoglycemic-seizure'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-hypoglycemic-seizure-reassessment');
+    if (pediatricHypoglycemicSeizure
+      && PEDIATRIC_HYPOGLYCEMIC_SEIZURE_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment',
+        `pediatric-hypoglycemic-seizure-generic-action-refused-${this.currentTick}`,
+        'This pediatric hypoglycemic-seizure lesson does not expose generic glucose, medication, fluid, oxygen-device, airway, ventilator, procedure, test, alarm, neurologic-crisis, or adjacent-scenario actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -6559,6 +6589,156 @@ export class AnesthesiaEngine {
         this.pediatricDkaHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `pediatric-dka-handoff-recorded-${this.currentTick}`, 'The illness and fixed biochemical trajectory, mentation, headache and emesis surveillance, breathing, perfusion, rhythm, glucose, ketone, acid-base, electrolyte, renal, fluid-balance, urine, precipitant, caregiver, recurrence, escalation, and named pediatric, diabetes, nursing, pharmacy, and laboratory ownership were handed off. DKA resolution, cerebral-injury exclusion, causal treatment effect, durable recovery, discharge readiness, disposition, prognosis, recurrence, and outcome remain undeclared.', { pediatricDkaAuthored: true, cerebralInjuryRiskActive: true, cerebralInjuryExcluded: false, treatmentEffectProven: false, biochemicalResolutionProven: false, durableRecoveryProven: false, dischargeReadinessProven: false, dispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'pediatric-hypoglycemic-seizure-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.metadata.id === 'pediatric-hypoglycemic-seizure'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-hypoglycemic-seizure-reassessment');
+        const valid = ['reconcile-pediatric-hypoglycemic-seizure-whole-child-and-glucose',
+          'recognize-pediatric-hypoglycemic-seizure',
+          'activate-pediatric-hypoglycemic-seizure-qualified-rescue-ownership',
+          'review-pediatric-hypoglycemic-seizure-causes-and-recurrence-risk',
+          'review-pediatric-hypoglycemic-seizure-later-response',
+          'handoff-pediatric-hypoglycemic-seizure-active-risk'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment',
+            `pediatric-hypoglycemic-seizure-response-refused-${this.currentTick}`,
+            supported ? 'The pediatric hypoglycemic-seizure action was not one of the listed choices. Nothing changed.'
+              : 'These pediatric hypoglycemic-seizure choices are available only in the exact declared Pediatrics lesson.');
+          break;
+        }
+        if (response === 'reconcile-pediatric-hypoglycemic-seizure-whole-child-and-glucose') {
+          if (this.pediatricHypoglycemicSeizureTrajectoryAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-hypoglycemic-seizure-trajectory-refused-${this.currentTick}`,
+              'The supplied whole-child, seizure, and glucose pattern was already reconciled.');
+            break;
+          }
+          this.pediatricHypoglycemicSeizureTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-hypoglycemic-seizure-trajectory-reconciled-${this.currentTick}`,
+            'The supplied whole-child report confirms a stopped generalized convulsion with current postictal drowsiness, a pulse, spontaneous breathing, preserved oxygenation, and a supplied qualified glucose report of 34 mg/dL. The learner did not examine the child, acquire or interpret glucose, or establish a cause.',
+            { initialPulsePresent: true, spontaneousBreathingAuthored: true,
+              seizureAuthored: true, glucoseMgPerDl: 34, patientExaminedByLearner: false,
+              glucoseAcquiredByLearner: false, glucoseInterpretedByLearner: false });
+          break;
+        }
+        if (this.pediatricHypoglycemicSeizureTrajectoryAtTick === null) {
+          this.log('warning', 'assessment',
+            `pediatric-hypoglycemic-seizure-trajectory-order-refused-${this.currentTick}`,
+            'Reconcile the supplied whole-child, seizure, and glucose pattern first.');
+          break;
+        }
+        if (response === 'recognize-pediatric-hypoglycemic-seizure') {
+          if (this.pediatricHypoglycemicSeizureRecognitionAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-hypoglycemic-seizure-recognition-refused-${this.currentTick}`,
+              'The authored hypoglycemic-seizure pattern was already recognized.');
+            break;
+          }
+          this.pediatricHypoglycemicSeizureRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-hypoglycemic-seizure-recognized-${this.currentTick}`,
+            'The authored seizure plus glucose 34 mg/dL was recognized as a time-critical pediatric hypoglycemic-seizure pattern. The supplied association supports immediate qualified rescue while the cause remains open; it is not a learner-performed diagnosis or glucose interpretation.',
+            { seizureAuthored: true, hypoglycemiaAuthored: true,
+              diagnosisMadeByLearner: false, glucoseInterpretedByLearner: false });
+          break;
+        }
+        if (this.pediatricHypoglycemicSeizureRecognitionAtTick === null) {
+          this.log('warning', 'assessment',
+            `pediatric-hypoglycemic-seizure-recognition-order-refused-${this.currentTick}`,
+            'Recognize the authored pediatric hypoglycemic-seizure pattern before rescue or safety work.');
+          break;
+        }
+        if (response === 'activate-pediatric-hypoglycemic-seizure-qualified-rescue-ownership') {
+          if (this.pediatricHypoglycemicSeizureRescueAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-hypoglycemic-seizure-rescue-refused-${this.currentTick}`,
+              'Qualified pediatric seizure and hypoglycemia rescue ownership is already active.');
+            break;
+          }
+          this.pediatricHypoglycemicSeizureRescueAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-hypoglycemic-seizure-qualified-rescue-activated-${this.currentTick}`,
+            'Experienced pediatric, nursing, pharmacy, airway-capable, and escalation teams now own immediate seizure safety, locally protocolized glucose correction, cardiorespiratory surveillance, repeated glucose review, access and airway contingencies, and frequent neurological reassessment. The learner selected or delivered no glucose formulation, drug, dose, concentration, route, volume, rate, access, device, airway maneuver, procedure, or treatment.',
+            { qualifiedRescueOwnershipActive: true, drugSelectedByLearner: false,
+              glucoseFormulationSelectedByLearner: false, treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (response === 'review-pediatric-hypoglycemic-seizure-causes-and-recurrence-risk') {
+          if (this.pediatricHypoglycemicSeizureSafetyAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-hypoglycemic-seizure-safety-refused-${this.currentTick}`,
+              'Cause, recurrence, and neurological-metabolic safety review is already active.');
+            break;
+          }
+          this.pediatricHypoglycemicSeizureSafetyAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-hypoglycemic-seizure-safety-reviewed-${this.currentTick}`,
+            'Experienced teams retain ownership of serial consciousness, seizure, airway, breathing, circulation, temperature, glucose, intake, medication and exposure, endocrine, metabolic, hepatic, infectious, injury, safeguarding, recurrence, and escalation review. A later glucose value cannot by itself prove cause, durable euglycemia, neurological recovery, or freedom from recurrence.',
+            { qualifiedSafetyReviewActive: true, seizureCauseProven: false,
+              durableEuglycemiaProven: false, neurologicRecoveryProven: false,
+              recurrenceExcluded: false });
+          break;
+        }
+        const parallelAt = Math.max(this.pediatricHypoglycemicSeizureRescueAtTick ?? -1,
+          this.pediatricHypoglycemicSeizureSafetyAtTick ?? -1);
+        if (this.pediatricHypoglycemicSeizureRescueAtTick === null
+          || this.pediatricHypoglycemicSeizureSafetyAtTick === null) {
+          this.log('warning', 'assessment',
+            `pediatric-hypoglycemic-seizure-parallel-care-order-refused-${this.currentTick}`,
+            'Keep qualified rescue ownership and cause-recurrence safety review active in parallel before opening the later report.');
+          break;
+        }
+        if (response === 'review-pediatric-hypoglycemic-seizure-later-response') {
+          if (this.currentTick <= parallelAt) {
+            this.log('warning', 'assessment',
+              `pediatric-hypoglycemic-seizure-later-time-refused-${this.currentTick}`,
+              'Allow elapsed simulated time after both rescue and safety ownership are active.');
+            break;
+          }
+          if (this.pediatricHypoglycemicSeizureLaterResponseAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-hypoglycemic-seizure-later-response-refused-${this.currentTick}`,
+              'The fixed later pediatric hypoglycemic-seizure report was already reviewed.');
+            break;
+          }
+          this.pediatricHypoglycemicSeizureLaterResponseAtTick = this.currentTick;
+          this.log('warning', 'assessment',
+            `pediatric-hypoglycemic-seizure-later-response-reviewed-${this.currentTick}`,
+            'Fixed qualified later report: he is awake, follows commands, uses age-appropriate speech, and remains tired, with no recurrent convulsion. Temperature is 36.7°C, HR 106/min, RR 20/min, BP 100/64 mmHg (MAP 76), clean pulse-coherent SpO2 99%, and glucose 86 mg/dL. This authored checkpoint does not prove treatment effect, seizure cause, durable euglycemia, neurological recovery, freedom from recurrence, disposition, or outcome.',
+            { laterReportAuthored: true, glucoseMgPerDl: 86, treatmentEffectProven: false,
+              seizureCauseProven: false, durableEuglycemiaProven: false,
+              neurologicRecoveryProven: false, recurrenceExcluded: false });
+          break;
+        }
+        if (this.pediatricHypoglycemicSeizureLaterResponseAtTick === null) {
+          this.log('warning', 'assessment',
+            `pediatric-hypoglycemic-seizure-later-order-refused-${this.currentTick}`,
+            'Review the fixed later whole-child and glucose report after elapsed qualified care.');
+          break;
+        }
+        if (this.currentTick <= this.pediatricHypoglycemicSeizureLaterResponseAtTick) {
+          this.log('warning', 'assessment',
+            `pediatric-hypoglycemic-seizure-handoff-time-refused-${this.currentTick}`,
+            'Allow another simulated tick before handing off active seizure and hypoglycemia risk.');
+          break;
+        }
+        if (this.pediatricHypoglycemicSeizureHandoffAtTick !== null) {
+          this.log('warning', 'assessment',
+            `pediatric-hypoglycemic-seizure-handoff-refused-${this.currentTick}`,
+            'The active pediatric hypoglycemic-seizure handoff was already recorded.');
+          break;
+        }
+        this.pediatricHypoglycemicSeizureHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment',
+          `pediatric-hypoglycemic-seizure-handoff-recorded-${this.currentTick}`,
+          'The whole-child and glucose trajectory, seizure and neurological surveillance, repeated glucose review, open cause and exposure work, recurrence and airway contingencies, caregiver context, escalation triggers, and named qualified ownership were handed off. Treatment effect, seizure cause, durable euglycemia, neurological recovery, recurrence exclusion, disposition, prognosis, and outcome remain undeclared.',
+          { treatmentEffectProven: false, seizureCauseProven: false,
+            durableEuglycemiaProven: false, neurologicRecoveryProven: false,
+            recurrenceExcluded: false, dispositionDetermined: false, outcomePredicted: false });
+        break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -9485,6 +9665,19 @@ export class AnesthesiaEngine {
         meanArterialMmHg: later ? 79 : 77,
         coreTemperatureC: later ? 37.1 : 37.2 };
     }
+    if (this.scenario.metadata.id === 'pediatric-hypoglycemic-seizure'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-hypoglycemic-seizure-reassessment')) {
+      const later = this.pediatricHypoglycemicSeizureLaterResponseAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: later ? 106 : 132,
+        respiratoryRateBpm: later ? 20 : 24,
+        spo2Percent: 99,
+        systolicMmHg: later ? 100 : 98,
+        diastolicMmHg: later ? 64 : 62,
+        meanArterialMmHg: later ? 76 : 74,
+        coreTemperatureC: later ? 36.7 : 36.6 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -11356,6 +11549,51 @@ export class AnesthesiaEngine {
               cerebralInjuryExcluded: false as const, treatmentEffectProven: false as const,
               biochemicalResolutionProven: false as const, durableRecoveryProven: false as const,
               dischargeReadinessProven: false as const, dispositionDetermined: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'pediatric-hypoglycemic-seizure'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-hypoglycemic-seizure-reassessment') ? {
+            pediatricHypoglycemicSeizureAssessment: {
+              trajectoryAtTick: this.pediatricHypoglycemicSeizureTrajectoryAtTick,
+              recognitionAtTick: this.pediatricHypoglycemicSeizureRecognitionAtTick,
+              rescueAtTick: this.pediatricHypoglycemicSeizureRescueAtTick,
+              safetyAtTick: this.pediatricHypoglycemicSeizureSafetyAtTick,
+              laterResponseAtTick: this.pediatricHypoglycemicSeizureLaterResponseAtTick,
+              handoffAtTick: this.pediatricHypoglycemicSeizureHandoffAtTick,
+              initialPulsePresent: true as const, spontaneousBreathingAuthored: true as const,
+              seizureAuthored: true as const, hypoglycemiaAuthored: true as const,
+              initialGlucoseMgPerDl: 34 as const, laterGlucoseMgPerDl: 86 as const,
+              qualifiedRescueOwnershipActive:
+                this.pediatricHypoglycemicSeizureRescueAtTick !== null,
+              qualifiedSafetyReviewActive:
+                this.pediatricHypoglycemicSeizureSafetyAtTick !== null,
+              laterReportAuthored: this.pediatricHypoglycemicSeizureLaterResponseAtTick !== null,
+              patientExaminedByLearner: false as const,
+              glucoseAcquiredByLearner: false as const,
+              glucoseInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const,
+              drugSelectedByLearner: false as const,
+              glucoseFormulationSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const,
+              concentrationSelectedByLearner: false as const,
+              routeSelectedByLearner: false as const,
+              volumeSelectedByLearner: false as const,
+              rateSelectedByLearner: false as const,
+              accessPlacedByLearner: false as const,
+              deviceSelectedByLearner: false as const,
+              drugDeliveredByLearner: false as const,
+              glucoseDeliveredByLearner: false as const,
+              airwayManeuverPerformedByLearner: false as const,
+              procedurePerformedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              treatmentEffectProven: false as const,
+              seizureCauseProven: false as const,
+              durableEuglycemiaProven: false as const,
+              neurologicRecoveryProven: false as const,
+              recurrenceExcluded: false as const,
+              dispositionDetermined: false as const,
               outcomePredicted: false as const,
             },
           } : {}),

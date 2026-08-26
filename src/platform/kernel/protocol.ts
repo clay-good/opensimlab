@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 124 reports pediatric DKA reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 124;
+/** Bumped whenever the message shape changes incompatibly. Version 125 reports pediatric hypoglycemic-seizure reassessment state. */
+export const WORKER_PROTOCOL_VERSION = 125;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1309,6 +1309,29 @@ export interface EquipmentSnapshot {
       readonly cerebralInjuryExcluded: false; readonly treatmentEffectProven: false;
       readonly biochemicalResolutionProven: false; readonly durableRecoveryProven: false;
       readonly dischargeReadinessProven: false; readonly dispositionDetermined: false;
+      readonly outcomePredicted: false;
+    };
+    readonly pediatricHypoglycemicSeizureAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly rescueAtTick: number | null; readonly safetyAtTick: number | null;
+      readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true; readonly spontaneousBreathingAuthored: true;
+      readonly seizureAuthored: true; readonly hypoglycemiaAuthored: true;
+      readonly initialGlucoseMgPerDl: 34; readonly laterGlucoseMgPerDl: 86;
+      readonly qualifiedRescueOwnershipActive: boolean;
+      readonly qualifiedSafetyReviewActive: boolean; readonly laterReportAuthored: boolean;
+      readonly patientExaminedByLearner: false; readonly glucoseAcquiredByLearner: false;
+      readonly glucoseInterpretedByLearner: false; readonly diagnosisMadeByLearner: false;
+      readonly drugSelectedByLearner: false; readonly glucoseFormulationSelectedByLearner: false;
+      readonly doseSelectedByLearner: false; readonly concentrationSelectedByLearner: false;
+      readonly routeSelectedByLearner: false; readonly volumeSelectedByLearner: false;
+      readonly rateSelectedByLearner: false; readonly accessPlacedByLearner: false;
+      readonly deviceSelectedByLearner: false; readonly drugDeliveredByLearner: false;
+      readonly glucoseDeliveredByLearner: false; readonly airwayManeuverPerformedByLearner: false;
+      readonly procedurePerformedByLearner: false; readonly treatmentDeliveredByLearner: false;
+      readonly treatmentEffectProven: false; readonly seizureCauseProven: false;
+      readonly durableEuglycemiaProven: false; readonly neurologicRecoveryProven: false;
+      readonly recurrenceExcluded: false; readonly dispositionDetermined: false;
       readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
