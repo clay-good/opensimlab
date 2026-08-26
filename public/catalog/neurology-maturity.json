@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "neurology",
-  "recordCount": 13,
+  "recordCount": 14,
   "records": [
     {
       "recordId": "scenario:minor-nondisabling-acute-ischemic-stroke@0.1.0",
@@ -144,6 +144,17 @@
       "evidence": [
         "/catalog/neurology-completion-audit.json#metastatic-spinal-cord-compression@0.1.0",
         "/catalog/neurology-quality-audit.json#metastatic-spinal-cord-compression@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:acute-delirium-reversible-causes@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "acute-delirium-reversible-causes",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/neurology-completion-audit.json#acute-delirium-reversible-causes@0.1.0",
+        "/catalog/neurology-quality-audit.json#acute-delirium-reversible-causes@0.1.0"
       ]
     }
   ]

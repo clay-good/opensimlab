@@ -1165,6 +1165,11 @@ export interface ActionCockpitProps {
       readonly ownershipAtTick: number | null; readonly boundaryAtTick: number | null;
       readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly neurologyDeliriumAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly ownershipAtTick: number | null; readonly boundaryAtTick: number | null;
+      readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1977,6 +1982,14 @@ export interface ActionCockpitProps {
       | 'review-neurology-mscc-strict-later-qualified-mri-and-unresolved-function-trajectory'
       | 'handoff-neurology-mscc-level-stability-function-bladder-definitive-care-and-active-risk',
   ) => void;
+  readonly onNeurologyDeliriumResponse?: (
+    action: 'reconcile-neurology-delirium-baseline-clock-fluctuation-attention-perception-function-and-whole-patient'
+      | 'recognize-neurology-delirium-indicators-and-qualified-assessment-boundary-without-dementia-or-single-cause-closure'
+      | 'activate-neurology-delirium-qualified-medical-nursing-pharmacy-family-safety-capacity-and-mobility-ownership'
+      | 'review-neurology-delirium-reversible-contributors-communication-environment-deescalation-and-treatment-boundary'
+      | 'review-neurology-delirium-strict-later-contributor-and-unresolved-cognitive-trajectory'
+      | 'handoff-neurology-delirium-causes-capacity-safety-medicines-function-recurrence-follow-up-and-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2466,6 +2479,10 @@ export function crisisResponseAvailability(
         && event.target === 'metastatic-spinal-cord-compression-reassessment')
       && scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'metastatic-spinal-cord-compression-reassessment-boundary'),
+    hasNeurologyDeliriumResponse:
+      scenario.metadata.id === 'acute-delirium-reversible-causes'
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acute-delirium-reversible-causes-reassessment')
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acute-delirium-reversible-causes-reassessment-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2663,6 +2680,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'acute-transtentorial-herniation-pattern-reassessment')
       || (event.type === 'narrative'
         && event.target === 'metastatic-spinal-cord-compression-reassessment')
+      || (event.type === 'narrative' && event.target === 'acute-delirium-reversible-causes-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2748,6 +2766,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeurologyRaisedIcpResponse,
     hasNeurologyHerniationResponse,
     hasNeurologyMsccResponse,
+    hasNeurologyDeliriumResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2831,7 +2850,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeurologyFocalMotorStatusResponse || hasNeurologyNcseResponse
     || hasNeurologyMyasthenicCrisisResponse || hasNeurologyGbsResponse
     || hasNeurologyMeningitisResponse || hasNeurologyEncephalitisResponse
-    || hasNeurologyRaisedIcpResponse || hasNeurologyHerniationResponse || hasNeurologyMsccResponse;
+    || hasNeurologyRaisedIcpResponse || hasNeurologyHerniationResponse || hasNeurologyMsccResponse
+    || hasNeurologyDeliriumResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2862,7 +2882,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasNeurologyMsccResponse
+  const responseTray = hasNeurologyDeliriumResponse
+    ? { id: 'crisis', label: 'Acute delirium' } as const
+    : hasNeurologyMsccResponse
     ? { id: 'crisis', label: 'Cord compression' } as const
     : hasNeurologyHerniationResponse
     ? { id: 'crisis', label: 'Acute brain rescue' } as const
@@ -3194,6 +3216,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeurologyRaisedIcpResponse
     || hasNeurologyHerniationResponse
     || hasNeurologyMsccResponse
+    || hasNeurologyDeliriumResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3985,6 +4008,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <NeurologyMsccTray
                 assessment={props.resuscitation.neurologyMsccAssessment}
                 onAction={props.onNeurologyMsccResponse ?? (() => {})} />
+            )}
+            {hasNeurologyDeliriumResponse && (
+              <NeurologyDeliriumTray
+                assessment={props.resuscitation.neurologyDeliriumAssessment}
+                onAction={props.onNeurologyDeliriumResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -10238,6 +10266,38 @@ function NeurologyMsccTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {boundary && !later && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-mscc-strict-later-qualified-mri-and-unresolved-function-trajectory')}>Review the 4-hour report</Button>}
         {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-mscc-level-stability-function-bladder-definitive-care-and-active-risk')}>Hand off function + active risk</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function NeurologyDeliriumTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyDeliriumAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNeurologyDeliriumResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const ownership = assessment?.ownershipAtTick != null;
+  const boundary = assessment?.boundaryAtTick != null;
+  const later = assessment?.laterAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="neurology-delirium-early-title">
+      <div id="neurology-delirium-early-title" className="syringe__name">Begin with who she was.</div>
+      <p className="syringe__remaining">Baseline, fluctuation, attention, perception, function, and the whole patient belong together.</p>
+      <div className="crisis-drug__actions">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neurology-delirium-baseline-clock-fluctuation-attention-perception-function-and-whole-patient')}>Review baseline + fluctuation</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-neurology-delirium-indicators-and-qualified-assessment-boundary-without-dementia-or-single-cause-closure')}>Recognize the assessment boundary</Button>}
+        {recognition && !ownership && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-delirium-qualified-medical-nursing-pharmacy-family-safety-capacity-and-mobility-ownership')}>Bring familiar care together</Button>}
+        {ownership && !boundary && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-delirium-reversible-contributors-communication-environment-deescalation-and-treatment-boundary')}>Review causes + calm care</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="neurology-delirium-later-title">
+      <div id="neurology-delirium-later-title" className="syringe__name">Make the room easier to understand.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Causes, capacity, safety, medicines, function, recurrence, follow-up, and outcome uncertainty handed off.' : later ? 'Several contributors are visible. Attention still fluctuates, so no single cause or recovery is claimed.' : boundary ? 'Familiar, least-restrictive care is active. Review the fixed 6-hour report after time passes.' : 'Complete the baseline, assessment, owners, and contributor boundary before reassessment.'}</p>
+      <div className="crisis-drug__actions">
+        {boundary && !later && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-delirium-strict-later-contributor-and-unresolved-cognitive-trajectory')}>Review the 6-hour report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-delirium-causes-capacity-safety-medicines-function-recurrence-follow-up-and-active-risk')}>Hand off the whole picture</Button>}
       </div>
     </section>
   </>;

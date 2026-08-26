@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 145 reports Neurology cord-compression state. */
-export const WORKER_PROTOCOL_VERSION = 145;
+/** Bumped whenever the message shape changes incompatibly. Version 146 reports Neurology delirium state. */
+export const WORKER_PROTOCOL_VERSION = 146;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2217,6 +2217,21 @@ export interface EquipmentSnapshot {
       readonly dispositionDetermined: false;
       readonly prognosisPredicted: false;
       readonly outcomePredicted: false;
+    };
+    readonly neurologyDeliriumAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly ownershipAtTick: number | null; readonly boundaryAtTick: number | null;
+      readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly acuteFluctuationAuthored: true; readonly qualifiedAssessmentBoundaryRecognized: boolean;
+      readonly qualifiedOwnershipActive: boolean; readonly qualifiedContributorBoundaryReviewed: boolean;
+      readonly laterContributorsAuthored: boolean; readonly patientHistoryTakenByLearner: false;
+      readonly patientExaminedByLearner: false; readonly scoreCalculatedByLearner: false;
+      readonly capacityAssessedByLearner: false; readonly diagnosisMadeByLearner: false;
+      readonly restraintSelectedByLearner: false; readonly observationSelectedByLearner: false;
+      readonly drugSelectedByLearner: false; readonly treatmentDeliveredByLearner: false;
+      readonly singleCauseProven: false; readonly treatmentEffectProven: false;
+      readonly cognitiveRecoveryProven: false; readonly dispositionDetermined: false;
+      readonly prognosisPredicted: false; readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

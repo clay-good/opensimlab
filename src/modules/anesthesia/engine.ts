@@ -372,6 +372,10 @@ const NEUROLOGY_MSCC_BLOCKED_ACTION_TYPES = new Set([
   ...NEUROLOGY_HERNIATION_BLOCKED_ACTION_TYPES,
   'acute-transtentorial-herniation-pattern-response',
 ]);
+const NEUROLOGY_DELIRIUM_BLOCKED_ACTION_TYPES = new Set([
+  ...NEUROLOGY_MSCC_BLOCKED_ACTION_TYPES,
+  'metastatic-spinal-cord-compression-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1197,6 +1201,12 @@ export class AnesthesiaEngine {
   private neurologyMsccBoundaryAtTick: number | null = null;
   private neurologyMsccLaterAtTick: number | null = null;
   private neurologyMsccHandoffAtTick: number | null = null;
+  private neurologyDeliriumTrajectoryAtTick: number | null = null;
+  private neurologyDeliriumRecognitionAtTick: number | null = null;
+  private neurologyDeliriumOwnershipAtTick: number | null = null;
+  private neurologyDeliriumBoundaryAtTick: number | null = null;
+  private neurologyDeliriumLaterAtTick: number | null = null;
+  private neurologyDeliriumHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1938,6 +1948,15 @@ export class AnesthesiaEngine {
       this.log('warning', 'assessment', `neurology-mscc-generic-action-refused-${this.currentTick}`,
         'This Neurology lesson exposes no generic movement, immobilization, corticosteroid, drug, '
         + 'dose, route, access, imaging, bladder, surgery, radiotherapy, procedure, herniation, or '
+        + 'adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const neurologyDelirium = this.scenario.metadata.id === 'acute-delirium-reversible-causes'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acute-delirium-reversible-causes-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acute-delirium-reversible-causes-reassessment-boundary');
+    if (neurologyDelirium && NEUROLOGY_DELIRIUM_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `neurology-delirium-generic-action-refused-${this.currentTick}`,
+        'This Neurology lesson exposes no generic examination, score, capacity, restraint, observation, '
+        + 'fluid, drug, dose, route, access, test, catheter, procedure, seizure, stroke, infection, or '
         + 'adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
@@ -9893,6 +9912,32 @@ export class AnesthesiaEngine {
           'Lesion level, stability, motor and sensory trajectory, bladder and pain care, cancer extent and pathology, definitive surgery or radiotherapy, skin and thrombosis risks, rehabilitation, disposition, prognosis, and outcome uncertainty were handed off.',
           { treatmentEffectProven: false, neurologicRecoveryProven: false, definitiveTreatmentProven: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
       }
+      case 'acute-delirium-reversible-causes-response': {
+        const response = typeof action.payload.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'acute-delirium-reversible-causes'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acute-delirium-reversible-causes-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acute-delirium-reversible-causes-reassessment-boundary');
+        const actions = ['reconcile-neurology-delirium-baseline-clock-fluctuation-attention-perception-function-and-whole-patient',
+          'recognize-neurology-delirium-indicators-and-qualified-assessment-boundary-without-dementia-or-single-cause-closure',
+          'activate-neurology-delirium-qualified-medical-nursing-pharmacy-family-safety-capacity-and-mobility-ownership',
+          'review-neurology-delirium-reversible-contributors-communication-environment-deescalation-and-treatment-boundary',
+          'review-neurology-delirium-strict-later-contributor-and-unresolved-cognitive-trajectory',
+          'handoff-neurology-delirium-causes-capacity-safety-medicines-function-recurrence-follow-up-and-active-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `neurology-delirium-response-refused-${this.currentTick}`, supported ? 'The delirium action was not listed. No supplied or injected text was retained.' : 'These delirium choices are available only in the exact declared Neurology lesson.'); break; }
+        if (response === actions[0]) { if (this.neurologyDeliriumTrajectoryAtTick !== null) { this.log('warning', 'assessment', `neurology-delirium-trajectory-refused-${this.currentTick}`, 'The supplied baseline and fluctuation were already reconciled.'); break; } this.neurologyDeliriumTrajectoryAtTick = this.currentTick; this.log('critical', 'assessment', `neurology-delirium-trajectory-reconciled-${this.currentTick}`, 'Verified independent baseline and normal morning conversation contrast with a 10-hour fluctuation across withdrawal, slow responses, restlessness, visual misperception, disorganized answers, and inattention. The learner did not take history, examine, score, diagnose, or treat.', { acuteFluctuationAuthored: true, patientHistoryTakenByLearner: false, patientExaminedByLearner: false, scoreCalculatedByLearner: false }); break; }
+        if (this.neurologyDeliriumTrajectoryAtTick === null) { this.log('warning', 'assessment', `neurology-delirium-trajectory-order-refused-${this.currentTick}`, 'Reconcile baseline and fluctuation first.'); break; }
+        if (response === actions[1]) { if (this.neurologyDeliriumRecognitionAtTick !== null) { this.log('warning', 'assessment', `neurology-delirium-recognition-refused-${this.currentTick}`, 'The delirium assessment boundary was already recognized.'); break; } this.neurologyDeliriumRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `neurology-delirium-assessment-boundary-recognized-${this.currentTick}`, 'Acute fluctuation and inattention support qualified 4AT assessment and expert diagnosis. The supplied score is not a learner calculation, cause finder, capacity test, severity scale, or dementia label, and no single cause is closed.', { qualifiedAssessmentBoundaryRecognized: true, scoreCalculatedByLearner: false, capacityAssessedByLearner: false, diagnosisMadeByLearner: false }); break; }
+        if (this.neurologyDeliriumRecognitionAtTick === null) { this.log('warning', 'assessment', `neurology-delirium-recognition-order-refused-${this.currentTick}`, 'Recognize the qualified assessment boundary before activating owners.'); break; }
+        if (response === actions[2]) { if (this.neurologyDeliriumOwnershipAtTick !== null) { this.log('warning', 'assessment', `neurology-delirium-ownership-refused-${this.currentTick}`, 'Qualified delirium ownership is already active.'); break; } this.neurologyDeliriumOwnershipAtTick = this.currentTick; this.log('critical', 'assessment', `neurology-delirium-qualified-ownership-activated-${this.currentTick}`, 'Qualified medical, nursing, pharmacy, family, falls, capacity, mobility, pain, nutrition, bladder, bowel, sensory, sleep, and safeguarding owners now coordinate in parallel.', { qualifiedOwnershipActive: true, restraintSelectedByLearner: false, observationSelectedByLearner: false, drugSelectedByLearner: false }); break; }
+        if (this.neurologyDeliriumOwnershipAtTick === null) { this.log('warning', 'assessment', `neurology-delirium-ownership-order-refused-${this.currentTick}`, 'Activate qualified owners before reviewing contributors.'); break; }
+        if (response === actions[3]) { if (this.neurologyDeliriumBoundaryAtTick !== null) { this.log('warning', 'assessment', `neurology-delirium-boundary-refused-${this.currentTick}`, 'The contributor, communication, environment, safety, and treatment boundary was already reviewed.'); break; } this.neurologyDeliriumBoundaryAtTick = this.currentTick; this.log('critical', 'assessment', `neurology-delirium-contributor-boundary-reviewed-${this.currentTick}`, 'Qualified teams own oxygenation, infection, hydration, medicines, pain, retention, constipation, nutrition, senses, sleep, mobility, communication, reassurance, environmental consistency, de-escalation, and least-restrictive safety. No universal test, fluid, drug, restraint, observation, or treatment recipe is taught.', { qualifiedContributorBoundaryReviewed: true, treatmentDeliveredByLearner: false, restraintSelectedByLearner: false, capacityAssessedByLearner: false }); break; }
+        if (this.neurologyDeliriumBoundaryAtTick === null) { this.log('warning', 'assessment', `neurology-delirium-boundary-order-refused-${this.currentTick}`, 'Review qualified contributor and safety boundaries before the later report.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.neurologyDeliriumBoundaryAtTick) { this.log('warning', 'assessment', `neurology-delirium-later-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before reviewing the fixed 6-hour report.'); break; } if (this.neurologyDeliriumLaterAtTick !== null) { this.log('warning', 'assessment', `neurology-delirium-later-refused-${this.currentTick}`, 'The fixed contributor and cognition report was already reviewed.'); break; } this.neurologyDeliriumLaterAtTick = this.currentTick; this.log('critical', 'assessment', `neurology-delirium-later-contributors-reviewed-${this.currentTick}`, 'At 6 hours, qualified review reports urinary retention, recent diphenhydramine exposure, poor intake, movement pain, fragmented sleep, and absent hearing aids. Recognition and orientation have improved in the supplied snapshot, but attention still fluctuates. No one cause, treatment effect, resolution, baseline recovery, capacity conclusion, disposition, or outcome is established.', { laterContributorsAuthored: true, singleCauseProven: false, treatmentEffectProven: false, cognitiveRecoveryProven: false, capacityAssessedByLearner: false }); break; }
+        if (this.neurologyDeliriumLaterAtTick === null) { this.log('warning', 'assessment', `neurology-delirium-later-order-refused-${this.currentTick}`, 'Review the fixed later contributors and cognition before handoff.'); break; }
+        if (this.currentTick <= this.neurologyDeliriumLaterAtTick) { this.log('warning', 'assessment', `neurology-delirium-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off active delirium risk.'); break; }
+        if (this.neurologyDeliriumHandoffAtTick !== null) { this.log('warning', 'assessment', `neurology-delirium-handoff-refused-${this.currentTick}`, 'The cause, capacity, safety, medicine, function, recurrence, and active-risk handoff was already recorded.'); break; }
+        this.neurologyDeliriumHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `neurology-delirium-active-risk-handoff-recorded-${this.currentTick}`, 'Possible cause combination, serial cognition, distress, decision-specific capacity, least-restrictive safety, medicines, hydration, bladder and bowel, pain, nutrition, senses, sleep, mobility, family communication, recurrence, baseline recovery, dementia review if unresolved, disposition, prognosis, and outcome uncertainty were handed off.', { singleCauseProven: false, treatmentEffectProven: false, cognitiveRecoveryProven: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -16077,6 +16122,23 @@ export class AnesthesiaEngine {
               dispositionDetermined: false as const,
               prognosisPredicted: false as const,
               outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'acute-delirium-reversible-causes'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acute-delirium-reversible-causes-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acute-delirium-reversible-causes-reassessment-boundary') ? {
+            neurologyDeliriumAssessment: {
+              trajectoryAtTick: this.neurologyDeliriumTrajectoryAtTick, recognitionAtTick: this.neurologyDeliriumRecognitionAtTick,
+              ownershipAtTick: this.neurologyDeliriumOwnershipAtTick, boundaryAtTick: this.neurologyDeliriumBoundaryAtTick,
+              laterAtTick: this.neurologyDeliriumLaterAtTick, handoffAtTick: this.neurologyDeliriumHandoffAtTick,
+              acuteFluctuationAuthored: true as const, qualifiedAssessmentBoundaryRecognized: this.neurologyDeliriumRecognitionAtTick !== null,
+              qualifiedOwnershipActive: this.neurologyDeliriumOwnershipAtTick !== null, qualifiedContributorBoundaryReviewed: this.neurologyDeliriumBoundaryAtTick !== null,
+              laterContributorsAuthored: this.neurologyDeliriumLaterAtTick !== null, patientHistoryTakenByLearner: false as const,
+              patientExaminedByLearner: false as const, scoreCalculatedByLearner: false as const, capacityAssessedByLearner: false as const,
+              diagnosisMadeByLearner: false as const, restraintSelectedByLearner: false as const, observationSelectedByLearner: false as const,
+              drugSelectedByLearner: false as const, treatmentDeliveredByLearner: false as const, singleCauseProven: false as const,
+              treatmentEffectProven: false as const, cognitiveRecoveryProven: false as const, dispositionDetermined: false as const,
+              prognosisPredicted: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

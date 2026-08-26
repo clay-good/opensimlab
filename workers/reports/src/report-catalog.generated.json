@@ -1639,6 +1639,17 @@
         "GB"
       ],
       "fidelityClass": "state_transition"
+    },
+    {
+      "scenarioId": "acute-delirium-reversible-causes",
+      "contentVersion": "0.1.0",
+      "moduleId": "neurology",
+      "maturity": "draft",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition"
     }
   ]
 }

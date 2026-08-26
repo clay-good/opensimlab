@@ -2229,6 +2229,21 @@ persistent deficits before an elapsed active-risk handoff. No learner history, e
 testing, movement, imaging, diagnosis, drug, dose, route, access, catheter, surgery, radiotherapy,
 biopsy, procedure, treatment effect, recovery, disposition, prognosis, or outcome control exists.
 
+### Wave E neurology slice 14: acute delirium with reversible causes
+
+The fourteenth Neurology lab owns verified-baseline, acute-fluctuation, qualified-assessment, and
+multicausal contributor review rather than duplicating emergence, infection, shock, stroke, seizure,
+toxicity, or future nursing falls-risk labs. The learner reconciles hypoactive and restless change,
+attention, perception, function, and the whole patient; recognizes a qualified 4AT and expert
+diagnosis boundary without treating the score as a cause, capacity test, severity scale, or dementia
+label; activates qualified medical, nursing, pharmacy, family, safety, capacity, mobility, and
+supportive owners; reviews reversible contributors, familiar communication, environment,
+de-escalation, and least-restrictive care; then reviews a strict 6-hour multicontributor report with
+attention still fluctuating before an elapsed active-risk handoff. No learner history, examination,
+score, capacity assessment, test, diagnosis, observation, restraint, reorientation, mobility, drug,
+dose, route, access, catheter, procedure, treatment effect, recovery, disposition, prognosis, or
+outcome control exists.
+
 #### Neurology: 15
 
 Acute ischemic stroke; large-vessel-occlusion escalation; intracranial hemorrhage; subarachnoid

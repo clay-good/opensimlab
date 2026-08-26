@@ -5262,6 +5262,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-neurology-delirium-baseline-clock-fluctuation-attention-perception-function-and-whole-patient',
+      'recognize-neurology-delirium-indicators-and-qualified-assessment-boundary-without-dementia-or-single-cause-closure',
+      'activate-neurology-delirium-qualified-medical-nursing-pharmacy-family-safety-capacity-and-mobility-ownership',
+      'review-neurology-delirium-reversible-contributors-communication-environment-deescalation-and-treatment-boundary',
+      'review-neurology-delirium-strict-later-contributor-and-unresolved-cognitive-trajectory',
+      'handoff-neurology-delirium-causes-capacity-safety-medicines-function-recurrence-follow-up-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'acute-delirium-reversible-causes'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acute-delirium-reversible-causes-reassessment')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acute-delirium-reversible-causes-reassessment-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neurology acute-delirium lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'Verified baseline, acute clock, fluctuation, attention, perception, function, and whole-patient state were reconciled.'],
+        ['assessment-boundary-recognized', 'Delirium indicators and qualified assessment were recognized without treating 4AT as a cause, capacity test, severity scale, or dementia label.'],
+        ['qualified-ownership-activated', 'Qualified medical, nursing, pharmacy, family, safety, capacity, mobility, and supportive owners were activated.'],
+        ['contributor-boundary-reviewed', 'Reversible contributors, communication, environment, de-escalation, least-restrictive safety, and treatment boundaries were reviewed.'],
+        ['later-contributors-reviewed', 'Elapsed contributor and cognitive findings were integrated without one-cause, treatment-effect, or recovery claims.'],
+        ['active-risk-handoff-recorded', 'Causes, cognition, capacity, safety, medicines, function, recurrence, follow-up, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^neurology-delirium-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^neurology-delirium-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

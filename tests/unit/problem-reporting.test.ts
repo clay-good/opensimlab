@@ -22,9 +22,9 @@ describe('scenario report contract', () => {
     const catalog = JSON.parse(readFileSync(
       join(process.cwd(), 'workers/reports/src/report-catalog.generated.json'), 'utf8',
     )) as { scenarios: { moduleId: string; scenarioId: string; contentVersion: string }[] };
-    expect(catalog.scenarios).toHaveLength(149);
+    expect(catalog.scenarios).toHaveLength(150);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(149);
+      .toBe(150);
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'neurology', scenarioId: 'basilar-artery-occlusion-escalation',
       contentVersion: '0.1.0',
@@ -59,6 +59,10 @@ describe('scenario report contract', () => {
     }));
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'neurology', scenarioId: 'metastatic-spinal-cord-compression',
+      contentVersion: '0.1.0',
+    }));
+    expect(catalog.scenarios).toContainEqual(expect.objectContaining({
+      moduleId: 'neurology', scenarioId: 'acute-delirium-reversible-causes',
       contentVersion: '0.1.0',
     }));
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
@@ -488,6 +492,18 @@ describe('scenario report contract', () => {
       .toEqual({ ok: false, status: 400 });
     expect(validateReportPayload({ ...report, canonical_url: `${neurology.canonicalUrl}#tick-12` }))
       .toEqual({ ok: false, status: 403 });
+  });
+
+  it('accepts the exact Neurology delirium context and rejects drift', () => {
+    const neurology: ScenarioReportContext = {
+      ...context, moduleId: 'neurology', scenarioId: 'acute-delirium-reversible-causes',
+      canonicalUrl: 'https://opensimlab.com/neurology/scenario/acute-delirium-reversible-causes',
+      fidelityClass: 'state_transition', simulatedTick: 12,
+    };
+    const report = buildScenarioReportRequest(neurology, 'clinical-content', 'The delirium contributor boundary may need review.', 'token');
+    expect(validateReportPayload(report)).toMatchObject({ ok: true });
+    expect(validateReportPayload({ ...report, scenario_id: 'delirium' })).toEqual({ ok: false, status: 400 });
+    expect(validateReportPayload({ ...report, canonical_url: `${neurology.canonicalUrl}#tick-12` })).toEqual({ ok: false, status: 403 });
   });
 
   it('rejects unknown fields, stale versions, learner-state URLs, unsafe text, and token overflow', () => {

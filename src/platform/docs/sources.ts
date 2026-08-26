@@ -2916,6 +2916,28 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'https://www.nice.org.uk/guidance/qs56/chapter/Quality-statement-3-Imaging-for-adults-with-suspected-metastatic-spinal-cord-compression',
     verifiedOn: '2026-08-26',
   },
+  {
+    id: 'nice-cg103-delirium-2023',
+    currency: { lastAmended: '2023-01-18', checkedAt: '2026-08-26' },
+    authors: 'National Institute for Health and Care Excellence',
+    title: 'Delirium: prevention, diagnosis and management in hospital and long-term care',
+    publication: 'NICE guideline CG103', year: 2023,
+    locator: 'Recommendations 1.3.1-1.3.2, 1.4.1-1.4.13, 1.5.1-1.5.2, 1.6.1-1.6.4, 1.7.1-1.7.2, 1.7.5, and 1.8.1',
+    usedFor: 'Acute-change and hypoactive indicators, qualified 4AT assessment and expert diagnosis, multicomponent contributor care, communication and reassurance, re-evaluation when unresolved, and family information.',
+    verifiedAgainst: 'https://www.nice.org.uk/guidance/cg103/chapter/Recommendations',
+    verifiedOn: '2026-08-26',
+  },
+  {
+    id: 'nice-qs63-delirium-2023',
+    currency: { lastAmended: '2023-01-18', checkedAt: '2026-08-26' },
+    authors: 'National Institute for Health and Care Excellence',
+    title: 'Delirium in adults: quality statements',
+    publication: 'NICE quality standard QS63', year: 2023,
+    locator: 'Quality statements 1-5; recent change, tailored contributors, de-escalation before antipsychotics, information, and continuity',
+    usedFor: 'Early recognition, tailored reversible-contributor review, least-restrictive de-escalation, family support, and documented continuity after delirium.',
+    verifiedAgainst: 'https://www.nice.org.uk/guidance/qs63/chapter/Quality-statements',
+    verifiedOn: '2026-08-26',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

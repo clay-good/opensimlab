@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Neurology cord-compression state has protocol version 145', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(145);
+  it('Scenario: Neurology delirium state has protocol version 146', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(146);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

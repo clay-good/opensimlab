@@ -511,6 +511,18 @@ credited toward the catalog until every item in the completion contract passes.
     handoff without learner history, examination, gait testing, movement, imaging acquisition or
     interpretation, diagnosis, drug, dose, route, access, catheter, surgery, radiotherapy, biopsy,
     procedure, treatment effect, recovery, disposition, prognosis, or outcome control.
+  - [x] Neurology slice 14/15 adds one authored independently functioning 82-year-old with a verified
+    normal morning baseline and 10 hours of alternating withdrawal, restlessness, visual
+    misperception, disorganized answers, and inattention. The learner reconciles baseline and
+    fluctuation, recognizes a qualified 4AT and expert-diagnosis boundary without dementia or
+    single-cause closure, activates medical, nursing, pharmacy, family, safety, capacity, mobility,
+    and supportive ownership, reviews reversible contributors and familiar least-restrictive care,
+    then reviews a strict 6-hour report with urinary retention, recent anticholinergic exposure,
+    poor intake, pain, fragmented sleep, absent hearing aids, and unresolved fluctuating attention
+    before another elapsed cause, capacity, safety, medicine, function, recurrence, follow-up, and
+    active-risk handoff without learner history, examination, scoring, capacity assessment, test,
+    diagnosis, observation, restraint, reorientation, mobility, drug, dose, route, access, catheter,
+    procedure, treatment effect, recovery, disposition, prognosis, or outcome control.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.

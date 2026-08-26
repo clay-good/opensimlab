@@ -4151,6 +4151,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use the whole evolving cord-level pattern, direct verified assessment, immediate qualified escalation, patient-specific protection and medical care, continuous reassessment, and definitive multidisciplinary treatment.',
     briefIn: ['metastatic-spinal-cord-compression'],
   },
+  {
+    id: 'delirium-baseline-clock-assessment-contributors-care-and-later-state-are-authored',
+    headline: 'The baseline, clock, cognition, 4AT, diagnosis, contributor, qualified-care, and later reports are authored.',
+    simplification: 'Fixed family and team reports stand in for history, examination, attention and orientation tasks, 4AT, diagnosis, capacity, physiology, tests, contributor review, qualified care, and reassessment.',
+    whereItMisleads: 'Treating fictional fluctuation, a supplied score, contributor, or later improvement as learner evidence, one proven cause, dementia, capacity, treatment effect, recovery, or predicted course.',
+    correctUnderstanding: 'Real care requires verified baseline and serial change, direct qualified assessment, decision-specific capacity review, individualized multicomponent care, and continuous reassessment.',
+    briefIn: ['acute-delirium-reversible-causes'],
+  },
+  {
+    id: 'delirium-controls-reconcile-recognize-activate-review-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, assessment-boundary recognition, qualified ownership, contributor review, later-report review, and handoff only.',
+    simplification: 'Six actions stand in for medical, nursing, pharmacy, family, safety, capacity, mobility, pain, nutrition, bladder, bowel, sensory, sleep, safeguarding, and handoff work.',
+    whereItMisleads: 'Equating button order with examination, score interpretation, diagnosis, capacity assessment, observation, restraint, prescribing, treatment, procedure, disposition, or competence.',
+    correctUnderstanding: 'Actual care requires the person, familiar support, trained teams, verified serial findings, current local protocols, individualized least-restrictive care, and reassessment.',
+    briefIn: ['acute-delirium-reversible-causes'],
+  },
+  {
+    id: 'no-live-delirium-history-exam-score-capacity-test-diagnosis-drug-restraint-procedure-or-outcome',
+    headline: 'The lab does not examine, score, assess capacity, test, diagnose, restrain, prescribe, treat, perform a procedure, or report outcome.',
+    simplification: 'No live history, cognitive or neurological examination, 4AT or another score, capacity assessment, observation, oxygenation, bladder, blood, urine, imaging, EEG or another test, diagnosis, reorientation, mobility, restraint, fluid, analgesic, antipsychotic, sedative or other drug, dose, route, access, catheter, procedure, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Using one score as diagnosis or capacity, assigning one cause, overlooking hypoactive change, defaulting to restraint or medication, copying fictional values into care, or reading completion as competence.',
+    correctUnderstanding: 'Use verified baseline and fluctuation, direct qualified assessment, a broad cause combination, familiar communication, individualized least-restrictive care, family partnership, and serial reassessment.',
+    briefIn: ['acute-delirium-reversible-causes'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

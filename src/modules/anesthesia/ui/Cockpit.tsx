@@ -1061,6 +1061,9 @@ export function Cockpit({
           onNeurologyMsccResponse={(action) => session.act({
             type: 'metastatic-spinal-cord-compression-response', payload: { action },
           })}
+          onNeurologyDeliriumResponse={(action) => session.act({
+            type: 'acute-delirium-reversible-causes-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}
