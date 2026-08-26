@@ -78,7 +78,7 @@ screening-rule calculation, abuse or perpetrator diagnosis, confrontation, refer
 submission, jurisdiction selection, custody action, procedure, treatment, disposition, or outcome
 controls.
 
-Wave E Neurology catalog work now includes 11 of 15 bounded labs. Minor nondisabling acute ischemic
+Wave E Neurology catalog work now includes 12 of 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later
 neurological trajectory, and elapsed etiology, recurrence, secondary-prevention, and active-risk
@@ -140,8 +140,15 @@ prognosis, or outcome controls.
 Raised intracranial pressure with visual threat adds specialist-confirmed papilledema, supplied
 visual function, MRI plus venography, qualified LP, a strict 24-hour worsening visual-field report
 despite preserved 20/20 acuity, and urgent sight-preservation handoff without duplicating the
-monitored traumatic-ICP or next herniation labs and without examination, testing, interpretation,
+monitored traumatic-ICP or acute herniation labs and without examination, testing, interpretation,
 diagnosis, drug, dose, LP, procedure, treatment, disposition, prognosis, or outcome controls.
+Acute transtentorial herniation pattern adds a rapid consciousness, pupil, motor, physiological,
+and temporal mass-effect convergence; immediate qualified airway, neurocritical, neurosurgical, and
+brain-rescue ownership; a strict 15-minute supplied rescue report with the pupil still nonreactive;
+and elapsed lesion, airway, pressure, seizure, surgery, complication, and active-risk handoff without
+examination, scoring, monitoring, imaging interpretation, diagnosis, airway management, drug, dose,
+route, access, drain, decompression, procedure, treatment-effect, recovery, disposition, prognosis,
+or outcome controls.
 
 The goal is not a tech demo. It is the best anesthesia education on the internet: the
 thing a student opens the night before their first day in the OR and comes out of

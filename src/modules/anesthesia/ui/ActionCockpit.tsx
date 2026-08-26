@@ -1155,6 +1155,11 @@ export interface ActionCockpitProps {
       readonly eyesAtTick: number | null; readonly diagnosticsAtTick: number | null;
       readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly neurologyHerniationAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly ownershipAtTick: number | null; readonly boundaryAtTick: number | null;
+      readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1951,6 +1956,14 @@ export interface ActionCockpitProps {
       | 'review-neurology-raised-icp-strict-later-worsening-visual-field-and-imminent-sight-threat'
       | 'handoff-neurology-raised-icp-vision-rescue-cause-disease-headache-follow-up-and-active-risk',
   ) => void;
+  readonly onNeurologyHerniationResponse?: (
+    action: 'reconcile-neurology-herniation-clock-consciousness-pupils-motor-physiology-and-whole-patient'
+      | 'recognize-neurology-converging-transtentorial-herniation-pattern-without-isolated-pupil-or-complete-triad'
+      | 'activate-neurology-herniation-qualified-airway-neurocritical-neurosurgical-and-brain-rescue-ownership'
+      | 'review-neurology-herniation-immediate-systemic-brain-rescue-imaging-and-definitive-source-control-boundary'
+      | 'review-neurology-herniation-strict-later-qualified-rescue-and-unresolved-neurologic-trajectory'
+      | 'handoff-neurology-herniation-lesion-airway-pressure-seizure-surgery-and-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2428,6 +2441,12 @@ export function crisisResponseAvailability(
         && event.target === 'raised-intracranial-pressure-visual-threat-reassessment')
       && scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'raised-intracranial-pressure-visual-threat-reassessment-boundary'),
+    hasNeurologyHerniationResponse:
+      scenario.metadata.id === 'acute-transtentorial-herniation-pattern'
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'acute-transtentorial-herniation-pattern-reassessment')
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'acute-transtentorial-herniation-pattern-reassessment-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2621,6 +2640,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'suspected-herpes-simplex-encephalitis-reassessment')
       || (event.type === 'narrative'
         && event.target === 'raised-intracranial-pressure-visual-threat-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'acute-transtentorial-herniation-pattern-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2704,6 +2725,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeurologyMeningitisResponse,
     hasNeurologyEncephalitisResponse,
     hasNeurologyRaisedIcpResponse,
+    hasNeurologyHerniationResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2787,7 +2809,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeurologyFocalMotorStatusResponse || hasNeurologyNcseResponse
     || hasNeurologyMyasthenicCrisisResponse || hasNeurologyGbsResponse
     || hasNeurologyMeningitisResponse || hasNeurologyEncephalitisResponse
-    || hasNeurologyRaisedIcpResponse;
+    || hasNeurologyRaisedIcpResponse || hasNeurologyHerniationResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2818,7 +2840,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasNeurologyRaisedIcpResponse
+  const responseTray = hasNeurologyHerniationResponse
+    ? { id: 'crisis', label: 'Acute brain rescue' } as const
+    : hasNeurologyRaisedIcpResponse
     ? { id: 'crisis', label: 'Raised pressure + vision' } as const
     : hasNeurologyEncephalitisResponse
     ? { id: 'crisis', label: 'Encephalitis reassessment' } as const
@@ -3144,6 +3168,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeurologyMeningitisResponse
     || hasNeurologyEncephalitisResponse
     || hasNeurologyRaisedIcpResponse
+    || hasNeurologyHerniationResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3925,6 +3950,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <NeurologyRaisedIcpTray
                 assessment={props.resuscitation.neurologyRaisedIcpAssessment}
                 onAction={props.onNeurologyRaisedIcpResponse ?? (() => {})} />
+            )}
+            {hasNeurologyHerniationResponse && (
+              <NeurologyHerniationTray
+                assessment={props.resuscitation.neurologyHerniationAssessment}
+                onAction={props.onNeurologyHerniationResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -10114,6 +10144,38 @@ function NeurologyRaisedIcpTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {diagnostics && !later && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-raised-icp-strict-later-worsening-visual-field-and-imminent-sight-threat')}>Review the 24-hour fields</Button>}
         {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-raised-icp-vision-rescue-cause-disease-headache-follow-up-and-active-risk')}>Hand off sight + active risk</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function NeurologyHerniationTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyHerniationAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNeurologyHerniationResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const ownership = assessment?.ownershipAtTick != null;
+  const boundary = assessment?.boundaryAtTick != null;
+  const later = assessment?.laterAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="neurology-herniation-early-title">
+      <div id="neurology-herniation-early-title" className="syringe__name">The pattern changed now.</div>
+      <p className="syringe__remaining">Consciousness, pupils, movement, physiology, and structure converge. One sign never stands alone.</p>
+      <div className="crisis-drug__actions">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neurology-herniation-clock-consciousness-pupils-motor-physiology-and-whole-patient')}>Review the rapid change</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-neurology-converging-transtentorial-herniation-pattern-without-isolated-pupil-or-complete-triad')}>Recognize the whole pattern</Button>}
+        {recognition && !ownership && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-herniation-qualified-airway-neurocritical-neurosurgical-and-brain-rescue-ownership')}>Activate brain rescue owners</Button>}
+        {ownership && !boundary && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-herniation-immediate-systemic-brain-rescue-imaging-and-definitive-source-control-boundary')}>Review rescue boundaries</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="neurology-herniation-later-title">
+      <div id="neurology-herniation-later-title" className="syringe__name">Rescue first. Certainty follows.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Lesion, airway, pressure, seizure, surgery, recovery, and outcome uncertainty handed off.' : later ? 'Qualified rescue is active, but the pupil remains nonreactive and definitive control is unresolved.' : boundary ? 'Parallel rescue and definitive-control owners are active. Review the fixed 15-minute report after time passes.' : 'Complete the pattern, recognition, owners, and rescue boundary before reassessment.'}</p>
+      <div className="crisis-drug__actions">
+        {boundary && !later && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-herniation-strict-later-qualified-rescue-and-unresolved-neurologic-trajectory')}>Review the 15-minute report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-herniation-lesion-airway-pressure-seizure-surgery-and-active-risk')}>Hand off rescue + active risk</Button>}
       </div>
     </section>
   </>;

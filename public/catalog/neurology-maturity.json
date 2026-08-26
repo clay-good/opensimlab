@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "neurology",
-  "recordCount": 11,
+  "recordCount": 12,
   "records": [
     {
       "recordId": "scenario:minor-nondisabling-acute-ischemic-stroke@0.1.0",
@@ -122,6 +122,17 @@
       "evidence": [
         "/catalog/neurology-completion-audit.json#raised-intracranial-pressure-visual-threat@0.1.0",
         "/catalog/neurology-quality-audit.json#raised-intracranial-pressure-visual-threat@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:acute-transtentorial-herniation-pattern@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "acute-transtentorial-herniation-pattern",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/neurology-completion-audit.json#acute-transtentorial-herniation-pattern@0.1.0",
+        "/catalog/neurology-quality-audit.json#acute-transtentorial-herniation-pattern@0.1.0"
       ]
     }
   ]

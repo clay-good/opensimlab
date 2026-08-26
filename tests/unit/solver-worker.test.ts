@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Neurology raised-ICP state has protocol version 143', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(143);
+  it('Scenario: Neurology acute-herniation state has protocol version 144', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(144);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

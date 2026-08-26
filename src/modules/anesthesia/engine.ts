@@ -363,6 +363,11 @@ const NEUROLOGY_RAISED_ICP_BLOCKED_ACTION_TYPES = new Set([
   ...NEUROLOGY_ENCEPHALITIS_BLOCKED_ACTION_TYPES,
   'suspected-herpes-simplex-encephalitis-response', 'intracranial-hypertension-response',
 ]);
+const NEUROLOGY_HERNIATION_BLOCKED_ACTION_TYPES = new Set([
+  ...NEUROLOGY_RAISED_ICP_BLOCKED_ACTION_TYPES,
+  'raised-intracranial-pressure-visual-threat-response', 'airway-device', 'laryngoscopy',
+  'ventilator', 'bolus', 'infusion',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1176,6 +1181,12 @@ export class AnesthesiaEngine {
   private neurologyRaisedIcpDiagnosticsAtTick: number | null = null;
   private neurologyRaisedIcpLaterAtTick: number | null = null;
   private neurologyRaisedIcpHandoffAtTick: number | null = null;
+  private neurologyHerniationTrajectoryAtTick: number | null = null;
+  private neurologyHerniationRecognitionAtTick: number | null = null;
+  private neurologyHerniationOwnershipAtTick: number | null = null;
+  private neurologyHerniationBoundaryAtTick: number | null = null;
+  private neurologyHerniationLaterAtTick: number | null = null;
+  private neurologyHerniationHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1895,6 +1906,18 @@ export class AnesthesiaEngine {
         'This Neurology lesson exposes no generic pressure, hyperosmolar, drug, dose, route, access, '
         + 'eye examination, imaging, venography, LP, shunt, fenestration, stent, herniation, or '
         + 'adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const neurologyHerniation = this.scenario.metadata.id
+      === 'acute-transtentorial-herniation-pattern'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'acute-transtentorial-herniation-pattern-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'acute-transtentorial-herniation-pattern-reassessment-boundary');
+    if (neurologyHerniation && NEUROLOGY_HERNIATION_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `neurology-herniation-generic-action-refused-${this.currentTick}`,
+        'This Neurology lesson exposes no generic airway, ventilation, oxygen, pressure, '
+        + 'hyperosmolar, drug, dose, route, access, imaging, drain, surgery, procedure, raised-ICP, '
+        + 'hemorrhage, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -9719,6 +9742,71 @@ export class AnesthesiaEngine {
           'Visual fields and papilledema, urgent rescue selection, secondary causes, individualized disease modification and medicine safety, headache disability and medication overuse, diplopia, recurrence, follow-up, disposition, prognosis, and outcome uncertainty were handed off. No learner procedure, treatment, visual rescue, disposition, prognosis, or outcome is claimed.',
           { procedureSelectedByLearner: false, treatmentDeliveredByLearner: false, visualRescueProven: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
       }
+      case 'acute-transtentorial-herniation-pattern-response': {
+        const response = typeof action.payload.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'acute-transtentorial-herniation-pattern'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acute-transtentorial-herniation-pattern-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acute-transtentorial-herniation-pattern-reassessment-boundary');
+        const actions = [
+          'reconcile-neurology-herniation-clock-consciousness-pupils-motor-physiology-and-whole-patient',
+          'recognize-neurology-converging-transtentorial-herniation-pattern-without-isolated-pupil-or-complete-triad',
+          'activate-neurology-herniation-qualified-airway-neurocritical-neurosurgical-and-brain-rescue-ownership',
+          'review-neurology-herniation-immediate-systemic-brain-rescue-imaging-and-definitive-source-control-boundary',
+          'review-neurology-herniation-strict-later-qualified-rescue-and-unresolved-neurologic-trajectory',
+          'handoff-neurology-herniation-lesion-airway-pressure-seizure-surgery-and-active-risk',
+        ] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) {
+          this.log('warning', 'assessment', `neurology-herniation-response-refused-${this.currentTick}`,
+            supported ? 'The herniation action was not listed. No supplied or injected text was retained.' : 'These herniation choices are available only in the exact declared Neurology lesson.'); break;
+        }
+        if (response === actions[0]) {
+          if (this.neurologyHerniationTrajectoryAtTick !== null) { this.log('warning', 'assessment', `neurology-herniation-trajectory-refused-${this.currentTick}`, 'The supplied whole-patient trajectory was already reconciled.'); break; }
+          this.neurologyHerniationTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-herniation-trajectory-reconciled-${this.currentTick}`,
+            'The supplied 12-minute consciousness decline connects new right pupillary nonreactivity, left motor extension, spontaneous breathing with unreliable airway protection, bradycardia, hypertension, and known right temporal mass effect. The learner did not take history, examine, score, monitor, image, diagnose, or treat.',
+            { acuteTranstentorialHerniationPatternAuthored: true, patientHistoryTakenByLearner: false, patientExaminedByLearner: false, scoreCalculatedByLearner: false }); break;
+        }
+        if (this.neurologyHerniationTrajectoryAtTick === null) { this.log('warning', 'assessment', `neurology-herniation-trajectory-order-refused-${this.currentTick}`, 'Reconcile the whole-patient trajectory first.'); break; }
+        if (response === actions[1]) {
+          if (this.neurologyHerniationRecognitionAtTick !== null) { this.log('warning', 'assessment', `neurology-herniation-recognition-refused-${this.currentTick}`, 'The converging herniation pattern was already recognized.'); break; }
+          this.neurologyHerniationRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-herniation-converging-pattern-recognized-${this.currentTick}`,
+            'Rapid consciousness decline, a new ipsilateral nonreactive pupil, contralateral motor change, severe physiology, and supplied temporal mass effect converge on the authored transtentorial herniation emergency. An isolated pupil or complete Cushing triad is not required or sufficient by itself.',
+            { convergingPatternRecognized: true, diagnosisMadeByLearner: false, imagingInterpretedByLearner: false }); break;
+        }
+        if (this.neurologyHerniationRecognitionAtTick === null) { this.log('warning', 'assessment', `neurology-herniation-recognition-order-refused-${this.currentTick}`, 'Recognize the converging emergency pattern before activating rescue ownership.'); break; }
+        if (response === actions[2]) {
+          if (this.neurologyHerniationOwnershipAtTick !== null) { this.log('warning', 'assessment', `neurology-herniation-ownership-refused-${this.currentTick}`, 'Qualified airway, neurocritical, neurosurgical, and brain-rescue ownership is already active.'); break; }
+          this.neurologyHerniationOwnershipAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-herniation-qualified-ownership-activated-${this.currentTick}`,
+            'Qualified airway, neurocritical, neurosurgical, nursing, respiratory, pharmacy, imaging, and operating-room teams now own simultaneous stabilization, rescue, reassessment, and definitive control without waiting for repeat learner certainty.',
+            { qualifiedOwnershipActive: true, airwayProcedurePerformedByLearner: false, drugSelectedByLearner: false, procedureSelectedByLearner: false }); break;
+        }
+        if (this.neurologyHerniationOwnershipAtTick === null) { this.log('warning', 'assessment', `neurology-herniation-ownership-order-refused-${this.currentTick}`, 'Activate qualified rescue ownership before reviewing the treatment boundary.'); break; }
+        if (response === actions[3]) {
+          if (this.neurologyHerniationBoundaryAtTick !== null) { this.log('warning', 'assessment', `neurology-herniation-boundary-refused-${this.currentTick}`, 'The systemic, brain-rescue, imaging, and source-control boundary was already reviewed.'); break; }
+          this.neurologyHerniationBoundaryAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-herniation-brain-rescue-boundary-reviewed-${this.currentTick}`,
+            'Qualified teams own airway and systemic protection, reversible threats, positioning, oxygenation, ventilation, perfusion, glucose, temperature, seizure care, individualized expert-selected osmotic rescue, urgent imaging, and definitive decompression or source control. No universal drug, dose, route, ventilation target, device, operation, or response is taught.',
+            { qualifiedBrainRescueBoundaryReviewed: true, doseSelectedByLearner: false, treatmentDeliveredByLearner: false, treatmentEffectProven: false }); break;
+        }
+        if (this.neurologyHerniationBoundaryAtTick === null) { this.log('warning', 'assessment', `neurology-herniation-boundary-order-refused-${this.currentTick}`, 'Review the qualified brain-rescue boundary before the later report.'); break; }
+        if (response === actions[4]) {
+          if (this.currentTick <= this.neurologyHerniationBoundaryAtTick) { this.log('warning', 'assessment', `neurology-herniation-later-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before reviewing the fixed 15-minute report.'); break; }
+          if (this.neurologyHerniationLaterAtTick !== null) { this.log('warning', 'assessment', `neurology-herniation-later-refused-${this.currentTick}`, 'The fixed qualified-rescue trajectory was already reviewed.'); break; }
+          this.neurologyHerniationLaterAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-herniation-later-qualified-rescue-reviewed-${this.currentTick}`,
+            'At 15 minutes, qualified teams report a secured airway, bilateral ventilation, SpO2 99%, end-tidal CO2 36 mmHg, individualized brain-rescue care, and an active operating-room pathway. The right pupil remains nonreactive; decompression, neurological recovery, durable pressure control, treatment effect, survival, and outcome are not reported.',
+            { laterQualifiedRescueAuthored: true, airwayProcedurePerformedByLearner: false, treatmentEffectProven: false, neurologicRecoveryProven: false, definitiveSourceControlProven: false }); break;
+        }
+        if (this.neurologyHerniationLaterAtTick === null) { this.log('warning', 'assessment', `neurology-herniation-later-order-refused-${this.currentTick}`, 'Review the fixed later rescue trajectory before handoff.'); break; }
+        if (this.currentTick <= this.neurologyHerniationLaterAtTick) { this.log('warning', 'assessment', `neurology-herniation-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off active herniation risk.'); break; }
+        if (this.neurologyHerniationHandoffAtTick !== null) { this.log('warning', 'assessment', `neurology-herniation-handoff-refused-${this.currentTick}`, 'The lesion, airway, pressure, seizure, surgery, and active-risk handoff was already recorded.'); break; }
+        this.neurologyHerniationHandoffAtTick = this.currentTick;
+        this.log('critical', 'assessment', `neurology-herniation-active-risk-handoff-recorded-${this.currentTick}`,
+          'The structural lesion, consciousness, pupils, motor trajectory, airway and ventilation, perfusion, pressure strategy, seizure risk, definitive surgery, complications, recurrence, rehabilitation, disposition, prognosis, and outcome uncertainty were handed off.',
+          { treatmentEffectProven: false, neurologicRecoveryProven: false, durablePressureControlProven: false, definitiveSourceControlProven: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -15833,6 +15921,40 @@ export class AnesthesiaEngine {
               treatmentDeliveredByLearner: false as const,
               visualRescueProven: false as const,
               herniationAuthored: false as const,
+              dispositionDetermined: false as const,
+              prognosisPredicted: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'acute-transtentorial-herniation-pattern'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acute-transtentorial-herniation-pattern-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acute-transtentorial-herniation-pattern-reassessment-boundary') ? {
+            neurologyHerniationAssessment: {
+              trajectoryAtTick: this.neurologyHerniationTrajectoryAtTick,
+              recognitionAtTick: this.neurologyHerniationRecognitionAtTick,
+              ownershipAtTick: this.neurologyHerniationOwnershipAtTick,
+              boundaryAtTick: this.neurologyHerniationBoundaryAtTick,
+              laterAtTick: this.neurologyHerniationLaterAtTick,
+              handoffAtTick: this.neurologyHerniationHandoffAtTick,
+              acuteTranstentorialHerniationPatternAuthored: true as const,
+              convergingPatternRecognized: this.neurologyHerniationRecognitionAtTick !== null,
+              qualifiedOwnershipActive: this.neurologyHerniationOwnershipAtTick !== null,
+              qualifiedBrainRescueBoundaryReviewed: this.neurologyHerniationBoundaryAtTick !== null,
+              laterQualifiedRescueAuthored: this.neurologyHerniationLaterAtTick !== null,
+              patientHistoryTakenByLearner: false as const,
+              patientExaminedByLearner: false as const,
+              scoreCalculatedByLearner: false as const,
+              imagingInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const,
+              airwayProcedurePerformedByLearner: false as const,
+              drugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const,
+              procedureSelectedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              treatmentEffectProven: false as const,
+              neurologicRecoveryProven: false as const,
+              durablePressureControlProven: false as const,
+              definitiveSourceControlProven: false as const,
               dispositionDetermined: false as const,
               prognosisPredicted: false as const,
               outcomePredicted: false as const,

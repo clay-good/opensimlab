@@ -487,6 +487,17 @@ credited toward the catalog until every item in the completion contract passes.
     sight-rescue and active-risk handoff without learner examination, testing, interpretation,
     diagnosis, drug, dose, route, access, LP, procedure, treatment, herniation, visual rescue,
     disposition, prognosis, or outcome control.
+  - [x] Neurology slice 12/15 adds one authored 58-year-old with a recently identified right
+    temporal mass and a 12-minute decline from GCS 14 to GCS 9, new right pupillary nonreactivity,
+    left-arm extension, bradycardia, hypertension, and supplied CT mass effect. The learner
+    reconciles the whole pattern, recognizes the emergency without an isolated pupil or complete
+    triad, activates qualified airway, neurocritical, neurosurgical, and brain-rescue ownership,
+    reviews individualized systemic, osmotic, imaging, and definitive-control boundaries, then
+    reviews a strict 15-minute supplied qualified-rescue report with the pupil still nonreactive
+    before another elapsed lesion, airway, pressure, seizure, surgery, complication, and active-risk
+    handoff without learner examination, scoring, monitoring, imaging interpretation, diagnosis,
+    airway management, oxygen, ventilation, drug, dose, route, access, drain, decompression,
+    procedure, treatment effect, recovery, disposition, prognosis, or outcome control.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.

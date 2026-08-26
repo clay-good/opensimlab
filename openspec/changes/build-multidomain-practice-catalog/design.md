@@ -2201,6 +2201,19 @@ surveillance, and active-risk handoff. No learner examination, test interpretati
 dose, route, access, LP, procedure selection, treatment, visual rescue, disposition, prognosis, or
 outcome control exists, and no herniation pattern is authored.
 
+### Wave E neurology slice 12: acute transtentorial herniation pattern
+
+The twelfth Neurology lab owns the rapidly converging clinical herniation emergency rather than
+duplicating stable visual-threat, posterior-fossa hydrocephalus, hemorrhage-reversal, or monitored
+post-traumatic ICP treatment. The learner reconciles rapid consciousness, pupil, motor,
+physiological, and supplied right temporal mass-effect change; recognizes the whole pattern without
+requiring an isolated pupil or complete Cushing triad; activates qualified airway, neurocritical,
+neurosurgical, and brain-rescue ownership; reviews individualized systemic, osmotic, imaging, and
+definitive-control boundaries; then reviews a strict 15-minute supplied qualified-rescue report with
+the pupil still nonreactive before an elapsed active-risk handoff. No learner examination, scoring,
+monitoring, imaging, diagnosis, airway management, oxygen, ventilation, drug, dose, route, access,
+drain, surgery, procedure, treatment, recovery, disposition, prognosis, or outcome control exists.
+
 #### Neurology: 15
 
 Acute ischemic stroke; large-vessel-occlusion escalation; intracranial hemorrhage; subarachnoid

@@ -4103,6 +4103,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use direct verified serial visual and neurological findings, qualified multidisciplinary teams, current guidance and local protocols, individualized cause and treatment decisions, and continuous reassessment.',
     briefIn: ['raised-intracranial-pressure-visual-threat'],
   },
+  {
+    id: 'herniation-clock-exam-imaging-care-and-later-state-are-authored',
+    headline: 'The clock, neurological examination, CT, physiology, qualified care, and later state are authored.',
+    simplification: 'Fixed reports stand in for history, GCS, pupil and motor examination, airway assessment, monitoring, glucose, CT, qualified airway and brain-rescue care, operating-room activation, and reassessment.',
+    whereItMisleads: 'Treating fictional findings, anisocoria, mass effect, supplied care, or a later monitor change as learner evidence, a universal diagnosis, treatment effect, recovery, or predicted course.',
+    correctUnderstanding: 'Real care requires immediate direct reassessment, verified serial findings, experienced emergency, airway, neurocritical and neurosurgical teams, current local pathways, individualized rescue, and definitive cause control.',
+    briefIn: ['acute-transtentorial-herniation-pattern'],
+  },
+  {
+    id: 'herniation-controls-reconcile-recognize-activate-review-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, pattern recognition, qualified ownership, boundary review, later-report review, and handoff only.',
+    simplification: 'Six actions stand in for airway, neurocritical, neurosurgical, nursing, respiratory, pharmacy, imaging, operating-room, rescue, and handoff work.',
+    whereItMisleads: 'Equating button order with examination, scoring, diagnosis, airway management, prescribing, imaging, pressure treatment, surgery, procedure, disposition, or competence.',
+    correctUnderstanding: 'Actual care requires the patient, trained teams, verified serial findings, current local protocols, individualized medical and surgical decisions, and continuous reassessment.',
+    briefIn: ['acute-transtentorial-herniation-pattern'],
+  },
+  {
+    id: 'no-live-herniation-exam-monitor-imaging-diagnosis-airway-drug-procedure-or-outcome',
+    headline: 'The lab does not examine, monitor, image, diagnose, manage an airway, prescribe, operate, treat, or report outcome.',
+    simplification: 'No live history, GCS, pupil or motor examination, monitoring, glucose, blood gas, imaging, ICP or another test, diagnosis, positioning, oxygen, ventilation, fluid, hyperosmolar or other drug, dose, route, access, airway device, drain, decompression, procedure, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Waiting for a complete triad, treating an isolated pupil as proof, copying fictional values into care, applying one drug or ventilation recipe universally, or reading completion as competence.',
+    correctUnderstanding: 'Use the whole evolving pattern, direct verified assessment, immediate qualified rescue, patient-specific medical and surgical decisions, continuous reassessment, and definitive source control.',
+    briefIn: ['acute-transtentorial-herniation-pattern'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

@@ -5214,6 +5214,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-neurology-herniation-clock-consciousness-pupils-motor-physiology-and-whole-patient',
+      'recognize-neurology-converging-transtentorial-herniation-pattern-without-isolated-pupil-or-complete-triad',
+      'activate-neurology-herniation-qualified-airway-neurocritical-neurosurgical-and-brain-rescue-ownership',
+      'review-neurology-herniation-immediate-systemic-brain-rescue-imaging-and-definitive-source-control-boundary',
+      'review-neurology-herniation-strict-later-qualified-rescue-and-unresolved-neurologic-trajectory',
+      'handoff-neurology-herniation-lesion-airway-pressure-seizure-surgery-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'acute-transtentorial-herniation-pattern'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acute-transtentorial-herniation-pattern-reassessment')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acute-transtentorial-herniation-pattern-reassessment-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neurology acute-herniation lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'The rapid consciousness, pupil, motor, respiratory, circulatory, structural, and whole-patient clock was reconciled.'],
+        ['converging-pattern-recognized', 'The converging transtentorial pattern was recognized without relying on an isolated pupil or complete triad.'],
+        ['qualified-ownership-activated', 'Qualified airway, neurocritical, neurosurgical, nursing, respiratory, pharmacy, imaging, and operating-room ownership was activated.'],
+        ['brain-rescue-boundary-reviewed', 'Systemic protection, individualized brain rescue, urgent imaging, and definitive-control boundaries were reviewed without a universal recipe.'],
+        ['later-qualified-rescue-reviewed', 'Elapsed qualified rescue was integrated while the abnormal pupil and unresolved decompression, recovery, pressure, and outcome remained open.'],
+        ['active-risk-handoff-recorded', 'Lesion, airway, pressure, seizure, surgery, complications, recovery, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^neurology-herniation-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^neurology-herniation-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

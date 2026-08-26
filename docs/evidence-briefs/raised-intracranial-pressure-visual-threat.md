@@ -9,7 +9,7 @@ and neuro-ophthalmic ownership. Supplied MRI with venography excludes authored s
 causes before a qualified LP. The learner does not examine, test, diagnose, prescribe, perform LP,
 select a vision procedure, or deliver treatment.
 
-The case remains distinct from the next herniation lab: GCS stays 15, pupils remain equal, physiology
+The case remains distinct from the acute herniation lab: GCS stays 15, pupils remain equal, physiology
 is stable, and no Cushing pattern, posturing, or new persistent motor deficit is authored. The urgent
 threat is worsening peripheral visual function despite preserved 20/20 central acuity.
 

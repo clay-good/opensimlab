@@ -2874,6 +2874,26 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/32675143/',
     verifiedOn: '2026-08-26',
   },
+  {
+    id: 'ncs-enls-intracranial-hypertension-herniation-v6-2026',
+    authors: 'Neurocritical Care Society',
+    title: 'Emergency Neurological Life Support: Intracranial Hypertension and Herniation Protocol, Version 6.0',
+    publication: 'Emergency Neurological Life Support', year: 2026,
+    locator: 'Version 6.0 first-hour intracranial hypertension and herniation recognition, staged rescue, and definitive-control algorithm',
+    usedFor: 'The acute converging-pattern, immediate parallel qualified rescue, individualized medical treatment, and definitive neurosurgical-control boundaries.',
+    verifiedAgainst: 'https://www.neurocriticalcare.org/Portals/0/ENLS%205.0/ENLS%206.0/Protocol%20V6_0_Intracranial%20Hypertension%20and%20Herniation.pdf',
+    verifiedOn: '2026-08-26',
+  },
+  {
+    id: 'enls-intracranial-hypertension-herniation-2015', pmid: '26438459',
+    authors: 'Stevens RD, Shoykhet M, Cadena R',
+    title: 'Emergency Neurological Life Support: Intracranial Hypertension and Herniation',
+    publication: 'Neurocritical Care', year: 2015,
+    locator: '23 Suppl 2:S76-S82; doi:10.1007/s12028-015-0168-z; brain-code recognition and organized emergency treatment',
+    usedFor: 'The time-critical herniation-emergency framing and organized evaluation, rescue, and handoff structure.',
+    verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/26438459/',
+    verifiedOn: '2026-08-26',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

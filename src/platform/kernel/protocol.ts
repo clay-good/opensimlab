@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 143 reports Neurology raised-ICP visual-threat state. */
-export const WORKER_PROTOCOL_VERSION = 143;
+/** Bumped whenever the message shape changes incompatibly. Version 144 reports Neurology acute-herniation state. */
+export const WORKER_PROTOCOL_VERSION = 144;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2155,6 +2155,36 @@ export interface EquipmentSnapshot {
       readonly treatmentDeliveredByLearner: false;
       readonly visualRescueProven: false;
       readonly herniationAuthored: false;
+      readonly dispositionDetermined: false;
+      readonly prognosisPredicted: false;
+      readonly outcomePredicted: false;
+    };
+    readonly neurologyHerniationAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly recognitionAtTick: number | null;
+      readonly ownershipAtTick: number | null;
+      readonly boundaryAtTick: number | null;
+      readonly laterAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly acuteTranstentorialHerniationPatternAuthored: true;
+      readonly convergingPatternRecognized: boolean;
+      readonly qualifiedOwnershipActive: boolean;
+      readonly qualifiedBrainRescueBoundaryReviewed: boolean;
+      readonly laterQualifiedRescueAuthored: boolean;
+      readonly patientHistoryTakenByLearner: false;
+      readonly patientExaminedByLearner: false;
+      readonly scoreCalculatedByLearner: false;
+      readonly imagingInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false;
+      readonly airwayProcedurePerformedByLearner: false;
+      readonly drugSelectedByLearner: false;
+      readonly doseSelectedByLearner: false;
+      readonly procedureSelectedByLearner: false;
+      readonly treatmentDeliveredByLearner: false;
+      readonly treatmentEffectProven: false;
+      readonly neurologicRecoveryProven: false;
+      readonly durablePressureControlProven: false;
+      readonly definitiveSourceControlProven: false;
       readonly dispositionDetermined: false;
       readonly prognosisPredicted: false;
       readonly outcomePredicted: false;
