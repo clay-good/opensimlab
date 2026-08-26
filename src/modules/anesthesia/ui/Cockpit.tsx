@@ -1031,6 +1031,9 @@ export function Cockpit({
           onNeurologyCerebellarIchResponse={(action) => session.act({
             type: 'spontaneous-cerebellar-intracerebral-hemorrhage-response', payload: { action },
           })}
+          onNeurologyAsahDeteriorationResponse={(action) => session.act({
+            type: 'aneurysmal-subarachnoid-hemorrhage-deterioration-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

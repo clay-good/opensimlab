@@ -313,6 +313,15 @@ const NEUROLOGY_CEREBELLAR_ICH_BLOCKED_ACTION_TYPES = new Set([
   'critical-care-status-epilepticus-response', 'hyponatremia-response',
   'glycemic-response', 'acute-aortic-syndrome-response',
 ]);
+const NEUROLOGY_ASAH_BLOCKED_ACTION_TYPES = new Set([
+  ...HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES,
+  'intracranial-hemorrhage-response', 'intracranial-hypertension-response',
+  'spontaneous-cerebellar-intracerebral-hemorrhage-response',
+  'acute-ischemic-stroke-response', 'minor-nondisabling-acute-ischemic-stroke-response',
+  'basilar-artery-occlusion-escalation-response', 'status-epilepticus-response',
+  'critical-care-status-epilepticus-response', 'hyponatremia-response',
+  'glycemic-response', 'acute-aortic-syndrome-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1078,6 +1087,12 @@ export class AnesthesiaEngine {
   private neurologyCerebellarIchOwnershipAtTick: number | null = null;
   private neurologyCerebellarIchLaterAtTick: number | null = null;
   private neurologyCerebellarIchHandoffAtTick: number | null = null;
+  private neurologyAsahTrajectoryAtTick: number | null = null;
+  private neurologyAsahEvidenceAtTick: number | null = null;
+  private neurologyAsahRecognitionAtTick: number | null = null;
+  private neurologyAsahOwnershipAtTick: number | null = null;
+  private neurologyAsahLaterAtTick: number | null = null;
+  private neurologyAsahHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1681,6 +1696,21 @@ export class AnesthesiaEngine {
         'This Neurology lesson exposes no generic reversal, blood-pressure, hyperosmolar, drug, '
         + 'dose, route, imaging, airway, fluid, device, drainage, surgery, procedure, adult ED ICH, '
         + 'critical-care ICP, stroke, or adjacent-scenario action. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const neurologyAsah = this.scenario.metadata.id
+      === 'aneurysmal-subarachnoid-hemorrhage-deterioration'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'aneurysmal-subarachnoid-hemorrhage-deterioration-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target
+          === 'aneurysmal-subarachnoid-hemorrhage-deterioration-reassessment-boundary');
+    if (neurologyAsah && NEUROLOGY_ASAH_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `neurology-asah-generic-action-refused-${this.currentTick}`,
+        'This Neurology lesson exposes no generic nimodipine, vasopressor, fluid, blood-pressure, '
+        + 'seizure, drug, dose, route, imaging, airway, device, drainage, angiography, angioplasty, '
+        + 'procedure, ICH, ICP, stroke, or adjacent-scenario action. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -8625,6 +8655,157 @@ export class AnesthesiaEngine {
             dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false });
         break;
       }
+      case 'aneurysmal-subarachnoid-hemorrhage-deterioration-response': {
+        const response = typeof action.payload.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id
+          === 'aneurysmal-subarachnoid-hemorrhage-deterioration'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'aneurysmal-subarachnoid-hemorrhage-deterioration-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target
+              === 'aneurysmal-subarachnoid-hemorrhage-deterioration-reassessment-boundary');
+        const valid = [
+          'reconcile-neurology-asah-day-aneurysm-status-new-deficit-and-whole-patient',
+          'review-neurology-asah-rebleeding-hydrocephalus-seizure-metabolic-and-perfusion-evidence',
+          'recognize-neurology-asah-possible-dci-without-imaging-alone',
+          'activate-neurology-asah-qualified-neurocritical-neurovascular-and-rescue-ownership',
+          'review-neurology-asah-strict-later-neurologic-and-perfusion-trajectory',
+          'handoff-neurology-asah-dci-aneurysm-recurrence-and-active-risk',
+        ].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `neurology-asah-response-refused-${this.currentTick}`,
+            supported
+              ? 'The aneurysmal-SAH action was not one of the listed choices. No supplied or injected text was retained.'
+              : 'These aneurysmal-SAH choices are available only in the exact declared Neurology lesson.');
+          break;
+        }
+        if (response
+          === 'reconcile-neurology-asah-day-aneurysm-status-new-deficit-and-whole-patient') {
+          if (this.neurologyAsahTrajectoryAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-asah-trajectory-refused-${this.currentTick}`,
+              'The supplied SAH day, aneurysm status, new deficit, physiology, and whole-patient state were already reconciled.');
+            break;
+          }
+          this.neurologyAsahTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-asah-trajectory-reconciled-${this.currentTick}`,
+            'The supplied record describes day 7 after aneurysmal SAH with a reported coiled aneurysm and a new focal neurologic change after a normal morning baseline. The learner did not take a history, examine, score, validate aneurysm status, diagnose, or deliver treatment.',
+            { priorAneurysmalSahAuthored: true, reportedAneurysmSecuredAuthored: true,
+              newFocalDeficitAuthored: true, patientExaminedByLearner: false,
+              diagnosisMadeByLearner: false, treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.neurologyAsahTrajectoryAtTick === null) {
+          this.log('warning', 'assessment', `neurology-asah-trajectory-order-refused-${this.currentTick}`,
+            'Reconcile the supplied SAH course, aneurysm status, new deficit, and whole-patient state first.');
+          break;
+        }
+        if (response
+          === 'review-neurology-asah-rebleeding-hydrocephalus-seizure-metabolic-and-perfusion-evidence') {
+          if (this.neurologyAsahEvidenceAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-asah-evidence-refused-${this.currentTick}`,
+              'The fixed rebleeding, hydrocephalus, seizure, metabolic, and perfusion evidence was already reviewed.');
+            break;
+          }
+          this.neurologyAsahEvidenceAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-asah-evidence-and-threats-reviewed-${this.currentTick}`,
+            'Fixed CT reports no current rebleeding, hydrocephalus, or established new infarct; fixed CTA and perfusion reports show right MCA narrowing and delayed perfusion without a supplied core. Glucose and sodium are supplied. Imaging, EEG, laboratory data, aneurysm durability, DCI, cause, and exclusions were not acquired, interpreted, or determined by the learner.',
+            { fixedImagingAuthored: true, fixedPerfusionEvidenceAuthored: true,
+              imagingAcquiredByLearner: false, imagingInterpretedByLearner: false,
+              dciFinallyProven: false, rebleedingExcluded: false,
+              hydrocephalusExcluded: false, seizureExcluded: false });
+          break;
+        }
+        if (this.neurologyAsahEvidenceAtTick === null) {
+          this.log('warning', 'assessment', `neurology-asah-evidence-order-refused-${this.currentTick}`,
+            'Review the fixed alternative-cause, immediate-threat, and perfusion evidence first.');
+          break;
+        }
+        if (response === 'recognize-neurology-asah-possible-dci-without-imaging-alone') {
+          if (this.neurologyAsahRecognitionAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-asah-boundary-refused-${this.currentTick}`,
+              'The possible-DCI deterioration boundary was already recognized.');
+            break;
+          }
+          this.neurologyAsahRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `neurology-asah-possible-dci-boundary-recognized-${this.currentTick}`,
+            'The delayed focal neurologic deterioration requires urgent qualified DCI evaluation in the full clinical context. Arterial narrowing or perfusion imaging alone does not prove DCI, causality, candidacy, treatment response, or outcome.',
+            { possibleDciBoundaryAuthored: true, imagingAloneUsed: false,
+              vasospasmProvenCausal: false, dciFinallyProven: false,
+              eligibilityDeterminedByLearner: false });
+          break;
+        }
+        if (this.neurologyAsahRecognitionAtTick === null) {
+          this.log('warning', 'assessment', `neurology-asah-boundary-order-refused-${this.currentTick}`,
+            'Recognize the possible-DCI deterioration boundary before activating qualified ownership.');
+          break;
+        }
+        if (response
+          === 'activate-neurology-asah-qualified-neurocritical-neurovascular-and-rescue-ownership') {
+          if (this.neurologyAsahOwnershipAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-asah-ownership-refused-${this.currentTick}`,
+              'Qualified neurocritical, neurovascular, and rescue ownership is already active.');
+            break;
+          }
+          this.neurologyAsahOwnershipAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-asah-qualified-ownership-activated-${this.currentTick}`,
+            'Qualified neurocritical, neurovascular, nursing, pharmacy, and airway-capable teams now own serial evaluation and rescue decisions. The learner did not select nimodipine, fluid, BP augmentation, vasopressor, airway device, angiography, angioplasty, intra-arterial therapy, drain, surgery, procedure, or treatment.',
+            { qualifiedNeurocriticalOwnershipActive: true,
+              qualifiedNeurovascularOwnershipActive: true,
+              qualifiedRescueOwnershipActive: true, drugSelectedByLearner: false,
+              deviceSelectedByLearner: false, procedurePerformedByLearner: false,
+              treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.neurologyAsahOwnershipAtTick === null) {
+          this.log('warning', 'assessment', `neurology-asah-ownership-order-refused-${this.currentTick}`,
+            'Activate qualified neurocritical, neurovascular, and rescue ownership before later review.');
+          break;
+        }
+        if (response
+          === 'review-neurology-asah-strict-later-neurologic-and-perfusion-trajectory') {
+          if (this.currentTick <= this.neurologyAsahOwnershipAtTick) {
+            this.log('warning', 'assessment', `neurology-asah-later-time-refused-${this.currentTick}`,
+              'Allow elapsed simulated time before reviewing the fixed later trajectory.');
+            break;
+          }
+          if (this.neurologyAsahLaterAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-asah-later-refused-${this.currentTick}`,
+              'The fixed later neurologic and perfusion trajectory was already reviewed.');
+            break;
+          }
+          this.neurologyAsahLaterAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-asah-later-trajectory-reviewed-${this.currentTick}`,
+            'At the fixed 80-minute report, alertness and left-arm weakness have worsened while breathing and cough remain present. Repeat CT still reports no current rebleeding, hydrocephalus, or established infarct, and captured EEG reports no interval seizure without excluding seizure outside the sample. DCI, cause, response, and outcome remain unresolved.',
+            { laterDeteriorationAuthored: true, repeatImagingAuthored: true,
+              capturedEegNoSeizureAuthored: true, seizureExcluded: false,
+              dciFinallyProven: false, treatmentEffectProven: false });
+          break;
+        }
+        if (this.neurologyAsahLaterAtTick === null) {
+          this.log('warning', 'assessment', `neurology-asah-later-order-refused-${this.currentTick}`,
+            'Review the fixed later neurologic and perfusion trajectory before handoff.');
+          break;
+        }
+        if (this.currentTick <= this.neurologyAsahLaterAtTick) {
+          this.log('warning', 'assessment', `neurology-asah-handoff-time-refused-${this.currentTick}`,
+            'Allow another simulated tick before handing off active aneurysmal-SAH risk.');
+          break;
+        }
+        if (this.neurologyAsahHandoffAtTick !== null) {
+          this.log('warning', 'assessment', `neurology-asah-handoff-refused-${this.currentTick}`,
+            'The DCI, aneurysm, recurrence, and active-risk handoff was already recorded.');
+          break;
+        }
+        this.neurologyAsahHandoffAtTick = this.currentTick;
+        this.log('critical', 'assessment', `neurology-asah-active-risk-handoff-recorded-${this.currentTick}`,
+          'The SAH day, reported aneurysm status, baseline, serial deficit, fixed imaging and perfusion evidence, alternative threats, qualified ownership, and unresolved DCI, rebleeding, hydrocephalus, seizure, recurrence, intervention, disposition, and outcome work were handed off. No cause, treatment effect, durable recovery, prognosis, or outcome is claimed.',
+          { dciFinallyProven: false, vasospasmProvenCausal: false,
+            aneurysmDurableSecurityProven: false, rebleedingExcluded: false,
+            treatmentEffectProven: false, dispositionDetermined: false,
+            prognosisPredicted: false, outcomePredicted: false });
+        break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -11710,6 +11891,22 @@ export class AnesthesiaEngine {
         meanArterialMmHg: later ? 123 : 117,
         coreTemperatureC: 36.7 };
     }
+    if (this.scenario.metadata.id === 'aneurysmal-subarachnoid-hemorrhage-deterioration'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'aneurysmal-subarachnoid-hemorrhage-deterioration-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target
+          === 'aneurysmal-subarachnoid-hemorrhage-deterioration-reassessment-boundary')) {
+      const later = this.neurologyAsahLaterAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: later ? 86 : 82,
+        respiratoryRateBpm: later ? 18 : 16,
+        spo2Percent: later ? 97 : 98,
+        systolicMmHg: later ? 148 : 144,
+        diastolicMmHg: later ? 82 : 80,
+        meanArterialMmHg: later ? 104 : 101,
+        coreTemperatureC: later ? 37.2 : 37.1 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -14223,6 +14420,84 @@ export class AnesthesiaEngine {
               durablePressureControlProven: false as const,
               durableAirwayProtectionProven: false as const,
               neurologicRecoveryProven: false as const,
+              dischargeReadinessProven: false as const,
+              dispositionDetermined: false as const,
+              prognosisPredicted: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'aneurysmal-subarachnoid-hemorrhage-deterioration'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'aneurysmal-subarachnoid-hemorrhage-deterioration-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target
+              === 'aneurysmal-subarachnoid-hemorrhage-deterioration-reassessment-boundary') ? {
+            neurologyAsahAssessment: {
+              trajectoryAtTick: this.neurologyAsahTrajectoryAtTick,
+              evidenceAtTick: this.neurologyAsahEvidenceAtTick,
+              boundaryAtTick: this.neurologyAsahRecognitionAtTick,
+              ownershipAtTick: this.neurologyAsahOwnershipAtTick,
+              laterAtTick: this.neurologyAsahLaterAtTick,
+              handoffAtTick: this.neurologyAsahHandoffAtTick,
+              initialPulsePresent: true as const,
+              spontaneousBreathingAuthored: true as const,
+              priorAneurysmalSahAuthored: true as const,
+              reportedAneurysmSecuredAuthored: true as const,
+              newFocalDeficitAuthored: true as const,
+              fixedImagingAuthored: true as const,
+              fixedPerfusionEvidenceAuthored: true as const,
+              possibleDciBoundaryAuthored: this.neurologyAsahRecognitionAtTick !== null,
+              qualifiedNeurocriticalOwnershipActive: this.neurologyAsahOwnershipAtTick !== null,
+              qualifiedNeurovascularOwnershipActive: this.neurologyAsahOwnershipAtTick !== null,
+              qualifiedRescueOwnershipActive: this.neurologyAsahOwnershipAtTick !== null,
+              laterDeteriorationAuthored: this.neurologyAsahLaterAtTick !== null,
+              patientHistoryTakenByLearner: false as const,
+              patientExaminedByLearner: false as const,
+              neurologicExamPerformedByLearner: false as const,
+              scoreCalculatedByLearner: false as const,
+              clockDeterminedByLearner: false as const,
+              glucoseAcquiredByLearner: false as const,
+              sodiumAcquiredByLearner: false as const,
+              bloodPressureAcquiredByLearner: false as const,
+              testAcquiredByLearner: false as const,
+              testInterpretedByLearner: false as const,
+              imagingAcquiredByLearner: false as const,
+              imagingInterpretedByLearner: false as const,
+              eegAcquiredByLearner: false as const,
+              eegInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const,
+              dciDiagnosedByLearner: false as const,
+              aneurysmSecurityValidatedByLearner: false as const,
+              drugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const,
+              routeSelectedByLearner: false as const,
+              accessPlacedByLearner: false as const,
+              medicationDeliveredByLearner: false as const,
+              fluidSelectedByLearner: false as const,
+              bloodPressureTargetSelectedByLearner: false as const,
+              vasopressorSelectedByLearner: false as const,
+              airwayDeviceSelectedByLearner: false as const,
+              airwayProcedurePerformedByLearner: false as const,
+              angiographySelectedByLearner: false as const,
+              angioplastySelectedByLearner: false as const,
+              intraArterialTherapySelectedByLearner: false as const,
+              drainSelectedByLearner: false as const,
+              deviceSelectedByLearner: false as const,
+              procedureSelectedByLearner: false as const,
+              procedurePerformedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              dciFinallyProven: false as const,
+              vasospasmProvenCausal: false as const,
+              aneurysmDurableSecurityProven: false as const,
+              rebleedingExcluded: false as const,
+              hydrocephalusExcluded: false as const,
+              seizureExcluded: false as const,
+              infectionExcluded: false as const,
+              metabolicCauseExcluded: false as const,
+              establishedInfarctExcluded: false as const,
+              treatmentEffectProven: false as const,
+              durableNeurologicRecoveryProven: false as const,
+              durableAirwayProtectionProven: false as const,
               dischargeReadinessProven: false as const,
               dispositionDetermined: false as const,
               prognosisPredicted: false as const,

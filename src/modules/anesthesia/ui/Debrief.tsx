@@ -5022,6 +5022,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-neurology-asah-day-aneurysm-status-new-deficit-and-whole-patient',
+      'review-neurology-asah-rebleeding-hydrocephalus-seizure-metabolic-and-perfusion-evidence',
+      'recognize-neurology-asah-possible-dci-without-imaging-alone',
+      'activate-neurology-asah-qualified-neurocritical-neurovascular-and-rescue-ownership',
+      'review-neurology-asah-strict-later-neurologic-and-perfusion-trajectory',
+      'handoff-neurology-asah-dci-aneurysm-recurrence-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'aneurysmal-subarachnoid-hemorrhage-deterioration'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'aneurysmal-subarachnoid-hemorrhage-deterioration-reassessment')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'aneurysmal-subarachnoid-hemorrhage-deterioration-reassessment-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neurology aSAH-deterioration lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'The day, secured-aneurysm status, new deficit, physiology, and whole patient were reconciled.'],
+        ['evidence-and-threats-reviewed', 'Rebleeding, hydrocephalus, seizure, metabolic, vascular, and perfusion evidence were reviewed.'],
+        ['possible-dci-boundary-recognized', 'Possible DCI was recognized without treating imaging alone as the diagnosis.'],
+        ['qualified-ownership-activated', 'Qualified neurocritical, neurovascular, and rescue ownership was activated.'],
+        ['later-trajectory-reviewed', 'The elapsed worsening neurologic and perfusion trajectory was reviewed without claiming infarction or treatment effect.'],
+        ['active-risk-handoff-recorded', 'Possible DCI, aneurysm and recurrence context, open causes, active risk, and owners were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^neurology-asah-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^neurology-asah-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

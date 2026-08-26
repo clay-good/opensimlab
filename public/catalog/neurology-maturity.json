@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "neurology",
-  "recordCount": 3,
+  "recordCount": 4,
   "records": [
     {
       "recordId": "scenario:minor-nondisabling-acute-ischemic-stroke@0.1.0",
@@ -34,6 +34,17 @@
       "evidence": [
         "/catalog/neurology-completion-audit.json#spontaneous-cerebellar-intracerebral-hemorrhage@0.1.0",
         "/catalog/neurology-quality-audit.json#spontaneous-cerebellar-intracerebral-hemorrhage@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:aneurysmal-subarachnoid-hemorrhage-deterioration@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "aneurysmal-subarachnoid-hemorrhage-deterioration",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/neurology-completion-audit.json#aneurysmal-subarachnoid-hemorrhage-deterioration@0.1.0",
+        "/catalog/neurology-quality-audit.json#aneurysmal-subarachnoid-hemorrhage-deterioration@0.1.0"
       ]
     }
   ]

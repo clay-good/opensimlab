@@ -2055,6 +2055,28 @@ imaging or tests; diagnose; select or deliver a drug, pressure target, reversal,
 device, drain, surgery, procedure, transfer, or treatment; determine disposition or prognosis; or
 predict outcome.
 
+### Wave E neurology slice 4: aneurysmal subarachnoid hemorrhage delayed deterioration
+
+The fourth Neurology lab owns a delayed neurological deterioration boundary after a secured
+aneurysmal subarachnoid hemorrhage, not hyperacute hemorrhage control, posterior-fossa surgery, ICP
+rescue, or seizure treatment. A previously independent 56-year-old woman is on day 7 after a right
+MCA-bifurcation aneurysm rupture, with fixed experienced-team coil-treatment and scheduled-care
+records. After an intact morning examination, she develops 35 minutes of slowed responses, left
+neglect, facial weakness, and arm drift. Supplied CT shows no rebleeding, hydrocephalus, or established
+infarct; CTA reports new right M1/proximal M2 narrowing; and CTP reports delayed right-MCA perfusion
+without a supplied established core.
+
+The learner serially reconciles the trajectory, reviews fixed alternative-cause and perfusion
+evidence, recognizes possible DCI without equating angiographic narrowing with DCI or delaying for a
+research-definition clock, and activates qualified neurocritical, neurovascular, and rescue-capable
+ownership. A strict later report supplies increasing drowsiness and motor deficit with repeat CT
+still negative for rebleeding, hydrocephalus, or established infarct and a captured EEG interval
+without electrographic seizure. Another elapsed handoff preserves diagnosis, aneurysm and recurrence
+risk, alternatives, rescue planning, disposition, and outcome as unresolved. The lab does not
+examine; score; acquire or interpret imaging, EEG, or tests; diagnose; select or deliver a drug,
+fluid, pressure target, oxygen, airway, angiography, endovascular therapy, device, procedure,
+transfer, or treatment; determine disposition or prognosis; or predict outcome.
+
 #### Neurology: 15
 
 Acute ischemic stroke; large-vessel-occlusion escalation; intracranial hemorrhage; subarachnoid

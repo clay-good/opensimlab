@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 135 reports Neurology cerebellar-ICH reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 135;
+/** Bumped whenever the message shape changes incompatibly. Version 136 reports Neurology aneurysmal-SAH deterioration state. */
+export const WORKER_PROTOCOL_VERSION = 136;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1803,6 +1803,77 @@ export interface EquipmentSnapshot {
       readonly durablePressureControlProven: false;
       readonly durableAirwayProtectionProven: false;
       readonly neurologicRecoveryProven: false;
+      readonly dischargeReadinessProven: false;
+      readonly dispositionDetermined: false;
+      readonly prognosisPredicted: false;
+      readonly outcomePredicted: false;
+    };
+    readonly neurologyAsahAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly evidenceAtTick: number | null;
+      readonly boundaryAtTick: number | null;
+      readonly ownershipAtTick: number | null;
+      readonly laterAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true;
+      readonly spontaneousBreathingAuthored: true;
+      readonly priorAneurysmalSahAuthored: true;
+      readonly reportedAneurysmSecuredAuthored: true;
+      readonly newFocalDeficitAuthored: true;
+      readonly fixedImagingAuthored: true;
+      readonly fixedPerfusionEvidenceAuthored: true;
+      readonly possibleDciBoundaryAuthored: boolean;
+      readonly qualifiedNeurocriticalOwnershipActive: boolean;
+      readonly qualifiedNeurovascularOwnershipActive: boolean;
+      readonly qualifiedRescueOwnershipActive: boolean;
+      readonly laterDeteriorationAuthored: boolean;
+      readonly patientHistoryTakenByLearner: false;
+      readonly patientExaminedByLearner: false;
+      readonly neurologicExamPerformedByLearner: false;
+      readonly scoreCalculatedByLearner: false;
+      readonly clockDeterminedByLearner: false;
+      readonly glucoseAcquiredByLearner: false;
+      readonly sodiumAcquiredByLearner: false;
+      readonly bloodPressureAcquiredByLearner: false;
+      readonly testAcquiredByLearner: false;
+      readonly testInterpretedByLearner: false;
+      readonly imagingAcquiredByLearner: false;
+      readonly imagingInterpretedByLearner: false;
+      readonly eegAcquiredByLearner: false;
+      readonly eegInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false;
+      readonly dciDiagnosedByLearner: false;
+      readonly aneurysmSecurityValidatedByLearner: false;
+      readonly drugSelectedByLearner: false;
+      readonly doseSelectedByLearner: false;
+      readonly routeSelectedByLearner: false;
+      readonly accessPlacedByLearner: false;
+      readonly medicationDeliveredByLearner: false;
+      readonly fluidSelectedByLearner: false;
+      readonly bloodPressureTargetSelectedByLearner: false;
+      readonly vasopressorSelectedByLearner: false;
+      readonly airwayDeviceSelectedByLearner: false;
+      readonly airwayProcedurePerformedByLearner: false;
+      readonly angiographySelectedByLearner: false;
+      readonly angioplastySelectedByLearner: false;
+      readonly intraArterialTherapySelectedByLearner: false;
+      readonly drainSelectedByLearner: false;
+      readonly deviceSelectedByLearner: false;
+      readonly procedureSelectedByLearner: false;
+      readonly procedurePerformedByLearner: false;
+      readonly treatmentDeliveredByLearner: false;
+      readonly dciFinallyProven: false;
+      readonly vasospasmProvenCausal: false;
+      readonly aneurysmDurableSecurityProven: false;
+      readonly rebleedingExcluded: false;
+      readonly hydrocephalusExcluded: false;
+      readonly seizureExcluded: false;
+      readonly infectionExcluded: false;
+      readonly metabolicCauseExcluded: false;
+      readonly establishedInfarctExcluded: false;
+      readonly treatmentEffectProven: false;
+      readonly durableNeurologicRecoveryProven: false;
+      readonly durableAirwayProtectionProven: false;
       readonly dischargeReadinessProven: false;
       readonly dispositionDetermined: false;
       readonly prognosisPredicted: false;

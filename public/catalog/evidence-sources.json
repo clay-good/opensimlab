@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 207,
+  "sourceCount": 209,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -2681,6 +2681,34 @@
       "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/38695183/",
       "verifiedOn": "2026-08-26",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/38695183/"
+    },
+    {
+      "id": "aha-asa-aneurysmal-sah-guideline-2023",
+      "currency": {
+        "lastAmended": "2023-05-22",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "Hoh BL, Ko NU, Amin-Hanjani S, et al",
+      "title": "2023 Guideline for the Management of Patients With Aneurysmal Subarachnoid Hemorrhage",
+      "publication": "Stroke",
+      "year": 2023,
+      "locator": "54:e314-e370; doi:10.1161/STR.0000000000000436; sections 8.2 and 8.3 on DCI detection, monitoring, and management, with seizure and hydrocephalus alternatives",
+      "usedFor": "The day-7 neurological-deterioration surveillance context, multimodal evidence review, urgent qualified DCI evaluation and rescue ownership, and limits on prophylactic hemodynamic augmentation, without prescribing a learner treatment pathway.",
+      "verifiedAgainst": "https://www.ahajournals.org/doi/10.1161/STR.0000000000000436",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "vergouwen-dci-definition-2010",
+      "pmid": "20798370",
+      "authors": "Vergouwen MDI, Vermeulen M, van Gijn J, et al",
+      "title": "Definition of delayed cerebral ischemia after aneurysmal subarachnoid hemorrhage as an outcome event in clinical trials and observational studies",
+      "publication": "Stroke",
+      "year": 2010,
+      "locator": "41:2391-2395; doi:10.1161/STROKEAHA.110.589275; consensus clinical and cerebral-infarction definitions and separation from angiographic vasospasm",
+      "usedFor": "The terminology boundary that DCI is a clinical or infarction outcome construct and must not be equated with angiographic vasospasm alone; the research definition does not justify delaying urgent bedside escalation until one hour has elapsed.",
+      "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/20798370/",
+      "verifiedOn": "2026-08-26",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/20798370/"
     }
   ]
 }

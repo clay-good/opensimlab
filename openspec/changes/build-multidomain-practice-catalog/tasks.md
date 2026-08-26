@@ -402,6 +402,15 @@ credited toward the catalog until every item in the completion contract passes.
     learner examination, scoring, volume calculation, imaging or test acquisition or interpretation,
     diagnosis, drug, pressure target, reversal, airway device, drain, surgery, procedure, transfer,
     treatment, disposition, prognosis, treatment-effect, or outcome controls.
+  - [x] Neurology slice 4/15 adds one authored day-7 aneurysmal-SAH delayed deterioration after a
+    supplied secured-aneurysm and scheduled-care record, with a new focal deficit, fixed CT, CTA,
+    CTP, glucose, and sodium context, possible-DCI recognition without equating angiographic
+    narrowing with DCI, qualified neurocritical, neurovascular, and rescue-capable ownership, a
+    strict later neurological and captured-interval EEG report, and another elapsed active-risk
+    handoff without learner examination, scoring, imaging, EEG or test acquisition or interpretation,
+    diagnosis, drug, dose, route, fluid, pressure target, oxygen, airway device, angiography,
+    endovascular treatment, procedure, transfer, treatment, disposition, prognosis, treatment-effect,
+    or outcome controls.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.

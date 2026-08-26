@@ -3911,6 +3911,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified serial patient findings, current ICH guidance, qualified multidisciplinary teams, locally available capabilities, patient-specific goals, and urgent individualized response to posterior-fossa deterioration.',
     briefIn: ['spontaneous-cerebellar-intracerebral-hemorrhage'],
   },
+  {
+    id: 'asah-deterioration-clock-neurologic-imaging-care-and-later-state-are-authored',
+    headline: 'The aSAH day, aneurysm record, deficit clock, neurological findings, imaging, physiology, care, and later state are authored.',
+    simplification: 'Fixed qualified reports stand in for history, examination, glucose, sodium, CT, CTA, CTP, captured-interval EEG, aneurysm-treatment review, neurocritical and neurovascular escalation, and serial reassessment.',
+    whereItMisleads: 'Treating fictional findings, a secured-aneurysm record, vascular narrowing, perfusion delay, negative snapshots, scheduled care, later deterioration, or named ownership as learner-acquired evidence, diagnosis, treatment effect, or a predicted course.',
+    correctUnderstanding: 'Real care requires direct repeated assessment, verified multimodal evidence, trained neurocritical, neurovascular, radiology, EEG, nursing, airway, and rescue teams, patient-specific decisions, and continuous deterioration surveillance.',
+    briefIn: ['aneurysmal-subarachnoid-hemorrhage-deterioration'],
+  },
+  {
+    id: 'asah-deterioration-controls-reconcile-review-recognize-activate-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, supplied-evidence review, possible-DCI recognition, qualified ownership, reassessment, and handoff only.',
+    simplification: 'Six accepted actions stand in for experienced neurological, neurocritical, neurovascular, emergency, airway, radiology, EEG, nursing, and rescue assessment, planning, monitoring, escalation, and handoff.',
+    whereItMisleads: 'Equating button order with examination, score or imaging interpretation, DCI diagnosis, aneurysm assessment, EEG interpretation, hemodynamic or airway management, angiography, endovascular care, team performance, disposition, or competence.',
+    correctUnderstanding: 'Actual care requires the patient, trained teams, current pathways, verified findings, rapid change-triggered escalation, individualized diagnosis and treatment decisions, and continuous reassessment.',
+    briefIn: ['aneurysmal-subarachnoid-hemorrhage-deterioration'],
+  },
+  {
+    id: 'no-live-asah-exam-score-imaging-eeg-drug-hemodynamic-airway-endovascular-procedure-disposition-or-outcome',
+    headline: 'The lab does not examine, score, image, interpret EEG, prescribe, manage hemodynamics or an airway, perform a procedure, or report outcome.',
+    simplification: 'No live history, examination, score, glucose or vital measurement, CT, CTA, CTP, angiography, EEG or other test acquisition or interpretation, diagnosis, drug, dose, route, fluid, pressure target, oxygen, airway device, endovascular treatment, procedure, transfer mechanics, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Equating angiographic narrowing with DCI, delaying urgent escalation until a research-definition clock is met, treating negative CT or EEG snapshots as permanent exclusions, assuming a secured aneurysm eliminates recurrence risk, applying prophylactic augmentation or hypervolemia, copying fictional values into care, or using completion as competence.',
+    correctUnderstanding: 'Use verified serial findings, current aSAH guidance, qualified multidisciplinary teams, locally available capabilities, patient-specific diagnosis and rescue decisions, and repeated surveillance without confusing research definitions with bedside delay.',
+    briefIn: ['aneurysmal-subarachnoid-hemorrhage-deterioration'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

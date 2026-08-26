@@ -207,6 +207,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       hasNeurologyMinorStrokeResponse: false,
       hasNeurologyBasilarLvoResponse: false,
       hasNeurologyCerebellarIchResponse: false,
+      hasNeurologyAsahDeteriorationResponse: false,
       hasPulmonaryEmbolismResponse: false,
       hasStemiResponse: false,
       hasUnstableNarrowTachycardiaResponse: false,

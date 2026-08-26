@@ -22,9 +22,9 @@ describe('scenario report contract', () => {
     const catalog = JSON.parse(readFileSync(
       join(process.cwd(), 'workers/reports/src/report-catalog.generated.json'), 'utf8',
     )) as { scenarios: { moduleId: string; scenarioId: string; contentVersion: string }[] };
-    expect(catalog.scenarios).toHaveLength(139);
+    expect(catalog.scenarios).toHaveLength(140);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(139);
+      .toBe(140);
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'neurology', scenarioId: 'basilar-artery-occlusion-escalation',
       contentVersion: '0.1.0',

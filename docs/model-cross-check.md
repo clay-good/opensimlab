@@ -179,6 +179,12 @@ Recorded here rather than silently carried:
   scaffold; it does not validate hemorrhage or pressure physiology, examination, volume calculation,
   imaging, airway safety, procedure selection, surgery, treatment effect, etiology, disposition,
   prognosis, functional benefit, or outcome.
+  Aneurysmal subarachnoid hemorrhage delayed deterioration overlays a fixed day-7 aneurysm-care
+  record, new focal findings, CT, CTA, CTP, physiology, qualified multidisciplinary ownership, and
+  strict-later neurological and captured-interval EEG reports on the healthy adult scaffold; it
+  does not validate DCI, vasospasm, rebleeding, hydrocephalus, infarction or seizure physiology,
+  examination, scoring, imaging or EEG interpretation, hemodynamic or airway management,
+  angiography, endovascular care, treatment effect, etiology, disposition, prognosis, or outcome.
 
 ## Concentration-time checks, 2026-08-23
 
