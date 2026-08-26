@@ -338,6 +338,7 @@ export function Cockpit({
       actions: sessionInternals().recorder?.build('pending').actions ?? [],
       ventilating: ventilator.delivering,
       alarmCount: session.alarms.length,
+      unavailableParameters: [...invalidParameters],
     };
     if (prompt) {
       if (!promptStillEligible(session.guidance, input, prompt.id)) {
@@ -353,7 +354,8 @@ export function Cockpit({
       setTutorCollapsed(false);
       setPrompt(next);
     }
-  }, [session.tick, session.guidance, session.state, session.alarms.length, prompt, tutorIntroductionOpen]);
+  }, [session.tick, session.guidance, session.state, session.alarms.length, prompt,
+    tutorIntroductionOpen, invalidParameters]);
 
   const speak = useCallback((text: string) => setAnnouncement(text), []);
 
@@ -1007,6 +1009,9 @@ export function Cockpit({
           })}
           onPediatricSupraventricularTachycardiaResponse={(action) => session.act({
             type: 'pediatric-supraventricular-tachycardia-response', payload: { action },
+          })}
+          onPediatricBradycardicArrestResponse={(action) => session.act({
+            type: 'pediatric-bradycardic-arrest-response', payload: { action },
           })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },

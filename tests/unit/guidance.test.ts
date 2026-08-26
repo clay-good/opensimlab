@@ -53,6 +53,17 @@ describe('Requirement: Progressive Guidance Levels', () => {
     expect(promptFor('guided', { ...base, alarmCount: 2 }, NONE)).toBeNull();
   });
 
+  it('does not advise treating a pressure the monitor cannot measure', () => {
+    const unavailableMap: GuidanceInput = {
+      ...base,
+      tick: 20 * TICKS_PER_SECOND,
+      state: { ...base.state!, fio2: 1, meanArterialMmHg: 0 },
+      unavailableParameters: ['meanArterialMmHg'],
+    };
+    expect(promptFor('guided', unavailableMap, NONE)).toBeNull();
+    expect(promptStillEligible('guided', unavailableMap, 'treat-the-mechanism')).toBe(false);
+  });
+
   it('does not repeat the same prompt inside its cooldown', () => {
     const shown = new Map([['preoxygenate-orient', 700]]);
     expect(promptFor('guided', base, shown)).toBeNull();

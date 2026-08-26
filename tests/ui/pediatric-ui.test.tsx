@@ -17,6 +17,7 @@ import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PEDIATRIC_STATUS_EPILEPTICUS } from '../../src/modules/pediatrics/scenarios/pediatric-status-epilepticus';
 import { PEDIATRIC_ANAPHYLAXIS } from '../../src/modules/pediatrics/scenarios/pediatric-anaphylaxis';
 import { PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA } from '../../src/modules/pediatrics/scenarios/pediatric-supraventricular-tachycardia';
+import { PEDIATRIC_BRADYCARDIC_ARREST } from '../../src/modules/pediatrics/scenarios/pediatric-bradycardic-arrest';
 import { PrerenderedBody } from '../../src/routes/Prerendered';
 import { ROUTES } from '../../src/routes/routes';
 
@@ -474,6 +475,113 @@ describe('Requirement: pediatric SVT keeps one calm action at a time', () => {
           event.target === target ? { ...event, target: `${target}-suffix` } : event) };
       expect(crisisResponseAvailability(drifted, [])
         .hasPediatricSupraventricularTachycardiaResponse).toBe(false);
+    }
+  });
+});
+
+describe('Requirement: pediatric bradycardic arrest keeps one calm action at a time', () => {
+  let container: HTMLDivElement; let root: Root;
+  beforeEach(() => {
+    (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+    document.documentElement.style.width = '320px';
+    container = document.createElement('div'); document.body.appendChild(container);
+    const style = document.createElement('style');
+    style.dataset.testStyles = 'pediatric-bradycardic-arrest-ui';
+    style.textContent = [readFileSync(join(process.cwd(), 'src/platform/ui/components.css'), 'utf8'),
+      readFileSync(join(process.cwd(), 'src/modules/anesthesia/ui/cockpit.css'), 'utf8')].join('\n');
+    document.head.appendChild(style); root = createRoot(container);
+  });
+  afterEach(() => {
+    act(() => root.unmount()); container.remove(); document.documentElement.style.width = '';
+    document.querySelector('style[data-test-styles="pediatric-bradycardic-arrest-ui"]')?.remove();
+  });
+
+  const assessment = (step = 0) => ({
+    trajectoryAtTick: step > 0 ? 1 : null, recognitionAtTick: step > 1 ? 2 : null,
+    resuscitationAtTick: step > 2 ? 3 : null, safetyAtTick: step > 3 ? 4 : null,
+    laterResponseAtTick: step > 4 ? 5 : null, handoffAtTick: step > 5 ? 6 : null,
+  });
+  function bradycardicArrestProps(step = 0, onAction = vi.fn()): ActionCockpitProps {
+    return { scenario: PEDIATRIC_BRADYCARDIC_ARREST, region: UNITED_STATES,
+      infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+        lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0,
+        dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false,
+        pediatricBradycardicArrestAssessment: assessment(step) }, lastExposure: null,
+      syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 120,
+        respiratoryRateBpm: 20, fio2: 1, peep: 0, delivering: true,
+        sevofluranePercent: 0, freshGasFlowLPerMin: 10 }, intubated: false,
+      airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0,
+      airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0,
+      helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {},
+      onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {},
+      onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {},
+      onCallForHelp: () => {}, onAirwayDevice: () => {}, onEpinephrine: () => {},
+      onDantrolene: () => {}, onActiveCooling: () => {},
+      onPediatricBradycardicArrestResponse: onAction, onDrugCard: () => {} };
+  }
+
+  it('shows exact serial actions in two labelled cards with one live status', () => {
+    const labels = ['Review breathing + rhythm + whole child',
+      'Recognize persistent bradycardic compromise',
+      'Activate qualified pediatric resuscitation', 'Review pulse + breathing + causes',
+      'Review the 2-minute pulse-loss report', 'Hand off active arrest risk'];
+    const statuses = ['Recognition, qualified care, and safety review proceed in order.',
+      'Recognition, qualified care, and safety review proceed in order.',
+      'Recognition, qualified care, and safety review proceed in order.',
+      'Recognition, qualified care, and safety review proceed in order.',
+      'Review the fixed pulse-loss report after elapsed qualified care.',
+      'No pulse is reported. Organized rhythm is not circulation.',
+      'Active nonshockable arrest and owners handed off.'];
+    for (let step = 0; step <= labels.length; step += 1) {
+      act(() => root.render(createElement(ActionCockpit, bradycardicArrestProps(step))));
+      const cards = [...container.querySelectorAll('.tray-grid > section.syringe')];
+      expect(cards).toHaveLength(2);
+      expect(cards.map((card) => card.getAttribute('aria-labelledby'))).toEqual([
+        'pediatric-bradycardic-arrest-pattern-title',
+        'pediatric-bradycardic-arrest-response-title']);
+      const liveStatuses = container.querySelectorAll('[role="status"]');
+      expect(liveStatuses).toHaveLength(1);
+      expect(liveStatuses[0]?.textContent?.trim()).toBe(statuses[step]);
+      const buttons = [...container.querySelectorAll('.tray-grid button')];
+      expect(buttons).toHaveLength([1, 1, 1, 1, 1, 1, 0][step]!);
+      if (step < labels.length) expect(buttons[0]?.textContent?.trim()).toBe(labels[step]);
+      for (const action of buttons) expect(getComputedStyle(action).minBlockSize).toBe('44px');
+    }
+    expect(container.textContent).toContain('breathing · oxygenation · rhythm · pulse · perfusion · responsiveness');
+    expect(container.textContent).toContain('6 years · 20 kg · organized slow rhythm · pulse initially present');
+  });
+
+  it('dispatches exact frozen actions without generic arrest controls', () => {
+    const onAction = vi.fn();
+    act(() => root.render(createElement(ActionCockpit, bradycardicArrestProps(1, onAction))));
+    act(() => [...container.querySelectorAll('button')]
+      .find((entry) => entry.textContent?.trim() === 'Recognize persistent bradycardic compromise')
+      ?.click());
+    expect(onAction).toHaveBeenCalledWith(
+      'recognize-pediatric-bradycardia-with-persistent-compromise');
+    act(() => root.render(createElement(ActionCockpit, bradycardicArrestProps(5))));
+    expect(container.textContent).toContain('No pulse is reported. Organized rhythm is not circulation.');
+    const actionLabels = [...container.querySelectorAll('.tray-grid button')]
+      .map((entry) => entry.textContent ?? '').join(' ');
+    expect(actionLabels).not.toMatch(/start compressions|ventilate|oxygen|epinephrine|atropine|mg\/kg|intravenous|intraosseous|pace|current|output|pad|capture|\bshock\b|joule|energy|cardiovert|sedat/i);
+    expect(container.textContent).toContain('does not prove cause');
+  });
+
+  it('requires the exact scenario and both narrative targets', () => {
+    expect(crisisResponseAvailability(PEDIATRIC_BRADYCARDIC_ARREST, [])
+      .hasPediatricBradycardicArrestResponse).toBe(true);
+    const wrongId = { ...PEDIATRIC_BRADYCARDIC_ARREST,
+      metadata: { ...PEDIATRIC_BRADYCARDIC_ARREST.metadata, id: 'not-pediatric-arrest' } };
+    expect(crisisResponseAvailability(wrongId, []).hasPediatricBradycardicArrestResponse)
+      .toBe(false);
+    for (const target of ['pediatric-bradycardic-arrest-reassessment',
+      'pediatric-bradycardic-arrest-reassessment-boundary']) {
+      const drifted = { ...PEDIATRIC_BRADYCARDIC_ARREST,
+        timeline: PEDIATRIC_BRADYCARDIC_ARREST.timeline.map((event) =>
+          event.target === target ? { ...event, target: `${target}-suffix` } : event) };
+      expect(crisisResponseAvailability(drifted, []).hasPediatricBradycardicArrestResponse)
+        .toBe(false);
     }
   });
 });

@@ -1085,6 +1085,11 @@ export interface ActionCockpitProps {
       readonly careAtTick: number | null; readonly safetyAtTick: number | null;
       readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly pediatricBradycardicArrestAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly resuscitationAtTick: number | null; readonly safetyAtTick: number | null;
+      readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1769,6 +1774,14 @@ export interface ActionCockpitProps {
       | 'review-pediatric-svt-later-response'
       | 'handoff-pediatric-svt-recurrence-cardiology-and-caregiver-risk',
   ) => void;
+  readonly onPediatricBradycardicArrestResponse?: (
+    action: 'reconcile-pediatric-bradycardic-arrest-support-and-trajectory'
+      | 'recognize-pediatric-bradycardia-with-persistent-compromise'
+      | 'activate-pediatric-bradycardic-arrest-qualified-resuscitation-ownership'
+      | 'review-pediatric-bradycardic-arrest-causes-pulse-and-arrest-boundary'
+      | 'review-pediatric-bradycardic-arrest-pulse-loss-response'
+      | 'handoff-pediatric-bradycardic-arrest-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2162,6 +2175,12 @@ export function crisisResponseAvailability(
         && event.target === 'pediatric-supraventricular-tachycardia-reassessment')
       && scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'pediatric-supraventricular-tachycardia-reassessment-boundary'),
+    hasPediatricBradycardicArrestResponse:
+      scenario.metadata.id === 'pediatric-bradycardic-arrest'
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-bradycardic-arrest-reassessment')
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-bradycardic-arrest-reassessment-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2327,6 +2346,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'pediatric-anaphylaxis-reassessment')
       || (event.type === 'narrative'
         && event.target === 'pediatric-supraventricular-tachycardia-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'pediatric-bradycardic-arrest-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2396,6 +2417,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasPediatricStatusEpilepticusResponse,
     hasPediatricAnaphylaxisResponse,
     hasPediatricSupraventricularTachycardiaResponse,
+    hasPediatricBradycardicArrestResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2472,7 +2494,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPediatricDehydrationResponse || hasPediatricDiabeticKetoacidosisResponse
     || hasPediatricHypoglycemicSeizureResponse || hasPediatricFebrileSeizureResponse
     || hasPediatricStatusEpilepticusResponse || hasPediatricAnaphylaxisResponse
-    || hasPediatricSupraventricularTachycardiaResponse;
+    || hasPediatricSupraventricularTachycardiaResponse || hasPediatricBradycardicArrestResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2503,7 +2525,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasPediatricSupraventricularTachycardiaResponse
+  const responseTray = hasPediatricBradycardicArrestResponse
+    ? { id: 'crisis', label: 'Pediatric bradycardic-arrest reassessment' } as const
+    : hasPediatricSupraventricularTachycardiaResponse
     ? { id: 'crisis', label: 'Pediatric SVT reassessment' } as const
     : hasPediatricAnaphylaxisResponse
     ? { id: 'crisis', label: 'Pediatric anaphylaxis reassessment' } as const
@@ -2787,6 +2811,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPediatricStatusEpilepticusResponse
     || hasPediatricAnaphylaxisResponse
     || hasPediatricSupraventricularTachycardiaResponse
+    || hasPediatricBradycardicArrestResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3498,6 +3523,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <PediatricSupraventricularTachycardiaTray
                 assessment={props.resuscitation.pediatricSupraventricularTachycardiaAssessment}
                 onAction={props.onPediatricSupraventricularTachycardiaResponse ?? (() => {})} />
+            )}
+            {hasPediatricBradycardicArrestResponse && (
+              <PediatricBradycardicArrestTray
+                assessment={props.resuscitation.pediatricBradycardicArrestAssessment}
+                onAction={props.onPediatricBradycardicArrestResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -9099,6 +9129,61 @@ function PediatricSupraventricularTachycardiaTray({ assessment, onAction }: {
           onClick={() => onAction('handoff-pediatric-svt-recurrence-cardiology-and-caregiver-risk')}>Hand off recurrence + cardiology risk</Button>}
       </div>
       <p className="field__hint">Reported conversion does not prove treatment effect, durable rhythm control, ventricular recovery, recurrence exclusion, cause closure, discharge readiness, or outcome.</p>
+    </section>
+  </div>;
+}
+
+function PediatricBradycardicArrestTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricBradycardicArrestAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onPediatricBradycardicArrestResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const care = assessment?.resuscitationAtTick != null;
+  const safety = assessment?.safetyAtTick != null;
+  const later = assessment?.laterResponseAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="pediatric-bradycardic-arrest-pattern-title">
+      <div id="pediatric-bradycardic-arrest-pattern-title" className="syringe__name">Read the pulse behind the rate.</div>
+      <Badge kind="teaching">breathing · oxygenation · rhythm · pulse · perfusion · responsiveness</Badge>
+      <div className="syringe__meta">6 years · 20 kg · organized slow rhythm · pulse initially present</div>
+      <p className="syringe__remaining">
+        {safety ? 'Pulse, breathing, causes, and deterioration remain under review'
+          : care ? 'Qualified pediatric resuscitation is active · complete the safety review'
+            : recognition ? 'Persistent compromise · qualified pediatric resuscitation matters now'
+              : trajectory ? 'Now connect the slow rhythm to cardiopulmonary compromise'
+                : 'Start with breathing, rhythm, pulse, and the whole-child state.'}
+      </p>
+      <div className="syringe__presets">
+        {!trajectory && <Button className="crisis-drug__action"
+          onClick={() => onAction('reconcile-pediatric-bradycardic-arrest-support-and-trajectory')}>Review breathing + rhythm + whole child</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action"
+          onClick={() => onAction('recognize-pediatric-bradycardia-with-persistent-compromise')}>Recognize persistent bradycardic compromise</Button>}
+        {recognition && !care && <Button className="crisis-drug__action"
+          onClick={() => onAction('activate-pediatric-bradycardic-arrest-qualified-resuscitation-ownership')}>Activate qualified pediatric resuscitation</Button>}
+        {care && !safety && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-pediatric-bradycardic-arrest-causes-pulse-and-arrest-boundary')}>Review pulse + breathing + causes</Button>}
+      </div>
+      <p className="field__hint">Experienced pediatric, resuscitation, airway-capable, nursing, pharmacy, and cardiology teams own immediate breathing and circulation care, monitoring, access, cause review, and escalation. This surface exposes no learner compression, ventilation, oxygen, product, drug, dose, route, pacing, shock, energy, device, procedure, or treatment control.</p>
+    </section>
+    <section className="syringe" aria-labelledby="pediatric-bradycardic-arrest-response-title">
+      <div id="pediatric-bradycardic-arrest-response-title" className="syringe__name">A rhythm is not circulation.</div>
+      <Badge kind="teaching">pulse · breathing · perfusion · arrest · causes · ownership</Badge>
+      <div className="syringe__meta">fixed 2-minute report · outcome remains open</div>
+      <p className="syringe__remaining" role="status">
+        {handoff ? 'Active nonshockable arrest and owners handed off.'
+          : later ? 'No pulse is reported. Organized rhythm is not circulation.'
+            : safety ? 'Review the fixed pulse-loss report after elapsed qualified care.'
+              : 'Recognition, qualified care, and safety review proceed in order.'}
+      </p>
+      <div className="syringe__presets">
+        {safety && !later && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-pediatric-bradycardic-arrest-pulse-loss-response')}>Review the 2-minute pulse-loss report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action"
+          onClick={() => onAction('handoff-pediatric-bradycardic-arrest-active-risk')}>Hand off active arrest risk</Button>}
+      </div>
+      <p className="field__hint">The fixed pulse-loss transition does not prove cause, treatment modality or effect, resuscitation quality, return of circulation, neurological recovery, prognosis, or outcome.</p>
     </section>
   </div>;
 }

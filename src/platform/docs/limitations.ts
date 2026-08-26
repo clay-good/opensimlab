@@ -3767,6 +3767,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, current pediatric rhythm guidance, local resuscitation systems, qualified teams, whole-child perfusion rather than one number, continuous rhythm and circulation reassessment, and patient-specific cause, recurrence, and cardiology planning.',
     briefIn: ['pediatric-supraventricular-tachycardia'],
   },
+  {
+    id: 'pediatric-bradycardic-arrest-support-pulse-loss-and-rhythm-are-authored',
+    headline: 'The breathing support, bradycardia, pulses, perfusion, PEA transition, and ongoing resuscitation are authored.',
+    simplification: 'Fixed qualified reports stand in for airway and breathing support, examination, monitoring, pulse and perfusion assessment, CPR, rhythm review, cause evaluation, and serial arrest reassessment.',
+    whereItMisleads: 'Treating the fictional values, effective-support record, negative snapshots, pulse findings, elapsed pulse loss, or PEA as learner-acquired evidence, modeled pediatric physiology, treatment effect, predicted arrest, or universal trajectory.',
+    correctUnderstanding: 'Real care requires verified effective oxygenation and ventilation, repeated whole-child and pulse assessment, immediate qualified resuscitation for persistent compromised bradycardia, continuous arrest care, open-cause evaluation, and patient-specific reassessment.',
+    briefIn: ['pediatric-bradycardic-arrest'],
+  },
+  {
+    id: 'pediatric-bradycardic-arrest-controls-reconcile-recognize-escalate-review-and-handoff-only',
+    headline: 'The controls record trajectory review, recognition, qualified escalation, pulse-loss review, and active-risk handoff only.',
+    simplification: 'Six accepted actions stand in for experienced pediatric, nursing, airway-capable, resuscitation, pharmacy, critical-care, cardiology, and caregiver assessment, treatment, monitoring, cause review, and handoff.',
+    whereItMisleads: 'Equating button order with airway or ventilation assessment, pulse checking, monitoring or rhythm interpretation, CPR, prescribing, drug delivery, device operation, cause treatment, team performance, caregiver communication, or pediatric resuscitation competence.',
+    correctUnderstanding: 'Actual care requires the child, trained teams, current pediatric resuscitation pathways, verified support and pulse assessment, immediate patient-specific resuscitation, continuous reassessment, and parallel cause-directed care.',
+    briefIn: ['pediatric-bradycardic-arrest'],
+  },
+  {
+    id: 'no-live-pediatric-bradycardic-arrest-exam-cpr-drug-device-treatment-or-outcome',
+    headline: 'The lab does not assess support or a pulse, perform CPR, choose a drug, operate a device, treat a cause, terminate care, or report outcome.',
+    simplification: 'No live examination, palpation, pulse check, airway or ventilation assessment, oxygen delivery, monitor, ECG or capnography acquisition or interpretation, CPR mechanics, compression rate or depth, access, drug, concentration, dose, route, flush, pacing, shock, energy, device operation, procedure, cause-specific treatment, post-arrest care, termination, disposition, prognosis, ROSC, recovery, or outcome is modeled.',
+    whereItMisleads: 'Using HR below 60/min without persistent compromise and effective-ventilation context, reading SpO₂ alone as effective ventilation, copying fictional values into care, delaying resuscitation until pulse loss, shocking PEA, treating negative snapshots as exclusions, or using completion as clinical competence.',
+    correctUnderstanding: 'Use verified patient data, current pediatric resuscitation guidance, local systems, qualified teams, multiple concordant support and perfusion findings, immediate care when the full threshold is met, and continuous pulse, rhythm, support, and cause reassessment.',
+    briefIn: ['pediatric-bradycardic-arrest'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

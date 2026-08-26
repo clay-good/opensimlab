@@ -143,6 +143,11 @@ Recorded here rather than silently carried:
   qualified rhythm-care escalation, and serial improving response; it does not validate pediatric
   rhythm or perfusion physiology, ECG interpretation, a mechanism or cause, treatment modality or
   effect, durable rhythm control, recurrence, disposition, or outcome.
+  Pediatric bradycardic arrest reuses the exact 6-year-old, 20 kg healthy-child scaffold and
+  overlays fixed qualified effective breathing support, compromised sinus bradycardia with a pulse,
+  qualified CPR ownership, and a strict-later PEA transition; it does not validate pediatric
+  bradycardia, ventilation, perfusion, arrest or CPR physiology, treatment effect, cause, pulse-loss
+  prediction, ROSC, termination, post-arrest care, prognosis, or outcome.
 
 ## Concentration-time checks, 2026-08-23
 

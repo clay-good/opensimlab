@@ -12,11 +12,11 @@ import {
 const json = (path: string) => JSON.parse(readFileSync(join(process.cwd(), path), 'utf8'));
 
 describe('Pediatrics module foundation', () => {
-  it('registers thirteen available, bounded labs behind an exact module contract', () => {
+  it('registers fourteen available, bounded labs behind an exact module contract', () => {
     expect(getModule('pediatrics')).toMatchObject({
       route: 'pediatrics', displayName: 'Pediatrics', status: 'available',
     });
-    expect(PEDIATRICS_SCENARIOS).toHaveLength(13);
+    expect(PEDIATRICS_SCENARIOS).toHaveLength(14);
     expect(DEFAULT_PEDIATRICS_SCENARIO_ID).toBe('pediatric-respiratory-distress');
     expect(getPediatricsScenario(DEFAULT_PEDIATRICS_SCENARIO_ID))
       .toBe(PEDIATRICS_SCENARIOS[0]);
@@ -43,6 +43,8 @@ describe('Pediatrics module foundation', () => {
     const anaphylaxisRoute = routeFor('/pediatrics/scenario/pediatric-anaphylaxis')!;
     const svtRoute = routeFor(
       '/pediatrics/scenario/pediatric-supraventricular-tachycardia')!;
+    const bradycardicArrestRoute = routeFor(
+      '/pediatrics/scenario/pediatric-bradycardic-arrest')!;
     expect(moduleRoute).toMatchObject({ indexable: true, heading: 'Pediatrics simulator',
       structuredData: ['SoftwareApplication'] });
     expect(scenarioRoute).toMatchObject({ indexable: true,
@@ -146,6 +148,15 @@ describe('Pediatrics module foundation', () => {
     expect(svtRoute.description.length).toBeLessThanOrEqual(160);
     expect(canonicalUrl(svtRoute.path)).toBe(
       'https://opensimlab.com/pediatrics/scenario/pediatric-supraventricular-tachycardia');
+    expect(bradycardicArrestRoute).toMatchObject({ indexable: true,
+      heading: 'Pediatric bradycardic arrest transition',
+      structuredData: ['LearningResource'] });
+    expect(bradycardicArrestRoute.description).toBe(
+      'A 6-year-old girl for calm pediatric bradycardia-to-arrest recognition, qualified resuscitation ownership, and active-risk handoff.',
+    );
+    expect(bradycardicArrestRoute.description.length).toBeLessThanOrEqual(160);
+    expect(canonicalUrl(bradycardicArrestRoute.path)).toBe(
+      'https://opensimlab.com/pediatrics/scenario/pediatric-bradycardic-arrest');
   });
 
   it('publishes exact completion, quality, maturity, and report records', () => {
@@ -153,9 +164,9 @@ describe('Pediatrics module foundation', () => {
     const quality = json('public/catalog/pediatrics-quality-audit.json');
     const maturity = json('public/catalog/pediatrics-maturity.json');
     const reports = json('public/catalog/scenario-report-catalog.json');
-    expect(completion).toMatchObject({ moduleId: 'pediatrics', scenarioCount: 13 });
-    expect(quality).toMatchObject({ scenarioCount: 13 });
-    expect(maturity).toMatchObject({ recordCount: 13 });
+    expect(completion).toMatchObject({ moduleId: 'pediatrics', scenarioCount: 14 });
+    expect(quality).toMatchObject({ scenarioCount: 14 });
+    expect(maturity).toMatchObject({ recordCount: 14 });
     expect(reports.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-respiratory-distress',
       contentVersion: '0.1.0', maturity: 'draft',
@@ -208,6 +219,10 @@ describe('Pediatrics module foundation', () => {
       moduleId: 'pediatrics', scenarioId: 'pediatric-supraventricular-tachycardia',
       contentVersion: '0.1.0', maturity: 'draft',
     }));
+    expect(reports.scenarios).toContainEqual(expect.objectContaining({
+      moduleId: 'pediatrics', scenarioId: 'pediatric-bradycardic-arrest',
+      contentVersion: '0.1.0', maturity: 'draft',
+    }));
     expect(reviewableItems()).toContainEqual(expect.objectContaining({
       id: 'pediatric-respiratory-distress', domains: ['pediatrics'],
     }));
@@ -246,6 +261,9 @@ describe('Pediatrics module foundation', () => {
     }));
     expect(reviewableItems()).toContainEqual(expect.objectContaining({
       id: 'pediatric-supraventricular-tachycardia', domains: ['pediatrics'],
+    }));
+    expect(reviewableItems()).toContainEqual(expect.objectContaining({
+      id: 'pediatric-bradycardic-arrest', domains: ['pediatrics'],
     }));
   });
 });

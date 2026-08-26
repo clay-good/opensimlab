@@ -353,6 +353,14 @@ credited toward the catalog until every item in the completion contract passes.
     deterioration-risk handoff without learner examination, pulse assessment, ECG acquisition or
     interpretation, vagal maneuver, drug, dose, route, access, oxygen, sedation, pad,
     synchronization, energy, cardioversion, test, procedure, treatment, or disposition controls.
+  - [x] Pediatrics slice 14/16 adds one authored 6-year-old bradycardia-to-arrest transition after
+    supplied effective ventilation with oxygen, with persistent HR below 60/min, a central pulse,
+    and severe compromise triggering qualified CPR and resuscitation ownership before pulse loss;
+    a strictly elapsed fixed PEA checkpoint; and elapsed active-resuscitation handoff without
+    learner examination, pulse assessment, airway or ventilation assessment, oxygen delivery, CPR
+    mechanics, monitoring or rhythm interpretation, drug, dose, route, access, pacing, shock,
+    energy, device, procedure, cause treatment, termination, post-arrest care, disposition, or
+    outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing

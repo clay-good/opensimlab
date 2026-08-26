@@ -139,6 +139,7 @@ const PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES = new Set([
   'pediatric-status-epilepticus-response',
   'pediatric-anaphylaxis-response',
   'pediatric-supraventricular-tachycardia-response',
+  'pediatric-bradycardic-arrest-response',
   'pediatric-foreign-body-airway-obstruction-response',
 ]);
 const BRONCHIOLITIS_BLOCKED_ACTION_TYPES = new Set([
@@ -255,6 +256,17 @@ const PEDIATRIC_SVT_BLOCKED_ACTION_TYPES = new Set([
   'stable-wide-tachycardia-response', 'af-rvr-response', 'torsades-response',
   'symptomatic-bradycardia-response', 'unstable-bradycardia-response',
   'complete-heart-block-response', 'emergency-anaphylaxis-response',
+]);
+const PEDIATRIC_BRADYCARDIC_ARREST_BLOCKED_ACTION_TYPES = new Set([
+  ...[...PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES]
+    .filter((type) => type !== 'pediatric-bradycardic-arrest-response'),
+  'pediatric-respiratory-distress-response', 'pediatric-sepsis-response',
+  'pediatric-septic-shock-response', 'pediatric-anaphylaxis-response',
+  'pediatric-supraventricular-tachycardia-response',
+  'symptomatic-bradycardia-response', 'unstable-bradycardia-response',
+  'complete-heart-block-response', 'pacemaker-capture-failure-response',
+  'transcutaneous-pacing-capture-response', 'stable-narrow-tachycardia-response',
+  'unstable-narrow-tachycardia-response', 'stable-wide-tachycardia-response',
 ]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
@@ -985,6 +997,12 @@ export class AnesthesiaEngine {
   private pediatricSvtSafetyAtTick: number | null = null;
   private pediatricSvtLaterResponseAtTick: number | null = null;
   private pediatricSvtHandoffAtTick: number | null = null;
+  private pediatricBradycardicArrestTrajectoryAtTick: number | null = null;
+  private pediatricBradycardicArrestRecognitionAtTick: number | null = null;
+  private pediatricBradycardicArrestResuscitationAtTick: number | null = null;
+  private pediatricBradycardicArrestSafetyAtTick: number | null = null;
+  private pediatricBradycardicArrestLaterResponseAtTick: number | null = null;
+  private pediatricBradycardicArrestHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1503,6 +1521,19 @@ export class AnesthesiaEngine {
     if (pediatricSvt && PEDIATRIC_SVT_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `pediatric-svt-generic-action-refused-${this.currentTick}`,
         'This pediatric SVT lesson exposes no generic rhythm, drug, dose, device, defibrillation, cardioversion, airway, oxygen, fluid, procedure, adult-tachycardia, or adjacent-scenario action. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const pediatricBradycardicArrest = this.scenario.metadata.id === 'pediatric-bradycardic-arrest'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-bradycardic-arrest-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-bradycardic-arrest-reassessment-boundary');
+    if (pediatricBradycardicArrest
+      && PEDIATRIC_BRADYCARDIC_ARREST_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment',
+        `pediatric-bradycardic-arrest-generic-action-refused-${this.currentTick}`,
+        'This pediatric bradycardic-arrest lesson exposes no generic compression, adult arrest-drug, shock, rhythm, medication, pacing, device, oxygen, ventilation, airway, fluid, procedure, adult-bradycardia, or adjacent-scenario action. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -7462,6 +7493,173 @@ export class AnesthesiaEngine {
             outcomePredicted: false });
         break;
       }
+      case 'pediatric-bradycardic-arrest-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.metadata.id === 'pediatric-bradycardic-arrest'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-bradycardic-arrest-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-bradycardic-arrest-reassessment-boundary');
+        const valid = ['reconcile-pediatric-bradycardic-arrest-support-and-trajectory',
+          'recognize-pediatric-bradycardia-with-persistent-compromise',
+          'activate-pediatric-bradycardic-arrest-qualified-resuscitation-ownership',
+          'review-pediatric-bradycardic-arrest-causes-pulse-and-arrest-boundary',
+          'review-pediatric-bradycardic-arrest-pulse-loss-response',
+          'handoff-pediatric-bradycardic-arrest-active-risk'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment',
+            `pediatric-bradycardic-arrest-response-refused-${this.currentTick}`,
+            supported
+              ? 'The pediatric bradycardic-arrest action was not one of the listed choices. Nothing changed.'
+              : 'These pediatric bradycardic-arrest choices are available only in the exact declared Pediatrics lesson.');
+          break;
+        }
+        if (response === 'reconcile-pediatric-bradycardic-arrest-support-and-trajectory') {
+          if (this.pediatricBradycardicArrestTrajectoryAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-bradycardic-arrest-trajectory-refused-${this.currentTick}`,
+              'The supplied respiratory support, rhythm, pulse, perfusion, and whole-child trajectory were already reconciled.');
+            break;
+          }
+          this.pediatricBradycardicArrestTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-bradycardic-arrest-trajectory-reconciled-${this.currentTick}`,
+            'The supplied record reconciles effective assisted ventilation with persistent pulse-bearing sinus bradycardia and cardiopulmonary compromise. Fixed physiology is HR 52/min, delivered RR 20/min, BP 64/36 mmHg (MAP 45), pulse-coherent SpO2 95%, EtCO2 36 mmHg, and temperature 36.8°C. The learner examined, monitored, ventilated, diagnosed, or treated none of this.',
+            { initialPulsePresent: true, effectiveAssistedVentilationAuthored: true,
+              persistentBradycardiaWithCompromiseAuthored: true,
+              patientExaminedByLearner: false, ventilationDeliveredByLearner: false,
+              treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.pediatricBradycardicArrestTrajectoryAtTick === null) {
+          this.log('warning', 'assessment',
+            `pediatric-bradycardic-arrest-trajectory-order-refused-${this.currentTick}`,
+            'Reconcile the supplied support, rhythm, pulse, perfusion, and whole-child trajectory first.');
+          break;
+        }
+        if (response === 'recognize-pediatric-bradycardia-with-persistent-compromise') {
+          if (this.pediatricBradycardicArrestRecognitionAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-bradycardic-arrest-recognition-refused-${this.currentTick}`,
+              'The authored persistent bradycardia with cardiopulmonary compromise was already recognized.');
+            break;
+          }
+          this.pediatricBradycardicArrestRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-bradycardic-arrest-persistent-compromise-recognized-${this.currentTick}`,
+            'The authored heart rate below 60/min with a present pulse and ongoing cardiopulmonary compromise despite effective assisted ventilation marks an urgent pediatric resuscitation boundary. Cause, exact conduction mechanism, diagnosis, and outcome were not proven by the learner.',
+            { persistentBradycardiaWithCompromiseAuthored: true,
+              diagnosisMadeByLearner: false, causeProven: false,
+              conductionMechanismProven: false });
+          break;
+        }
+        if (this.pediatricBradycardicArrestRecognitionAtTick === null) {
+          this.log('warning', 'assessment',
+            `pediatric-bradycardic-arrest-recognition-order-refused-${this.currentTick}`,
+            'Recognize persistent pediatric bradycardia with compromise before activating qualified resuscitation ownership.');
+          break;
+        }
+        if (response === 'activate-pediatric-bradycardic-arrest-qualified-resuscitation-ownership') {
+          if (this.pediatricBradycardicArrestResuscitationAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-bradycardic-arrest-resuscitation-refused-${this.currentTick}`,
+              'Qualified pediatric resuscitation ownership is already active.');
+            break;
+          }
+          this.pediatricBradycardicArrestResuscitationAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-bradycardic-arrest-qualified-resuscitation-activated-${this.currentTick}`,
+            'Qualified pediatric resuscitation, airway-capable, nursing, pharmacy, and emergency teams now own support, pulse checks, monitoring, access, arrest response, and cause-directed escalation. No compression, oxygen or ventilation change, access, drug, product, concentration, dose, route, interval, volume, rate, pacing, device, current, energy, shock, airway action, procedure, or treatment was selected or delivered by the learner.',
+            { qualifiedResuscitationOwnershipActive: true,
+              cprDeliveredByLearner: false, drugSelectedByLearner: false,
+              deviceSelectedByLearner: false, treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.pediatricBradycardicArrestResuscitationAtTick === null) {
+          this.log('warning', 'assessment',
+            `pediatric-bradycardic-arrest-resuscitation-order-refused-${this.currentTick}`,
+            'Activate qualified pediatric resuscitation ownership before safety review.');
+          break;
+        }
+        if (response === 'review-pediatric-bradycardic-arrest-causes-pulse-and-arrest-boundary') {
+          if (this.pediatricBradycardicArrestSafetyAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-bradycardic-arrest-safety-refused-${this.currentTick}`,
+              'Ventilation, pulse, causes, deterioration, and arrest boundaries were already reviewed.');
+            break;
+          }
+          this.pediatricBradycardicArrestSafetyAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-bradycardic-arrest-safety-reviewed-${this.currentTick}`,
+            'Qualified teams retain ownership of continuous support verification, frequent pulse and perfusion reassessment, rhythm surveillance, reversible-cause work, and immediate nonshockable-arrest response if the pulse is lost. The learner acquired or interpreted no monitor, ECG, or test; performed no pulse check, access, compression, device operation, pacing, shock, airway action, procedure, or treatment; and selected no disposition.',
+            { qualifiedSafetyReviewActive: true, pulseAssessedByLearner: false,
+              monitoringAcquiredByLearner: false, ecgAcquiredByLearner: false,
+              testInterpretedByLearner: false, procedurePerformedByLearner: false,
+              dispositionDetermined: false });
+          break;
+        }
+        if (this.pediatricBradycardicArrestSafetyAtTick === null) {
+          this.log('warning', 'assessment',
+            `pediatric-bradycardic-arrest-safety-order-refused-${this.currentTick}`,
+            'Review ventilation, pulse, causes, deterioration, and arrest boundaries first.');
+          break;
+        }
+        if (response === 'review-pediatric-bradycardic-arrest-pulse-loss-response') {
+          if (this.currentTick <= this.pediatricBradycardicArrestSafetyAtTick) {
+            this.log('warning', 'assessment',
+              `pediatric-bradycardic-arrest-later-time-refused-${this.currentTick}`,
+              'Allow elapsed simulated time after qualified resuscitation and safety ownership are active.');
+            break;
+          }
+          if (this.pediatricBradycardicArrestLaterResponseAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-bradycardic-arrest-pulse-loss-response-refused-${this.currentTick}`,
+              'The fixed later pulse-loss report was already reviewed.');
+            break;
+          }
+          this.pediatricBradycardicArrestLaterResponseAtTick = this.currentTick;
+          this.rhythm = 'pea';
+          this.startScriptedCardiacArrest();
+          this.log('critical', 'assessment',
+            `pediatric-bradycardic-arrest-pulse-loss-response-reviewed-${this.currentTick}`,
+            'Fixed qualified later report: organized electrical activity persists at 46/min, but no pulse or blood pressure is reported, meeting the authored pulseless electrical activity boundary. Qualified teams own ongoing nonshockable-arrest response and cause-directed work. The learner delivered no compression, drug, oxygen, ventilation, access, pacing, shock, device action, procedure, or treatment. ROSC, causal treatment effect, cause, recovery, disposition, and outcome are not reported.',
+            { laterReportAuthored: true, laterPulseLossAuthored: true,
+              laterPeaAuthored: true, cprDeliveredByLearner: false,
+              treatmentDeliveredByLearner: false, roscReported: false,
+              treatmentEffectProven: false, causeProven: false,
+              dispositionDetermined: false, outcomePredicted: false });
+          break;
+        }
+        if (this.pediatricBradycardicArrestLaterResponseAtTick === null) {
+          this.log('warning', 'assessment',
+            `pediatric-bradycardic-arrest-later-order-refused-${this.currentTick}`,
+            'Review the fixed pulse-loss response after elapsed qualified care.');
+          break;
+        }
+        if (this.currentTick <= this.pediatricBradycardicArrestLaterResponseAtTick) {
+          this.log('warning', 'assessment',
+            `pediatric-bradycardic-arrest-handoff-time-refused-${this.currentTick}`,
+            'Allow another simulated tick before handing off active pediatric nonshockable-arrest risk.');
+          break;
+        }
+        if (this.pediatricBradycardicArrestHandoffAtTick !== null) {
+          this.log('warning', 'assessment',
+            `pediatric-bradycardic-arrest-handoff-refused-${this.currentTick}`,
+            'The active pediatric bradycardic-arrest handoff was already recorded.');
+          break;
+        }
+        this.pediatricBradycardicArrestHandoffAtTick = this.currentTick;
+        this.log('critical', 'assessment',
+          `pediatric-bradycardic-arrest-active-risk-handoff-recorded-${this.currentTick}`,
+          'The support and rhythm trajectory, persistent compromise, pulse-loss transition, active nonshockable-arrest response, reversible-cause work, caregiver context, escalation triggers, and named ownership were handed off. Cause, causal treatment effect, ROSC, durable circulation or neurological recovery, recurrence exclusion, death or termination decisions, disposition, prognosis, and outcome remain undeclared.',
+          { causeProven: false, treatmentEffectProven: false, roscReported: false,
+            durableRoscProven: false, durableRecoveryProven: false,
+            neurologicRecoveryProven: false, recurrenceExcluded: false,
+            deathDeclared: false, resuscitationTerminated: false,
+            dischargeReadinessProven: false, dispositionDetermined: false,
+            prognosisPredicted: false, outcomePredicted: false });
+        break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -10455,6 +10653,21 @@ export class AnesthesiaEngine {
         meanArterialMmHg: later ? 78 : 72,
         coreTemperatureC: 37.0 };
     }
+    if (this.scenario.metadata.id === 'pediatric-bradycardic-arrest'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-bradycardic-arrest-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-bradycardic-arrest-reassessment-boundary')) {
+      crisisState = { ...crisisState,
+        heartRateBpm: this.pediatricBradycardicArrestLaterResponseAtTick === null ? 52 : 46,
+        respiratoryRateBpm: 20,
+        spo2Percent: 95,
+        etco2MmHg: 36,
+        systolicMmHg: 64,
+        diastolicMmHg: 36,
+        meanArterialMmHg: 45,
+        coreTemperatureC: 36.8 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -10797,9 +11010,11 @@ export class AnesthesiaEngine {
         meanArterialMmHg: reassessed ? 88 : 87, coreTemperatureC: 36.7 };
     }
 
+    const pediatricBradycardicArrestPea = this.scenario.metadata.id === 'pediatric-bradycardic-arrest'
+      && this.pediatricBradycardicArrestLaterResponseAtTick !== null;
     const state: PatientState = this.cardiacArrestActive ? {
       ...crisisState,
-      heartRateBpm: 0,
+      heartRateBpm: pediatricBradycardicArrestPea ? 46 : 0,
       cardiacOutputLPerMin: this.chestCompressionsActive ? 1.2 : 0,
       strokeVolumeMl: 0,
       systolicMmHg: this.chestCompressionsActive ? 45 : 0,
@@ -12555,6 +12770,62 @@ export class AnesthesiaEngine {
               outcomePredicted: false as const,
             },
           } : {}),
+        ...(this.scenario.metadata.id === 'pediatric-bradycardic-arrest'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-bradycardic-arrest-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-bradycardic-arrest-reassessment-boundary') ? {
+            pediatricBradycardicArrestAssessment: {
+              trajectoryAtTick: this.pediatricBradycardicArrestTrajectoryAtTick,
+              recognitionAtTick: this.pediatricBradycardicArrestRecognitionAtTick,
+              resuscitationAtTick: this.pediatricBradycardicArrestResuscitationAtTick,
+              safetyAtTick: this.pediatricBradycardicArrestSafetyAtTick,
+              laterResponseAtTick: this.pediatricBradycardicArrestLaterResponseAtTick,
+              handoffAtTick: this.pediatricBradycardicArrestHandoffAtTick,
+              initialPulsePresent: true as const,
+              effectiveAssistedVentilationAuthored: true as const,
+              persistentBradycardiaWithCompromiseAuthored: true as const,
+              laterPulseLossAuthored:
+                this.pediatricBradycardicArrestLaterResponseAtTick !== null,
+              laterPeaAuthored: this.pediatricBradycardicArrestLaterResponseAtTick !== null,
+              qualifiedResuscitationOwnershipActive:
+                this.pediatricBradycardicArrestResuscitationAtTick !== null,
+              qualifiedSafetyReviewActive: this.pediatricBradycardicArrestSafetyAtTick !== null,
+              laterReportAuthored: this.pediatricBradycardicArrestLaterResponseAtTick !== null,
+              patientExaminedByLearner: false as const,
+              pulseAssessedByLearner: false as const,
+              monitoringAcquiredByLearner: false as const,
+              ecgAcquiredByLearner: false as const, ecgInterpretedByLearner: false as const,
+              testAcquiredByLearner: false as const, testInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const, causeAssignedByLearner: false as const,
+              cprDeliveredByLearner: false as const,
+              chestCompressionsDeliveredByLearner: false as const,
+              oxygenDeliveredByLearner: false as const,
+              ventilationDeliveredByLearner: false as const,
+              accessPlacedByLearner: false as const, drugSelectedByLearner: false as const,
+              epinephrineSelectedByLearner: false as const,
+              productSelectedByLearner: false as const,
+              concentrationSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const, routeSelectedByLearner: false as const,
+              intervalSelectedByLearner: false as const, volumeSelectedByLearner: false as const,
+              rateSelectedByLearner: false as const, fluidDeliveredByLearner: false as const,
+              pacingSelectedByLearner: false as const, deviceSelectedByLearner: false as const,
+              currentSelectedByLearner: false as const, energySelectedByLearner: false as const,
+              shockDeliveredByLearner: false as const,
+              defibrillationPerformedByLearner: false as const,
+              airwayManeuverPerformedByLearner: false as const,
+              procedurePerformedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              causeProven: false as const, conductionMechanismProven: false as const,
+              treatmentEffectProven: false as const, roscReported: false as const,
+              durableRoscProven: false as const, durableRecoveryProven: false as const,
+              neurologicRecoveryProven: false as const, recurrenceExcluded: false as const,
+              deathDeclared: false as const, resuscitationTerminated: false as const,
+              dischargeReadinessProven: false as const,
+              dispositionDetermined: false as const, prognosisPredicted: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,
           classification: this.aspirationRiskClassification,
@@ -12779,6 +13050,14 @@ export class AnesthesiaEngine {
         && event.target === 'pediatric-supraventricular-tachycardia-reassessment')
       && this.scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'pediatric-supraventricular-tachycardia-reassessment-boundary')) {
+      invalid.add('etco2MmHg');
+    }
+    if (this.scenario.metadata.id === 'pediatric-bradycardic-arrest'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-bradycardic-arrest-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-bradycardic-arrest-reassessment-boundary')
+      && this.pediatricBradycardicArrestLaterResponseAtTick !== null) {
       invalid.add('etco2MmHg');
     }
     return invalid;

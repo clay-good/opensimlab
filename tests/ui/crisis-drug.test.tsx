@@ -15,7 +15,9 @@ import { ASPIRATION_RISK_RECOGNITION } from '@anesthesia/scenarios/aspiration-ri
 import { EMERGENCE_WITH_RESIDUAL_BLOCKADE } from '@anesthesia/scenarios/emergence-with-residual-blockade';
 import { DELAYED_EMERGENCE_DIFFERENTIAL } from '@anesthesia/scenarios/delayed-emergence-differential';
 import { EXTUBATION_READINESS } from '@anesthesia/scenarios/extubation-readiness';
+import { AnesthesiaEngine } from '@anesthesia/engine';
 import { UNITED_KINGDOM, UNITED_STATES } from '@anesthesia/region/profiles';
+import { PEDIATRIC_BRADYCARDIC_ARREST } from '../../src/modules/pediatrics/scenarios/pediatric-bradycardic-arrest';
 
 const CRISIS_SCENARIO = {
   ...ROUTINE_INDUCTION,
@@ -198,6 +200,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       hasPediatricStatusEpilepticusResponse: false,
       hasPediatricAnaphylaxisResponse: false,
       hasPediatricSupraventricularTachycardiaResponse: false,
+      hasPediatricBradycardicArrestResponse: false,
       hasPulmonaryEmbolismResponse: false,
       hasStemiResponse: false,
       hasUnstableNarrowTachycardiaResponse: false,
@@ -739,5 +742,32 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
     act(() => button('50 µg IV')!.click());
     assertTouchHeight(button('Give Epinephrine')!);
     assertTouchHeight(button('Cancel')!);
+  });
+
+  it('does not expose the adult arrest tray after the authored pediatric PEA transition', () => {
+    const subject = new AnesthesiaEngine({ scenario: PEDIATRIC_BRADYCARDIC_ARREST,
+      seed: 1408, practiceRegion: 'US' });
+    subject.step();
+    const actions = ['reconcile-pediatric-bradycardic-arrest-support-and-trajectory',
+      'recognize-pediatric-bradycardia-with-persistent-compromise',
+      'activate-pediatric-bradycardic-arrest-qualified-resuscitation-ownership',
+      'review-pediatric-bradycardic-arrest-causes-pulse-and-arrest-boundary'] as const;
+    for (const action of actions) subject.apply({ tick: subject.tick,
+      type: 'pediatric-bradycardic-arrest-response', payload: { action } });
+    subject.step();
+    subject.apply({ tick: subject.tick, type: 'pediatric-bradycardic-arrest-response',
+      payload: { action: 'review-pediatric-bradycardic-arrest-pulse-loss-response' } });
+    const frame = subject.step();
+
+    expect(frame.equipment.resuscitation.cardiacArrestActive).toBe(true);
+    expect(crisisResponseAvailability(PEDIATRIC_BRADYCARDIC_ARREST))
+      .toMatchObject({ hasCardiacArrestResponse: false,
+        hasPediatricBradycardicArrestResponse: true });
+    renderCockpit(UNITED_STATES, vi.fn(), { scenario: PEDIATRIC_BRADYCARDIC_ARREST,
+      resuscitation: frame.equipment.resuscitation, lastExposure: null });
+    expect(button('Crisis response')).toBeUndefined();
+    expect(container.textContent).not.toContain('Epinephrine 1 mg IV/IO');
+    expect(container.textContent).not.toContain('Defibrillate 200 J');
+    expect(container.textContent).toContain('A rhythm is not circulation.');
   });
 });

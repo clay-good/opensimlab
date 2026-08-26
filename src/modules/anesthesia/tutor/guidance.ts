@@ -42,6 +42,8 @@ export interface GuidanceInput {
   readonly ventilating: boolean;
   /** Alarms currently active; a prompt never interrupts a crisis. */
   readonly alarmCount: number;
+  /** Monitor values that are not currently measurable must not drive tutor advice. */
+  readonly unavailableParameters?: readonly string[];
 }
 
 /** How often the same prompt may be repeated, in simulated seconds. */
@@ -239,7 +241,8 @@ export const TUTOR_RULES: readonly TutorRule[] = [
         + 'Why panel will rank what is actually contributing.',
       concept: 'vasodilation-versus-hypovolemia',
     },
-    applies: (input) => (input.state?.meanArterialMmHg ?? 100) < 60,
+    applies: (input) => !input.unavailableParameters?.includes('meanArterialMmHg')
+      && (input.state?.meanArterialMmHg ?? 100) < 60,
   },
 ];
 

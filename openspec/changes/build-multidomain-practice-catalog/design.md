@@ -1898,6 +1898,30 @@ pad, synchronization, energy, cardioversion, refractory therapy, procedure, test
 choose observation or disposition; predict recurrence or prognosis; or prove treatment modality or
 effect, durable control, complete recovery, recurrence exclusion, or outcome.
 
+### Wave D pediatrics slice 14: bradycardic arrest transition
+
+The fourteenth Pediatrics lab owns the pediatric bridge from compromised bradycardia with a pulse
+to nonshockable arrest. A previously well 6-year-old girl weighing 20 kg has several hours of
+worsening breathing and fatigue from an unestablished cause. A fixed qualified report documents a
+patent airway, assisted positive-pressure ventilation with oxygen, equal bilateral chest rise, a
+continuous capnogram with EtCO₂ 36 mmHg, and SpO₂ improving from 79% to 95%. Despite that supplied
+effective support, sinus bradycardia and a central pulse persist at 52/min with BP 64/36 mmHg,
+unresponsiveness, pale cool mottled skin, refill 5 seconds, a weak central pulse, and no peripheral
+pulse reported. Pulse loss has not yet occurred.
+
+The learner reconciles support, pulse, perfusion, and trajectory; recognizes persistent HR below
+60/min with cardiopulmonary compromise despite effective ventilation with oxygen; activates
+qualified pediatric CPR and resuscitation ownership without waiting for pulse loss; and then
+reviews support evidence, open causes, pulse surveillance, and the arrest boundary. A strictly
+elapsed qualified checkpoint reports organized electrical activity at 46/min with no pulse,
+a nonpulsatile pleth, and unobtainable BP, establishing authored PEA before
+another elapsed active-resuscitation handoff. The lab does not examine or palpate the child; assess
+a pulse, airway, ventilation, monitor, capnogram, CPR quality, or treatment response; acquire or
+interpret a rhythm or test; choose or deliver oxygen, ventilation, compressions, access, drug, dose,
+route, pacing, shock, energy, device operation, procedure, cause-specific treatment, resuscitation,
+or post-arrest care; determine termination or disposition; predict prognosis; or report ROSC or
+outcome.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 128 reports pediatric anaphylaxis reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 129;
+/** Bumped whenever the message shape changes incompatibly. Version 130 reports pediatric bradycardic-arrest reassessment state. */
+export const WORKER_PROTOCOL_VERSION = 130;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1446,6 +1446,42 @@ export interface EquipmentSnapshot {
       readonly treatmentEffectProven: false; readonly durableConversionProven: false;
       readonly durableRecoveryProven: false; readonly heartFailureExcluded: false;
       readonly deteriorationExcluded: false; readonly recurrenceExcluded: false;
+      readonly dischargeReadinessProven: false; readonly dispositionDetermined: false;
+      readonly prognosisPredicted: false; readonly outcomePredicted: false;
+    };
+    readonly pediatricBradycardicArrestAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly resuscitationAtTick: number | null; readonly safetyAtTick: number | null;
+      readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true;
+      readonly effectiveAssistedVentilationAuthored: true;
+      readonly persistentBradycardiaWithCompromiseAuthored: true;
+      readonly laterPulseLossAuthored: boolean; readonly laterPeaAuthored: boolean;
+      readonly qualifiedResuscitationOwnershipActive: boolean;
+      readonly qualifiedSafetyReviewActive: boolean; readonly laterReportAuthored: boolean;
+      readonly patientExaminedByLearner: false; readonly pulseAssessedByLearner: false;
+      readonly monitoringAcquiredByLearner: false; readonly ecgAcquiredByLearner: false;
+      readonly ecgInterpretedByLearner: false; readonly testAcquiredByLearner: false;
+      readonly testInterpretedByLearner: false; readonly diagnosisMadeByLearner: false;
+      readonly causeAssignedByLearner: false; readonly cprDeliveredByLearner: false;
+      readonly chestCompressionsDeliveredByLearner: false;
+      readonly oxygenDeliveredByLearner: false; readonly ventilationDeliveredByLearner: false;
+      readonly accessPlacedByLearner: false; readonly drugSelectedByLearner: false;
+      readonly epinephrineSelectedByLearner: false; readonly productSelectedByLearner: false;
+      readonly concentrationSelectedByLearner: false; readonly doseSelectedByLearner: false;
+      readonly routeSelectedByLearner: false; readonly intervalSelectedByLearner: false;
+      readonly volumeSelectedByLearner: false; readonly rateSelectedByLearner: false;
+      readonly fluidDeliveredByLearner: false; readonly pacingSelectedByLearner: false;
+      readonly deviceSelectedByLearner: false; readonly currentSelectedByLearner: false;
+      readonly energySelectedByLearner: false; readonly shockDeliveredByLearner: false;
+      readonly defibrillationPerformedByLearner: false;
+      readonly airwayManeuverPerformedByLearner: false;
+      readonly procedurePerformedByLearner: false; readonly treatmentDeliveredByLearner: false;
+      readonly causeProven: false; readonly conductionMechanismProven: false;
+      readonly treatmentEffectProven: false; readonly roscReported: false;
+      readonly durableRoscProven: false; readonly durableRecoveryProven: false;
+      readonly neurologicRecoveryProven: false; readonly recurrenceExcluded: false;
+      readonly deathDeclared: false; readonly resuscitationTerminated: false;
       readonly dischargeReadinessProven: false; readonly dispositionDetermined: false;
       readonly prognosisPredicted: false; readonly outcomePredicted: false;
     };

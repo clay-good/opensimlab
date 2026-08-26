@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "pediatrics",
-  "recordCount": 13,
+  "recordCount": 14,
   "records": [
     {
       "recordId": "scenario:pediatric-respiratory-distress@0.1.0",
@@ -144,6 +144,17 @@
       "evidence": [
         "/catalog/pediatrics-completion-audit.json#pediatric-supraventricular-tachycardia@0.1.0",
         "/catalog/pediatrics-quality-audit.json#pediatric-supraventricular-tachycardia@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:pediatric-bradycardic-arrest@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "pediatric-bradycardic-arrest",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/pediatrics-completion-audit.json#pediatric-bradycardic-arrest@0.1.0",
+        "/catalog/pediatrics-quality-audit.json#pediatric-bradycardic-arrest@0.1.0"
       ]
     }
   ]

@@ -4868,6 +4868,32 @@ export function objectiveFindings(
       const ordered = later && handoff && later.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved rhythm duration and response, perfusion and heart-function risk, recurrence, caregiver context, escalation triggers, pending cardiac review, and named owners without claiming durable control, discharge, or outcome.' : 'The pediatric SVT handoff was absent or did not follow the later response after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-pediatric-bradycardic-arrest-support-and-trajectory',
+      'recognize-pediatric-bradycardia-with-persistent-compromise',
+      'activate-pediatric-bradycardic-arrest-qualified-resuscitation-ownership',
+      'review-pediatric-bradycardic-arrest-causes-pulse-and-arrest-boundary',
+      'review-pediatric-bradycardic-arrest-pulse-loss-response',
+      'handoff-pediatric-bradycardic-arrest-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'pediatric-bradycardic-arrest'
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pediatric-bradycardic-arrest-reassessment')
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pediatric-bradycardic-arrest-reassessment-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The pediatric bradycardic-arrest lesson was not active.' } satisfies ObjectiveFinding;
+      const trajectory = log.find((event) => /^pediatric-bradycardic-arrest-trajectory-reconciled-\d+$/.test(event.eventId));
+      const recognition = log.find((event) => /^pediatric-bradycardic-arrest-persistent-compromise-recognized-\d+$/.test(event.eventId));
+      const care = log.find((event) => /^pediatric-bradycardic-arrest-qualified-resuscitation-activated-\d+$/.test(event.eventId));
+      const safety = log.find((event) => /^pediatric-bradycardic-arrest-safety-reviewed-\d+$/.test(event.eventId));
+      const later = log.find((event) => /^pediatric-bradycardic-arrest-pulse-loss-response-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^pediatric-bradycardic-arrest-active-risk-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-pediatric-bradycardic-arrest-support-and-trajectory') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'The supplied breathing support, slow organized rhythm, pulse, perfusion, responsiveness, and whole-child trajectory were reconciled without learner examination, pulse assessment, monitoring, interpretation, diagnosis, or treatment.' : 'The pediatric bradycardic-arrest trajectory was not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'recognize-pediatric-bradycardia-with-persistent-compromise') { const ordered = trajectory && recognition && trajectory.tick <= recognition.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Persistent authored bradycardia with cardiopulmonary compromise was recognized from breathing, pulse, perfusion, and responsiveness rather than rate alone.' : 'Persistent pediatric bradycardic compromise was absent or preceded trajectory review.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-pediatric-bradycardic-arrest-qualified-resuscitation-ownership') { const ordered = recognition && care && recognition.tick <= care.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Qualified pediatric resuscitation ownership was activated without learner compression, ventilation, oxygen, drug, dose, route, access, pacing, shock, energy, device, procedure, or treatment selection.' : 'Qualified pediatric resuscitation was absent or preceded recognition.', atTick: care?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-bradycardic-arrest-causes-pulse-and-arrest-boundary') { const ordered = care && safety && care.tick <= safety.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Breathing, pulse, open causes, and the arrest boundary were reviewed after qualified ownership without learner examination, testing, treatment, or disposition.' : 'The pediatric bradycardic-arrest safety review was absent or preceded qualified care.', atTick: safety?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-bradycardic-arrest-pulse-loss-response') { const ordered = safety && later && safety.tick < later.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed qualified care, the fixed loss of mechanical pulse was distinguished from the persistent organized rhythm without claiming cause, treatment effect, resuscitation quality, return of circulation, recovery, or outcome.' : 'The pulse-loss response was absent or did not follow safety review after elapsed time.', atTick: later?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = later && handoff && later.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved active nonshockable arrest, breathing and pulse findings, open causes, deterioration, and named resuscitation owners without claiming return of circulation, disposition, prognosis, or outcome.' : 'The pediatric bradycardic-arrest handoff was absent or did not follow pulse loss after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

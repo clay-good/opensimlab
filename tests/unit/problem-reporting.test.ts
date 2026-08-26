@@ -22,9 +22,9 @@ describe('scenario report contract', () => {
     const catalog = JSON.parse(readFileSync(
       join(process.cwd(), 'workers/reports/src/report-catalog.generated.json'), 'utf8',
     )) as { scenarios: { moduleId: string; scenarioId: string; contentVersion: string }[] };
-    expect(catalog.scenarios).toHaveLength(133);
+    expect(catalog.scenarios).toHaveLength(134);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(133);
+      .toBe(134);
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-respiratory-distress',
       contentVersion: '0.1.0',
@@ -70,6 +70,10 @@ describe('scenario report contract', () => {
     }));
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-supraventricular-tachycardia',
+      contentVersion: '0.1.0',
+    }));
+    expect(catalog.scenarios).toContainEqual(expect.objectContaining({
+      moduleId: 'pediatrics', scenarioId: 'pediatric-bradycardic-arrest',
       contentVersion: '0.1.0',
     }));
   });
@@ -197,6 +201,25 @@ describe('scenario report contract', () => {
     expect(validateReportPayload({ ...report, module_id: 'cardiology' }))
       .toEqual({ ok: false, status: 400 });
     expect(validateReportPayload({ ...report, scenario_id: 'regular-narrow-complex-tachycardia' }))
+      .toEqual({ ok: false, status: 400 });
+    expect(validateReportPayload({ ...report, canonical_url: `${pediatric.canonicalUrl}?tick=12` }))
+      .toEqual({ ok: false, status: 403 });
+    expect(validateReportPayload({ ...report, canonical_url: `${pediatric.canonicalUrl}#tick-12` }))
+      .toEqual({ ok: false, status: 403 });
+  });
+
+  it('accepts the exact pediatric bradycardic-arrest context and rejects drift', () => {
+    const pediatric: ScenarioReportContext = {
+      ...context, moduleId: 'pediatrics', scenarioId: 'pediatric-bradycardic-arrest',
+      canonicalUrl: 'https://opensimlab.com/pediatrics/scenario/pediatric-bradycardic-arrest',
+      fidelityClass: 'state_transition', simulatedTick: 12,
+    };
+    const report = buildScenarioReportRequest(
+      pediatric, 'clinical-content', 'The pulse-loss boundary may need review.', 'token');
+    expect(validateReportPayload(report)).toMatchObject({ ok: true });
+    expect(validateReportPayload({ ...report, module_id: 'emergency-medicine' }))
+      .toEqual({ ok: false, status: 400 });
+    expect(validateReportPayload({ ...report, scenario_id: 'unstable-bradycardia' }))
       .toEqual({ ok: false, status: 400 });
     expect(validateReportPayload({ ...report, canonical_url: `${pediatric.canonicalUrl}?tick=12` }))
       .toEqual({ ok: false, status: 403 });

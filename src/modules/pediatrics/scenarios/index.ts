@@ -12,6 +12,7 @@ import { PEDIATRIC_STATUS_ASTHMATICUS } from './pediatric-status-asthmaticus';
 import { PEDIATRIC_STATUS_EPILEPTICUS } from './pediatric-status-epilepticus';
 import { PEDIATRIC_ANAPHYLAXIS } from './pediatric-anaphylaxis';
 import { PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA } from './pediatric-supraventricular-tachycardia';
+import { PEDIATRIC_BRADYCARDIC_ARREST } from './pediatric-bradycardic-arrest';
 
 export const PEDIATRICS_SCENARIOS: readonly Scenario[] = [
   PEDIATRIC_RESPIRATORY_DISTRESS,
@@ -27,6 +28,7 @@ export const PEDIATRICS_SCENARIOS: readonly Scenario[] = [
   PEDIATRIC_STATUS_EPILEPTICUS,
   PEDIATRIC_ANAPHYLAXIS,
   PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA,
+  PEDIATRIC_BRADYCARDIC_ARREST,
 ];
 export const DEFAULT_PEDIATRICS_SCENARIO_ID = PEDIATRIC_RESPIRATORY_DISTRESS.metadata.id;
 
