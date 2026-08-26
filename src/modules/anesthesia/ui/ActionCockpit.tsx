@@ -1045,6 +1045,11 @@ export interface ActionCockpitProps {
       readonly careAtTick: number | null; readonly sourceReviewAtTick: number | null;
       readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly pediatricSepticShockAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly rescueAtTick: number | null; readonly sourceAtTick: number | null;
+      readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1665,6 +1670,14 @@ export interface ActionCockpitProps {
       | 'review-pediatric-sepsis-later-response'
       | 'handoff-pediatric-sepsis-active-risk',
   ) => void;
+  readonly onPediatricSepticShockResponse?: (
+    action: 'reconcile-pediatric-septic-shock-care-and-trajectory'
+      | 'recognize-pediatric-septic-shock-after-fluid-reassessment'
+      | 'activate-pediatric-septic-shock-critical-care-and-vasoactive-ownership'
+      | 'escalate-pediatric-septic-shock-source-control'
+      | 'review-pediatric-septic-shock-later-response'
+      | 'handoff-pediatric-septic-shock-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2022,6 +2035,9 @@ export function crisisResponseAvailability(
     hasPediatricSepsisResponse: scenario.metadata.id === 'pediatric-sepsis'
       && scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'pediatric-sepsis-reassessment'),
+    hasPediatricSepticShockResponse: scenario.metadata.id === 'pediatric-septic-shock'
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-septic-shock-reassessment'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2172,6 +2188,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative'
         && event.target === 'pediatric-status-asthmaticus-reassessment')
       || (event.type === 'narrative' && event.target === 'pediatric-sepsis-reassessment')
+      || (event.type === 'narrative' && event.target === 'pediatric-septic-shock-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2233,6 +2250,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasOxygenDeviceFailureResponse, hasAcuteTracheostomyObstructionResponse,
     hasPediatricRespiratoryDistressResponse, hasBronchiolitisResponse, hasCroupResponse,
     hasPediatricStatusAsthmaticusResponse, hasPediatricSepsisResponse,
+    hasPediatricSepticShockResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2305,7 +2323,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasHighFlowOxygenEscalationResponse || hasOxygenDeviceFailureResponse
     || hasAcuteTracheostomyObstructionResponse || hasPediatricRespiratoryDistressResponse
     || hasBronchiolitisResponse || hasCroupResponse || hasPediatricStatusAsthmaticusResponse
-    || hasPediatricSepsisResponse;
+    || hasPediatricSepsisResponse || hasPediatricSepticShockResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2336,7 +2354,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasPediatricSepsisResponse
+  const responseTray = hasPediatricSepticShockResponse
+    ? { id: 'crisis', label: 'Pediatric septic-shock reassessment' } as const
+    : hasPediatricSepsisResponse
     ? { id: 'crisis', label: 'Pediatric sepsis reassessment' } as const
     : hasPediatricStatusAsthmaticusResponse
     ? { id: 'crisis', label: 'Severe-asthma reassessment' } as const
@@ -2597,7 +2617,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasAcuteTracheostomyObstructionResponse
     || hasPediatricRespiratoryDistressResponse
     || hasBronchiolitisResponse || hasCroupResponse || hasPediatricStatusAsthmaticusResponse
-    || hasPediatricSepsisResponse
+    || hasPediatricSepsisResponse || hasPediatricSepticShockResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3269,6 +3289,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasPediatricSepsisResponse && (
               <PediatricSepsisTray assessment={props.resuscitation.pediatricSepsisAssessment}
                 onAction={props.onPediatricSepsisResponse ?? (() => {})} />
+            )}
+            {hasPediatricSepticShockResponse && (
+              <PediatricSepticShockTray
+                assessment={props.resuscitation.pediatricSepticShockAssessment}
+                onAction={props.onPediatricSepticShockResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -8411,6 +8436,64 @@ function PediatricSepsisTray({ assessment, onAction }: {
           onClick={() => onAction('handoff-pediatric-sepsis-active-risk')}>Hand off active sepsis risk</Button>}
       </div>
       <p className="field__hint">No cardiovascular Phoenix points are authored now; continue shock surveillance. Improved physiology does not erase persistent organ dysfunction, prove source control, or establish recovery.</p>
+    </section>
+  </div>;
+}
+
+function PediatricSepticShockTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricSepticShockAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onPediatricSepticShockResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const rescue = assessment?.rescueAtTick != null;
+  const source = assessment?.sourceAtTick != null;
+  const later = assessment?.laterResponseAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="pediatric-septic-shock-pattern-title">
+      <div id="pediatric-septic-shock-pattern-title" className="syringe__name">More fluid is not automatic.</div>
+      <Badge kind="teaching">mentation · pulses · refill · urine · lactate</Badge>
+      <div className="syringe__meta">4 years · 16 kg · persistent shock after reassessed aliquots</div>
+      <p className="syringe__remaining" role="status">
+        {source && rescue ? 'Shock rescue and source work are active together'
+          : source ? 'Source work is active · qualified shock rescue still matters'
+            : rescue ? 'Qualified rescue is active · keep source work moving'
+            : recognition ? 'Persistent shock · congestion changes the next step'
+              : trajectory ? 'Now recognize the post-fluid shock pattern'
+                : 'Start with the whole trajectory, not pressure alone.'}
+      </p>
+      <div className="syringe__presets">
+        {!trajectory && <Button className="crisis-drug__action"
+          onClick={() => onAction('reconcile-pediatric-septic-shock-care-and-trajectory')}>Review care + perfusion trajectory</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action"
+          onClick={() => onAction('recognize-pediatric-septic-shock-after-fluid-reassessment')}>Recognize persistent septic shock</Button>}
+        {recognition && !rescue && <Button className="crisis-drug__action"
+          onClick={() => onAction('activate-pediatric-septic-shock-critical-care-and-vasoactive-ownership')}>Activate qualified shock rescue</Button>}
+        {recognition && !source && <Button className="crisis-drug__action"
+          onClick={() => onAction('escalate-pediatric-septic-shock-source-control')}>Escalate source-control review</Button>}
+      </div>
+      <p className="field__hint">Experienced teams own antimicrobials, tests, fluid decisions, access, vasoactives, monitoring, and source procedures. No universal fluid total, MAP target, agent, access route, or response is taught.</p>
+    </section>
+    <section className="syringe" aria-labelledby="pediatric-septic-shock-response-title">
+      <div id="pediatric-septic-shock-response-title" className="syringe__name">Partial movement is not resolution.</div>
+      <Badge kind="teaching">perfusion · congestion · source · ownership</Badge>
+      <div className="syringe__meta">fixed minute-90 report · active cardiovascular dysfunction</div>
+      <p className="syringe__remaining" role="status">
+        {handoff ? 'Active shock, congestion, source, and support handed off'
+          : later ? 'Some signals improved. Shock remains active.'
+            : source && rescue ? 'Review the fixed report after elapsed parallel care'
+              : source ? 'Source work is active · activate qualified shock rescue'
+                : rescue ? 'Shock rescue is active · escalate source review'
+              : 'Rescue and source control cannot wait for each other.'}
+      </p>
+      <div className="syringe__presets">
+        {source && rescue && !later && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-pediatric-septic-shock-later-response')}>Review the 90-minute report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action"
+          onClick={() => onAction('handoff-pediatric-septic-shock-active-risk')}>Hand off active shock risk</Button>}
+      </div>
+      <p className="field__hint">One unnamed vasoactive and source planning remain qualified-team work. Better pressure or refill does not prove treatment effect, source control, durable recovery, or readiness to leave care.</p>
     </section>
   </div>;
 }

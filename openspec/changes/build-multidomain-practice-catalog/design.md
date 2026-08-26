@@ -1730,6 +1730,27 @@ a pathogen, choose or deliver an antimicrobial, drug, dose, route, access, fluid
 oxygen, device, procedure, source control, or treatment, determine disposition or prognosis, or
 predict recovery or outcome.
 
+### Wave D pediatrics slice 6: pediatric septic shock after reassessed fluid
+
+The sixth Pediatrics lab is a persistent-shock reassessment rather than an initial bundle or fluid
+calculator. A previously well 4-year-old girl weighing 16 kg has a suspected but unconfirmed
+intra-abdominal source. After supplied timely antimicrobial care and 2 individually reassessed
+10 mL/kg balanced-crystalloid aliquots, she has worsening cool mottled perfusion, weak pulses,
+refill 6 seconds, oliguria, hypotension, lactate 6.2 mmol/L, and new crackles and hepatomegaly.
+Those congestion findings stop automatic fluid continuation but do not prove fluid causation.
+
+A supplied expert report assigns 2 cardiovascular Phoenix points and no points in the other
+components, establishing authored pediatric sepsis with cardiovascular dysfunction and therefore
+septic shock. The learner reconciles the fixed care and whole-child trajectory, recognizes
+persistent shock after fluid-by-fluid reassessment, activates experienced critical-care and
+vasoactive ownership without waiting for central access, and escalates source-control evaluation in
+parallel. A strictly elapsed minute-90 report shows partial stabilization with one unnamed
+vasoactive, persistent lactate elevation, cool extremities, oliguria, crackles, hepatomegaly, and
+unresolved source before another elapsed active-risk handoff. The lab does not teach a universal
+fluid total, MAP target, first-line vasoactive, access route, or response; examine, score, test,
+diagnose, choose or deliver a drug, fluid, device, procedure, or treatment; determine disposition or
+prognosis; or predict recovery or outcome.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

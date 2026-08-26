@@ -99,11 +99,15 @@ Recorded here rather than silently carried:
 - The healthy-child respiratory profile is bounded to the exact bundled 6-year-old, 20 kg teaching
   patient, the bronchiolitis scenario's exact 1-year-old, 10 kg scaffold, the croup scenario's
   exact 3-year-old, 15 kg scaffold, and the pediatric status-asthmaticus scenario's exact
-  10-year-old, 32 kg scaffold; pediatric disease, upper- and lower-airway obstruction,
+  10-year-old, 32 kg scaffold, and the pediatric septic-shock scenario's exact 4-year-old, 16 kg
+  scaffold; pediatric disease, upper- and lower-airway obstruction,
   developmental hemodynamics, and broader age-specific validation remain absent. Pediatric sepsis
   reuses the exact 6-year-old, 20 kg scaffold and overlays fixed infection, coagulation,
   classification, qualified-care, and serial-response reports; it does not validate sepsis
   physiology or treatment effect.
+  Pediatric septic shock overlays fixed infection, perfusion, congestion-warning, Phoenix,
+  qualified-care, and serial-response reports on its source-composed child scaffold; it does not
+  validate shock physiology, fluid responsiveness, congestion causality, or treatment effect.
 
 ## Concentration-time checks, 2026-08-23
 

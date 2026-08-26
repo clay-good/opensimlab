@@ -7,7 +7,7 @@ nurse anesthetists — anywhere in the world, on any device, with or without a n
 
 Respiratory Medicine is now playable at `/respiratory-medicine` with all 15 bounded labs: acute severe asthma, post-exacerbation COPD recovery-versus-readiness, hypoxemic community-acquired pneumonia, persistent dyspnea after pulmonary embolism, progressive respiratory failure during initial support for acute pulmonary edema, post-drainage reassessment after a spontaneous tension pneumothorax, symptom-limited evaluation of a large unilateral pleural effusion, bronchiectasis mucus plugging with persistent focal collapse after individualized airway clearance, chronic prescribed-opioid exposure with fixed attended sleep-related hypoventilation evidence and shared follow-through, progressive neuromuscular respiratory failure in established ALS with patient-centered escalation and ownership, obesity hypoventilation with fixed awake hypercapnia and attended sleep evidence, bilevel NIV selection for acute acidotic hypercapnic COPD, high-flow nasal oxygen escalation with calm support choices and an active rescue boundary, a portable oxygen source interruption during transport with immediate verified bridge support and systems-focused handoff, and acute obstruction of a declared removable tracheostomy inner cannula with anatomy-first oxygenation, qualified restoration, reassessment, and active-risk handoff.
 
-Pediatrics is now playable at `/pediatrics`, beginning with 5 of 16 bounded labs. Pediatric
+Pediatrics is now playable at `/pediatrics`, beginning with 6 of 16 bounded labs. Pediatric
 respiratory distress teaches whole-child recognition and fatigue escalation. Infant bronchiolitis
 adds illness-day, feeding, hydration, apnea-risk, and supportive-care reassessment while keeping
 routine imaging, low-value medicine, oxygen-device, fluid-route, suction, treatment, and disposition
@@ -22,6 +22,10 @@ infection-plus-coagulation-dysfunction recognition, explicit distinction from cu
 confirmation of qualified evaluation and antimicrobial-care ownership, source and organ review, and timed
 active-risk handoff without exposing a screening calculator, test, antimicrobial, dose, access,
 fluid, oxygen, source-control, treatment, or disposition control.
+Pediatric septic shock adds a worsening post-fluid trajectory with supplied Phoenix cardiovascular
+dysfunction, congestion warnings, qualified critical-care and vasoactive ownership, source-control
+work in parallel, and a timed partial-stabilization handoff without exposing a fluid calculator,
+MAP target, vasoactive selector, access, procedure, treatment, or disposition control.
 
 The goal is not a tech demo. It is the best anesthesia education on the internet: the
 thing a student opens the night before their first day in the OR and comes out of

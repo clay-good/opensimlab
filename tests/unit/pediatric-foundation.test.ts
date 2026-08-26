@@ -129,6 +129,16 @@ describe('Requirement: bounded healthy-child respiratory physiology', () => {
     expect(profile.spontaneousRespiratoryRateBpm).toBe(27);
   });
 
+  it('keeps the septic-shock 4-year-old, 16 kg scaffold finite and source-composed', () => {
+    const profile = healthyChildRespiratoryProfile(4, 16);
+    expect(profile.frcLitres).toBeCloseTo(9.51 * 16 ** 1.31 / 1000, 12);
+    expect(profile.vo2LitresPerMin).toBeGreaterThan(0);
+    expect(profile.vco2LitresPerMin).toBeGreaterThan(0);
+    expect(profile.deadSpaceMl).toBeGreaterThan(0);
+    expect(profile.spontaneousTidalVolumeMl).toBe(96);
+    expect(profile.spontaneousRespiratoryRateBpm).toBe(31);
+  });
+
   it('does not alter any adult respiratory constant', () => {
     expect(RESPIRATORY_PROFILES.healthy).toEqual({
       frcLitres: 2.5, vo2LitresPerMin: 0.25, vco2LitresPerMin: 0.2, deadSpaceMl: 150,

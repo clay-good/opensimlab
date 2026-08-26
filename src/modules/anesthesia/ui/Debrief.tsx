@@ -4671,6 +4671,30 @@ export function objectiveFindings(
       const ordered = later && handoff && later.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved infection, organ dysfunction, shock surveillance, pending source work, treatment review, caregiver context, and named owners without claiming recovery, disposition, or outcome.' : 'The active pediatric sepsis handoff was absent or did not follow the later response after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-pediatric-septic-shock-care-and-trajectory',
+      'recognize-pediatric-septic-shock-after-fluid-reassessment',
+      'activate-pediatric-septic-shock-critical-care-and-vasoactive-ownership',
+      'escalate-pediatric-septic-shock-source-control',
+      'review-pediatric-septic-shock-later-response',
+      'handoff-pediatric-septic-shock-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'pediatric-septic-shock'
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pediatric-septic-shock-reassessment');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The pediatric septic-shock lesson was not active.' } satisfies ObjectiveFinding;
+      const trajectory = log.find((event) => /^pediatric-septic-shock-trajectory-reconciled-\d+$/.test(event.eventId));
+      const recognition = log.find((event) => /^pediatric-septic-shock-after-fluid-recognized-\d+$/.test(event.eventId));
+      const rescue = log.find((event) => /^pediatric-septic-shock-qualified-rescue-activated-\d+$/.test(event.eventId));
+      const source = log.find((event) => /^pediatric-septic-shock-source-control-escalated-\d+$/.test(event.eventId));
+      const later = log.find((event) => /^pediatric-septic-shock-later-response-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^pediatric-septic-shock-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-pediatric-septic-shock-care-and-trajectory') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'The supplied infection, qualified care, worsening perfusion, oliguria, lactate, and whole-child trajectory were reconciled without learner examination, scoring, testing, diagnosis, or treatment.' : 'The fixed pediatric septic-shock trajectory was not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'recognize-pediatric-septic-shock-after-fluid-reassessment') { const ordered = trajectory && recognition && trajectory.tick <= recognition.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Persistent authored shock and congestion warnings were recognized after individually reassessed fluid without automatic continuation, learner Phoenix calculation, or diagnosis.' : 'Persistent shock recognition was absent or preceded trajectory review.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-pediatric-septic-shock-critical-care-and-vasoactive-ownership') { const ordered = recognition && rescue && recognition.tick <= rescue.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Qualified critical-care, vasoactive, monitoring, and access ownership was activated without learner agent, dose, rate, route, pump, access, or treatment selection.' : 'Qualified rescue ownership was absent or preceded shock recognition.', atTick: rescue?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'escalate-pediatric-septic-shock-source-control') { const ordered = recognition && source && recognition.tick <= source.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Urgent source clarification and source-control planning proceeded in parallel without a learner diagnosis, image interpretation, pathogen claim, or procedure.' : 'Source-control escalation was absent or preceded shock recognition.', atTick: source?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-septic-shock-later-response') { const parallelAt = Math.max(rescue?.tick ?? -1, source?.tick ?? -1); const ordered = rescue && source && later && parallelAt < later.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed parallel care, partial physiologic improvement was separated from active shock, congestion, unresolved source, treatment effect, durable recovery, and disposition.' : 'The later response was absent or did not follow both rescue and source ownership after elapsed time.', atTick: later?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = later && handoff && later.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved shock, perfusion and congestion trends, fluid balance, vasoactive support, source work, failure triggers, caregiver context, and named owners without claiming recovery, disposition, or outcome.' : 'The active pediatric septic-shock handoff was absent or did not follow the later response after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

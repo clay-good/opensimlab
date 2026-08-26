@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "pediatrics",
-  "recordCount": 5,
+  "recordCount": 6,
   "records": [
     {
       "recordId": "scenario:pediatric-respiratory-distress@0.1.0",
@@ -56,6 +56,17 @@
       "evidence": [
         "/catalog/pediatrics-completion-audit.json#pediatric-sepsis@0.1.0",
         "/catalog/pediatrics-quality-audit.json#pediatric-sepsis@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:pediatric-septic-shock@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "pediatric-septic-shock",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/pediatrics-completion-audit.json#pediatric-septic-shock@0.1.0",
+        "/catalog/pediatrics-quality-audit.json#pediatric-septic-shock@0.1.0"
       ]
     }
   ]

@@ -298,6 +298,13 @@ credited toward the catalog until every item in the completion contract passes.
     learner examination, screening, score calculation, testing, diagnosis, antimicrobial, dose,
     route, access, fluid, vasoactive, oxygen, device, source-control, treatment, or disposition
     controls.
+  - [x] Pediatrics slice 6/16 adds one authored 4-year-old persistent septic-shock reassessment
+    after individually reassessed qualified fluid aliquots, with supplied Phoenix cardiovascular
+    classification, explicit congestion stop warnings, critical-care and unnamed-vasoactive
+    ownership in parallel with source-control escalation, a strictly elapsed partial-stabilization
+    report, and elapsed active-risk handoff without learner examination, score calculation, testing,
+    imaging interpretation, diagnosis, antimicrobial, fluid, dose, access, vasoactive, oxygen,
+    device, procedure, treatment, or disposition controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing

@@ -3575,6 +3575,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, current pediatric sepsis guidance, local recognition and antimicrobial systems, qualified source and organ-support teams, caregiver input, and repeated patient-specific reassessment.',
     briefIn: ['pediatric-sepsis'],
   },
+  {
+    id: 'pediatric-septic-shock-infection-perfusion-care-and-response-are-authored',
+    headline: 'The child, suspected source, shock pattern, congestion warnings, qualified care, and serial response are authored.',
+    simplification: 'Fixed reports and scenario-specific snapshots stand in for caregiver history, examination, monitoring, imaging, laboratory work, expert Phoenix classification, antimicrobial care, fluid reassessment, vasoactive support, source-control planning, and serial bedside reassessment.',
+    whereItMisleads: 'Treating the fictional age, pressure, refill, urine, lactate, GCS, fluid history, congestion signs, score, care timing, or response as a universal threshold, learner-acquired finding, causal treatment effect, or validated pediatric septic-shock physiology.',
+    correctUnderstanding: 'Real care integrates verified infection and source context, mentation, breathing, circulation, urine, congestion, organ function, patient-specific treatment response, caregiver context, local systems, and continuous qualified reassessment.',
+    briefIn: ['pediatric-septic-shock'],
+  },
+  {
+    id: 'pediatric-septic-shock-controls-reconcile-recognize-activate-escalate-reassess-and-handoff-only',
+    headline: 'The controls record trajectory review, shock recognition, parallel qualified rescue and source ownership, reassessment, and handoff only.',
+    simplification: 'Six accepted actions stand in for experienced pediatric septic-shock recognition, critical-care and vasoactive coordination, source work, organ and congestion surveillance, caregiver communication, and handoff.',
+    whereItMisleads: 'Equating button order with examination, diagnosis, Phoenix calculation, imaging or test interpretation, fluid or vasoactive delivery, source control, treatment, team performance, caregiver communication, or pediatric competence.',
+    correctUnderstanding: 'Actual care requires the child and caregiver, trained pediatric, critical-care, nursing, pharmacy, laboratory, imaging, and source teams, current local guidance, patient-specific treatment, and continuous reassessment.',
+    briefIn: ['pediatric-septic-shock'],
+  },
+  {
+    id: 'no-live-pediatric-septic-shock-exam-score-test-drug-fluid-device-procedure-treatment-or-disposition',
+    headline: 'The lab does not examine, score, test, choose or deliver resuscitation, perform source control, determine disposition, or predict outcome.',
+    simplification: 'No live examination, monitor interpretation, Phoenix, PEWS or SIRS calculation, culture, specimen, lactate, gas, laboratory, ultrasound, point-of-care ultrasound or imaging acquisition or interpretation, source or pathogen diagnosis, antimicrobial, fluid, bolus, volume, rate, access, vasoactive, agent, dose, infusion, oxygen, device, ventilation, airway maneuver, source-control procedure, treatment, admission, discharge, prognosis, recovery, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values or timing into care, assuming a universal fluid total or MAP target, preferring one first-line vasoactive from this lab, attributing congestion or partial improvement to one intervention, or using completion as evidence of clinical or procedural competence.',
+    correctUnderstanding: 'Use verified patient data, current pediatric sepsis guidance, local antimicrobial and resuscitation systems, qualified source and organ-support teams, caregiver input, and repeated patient-specific reassessment with fluid stopped or changed when shock resolves or overload signs appear.',
+    briefIn: ['pediatric-septic-shock'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {
