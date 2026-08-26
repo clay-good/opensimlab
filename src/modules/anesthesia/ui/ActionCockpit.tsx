@@ -1040,6 +1040,11 @@ export interface ActionCockpitProps {
       readonly lastUnsupportedChoice: 'force-peak-flow' | 'radiograph-delay'
         | 'trigger-review-delay' | 'saturation-discharge' | null;
     };
+    readonly pediatricSepsisAssessment?: {
+      readonly patternAtTick: number | null; readonly shockBoundaryAtTick: number | null;
+      readonly careAtTick: number | null; readonly sourceReviewAtTick: number | null;
+      readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1652,6 +1657,14 @@ export interface ActionCockpitProps {
       | 'discharge-pediatric-status-asthmaticus-from-saturation-alone'
       | 'handoff-pediatric-status-asthmaticus-reassessment',
   ) => void;
+  readonly onPediatricSepsisResponse?: (
+    action: 'reconcile-pediatric-sepsis-infection-and-organ-dysfunction'
+      | 'distinguish-pediatric-sepsis-without-shock'
+      | 'confirm-pediatric-sepsis-qualified-care-ownership'
+      | 'review-pediatric-sepsis-source-organs-and-alternatives'
+      | 'review-pediatric-sepsis-later-response'
+      | 'handoff-pediatric-sepsis-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2006,6 +2019,9 @@ export function crisisResponseAvailability(
     hasPediatricStatusAsthmaticusResponse: scenario.metadata.id === 'pediatric-status-asthmaticus'
       && scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'pediatric-status-asthmaticus-reassessment'),
+    hasPediatricSepsisResponse: scenario.metadata.id === 'pediatric-sepsis'
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-sepsis-reassessment'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2155,6 +2171,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'croup-reassessment')
       || (event.type === 'narrative'
         && event.target === 'pediatric-status-asthmaticus-reassessment')
+      || (event.type === 'narrative' && event.target === 'pediatric-sepsis-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2215,7 +2232,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNoninvasiveVentilationSelectionResponse, hasHighFlowOxygenEscalationResponse,
     hasOxygenDeviceFailureResponse, hasAcuteTracheostomyObstructionResponse,
     hasPediatricRespiratoryDistressResponse, hasBronchiolitisResponse, hasCroupResponse,
-    hasPediatricStatusAsthmaticusResponse,
+    hasPediatricStatusAsthmaticusResponse, hasPediatricSepsisResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2287,7 +2304,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasObesityHypoventilationResponse || hasNoninvasiveVentilationSelectionResponse
     || hasHighFlowOxygenEscalationResponse || hasOxygenDeviceFailureResponse
     || hasAcuteTracheostomyObstructionResponse || hasPediatricRespiratoryDistressResponse
-    || hasBronchiolitisResponse || hasCroupResponse || hasPediatricStatusAsthmaticusResponse;
+    || hasBronchiolitisResponse || hasCroupResponse || hasPediatricStatusAsthmaticusResponse
+    || hasPediatricSepsisResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2318,7 +2336,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasPediatricStatusAsthmaticusResponse
+  const responseTray = hasPediatricSepsisResponse
+    ? { id: 'crisis', label: 'Pediatric sepsis reassessment' } as const
+    : hasPediatricStatusAsthmaticusResponse
     ? { id: 'crisis', label: 'Severe-asthma reassessment' } as const
     : hasCroupResponse
     ? { id: 'crisis', label: 'Croup reassessment' } as const
@@ -2577,6 +2597,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasAcuteTracheostomyObstructionResponse
     || hasPediatricRespiratoryDistressResponse
     || hasBronchiolitisResponse || hasCroupResponse || hasPediatricStatusAsthmaticusResponse
+    || hasPediatricSepsisResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3244,6 +3265,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <PediatricStatusAsthmaticusTray
                 assessment={props.resuscitation.pediatricStatusAsthmaticusAssessment}
                 onAction={props.onPediatricStatusAsthmaticusResponse ?? (() => {})} />
+            )}
+            {hasPediatricSepsisResponse && (
+              <PediatricSepsisTray assessment={props.resuscitation.pediatricSepsisAssessment}
+                onAction={props.onPediatricSepsisResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -8331,6 +8356,61 @@ function PediatricStatusAsthmaticusTray({ assessment, onAction }: {
           onClick={() => onAction('handoff-pediatric-status-asthmaticus-reassessment')}>Hand off active severe asthma</Button>}
       </div>
       <p className="field__hint">Partial improvement does not prove durable recovery. Keep residual work, air entry, oxygen need, treatment exposure, toxicity surveillance, recurrence, access, and caregiver context visible.</p>
+    </section>
+  </div>;
+}
+
+function PediatricSepsisTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricSepsisAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onPediatricSepsisResponse']>;
+}) {
+  const pattern = assessment?.patternAtTick != null;
+  const shockBoundary = assessment?.shockBoundaryAtTick != null;
+  const care = assessment?.careAtTick != null;
+  const sourceReview = assessment?.sourceReviewAtTick != null;
+  const later = assessment?.laterResponseAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="pediatric-sepsis-pattern-title">
+      <div id="pediatric-sepsis-pattern-title" className="syringe__name">See the whole pattern.</div>
+      <Badge kind="teaching">infection · organ dysfunction · circulation</Badge>
+      <div className="syringe__meta">6 years · 20 kg · supplied coagulation dysfunction</div>
+      <p className="syringe__remaining" role="status">
+        {sourceReview ? 'Source and organ surveillance remain active'
+          : care ? 'Qualified evaluation and antimicrobial care are active'
+            : shockBoundary ? 'No shock now does not mean no urgency'
+              : pattern ? 'Now separate sepsis from current shock'
+                : 'Fever is context. Organ dysfunction changes the question.'}
+      </p>
+      <div className="syringe__presets">
+        {!pattern && <Button className="crisis-drug__action"
+          onClick={() => onAction('reconcile-pediatric-sepsis-infection-and-organ-dysfunction')}>Review infection + organ dysfunction</Button>}
+        {pattern && !shockBoundary && <Button className="crisis-drug__action"
+          onClick={() => onAction('distinguish-pediatric-sepsis-without-shock')}>Separate sepsis from shock</Button>}
+        {shockBoundary && !care && <Button className="crisis-drug__action"
+          onClick={() => onAction('confirm-pediatric-sepsis-qualified-care-ownership')}>Confirm qualified care ownership</Button>}
+        {care && !sourceReview && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-pediatric-sepsis-source-organs-and-alternatives')}>Review source + organ support</Button>}
+      </div>
+      <p className="field__hint">Experienced teams own specimens, tests, antimicrobial selection and delivery, access, fluids, oxygen, organ support, and source procedures. Phoenix is supplied classification, not an early screening control.</p>
+    </section>
+    <section className="syringe" aria-labelledby="pediatric-sepsis-response-title">
+      <div id="pediatric-sepsis-response-title" className="syringe__name">Keep the next check close.</div>
+      <Badge kind="teaching">source · organs · response · ownership</Badge>
+      <div className="syringe__meta">fixed minute-120 report · active coagulation risk</div>
+      <p className="syringe__remaining" role="status">
+        {handoff ? 'Active infection, organ, and shock-surveillance work handed off'
+          : later ? 'Stable is not resolved. Preserve active ownership.'
+            : sourceReview ? 'Review the fixed report after elapsed care'
+              : 'Keep source and organ surveillance in parallel'}
+      </p>
+      <div className="syringe__presets">
+        {sourceReview && !later && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-pediatric-sepsis-later-response')}>Review the 120-minute report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action"
+          onClick={() => onAction('handoff-pediatric-sepsis-active-risk')}>Hand off active sepsis risk</Button>}
+      </div>
+      <p className="field__hint">No cardiovascular Phoenix points are authored now; continue shock surveillance. Improved physiology does not erase persistent organ dysfunction, prove source control, or establish recovery.</p>
     </section>
   </div>;
 }

@@ -100,7 +100,10 @@ Recorded here rather than silently carried:
   patient, the bronchiolitis scenario's exact 1-year-old, 10 kg scaffold, the croup scenario's
   exact 3-year-old, 15 kg scaffold, and the pediatric status-asthmaticus scenario's exact
   10-year-old, 32 kg scaffold; pediatric disease, upper- and lower-airway obstruction,
-  developmental hemodynamics, and broader age-specific validation remain absent.
+  developmental hemodynamics, and broader age-specific validation remain absent. Pediatric sepsis
+  reuses the exact 6-year-old, 20 kg scaffold and overlays fixed infection, coagulation,
+  classification, qualified-care, and serial-response reports; it does not validate sepsis
+  physiology or treatment effect.
 
 ## Concentration-time checks, 2026-08-23
 

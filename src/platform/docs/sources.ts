@@ -2251,6 +2251,29 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'https://doi.org/10.1002/14651858.CD001955.pub5',
     verifiedOn: '2026-08-25',
   },
+  {
+    id: 'ssc-pediatric-sepsis-2026',
+    currency: { lastAmended: '2026-03-23', checkedAt: '2026-08-25' },
+    authors: 'Weiss SL, Peters MJ, Oczkowski SJ, et al',
+    title: 'Surviving Sepsis Campaign international guidelines for the management of sepsis and septic shock in children 2026',
+    publication: 'Pediatric Critical Care Medicine',
+    year: 2026,
+    locator: '27(4):379-434; doi:10.1097/PCC.0000000000003927; initial evaluation, antimicrobial therapy, fluid therapy, hemodynamic monitoring, and source control recommendations',
+    usedFor: 'The pediatric sepsis-without-shock boundary: time-limited rapid evaluation, cultures without material treatment delay, timely qualified antimicrobial care, source and organ review, and serial whole-child reassessment without exposing a universal clock, drug, dose, fluid, or treatment control.',
+    verifiedAgainst: 'https://sccm.org/survivingsepsiscampaign/guidelines-and-resources/surviving-sepsis-campaign-pediatric-guidelines',
+    verifiedOn: '2026-08-25',
+  },
+  {
+    id: 'schlapbach-phoenix-pediatric-sepsis-2024',
+    authors: 'Schlapbach LJ, Watson RS, Sorce LR, et al',
+    title: 'International Consensus Criteria for Pediatric Sepsis and Septic Shock',
+    publication: 'JAMA',
+    year: 2024,
+    locator: '331:665-674; doi:10.1001/jama.2024.0179; criteria table, key concepts, and diagnostic-flow footnote',
+    usedFor: 'The supplied classification boundary: suspected infection plus a Phoenix Sepsis Score of at least 2 identifies pediatric sepsis; shock requires cardiovascular dysfunction; coagulation points are authored; Phoenix is not an early screening tool or learner calculator.',
+    verifiedAgainst: 'https://jamanetwork.com/journals/jama/fullarticle/2814297',
+    verifiedOn: '2026-08-25',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

@@ -291,6 +291,13 @@ credited toward the catalog until every item in the completion contract passes.
     for the supplied second-line plan, a strictly elapsed partial response, and elapsed active-risk handoff without
     learner examination, peak flow, scoring, drug, dose, route, oxygen, device, intravenous access,
     airway, treatment, or disposition controls.
+  - [x] Pediatrics slice 5/16 adds one authored 6-year-old infection-associated coagulation-
+    dysfunction reassessment without current shock, with supplied Phoenix classification,
+    verified qualified evaluation and antimicrobial care, explicit shock surveillance, source and
+    organ review, a strictly elapsed partial trajectory, and elapsed active-risk handoff without
+    learner examination, screening, score calculation, testing, diagnosis, antimicrobial, dose,
+    route, access, fluid, vasoactive, oxygen, device, source-control, treatment, or disposition
+    controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing

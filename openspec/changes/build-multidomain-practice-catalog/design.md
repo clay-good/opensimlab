@@ -1708,6 +1708,28 @@ choices. The lab does not examine, diagnose, score, test, choose or deliver a dr
 oxygen setting, inhaler, nebulizer, intravenous access, infusion, airway care, procedure, or
 treatment; determine disposition or prognosis; or predict outcome.
 
+### Wave D pediatrics slice 5: pediatric sepsis without shock
+
+The fifth Pediatrics lab separates infection-associated organ dysfunction from current shock so
+the following septic-shock lab can own hemodynamic rescue. A previously well 6-year-old boy
+weighing 20 kg has a probable but unconfirmed urinary source and a fixed experienced-team report
+of thrombocytopenia and prolonged INR. A qualified report supplies 2 Phoenix coagulation points,
+0 cardiovascular, respiratory, and neurological points, and pediatric sepsis without current
+shock. The learner does not calculate Phoenix, which is classification after overt organ
+dysfunction rather than an early screening tool.
+
+Learners reconcile suspected infection, organ dysfunction, whole-child state, and verified care;
+distinguish current sepsis from shock without treating preserved pressure as low risk; confirm
+ongoing experienced ownership of the supplied evaluation and antimicrobial care, source work,
+organ support, and serial reassessment;
+then review source, organ, alternative-cause, and deterioration work. A strictly elapsed fixed
+minute-120 report shows improved physiology but persistent coagulation dysfunction and unresolved
+source, followed by another elapsed active-risk handoff. Exactly one positive action is visible at
+each stage. The lab does not examine, screen, score, diagnose, acquire or interpret tests, identify
+a pathogen, choose or deliver an antimicrobial, drug, dose, route, access, fluid, vasoactive,
+oxygen, device, procedure, source control, or treatment, determine disposition or prognosis, or
+predict recovery or outcome.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

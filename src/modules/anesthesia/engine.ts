@@ -41,7 +41,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.46';
+export const ENGINE_VERSION = '0.1.0-alpha.47';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -130,6 +130,7 @@ const PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES = new Set([
   'high-flow-nasal-oxygen-escalation-response', 'noninvasive-ventilation-selection-response',
   'unplanned-extubation-response', 'endotracheal-tube-migration-response',
   'bronchiolitis-response', 'croup-response', 'pediatric-status-asthmaticus-response',
+  'pediatric-sepsis-response',
   'pediatric-foreign-body-airway-obstruction-response',
 ]);
 const BRONCHIOLITIS_BLOCKED_ACTION_TYPES = new Set([
@@ -151,6 +152,15 @@ const PEDIATRIC_STATUS_ASTHMATICUS_BLOCKED_ACTION_TYPES = new Set([
   'pediatric-respiratory-distress-response', 'bronchiolitis-response', 'croup-response',
   'pediatric-foreign-body-airway-obstruction-response', 'opioid-toxicity-response',
   'bronchiectasis-mucus-plugging-response', 'ventilator-circuit-disconnection-response',
+]);
+const PEDIATRIC_SEPSIS_BLOCKED_ACTION_TYPES = new Set([
+  ...[...PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES]
+    .filter((type) => type !== 'pediatric-sepsis-response'),
+  'pediatric-respiratory-distress-response', 'bronchiolitis-response', 'croup-response',
+  'pediatric-status-asthmaticus-response', 'septic-shock-assessment',
+  'septic-shock-resuscitation-response', 'pediatric-foreign-body-airway-obstruction-response',
+  'opioid-toxicity-response', 'bronchiectasis-mucus-plugging-response',
+  'ventilator-circuit-disconnection-response',
 ]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
@@ -827,6 +837,12 @@ export class AnesthesiaEngine {
   private pediatricStatusAsthmaticusHandoffAtTick: number | null = null;
   private pediatricStatusAsthmaticusLastUnsupportedChoice: 'force-peak-flow'
     | 'radiograph-delay' | 'trigger-review-delay' | 'saturation-discharge' | null = null;
+  private pediatricSepsisPatternAtTick: number | null = null;
+  private pediatricSepsisShockBoundaryAtTick: number | null = null;
+  private pediatricSepsisCareAtTick: number | null = null;
+  private pediatricSepsisSourceReviewAtTick: number | null = null;
+  private pediatricSepsisLaterResponseAtTick: number | null = null;
+  private pediatricSepsisHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1060,6 +1076,13 @@ export class AnesthesiaEngine {
   }
 
   apply(action: LearnerAction): void {
+    if (action === null || typeof action !== 'object' || Array.isArray(action)
+      || typeof action.type !== 'string' || action.payload === null
+      || typeof action.payload !== 'object' || Array.isArray(action.payload)) {
+      this.log('warning', 'assessment', `malformed-action-refused-${this.currentTick}`,
+        'That action was malformed and was safely ignored. Nothing changed.');
+      return;
+    }
     const hypertensiveEmergency = this.scenario.timeline.some((event) =>
       event.type === 'narrative' && event.target === 'hypertensive-emergency-reassessment');
     if (hypertensiveEmergency && HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES.has(action.type)) {
@@ -1247,6 +1270,15 @@ export class AnesthesiaEngine {
       && PEDIATRIC_STATUS_ASTHMATICUS_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `pediatric-status-asthmaticus-generic-action-refused-${this.currentTick}`,
         'This pediatric severe-asthma lesson does not expose generic medication, oxygen-device, airway, ventilator, procedure, test, alarm, or adjacent-crisis actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const pediatricSepsis = this.scenario.metadata.id === 'pediatric-sepsis'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-sepsis-reassessment');
+    if (pediatricSepsis && PEDIATRIC_SEPSIS_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `pediatric-sepsis-generic-action-refused-${this.currentTick}`,
+        'This pediatric sepsis lesson does not expose generic medication, antimicrobial, fluid, oxygen-device, airway, ventilator, procedure, test, alarm, shock, or adjacent-crisis actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -6249,6 +6281,55 @@ export class AnesthesiaEngine {
         this.pediatricStatusAsthmaticusHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `pediatric-status-asthmaticus-handoff-recorded-${this.currentTick}`, 'Established asthma risk, arrival and first-hour trajectory, reported treatment exposure, current obstruction and oxygen need, partial response, medication-effect surveillance, failure triggers, open causes, controller access and adherence questions, and named pediatric, respiratory, nursing, pharmacy, and airway owners were handed off. No durable recovery, discharge readiness, disposition, prognosis, or outcome was declared.', { durableRecoveryProven: false, dischargeReadinessProven: false, dispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'pediatric-sepsis-response': {
+        const supported = this.scenario.metadata.id === 'pediatric-sepsis'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-sepsis-reassessment');
+        if (!supported) { this.log('warning', 'assessment', `pediatric-sepsis-response-refused-${this.currentTick}`, 'These choices are available only in the declared pediatric sepsis lesson.'); break; }
+        const response = String(action.payload.action ?? '');
+        const valid = ['reconcile-pediatric-sepsis-infection-and-organ-dysfunction',
+          'distinguish-pediatric-sepsis-without-shock',
+          'confirm-pediatric-sepsis-qualified-care-ownership',
+          'review-pediatric-sepsis-source-organs-and-alternatives',
+          'review-pediatric-sepsis-later-response',
+          'handoff-pediatric-sepsis-active-risk'].includes(response);
+        if (!valid) { this.log('warning', 'assessment', `pediatric-sepsis-response-refused-${this.currentTick}`, 'That pediatric sepsis response is not available. Nothing changed.'); break; }
+        if (response === 'reconcile-pediatric-sepsis-infection-and-organ-dysfunction') {
+          if (this.pediatricSepsisPatternAtTick !== null) { this.log('warning', 'assessment', `pediatric-sepsis-pattern-refused-${this.currentTick}`, 'The supplied infection, organ-dysfunction, care, and whole-child pattern was already reconciled.'); break; }
+          this.pediatricSepsisPatternAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pediatric-sepsis-pattern-reconciled-${this.currentTick}`, 'The suspected-infection history, fixed coagulation dysfunction, qualified-care record, and current whole-child state were reconciled. Fever and tachycardia were context rather than a diagnostic shortcut. The learner did not examine, interpret a monitor, calculate a score, acquire or interpret a test, diagnose, or deliver treatment.', { suspectedInfectionAuthored: true, coagulationDysfunctionAuthored: true, phoenixScoreCalculatedByLearner: false, diagnosisMadeByLearner: false }); break;
+        }
+        if (this.pediatricSepsisPatternAtTick === null) { this.log('warning', 'assessment', `pediatric-sepsis-pattern-order-refused-${this.currentTick}`, 'Reconcile the supplied infection, organ-dysfunction, care, and whole-child pattern first.'); break; }
+        if (response === 'distinguish-pediatric-sepsis-without-shock') {
+          if (this.pediatricSepsisShockBoundaryAtTick !== null) { this.log('warning', 'assessment', `pediatric-sepsis-shock-boundary-refused-${this.currentTick}`, 'The current sepsis-without-shock boundary was already reviewed.'); break; }
+          this.pediatricSepsisShockBoundaryAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pediatric-sepsis-without-shock-distinguished-${this.currentTick}`, 'The supplied coagulation organ dysfunction supports authored pediatric sepsis, while preserved blood pressure, refill, pulse quality, mentation, breathing, room-air oxygenation, lactate below 5 mmol/L, and no vasoactive support supply 0 current cardiovascular Phoenix points. No shock is authored now, but frequent whole-child surveillance continues because preserved pressure does not establish low risk or exclude later deterioration.', { pediatricSepsisAuthored: true, septicShockAuthored: false, phoenixCardiovascularSubscoreAuthored: 0, shockDiagnosedByLearner: false }); break;
+        }
+        if (this.pediatricSepsisShockBoundaryAtTick === null) { this.log('warning', 'assessment', `pediatric-sepsis-shock-boundary-order-refused-${this.currentTick}`, 'Distinguish the supplied current sepsis state from shock before activating ongoing care.'); break; }
+        if (response === 'confirm-pediatric-sepsis-qualified-care-ownership') {
+          if (this.pediatricSepsisCareAtTick !== null) { this.log('warning', 'assessment', `pediatric-sepsis-care-refused-${this.currentTick}`, 'Ongoing qualified pediatric sepsis ownership was already confirmed.'); break; }
+          this.pediatricSepsisCareAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pediatric-sepsis-qualified-care-ownership-confirmed-${this.currentTick}`, 'Ongoing experienced pediatric, nursing, pharmacy, laboratory, and escalation ownership was confirmed for the supplied evaluation and delivered local empiric antimicrobial care, unresolved source work, organ support, and frequent reassessment. The supplied culture record did not materially delay care. The learner chose or delivered no culture, specimen, test, antimicrobial, drug, dose, concentration, route, interval, access, fluid, oxygen, device, procedure, or treatment.', { qualifiedCareOwnershipConfirmed: true, antimicrobialSelectedByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.pediatricSepsisCareAtTick === null) { this.log('warning', 'assessment', `pediatric-sepsis-care-order-refused-${this.currentTick}`, 'Activate qualified pediatric sepsis evaluation, antimicrobial care, and reassessment first.'); break; }
+        if (response === 'review-pediatric-sepsis-source-organs-and-alternatives') {
+          if (this.pediatricSepsisSourceReviewAtTick !== null) { this.log('warning', 'assessment', `pediatric-sepsis-source-review-refused-${this.currentTick}`, 'Source, organ, alternative-cause, and deterioration work was already reviewed.'); break; }
+          this.pediatricSepsisSourceReviewAtTick = this.currentTick;
+          this.log('warning', 'assessment', `pediatric-sepsis-source-organs-reviewed-${this.currentTick}`, 'The probable urinary source remains unconfirmed while culture and source-directed results are pending. Coagulation, bleeding, mentation, breathing, circulation, urine, lactate, treatment fit, access, and alternative sources or causes remain under experienced review without delaying active care. No exclusive source, pathogen, procedure, or treatment was selected by the learner.', { sourceConfirmed: false, pathogenIdentified: false, sourceProcedurePerformedByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.pediatricSepsisSourceReviewAtTick === null) { this.log('warning', 'assessment', `pediatric-sepsis-source-review-order-refused-${this.currentTick}`, 'Review unresolved source, organs, alternatives, and deterioration triggers before opening the later report.'); break; }
+        if (response === 'review-pediatric-sepsis-later-response') {
+          if (this.currentTick <= this.pediatricSepsisSourceReviewAtTick) { this.log('warning', 'assessment', `pediatric-sepsis-later-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before reviewing the fixed later whole-child report.'); break; }
+          if (this.pediatricSepsisLaterResponseAtTick !== null) { this.log('warning', 'assessment', `pediatric-sepsis-later-response-refused-${this.currentTick}`, 'The fixed later pediatric sepsis report was already reviewed.'); break; }
+          this.pediatricSepsisLaterResponseAtTick = this.currentTick;
+          this.log('warning', 'assessment', `pediatric-sepsis-later-response-reviewed-${this.currentTick}`, 'Fixed qualified minute-120 report: he is alert and interactive, with temperature 38.3°C, HR 126/min, RR 24/min, BP 102/60 mmHg (MAP 74), clean room-air SpO2 98%, warm normal-volume pulses, capillary refill 2 seconds, and reported urine output 1.2 mL/kg/h. Lactate is 1.9 mmol/L, platelets 80,000 per microliter, INR 1.5, and there is no active bleeding. Improved physiology does not erase persistent coagulation dysfunction, prove treatment effect or source control, establish durable recovery, or determine disposition.', { laterReportAuthored: true, persistentOrganDysfunctionAuthored: true, treatmentEffectProven: false, durableRecoveryProven: false, dispositionDetermined: false }); break;
+        }
+        if (this.pediatricSepsisLaterResponseAtTick === null) { this.log('warning', 'assessment', `pediatric-sepsis-later-order-refused-${this.currentTick}`, 'Review the fixed later whole-child and organ-function report after elapsed qualified care.'); break; }
+        if (this.currentTick <= this.pediatricSepsisLaterResponseAtTick) { this.log('warning', 'assessment', `pediatric-sepsis-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off active pediatric sepsis risk.'); break; }
+        if (this.pediatricSepsisHandoffAtTick !== null) { this.log('warning', 'assessment', `pediatric-sepsis-handoff-refused-${this.currentTick}`, 'The active pediatric sepsis handoff was already recorded.'); break; }
+        this.pediatricSepsisHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `pediatric-sepsis-handoff-recorded-${this.currentTick}`, 'The suspected infection, persistent coagulation dysfunction, current no-shock findings, shock and bleeding surveillance, pending culture and source work, qualified treatment review, organ trends, alternative causes, caregiver context, and named pediatric, nursing, pharmacy, laboratory, and escalation owners were handed off. No source, pathogen, durable recovery, disposition, prognosis, or outcome was declared.', { septicShockAuthored: false, durableRecoveryProven: false, dischargeReadinessProven: false, dispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -9119,6 +9200,20 @@ export class AnesthesiaEngine {
         meanArterialMmHg: later ? 78 : 80,
         coreTemperatureC: 37.2 };
     }
+    if (this.scenario.metadata.id === 'pediatric-sepsis'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-sepsis-reassessment')) {
+      const later = this.pediatricSepsisLaterResponseAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: later ? 126 : 140,
+        respiratoryRateBpm: later ? 24 : 28,
+        spo2Percent: later ? 98 : 97,
+        etco2MmHg: later ? 36 : 34,
+        systolicMmHg: later ? 102 : 104,
+        diastolicMmHg: later ? 60 : 62,
+        meanArterialMmHg: later ? 74 : 76,
+        coreTemperatureC: later ? 38.3 : 39.1 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -10811,6 +10906,48 @@ export class AnesthesiaEngine {
               intubationPerformedByLearner: false as const,
               procedurePerformedByLearner: false as const,
               treatmentDeliveredByLearner: false as const, durableRecoveryProven: false as const,
+              dischargeReadinessProven: false as const, dispositionDetermined: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'pediatric-sepsis'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-sepsis-reassessment') ? {
+            pediatricSepsisAssessment: {
+              patternAtTick: this.pediatricSepsisPatternAtTick,
+              shockBoundaryAtTick: this.pediatricSepsisShockBoundaryAtTick,
+              careAtTick: this.pediatricSepsisCareAtTick,
+              sourceReviewAtTick: this.pediatricSepsisSourceReviewAtTick,
+              laterResponseAtTick: this.pediatricSepsisLaterResponseAtTick,
+              handoffAtTick: this.pediatricSepsisHandoffAtTick,
+              initialPulsePresent: true as const, spontaneousBreathingAuthored: true as const,
+              suspectedInfectionAuthored: true as const, coagulationDysfunctionAuthored: true as const,
+              phoenixSepsisScoreAuthored: 2 as const,
+              phoenixCardiovascularSubscoreAuthored: 0 as const,
+              sepsisWithoutShockAuthored: true as const, hypotensionAuthored: false as const,
+              respiratoryDysfunctionAuthored: false as const,
+              neurologicDysfunctionAuthored: false as const,
+              qualifiedCareOwnershipConfirmed: this.pediatricSepsisCareAtTick !== null,
+              laterReportAuthored: this.pediatricSepsisLaterResponseAtTick !== null,
+              sourceConfirmed: false as const, pathogenIdentified: false as const,
+              patientExaminedByLearner: false as const,
+              monitorInterpretedByLearner: false as const,
+              scoreCalculatedByLearner: false as const,
+              testAcquiredByLearner: false as const, testInterpretedByLearner: false as const,
+              cultureAcquiredByLearner: false as const, diagnosisMadeByLearner: false as const,
+              antimicrobialSelectedByLearner: false as const,
+              drugSelectedByLearner: false as const, doseSelectedByLearner: false as const,
+              concentrationSelectedByLearner: false as const, routeSelectedByLearner: false as const,
+              accessPlacedByLearner: false as const, fluidSelectedByLearner: false as const,
+              fluidVolumeSelectedByLearner: false as const,
+              fluidRateSelectedByLearner: false as const,
+              fluidDeliveredByLearner: false as const, vasoactiveSelectedByLearner: false as const,
+              oxygenSelectedByLearner: false as const, deviceSelectedByLearner: false as const,
+              oxygenFlowSelectedByLearner: false as const,
+              oxygenDeliveredByLearner: false as const,
+              procedurePerformedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              treatmentEffectProven: false as const, durableRecoveryProven: false as const,
               dischargeReadinessProven: false as const, dispositionDetermined: false as const,
               outcomePredicted: false as const,
             },

@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: pediatric respiratory-distress state has protocol version 117', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(120);
+  it('Scenario: pediatric sepsis state has protocol version 121', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(121);
   });
 
   it('Scenario: init reports ready before any step runs', () => {
@@ -77,6 +77,22 @@ describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
     const state = lastState();
     expect(state.tick).toBe(10);
     expect(state.concentrations.find((entry) => entry.drugId === 'propofol')?.plasma).toBeGreaterThan(0);
+  });
+
+  it.each([
+    { v: WORKER_PROTOCOL_VERSION, type: 'action' },
+    { v: WORKER_PROTOCOL_VERSION, type: 'action', action: null },
+    { v: WORKER_PROTOCOL_VERSION, type: 'action', action: {
+      tick: 0, type: 'bolus', payload: null } },
+  ])('calmly refuses a malformed runtime action without ending the worker', (message) => {
+    init(); emitted.length = 0;
+    deliver(message as unknown as ToWorkerMessage);
+    expect(emitted.some((entry) => entry.type === 'error')).toBe(false);
+    deliver({ v: WORKER_PROTOCOL_VERSION, type: 'advance', ticks: 1 });
+    const state = lastState();
+    expect(state.tick).toBeGreaterThanOrEqual(0);
+    expect(state.events.some((event) => event.eventId.startsWith('malformed-action-refused-')))
+      .toBe(true);
   });
 });
 

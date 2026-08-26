@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 117 reports pediatric respiratory-distress reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 120;
+/** Bumped whenever the message shape changes incompatibly. Version 121 reports pediatric-sepsis reassessment state. */
+export const WORKER_PROTOCOL_VERSION = 121;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1193,6 +1193,34 @@ export interface EquipmentSnapshot {
       readonly procedurePerformedByLearner: false; readonly treatmentDeliveredByLearner: false;
       readonly durableRecoveryProven: false; readonly dischargeReadinessProven: false;
       readonly dispositionDetermined: false; readonly outcomePredicted: false;
+    };
+    readonly pediatricSepsisAssessment?: {
+      readonly patternAtTick: number | null; readonly shockBoundaryAtTick: number | null;
+      readonly careAtTick: number | null; readonly sourceReviewAtTick: number | null;
+      readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true; readonly spontaneousBreathingAuthored: true;
+      readonly suspectedInfectionAuthored: true; readonly coagulationDysfunctionAuthored: true;
+      readonly phoenixSepsisScoreAuthored: 2;
+      readonly phoenixCardiovascularSubscoreAuthored: 0;
+      readonly sepsisWithoutShockAuthored: true; readonly hypotensionAuthored: false;
+      readonly respiratoryDysfunctionAuthored: false; readonly neurologicDysfunctionAuthored: false;
+      readonly qualifiedCareOwnershipConfirmed: boolean; readonly laterReportAuthored: boolean;
+      readonly sourceConfirmed: false; readonly pathogenIdentified: false;
+      readonly patientExaminedByLearner: false; readonly monitorInterpretedByLearner: false;
+      readonly scoreCalculatedByLearner: false; readonly testAcquiredByLearner: false;
+      readonly testInterpretedByLearner: false; readonly cultureAcquiredByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly antimicrobialSelectedByLearner: false;
+      readonly drugSelectedByLearner: false; readonly doseSelectedByLearner: false;
+      readonly concentrationSelectedByLearner: false; readonly routeSelectedByLearner: false;
+      readonly accessPlacedByLearner: false; readonly fluidSelectedByLearner: false;
+      readonly fluidVolumeSelectedByLearner: false; readonly fluidRateSelectedByLearner: false;
+      readonly fluidDeliveredByLearner: false; readonly vasoactiveSelectedByLearner: false;
+      readonly oxygenSelectedByLearner: false; readonly deviceSelectedByLearner: false;
+      readonly oxygenFlowSelectedByLearner: false; readonly oxygenDeliveredByLearner: false;
+      readonly procedurePerformedByLearner: false; readonly treatmentDeliveredByLearner: false;
+      readonly treatmentEffectProven: false; readonly durableRecoveryProven: false;
+      readonly dischargeReadinessProven: false; readonly dispositionDetermined: false;
+      readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

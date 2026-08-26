@@ -4647,6 +4647,30 @@ export function objectiveFindings(
       const ordered = later && handoff && later.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved obstruction, oxygen need, treatment exposure, toxicity surveillance, failure triggers, open causes, access questions, and named owners without claiming disposition or outcome.' : 'The active severe-asthma handoff was absent or did not follow the later response after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-pediatric-sepsis-infection-and-organ-dysfunction',
+      'distinguish-pediatric-sepsis-without-shock',
+      'confirm-pediatric-sepsis-qualified-care-ownership',
+      'review-pediatric-sepsis-source-organs-and-alternatives',
+      'review-pediatric-sepsis-later-response',
+      'handoff-pediatric-sepsis-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'pediatric-sepsis'
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pediatric-sepsis-reassessment');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The pediatric sepsis lesson was not active.' } satisfies ObjectiveFinding;
+      const pattern = log.find((event) => /^pediatric-sepsis-pattern-reconciled-\d+$/.test(event.eventId));
+      const shockBoundary = log.find((event) => /^pediatric-sepsis-without-shock-distinguished-\d+$/.test(event.eventId));
+      const care = log.find((event) => /^pediatric-sepsis-qualified-care-ownership-confirmed-\d+$/.test(event.eventId));
+      const source = log.find((event) => /^pediatric-sepsis-source-organs-reviewed-\d+$/.test(event.eventId));
+      const later = log.find((event) => /^pediatric-sepsis-later-response-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^pediatric-sepsis-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-pediatric-sepsis-infection-and-organ-dysfunction') return { ...base, outcome: pattern ? 'met' : 'not-met', finding: pattern ? 'The supplied suspected infection, coagulation dysfunction, qualified-care record, and whole-child trajectory were reconciled without learner examination, scoring, testing, diagnosis, or treatment.' : 'The fixed infection and organ-dysfunction pattern was not reconciled.', atTick: pattern?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'distinguish-pediatric-sepsis-without-shock') { const ordered = pattern && shockBoundary && pattern.tick <= shockBoundary.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Authored sepsis was distinguished from current shock while preserved pressure and perfusion remained insufficient to establish low risk.' : 'The no-shock boundary was absent or preceded pattern review.', atTick: shockBoundary?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'confirm-pediatric-sepsis-qualified-care-ownership') { const ordered = shockBoundary && care && shockBoundary.tick <= care.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Ongoing qualified ownership of the supplied evaluation, delivered antimicrobial care, source work, organ support, and reassessment was confirmed without learner test, drug, dose, route, access, fluid, device, procedure, or treatment selection.' : 'Qualified-care ownership was absent or preceded the shock-boundary review.', atTick: care?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-sepsis-source-organs-and-alternatives') { const ordered = care && source && care.tick <= source.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Source, organ, alternative-cause, and deterioration work continued in parallel without claiming an exclusive source, pathogen, or procedure.' : 'Source and organ review was absent or preceded qualified care.', atTick: source?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-sepsis-later-response') { const ordered = source && later && source.tick < later.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed qualified care, improved physiology was separated from persistent coagulation dysfunction, unresolved source, treatment effect, durable recovery, and disposition.' : 'The later response was absent or did not follow source and organ review after elapsed time.', atTick: later?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = later && handoff && later.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved infection, organ dysfunction, shock surveillance, pending source work, treatment review, caregiver context, and named owners without claiming recovery, disposition, or outcome.' : 'The active pediatric sepsis handoff was absent or did not follow the later response after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

@@ -3551,6 +3551,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, current croup guidance, local medication and airway systems, qualified teams, caregiver input, and patient-specific reassessment; poor response or red flags change the pathway.',
     briefIn: ['croup'],
   },
+  {
+    id: 'pediatric-sepsis-infection-organ-dysfunction-care-and-response-are-authored',
+    headline: 'The child, suspected infection, coagulation dysfunction, score report, qualified care, and serial response are authored.',
+    simplification: 'Fixed reports and scenario-specific snapshots stand in for caregiver history, examination, monitoring, specimen and laboratory work, expert classification, antimicrobial care, source review, organ surveillance, and serial bedside reassessment.',
+    whereItMisleads: 'Treating the fictional age, temperature, rates, pressure, refill, lactate, platelet count, INR, score, care timing, or response as a universal threshold, learner-acquired finding, screening rule, or validated pediatric-sepsis physiology.',
+    correctUnderstanding: 'Real pediatric sepsis care integrates verified infection context, organ function, mentation, breathing, circulation, urine, bleeding, source, treatment fit, caregiver context, local pathways, and frequent qualified reassessment.',
+    briefIn: ['pediatric-sepsis'],
+  },
+  {
+    id: 'pediatric-sepsis-controls-reconcile-distinguish-activate-review-reassess-and-handoff-only',
+    headline: 'The controls record supplied-pattern review, shock distinction, qualified-care activation, source and organ review, reassessment, and handoff only.',
+    simplification: 'Six accepted actions stand in for experienced pediatric sepsis evaluation, antimicrobial and supportive care, source work, organ surveillance, caregiver communication, escalation, and handoff.',
+    whereItMisleads: 'Equating button order with screening, examination, diagnosis, score calculation, specimen or test work, medication, fluid, oxygen or device operation, source control, treatment, team performance, caregiver communication, or pediatric competence.',
+    correctUnderstanding: 'Actual care requires the child and caregiver, trained pediatric teams, current local guidance, patient-specific evaluation and treatment, source expertise, and continuous reassessment for shock and organ change.',
+    briefIn: ['pediatric-sepsis'],
+  },
+  {
+    id: 'no-live-pediatric-sepsis-exam-score-test-drug-fluid-device-procedure-treatment-or-disposition',
+    headline: 'The lab does not screen, examine, score, test, choose or deliver treatment, perform source control, determine disposition, or predict outcome.',
+    simplification: 'No live examination, monitor interpretation, Phoenix, PEWS or SIRS calculation, culture, specimen, lactate, gas, laboratory or imaging acquisition or interpretation, source or pathogen diagnosis, antimicrobial, drug, dose, concentration, route, interval, access, fluid, bolus, volume, rate, vasoactive, oxygen, device, flow, ventilation, airway maneuver, source-control procedure, treatment, admission, discharge, prognosis, recovery, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values or timing into care, using Phoenix as an early screen, treating preserved pressure or falling lactate as low risk, or using completion as evidence of clinical, prescribing, procedural, disposition, or prognostic competence.',
+    correctUnderstanding: 'Use verified patient data, current pediatric sepsis guidance, local recognition and antimicrobial systems, qualified source and organ-support teams, caregiver input, and repeated patient-specific reassessment.',
+    briefIn: ['pediatric-sepsis'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {
