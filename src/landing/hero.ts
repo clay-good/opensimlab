@@ -65,10 +65,14 @@ export function heroStaticPath(widthPx: number, heightPx: number): string {
   // caught at full height, and the trace came out as an irregular picket fence
   // with no recognisable P or T wave between the spikes.
   const perColumn = SAMPLE_RATE_HZ.ecg / PIXELS_PER_SECOND;
+  // Two CSS pixels per static column preserves the P-QRS-T silhouette at this
+  // scale while keeping the server-rendered fallback comfortably inside the
+  // landing transfer budget. The live canvas still paints at one-pixel density.
+  const staticColumnWidth = 2;
   const points: string[] = [];
-  for (let x = 0; x < widthPx; x += 1) {
+  for (let x = 0; x < widthPx; x += staticColumnWidth) {
     const from = Math.floor(x * perColumn);
-    const to = Math.min(Math.floor((x + 1) * perColumn), samples.length);
+    const to = Math.min(Math.floor((x + staticColumnWidth) * perColumn), samples.length);
     let low = Infinity;
     let high = -Infinity;
     for (let i = from; i < to; i += 1) {

@@ -19,6 +19,10 @@ export default defineConfig({
   worker: { format: 'es' },
   build: {
     target: 'es2022',
+    // The budget gate follows this manifest so the interactive ceiling measures
+    // the files a learner actually downloads to enter a lab, not every lazy
+    // documentation and review route in the complete offline artifact.
+    manifest: true,
     cssCodeSplit: true,
     reportCompressedSize: true,
     rollupOptions: {
@@ -28,8 +32,6 @@ export default defineConfig({
           // the cockpit. It must NOT sit in the anesthesia chunk, or the landing
           // route would pull the whole simulator in with it.
           if (id.includes('src/modules/anesthesia/waveforms')) return 'waveforms';
-          if (id.includes('src/modules/anesthesia')) return 'anesthesia';
-          if (id.includes('node_modules/react')) return 'react';
           return undefined;
         },
       },

@@ -2,9 +2,10 @@
 
 Open Sim Lab ships two variable families: **Open Sim Lab Inter**, an OFL-compliant
 renamed subset of Inter, for interface text and numerics; and **JetBrains Mono** for
-the event log and tabular code. Both are served from `/fonts`, preloaded by every
-page, and included in the offline precache. No font service or other foreign origin
-is used.
+the event log and tabular code. Both are served from `/fonts` and included in the
+offline precache. Pages preload the interface face; the cockpit-only mono face is
+requested when its event log appears, preserving the landing transfer budget. No
+font service or other foreign origin is used.
 
 The committed Latin subsets total **86.2 KB compressed** against the 120 KB budget.
 `npm run fonts` verifies their WOFF2 signatures, licenses, presence, and size. The

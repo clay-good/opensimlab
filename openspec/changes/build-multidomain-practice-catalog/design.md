@@ -2603,6 +2603,21 @@ Quality gates are not waivable to reach a catalog number or schedule. A waiver m
 scenario, but it cannot mark an unmet scenario playable. The public catalog always reports the actual
 passing count beside the 256-scenario target.
 
+### 8.4 Production transfer boundaries
+
+The landing, interactive-cockpit, and complete-offline budgets measure different promises. Vite emits
+a build manifest and CI walks static imports from the landing entry and shared clinical route rather
+than summing unrelated lazy routes. The cockpit graph also includes its solver worker, both fonts, and
+the largest direct scenario document. The complete-offline gate continues to count every emitted
+file, so route splitting cannot hide total storage growth.
+
+Automatic route chunking is the authoritative production boundary. Broad manual anesthesia and React
+chunks are prohibited because they can create circular static imports that preload the simulator on
+the landing page. Only the waveform generator remains a named shared chunk. The interface font is
+preloaded on every document; the mono face is requested when the cockpit event log uses it. The static
+hero remains an engine-generated trace at two-pixel min/max density, while the live sweep retains its
+one-pixel canvas density and identical layout.
+
 ## 9. Open source and public operations
 
 The repository becomes the source of truth for code, content, evidence briefs, review records,

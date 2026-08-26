@@ -6,7 +6,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { BUDGETS } from '../../scripts/check-budgets';
+import { BUDGETS, manifestAssetPaths } from '../../scripts/check-budgets';
 import { precacheVersion } from '../../scripts/prerender';
 import { isCrawler } from '@platform/offline/register';
 import { AnesthesiaEngine } from '@anesthesia/engine';
@@ -147,6 +147,35 @@ describe('Requirement: Bounded Download Budget', () => {
     // The landing route is budgeted separately and far more tightly.
     expect(BUDGETS.landing).toBe(150 * 1024);
     expect(BUDGETS.landing).toBeLessThan(BUDGETS.interactive);
+  });
+
+  it('follows static cockpit imports without charging unrelated lazy routes', () => {
+    const buildManifest = {
+      'index.html': {
+        file: 'assets/index.js',
+        imports: ['_shared.js'],
+        dynamicImports: ['src/routes/DocumentRoute.tsx'],
+        css: ['assets/index.css'],
+      },
+      '_shared.js': { file: 'assets/shared.js' },
+      'src/routes/AnesthesiaRoute.tsx': {
+        file: 'assets/cockpit.js',
+        imports: ['_shared.js'],
+        css: ['assets/cockpit.css'],
+      },
+      'src/routes/DocumentRoute.tsx': { file: 'assets/documents.js' },
+    };
+
+    expect([...manifestAssetPaths(
+      buildManifest,
+      ['index.html', 'src/routes/AnesthesiaRoute.tsx'],
+    )].sort()).toEqual([
+      'assets/cockpit.css',
+      'assets/cockpit.js',
+      'assets/index.css',
+      'assets/index.js',
+      'assets/shared.js',
+    ]);
   });
 });
 

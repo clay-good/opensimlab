@@ -80,6 +80,13 @@ credited toward the catalog until every item in the completion contract passes.
   storage budgeting, and safe pack rollback.
 - [x] Keep the complete scenario route catalog out of the initial landing shell while retaining
   synchronous prerendering, canonical metadata, social previews, sitemap coverage, and offline routes.
+  Production chunking now leaves lazy clinical, document, review, and educator routes outside the
+  landing entry. CI follows Vite's emitted static-import manifest, includes the largest direct lab
+  document and solver worker in the cockpit measurement, and still measures the entire artifact
+  against the separate offline ceiling. The interface font is preloaded; the event-log-only mono
+  face loads on demand. The engine-generated still ECG uses two-pixel min/max columns while the live
+  sweep retains one-pixel density. Verified compressed totals are 148.1 KB landing, 1,153.9 KB to an
+  interactive cockpit, and 2,502.3 KB for the complete offline artifact.
 - [ ] Ensure planned titles are distinct from playable scenarios and excluded from complete counts.
 
 ## 4. Private tutor

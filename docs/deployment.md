@@ -23,6 +23,12 @@ credential-shaped file or local Cloudflare state entered `dist/`. CI runs the
 same proof after every build. The artifact can then be served by any static file
 server; `wrangler` is only one deployment option.
 
+The production build also emits `dist/.vite/manifest.json`. The size gate follows
+its static import graph for the landing and clinical routes, then separately
+measures every emitted file for the complete-offline ceiling. This prevents lazy
+review or documentation routes from being charged to first cockpit entry without
+letting code splitting hide growth in the installed artifact.
+
 The source repository is currently private. This automated proof covers the
 clean-checkout build and the resulting portable artifact, but it does not claim
 that an anonymous public clone is possible yet. That final visibility check must

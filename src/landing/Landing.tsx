@@ -103,10 +103,13 @@ export function Landing() {
         {/* The module directory, compact and unambiguous. Each planned module's
             scope lives on its own route, which is one click from here. */}
         <p className="landing__modules">
-          {available.map((module) => (
-            <a key={module.id} className="landing__module-live" href={`/${module.route}`}>
-              {module.displayName}
-            </a>
+          {available.map((module, index) => (
+            <span key={module.id}>
+              {index > 0 && <span aria-hidden="true"> · </span>}
+              <a className="landing__module-live" href={`/${module.route}`}>
+                {module.displayName}
+              </a>
+            </span>
           ))}
           <span className="landing__module-planned">
             {' · '}

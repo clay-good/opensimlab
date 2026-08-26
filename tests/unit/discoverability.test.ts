@@ -548,6 +548,9 @@ describe('Requirement: One Screen, One Action', () => {
     const markup = renderToStaticMarkup(createElement(Landing));
     for (const module of MODULES) expect(markup).toContain(module.displayName);
     expect(markup).toContain('planned. No dates.');
+    const directory = /<p class="landing__modules">([\s\S]*?)<\/p>/.exec(markup)?.[1] ?? '';
+    const availableCount = MODULES.filter((module) => module.status === 'available').length;
+    expect(directory.match(/aria-hidden="true"> · <\/span>/g)).toHaveLength(availableCount - 1);
     // No date, no quarter, no countdown anywhere in what a visitor actually sees.
     expect(markup).not.toMatch(/\bQ[1-4]\s*20\d\d|coming soon|\b20[2-9]\d\b/i);
   });

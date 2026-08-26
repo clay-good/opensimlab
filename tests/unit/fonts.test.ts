@@ -86,18 +86,17 @@ describe('Requirement: Exactly Two Self-Hosted Variable Font Families', () => {
   });
 });
 
-describe('Scenario: Fonts Are Preloaded Without A Foreign Request', () => {
-  it('preloads both families on every built route', () => {
+describe('Scenario: Fonts Load Without A Foreign Request', () => {
+  it('preloads interface text and leaves the cockpit-only mono face on demand', () => {
     for (const route of ROUTES) {
       const htmlPath = route.path === '/'
         ? join(root, 'dist/index.html')
         : join(root, 'dist', route.path.slice(1), 'index.html');
       const html = readFileSync(htmlPath, 'utf8');
-      for (const font of REQUIRED_FONTS) {
-        expect(html).toContain(
-          `<link rel="preload" href="/fonts/${font.file}" as="font" type="font/woff2" crossorigin`,
-        );
-      }
+      expect(html).toContain(
+        '<link rel="preload" href="/fonts/open-sim-lab-inter-latin.woff2" as="font" type="font/woff2" crossorigin',
+      );
+      expect(html).not.toContain('<link rel="preload" href="/fonts/jetbrains-mono-latin.woff2"');
       expect(html).not.toMatch(/(?:fonts\.googleapis|fonts\.gstatic|use\.typekit)\.com/);
     }
   });
