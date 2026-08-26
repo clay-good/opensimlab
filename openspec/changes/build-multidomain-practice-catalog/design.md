@@ -2168,6 +2168,25 @@ prognosis, and outcome unresolved. No learner history, examination, score, test,
 diagnosis, drug, dose, route, access, isolation equipment, procedure, treatment, contact decision,
 disposition, prognosis, or outcome control exists.
 
+### Wave E neurology slice 10: suspected herpes simplex encephalitis
+
+The tenth Neurology lab owns the fever-plus-parenchymal-brain-dysfunction and early-negative-PCR
+boundary in an adult with new behavior, memory, language, and focal-seizure change. It is distinct
+from meningitis because altered cognition and temporal localization dominate without meningism, and
+from status epilepticus because the single focal seizure stopped and a strict qualified EEG sample
+contains no electrographic seizure. The learner reconciles the syndrome, activates qualified
+neurological, infection, neurocritical, airway-capable, nursing, seizure, and diagnostic ownership,
+and activates immediate qualified empiric intravenous antiviral care without waiting for MRI, EEG,
+CSF, or PCR certainty. Supplied CSF inflammation, temporal MRI, and specialist EEG reports preserve
+infectious, autoimmune, vascular, neoplastic, postictal, toxic-metabolic, and other alternatives. A
+strict 4-hour report supplies persistent dysfunction and a negative initial HSV PCR from an early
+specimen; compatible localization prevents premature closure and preserves qualified repeat-PCR
+ownership. Another elapsed handoff keeps treatment safety, seizures, autoimmune evaluation,
+cognition, rehabilitation, recurrence, disposition, prognosis, and outcome unresolved. No learner
+history, examination, test acquisition or interpretation, diagnosis, drug, dose, route, access,
+oxygen, airway, LP, imaging, EEG, procedure, treatment, disposition, prognosis, or outcome control
+exists.
+
 #### Neurology: 15
 
 Acute ischemic stroke; large-vessel-occlusion escalation; intracranial hemorrhage; subarachnoid

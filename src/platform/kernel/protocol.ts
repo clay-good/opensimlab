@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 141 reports Neurology meningitis first-hour state. */
-export const WORKER_PROTOCOL_VERSION = 141;
+/** Bumped whenever the message shape changes incompatibly. Version 142 reports Neurology encephalitis state. */
+export const WORKER_PROTOCOL_VERSION = 142;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2098,6 +2098,34 @@ export interface EquipmentSnapshot {
       readonly airwayProcedurePerformedByLearner: false;
       readonly isolationEquipmentSelectedByLearner: false;
       readonly treatmentDeliveredByLearner: false;
+      readonly treatmentEffectProven: false;
+      readonly durableNeurologicStabilityProven: false;
+      readonly dispositionDetermined: false;
+      readonly prognosisPredicted: false;
+      readonly outcomePredicted: false;
+    };
+    readonly neurologyEncephalitisAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly ownershipAtTick: number | null;
+      readonly treatmentAtTick: number | null;
+      readonly diagnosticsAtTick: number | null;
+      readonly laterAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly encephaliticSyndromeAuthored: true;
+      readonly qualifiedOwnershipActive: boolean;
+      readonly qualifiedEarlyAntiviralPathwayActive: boolean;
+      readonly qualifiedDiagnosticsReviewed: boolean;
+      readonly earlyNegativeHsvPcrAuthored: boolean;
+      readonly patientHistoryTakenByLearner: false;
+      readonly patientExaminedByLearner: false;
+      readonly csfAcquiredByLearner: false;
+      readonly imagingInterpretedByLearner: false;
+      readonly eegInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false;
+      readonly pathogenIdentified: false;
+      readonly drugSelectedByLearner: false;
+      readonly doseSelectedByLearner: false;
+      readonly medicationDeliveredByLearner: false;
       readonly treatmentEffectProven: false;
       readonly durableNeurologicStabilityProven: false;
       readonly dispositionDetermined: false;

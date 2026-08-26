@@ -7,6 +7,7 @@ import { NONCONVULSIVE_STATUS_EPILEPTICUS_RECOGNITION } from './nonconvulsive-st
 import { MYASTHENIC_CRISIS_ESCALATION } from './myasthenic-crisis-escalation';
 import { GUILLAIN_BARRE_RESPIRATORY_DECLINE } from './guillain-barre-respiratory-decline';
 import { ACUTE_BACTERIAL_MENINGITIS_FIRST_HOUR } from './acute-bacterial-meningitis-first-hour';
+import { SUSPECTED_HERPES_SIMPLEX_ENCEPHALITIS } from './suspected-herpes-simplex-encephalitis';
 import { SPONTANEOUS_CEREBELLAR_INTRACEREBRAL_HEMORRHAGE } from './spontaneous-cerebellar-intracerebral-hemorrhage';
 
 export const NEUROLOGY_SCENARIOS: readonly Scenario[] = [
@@ -19,6 +20,7 @@ export const NEUROLOGY_SCENARIOS: readonly Scenario[] = [
   MYASTHENIC_CRISIS_ESCALATION,
   GUILLAIN_BARRE_RESPIRATORY_DECLINE,
   ACUTE_BACTERIAL_MENINGITIS_FIRST_HOUR,
+  SUSPECTED_HERPES_SIMPLEX_ENCEPHALITIS,
 ];
 export const DEFAULT_NEUROLOGY_SCENARIO_ID = MINOR_NONDISABLING_ACUTE_ISCHEMIC_STROKE.metadata.id;
 

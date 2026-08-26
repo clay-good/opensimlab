@@ -4055,6 +4055,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use direct verified serial findings, qualified neurological, infection, emergency, airway, laboratory and public-health teams, current guidance and local protocols, individualized diagnostics and treatment, and continuous reassessment.',
     briefIn: ['acute-bacterial-meningitis-first-hour'],
   },
+  {
+    id: 'encephalitis-clock-exam-csf-mri-eeg-pcr-treatment-and-later-state-are-authored',
+    headline: 'The illness clock, examination, focal seizure, CSF, MRI, EEG, PCR, qualified care, and later state are authored.',
+    simplification: 'Fixed reports stand in for history, examination, monitoring, glucose, blood and CSF tests, lumbar puncture, MRI, specialist EEG, PCR, qualified empiric antiviral care, and reassessment.',
+    whereItMisleads: 'Treating fictional findings, temporal localization, periodic discharges, the early negative PCR, supplied care, or absent sampled seizure as learner evidence, etiologic proof, durable exclusion, treatment effect, or predicted course.',
+    correctUnderstanding: 'Real care requires immediate verified assessment, qualified neurological, infection, neurocritical and airway-capable teams, prompt individualized empiric care, parallel diagnostics, repeat testing when indicated, and continuous reassessment.',
+    briefIn: ['suspected-herpes-simplex-encephalitis'],
+  },
+  {
+    id: 'encephalitis-controls-reconcile-activate-treat-review-reassess-and-handoff-only',
+    headline: 'The controls record trajectory reconciliation, qualified ownership, early-care activation, diagnostic review, later-report review, and handoff only.',
+    simplification: 'Six accepted actions stand in for neurological, infection, neurocritical, airway, nursing, pharmacy, laboratory, imaging, neurophysiology, treatment, rehabilitation, and handoff work.',
+    whereItMisleads: 'Equating button order with examination, seizure assessment, test acquisition or interpretation, diagnosis, prescribing, procedure, treatment, disposition, or competence.',
+    correctUnderstanding: 'Actual care requires the patient, trained teams, current local pathways, verified serial findings, individualized diagnostics and treatment, and continuous reassessment.',
+    briefIn: ['suspected-herpes-simplex-encephalitis'],
+  },
+  {
+    id: 'no-live-encephalitis-exam-test-imaging-eeg-lp-diagnosis-drug-procedure-or-outcome',
+    headline: 'The lab does not examine, test, image, interpret EEG, perform LP, diagnose, prescribe, treat, perform a procedure, or report outcome.',
+    simplification: 'No live history, examination, score, monitoring, glucose, blood, culture, CSF, PCR, antibody, imaging, EEG or another test, diagnosis, oxygen, fluid, antiviral, antimicrobial, antiseizure or immune medicine, drug, dose, route, access, airway care, LP, procedure, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Treating one negative early PCR or sampled EEG as exclusion, copying fictional values into care, waiting for test certainty before qualified empiric care, or reading completion as competence.',
+    correctUnderstanding: 'Use direct verified serial findings, qualified neurological, infection, neurocritical, airway, laboratory and neurophysiology teams, current guidance and local protocols, individualized diagnostics and treatment, and continuous reassessment.',
+    briefIn: ['suspected-herpes-simplex-encephalitis'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

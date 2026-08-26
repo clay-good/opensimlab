@@ -1145,6 +1145,11 @@ export interface ActionCockpitProps {
       readonly diagnosticsAtTick: number | null; readonly treatmentAtTick: number | null;
       readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly neurologyEncephalitisAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly ownershipAtTick: number | null;
+      readonly treatmentAtTick: number | null; readonly diagnosticsAtTick: number | null;
+      readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1925,6 +1930,14 @@ export interface ActionCockpitProps {
       | 'review-neurology-meningitis-strict-later-csf-clinical-and-supplied-treatment-trajectory'
       | 'handoff-neurology-meningitis-organism-treatment-complication-public-health-hearing-and-active-risk',
   ) => void;
+  readonly onNeurologyEncephalitisResponse?: (
+    action: 'reconcile-neurology-encephalitis-clock-cognition-language-focal-seizure-and-whole-patient'
+      | 'activate-neurology-encephalitis-qualified-neurocritical-infection-airway-and-seizure-ownership'
+      | 'activate-neurology-encephalitis-qualified-immediate-empiric-antiviral-pathway-without-test-delay'
+      | 'review-neurology-encephalitis-mri-eeg-csf-etiology-and-nonconvulsive-seizure-boundary'
+      | 'review-neurology-encephalitis-strict-later-early-negative-hsv-pcr-and-clinical-trajectory'
+      | 'handoff-neurology-encephalitis-repeat-testing-antiviral-seizure-autoimmune-and-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2390,6 +2403,12 @@ export function crisisResponseAvailability(
         && event.target === 'acute-bacterial-meningitis-first-hour-reassessment')
       && scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'acute-bacterial-meningitis-first-hour-reassessment-boundary'),
+    hasNeurologyEncephalitisResponse:
+      scenario.metadata.id === 'suspected-herpes-simplex-encephalitis'
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'suspected-herpes-simplex-encephalitis-reassessment')
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'suspected-herpes-simplex-encephalitis-reassessment-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2579,6 +2598,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'guillain-barre-respiratory-decline-reassessment')
       || (event.type === 'narrative'
         && event.target === 'acute-bacterial-meningitis-first-hour-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'suspected-herpes-simplex-encephalitis-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2660,6 +2681,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeurologyMyasthenicCrisisResponse,
     hasNeurologyGbsResponse,
     hasNeurologyMeningitisResponse,
+    hasNeurologyEncephalitisResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2742,7 +2764,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeurologyCerebellarIchResponse || hasNeurologyAsahDeteriorationResponse
     || hasNeurologyFocalMotorStatusResponse || hasNeurologyNcseResponse
     || hasNeurologyMyasthenicCrisisResponse || hasNeurologyGbsResponse
-    || hasNeurologyMeningitisResponse;
+    || hasNeurologyMeningitisResponse || hasNeurologyEncephalitisResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2773,7 +2795,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasNeurologyMeningitisResponse
+  const responseTray = hasNeurologyEncephalitisResponse
+    ? { id: 'crisis', label: 'Encephalitis reassessment' } as const
+    : hasNeurologyMeningitisResponse
     ? { id: 'crisis', label: 'Meningitis first hour' } as const
     : hasNeurologyGbsResponse
     ? { id: 'crisis', label: 'Guillain-Barré respiratory decline' } as const
@@ -3093,6 +3117,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeurologyMyasthenicCrisisResponse
     || hasNeurologyGbsResponse
     || hasNeurologyMeningitisResponse
+    || hasNeurologyEncephalitisResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3864,6 +3889,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <NeurologyMeningitisTray
                 assessment={props.resuscitation.neurologyMeningitisAssessment}
                 onAction={props.onNeurologyMeningitisResponse ?? (() => {})} />
+            )}
+            {hasNeurologyEncephalitisResponse && (
+              <NeurologyEncephalitisTray
+                assessment={props.resuscitation.neurologyEncephalitisAssessment}
+                onAction={props.onNeurologyEncephalitisResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -9992,6 +10022,38 @@ function NeurologyMeningitisTray({ assessment, onAction }: {
       <p className="field__hint">The blood, LP, CSF, and prior qualified care are fixed reports, not learner tests, interpretation, procedure, prescribing, or treatment. No pathogen, susceptibility, treatment effect, durable neurological safety, hearing result, disposition, prognosis, or outcome is supplied.</p>
     </section>
   </div>;
+}
+
+function NeurologyEncephalitisTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyEncephalitisAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNeurologyEncephalitisResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const ownership = assessment?.ownershipAtTick != null;
+  const treatment = assessment?.treatmentAtTick != null;
+  const diagnostics = assessment?.diagnosticsAtTick != null;
+  const later = assessment?.laterAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="neurology-encephalitis-early-title">
+      <div id="neurology-encephalitis-early-title" className="syringe__name">The brain changed first.</div>
+      <p className="syringe__remaining">Fever with new memory, language, behavior, and focal-seizure change needs parallel ownership and care.</p>
+      <div className="crisis-drug__actions">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neurology-encephalitis-clock-cognition-language-focal-seizure-and-whole-patient')}>Review encephalitic trajectory</Button>}
+        {trajectory && !ownership && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-encephalitis-qualified-neurocritical-infection-airway-and-seizure-ownership')}>Activate brain + infection owners</Button>}
+        {ownership && !treatment && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-encephalitis-qualified-immediate-empiric-antiviral-pathway-without-test-delay')}>Activate early antiviral care</Button>}
+        {treatment && !diagnostics && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-encephalitis-mri-eeg-csf-etiology-and-nonconvulsive-seizure-boundary')}>Review MRI + EEG + CSF</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="neurology-encephalitis-later-title">
+      <div id="neurology-encephalitis-later-title" className="syringe__name">One negative is not the end.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Repeat testing, treatment safety, seizures, autoimmune causes, cognition, and outcome uncertainty handed off.' : later ? 'The localized pattern remains compatible despite an early negative HSV PCR. Risk stays open.' : diagnostics ? 'Qualified early care and diagnostics are active. Review the fixed 4-hour report after time passes.' : 'Complete trajectory, ownership, care, and diagnostic boundaries before reassessment.'}</p>
+      <div className="crisis-drug__actions">
+        {diagnostics && !later && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-encephalitis-strict-later-early-negative-hsv-pcr-and-clinical-trajectory')}>Review the 4-hour report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-encephalitis-repeat-testing-antiviral-seizure-autoimmune-and-active-risk')}>Hand off repeat testing + risk</Button>}
+      </div>
+    </section>
+  </>;
 }
 
 function PostInfarctionShockTray({ assessment, onAction }: {

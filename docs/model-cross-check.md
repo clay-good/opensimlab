@@ -214,6 +214,12 @@ Recorded here rather than silently carried:
   validate meningitis physiology or diagnosis, examination, blood or CSF testing, imaging or LP
   safety, antimicrobial or adjunct effects, neurological complications, recovery, prognosis, or
   outcome.
+  Suspected herpes simplex encephalitis overlays a fixed fever and encephalopathy clock, focal-
+  seizure report, CSF inflammation, qualified early care, temporal MRI, specialist EEG, early
+  negative HSV PCR, and strict-later clinical state on the healthy adult scaffold; it does not
+  validate encephalitis physiology or diagnosis, examination, CSF or PCR testing, imaging or EEG
+  interpretation, antiviral or antiseizure effects, repeat-test timing, recovery, prognosis, or
+  outcome.
 
 ## Concentration-time checks, 2026-08-23
 

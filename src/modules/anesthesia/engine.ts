@@ -353,6 +353,12 @@ const NEUROLOGY_MENINGITIS_BLOCKED_ACTION_TYPES = new Set([
   'septic-shock-response', 'sepsis-response', 'status-epilepticus-response',
   'critical-care-status-epilepticus-response', 'intracranial-hypertension-response',
 ]);
+const NEUROLOGY_ENCEPHALITIS_BLOCKED_ACTION_TYPES = new Set([
+  ...NEUROLOGY_MENINGITIS_BLOCKED_ACTION_TYPES,
+  'acute-bacterial-meningitis-first-hour-response',
+  'focal-motor-status-epilepticus-escalation-response',
+  'nonconvulsive-status-epilepticus-recognition-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1154,6 +1160,12 @@ export class AnesthesiaEngine {
   private neurologyMeningitisTreatmentAtTick: number | null = null;
   private neurologyMeningitisLaterAtTick: number | null = null;
   private neurologyMeningitisHandoffAtTick: number | null = null;
+  private neurologyEncephalitisTrajectoryAtTick: number | null = null;
+  private neurologyEncephalitisOwnershipAtTick: number | null = null;
+  private neurologyEncephalitisTreatmentAtTick: number | null = null;
+  private neurologyEncephalitisDiagnosticsAtTick: number | null = null;
+  private neurologyEncephalitisLaterAtTick: number | null = null;
+  private neurologyEncephalitisHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1844,6 +1856,22 @@ export class AnesthesiaEngine {
         + 'oxygen, fluid, airway, drug, dose, route, access, isolation equipment, imaging, lumbar '
         + 'puncture, test, sepsis, seizure, intracranial-pressure, or adjacent-scenario action. '
         + 'Nothing changed.', { actionType: action.type });
+      return;
+    }
+    const neurologyEncephalitis = this.scenario.metadata.id
+      === 'suspected-herpes-simplex-encephalitis'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'suspected-herpes-simplex-encephalitis-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'suspected-herpes-simplex-encephalitis-reassessment-boundary');
+    if (neurologyEncephalitis
+      && NEUROLOGY_ENCEPHALITIS_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment',
+        `neurology-encephalitis-generic-action-refused-${this.currentTick}`,
+        'This Neurology lesson exposes no generic antiviral, antimicrobial, antiseizure, immune, '
+        + 'oxygen, fluid, airway, drug, dose, route, access, MRI, EEG, lumbar puncture, test, stroke, '
+        + 'meningitis, status-epilepticus, or adjacent-scenario action. Nothing changed.',
+        { actionType: action.type });
       return;
     }
     switch (action.type) {
@@ -9502,6 +9530,108 @@ export class AnesthesiaEngine {
             durableNeurologicStabilityProven: false, dispositionDetermined: false,
             prognosisPredicted: false, outcomePredicted: false }); break;
       }
+      case 'suspected-herpes-simplex-encephalitis-response': {
+        const response = typeof action.payload.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'suspected-herpes-simplex-encephalitis'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'suspected-herpes-simplex-encephalitis-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'suspected-herpes-simplex-encephalitis-reassessment-boundary');
+        const actions = [
+          'reconcile-neurology-encephalitis-clock-cognition-language-focal-seizure-and-whole-patient',
+          'activate-neurology-encephalitis-qualified-neurocritical-infection-airway-and-seizure-ownership',
+          'activate-neurology-encephalitis-qualified-immediate-empiric-antiviral-pathway-without-test-delay',
+          'review-neurology-encephalitis-mri-eeg-csf-etiology-and-nonconvulsive-seizure-boundary',
+          'review-neurology-encephalitis-strict-later-early-negative-hsv-pcr-and-clinical-trajectory',
+          'handoff-neurology-encephalitis-repeat-testing-antiviral-seizure-autoimmune-and-active-risk',
+        ] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) {
+          this.log('warning', 'assessment',
+            `neurology-encephalitis-response-refused-${this.currentTick}`,
+            supported ? 'The encephalitis action was not listed. No supplied or injected text was retained.'
+              : 'These encephalitis choices are available only in the exact declared Neurology lesson.'); break;
+        }
+        if (response === actions[0]) {
+          if (this.neurologyEncephalitisTrajectoryAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-encephalitis-trajectory-refused-${this.currentTick}`, 'The supplied encephalitic trajectory was already reconciled.'); break;
+          }
+          this.neurologyEncephalitisTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-encephalitis-trajectory-reconciled-${this.currentTick}`,
+            'Fever and headache followed by new behavior, memory, and language dysfunction plus one stopped focal seizure establish an authored encephalitic syndrome. Stable airway, breathing, perfusion, glucose, sodium, and the absence of meningism, persistent focal motor deficit, or recurrent visible seizure refine but do not close infectious, autoimmune, vascular, postictal, toxic-metabolic, neoplastic, and other causes. The learner did not take history, examine, test, diagnose, or treat.',
+            { encephaliticSyndromeAuthored: true, patientHistoryTakenByLearner: false,
+              patientExaminedByLearner: false, diagnosisMadeByLearner: false }); break;
+        }
+        if (this.neurologyEncephalitisTrajectoryAtTick === null) {
+          this.log('warning', 'assessment', `neurology-encephalitis-trajectory-order-refused-${this.currentTick}`, 'Reconcile the encephalitic whole-patient trajectory first.'); break;
+        }
+        if (response === actions[1]) {
+          if (this.neurologyEncephalitisOwnershipAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-encephalitis-ownership-refused-${this.currentTick}`, 'Qualified neurological, infection, neurocritical, airway, nursing, and seizure ownership is already active.'); break;
+          }
+          this.neurologyEncephalitisOwnershipAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-encephalitis-qualified-ownership-activated-${this.currentTick}`,
+            'Qualified neurological, infection, neurocritical, airway-capable, nursing, pharmacy, laboratory, and seizure teams own consciousness, airway, recurrent and nonconvulsive seizure, intracranial, diagnostic, treatment, renal, and systemic risk. The learner selected no device, test, procedure, drug, dose, route, access, or treatment.',
+            { qualifiedOwnershipActive: true, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.neurologyEncephalitisOwnershipAtTick === null) {
+          this.log('warning', 'assessment', `neurology-encephalitis-ownership-order-refused-${this.currentTick}`, 'Activate qualified ownership before early care.'); break;
+        }
+        if (response === actions[2]) {
+          if (this.neurologyEncephalitisTreatmentAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-encephalitis-treatment-refused-${this.currentTick}`, 'The qualified immediate empiric antiviral pathway is already active.'); break;
+          }
+          this.neurologyEncephalitisTreatmentAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-encephalitis-early-qualified-pathway-activated-${this.currentTick}`,
+            'Qualified teams activated immediate empiric intravenous antiviral care without waiting for MRI, EEG, CSF, or PCR certainty. Renal function, hydration, allergy, host, exposure, epidemiology, bacterial-meningitis coverage, alternatives, and local protocols remain individualized. The learner selected or delivered no antiviral, antimicrobial, fluid, drug, dose, route, access, or treatment.',
+            { qualifiedEarlyAntiviralPathwayActive: true, drugSelectedByLearner: false,
+              medicationDeliveredByLearner: false, treatmentEffectProven: false }); break;
+        }
+        if (this.neurologyEncephalitisTreatmentAtTick === null) {
+          this.log('warning', 'assessment', `neurology-encephalitis-treatment-order-refused-${this.currentTick}`, 'Activate qualified early antiviral care before reviewing diagnostics.'); break;
+        }
+        if (response === actions[3]) {
+          if (this.neurologyEncephalitisDiagnosticsAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-encephalitis-diagnostics-refused-${this.currentTick}`, 'The supplied MRI, EEG, CSF, etiologic, and seizure boundaries were already reviewed.'); break;
+          }
+          this.neurologyEncephalitisDiagnosticsAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-encephalitis-diagnostics-and-seizure-boundary-reviewed-${this.currentTick}`,
+            'Qualified CSF shows lymphocytic inflammation with elevated protein and red cells but no organism on Gram stain. MRI and EEG remain qualified pending reports. The single focal seizure stopped, but that does not remove recurrence or nonconvulsive-seizure risk. Parallel infectious, autoimmune, vascular, neoplastic, toxic-metabolic, and other evaluation remains open. The learner acquired or interpreted no CSF, imaging, EEG, PCR, or other test.',
+            { qualifiedDiagnosticsReviewed: true, csfAcquiredByLearner: false,
+              imagingInterpretedByLearner: false, eegInterpretedByLearner: false }); break;
+        }
+        if (this.neurologyEncephalitisDiagnosticsAtTick === null) {
+          this.log('warning', 'assessment', `neurology-encephalitis-diagnostics-order-refused-${this.currentTick}`, 'Review the supplied diagnostic and seizure boundaries before the later report.'); break;
+        }
+        if (response === actions[4]) {
+          if (this.currentTick <= this.neurologyEncephalitisDiagnosticsAtTick) {
+            this.log('warning', 'assessment', `neurology-encephalitis-later-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before reviewing the fixed 4-hour report.'); break;
+          }
+          if (this.neurologyEncephalitisLaterAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-encephalitis-later-refused-${this.currentTick}`, 'The fixed early-PCR and clinical trajectory was already reviewed.'); break;
+          }
+          this.neurologyEncephalitisLaterAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-encephalitis-early-negative-pcr-trajectory-reviewed-${this.currentTick}`,
+            'The strict 4-hour reports supply left mesial-temporal and insular MRI abnormalities, left temporal slowing and lateralized periodic discharges without an electrographic seizure during the 60-minute EEG sample, and a negative initial HSV-1/2 PCR from CSF obtained about 18 hours after neurobehavioral onset. Persistent anomia and poor recall remain. This early negative PCR does not safely close HSV in the compatible localized syndrome; repeat CSF PCR timing remains qualified-team work. No learner test interpretation, pathogen identification, treatment effect, or durable stability is claimed.',
+            { earlyNegativeHsvPcrAuthored: true, pathogenIdentified: false,
+              imagingInterpretedByLearner: false, eegInterpretedByLearner: false,
+              treatmentEffectProven: false }); break;
+        }
+        if (this.neurologyEncephalitisLaterAtTick === null) {
+          this.log('warning', 'assessment', `neurology-encephalitis-later-order-refused-${this.currentTick}`, 'Review the fixed 4-hour early-PCR and clinical trajectory before handoff.'); break;
+        }
+        if (this.currentTick <= this.neurologyEncephalitisLaterAtTick) {
+          this.log('warning', 'assessment', `neurology-encephalitis-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off active encephalitis risk.'); break;
+        }
+        if (this.neurologyEncephalitisHandoffAtTick !== null) {
+          this.log('warning', 'assessment', `neurology-encephalitis-handoff-refused-${this.currentTick}`, 'The repeat-testing, treatment, seizure, autoimmune, and active-risk handoff was already recorded.'); break;
+        }
+        this.neurologyEncephalitisHandoffAtTick = this.currentTick;
+        this.log('critical', 'assessment', `neurology-encephalitis-active-risk-handoff-recorded-${this.currentTick}`,
+          'Repeat HSV PCR timing, broader infectious and autoimmune evaluation, antiviral and antimicrobial optimization and toxicity, renal and hydration safety, recurrent and nonconvulsive seizure surveillance, consciousness, airway, intracranial and systemic complications, cognition, language, memory, rehabilitation, recurrence, disposition, prognosis, and outcome uncertainty were handed off. No learner diagnosis, pathogen identification, treatment, durable stability, disposition, prognosis, or outcome is claimed.',
+          { pathogenIdentified: false, treatmentEffectProven: false,
+            durableNeurologicStabilityProven: false, dispositionDetermined: false,
+            prognosisPredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -12678,6 +12808,21 @@ export class AnesthesiaEngine {
         meanArterialMmHg: later ? 87 : 83,
         coreTemperatureC: later ? 38.8 : 39.3 };
     }
+    if (this.scenario.metadata.id === 'suspected-herpes-simplex-encephalitis'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'suspected-herpes-simplex-encephalitis-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'suspected-herpes-simplex-encephalitis-reassessment-boundary')) {
+      const later = this.neurologyEncephalitisLaterAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: later ? 102 : 110,
+        respiratoryRateBpm: later ? 19 : 20,
+        spo2Percent: 98,
+        systolicMmHg: later ? 124 : 126,
+        diastolicMmHg: later ? 72 : 74,
+        meanArterialMmHg: later ? 89 : 91,
+        coreTemperatureC: later ? 38.5 : 38.8 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -15526,6 +15671,41 @@ export class AnesthesiaEngine {
               airwayProcedurePerformedByLearner: false as const,
               isolationEquipmentSelectedByLearner: false as const,
               treatmentDeliveredByLearner: false as const,
+              treatmentEffectProven: false as const,
+              durableNeurologicStabilityProven: false as const,
+              dispositionDetermined: false as const,
+              prognosisPredicted: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'suspected-herpes-simplex-encephalitis'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'suspected-herpes-simplex-encephalitis-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'suspected-herpes-simplex-encephalitis-reassessment-boundary') ? {
+            neurologyEncephalitisAssessment: {
+              trajectoryAtTick: this.neurologyEncephalitisTrajectoryAtTick,
+              ownershipAtTick: this.neurologyEncephalitisOwnershipAtTick,
+              treatmentAtTick: this.neurologyEncephalitisTreatmentAtTick,
+              diagnosticsAtTick: this.neurologyEncephalitisDiagnosticsAtTick,
+              laterAtTick: this.neurologyEncephalitisLaterAtTick,
+              handoffAtTick: this.neurologyEncephalitisHandoffAtTick,
+              encephaliticSyndromeAuthored: true as const,
+              qualifiedOwnershipActive: this.neurologyEncephalitisOwnershipAtTick !== null,
+              qualifiedEarlyAntiviralPathwayActive:
+                this.neurologyEncephalitisTreatmentAtTick !== null,
+              qualifiedDiagnosticsReviewed: this.neurologyEncephalitisDiagnosticsAtTick !== null,
+              earlyNegativeHsvPcrAuthored: this.neurologyEncephalitisLaterAtTick !== null,
+              patientHistoryTakenByLearner: false as const,
+              patientExaminedByLearner: false as const,
+              csfAcquiredByLearner: false as const,
+              imagingInterpretedByLearner: false as const,
+              eegInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const,
+              pathogenIdentified: false as const,
+              drugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const,
+              medicationDeliveredByLearner: false as const,
               treatmentEffectProven: false as const,
               durableNeurologicStabilityProven: false as const,
               dispositionDetermined: false as const,

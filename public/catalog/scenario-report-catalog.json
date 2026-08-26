@@ -1595,6 +1595,17 @@
         "GB"
       ],
       "fidelityClass": "state_transition"
+    },
+    {
+      "scenarioId": "suspected-herpes-simplex-encephalitis",
+      "contentVersion": "0.1.0",
+      "moduleId": "neurology",
+      "maturity": "draft",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition"
     }
   ]
 }

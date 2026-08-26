@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "neurology",
-  "recordCount": 9,
+  "recordCount": 10,
   "records": [
     {
       "recordId": "scenario:minor-nondisabling-acute-ischemic-stroke@0.1.0",
@@ -100,6 +100,17 @@
       "evidence": [
         "/catalog/neurology-completion-audit.json#acute-bacterial-meningitis-first-hour@0.1.0",
         "/catalog/neurology-quality-audit.json#acute-bacterial-meningitis-first-hour@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:suspected-herpes-simplex-encephalitis@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "suspected-herpes-simplex-encephalitis",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/neurology-completion-audit.json#suspected-herpes-simplex-encephalitis@0.1.0",
+        "/catalog/neurology-quality-audit.json#suspected-herpes-simplex-encephalitis@0.1.0"
       ]
     }
   ]

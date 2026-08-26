@@ -465,6 +465,18 @@ credited toward the catalog until every item in the completion contract passes.
     test or imaging acquisition or interpretation, LP, diagnosis, drug, dose, route, access,
     isolation equipment, procedure, treatment, contact decision, disposition, prognosis, or outcome
     controls.
+  - [x] Neurology slice 10/15 adds one authored previously independent 37-year-old with fever,
+    headache, new irritability, repetitive questions, impaired recent memory, anomia, and one
+    stopped focal seizure. The learner reconciles the encephalitic whole-patient trajectory,
+    activates qualified neurological, infection, neurocritical, airway-capable, nursing, seizure,
+    and diagnostic ownership, activates immediate qualified empiric antiviral care without waiting
+    for MRI, EEG, CSF, or PCR certainty, reviews supplied inflammatory CSF and open etiologies, then
+    reviews a strict 4-hour temporal MRI, specialist EEG without sampled electrographic seizure,
+    persistent dysfunction, and early negative HSV PCR without premature closure before another
+    elapsed repeat-testing, treatment-safety, seizure, autoimmune, cognitive, rehabilitation, and
+    active-risk handoff. No learner history, examination, test acquisition or interpretation,
+    diagnosis, drug, dose, route, access, oxygen, fluid, airway, LP, imaging, EEG, procedure,
+    treatment, durable stability, disposition, prognosis, or outcome control exists.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.

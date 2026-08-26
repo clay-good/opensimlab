@@ -2834,6 +2834,26 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'https://www.nice.org.uk/guidance/ng240/chapter/recommendations',
     verifiedOn: '2026-08-26',
   },
+  {
+    id: 'dgn-viral-meningoencephalitis-guideline-2026', pmid: '41998791',
+    authors: 'Meyding-Lamadé U, Craemer EM, Aydin K, et al',
+    title: 'S1 guidelines of the German Society of Neurology for Viral Meningoencephalitis',
+    publication: 'Neurological Research and Practice', year: 2026,
+    locator: '8:24; doi:10.1186/s42466-026-00487-3; diagnosis, MRI, EEG, CSF, and immediate empiric acyclovir recommendations',
+    usedFor: 'The immediate qualified empiric antiviral pathway, parallel CSF, MRI, and EEG work, and no-delay boundary in suspected HSV encephalitis.',
+    verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/41998791/',
+    verifiedOn: '2026-08-26',
+  },
+  {
+    id: 'idsa-encephalitis-guideline-2008',
+    authors: 'Tunkel AR, Glaser CA, Bloch KC, et al',
+    title: 'The Management of Encephalitis: Clinical Practice Guidelines by the Infectious Diseases Society of America',
+    publication: 'Clinical Infectious Diseases', year: 2008,
+    locator: '47:303-327; doi:10.1086/589747; recommendations 11-15, 18, 21, and 35',
+    usedFor: 'MRI and EEG roles, CSF HSV PCR limitations, repeat PCR after an initially negative result in a compatible temporal-lobe syndrome, and empiric acyclovir pending diagnostics.',
+    verifiedAgainst: 'https://www.idsociety.org/practice-guideline/encephalitis/',
+    verifiedOn: '2026-08-26',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

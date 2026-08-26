@@ -5166,6 +5166,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-neurology-encephalitis-clock-cognition-language-focal-seizure-and-whole-patient',
+      'activate-neurology-encephalitis-qualified-neurocritical-infection-airway-and-seizure-ownership',
+      'activate-neurology-encephalitis-qualified-immediate-empiric-antiviral-pathway-without-test-delay',
+      'review-neurology-encephalitis-mri-eeg-csf-etiology-and-nonconvulsive-seizure-boundary',
+      'review-neurology-encephalitis-strict-later-early-negative-hsv-pcr-and-clinical-trajectory',
+      'handoff-neurology-encephalitis-repeat-testing-antiviral-seizure-autoimmune-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'suspected-herpes-simplex-encephalitis'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'suspected-herpes-simplex-encephalitis-reassessment')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'suspected-herpes-simplex-encephalitis-reassessment-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neurology suspected-encephalitis lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'Fever plus new behavior, memory, language, and focal-seizure change was reconciled as an encephalitic whole-patient trajectory.'],
+        ['qualified-ownership-activated', 'Qualified neurological, infection, neurocritical, airway-capable, nursing, and seizure ownership was activated.'],
+        ['early-qualified-pathway-activated', 'Immediate qualified empiric antiviral care was activated without waiting for MRI, EEG, CSF, or PCR certainty.'],
+        ['diagnostics-and-seizure-boundary-reviewed', 'The supplied CSF, MRI, EEG, etiologic, recurrent-seizure, and nonconvulsive-seizure boundaries were reviewed without learner testing.'],
+        ['early-negative-pcr-trajectory-reviewed', 'The localized syndrome and persistent dysfunction stayed open despite the early negative HSV PCR, preserving repeat-testing ownership.'],
+        ['active-risk-handoff-recorded', 'Repeat testing, treatment safety, seizures, autoimmune causes, cognition, rehabilitation, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^neurology-encephalitis-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^neurology-encephalitis-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

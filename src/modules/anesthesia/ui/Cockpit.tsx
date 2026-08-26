@@ -1049,6 +1049,9 @@ export function Cockpit({
           onNeurologyMeningitisResponse={(action) => session.act({
             type: 'acute-bacterial-meningitis-first-hour-response', payload: { action },
           })}
+          onNeurologyEncephalitisResponse={(action) => session.act({
+            type: 'suspected-herpes-simplex-encephalitis-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}
