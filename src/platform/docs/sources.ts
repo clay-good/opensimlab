@@ -3266,6 +3266,27 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'https://www.who.int/publications/i/item/WHO-RHR-17.02',
     verifiedOn: '2026-08-26',
   },
+  {
+    id: 'smith-lee-placental-abruption-2024', pmid: '39234154',
+    authors: 'Smith CD, Lee A',
+    title: 'Placental abruption',
+    publication: 'BJA Education', year: 2024,
+    locator: '24(9):305-308; doi:10.1016/j.bjae.2024.05.001; classification, diagnosis, concealed hemorrhage, coagulopathy, and management',
+    usedFor: 'Revealed-versus-concealed presentation, poor correlation between vaginal bleeding and severity, underestimation of total loss, primarily clinical diagnosis, early coagulopathy risk, maternal-fetal compromise, and urgent multidisciplinary intervention boundary.',
+    verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/39234154/',
+    verifiedOn: '2026-08-26',
+  },
+  {
+    id: 'rcog-antepartum-haemorrhage-63',
+    currency: { lastAmended: '2011-12-05', checkedAt: '2026-08-26' },
+    authors: 'Royal College of Obstetricians and Gynaecologists',
+    title: 'Antepartum Haemorrhage',
+    publication: 'RCOG Green-top Guideline No. 63', year: 2011,
+    locator: 'Green-top Guideline 63; sections on severity, assessment, delivery, maternal resuscitation, fetal compromise, and concealed abruption; second edition in development',
+    usedFor: 'Visible blood not representing total loss, shock and fetal-compromise severity signals, maternal resuscitation priority, urgent delivery when maternal or fetal compromise is present, and ultrasound-exclusion boundary.',
+    verifiedAgainst: 'https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/antepartum-haemorrhage-green-top-guideline-no-63/',
+    verifiedOn: '2026-08-26',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

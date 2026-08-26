@@ -2021,6 +2021,23 @@ vasopressor, oxygen setting, drainage, evacuation, surgery, disposition or outco
 canonical state is not an infection, sepsis-screen, antimicrobial, hemodynamic, organ-recovery,
 source-control, survivor-outcome or newborn-outcome model.
 
+### Wave D obstetrics slice 3: concealed placental-abruption hemorrhage
+
+The third lab opens at 36 weeks 4 days with abrupt constant abdominal and back pain, only 80 mL of
+externally collected blood, maternal hypoperfusion, a supplied tense tender uterus, fetal
+tachycardia with minimal variability and recurrent late decelerations, and early coagulation
+concern. The deliberately discordant visible loss teaches that the whole maternal-fetal pattern,
+not the puddle or a reassuring ultrasound, sets urgency while rupture, previa, vasa previa, labor,
+trauma and non-obstetric causes remain open.
+
+Six controls record reconciliation, recognition, multidisciplinary ownership, supplied evidence
+review, bounded simultaneous resuscitation, coagulation and urgent-delivery intent, a strict
+elapsed readiness report, and active-risk handoff. They never expose examination, loss measurement
+or calculation, fetal-trace or ultrasound interpretation, a blood component, drug, dose, route,
+access, anesthesia, delivery, procedure, disposition, fertility or outcome decision. The canonical
+state is not a concealed-loss, coagulation, fetal-monitoring, blood-response, anesthesia, delivery,
+fertility, maternal-outcome or newborn-outcome model.
+
 #### Neonatology: 11
 
 Term newborn transition; neonatal apnea; ineffective ventilation correction; neonatal bradycardia;

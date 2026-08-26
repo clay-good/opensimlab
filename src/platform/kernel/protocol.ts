@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 164 reports maternal-sepsis state. */
-export const WORKER_PROTOCOL_VERSION = 164;
+/** Bumped whenever the message shape changes incompatibly. Version 165 reports concealed-abruption state. */
+export const WORKER_PROTOCOL_VERSION = 165;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2656,6 +2656,32 @@ export interface EquipmentSnapshot {
       readonly safetyDispositionDetermined: false; readonly dispositionDetermined: false;
       readonly maternalOutcomePredicted: false; readonly newbornOutcomePredicted: false;
       readonly outcomePredicted: false;
+    };
+    readonly obstetricsConcealedAbruptionAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly concealedHemorrhageMaternalFetalCoagulationPatternAuthored: true;
+      readonly concealedHemorrhagePatternRecognized: boolean; readonly qualifiedSupportActive: boolean;
+      readonly maternalFetalCoagulationPlacentalAndDifferentialEvidenceReviewed: boolean;
+      readonly qualifiedResuscitationCoagulationAndUrgentDeliveryIntentRecorded: boolean;
+      readonly responseStateAuthored: boolean;
+      readonly bloodLossMeasuredByLearner: false; readonly totalBloodLossCalculatedByLearner: false;
+      readonly patientExaminedByLearner: false; readonly fetalTraceInterpretedByLearner: false;
+      readonly ultrasoundAcquiredByLearner: false; readonly ultrasoundInterpretedByLearner: false;
+      readonly bloodSampleAcquiredByLearner: false; readonly coagulationInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly alternativeExcludedByLearner: false;
+      readonly fluidSelectedByLearner: false; readonly bloodComponentSelectedByLearner: false;
+      readonly oxygenSelectedByLearner: false; readonly drugSelectedByLearner: false;
+      readonly doseSelectedByLearner: false; readonly routeSelectedByLearner: false;
+      readonly accessSelectedByLearner: false; readonly anesthesiaSelectedByLearner: false;
+      readonly deliverySelectedByLearner: false; readonly procedureSelectedByLearner: false;
+      readonly treatmentDeliveredByLearner: false; readonly deliveryPerformedByLearner: false;
+      readonly treatmentEffectProven: false; readonly concealedLossQuantified: false;
+      readonly coagulationSafetyProven: false; readonly fetalRecoveryProven: false;
+      readonly deliveryCompleted: false; readonly safetyDispositionDetermined: false;
+      readonly fertilityOutcomePredicted: false; readonly maternalOutcomePredicted: false;
+      readonly newbornOutcomePredicted: false; readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

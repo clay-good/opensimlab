@@ -4607,6 +4607,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified serial infection, perfusion, neurologic, respiratory, kidney, hematologic, hepatic, source, mimic, treatment and response evidence under qualified obstetric sepsis and critical-care ownership.',
     briefIn: ['maternal-sepsis-postpartum-deterioration'],
   },
+  {
+    id: 'concealed-abruption-maternal-fetal-coagulation-and-response-pattern-are-authored',
+    headline: 'The maternal-fetal pattern, coagulation findings, concealed loss, and later response are authored.',
+    simplification: 'Fixed reports stand in for history, examination, visible and concealed blood-loss measurement, maternal and fetal monitoring, placental and uterine assessment, laboratory and coagulation acquisition, imaging, qualified resuscitation and delivery care, and reassessment.',
+    whereItMisleads: 'Treating the fictional 80 mL or 120 mL visible loss, pain, uterine findings, fetal trace, laboratory values, operating-room readiness, or modest later improvement as learner evidence, diagnosis, total blood loss, treatment effect, fetal recovery, delivery, or predicted outcome.',
+    correctUnderstanding: 'Real care requires direct serial maternal perfusion, fetal status, visible and concealed bleeding, coagulation, uterine and placental findings, competing causes, treatment response, delivery readiness, and maternal-newborn outcome assessment under qualified multidisciplinary ownership.',
+    briefIn: ['concealed-placental-abruption-hemorrhage'],
+  },
+  {
+    id: 'concealed-abruption-controls-reconcile-recognize-support-review-intent-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, recognition, qualified ownership, review, bounded intent, reassessment, and handoff only.',
+    simplification: 'Six actions stand in for obstetric hemorrhage, anesthesia, nursing, blood-bank, operating-room, fetal surveillance, neonatal, dignity, bereavement, resuscitation, delivery, surveillance, and handoff work.',
+    whereItMisleads: 'Equating button order with history, examination, blood-loss measurement, fetal-trace or laboratory interpretation, diagnosis, prescribing, resuscitation, anesthesia, delivery, source control, disposition, recovery, or competence.',
+    correctUnderstanding: 'Actual care requires trained teams, current local protocols, simultaneous maternal resuscitation and fetal assessment, individualized blood and coagulation care, urgent delivery decisions when compromise is present, respectful communication, and serial maternal-newborn reassessment.',
+    briefIn: ['concealed-placental-abruption-hemorrhage'],
+  },
+  {
+    id: 'no-live-concealed-abruption-exam-trace-imaging-blood-drug-anesthesia-delivery-disposition-or-outcome',
+    headline: 'The lab does not examine, interpret a fetal trace or image, give blood or a drug, provide anesthesia, deliver a baby, determine disposition, or report outcome.',
+    simplification: 'No live history, examination, blood-loss measurement, uterine or placental assessment, fetal monitoring, ultrasound, laboratory or coagulation interpretation, diagnosis, differential exclusion, oxygen, fluid, blood component, medication, dose, rate, target, route, access, anesthesia, procedure, surgery, delivery, transport, disposition, prognosis, fertility, safety decision, bereavement need, or maternal or newborn outcome is modeled.',
+    whereItMisleads: 'Using visible blood volume, pain, uterine tone, fetal status, one vital sign, ultrasound, or one laboratory value alone; copying fictional values into care; choosing blood, medication, anesthesia, delivery, or procedural care from this rehearsal; attributing the fixed response; or reading completion as competence.',
+    correctUnderstanding: 'Use verified serial maternal symptoms, perfusion, fetal status, total bleeding, uterine and placental findings, coagulation, competing-cause, treatment, delivery, and response evidence under qualified obstetric hemorrhage, anesthesia, nursing, blood-bank, operative, neonatal, and bereavement-support ownership.',
+    briefIn: ['concealed-placental-abruption-hemorrhage'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

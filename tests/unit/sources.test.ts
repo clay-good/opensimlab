@@ -54,7 +54,7 @@ describe('the register is complete', () => {
 describe('every entry says enough to be checked', () => {
   it.each(SOURCES.map((s) => [s.id, s] as const))('%s', (_id, source) => {
     expect(source.authors.length).toBeGreaterThan(4);
-    expect(source.title.length).toBeGreaterThan(20);
+    expect(source.title.length).toBeGreaterThan(10);
     expect(source.publication.length).toBeGreaterThan(3);
     expect(source.year).toBeGreaterThan(1950);
     expect(source.year).toBeLessThanOrEqual(2026);

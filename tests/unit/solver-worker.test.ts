@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Obstetrics maternal-sepsis state has protocol version 164', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(164);
+  it('Scenario: Obstetrics concealed-abruption state has protocol version 165', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(165);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

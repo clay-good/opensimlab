@@ -5022,6 +5022,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-obstetrics-abruption-pain-visible-blood-maternal-physiology-fetal-context-and-whole-person',
+      'recognize-obstetrics-abruption-concealed-hemorrhage-pattern-without-visible-volume-ultrasound-or-single-cause-closure',
+      'activate-obstetrics-abruption-hemorrhage-anesthesia-blood-bank-operating-room-neonatal-and-dignity-ownership',
+      'review-obstetrics-abruption-supplied-perfusion-uterine-fetal-coagulation-placental-and-competing-cause-boundary',
+      'record-obstetrics-abruption-bounded-qualified-resuscitation-coagulation-and-urgent-delivery-intent-with-strict-later-review',
+      'handoff-obstetrics-abruption-concealed-loss-shock-coagulopathy-fetal-delivery-neonatal-bereavement-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'concealed-placental-abruption-hemorrhage'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'concealed-placental-abruption-hemorrhage-transition')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'concealed-placental-abruption-hemorrhage-transition-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Obstetrics concealed-hemorrhage lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'Pain, little visible blood, maternal physiology, fetal context, coagulation, and whole-person state were connected.'],
+        ['pattern-recognized', 'Concealed hemorrhage with a supplied abruption pattern was recognized without visible-volume-, ultrasound-, or diagnostic closure.'],
+        ['support-activated', 'Qualified hemorrhage, anesthesia, blood-bank, operating-room, neonatal, consent, communication, support, and dignity-centered ownership was activated.'],
+        ['evidence-reviewed', 'Supplied perfusion, uterine, fetal, coagulation, placental, rupture, previa, vasa-previa, labor, trauma, and non-obstetric boundaries were reviewed.'],
+        ['intent-and-reassessment-recorded', 'Bounded resuscitation, coagulation, anesthesia, urgent-delivery and neonatal intent plus the elapsed report were recorded without treatment, procedure, delivery, or outcome claims.'],
+        ['active-risk-handoff-recorded', 'Concealed loss, shock, coagulopathy, fetal, delivery, neonatal, dignity, bereavement, fertility, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^obstetrics-concealed-abruption-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^obstetrics-concealed-abruption-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-obstetrics-sepsis-postpartum-clock-infection-organ-dysfunction-and-whole-person',
       'recognize-obstetrics-maternal-sepsis-emergency-without-fever-score-source-or-single-value-closure',
       'activate-obstetrics-sepsis-obstetric-critical-care-anesthesia-nursing-pharmacy-microbiology-source-newborn-and-dignity-ownership',

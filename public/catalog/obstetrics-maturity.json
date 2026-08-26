@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "obstetrics",
-  "recordCount": 2,
+  "recordCount": 3,
   "records": [
     {
       "recordId": "scenario:postpartum-hemorrhage-uterine-atony@0.1.0",
@@ -23,6 +23,17 @@
       "evidence": [
         "/catalog/obstetrics-completion-audit.json#maternal-sepsis-postpartum-deterioration@0.1.0",
         "/catalog/obstetrics-quality-audit.json#maternal-sepsis-postpartum-deterioration@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:concealed-placental-abruption-hemorrhage@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "concealed-placental-abruption-hemorrhage",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/obstetrics-completion-audit.json#concealed-placental-abruption-hemorrhage@0.1.0",
+        "/catalog/obstetrics-quality-audit.json#concealed-placental-abruption-hemorrhage@0.1.0"
       ]
     }
   ]

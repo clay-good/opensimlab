@@ -400,6 +400,15 @@ credited toward the catalog until every item in the completion contract passes.
     perfusion and organ review; bounded immediate-care intent; a strict elapsed partial-improvement
     report; and active-risk handoff without learner examination, scoring, testing, prescribing,
     fluid, vasopressor, oxygen, source-control, procedure, disposition, or outcome controls.
+  - [x] Obstetrics slice 3/15 adds one authored concealed placental-abruption hemorrhage pattern
+    with deliberately small visible loss beside maternal hypoperfusion, abrupt pain, a supplied
+    tense tender uterus, fetal compromise and early coagulation concern; whole-pattern recognition
+    without visible-volume, ultrasound or single-cause closure; immediate obstetric hemorrhage,
+    anesthesia, blood-bank, operating-room, neonatal and dignity-centered ownership; bounded
+    simultaneous resuscitation, coagulation and urgent-delivery intent; a strict elapsed readiness
+    report; and active-risk handoff without learner examination, measurement, calculation, fetal-
+    trace or ultrasound interpretation, blood, drug, anesthesia, delivery, procedure, disposition,
+    fertility, or maternal/newborn outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

@@ -215,6 +215,14 @@ together; and reviews a strict elapsed report. It exposes no learner examination
 antimicrobial, dose, fluid, vasopressor, oxygen setting, source-control procedure, disposition, or
 maternal/newborn outcome control.
 
+The third lab teaches concealed placental-abruption hemorrhage: a small visible loss sits beside
+abrupt pain, maternal hypoperfusion, a tense tender uterus, fetal compromise and early coagulation
+concern. The learner trusts the whole maternal-fetal pattern, keeps competing causes open, unites
+hemorrhage, anesthesia, blood-bank, operating-room, neonatal and dignity-centered owners, and
+reviews a strict elapsed readiness report. It exposes no learner examination, blood-loss
+calculation, fetal-trace or ultrasound interpretation, blood or drug choice, anesthesia, delivery,
+procedure, disposition, fertility, or maternal/newborn outcome control.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

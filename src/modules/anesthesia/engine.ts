@@ -453,6 +453,12 @@ const OBSTETRICS_MATERNAL_SEPSIS_BLOCKED_ACTION_TYPES = new Set([
   'septic-shock-response',
   'septic-shock-resuscitation-response',
 ]);
+const OBSTETRICS_CONCEALED_ABRUPTION_BLOCKED_ACTION_TYPES = new Set([
+  ...OBSTETRICS_MATERNAL_SEPSIS_BLOCKED_ACTION_TYPES,
+  'maternal-sepsis-postpartum-deterioration-response',
+  'postpartum-hemorrhage-uterine-atony-response',
+  'hemorrhagic-shock-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1392,6 +1398,12 @@ export class AnesthesiaEngine {
   private obstetricsMaternalSepsisEvidenceAtTick: number | null = null;
   private obstetricsMaternalSepsisReassessmentAtTick: number | null = null;
   private obstetricsMaternalSepsisHandoffAtTick: number | null = null;
+  private obstetricsConcealedAbruptionTrajectoryAtTick: number | null = null;
+  private obstetricsConcealedAbruptionRecognitionAtTick: number | null = null;
+  private obstetricsConcealedAbruptionSupportAtTick: number | null = null;
+  private obstetricsConcealedAbruptionEvidenceAtTick: number | null = null;
+  private obstetricsConcealedAbruptionReassessmentAtTick: number | null = null;
+  private obstetricsConcealedAbruptionHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2303,6 +2315,13 @@ export class AnesthesiaEngine {
     if (obstetricsMaternalSepsis && OBSTETRICS_MATERNAL_SEPSIS_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `obstetrics-maternal-sepsis-generic-action-refused-${this.currentTick}`,
         'This Obstetrics lesson exposes no generic examination, score, monitoring, culture, laboratory, imaging, antimicrobial, oxygen, fluid, blood, vasopressor, drug, dose, route, access, source-control, procedure, transport, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const obstetricsConcealedAbruption = this.scenario.metadata.id === 'concealed-placental-abruption-hemorrhage'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'concealed-placental-abruption-hemorrhage-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'concealed-placental-abruption-hemorrhage-transition-boundary');
+    if (obstetricsConcealedAbruption && OBSTETRICS_CONCEALED_ABRUPTION_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `obstetrics-concealed-abruption-generic-action-refused-${this.currentTick}`,
+        'This Obstetrics lesson exposes no generic blood-loss measurement, examination, fetal-monitor or ultrasound interpretation, laboratory, calculation, oxygen, fluid, blood, drug, dose, route, access, anesthesia, transport, procedure, delivery, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -10751,6 +10770,32 @@ export class AnesthesiaEngine {
         if (this.obstetricsMaternalSepsisHandoffAtTick !== null) break;
         this.obstetricsMaternalSepsisHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-maternal-sepsis-active-risk-handoff-recorded-${this.currentTick}`, 'Shock, repeat perfusion, microbiology, antimicrobial review, source control, organ support, VTE, pain, privacy, communication, feeding and newborn support, survivor needs, disposition, recovery, prognosis, and outcome uncertainty were handed off.', { safetyDispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'concealed-placental-abruption-hemorrhage-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'concealed-placental-abruption-hemorrhage'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'concealed-placental-abruption-hemorrhage-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'concealed-placental-abruption-hemorrhage-transition-boundary');
+        const actions = ['reconcile-obstetrics-abruption-pain-visible-blood-maternal-physiology-fetal-context-and-whole-person',
+          'recognize-obstetrics-abruption-concealed-hemorrhage-pattern-without-visible-volume-ultrasound-or-single-cause-closure',
+          'activate-obstetrics-abruption-hemorrhage-anesthesia-blood-bank-operating-room-neonatal-and-dignity-ownership',
+          'review-obstetrics-abruption-supplied-perfusion-uterine-fetal-coagulation-placental-and-competing-cause-boundary',
+          'record-obstetrics-abruption-bounded-qualified-resuscitation-coagulation-and-urgent-delivery-intent-with-strict-later-review',
+          'handoff-obstetrics-abruption-concealed-loss-shock-coagulopathy-fetal-delivery-neonatal-bereavement-and-outcome-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `obstetrics-concealed-abruption-response-refused-${this.currentTick}`, supported ? 'The concealed-hemorrhage action was not listed. No supplied or injected text was retained.' : 'These concealed-hemorrhage choices are available only in the exact declared Obstetrics lesson.'); break; }
+        if (response === actions[0]) { if (this.obstetricsConcealedAbruptionTrajectoryAtTick !== null) break; this.obstetricsConcealedAbruptionTrajectoryAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-concealed-abruption-trajectory-reconciled-${this.currentTick}`, 'Pain, little visible blood, maternal physiology, uterine pattern, fetal context, coagulation evidence, support needs, and whole person were connected without learner history, measurement, examination, fetal-trace interpretation, calculation, testing, or diagnosis.'); break; }
+        if (this.obstetricsConcealedAbruptionTrajectoryAtTick === null) { this.log('warning', 'assessment', `obstetrics-concealed-abruption-trajectory-order-refused-${this.currentTick}`, 'Connect pain, visible blood, maternal physiology, fetal context, coagulation, and whole person first.'); break; }
+        if (response === actions[1]) { if (this.obstetricsConcealedAbruptionRecognitionAtTick !== null) break; this.obstetricsConcealedAbruptionRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-concealed-abruption-pattern-recognized-${this.currentTick}`, 'Maternal-fetal compromise with a supplied placental-abruption and concealed-hemorrhage pattern was recognized. Visible volume, ultrasound, uterine findings, fetal findings, or one cause cannot quantify total loss, establish diagnosis, or exclude rupture, previa, vasa previa, labor, trauma, or non-obstetric causes.', { diagnosisMadeByLearner: false }); break; }
+        if (this.obstetricsConcealedAbruptionRecognitionAtTick === null) { this.log('warning', 'assessment', `obstetrics-concealed-abruption-recognition-order-refused-${this.currentTick}`, 'Recognize concealed hemorrhage without visible-volume, ultrasound, or single-cause closure before support.'); break; }
+        if (response === actions[2]) { if (this.obstetricsConcealedAbruptionSupportAtTick !== null) break; this.obstetricsConcealedAbruptionSupportAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-concealed-abruption-support-activated-${this.currentTick}`, 'Obstetric hemorrhage, anesthesia, nursing, monitoring, blood-bank, operating-room, neonatal, pain, privacy, consent, communication, support-person, and dignity-centered ownership were recorded without learner treatment, anesthesia, procedure, or delivery selection.'); break; }
+        if (this.obstetricsConcealedAbruptionSupportAtTick === null) { this.log('warning', 'assessment', `obstetrics-concealed-abruption-support-order-refused-${this.currentTick}`, 'Bring hemorrhage, anesthesia, blood-bank, operating-room, neonatal, and dignity-centered owners together before evidence review.'); break; }
+        if (response === actions[3]) { if (this.obstetricsConcealedAbruptionEvidenceAtTick !== null) break; this.obstetricsConcealedAbruptionEvidenceAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-concealed-abruption-evidence-reviewed-${this.currentTick}`, 'Supplied maternal perfusion, uterine, fetal, coagulation, placental-location, rupture, previa, vasa-previa, labor, trauma, and non-obstetric boundaries were integrated without learner examination, acquisition, interpretation, diagnosis, exclusion, or eligibility determination.'); break; }
+        if (this.obstetricsConcealedAbruptionEvidenceAtTick === null) { this.log('warning', 'assessment', `obstetrics-concealed-abruption-evidence-order-refused-${this.currentTick}`, 'Review supplied perfusion, uterine, fetal, coagulation, placental, and competing-cause evidence before qualified intent.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.obstetricsConcealedAbruptionEvidenceAtTick) { this.log('warning', 'assessment', `obstetrics-concealed-abruption-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before resuscitation, coagulation, and urgent-delivery intent.'); break; } if (this.obstetricsConcealedAbruptionReassessmentAtTick !== null) break; this.obstetricsConcealedAbruptionReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-concealed-abruption-intent-and-reassessment-recorded-${this.currentTick}`, 'Qualified simultaneous hemorrhage, blood-bank, coagulation, anesthesia, operating-room, urgent-delivery, and neonatal intent was recorded without learner product, dose, route, access, volume, target, technique, procedure, delivery, or treatment effect. Strict 10-minute report: HR 118, BP 98/60 (MAP 73), RR 22, SpO2 99% on supplied support, persistent fetal compromise, 120 mL visible cumulative blood, operating-room readiness, and unresolved total loss, coagulation, anesthesia, and delivery.', { treatmentDeliveredByLearner: false, deliveryPerformedByLearner: false, treatmentEffectProven: false }); break; }
+        if (this.obstetricsConcealedAbruptionReassessmentAtTick === null) { this.log('warning', 'assessment', `obstetrics-concealed-abruption-handoff-order-refused-${this.currentTick}`, 'Review the strict later maternal, fetal, coagulation, and readiness report before handoff.'); break; }
+        if (this.currentTick <= this.obstetricsConcealedAbruptionReassessmentAtTick) { this.log('warning', 'assessment', `obstetrics-concealed-abruption-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.obstetricsConcealedAbruptionHandoffAtTick !== null) break;
+        this.obstetricsConcealedAbruptionHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-concealed-abruption-active-risk-handoff-recorded-${this.currentTick}`, 'Concealed and total loss, shock, coagulopathy, fetal compromise, anesthesia, delivery, neonatal care, postpartum hemorrhage, pathology, recurrence, pain, privacy, communication, support, bereavement, disposition, fertility, prognosis, and maternal or newborn outcome uncertainty were handed off.', { safetyDispositionDetermined: false, fertilityOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -13639,6 +13684,17 @@ export class AnesthesiaEngine {
         diastolicMmHg: this.obstetricsMaternalSepsisReassessmentAtTick !== null ? 58 : 52,
         meanArterialMmHg: this.obstetricsMaternalSepsisReassessmentAtTick !== null ? 70 : 64,
         coreTemperatureC: this.obstetricsMaternalSepsisReassessmentAtTick !== null ? 39.0 : 39.1 };
+    }
+    if (this.scenario.metadata.id === 'concealed-placental-abruption-hemorrhage'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'concealed-placental-abruption-hemorrhage-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'concealed-placental-abruption-hemorrhage-transition-boundary')) {
+      crisisState = { ...crisisState, heartRateBpm: this.obstetricsConcealedAbruptionReassessmentAtTick !== null ? 118 : 126,
+        respiratoryRateBpm: this.obstetricsConcealedAbruptionReassessmentAtTick !== null ? 22 : 26,
+        spo2Percent: this.obstetricsConcealedAbruptionReassessmentAtTick !== null ? 99 : 98,
+        systolicMmHg: this.obstetricsConcealedAbruptionReassessmentAtTick !== null ? 98 : 92,
+        diastolicMmHg: this.obstetricsConcealedAbruptionReassessmentAtTick !== null ? 60 : 56,
+        meanArterialMmHg: this.obstetricsConcealedAbruptionReassessmentAtTick !== null ? 73 : 68,
+        coreTemperatureC: 36.8 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -17603,6 +17659,37 @@ export class AnesthesiaEngine {
               safetyDispositionDetermined: false as const, dispositionDetermined: false as const,
               maternalOutcomePredicted: false as const, newbornOutcomePredicted: false as const,
               outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'concealed-placental-abruption-hemorrhage'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'concealed-placental-abruption-hemorrhage-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'concealed-placental-abruption-hemorrhage-transition-boundary') ? {
+            obstetricsConcealedAbruptionAssessment: {
+              trajectoryAtTick: this.obstetricsConcealedAbruptionTrajectoryAtTick, recognitionAtTick: this.obstetricsConcealedAbruptionRecognitionAtTick,
+              supportAtTick: this.obstetricsConcealedAbruptionSupportAtTick, evidenceAtTick: this.obstetricsConcealedAbruptionEvidenceAtTick,
+              reassessmentAtTick: this.obstetricsConcealedAbruptionReassessmentAtTick, handoffAtTick: this.obstetricsConcealedAbruptionHandoffAtTick,
+              concealedHemorrhageMaternalFetalCoagulationPatternAuthored: true as const,
+              concealedHemorrhagePatternRecognized: this.obstetricsConcealedAbruptionRecognitionAtTick !== null,
+              qualifiedSupportActive: this.obstetricsConcealedAbruptionSupportAtTick !== null,
+              maternalFetalCoagulationPlacentalAndDifferentialEvidenceReviewed: this.obstetricsConcealedAbruptionEvidenceAtTick !== null,
+              qualifiedResuscitationCoagulationAndUrgentDeliveryIntentRecorded: this.obstetricsConcealedAbruptionReassessmentAtTick !== null,
+              responseStateAuthored: this.obstetricsConcealedAbruptionReassessmentAtTick !== null,
+              bloodLossMeasuredByLearner: false as const, totalBloodLossCalculatedByLearner: false as const,
+              patientExaminedByLearner: false as const, fetalTraceInterpretedByLearner: false as const,
+              ultrasoundAcquiredByLearner: false as const, ultrasoundInterpretedByLearner: false as const,
+              bloodSampleAcquiredByLearner: false as const, coagulationInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const, alternativeExcludedByLearner: false as const,
+              fluidSelectedByLearner: false as const, bloodComponentSelectedByLearner: false as const,
+              oxygenSelectedByLearner: false as const, drugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const, routeSelectedByLearner: false as const,
+              accessSelectedByLearner: false as const, anesthesiaSelectedByLearner: false as const,
+              deliverySelectedByLearner: false as const, procedureSelectedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const, deliveryPerformedByLearner: false as const,
+              treatmentEffectProven: false as const, concealedLossQuantified: false as const,
+              coagulationSafetyProven: false as const, fetalRecoveryProven: false as const,
+              deliveryCompleted: false as const, safetyDispositionDetermined: false as const,
+              fertilityOutcomePredicted: false as const, maternalOutcomePredicted: false as const,
+              newbornOutcomePredicted: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

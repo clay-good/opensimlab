@@ -1260,6 +1260,11 @@ export interface ActionCockpitProps {
       readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly obstetricsConcealedAbruptionAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2224,6 +2229,14 @@ export interface ActionCockpitProps {
       | 'record-obstetrics-sepsis-bounded-qualified-immediate-care-source-control-intent-and-strict-later-review'
       | 'handoff-obstetrics-sepsis-shock-source-organ-antimicrobial-vte-newborn-survivor-and-outcome-risk',
   ) => void;
+  readonly onObstetricsConcealedAbruptionResponse?: (
+    action: 'reconcile-obstetrics-abruption-pain-visible-blood-maternal-physiology-fetal-context-and-whole-person'
+      | 'recognize-obstetrics-abruption-concealed-hemorrhage-pattern-without-visible-volume-ultrasound-or-single-cause-closure'
+      | 'activate-obstetrics-abruption-hemorrhage-anesthesia-blood-bank-operating-room-neonatal-and-dignity-ownership'
+      | 'review-obstetrics-abruption-supplied-perfusion-uterine-fetal-coagulation-placental-and-competing-cause-boundary'
+      | 'record-obstetrics-abruption-bounded-qualified-resuscitation-coagulation-and-urgent-delivery-intent-with-strict-later-review'
+      | 'handoff-obstetrics-abruption-concealed-loss-shock-coagulopathy-fetal-delivery-neonatal-bereavement-and-outcome-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2789,6 +2802,10 @@ export function crisisResponseAvailability(
       scenario.metadata.id === 'maternal-sepsis-postpartum-deterioration'
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'maternal-sepsis-postpartum-deterioration-transition')
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'maternal-sepsis-postpartum-deterioration-transition-boundary'),
+    hasObstetricsConcealedAbruptionResponse:
+      scenario.metadata.id === 'concealed-placental-abruption-hemorrhage'
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'concealed-placental-abruption-hemorrhage-transition')
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'concealed-placental-abruption-hemorrhage-transition-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3005,6 +3022,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'opioid-xylazine-persistent-sedation-transition')
       || (event.type === 'narrative' && event.target === 'postpartum-hemorrhage-uterine-atony-transition')
       || (event.type === 'narrative' && event.target === 'maternal-sepsis-postpartum-deterioration-transition')
+      || (event.type === 'narrative' && event.target === 'concealed-placental-abruption-hemorrhage-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3109,6 +3127,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasToxicologyOpioidXylazineResponse,
     hasObstetricsAtonyResponse,
     hasObstetricsMaternalSepsisResponse,
+    hasObstetricsConcealedAbruptionResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3240,8 +3259,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasToxicologyOpioidXylazineResponse
     || hasObstetricsAtonyResponse
     || hasObstetricsMaternalSepsisResponse
+    || hasObstetricsConcealedAbruptionResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasObstetricsMaternalSepsisResponse
+  const responseTray = hasObstetricsConcealedAbruptionResponse
+    ? { id: 'crisis', label: 'Hidden blood + fetus' } as const
+    : hasObstetricsMaternalSepsisResponse
     ? { id: 'crisis', label: 'Infection + organs' } as const
     : hasObstetricsAtonyResponse
     ? { id: 'crisis', label: 'Bleeding + tone' } as const
@@ -3615,6 +3637,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeurologyAutonomicDysreflexiaResponse
     || hasObstetricsAtonyResponse
     || hasObstetricsMaternalSepsisResponse
+    || hasObstetricsConcealedAbruptionResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -4488,6 +4511,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasObstetricsMaternalSepsisResponse && (
               <ObstetricsMaternalSepsisTray assessment={props.resuscitation.obstetricsMaternalSepsisAssessment}
                 onAction={props.onObstetricsMaternalSepsisResponse ?? (() => {})} />
+            )}
+            {hasObstetricsConcealedAbruptionResponse && (
+              <ObstetricsConcealedAbruptionTray assessment={props.resuscitation.obstetricsConcealedAbruptionAssessment}
+                onAction={props.onObstetricsConcealedAbruptionResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -11349,6 +11376,38 @@ function ObstetricsMaternalSepsisTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-obstetrics-sepsis-bounded-qualified-immediate-care-source-control-intent-and-strict-later-review')}>Record care intent + reassess</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-obstetrics-sepsis-shock-source-organ-antimicrobial-vte-newborn-survivor-and-outcome-risk')}>Hand off what stays open</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function ObstetricsConcealedAbruptionTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['obstetricsConcealedAbruptionAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onObstetricsConcealedAbruptionResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const evidence = assessment?.evidenceAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="concealed-abruption-now-title">
+      <div id="concealed-abruption-now-title" className="syringe__name">Look beyond what you can see.</div>
+      <p className="syringe__remaining">Pain, perfusion, uterine tone, fetal context, coagulation, and the whole person tell more than the visible blood alone.</p>
+      <div className="crisis-drug__actions">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-obstetrics-abruption-pain-visible-blood-maternal-physiology-fetal-context-and-whole-person')}>Connect mother + fetus</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-obstetrics-abruption-concealed-hemorrhage-pattern-without-visible-volume-ultrasound-or-single-cause-closure')}>Trust the pattern, not the puddle</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-obstetrics-abruption-hemorrhage-anesthesia-blood-bank-operating-room-neonatal-and-dignity-ownership')}>Bring both teams together</Button>}
+        {support && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-abruption-supplied-perfusion-uterine-fetal-coagulation-placental-and-competing-cause-boundary')}>Review blood + competing causes</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="concealed-abruption-later-title">
+      <div id="concealed-abruption-later-title" className="syringe__name">Readiness is progress. It is not resolution.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Hidden loss, shock, coagulation, fetal, delivery, neonatal, dignity, support, fertility, and outcome uncertainty handed off.' : reassessment ? 'Maternal numbers improved modestly, but fetal compromise persists. Total loss, coagulation, anesthesia, delivery, treatment effect, and outcome remain open.' : evidence ? 'Perfusion, fetus, coagulation, placenta, rupture, previa, vasa previa, labor, trauma, and non-obstetric causes stay coupled. Record bounded urgent intent after time passes.' : support ? 'Hemorrhage, anesthesia, blood-bank, operating-room, neonatal, consent, communication, and dignity-centered ownership are together. Review the supplied evidence.' : 'Connect the maternal-fetal pattern before visible volume or ultrasound narrows the view.'}</p>
+      <div className="crisis-drug__actions">
+        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-obstetrics-abruption-bounded-qualified-resuscitation-coagulation-and-urgent-delivery-intent-with-strict-later-review')}>Record urgent intent + reassess</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-obstetrics-abruption-concealed-loss-shock-coagulopathy-fetal-delivery-neonatal-bereavement-and-outcome-risk')}>Hand off both horizons</Button>}
       </div>
     </section>
   </>;

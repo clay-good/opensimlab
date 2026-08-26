@@ -375,6 +375,17 @@ and unresolved source control. These are authored teaching checkpoints grounded 
 Series #67 and the WHO maternal-sepsis statement, not an infection, antimicrobial, fluid,
 vasopressor, source-control, organ-recovery, maternal-outcome or newborn-outcome model.
 
+Concealed placental-abruption hemorrhage uses two fixed canonical states: the opening report has
+only 80 mL externally collected blood beside abrupt pain, a supplied tense tender uterus, HR
+126/min, BP 92/56 mmHg, RR 26/min, SpO2 98%, T 36.8°C, fetal baseline 170/min with minimal
+variability and recurrent late decelerations, platelets 112 × 10^9/L, fibrinogen 1.5 g/L, INR 1.4
+and lactate 4.0 mmol/L; the strict 10-minute report has HR 118/min, BP 98/60 mmHg, RR 22/min, SpO2
+99% on supplied support, persistent fetal compromise, 120 mL visible cumulative blood and
+operating-room readiness while total loss, coagulation, anesthesia and delivery remain unresolved.
+These authored checkpoints are grounded in the 2024 BJA Education review and RCOG Green-top
+Guideline No. 63, not a concealed-loss, fetal-monitoring, coagulation, treatment-response,
+anesthesia, delivery, maternal-outcome or newborn-outcome model.
+
 ## Concentration-time checks, 2026-08-23
 
 The acceptance text requires a published concentration-time point for every model. The Marsh
