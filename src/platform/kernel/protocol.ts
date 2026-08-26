@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 117 reports pediatric respiratory-distress reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 119;
+export const WORKER_PROTOCOL_VERSION = 120;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1162,6 +1162,33 @@ export interface EquipmentSnapshot {
       readonly concentrationSelectedByLearner: false; readonly oxygenSelectedByLearner: false;
       readonly deviceSelectedByLearner: false; readonly flowSelectedByLearner: false;
       readonly nebulizerOperatedByLearner: false; readonly airwayManeuverPerformedByLearner: false;
+      readonly ventilationDeliveredByLearner: false; readonly intubationPerformedByLearner: false;
+      readonly procedurePerformedByLearner: false; readonly treatmentDeliveredByLearner: false;
+      readonly durableRecoveryProven: false; readonly dischargeReadinessProven: false;
+      readonly dispositionDetermined: false; readonly outcomePredicted: false;
+    };
+    readonly pediatricStatusAsthmaticusAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly nonresponseAtTick: number | null;
+      readonly escalationAtTick: number | null; readonly secondLineIntentAtTick: number | null;
+      readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly lastUnsupportedChoice: 'force-peak-flow' | 'radiograph-delay'
+        | 'trigger-review-delay' | 'saturation-discharge' | null;
+      readonly initialPulsePresent: true; readonly spontaneousBreathingAuthored: true;
+      readonly asthmaHistoryAuthored: true; readonly treatmentRecordAuthored: true;
+      readonly persistentSevereNonresponseAuthored: true;
+      readonly experiencedSecondLineCareAuthored: boolean; readonly partialResponseAuthored: boolean;
+      readonly quietChestAuthored: false; readonly respiratoryFailureAuthored: false;
+      readonly anaphylaxisPatternAuthored: false; readonly upperAirwayPatternAuthored: false;
+      readonly foreignBodyPatternAuthored: false;
+      readonly patientExaminedByLearner: false; readonly monitorInterpretedByLearner: false;
+      readonly pefMeasuredByLearner: false; readonly scoreCalculatedByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly testAcquiredByLearner: false;
+      readonly imagingAcquiredByLearner: false; readonly drugSelectedByLearner: false;
+      readonly doseSelectedByLearner: false; readonly routeSelectedByLearner: false;
+      readonly concentrationSelectedByLearner: false; readonly oxygenSelectedByLearner: false;
+      readonly deviceSelectedByLearner: false; readonly flowSelectedByLearner: false;
+      readonly nebulizerOperatedByLearner: false; readonly ivAccessPlacedByLearner: false;
+      readonly infusionOperatedByLearner: false; readonly airwayManeuverPerformedByLearner: false;
       readonly ventilationDeliveredByLearner: false; readonly intubationPerformedByLearner: false;
       readonly procedurePerformedByLearner: false; readonly treatmentDeliveredByLearner: false;
       readonly durableRecoveryProven: false; readonly dischargeReadinessProven: false;

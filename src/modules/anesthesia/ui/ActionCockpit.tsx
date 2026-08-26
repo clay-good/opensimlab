@@ -1033,6 +1033,13 @@ export interface ActionCockpitProps {
       readonly lastUnsupportedChoice: 'albuterol' | 'radiograph' | 'discharge-early'
         | 'normal-saturation' | null;
     };
+    readonly pediatricStatusAsthmaticusAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly nonresponseAtTick: number | null;
+      readonly escalationAtTick: number | null; readonly secondLineIntentAtTick: number | null;
+      readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly lastUnsupportedChoice: 'force-peak-flow' | 'radiograph-delay'
+        | 'trigger-review-delay' | 'saturation-discharge' | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1633,6 +1640,18 @@ export interface ActionCockpitProps {
       | 'review-croup-recurrence-and-preserve-airway-readiness'
       | 'handoff-croup-active-upper-airway-risk',
   ) => void;
+  readonly onPediatricStatusAsthmaticusResponse?: (
+    action: 'reconcile-pediatric-status-asthmaticus-treatment-and-trajectory'
+      | 'recognize-pediatric-status-asthmaticus-severe-nonresponse'
+      | 'force-pediatric-status-asthmaticus-peak-flow'
+      | 'wait-for-pediatric-status-asthmaticus-routine-radiograph'
+      | 'activate-pediatric-status-asthmaticus-critical-care-escalation'
+      | 'delay-pediatric-status-asthmaticus-escalation-for-trigger-review'
+      | 'record-pediatric-status-asthmaticus-qualified-second-line-care-intent'
+      | 'review-pediatric-status-asthmaticus-later-response'
+      | 'discharge-pediatric-status-asthmaticus-from-saturation-alone'
+      | 'handoff-pediatric-status-asthmaticus-reassessment',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1984,6 +2003,9 @@ export function crisisResponseAvailability(
     hasCroupResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'croup-reassessment',
     ),
+    hasPediatricStatusAsthmaticusResponse: scenario.metadata.id === 'pediatric-status-asthmaticus'
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-status-asthmaticus-reassessment'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2131,6 +2153,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'pediatric-respiratory-distress-reassessment')
       || (event.type === 'narrative' && event.target === 'bronchiolitis-reassessment')
       || (event.type === 'narrative' && event.target === 'croup-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'pediatric-status-asthmaticus-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2191,6 +2215,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNoninvasiveVentilationSelectionResponse, hasHighFlowOxygenEscalationResponse,
     hasOxygenDeviceFailureResponse, hasAcuteTracheostomyObstructionResponse,
     hasPediatricRespiratoryDistressResponse, hasBronchiolitisResponse, hasCroupResponse,
+    hasPediatricStatusAsthmaticusResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2262,7 +2287,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasObesityHypoventilationResponse || hasNoninvasiveVentilationSelectionResponse
     || hasHighFlowOxygenEscalationResponse || hasOxygenDeviceFailureResponse
     || hasAcuteTracheostomyObstructionResponse || hasPediatricRespiratoryDistressResponse
-    || hasBronchiolitisResponse || hasCroupResponse;
+    || hasBronchiolitisResponse || hasCroupResponse || hasPediatricStatusAsthmaticusResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2293,7 +2318,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasCroupResponse
+  const responseTray = hasPediatricStatusAsthmaticusResponse
+    ? { id: 'crisis', label: 'Severe-asthma reassessment' } as const
+    : hasCroupResponse
     ? { id: 'crisis', label: 'Croup reassessment' } as const
     : hasBronchiolitisResponse
     ? { id: 'crisis', label: 'Bronchiolitis reassessment' } as const
@@ -2549,7 +2576,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasOxygenDeviceFailureResponse
     || hasAcuteTracheostomyObstructionResponse
     || hasPediatricRespiratoryDistressResponse
-    || hasBronchiolitisResponse || hasCroupResponse
+    || hasBronchiolitisResponse || hasCroupResponse || hasPediatricStatusAsthmaticusResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3212,6 +3239,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasCroupResponse && (
               <CroupTray assessment={props.resuscitation.croupAssessment}
                 onAction={props.onCroupResponse ?? (() => {})} />
+            )}
+            {hasPediatricStatusAsthmaticusResponse && (
+              <PediatricStatusAsthmaticusTray
+                assessment={props.resuscitation.pediatricStatusAsthmaticusAssessment}
+                onAction={props.onPediatricStatusAsthmaticusResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -8239,6 +8271,66 @@ function CroupTray({ assessment, onAction }: {
           onClick={() => onAction('handoff-croup-active-upper-airway-risk')}>Hand off active upper-airway risk</Button>}
       </div>
       <p className="field__hint">Review voice, stridor at calm rest, work, behavior, color, and breathing together. Recurrence renews experienced ownership; it does not select a repeat treatment, airway procedure, or disposition.</p>
+    </section>
+  </div>;
+}
+
+function PediatricStatusAsthmaticusTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricStatusAsthmaticusAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onPediatricStatusAsthmaticusResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const nonresponse = assessment?.nonresponseAtTick != null;
+  const escalation = assessment?.escalationAtTick != null;
+  const secondLine = assessment?.secondLineIntentAtTick != null;
+  const later = assessment?.laterResponseAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  const unsupported = assessment?.lastUnsupportedChoice;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="pediatric-status-asthmaticus-pattern-title">
+      <div id="pediatric-status-asthmaticus-pattern-title" className="syringe__name">Read the whole child.</div>
+      <Badge kind="teaching">history · prior care · speech · work · air entry</Badge>
+      <div className="syringe__meta">10 years · 32 kg · severe nonresponse at minute 60</div>
+      <p className="syringe__remaining" role="status">
+        {secondLine ? 'Critical-care ownership active · qualified second-line care recorded'
+          : unsupported === 'trigger-review-delay' ? 'Review causes in parallel with qualified care'
+            : escalation ? 'Escalation active · record qualified second-line intent'
+              : nonresponse ? 'Severe nonresponse clear · escalate before fatigue'
+                : unsupported === 'radiograph-delay' ? 'Routine imaging does not delay severe-asthma care'
+                  : unsupported === 'force-peak-flow' ? 'Use the whole child when peak flow is not feasible'
+                    : trajectory ? 'Trajectory reconciled · recognize persistent severe obstruction'
+                      : 'Start with asthma risk, verified care, and current function'}
+      </p>
+      <div className="syringe__presets">
+        {!trajectory && <Button className="crisis-drug__action"
+          onClick={() => onAction('reconcile-pediatric-status-asthmaticus-treatment-and-trajectory')}>Review trajectory + prior care</Button>}
+        {trajectory && !nonresponse && <Button className="crisis-drug__action"
+          onClick={() => onAction('recognize-pediatric-status-asthmaticus-severe-nonresponse')}>Recognize severe nonresponse</Button>}
+        {nonresponse && !escalation && <Button className="crisis-drug__action"
+          onClick={() => onAction('activate-pediatric-status-asthmaticus-critical-care-escalation')}>Activate pediatric critical-care help</Button>}
+        {escalation && !secondLine && <Button className="crisis-drug__action"
+          onClick={() => onAction('record-pediatric-status-asthmaticus-qualified-second-line-care-intent')}>Record qualified care + monitoring</Button>}
+      </div>
+      <p className="field__hint">Experienced pediatric staff own oxygen, inhaled and systemic medicines, monitoring, access, doses, routes, devices, and delivery. The learner records recognition and qualified ownership only.</p>
+    </section>
+    <section className="syringe" aria-labelledby="pediatric-status-asthmaticus-response-title">
+      <div id="pediatric-status-asthmaticus-response-title" className="syringe__name">Improvement must hold.</div>
+      <Badge kind="teaching">speech · effort · air entry · oxygen need · time</Badge>
+      <div className="syringe__meta">fixed minute-90 response · active severe-asthma risk</div>
+      <p className="syringe__remaining" role="status">
+        {handoff ? 'Residual obstruction, oxygen need, triggers, and owners handed off'
+          : unsupported === 'saturation-discharge' ? 'A better saturation is not discharge readiness'
+            : later ? 'Partial improvement only · hand off active risk'
+              : secondLine ? 'Review the whole child after elapsed qualified care'
+                : 'First recognize nonresponse and activate qualified care'}
+      </p>
+      <div className="syringe__presets">
+        {secondLine && !later && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-pediatric-status-asthmaticus-later-response')}>Review the later response</Button>}
+        {later && !handoff && <Button className="crisis-drug__action"
+          onClick={() => onAction('handoff-pediatric-status-asthmaticus-reassessment')}>Hand off active severe asthma</Button>}
+      </div>
+      <p className="field__hint">Partial improvement does not prove durable recovery. Keep residual work, air entry, oxygen need, treatment exposure, toxicity surveillance, recurrence, access, and caregiver context visible.</p>
     </section>
   </div>;
 }

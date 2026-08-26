@@ -1686,6 +1686,28 @@ choices. The lab does not examine the throat; diagnose; acquire or interpret tes
 deliver a drug, dose, route, concentration, repeat interval, oxygen interface or setting, nebulizer,
 airway maneuver, ventilation, procedure, or treatment; decide disposition; or predict outcome.
 
+### Wave D pediatrics slice 4: status asthmaticus after initial care
+
+The fourth Pediatrics lab begins after a verified first hour of experienced-team severe-asthma
+care, making it distinct from first-contact adult asthma and from the adult hypercapnic-failure
+reassessment. A 10-year-old girl weighing 32 kg has established asthma, one prior PICU admission,
+and a supplied child-specific peak-flow history. At minute 60 she remains alert and anxious with
+one-word speech, marked recession, poor equal bilateral air entry, diffuse expiratory wheeze, and
+an oxygen requirement despite the authored initial-care record. The learner reconciles prior care
+and the whole-child trajectory, recognizes severe nonresponse without relying on one number, and
+activates pediatric critical-care and airway-capable ownership before fatigue.
+
+Experienced staff then own monitored, patient-specific intravenous magnesium as the supplied,
+evidence-supported second-line pathway; the learner records team ownership and monitoring rather
+than selecting a drug. A strictly elapsed minute-90 report shows improved speech, effort,
+air entry, breathing, and oxygenation with residual obstruction and oxygen need, so an additional
+elapsed handoff preserves toxicity surveillance, failure triggers, open alternatives, access and
+adherence questions, caregiver context, and named owners. More learner-delivered albuterol, forced
+peak flow, aminophylline selection, and discharge from saturation alone are calm nonmutating
+choices. The lab does not examine, diagnose, score, test, choose or deliver a drug, dose, route,
+oxygen setting, inhaler, nebulizer, intravenous access, infusion, airway care, procedure, or
+treatment; determine disposition or prognosis; or predict outcome.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

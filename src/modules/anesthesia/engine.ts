@@ -41,7 +41,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.45';
+export const ENGINE_VERSION = '0.1.0-alpha.46';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -144,6 +144,13 @@ const CROUP_BLOCKED_ACTION_TYPES = new Set([
   'pediatric-respiratory-distress-response', 'bronchiolitis-response',
   'opioid-toxicity-response', 'bronchiectasis-mucus-plugging-response',
   'ventilator-circuit-disconnection-response',
+]);
+const PEDIATRIC_STATUS_ASTHMATICUS_BLOCKED_ACTION_TYPES = new Set([
+  ...[...PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES]
+    .filter((type) => type !== 'pediatric-status-asthmaticus-response'),
+  'pediatric-respiratory-distress-response', 'bronchiolitis-response', 'croup-response',
+  'pediatric-foreign-body-airway-obstruction-response', 'opioid-toxicity-response',
+  'bronchiectasis-mucus-plugging-response', 'ventilator-circuit-disconnection-response',
 ]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
@@ -812,6 +819,14 @@ export class AnesthesiaEngine {
   private croupHandoffAtTick: number | null = null;
   private croupLastUnsupportedChoice: 'albuterol' | 'radiograph' | 'discharge-early'
     | 'normal-saturation' | null = null;
+  private pediatricStatusAsthmaticusTrajectoryAtTick: number | null = null;
+  private pediatricStatusAsthmaticusNonresponseAtTick: number | null = null;
+  private pediatricStatusAsthmaticusEscalationAtTick: number | null = null;
+  private pediatricStatusAsthmaticusSecondLineIntentAtTick: number | null = null;
+  private pediatricStatusAsthmaticusLaterResponseAtTick: number | null = null;
+  private pediatricStatusAsthmaticusHandoffAtTick: number | null = null;
+  private pediatricStatusAsthmaticusLastUnsupportedChoice: 'force-peak-flow'
+    | 'radiograph-delay' | 'trigger-review-delay' | 'saturation-discharge' | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1222,6 +1237,16 @@ export class AnesthesiaEngine {
     if (croup && CROUP_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `croup-generic-action-refused-${this.currentTick}`,
         'This croup lesson does not expose generic medication, oxygen-device, airway, ventilator, procedure, test, alarm, or adjacent-crisis actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const pediatricStatusAsthmaticus = this.scenario.metadata.id === 'pediatric-status-asthmaticus'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-status-asthmaticus-reassessment');
+    if (pediatricStatusAsthmaticus
+      && PEDIATRIC_STATUS_ASTHMATICUS_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `pediatric-status-asthmaticus-generic-action-refused-${this.currentTick}`,
+        'This pediatric severe-asthma lesson does not expose generic medication, oxygen-device, airway, ventilator, procedure, test, alarm, or adjacent-crisis actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -6157,6 +6182,73 @@ export class AnesthesiaEngine {
         this.croupHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `croup-handoff-recorded-${this.currentTick}`, 'The whole-child trajectory, caregiver-centered support, time since reported qualified care, early improvement, recurrent stridor at rest, open mimics, deterioration triggers, monitoring, and named pediatric, nursing, and airway owners were handed off. No durable recovery, discharge readiness, disposition, prognosis, or outcome was declared.', { durableRecoveryProven: false, dischargeReadinessProven: false, dispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'pediatric-status-asthmaticus-response': {
+        const supported = this.scenario.metadata.id === 'pediatric-status-asthmaticus'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-status-asthmaticus-reassessment');
+        if (!supported) { this.log('warning', 'assessment', `pediatric-status-asthmaticus-response-refused-${this.currentTick}`, 'These choices are available only in the declared pediatric status-asthmaticus lesson.'); break; }
+        const response = String(action.payload.action ?? '');
+        const valid = ['reconcile-pediatric-status-asthmaticus-treatment-and-trajectory',
+          'recognize-pediatric-status-asthmaticus-severe-nonresponse',
+          'force-pediatric-status-asthmaticus-peak-flow',
+          'wait-for-pediatric-status-asthmaticus-routine-radiograph',
+          'activate-pediatric-status-asthmaticus-critical-care-escalation',
+          'delay-pediatric-status-asthmaticus-escalation-for-trigger-review',
+          'record-pediatric-status-asthmaticus-qualified-second-line-care-intent',
+          'review-pediatric-status-asthmaticus-later-response',
+          'discharge-pediatric-status-asthmaticus-from-saturation-alone',
+          'handoff-pediatric-status-asthmaticus-reassessment'].includes(response);
+        if (!valid) { this.log('warning', 'assessment', `pediatric-status-asthmaticus-response-refused-${this.currentTick}`, 'That pediatric severe-asthma response is not available. Nothing changed.'); break; }
+        if (response === 'reconcile-pediatric-status-asthmaticus-treatment-and-trajectory') {
+          if (this.pediatricStatusAsthmaticusTrajectoryAtTick !== null) { this.log('warning', 'assessment', `pediatric-status-asthmaticus-trajectory-refused-${this.currentTick}`, 'The fixed asthma history, care record, and trajectory were already reconciled.'); break; }
+          this.pediatricStatusAsthmaticusTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pediatric-status-asthmaticus-trajectory-reconciled-${this.currentTick}`, 'Established asthma risk, the child-specific arrival report, verified first-hour qualified care, and the persistent minute-60 whole-child state were reconciled. Speech, work, equal bilateral air entry, oxygenation, mentation, circulation, and response were kept together. The learner did not examine, measure PEF, score, test, diagnose, or deliver treatment.', { asthmaHistoryAuthored: true, treatmentRecordAuthored: true, patientExaminedByLearner: false, diagnosisMadeByLearner: false }); break;
+        }
+        if (this.pediatricStatusAsthmaticusTrajectoryAtTick === null) { this.log('warning', 'assessment', `pediatric-status-asthmaticus-trajectory-order-refused-${this.currentTick}`, 'Reconcile the supplied asthma risk, prior care, and whole-child trajectory first.'); break; }
+        if (response === 'force-pediatric-status-asthmaticus-peak-flow' || response === 'wait-for-pediatric-status-asthmaticus-routine-radiograph') {
+          this.pediatricStatusAsthmaticusLastUnsupportedChoice = response === 'force-pediatric-status-asthmaticus-peak-flow' ? 'force-peak-flow' : 'radiograph-delay';
+          this.log('warning', 'assessment', `pediatric-status-asthmaticus-nonresponse-choice-not-selected-${this.currentTick}`, response === 'force-pediatric-status-asthmaticus-peak-flow' ? 'Peak flow can help when feasible, but this child cannot perform it comfortably and reliably now. Reassess speech, mentation, effort, air entry, oxygenation, circulation, and trajectory. Nothing changed.' : 'Routine imaging should not delay recognition and escalation of this supplied severe nonresponse. Investigate when a specific complication or alternative changes the question. Nothing changed.', { unsupportedChoice: this.pediatricStatusAsthmaticusLastUnsupportedChoice, patientStateChanged: false }); break;
+        }
+        if (response === 'recognize-pediatric-status-asthmaticus-severe-nonresponse') {
+          if (this.pediatricStatusAsthmaticusNonresponseAtTick !== null) { this.log('warning', 'assessment', `pediatric-status-asthmaticus-nonresponse-refused-${this.currentTick}`, 'Persistent severe nonresponse was already recognized.'); break; }
+          this.pediatricStatusAsthmaticusNonresponseAtTick = this.currentTick;
+          this.pediatricStatusAsthmaticusLastUnsupportedChoice = null;
+          this.log('critical', 'assessment', `pediatric-status-asthmaticus-severe-nonresponse-recognized-${this.currentTick}`, 'One-word speech, marked recession, poor equal bilateral air entry, diffuse wheeze, persistent oxygen need, and failure to restore function after verified initial care established authored severe nonresponse. No single saturation, peak flow, rate, or wheeze intensity was treated as a universal threshold; there is not yet an authored fatigue or quiet-chest failure pattern.', { persistentSevereNonresponseAuthored: true, quietChestAuthored: false, respiratoryFailureDiagnosedByLearner: false }); break;
+        }
+        if (this.pediatricStatusAsthmaticusNonresponseAtTick === null) { this.log('warning', 'assessment', `pediatric-status-asthmaticus-nonresponse-order-refused-${this.currentTick}`, 'Recognize the persistent severe whole-child nonresponse before escalating care.'); break; }
+        if (response === 'activate-pediatric-status-asthmaticus-critical-care-escalation') {
+          if (this.pediatricStatusAsthmaticusEscalationAtTick !== null) { this.log('warning', 'assessment', `pediatric-status-asthmaticus-escalation-refused-${this.currentTick}`, 'Pediatric critical-care and airway-capable ownership is already active.'); break; }
+          this.pediatricStatusAsthmaticusEscalationAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pediatric-status-asthmaticus-critical-care-escalation-activated-${this.currentTick}`, 'Experienced pediatric critical-care and airway-capable ownership, continuous cardiorespiratory and blood-pressure monitoring, and frequent whole-child reassessment were activated without waiting for fatigue, respiratory failure, or complete trigger review. The learner selected no oxygen, device, flow, target, medicine, dose, route, ventilation, airway maneuver, procedure, or treatment.', { continuousReassessmentOwned: true, treatmentDeliveredByLearner: false, ventilationDeliveredByLearner: false }); break;
+        }
+        if (this.pediatricStatusAsthmaticusEscalationAtTick === null) { this.log('warning', 'assessment', `pediatric-status-asthmaticus-escalation-order-refused-${this.currentTick}`, 'Activate pediatric critical-care and airway-capable ownership before recording second-line intent.'); break; }
+        if (response === 'delay-pediatric-status-asthmaticus-escalation-for-trigger-review') {
+          this.pediatricStatusAsthmaticusLastUnsupportedChoice = 'trigger-review-delay';
+          this.log('warning', 'assessment', `pediatric-status-asthmaticus-second-line-choice-not-selected-${this.currentTick}`, 'Trigger, access, adherence, and alternative-cause review continue in parallel, but they should not delay qualified second-line care for this supplied severe nonresponse. Nothing changed.', { unsupportedChoice: 'trigger-review-delay', patientStateChanged: false }); break;
+        }
+        if (response === 'record-pediatric-status-asthmaticus-qualified-second-line-care-intent') {
+          if (this.pediatricStatusAsthmaticusSecondLineIntentAtTick !== null) { this.log('warning', 'assessment', `pediatric-status-asthmaticus-second-line-intent-refused-${this.currentTick}`, 'Experienced-team ownership of the supplied second-line care plan was already recorded.'); break; }
+          this.pediatricStatusAsthmaticusSecondLineIntentAtTick = this.currentTick;
+          this.pediatricStatusAsthmaticusLastUnsupportedChoice = null;
+          this.log('critical', 'assessment', `pediatric-status-asthmaticus-qualified-second-line-intent-recorded-${this.currentTick}`, 'Experienced-team ownership and monitoring were recorded for the supplied patient-specific second-line care plan while standard care continued. The authored plan names intravenous magnesium; the learner chose no drug, dose, concentration, route, intravenous access, dilution, infusion duration, pump, accompanying therapy, or treatment delivery.', { experiencedSecondLineCareAuthored: true, drugSelectedByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.pediatricStatusAsthmaticusSecondLineIntentAtTick === null) { this.log('warning', 'assessment', `pediatric-status-asthmaticus-second-line-intent-order-refused-${this.currentTick}`, 'Record experienced-team ownership and monitoring before reviewing a later response.'); break; }
+        if (response === 'review-pediatric-status-asthmaticus-later-response') {
+          if (this.currentTick <= this.pediatricStatusAsthmaticusSecondLineIntentAtTick) { this.log('warning', 'assessment', `pediatric-status-asthmaticus-later-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before reviewing the fixed later whole-child response.'); break; }
+          if (this.pediatricStatusAsthmaticusLaterResponseAtTick !== null) { this.log('warning', 'assessment', `pediatric-status-asthmaticus-later-response-refused-${this.currentTick}`, 'The fixed later whole-child response was already reviewed.'); break; }
+          this.pediatricStatusAsthmaticusLaterResponseAtTick = this.currentTick;
+          this.log('warning', 'assessment', `pediatric-status-asthmaticus-later-response-reviewed-${this.currentTick}`, 'Fixed qualified minute-90 report: she is alert and speaks in short phrases, with HR 142/min, RR 32/min, BP 106/64 mmHg, and SpO2 95% on unchanged authored oxygen support. Recession is moderate, bilateral air entry is improved but still reduced, and expiratory wheeze persists. This is partial improvement only; severe-asthma risk, oxygen need, recurrence, toxicity surveillance, causes, access, disposition, and outcome remain unresolved.', { partialResponseAuthored: true, durableRecoveryProven: false, dischargeReadinessProven: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.pediatricStatusAsthmaticusLaterResponseAtTick === null) { this.log('warning', 'assessment', `pediatric-status-asthmaticus-later-order-refused-${this.currentTick}`, 'Review the fixed later whole-child response after elapsed qualified care.'); break; }
+        if (response === 'discharge-pediatric-status-asthmaticus-from-saturation-alone') {
+          this.pediatricStatusAsthmaticusLastUnsupportedChoice = 'saturation-discharge';
+          this.log('warning', 'assessment', `pediatric-status-asthmaticus-handoff-choice-not-selected-${this.currentTick}`, 'SpO2 95% on authored support is one lane, not discharge readiness. Residual work, reduced air entry, treatment intensity, risk history, elapsed stability, oxygen need, and long-term asthma work remain active. Nothing changed.', { unsupportedChoice: 'saturation-discharge', patientStateChanged: false }); break;
+        }
+        if (this.currentTick <= this.pediatricStatusAsthmaticusLaterResponseAtTick) { this.log('warning', 'assessment', `pediatric-status-asthmaticus-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off the active severe-asthma risk.'); break; }
+        if (this.pediatricStatusAsthmaticusHandoffAtTick !== null) { this.log('warning', 'assessment', `pediatric-status-asthmaticus-handoff-refused-${this.currentTick}`, 'The active severe-asthma handoff was already recorded.'); break; }
+        this.pediatricStatusAsthmaticusHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `pediatric-status-asthmaticus-handoff-recorded-${this.currentTick}`, 'Established asthma risk, arrival and first-hour trajectory, reported treatment exposure, current obstruction and oxygen need, partial response, medication-effect surveillance, failure triggers, open causes, controller access and adherence questions, and named pediatric, respiratory, nursing, pharmacy, and airway owners were handed off. No durable recovery, discharge readiness, disposition, prognosis, or outcome was declared.', { durableRecoveryProven: false, dischargeReadinessProven: false, dispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -9013,6 +9105,20 @@ export class AnesthesiaEngine {
         meanArterialMmHg: recurrence ? 72 : early ? 74 : 71,
         coreTemperatureC: 37.8 };
     }
+    if (this.scenario.metadata.id === 'pediatric-status-asthmaticus'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-status-asthmaticus-reassessment')) {
+      const later = this.pediatricStatusAsthmaticusLaterResponseAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: later ? 142 : 154,
+        respiratoryRateBpm: later ? 32 : 40,
+        spo2Percent: later ? 95 : 93,
+        etco2MmHg: later ? 35 : 33,
+        systolicMmHg: later ? 106 : 108,
+        diastolicMmHg: later ? 64 : 66,
+        meanArterialMmHg: later ? 78 : 80,
+        coreTemperatureC: 37.2 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -10663,6 +10769,43 @@ export class AnesthesiaEngine {
               concentrationSelectedByLearner: false as const,
               oxygenSelectedByLearner: false as const, deviceSelectedByLearner: false as const,
               flowSelectedByLearner: false as const, nebulizerOperatedByLearner: false as const,
+              airwayManeuverPerformedByLearner: false as const,
+              ventilationDeliveredByLearner: false as const,
+              intubationPerformedByLearner: false as const,
+              procedurePerformedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const, durableRecoveryProven: false as const,
+              dischargeReadinessProven: false as const, dispositionDetermined: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'pediatric-status-asthmaticus'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-status-asthmaticus-reassessment') ? {
+            pediatricStatusAsthmaticusAssessment: {
+              trajectoryAtTick: this.pediatricStatusAsthmaticusTrajectoryAtTick,
+              nonresponseAtTick: this.pediatricStatusAsthmaticusNonresponseAtTick,
+              escalationAtTick: this.pediatricStatusAsthmaticusEscalationAtTick,
+              secondLineIntentAtTick: this.pediatricStatusAsthmaticusSecondLineIntentAtTick,
+              laterResponseAtTick: this.pediatricStatusAsthmaticusLaterResponseAtTick,
+              handoffAtTick: this.pediatricStatusAsthmaticusHandoffAtTick,
+              lastUnsupportedChoice: this.pediatricStatusAsthmaticusLastUnsupportedChoice,
+              initialPulsePresent: true as const, spontaneousBreathingAuthored: true as const,
+              asthmaHistoryAuthored: true as const, treatmentRecordAuthored: true as const,
+              persistentSevereNonresponseAuthored: true as const,
+              experiencedSecondLineCareAuthored: this.pediatricStatusAsthmaticusSecondLineIntentAtTick !== null,
+              partialResponseAuthored: this.pediatricStatusAsthmaticusLaterResponseAtTick !== null,
+              quietChestAuthored: false as const, respiratoryFailureAuthored: false as const,
+              anaphylaxisPatternAuthored: false as const, upperAirwayPatternAuthored: false as const,
+              foreignBodyPatternAuthored: false as const,
+              patientExaminedByLearner: false as const, monitorInterpretedByLearner: false as const,
+              pefMeasuredByLearner: false as const, scoreCalculatedByLearner: false as const,
+              diagnosisMadeByLearner: false as const, testAcquiredByLearner: false as const,
+              imagingAcquiredByLearner: false as const, drugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const, routeSelectedByLearner: false as const,
+              concentrationSelectedByLearner: false as const,
+              oxygenSelectedByLearner: false as const, deviceSelectedByLearner: false as const,
+              flowSelectedByLearner: false as const, nebulizerOperatedByLearner: false as const,
+              ivAccessPlacedByLearner: false as const, infusionOperatedByLearner: false as const,
               airwayManeuverPerformedByLearner: false as const,
               ventilationDeliveredByLearner: false as const,
               intubationPerformedByLearner: false as const,

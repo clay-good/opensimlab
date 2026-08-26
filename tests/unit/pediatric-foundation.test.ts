@@ -119,6 +119,16 @@ describe('Requirement: bounded healthy-child respiratory physiology', () => {
     expect(profile.spontaneousRespiratoryRateBpm).toBe(32);
   });
 
+  it('keeps the status-asthmaticus 10-year-old, 32 kg scaffold finite and source-composed', () => {
+    const profile = healthyChildRespiratoryProfile(10, 32);
+    expect(profile.frcLitres).toBeCloseTo(9.51 * 32 ** 1.31 / 1000, 12);
+    expect(profile.vo2LitresPerMin).toBeGreaterThan(0);
+    expect(profile.vco2LitresPerMin).toBeGreaterThan(0);
+    expect(profile.deadSpaceMl).toBeGreaterThan(0);
+    expect(profile.spontaneousTidalVolumeMl).toBe(192);
+    expect(profile.spontaneousRespiratoryRateBpm).toBe(27);
+  });
+
   it('does not alter any adult respiratory constant', () => {
     expect(RESPIRATORY_PROFILES.healthy).toEqual({
       frcLitres: 2.5, vo2LitresPerMin: 0.25, vco2LitresPerMin: 0.2, deadSpaceMl: 150,

@@ -12,11 +12,11 @@ import {
 const json = (path: string) => JSON.parse(readFileSync(join(process.cwd(), path), 'utf8'));
 
 describe('Pediatrics module foundation', () => {
-  it('registers three available, bounded labs behind an exact module contract', () => {
+  it('registers four available, bounded labs behind an exact module contract', () => {
     expect(getModule('pediatrics')).toMatchObject({
       route: 'pediatrics', displayName: 'Pediatrics', status: 'available',
     });
-    expect(PEDIATRICS_SCENARIOS).toHaveLength(3);
+    expect(PEDIATRICS_SCENARIOS).toHaveLength(4);
     expect(DEFAULT_PEDIATRICS_SCENARIO_ID).toBe('pediatric-respiratory-distress');
     expect(getPediatricsScenario(DEFAULT_PEDIATRICS_SCENARIO_ID))
       .toBe(PEDIATRICS_SCENARIOS[0]);
@@ -27,6 +27,8 @@ describe('Pediatrics module foundation', () => {
     const scenarioRoute = routeFor('/pediatrics/scenario/pediatric-respiratory-distress')!;
     const bronchiolitisRoute = routeFor('/pediatrics/scenario/bronchiolitis')!;
     const croupRoute = routeFor('/pediatrics/scenario/croup')!;
+    const statusAsthmaticusRoute = routeFor(
+      '/pediatrics/scenario/pediatric-status-asthmaticus')!;
     expect(moduleRoute).toMatchObject({ indexable: true, heading: 'Pediatrics simulator',
       structuredData: ['SoftwareApplication'] });
     expect(scenarioRoute).toMatchObject({ indexable: true,
@@ -47,6 +49,13 @@ describe('Pediatrics module foundation', () => {
     expect(croupRoute.description.length).toBeLessThanOrEqual(160);
     expect(canonicalUrl(croupRoute.path))
       .toBe('https://opensimlab.com/pediatrics/scenario/croup');
+    expect(statusAsthmaticusRoute).toMatchObject({ indexable: true,
+      heading: 'Pediatric status asthmaticus after initial care',
+      structuredData: ['LearningResource'] });
+    expect(statusAsthmaticusRoute.description.length).toBeGreaterThanOrEqual(110);
+    expect(statusAsthmaticusRoute.description.length).toBeLessThanOrEqual(160);
+    expect(canonicalUrl(statusAsthmaticusRoute.path))
+      .toBe('https://opensimlab.com/pediatrics/scenario/pediatric-status-asthmaticus');
   });
 
   it('publishes exact completion, quality, maturity, and report records', () => {
@@ -54,9 +63,9 @@ describe('Pediatrics module foundation', () => {
     const quality = json('public/catalog/pediatrics-quality-audit.json');
     const maturity = json('public/catalog/pediatrics-maturity.json');
     const reports = json('public/catalog/scenario-report-catalog.json');
-    expect(completion).toMatchObject({ moduleId: 'pediatrics', scenarioCount: 3 });
-    expect(quality).toMatchObject({ scenarioCount: 3 });
-    expect(maturity).toMatchObject({ recordCount: 3 });
+    expect(completion).toMatchObject({ moduleId: 'pediatrics', scenarioCount: 4 });
+    expect(quality).toMatchObject({ scenarioCount: 4 });
+    expect(maturity).toMatchObject({ recordCount: 4 });
     expect(reports.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-respiratory-distress',
       contentVersion: '0.1.0', maturity: 'draft',
@@ -69,6 +78,10 @@ describe('Pediatrics module foundation', () => {
       moduleId: 'pediatrics', scenarioId: 'croup',
       contentVersion: '0.1.0', maturity: 'draft',
     }));
+    expect(reports.scenarios).toContainEqual(expect.objectContaining({
+      moduleId: 'pediatrics', scenarioId: 'pediatric-status-asthmaticus',
+      contentVersion: '0.1.0', maturity: 'draft',
+    }));
     expect(reviewableItems()).toContainEqual(expect.objectContaining({
       id: 'pediatric-respiratory-distress', domains: ['pediatrics'],
     }));
@@ -77,6 +90,9 @@ describe('Pediatrics module foundation', () => {
     }));
     expect(reviewableItems()).toContainEqual(expect.objectContaining({
       id: 'croup', domains: ['pediatrics'],
+    }));
+    expect(reviewableItems()).toContainEqual(expect.objectContaining({
+      id: 'pediatric-status-asthmaticus', domains: ['pediatrics'],
     }));
   });
 });

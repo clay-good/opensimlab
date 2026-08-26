@@ -4623,6 +4623,30 @@ export function objectiveFindings(
       const ordered = recurrence && handoff && recurrence.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved treatment timing, recurrence, open mimics, deterioration triggers, monitoring, and named owners without claiming durable recovery, disposition, or outcome.' : 'The active upper-airway-risk handoff was absent or did not follow recurrence review after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-pediatric-status-asthmaticus-treatment-and-trajectory',
+      'recognize-pediatric-status-asthmaticus-severe-nonresponse',
+      'activate-pediatric-status-asthmaticus-critical-care-escalation',
+      'record-pediatric-status-asthmaticus-qualified-second-line-care-intent',
+      'review-pediatric-status-asthmaticus-later-response',
+      'handoff-pediatric-status-asthmaticus-reassessment'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'pediatric-status-asthmaticus'
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pediatric-status-asthmaticus-reassessment');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The pediatric status-asthmaticus lesson was not active.' } satisfies ObjectiveFinding;
+      const trajectory = log.find((event) => /^pediatric-status-asthmaticus-trajectory-reconciled-\d+$/.test(event.eventId));
+      const nonresponse = log.find((event) => /^pediatric-status-asthmaticus-severe-nonresponse-recognized-\d+$/.test(event.eventId));
+      const escalation = log.find((event) => /^pediatric-status-asthmaticus-critical-care-escalation-activated-\d+$/.test(event.eventId));
+      const secondLine = log.find((event) => /^pediatric-status-asthmaticus-qualified-second-line-intent-recorded-\d+$/.test(event.eventId));
+      const later = log.find((event) => /^pediatric-status-asthmaticus-later-response-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^pediatric-status-asthmaticus-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-pediatric-status-asthmaticus-treatment-and-trajectory') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'The supplied asthma risk, arrival state, verified first-hour care, and current whole-child trajectory were reconciled without learner examination, peak-flow testing, scoring, diagnosis, or treatment.' : 'The fixed asthma treatment and whole-child trajectory were not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'recognize-pediatric-status-asthmaticus-severe-nonresponse') { const ordered = trajectory && nonresponse && trajectory.tick <= nonresponse.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Persistent severe nonresponse was recognized from speech, work, air entry, oxygenation, mentation, circulation, and trajectory without relying on one threshold or wheeze loudness.' : 'Severe nonresponse was absent or preceded trajectory review.', atTick: nonresponse?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-pediatric-status-asthmaticus-critical-care-escalation') { const ordered = nonresponse && escalation && nonresponse.tick <= escalation.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Pediatric critical-care and airway-capable ownership was activated before fatigue without learner device, setting, drug, ventilation, procedure, or treatment selection.' : 'Critical-care escalation was absent or preceded severe-nonresponse recognition.', atTick: escalation?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'record-pediatric-status-asthmaticus-qualified-second-line-care-intent') { const ordered = escalation && secondLine && escalation.tick <= secondLine.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Experienced-team ownership and monitoring for the supplied second-line plan followed escalation without learner drug, dose, route, access, infusion, or treatment delivery.' : 'Qualified second-line ownership was absent or preceded escalation.', atTick: secondLine?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-status-asthmaticus-later-response') { const ordered = secondLine && later && secondLine.tick < later.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed qualified care, partial whole-child improvement was reviewed without declaring durable recovery, discharge readiness, or outcome.' : 'The later response was absent or did not follow qualified second-line ownership after elapsed time.', atTick: later?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = later && handoff && later.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved obstruction, oxygen need, treatment exposure, toxicity surveillance, failure triggers, open causes, access questions, and named owners without claiming disposition or outcome.' : 'The active severe-asthma handoff was absent or did not follow the later response after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

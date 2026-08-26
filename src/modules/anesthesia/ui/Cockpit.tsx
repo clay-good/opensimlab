@@ -978,6 +978,9 @@ export function Cockpit({
           onCroupResponse={(action) => session.act({
             type: 'croup-response', payload: { action },
           })}
+          onPediatricStatusAsthmaticusResponse={(action) => session.act({
+            type: 'pediatric-status-asthmaticus-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

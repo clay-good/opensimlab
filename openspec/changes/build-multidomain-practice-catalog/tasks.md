@@ -285,6 +285,12 @@ credited toward the catalog until every item in the completion contract passes.
     qualified-team corticosteroid and nebulized epinephrine intent, a strictly elapsed early
     response, later recurrent stridor at rest, and active-risk handoff without learner drug, dose,
     device, airway-procedure, treatment, or disposition controls.
+  - [x] Pediatrics slice 4/16 adds one authored 10-year-old established-asthma reassessment after
+    verified first-hour qualified care, with whole-child severe-nonresponse recognition, early
+    pediatric critical-care and airway-capable escalation, experienced-team ownership and monitoring
+    for the supplied second-line plan, a strictly elapsed partial response, and elapsed active-risk handoff without
+    learner examination, peak flow, scoring, drug, dose, route, oxygen, device, intravenous access,
+    airway, treatment, or disposition controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
