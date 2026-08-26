@@ -2358,6 +2358,21 @@ confusion precedes another elapsed CNS, pulmonary, absorption, renal, electrolyt
 safety, and active-risk handoff. The canonical state is not a salicylate kinetic, tissue-distribution,
 acid-base, treatment-response, airway, or dialysis model.
 
+### Wave F toxicology slice 5: tricyclic sodium-channel cardiotoxicity
+
+The fifth Toxicology lab owns the whole electrical, perfusion, CNS, and seizure pattern of declared
+amitriptyline toxicity rather than duplicating a generic anticholinergic syndrome, wide-complex
+tachycardia, or QRS-only bicarbonate calculator. The learner reconciles the 90-minute exposure clock,
+anticholinergic clues, confusion, a stopped seizure, HR 132/min, BP 82/48 mmHg, supplied QRS 132 ms,
+intraventricular delay, terminal rightward aVR pattern, pH and electrolytes; recognizes sodium-channel
+cardiotoxicity without one-interval closure; activates toxicology, resuscitation, cardiac, airway,
+seizure, monitoring, and compassionate safety ownership; and reviews coingestion and refractory-
+rescue boundaries. Bounded qualified bicarbonate and rescue intent exposes no solution, dose, rate,
+target, access, ventilation, rhythm treatment, lipid, ECLS, or delivery. A strict elapsed fixed
+electrical, perfusion, and mental-state report precedes another elapsed recurrence and active-risk
+handoff. The canonical state is not an ECG, electrophysiology, toxicokinetic, bicarbonate-response,
+airway, dysrhythmia, or refractory-rescue model.
+
 #### Hematology and oncology: 11
 
 Neutropenic fever; tumor-lysis syndrome; hyperleukocytosis pattern; sickle-cell acute chest syndrome;

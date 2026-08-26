@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "toxicology",
-  "recordCount": 4,
+  "recordCount": 5,
   "records": [
     {
       "recordId": "scenario:methemoglobinemia-saturation-gap@0.1.0",
@@ -45,6 +45,17 @@
       "evidence": [
         "/catalog/toxicology-completion-audit.json#salicylate-falling-number@0.1.0",
         "/catalog/toxicology-quality-audit.json#salicylate-falling-number@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:tricyclic-sodium-channel-cardiotoxicity@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "tricyclic-sodium-channel-cardiotoxicity",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/toxicology-completion-audit.json#tricyclic-sodium-channel-cardiotoxicity@0.1.0",
+        "/catalog/toxicology-quality-audit.json#tricyclic-sodium-channel-cardiotoxicity@0.1.0"
       ]
     }
   ]

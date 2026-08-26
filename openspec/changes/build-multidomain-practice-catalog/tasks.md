@@ -591,6 +591,18 @@ credited toward the catalog until every item in the completion contract passes.
     test acquisition, acid-base calculation, diagnosis, fluid or electrolyte prescription, drug,
     dose, route, access, infusion, airway or ventilation setting, dialysis eligibility or delivery,
     procedure, safety disposition, prognosis, or outcome control exists.
+  - [x] Toxicology slice 5/15 adds declared amitriptyline sodium-channel cardiotoxicity. The learner
+    reconciles product, 90-minute clock, anticholinergic and CNS clues, a stopped seizure, hypotension,
+    tachycardia, supplied QRS widening and terminal-aVR pattern, pH, electrolytes and whole patient;
+    recognizes the whole pattern without QRS-only closure; activates toxicology, emergency, critical-
+    care, nursing, pharmacy, airway, seizure, cardiac, perfusion and compassionate safety ownership;
+    reviews ECG, perfusion, acid-base, electrolyte, coingestion and refractory-rescue boundaries;
+    records bounded qualified bicarbonate and rescue intent; then reviews a strict elapsed fixed ECG,
+    pressure and mental-state report before another elapsed conduction, shock, seizure, acidemia,
+    recurrence, rescue and active-risk handoff. No learner history, examination, monitoring, ECG or
+    test acquisition or interpretation, diagnosis, drug, dose, target, route, access, infusion, airway,
+    ventilation, rhythm treatment, shock, pacing, lipid, ECLS, procedure, safety disposition,
+    prognosis, or outcome control exists.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.
 - [ ] After every wave, verify the exact cumulative count, distinctness, capability reuse, path and

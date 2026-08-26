@@ -58,6 +58,25 @@ const RHYTHM_LIST: readonly RhythmDefinition[] = Object.freeze([
     morphologyDescription: 'Sinus morphology at a fast rate, with a shortened T-P interval.',
   },
   {
+    id: 'tricyclic-sodium-channel-tachycardia',
+    name: 'Sinus tachycardia with sodium-channel conduction delay',
+    morphology: {
+      events: table({
+        Q: { a: -3, b: 0.16 },
+        R: { a: 22, b: 0.18 },
+        S: { a: -7, b: 0.18 },
+        T: { a: 1.1, b: 0.28 },
+      }),
+      mechanicalPulse: true,
+    },
+    rateRangeBpm: [101, 150],
+    rateIsMeasurable: true,
+    source:
+      'Sinus tachycardia with QRS widening from sodium-channel blockade; 2023 AHA focused toxicology update and amitriptyline prescribing information.',
+    morphologyDescription:
+      'A fast regular sinus rhythm with visibly widened complexes from the authored sodium-channel conduction delay.',
+  },
+  {
     id: 'atrial-fibrillation',
     name: 'Atrial fibrillation',
     morphology: { events: table({ P: { a: 0 } }), mechanicalPulse: true },

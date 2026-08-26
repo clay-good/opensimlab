@@ -5421,6 +5421,30 @@ export function objectiveFindings(
       const ordered = bridge && handoff && bridge.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Elapsed reassessment preserved unresolved shock, owners, triggers, and open work in handoff.' : 'Handoff was absent or did not follow the bridge after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-toxicology-tricyclic-product-clock-cns-seizure-perfusion-ecg-and-whole-patient',
+      'recognize-toxicology-tricyclic-sodium-channel-cardiotoxicity-pattern-without-qrs-only-closure',
+      'activate-toxicology-tricyclic-poison-center-resuscitation-cardiac-airway-seizure-and-safety-ownership',
+      'review-toxicology-tricyclic-supplied-ecg-perfusion-acid-base-electrolyte-coingestion-and-rescue-boundary',
+      'record-toxicology-tricyclic-bounded-qualified-bicarbonate-and-rescue-intent-with-strict-later-review',
+      'handoff-toxicology-tricyclic-recurrent-conduction-shock-seizure-acidemia-rescue-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'tricyclic-sodium-channel-cardiotoxicity'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'tricyclic-sodium-channel-cardiotoxicity-transition')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'tricyclic-sodium-channel-cardiotoxicity-transition-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Toxicology tricyclic lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'Product, clock, CNS, seizure, perfusion, supplied ECG, oxygenation, and whole-patient state were reconciled.'],
+        ['pattern-recognized', 'The sodium-channel cardiotoxicity pattern was recognized without QRS-only or diagnostic closure.'],
+        ['support-activated', 'Toxicology, resuscitation, cardiac, airway, seizure, monitoring, and compassionate safety ownership were activated.'],
+        ['evidence-reviewed', 'Supplied ECG, perfusion, CNS, acid-base, electrolyte, temperature, coingestion, and rescue evidence were reviewed without learner interpretation.'],
+        ['intent-and-reassessment-recorded', 'Bounded qualified bicarbonate and rescue intent plus the elapsed fixed report were recorded without dosing, delivery, eligibility, causal, or durable-safety claims.'],
+        ['active-risk-handoff-recorded', 'Serial conduction, shock, seizure, acidemia, coingestion, recurrence, rescue, safety, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^toxicology-tricyclic-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^toxicology-tricyclic-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-af-rvr-rhythm-and-stability', 'review-af-rvr-context-and-triggers',
       'record-af-rvr-rate-control-intent', 'record-af-rvr-stroke-prevention-intent',
       'reassess-af-rvr-trajectory-and-follow-up'].includes(objective.id)) {

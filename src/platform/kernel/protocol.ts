@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 150 reports Toxicology acetaminophen state. */
-export const WORKER_PROTOCOL_VERSION = 151;
+export const WORKER_PROTOCOL_VERSION = 152;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2321,6 +2321,28 @@ export interface EquipmentSnapshot {
       readonly dialysisSelectedByLearner: false; readonly treatmentDeliveredByLearner: false;
       readonly tissueConcentrationProven: false; readonly ongoingAbsorptionExcluded: false;
       readonly pulmonaryComplicationsExcluded: false; readonly dialysisEligibilityDetermined: false;
+      readonly treatmentEffectProven: false; readonly safetyDispositionDetermined: false;
+      readonly dispositionDetermined: false; readonly prognosisPredicted: false;
+      readonly outcomePredicted: false;
+    };
+    readonly toxicologyTricyclicAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly exposureAndElectricalPatternAuthored: true; readonly sodiumChannelPatternRecognized: boolean;
+      readonly qualifiedSupportActive: boolean; readonly ecgAndLaboratoryEvidenceReviewed: boolean;
+      readonly qualifiedBicarbonateIntentRecorded: boolean; readonly qualifiedRescuePreparednessRecorded: boolean;
+      readonly responseStateAuthored: boolean; readonly patientHistoryTakenByLearner: false;
+      readonly patientExaminedByLearner: false; readonly monitoringAcquiredByLearner: false;
+      readonly ecgAcquiredByLearner: false; readonly ecgInterpretedByLearner: false;
+      readonly bloodSampleAcquiredByLearner: false; readonly diagnosisMadeByLearner: false;
+      readonly decontaminationSelectedByLearner: false; readonly fluidSelectedByLearner: false;
+      readonly drugSelectedByLearner: false; readonly doseSelectedByLearner: false;
+      readonly routeSelectedByLearner: false; readonly airwaySelectedByLearner: false;
+      readonly ventilationSelectedByLearner: false; readonly rhythmTreatmentSelectedByLearner: false;
+      readonly rescueSelectedByLearner: false; readonly treatmentDeliveredByLearner: false;
+      readonly durableElectricalStabilityProven: false; readonly seizureRecurrenceExcluded: false;
+      readonly coingestionExcluded: false; readonly rescueEligibilityDetermined: false;
       readonly treatmentEffectProven: false; readonly safetyDispositionDetermined: false;
       readonly dispositionDetermined: false; readonly prognosisPredicted: false;
       readonly outcomePredicted: false;

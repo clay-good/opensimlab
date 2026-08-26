@@ -1195,6 +1195,11 @@ export interface ActionCockpitProps {
       readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly toxicologyTricyclicAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2055,6 +2060,14 @@ export interface ActionCockpitProps {
       | 'record-toxicology-salicylate-bounded-qualified-alkalinization-and-dialysis-preparedness-with-strict-later-review'
       | 'handoff-toxicology-salicylate-cns-pulmonary-acidemia-absorption-extracorporeal-and-active-risk',
   ) => void;
+  readonly onToxicologyTricyclicResponse?: (
+    action: 'reconcile-toxicology-tricyclic-product-clock-cns-seizure-perfusion-ecg-and-whole-patient'
+      | 'recognize-toxicology-tricyclic-sodium-channel-cardiotoxicity-pattern-without-qrs-only-closure'
+      | 'activate-toxicology-tricyclic-poison-center-resuscitation-cardiac-airway-seizure-and-safety-ownership'
+      | 'review-toxicology-tricyclic-supplied-ecg-perfusion-acid-base-electrolyte-coingestion-and-rescue-boundary'
+      | 'record-toxicology-tricyclic-bounded-qualified-bicarbonate-and-rescue-intent-with-strict-later-review'
+      | 'handoff-toxicology-tricyclic-recurrent-conduction-shock-seizure-acidemia-rescue-and-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2568,6 +2581,10 @@ export function crisisResponseAvailability(
       scenario.metadata.id === 'salicylate-falling-number'
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'salicylate-falling-number-transition')
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'salicylate-falling-number-transition-boundary'),
+    hasToxicologyTricyclicResponse:
+      scenario.metadata.id === 'tricyclic-sodium-channel-cardiotoxicity'
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'tricyclic-sodium-channel-cardiotoxicity-transition')
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'tricyclic-sodium-channel-cardiotoxicity-transition-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2771,6 +2788,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'carbon-monoxide-reassuring-monitor-transition')
       || (event.type === 'narrative' && event.target === 'acetaminophen-clock-and-nomogram-transition')
       || (event.type === 'narrative' && event.target === 'salicylate-falling-number-transition')
+      || (event.type === 'narrative' && event.target === 'tricyclic-sodium-channel-cardiotoxicity-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2862,6 +2880,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasToxicologyCarbonMonoxideResponse,
     hasToxicologyAcetaminophenResponse,
     hasToxicologySalicylateResponse,
+    hasToxicologyTricyclicResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2980,8 +2999,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasToxicologyCarbonMonoxideResponse
     || hasToxicologyAcetaminophenResponse
     || hasToxicologySalicylateResponse
+    || hasToxicologyTricyclicResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasToxicologySalicylateResponse
+  const responseTray = hasToxicologyTricyclicResponse
+    ? { id: 'crisis', label: 'Electrical toxicity' } as const
+    : hasToxicologySalicylateResponse
     ? { id: 'crisis', label: 'Salicylate trajectory' } as const
     : hasToxicologyAcetaminophenResponse
     ? { id: 'crisis', label: 'Acetaminophen clock' } as const
@@ -4148,6 +4170,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <ToxicologySalicylateTray
                 assessment={props.resuscitation.toxicologySalicylateAssessment}
                 onAction={props.onToxicologySalicylateResponse ?? (() => {})} />
+            )}
+            {hasToxicologyTricyclicResponse && (
+              <ToxicologyTricyclicTray assessment={props.resuscitation.toxicologyTricyclicAssessment}
+                onAction={props.onToxicologyTricyclicResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -10593,6 +10619,38 @@ function ToxicologySalicylateTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-salicylate-bounded-qualified-alkalinization-and-dialysis-preparedness-with-strict-later-review')}>Prepare early + reassess</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-salicylate-cns-pulmonary-acidemia-absorption-extracorporeal-and-active-risk')}>Hand off the whole trajectory</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function ToxicologyTricyclicTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyTricyclicAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onToxicologyTricyclicResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const evidence = assessment?.evidenceAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="toxicology-tricyclic-early-title">
+      <div id="toxicology-tricyclic-early-title" className="syringe__name">The tracing belongs to a whole patient.</div>
+      <p className="syringe__remaining">Begin with product, clock, mentation, seizure, perfusion, supplied ECG, oxygenation, and whole person.</p>
+      <div className="crisis-drug__actions">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-toxicology-tricyclic-product-clock-cns-seizure-perfusion-ecg-and-whole-patient')}>Connect patient + tracing</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-toxicology-tricyclic-sodium-channel-cardiotoxicity-pattern-without-qrs-only-closure')}>Recognize the electrical pattern</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-toxicology-tricyclic-poison-center-resuscitation-cardiac-airway-seizure-and-safety-ownership')}>Build the rescue circle</Button>}
+        {support && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-toxicology-tricyclic-supplied-ecg-perfusion-acid-base-electrolyte-coingestion-and-rescue-boundary')}>Review the coupled risk</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="toxicology-tricyclic-later-title">
+      <div id="toxicology-tricyclic-later-title" className="syringe__name">A narrower tracing is a checkpoint, not an all-clear.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Serial conduction, perfusion, CNS, seizure, acid-base, recurrence, rescue, safety, and outcome uncertainty handed off.' : reassessment ? 'The fixed electrical, perfusion, and mental-state report improved. Durable stability and treatment effect remain unproven.' : evidence ? 'ECG, perfusion, CNS, seizure, acid-base, electrolytes, and rescue readiness stay coupled. Record qualified intent after time passes.' : support ? 'Qualified toxicology, resuscitation, cardiac, airway, seizure, and safety ownership are active. Review the supplied evidence.' : 'Complete whole-pattern recognition and rescue ownership before treatment-boundary review.'}</p>
+      <div className="crisis-drug__actions">
+        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-tricyclic-bounded-qualified-bicarbonate-and-rescue-intent-with-strict-later-review')}>Record intent + reassess</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-tricyclic-recurrent-conduction-shock-seizure-acidemia-rescue-and-active-risk')}>Hand off what can recur</Button>}
       </div>
     </section>
   </>;

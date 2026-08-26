@@ -106,6 +106,13 @@ ventilation, CNS and pulmonary risk, bounded qualified alkalinization intent, ea
 preparedness, a strict worsening-acidemia report, and active-risk handoff visible without exposing a
 blood-gas calculator, fluid or electrolyte prescription, airway setting, dialysis threshold,
 eligibility or delivery, procedure, disposition, or outcome control.
+Its fifth lab, tricyclic toxicity where the whole electrical pattern matters, couples declared
+amitriptyline exposure, anticholinergic and CNS clues, a stopped seizure, hypotension, a supplied
+widened-QRS and terminal-aVR pattern, acid-base and electrolyte context, early toxicology and
+resuscitation ownership, bounded qualified bicarbonate and refractory-rescue intent, strict elapsed
+electrical and perfusion reassessment, and recurrence handoff. It exposes no learner ECG
+interpretation, dose or target, airway or rhythm treatment, lipid, ECLS, shock, pacing, procedure,
+disposition, or outcome control.
 
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage

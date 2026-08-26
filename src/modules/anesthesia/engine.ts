@@ -396,6 +396,10 @@ const TOXICOLOGY_SALICYLATE_BLOCKED_ACTION_TYPES = new Set([
   ...TOXICOLOGY_ACETAMINOPHEN_BLOCKED_ACTION_TYPES,
   'acetaminophen-clock-and-nomogram-response',
 ]);
+const TOXICOLOGY_TRICYCLIC_BLOCKED_ACTION_TYPES = new Set([
+  ...TOXICOLOGY_SALICYLATE_BLOCKED_ACTION_TYPES,
+  'salicylate-falling-number-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1257,6 +1261,12 @@ export class AnesthesiaEngine {
   private toxicologySalicylateEvidenceAtTick: number | null = null;
   private toxicologySalicylateReassessmentAtTick: number | null = null;
   private toxicologySalicylateHandoffAtTick: number | null = null;
+  private toxicologyTricyclicTrajectoryAtTick: number | null = null;
+  private toxicologyTricyclicRecognitionAtTick: number | null = null;
+  private toxicologyTricyclicSupportAtTick: number | null = null;
+  private toxicologyTricyclicEvidenceAtTick: number | null = null;
+  private toxicologyTricyclicReassessmentAtTick: number | null = null;
+  private toxicologyTricyclicHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2053,6 +2063,15 @@ export class AnesthesiaEngine {
         'This Toxicology lesson exposes no generic examination, monitoring, laboratory, acid-base calculation, '
         + 'charcoal, fluid, electrolyte, drug, dose, route, access, infusion, airway, ventilation, dialysis, transport, '
         + 'procedure, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const toxicologyTricyclic = this.scenario.metadata.id === 'tricyclic-sodium-channel-cardiotoxicity'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'tricyclic-sodium-channel-cardiotoxicity-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'tricyclic-sodium-channel-cardiotoxicity-transition-boundary');
+    if (toxicologyTricyclic && TOXICOLOGY_TRICYCLIC_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `toxicology-tricyclic-generic-action-refused-${this.currentTick}`,
+        'This Toxicology lesson exposes no generic examination, monitoring, ECG or laboratory interpretation, '
+        + 'charcoal, bicarbonate, electrolyte, fluid, drug, dose, route, access, infusion, airway, ventilation, shock, '
+        + 'pacing, antiarrhythmic, lipid, ECLS, transport, procedure, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -10163,6 +10182,32 @@ export class AnesthesiaEngine {
         if (this.toxicologySalicylateHandoffAtTick !== null) { this.log('warning', 'assessment', `toxicology-salicylate-handoff-refused-${this.currentTick}`, 'The CNS, pulmonary, acidemia, absorption, extracorporeal, and active-risk handoff was already recorded.'); break; }
         this.toxicologySalicylateHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-salicylate-active-risk-handoff-recorded-${this.currentTick}`, 'Serial clinical, concentration, pH and ventilation state, CNS and pulmonary deterioration, ongoing absorption, renal and electrolyte constraints, alkalinization and extracorporeal status, airway risk, compassionate safety, disposition, prognosis, and outcome uncertainty were handed off.', { tissueConcentrationProven: false, ongoingAbsorptionExcluded: false, pulmonaryComplicationsExcluded: false, dialysisEligibilityDetermined: false, safetyDispositionDetermined: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
       }
+      case 'tricyclic-sodium-channel-cardiotoxicity-response': {
+        const response = typeof action.payload.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'tricyclic-sodium-channel-cardiotoxicity'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'tricyclic-sodium-channel-cardiotoxicity-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'tricyclic-sodium-channel-cardiotoxicity-transition-boundary');
+        const actions = ['reconcile-toxicology-tricyclic-product-clock-cns-seizure-perfusion-ecg-and-whole-patient',
+          'recognize-toxicology-tricyclic-sodium-channel-cardiotoxicity-pattern-without-qrs-only-closure',
+          'activate-toxicology-tricyclic-poison-center-resuscitation-cardiac-airway-seizure-and-safety-ownership',
+          'review-toxicology-tricyclic-supplied-ecg-perfusion-acid-base-electrolyte-coingestion-and-rescue-boundary',
+          'record-toxicology-tricyclic-bounded-qualified-bicarbonate-and-rescue-intent-with-strict-later-review',
+          'handoff-toxicology-tricyclic-recurrent-conduction-shock-seizure-acidemia-rescue-and-active-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `toxicology-tricyclic-response-refused-${this.currentTick}`, supported ? 'The tricyclic action was not listed. No supplied or injected text was retained.' : 'These tricyclic choices are available only in the exact declared Toxicology lesson.'); break; }
+        if (response === actions[0]) { if (this.toxicologyTricyclicTrajectoryAtTick !== null) { this.log('warning', 'assessment', `toxicology-tricyclic-trajectory-refused-${this.currentTick}`, 'The product, clock, CNS, seizure, perfusion, ECG, and whole-patient state were already reconciled.'); break; } this.toxicologyTricyclicTrajectoryAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-tricyclic-trajectory-reconciled-${this.currentTick}`, 'Declared amitriptyline exposure, 90-minute clock, anticholinergic clues, confusion, stopped seizure, hypotension, tachycardia, supplied ECG, oxygenation, and whole-patient state were connected. The learner did not take history, examine, acquire or interpret monitoring or ECG, test, or diagnose.', { exposureAuthored: true, minutesPostIngestion: 90, patientHistoryTakenByLearner: false, patientExaminedByLearner: false, ecgInterpretedByLearner: false }); break; }
+        if (this.toxicologyTricyclicTrajectoryAtTick === null) { this.log('warning', 'assessment', `toxicology-tricyclic-trajectory-order-refused-${this.currentTick}`, 'Reconcile product, clock, CNS, seizure, perfusion, ECG, and whole patient first.'); break; }
+        if (response === actions[1]) { if (this.toxicologyTricyclicRecognitionAtTick !== null) { this.log('warning', 'assessment', `toxicology-tricyclic-recognition-refused-${this.currentTick}`, 'The sodium-channel cardiotoxicity pattern and QRS-only boundary were already recognized.'); break; } this.toxicologyTricyclicRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-tricyclic-pattern-recognized-${this.currentTick}`, 'Declared exposure, QRS widening, terminal rightward aVR pattern, hypotension, CNS toxicity, and seizure form an authored sodium-channel cardiotoxicity pattern. One interval, axis finding, concentration, or anticholinergic clue alone neither diagnoses nor grades the case.', { sodiumChannelPatternRecognized: true, qrsUsedAlone: false, diagnosisMadeByLearner: false }); break; }
+        if (this.toxicologyTricyclicRecognitionAtTick === null) { this.log('warning', 'assessment', `toxicology-tricyclic-recognition-order-refused-${this.currentTick}`, 'Recognize the whole sodium-channel cardiotoxicity pattern before support or evidence review.'); break; }
+        if (response === actions[2]) { if (this.toxicologyTricyclicSupportAtTick !== null) { this.log('warning', 'assessment', `toxicology-tricyclic-support-refused-${this.currentTick}`, 'Qualified toxicology, resuscitation, cardiac, airway, seizure, and safety ownership are already active.'); break; } this.toxicologyTricyclicSupportAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-tricyclic-support-activated-${this.currentTick}`, 'Poison-center or medical-toxicology, emergency, critical-care, nursing, pharmacy, airway-capable, seizure, continuous cardiac and perfusion monitoring, and compassionate safety ownership were recorded. The learner selected no fluid, drug, dose, route, access, airway, shock, pacing, or procedure.', { qualifiedSupportActive: true, safetyOwnershipActive: true, treatmentSelectedByLearner: false }); break; }
+        if (this.toxicologyTricyclicSupportAtTick === null) { this.log('warning', 'assessment', `toxicology-tricyclic-support-order-refused-${this.currentTick}`, 'Activate qualified toxicology, resuscitation, cardiac, airway, seizure, and safety ownership before evidence review.'); break; }
+        if (response === actions[3]) { if (this.toxicologyTricyclicEvidenceAtTick !== null) { this.log('warning', 'assessment', `toxicology-tricyclic-evidence-refused-${this.currentTick}`, 'The supplied ECG, perfusion, acid-base, electrolyte, coingestion, and rescue boundary was already reviewed.'); break; } this.toxicologyTricyclicEvidenceAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-tricyclic-evidence-reviewed-${this.currentTick}`, 'Supplied QRS 132 ms, intraventricular delay, terminal rightward aVR pattern, pressure, CNS and seizure state, pH 7.34, PCO2 36, bicarbonate 19, sodium 139, potassium 3.7, glucose 104, creatinine 0.9, temperature, coingestion limits, and rescue boundary were integrated. The learner acquired, calculated, interpreted, diagnosed, or determined no eligibility.', { ecgAndLaboratoryEvidenceAuthored: true, qrsMilliseconds: 132, ecgInterpretedByLearner: false, rescueEligibilityDetermined: false }); break; }
+        if (this.toxicologyTricyclicEvidenceAtTick === null) { this.log('warning', 'assessment', `toxicology-tricyclic-evidence-order-refused-${this.currentTick}`, 'Review supplied ECG, perfusion, CNS, acid-base, electrolyte, coingestion, and rescue evidence before qualified intent.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.toxicologyTricyclicEvidenceAtTick) { this.log('warning', 'assessment', `toxicology-tricyclic-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before qualified intent and strict later review.'); break; } if (this.toxicologyTricyclicReassessmentAtTick !== null) { this.log('warning', 'assessment', `toxicology-tricyclic-reassessment-refused-${this.currentTick}`, 'Qualified bicarbonate and rescue intent with the strict later report were already reviewed.'); break; } this.toxicologyTricyclicReassessmentAtTick = this.currentTick; this.rhythm = 'sinus-tachycardia'; this.log('critical', 'assessment', `toxicology-tricyclic-intent-and-reassessment-recorded-${this.currentTick}`, 'Qualified-team sodium-bicarbonate intent and refractory-rescue preparedness were recorded without solution, concentration, dose, rate, target, access, ventilation, antiarrhythmic, lipid, ECLS, or delivery. Strict 3-hour report: clearer mentation, no recurrent seizure, sinus rate 112/min, BP 106/66 (MAP 79), QRS 104 ms, pH 7.43, sodium 144, potassium 3.4, and unchanged oxygenation. This does not prove individualized treatment effect, durable electrical or perfusion stability, seizure freedom, coingestant exclusion, disposition, or outcome.', { qualifiedBicarbonateIntentRecorded: true, qualifiedRescuePreparednessRecorded: true, laterQrsMilliseconds: 104, treatmentDeliveredByLearner: false, rescueSelectedByLearner: false, treatmentEffectProven: false }); break; }
+        if (this.toxicologyTricyclicReassessmentAtTick === null) { this.log('warning', 'assessment', `toxicology-tricyclic-handoff-order-refused-${this.currentTick}`, 'Record bounded qualified intent and review the strict later report before handoff.'); break; }
+        if (this.currentTick <= this.toxicologyTricyclicReassessmentAtTick) { this.log('warning', 'assessment', `toxicology-tricyclic-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off recurrent cardiotoxicity and seizure risk.'); break; }
+        if (this.toxicologyTricyclicHandoffAtTick !== null) { this.log('warning', 'assessment', `toxicology-tricyclic-handoff-refused-${this.currentTick}`, 'The recurrent conduction, shock, seizure, acidemia, rescue, and active-risk handoff was already recorded.'); break; }
+        this.toxicologyTricyclicHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-tricyclic-active-risk-handoff-recorded-${this.currentTick}`, 'Serial ECG, perfusion, CNS and seizure state, acid-base and electrolytes, coingestion, recurrent conduction delay, dysrhythmia and shock, airway and rescue contingencies, compassionate safety, disposition, prognosis, and outcome uncertainty were handed off.', { durableElectricalStabilityProven: false, seizureRecurrenceExcluded: false, coingestionExcluded: false, rescueEligibilityDetermined: false, safetyDispositionDetermined: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -12924,6 +12969,14 @@ export class AnesthesiaEngine {
       crisisState = { ...crisisState, heartRateBpm: this.toxicologySalicylateReassessmentAtTick !== null ? 114 : 108,
         respiratoryRateBpm: 30, spo2Percent: 99, systolicMmHg: 116, diastolicMmHg: 74,
         meanArterialMmHg: 88, coreTemperatureC: 37.6 };
+    }
+    if (this.scenario.metadata.id === 'tricyclic-sodium-channel-cardiotoxicity'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'tricyclic-sodium-channel-cardiotoxicity-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'tricyclic-sodium-channel-cardiotoxicity-transition-boundary')) {
+      crisisState = { ...crisisState, heartRateBpm: this.toxicologyTricyclicReassessmentAtTick !== null ? 112 : 132,
+        respiratoryRateBpm: 20, spo2Percent: 96, systolicMmHg: this.toxicologyTricyclicReassessmentAtTick !== null ? 106 : 82,
+        diastolicMmHg: this.toxicologyTricyclicReassessmentAtTick !== null ? 66 : 48,
+        meanArterialMmHg: this.toxicologyTricyclicReassessmentAtTick !== null ? 79 : 59, coreTemperatureC: 37.4 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -16542,6 +16595,28 @@ export class AnesthesiaEngine {
               tissueConcentrationProven: false as const, ongoingAbsorptionExcluded: false as const, pulmonaryComplicationsExcluded: false as const,
               dialysisEligibilityDetermined: false as const, treatmentEffectProven: false as const, safetyDispositionDetermined: false as const,
               dispositionDetermined: false as const, prognosisPredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'tricyclic-sodium-channel-cardiotoxicity'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'tricyclic-sodium-channel-cardiotoxicity-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'tricyclic-sodium-channel-cardiotoxicity-transition-boundary') ? {
+            toxicologyTricyclicAssessment: {
+              trajectoryAtTick: this.toxicologyTricyclicTrajectoryAtTick, recognitionAtTick: this.toxicologyTricyclicRecognitionAtTick,
+              supportAtTick: this.toxicologyTricyclicSupportAtTick, evidenceAtTick: this.toxicologyTricyclicEvidenceAtTick,
+              reassessmentAtTick: this.toxicologyTricyclicReassessmentAtTick, handoffAtTick: this.toxicologyTricyclicHandoffAtTick,
+              exposureAndElectricalPatternAuthored: true as const, sodiumChannelPatternRecognized: this.toxicologyTricyclicRecognitionAtTick !== null,
+              qualifiedSupportActive: this.toxicologyTricyclicSupportAtTick !== null, ecgAndLaboratoryEvidenceReviewed: this.toxicologyTricyclicEvidenceAtTick !== null,
+              qualifiedBicarbonateIntentRecorded: this.toxicologyTricyclicReassessmentAtTick !== null, qualifiedRescuePreparednessRecorded: this.toxicologyTricyclicReassessmentAtTick !== null,
+              responseStateAuthored: this.toxicologyTricyclicReassessmentAtTick !== null,
+              patientHistoryTakenByLearner: false as const, patientExaminedByLearner: false as const, monitoringAcquiredByLearner: false as const,
+              ecgAcquiredByLearner: false as const, ecgInterpretedByLearner: false as const, bloodSampleAcquiredByLearner: false as const,
+              diagnosisMadeByLearner: false as const, decontaminationSelectedByLearner: false as const, fluidSelectedByLearner: false as const,
+              drugSelectedByLearner: false as const, doseSelectedByLearner: false as const, routeSelectedByLearner: false as const,
+              airwaySelectedByLearner: false as const, ventilationSelectedByLearner: false as const, rhythmTreatmentSelectedByLearner: false as const,
+              rescueSelectedByLearner: false as const, treatmentDeliveredByLearner: false as const, durableElectricalStabilityProven: false as const,
+              seizureRecurrenceExcluded: false as const, coingestionExcluded: false as const, rescueEligibilityDetermined: false as const,
+              treatmentEffectProven: false as const, safetyDispositionDetermined: false as const, dispositionDetermined: false as const,
+              prognosisPredicted: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

@@ -77,6 +77,7 @@ export type RhythmId =
   | 'sinus'
   | 'sinus-bradycardia'
   | 'sinus-tachycardia'
+  | 'tricyclic-sodium-channel-tachycardia'
   | 'atrial-fibrillation'
   | 'svt'
   | 'first-degree-block'

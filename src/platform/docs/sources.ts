@@ -3053,6 +3053,17 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/25986310/',
     verifiedOn: '2026-08-26',
   },
+  {
+    id: 'dailymed-amitriptyline-2024',
+    currency: { lastAmended: '2024-12-19', checkedAt: '2026-08-26' },
+    authors: 'US National Library of Medicine, DailyMed',
+    title: 'Amitriptyline hydrochloride tablets prescribing information',
+    publication: 'DailyMed', year: 2024,
+    locator: 'Set ID 73669354-babc-4687-a4fe-ad0fc1f863ba; Overdosage manifestations, monitoring, and management sections',
+    usedFor: 'Rapid toxicity, poison-center consultation, dysrhythmia, hypotension, seizure and CNS risk, and the clinical significance but non-exclusionary nature of ECG QRS axis and width changes.',
+    verifiedAgainst: 'https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=73669354-babc-4687-a4fe-ad0fc1f863ba',
+    verifiedOn: '2026-08-26',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

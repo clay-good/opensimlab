@@ -9,6 +9,7 @@ import { METHEMOGLOBINEMIA_SATURATION_GAP as SCENARIO } from '../../src/modules/
 import { CARBON_MONOXIDE_REASSURING_MONITOR } from '../../src/modules/toxicology/scenarios/carbon-monoxide-reassuring-monitor';
 import { ACETAMINOPHEN_CLOCK_AND_NOMOGRAM } from '../../src/modules/toxicology/scenarios/acetaminophen-clock-and-nomogram';
 import { SALICYLATE_FALLING_NUMBER } from '../../src/modules/toxicology/scenarios/salicylate-falling-number';
+import { TRICYCLIC_SODIUM_CHANNEL_CARDIOTOXICITY } from '../../src/modules/toxicology/scenarios/tricyclic-sodium-channel-cardiotoxicity';
 
 describe('Toxicology module user-facing foundation', () => {
   const cockpitMarkup = (
@@ -44,6 +45,7 @@ describe('Toxicology module user-facing foundation', () => {
     onToxicologyCarbonMonoxideResponse: () => {},
     onToxicologyAcetaminophenResponse: () => {},
     onToxicologySalicylateResponse: () => {},
+    onToxicologyTricyclicResponse: () => {},
   } satisfies ActionCockpitProps));
 
   it('renders a calm module index with shared navigation and the exact first lab', () => {
@@ -58,6 +60,8 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('Acetaminophen: the clock changes the meaning');
     expect(markup).toContain('href="/toxicology/scenario/salicylate-falling-number"');
     expect(markup).toContain('Salicylate: the falling number can be worse');
+    expect(markup).toContain('href="/toxicology/scenario/tricyclic-sodium-channel-cardiotoxicity"');
+    expect(markup).toContain('Tricyclic toxicity: read the whole electrical pattern');
   });
 
   it('briefs the bounded poisoning rehearsal without dose or diagnostic claims', () => {
@@ -159,6 +163,27 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('Read the patient and the number together.');
     expect(markup).toContain('Connect exposure + breathing');
     expect(markup).not.toMatch(/mEq|mL\/kg|dialysis threshold|ventilator setting/i);
+    expect(markup).not.toContain('<input');
+    expect(markup).not.toContain('<select');
+  });
+
+  it('prerenders and opens the tricyclic lab on its calm whole-pattern tray', () => {
+    const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/tricyclic-sodium-channel-cardiotoxicity' }));
+    expect(page).toContain('<h1>Tricyclic toxicity: read the whole electrical pattern</h1>');
+    expect(page).toContain('QRS-only closure');
+    expect(crisisResponseAvailability(TRICYCLIC_SODIUM_CHANNEL_CARDIOTOXICITY, []))
+      .toMatchObject({ hasToxicologyTricyclicResponse: true });
+    expect(crisisResponseAvailability({ ...TRICYCLIC_SODIUM_CHANNEL_CARDIOTOXICITY,
+      metadata: { ...TRICYCLIC_SODIUM_CHANNEL_CARDIOTOXICITY.metadata, id: 'tricyclic-clone' } }, []))
+      .toMatchObject({ hasToxicologyTricyclicResponse: false });
+    const markup = cockpitMarkup(TRICYCLIC_SODIUM_CHANNEL_CARDIOTOXICITY, {
+      toxicologyTricyclicAssessment: { trajectoryAtTick: null, recognitionAtTick: null,
+        supportAtTick: null, evidenceAtTick: null, reassessmentAtTick: null, handoffAtTick: null },
+    });
+    expect(markup).toContain('Electrical toxicity');
+    expect(markup).toContain('The tracing belongs to a whole patient.');
+    expect(markup).toContain('Connect patient + tracing');
+    expect(markup).not.toMatch(/mEq|mg\/kg|pH target|ventilator setting|ECLS/i);
     expect(markup).not.toContain('<input');
     expect(markup).not.toContain('<select');
   });

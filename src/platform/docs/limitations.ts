@@ -4295,6 +4295,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use the whole serial clinical state with verified concentrations and units, acid-base, CNS, pulmonary, renal, volume, glucose, and electrolyte evidence under toxicology, critical-care, and nephrology ownership.',
     briefIn: ['salicylate-falling-number'],
   },
+  {
+    id: 'tricyclic-exposure-electrical-perfusion-cns-transition-and-response-are-authored',
+    headline: 'The exposure, electrical pattern, perfusion, CNS state, qualified care, and later response are authored.',
+    simplification: 'Fixed reports and canonical monitor states stand in for history, examination, exposure verification, ECG and laboratory acquisition and interpretation, seizure assessment, qualified resuscitation, and reassessment.',
+    whereItMisleads: 'Treating the fictional QRS, aVR finding, hypotension, seizure, anticholinergic clues, or later improvement as learner evidence, a universal diagnosis or severity threshold, treatment effect, durable stability, or predicted course.',
+    correctUnderstanding: 'Real care requires direct serial clinical, ECG, perfusion, neurological, acid-base, and electrolyte assessment with poison-center or medical-toxicology and resuscitation-team ownership.',
+    briefIn: ['tricyclic-sodium-channel-cardiotoxicity'],
+  },
+  {
+    id: 'tricyclic-controls-reconcile-recognize-support-review-intent-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, pattern recognition, qualified ownership, evidence review, bounded bicarbonate and rescue intent, reassessment, and handoff only.',
+    simplification: 'Six actions stand in for emergency, toxicology, critical-care, nursing, pharmacy, airway, seizure, cardiac, perfusion, rescue, safety, surveillance, and handoff work.',
+    whereItMisleads: 'Equating button order with history, examination, ECG interpretation, diagnosis, prescribing, airway or rhythm management, rescue eligibility or delivery, disposition, or competence.',
+    correctUnderstanding: 'Actual care requires trained teams, continuous verified cardiac and perfusion surveillance, serial neurological and laboratory assessment, current local protocols, individualized treatment, and reassessment.',
+    briefIn: ['tricyclic-sodium-channel-cardiotoxicity'],
+  },
+  {
+    id: 'no-live-tricyclic-diagnosis-ecg-interpretation-bicarbonate-airway-rescue-or-outcome',
+    headline: 'The lab does not diagnose poisoning, interpret an ECG, prescribe bicarbonate, manage an airway or rhythm, perform rescue, or report outcome.',
+    simplification: 'No live history, examination, monitoring, ECG, blood gas, chemistry or another test, interval or axis calculation, diagnosis, charcoal, bicarbonate, electrolyte, fluid, vasopressor, seizure drug, dose, route, access, infusion, airway, ventilation, shock, pacing, antiarrhythmic, lipid, ECLS, transport, procedure, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Using one QRS interval or aVR finding alone, copying fictional values into care, selecting an airway or refractory rescue from this rehearsal, attributing the fixed response, or reading completion as competence.',
+    correctUnderstanding: 'Use the complete verified exposure, serial ECG, perfusion, CNS, seizure, acid-base, electrolyte, temperature, and coingestion trajectory under qualified toxicology and resuscitation ownership.',
+    briefIn: ['tricyclic-sodium-channel-cardiotoxicity'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

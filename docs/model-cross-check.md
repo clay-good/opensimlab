@@ -266,6 +266,12 @@ Recorded here rather than silently carried:
   bicarbonate 13 mmol/L, potassium 3.0 mmol/L and new confusion. These are teaching calibrations
   grounded in ACMT and EXTRIP guidance, not a salicylate kinetic, tissue-distribution, acid-base,
   alkalinization-response, airway, extracorporeal-treatment, or individualized-response model.
+  Tricyclic sodium-channel cardiotoxicity uses fixed canonical presentation and elapsed-response
+  states: HR 132/min, BP 82/48 mmHg, supplied QRS 132 ms with terminal rightward aVR pattern,
+  pH 7.34, sodium 139 mmol/L and potassium 3.7 mmol/L, then HR 112/min, BP 106/66 mmHg, QRS 104 ms,
+  pH 7.43, sodium 144 mmol/L and potassium 3.4 mmol/L. These are teaching calibrations grounded in
+  AHA guidance and product labeling, not an ECG, electrophysiology, toxicokinetic, bicarbonate-
+  response, airway, dysrhythmia, refractory-rescue, or individualized-response model.
 
 ## Concentration-time checks, 2026-08-23
 

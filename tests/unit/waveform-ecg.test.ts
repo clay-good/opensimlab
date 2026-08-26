@@ -183,7 +183,7 @@ describe('Scenario: Rate changes do not distort morphology incorrectly', () => {
       .filter((event) => event.name === 'Q' || event.name === 'R' || event.name === 'S')
       .reduce((sum, event) => sum + event.b, 0);
     const sinusWidth = qrsWidth('sinus');
-    for (const rhythm of ['complete-heart-block', 'hyperkalemic-conduction',
+    for (const rhythm of ['tricyclic-sodium-channel-tachycardia', 'complete-heart-block', 'hyperkalemic-conduction',
       'ventricular-tachycardia', 'paced'] as const) {
       expect(qrsWidth(rhythm)).toBeGreaterThan(sinusWidth);
     }
@@ -293,7 +293,8 @@ describe('Scenario: Electrical and mechanical activity are separate', () => {
 describe('The rhythm library is complete and self-describing', () => {
   it('provides every named rhythm the specification lists', () => {
     expect(RHYTHM_IDS).toEqual([
-      'sinus', 'sinus-bradycardia', 'sinus-tachycardia', 'atrial-fibrillation', 'svt',
+      'sinus', 'sinus-bradycardia', 'sinus-tachycardia',
+      'tricyclic-sodium-channel-tachycardia', 'atrial-fibrillation', 'svt',
       'first-degree-block', 'complete-heart-block', 'hyperkalemic-conduction',
       'torsades-de-pointes', 'ventricular-tachycardia',
       'ventricular-fibrillation', 'asystole', 'pea', 'paced',

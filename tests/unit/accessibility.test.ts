@@ -115,6 +115,16 @@ describe('Requirement: Screen Reader Access To Live Physiology', () => {
     expect(descriptions[1]?.description).toContain('dicrotic notch');
   });
 
+  it('describes the tricyclic teaching trace as widened rather than narrow', () => {
+    const descriptions = waveformDescriptions({
+      rhythm: 'tricyclic-sodium-channel-tachycardia', bronchospasmSeverity: 0,
+      airwayPatencyFraction: 1, perfusionIndex: 0.8, artifacts: new Set(),
+      ventilating: true, mechanicalPulse: true,
+    });
+    expect(descriptions.find(({ signal }) => signal === 'ecg')?.description)
+      .toContain('visibly widened complexes');
+  });
+
   it('describes absent gas flow when a ventilator is commanded but not delivering', () => {
     const descriptions = waveformDescriptions({
       rhythm: 'sinus', bronchospasmSeverity: 0, airwayPatencyFraction: 1, perfusionIndex: 0.8,
