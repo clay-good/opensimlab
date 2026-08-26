@@ -53,4 +53,12 @@ export const PRIVACY_CLAIMS: readonly PrivacyClaim[] = [
     claim: 'The report API fails closed and accepts only exact routes and bounded exact-version payloads.',
     test: 'tests/unit/problem-reporting.test.ts → has only the two exact API routes',
   },
+  {
+    claim: 'Recent simulation context is collected only after explicit consent and is structurally bounded.',
+    test: 'tests/ui/problem-reporting.test.tsx → collects bounded simulation context only after explicit consent',
+  },
+  {
+    claim: 'Likely real-patient or contact information is stopped in the dialog and at the Worker boundary.',
+    test: 'tests/unit/problem-reporting.test.ts → stops likely real-patient and contact information',
+  },
 ];

@@ -8,7 +8,9 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Select, SiteBar, useLocalPreference } from '@platform/ui';
-import { useSession, sessionInternals, type GuidanceLevel } from '@platform/session/session-store';
+import {
+  useSession, sessionInternals, type GuidanceLevel, type SessionState,
+} from '@platform/session/session-store';
 import { NotForClinicalUseGate, hasAcknowledged, recordAcknowledgement } from '@platform/safety/not-for-clinical-use';
 import { SonificationEngine } from '@platform/audio/sonification';
 import { guessRegion, getRegion, REGIONS } from '@anesthesia/region/profiles';
@@ -67,6 +69,10 @@ import {
 } from '../modules/obstetrics/scenarios';
 import { APP_VERSION } from '@platform/governance/status';
 import { ScenarioProblemReport } from '@platform/reporting/ScenarioProblemReport';
+import {
+  REPORT_CONTEXT_ACTION_LIMIT, REPORT_CONTEXT_SNAPSHOT_LIMIT,
+  type ReportContextScalar, type ScenarioReportRecentContext,
+} from '@platform/reporting/contracts';
 import { SITE_ORIGIN } from './site-metadata';
 
 interface ClinicalModuleConfig {
@@ -181,6 +187,50 @@ function scenarioForPath(
 /** A seed derived from the scenario rather than from a clock, so a session replays. */
 const DEFAULT_SEED = 20260819;
 
+function boundedScalars(value: unknown, limit: number): Record<string, ReportContextScalar> {
+  const result: Record<string, ReportContextScalar> = {};
+  const visit = (node: unknown, path: string) => {
+    if (Object.keys(result).length >= limit) return;
+    if (node === null || typeof node === 'boolean'
+      || (typeof node === 'number' && Number.isFinite(node))) {
+      if (path) result[path.slice(0, 80)] = node;
+      return;
+    }
+    if (typeof node === 'string') {
+      if (path && /^[a-zA-Z0-9_.-]+$/.test(node)) result[path.slice(0, 80)] = node.slice(0, 80);
+      return;
+    }
+    if (!node || typeof node !== 'object' || Array.isArray(node)) return;
+    for (const [key, child] of Object.entries(node as Record<string, unknown>).sort()) {
+      visit(child, path ? `${path}.${key}` : key);
+      if (Object.keys(result).length >= limit) break;
+    }
+  };
+  visit(value, '');
+  return result;
+}
+
+function collectReportRecentContext(session: SessionState, seed: number): ScenarioReportRecentContext {
+  const actions = sessionInternals().recorder?.build('pending').actions ?? [];
+  return {
+    seed: Math.trunc(seed),
+    actions: actions.slice(-REPORT_CONTEXT_ACTION_LIMIT).map((action) => ({
+      tick: Math.max(0, Math.trunc(action.tick)),
+      type: action.type.slice(0, 80),
+      outcome: session.log.some((entry) => entry.tick === action.tick && entry.eventId.includes('refused'))
+        ? 'refused' as const : 'accepted' as const,
+      payload: boundedScalars(action.payload, 12),
+    })),
+    snapshot: {
+      patient: Object.fromEntries(Object.entries(session.state ?? {})
+        .filter((entry): entry is [string, number] => Number.isFinite(entry[1]))
+        .sort(([left], [right]) => left.localeCompare(right))
+        .slice(0, REPORT_CONTEXT_SNAPSHOT_LIMIT)),
+      equipment: boundedScalars(session.equipment, REPORT_CONTEXT_SNAPSHOT_LIMIT),
+    },
+  };
+}
+
 /**
  * An assignment carried in the URL (platform/adoption → Assignment Links Without
  * Accounts).
@@ -278,6 +328,7 @@ function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalM
           : session.phase === 'briefing' || session.phase === 'idle' ? 'prebrief' : 'live',
         simulatedTick: session.tick,
         canonicalUrl: `${SITE_ORIGIN}${config.basePath}/scenario/${scenario.metadata.id}`,
+        collectRecentContext: () => collectReportRecentContext(session, assignment.seed),
       }}
       onOpen={() => {
         reportWasRunning.current = session.transport === 'running';

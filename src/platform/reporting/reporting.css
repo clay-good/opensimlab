@@ -11,6 +11,9 @@
 .problem-report__form { display: grid; gap: var(--space-4); }
 .problem-report__label-short { display: none; }
 .problem-report__count { justify-self: end; }
+.problem-report__warning { color: var(--critical-text); }
+.problem-report__context-choice { display: flex; gap: var(--space-2); align-items: flex-start; }
+.problem-report__context-choice input { inline-size: 1.25rem; block-size: 1.25rem; flex: 0 0 auto; }
 .problem-report__preview {
   padding: var(--space-3);
   border: 1px solid var(--line-subtle);
@@ -22,6 +25,16 @@
 .problem-report__preview dl div { display: grid; grid-template-columns: minmax(7rem, 1fr) 2fr; gap: var(--space-3); }
 .problem-report__preview dt { color: var(--text-secondary); }
 .problem-report__preview dd { min-inline-size: 0; overflow-wrap: anywhere; }
+.problem-report__context-preview {
+  max-block-size: 12rem;
+  overflow: auto;
+  padding: var(--space-2);
+  border-radius: var(--radius-control);
+  background: var(--surface-1);
+  font: var(--type-code);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
 .problem-report__turnstile { min-block-size: 65px; }
 
 /* The simulator's Analysis and Actions controls occupy the bottom-right corner

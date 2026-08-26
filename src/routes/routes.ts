@@ -298,8 +298,8 @@ export const ROUTES: readonly RouteMetadata[] = [
     path: '/privacy',
     title: formatTitle('Privacy'),
     description:
-      'Private clinical simulation practice with no accounts, analytics, or learner telemetry. '
-      + 'Anonymous problem reports are bounded, previewed, and briefly retained.',
+      'Private clinical simulation practice with no accounts, analytics, or telemetry. Anonymous '
+      + 'problem reports are previewed and retained for at most 30 days.',
     indexable: true,
     structuredData: [],
     heading: 'Privacy',

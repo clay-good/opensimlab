@@ -2,7 +2,8 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 import {
-  REPORT_NOTE_LIMIT, buildScenarioReportRequest, type ScenarioReportContext,
+  REPORT_NOTE_LIMIT, buildScenarioReportRequest, noteMayContainRealPatientInformation,
+  type ScenarioReportContext,
 } from '@platform/reporting/contracts';
 import {
   handleRequest, validateReportPayload, verifyTurnstile,
@@ -252,6 +253,35 @@ describe('scenario report contract', () => {
     expect(report.note).toHaveLength(160);
     expect(validateReportPayload(report)).toMatchObject({ ok: true });
     expect(validateReportPayload({ ...report, note: 'x'.repeat(161) })).toEqual({ ok: false, status: 400 });
+  });
+
+  it('stops likely real-patient and contact information on both sides of the boundary', () => {
+    for (const note of [
+      'This is about my patient today.', 'MRN: AB123456', 'reply@example.com', '312-555-0199',
+    ]) {
+      expect(noteMayContainRealPatientInformation(note)).toBe(true);
+      expect(validateReportPayload({ ...valid(), note })).toEqual({ ok: false, status: 400 });
+    }
+    expect(noteMayContainRealPatientInformation('The simulated pressure response seems delayed.')).toBe(false);
+  });
+
+  it('accepts only bounded opt-in structured context', () => {
+    const recent_context = {
+      seed: 7,
+      actions: [{ tick: 12, type: 'review-state', outcome: 'accepted', payload: { selected: true } }],
+      snapshot: { patient: { heartRateBpm: 88 }, equipment: { 'airway.device': 'facemask' } },
+    };
+    expect(validateReportPayload({ ...valid(), recent_context })).toMatchObject({ ok: true });
+    expect(validateReportPayload({ ...valid(), recent_context: {
+      ...recent_context, actions: Array.from({ length: 21 }, () => recent_context.actions[0]),
+    } })).toEqual({ ok: false, status: 400 });
+    expect(validateReportPayload({ ...valid(), recent_context: {
+      ...recent_context, snapshot: { ...recent_context.snapshot, patient: { note: 'free prose' } },
+    } })).toEqual({ ok: false, status: 400 });
+    const { recent_context: _context, ...olderInstalledClient } = valid();
+    expect(validateReportPayload(olderInstalledClient)).toMatchObject({
+      ok: true, value: { recentContext: null },
+    });
   });
 
   it('accepts the exact pediatric dehydration context and rejects module or URL drift', () => {

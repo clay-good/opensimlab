@@ -139,7 +139,7 @@ credited toward the catalog until every item in the completion contract passes.
 - [x] Specify and implement the exact report request/response schemas and generated scenario report
   catalog.
 - [ ] Add one shared report control to prebrief, live, debrief, source, and limitation surfaces.
-- [ ] Implement the accessible payload-preview dialog, category-only submission, optional 160-
+- [x] Implement the accessible payload-preview dialog, category-only submission, optional 160-
   character note, and opt-in bounded recent context.
 - [x] Structurally exclude reflections, local history, progress, imported files, arbitrary storage,
   real-world timestamps, identity, locale, user agent, and device data.

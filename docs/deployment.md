@@ -104,6 +104,42 @@ Before enabling `REPORTING_ENABLED`, add a Cloudflare WAF rate rule for the exac
 the test-key checklist against a non-production database, and inspect one bounded row. A generic
 `202` deliberately does not reveal whether a valid report was new, duplicated, or quota-dropped.
 
+Use the Free-plan-compatible WAF expression `http.request.uri.path eq "/api/reports"` with IP as
+the counting characteristic, a 10-second period, and mitigation after 10 requests. If the zone plan
+supports method and host fields, narrow it further to `POST` and `opensimlab.com`. Do not broaden it
+to all `/api/` traffic. Record one blocked flood in the private launch log before enabling reports;
+WAF counters may update a few seconds after detection, so this is a cost boundary rather than an
+exact concurrency lock.
+
+Cloudflare's current Turnstile test pair is safe only outside production: site key
+`1x00000000000000000000AA` and secret `1x0000000000000000000000000000000AA` always pass. Use a
+separate non-production widget/database, confirm the returned hostname and `scenario-report`
+action, then remove test configuration. Production widgets must allow only `opensimlab.com`.
+
+The application admits at most 400 verified attempts and 200 accepted rows per UTC day. Each
+accepted report uses one Turnstile verification and one bounded D1 batch; duplicate and quota cases
+remain indistinguishable. These ceilings keep this feature far below ordinary D1 free-tier volume,
+but D1 returns errors after a free daily limit is exhausted. The Worker converts that condition to
+generic unavailability and the static simulator remains unaffected. Recheck Cloudflare's current
+[D1 limits](https://developers.cloudflare.com/d1/platform/limits/),
+[Turnstile validation contract](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/),
+and [WAF rate-limit availability](https://developers.cloudflare.com/waf/rate-limiting-rules/)
+at launch rather than treating these August 2026 assumptions as permanent.
+
+Launch checklist:
+
+- Apply every D1 migration and inspect the resulting tables and indexes.
+- Set the production site key, Turnstile secret, and an independent random HMAC secret; verify none
+  appears in source, build output, shell history, or Worker logs.
+- Deploy with `workers_dev`, preview URLs, and observability disabled; confirm only the 2 exact routes
+  respond and every lookalike route returns `404`.
+- Demonstrate the exact-path WAF block, successful category-only report, opt-in context report,
+  same-day duplicate suppression, reporter/global quota behavior, and report-only failure when D1,
+  Turnstile, or configuration is unavailable.
+- Query the inserted row with authenticated Wrangler tooling, verify that no token or raw address
+  was stored, delete all test rows, then set `REPORTING_ENABLED=true`.
+- Add a weekly owner for open/urgent review and a calendar check for the daily retention trigger.
+
 The scheduled handler deletes reports older than 30 days and anonymous daily counters older than
 14 days. Recovery can be run manually with authenticated tooling:
 

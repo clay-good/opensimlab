@@ -2,6 +2,8 @@ import type { ContentMaturity } from '@platform/catalog/maturity';
 
 export const REPORT_NOTE_LIMIT = 160;
 export const REPORT_ACTION = 'scenario-report';
+export const REPORT_CONTEXT_ACTION_LIMIT = 20;
+export const REPORT_CONTEXT_SNAPSHOT_LIMIT = 32;
 
 export const REPORT_CATEGORIES = [
   ['clinical-content', 'Clinical content'],
@@ -15,6 +17,23 @@ export const REPORT_CATEGORIES = [
 
 export type ReportCategory = typeof REPORT_CATEGORIES[number][0];
 export type ReportSurface = 'prebrief' | 'live' | 'debrief' | 'source' | 'limitation';
+export type ReportContextScalar = string | number | boolean | null;
+
+export interface ScenarioReportActionContext {
+  readonly tick: number;
+  readonly type: string;
+  readonly outcome: 'accepted' | 'refused';
+  readonly payload: Readonly<Record<string, ReportContextScalar>>;
+}
+
+export interface ScenarioReportRecentContext {
+  readonly seed: number;
+  readonly actions: readonly ScenarioReportActionContext[];
+  readonly snapshot: {
+    readonly patient: Readonly<Record<string, number>>;
+    readonly equipment: Readonly<Record<string, ReportContextScalar>>;
+  };
+}
 
 export interface ScenarioReportContext {
   readonly scenarioId: string;
@@ -28,6 +47,8 @@ export interface ScenarioReportContext {
   readonly surface: ReportSurface;
   readonly simulatedTick: number;
   readonly canonicalUrl: string;
+  /** Invoked only after the learner explicitly opts in. */
+  readonly collectRecentContext?: () => ScenarioReportRecentContext;
 }
 
 export interface ScenarioReportRequest {
@@ -42,7 +63,15 @@ export interface ScenarioReportRequest {
   readonly canonical_url: string;
   readonly category: ReportCategory;
   readonly note: string;
+  readonly recent_context: ScenarioReportRecentContext | null;
   readonly turnstile_token: string;
+}
+
+export function noteMayContainRealPatientInformation(note: string): boolean {
+  return /\b(?:(?:my|our)\s+patient|(?:this|a)\s+real\s+patient|real-life\s+patient)\b/i.test(note)
+    || /\b(?:m(?:rn)|medical\s+record|patient\s+id)\s*[:#-]?\s*[a-z0-9-]{4,}\b/i.test(note)
+    || /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i.test(note)
+    || /(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}/.test(note);
 }
 
 export function buildScenarioReportRequest(
@@ -50,6 +79,7 @@ export function buildScenarioReportRequest(
   category: ReportCategory,
   note: string,
   turnstileToken: string,
+  recentContext: ScenarioReportRecentContext | null = null,
 ): ScenarioReportRequest {
   return {
     module_id: context.moduleId,
@@ -63,6 +93,7 @@ export function buildScenarioReportRequest(
     canonical_url: context.canonicalUrl,
     category,
     note: note.trim().slice(0, REPORT_NOTE_LIMIT),
+    recent_context: recentContext,
     turnstile_token: turnstileToken,
   };
 }

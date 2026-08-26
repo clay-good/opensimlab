@@ -12,9 +12,19 @@ The request also contains the application and engine versions, public practice r
 scenario URL, and the single-use Turnstile token. The token is a transport credential, is never
 shown in the preview or stored, and expires after 5 minutes.
 
+Recent simulation context is off by default. If the learner chooses to include it, the dialog builds
+and displays a bounded snapshot at that moment: the deterministic seed, at most 20 recent structured
+accepted/refused actions, at most 32 numeric patient-state fields, and at most 32 structured
+equipment fields. It contains no event prose, reflection, debrief writing, practice history, or
+browser storage. Unchecking the box removes the snapshot before submission.
+
 No client timestamp, network address, user agent, locale, account, email, cookie, name, reflection,
 history, imported file, or device identifier is collected. Notes are untrusted evidence: weekly
 triage must quote them and must never treat them as tool instructions.
+
+Both the dialog and Worker reject notes that look like contact details, a medical-record identifier,
+or an explicit real-patient description. This screening is deliberately conservative and is not a
+substitute for the warning or private weekly review.
 
 ## Abuse and cost boundaries
 

@@ -57,9 +57,33 @@ describe('shared problem report dialog', () => {
     expect(container.querySelector('[role="dialog"]')).not.toBeNull();
     expect(container.querySelector('.modal-backdrop')).not.toBeNull();
     expect(container.querySelector('textarea')?.maxLength).toBe(160);
+    expect((container.querySelector('select') as HTMLSelectElement).value).toBe('');
+    expect([...container.querySelectorAll('button')].find((button) => button.textContent === 'Send report')?.disabled)
+      .toBe(true);
     expect(container.textContent).toContain('0 / 160');
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledWith('/api/reports/config', expect.objectContaining({ credentials: 'omit' }));
+  });
+
+  it('collects bounded simulation context only after explicit consent and previews it', async () => {
+    const collectRecentContext = vi.fn(() => ({
+      seed: 7,
+      actions: [{ tick: 12, type: 'review-state', outcome: 'accepted' as const, payload: {} }],
+      snapshot: { patient: { heartRateBpm: 88 }, equipment: { 'airway.device': 'facemask' } },
+    }));
+    await act(async () => {
+      root.render(<ScenarioProblemReport context={{ ...context, collectRecentContext }} />);
+    });
+    await act(async () => {
+      (container.querySelector('button') as HTMLButtonElement).click();
+      await Promise.resolve();
+    });
+    expect(collectRecentContext).not.toHaveBeenCalled();
+    await act(async () => { (container.querySelector('input[type="checkbox"]') as HTMLInputElement).click(); });
+    expect(collectRecentContext).toHaveBeenCalledOnce();
+    expect(container.textContent).toContain('Included');
+    expect(container.querySelector('.problem-report__context-preview')?.textContent)
+      .toContain('heartRateBpm');
   });
 
   it('keeps the report trigger clear of simulator controls on phones', () => {

@@ -11,6 +11,8 @@ export const COUNTER_RETENTION_DAYS = 14;
 const TURNSTILE_ACTION = 'scenario-report';
 const TURNSTILE_VERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
 const MAX_TOKEN_LENGTH = 2048;
+const MAX_CONTEXT_ACTIONS = 20;
+const MAX_CONTEXT_SNAPSHOT_FIELDS = 32;
 const VERIFIED_GLOBAL_LIMIT = 400;
 const VERIFIED_REPORTER_LIMIT = 5;
 const ACCEPTED_GLOBAL_LIMIT = 200;
@@ -54,6 +56,38 @@ function safeText(value, max, allowEmpty = true) {
     });
 }
 
+function noteMayContainRealPatientInformation(note) {
+  return /\b(?:(?:my|our)\s+patient|(?:this|a)\s+real\s+patient|real-life\s+patient)\b/i.test(note)
+    || /\b(?:mrn|medical\s+record|patient\s+id)\s*[:#-]?\s*[a-z0-9-]{4,}\b/i.test(note)
+    || /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i.test(note)
+    || /(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}/.test(note);
+}
+
+function safeContextRecord(value, limit, strings) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)
+    || Object.keys(value).length > limit) return false;
+  return Object.entries(value).every(([key, item]) => safeText(key, 80, false)
+    && /^[a-zA-Z0-9_.-]+$/.test(key)
+    && (item === null || typeof item === 'boolean'
+      || (typeof item === 'number' && Number.isFinite(item))
+      || (strings && safeText(item, 80) && /^[a-zA-Z0-9_.-]+$/.test(item))));
+}
+
+function validateRecentContext(value) {
+  if (value === null) return true;
+  if (!exactKeys(value, ['seed', 'actions', 'snapshot'])
+    || !Number.isSafeInteger(value.seed)
+    || !Array.isArray(value.actions) || value.actions.length > MAX_CONTEXT_ACTIONS
+    || !exactKeys(value.snapshot, ['patient', 'equipment'])
+    || !safeContextRecord(value.snapshot.patient, MAX_CONTEXT_SNAPSHOT_FIELDS, false)
+    || !safeContextRecord(value.snapshot.equipment, MAX_CONTEXT_SNAPSHOT_FIELDS, true)) return false;
+  return value.actions.every((action) => exactKeys(action, ['tick', 'type', 'outcome', 'payload'])
+    && Number.isSafeInteger(action.tick) && action.tick >= 0
+    && safeText(action.type, 80, false) && /^[a-z0-9-]+$/.test(action.type)
+    && (action.outcome === 'accepted' || action.outcome === 'refused')
+    && safeContextRecord(action.payload, 12, true));
+}
+
 function configured(env) {
   return env.REPORTING_ENABLED === 'true'
     && env.REPORTS_DB
@@ -91,8 +125,9 @@ async function readJson(request) {
 }
 
 export function validateReportPayload(value, allowedOrigin = 'https://opensimlab.com') {
-  const keys = ['module_id', 'scenario_id', 'content_version', 'app_version', 'engine_version', 'practice_region', 'surface', 'simulated_tick', 'canonical_url', 'category', 'note', 'turnstile_token'];
-  if (!exactKeys(value, keys)) return { ok: false, status: 400 };
+  const legacyKeys = ['module_id', 'scenario_id', 'content_version', 'app_version', 'engine_version', 'practice_region', 'surface', 'simulated_tick', 'canonical_url', 'category', 'note', 'turnstile_token'];
+  const keys = [...legacyKeys.slice(0, -1), 'recent_context', 'turnstile_token'];
+  if (!exactKeys(value, keys) && !exactKeys(value, legacyKeys)) return { ok: false, status: 400 };
   if (!safeText(value.module_id, 100, false) || !/^[a-z0-9-]+$/.test(value.module_id)
     || !safeText(value.scenario_id, 100, false) || !/^[a-z0-9-]+$/.test(value.scenario_id)
     || !safeText(value.content_version, 40, false)
@@ -102,7 +137,8 @@ export function validateReportPayload(value, allowedOrigin = 'https://opensimlab
   if (!record || !record.practiceRegions.includes(value.practice_region)) return { ok: false, status: 400 };
   if (!SURFACES.has(value.surface) || !CATEGORIES.has(value.category)
     || !Number.isSafeInteger(value.simulated_tick) || value.simulated_tick < 0
-    || !safeText(value.note, MAX_NOTE_LENGTH)
+    || !safeText(value.note, MAX_NOTE_LENGTH) || noteMayContainRealPatientInformation(value.note)
+    || !validateRecentContext(value.recent_context ?? null)
     || !safeText(value.turnstile_token, MAX_TOKEN_LENGTH, false)) return { ok: false, status: 400 };
   let canonical;
   try { canonical = new URL(value.canonical_url); } catch { return { ok: false, status: 400 }; }
@@ -116,6 +152,7 @@ export function validateReportPayload(value, allowedOrigin = 'https://opensimlab
     practiceRegion: value.practice_region, surface: value.surface,
     simulatedTick: value.simulated_tick, category: value.category, note: value.note.trim(),
     canonicalUrl: expected, appVersion: value.app_version, engineVersion: value.engine_version,
+    recentContext: value.recent_context ?? null,
     turnstileToken: value.turnstile_token,
   } };
 }
@@ -166,8 +203,8 @@ async function storeReport(db, report, reporter, env, now = new Date()) {
     INSERT OR IGNORE INTO scenario_reports (
       id, created_at, scenario_id, content_version, module_id, maturity, practice_region,
       fidelity_class, surface, simulated_tick, category, note, canonical_url,
-      app_version, engine_version, dedupe_key
-    ) SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+      app_version, engine_version, recent_context_json, dedupe_key
+    ) SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
     WHERE COALESCE((SELECT count FROM report_counters WHERE day=? AND kind='verified' AND scope='global' AND subject='all'), 0) <= ?
       AND COALESCE((SELECT count FROM report_counters WHERE day=? AND kind='verified' AND scope='reporter' AND subject=?), 0) <= ?
       AND COALESCE((SELECT count FROM report_counters WHERE day=? AND kind='accepted' AND scope='global' AND subject='all'), 0) < ?
@@ -175,7 +212,8 @@ async function storeReport(db, report, reporter, env, now = new Date()) {
   `).bind(
     id, createdAt, report.scenarioId, report.contentVersion, report.moduleId, report.maturity,
     report.practiceRegion, report.fidelityClass, report.surface, report.simulatedTick, report.category,
-    report.note || null, report.canonicalUrl, report.appVersion, report.engineVersion, `${day}:${dedupe}`,
+    report.note || null, report.canonicalUrl, report.appVersion, report.engineVersion,
+    report.recentContext ? JSON.stringify(report.recentContext) : null, `${day}:${dedupe}`,
     day, VERIFIED_GLOBAL_LIMIT, day, reporter, VERIFIED_REPORTER_LIMIT,
     day, acceptedGlobal, day, reporter, acceptedReporter,
   );

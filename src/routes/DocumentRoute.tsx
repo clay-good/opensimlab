@@ -345,7 +345,9 @@ function PrivacyBody() {
         Your simulation, tutor, debrief writing, and practice history do not leave. If you open
         <strong> Report a problem</strong>, Cloudflare Turnstile loads for abuse prevention. If you
         then send, the previewed scenario/version, public practice context, category, and optional
-        160-character note go to the isolated correction service. Canceling sends no report.
+        160-character note go to the isolated correction service. Recent simulated actions and a
+        bounded patient/equipment snapshot are included only if you turn that option on and review
+        the exact fields. Canceling sends no report.
       </p>
 
       <h2>Your private practice history</h2>
