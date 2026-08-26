@@ -2806,6 +2806,22 @@ export interface EquipmentSnapshot {
       readonly maternalOutcomePredicted: false; readonly newbornOutcomePredicted: false;
       readonly outcomePredicted: false;
     };
+    readonly obstetricsCordProlapseAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly bridgeAtTick: number | null; readonly birthPlanAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly authoredCordProlapse: true; readonly authoredPersistentFetalCompromise: boolean;
+      readonly patientExaminedByLearner: false; readonly fetalMonitoringInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly cordHandledByLearner: false;
+      readonly cordReplacementAttemptedByLearner: false; readonly presentingPartElevatedByLearner: false;
+      readonly bladderFilledByLearner: false; readonly positionChangedByLearner: false;
+      readonly drugDoseRouteSelectedByLearner: false; readonly anesthesiaSelectedByLearner: false;
+      readonly birthModeSelectedByLearner: false; readonly deliveryPerformedByLearner: false;
+      readonly newbornCarePerformedByLearner: false; readonly procedureSelectedByLearner: false;
+      readonly fetalRecoveryProven: false; readonly treatmentEffectProven: false;
+      readonly safetyDispositionDetermined: false; readonly maternalOutcomePredicted: false;
+      readonly newbornOutcomePredicted: false; readonly outcomePredicted: false;
+    };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {
       readonly cuesReviewedAtTick: number | null;

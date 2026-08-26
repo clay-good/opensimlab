@@ -5175,6 +5175,31 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['activate-obstetrics-cord-prolapse-response-diagnosis-clock-theatre-anesthesia-newborn-and-support-roles',
+      'reconcile-obstetrics-cord-prolapse-membrane-rupture-fetal-heart-exam-birth-imminence-and-whole-person',
+      'review-obstetrics-cord-prolapse-pressure-relief-minimal-handling-position-and-no-delay-boundaries',
+      'review-obstetrics-cord-prolapse-birth-urgency-mode-anesthesia-newborn-documentation-and-safety-boundaries',
+      'review-obstetrics-cord-prolapse-fixed-persistent-fetal-compromise-and-theatre-transfer-report',
+      'handoff-obstetrics-cord-prolapse-fetal-maternal-theatre-newborn-support-documentation-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'umbilical-cord-prolapse-urgent-birth-coordination'
+        && scenario.timeline.every((event) => event.type === 'narrative')
+        && scenario.timeline.filter((event) => event.target === 'umbilical-cord-prolapse-urgent-birth-coordination-transition').length === 1
+        && scenario.timeline.filter((event) => event.target === 'umbilical-cord-prolapse-urgent-birth-coordination-transition-boundary').length === 1;
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Obstetrics cord-prolapse lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['support-activated', 'The cord-prolapse response, diagnosis clock, theatre, anesthesia, newborn, leadership, timekeeping, documentation, communication, dignity, family, and support ownership was activated first.'],
+        ['context-reconciled', 'Membrane rupture, fetal-heart change, supplied cord and labour examination, birth imminence, maternal state, distress, and support were connected.'],
+        ['bridge-reviewed', 'Qualified pressure-relief, minimal-handling, position, continued-surveillance, no-replacement, and no-delay boundaries were reviewed as temporary bridges.'],
+        ['birth-plan-reviewed', 'Case-specific urgency, birth, anesthesia, newborn, cord-gas, documentation, communication, support, and maternal-safety boundaries were reviewed without a universal countdown.'],
+        ['transfer-report-reviewed', 'The fixed persistent-compromise and theatre-transfer report was reviewed without learner decompression, fetal recovery, delivery, treatment-effect, or outcome claims.'],
+        ['active-risk-handoff-recorded', 'Fetal compromise, cord risk, qualified pressure relief, maternal safety, theatre, anesthesia, birth, newborn, documentation, support, review, prognosis, and outcomes were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^obstetrics-cord-prolapse-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^obstetrics-cord-prolapse-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-obstetrics-sepsis-postpartum-clock-infection-organ-dysfunction-and-whole-person',
       'recognize-obstetrics-maternal-sepsis-emergency-without-fever-score-source-or-single-value-closure',
       'activate-obstetrics-sepsis-obstetric-critical-care-anesthesia-nursing-pharmacy-microbiology-source-newborn-and-dignity-ownership',

@@ -529,6 +529,10 @@ const OBSTETRICS_SHOULDER_DYSTOCIA_BLOCKED_ACTION_TYPES = new Set([
   'maternal-cardiac-arrest-response',
   'postpartum-hemorrhage-uterine-atony-response',
 ]);
+const OBSTETRICS_CORD_PROLAPSE_BLOCKED_ACTION_TYPES = new Set([
+  ...OBSTETRICS_SHOULDER_DYSTOCIA_BLOCKED_ACTION_TYPES,
+  'shoulder-dystocia-cognitive-sequence-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1504,6 +1508,12 @@ export class AnesthesiaEngine {
   private obstetricsShoulderDystociaEscalationAtTick: number | null = null;
   private obstetricsShoulderDystociaReassessmentAtTick: number | null = null;
   private obstetricsShoulderDystociaHandoffAtTick: number | null = null;
+  private obstetricsCordProlapseSupportAtTick: number | null = null;
+  private obstetricsCordProlapseContextAtTick: number | null = null;
+  private obstetricsCordProlapseBridgeAtTick: number | null = null;
+  private obstetricsCordProlapseBirthPlanAtTick: number | null = null;
+  private obstetricsCordProlapseReassessmentAtTick: number | null = null;
+  private obstetricsCordProlapseHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2459,6 +2469,14 @@ export class AnesthesiaEngine {
     if (obstetricsShoulderDystocia && OBSTETRICS_SHOULDER_DYSTOCIA_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `obstetrics-shoulder-dystocia-generic-action-refused-${this.currentTick}`,
         'This Obstetrics lesson exposes no generic examination, traction, pushing, positioning, pressure, maneuver, episiotomy, delivery, newborn care, oxygen, airway, fluid, blood, drug, dose, route, procedure, transport, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const obstetricsCordProlapse = this.scenario.metadata.id === 'umbilical-cord-prolapse-urgent-birth-coordination'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'umbilical-cord-prolapse-urgent-birth-coordination-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'umbilical-cord-prolapse-urgent-birth-coordination-transition-boundary').length === 1;
+    if (obstetricsCordProlapse && OBSTETRICS_CORD_PROLAPSE_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `obstetrics-cord-prolapse-generic-action-refused-${this.currentTick}`,
+        'This Obstetrics lesson exposes no generic examination, fetal-monitor interpretation, cord handling or replacement, presenting-part elevation, bladder filling, positioning, oxygen, airway, fluid, blood, tocolytic, drug, dose, anesthesia, delivery, newborn care, procedure, transport, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -11061,6 +11079,33 @@ export class AnesthesiaEngine {
         if (this.obstetricsShoulderDystociaHandoffAtTick !== null) break;
         this.obstetricsShoulderDystociaHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-shoulder-dystocia-active-risk-handoff-recorded-${this.currentTick}`, 'Maternal hemorrhage, uterine tone, genital-tract and perineal injury, bladder and pelvic injury, pain, psychological trauma, newborn ventilation and resuscitation, neurologic and musculoskeletal injury, cord-gas and examination review, family and staff support, complete contemporaneous documentation, multidisciplinary review, future-birth counseling, prognosis, and maternal or newborn outcome uncertainty were handed off.', { safetyDispositionDetermined: false, maternalInjuryDetermined: false, newbornInjuryDetermined: false, maternalOutcomePredicted: false, newbornOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'umbilical-cord-prolapse-urgent-birth-coordination-response': {
+        const response = typeof action.payload?.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'umbilical-cord-prolapse-urgent-birth-coordination'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'umbilical-cord-prolapse-urgent-birth-coordination-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'umbilical-cord-prolapse-urgent-birth-coordination-transition-boundary').length === 1;
+        const actions = ['activate-obstetrics-cord-prolapse-response-diagnosis-clock-theatre-anesthesia-newborn-and-support-roles',
+          'reconcile-obstetrics-cord-prolapse-membrane-rupture-fetal-heart-exam-birth-imminence-and-whole-person',
+          'review-obstetrics-cord-prolapse-pressure-relief-minimal-handling-position-and-no-delay-boundaries',
+          'review-obstetrics-cord-prolapse-birth-urgency-mode-anesthesia-newborn-documentation-and-safety-boundaries',
+          'review-obstetrics-cord-prolapse-fixed-persistent-fetal-compromise-and-theatre-transfer-report',
+          'handoff-obstetrics-cord-prolapse-fetal-maternal-theatre-newborn-support-documentation-and-outcome-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `obstetrics-cord-prolapse-response-refused-${this.currentTick}`, supported ? 'The cord-prolapse action was not listed. No supplied or injected text was retained.' : 'These cord-prolapse choices are available only in the exact declared Obstetrics lesson.'); break; }
+        if (response === actions[0]) { if (this.obstetricsCordProlapseSupportAtTick !== null) break; this.obstetricsCordProlapseSupportAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-cord-prolapse-support-activated-${this.currentTick}`, 'The supplied cord-prolapse emergency was named, the diagnosis clock started, and qualified obstetric, theatre, anesthesia, newborn, leadership, timekeeping, documentation, communication, dignity, family, and staff-support ownership was activated. No learner examination, monitoring interpretation, cord handling, decompression, drug, anesthesia, delivery, newborn-care, or procedure action occurred.'); break; }
+        if (this.obstetricsCordProlapseSupportAtTick === null) { this.log('warning', 'assessment', `obstetrics-cord-prolapse-support-order-refused-${this.currentTick}`, 'Activate the prepared cord-prolapse response and diagnosis clock before further review.'); break; }
+        if (response === actions[1]) { if (this.obstetricsCordProlapseContextAtTick !== null) break; this.obstetricsCordProlapseContextAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-cord-prolapse-context-reconciled-${this.currentTick}`, 'Membrane-rupture timing, fetal-heart change, supplied cord and labour examination, dilation, high presenting part, non-imminent birth, maternal physiology, distress, communication, support, and the whole person were connected without learner examination, monitoring interpretation, diagnosis, or procedure.'); break; }
+        if (this.obstetricsCordProlapseContextAtTick === null) { this.log('warning', 'assessment', `obstetrics-cord-prolapse-context-order-refused-${this.currentTick}`, 'Connect the supplied membrane-rupture, fetal-heart, examination, birth-imminence, and whole-person facts before reviewing temporary bridges.'); break; }
+        if (response === actions[2]) { if (this.obstetricsCordProlapseBridgeAtTick !== null) break; this.obstetricsCordProlapseBridgeAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-cord-prolapse-bridge-reviewed-${this.currentTick}`, 'Qualified presenting-part elevation by hand or bladder filling and knee-chest or left-lateral head-down positioning were reviewed as temporary pressure-relief bridges. Minimal handling of exposed cord, no replacement to continue labour, continued fetal surveillance, and no delay to birth preparation were preserved without learner cord handling, elevation, bladder filling, positioning, monitoring interpretation, or treatment.'); break; }
+        if (this.obstetricsCordProlapseBridgeAtTick === null) { this.log('warning', 'assessment', `obstetrics-cord-prolapse-bridge-order-refused-${this.currentTick}`, 'Review qualified pressure-relief, minimal-handling, position, and no-delay boundaries before birth planning.'); break; }
+        if (response === actions[3]) { if (this.obstetricsCordProlapseBirthPlanAtTick !== null) break; this.obstetricsCordProlapseBirthPlanAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-cord-prolapse-birth-plan-reviewed-${this.currentTick}`, 'Case-specific urgency, vaginal-birth imminence, caesarean planning, maternal safety, anesthesia, newborn readiness, cord gases, contemporaneous documentation, communication, and support were reviewed. A time target was not treated as a universal biologic deadline, and no learner birth-mode, anesthesia, drug, dose, procedure, or delivery decision occurred.'); break; }
+        if (this.obstetricsCordProlapseBirthPlanAtTick === null) { this.log('warning', 'assessment', `obstetrics-cord-prolapse-birth-plan-order-refused-${this.currentTick}`, 'Review case-specific urgency, birth, anesthesia, newborn, documentation, and maternal-safety boundaries before the fixed report.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.obstetricsCordProlapseBirthPlanAtTick) { this.log('warning', 'assessment', `obstetrics-cord-prolapse-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed qualified-team transfer report.'); break; } if (this.obstetricsCordProlapseReassessmentAtTick !== null) break; this.obstetricsCordProlapseReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-cord-prolapse-transfer-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report 6 minutes after diagnosis: fetal bradycardia persists at 82/min with recurrent variable decelerations while manual presenting-part elevation continues. Left-lateral transfer to theatre is in progress, vaginal birth remains not imminent, and the category-1 caesarean plan remains active. No fetal recovery, learner decompression, delivery, cord gas, newborn condition, resuscitation, injury, maternal complication, treatment effect, or outcome is supplied.', { fetalRecoveryProven: false, pressureReliefPerformedByLearner: false, deliveryPerformedByLearner: false, newbornCarePerformedByLearner: false, treatmentEffectProven: false, outcomePredicted: false }); break; }
+        if (this.obstetricsCordProlapseReassessmentAtTick === null) { this.log('warning', 'assessment', `obstetrics-cord-prolapse-handoff-order-refused-${this.currentTick}`, 'Review the fixed persistent-compromise and theatre-transfer report before handoff.'); break; }
+        if (this.currentTick <= this.obstetricsCordProlapseReassessmentAtTick) { this.log('warning', 'assessment', `obstetrics-cord-prolapse-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.obstetricsCordProlapseHandoffAtTick !== null) break;
+        this.obstetricsCordProlapseHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-cord-prolapse-active-risk-handoff-recorded-${this.currentTick}`, 'Persistent fetal compromise, cord compression and vasospasm risk, ongoing qualified elevation and surveillance, maternal positioning and safety, theatre transfer, anesthesia, birth, newborn resuscitation, cord gases, neurologic uncertainty, documentation, incident review, explanation, family and staff support, psychological follow-up, prognosis, and maternal or newborn outcome uncertainty were handed off.', { fetalRecoveryProven: false, deliveryCompleted: false, safetyDispositionDetermined: false, maternalOutcomePredicted: false, newbornOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -14011,6 +14056,14 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: this.obstetricsShoulderDystociaReassessmentAtTick !== null ? 20 : 22,
         spo2Percent: 98, systolicMmHg: 118, diastolicMmHg: 66,
         meanArterialMmHg: 83, coreTemperatureC: 36.8 };
+    }
+    if (this.scenario.metadata.id === 'umbilical-cord-prolapse-urgent-birth-coordination'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'umbilical-cord-prolapse-urgent-birth-coordination-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'umbilical-cord-prolapse-urgent-birth-coordination-transition-boundary').length === 1) {
+      crisisState = { ...crisisState, heartRateBpm: 96, respiratoryRateBpm: 20,
+        spo2Percent: 99, systolicMmHg: 122, diastolicMmHg: 72,
+        meanArterialMmHg: 89, coreTemperatureC: 36.8 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -18153,6 +18206,30 @@ export class AnesthesiaEngine {
               newbornCarePerformedByLearner: false as const, drugDoseRouteSelectedByLearner: false as const,
               procedureSelectedByLearner: false as const, maternalInjuryDetermined: false as const,
               newbornInjuryDetermined: false as const, treatmentEffectProven: false as const,
+              safetyDispositionDetermined: false as const, maternalOutcomePredicted: false as const,
+              newbornOutcomePredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'umbilical-cord-prolapse-urgent-birth-coordination'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'umbilical-cord-prolapse-urgent-birth-coordination-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'umbilical-cord-prolapse-urgent-birth-coordination-transition-boundary').length === 1 ? {
+            obstetricsCordProlapseAssessment: {
+              supportAtTick: this.obstetricsCordProlapseSupportAtTick,
+              contextAtTick: this.obstetricsCordProlapseContextAtTick,
+              bridgeAtTick: this.obstetricsCordProlapseBridgeAtTick,
+              birthPlanAtTick: this.obstetricsCordProlapseBirthPlanAtTick,
+              reassessmentAtTick: this.obstetricsCordProlapseReassessmentAtTick,
+              handoffAtTick: this.obstetricsCordProlapseHandoffAtTick,
+              authoredCordProlapse: true as const, authoredPersistentFetalCompromise: this.obstetricsCordProlapseReassessmentAtTick !== null,
+              patientExaminedByLearner: false as const, fetalMonitoringInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const, cordHandledByLearner: false as const,
+              cordReplacementAttemptedByLearner: false as const, presentingPartElevatedByLearner: false as const,
+              bladderFilledByLearner: false as const, positionChangedByLearner: false as const,
+              drugDoseRouteSelectedByLearner: false as const, anesthesiaSelectedByLearner: false as const,
+              birthModeSelectedByLearner: false as const, deliveryPerformedByLearner: false as const,
+              newbornCarePerformedByLearner: false as const, procedureSelectedByLearner: false as const,
+              fetalRecoveryProven: false as const, treatmentEffectProven: false as const,
               safetyDispositionDetermined: false as const, maternalOutcomePredicted: false as const,
               newbornOutcomePredicted: false as const, outcomePredicted: false as const,
             },

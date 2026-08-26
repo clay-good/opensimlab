@@ -454,6 +454,14 @@ credited toward the catalog until every item in the completion contract passes.
     injury, hemorrhage, documentation, support and outcome handoff without learner examination,
     traction, pushing, positioning, pressure, maneuver, episiotomy, delivery, newborn care, drug,
     dose, procedure, injury determination, disposition or outcome controls.
+  - [x] Obstetrics slice 9/15 adds one authored overt umbilical-cord-prolapse escalation after
+    membrane rupture, fetal bradycardia and qualified examination; immediate clock, theatre,
+    anesthesia, newborn, leadership, communication and support ownership; qualified temporary
+    pressure-relief and minimal-handling boundaries that cannot delay birth; case-specific urgency,
+    mode, anesthesia and maternal-safety review; a fixed persistent-compromise theatre-transfer
+    report; and active-risk handoff without learner examination, monitoring interpretation, cord
+    handling or replacement, presenting-part elevation, bladder filling, positioning, medication,
+    anesthesia, delivery, newborn care, disposition or outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

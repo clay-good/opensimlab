@@ -2127,6 +2127,25 @@ maternal bleeding, injury, pain, trauma and outcome remain unresolved. Six contr
 learner examination, traction, pushing, positioning, pressure, maneuver, episiotomy, delivery,
 newborn care, drug, dose, procedure, injury determination, disposition or outcome decision.
 
+### Wave D obstetrics slice 9: umbilical-cord-prolapse urgent-birth coordination
+
+The ninth lab opens after spontaneous membrane rupture, immediate fetal bradycardia, and qualified
+digital confirmation of an overt prolapsed cord at 5 cm with a high cephalic presenting part and
+birth not imminent. Qualified manual elevation and left-lateral head-down positioning are already
+underway. The learner activates the diagnosis clock and prepared obstetric, theatre, anesthesia,
+newborn, leadership, timekeeping, documentation, communication, dignity and support response,
+connects the supplied maternal-fetal-labour facts, and reviews minimal cord handling plus temporary
+pressure-relief measures as bridges that must not delay preparation for birth.
+
+Birth urgency, mode and anesthesia remain case-specific and preserve maternal safety rather than
+turning a time target into a biologic deadline. A fixed qualified report 6 minutes after diagnosis
+supplies persistent fetal bradycardia with recurrent variable decelerations, ongoing manual
+elevation, left-lateral theatre transfer, non-imminent vaginal birth, and an active category-1
+caesarean plan, but stops before delivery, cord gas, newborn state, maternal complication or
+outcome. Six controls expose no learner examination, fetal-monitor interpretation, diagnosis, cord
+handling or replacement, presenting-part elevation, bladder filling, positioning, tocolytic, drug,
+dose, anesthesia, birth-mode decision, delivery, newborn care, disposition or outcome control.
+
 #### Neonatology: 11
 
 Term newborn transition; neonatal apnea; ineffective ventilation correction; neonatal bradycardia;

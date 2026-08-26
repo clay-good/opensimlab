@@ -1158,6 +1158,9 @@ export function Cockpit({
           onObstetricsShoulderDystociaResponse={(action) => session.act({
             type: 'shoulder-dystocia-cognitive-sequence-response', payload: { action },
           })}
+          onObstetricsCordProlapseResponse={(action) => session.act({
+            type: 'umbilical-cord-prolapse-urgent-birth-coordination-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

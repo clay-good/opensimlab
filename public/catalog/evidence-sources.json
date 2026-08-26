@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 274,
+  "sourceCount": 277,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -864,6 +864,51 @@
       "locator": "sections 5.1-5.3, logistics and first- and second-line maneuvers",
       "usedFor": "Early communication and experienced leadership, stopping pushing during repositioning, no fundal pressure or forced traction, discontinuing oxytocin, flexible case-specific first-line choices, and McRoberts with or without suprapubic pressure.",
       "verifiedAgainst": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11802195/",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "rcog-umbilical-cord-prolapse-50-2014",
+      "currency": {
+        "lastAmended": "2024-12-01",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "Royal College of Obstetricians and Gynaecologists",
+      "title": "Umbilical Cord Prolapse",
+      "publication": "Green-top Guideline No. 50",
+      "year": 2014,
+      "locator": "pages 2-13, initial management, mode of birth, explanation, training, reporting, and documentation sections",
+      "usedFor": "Immediate help and theatre preparation, minimal cord handling, qualified pressure-relief bridges, position, no cord replacement to continue labour, no delay to birth, case-specific urgency and birth mode, maternal safety, newborn attendance, explanation, documentation, and review.",
+      "verifiedAgainst": "https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/umbilical-cord-prolapse-green-top-guideline-no-50/",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "rcog-cord-prolapse-patient-information-2025",
+      "currency": {
+        "lastAmended": "2025-08-04",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "Royal College of Obstetricians and Gynaecologists",
+      "title": "Umbilical cord prolapse in late pregnancy",
+      "publication": "Patient information",
+      "year": 2025,
+      "locator": "2025 key points and sections on emergency meaning, hospital care, birth, newborn risk, explanation, and post-birth support",
+      "usedFor": "Plain patient-facing explanation of compression risk, emergency birth options, frightening experience, keeping the patient and companion informed, and later psychological support.",
+      "verifiedAgainst": "https://www.rcog.org.uk/for-the-public/browse-our-patient-information/umbilical-cord-prolapse-in-late-pregnancy/",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "nice-fetal-monitoring-in-labour-ng229-2026",
+      "currency": {
+        "lastAmended": "2026-03-01",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "National Institute for Health and Care Excellence",
+      "title": "Fetal monitoring in labour",
+      "publication": "NICE guideline NG229",
+      "year": 2022,
+      "locator": "recommendations, acute events and interpretation principles; updated March 2026",
+      "usedFor": "The boundary that fetal monitoring informs but does not alone diagnose the whole clinical state, and that an acute event such as cord prolapse requires expedited qualified birth planning.",
+      "verifiedAgainst": "https://www.nice.org.uk/guidance/ng229/chapter/recommendations",
       "verifiedOn": "2026-08-26"
     },
     {

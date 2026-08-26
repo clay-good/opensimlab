@@ -4751,6 +4751,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use direct findings, a current local protocol, trained multidisciplinary teams, situation-specific maneuver selection, respectful communication, and hands-on simulation with qualified feedback.',
     briefIn: ['shoulder-dystocia-cognitive-sequence'],
   },
+  {
+    id: 'cord-prolapse-membrane-rupture-exam-fetal-heart-pressure-relief-and-transfer-reports-are-authored',
+    headline: 'Membrane rupture, fetal-heart change, qualified cord and labour examination, pressure relief, and theatre-transfer reports are authored.',
+    simplification: 'Fixed reports stand in for direct maternal and fetal assessment, monitoring, vaginal examination, cord identification, dilation, presenting-part station, birth imminence, manual elevation, position, transfer, anesthesia, theatre, newborn, documentation, and support work.',
+    whereItMisleads: 'Treating the fetal-heart values, 6-minute report, continued elevation, category-1 plan, stable maternal monitor, or absent birth report as learner findings, decompression effect, a universal time target, fetal prognosis, maternal safety, or predicted outcome.',
+    correctUnderstanding: 'Cord prolapse is a time-critical fetal emergency requiring direct qualified assessment, immediate multidisciplinary response, temporary pressure relief without unnecessary delay, case-specific safest rapid birth, maternal safety, newborn readiness, communication, and documentation.',
+    briefIn: ['umbilical-cord-prolapse-urgent-birth-coordination'],
+  },
+  {
+    id: 'cord-prolapse-controls-activate-reconcile-review-reassess-and-handoff-only',
+    headline: 'The controls activate the response and clock, reconcile supplied context, review temporary bridges and birth coordination, read a fixed report, and hand off only.',
+    simplification: 'Six actions stand in for simultaneous qualified obstetric, midwifery or nursing, theatre, anesthesia, newborn, leadership, timekeeping, documentation, communication, dignity, family, staff-support, surveillance, pressure-relief, transfer, birth, post-birth, review, and handoff work.',
+    whereItMisleads: 'Equating button order with examination, diagnosis, fetal-trace interpretation, cord handling, decompression, medication, anesthesia, birth-mode selection, delivery, newborn care, documentation quality, or team competence.',
+    correctUnderstanding: 'Real response is physical, concurrent, time-critical, team-based, and locally rehearsed. Cognitive sequence practice cannot replace hands-on multidisciplinary simulation or assessed clinical performance.',
+    briefIn: ['umbilical-cord-prolapse-urgent-birth-coordination'],
+  },
+  {
+    id: 'no-live-cord-prolapse-exam-monitor-interpretation-cord-handling-decompression-drug-anesthesia-delivery-or-outcome',
+    headline: 'The lab does not examine, interpret fetal monitoring, handle the cord, relieve compression, choose medication or anesthesia, perform birth, determine disposition, or report outcome.',
+    simplification: 'No live maternal, fetal, labour, cervical, presenting-part, cord, contraction, CTG, ultrasound, blood, gas, newborn, neurologic, or injury assessment; cord handling or replacement, manual elevation, bladder filling, positioning, oxygen, fluid, tocolytic, drug, dose, route, access, anesthesia, operative vaginal or caesarean birth, neonatal resuscitation, transfer, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Using the rehearsal as examination, monitoring, decompression, positioning, medication, anesthesia, delivery, or newborn-care instructions; delaying immediate trained help for a click; fixating on a time target over maternal safety; or reading completion as competence.',
+    correctUnderstanding: 'Use verified direct findings, continuous qualified fetal assessment, the current local cord-prolapse protocol, trained multidisciplinary teams, temporary pressure relief without avoidable birth delay, case-specific birth and anesthesia planning, and hands-on simulation with qualified feedback.',
+    briefIn: ['umbilical-cord-prolapse-urgent-birth-coordination'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {
