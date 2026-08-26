@@ -2206,6 +2206,26 @@ monitoring interpretation, diagnosis, injection or infusion operation, position,
 ventilation, airway care, fluid, vasopressor or another drug, dose, concentration, route, rate,
 target, anesthesia, birth, delivery, procedure, newborn assessment, disposition or outcome control.
 
+### Wave D obstetrics slice 13: failed intubation, oxygenation first
+
+The thirteenth lab opens after 2 unsuccessful qualified-team tracheal-intubation attempts during
+category-1 caesarean birth for persistent fetal bradycardia. Failed intubation is declared,
+experienced help is present, and qualified staff supply effective second-generation supraglottic
+ventilation with sustained capnography and adequate oxygenation. Airway hazards are not supplied,
+but displacement, aspiration, awareness, deterioration and CICO risk remain open.
+
+The learner activates oxygenation-first airway, obstetric, theatre, newborn, communication, dignity
+and support ownership; connects attempts, device, ventilation, aspiration, fetal urgency and the
+whole person; reviews attempt-limit, CICO, awareness and aspiration boundaries; and reviews the
+individualized wake-or-proceed factors without making that decision. A fixed 3-minute report
+supplies stable qualified ventilation, persistent fetal bradycardia and a qualified multidisciplinary
+decision that surgery is essential and proceeding. Incision begins while delivery, newborn state,
+aspiration, awareness, injury, disposition and outcomes stay unresolved. Six controls expose no
+learner examination, monitoring interpretation, diagnosis, airway attempt or device manipulation,
+oxygen, ventilation, position, suction, front-of-neck access, fluid, blood, anesthetic or other drug,
+dose, airway, wake-or-proceed, anesthesia or birth decision, surgery, delivery, newborn care,
+procedure, transfer, disposition or outcome control.
+
 #### Neonatology: 11
 
 Term newborn transition; neonatal apnea; ineffective ventilation correction; neonatal bradycardia;

@@ -1166,7 +1166,7 @@ export const SOURCES: readonly Source[] = [
     locator: '70:1286-306',
     usedFor: 'The obstetric general-anesthesia lesson’s end-tidal oxygen endpoint of at least 0.90, '
       + 'fresh-gas flow of at least 10 L/min during preoxygenation, preparation emphasis, and '
-      + 'explicit boundary that mask seal and physical airway technique are not assessed.',
+      + 'explicit boundary that mask seal and physical airway technique are not assessed; and the failed-intubation lesson’s declaration after 2 unsuccessful attempts, oxygenation priority, second-generation supraglottic rescue, CICO boundary, and individualized wake-or-proceed review.',
     verifiedAgainst: NCBI,
     verifiedOn: '2026-08-24',
   },

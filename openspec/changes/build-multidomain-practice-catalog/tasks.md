@@ -488,6 +488,14 @@ credited toward the catalog until every item in the completion contract passes.
     without learner examination, block assessment, monitoring interpretation, diagnosis, infusion
     operation, position, oxygen, ventilation, airway care, fluid, vasopressor or another drug, dose,
     anesthesia, delivery, procedure, newborn assessment, disposition or outcome.
+  - [x] Obstetrics slice 13/15 adds one authored failed-intubation pattern after 2 unsuccessful
+    qualified-team attempts with declared failure, experienced help, effective second-generation
+    supraglottic ventilation and sustained capnography; immediate oxygenation-first anesthesia,
+    obstetric, theatre, newborn, communication and support ownership; explicit attempt-limit, CICO,
+    aspiration and awareness boundaries; individualized wake-or-proceed review; a fixed qualified
+    proceeding-to-essential-surgery report; and active-risk handoff without learner examination,
+    monitoring interpretation, diagnosis, airway care, oxygen, ventilation, device, drug, dose,
+    anesthesia, surgery, delivery, newborn care, procedure, disposition or outcome.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

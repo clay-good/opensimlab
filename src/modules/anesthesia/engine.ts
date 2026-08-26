@@ -545,6 +545,10 @@ const OBSTETRICS_HIGH_NEURAXIAL_BLOCK_BLOCKED_ACTION_TYPES = new Set([
   ...OBSTETRICS_MAGNESIUM_TOXICITY_BLOCKED_ACTION_TYPES,
   'magnesium-sulfate-toxicity-recognition-response',
 ]);
+const OBSTETRICS_FAILED_INTUBATION_BLOCKED_ACTION_TYPES = new Set([
+  ...OBSTETRICS_HIGH_NEURAXIAL_BLOCK_BLOCKED_ACTION_TYPES,
+  'high-neuraxial-block-obstetric-coordination-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1544,6 +1548,12 @@ export class AnesthesiaEngine {
   private obstetricsHighNeuraxialReadinessAtTick: number | null = null;
   private obstetricsHighNeuraxialReassessmentAtTick: number | null = null;
   private obstetricsHighNeuraxialHandoffAtTick: number | null = null;
+  private obstetricsFailedIntubationSupportAtTick: number | null = null;
+  private obstetricsFailedIntubationContextAtTick: number | null = null;
+  private obstetricsFailedIntubationSafetyAtTick: number | null = null;
+  private obstetricsFailedIntubationDecisionAtTick: number | null = null;
+  private obstetricsFailedIntubationReassessmentAtTick: number | null = null;
+  private obstetricsFailedIntubationHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2531,6 +2541,14 @@ export class AnesthesiaEngine {
     if (obstetricsHighNeuraxial && OBSTETRICS_HIGH_NEURAXIAL_BLOCK_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `obstetrics-high-neuraxial-block-generic-action-refused-${this.currentTick}`,
         'This Obstetrics lesson exposes no generic examination, block assessment, monitoring interpretation, diagnosis, injection or infusion operation, position, oxygen, airway, ventilation, fluid, vasopressor or other drug, dose, anesthesia, birth, newborn assessment, procedure, transport, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const obstetricsFailedIntubation = this.scenario.metadata.id === 'failed-obstetric-intubation-oxygenation-first'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'failed-obstetric-intubation-oxygenation-first-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'failed-obstetric-intubation-oxygenation-first-transition-boundary').length === 1;
+    if (obstetricsFailedIntubation && OBSTETRICS_FAILED_INTUBATION_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `obstetrics-failed-intubation-generic-action-refused-${this.currentTick}`,
+        'This Obstetrics lesson exposes no generic examination, monitoring interpretation, diagnosis, airway attempt or device manipulation, oxygen, ventilation, position, suction, front-of-neck access, fluid, blood, anesthetic or other drug, dose, wake-or-proceed decision, surgery, birth, newborn care, procedure, transfer, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -11241,6 +11259,33 @@ export class AnesthesiaEngine {
         if (this.obstetricsHighNeuraxialHandoffAtTick !== null) break;
         this.obstetricsHighNeuraxialHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-high-neuraxial-block-active-risk-handoff-recorded-${this.currentTick}`, 'Airway obstruction, apnea, aspiration, intubation and ventilation risk, hypotension and bradycardia, arrest, block progression and recession, medication and catheter reconciliation, fetal hypoxia, birth and anesthesia planning, newborn resuscitation, awareness and recall, explanation, family and staff support, postnatal anesthesia review, psychological follow-up, disposition, prognosis, and maternal or newborn outcome uncertainty were handed off.', { blockRecessionProven: false, fetalRecoveryProven: false, deliveryCompleted: false, newbornSafetyProven: false, awarenessExcluded: false, safetyDispositionDetermined: false, maternalOutcomePredicted: false, newbornOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'failed-obstetric-intubation-oxygenation-first-response': {
+        const response = typeof action.payload?.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'failed-obstetric-intubation-oxygenation-first'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'failed-obstetric-intubation-oxygenation-first-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'failed-obstetric-intubation-oxygenation-first-transition-boundary').length === 1;
+        const actions = ['activate-obstetrics-failed-intubation-oxygenation-anesthesia-obstetric-theatre-newborn-and-support-response',
+          'reconcile-obstetrics-failed-intubation-attempts-device-ventilation-aspiration-fetus-and-whole-person',
+          'review-obstetrics-failed-intubation-attempt-limit-oxygenation-cico-awareness-and-aspiration-boundaries',
+          'review-obstetrics-failed-intubation-individualized-wake-or-proceed-and-parallel-readiness',
+          'review-obstetrics-failed-intubation-fixed-three-minute-qualified-course-report',
+          'handoff-obstetrics-failed-intubation-airway-aspiration-awareness-birth-newborn-support-and-outcome-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `obstetrics-failed-intubation-response-refused-${this.currentTick}`, supported ? 'The failed-intubation action was not listed. No supplied or injected text was retained.' : 'These failed-intubation choices are available only in the exact declared Obstetrics lesson.'); break; }
+        if (response === actions[0]) { if (this.obstetricsFailedIntubationSupportAtTick !== null) break; this.obstetricsFailedIntubationSupportAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-failed-intubation-support-activated-${this.currentTick}`, 'Failed intubation was declared after the supplied attempt limit and oxygenation-first experienced anesthesia and airway, obstetric, theatre, newborn, nursing, pharmacy, critical-care, leadership, documentation, communication, dignity, family, and staff-support ownership was activated. No learner examination, airway, ventilation, drug, anesthesia, surgery, birth, or procedure action occurred.'); break; }
+        if (this.obstetricsFailedIntubationSupportAtTick === null) { this.log('warning', 'assessment', `obstetrics-failed-intubation-support-order-refused-${this.currentTick}`, 'Declare the failed intubation and activate the prepared oxygenation-first response before further review.'); break; }
+        if (response === actions[1]) { if (this.obstetricsFailedIntubationContextAtTick !== null) break; this.obstetricsFailedIntubationContextAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-failed-intubation-context-reconciled-${this.currentTick}`, 'Supplied attempt count, rescue device, seal and ventilation, capnography, oxygenation trend, aspiration and awareness risk, maternal state, fetal urgency, surgical context, staff experience, alternative anesthesia, airway hazards, distress, support, and the whole person were connected without learner examination, monitoring interpretation, diagnosis, or treatment.'); break; }
+        if (this.obstetricsFailedIntubationContextAtTick === null) { this.log('warning', 'assessment', `obstetrics-failed-intubation-context-order-refused-${this.currentTick}`, 'Connect the supplied attempts, device, ventilation, aspiration, fetal, surgical, and whole-person facts before safety review.'); break; }
+        if (response === actions[2]) { if (this.obstetricsFailedIntubationSafetyAtTick !== null) break; this.obstetricsFailedIntubationSafetyAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-failed-intubation-safety-reviewed-${this.currentTick}`, 'The attempt limit, oxygenation priority, effective-rescue-device boundary, possible displacement or deterioration, CICO escalation readiness, aspiration and awareness risk, and avoidance of fixation were reviewed without learner airway or treatment action.'); break; }
+        if (this.obstetricsFailedIntubationSafetyAtTick === null) { this.log('warning', 'assessment', `obstetrics-failed-intubation-safety-order-refused-${this.currentTick}`, 'Review attempt limits, oxygenation, CICO, awareness, aspiration, and deterioration boundaries before the individualized decision review.'); break; }
+        if (response === actions[3]) { if (this.obstetricsFailedIntubationDecisionAtTick !== null) break; this.obstetricsFailedIntubationDecisionAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-failed-intubation-decision-reviewed-${this.currentTick}`, 'Maternal and fetal urgency, staff experience, surgical complexity, aspiration risk, alternative anesthesia, airway device and patency, airway hazards, rescue readiness, birth and newborn readiness, communication, documentation, and support were reviewed together. No single factor closed the individualized qualified wake-or-proceed decision, and the learner did not make it.'); break; }
+        if (this.obstetricsFailedIntubationDecisionAtTick === null) { this.log('warning', 'assessment', `obstetrics-failed-intubation-decision-order-refused-${this.currentTick}`, 'Review the individualized qualified wake-or-proceed factors and parallel readiness before the fixed report.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.obstetricsFailedIntubationDecisionAtTick) { this.log('warning', 'assessment', `obstetrics-failed-intubation-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed qualified-team course report.'); break; } if (this.obstetricsFailedIntubationReassessmentAtTick !== null) break; this.obstetricsFailedIntubationReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-failed-intubation-three-minute-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report 3 minutes after declaration: second-generation supraglottic ventilation remains stable with sustained capnography and ETCO2 34 mmHg. HR is 108/min, BP 110/66 mmHg (MAP 81), delivered RR 12/min, support-coherent SpO2 98%, and fetal baseline remains 70/min. No airway hazard is supplied. The qualified multidisciplinary team has documented that surgery is essential and is proceeding while rescue readiness continues; incision has begun. Delivery, newborn condition, aspiration, awareness, airway injury, treatment effect, disposition, and outcomes remain unresolved.', { airwayManagedByLearner: false, wakeOrProceedDecisionMadeByLearner: false, surgeryPerformedByLearner: false, deliveryPerformedByLearner: false, fetalRecoveryProven: false, outcomePredicted: false }); break; }
+        if (this.obstetricsFailedIntubationReassessmentAtTick === null) { this.log('warning', 'assessment', `obstetrics-failed-intubation-handoff-order-refused-${this.currentTick}`, 'Review the fixed 3-minute qualified-team course report before active-risk handoff.'); break; }
+        if (this.currentTick <= this.obstetricsFailedIntubationReassessmentAtTick) { this.log('warning', 'assessment', `obstetrics-failed-intubation-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.obstetricsFailedIntubationHandoffAtTick !== null) break;
+        this.obstetricsFailedIntubationHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-failed-intubation-active-risk-handoff-recorded-${this.currentTick}`, 'Airway patency, device seal and displacement, oxygenation and ventilation deterioration, CICO rescue, aspiration, awareness and recall, airway injury, anesthetic course, maternal circulation, fetal hypoxia, surgery, birth, newborn resuscitation, explanation, family and staff support, postnatal anesthesia review, psychological follow-up, incident review, disposition, prognosis, and maternal or newborn outcome uncertainty were handed off.', { airwaySafetyProven: false, aspirationExcluded: false, awarenessExcluded: false, fetalRecoveryProven: false, deliveryCompleted: false, newbornSafetyProven: false, safetyDispositionDetermined: false, maternalOutcomePredicted: false, newbornOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -14238,6 +14283,19 @@ export class AnesthesiaEngine {
         diastolicMmHg: this.obstetricsHighNeuraxialReassessmentAtTick !== null ? 64 : 42,
         meanArterialMmHg: this.obstetricsHighNeuraxialReassessmentAtTick !== null ? 77 : 54,
         coreTemperatureC: 36.8 };
+    }
+    if (this.scenario.metadata.id === 'failed-obstetric-intubation-oxygenation-first'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'failed-obstetric-intubation-oxygenation-first-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'failed-obstetric-intubation-oxygenation-first-transition-boundary').length === 1) {
+      crisisState = { ...crisisState,
+        heartRateBpm: this.obstetricsFailedIntubationReassessmentAtTick !== null ? 108 : 112,
+        respiratoryRateBpm: 12,
+        spo2Percent: this.obstetricsFailedIntubationReassessmentAtTick !== null ? 98 : 97,
+        systolicMmHg: this.obstetricsFailedIntubationReassessmentAtTick !== null ? 110 : 106,
+        diastolicMmHg: this.obstetricsFailedIntubationReassessmentAtTick !== null ? 66 : 64,
+        meanArterialMmHg: this.obstetricsFailedIntubationReassessmentAtTick !== null ? 81 : 78,
+        coreTemperatureC: 36.7 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -18483,6 +18541,34 @@ export class AnesthesiaEngine {
               procedurePerformedByLearner: false as const, blockRecessionProven: false as const,
               fetalRecoveryProven: false as const, treatmentEffectProven: false as const,
               newbornSafetyProven: false as const, awarenessExcluded: false as const,
+              safetyDispositionDetermined: false as const, maternalOutcomePredicted: false as const,
+              newbornOutcomePredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'failed-obstetric-intubation-oxygenation-first'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'failed-obstetric-intubation-oxygenation-first-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'failed-obstetric-intubation-oxygenation-first-transition-boundary').length === 1 ? {
+            obstetricsFailedIntubationAssessment: {
+              supportAtTick: this.obstetricsFailedIntubationSupportAtTick,
+              contextAtTick: this.obstetricsFailedIntubationContextAtTick,
+              safetyAtTick: this.obstetricsFailedIntubationSafetyAtTick,
+              decisionAtTick: this.obstetricsFailedIntubationDecisionAtTick,
+              reassessmentAtTick: this.obstetricsFailedIntubationReassessmentAtTick,
+              handoffAtTick: this.obstetricsFailedIntubationHandoffAtTick,
+              authoredFailedIntubationPattern: true as const,
+              authoredQualifiedProceedingCourse: this.obstetricsFailedIntubationReassessmentAtTick !== null,
+              patientExaminedByLearner: false as const, monitoringInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const, airwayManagedByLearner: false as const,
+              oxygenDeliveredByLearner: false as const, ventilationDeliveredByLearner: false as const,
+              airwayDeviceSelectedOrManipulatedByLearner: false as const, positionChangedByLearner: false as const,
+              suctionOrFrontOfNeckAccessPerformedByLearner: false as const,
+              drugDoseDeviceAnesthesiaOrBirthPlanSelectedByLearner: false as const,
+              wakeOrProceedDecisionMadeByLearner: false as const, surgeryPerformedByLearner: false as const,
+              deliveryPerformedByLearner: false as const, newbornAssessedByLearner: false as const,
+              airwaySafetyProven: false as const, aspirationExcluded: false as const,
+              awarenessExcluded: false as const, fetalRecoveryProven: false as const,
+              treatmentEffectProven: false as const, newbornSafetyProven: false as const,
               safetyDispositionDetermined: false as const, maternalOutcomePredicted: false as const,
               newbornOutcomePredicted: false as const, outcomePredicted: false as const,
             },

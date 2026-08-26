@@ -1310,6 +1310,11 @@ export interface ActionCockpitProps {
       readonly uncertaintyAtTick: number | null; readonly readinessAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly obstetricsFailedIntubationAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly safetyAtTick: number | null; readonly decisionAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2354,6 +2359,14 @@ export interface ActionCockpitProps {
       | 'review-obstetrics-high-neuraxial-block-fixed-four-minute-qualified-support-report'
       | 'handoff-obstetrics-high-neuraxial-block-airway-circulation-block-fetal-birth-awareness-support-and-outcome-risk',
   ) => void;
+  readonly onObstetricsFailedIntubationResponse?: (
+    action: 'activate-obstetrics-failed-intubation-oxygenation-anesthesia-obstetric-theatre-newborn-and-support-response'
+      | 'reconcile-obstetrics-failed-intubation-attempts-device-ventilation-aspiration-fetus-and-whole-person'
+      | 'review-obstetrics-failed-intubation-attempt-limit-oxygenation-cico-awareness-and-aspiration-boundaries'
+      | 'review-obstetrics-failed-intubation-individualized-wake-or-proceed-and-parallel-readiness'
+      | 'review-obstetrics-failed-intubation-fixed-three-minute-qualified-course-report'
+      | 'handoff-obstetrics-failed-intubation-airway-aspiration-awareness-birth-newborn-support-and-outcome-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2417,6 +2430,11 @@ export function crisisResponseAvailability(
     && scenario.timeline.every((event) => event.type === 'narrative')
     && scenario.timeline.filter((event) => event.target === 'high-neuraxial-block-obstetric-coordination-transition').length === 1
     && scenario.timeline.filter((event) => event.target === 'high-neuraxial-block-obstetric-coordination-transition-boundary').length === 1;
+  const hasObstetricsFailedIntubationResponse =
+    scenario.metadata.id === 'failed-obstetric-intubation-oxygenation-first'
+    && scenario.timeline.every((event) => event.type === 'narrative')
+    && scenario.timeline.filter((event) => event.target === 'failed-obstetric-intubation-oxygenation-first-transition').length === 1
+    && scenario.timeline.filter((event) => event.target === 'failed-obstetric-intubation-oxygenation-first-transition-boundary').length === 1;
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -2971,6 +2989,7 @@ export function crisisResponseAvailability(
     hasObstetricsUterineRuptureResponse,
     hasObstetricsMagnesiumToxicityResponse,
     hasObstetricsHighNeuraxialResponse,
+    hasObstetricsFailedIntubationResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3197,6 +3216,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'suspected-uterine-rupture-recognition-transition')
       || (event.type === 'narrative' && event.target === 'magnesium-sulfate-toxicity-recognition-transition')
       || (event.type === 'narrative' && event.target === 'high-neuraxial-block-obstetric-coordination-transition')
+      || (event.type === 'narrative' && event.target === 'failed-obstetric-intubation-oxygenation-first-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3311,6 +3331,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasObstetricsUterineRuptureResponse,
     hasObstetricsMagnesiumToxicityResponse,
     hasObstetricsHighNeuraxialResponse,
+    hasObstetricsFailedIntubationResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3452,8 +3473,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasObstetricsUterineRuptureResponse
     || hasObstetricsMagnesiumToxicityResponse
     || hasObstetricsHighNeuraxialResponse
+    || hasObstetricsFailedIntubationResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasObstetricsHighNeuraxialResponse
+  const responseTray = hasObstetricsFailedIntubationResponse
+    ? { id: 'crisis', label: 'Oxygenation + decision' } as const
+    : hasObstetricsHighNeuraxialResponse
     ? { id: 'crisis', label: 'Block + breathing' } as const
     : hasObstetricsMagnesiumToxicityResponse
     ? { id: 'crisis', label: 'Breathing + clearance' } as const
@@ -3857,6 +3881,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasObstetricsUterineRuptureResponse
     || hasObstetricsMagnesiumToxicityResponse
     || hasObstetricsHighNeuraxialResponse
+    || hasObstetricsFailedIntubationResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -4770,6 +4795,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasObstetricsHighNeuraxialResponse && (
               <ObstetricsHighNeuraxialTray assessment={props.resuscitation.obstetricsHighNeuraxialAssessment}
                 onAction={props.onObstetricsHighNeuraxialResponse ?? (() => {})} />
+            )}
+            {hasObstetricsFailedIntubationResponse && (
+              <ObstetricsFailedIntubationTray assessment={props.resuscitation.obstetricsFailedIntubationAssessment}
+                onAction={props.onObstetricsFailedIntubationResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -11951,6 +11980,38 @@ function ObstetricsHighNeuraxialTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-high-neuraxial-block-fixed-four-minute-qualified-support-report')}>Review the fixed 4-minute report</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-obstetrics-high-neuraxial-block-airway-circulation-block-fetal-birth-awareness-support-and-outcome-risk')}>Hand off active block risk</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function ObstetricsFailedIntubationTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['obstetricsFailedIntubationAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onObstetricsFailedIntubationResponse']>;
+}) {
+  const support = assessment?.supportAtTick != null;
+  const context = assessment?.contextAtTick != null;
+  const safety = assessment?.safetyAtTick != null;
+  const decision = assessment?.decisionAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="obstetrics-failed-intubation-now-title">
+      <div id="obstetrics-failed-intubation-now-title" className="syringe__name">Name the failure. Keep oxygenation at the center.</div>
+      <p className="syringe__remaining">Connect attempts, rescue ventilation, aspiration, awareness, fetal urgency, and the whole person. Every physical airway action stays with the qualified team.</p>
+      <div className="crisis-drug__actions">
+        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-obstetrics-failed-intubation-oxygenation-anesthesia-obstetric-theatre-newborn-and-support-response')}>Declare + activate shared response</Button>}
+        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-obstetrics-failed-intubation-attempts-device-ventilation-aspiration-fetus-and-whole-person')}>Connect airway + whole person</Button>}
+        {context && !safety && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-failed-intubation-attempt-limit-oxygenation-cico-awareness-and-aspiration-boundaries')}>Review safety boundaries</Button>}
+        {safety && !decision && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-failed-intubation-individualized-wake-or-proceed-and-parallel-readiness')}>Review individualized decision</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="obstetrics-failed-intubation-later-title">
+      <div id="obstetrics-failed-intubation-later-title" className="syringe__name">Adequate oxygenation creates space to think, not certainty.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Airway, aspiration, awareness, birth, newborn, support, and outcome risks handed off.' : reassessment ? 'Qualified ventilation remains stable and essential surgery proceeds. Delivery and every outcome remain open.' : decision ? 'The qualified team is weighing the whole case. Review the fixed report after time passes.' : support ? 'The failure is named and help is present. Connect the whole pattern without returning to repeated attempts.' : 'Begin with a clear declaration and calm shared ownership. You can pause or leave this practice at any time.'}</p>
+      <div className="crisis-drug__actions">
+        {decision && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-failed-intubation-fixed-three-minute-qualified-course-report')}>Review the fixed 3-minute report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-obstetrics-failed-intubation-airway-aspiration-awareness-birth-newborn-support-and-outcome-risk')}>Hand off active airway risk</Button>}
       </div>
     </section>
   </>;

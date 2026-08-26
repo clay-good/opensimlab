@@ -11,6 +11,7 @@ import { UMBILICAL_CORD_PROLAPSE_URGENT_BIRTH_COORDINATION } from './umbilical-c
 import { SUSPECTED_UTERINE_RUPTURE_RECOGNITION } from './suspected-uterine-rupture-recognition';
 import { MAGNESIUM_SULFATE_TOXICITY_RECOGNITION } from './magnesium-sulfate-toxicity-recognition';
 import { HIGH_NEURAXIAL_BLOCK_OBSTETRIC_COORDINATION } from './high-neuraxial-block-obstetric-coordination';
+import { FAILED_OBSTETRIC_INTUBATION_OXYGENATION_FIRST } from './failed-obstetric-intubation-oxygenation-first';
 
 export const OBSTETRICS_SCENARIOS: readonly Scenario[] = [
   POSTPARTUM_HEMORRHAGE_UTERINE_ATONY,
@@ -25,6 +26,7 @@ export const OBSTETRICS_SCENARIOS: readonly Scenario[] = [
   SUSPECTED_UTERINE_RUPTURE_RECOGNITION,
   MAGNESIUM_SULFATE_TOXICITY_RECOGNITION,
   HIGH_NEURAXIAL_BLOCK_OBSTETRIC_COORDINATION,
+  FAILED_OBSTETRIC_INTUBATION_OXYGENATION_FIRST,
 ];
 export const DEFAULT_OBSTETRICS_SCENARIO_ID = POSTPARTUM_HEMORRHAGE_UTERINE_ATONY.metadata.id;
 

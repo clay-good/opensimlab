@@ -5275,6 +5275,31 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['activate-obstetrics-failed-intubation-oxygenation-anesthesia-obstetric-theatre-newborn-and-support-response',
+      'reconcile-obstetrics-failed-intubation-attempts-device-ventilation-aspiration-fetus-and-whole-person',
+      'review-obstetrics-failed-intubation-attempt-limit-oxygenation-cico-awareness-and-aspiration-boundaries',
+      'review-obstetrics-failed-intubation-individualized-wake-or-proceed-and-parallel-readiness',
+      'review-obstetrics-failed-intubation-fixed-three-minute-qualified-course-report',
+      'handoff-obstetrics-failed-intubation-airway-aspiration-awareness-birth-newborn-support-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'failed-obstetric-intubation-oxygenation-first'
+        && scenario.timeline.every((event) => event.type === 'narrative')
+        && scenario.timeline.filter((event) => event.target === 'failed-obstetric-intubation-oxygenation-first-transition').length === 1
+        && scenario.timeline.filter((event) => event.target === 'failed-obstetric-intubation-oxygenation-first-transition-boundary').length === 1;
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Obstetrics failed-intubation lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['support-activated', 'Failed intubation was declared after the supplied attempt limit and oxygenation-first experienced airway, obstetric, theatre, newborn, communication, dignity, family, and support ownership was activated.'],
+        ['context-reconciled', 'Attempts, rescue device, ventilation, capnography, oxygenation, aspiration, awareness, maternal and fetal state, surgical context, staff experience, and the whole person were connected.'],
+        ['safety-reviewed', 'Attempt limits, oxygenation, CICO readiness, device deterioration, aspiration, awareness, and fixation boundaries were reviewed without learner airway action.'],
+        ['decision-reviewed', 'The individualized maternal, fetal, staff, surgical, aspiration, device, airway-hazard, birth, newborn, communication, and support factors were reviewed without a learner wake-or-proceed decision.'],
+        ['three-minute-report-reviewed', 'The fixed qualified proceeding-course report was reviewed without learner airway, anesthesia, surgery, delivery, fetal-recovery, newborn-safety, disposition, or outcome claims.'],
+        ['active-risk-handoff-recorded', 'Airway, device, oxygenation, aspiration, awareness, injury, maternal, fetal, surgery, birth, newborn, support, review, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^obstetrics-failed-intubation-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^obstetrics-failed-intubation-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-obstetrics-sepsis-postpartum-clock-infection-organ-dysfunction-and-whole-person',
       'recognize-obstetrics-maternal-sepsis-emergency-without-fever-score-source-or-single-value-closure',
       'activate-obstetrics-sepsis-obstetric-critical-care-anesthesia-nursing-pharmacy-microbiology-source-newborn-and-dignity-ownership',

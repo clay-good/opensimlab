@@ -4847,6 +4847,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified direct findings, exact medication and catheter reconciliation, current local protocols, immediate airway-capable multidisciplinary response, pregnancy-specific maternal and fetal care, respectful communication, and hands-on simulation.',
     briefIn: ['high-neuraxial-block-obstetric-coordination'],
   },
+  {
+    id: 'failed-obstetric-intubation-attempt-airway-device-maternal-fetal-and-qualified-course-reports-are-authored',
+    headline: 'The attempts, rescue airway, maternal-fetal pattern, decision process, and 3-minute qualified report are authored.',
+    simplification: 'Fixed reports stand in for laryngoscopy, device placement and seal, ventilation, capnography, oxygenation, aspiration and awareness review, maternal and fetal monitoring, staff and surgical context, wake-or-proceed decision-making, incision, documentation, and serial review.',
+    whereItMisleads: 'Treating 2 attempts, the rescue device, displayed values, absent reported hazards, proceeding decision, or partial stability as learner findings, universal thresholds, technical success, treatment effect, fetal recovery, completed birth, prognosis, or outcome.',
+    correctUnderstanding: 'Failed obstetric intubation requires immediate declaration, experienced help, oxygenation priority, limited attempts, readiness for CICO, individualized senior decision-making, and direct multidisciplinary care.',
+    briefIn: ['failed-obstetric-intubation-oxygenation-first'],
+  },
+  {
+    id: 'failed-obstetric-intubation-controls-activate-reconcile-review-reassess-and-handoff-only',
+    headline: 'The controls activate qualified help, connect supplied facts, review safety and decision boundaries, read a fixed report, and hand off only.',
+    simplification: 'Six actions stand in for concurrent qualified anesthesia and airway, obstetric, nursing, theatre, newborn, pharmacy, critical-care, leadership, timekeeping, documentation, communication, dignity, family, staff-support, post-event review, and handoff work.',
+    whereItMisleads: 'Equating button order with examination, airway or ventilation skill, device placement, monitoring interpretation, wake-or-proceed judgement, anesthesia, surgery, birth, newborn care, documentation quality, or competence.',
+    correctUnderstanding: 'Real response is concurrent, physical, time-critical, team-based, and locally rehearsed. Cognitive practice cannot replace direct care or hands-on multidisciplinary simulation with qualified feedback.',
+    briefIn: ['failed-obstetric-intubation-oxygenation-first'],
+  },
+  {
+    id: 'no-live-failed-obstetric-intubation-airway-monitor-anesthesia-drug-surgery-birth-procedure-or-outcome',
+    headline: 'The lab does not manage an airway, interpret monitoring, choose anesthesia or wake-or-proceed strategy, operate, deliver, or report outcome.',
+    simplification: 'No live airway examination, laryngoscopy, mask or device manipulation, cricoid-pressure change, oxygen, ventilation, suction, position, front-of-neck access, monitoring, drug, dose, fluid, blood, anesthesia, surgery, delivery, newborn care, procedure, transfer, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Using the rehearsal as airway-device, oxygenation, ventilation, aspiration, anesthetic, wake-or-proceed, surgery, birth, newborn, or disposition instructions; delaying trained response for a click; or reading completion as competence.',
+    correctUnderstanding: 'Use direct findings, current local protocols and equipment, immediate experienced airway and obstetric help, qualified individualized decisions, respectful communication, and hands-on simulation.',
+    briefIn: ['failed-obstetric-intubation-oxygenation-first'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

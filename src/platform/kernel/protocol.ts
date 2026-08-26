@@ -2876,6 +2876,25 @@ export interface EquipmentSnapshot {
       readonly safetyDispositionDetermined: false; readonly maternalOutcomePredicted: false;
       readonly newbornOutcomePredicted: false; readonly outcomePredicted: false;
     };
+    readonly obstetricsFailedIntubationAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly safetyAtTick: number | null; readonly decisionAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly authoredFailedIntubationPattern: true; readonly authoredQualifiedProceedingCourse: boolean;
+      readonly patientExaminedByLearner: false; readonly monitoringInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly airwayManagedByLearner: false;
+      readonly oxygenDeliveredByLearner: false; readonly ventilationDeliveredByLearner: false;
+      readonly airwayDeviceSelectedOrManipulatedByLearner: false; readonly positionChangedByLearner: false;
+      readonly suctionOrFrontOfNeckAccessPerformedByLearner: false;
+      readonly drugDoseDeviceAnesthesiaOrBirthPlanSelectedByLearner: false;
+      readonly wakeOrProceedDecisionMadeByLearner: false; readonly surgeryPerformedByLearner: false;
+      readonly deliveryPerformedByLearner: false; readonly newbornAssessedByLearner: false;
+      readonly airwaySafetyProven: false; readonly aspirationExcluded: false;
+      readonly awarenessExcluded: false; readonly fetalRecoveryProven: false;
+      readonly treatmentEffectProven: false; readonly newbornSafetyProven: false;
+      readonly safetyDispositionDetermined: false; readonly maternalOutcomePredicted: false;
+      readonly newbornOutcomePredicted: false; readonly outcomePredicted: false;
+    };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {
       readonly cuesReviewedAtTick: number | null;

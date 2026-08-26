@@ -1170,6 +1170,9 @@ export function Cockpit({
           onObstetricsHighNeuraxialResponse={(action) => session.act({
             type: 'high-neuraxial-block-obstetric-coordination-response', payload: { action },
           })}
+          onObstetricsFailedIntubationResponse={(action) => session.act({
+            type: 'failed-obstetric-intubation-oxygenation-first-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}
