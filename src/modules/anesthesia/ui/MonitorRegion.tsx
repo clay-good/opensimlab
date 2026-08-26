@@ -52,8 +52,12 @@ export interface MonitorRegionProps {
 
 export function MonitorRegion(props: MonitorRegionProps) {
   const tracks = useMemo(
-    () => trackConfigs(props.colorblindSafe, props.waveformArtifacts, props.primaryTracesOnly),
-    [props.colorblindSafe, props.waveformArtifacts, props.primaryTracesOnly],
+    () => trackConfigs(props.colorblindSafe, props.waveformArtifacts, props.primaryTracesOnly)
+      .filter((track) => track.id !== 'capno'
+        || !props.invalidParameters.has('etco2MmHg')
+        || props.capnographySampleObstructed),
+    [props.colorblindSafe, props.waveformArtifacts, props.primaryTracesOnly,
+      props.invalidParameters, props.capnographySampleObstructed],
   );
 
   const descriptions = useMemo(() => waveformDescriptions({

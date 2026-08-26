@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 126 reports pediatric febrile-seizure reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 126;
+/** Bumped whenever the message shape changes incompatibly. Version 127 reports pediatric status-epilepticus reassessment state. */
+export const WORKER_PROTOCOL_VERSION = 127;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1359,6 +1359,32 @@ export interface EquipmentSnapshot {
       readonly seizureCauseProven: false; readonly cnsInfectionExcluded: false;
       readonly seriousInfectionExcluded: false;
       readonly treatmentEffectProven: false; readonly durableRecoveryProven: false;
+      readonly recurrenceExcluded: false; readonly dischargeReadinessProven: false;
+      readonly dispositionDetermined: false; readonly outcomePredicted: false;
+    };
+    readonly pediatricStatusEpilepticusAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly secondLineAtTick: number | null; readonly safetyAtTick: number | null;
+      readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true; readonly spontaneousBreathingAuthored: true;
+      readonly initialOngoingConvulsionAuthored: true; readonly statusThresholdAuthored: true;
+      readonly firstLineCareAuthored: true; readonly qualifiedSecondLineOwnershipActive: boolean;
+      readonly qualifiedSafetyReviewActive: boolean; readonly laterReportAuthored: boolean;
+      readonly patientExaminedByLearner: false; readonly seizureTimedByLearner: false;
+      readonly monitoringAcquiredByLearner: false; readonly glucoseAcquiredByLearner: false;
+      readonly glucoseInterpretedByLearner: false; readonly testAcquiredByLearner: false;
+      readonly testInterpretedByLearner: false; readonly diagnosisMadeByLearner: false;
+      readonly drugSelectedByLearner: false; readonly benzodiazepineSelectedByLearner: false;
+      readonly antiseizureDrugSelectedByLearner: false; readonly doseSelectedByLearner: false;
+      readonly concentrationSelectedByLearner: false; readonly routeSelectedByLearner: false;
+      readonly volumeSelectedByLearner: false; readonly rateSelectedByLearner: false;
+      readonly accessPlacedByLearner: false; readonly deviceSelectedByLearner: false;
+      readonly drugDeliveredByLearner: false; readonly oxygenDeliveredByLearner: false;
+      readonly airwayManeuverPerformedByLearner: false;
+      readonly procedurePerformedByLearner: false; readonly treatmentDeliveredByLearner: false;
+      readonly seizureCauseProven: false; readonly treatmentEffectProven: false;
+      readonly electrographicSeizureControlProven: false;
+      readonly durableSeizureControlProven: false; readonly neurologicRecoveryProven: false;
       readonly recurrenceExcluded: false; readonly dischargeReadinessProven: false;
       readonly dispositionDetermined: false; readonly outcomePredicted: false;
     };

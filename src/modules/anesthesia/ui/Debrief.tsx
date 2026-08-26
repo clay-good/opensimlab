@@ -4792,6 +4792,30 @@ export function objectiveFindings(
       const ordered = later && handoff && later.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved recovery, infection and alternative-cause review, recurrence risk, caregiver guidance, escalation triggers, and named owners without claiming cure, discharge, or outcome.' : 'The active pediatric febrile-seizure handoff was absent or did not follow the later response after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-pediatric-status-epilepticus-clock-care-and-whole-child',
+      'recognize-pediatric-convulsive-status-after-first-line-care',
+      'activate-pediatric-status-epilepticus-qualified-second-line-ownership',
+      'review-pediatric-status-epilepticus-airway-causes-and-refractory-boundary',
+      'review-pediatric-status-epilepticus-later-response',
+      'handoff-pediatric-status-epilepticus-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'pediatric-status-epilepticus'
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pediatric-status-epilepticus-reassessment');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The pediatric status-epilepticus lesson was not active.' } satisfies ObjectiveFinding;
+      const trajectory = log.find((event) => /^pediatric-status-epilepticus-trajectory-reconciled-\d+$/.test(event.eventId));
+      const recognition = log.find((event) => /^pediatric-status-epilepticus-convulsive-status-recognized-\d+$/.test(event.eventId));
+      const secondLine = log.find((event) => /^pediatric-status-epilepticus-qualified-second-line-ownership-activated-\d+$/.test(event.eventId));
+      const safety = log.find((event) => /^pediatric-status-epilepticus-airway-causes-and-refractory-boundary-reviewed-\d+$/.test(event.eventId));
+      const later = log.find((event) => /^pediatric-status-epilepticus-later-response-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^pediatric-status-epilepticus-active-risk-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-pediatric-status-epilepticus-clock-care-and-whole-child') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'The supplied seizure clock, reported first-line care, absent recovery, airway, breathing, circulation, and glucose context were reconciled without learner examination, timing, testing, diagnosis, or treatment.' : 'The pediatric status-epilepticus trajectory was not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'recognize-pediatric-convulsive-status-after-first-line-care') { const ordered = trajectory && recognition && trajectory.tick <= recognition.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Ongoing pediatric convulsive status after reported first-line care was recognized without assigning a cause or claiming refractory status.' : 'Convulsive-status recognition was absent or preceded trajectory review.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-pediatric-status-epilepticus-qualified-second-line-ownership') { const ordered = recognition && secondLine && recognition.tick <= secondLine.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Qualified second-line, pediatric critical-care, neurological, pharmacy, nursing, and airway-capable ownership was activated without learner product, drug, dose, route, access, oxygen, device, procedure, or treatment selection.' : 'Qualified second-line ownership was absent or preceded recognition.', atTick: secondLine?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-status-epilepticus-airway-causes-and-refractory-boundary') { const ordered = recognition && safety && recognition.tick <= safety.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Airway, breathing, circulation, glucose, injury, open causes, and the refractory boundary were reviewed in parallel without learner examination, testing, diagnosis, airway care, treatment, or disposition.' : 'Airway, cause, and refractory-boundary review was absent or preceded recognition.', atTick: safety?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-status-epilepticus-later-response') { const parallelAt = Math.max(secondLine?.tick ?? -1, safety?.tick ?? -1); const ordered = secondLine && safety && later && parallelAt < later.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed parallel care, stopped visible movements were separated from electrographic or durable seizure control, neurological recovery, causal closure, and disposition.' : 'The fixed later response was absent or did not follow both qualified second-line and safety ownership after elapsed time.', atTick: later?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = later && handoff && later.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved the seizure clock, reported care, movement and recovery state, airway and glucose context, open causes, escalation triggers, and named owners without claiming durable control, recovery, discharge, or outcome.' : 'The active pediatric status-epilepticus handoff was absent or did not follow the later response after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

@@ -333,6 +333,12 @@ credited toward the catalog until every item in the completion contract passes.
     without learner examination, seizure timing, routine testing, diagnosis, drug, dose, route,
     access, airway, device, procedure, treatment, communication-performance, or disposition
     controls.
+  - [x] Pediatrics slice 11/16 adds one authored 6-year-old persistent convulsive-status
+    reassessment after 2 supplied documented appropriate first-line doses, with immediate qualified
+    second-line ownership in parallel with airway, cause, and refractory-boundary review, a strictly
+    elapsed visible-response report, and elapsed active-risk handoff without learner seizure timing,
+    examination, monitoring, glucose acquisition, medication verification, drug, dose, route,
+    access, infusion, airway, EEG, procedure, treatment, or disposition controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing

@@ -1830,6 +1830,29 @@ maneuver, procedure, or treatment; assess caregiver communication or first-aid p
 determine disposition or prognosis; or prove confirmed simple classification, treatment effect,
 fever source, CNS-infection exclusion, durable recovery, recurrence exclusion, or outcome.
 
+### Wave D pediatrics slice 11: convulsive status after first-line care
+
+The eleventh Pediatrics lab begins after first-line care and before refractory critical-care
+management. A previously well 6-year-old girl weighing 20 kg has ongoing bilateral generalized
+convulsions for 14 minutes 30 seconds without recovery. A supplied experienced-team record verifies
+2 documented appropriate weight-based first-line benzodiazepine doses at minutes 5 and 10 without
+showing a product, dose, concentration, route, access, preparation, or delivery control. She has a
+pulse and spontaneous chest rise, but respiratory rate is not reliably countable during movement
+and no capnography is supplied. Fixed qualified findings include HR 146/min, BP 106/68 mmHg,
+temperature 37.2°C, pulse-coherent room-air SpO₂ 94%, warm perfusion, refill 2 seconds, and
+point-of-care glucose 108 mg/dL.
+
+The learner reconciles the seizure clock, supplied care, and whole-child state; recognizes
+persistent pediatric convulsive status after first-line care; and activates qualified second-line
+ownership without waiting for parallel airway, monitoring, cause, and refractory-boundary review.
+A strictly elapsed minute-25 report states that visible convulsions have not been seen since minute
+18, while the child remains drowsy, below baseline, and unsafe to swallow, before another elapsed
+active-risk handoff. The lab does not time or examine the seizure, acquire or interpret monitoring,
+glucose, laboratory, EEG, imaging, or lumbar-puncture findings, verify or select a drug, dose, route,
+access, infusion, oxygen, suction, airway, procedure, or treatment, diagnose or treat a cause,
+assess team performance, determine disposition or prognosis, or prove causal treatment effect,
+electrographic or durable seizure control, recovery, recurrence exclusion, or outcome.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

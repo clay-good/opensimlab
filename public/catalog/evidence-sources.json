@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 183,
+  "sourceCount": 185,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -2310,11 +2310,39 @@
       "title": "Clinical Practice Guideline: Seizures - acute management",
       "publication": "Royal Children's Hospital Melbourne Clinical Practice Guidelines",
       "year": 2025,
-      "locator": "current web guideline, last updated June 2025; key points, assessment, investigations, and acute management sections",
+      "locator": "current web guideline, last updated June 2025; key points, assessment, investigations, acute management, and active-seizure flowchart sections",
       "unpinned": true,
-      "usedFor": "The stopped brief-seizure boundary, reversible-cause review, and separation from an ongoing seizure requiring a status-epilepticus medication pathway.",
+      "usedFor": "The stopped brief-seizure boundary; the ongoing-seizure threshold, concurrent assessment and management, prehospital-dose reconciliation, 2-appropriate-benzodiazepine-dose ceiling before second-line escalation, reversible-cause review, and refractory contingency.",
       "verifiedAgainst": "current page: https://www.rch.org.au/afebrile_seizures/",
       "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "nice-epilepsies-ng217-status-2025",
+      "currency": {
+        "lastAmended": "2025-01-30",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "National Institute for Health and Care Excellence",
+      "title": "Epilepsies in children, young people and adults",
+      "publication": "NICE guideline NG217",
+      "year": 2022,
+      "locator": "Published 2022-04-27; last updated 2025-01-30; recommendations 7.1.1-7.1.12",
+      "usedFor": "The 5-minute convulsive-status emergency boundary, repeat first-line timing, transition to qualified second-line therapy after 2 benzodiazepine doses, open causes, expert escalation, and later emergency-plan context.",
+      "verifiedAgainst": "https://www.nice.org.uk/guidance/ng217/chapter/7-Treating-status-epilepticus-repeated-or-cluster-seizures-and-prolonged-seizures",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "aes-convulsive-status-guideline-2016",
+      "pmid": "26900382",
+      "authors": "Glauser T, Shinnar S, Gloss D, et al",
+      "title": "Evidence-Based Guideline: Treatment of Convulsive Status Epilepticus in Children and Adults",
+      "publication": "Epilepsy Currents",
+      "year": 2016,
+      "locator": "16(1):48-61; doi:10.5698/1535-7597-16.1.48; treatment algorithm phases and conclusions",
+      "usedFor": "The child-and-adult time-phased convulsive-status pathway from stabilization and first-line therapy to second-line therapy when seizures persist, without validating the fictional response.",
+      "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/26900382/",
+      "verifiedOn": "2026-08-26",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/26900382/"
     },
     {
       "id": "ispad-pediatric-hypoglycemia-2022",

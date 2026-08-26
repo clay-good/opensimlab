@@ -128,6 +128,11 @@ Recorded here rather than silently carried:
   source-composed child scaffold; it does not validate fever or seizure physiology, temperature or
   recovery kinetics, treatment effect, fever source, CNS-infection exclusion, recurrence, or
   outcome.
+  Pediatric status epilepticus reuses the exact 6-year-old, 20 kg healthy-child scaffold and
+  overlays a fixed ongoing-convulsion clock, 2-dose qualified-care record, supplied room-air oxygenation and
+  glucose, immediate escalation boundary, and serial visible-response report; it does not validate
+  seizure physiology, benzodiazepine or second-line drug effect, airway safety, electrographic
+  control, neurological recovery, cause, recurrence, or outcome.
 
 ## Concentration-time checks, 2026-08-23
 

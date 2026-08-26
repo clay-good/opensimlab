@@ -3695,6 +3695,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, current pediatric fever and seizure guidance, qualified fever-source and dangerous-cause assessment, patient-specific testing and treatment when indicated, repeated neurological reassessment, caregiver education, and escalation for complex features or serious illness.',
     briefIn: ['pediatric-febrile-seizure'],
   },
+  {
+    id: 'pediatric-status-epilepticus-presentation-care-and-response-are-authored',
+    headline: 'The seizure clock, first-line-care record, whole-child findings, qualified escalation, and later response are authored.',
+    simplification: 'Fixed reports stand in for witness history, seizure timing, examination, monitoring, glucose acquisition, verification of prior care, active treatment, airway support, cause evaluation, and serial neurological reassessment.',
+    whereItMisleads: 'Treating the fictional values, care times, prior-dose adequacy, negative snapshots, or visible-convulsion cessation as learner-acquired evidence, modeled physiology, causal treatment effect, electrographic control, or predicted recovery.',
+    correctUnderstanding: 'Real pediatric convulsive status requires verified seizure and treatment timing, immediate concurrent resuscitation and seizure-control care, patient-specific monitoring, repeated airway and neurological assessment, dangerous-cause evaluation, and prompt escalation through qualified teams.',
+    briefIn: ['pediatric-status-epilepticus'],
+  },
+  {
+    id: 'pediatric-status-epilepticus-controls-reconcile-recognize-escalate-review-reassess-and-handoff-only',
+    headline: 'The controls record trajectory review, recognition, parallel qualified escalation and safety work, reassessment, and handoff only.',
+    simplification: 'Six accepted actions stand in for experienced pediatric, neurology, nursing, pharmacy, airway-capable, critical-care, laboratory, imaging, safeguarding, and caregiver assessment, treatment, surveillance, escalation, and handoff.',
+    whereItMisleads: 'Equating button order with seizure timing, examination, medication verification, prescribing, drug delivery, airway skill, testing, diagnosis, team performance, caregiver communication, or pediatric status competence.',
+    correctUnderstanding: 'Actual care requires the child and caregiver, trained teams, verified prior therapy, current local pathways, immediate patient-specific seizure control, continuous physiologic support, repeated reassessment, cause-directed care, and refractory rescue capability.',
+    briefIn: ['pediatric-status-epilepticus'],
+  },
+  {
+    id: 'no-live-pediatric-status-epilepticus-exam-test-drug-airway-treatment-or-disposition',
+    headline: 'The lab does not examine, test, prescribe or deliver seizure or airway care, determine disposition, or predict outcome.',
+    simplification: 'No live seizure timing, examination, monitor or glucose acquisition, prior-dose verification, first-line or second-line product, concentration, route, dose, access, infusion, oxygen, suction, airway device or maneuver, ventilation, laboratory test, EEG, imaging, lumbar puncture, procedure, treatment, admission, discharge, prognosis, recurrence, recovery, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values into care, treating supplied prior therapy as a universal recipe, delaying second-line escalation for cause review, reading absent visible movement as seizure control, treating fixed negatives as exclusions, or using completion as clinical competence.',
+    correctUnderstanding: 'Use verified patient data, current pediatric seizure guidance, local medication and airway systems, qualified teams, continuous reassessment, EEG when indicated, cause-directed evaluation and treatment, and appropriate critical-care escalation.',
+    briefIn: ['pediatric-status-epilepticus'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

@@ -999,6 +999,9 @@ export function Cockpit({
           onPediatricFebrileSeizureResponse={(action) => session.act({
             type: 'pediatric-febrile-seizure-response', payload: { action },
           })}
+          onPediatricStatusEpilepticusResponse={(action) => session.act({
+            type: 'pediatric-status-epilepticus-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

@@ -136,6 +136,7 @@ const PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES = new Set([
   'pediatric-diabetic-ketoacidosis-response',
   'pediatric-hypoglycemic-seizure-response',
   'pediatric-febrile-seizure-response',
+  'pediatric-status-epilepticus-response',
   'pediatric-foreign-body-airway-obstruction-response',
 ]);
 const BRONCHIOLITIS_BLOCKED_ACTION_TYPES = new Set([
@@ -222,6 +223,18 @@ const PEDIATRIC_FEBRILE_SEIZURE_BLOCKED_ACTION_TYPES = new Set([
   'intracranial-hypertension-response', 'status-epilepticus-response',
   'critical-care-status-epilepticus-response', 'opioid-toxicity-response',
   'emergency-anaphylaxis-response',
+]);
+const PEDIATRIC_STATUS_EPILEPTICUS_BLOCKED_ACTION_TYPES = new Set([
+  ...[...PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES]
+    .filter((type) => type !== 'pediatric-status-epilepticus-response'),
+  'pediatric-respiratory-distress-response', 'bronchiolitis-response', 'croup-response',
+  'pediatric-status-asthmaticus-response', 'pediatric-sepsis-response',
+  'pediatric-septic-shock-response', 'pediatric-dehydration-response',
+  'pediatric-diabetic-ketoacidosis-response', 'pediatric-hypoglycemic-seizure-response',
+  'pediatric-febrile-seizure-response', 'status-epilepticus-response',
+  'critical-care-status-epilepticus-response', 'diabetic-ketoacidosis-response',
+  'glycemic-response', 'hyponatremia-response', 'intracranial-hypertension-response',
+  'opioid-toxicity-response', 'emergency-anaphylaxis-response',
 ]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
@@ -934,6 +947,12 @@ export class AnesthesiaEngine {
   private pediatricFebrileSeizureSafetyAtTick: number | null = null;
   private pediatricFebrileSeizureLaterResponseAtTick: number | null = null;
   private pediatricFebrileSeizureHandoffAtTick: number | null = null;
+  private pediatricStatusEpilepticusTrajectoryAtTick: number | null = null;
+  private pediatricStatusEpilepticusRecognitionAtTick: number | null = null;
+  private pediatricStatusEpilepticusSecondLineAtTick: number | null = null;
+  private pediatricStatusEpilepticusSafetyAtTick: number | null = null;
+  private pediatricStatusEpilepticusLaterResponseAtTick: number | null = null;
+  private pediatricStatusEpilepticusHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1420,6 +1439,17 @@ export class AnesthesiaEngine {
       this.log('warning', 'assessment',
         `pediatric-febrile-seizure-generic-action-refused-${this.currentTick}`,
         'This pediatric febrile-seizure lesson does not expose generic testing, medication, fluid, cooling, oxygen-device, airway, ventilator, procedure, alarm, neurologic-crisis, infection, or adjacent-scenario actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const pediatricStatusEpilepticus = this.scenario.metadata.id === 'pediatric-status-epilepticus'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-status-epilepticus-reassessment');
+    if (pediatricStatusEpilepticus
+      && PEDIATRIC_STATUS_EPILEPTICUS_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment',
+        `pediatric-status-epilepticus-generic-action-refused-${this.currentTick}`,
+        'This pediatric status-epilepticus lesson exposes no generic seizure, medication, dose, route, access, oxygen-device, airway, ventilator, test, procedure, adult-status, refractory-status, or adjacent-scenario action. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -6931,6 +6961,161 @@ export class AnesthesiaEngine {
             outcomePredicted: false });
         break;
       }
+      case 'pediatric-status-epilepticus-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.metadata.id === 'pediatric-status-epilepticus'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-status-epilepticus-reassessment');
+        const valid = ['reconcile-pediatric-status-epilepticus-clock-care-and-whole-child',
+          'recognize-pediatric-convulsive-status-after-first-line-care',
+          'activate-pediatric-status-epilepticus-qualified-second-line-ownership',
+          'review-pediatric-status-epilepticus-airway-causes-and-refractory-boundary',
+          'review-pediatric-status-epilepticus-later-response',
+          'handoff-pediatric-status-epilepticus-active-risk'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment',
+            `pediatric-status-epilepticus-response-refused-${this.currentTick}`,
+            supported ? 'The pediatric status-epilepticus action was not one of the listed choices. Nothing changed.'
+              : 'These pediatric status-epilepticus choices are available only in the exact declared Pediatrics lesson.');
+          break;
+        }
+        if (response === 'reconcile-pediatric-status-epilepticus-clock-care-and-whole-child') {
+          if (this.pediatricStatusEpilepticusTrajectoryAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-status-epilepticus-trajectory-refused-${this.currentTick}`,
+              'The supplied seizure clock, first-line care, and whole-child trajectory were already reconciled.');
+            break;
+          }
+          this.pediatricStatusEpilepticusTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-status-epilepticus-trajectory-reconciled-${this.currentTick}`,
+            'The supplied record reconciles ongoing bilateral generalized convulsions for 14 minutes 30 seconds without recovery, two qualified first-line benzodiazepine doses at minutes 5 and 10, a present pulse, spontaneous chest rise, no reliable respiratory-rate count or supplied capnography, room-air oxygenation, and point-of-care glucose 108 mg/dL. HR is 146/min, BP 106/68 mmHg (MAP 81), temperature 37.2°C, and clean pulse-coherent SpO2 is 94%. The learner did not examine or time the seizure, acquire or interpret glucose or monitoring, or select, verify, or deliver any drug, dose, route, access, device, airway action, procedure, or treatment.',
+            { initialOngoingConvulsionAuthored: true, firstLineCareAuthored: true,
+              initialPulsePresent: true, spontaneousBreathingAuthored: true,
+              patientExaminedByLearner: false, seizureTimedByLearner: false,
+              glucoseAcquiredByLearner: false, drugDeliveredByLearner: false });
+          break;
+        }
+        if (this.pediatricStatusEpilepticusTrajectoryAtTick === null) {
+          this.log('warning', 'assessment',
+            `pediatric-status-epilepticus-trajectory-order-refused-${this.currentTick}`,
+            'Reconcile the supplied seizure clock, first-line care, and whole-child trajectory first.');
+          break;
+        }
+        if (response === 'recognize-pediatric-convulsive-status-after-first-line-care') {
+          if (this.pediatricStatusEpilepticusRecognitionAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-status-epilepticus-recognition-refused-${this.currentTick}`,
+              'The authored pediatric convulsive-status pattern after first-line care was already recognized.');
+            break;
+          }
+          this.pediatricStatusEpilepticusRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-status-epilepticus-convulsive-status-recognized-${this.currentTick}`,
+            'The supplied ongoing bilateral generalized convulsions, absent recovery, elapsed clock, and verified qualified first-line care establish an authored pediatric convulsive-status pattern requiring immediate qualified escalation. The learner made no diagnosis, selected no second-line drug, and proved neither cause nor treatment failure mechanism.',
+            { statusThresholdAuthored: true, diagnosisMadeByLearner: false,
+              antiseizureDrugSelectedByLearner: false, seizureCauseProven: false });
+          break;
+        }
+        if (this.pediatricStatusEpilepticusRecognitionAtTick === null) {
+          this.log('warning', 'assessment',
+            `pediatric-status-epilepticus-recognition-order-refused-${this.currentTick}`,
+            'Recognize the authored convulsive-status pattern after first-line care before opening the parallel safety work.');
+          break;
+        }
+        if (response === 'activate-pediatric-status-epilepticus-qualified-second-line-ownership') {
+          if (this.pediatricStatusEpilepticusSecondLineAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-status-epilepticus-second-line-refused-${this.currentTick}`,
+              'Qualified pediatric second-line and escalation ownership is already active.');
+            break;
+          }
+          this.pediatricStatusEpilepticusSecondLineAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-status-epilepticus-qualified-second-line-ownership-activated-${this.currentTick}`,
+            'Experienced pediatric, emergency, neurology, pharmacy, nursing, airway-capable, and critical-care teams now own immediate second-line therapy, preparation and verification, monitoring, airway and ventilation support, recurrence surveillance, and escalation. The learner selected or delivered no drug, dose, concentration, route, volume, rate, access, oxygen, device, airway maneuver, procedure, or treatment.',
+            { qualifiedSecondLineOwnershipActive: true, drugSelectedByLearner: false,
+              doseSelectedByLearner: false, routeSelectedByLearner: false,
+              treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (response === 'review-pediatric-status-epilepticus-airway-causes-and-refractory-boundary') {
+          if (this.pediatricStatusEpilepticusSafetyAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-status-epilepticus-safety-refused-${this.currentTick}`,
+              'Airway, cause, systemic-risk, and refractory-status boundary review is already active.');
+            break;
+          }
+          this.pediatricStatusEpilepticusSafetyAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-status-epilepticus-airway-causes-and-refractory-boundary-reviewed-${this.currentTick}`,
+            'Experienced teams retain ownership of airway, ventilation, oxygenation, circulation, temperature, glucose and metabolic, toxic, medication, infectious, traumatic, structural, vascular, immune, and other causes while preparing for persistent, recurrent, or electrographic seizure escalation. Supplied negative findings remain snapshots. The learner acquired or interpreted no test, EEG, imaging, or examination and performed no airway action, lumbar puncture, procedure, or treatment.',
+            { qualifiedSafetyReviewActive: true, patientExaminedByLearner: false,
+              testAcquiredByLearner: false, testInterpretedByLearner: false,
+              airwayManeuverPerformedByLearner: false, procedurePerformedByLearner: false });
+          break;
+        }
+        const parallelAt = Math.max(this.pediatricStatusEpilepticusSecondLineAtTick ?? -1,
+          this.pediatricStatusEpilepticusSafetyAtTick ?? -1);
+        if (this.pediatricStatusEpilepticusSecondLineAtTick === null
+          || this.pediatricStatusEpilepticusSafetyAtTick === null) {
+          this.log('warning', 'assessment',
+            `pediatric-status-epilepticus-parallel-order-refused-${this.currentTick}`,
+            'Keep qualified second-line ownership and airway-cause-refractory safety review active in parallel before opening the later report.');
+          break;
+        }
+        if (response === 'review-pediatric-status-epilepticus-later-response') {
+          if (this.currentTick <= parallelAt) {
+            this.log('warning', 'assessment',
+              `pediatric-status-epilepticus-later-time-refused-${this.currentTick}`,
+              'Allow elapsed simulated time after both qualified second-line and safety ownership are active.');
+            break;
+          }
+          if (this.pediatricStatusEpilepticusLaterResponseAtTick !== null) {
+            this.log('warning', 'assessment',
+              `pediatric-status-epilepticus-later-response-refused-${this.currentTick}`,
+              'The fixed later pediatric status-epilepticus report was already reviewed.');
+            break;
+          }
+          this.pediatricStatusEpilepticusLaterResponseAtTick = this.currentTick;
+          this.log('warning', 'assessment',
+            `pediatric-status-epilepticus-later-response-reviewed-${this.currentTick}`,
+            'Fixed qualified minute-25 report: no visible convulsions have occurred since minute 18. She is drowsy, opens her eyes to voice, localizes and moves symmetrically, is not at baseline, and remains unsafe to swallow. HR is 116/min, RR 22/min, BP 102/66 mmHg (MAP 78), room-air SpO2 98%, and temperature 37.2°C. This authored checkpoint proves neither causal treatment effect, electrographic or durable seizure control, neurological recovery, cause, recurrence exclusion, disposition, nor outcome.',
+            { laterReportAuthored: true, treatmentEffectProven: false,
+              electrographicSeizureControlProven: false, durableSeizureControlProven: false,
+              neurologicRecoveryProven: false, seizureCauseProven: false,
+              recurrenceExcluded: false, dispositionDetermined: false, outcomePredicted: false });
+          break;
+        }
+        if (this.pediatricStatusEpilepticusLaterResponseAtTick === null) {
+          this.log('warning', 'assessment',
+            `pediatric-status-epilepticus-later-order-refused-${this.currentTick}`,
+            'Review the fixed later whole-child and seizure report after elapsed parallel care.');
+          break;
+        }
+        if (this.currentTick <= this.pediatricStatusEpilepticusLaterResponseAtTick) {
+          this.log('warning', 'assessment',
+            `pediatric-status-epilepticus-handoff-time-refused-${this.currentTick}`,
+            'Allow another simulated tick before handing off active pediatric status-epilepticus risk.');
+          break;
+        }
+        if (this.pediatricStatusEpilepticusHandoffAtTick !== null) {
+          this.log('warning', 'assessment',
+            `pediatric-status-epilepticus-handoff-refused-${this.currentTick}`,
+            'The active pediatric status-epilepticus handoff was already recorded.');
+          break;
+        }
+        this.pediatricStatusEpilepticusHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment',
+          `pediatric-status-epilepticus-active-risk-handoff-recorded-${this.currentTick}`,
+          'The seizure clock and qualified-care record, airway and systemic surveillance, open cause work, persistent, recurrent and electrographic seizure contingencies, neurological trajectory, unsafe-swallow boundary, caregiver context, escalation triggers, and named ownership were handed off. Treatment effect, electrographic or durable seizure control, neurological recovery, cause, recurrence exclusion, discharge readiness, disposition, prognosis, and outcome remain undeclared.',
+          { treatmentEffectProven: false, electrographicSeizureControlProven: false,
+            durableSeizureControlProven: false, neurologicRecoveryProven: false,
+            seizureCauseProven: false, recurrenceExcluded: false,
+            dischargeReadinessProven: false, dispositionDetermined: false,
+            outcomePredicted: false });
+        break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -9883,6 +10068,19 @@ export class AnesthesiaEngine {
         meanArterialMmHg: later ? 72 : 70,
         coreTemperatureC: later ? 38.7 : 39.0 };
     }
+    if (this.scenario.metadata.id === 'pediatric-status-epilepticus'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-status-epilepticus-reassessment')) {
+      const later = this.pediatricStatusEpilepticusLaterResponseAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: later ? 116 : 146,
+        respiratoryRateBpm: later ? 22 : crisisState.respiratoryRateBpm,
+        spo2Percent: later ? 98 : 94,
+        systolicMmHg: later ? 102 : 106,
+        diastolicMmHg: later ? 66 : 68,
+        meanArterialMmHg: later ? 78 : 81,
+        coreTemperatureC: 37.2 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -11845,6 +12043,49 @@ export class AnesthesiaEngine {
               dispositionDetermined: false as const, outcomePredicted: false as const,
             },
           } : {}),
+        ...(this.scenario.metadata.id === 'pediatric-status-epilepticus'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-status-epilepticus-reassessment') ? {
+            pediatricStatusEpilepticusAssessment: {
+              trajectoryAtTick: this.pediatricStatusEpilepticusTrajectoryAtTick,
+              recognitionAtTick: this.pediatricStatusEpilepticusRecognitionAtTick,
+              secondLineAtTick: this.pediatricStatusEpilepticusSecondLineAtTick,
+              safetyAtTick: this.pediatricStatusEpilepticusSafetyAtTick,
+              laterResponseAtTick: this.pediatricStatusEpilepticusLaterResponseAtTick,
+              handoffAtTick: this.pediatricStatusEpilepticusHandoffAtTick,
+              initialPulsePresent: true as const, spontaneousBreathingAuthored: true as const,
+              initialOngoingConvulsionAuthored: true as const,
+              statusThresholdAuthored: true as const,
+              firstLineCareAuthored: true as const,
+              qualifiedSecondLineOwnershipActive:
+                this.pediatricStatusEpilepticusSecondLineAtTick !== null,
+              qualifiedSafetyReviewActive: this.pediatricStatusEpilepticusSafetyAtTick !== null,
+              laterReportAuthored: this.pediatricStatusEpilepticusLaterResponseAtTick !== null,
+              patientExaminedByLearner: false as const, seizureTimedByLearner: false as const,
+              monitoringAcquiredByLearner: false as const,
+              glucoseAcquiredByLearner: false as const,
+              glucoseInterpretedByLearner: false as const,
+              testAcquiredByLearner: false as const, testInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const, drugSelectedByLearner: false as const,
+              benzodiazepineSelectedByLearner: false as const,
+              antiseizureDrugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const,
+              concentrationSelectedByLearner: false as const,
+              routeSelectedByLearner: false as const, volumeSelectedByLearner: false as const,
+              rateSelectedByLearner: false as const, accessPlacedByLearner: false as const,
+              deviceSelectedByLearner: false as const, drugDeliveredByLearner: false as const,
+              oxygenDeliveredByLearner: false as const,
+              airwayManeuverPerformedByLearner: false as const,
+              procedurePerformedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              seizureCauseProven: false as const, treatmentEffectProven: false as const,
+              electrographicSeizureControlProven: false as const,
+              durableSeizureControlProven: false as const,
+              neurologicRecoveryProven: false as const, recurrenceExcluded: false as const,
+              dischargeReadinessProven: false as const,
+              dispositionDetermined: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,
           classification: this.aspirationRiskClassification,
@@ -12050,6 +12291,14 @@ export class AnesthesiaEngine {
     }
     if (this.artifacts.has('probe-displacement')) invalid.add('spo2Percent');
     if (this.artifacts.has('sampling-line-obstruction')) invalid.add('etco2MmHg');
+    if (this.scenario.metadata.id === 'pediatric-status-epilepticus'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-status-epilepticus-reassessment')) {
+      invalid.add('etco2MmHg');
+      if (this.pediatricStatusEpilepticusLaterResponseAtTick === null) {
+        invalid.add('respiratoryRateBpm');
+      }
+    }
     return invalid;
   }
 

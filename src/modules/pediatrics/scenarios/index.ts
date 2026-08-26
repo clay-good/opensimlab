@@ -9,6 +9,7 @@ import { PEDIATRIC_FEBRILE_SEIZURE } from './pediatric-febrile-seizure';
 import { PEDIATRIC_SEPSIS } from './pediatric-sepsis';
 import { PEDIATRIC_SEPTIC_SHOCK } from './pediatric-septic-shock';
 import { PEDIATRIC_STATUS_ASTHMATICUS } from './pediatric-status-asthmaticus';
+import { PEDIATRIC_STATUS_EPILEPTICUS } from './pediatric-status-epilepticus';
 
 export const PEDIATRICS_SCENARIOS: readonly Scenario[] = [
   PEDIATRIC_RESPIRATORY_DISTRESS,
@@ -21,6 +22,7 @@ export const PEDIATRICS_SCENARIOS: readonly Scenario[] = [
   PEDIATRIC_DIABETIC_KETOACIDOSIS,
   PEDIATRIC_HYPOGLYCEMIC_SEIZURE,
   PEDIATRIC_FEBRILE_SEIZURE,
+  PEDIATRIC_STATUS_EPILEPTICUS,
 ];
 export const DEFAULT_PEDIATRICS_SCENARIO_ID = PEDIATRIC_RESPIRATORY_DISTRESS.metadata.id;
 

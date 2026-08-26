@@ -32,6 +32,15 @@ honest count rather than waive a gate to reach 256.
   evidence, or debrief focus differs materially
 - **AND** a distinctness test rejects mere retitling of identical state, actions, and objectives
 
+#### Scenario: Seizure labs own different phases of care
+
+- **WHEN** pediatric status epilepticus is added alongside adult first-line and critical-care
+  refractory-status lessons
+- **THEN** it begins after 2 supplied documented appropriate first-line doses and teaches immediate
+  qualified second-line ownership with concurrent airway, cause, and refractory-boundary review
+- **AND** it stops before learner drug selection or delivery, airway procedures, EEG interpretation,
+  continuous anesthetic management, durable seizure-control claims, disposition, or outcome
+
 #### Scenario: Quality beats the target date
 
 - **WHEN** fewer than 256 planned scenarios pass every gate at release time

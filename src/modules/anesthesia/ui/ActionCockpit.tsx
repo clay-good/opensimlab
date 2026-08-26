@@ -1070,6 +1070,11 @@ export interface ActionCockpitProps {
       readonly careAtTick: number | null; readonly safetyAtTick: number | null;
       readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly pediatricStatusEpilepticusAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly secondLineAtTick: number | null; readonly safetyAtTick: number | null;
+      readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1730,6 +1735,14 @@ export interface ActionCockpitProps {
       | 'review-pediatric-febrile-seizure-later-response'
       | 'handoff-pediatric-febrile-seizure-active-risk',
   ) => void;
+  readonly onPediatricStatusEpilepticusResponse?: (
+    action: 'reconcile-pediatric-status-epilepticus-clock-care-and-whole-child'
+      | 'recognize-pediatric-convulsive-status-after-first-line-care'
+      | 'activate-pediatric-status-epilepticus-qualified-second-line-ownership'
+      | 'review-pediatric-status-epilepticus-airway-causes-and-refractory-boundary'
+      | 'review-pediatric-status-epilepticus-later-response'
+      | 'handoff-pediatric-status-epilepticus-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2107,6 +2120,10 @@ export function crisisResponseAvailability(
       scenario.metadata.id === 'pediatric-febrile-seizure'
       && scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'pediatric-febrile-seizure-reassessment'),
+    hasPediatricStatusEpilepticusResponse:
+      scenario.metadata.id === 'pediatric-status-epilepticus'
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-status-epilepticus-reassessment'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2266,6 +2283,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'pediatric-hypoglycemic-seizure-reassessment')
       || (event.type === 'narrative'
         && event.target === 'pediatric-febrile-seizure-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'pediatric-status-epilepticus-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2332,6 +2351,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasPediatricDiabeticKetoacidosisResponse,
     hasPediatricHypoglycemicSeizureResponse,
     hasPediatricFebrileSeizureResponse,
+    hasPediatricStatusEpilepticusResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2406,7 +2426,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasBronchiolitisResponse || hasCroupResponse || hasPediatricStatusAsthmaticusResponse
     || hasPediatricSepsisResponse || hasPediatricSepticShockResponse
     || hasPediatricDehydrationResponse || hasPediatricDiabeticKetoacidosisResponse
-    || hasPediatricHypoglycemicSeizureResponse || hasPediatricFebrileSeizureResponse;
+    || hasPediatricHypoglycemicSeizureResponse || hasPediatricFebrileSeizureResponse
+    || hasPediatricStatusEpilepticusResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2437,7 +2458,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasPediatricFebrileSeizureResponse
+  const responseTray = hasPediatricStatusEpilepticusResponse
+    ? { id: 'crisis', label: 'Pediatric status-epilepticus reassessment' } as const
+    : hasPediatricFebrileSeizureResponse
     ? { id: 'crisis', label: 'Pediatric febrile-seizure reassessment' } as const
     : hasPediatricHypoglycemicSeizureResponse
     ? { id: 'crisis', label: 'Pediatric hypoglycemia reassessment' } as const
@@ -2712,6 +2735,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPediatricDehydrationResponse || hasPediatricDiabeticKetoacidosisResponse
     || hasPediatricHypoglycemicSeizureResponse
     || hasPediatricFebrileSeizureResponse
+    || hasPediatricStatusEpilepticusResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3408,6 +3432,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <PediatricFebrileSeizureTray
                 assessment={props.resuscitation.pediatricFebrileSeizureAssessment}
                 onAction={props.onPediatricFebrileSeizureResponse ?? (() => {})} />
+            )}
+            {hasPediatricStatusEpilepticusResponse && (
+              <PediatricStatusEpilepticusTray
+                assessment={props.resuscitation.pediatricStatusEpilepticusAssessment}
+                onAction={props.onPediatricStatusEpilepticusResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -8840,6 +8869,64 @@ function PediatricFebrileSeizureTray({ assessment, onAction }: {
           onClick={() => onAction('handoff-pediatric-febrile-seizure-active-risk')}>Hand off safety + caregiver guidance</Button>}
       </div>
       <p className="field__hint">The fixed report does not prove a benign cause, exclude serious infection, predict recurrence, establish durable neurological recovery, or determine discharge readiness or outcome.</p>
+    </section>
+  </div>;
+}
+
+function PediatricStatusEpilepticusTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricStatusEpilepticusAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onPediatricStatusEpilepticusResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const secondLine = assessment?.secondLineAtTick != null;
+  const safety = assessment?.safetyAtTick != null;
+  const later = assessment?.laterResponseAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="pediatric-status-epilepticus-pattern-title">
+      <div id="pediatric-status-epilepticus-pattern-title" className="syringe__name">Read the clock and the child.</div>
+      <Badge kind="teaching">clock · movement · recovery · breathing · pulse · glucose</Badge>
+      <div className="syringe__meta">6 years · 20 kg · 14:30 without recovery after reported first-line care</div>
+      <p className="syringe__remaining">
+        {secondLine && safety ? 'Qualified second-line ownership and safety review are active'
+          : safety ? 'Safety review is active · qualified second-line ownership still matters'
+            : secondLine ? 'Qualified second-line ownership is active · keep safety review moving'
+              : recognition ? 'Ongoing convulsive status · urgent next-line ownership matters'
+                : trajectory ? 'Now recognize status after reported first-line care'
+                  : 'Start with the clock, reported care, and whole child.'}
+      </p>
+      <div className="syringe__presets">
+        {!trajectory && <Button className="crisis-drug__action"
+          onClick={() => onAction('reconcile-pediatric-status-epilepticus-clock-care-and-whole-child')}>Review clock + first-line care</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action"
+          onClick={() => onAction('recognize-pediatric-convulsive-status-after-first-line-care')}>Recognize ongoing convulsive status</Button>}
+        {recognition && !secondLine && <Button className="crisis-drug__action"
+          onClick={() => onAction('activate-pediatric-status-epilepticus-qualified-second-line-ownership')}>Activate qualified second-line ownership</Button>}
+        {recognition && !safety && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-pediatric-status-epilepticus-airway-causes-and-refractory-boundary')}>Review airway + causes + boundaries</Button>}
+      </div>
+      <p className="field__hint">Experienced pediatric, neurological, pharmacy, nursing, and airway-capable teams own medicines, monitoring, glucose and cause work, oxygenation, access, devices, procedures, and escalation. The learner selects or delivers none of them.</p>
+    </section>
+    <section className="syringe" aria-labelledby="pediatric-status-epilepticus-response-title">
+      <div id="pediatric-status-epilepticus-response-title" className="syringe__name">Persistence changes the plan.</div>
+      <Badge kind="teaching">response · airway · causes · escalation · ownership</Badge>
+      <div className="syringe__meta">fixed minute-25 response · active neurological risk</div>
+      <p className="syringe__remaining" role="status">
+        {handoff ? 'Active seizure, recovery, and cause risk handed off'
+          : later ? 'Visible movements stopped. Recovery and durable control remain open.'
+            : secondLine && safety ? 'Review the fixed response after elapsed parallel care'
+              : safety ? 'Safety review is active · activate qualified second-line ownership'
+                : secondLine ? 'Second-line ownership is active · complete airway and cause review'
+                  : 'Qualified escalation and safety review should move together.'}
+      </p>
+      <div className="syringe__presets">
+        {secondLine && safety && !later && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-pediatric-status-epilepticus-later-response')}>Review the minute-25 response</Button>}
+        {later && !handoff && <Button className="crisis-drug__action"
+          onClick={() => onAction('handoff-pediatric-status-epilepticus-active-risk')}>Hand off active status risk</Button>}
+      </div>
+      <p className="field__hint">Stopped visible movements do not prove electrographic seizure control, durable seizure control, neurological recovery, causal closure, discharge readiness, or outcome.</p>
     </section>
   </div>;
 }
