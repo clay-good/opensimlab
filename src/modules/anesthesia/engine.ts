@@ -388,6 +388,10 @@ const TOXICOLOGY_CARBON_MONOXIDE_BLOCKED_ACTION_TYPES = new Set([
   ...TOXICOLOGY_METHEMOGLOBINEMIA_BLOCKED_ACTION_TYPES,
   'methemoglobinemia-saturation-gap-response',
 ]);
+const TOXICOLOGY_ACETAMINOPHEN_BLOCKED_ACTION_TYPES = new Set([
+  ...TOXICOLOGY_CARBON_MONOXIDE_BLOCKED_ACTION_TYPES,
+  'carbon-monoxide-reassuring-monitor-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1237,6 +1241,12 @@ export class AnesthesiaEngine {
   private toxicologyCarbonMonoxideSeverityAtTick: number | null = null;
   private toxicologyCarbonMonoxideReassessmentAtTick: number | null = null;
   private toxicologyCarbonMonoxideHandoffAtTick: number | null = null;
+  private toxicologyAcetaminophenTrajectoryAtTick: number | null = null;
+  private toxicologyAcetaminophenRecognitionAtTick: number | null = null;
+  private toxicologyAcetaminophenSupportAtTick: number | null = null;
+  private toxicologyAcetaminophenEvidenceAtTick: number | null = null;
+  private toxicologyAcetaminophenReassessmentAtTick: number | null = null;
+  private toxicologyAcetaminophenHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2015,6 +2025,15 @@ export class AnesthesiaEngine {
         'This Toxicology lesson exposes no generic examination, monitoring, co-oximetry, oxygen, '
         + 'drug, dose, route, access, infusion, fluid, device, hyperbaric, transport, procedure, or '
         + 'adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const toxicologyAcetaminophen = this.scenario.metadata.id === 'acetaminophen-clock-and-nomogram'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acetaminophen-clock-and-nomogram-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acetaminophen-clock-and-nomogram-transition-boundary');
+    if (toxicologyAcetaminophen && TOXICOLOGY_ACETAMINOPHEN_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `toxicology-acetaminophen-generic-action-refused-${this.currentTick}`,
+        'This Toxicology lesson exposes no generic examination, monitoring, laboratory, nomogram, '
+        + 'charcoal, drug, dose, route, access, infusion, fluid, device, dialysis, procedure, stopping, '
+        + 'or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -10073,6 +10092,32 @@ export class AnesthesiaEngine {
         if (this.toxicologyCarbonMonoxideHandoffAtTick !== null) { this.log('warning', 'assessment', `toxicology-carbon-monoxide-handoff-refused-${this.currentTick}`, 'The delayed neurologic, cardiac, exposure, follow-up, and active-risk handoff was already recorded.'); break; }
         this.toxicologyCarbonMonoxideHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-carbon-monoxide-active-risk-handoff-recorded-${this.currentTick}`, 'Exposure and source safety, co-exposed people, serial symptoms and neurologic findings, serial co-oximetry with timing, cardiac surveillance, hyperbaric consultation status, delayed neurologic complications, follow-up, disposition, prognosis, and outcome uncertainty were handed off.', { treatmentEffectProven: false, delayedNeurologicComplicationsExcluded: false, cardiacComplicationsExcluded: false, coexposureExcluded: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
       }
+      case 'acetaminophen-clock-and-nomogram-response': {
+        const response = typeof action.payload.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'acetaminophen-clock-and-nomogram'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acetaminophen-clock-and-nomogram-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acetaminophen-clock-and-nomogram-transition-boundary');
+        const actions = ['reconcile-toxicology-acetaminophen-product-ingestion-window-clock-symptoms-and-whole-patient',
+          'recognize-toxicology-acetaminophen-acute-timed-pattern-and-nomogram-applicability-boundary',
+          'activate-toxicology-acetaminophen-poison-center-emergency-monitoring-and-nonjudgmental-safety-ownership',
+          'review-toxicology-acetaminophen-supplied-timed-level-nomogram-position-liver-and-coingestion-boundary',
+          'record-toxicology-acetaminophen-bounded-qualified-team-acetylcysteine-intent-and-strict-later-review',
+          'handoff-toxicology-acetaminophen-serial-level-liver-failure-stopping-safety-and-active-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `toxicology-acetaminophen-response-refused-${this.currentTick}`, supported ? 'The acetaminophen action was not listed. No supplied or injected text was retained.' : 'These acetaminophen choices are available only in the exact declared Toxicology lesson.'); break; }
+        if (response === actions[0]) { if (this.toxicologyAcetaminophenTrajectoryAtTick !== null) { this.log('warning', 'assessment', `toxicology-acetaminophen-trajectory-refused-${this.currentTick}`, 'The product, ingestion window, clock, symptoms, and whole-patient state were already reconciled.'); break; } this.toxicologyAcetaminophenTrajectoryAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-acetaminophen-trajectory-reconciled-${this.currentTick}`, 'Supplied immediate-release acetaminophen-only exposure, witnessed completion time, 6-hour clock, nausea, stable physiology, unreliable reported quantity, and whole-patient state were connected. The learner did not take history, examine, acquire monitoring or blood, calculate, test, or diagnose.', { timedAcuteExposureAuthored: true, hoursPostIngestion: 6, reportedQuantityUsedAsTreatmentGuide: false, patientHistoryTakenByLearner: false, patientExaminedByLearner: false }); break; }
+        if (this.toxicologyAcetaminophenTrajectoryAtTick === null) { this.log('warning', 'assessment', `toxicology-acetaminophen-trajectory-order-refused-${this.currentTick}`, 'Reconcile the product, ingestion window, clock, symptoms, and whole patient first.'); break; }
+        if (response === actions[1]) { if (this.toxicologyAcetaminophenRecognitionAtTick !== null) { this.log('warning', 'assessment', `toxicology-acetaminophen-recognition-refused-${this.currentTick}`, 'The timed acute pattern and nomogram boundary were already recognized.'); break; } this.toxicologyAcetaminophenRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-acetaminophen-pattern-recognized-${this.currentTick}`, 'This authored timed acute ingestion supports qualified nomogram use. A pre-4-hour level cannot risk-stratify, and unknown-time, repeated, extended-release, delayed-absorption, coingestion, late, and liver-injury pathways require distinct evaluation. The learner did not plot, calculate, diagnose, or close alternatives.', { nomogramApplicabilityRecognized: true, nomogramPlottedByLearner: false, diagnosisMadeByLearner: false, alternativesClosed: false }); break; }
+        if (this.toxicologyAcetaminophenRecognitionAtTick === null) { this.log('warning', 'assessment', `toxicology-acetaminophen-recognition-order-refused-${this.currentTick}`, 'Recognize the timed acute pattern and nomogram boundary before support or evidence review.'); break; }
+        if (response === actions[2]) { if (this.toxicologyAcetaminophenSupportAtTick !== null) { this.log('warning', 'assessment', `toxicology-acetaminophen-support-refused-${this.currentTick}`, 'Toxicology, emergency, laboratory, monitoring, and compassionate safety ownership are already active.'); break; } this.toxicologyAcetaminophenSupportAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-acetaminophen-support-activated-${this.currentTick}`, 'Poison-center or medical-toxicology consultation, emergency and laboratory ownership, supportive monitoring, exposure reconciliation, and compassionate self-harm safety ownership were recorded. The learner selected no charcoal, antidote, drug, dose, route, access, infusion, or procedure.', { qualifiedSupportActive: true, safetyOwnershipActive: true, decontaminationSelectedByLearner: false, drugSelectedByLearner: false }); break; }
+        if (this.toxicologyAcetaminophenSupportAtTick === null) { this.log('warning', 'assessment', `toxicology-acetaminophen-support-order-refused-${this.currentTick}`, 'Activate qualified toxicology, emergency, laboratory, monitoring, and safety ownership before evidence review.'); break; }
+        if (response === actions[3]) { if (this.toxicologyAcetaminophenEvidenceAtTick !== null) { this.log('warning', 'assessment', `toxicology-acetaminophen-evidence-refused-${this.currentTick}`, 'The supplied timed level, qualified plot, labs, and coingestion boundary were already reviewed.'); break; } this.toxicologyAcetaminophenEvidenceAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-acetaminophen-timed-evidence-reviewed-${this.currentTick}`, 'Supplied 6-hour acetaminophen 132 µg/mL and qualified above-treatment-line, below-high-risk-line position were integrated with baseline AST 24, ALT 21, INR 1.1, creatinine 0.8, glucose 96, product, timing, and coingestion limits. The learner did not acquire, plot, calculate, interpret, diagnose, or determine eligibility.', { timedLevelAuthored: true, acetaminophenMicrogramsPerMl: 132, nomogramPlottedByLearner: false, eligibilityDeterminedByLearner: false }); break; }
+        if (this.toxicologyAcetaminophenEvidenceAtTick === null) { this.log('warning', 'assessment', `toxicology-acetaminophen-evidence-order-refused-${this.currentTick}`, 'Review the supplied timed level, qualified plot, liver evidence, and coingestion boundary before antidote intent.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.toxicologyAcetaminophenEvidenceAtTick) { this.log('warning', 'assessment', `toxicology-acetaminophen-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before bounded antidote intent and the strict later review.'); break; } if (this.toxicologyAcetaminophenReassessmentAtTick !== null) { this.log('warning', 'assessment', `toxicology-acetaminophen-reassessment-refused-${this.currentTick}`, 'Bounded acetylcysteine intent and the strict later report were already reviewed.'); break; } this.toxicologyAcetaminophenReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-acetaminophen-antidote-intent-and-reassessment-recorded-${this.currentTick}`, 'Qualified-team acetylcysteine intent was recorded without product, dose, route, preparation, access, infusion, adverse-reaction management, or delivery. Strict 22-hour-post-ingestion report: acetaminophen below 10 µg/mL, AST 27, ALT 24, INR 1.2, creatinine 0.8, normal glucose, stable mentation, and easing nausea. This does not authorize an automatic course-length stop, prove treatment effect, exclude delayed absorption or evolving liver injury, determine safety or disposition, or predict outcome.', { qualifiedAntidoteIntentRecorded: true, laterAcetaminophenBelowTen: true, doseSelectedByLearner: false, treatmentDeliveredByLearner: false, stoppingDeterminedByLearner: false, treatmentEffectProven: false }); break; }
+        if (this.toxicologyAcetaminophenReassessmentAtTick === null) { this.log('warning', 'assessment', `toxicology-acetaminophen-handoff-order-refused-${this.currentTick}`, 'Record bounded antidote intent and review the strict later evidence before handoff.'); break; }
+        if (this.currentTick <= this.toxicologyAcetaminophenReassessmentAtTick) { this.log('warning', 'assessment', `toxicology-acetaminophen-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off liver, stopping, and safety risk.'); break; }
+        if (this.toxicologyAcetaminophenHandoffAtTick !== null) { this.log('warning', 'assessment', `toxicology-acetaminophen-handoff-refused-${this.currentTick}`, 'The serial level, liver, stopping, safety, and active-risk handoff was already recorded.'); break; }
+        this.toxicologyAcetaminophenHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-acetaminophen-active-risk-handoff-recorded-${this.currentTick}`, 'Exposure timing, serial acetaminophen and liver evidence, acetylcysteine status, individualized continuation and stopping review, hepatic deterioration and liver-failure escalation, coingestion, compassionate self-harm safety, disposition, prognosis, and outcome uncertainty were handed off.', { treatmentEffectProven: false, delayedAbsorptionExcluded: false, liverInjuryExcluded: false, stoppingDeterminedByLearner: false, safetyDispositionDetermined: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -12820,6 +12865,13 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: this.toxicologyCarbonMonoxideReassessmentAtTick !== null ? 18 : 24,
         spo2Percent: this.toxicologyCarbonMonoxideReassessmentAtTick !== null ? 100 : 99,
         systolicMmHg: 118, diastolicMmHg: 74, meanArterialMmHg: 89, coreTemperatureC: 36.8 };
+    }
+    if (this.scenario.metadata.id === 'acetaminophen-clock-and-nomogram'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acetaminophen-clock-and-nomogram-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acetaminophen-clock-and-nomogram-transition-boundary')) {
+      crisisState = { ...crisisState, heartRateBpm: this.toxicologyAcetaminophenReassessmentAtTick !== null ? 82 : 92,
+        respiratoryRateBpm: 16, spo2Percent: 99, systolicMmHg: 122, diastolicMmHg: 76,
+        meanArterialMmHg: 91, coreTemperatureC: 36.8 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -16392,6 +16444,30 @@ export class AnesthesiaEngine {
               treatmentEffectProven: false as const, durableNeurologicRecoveryProven: false as const,
               delayedNeurologicComplicationsExcluded: false as const, cardiacComplicationsExcluded: false as const,
               coexposureExcluded: false as const, dispositionDetermined: false as const,
+              prognosisPredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'acetaminophen-clock-and-nomogram'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acetaminophen-clock-and-nomogram-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acetaminophen-clock-and-nomogram-transition-boundary') ? {
+            toxicologyAcetaminophenAssessment: {
+              trajectoryAtTick: this.toxicologyAcetaminophenTrajectoryAtTick, recognitionAtTick: this.toxicologyAcetaminophenRecognitionAtTick,
+              supportAtTick: this.toxicologyAcetaminophenSupportAtTick, evidenceAtTick: this.toxicologyAcetaminophenEvidenceAtTick,
+              reassessmentAtTick: this.toxicologyAcetaminophenReassessmentAtTick, handoffAtTick: this.toxicologyAcetaminophenHandoffAtTick,
+              timedAcuteExposureAuthored: true as const, nomogramApplicabilityRecognized: this.toxicologyAcetaminophenRecognitionAtTick !== null,
+              qualifiedSupportActive: this.toxicologyAcetaminophenSupportAtTick !== null,
+              timedEvidenceReviewed: this.toxicologyAcetaminophenEvidenceAtTick !== null,
+              qualifiedAntidoteIntentRecorded: this.toxicologyAcetaminophenReassessmentAtTick !== null,
+              responseStateAuthored: this.toxicologyAcetaminophenReassessmentAtTick !== null,
+              patientHistoryTakenByLearner: false as const, patientExaminedByLearner: false as const,
+              monitoringAcquiredByLearner: false as const, bloodSampleAcquiredByLearner: false as const,
+              nomogramPlottedByLearner: false as const, diagnosisMadeByLearner: false as const,
+              decontaminationSelectedByLearner: false as const, drugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const, routeSelectedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const, stoppingDeterminedByLearner: false as const,
+              treatmentEffectProven: false as const, delayedAbsorptionExcluded: false as const,
+              liverInjuryExcluded: false as const, coingestionExcluded: false as const,
+              safetyDispositionDetermined: false as const, dispositionDetermined: false as const,
               prognosisPredicted: false as const, outcomePredicted: false as const,
             },
           } : {}),

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 235,
+  "sourceCount": 238,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -3054,6 +3054,49 @@
       "locator": "85:e45-e59; doi:10.1016/j.annemergmed.2024.12.005; patient-management recommendation and potential transport harms",
       "usedFor": "Selected-patient hyperbaric consultation based on symptom severity, availability, distance, time, and transport risk without a universal treatment rule.",
       "verifiedAgainst": "https://www.acep.org/siteassets/sites/acep/media/clinical-policies/final-cp-pdfs/carbonmonoxide3-cp.pdf",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "dart-acetaminophen-consensus-2023",
+      "pmid": "37552484",
+      "authors": "Dart RC, Mullins ME, Matoushek T, et al",
+      "title": "Management of Acetaminophen Poisoning in the US and Canada: A Consensus Statement",
+      "publication": "JAMA Network Open",
+      "year": 2023,
+      "locator": "6(8):e2327739; doi:10.1001/jamanetworkopen.2023.27739; Figures 2-4 and consensus pathways",
+      "usedFor": "Timed acute-ingestion assessment, 4-hour sampling boundary, qualified nomogram use, unreliable reported quantity, treatment-line context, delayed-presentation escalation, and serial continuation and stopping review.",
+      "verifiedAgainst": "https://jamanetwork.com/journals/jamanetworkopen/fullarticle/2808062",
+      "verifiedOn": "2026-08-26",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/37552484/"
+    },
+    {
+      "id": "acmt-acetylcysteine-duration-2026",
+      "currency": {
+        "lastAmended": "2026-01-26",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "American College of Medical Toxicology",
+      "title": "Duration of Intravenous Acetylcysteine Therapy following Acetaminophen Overdose: 2026 Update",
+      "publication": "ACMT Practice Statement",
+      "year": 2026,
+      "locator": "Discontinuation criteria: acetaminophen below 10 µg/mL, improving aminotransferases, INR below 2.0, and improving prognostic markers",
+      "usedFor": "The no-automatic-stop boundary, individualized continuation, serial liver and prognostic review, and qualified medical-toxicology ownership.",
+      "verifiedAgainst": "https://www.acmt.net/news/acmt-practice-statement-duration-of-intravenous-acetylcysteine-therapy-following-acetaminophen-overdose-2026-update/",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "dailymed-acetadote-2024",
+      "currency": {
+        "lastAmended": "2024-11-01",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "US National Library of Medicine, DailyMed",
+      "title": "ACETADOTE acetylcysteine injection prescribing information",
+      "publication": "DailyMed",
+      "year": 2024,
+      "locator": "Set ID 472f158a-5ab9-4308-8e49-1116e6ea3d39; indications, dosing pathways, warnings, and monitoring sections",
+      "usedFor": "The qualified antidote-intent boundary, unreliability of reported ingestion quantity, adverse-reaction awareness, and exclusion of learner dosing and delivery controls.",
+      "verifiedAgainst": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=472f158a-5ab9-4308-8e49-1116e6ea3d39",
       "verifiedOn": "2026-08-26"
     }
   ]

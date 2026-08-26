@@ -7,6 +7,7 @@ import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
 import { METHEMOGLOBINEMIA_SATURATION_GAP as SCENARIO } from '../../src/modules/toxicology/scenarios/methemoglobinemia-saturation-gap';
 import { CARBON_MONOXIDE_REASSURING_MONITOR } from '../../src/modules/toxicology/scenarios/carbon-monoxide-reassuring-monitor';
+import { ACETAMINOPHEN_CLOCK_AND_NOMOGRAM } from '../../src/modules/toxicology/scenarios/acetaminophen-clock-and-nomogram';
 
 describe('Toxicology module user-facing foundation', () => {
   const cockpitMarkup = (
@@ -40,6 +41,7 @@ describe('Toxicology module user-facing foundation', () => {
     onActiveCooling: () => {}, onDrugCard: () => {},
     onToxicologyMethemoglobinemiaResponse: () => {},
     onToxicologyCarbonMonoxideResponse: () => {},
+    onToxicologyAcetaminophenResponse: () => {},
   } satisfies ActionCockpitProps));
 
   it('renders a calm module index with shared navigation and the exact first lab', () => {
@@ -50,6 +52,8 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('Methemoglobinemia with a saturation gap');
     expect(markup).toContain('href="/toxicology/scenario/carbon-monoxide-reassuring-monitor"');
     expect(markup).toContain('Carbon monoxide with a reassuring monitor');
+    expect(markup).toContain('href="/toxicology/scenario/acetaminophen-clock-and-nomogram"');
+    expect(markup).toContain('Acetaminophen: the clock changes the meaning');
   });
 
   it('briefs the bounded poisoning rehearsal without dose or diagnostic claims', () => {
@@ -105,6 +109,31 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('Hidden carbon monoxide');
     expect(markup).toContain('A calm monitor can still hide a poisoned patient.');
     expect(markup).toContain('Connect exposure + patient');
+    expect(markup).not.toContain('<input');
+    expect(markup).not.toContain('<select');
+  });
+
+  it('prerenders and opens the acetaminophen lab on its calm clock-first tray', () => {
+    const page = renderToStaticMarkup(createElement(PrerenderedBody, {
+      path: '/toxicology/scenario/acetaminophen-clock-and-nomogram',
+    }));
+    expect(page).toContain('<h1>Acetaminophen: the clock changes the meaning</h1>');
+    expect(page).toContain('nomogram-applicability boundary');
+    expect(crisisResponseAvailability(ACETAMINOPHEN_CLOCK_AND_NOMOGRAM, []))
+      .toMatchObject({ hasToxicologyAcetaminophenResponse: true });
+    expect(crisisResponseAvailability({ ...ACETAMINOPHEN_CLOCK_AND_NOMOGRAM,
+      metadata: { ...ACETAMINOPHEN_CLOCK_AND_NOMOGRAM.metadata, id: 'acetaminophen-clone' } }, []))
+      .toMatchObject({ hasToxicologyAcetaminophenResponse: false });
+    const markup = cockpitMarkup(ACETAMINOPHEN_CLOCK_AND_NOMOGRAM, {
+      toxicologyAcetaminophenAssessment: {
+        trajectoryAtTick: null, recognitionAtTick: null, supportAtTick: null,
+        evidenceAtTick: null, reassessmentAtTick: null, handoffAtTick: null,
+      },
+    });
+    expect(markup).toContain('Acetaminophen clock');
+    expect(markup).toContain('The clock gives the number its meaning.');
+    expect(markup).toContain('Connect product + clock');
+    expect(markup).not.toMatch(/mg\/kg|automatic stop/i);
     expect(markup).not.toContain('<input');
     expect(markup).not.toContain('<select');
   });

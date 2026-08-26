@@ -1185,6 +1185,11 @@ export interface ActionCockpitProps {
       readonly supportAtTick: number | null; readonly severityAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly toxicologyAcetaminophenAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2029,6 +2034,14 @@ export interface ActionCockpitProps {
       | 'record-toxicology-carbon-monoxide-selected-patient-hyperbaric-consultation-and-strict-reassessment'
       | 'handoff-toxicology-carbon-monoxide-delayed-neurologic-cardiac-exposure-followup-and-active-risk',
   ) => void;
+  readonly onToxicologyAcetaminophenResponse?: (
+    action: 'reconcile-toxicology-acetaminophen-product-ingestion-window-clock-symptoms-and-whole-patient'
+      | 'recognize-toxicology-acetaminophen-acute-timed-pattern-and-nomogram-applicability-boundary'
+      | 'activate-toxicology-acetaminophen-poison-center-emergency-monitoring-and-nonjudgmental-safety-ownership'
+      | 'review-toxicology-acetaminophen-supplied-timed-level-nomogram-position-liver-and-coingestion-boundary'
+      | 'record-toxicology-acetaminophen-bounded-qualified-team-acetylcysteine-intent-and-strict-later-review'
+      | 'handoff-toxicology-acetaminophen-serial-level-liver-failure-stopping-safety-and-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2534,6 +2547,10 @@ export function crisisResponseAvailability(
       scenario.metadata.id === 'carbon-monoxide-reassuring-monitor'
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'carbon-monoxide-reassuring-monitor-transition')
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'carbon-monoxide-reassuring-monitor-transition-boundary'),
+    hasToxicologyAcetaminophenResponse:
+      scenario.metadata.id === 'acetaminophen-clock-and-nomogram'
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acetaminophen-clock-and-nomogram-transition')
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acetaminophen-clock-and-nomogram-transition-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2735,6 +2752,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'autonomic-dysreflexia-authored-trigger-transition')
       || (event.type === 'narrative' && event.target === 'methemoglobinemia-saturation-gap-transition')
       || (event.type === 'narrative' && event.target === 'carbon-monoxide-reassuring-monitor-transition')
+      || (event.type === 'narrative' && event.target === 'acetaminophen-clock-and-nomogram-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2824,6 +2842,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeurologyAutonomicDysreflexiaResponse,
     hasToxicologyMethemoglobinemiaResponse,
     hasToxicologyCarbonMonoxideResponse,
+    hasToxicologyAcetaminophenResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2940,8 +2959,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasToxicologyMethemoglobinemiaResponse
     || hasToxicologyCarbonMonoxideResponse
+    || hasToxicologyAcetaminophenResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasToxicologyCarbonMonoxideResponse
+  const responseTray = hasToxicologyAcetaminophenResponse
+    ? { id: 'crisis', label: 'Acetaminophen clock' } as const
+    : hasToxicologyCarbonMonoxideResponse
     ? { id: 'crisis', label: 'Hidden carbon monoxide' } as const
     : hasToxicologyMethemoglobinemiaResponse
     ? { id: 'crisis', label: 'Dyshemoglobin pattern' } as const
@@ -4094,6 +4116,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <ToxicologyCarbonMonoxideTray
                 assessment={props.resuscitation.toxicologyCarbonMonoxideAssessment}
                 onAction={props.onToxicologyCarbonMonoxideResponse ?? (() => {})} />
+            )}
+            {hasToxicologyAcetaminophenResponse && (
+              <ToxicologyAcetaminophenTray
+                assessment={props.resuscitation.toxicologyAcetaminophenAssessment}
+                onAction={props.onToxicologyAcetaminophenResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -10475,6 +10502,38 @@ function ToxicologyCarbonMonoxideTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {severity && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-carbon-monoxide-selected-patient-hyperbaric-consultation-and-strict-reassessment')}>Consult + reassess</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-carbon-monoxide-delayed-neurologic-cardiac-exposure-followup-and-active-risk')}>Hand off what can emerge</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function ToxicologyAcetaminophenTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyAcetaminophenAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onToxicologyAcetaminophenResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const evidence = assessment?.evidenceAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="toxicology-acetaminophen-early-title">
+      <div id="toxicology-acetaminophen-early-title" className="syringe__name">The clock gives the number its meaning.</div>
+      <p className="syringe__remaining">Begin with product, ingestion window, exact clock, symptoms, reported-quantity limits, and whole person.</p>
+      <div className="crisis-drug__actions">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-toxicology-acetaminophen-product-ingestion-window-clock-symptoms-and-whole-patient')}>Connect product + clock</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-toxicology-acetaminophen-acute-timed-pattern-and-nomogram-applicability-boundary')}>Set the nomogram boundary</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-toxicology-acetaminophen-poison-center-emergency-monitoring-and-nonjudgmental-safety-ownership')}>Bring in toxicology + safety</Button>}
+        {support && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-toxicology-acetaminophen-supplied-timed-level-nomogram-position-liver-and-coingestion-boundary')}>Review the timed evidence</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="toxicology-acetaminophen-later-title">
+      <div id="toxicology-acetaminophen-later-title" className="syringe__name">A finished clock is not a stopping rule.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Serial level, liver and failure markers, stopping criteria, safety, disposition, and outcome uncertainty handed off.' : reassessment ? 'The fixed later level and labs are reassuring. They do not create an automatic stop or prove treatment effect.' : evidence ? 'The supplied timed level and nomogram position are visible. Record bounded intent after time passes.' : support ? 'Qualified toxicology, emergency, monitoring, and safety ownership are active. Review the supplied evidence.' : 'Complete recognition and immediate ownership before antidote review.'}</p>
+      <div className="crisis-drug__actions">
+        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-acetaminophen-bounded-qualified-team-acetylcysteine-intent-and-strict-later-review')}>Record intent + review</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-acetaminophen-serial-level-liver-failure-stopping-safety-and-active-risk')}>Hand off what stays open</Button>}
       </div>
     </section>
   </>;

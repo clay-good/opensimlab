@@ -1683,6 +1683,17 @@
         "GB"
       ],
       "fidelityClass": "state_transition"
+    },
+    {
+      "scenarioId": "acetaminophen-clock-and-nomogram",
+      "contentVersion": "0.1.0",
+      "moduleId": "toxicology",
+      "maturity": "draft",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition"
     }
   ]
 }

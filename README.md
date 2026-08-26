@@ -93,6 +93,12 @@ or medical-toxicology ownership, timed co-oximetry context, neurologic and cardi
 selected-patient hyperbaric consultation, elapsed reassessment, delayed neurologic risk, and follow-up
 visible without exposing an oxygen setting, universal COHb threshold, hyperbaric eligibility or
 treatment, chamber or transport choice, procedure, disposition, or outcome control.
+Its third lab, acetaminophen where the clock changes the meaning, connects a witnessed acute
+immediate-release ingestion, exact 6-hour clock, supplied 132 µg/mL level and qualified nomogram
+position, baseline liver evidence, poison-center and compassionate safety ownership, bounded
+qualified-team acetylcysteine intent, a strict elapsed later report, individualized stopping review,
+and active-risk handoff. It exposes no learner nomogram calculator, drug, dose, route, infusion,
+automatic course-length stop, safety disposition, procedure, prognosis, or outcome control.
 
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage

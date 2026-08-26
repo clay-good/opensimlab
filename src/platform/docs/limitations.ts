@@ -4247,6 +4247,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use direct clinical evidence, verified timed co-oximetry, serial neurologic and cardiac assessment, source control, current specialist guidance, and patient-specific treatment and follow-up planning.',
     briefIn: ['carbon-monoxide-reassuring-monitor'],
   },
+  {
+    id: 'acetaminophen-exposure-clock-level-nomogram-position-labs-and-response-are-authored',
+    headline: 'The product, ingestion clock, concentration, nomogram position, laboratory evidence, qualified care, and later report are authored.',
+    simplification: 'Fixed reports and canonical monitor states stand in for history, examination, product reconciliation, timing verification, monitoring, sampling, nomogram plotting, qualified antidote care, safety assessment, and reassessment.',
+    whereItMisleads: 'Treating the fictional quantity, 6-hour level, supplied plot, laboratory values, or later improvement as learner evidence, a universal treatment rule, treatment effect, automatic stopping decision, or predicted course.',
+    correctUnderstanding: 'Real care requires verified product and timing, direct assessment, poison-center or medical-toxicology guidance, appropriate serial testing, individualized treatment, stopping review, and compassionate safety care.',
+    briefIn: ['acetaminophen-clock-and-nomogram'],
+  },
+  {
+    id: 'acetaminophen-controls-reconcile-recognize-support-review-intent-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, nomogram-boundary recognition, qualified ownership, evidence review, bounded antidote intent with reassessment, and handoff only.',
+    simplification: 'Six actions stand in for emergency, toxicology, poison-center, laboratory, pharmacy, nursing, liver-failure, transplant, mental-health, safety, surveillance, and handoff work.',
+    whereItMisleads: 'Equating button order with history, examination, nomogram calculation, diagnosis, decontamination, prescribing, infusion delivery, stopping, safety disposition, or competence.',
+    correctUnderstanding: 'Actual care requires the patient, verified timing and serial findings, trained teams, current poison-center and local protocols, individualized treatment, compassionate safety assessment, and continuous reassessment.',
+    briefIn: ['acetaminophen-clock-and-nomogram'],
+  },
+  {
+    id: 'no-live-ingestion-assessment-nomogram-calculation-antidote-dose-delivery-stopping-or-outcome',
+    headline: 'The lab does not assess a real ingestion, calculate a nomogram, diagnose, prescribe or deliver an antidote, decide stopping, determine safety, or report outcome.',
+    simplification: 'No live history, examination, monitoring, blood sample, laboratory or other test, nomogram plotting, diagnosis, charcoal, acetylcysteine product, dose, route, preparation, access or infusion, adverse-reaction management, dialysis, transplant decision, safety disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Using a pre-4-hour, unknown-time, repeated, extended-release, delayed-absorption, coingested, or late exposure as if it fit this fixture; copying fictional values into care; stopping by elapsed time alone; or reading completion as competence.',
+    correctUnderstanding: 'Use verified product, timing, serial acetaminophen and liver evidence, poison-center or medical-toxicology guidance, patient-specific treatment and stopping criteria, liver-failure escalation, and nonjudgmental safety care.',
+    briefIn: ['acetaminophen-clock-and-nomogram'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

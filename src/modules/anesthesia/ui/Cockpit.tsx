@@ -1073,6 +1073,9 @@ export function Cockpit({
           onToxicologyCarbonMonoxideResponse={(action) => session.act({
             type: 'carbon-monoxide-reassuring-monitor-response', payload: { action },
           })}
+          onToxicologyAcetaminophenResponse={(action) => session.act({
+            type: 'acetaminophen-clock-and-nomogram-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

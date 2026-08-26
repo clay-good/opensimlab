@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Toxicology carbon-monoxide state has protocol version 149', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(149);
+  it('Scenario: Toxicology acetaminophen state has protocol version 150', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(150);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

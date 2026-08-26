@@ -5358,6 +5358,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-toxicology-acetaminophen-product-ingestion-window-clock-symptoms-and-whole-patient',
+      'recognize-toxicology-acetaminophen-acute-timed-pattern-and-nomogram-applicability-boundary',
+      'activate-toxicology-acetaminophen-poison-center-emergency-monitoring-and-nonjudgmental-safety-ownership',
+      'review-toxicology-acetaminophen-supplied-timed-level-nomogram-position-liver-and-coingestion-boundary',
+      'record-toxicology-acetaminophen-bounded-qualified-team-acetylcysteine-intent-and-strict-later-review',
+      'handoff-toxicology-acetaminophen-serial-level-liver-failure-stopping-safety-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'acetaminophen-clock-and-nomogram'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acetaminophen-clock-and-nomogram-transition')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acetaminophen-clock-and-nomogram-transition-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Toxicology acetaminophen lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'Product, ingestion window, clock, symptoms, reported-quantity limits, and the whole patient were reconciled.'],
+        ['pattern-recognized', 'The timed acute-ingestion pattern and nomogram applicability boundary were recognized without dose or diagnostic closure.'],
+        ['support-activated', 'Poison-center, emergency, monitoring, and nonjudgmental safety ownership were activated.'],
+        ['timed-evidence-reviewed', 'The supplied timed level, qualified nomogram position, liver markers, and coingestion boundary were reviewed without learner calculation.'],
+        ['antidote-intent-and-reassessment-recorded', 'Bounded qualified-team acetylcysteine intent and the elapsed fixed report were recorded without dosing, delivery, causal, or automatic-stop claims.'],
+        ['active-risk-handoff-recorded', 'Serial level and liver evidence, failure markers, stopping criteria, safety, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^toxicology-acetaminophen-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^toxicology-acetaminophen-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

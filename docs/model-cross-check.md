@@ -253,6 +253,13 @@ Recorded here rather than silently carried:
   heart rate 92/min, respiratory rate 18/min, conventional SpO2 100%, and COHb 7%. These are teaching
   calibrations grounded in current CDC and ACEP guidance, not a CO uptake, elimination, tissue-
   oxygen-delivery, neurologic-injury, hyperbaric-benefit, or individualized response model.
+  Acetaminophen where the clock changes the meaning uses fixed canonical presentation and elapsed-
+  review states: an authored 6-hour level of 132 µg/mL with a supplied qualified above-treatment-line
+  and below-high-risk-line position, baseline AST 24 U/L, ALT 21 U/L and INR 1.1, then a fixed
+  22-hour report with acetaminophen below 10 µg/mL, AST 27 U/L, ALT 24 U/L and INR 1.2. These are
+  teaching calibrations grounded in current consensus and ACMT guidance, not an absorption,
+  metabolism, nomogram-calculation, liver-injury, acetylcysteine-pharmacology, automatic-stopping, or
+  individualized-response model.
 
 ## Concentration-time checks, 2026-08-23
 

@@ -2326,6 +2326,22 @@ and transport risk. A strict elapsed fixed clinical and COHb response precedes a
 neurologic, cardiac, exposure, follow-up, disposition, and active-risk handoff. The canonical state is
 a teaching fixture, not a CO uptake, elimination, tissue-oxygen, or individualized-treatment model.
 
+### Wave F toxicology slice 3: acetaminophen where the clock changes the meaning
+
+The third Toxicology lab owns the timed acute immediate-release acetaminophen pathway rather than
+forcing unknown-time, repeated, extended-release, delayed-absorption, coingested, late, or established
+liver-injury presentations through one nomogram. The learner reconciles product, witnessed ingestion
+window, exact 6-hour clock, nausea, uncertain reported quantity, stable whole-patient state, supplied
+acetaminophen 132 µg/mL, and baseline liver, coagulation, renal, and glucose evidence; recognizes the
+qualified nomogram-applicability boundary; activates poison-center or medical-toxicology, emergency,
+laboratory, monitoring, and compassionate safety ownership; and reviews the supplied above-treatment-
+line, below-high-risk-line position without plotting. The only antidote action is bounded qualified-
+team acetylcysteine intent without product, dose, route, preparation, access, infusion, or delivery.
+A strict elapsed fixed 22-hour report precedes another elapsed serial-level, liver-failure, stopping,
+safety, disposition, and active-risk handoff. The clock does not create an automatic stop, and the
+canonical state is not an absorption, metabolism, liver-injury, pharmacology, or individualized-
+response model.
+
 #### Hematology and oncology: 11
 
 Neutropenic fever; tumor-lysis syndrome; hyperleukocytosis pattern; sickle-cell acute chest syndrome;

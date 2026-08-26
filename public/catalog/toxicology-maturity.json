@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "toxicology",
-  "recordCount": 2,
+  "recordCount": 3,
   "records": [
     {
       "recordId": "scenario:methemoglobinemia-saturation-gap@0.1.0",
@@ -23,6 +23,17 @@
       "evidence": [
         "/catalog/toxicology-completion-audit.json#carbon-monoxide-reassuring-monitor@0.1.0",
         "/catalog/toxicology-quality-audit.json#carbon-monoxide-reassuring-monitor@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:acetaminophen-clock-and-nomogram@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "acetaminophen-clock-and-nomogram",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/toxicology-completion-audit.json#acetaminophen-clock-and-nomogram@0.1.0",
+        "/catalog/toxicology-quality-audit.json#acetaminophen-clock-and-nomogram@0.1.0"
       ]
     }
   ]

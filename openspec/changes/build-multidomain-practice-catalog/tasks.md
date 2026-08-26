@@ -568,6 +568,17 @@ credited toward the catalog until every item in the completion contract passes.
     learner history, examination, monitoring or test acquisition, diagnosis, oxygen setting, drug,
     hyperbaric eligibility or treatment, chamber or transport selection, procedure, disposition,
     prognosis, or outcome control exists.
+  - [x] Toxicology slice 3/15 adds acetaminophen where the clock changes the meaning. The learner
+    reconciles a witnessed acute immediate-release ingestion, exact 6-hour clock, nausea, uncertain
+    reported quantity, stable whole-patient state, supplied acetaminophen 132 µg/mL, qualified
+    above-treatment-line plot, and baseline liver evidence; recognizes which exposure patterns permit
+    or defeat acute nomogram use; activates poison-center or medical-toxicology, emergency, laboratory,
+    monitoring, and compassionate safety ownership; records bounded qualified-team acetylcysteine
+    intent; then reviews a strict elapsed fixed 22-hour report before another elapsed serial-level,
+    liver-failure, individualized-stopping, safety, disposition, and active-risk handoff. No learner
+    history, examination, monitoring or test acquisition, nomogram calculation, diagnosis,
+    decontamination, drug, dose, route, preparation, access, infusion, adverse-reaction management,
+    automatic stop, procedure, safety disposition, prognosis, or outcome control exists.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.
 - [ ] After every wave, verify the exact cumulative count, distinctness, capability reuse, path and

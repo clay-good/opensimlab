@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "toxicology",
-  "scenarioCount": 2,
+  "scenarioCount": 3,
   "playableScenarioCount": 0,
   "scenarios": [
     {
@@ -71,6 +71,42 @@
           "status": "missing",
           "evidence": [
             "No version-bound state-space-verification record exists for carbon-monoxide-reassuring-monitor 0.1.0."
+          ]
+        }
+      ],
+      "playable": false
+    },
+    {
+      "scenarioId": "acetaminophen-clock-and-nomogram",
+      "contentVersion": "0.1.0",
+      "completionComplete": false,
+      "qualityRecords": [
+        {
+          "kind": "training-value",
+          "status": "missing",
+          "evidence": [
+            "No version-bound training-value record exists for acetaminophen-clock-and-nomogram 0.1.0."
+          ]
+        },
+        {
+          "kind": "authored-defaults",
+          "status": "missing",
+          "evidence": [
+            "No version-bound authored-defaults record exists for acetaminophen-clock-and-nomogram 0.1.0."
+          ]
+        },
+        {
+          "kind": "scenario-hazard",
+          "status": "missing",
+          "evidence": [
+            "No version-bound scenario-hazard record exists for acetaminophen-clock-and-nomogram 0.1.0."
+          ]
+        },
+        {
+          "kind": "state-space-verification",
+          "status": "missing",
+          "evidence": [
+            "No version-bound state-space-verification record exists for acetaminophen-clock-and-nomogram 0.1.0."
           ]
         }
       ],

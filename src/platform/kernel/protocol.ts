@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 149 reports Toxicology carbon-monoxide state. */
-export const WORKER_PROTOCOL_VERSION = 149;
+/** Bumped whenever the message shape changes incompatibly. Version 150 reports Toxicology acetaminophen state. */
+export const WORKER_PROTOCOL_VERSION = 150;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2284,6 +2284,24 @@ export interface EquipmentSnapshot {
       readonly treatmentEffectProven: false; readonly durableNeurologicRecoveryProven: false;
       readonly delayedNeurologicComplicationsExcluded: false; readonly cardiacComplicationsExcluded: false;
       readonly coexposureExcluded: false; readonly dispositionDetermined: false;
+      readonly prognosisPredicted: false; readonly outcomePredicted: false;
+    };
+    readonly toxicologyAcetaminophenAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly timedAcuteExposureAuthored: true; readonly nomogramApplicabilityRecognized: boolean;
+      readonly qualifiedSupportActive: boolean; readonly timedEvidenceReviewed: boolean;
+      readonly qualifiedAntidoteIntentRecorded: boolean; readonly responseStateAuthored: boolean;
+      readonly patientHistoryTakenByLearner: false; readonly patientExaminedByLearner: false;
+      readonly monitoringAcquiredByLearner: false; readonly bloodSampleAcquiredByLearner: false;
+      readonly nomogramPlottedByLearner: false; readonly diagnosisMadeByLearner: false;
+      readonly decontaminationSelectedByLearner: false; readonly drugSelectedByLearner: false;
+      readonly doseSelectedByLearner: false; readonly routeSelectedByLearner: false;
+      readonly treatmentDeliveredByLearner: false; readonly stoppingDeterminedByLearner: false;
+      readonly treatmentEffectProven: false; readonly delayedAbsorptionExcluded: false;
+      readonly liverInjuryExcluded: false; readonly coingestionExcluded: false;
+      readonly safetyDispositionDetermined: false; readonly dispositionDetermined: false;
       readonly prognosisPredicted: false; readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
