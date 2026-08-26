@@ -5310,6 +5310,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-toxicology-methemoglobinemia-exposure-cyanosis-symptoms-pulse-ox-arterial-oxygen-and-whole-patient',
+      'recognize-toxicology-methemoglobinemia-dyshemoglobin-pattern-without-single-number-or-diagnostic-closure',
+      'activate-toxicology-methemoglobinemia-support-monitoring-source-control-poison-center-and-critical-care-ownership',
+      'review-toxicology-methemoglobinemia-supplied-cooximetry-and-methylene-blue-hazard-boundary',
+      'record-toxicology-methemoglobinemia-bounded-qualified-team-antidote-intent-and-strict-reassessment',
+      'handoff-toxicology-methemoglobinemia-exposure-rebound-hemolysis-serotonin-rescue-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'methemoglobinemia-saturation-gap'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methemoglobinemia-saturation-gap-transition')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methemoglobinemia-saturation-gap-transition-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Toxicology methemoglobinemia lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'Exposure, cyanosis, symptoms, pulse oximetry, arterial oxygen evidence, and the whole patient were reconciled.'],
+        ['pattern-recognized', 'The urgent dyshemoglobin pattern was recognized while single-number diagnosis and alternative closure remained open.'],
+        ['support-activated', 'Support, source control, continuous monitoring, toxicology consultation, and critical-care ownership were activated.'],
+        ['cooximetry-and-hazards-reviewed', 'Supplied co-oximetry and the G6PD and serotonergic methylene-blue hazards were reviewed without determining eligibility.'],
+        ['antidote-intent-and-reassessment-recorded', 'Bounded qualified-team antidote intent and the elapsed fixed response were recorded without dose, delivery, or causal claims.'],
+        ['active-risk-handoff-recorded', 'Exposure, serial co-oximetry, rebound, hemolysis, serotonin, rescue, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^toxicology-methemoglobinemia-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^toxicology-methemoglobinemia-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

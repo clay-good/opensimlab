@@ -2295,6 +2295,22 @@ anticholinergic syndrome; serotonin syndrome; sympathomimetic toxicity; toxic al
 carbon-monoxide exposure; local-anesthetic systemic toxicity; methemoglobinemia with a saturation
 gap, exposure history, chocolate-brown blood observation, and bounded antidote intent.
 
+### Wave F toxicology slice 1: methemoglobinemia with a saturation gap
+
+The first Toxicology lab owns oxidant-exposure dyshemoglobin recognition rather than duplicating
+pulse-oximeter motion artifact, primary pulmonary hypoxemia, carbon-monoxide poisoning, shock, or
+routine oxygen titration. The learner reconciles documented benzocaine exposure, cyanosis, symptoms,
+pulse-coherent SpO2 85%, high supplied PaO2, chocolate-brown blood, and whole-patient state; recognizes
+an urgent suspected methemoglobinemia pattern without treating one number as diagnosis; activates
+continued qualified oxygen and monitoring, source cessation, poison-center or medical-toxicology
+consultation, and critical-care ownership; then reviews supplied multiwavelength co-oximetry with
+G6PD-deficiency hemolysis and serotonergic-drug hazards explicit. The only antidote action is bounded
+qualified-team methylene-blue intent without a product, dose, route, preparation, access, infusion,
+eligibility result, or delivery. A strict elapsed fixed clinical and co-oximetry response precedes
+another elapsed exposure, rebound, hemolysis, serotonin-syndrome, rescue, disposition, and active-risk
+handoff. The canonical state is a teaching fixture, not a dyshemoglobin chemistry or individualized
+treatment-response model.
+
 #### Hematology and oncology: 11
 
 Neutropenic fever; tumor-lysis syndrome; hyperleukocytosis pattern; sickle-cell acute chest syndrome;

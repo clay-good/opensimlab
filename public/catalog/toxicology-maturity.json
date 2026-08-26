@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "moduleId": "toxicology",
+  "recordCount": 1,
+  "records": [
+    {
+      "recordId": "scenario:methemoglobinemia-saturation-gap@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "methemoglobinemia-saturation-gap",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/toxicology-completion-audit.json#methemoglobinemia-saturation-gap@0.1.0",
+        "/catalog/toxicology-quality-audit.json#methemoglobinemia-saturation-gap@0.1.0"
+      ]
+    }
+  ]
+}

@@ -1175,6 +1175,11 @@ export interface ActionCockpitProps {
       readonly supportAtTick: number | null; readonly triggerAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly toxicologyMethemoglobinemiaAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly hazardsAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2003,6 +2008,14 @@ export interface ActionCockpitProps {
       | 'reassess-neurology-autonomic-dysreflexia-strict-pressure-pulse-symptom-and-trigger-transition'
       | 'handoff-neurology-autonomic-dysreflexia-baseline-triggers-recurrence-complications-prevention-and-active-risk',
   ) => void;
+  readonly onToxicologyMethemoglobinemiaResponse?: (
+    action: 'reconcile-toxicology-methemoglobinemia-exposure-cyanosis-symptoms-pulse-ox-arterial-oxygen-and-whole-patient'
+      | 'recognize-toxicology-methemoglobinemia-dyshemoglobin-pattern-without-single-number-or-diagnostic-closure'
+      | 'activate-toxicology-methemoglobinemia-support-monitoring-source-control-poison-center-and-critical-care-ownership'
+      | 'review-toxicology-methemoglobinemia-supplied-cooximetry-and-methylene-blue-hazard-boundary'
+      | 'record-toxicology-methemoglobinemia-bounded-qualified-team-antidote-intent-and-strict-reassessment'
+      | 'handoff-toxicology-methemoglobinemia-exposure-rebound-hemolysis-serotonin-rescue-and-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2500,6 +2513,10 @@ export function crisisResponseAvailability(
       scenario.metadata.id === 'autonomic-dysreflexia-authored-trigger'
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'autonomic-dysreflexia-authored-trigger-transition')
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'autonomic-dysreflexia-authored-trigger-transition-boundary'),
+    hasToxicologyMethemoglobinemiaResponse:
+      scenario.metadata.id === 'methemoglobinemia-saturation-gap'
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methemoglobinemia-saturation-gap-transition')
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methemoglobinemia-saturation-gap-transition-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2699,6 +2716,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'metastatic-spinal-cord-compression-reassessment')
       || (event.type === 'narrative' && event.target === 'acute-delirium-reversible-causes-reassessment')
       || (event.type === 'narrative' && event.target === 'autonomic-dysreflexia-authored-trigger-transition')
+      || (event.type === 'narrative' && event.target === 'methemoglobinemia-saturation-gap-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2786,6 +2804,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeurologyMsccResponse,
     hasNeurologyDeliriumResponse,
     hasNeurologyAutonomicDysreflexiaResponse,
+    hasToxicologyMethemoglobinemiaResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2900,8 +2919,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasSevereAcidemiaResponse || hasIcuHiddenDeteriorationHandoffResponse
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
-    || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasNeurologyAutonomicDysreflexiaResponse
+    || hasSepticShockResuscitationResponse || hasToxicologyMethemoglobinemiaResponse
+    || hasAnyNonAcuteAssessment;
+  const responseTray = hasToxicologyMethemoglobinemiaResponse
+    ? { id: 'crisis', label: 'Dyshemoglobin pattern' } as const
+    : hasNeurologyAutonomicDysreflexiaResponse
     ? { id: 'crisis', label: 'Autonomic dysreflexia' } as const
     : hasNeurologyDeliriumResponse
     ? { id: 'crisis', label: 'Acute delirium' } as const
@@ -4040,6 +4062,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <NeurologyAutonomicDysreflexiaTray
                 assessment={props.resuscitation.neurologyAutonomicDysreflexiaAssessment}
                 onAction={props.onNeurologyAutonomicDysreflexiaResponse ?? (() => {})} />
+            )}
+            {hasToxicologyMethemoglobinemiaResponse && (
+              <ToxicologyMethemoglobinemiaTray
+                assessment={props.resuscitation.toxicologyMethemoglobinemiaAssessment}
+                onAction={props.onToxicologyMethemoglobinemiaResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -10357,6 +10384,38 @@ function NeurologyAutonomicDysreflexiaTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {trigger && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('reassess-neurology-autonomic-dysreflexia-strict-pressure-pulse-symptom-and-trigger-transition')}>Review the strict response</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-autonomic-dysreflexia-baseline-triggers-recurrence-complications-prevention-and-active-risk')}>Hand off what could return</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function ToxicologyMethemoglobinemiaTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyMethemoglobinemiaAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onToxicologyMethemoglobinemiaResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const hazards = assessment?.hazardsAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="toxicology-methemoglobinemia-early-title">
+      <div id="toxicology-methemoglobinemia-early-title" className="syringe__name">The numbers disagree. The patient matters.</div>
+      <p className="syringe__remaining">Begin with the exposure, cyanosis, symptoms, pulse trace, arterial oxygen evidence, and the whole person.</p>
+      <div className="crisis-drug__actions">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-toxicology-methemoglobinemia-exposure-cyanosis-symptoms-pulse-ox-arterial-oxygen-and-whole-patient')}>Connect the discordant clues</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-toxicology-methemoglobinemia-dyshemoglobin-pattern-without-single-number-or-diagnostic-closure')}>Recognize the urgent pattern</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-toxicology-methemoglobinemia-support-monitoring-source-control-poison-center-and-critical-care-ownership')}>Support + call toxicology</Button>}
+        {support && !hazards && <Button className="crisis-drug__action" onClick={() => onAction('review-toxicology-methemoglobinemia-supplied-cooximetry-and-methylene-blue-hazard-boundary')}>Review co-ox + hazards</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="toxicology-methemoglobinemia-later-title">
+      <div id="toxicology-methemoglobinemia-later-title" className="syringe__name">Better is a trend, not an all-clear.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Exposure, serial co-oximetry, rebound, hemolysis, serotonin, rescue, and outcome uncertainty handed off.' : reassessment ? 'Symptoms and co-oximetry improved in the fixed report. Rebound and treatment hazards remain open.' : hazards ? 'The co-ox result and methylene-blue hazards are visible. Record bounded intent after time passes.' : support ? 'Support and qualified ownership are active. Review the supplied co-oximetry and hazards.' : 'Complete recognition and immediate support before antidote review.'}</p>
+      <div className="crisis-drug__actions">
+        {hazards && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-methemoglobinemia-bounded-qualified-team-antidote-intent-and-strict-reassessment')}>Record intent + reassess</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-methemoglobinemia-exposure-rebound-hemolysis-serotonin-rescue-and-active-risk')}>Hand off what stays open</Button>}
       </div>
     </section>
   </>;

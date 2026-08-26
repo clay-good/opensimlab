@@ -56,7 +56,7 @@ export interface CockpitProps {
   /** Hand the session back to the learner, wherever the demonstration got to. */
   readonly onTakeControls?: (() => void) | undefined;
   readonly onEnd: () => void;
-  readonly moduleId?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology';
+  readonly moduleId?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology';
 }
 
 export function depthConfidenceFor(
@@ -1066,6 +1066,9 @@ export function Cockpit({
           })}
           onNeurologyAutonomicDysreflexiaResponse={(action) => session.act({
             type: 'autonomic-dysreflexia-authored-trigger-response', payload: { action },
+          })}
+          onToxicologyMethemoglobinemiaResponse={(action) => session.act({
+            type: 'methemoglobinemia-saturation-gap-response', payload: { action },
           })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },

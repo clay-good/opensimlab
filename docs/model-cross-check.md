@@ -243,6 +243,11 @@ Recorded here rather than silently carried:
   calibrations, not a validated neurogenic-autonomic response model, and do not validate lesion
   classification, diagnosis, catheter or bowel care, medication effects, individualized response,
   durable resolution, recurrence, complications, prognosis, or outcome.
+  Methemoglobinemia with a saturation gap uses fixed canonical presentation and elapsed-response
+  states: pulse-coherent SpO2 85%, PaO2 238 mmHg, calculated saturation 99%, co-oximetry
+  methemoglobin 32%, then clearer mentation, heart rate 98/min, and methemoglobin 8%. These are
+  teaching calibrations grounded in toxicology guidance, not a dyshemoglobin chemistry, tissue-
+  oxygen-delivery, methylene-blue kinetic, contraindication, or individualized response model.
 
 ## Concentration-time checks, 2026-08-23
 

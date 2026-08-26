@@ -22,9 +22,13 @@ describe('scenario report contract', () => {
     const catalog = JSON.parse(readFileSync(
       join(process.cwd(), 'workers/reports/src/report-catalog.generated.json'), 'utf8',
     )) as { scenarios: { moduleId: string; scenarioId: string; contentVersion: string }[] };
-    expect(catalog.scenarios).toHaveLength(151);
+    expect(catalog.scenarios).toHaveLength(152);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(151);
+      .toBe(152);
+    expect(catalog.scenarios).toContainEqual(expect.objectContaining({
+      moduleId: 'toxicology', scenarioId: 'methemoglobinemia-saturation-gap',
+      contentVersion: '0.1.0',
+    }));
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'neurology', scenarioId: 'basilar-artery-occlusion-escalation',
       contentVersion: '0.1.0',

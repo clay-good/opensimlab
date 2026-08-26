@@ -78,6 +78,15 @@ screening-rule calculation, abuse or perpetrator diagnosis, confrontation, refer
 submission, jurisdiction selection, custody action, procedure, treatment, disposition, or outcome
 controls.
 
+Wave F Toxicology is now live at `/toxicology`. Its first bounded lab, methemoglobinemia with a
+saturation gap, connects documented benzocaine exposure, cyanosis, symptoms, pulse-coherent SpO2
+85%, PaO2 238 mmHg, chocolate-brown blood, and supplied co-oximetry methemoglobin 32%; activates
+qualified support, source control, poison-center or medical-toxicology consultation, and critical-
+care ownership; keeps G6PD-deficiency hemolysis and serotonergic-drug hazards visible; records only
+bounded qualified-team methylene-blue intent; and requires elapsed reassessment and active-risk
+handoff. It exposes no learner test acquisition, gas calculation, diagnosis, oxygen setting, drug,
+dose, route, infusion, treatment delivery, rescue procedure, disposition, or outcome control.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

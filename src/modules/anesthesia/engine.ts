@@ -380,6 +380,10 @@ const NEUROLOGY_AUTONOMIC_DYSREFLEXIA_BLOCKED_ACTION_TYPES = new Set([
   ...NEUROLOGY_DELIRIUM_BLOCKED_ACTION_TYPES,
   'acute-delirium-reversible-causes-response',
 ]);
+const TOXICOLOGY_METHEMOGLOBINEMIA_BLOCKED_ACTION_TYPES = new Set([
+  ...NEUROLOGY_AUTONOMIC_DYSREFLEXIA_BLOCKED_ACTION_TYPES,
+  'autonomic-dysreflexia-authored-trigger-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1217,6 +1221,12 @@ export class AnesthesiaEngine {
   private neurologyAutonomicDysreflexiaTriggerAtTick: number | null = null;
   private neurologyAutonomicDysreflexiaReassessmentAtTick: number | null = null;
   private neurologyAutonomicDysreflexiaHandoffAtTick: number | null = null;
+  private toxicologyMethemoglobinemiaTrajectoryAtTick: number | null = null;
+  private toxicologyMethemoglobinemiaRecognitionAtTick: number | null = null;
+  private toxicologyMethemoglobinemiaSupportAtTick: number | null = null;
+  private toxicologyMethemoglobinemiaHazardsAtTick: number | null = null;
+  private toxicologyMethemoglobinemiaReassessmentAtTick: number | null = null;
+  private toxicologyMethemoglobinemiaHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1976,6 +1986,15 @@ export class AnesthesiaEngine {
       this.log('warning', 'assessment', `neurology-autonomic-dysreflexia-generic-action-refused-${this.currentTick}`,
         'This Neurology lesson exposes no generic examination, monitoring, catheter, bowel, fluid, '
         + 'drug, dose, route, access, oxygen, device, procedure, rhythm, crisis-injection, or adjacent-scenario '
+        + 'action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const toxicologyMethemoglobinemia = this.scenario.metadata.id === 'methemoglobinemia-saturation-gap'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methemoglobinemia-saturation-gap-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methemoglobinemia-saturation-gap-transition-boundary');
+    if (toxicologyMethemoglobinemia && TOXICOLOGY_METHEMOGLOBINEMIA_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `toxicology-methemoglobinemia-generic-action-refused-${this.currentTick}`,
+        'This Toxicology lesson exposes no generic examination, monitoring, blood-gas, co-oximetry, '
+        + 'oxygen, drug, dose, route, access, infusion, fluid, device, procedure, rescue, or adjacent-scenario '
         + 'action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
@@ -9983,6 +10002,32 @@ export class AnesthesiaEngine {
         if (this.neurologyAutonomicDysreflexiaHandoffAtTick !== null) { this.log('warning', 'assessment', `neurology-autonomic-dysreflexia-handoff-refused-${this.currentTick}`, 'The baseline, trigger, recurrence, complication, prevention, and active-risk handoff was already recorded.'); break; }
         this.neurologyAutonomicDysreflexiaHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `neurology-autonomic-dysreflexia-active-risk-handoff-recorded-${this.currentTick}`, 'Verified baseline, lesion, serial pressure and pulse, symptoms, known and possible additional triggers, recurrence surveillance, neurological and cardiopulmonary complications, medication and procedure boundaries, education, prevention, follow-up, disposition, prognosis, and outcome uncertainty were handed off.', { soleCauseProven: false, durableResolutionProven: false, complicationsExcluded: false, recurrenceExcluded: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
       }
+      case 'methemoglobinemia-saturation-gap-response': {
+        const response = typeof action.payload.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'methemoglobinemia-saturation-gap'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methemoglobinemia-saturation-gap-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methemoglobinemia-saturation-gap-transition-boundary');
+        const actions = ['reconcile-toxicology-methemoglobinemia-exposure-cyanosis-symptoms-pulse-ox-arterial-oxygen-and-whole-patient',
+          'recognize-toxicology-methemoglobinemia-dyshemoglobin-pattern-without-single-number-or-diagnostic-closure',
+          'activate-toxicology-methemoglobinemia-support-monitoring-source-control-poison-center-and-critical-care-ownership',
+          'review-toxicology-methemoglobinemia-supplied-cooximetry-and-methylene-blue-hazard-boundary',
+          'record-toxicology-methemoglobinemia-bounded-qualified-team-antidote-intent-and-strict-reassessment',
+          'handoff-toxicology-methemoglobinemia-exposure-rebound-hemolysis-serotonin-rescue-and-active-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `toxicology-methemoglobinemia-response-refused-${this.currentTick}`, supported ? 'The methemoglobinemia action was not listed. No supplied or injected text was retained.' : 'These methemoglobinemia choices are available only in the exact declared Toxicology lesson.'); break; }
+        if (response === actions[0]) { if (this.toxicologyMethemoglobinemiaTrajectoryAtTick !== null) { this.log('warning', 'assessment', `toxicology-methemoglobinemia-trajectory-refused-${this.currentTick}`, 'The supplied exposure, symptoms, saturation discordance, and whole-patient state were already reconciled.'); break; } this.toxicologyMethemoglobinemiaTrajectoryAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-methemoglobinemia-trajectory-reconciled-${this.currentTick}`, 'Documented topical benzocaine exposure, dusky appearance, dyspnea, headache, confusion, pulse-coherent SpO2 85%, and PaO2 238 mmHg despite supplied oxygen were connected. The learner did not take history, examine, acquire monitoring or blood, calculate, test, or diagnose.', { exposureAuthored: true, pulseOxPercent: 85, arterialOxygenMmHg: 238, patientHistoryTakenByLearner: false, patientExaminedByLearner: false }); break; }
+        if (this.toxicologyMethemoglobinemiaTrajectoryAtTick === null) { this.log('warning', 'assessment', `toxicology-methemoglobinemia-trajectory-order-refused-${this.currentTick}`, 'Reconcile the exposure, symptoms, pulse oximetry, arterial oxygen evidence, and whole patient first.'); break; }
+        if (response === actions[1]) { if (this.toxicologyMethemoglobinemiaRecognitionAtTick !== null) { this.log('warning', 'assessment', `toxicology-methemoglobinemia-recognition-refused-${this.currentTick}`, 'The urgent dyshemoglobin pattern and diagnostic boundary were already recognized.'); break; } this.toxicologyMethemoglobinemiaRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-methemoglobinemia-pattern-recognized-${this.currentTick}`, 'The exposure, cyanosis, symptoms, pulse-coherent low SpO2, preserved PaO2, and supplied blood observation support urgent suspected methemoglobinemia-pattern recognition. No single number diagnosed the patient; pulmonary, circulatory, hemolytic, inherited, medication, toxic, equipment, and other causes remain open.', { dyshemoglobinPatternRecognized: true, diagnosisMadeByLearner: false, alternativesClosed: false }); break; }
+        if (this.toxicologyMethemoglobinemiaRecognitionAtTick === null) { this.log('warning', 'assessment', `toxicology-methemoglobinemia-recognition-order-refused-${this.currentTick}`, 'Recognize the urgent dyshemoglobin pattern before support or co-oximetry review.'); break; }
+        if (response === actions[2]) { if (this.toxicologyMethemoglobinemiaSupportAtTick !== null) { this.log('warning', 'assessment', `toxicology-methemoglobinemia-support-refused-${this.currentTick}`, 'Support, source control, monitoring, and qualified ownership are already active.'); break; } this.toxicologyMethemoglobinemiaSupportAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-methemoglobinemia-support-activated-${this.currentTick}`, 'Continued qualified high-concentration oxygen, continuous monitoring, oxidant-source cessation, poison-center or medical-toxicology consultation, and critical-care ownership were recorded. The learner selected no oxygen setting, device, drug, access, infusion, procedure, or rescue.', { qualifiedSupportActive: true, oxygenSelectedByLearner: false, drugSelectedByLearner: false, procedurePerformedByLearner: false }); break; }
+        if (this.toxicologyMethemoglobinemiaSupportAtTick === null) { this.log('warning', 'assessment', `toxicology-methemoglobinemia-support-order-refused-${this.currentTick}`, 'Activate qualified support, source control, monitoring, and toxicology ownership before hazard review.'); break; }
+        if (response === actions[3]) { if (this.toxicologyMethemoglobinemiaHazardsAtTick !== null) { this.log('warning', 'assessment', `toxicology-methemoglobinemia-hazards-refused-${this.currentTick}`, 'The supplied co-oximetry and antidote hazards were already reviewed.'); break; } this.toxicologyMethemoglobinemiaHazardsAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-methemoglobinemia-cooximetry-and-hazards-reviewed-${this.currentTick}`, 'Supplied chocolate-brown blood, PaO2 238 mmHg, calculated saturation 99%, and multiwavelength co-oximetry methemoglobin 32% were integrated. G6PD-deficiency hemolysis and serotonergic-drug or opioid serotonin-syndrome hazards remain explicit qualified-team work; no eligibility was determined.', { cooximetryAuthored: true, methemoglobinPercent: 32, g6pdStatusDeterminedByLearner: false, medicationInteractionClearedByLearner: false }); break; }
+        if (this.toxicologyMethemoglobinemiaHazardsAtTick === null) { this.log('warning', 'assessment', `toxicology-methemoglobinemia-hazards-order-refused-${this.currentTick}`, 'Review supplied co-oximetry and methylene-blue hazards before recording bounded antidote intent.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.toxicologyMethemoglobinemiaHazardsAtTick) { this.log('warning', 'assessment', `toxicology-methemoglobinemia-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the strict antidote-intent reassessment.'); break; } if (this.toxicologyMethemoglobinemiaReassessmentAtTick !== null) { this.log('warning', 'assessment', `toxicology-methemoglobinemia-reassessment-refused-${this.currentTick}`, 'Bounded antidote intent and the strict later report were already reviewed.'); break; } this.toxicologyMethemoglobinemiaReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-methemoglobinemia-antidote-intent-and-reassessment-recorded-${this.currentTick}`, 'Qualified-team methylene-blue intent was recorded without product, dose, route, preparation, access, infusion, eligibility, or delivery. Strict later report: mentation clearer, breathing easier, sinus rate 98/min, and co-oximetry methemoglobin 8%. Conventional pulse oximetry was not treated as proof. This fixed state does not prove treatment causality, individualized effect, rebound, hemolysis, serotonin-syndrome, ongoing-exposure, rescue, disposition, or outcome.', { qualifiedAntidoteIntentRecorded: true, laterMethemoglobinPercent: 8, doseSelectedByLearner: false, treatmentDeliveredByLearner: false, treatmentEffectProven: false }); break; }
+        if (this.toxicologyMethemoglobinemiaReassessmentAtTick === null) { this.log('warning', 'assessment', `toxicology-methemoglobinemia-handoff-order-refused-${this.currentTick}`, 'Record bounded antidote intent and review the strict later report before handoff.'); break; }
+        if (this.currentTick <= this.toxicologyMethemoglobinemiaReassessmentAtTick) { this.log('warning', 'assessment', `toxicology-methemoglobinemia-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off active rebound and rescue risk.'); break; }
+        if (this.toxicologyMethemoglobinemiaHandoffAtTick !== null) { this.log('warning', 'assessment', `toxicology-methemoglobinemia-handoff-refused-${this.currentTick}`, 'The exposure, rebound, hemolysis, serotonin, rescue, and active-risk handoff was already recorded.'); break; }
+        this.toxicologyMethemoglobinemiaHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-methemoglobinemia-active-risk-handoff-recorded-${this.currentTick}`, 'Exposure and source control, serial symptoms and co-oximetry, G6PD and medication hazards, rebound and hemolysis surveillance, serotonin-syndrome risk, repeated treatment and rescue alternatives, disposition, prognosis, and outcome uncertainty were handed off.', { treatmentEffectProven: false, reboundExcluded: false, hemolysisExcluded: false, serotoninSyndromeExcluded: false, rescueEligibilityDetermined: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -12708,6 +12753,17 @@ export class AnesthesiaEngine {
             : { heartRateBpm: 48, systolicMmHg: 178, diastolicMmHg: 106, meanArterialMmHg: 130 };
       crisisState = { ...crisisState, ...vitals, respiratoryRateBpm: 16,
         spo2Percent: 98, coreTemperatureC: 36.8 };
+    }
+    if (this.scenario.metadata.id === 'methemoglobinemia-saturation-gap'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'methemoglobinemia-saturation-gap-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'methemoglobinemia-saturation-gap-transition-boundary')) {
+      crisisState = { ...crisisState,
+        heartRateBpm: this.toxicologyMethemoglobinemiaReassessmentAtTick !== null ? 98 : 122,
+        respiratoryRateBpm: this.toxicologyMethemoglobinemiaReassessmentAtTick !== null ? 20 : 26,
+        spo2Percent: this.toxicologyMethemoglobinemiaReassessmentAtTick !== null ? 90 : 85,
+        systolicMmHg: 112, diastolicMmHg: 68, meanArterialMmHg: 83, coreTemperatureC: 36.9 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -16224,6 +16280,35 @@ export class AnesthesiaEngine {
               durableResolutionProven: false as const, complicationsExcluded: false as const,
               recurrenceExcluded: false as const, dispositionDetermined: false as const,
               prognosisPredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'methemoglobinemia-saturation-gap'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methemoglobinemia-saturation-gap-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'methemoglobinemia-saturation-gap-transition-boundary') ? {
+            toxicologyMethemoglobinemiaAssessment: {
+              trajectoryAtTick: this.toxicologyMethemoglobinemiaTrajectoryAtTick,
+              recognitionAtTick: this.toxicologyMethemoglobinemiaRecognitionAtTick,
+              supportAtTick: this.toxicologyMethemoglobinemiaSupportAtTick,
+              hazardsAtTick: this.toxicologyMethemoglobinemiaHazardsAtTick,
+              reassessmentAtTick: this.toxicologyMethemoglobinemiaReassessmentAtTick,
+              handoffAtTick: this.toxicologyMethemoglobinemiaHandoffAtTick,
+              discordanceAuthored: true as const,
+              dyshemoglobinPatternRecognized: this.toxicologyMethemoglobinemiaRecognitionAtTick !== null,
+              qualifiedSupportActive: this.toxicologyMethemoglobinemiaSupportAtTick !== null,
+              cooximetryAndHazardsReviewed: this.toxicologyMethemoglobinemiaHazardsAtTick !== null,
+              qualifiedAntidoteIntentRecorded: this.toxicologyMethemoglobinemiaReassessmentAtTick !== null,
+              responseStateAuthored: this.toxicologyMethemoglobinemiaReassessmentAtTick !== null,
+              patientHistoryTakenByLearner: false as const, patientExaminedByLearner: false as const,
+              monitoringAcquiredByLearner: false as const, bloodSampleAcquiredByLearner: false as const,
+              saturationGapCalculatedByLearner: false as const, diagnosisMadeByLearner: false as const,
+              oxygenSelectedByLearner: false as const, drugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const, routeSelectedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const, rescuePerformedByLearner: false as const,
+              treatmentEffectProven: false as const, reboundExcluded: false as const,
+              hemolysisExcluded: false as const, serotoninSyndromeExcluded: false as const,
+              ongoingExposureExcluded: false as const, rescueEligibilityDetermined: false as const,
+              dispositionDetermined: false as const, prognosisPredicted: false as const,
+              outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

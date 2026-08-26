@@ -15,6 +15,7 @@ import { CARDIOLOGY_SCENARIOS } from '../modules/cardiology/scenarios';
 import { RESPIRATORY_MEDICINE_SCENARIOS } from '../modules/respiratory-medicine/scenarios';
 import { PEDIATRICS_SCENARIOS } from '../modules/pediatrics/scenarios';
 import { NEUROLOGY_SCENARIOS } from '../modules/neurology/scenarios';
+import { TOXICOLOGY_SCENARIOS } from '../modules/toxicology/scenarios';
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { ROOT_ROUTE, formatTitle } from './site-metadata';
 import type { RouteMetadata } from './site-metadata';
@@ -180,6 +181,23 @@ export const ROUTES: readonly RouteMetadata[] = [
   },
   ...NEUROLOGY_SCENARIOS.map((scenario) => ({
     path: `/neurology/scenario/${scenario.metadata.id}`,
+    title: formatTitle(scenario.metadata.title.length > 44
+      ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
+    description: scenarioDescription(scenario),
+    indexable: true,
+    structuredData: ['LearningResource'] as const,
+    heading: scenario.metadata.title,
+  })),
+  {
+    path: '/toxicology',
+    title: formatTitle('Toxicology simulator'),
+    description: 'Practice calm recognition, support, antidote boundaries, serial reassessment, and handoff across high-risk poisoning and toxic exposure scenarios.',
+    indexable: true,
+    structuredData: ['SoftwareApplication'],
+    heading: 'Toxicology simulator',
+  },
+  ...TOXICOLOGY_SCENARIOS.map((scenario) => ({
+    path: `/toxicology/scenario/${scenario.metadata.id}`,
     title: formatTitle(scenario.metadata.title.length > 44
       ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
     description: scenarioDescription(scenario),

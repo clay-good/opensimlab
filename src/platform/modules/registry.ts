@@ -123,6 +123,19 @@ export const MODULES: readonly ModuleDeclaration[] = [
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
+    id: 'toxicology',
+    route: 'toxicology',
+    displayName: 'Toxicology',
+    description: 'Practice calm recognition, support, antidote boundaries, serial reassessment, and handoff across high-risk poisonings.',
+    audience: 'Medical students, residents, nurses, pharmacists, and acute-care trainees assessing suspected poisoning.',
+    prerequisites: 'Basic emergency assessment, respiratory and cardiovascular physiology, and medication safety.',
+    status: 'available',
+    plannedScope:
+      'Fifteen bounded toxicology rehearsals spanning opioid, analgesic, cardiovascular, autonomic, '
+      + 'metabolic, inhalational, local-anesthetic, and dyshemoglobin emergencies.',
+    timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
+  },
+  {
     id: 'oncology',
     route: 'oncology',
     displayName: 'Oncology',

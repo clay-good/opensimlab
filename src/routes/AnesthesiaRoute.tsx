@@ -59,13 +59,16 @@ import {
 import {
   NEUROLOGY_SCENARIOS, DEFAULT_NEUROLOGY_SCENARIO_ID, getNeurologyScenario,
 } from '../modules/neurology/scenarios';
+import {
+  TOXICOLOGY_SCENARIOS, DEFAULT_TOXICOLOGY_SCENARIO_ID, getToxicologyScenario,
+} from '../modules/toxicology/scenarios';
 import { APP_VERSION } from '@platform/governance/status';
 import { ScenarioProblemReport } from '@platform/reporting/ScenarioProblemReport';
 import { SITE_ORIGIN } from './site-metadata';
 
 interface ClinicalModuleConfig {
-  readonly id: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology';
-  readonly basePath: '/anesthesia' | '/emergency-medicine' | '/critical-care' | '/cardiology' | '/respiratory-medicine' | '/pediatrics' | '/neurology';
+  readonly id: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology';
+  readonly basePath: '/anesthesia' | '/emergency-medicine' | '/critical-care' | '/cardiology' | '/respiratory-medicine' | '/pediatrics' | '/neurology' | '/toxicology';
   readonly heading: string;
   readonly catalogIntroduction: string;
   readonly catalogStatus: string;
@@ -129,6 +132,14 @@ const NEUROLOGY_CONFIG: ClinicalModuleConfig = {
   catalogStatus: `${NEUROLOGY_SCENARIOS.length} of 15 bounded Neurology labs is playable.`,
   scenarios: NEUROLOGY_SCENARIOS, defaultScenarioId: DEFAULT_NEUROLOGY_SCENARIO_ID,
   getScenario: getNeurologyScenario,
+};
+
+const TOXICOLOGY_CONFIG: ClinicalModuleConfig = {
+  id: 'toxicology', basePath: '/toxicology', heading: 'Toxicology simulator',
+  catalogIntroduction: 'Calm poisoning rehearsals for finding the dangerous pattern without losing the whole patient. Support first, keep antidote hazards visible, and make reassessment count.',
+  catalogStatus: `${TOXICOLOGY_SCENARIOS.length} of 15 bounded Toxicology labs is playable.`,
+  scenarios: TOXICOLOGY_SCENARIOS, defaultScenarioId: DEFAULT_TOXICOLOGY_SCENARIO_ID,
+  getScenario: getToxicologyScenario,
 };
 
 /**
@@ -463,6 +474,10 @@ export function PediatricsRoute({ path }: { path: string }) {
 
 export function NeurologyRoute({ path }: { path: string }) {
   return <ClinicalModuleRoute path={path} config={NEUROLOGY_CONFIG} />;
+}
+
+export function ToxicologyRoute({ path }: { path: string }) {
+  return <ClinicalModuleRoute path={path} config={TOXICOLOGY_CONFIG} />;
 }
 
 /**

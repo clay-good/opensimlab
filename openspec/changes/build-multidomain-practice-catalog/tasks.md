@@ -544,6 +544,18 @@ credited toward the catalog until every item in the completion contract passes.
     irrigation or replacement, bowel care, drug, dose, route, access, oxygen, fluid, device,
     procedure, treatment-effect prediction, disposition, prognosis, or outcome control.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
+  - [x] Toxicology slice 1/15 establishes the indexable `/toxicology` module with one authored
+    methemoglobinemia lab after documented topical benzocaine exposure. The learner reconciles
+    cyanosis, symptoms, pulse-coherent SpO2 85%, PaO2 238 mmHg, chocolate-brown blood, and supplied
+    co-oximetry methemoglobin 32%; recognizes an urgent dyshemoglobin pattern without one-number or
+    diagnostic closure; activates qualified support, source control, poison-center or medical-
+    toxicology consultation, and critical-care ownership; reviews G6PD-deficiency hemolysis and
+    serotonergic-drug hazards; records bounded qualified-team methylene-blue intent; then reviews a
+    strict elapsed fixed symptom, heart-rate, and co-oximetry response before another elapsed
+    exposure, rebound, hemolysis, serotonin, rescue, and active-risk handoff. No learner history,
+    examination, monitoring or test acquisition, gas calculation, diagnosis, oxygen setting, drug,
+    dose, route, access, infusion, treatment delivery, rescue procedure, disposition, prognosis, or
+    outcome control exists.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.
 - [ ] After every wave, verify the exact cumulative count, distinctness, capability reuse, path and

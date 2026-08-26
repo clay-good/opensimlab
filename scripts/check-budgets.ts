@@ -67,7 +67,7 @@ function fontPreloads(html: string): readonly string[] {
 
 function largestCockpitDocument(assets: readonly Asset[]): Asset | undefined {
   return assets
-    .filter((asset) => /^(?:anesthesia|emergency-medicine|critical-care|cardiology|respiratory-medicine|pediatrics|neurology)\/scenario\/[^/]+\/index\.html$/.test(asset.path))
+    .filter((asset) => /^(?:anesthesia|emergency-medicine|critical-care|cardiology|respiratory-medicine|pediatrics|neurology|toxicology)\/scenario\/[^/]+\/index\.html$/.test(asset.path))
     .sort((a, b) => b.gzipBytes - a.gzipBytes)[0];
 }
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 230,
+  "sourceCount": 233,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -2986,6 +2986,45 @@
       "verifiedAgainst": "https://pva.org/wp-content/uploads/2021/09/CPG_Autonomic-Dysreflexia_2025_digital_03.26-.pdf",
       "verifiedOn": "2026-08-26",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/34270391/"
+    },
+    {
+      "id": "aha-poisoning-focused-update-2023",
+      "authors": "Lavonas EJ, Akpunonu PD, Arens AM, et al",
+      "title": "2023 American Heart Association Focused Update on the Management of Patients With Cardiac Arrest or Life-Threatening Toxicity Due to Poisoning",
+      "publication": "Circulation",
+      "year": 2023,
+      "locator": "148:e149-e184; doi:10.1161/CIR.0000000000001161; methemoglobinemia recommendations",
+      "usedFor": "Acquired oxidant causes, cyanosis and saturation discordance, life-threatening methylene-blue intent, specialist consultation, contraindication-aware alternatives, and rescue escalation.",
+      "verifiedAgainst": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-and-pediatric-special-circumstances-of-resuscitation",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "eha-methemoglobinemia-recommendations-2021",
+      "pmid": "34467556",
+      "authors": "Iolascon A, Bianchi P, Andolfo I, et al",
+      "title": "Recommendations for diagnosis and treatment of methemoglobinemia",
+      "publication": "American Journal of Hematology",
+      "year": 2021,
+      "locator": "96(12):1666-1678; doi:10.1002/ajh.26340; diagnosis and acquired-treatment recommendations",
+      "usedFor": "Pulse-oximetry limitations near 85%, multiwavelength co-oximetry confirmation, whole-patient severity, exposure review, reassessment, and acquired-versus-inherited boundaries.",
+      "verifiedAgainst": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9291883/",
+      "verifiedOn": "2026-08-26",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/34467556/"
+    },
+    {
+      "id": "dailymed-methylene-blue-2026",
+      "currency": {
+        "lastAmended": "2026-02-09",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "US National Library of Medicine, DailyMed",
+      "title": "Methylene Blue Injection prescribing information",
+      "publication": "DailyMed",
+      "year": 2026,
+      "locator": "Set ID 4f222ee5-df03-46d5-a060-c63565b7186f; boxed warning, contraindications, and acquired methemoglobinemia indication",
+      "usedFor": "G6PD-deficiency hemolysis contraindication, serotonergic-drug and opioid serotonin-syndrome warning, monitoring, and qualified treatment boundaries.",
+      "verifiedAgainst": "https://dailymed.nlm.nih.gov/dailymed/lookup.cfm?setid=4f222ee5-df03-46d5-a060-c63565b7186f",
+      "verifiedOn": "2026-08-26"
     }
   ]
 }

@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 147 reports Neurology autonomic-dysreflexia state. */
-export const WORKER_PROTOCOL_VERSION = 147;
+/** Bumped whenever the message shape changes incompatibly. Version 148 reports Toxicology methemoglobinemia state. */
+export const WORKER_PROTOCOL_VERSION = 148;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2246,6 +2246,25 @@ export interface EquipmentSnapshot {
       readonly procedurePerformedByLearner: false; readonly soleCauseProven: false;
       readonly individualizedResponsePredicted: false; readonly durableResolutionProven: false;
       readonly complicationsExcluded: false; readonly recurrenceExcluded: false;
+      readonly dispositionDetermined: false; readonly prognosisPredicted: false;
+      readonly outcomePredicted: false;
+    };
+    readonly toxicologyMethemoglobinemiaAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly hazardsAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly discordanceAuthored: true; readonly dyshemoglobinPatternRecognized: boolean;
+      readonly qualifiedSupportActive: boolean; readonly cooximetryAndHazardsReviewed: boolean;
+      readonly qualifiedAntidoteIntentRecorded: boolean; readonly responseStateAuthored: boolean;
+      readonly patientHistoryTakenByLearner: false; readonly patientExaminedByLearner: false;
+      readonly monitoringAcquiredByLearner: false; readonly bloodSampleAcquiredByLearner: false;
+      readonly saturationGapCalculatedByLearner: false; readonly diagnosisMadeByLearner: false;
+      readonly oxygenSelectedByLearner: false; readonly drugSelectedByLearner: false;
+      readonly doseSelectedByLearner: false; readonly routeSelectedByLearner: false;
+      readonly treatmentDeliveredByLearner: false; readonly rescuePerformedByLearner: false;
+      readonly treatmentEffectProven: false; readonly reboundExcluded: false;
+      readonly hemolysisExcluded: false; readonly serotoninSyndromeExcluded: false;
+      readonly ongoingExposureExcluded: false; readonly rescueEligibilityDetermined: false;
       readonly dispositionDetermined: false; readonly prognosisPredicted: false;
       readonly outcomePredicted: false;
     };

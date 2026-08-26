@@ -12,6 +12,7 @@ import { CARDIOLOGY_SCENARIOS } from '../../src/modules/cardiology/scenarios';
 import { RESPIRATORY_MEDICINE_SCENARIOS } from '../../src/modules/respiratory-medicine/scenarios';
 import { PEDIATRICS_SCENARIOS } from '../../src/modules/pediatrics/scenarios';
 import { NEUROLOGY_SCENARIOS } from '../../src/modules/neurology/scenarios';
+import { TOXICOLOGY_SCENARIOS } from '../../src/modules/toxicology/scenarios';
 import { buildScenarioQualityCatalog } from '@platform/catalog/scenario-quality';
 import {
   buildMaturityCatalog, MATURITY_RECORD_SCHEMA, MATURITY_STATUSES,
@@ -60,6 +61,12 @@ const neurologyCompletion = buildModuleCompletionCatalog(
 const neurologyCatalog = buildMaturityCatalog(
   neurologyCompletion, buildScenarioQualityCatalog(neurologyCompletion),
 );
+const toxicologyCompletion = buildModuleCompletionCatalog(
+  TOXICOLOGY_SCENARIOS, ENGINE_VERSION, 'toxicology', 'emergency-department', 'state_transition',
+);
+const toxicologyCatalog = buildMaturityCatalog(
+  toxicologyCompletion, buildScenarioQualityCatalog(toxicologyCompletion),
+);
 
 describe('exact-version maturity records', () => {
   it('supports the complete public vocabulary and records every clinical item honestly', () => {
@@ -70,7 +77,7 @@ describe('exact-version maturity records', () => {
     expect(validateMaturityCatalog(catalog)).toEqual([]);
     expect(catalog.recordCount + emergencyCatalog.recordCount + criticalCareCatalog.recordCount
       + cardiologyCatalog.recordCount + respiratoryMedicineCatalog.recordCount
-      + pediatricsCatalog.recordCount + neurologyCatalog.recordCount)
+      + pediatricsCatalog.recordCount + neurologyCatalog.recordCount + toxicologyCatalog.recordCount)
       .toBe(reviewableItems().length);
     expect(catalog.recordCount).toBe(54);
     expect(catalog.records.every((record) => record.status === 'draft')).toBe(true);
@@ -98,6 +105,9 @@ describe('exact-version maturity records', () => {
     )?.status).toBe('draft');
     expect(maturityFor(
       neurologyCatalog, 'scenario', 'basilar-artery-occlusion-escalation', '0.1.0',
+    )?.status).toBe('draft');
+    expect(maturityFor(
+      toxicologyCatalog, 'scenario', 'methemoglobinemia-saturation-gap', '0.1.0',
     )?.status).toBe('draft');
     expect(maturityFor(
       criticalCareCatalog, 'scenario', 'ventilator-dyssynchrony', '0.1.0',
@@ -211,5 +221,7 @@ describe('exact-version maturity records', () => {
       .toEqual(criticalCareCatalog);
     expect(JSON.parse(readFileSync(join(publicCatalog, 'cardiology-maturity.json'), 'utf8')))
       .toEqual(cardiologyCatalog);
+    expect(JSON.parse(readFileSync(join(publicCatalog, 'toxicology-maturity.json'), 'utf8')))
+      .toEqual(toxicologyCatalog);
   });
 });

@@ -4199,6 +4199,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified individual baseline and serial findings, immediate qualified assessment, patient-specific trigger removal and medical care, local spinal-injury guidance, complication review, and recurrence planning.',
     briefIn: ['autonomic-dysreflexia-authored-trigger'],
   },
+  {
+    id: 'methemoglobinemia-exposure-saturation-gap-cooximetry-and-response-are-authored',
+    headline: 'The exposure, symptoms, saturation discordance, blood observation, co-oximetry, and later response are authored.',
+    simplification: 'Fixed reports and canonical monitor states stand in for history, examination, pulse-oximetry acquisition, arterial sampling, blood-gas analysis, co-oximetry, qualified treatment, and reassessment.',
+    whereItMisleads: 'Treating benzocaine exposure, SpO2 near 85%, chocolate-brown blood, a saturation gap, methemoglobin percentage, or later improvement as learner evidence, a universal diagnosis, treatment effect, or predicted course.',
+    correctUnderstanding: 'Real care requires direct assessment, verified multiwavelength co-oximetry, exposure and medication review, current toxicology guidance, serial reassessment, and individualized treatment.',
+    briefIn: ['methemoglobinemia-saturation-gap'],
+  },
+  {
+    id: 'methemoglobinemia-controls-reconcile-recognize-support-review-intent-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, pattern recognition, support, hazard review, bounded antidote intent with reassessment, and handoff only.',
+    simplification: 'Six actions stand in for emergency, toxicology, poison-center, critical-care, nursing, respiratory, laboratory, pharmacy, transfusion, hyperbaric, surveillance, and handoff work.',
+    whereItMisleads: 'Equating button order with examination, diagnosis, co-oximeter operation, eligibility review, prescribing, treatment delivery, rescue, disposition, or competence.',
+    correctUnderstanding: 'Actual care requires the patient, trained teams, verified serial findings, contraindication and interaction review, current local protocols, individualized treatment, and continuous reassessment.',
+    briefIn: ['methemoglobinemia-saturation-gap'],
+  },
+  {
+    id: 'no-live-dyshemoglobin-diagnosis-gas-calculation-antidote-dose-delivery-rescue-or-outcome',
+    headline: 'The lab does not examine, diagnose, calculate blood gases, prescribe or deliver an antidote, perform rescue, or report outcome.',
+    simplification: 'No live history, examination, monitoring, arterial sample, blood gas, co-oximetry, laboratory or other test, saturation-gap calculation, diagnosis, oxygen selection, methylene-blue product, dose, route, preparation, access or infusion, exchange transfusion, hyperbaric treatment, procedure, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Diagnosing from one SpO2 value or gap, copying fictional values into care, overlooking G6PD or serotonergic hazards, treating the fixed response as causality, or reading completion as competence.',
+    correctUnderstanding: 'Use direct verified clinical and co-oximetry evidence, poison-center or medical-toxicology guidance, patient-specific contraindication review, qualified treatment and rescue planning, and serial reassessment.',
+    briefIn: ['methemoglobinemia-saturation-gap'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {
