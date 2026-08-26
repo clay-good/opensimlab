@@ -271,6 +271,10 @@ credited toward the catalog until every item in the completion contract passes.
   elapsed active-risk handoff without teaching suction, tube exchange, ventilation, or laryngectomy
   care.
 - [ ] Wave D: complete 16 pediatric, 15 obstetric, and 11 neonatal scenarios.
+  - [x] Pediatrics slice 1/16 adds the available module foundation and one undifferentiated
+    respiratory-distress lab with whole-child recognition, experienced support, a misleading early
+    saturation improvement, a strictly later fatigue pattern, airway-capable rescue ownership, and
+    elapsed active-risk handoff without disease-specific treatment, device, dose, or procedure controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing

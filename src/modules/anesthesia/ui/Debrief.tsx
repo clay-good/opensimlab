@@ -4554,6 +4554,29 @@ export function objectiveFindings(
       const ordered = restoration && handoff && restoration.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved airway anatomy, device and stoma facts, recurrence risk, secretion and humidification work, emergency readiness, and named owners without declaring disposition or outcome.' : 'The active airway-risk handoff was absent or did not follow restoration review after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-pediatric-respiratory-distress-whole-child',
+      'activate-pediatric-respiratory-distress-support',
+      'review-pediatric-respiratory-distress-early-response',
+      'review-pediatric-respiratory-distress-later-panel',
+      'activate-pediatric-respiratory-failure-rescue',
+      'handoff-pediatric-respiratory-distress-reassessment'].includes(objective.id)) {
+      const supported = scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-respiratory-distress-reassessment');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The pediatric respiratory-distress lesson was not active.' } satisfies ObjectiveFinding;
+      const recognition = log.find((event) => /^pediatric-respiratory-distress-whole-child-reconciled-\d+$/.test(event.eventId));
+      const support = log.find((event) => /^pediatric-respiratory-distress-support-activated-\d+$/.test(event.eventId));
+      const early = log.find((event) => /^pediatric-respiratory-distress-early-response-reviewed-\d+$/.test(event.eventId));
+      const later = log.find((event) => /^pediatric-respiratory-distress-later-panel-reviewed-\d+$/.test(event.eventId));
+      const rescue = log.find((event) => /^pediatric-respiratory-distress-rescue-activated-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^pediatric-respiratory-distress-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-pediatric-respiratory-distress-whole-child') return { ...base, outcome: recognition ? 'met' : 'not-met', finding: recognition ? 'Appearance, speech, work of breathing, air movement, circulation, and clean pulse-coherent hypoxemia were reconciled as whole-child distress without learner examination, test interpretation, or diagnosis.' : 'The fixed whole-child respiratory-distress pattern was not reconciled.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'activate-pediatric-respiratory-distress-support') { const ordered = recognition && support && recognition.tick <= support.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Experienced pediatric help, qualified oxygenation, continuous monitoring, and rescue readiness followed recognition without waiting for imaging, a complete history, or a disease label.' : 'Experienced support was absent or preceded whole-child recognition.', atTick: support?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-respiratory-distress-early-response') { const ordered = support && early && support.tick < early.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed time, improved saturation was weighed beside persistent grunting, recession, short phrases, tachypnea, and reduced air entry rather than treated as recovery.' : 'The early whole-child response was absent or did not follow support after elapsed time.', atTick: early?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-respiratory-distress-later-panel') { const ordered = early && later && early.tick < later.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The strictly later fall in respiratory rate and visible effort was recognized as fatigue because mentation, breathing quality, air movement, and oxygenation worsened together.' : 'The later fatigue panel was absent or did not follow the early response after elapsed time.', atTick: later?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-pediatric-respiratory-failure-rescue') { const ordered = later && rescue && later.tick <= rescue.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Immediate airway-capable pediatric rescue ownership followed worsening mentation and inadequate breathing with a pulse without learner ventilation, airway procedure, device, drug, fluid, or treatment selection.' : 'Rescue ownership was absent or preceded the later whole-child report.', atTick: rescue?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = rescue && handoff && rescue.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved caregiver context, active support, the whole-child trajectory, open causes, deterioration triggers, rescue work, and named owners without claiming diagnosis, durable recovery, disposition, or outcome.' : 'The active-risk handoff was absent or did not follow rescue activation after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

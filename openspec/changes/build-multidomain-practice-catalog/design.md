@@ -1627,6 +1627,27 @@ or another procedure; decide disposition or prognosis; or predict durable resolu
 It does not generalize to laryngectomy, a fresh stoma, another device, upper-airway obstruction,
 ventilator dependence, or arrest.
 
+### Wave D pediatrics slice 1: pediatric respiratory distress
+
+The Pediatrics foundation begins with an undifferentiated whole-child respiratory-distress lesson,
+not a disease-specific treatment algorithm. A previously well 6-year-old girl weighing 20 kg has
+clean pulse-coherent room-air SpO₂ 87%, HR 138/min, RR 46/min, short-phrase speech, grunting, nasal
+flaring, marked recession, and equally reduced bilateral air entry, with warm perfusion, strong
+pulses, and spontaneous breathing. Learners reconcile appearance, breathing, circulation, and
+monitor evidence, then activate experienced pediatric help, qualified oxygenation, continuous
+monitoring, and rescue readiness without waiting for imaging, a complete history, or a diagnosis.
+
+A strictly elapsed fixed 5-minute report improves SpO₂ to 94% while grunting, recession, short
+phrases, tachypnea, and reduced air entry persist. Another strictly elapsed panel then shows
+drowsiness, weak one-word response, shallow irregular breathing, weaker effort, markedly reduced
+air movement, RR 28/min, and SpO₂ 90% on unchanged authored support. The falling rate and quieter
+effort are fatigue, not recovery. Learners activate airway-capable pediatric rescue and complete an
+elapsed active-risk handoff. The lab does not examine; acquire or interpret tests; diagnose; select
+or deliver oxygen, a device, flow, fraction, target, drug, dose, fluid, ventilation, airway maneuver,
+procedure, or treatment; calculate a score; determine disposition or prognosis; or predict recovery
+or outcome. Bronchiolitis, croup, status asthmaticus, infection, sepsis, anaphylaxis, aspiration,
+foreign-body obstruction, and other causes remain open for later distinct labs.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

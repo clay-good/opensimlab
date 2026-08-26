@@ -22,9 +22,13 @@ describe('scenario report contract', () => {
     const catalog = JSON.parse(readFileSync(
       join(process.cwd(), 'workers/reports/src/report-catalog.generated.json'), 'utf8',
     )) as { scenarios: { moduleId: string; scenarioId: string; contentVersion: string }[] };
-    expect(catalog.scenarios).toHaveLength(120);
+    expect(catalog.scenarios).toHaveLength(121);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(120);
+      .toBe(121);
+    expect(catalog.scenarios).toContainEqual(expect.objectContaining({
+      moduleId: 'pediatrics', scenarioId: 'pediatric-respiratory-distress',
+      contentVersion: '0.1.0',
+    }));
   });
 
   it('normalizes and bounds the optional note to exactly 160 characters', () => {

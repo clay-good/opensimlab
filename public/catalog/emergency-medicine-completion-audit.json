@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "emergency-medicine",
-  "capabilityVersion": "0.1.0-alpha.42",
+  "capabilityVersion": "0.1.0-alpha.43",
   "scenarioCount": 25,
   "completeScenarioCount": 0,
   "scenarios": [
@@ -19,7 +19,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -28,7 +28,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario undifferentiated-shock carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -145,7 +145,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -154,7 +154,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario septic-shock carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -271,7 +271,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -280,7 +280,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario hemorrhagic-shock carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -397,7 +397,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -406,7 +406,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario obstructive-shock-tension-pneumothorax carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -523,7 +523,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -532,7 +532,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario cardiac-tamponade carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -649,7 +649,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -658,7 +658,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario anaphylaxis carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -775,7 +775,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -784,7 +784,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario adult-asthma carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -901,7 +901,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -910,7 +910,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario copd-exacerbation carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -1027,7 +1027,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1036,7 +1036,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario acute-pulmonary-edema carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -1153,7 +1153,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1162,7 +1162,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario pulmonary-embolism-deterioration carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -1279,7 +1279,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1288,7 +1288,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario stemi carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -1405,7 +1405,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1414,7 +1414,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario unstable-narrow-complex-tachycardia carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -1531,7 +1531,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1540,7 +1540,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario unstable-bradycardia carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -1657,7 +1657,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1666,7 +1666,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario persistent-vf-arrest carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -1783,7 +1783,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1792,7 +1792,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario pea-arrest carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -1909,7 +1909,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1918,7 +1918,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario status-epilepticus carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -2035,7 +2035,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -2044,7 +2044,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario acute-ischemic-stroke carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -2161,7 +2161,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -2170,7 +2170,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario intracranial-hemorrhage-deterioration carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -2287,7 +2287,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -2296,7 +2296,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario diabetic-ketoacidosis carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -2413,7 +2413,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -2422,7 +2422,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario hyperkalemia-with-ecg-change carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -2539,7 +2539,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -2548,7 +2548,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario severe-hyponatremia-with-seizure carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -2665,7 +2665,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -2674,7 +2674,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario opioid-toxicity carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -2791,7 +2791,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -2800,7 +2800,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario exertional-heat-stroke carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -2917,7 +2917,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -2926,7 +2926,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario trauma-primary-survey carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -3043,7 +3043,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -3052,7 +3052,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario acute-aortic-syndrome carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {

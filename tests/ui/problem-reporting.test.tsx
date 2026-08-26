@@ -67,6 +67,7 @@ describe('shared problem report dialog', () => {
       '@media (max-width: 767px), (max-height: 499px) and (orientation: landscape)',
     );
     expect(reportingCss).toMatch(/\.problem-report\s*\{[^}]*inset-inline-start:\s*var\(--space-3\)/s);
+    expect(reportingCss).toMatch(/\.problem-report\s*>\s*\.button\s*\{[^}]*min-block-size:\s*44px/s);
     expect(reportingCss).toContain('@media (max-width: 400px)');
     expect(reportingCss).toContain('.problem-report__label-short { display: inline; }');
   });

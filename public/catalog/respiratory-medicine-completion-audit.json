@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "respiratory-medicine",
-  "capabilityVersion": "0.1.0-alpha.42",
+  "capabilityVersion": "0.1.0-alpha.43",
   "scenarioCount": 15,
   "completeScenarioCount": 0,
   "scenarios": [
@@ -19,7 +19,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -28,7 +28,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario acute-severe-asthma carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -145,7 +145,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -154,7 +154,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario copd-exacerbation-transition-reassessment carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -271,7 +271,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -280,7 +280,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario community-acquired-pneumonia-hypoxemia-reassessment carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -397,7 +397,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -406,7 +406,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario post-pulmonary-embolism-persistent-dyspnea carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -523,7 +523,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -532,7 +532,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario acute-pulmonary-edema-respiratory-support-reassessment carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -649,7 +649,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -658,7 +658,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario spontaneous-tension-pneumothorax-post-drainage-reassessment carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -775,7 +775,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -784,7 +784,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario large-unilateral-pleural-effusion-reassessment carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -901,7 +901,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -910,7 +910,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario bronchiectasis-mucus-plugging-reassessment carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -1027,7 +1027,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1036,7 +1036,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario chronic-opioid-related-hypoventilation-reassessment carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -1153,7 +1153,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1162,7 +1162,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario neuromuscular-respiratory-failure-reassessment carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -1279,7 +1279,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1288,7 +1288,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario obesity-hypoventilation-reassessment carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -1405,7 +1405,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1414,7 +1414,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario noninvasive-ventilation-selection carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -1531,7 +1531,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1540,7 +1540,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario high-flow-nasal-oxygen-escalation carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -1657,7 +1657,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1666,7 +1666,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario oxygen-device-failure carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {
@@ -1783,7 +1783,7 @@
       ],
       "fidelityClass": "state_transition",
       "contentVersion": "0.1.0",
-      "capabilityVersion": "0.1.0-alpha.42",
+      "capabilityVersion": "0.1.0-alpha.43",
       "maturity": "draft",
       "complete": false,
       "requirements": [
@@ -1792,7 +1792,7 @@
           "status": "satisfied",
           "evidence": [
             "Scenario acute-tracheostomy-obstruction carries stable content version 0.1.0.",
-            "Capability version 0.1.0-alpha.42 is bound by this audit."
+            "Capability version 0.1.0-alpha.43 is bound by this audit."
           ]
         },
         {

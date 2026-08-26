@@ -33,7 +33,7 @@ export function StatusBar({
 }: StatusBarProps) {
   const patient = scenario.patient;
   const summary = `${patient.ageYears} y ${patient.sex === 'male' ? 'M' : 'F'} · `
-    + `${patient.weightKg} kg${moduleId === 'cardiology' || moduleId === 'respiratory-medicine'
+    + `${patient.weightKg} kg${moduleId === 'cardiology' || moduleId === 'respiratory-medicine' || moduleId === 'pediatrics'
       ? '' : ` · ASA ${patient.asaClass}`}`;
 
   return (

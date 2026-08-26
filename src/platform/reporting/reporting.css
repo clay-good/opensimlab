@@ -35,7 +35,7 @@
     inset-block-end: var(--space-4);
   }
   .problem-report > .button {
-    min-block-size: 36px;
+    min-block-size: 44px;
     padding-inline: var(--space-2);
     font: var(--type-label);
   }

@@ -26,6 +26,7 @@ export const SITE_BAR_LINKS: readonly SiteBarLink[] = [
   { href: '/critical-care', label: 'Critical care' },
   { href: '/cardiology', label: 'Cardiology' },
   { href: '/respiratory-medicine', label: 'Respiratory medicine' },
+  { href: '/pediatrics', label: 'Pediatrics' },
   { href: '/about', label: 'About' },
   { href: '/validation', label: 'Validation' },
   { href: '/governance', label: 'Governance' },

@@ -999,6 +999,26 @@ export interface ActionCockpitProps {
       readonly durablePatencyProven: false; readonly dispositionDetermined: false;
       readonly outcomePredicted: false;
     };
+    readonly pediatricRespiratoryDistressAssessment?: {
+      readonly recognitionAtTick: number | null; readonly supportAtTick: number | null;
+      readonly earlyResponseAtTick: number | null; readonly laterPanelAtTick: number | null;
+      readonly rescueAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly lastUnsupportedChoice: 'history-first' | 'imaging-first' | 'single-number' | 'falling-rate' | null;
+      readonly initialPulsePresent: true; readonly spontaneousBreathingAuthored: true;
+      readonly hypoxemiaAuthored: true; readonly pulseSignalCoherentAuthored: true;
+      readonly progressiveInadequateBreathingAuthored: true;
+      readonly experiencedSupportActivated: boolean; readonly rescueReadinessActivated: boolean;
+      readonly patientExaminedByLearner: false; readonly monitorInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly testAcquiredByLearner: false;
+      readonly oxygenSelectedByLearner: false; readonly oxygenDeliveredByLearner: false;
+      readonly deviceSelectedByLearner: false; readonly flowSelectedByLearner: false;
+      readonly fio2SelectedByLearner: false; readonly oxygenTargetSelectedByLearner: false;
+      readonly ventilationDeliveredByLearner: false; readonly airwayManeuverPerformedByLearner: false;
+      readonly intubationPerformedByLearner: false; readonly drugDeliveredByLearner: false;
+      readonly fluidDeliveredByLearner: false; readonly procedurePerformedByLearner: false;
+      readonly treatmentDeliveredByLearner: false; readonly durableRecoveryProven: false;
+      readonly dispositionDetermined: false; readonly outcomePredicted: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1562,6 +1582,18 @@ export interface ActionCockpitProps {
       | 'reassess-acute-tracheostomy-obstruction-restoration'
       | 'handoff-acute-tracheostomy-obstruction-reassessment',
   ) => void;
+  readonly onPediatricRespiratoryDistressResponse?: (
+    action: 'reconcile-pediatric-respiratory-distress-whole-child'
+      | 'activate-pediatric-respiratory-distress-support'
+      | 'complete-pediatric-respiratory-distress-history-first'
+      | 'wait-for-pediatric-respiratory-distress-imaging'
+      | 'review-pediatric-respiratory-distress-early-response'
+      | 'review-pediatric-respiratory-distress-later-panel'
+      | 'reassure-pediatric-respiratory-distress-saturation-alone'
+      | 'treat-pediatric-respiratory-distress-falling-rate-as-recovery'
+      | 'activate-pediatric-respiratory-failure-rescue'
+      | 'handoff-pediatric-respiratory-distress-reassessment',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1903,6 +1935,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'acute-tracheostomy-obstruction-reassessment',
     ),
+    hasPediatricRespiratoryDistressResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'pediatric-respiratory-distress-reassessment',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2046,6 +2082,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'oxygen-device-failure')
       || (event.type === 'narrative'
         && event.target === 'acute-tracheostomy-obstruction-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'pediatric-respiratory-distress-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2105,6 +2143,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeuromuscularRespiratoryFailureResponse, hasObesityHypoventilationResponse,
     hasNoninvasiveVentilationSelectionResponse, hasHighFlowOxygenEscalationResponse,
     hasOxygenDeviceFailureResponse, hasAcuteTracheostomyObstructionResponse,
+    hasPediatricRespiratoryDistressResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2175,7 +2214,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasChronicOpioidHypoventilationResponse || hasNeuromuscularRespiratoryFailureResponse
     || hasObesityHypoventilationResponse || hasNoninvasiveVentilationSelectionResponse
     || hasHighFlowOxygenEscalationResponse || hasOxygenDeviceFailureResponse
-    || hasAcuteTracheostomyObstructionResponse;
+    || hasAcuteTracheostomyObstructionResponse || hasPediatricRespiratoryDistressResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2206,7 +2245,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasAcuteTracheostomyObstructionResponse
+  const responseTray = hasPediatricRespiratoryDistressResponse
+    ? { id: 'crisis', label: 'Whole-child reassessment' } as const
+    : hasAcuteTracheostomyObstructionResponse
     ? { id: 'crisis', label: 'Tracheostomy airflow' } as const
     : hasOxygenDeviceFailureResponse
     ? { id: 'crisis', label: 'Portable oxygen path' } as const
@@ -2455,6 +2496,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasHighFlowOxygenEscalationResponse
     || hasOxygenDeviceFailureResponse
     || hasAcuteTracheostomyObstructionResponse
+    || hasPediatricRespiratoryDistressResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3104,6 +3146,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <AcuteTracheostomyObstructionTray
                 assessment={props.resuscitation.acuteTracheostomyObstructionAssessment}
                 onAction={props.onAcuteTracheostomyObstructionResponse ?? (() => {})} />
+            )}
+            {hasPediatricRespiratoryDistressResponse && (
+              <PediatricRespiratoryDistressTray
+                assessment={props.resuscitation.pediatricRespiratoryDistressAssessment}
+                onAction={props.onPediatricRespiratoryDistressResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -7910,6 +7957,80 @@ function AcuteTracheostomyObstructionTray({ assessment, onAction }: {
           onClick={() => onAction('handoff-acute-tracheostomy-obstruction-reassessment')}>Hand off active airway risk</Button>}
       </div>
       <p className="field__hint">The learner does not inspect, handle, remove, suction, exchange, ventilate, or intubate. Worsening or unresolved obstruction continues down the local emergency pathway outside this bounded lesson.</p>
+    </section>
+  </div>;
+}
+
+function PediatricRespiratoryDistressTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricRespiratoryDistressAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onPediatricRespiratoryDistressResponse']>;
+}) {
+  const recognition = assessment?.recognitionAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const early = assessment?.earlyResponseAtTick != null;
+  const later = assessment?.laterPanelAtTick != null;
+  const rescue = assessment?.rescueAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  const unsupported = assessment?.lastUnsupportedChoice;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="pediatric-distress-whole-child-title">
+      <div id="pediatric-distress-whole-child-title" className="syringe__name">Read the whole child.</div>
+      <Badge kind="teaching">appearance · breathing · circulation · trend</Badge>
+      <div className="syringe__meta">6 years · 20 kg · pulse + spontaneous breathing</div>
+      <p className="syringe__remaining" role="status">
+        {early ? 'SpO₂ improved · grunting, recession, and short phrases remain'
+          : unsupported === 'history-first' ? 'Continue history in parallel · support cannot wait'
+            : unsupported === 'imaging-first' ? 'Cause review matters · support cannot wait for imaging'
+              : support ? 'Experienced support active · advance time for whole-child reassessment'
+                : recognition ? 'Respiratory distress recognized · support while causes stay open'
+                  : 'Start with appearance, work, speech, circulation, and a coherent signal'}
+      </p>
+      <div className="syringe__presets">
+        {!recognition && <Button className="crisis-drug__action"
+          onClick={() => onAction('reconcile-pediatric-respiratory-distress-whole-child')}>Review the whole-child trend</Button>}
+        {recognition && !support && <>
+          <Button className="crisis-drug__action"
+            onClick={() => onAction('activate-pediatric-respiratory-distress-support')}>Activate experienced pediatric help</Button>
+          <Button className="crisis-drug__action"
+            onClick={() => onAction('complete-pediatric-respiratory-distress-history-first')}>Complete the history first</Button>
+          <Button className="crisis-drug__action"
+            onClick={() => onAction('wait-for-pediatric-respiratory-distress-imaging')}>Wait for imaging first</Button>
+        </>}
+        {support && !early && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-pediatric-respiratory-distress-early-response')}>Review the 5-minute response</Button>}
+      </div>
+      <p className="field__hint">Qualified support happens off-screen. No device, flow, oxygen target, drug, dose, fluid, diagnosis, or procedure is selected here.</p>
+    </section>
+    <section className="syringe" aria-labelledby="pediatric-distress-change-title">
+      <div id="pediatric-distress-change-title" className="syringe__name">Notice what the number misses.</div>
+      <Badge kind="teaching">mentation · effort · air movement · oxygenation</Badge>
+      <div className="syringe__meta">early improvement · later fatigue · active rescue</div>
+      <p className="syringe__remaining" role="status">
+        {handoff ? 'Trajectory, active support, open causes, triggers, and owners handed off'
+          : rescue ? 'Airway-capable pediatric rescue active · hand off the unresolved risk'
+            : unsupported === 'falling-rate' ? 'A lower rate is not recovery when the child worsens'
+              : later ? 'Drowsier + shallow irregular breathing · rescue now'
+                : unsupported === 'single-number' ? 'A better saturation does not overrule the child'
+                  : early ? 'Review the later whole-child panel'
+                    : 'First support, then reassess the whole child'}
+      </p>
+      <div className="syringe__presets">
+        {early && !later && <>
+          <Button className="crisis-drug__action"
+            onClick={() => onAction('review-pediatric-respiratory-distress-later-panel')}>Review the later whole-child panel</Button>
+          <Button className="crisis-drug__action"
+            onClick={() => onAction('reassure-pediatric-respiratory-distress-saturation-alone')}>Reassure from SpO₂ 94%</Button>
+        </>}
+        {later && !rescue && <>
+          <Button className="crisis-drug__action"
+            onClick={() => onAction('activate-pediatric-respiratory-failure-rescue')}>Activate airway-capable pediatric rescue</Button>
+          <Button className="crisis-drug__action"
+            onClick={() => onAction('treat-pediatric-respiratory-distress-falling-rate-as-recovery')}>Treat RR 28 as recovery</Button>
+        </>}
+        {rescue && !handoff && <Button className="crisis-drug__action"
+          onClick={() => onAction('handoff-pediatric-respiratory-distress-reassessment')}>Hand off active breathing risk</Button>}
+      </div>
+      <p className="field__hint">The falling rate and quieter effort come with worsening mentation and air movement. This authored panel triggers rescue ownership; it does not diagnose a cause or predict outcome.</p>
     </section>
   </div>;
 }

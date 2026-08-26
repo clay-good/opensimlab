@@ -94,6 +94,20 @@ export const MODULES: readonly ModuleDeclaration[] = [
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
+    id: 'pediatrics',
+    route: 'pediatrics',
+    displayName: 'Pediatrics',
+    description: 'Practice calm whole-child recognition, reassessment, escalation, and handoff across pediatric emergencies.',
+    audience: 'Medical students, residents, nurses, and acute-care trainees caring for children.',
+    prerequisites: 'Basic pediatric assessment and respiratory and cardiovascular physiology.',
+    status: 'available',
+    plannedScope:
+      'Sixteen bounded pediatric rehearsals spanning respiratory distress, common respiratory '
+      + 'emergencies, sepsis and shock, metabolic and neurologic crises, rhythms, resuscitation, '
+      + 'airway obstruction, and safeguarding escalation.',
+    timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
+  },
+  {
     id: 'oncology',
     route: 'oncology',
     displayName: 'Oncology',

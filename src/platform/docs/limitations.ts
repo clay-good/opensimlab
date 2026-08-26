@@ -3455,6 +3455,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Distinguish tracheostomy from laryngectomy, verify stoma maturity, tube design, cuff and upper-airway facts, and use current device- and patient-specific emergency guidance with qualified teams.',
     briefIn: ['acute-tracheostomy-obstruction'],
   },
+  {
+    id: 'pediatric-respiratory-distress-presentation-support-and-trajectory-are-authored',
+    headline: 'The child, illness history, whole-child findings, experienced support, and serial deterioration are authored.',
+    simplification: 'Fixed reports and scenario-specific state snapshots stand in for caregiver history, appearance and mental-status assessment, examination, pulse oximetry, qualified support, continuous monitoring, and serial bedside reassessment.',
+    whereItMisleads: 'Treating the fictional saturation, respiratory rate, recession, air movement, or response as a universal threshold, disease prediction, learner-acquired finding, or validated sick-child physiology.',
+    correctUnderstanding: 'Real pediatric assessment integrates verified appearance, work and quality of breathing, speech or cry, air movement, circulation, mental status, signal quality, age, trajectory, caregiver context, and repeated qualified review.',
+    briefIn: ['pediatric-respiratory-distress'],
+  },
+  {
+    id: 'pediatric-respiratory-distress-controls-review-escalate-reassess-and-handoff-only',
+    headline: 'The controls record whole-child review, experienced support, serial reassessment, rescue ownership, and handoff only.',
+    simplification: 'Six accepted actions and 4 nonmutating teaching choices stand in for pediatric emergency team activation, qualified oxygenation and monitoring, repeated assessment, rescue preparation, cause review, caregiver communication, and handoff.',
+    whereItMisleads: 'Equating button order with examination, diagnosis, oxygen or airway support, treatment, procedural skill, team performance, caregiver communication, or pediatric emergency competence.',
+    correctUnderstanding: 'Actual care requires the child and caregiver, trained pediatric and airway-capable teams, current guidance, local resources, patient-specific support, and continuous reassessment.',
+    briefIn: ['pediatric-respiratory-distress'],
+  },
+  {
+    id: 'no-live-pediatric-diagnosis-device-dose-procedure-treatment-disposition-or-outcome',
+    headline: 'The lab does not diagnose a cause, choose pediatric equipment or doses, perform a procedure, deliver treatment, determine disposition, or predict outcome.',
+    simplification: 'No live examination, oximetry, capnography, blood gas, imaging, score, diagnosis, oxygen source or interface, flow, FiO2, target, medication, dose, fluid, suction, airway maneuver, bag-mask ventilation, intubation, tube sizing, procedure, treatment, disposition, prognosis, durable recovery, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values or actions into care, inferring a disease label from excluded snapshots, or using completion as evidence of clinical, device, dosing, airway, procedural, treatment, disposition, or prognostic competence.',
+    correctUnderstanding: 'Use verified patient data, current pediatric guidance, weight- and context-specific local systems, qualified teams, caregiver input, and repeated patient-specific reassessment.',
+    briefIn: ['pediatric-respiratory-distress'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

@@ -41,7 +41,7 @@ import type { Scenario as ScenarioDocument, TimelineEvent } from './scenarios/ty
 import { evaluatePredicate, parsePredicate, type StatePredicate } from './scenarios/predicate';
 
 /** The engine's own version, recorded in every transcript. */
-export const ENGINE_VERSION = '0.1.0-alpha.42';
+export const ENGINE_VERSION = '0.1.0-alpha.43';
 
 /** Source-banded adult perioperative IV epinephrine boluses modeled by this slice. */
 export const EPINEPHRINE_IV_BOUNDS = { minMicrograms: 10, maxMicrograms: 50 } as const;
@@ -120,6 +120,17 @@ const ACUTE_TRACHEOSTOMY_OBSTRUCTION_BLOCKED_ACTION_TYPES = new Set([
   ...OXYGEN_DEVICE_FAILURE_BLOCKED_ACTION_TYPES, 'oxygen-device-failure-response',
   'high-flow-nasal-oxygen-escalation-response', 'endotracheal-tube-migration-response',
   'bronchiectasis-mucus-plugging-response', 'unplanned-extubation-response',
+]);
+const PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES = new Set([
+  ...ACUTE_TRACHEOSTOMY_OBSTRUCTION_BLOCKED_ACTION_TYPES,
+  'acute-tracheostomy-obstruction-response', 'oxygen-device-failure-response',
+  'adult-asthma-response', 'acute-severe-asthma-response', 'copd-exacerbation-response',
+  'community-acquired-pneumonia-hypoxemia-response', 'emergency-anaphylaxis-response',
+  'septic-shock-response', 'status-epilepticus-response', 'mucus-plugging-response',
+  'high-flow-nasal-oxygen-escalation-response', 'noninvasive-ventilation-selection-response',
+  'unplanned-extubation-response', 'endotracheal-tube-migration-response',
+  'bronchiolitis-response', 'croup-response', 'pediatric-status-asthmaticus-response',
+  'pediatric-foreign-body-airway-obstruction-response',
 ]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
@@ -765,6 +776,13 @@ export class AnesthesiaEngine {
   private acuteTracheostomyObstructionLastUnsupportedChoice: 'imaging' | 'unverified-ventilation' | 'force-catheter' | 'whole-tube' | null = null;
   /** Canonical gas-flow state for the scenario's declared tracheostomy path. */
   private tracheostomyPatencyFraction = 1;
+  private pediatricRespiratoryDistressRecognitionAtTick: number | null = null;
+  private pediatricRespiratoryDistressSupportAtTick: number | null = null;
+  private pediatricRespiratoryDistressEarlyResponseAtTick: number | null = null;
+  private pediatricRespiratoryDistressLaterPanelAtTick: number | null = null;
+  private pediatricRespiratoryDistressRescueAtTick: number | null = null;
+  private pediatricRespiratoryDistressHandoffAtTick: number | null = null;
+  private pediatricRespiratoryDistressLastUnsupportedChoice: 'history-first' | 'imaging-first' | 'single-number' | 'falling-rate' | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1150,6 +1168,15 @@ export class AnesthesiaEngine {
       && ACUTE_TRACHEOSTOMY_OBSTRUCTION_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `acute-tracheostomy-obstruction-generic-action-refused-${this.currentTick}`,
         'This tracheostomy-patency lesson does not expose generic oxygen, airway, suction, device, ventilator, medication, procedure, alarm, or adjacent-crisis actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const pediatricRespiratoryDistress = this.scenario.timeline.some((event) =>
+      event.type === 'narrative' && event.target === 'pediatric-respiratory-distress-reassessment');
+    if (pediatricRespiratoryDistress
+      && PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `pediatric-respiratory-distress-generic-action-refused-${this.currentTick}`,
+        'This whole-child lesson does not expose generic medication, oxygen-device, airway, ventilator, procedure, alarm, disease-specific, or adjacent-crisis actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -5895,6 +5922,72 @@ export class AnesthesiaEngine {
         this.acuteTracheostomyObstructionHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `acute-tracheostomy-obstruction-handoff-recorded-${this.currentTick}`, 'The tracheostomy-versus-laryngectomy anatomy, device and stoma facts, current gas path, obstruction and qualified correction, partial response, recurrence triggers, humidification and secretion review, emergency plan, ready equipment, and named respiratory, nursing, and airway owners were handed off. No durable resolution, disposition, prognosis, or outcome was declared.', { durablePatencyProven: false, dispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'pediatric-respiratory-distress-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pediatric-respiratory-distress-reassessment');
+        const valid = ['reconcile-pediatric-respiratory-distress-whole-child',
+          'activate-pediatric-respiratory-distress-support',
+          'complete-pediatric-respiratory-distress-history-first',
+          'wait-for-pediatric-respiratory-distress-imaging',
+          'review-pediatric-respiratory-distress-early-response',
+          'review-pediatric-respiratory-distress-later-panel',
+          'reassure-pediatric-respiratory-distress-saturation-alone',
+          'treat-pediatric-respiratory-distress-falling-rate-as-recovery',
+          'activate-pediatric-respiratory-failure-rescue',
+          'handoff-pediatric-respiratory-distress-reassessment'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `pediatric-respiratory-distress-response-refused-${this.currentTick}`, supported ? 'That whole-child response is not available. Nothing changed.' : 'These pediatric respiratory-distress choices are available only in the declared Pediatrics lesson.'); break; }
+        if (response === 'reconcile-pediatric-respiratory-distress-whole-child') {
+          if (this.pediatricRespiratoryDistressRecognitionAtTick !== null) { this.log('warning', 'assessment', `pediatric-respiratory-distress-recognition-refused-${this.currentTick}`, 'The fixed whole-child pattern was already reconciled.'); break; }
+          this.pediatricRespiratoryDistressRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pediatric-respiratory-distress-whole-child-reconciled-${this.currentTick}`, 'Fixed qualified reports were reconciled as a whole-child respiratory-distress pattern: anxious appearance and short phrases, grunting, nasal flaring, marked recession, tachypnea, equally reduced air entry, and clean pulse-coherent hypoxemia, with warm perfusion, strong pulses, and spontaneous breathing. No single value established severity or cause, and the learner did not examine, measure, interpret a test, or diagnose.', { initialPulsePresent: true, spontaneousBreathingAuthored: true, diagnosisMadeByLearner: false, patientExaminedByLearner: false }); break;
+        }
+        if (this.pediatricRespiratoryDistressRecognitionAtTick === null) { this.log('warning', 'assessment', `pediatric-respiratory-distress-recognition-order-refused-${this.currentTick}`, 'Review the whole-child appearance, breathing, circulation, and pulse-coherent oxygenation first.'); break; }
+        if (response === 'complete-pediatric-respiratory-distress-history-first' || response === 'wait-for-pediatric-respiratory-distress-imaging') {
+          this.pediatricRespiratoryDistressLastUnsupportedChoice = response === 'complete-pediatric-respiratory-distress-history-first' ? 'history-first' : 'imaging-first';
+          this.log('warning', 'assessment', `pediatric-respiratory-distress-support-not-selected-${this.currentTick}`, response === 'complete-pediatric-respiratory-distress-history-first' ? 'A fuller history matters, but it should continue in parallel rather than delay support for this authored distress. Nothing changed.' : 'Imaging may later help with cause, but it should not delay support for this whole-child pattern. Nothing changed.', { unsupportedChoice: this.pediatricRespiratoryDistressLastUnsupportedChoice, patientStateChanged: false }); break;
+        }
+        if (response === 'activate-pediatric-respiratory-distress-support') {
+          if (this.pediatricRespiratoryDistressSupportAtTick !== null) { this.log('warning', 'assessment', `pediatric-respiratory-distress-support-refused-${this.currentTick}`, 'Experienced pediatric support was already activated.'); break; }
+          this.pediatricRespiratoryDistressSupportAtTick = this.currentTick;
+          this.pediatricRespiratoryDistressLastUnsupportedChoice = null;
+          this.log('critical', 'assessment', `pediatric-respiratory-distress-support-activated-${this.currentTick}`, 'Experienced pediatric help, qualified oxygenation, continuous monitoring, and airway-capable rescue readiness were activated while focused history and cause review continued in parallel. The learner did not choose a device, flow, fraction, target, ventilation, drug, dose, fluid, procedure, or treatment.', { experiencedSupportActivated: true, oxygenDeliveredByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.pediatricRespiratoryDistressSupportAtTick === null) { this.log('warning', 'assessment', `pediatric-respiratory-distress-support-order-refused-${this.currentTick}`, 'Activate experienced pediatric support before reviewing an elapsed response.'); break; }
+        if (response === 'review-pediatric-respiratory-distress-early-response') {
+          if (this.currentTick <= this.pediatricRespiratoryDistressSupportAtTick) { this.log('warning', 'assessment', `pediatric-respiratory-distress-early-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before reviewing the early whole-child response.'); break; }
+          if (this.pediatricRespiratoryDistressEarlyResponseAtTick !== null) { this.log('warning', 'assessment', `pediatric-respiratory-distress-early-refused-${this.currentTick}`, 'The early whole-child response was already reviewed.'); break; }
+          this.pediatricRespiratoryDistressEarlyResponseAtTick = this.currentTick;
+          this.log('warning', 'assessment', `pediatric-respiratory-distress-early-response-reviewed-${this.currentTick}`, 'Fixed qualified 5-minute report: SpO2 is 94% on authored experienced-team support, HR 134/min, RR 44/min, and BP 104/66 mmHg. She remains anxious, uses short phrases, grunts, and has marked recession with equally reduced bilateral air entry. Oxygenation improved; the whole child did not recover.', { singleNumberRecoveryProven: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.pediatricRespiratoryDistressEarlyResponseAtTick === null) { this.log('warning', 'assessment', `pediatric-respiratory-distress-early-order-refused-${this.currentTick}`, 'Review the early whole-child response after elapsed time before opening the later panel.'); break; }
+        if (response === 'reassure-pediatric-respiratory-distress-saturation-alone') {
+          this.pediatricRespiratoryDistressLastUnsupportedChoice = 'single-number';
+          this.log('warning', 'assessment', `pediatric-respiratory-distress-single-number-not-selected-${this.currentTick}`, 'The saturation improved, but grunting, recession, short phrases, tachypnea, and reduced air entry persist. Reassess the whole child. Nothing changed.', { unsupportedChoice: 'single-number', patientStateChanged: false }); break;
+        }
+        if (response === 'review-pediatric-respiratory-distress-later-panel') {
+          if (this.currentTick <= this.pediatricRespiratoryDistressEarlyResponseAtTick) { this.log('warning', 'assessment', `pediatric-respiratory-distress-later-time-refused-${this.currentTick}`, 'Allow more simulated time before reviewing the later whole-child panel.'); break; }
+          if (this.pediatricRespiratoryDistressLaterPanelAtTick !== null) { this.log('warning', 'assessment', `pediatric-respiratory-distress-later-refused-${this.currentTick}`, 'The later whole-child panel was already reviewed.'); break; }
+          this.pediatricRespiratoryDistressLaterPanelAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pediatric-respiratory-distress-later-panel-reviewed-${this.currentTick}`, 'Fixed qualified 10-minute report: she is drowsy but rousable with a weak one-word response, shallow irregular breathing, visibly weaker effort and less dramatic recession, markedly reduced bilateral air movement, HR 146/min, RR 28/min, BP 98/60 mmHg, and clean pulse-coherent SpO2 90% on unchanged authored support. The falling rate and quieter effort reflect fatigue and evolving inadequate breathing with a pulse, not recovery.', { progressiveInadequateBreathingAuthored: true, lowerRateMeansRecovery: false, diagnosisMadeByLearner: false }); break;
+        }
+        if (this.pediatricRespiratoryDistressLaterPanelAtTick === null) { this.log('warning', 'assessment', `pediatric-respiratory-distress-later-order-refused-${this.currentTick}`, 'Review the strictly later whole-child panel before activating the rescue pathway.'); break; }
+        if (response === 'treat-pediatric-respiratory-distress-falling-rate-as-recovery') {
+          this.pediatricRespiratoryDistressLastUnsupportedChoice = 'falling-rate';
+          this.log('warning', 'assessment', `pediatric-respiratory-distress-falling-rate-not-selected-${this.currentTick}`, 'A lower respiratory rate is not recovery when mentation, effort, air movement, rhythm, and oxygenation worsen together. Nothing changed.', { unsupportedChoice: 'falling-rate', patientStateChanged: false }); break;
+        }
+        if (response === 'activate-pediatric-respiratory-failure-rescue') {
+          if (this.pediatricRespiratoryDistressRescueAtTick !== null) { this.log('warning', 'assessment', `pediatric-respiratory-distress-rescue-refused-${this.currentTick}`, 'Airway-capable pediatric rescue ownership was already activated.'); break; }
+          this.pediatricRespiratoryDistressRescueAtTick = this.currentTick;
+          this.pediatricRespiratoryDistressLastUnsupportedChoice = null;
+          this.log('critical', 'assessment', `pediatric-respiratory-distress-rescue-activated-${this.currentTick}`, 'Immediate airway-capable pediatric rescue ownership was activated for worsening mentation and inadequate breathing with a pulse. Experienced staff continue active support while preparing context-specific rescue. The learner did not select or deliver ventilation, an airway maneuver, intubation, a device, setting, drug, fluid, procedure, or treatment.', { rescueReadinessActivated: true, ventilationDeliveredByLearner: false, intubationPerformedByLearner: false }); break;
+        }
+        if (this.pediatricRespiratoryDistressRescueAtTick === null) { this.log('warning', 'assessment', `pediatric-respiratory-distress-rescue-order-refused-${this.currentTick}`, 'Activate immediate airway-capable pediatric rescue before handoff.'); break; }
+        if (this.currentTick <= this.pediatricRespiratoryDistressRescueAtTick) { this.log('warning', 'assessment', `pediatric-respiratory-distress-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off the active risk.'); break; }
+        if (this.pediatricRespiratoryDistressHandoffAtTick !== null) { this.log('warning', 'assessment', `pediatric-respiratory-distress-handoff-refused-${this.currentTick}`, 'The active-risk handoff was already recorded.'); break; }
+        this.pediatricRespiratoryDistressHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `pediatric-respiratory-distress-handoff-recorded-${this.currentTick}`, 'The caregiver context, whole-child trajectory, qualified support, worsening mentation and breathing, open causes, active rescue work, deterioration triggers, and named pediatric, respiratory, nursing, and airway owners were handed off. No diagnosis, durable recovery, disposition, prognosis, or outcome was declared.', { durableRecoveryProven: false, dispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -8710,6 +8803,20 @@ export class AnesthesiaEngine {
         meanArterialMmHg: 96 + 9 * blocked,
         coreTemperatureC: 37.1 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'pediatric-respiratory-distress-reassessment')) {
+      const early = this.pediatricRespiratoryDistressEarlyResponseAtTick !== null;
+      const later = this.pediatricRespiratoryDistressLaterPanelAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: later ? 146 : early ? 134 : 138,
+        respiratoryRateBpm: later ? 28 : early ? 44 : 46,
+        spo2Percent: later ? 90 : early ? 94 : 87,
+        etco2MmHg: later ? 42 : 32,
+        systolicMmHg: later ? 98 : 104,
+        diastolicMmHg: later ? 60 : 66,
+        meanArterialMmHg: later ? 73 : 79,
+        coreTemperatureC: 37.7 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -10277,6 +10384,34 @@ export class AnesthesiaEngine {
               intubationPerformedByLearner: false as const,
               procedurePerformedByLearner: false as const,
               treatmentDeliveredByLearner: false as const, durablePatencyProven: false as const,
+              dispositionDetermined: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pediatric-respiratory-distress-reassessment') ? {
+            pediatricRespiratoryDistressAssessment: {
+              recognitionAtTick: this.pediatricRespiratoryDistressRecognitionAtTick,
+              supportAtTick: this.pediatricRespiratoryDistressSupportAtTick,
+              earlyResponseAtTick: this.pediatricRespiratoryDistressEarlyResponseAtTick,
+              laterPanelAtTick: this.pediatricRespiratoryDistressLaterPanelAtTick,
+              rescueAtTick: this.pediatricRespiratoryDistressRescueAtTick,
+              handoffAtTick: this.pediatricRespiratoryDistressHandoffAtTick,
+              lastUnsupportedChoice: this.pediatricRespiratoryDistressLastUnsupportedChoice,
+              initialPulsePresent: true as const, spontaneousBreathingAuthored: true as const,
+              hypoxemiaAuthored: true as const, pulseSignalCoherentAuthored: true as const,
+              progressiveInadequateBreathingAuthored: true as const,
+              experiencedSupportActivated: this.pediatricRespiratoryDistressSupportAtTick !== null,
+              rescueReadinessActivated: this.pediatricRespiratoryDistressRescueAtTick !== null,
+              patientExaminedByLearner: false as const, monitorInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const, testAcquiredByLearner: false as const,
+              oxygenSelectedByLearner: false as const, oxygenDeliveredByLearner: false as const,
+              deviceSelectedByLearner: false as const, flowSelectedByLearner: false as const,
+              fio2SelectedByLearner: false as const, oxygenTargetSelectedByLearner: false as const,
+              ventilationDeliveredByLearner: false as const,
+              airwayManeuverPerformedByLearner: false as const,
+              intubationPerformedByLearner: false as const, drugDeliveredByLearner: false as const,
+              fluidDeliveredByLearner: false as const, procedurePerformedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const, durableRecoveryProven: false as const,
               dispositionDetermined: false as const, outcomePredicted: false as const,
             },
           } : {}),
