@@ -1892,6 +1892,17 @@
         "GB"
       ],
       "fidelityClass": "state_transition"
+    },
+    {
+      "scenarioId": "maternal-cardiac-arrest-coordinated-response",
+      "contentVersion": "0.1.0",
+      "moduleId": "obstetrics",
+      "maturity": "draft",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition"
     }
   ]
 }

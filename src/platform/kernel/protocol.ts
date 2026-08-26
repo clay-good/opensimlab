@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 166 reports postpartum severe-preeclampsia state. */
-export const WORKER_PROTOCOL_VERSION = 168;
+export const WORKER_PROTOCOL_VERSION = 169;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2766,6 +2766,26 @@ export interface EquipmentSnapshot {
       readonly cardiacArrestOccurred: false; readonly treatmentEffectProven: false;
       readonly respiratoryRecoveryProven: false; readonly hemodynamicRecoveryProven: false;
       readonly bleedingControlProven: false; readonly coagulopathyControlProven: false;
+      readonly safetyDispositionDetermined: false; readonly maternalOutcomePredicted: false;
+      readonly newbornOutcomePredicted: false; readonly outcomePredicted: false;
+    };
+    readonly obstetricsMaternalArrestAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly modificationsAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly authoredMaternalCardiacArrest: true;
+      readonly qualifiedStandardResuscitationAuthored: true;
+      readonly learnerAssessedResponsivenessBreathingOrPulse: false;
+      readonly learnerInterpretedRhythmOrMonitoring: false;
+      readonly cprPerformedByLearner: false; readonly uterineDisplacementPerformedByLearner: false;
+      readonly airwayOrVentilationSelectedByLearner: false; readonly accessSelectedByLearner: false;
+      readonly drugDoseRouteOrTargetSelectedByLearner: false;
+      readonly shockOrPacingSelectedByLearner: false; readonly fetalMonitorOperatedByLearner: false;
+      readonly causeDiagnosedByLearner: false; readonly causeExcludedByLearner: false;
+      readonly deliveryEligibilityDeterminedByLearner: false;
+      readonly deliverySelectedByLearner: false; readonly deliveryPerformedByLearner: false;
+      readonly deliveryCompleted: false; readonly roscOccurred: false;
+      readonly treatmentEffectProven: false; readonly terminationDecisionMade: false;
       readonly safetyDispositionDetermined: false; readonly maternalOutcomePredicted: false;
       readonly newbornOutcomePredicted: false; readonly outcomePredicted: false;
     };

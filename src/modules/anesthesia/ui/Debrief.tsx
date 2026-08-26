@@ -5118,6 +5118,38 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!support && (index >= 4 ? support.tick < event.tick : support.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, preceded coordinated activation, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['activate-obstetrics-maternal-arrest-prepared-resuscitation-obstetric-anesthesia-delivery-newborn-and-dignity-response-now',
+      'reconcile-obstetrics-maternal-arrest-clock-responsiveness-breathing-pulse-rhythm-pregnancy-and-whole-person',
+      'review-obstetrics-maternal-arrest-supplied-pregnancy-modifications-and-airway-priority-boundary',
+      'review-obstetrics-maternal-arrest-reversible-causes-delivery-newborn-and-hemorrhage-readiness-boundary',
+      'review-obstetrics-maternal-arrest-fixed-minute-four-active-resuscitation-and-delivery-readiness-report',
+      'handoff-obstetrics-maternal-arrest-active-arrest-cause-procedure-hemorrhage-newborn-family-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'maternal-cardiac-arrest-coordinated-response'
+        && scenario.timeline.every((event) => event.type === 'narrative')
+        && scenario.timeline.filter((event) => event.target === 'maternal-cardiac-arrest-coordinated-response-transition').length === 1
+        && scenario.timeline.filter((event) => event.target === 'maternal-cardiac-arrest-coordinated-response-transition-boundary').length === 1;
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Obstetrics maternal cardiac-arrest lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['support-activated', 'The prepared pregnancy-arrest response, clock, standard resuscitation, pregnancy-specific, in-place delivery, newborn, hemorrhage, communication, dignity, family, and staff-support ownership was activated first.'],
+        ['context-reconciled', 'The arrest clock, responsiveness, breathing, pulse, supplied rhythm, fundal-height report, pregnancy context, and whole person were connected.'],
+        ['modifications-reviewed', 'Pregnancy-specific resuscitation, airway-priority, access, fetal-monitor, and resource-dependent rescue boundaries were reviewed without learner treatment controls.'],
+        ['readiness-reviewed', 'Open causes plus in-place delivery, newborn, hemorrhage, blood-bank, and rescue readiness were reviewed without delaying active resuscitation.'],
+        ['minute-four-report-reviewed', 'The fixed minute-4 persistent-arrest report was reviewed as qualified resuscitative delivery began at the arrest location, without delivery-completion, return-of-circulation, treatment-effect, or outcome claims.'],
+        ['active-risk-handoff-recorded', 'Active maternal resuscitation, cause, delivery, hemorrhage, newborn, rescue, family, staff, termination, disposition, prognosis, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^obstetrics-maternal-arrest-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const support = log.find(({ eventId }) => /^obstetrics-maternal-arrest-support-activated-\d+$/.test(eventId));
+      const context = log.find(({ eventId }) => /^obstetrics-maternal-arrest-context-reconciled-\d+$/.test(eventId));
+      const modifications = log.find(({ eventId }) => /^obstetrics-maternal-arrest-modifications-reviewed-\d+$/.test(eventId));
+      const readiness = log.find(({ eventId }) => /^obstetrics-maternal-arrest-readiness-reviewed-\d+$/.test(eventId));
+      const allReviews = context && modifications && readiness;
+      const ordered = !!event && (index === 0
+        || (index < 4 && !!support && support.tick <= event.tick)
+        || (index === 4 && !!allReviews && Math.max(context.tick, modifications.tick, readiness.tick) < event.tick)
+        || (index === 5 && !!support && support.tick < event.tick));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, preceded coordinated activation, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-obstetrics-sepsis-postpartum-clock-infection-organ-dysfunction-and-whole-person',
       'recognize-obstetrics-maternal-sepsis-emergency-without-fever-score-source-or-single-value-closure',
       'activate-obstetrics-sepsis-obstetric-critical-care-anesthesia-nursing-pharmacy-microbiology-source-newborn-and-dignity-ownership',

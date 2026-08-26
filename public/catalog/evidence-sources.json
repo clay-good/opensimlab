@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 268,
+  "sourceCount": 271,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -775,6 +775,51 @@
         "lastAmended": "2025-05-27",
         "checkedAt": "2026-08-24"
       }
+    },
+    {
+      "id": "aha-pregnancy-cardiac-arrest-2025",
+      "currency": {
+        "lastAmended": "2025-10-22",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "American Heart Association",
+      "title": "Adult and Pediatric Special Circumstances of Resuscitation",
+      "publication": "2025 American Heart Association Guidelines for CPR and ECC",
+      "year": 2025,
+      "locator": "section 19.3, recommendations for pregnant patients in cardiac arrest; doi:10.1161/CIR.0000000000001380",
+      "usedFor": "Standard resuscitation plus continuous manual left lateral uterine displacement when fundal height is at or above the umbilicus, early airway priority, upper-body access, fetal-monitor removal, preparation for in-place resuscitative delivery at arrest recognition with a goal of completion by minute 5 if circulation has not returned, newborn-team readiness, and resource-dependent ECPR boundaries.",
+      "verifiedAgainst": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-and-pediatric-special-circumstances-of-resuscitation",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "aha-cardiac-arrest-in-pregnancy-algorithm-2025",
+      "currency": {
+        "lastAmended": "2025-07-25",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "American Heart Association",
+      "title": "Cardiac Arrest in Pregnancy Algorithm",
+      "publication": "2025 American Heart Association Guidelines for CPR and ECC",
+      "year": 2025,
+      "locator": "pregnancy arrest algorithm, boxes 1-7",
+      "usedFor": "The low-clutter parallel sequence of BLS/ALS, pregnancy-team activation, uterine displacement, airway and access priorities, fetal-monitor removal, immediate resuscitative-delivery preparation, minute-5 goal, and separate newborn resuscitation ownership.",
+      "verifiedAgainst": "https://cpr.heart.org/-/media/CPR-Files/CPR-Guidelines-Files/2025-Algorithms/Algorithm-SC-ACLS-CA-in-Pregnancy-250620.pdf",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "aim-cardiac-conditions-obstetric-care-2025",
+      "currency": {
+        "lastAmended": "2025-01-01",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "Alliance for Innovation on Maternal Health",
+      "title": "Cardiac Conditions in Obstetric Care Patient Safety Bundle",
+      "publication": "Alliance for Innovation on Maternal Health",
+      "year": 2025,
+      "locator": "2025 bundle; readiness, response, reporting and systems learning, and respectful-care domains",
+      "usedFor": "Multidisciplinary pregnancy-heart readiness, coordinated response, respectful communication, support-network inclusion, and systems-learning context around the maternal cardiac-arrest rehearsal.",
+      "verifiedAgainst": "https://saferbirth.org/psbs/cardiac-conditions-in-obstetric-care/",
+      "verifiedOn": "2026-08-26"
     },
     {
       "id": "oaa-high-central-neuraxial-block-current",

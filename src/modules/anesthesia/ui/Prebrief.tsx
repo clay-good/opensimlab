@@ -80,8 +80,13 @@ export function Prebrief({ scenario, region, environment = 'anesthesia', onStart
         {environment === 'respiratory-medicine' || environment === 'pediatrics' || environment === 'neurology' || environment === 'toxicology' || environment === 'obstetrics' ? (
           <ul>
             <li>{patient.diagnosis}.</li>
-            <li>Current authored reassessment: {patient.baseline.heartRateBpm} bpm and mean arterial pressure{' '}
-              {patient.baseline.meanArterialMmHg} mmHg.</li>
+            {scenario.metadata.id === 'maternal-cardiac-arrest-coordinated-response' ? (
+              <li>Current authored arrest report: organized electrical activity at 48 bpm without a
+                central pulse or obtainable blood pressure.</li>
+            ) : (
+              <li>Current authored reassessment: {patient.baseline.heartRateBpm} bpm and mean arterial pressure{' '}
+                {patient.baseline.meanArterialMmHg} mmHg.</li>
+            )}
             <li>Breathing and alertness: {patient.airway.assessment ?? 'not recorded'}.</li>
             <li>Allergies: {(patient.allergies ?? []).join(', ') || 'none documented'}.</li>
           </ul>

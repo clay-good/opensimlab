@@ -515,6 +515,15 @@ const OBSTETRICS_AFE_BLOCKED_ACTION_TYPES = new Set([
   'post-arrest-temperature-response',
   'pediatric-bradycardic-arrest-response',
 ]);
+const OBSTETRICS_MATERNAL_ARREST_BLOCKED_ACTION_TYPES = new Set([
+  ...OBSTETRICS_AFE_BLOCKED_ACTION_TYPES,
+  'suspected-amniotic-fluid-embolism-pattern-response',
+  'pediatric-bradycardic-arrest-response',
+  'transcutaneous-pacing-capture-response',
+  'post-arrest-temperature-response',
+  'rhythm',
+  'rhythm-change',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1478,6 +1487,12 @@ export class AnesthesiaEngine {
   private obstetricsAfeEvidenceAtTick: number | null = null;
   private obstetricsAfeReassessmentAtTick: number | null = null;
   private obstetricsAfeHandoffAtTick: number | null = null;
+  private obstetricsMaternalArrestSupportAtTick: number | null = null;
+  private obstetricsMaternalArrestContextAtTick: number | null = null;
+  private obstetricsMaternalArrestModificationsAtTick: number | null = null;
+  private obstetricsMaternalArrestReadinessAtTick: number | null = null;
+  private obstetricsMaternalArrestReassessmentAtTick: number | null = null;
+  private obstetricsMaternalArrestHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2417,6 +2432,14 @@ export class AnesthesiaEngine {
     if (obstetricsAfe && OBSTETRICS_AFE_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `obstetrics-afe-generic-action-refused-${this.currentTick}`,
         'This Obstetrics lesson exposes no generic examination, monitoring, blood-loss, uterine, laboratory, imaging, DIC score, diagnosis, oxygen, ventilation, airway, fluid, vasoactive, blood, coagulation, drug, dose, route, access, CPR, defibrillation, ECMO, delivery, procedure, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const obstetricsMaternalArrest = this.scenario.metadata.id === 'maternal-cardiac-arrest-coordinated-response'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'maternal-cardiac-arrest-coordinated-response-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'maternal-cardiac-arrest-coordinated-response-transition-boundary').length === 1;
+    if (obstetricsMaternalArrest && OBSTETRICS_MATERNAL_ARREST_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `obstetrics-maternal-arrest-generic-action-refused-${this.currentTick}`,
+        'This Obstetrics lesson exposes no generic pulse or rhythm assessment, examination, monitoring, CPR, uterine displacement, oxygen, ventilation, airway, access, fluid, blood, drug, dose, route, shock, pacing, fetal monitoring, ECMO, delivery, procedure, transfer, termination, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -10967,6 +10990,31 @@ export class AnesthesiaEngine {
         if (this.obstetricsAfeHandoffAtTick !== null) break;
         this.obstetricsAfeHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-afe-active-risk-handoff-recorded-${this.currentTick}`, 'Hypoxemia, shock, right-heart and other cardiopulmonary causes, progressive coagulopathy and hemorrhage, arrest readiness, procedure and critical-care needs, newborn continuity, family and staff support, neurologic recovery, fertility, prognosis, and maternal or newborn outcome uncertainty were handed off.', { safetyDispositionDetermined: false, maternalOutcomePredicted: false, newbornOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'maternal-cardiac-arrest-response': {
+        const response = typeof action.payload?.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'maternal-cardiac-arrest-coordinated-response'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'maternal-cardiac-arrest-coordinated-response-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'maternal-cardiac-arrest-coordinated-response-transition-boundary').length === 1;
+        const actions = ['activate-obstetrics-maternal-arrest-prepared-resuscitation-obstetric-anesthesia-delivery-newborn-and-dignity-response-now',
+          'reconcile-obstetrics-maternal-arrest-clock-responsiveness-breathing-pulse-rhythm-pregnancy-and-whole-person',
+          'review-obstetrics-maternal-arrest-supplied-pregnancy-modifications-and-airway-priority-boundary',
+          'review-obstetrics-maternal-arrest-reversible-causes-delivery-newborn-and-hemorrhage-readiness-boundary',
+          'review-obstetrics-maternal-arrest-fixed-minute-four-active-resuscitation-and-delivery-readiness-report',
+          'handoff-obstetrics-maternal-arrest-active-arrest-cause-procedure-hemorrhage-newborn-family-and-outcome-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `obstetrics-maternal-arrest-response-refused-${this.currentTick}`, supported ? 'The maternal-arrest action was not listed. No supplied or injected text was retained.' : 'These maternal-arrest choices are available only in the exact declared Obstetrics lesson.'); break; }
+        if (response === actions[0]) { if (this.obstetricsMaternalArrestSupportAtTick !== null) break; this.obstetricsMaternalArrestSupportAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-maternal-arrest-support-activated-${this.currentTick}`, 'The pregnancy-arrest response and arrest clock were activated now. Qualified teams own uninterrupted standard resuscitation, continuous manual uterine displacement, early airway and ventilation care, upper-body access, rhythm-appropriate care, fetal-monitor removal, reversible causes, immediate in-place resuscitative-delivery preparation, newborn and hemorrhage readiness, communication, dignity, family and staff support. No learner assessment, maneuver, treatment, drug, shock, device, delivery, procedure, transfer, or termination action occurred.'); break; }
+        if (this.obstetricsMaternalArrestSupportAtTick === null) { this.log('warning', 'assessment', `obstetrics-maternal-arrest-support-order-refused-${this.currentTick}`, 'Activate the prepared pregnancy cardiac-arrest response and arrest clock now before further review.'); break; }
+        if (response === actions[1]) { if (this.obstetricsMaternalArrestContextAtTick !== null) break; this.obstetricsMaternalArrestContextAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-maternal-arrest-context-reconciled-${this.currentTick}`, 'The arrest clock, unresponsiveness, absent normal breathing and central pulse, supplied organized electrical activity without mechanical circulation, fundal-height report, pregnancy context, prearrest lead-in, and whole person were connected without learner pulse check, examination, measurement, monitoring interpretation, or diagnosis.'); break; }
+        if (response === actions[2]) { if (this.obstetricsMaternalArrestModificationsAtTick !== null) break; this.obstetricsMaternalArrestModificationsAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-maternal-arrest-modifications-reviewed-${this.currentTick}`, 'Qualified standard resuscitation plus continuous manual uterine displacement, early airway and ventilation priority, upper-body access, rhythm-appropriate care, fetal-monitor removal, and resource-dependent rescue boundaries were reviewed without learner compression, airway, access, monitor, drug, dose, shock, or procedure action.'); break; }
+        if (response === actions[3]) { if (this.obstetricsMaternalArrestReadinessAtTick !== null) break; this.obstetricsMaternalArrestReadinessAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-maternal-arrest-readiness-reviewed-${this.currentTick}`, 'Concealed hemorrhage, hypoxemia, thrombosis, amniotic fluid embolism, cardiac disease, aortic catastrophe, anesthetic or drug complication, sepsis, hypertensive disease, metabolic causes, tamponade, tension physiology and other causes remained open while qualified in-place delivery, newborn, hemorrhage, blood-bank and rescue readiness stayed active. No learner diagnosis, exclusion, eligibility, treatment or procedure decision occurred.'); break; }
+        if (this.obstetricsMaternalArrestContextAtTick === null || this.obstetricsMaternalArrestModificationsAtTick === null || this.obstetricsMaternalArrestReadinessAtTick === null) { this.log('warning', 'assessment', `obstetrics-maternal-arrest-review-order-refused-${this.currentTick}`, 'After activating the pregnancy-arrest response, connect the arrest context, review pregnancy modifications, and review open causes and readiness before the fixed report.'); break; }
+        if (response === actions[4]) { const prior = Math.max(this.obstetricsMaternalArrestContextAtTick, this.obstetricsMaternalArrestModificationsAtTick, this.obstetricsMaternalArrestReadinessAtTick); if (this.currentTick <= prior) { this.log('warning', 'assessment', `obstetrics-maternal-arrest-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed minute-4 qualified-team report.'); break; } if (this.obstetricsMaternalArrestReassessmentAtTick !== null) break; this.obstetricsMaternalArrestReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-maternal-arrest-minute-four-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report, authored at arrest minute 4: organized electrical activity persists at 42/min without a central pulse, blood pressure, pleth waveform or return of spontaneous circulation. Qualified standard resuscitation, uterine displacement, airway and ventilation care continue. Because the supplied fundal height is above the umbilicus and circulation has not returned, the qualified obstetric operator reports that resuscitative delivery is beginning at the arrest location while advanced life support continues. The lesson stops before delivery completion. Cause, fetal or newborn condition, hemorrhage, treatment effect, procedures, disposition, prognosis and outcomes remain unresolved.', { treatmentDeliveredByLearner: false, deliveryCompleted: false, roscOccurred: false, outcomePredicted: false }); break; }
+        if (this.obstetricsMaternalArrestReassessmentAtTick === null) { this.log('warning', 'assessment', `obstetrics-maternal-arrest-handoff-order-refused-${this.currentTick}`, 'Review the fixed minute-4 active-resuscitation and delivery-readiness report before handoff.'); break; }
+        if (this.currentTick <= this.obstetricsMaternalArrestReassessmentAtTick) { this.log('warning', 'assessment', `obstetrics-maternal-arrest-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.obstetricsMaternalArrestHandoffAtTick !== null) break;
+        this.obstetricsMaternalArrestHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-maternal-arrest-active-risk-handoff-recorded-${this.currentTick}`, 'Active maternal resuscitation, unresolved cause, in-progress delivery risk, hemorrhage, newborn readiness, resource-dependent rescue, neurologic uncertainty, family and staff support, termination, disposition, prognosis, and maternal or newborn outcome uncertainty were handed off.', { deliveryCompleted: false, roscOccurred: false, terminationDecisionMade: false, maternalOutcomePredicted: false, newbornOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -13899,6 +13947,14 @@ export class AnesthesiaEngine {
         diastolicMmHg: this.obstetricsAfeReassessmentAtTick !== null ? 50 : 42,
         meanArterialMmHg: this.obstetricsAfeReassessmentAtTick !== null ? 62 : 53,
         coreTemperatureC: this.obstetricsAfeReassessmentAtTick !== null ? 36.7 : 36.8 };
+    }
+    if (this.scenario.metadata.id === 'maternal-cardiac-arrest-coordinated-response'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'maternal-cardiac-arrest-coordinated-response-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'maternal-cardiac-arrest-coordinated-response-transition-boundary').length === 1) {
+      crisisState = { ...crisisState, heartRateBpm: this.obstetricsMaternalArrestReassessmentAtTick !== null ? 42 : 48,
+        respiratoryRateBpm: 0, spo2Percent: 0, systolicMmHg: 0, diastolicMmHg: 0,
+        meanArterialMmHg: 0, coreTemperatureC: 36.8 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -17994,6 +18050,33 @@ export class AnesthesiaEngine {
               outcomePredicted: false as const,
             },
           } : {}),
+        ...(this.scenario.metadata.id === 'maternal-cardiac-arrest-coordinated-response'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'maternal-cardiac-arrest-coordinated-response-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'maternal-cardiac-arrest-coordinated-response-transition-boundary').length === 1 ? {
+            obstetricsMaternalArrestAssessment: {
+              supportAtTick: this.obstetricsMaternalArrestSupportAtTick,
+              contextAtTick: this.obstetricsMaternalArrestContextAtTick,
+              modificationsAtTick: this.obstetricsMaternalArrestModificationsAtTick,
+              readinessAtTick: this.obstetricsMaternalArrestReadinessAtTick,
+              reassessmentAtTick: this.obstetricsMaternalArrestReassessmentAtTick,
+              handoffAtTick: this.obstetricsMaternalArrestHandoffAtTick,
+              authoredMaternalCardiacArrest: true as const,
+              qualifiedStandardResuscitationAuthored: true as const,
+              learnerAssessedResponsivenessBreathingOrPulse: false as const,
+              learnerInterpretedRhythmOrMonitoring: false as const,
+              cprPerformedByLearner: false as const, uterineDisplacementPerformedByLearner: false as const,
+              airwayOrVentilationSelectedByLearner: false as const, accessSelectedByLearner: false as const,
+              drugDoseRouteOrTargetSelectedByLearner: false as const, shockOrPacingSelectedByLearner: false as const,
+              fetalMonitorOperatedByLearner: false as const, causeDiagnosedByLearner: false as const,
+              causeExcludedByLearner: false as const, deliveryEligibilityDeterminedByLearner: false as const,
+              deliverySelectedByLearner: false as const, deliveryPerformedByLearner: false as const,
+              deliveryCompleted: false as const, roscOccurred: false as const,
+              treatmentEffectProven: false as const, terminationDecisionMade: false as const,
+              safetyDispositionDetermined: false as const, maternalOutcomePredicted: false as const,
+              newbornOutcomePredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,
           classification: this.aspirationRiskClassification,
@@ -18187,6 +18270,16 @@ export class AnesthesiaEngine {
    */
   invalidParameters(): Set<string> {
     const invalid = new Set<string>();
+    if (this.scenario.metadata.id === 'maternal-cardiac-arrest-coordinated-response'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'maternal-cardiac-arrest-coordinated-response-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'maternal-cardiac-arrest-coordinated-response-transition-boundary').length === 1) {
+      invalid.add('spo2Percent');
+      invalid.add('etco2MmHg');
+      invalid.add('systolicMmHg');
+      invalid.add('diastolicMmHg');
+      invalid.add('meanArterialMmHg');
+    }
     if (this.rhythm === 'ventricular-fibrillation' || this.rhythm === 'asystole') {
       invalid.add('heartRateBpm');
     }

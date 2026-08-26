@@ -68,6 +68,16 @@ export function depthConfidenceFor(
     : { label: 'Predicted', kind: 'default' as const };
 }
 
+export function monitorUnavailableParameters(
+  equipmentInvalid: readonly string[],
+  maternalArrest: boolean,
+): ReadonlySet<string> {
+  return new Set([
+    ...equipmentInvalid,
+    ...(maternalArrest ? ['meanArterialMmHg', 'spo2Percent', 'etco2MmHg'] : []),
+  ]);
+}
+
 /** Download a file locally. No network request is made. */
 function downloadLocal(filename: string, contents: string, type: string): void {
   const blob = new Blob([contents], { type });
@@ -233,11 +243,18 @@ export function Cockpit({
     hasHighSpinalResponse,
     hasVenousAirEmbolismResponse,
     hasBronchospasmResponse,
+    hasObstetricsMaternalArrestResponse,
   } = crisisResponseAvailability(scenario, injectedCrises);
   const rhythm = (equipment?.rhythmId ?? 'sinus') as RhythmId;
   const invalidParameters = useMemo(
-    () => new Set(equipment?.invalidParameters ?? []),
-    [equipment?.invalidParameters],
+    () => monitorUnavailableParameters(
+      equipment?.invalidParameters ?? [], hasObstetricsMaternalArrestResponse,
+    ),
+    [equipment?.invalidParameters, hasObstetricsMaternalArrestResponse],
+  );
+  const monitorAlarms = useMemo(
+    () => session.alarms.filter((alarm) => !invalidParameters.has(alarm.parameter)),
+    [invalidParameters, session.alarms],
   );
   const artifactParameters = useMemo(
     () => new Set(equipment?.artifactParameters ?? []),
@@ -572,12 +589,17 @@ export function Cockpit({
         <MonitorRegion
           state={displayedState}
           blocks={session.waveformBlocks}
-          alarms={session.alarms}
+          alarms={monitorAlarms}
           tick={session.tick}
           invalidParameters={invalidParameters}
-          invalidParameterReasons={scenario.metadata.id
-            === 'pediatric-foreign-body-airway-obstruction'
-            ? { meanArterialMmHg: 'Pressure not supplied' } : undefined}
+          invalidParameterReasons={hasObstetricsMaternalArrestResponse
+            ? {
+                meanArterialMmHg: 'Blood pressure not obtainable',
+                spo2Percent: 'Pulse-derived saturation unavailable',
+                etco2MmHg: 'Exhaled carbon dioxide not supplied',
+              }
+            : scenario.metadata.id === 'pediatric-foreign-body-airway-obstruction'
+              ? { meanArterialMmHg: 'Pressure not supplied' } : undefined}
           artifactParameters={artifactParameters}
           waveformArtifacts={waveformArtifacts}
           capnographySampleObstructed={capnographyLine.obstructed}
@@ -1129,6 +1151,9 @@ export function Cockpit({
           })}
           onObstetricsAfeResponse={(action) => session.act({
             type: 'suspected-amniotic-fluid-embolism-pattern-response', payload: { action },
+          })}
+          onObstetricsMaternalArrestResponse={(action) => session.act({
+            type: 'maternal-cardiac-arrest-response', payload: { action },
           })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },

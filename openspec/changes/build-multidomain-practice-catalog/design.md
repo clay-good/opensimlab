@@ -2091,6 +2091,25 @@ diagnosis, oxygen, ventilation, airway, fluid, vasopressor, pulmonary vasodilato
 blood component, coagulation therapy, drug, dose, route, CPR, defibrillation, ECMO, delivery,
 procedure, disposition, treatment-effect, durable-control or maternal/newborn outcome control.
 
+### Wave D obstetrics slice 7: maternal cardiac arrest coordinated response
+
+The seventh lab opens 30 seconds after a witnessed collapse at 32 weeks 4 days. Qualified staff
+supply absent normal breathing and central pulse, organized electrical activity at 48/min without
+mechanical circulation, fundal height above the umbilicus, and standard compressions already in
+progress. No cause is confirmed. This makes the lab pregnancy-specific coordination work rather
+than another generic PEA compression, epinephrine, or shock exercise, and keeps it distinct from the
+postpartum pulse-present amniotic-fluid-embolism pattern.
+
+Six controls activate the prepared pregnancy-arrest team and clock first, then record supplied
+arrest-context reconciliation, pregnancy-modification review, parallel reversible-cause and in-place
+delivery/newborn/hemorrhage readiness, a strict elapsed minute-4 report, and active-risk handoff. The
+fixed report preserves pulseless electrical activity while qualified resuscitative delivery begins
+at the arrest location and advanced life support continues; it stops before delivery completion,
+return of circulation, fetal or newborn state, or outcome. The lab exposes no learner pulse or
+rhythm assessment, CPR, uterine displacement, airway, access, monitoring, drug, dose, shock, fluid,
+blood, fetal monitoring, ECMO, delivery, procedure, transfer, termination, disposition, prognosis,
+or maternal/newborn outcome control.
+
 #### Neonatology: 11
 
 Term newborn transition; neonatal apnea; ineffective ventilation correction; neonatal bradycardia;

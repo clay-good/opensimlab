@@ -4703,6 +4703,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use direct serial whole-patient evidence, current local maternal-collapse, hemorrhage and arrest pathways, and qualified obstetric, anesthesia, critical-care, cardiopulmonary, blood-bank, laboratory, newborn, communication, and support ownership.',
     briefIn: ['suspected-amniotic-fluid-embolism-pattern'],
   },
+  {
+    id: 'maternal-arrest-clock-pulse-rhythm-pregnancy-delivery-and-minute-four-reports-are-authored',
+    headline: 'The arrest clock, pulse loss, supplied rhythm, pregnancy context, and minute-4 delivery-readiness report are authored.',
+    simplification: 'Fixed reports stand in for direct responsiveness, breathing, pulse, fundal-height, circulation, rhythm, airway, pregnancy, cause, fetal-monitor, delivery-readiness, hemorrhage, newborn and resuscitation assessment.',
+    whereItMisleads: 'Treating fictional timing, pulse loss, electrical rate, pregnancy context, persistent arrest, or delivery readiness as learner evidence, CPR quality, treatment effect, a universal delivery threshold, prognosis, or predicted outcome.',
+    correctUnderstanding: 'Real maternal cardiac arrest requires immediate standard resuscitation, pregnancy-specific modifications, preparation for in-place resuscitative delivery from recognition when indicated, parallel reversible-cause work, and trained maternal, obstetric, anesthesia, newborn, hemorrhage and support teams.',
+    briefIn: ['maternal-cardiac-arrest-coordinated-response'],
+  },
+  {
+    id: 'maternal-arrest-controls-activate-reconcile-prepare-review-reassess-and-handoff-only',
+    headline: 'The controls activate qualified response, reconcile context, review responsibilities and readiness, reassess, and hand off only.',
+    simplification: 'Six actions stand in for qualified BLS/ALS, pregnancy-specific, airway, obstetric, anesthesia, nursing, pharmacy, surgical, delivery, neonatal, blood-bank, critical-care, communication, dignity, family, staff-support, surveillance and handoff work.',
+    whereItMisleads: 'Equating button order with pulse or rhythm assessment, CPR, uterine displacement, airway care, access, monitoring, medication, shock, diagnosis, resuscitative delivery, neonatal care, hemorrhage care, termination, disposition, outcome, or competence.',
+    correctUnderstanding: 'Actual response is simultaneous and team-based. Standard resuscitation continues while pregnancy modifications, reversible causes and in-place delivery readiness proceed without waiting for transfer or fetal monitoring.',
+    briefIn: ['maternal-cardiac-arrest-coordinated-response'],
+  },
+  {
+    id: 'no-live-maternal-arrest-cpr-airway-drug-monitor-delivery-procedure-disposition-or-outcome',
+    headline: 'The lab does not assess a pulse, perform CPR, manage an airway, give a drug, operate monitoring, perform delivery, terminate care, determine disposition, or report outcome.',
+    simplification: 'No live responsiveness, breathing, pulse, fundal-height, fetal, hemorrhage, ECG, capnography, ultrasound, laboratory or other assessment; compression, uterine displacement, oxygen, ventilation, airway, suction, access, fluid, blood, drug, dose, route, rate, target, defibrillation, pacing, fetal monitoring, ECMO, resuscitative delivery, anesthesia, surgery, neonatal resuscitation, transfer, termination, disposition, prognosis, or maternal or newborn outcome is modeled.',
+    whereItMisleads: 'Copying fictional findings into care; delaying standard resuscitation or delivery preparation for a click or cause diagnosis; selecting a maneuver, dose, shock, procedure, transfer or termination action from this rehearsal; treating the minute-5 goal as biologic futility; or reading completion as competence.',
+    correctUnderstanding: 'Use verified direct findings, current local protocols and trained multidisciplinary teams. Pregnancy modifies team roles and selected resuscitation steps but does not replace standard advanced life support or turn one authored rhythm into a fixed future course.',
+    briefIn: ['maternal-cardiac-arrest-coordinated-response'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

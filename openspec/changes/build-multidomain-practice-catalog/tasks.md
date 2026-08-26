@@ -437,6 +437,15 @@ credited toward the catalog until every item in the completion contract passes.
     criteria scoring, oxygen, ventilation, airway, fluid, vasoactive, blood, coagulation, drug, dose,
     route, CPR, defibrillation, ECMO, delivery, procedure, disposition, treatment effect, durable
     control, or maternal/newborn outcome controls.
+  - [x] Obstetrics slice 7/15 adds one authored witnessed late-pregnancy pulseless-electrical-
+    activity arrest with fundal height above the umbilicus and qualified standard resuscitation
+    already underway; immediate prepared pregnancy-arrest, obstetric, anesthesia, in-place delivery,
+    newborn, hemorrhage, communication and support ownership; parallel pregnancy-modification,
+    reversible-cause and readiness review; a strict minute-4 persistent-arrest report as qualified
+    resuscitative delivery begins at the arrest location; and active-risk handoff without learner
+    pulse or rhythm assessment, CPR, uterine displacement, airway, access, monitoring, drug, dose,
+    shock, fluid, blood, fetal monitoring, ECMO, delivery, procedure, transfer, termination,
+    disposition, prognosis, or maternal/newborn outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and
