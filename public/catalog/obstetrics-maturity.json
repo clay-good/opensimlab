@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "obstetrics",
-  "recordCount": 1,
+  "recordCount": 2,
   "records": [
     {
       "recordId": "scenario:postpartum-hemorrhage-uterine-atony@0.1.0",
@@ -12,6 +12,17 @@
       "evidence": [
         "/catalog/obstetrics-completion-audit.json#postpartum-hemorrhage-uterine-atony@0.1.0",
         "/catalog/obstetrics-quality-audit.json#postpartum-hemorrhage-uterine-atony@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:maternal-sepsis-postpartum-deterioration@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "maternal-sepsis-postpartum-deterioration",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/obstetrics-completion-audit.json#maternal-sepsis-postpartum-deterioration@0.1.0",
+        "/catalog/obstetrics-quality-audit.json#maternal-sepsis-postpartum-deterioration@0.1.0"
       ]
     }
   ]

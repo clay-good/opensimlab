@@ -2006,6 +2006,21 @@ BP 102/64 mmHg, RR 20/min, a firmer uterus and visibly slower bleeding precedes 
 active-risk handoff. The canonical state is not a blood-loss, uterine-contractility, coagulation,
 drug-response, transfusion, procedural, fertility, maternal-outcome or newborn-outcome model.
 
+### Wave D obstetrics slice 2: maternal sepsis with postpartum deterioration
+
+The second lab opens 38 hours after unplanned cesarean birth following prolonged membrane rupture.
+Fixed infection, circulation, breathing, alertness, urine, kidney and lactate findings establish
+suspected infection plus organ dysfunction. The learner does not wait for fever, one screen, one
+value, microbiology or source confirmation; qualified obstetric, critical-care, anesthesia, nursing,
+pharmacy, microbiology, source-control, newborn and dignity-centered owners begin together.
+
+The six controls record reconciliation, emergency recognition, ownership, supplied evidence review,
+bounded immediate-care and source-control intent, a strict elapsed report, and active-risk handoff.
+They never expose a score, test, antimicrobial, dose, route, fluid volume, pressure target,
+vasopressor, oxygen setting, drainage, evacuation, surgery, disposition or outcome decision. The
+canonical state is not an infection, sepsis-screen, antimicrobial, hemodynamic, organ-recovery,
+source-control, survivor-outcome or newborn-outcome model.
+
 #### Neonatology: 11
 
 Term newborn transition; neonatal apnea; ineffective ventilation correction; neonatal bradycardia;

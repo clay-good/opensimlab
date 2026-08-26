@@ -1837,6 +1837,17 @@
         "GB"
       ],
       "fidelityClass": "state_transition"
+    },
+    {
+      "scenarioId": "maternal-sepsis-postpartum-deterioration",
+      "contentVersion": "0.1.0",
+      "moduleId": "obstetrics",
+      "maturity": "draft",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition"
     }
   ]
 }

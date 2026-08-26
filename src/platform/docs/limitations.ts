@@ -4583,6 +4583,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified serial objective loss, symptoms, perfusion, temperature, uterine, placental, genital-tract, coagulation, laboratory, concealed-bleeding, treatment and response evidence under qualified obstetric hemorrhage, anesthesia, nursing, blood-bank, operative and newborn-support ownership.',
     briefIn: ['postpartum-hemorrhage-uterine-atony'],
   },
+  {
+    id: 'maternal-sepsis-postpartum-infection-organ-and-response-pattern-are-authored',
+    headline: 'The postpartum infection, organ-dysfunction pattern, and later response are authored.',
+    simplification: 'Fixed reports stand in for history, examination, monitoring, cultures, lactate and laboratory acquisition, source and mimic evaluation, qualified immediate care, and reassessment.',
+    whereItMisleads: 'Treating fever, lactate, uterine findings, one score, one presumed source, or modest later improvement as learner evidence, diagnosis, treatment effect, source control, organ recovery, or predicted course.',
+    correctUnderstanding: 'Real care requires immediate serial whole-patient, infection, perfusion, organ, source and competing-cause assessment under qualified multidisciplinary ownership without waiting for one score or confirmation.',
+    briefIn: ['maternal-sepsis-postpartum-deterioration'],
+  },
+  {
+    id: 'maternal-sepsis-controls-reconcile-recognize-support-review-intent-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, recognition, qualified ownership, review, bounded intent, reassessment, and handoff only.',
+    simplification: 'Six actions stand in for obstetric, critical-care, anesthesia, nursing, pharmacy, microbiology, organ-support, source-control, newborn, dignity, survivor-support and handoff work.',
+    whereItMisleads: 'Equating button order with examination, screening, test interpretation, diagnosis, prescribing, resuscitation, source control, disposition, recovery, or competence.',
+    correctUnderstanding: 'Actual care requires trained teams, current local protocols, immediate individualized antimicrobial and resuscitation decisions, source control, serial organ assessment, respectful communication, and newborn and survivor support.',
+    briefIn: ['maternal-sepsis-postpartum-deterioration'],
+  },
+  {
+    id: 'no-live-maternal-sepsis-exam-score-test-drug-fluid-vasopressor-procedure-disposition-or-outcome',
+    headline: 'The lab does not examine, score, test, prescribe, resuscitate, perform source control, determine disposition, or report outcome.',
+    simplification: 'No live history, examination, score, monitoring, culture, laboratory, lactate, imaging, diagnosis, antimicrobial, oxygen, fluid, blood, vasopressor, drug, dose, target, route, access, drainage, evacuation, surgery, transport, disposition, prognosis, safety decision, or maternal or newborn outcome is modeled.',
+    whereItMisleads: 'Waiting for fever or one score; copying fictional values into care; choosing antimicrobial, fluid, vasopressor, source-control or disposition care from this rehearsal; attributing the fixed response; or reading completion as competence.',
+    correctUnderstanding: 'Use verified serial infection, perfusion, neurologic, respiratory, kidney, hematologic, hepatic, source, mimic, treatment and response evidence under qualified obstetric sepsis and critical-care ownership.',
+    briefIn: ['maternal-sepsis-postpartum-deterioration'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

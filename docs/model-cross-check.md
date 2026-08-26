@@ -367,6 +367,14 @@ Recorded here rather than silently carried:
   autonomic, cardiovascular, psychiatric, renal, CK, cooling, sedation, adjunct-response, airway, or
   individualized-response model.
 
+Maternal sepsis with postpartum deterioration uses two fixed canonical states: the opening report
+has HR 132/min, BP 88/52 mmHg, RR 28/min, SpO2 96%, T 39.1°C, slowed responses, reduced urine,
+creatinine 1.4 mg/dL from 0.7 and lactate 4.2 mmol/L; the strict 30-minute report has HR 122/min,
+BP 94/58 mmHg, RR 24/min, SpO2 98%, T 39.0°C, clearer responses, pending urine and repeat lactate,
+and unresolved source control. These are authored teaching checkpoints grounded in SMFM Consult
+Series #67 and the WHO maternal-sepsis statement, not an infection, antimicrobial, fluid,
+vasopressor, source-control, organ-recovery, maternal-outcome or newborn-outcome model.
+
 ## Concentration-time checks, 2026-08-23
 
 The acceptance text requires a published concentration-time point for every model. The Marsh

@@ -447,6 +447,12 @@ const OBSTETRICS_ATONY_BLOCKED_ACTION_TYPES = new Set([
   'opioid-xylazine-persistent-sedation-response',
   'hemorrhagic-shock-response',
 ]);
+const OBSTETRICS_MATERNAL_SEPSIS_BLOCKED_ACTION_TYPES = new Set([
+  ...OBSTETRICS_ATONY_BLOCKED_ACTION_TYPES,
+  'postpartum-hemorrhage-uterine-atony-response',
+  'septic-shock-response',
+  'septic-shock-resuscitation-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1380,6 +1386,12 @@ export class AnesthesiaEngine {
   private obstetricsAtonyEvidenceAtTick: number | null = null;
   private obstetricsAtonyReassessmentAtTick: number | null = null;
   private obstetricsAtonyHandoffAtTick: number | null = null;
+  private obstetricsMaternalSepsisTrajectoryAtTick: number | null = null;
+  private obstetricsMaternalSepsisRecognitionAtTick: number | null = null;
+  private obstetricsMaternalSepsisSupportAtTick: number | null = null;
+  private obstetricsMaternalSepsisEvidenceAtTick: number | null = null;
+  private obstetricsMaternalSepsisReassessmentAtTick: number | null = null;
+  private obstetricsMaternalSepsisHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2284,6 +2296,13 @@ export class AnesthesiaEngine {
         'This Obstetrics lesson exposes no generic blood-loss measurement, examination, monitoring, laboratory or placental interpretation, calculation, '
         + 'massage, oxygen, fluid, blood component, uterotonic, tranexamic acid, drug, dose, route, access, device, tamponade, transport, procedure, surgery, '
         + 'hysterectomy, delivery, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const obstetricsMaternalSepsis = this.scenario.metadata.id === 'maternal-sepsis-postpartum-deterioration'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'maternal-sepsis-postpartum-deterioration-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'maternal-sepsis-postpartum-deterioration-transition-boundary');
+    if (obstetricsMaternalSepsis && OBSTETRICS_MATERNAL_SEPSIS_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `obstetrics-maternal-sepsis-generic-action-refused-${this.currentTick}`,
+        'This Obstetrics lesson exposes no generic examination, score, monitoring, culture, laboratory, imaging, antimicrobial, oxygen, fluid, blood, vasopressor, drug, dose, route, access, source-control, procedure, transport, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -10706,6 +10725,32 @@ export class AnesthesiaEngine {
         if (this.obstetricsAtonyHandoffAtTick !== null) break;
         this.obstetricsAtonyHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-atony-active-risk-handoff-recorded-${this.currentTick}`, 'Cumulative and recurrent bleeding, shock, coagulopathy, hypothermia, concealed bleeding, blood-bank and operative escalation, pain, privacy, communication, feeding and newborn support, disposition, fertility, recovery, prognosis, and outcome uncertainty were handed off.', { safetyDispositionDetermined: false, fertilityOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'maternal-sepsis-postpartum-deterioration-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'maternal-sepsis-postpartum-deterioration'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'maternal-sepsis-postpartum-deterioration-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'maternal-sepsis-postpartum-deterioration-transition-boundary');
+        const actions = ['reconcile-obstetrics-sepsis-postpartum-clock-infection-organ-dysfunction-and-whole-person',
+          'recognize-obstetrics-maternal-sepsis-emergency-without-fever-score-source-or-single-value-closure',
+          'activate-obstetrics-sepsis-obstetric-critical-care-anesthesia-nursing-pharmacy-microbiology-source-newborn-and-dignity-ownership',
+          'review-obstetrics-sepsis-supplied-infectious-noninfectious-culture-lactate-perfusion-and-source-boundary',
+          'record-obstetrics-sepsis-bounded-qualified-immediate-care-source-control-intent-and-strict-later-review',
+          'handoff-obstetrics-sepsis-shock-source-organ-antimicrobial-vte-newborn-survivor-and-outcome-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `obstetrics-maternal-sepsis-response-refused-${this.currentTick}`, supported ? 'The maternal-sepsis action was not listed. No supplied or injected text was retained.' : 'These maternal-sepsis choices are available only in the exact declared Obstetrics lesson.'); break; }
+        if (response === actions[0]) { if (this.obstetricsMaternalSepsisTrajectoryAtTick !== null) break; this.obstetricsMaternalSepsisTrajectoryAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-maternal-sepsis-trajectory-reconciled-${this.currentTick}`, 'Postpartum and rupture timing, infection pattern, physiology, alertness, urine, uterine and lochia findings, kidney change, lactate, newborn context, and whole person were connected without learner history, examination, measurement, sampling, scoring, calculation, or diagnosis.'); break; }
+        if (this.obstetricsMaternalSepsisTrajectoryAtTick === null) { this.log('warning', 'assessment', `obstetrics-maternal-sepsis-trajectory-order-refused-${this.currentTick}`, 'Connect the postpartum clock, infection pattern, organ dysfunction, and whole person first.'); break; }
+        if (response === actions[1]) { if (this.obstetricsMaternalSepsisRecognitionAtTick !== null) break; this.obstetricsMaternalSepsisRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-maternal-sepsis-pattern-recognized-${this.currentTick}`, 'Suspected infection plus otherwise unexplained organ dysfunction was recognized as a maternal-sepsis emergency. Fever, one screen, one laboratory value, microbiology, or a presumed uterine source cannot establish or close the diagnosis and alternatives.', { diagnosisMadeByLearner: false }); break; }
+        if (this.obstetricsMaternalSepsisRecognitionAtTick === null) { this.log('warning', 'assessment', `obstetrics-maternal-sepsis-recognition-order-refused-${this.currentTick}`, 'Recognize the emergency without fever, score, source, or single-value closure before support.'); break; }
+        if (response === actions[2]) { if (this.obstetricsMaternalSepsisSupportAtTick !== null) break; this.obstetricsMaternalSepsisSupportAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-maternal-sepsis-support-activated-${this.currentTick}`, 'Obstetric, critical-care, anesthesia, nursing, pharmacy, microbiology, source-control, organ-support, newborn-support, pain, privacy, communication, and dignity-centered ownership were recorded without learner treatment or disposition selection.'); break; }
+        if (this.obstetricsMaternalSepsisSupportAtTick === null) { this.log('warning', 'assessment', `obstetrics-maternal-sepsis-support-order-refused-${this.currentTick}`, 'Bring qualified sepsis, source, newborn, and dignity-centered owners together before evidence review.'); break; }
+        if (response === actions[3]) { if (this.obstetricsMaternalSepsisEvidenceAtTick !== null) break; this.obstetricsMaternalSepsisEvidenceAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-maternal-sepsis-evidence-reviewed-${this.currentTick}`, 'Supplied infectious and noninfectious causes, cultures-without-delay, lactate, perfusion, organ, source, hemorrhage, hypertensive, medication, and thromboembolic boundaries were integrated without learner acquisition, interpretation, diagnosis, exclusion, or eligibility determination.'); break; }
+        if (this.obstetricsMaternalSepsisEvidenceAtTick === null) { this.log('warning', 'assessment', `obstetrics-maternal-sepsis-evidence-order-refused-${this.currentTick}`, 'Review supplied infectious, noninfectious, perfusion, organ, and source evidence before qualified intent.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.obstetricsMaternalSepsisEvidenceAtTick) { this.log('warning', 'assessment', `obstetrics-maternal-sepsis-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before immediate-care intent and strict later review.'); break; } if (this.obstetricsMaternalSepsisReassessmentAtTick !== null) break; this.obstetricsMaternalSepsisReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-maternal-sepsis-intent-and-reassessment-recorded-${this.currentTick}`, 'Qualified cultures without substantial antimicrobial delay, lactate, empiric antimicrobial, response-guided balanced-fluid, organ-support, vasopressor-escalation, and source-control intent were recorded without learner product, dose, route, access, volume, target, device, procedure, delivery, or treatment effect. Strict 30-minute report: HR 122, BP 94/58 (MAP 70), RR 24, SpO2 98% on supplied support, temperature 39.0 C, clearer responses, urine output and repeat lactate pending, and source control unresolved.', { treatmentDeliveredByLearner: false, treatmentEffectProven: false }); break; }
+        if (this.obstetricsMaternalSepsisReassessmentAtTick === null) { this.log('warning', 'assessment', `obstetrics-maternal-sepsis-handoff-order-refused-${this.currentTick}`, 'Review the strict later physiology, organ, and source report before handoff.'); break; }
+        if (this.currentTick <= this.obstetricsMaternalSepsisReassessmentAtTick) { this.log('warning', 'assessment', `obstetrics-maternal-sepsis-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.obstetricsMaternalSepsisHandoffAtTick !== null) break;
+        this.obstetricsMaternalSepsisHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-maternal-sepsis-active-risk-handoff-recorded-${this.currentTick}`, 'Shock, repeat perfusion, microbiology, antimicrobial review, source control, organ support, VTE, pain, privacy, communication, feeding and newborn support, survivor needs, disposition, recovery, prognosis, and outcome uncertainty were handed off.', { safetyDispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -13583,6 +13628,17 @@ export class AnesthesiaEngine {
         diastolicMmHg: this.obstetricsAtonyReassessmentAtTick !== null ? 64 : 58,
         meanArterialMmHg: this.obstetricsAtonyReassessmentAtTick !== null ? 77 : 70,
         coreTemperatureC: 36.7 };
+    }
+    if (this.scenario.metadata.id === 'maternal-sepsis-postpartum-deterioration'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'maternal-sepsis-postpartum-deterioration-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'maternal-sepsis-postpartum-deterioration-transition-boundary')) {
+      crisisState = { ...crisisState, heartRateBpm: this.obstetricsMaternalSepsisReassessmentAtTick !== null ? 122 : 132,
+        respiratoryRateBpm: this.obstetricsMaternalSepsisReassessmentAtTick !== null ? 24 : 28,
+        spo2Percent: this.obstetricsMaternalSepsisReassessmentAtTick !== null ? 98 : 96,
+        systolicMmHg: this.obstetricsMaternalSepsisReassessmentAtTick !== null ? 94 : 88,
+        diastolicMmHg: this.obstetricsMaternalSepsisReassessmentAtTick !== null ? 58 : 52,
+        meanArterialMmHg: this.obstetricsMaternalSepsisReassessmentAtTick !== null ? 70 : 64,
+        coreTemperatureC: this.obstetricsMaternalSepsisReassessmentAtTick !== null ? 39.0 : 39.1 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -17518,6 +17574,35 @@ export class AnesthesiaEngine {
               safetyDispositionDetermined: false as const, dispositionDetermined: false as const,
               prognosisPredicted: false as const, maternalOutcomePredicted: false as const,
               newbornOutcomePredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'maternal-sepsis-postpartum-deterioration'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'maternal-sepsis-postpartum-deterioration-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'maternal-sepsis-postpartum-deterioration-transition-boundary') ? {
+            obstetricsMaternalSepsisAssessment: {
+              trajectoryAtTick: this.obstetricsMaternalSepsisTrajectoryAtTick, recognitionAtTick: this.obstetricsMaternalSepsisRecognitionAtTick,
+              supportAtTick: this.obstetricsMaternalSepsisSupportAtTick, evidenceAtTick: this.obstetricsMaternalSepsisEvidenceAtTick,
+              reassessmentAtTick: this.obstetricsMaternalSepsisReassessmentAtTick, handoffAtTick: this.obstetricsMaternalSepsisHandoffAtTick,
+              postpartumInfectionOrganDysfunctionPatternAuthored: true as const,
+              maternalSepsisEmergencyRecognized: this.obstetricsMaternalSepsisRecognitionAtTick !== null,
+              qualifiedSupportActive: this.obstetricsMaternalSepsisSupportAtTick !== null,
+              infectiousNoninfectiousPerfusionOrganAndSourceEvidenceReviewed: this.obstetricsMaternalSepsisEvidenceAtTick !== null,
+              qualifiedImmediateCareAndSourceControlIntentRecorded: this.obstetricsMaternalSepsisReassessmentAtTick !== null,
+              responseStateAuthored: this.obstetricsMaternalSepsisReassessmentAtTick !== null,
+              patientExaminedByLearner: false as const, sepsisScoreCalculatedByLearner: false as const,
+              monitoringAcquiredByLearner: false as const, cultureAcquiredByLearner: false as const,
+              bloodSampleAcquiredByLearner: false as const, imagingAcquiredByLearner: false as const,
+              diagnosisMadeByLearner: false as const, alternativeExcludedByLearner: false as const,
+              antimicrobialSelectedByLearner: false as const, fluidSelectedByLearner: false as const,
+              vasopressorSelectedByLearner: false as const, oxygenSelectedByLearner: false as const,
+              drugSelectedByLearner: false as const, doseSelectedByLearner: false as const,
+              routeSelectedByLearner: false as const, accessSelectedByLearner: false as const,
+              sourceControlSelectedByLearner: false as const, procedureSelectedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const, treatmentEffectProven: false as const,
+              organRecoveryProven: false as const, sourceControlProven: false as const,
+              safetyDispositionDetermined: false as const, dispositionDetermined: false as const,
+              maternalOutcomePredicted: false as const, newbornOutcomePredicted: false as const,
+              outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

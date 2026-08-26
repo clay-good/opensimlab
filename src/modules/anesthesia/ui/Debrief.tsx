@@ -5022,6 +5022,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-obstetrics-sepsis-postpartum-clock-infection-organ-dysfunction-and-whole-person',
+      'recognize-obstetrics-maternal-sepsis-emergency-without-fever-score-source-or-single-value-closure',
+      'activate-obstetrics-sepsis-obstetric-critical-care-anesthesia-nursing-pharmacy-microbiology-source-newborn-and-dignity-ownership',
+      'review-obstetrics-sepsis-supplied-infectious-noninfectious-culture-lactate-perfusion-and-source-boundary',
+      'record-obstetrics-sepsis-bounded-qualified-immediate-care-source-control-intent-and-strict-later-review',
+      'handoff-obstetrics-sepsis-shock-source-organ-antimicrobial-vte-newborn-survivor-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'maternal-sepsis-postpartum-deterioration'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'maternal-sepsis-postpartum-deterioration-transition')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'maternal-sepsis-postpartum-deterioration-transition-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Obstetrics maternal-sepsis lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'Postpartum timing, infection pattern, organ dysfunction, newborn context, and whole-person state were connected.'],
+        ['pattern-recognized', 'A maternal-sepsis emergency was recognized without fever-, score-, source-, value-, or diagnostic closure.'],
+        ['support-activated', 'Qualified sepsis, organ-support, source, newborn, pain, privacy, communication, and dignity-centered ownership was activated.'],
+        ['evidence-reviewed', 'Supplied infectious, noninfectious, perfusion, organ, culture, lactate, source, and mimic boundaries were reviewed.'],
+        ['intent-and-reassessment-recorded', 'Bounded immediate-care and source-control intent plus the elapsed report were recorded without prescribing, delivery, treatment-effect, source-control, or recovery claims.'],
+        ['active-risk-handoff-recorded', 'Shock, source, organ, antimicrobial, VTE, dignity, newborn, survivor, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^obstetrics-maternal-sepsis-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^obstetrics-maternal-sepsis-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-toxicology-salicylate-product-exposure-clock-symptoms-breathing-and-whole-patient',
       'recognize-toxicology-salicylate-mixed-acid-base-pattern-without-single-concentration-closure',
       'activate-toxicology-salicylate-poison-center-emergency-critical-care-nephrology-and-safety-ownership',

@@ -393,6 +393,13 @@ credited toward the catalog until every item in the completion contract passes.
     improvement report, and another elapsed active-risk handoff without learner measurement,
     calculation, examination, diagnosis, drug, dose, route, fluid, blood component, massage,
     tamponade, procedure, surgery, disposition, fertility, or maternal/newborn outcome controls.
+  - [x] Obstetrics slice 2/15 adds one authored postpartum infection-plus-organ-dysfunction pattern
+    after prolonged membrane rupture and cesarean birth, with recognition that does not depend on
+    fever, one score, one value or a confirmed source; immediate qualified sepsis, critical-care,
+    source-control, newborn and dignity-centered ownership; parallel infectious, noninfectious,
+    perfusion and organ review; bounded immediate-care intent; a strict elapsed partial-improvement
+    report; and active-risk handoff without learner examination, scoring, testing, prescribing,
+    fluid, vasopressor, oxygen, source-control, procedure, disposition, or outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

@@ -1255,6 +1255,11 @@ export interface ActionCockpitProps {
       readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly obstetricsMaternalSepsisAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2211,6 +2216,14 @@ export interface ActionCockpitProps {
       | 'record-obstetrics-atony-bounded-qualified-motive-bundle-escalation-intent-and-strict-later-review'
       | 'handoff-obstetrics-atony-recurrent-bleeding-shock-coagulopathy-blood-procedure-newborn-and-outcome-risk',
   ) => void;
+  readonly onObstetricsMaternalSepsisResponse?: (
+    action: 'reconcile-obstetrics-sepsis-postpartum-clock-infection-organ-dysfunction-and-whole-person'
+      | 'recognize-obstetrics-maternal-sepsis-emergency-without-fever-score-source-or-single-value-closure'
+      | 'activate-obstetrics-sepsis-obstetric-critical-care-anesthesia-nursing-pharmacy-microbiology-source-newborn-and-dignity-ownership'
+      | 'review-obstetrics-sepsis-supplied-infectious-noninfectious-culture-lactate-perfusion-and-source-boundary'
+      | 'record-obstetrics-sepsis-bounded-qualified-immediate-care-source-control-intent-and-strict-later-review'
+      | 'handoff-obstetrics-sepsis-shock-source-organ-antimicrobial-vte-newborn-survivor-and-outcome-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2772,6 +2785,10 @@ export function crisisResponseAvailability(
       scenario.metadata.id === 'postpartum-hemorrhage-uterine-atony'
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-hemorrhage-uterine-atony-transition')
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-hemorrhage-uterine-atony-transition-boundary'),
+    hasObstetricsMaternalSepsisResponse:
+      scenario.metadata.id === 'maternal-sepsis-postpartum-deterioration'
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'maternal-sepsis-postpartum-deterioration-transition')
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'maternal-sepsis-postpartum-deterioration-transition-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2987,6 +3004,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'delayed-local-anesthetic-cns-cardiac-toxicity-transition')
       || (event.type === 'narrative' && event.target === 'opioid-xylazine-persistent-sedation-transition')
       || (event.type === 'narrative' && event.target === 'postpartum-hemorrhage-uterine-atony-transition')
+      || (event.type === 'narrative' && event.target === 'maternal-sepsis-postpartum-deterioration-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3090,6 +3108,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasToxicologyDelayedLastResponse,
     hasToxicologyOpioidXylazineResponse,
     hasObstetricsAtonyResponse,
+    hasObstetricsMaternalSepsisResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3220,8 +3239,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasToxicologyDelayedLastResponse
     || hasToxicologyOpioidXylazineResponse
     || hasObstetricsAtonyResponse
+    || hasObstetricsMaternalSepsisResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasObstetricsAtonyResponse
+  const responseTray = hasObstetricsMaternalSepsisResponse
+    ? { id: 'crisis', label: 'Infection + organs' } as const
+    : hasObstetricsAtonyResponse
     ? { id: 'crisis', label: 'Bleeding + tone' } as const
     : hasToxicologyOpioidXylazineResponse
     ? { id: 'crisis', label: 'Breathing + sedation' } as const
@@ -3592,6 +3614,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeurologyDeliriumResponse
     || hasNeurologyAutonomicDysreflexiaResponse
     || hasObstetricsAtonyResponse
+    || hasObstetricsMaternalSepsisResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -4461,6 +4484,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasObstetricsAtonyResponse && (
               <ObstetricsAtonyTray assessment={props.resuscitation.obstetricsAtonyAssessment}
                 onAction={props.onObstetricsAtonyResponse ?? (() => {})} />
+            )}
+            {hasObstetricsMaternalSepsisResponse && (
+              <ObstetricsMaternalSepsisTray assessment={props.resuscitation.obstetricsMaternalSepsisAssessment}
+                onAction={props.onObstetricsMaternalSepsisResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -11290,6 +11317,38 @@ function ObstetricsAtonyTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-obstetrics-atony-bounded-qualified-motive-bundle-escalation-intent-and-strict-later-review')}>Record bundle + reassess</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-obstetrics-atony-recurrent-bleeding-shock-coagulopathy-blood-procedure-newborn-and-outcome-risk')}>Hand off what stays open</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function ObstetricsMaternalSepsisTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['obstetricsMaternalSepsisAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onObstetricsMaternalSepsisResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const evidence = assessment?.evidenceAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="maternal-sepsis-now-title">
+      <div id="maternal-sepsis-now-title" className="syringe__name">Notice the whole person. Move together.</div>
+      <p className="syringe__remaining">The postpartum clock, infection pattern, brain, kidney, circulation, breathing, newborn context, and dignity belong in one calm view.</p>
+      <div className="crisis-drug__actions">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-obstetrics-sepsis-postpartum-clock-infection-organ-dysfunction-and-whole-person')}>Connect infection + organs</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-obstetrics-maternal-sepsis-emergency-without-fever-score-source-or-single-value-closure')}>See the emergency, keep it open</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-obstetrics-sepsis-obstetric-critical-care-anesthesia-nursing-pharmacy-microbiology-source-newborn-and-dignity-ownership')}>Bring every owner in</Button>}
+        {support && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-sepsis-supplied-infectious-noninfectious-culture-lactate-perfusion-and-source-boundary')}>Review source + mimics</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="maternal-sepsis-later-title">
+      <div id="maternal-sepsis-later-title" className="syringe__name">A better number is a checkpoint, not recovery.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Shock, source, organ, antimicrobial, VTE, newborn, survivor, and outcome uncertainty handed off.' : reassessment ? 'Pulse, pressure, breathing, and responses improved modestly. Repeat perfusion, source control, organ recovery, treatment effect, and outcome remain open.' : evidence ? 'Infection, perfusion, organ dysfunction, source, cultures, lactate, and noninfectious mimics stay coupled. Record bounded immediate-care intent after time passes.' : support ? 'Sepsis, organ-support, source, newborn, and dignity-centered owners are together. Review the supplied evidence.' : 'Connect the whole pattern before one fever, score, value, or source closes the view.'}</p>
+      <div className="crisis-drug__actions">
+        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-obstetrics-sepsis-bounded-qualified-immediate-care-source-control-intent-and-strict-later-review')}>Record care intent + reassess</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-obstetrics-sepsis-shock-source-organ-antimicrobial-vte-newborn-survivor-and-outcome-risk')}>Hand off what stays open</Button>}
       </div>
     </section>
   </>;

@@ -207,6 +207,14 @@ records bounded qualified MOTIVE-bundle intent and reviews a strict elapsed repo
 blood-loss calculation, examination, drug or dose, fluid or blood component, massage technique,
 procedure, surgery, disposition, fertility, or maternal/newborn outcome control is exposed.
 
+Its second lab adds postpartum maternal sepsis after prolonged membrane rupture and cesarean birth.
+The learner connects infection with brain, kidney, urine, perfusion, breathing, newborn context and
+the whole person; recognizes an emergency without waiting for fever, one score, one value or a
+confirmed source; brings qualified sepsis, source-control, newborn and dignity-centered owners
+together; and reviews a strict elapsed report. It exposes no learner examination, score, test,
+antimicrobial, dose, fluid, vasopressor, oxygen setting, source-control procedure, disposition, or
+maternal/newborn outcome control.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later
