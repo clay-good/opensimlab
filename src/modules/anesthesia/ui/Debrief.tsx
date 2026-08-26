@@ -5286,6 +5286,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-neurology-autonomic-dysreflexia-lesion-baseline-pressure-symptoms-rhythm-and-whole-patient',
+      'recognize-neurology-autonomic-dysreflexia-pattern-without-closing-alternatives-or-definitive-diagnosis',
+      'activate-neurology-autonomic-dysreflexia-upright-support-monitoring-and-qualified-ownership',
+      'review-and-release-neurology-autonomic-dysreflexia-supplied-external-urinary-trigger-within-role',
+      'reassess-neurology-autonomic-dysreflexia-strict-pressure-pulse-symptom-and-trigger-transition',
+      'handoff-neurology-autonomic-dysreflexia-baseline-triggers-recurrence-complications-prevention-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'autonomic-dysreflexia-authored-trigger'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'autonomic-dysreflexia-authored-trigger-transition')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'autonomic-dysreflexia-authored-trigger-transition-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neurology autonomic-dysreflexia lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'The declared lesion, verified baseline, acute pressure, symptoms, rhythm, and whole-patient state were reconciled.'],
+        ['pattern-recognized', 'The urgent baseline-relative syndrome was recognized while alternatives and definitive diagnosis remained open.'],
+        ['support-activated', 'Upright support, frequent pressure and pulse surveillance, and qualified spinal-injury ownership were activated.'],
+        ['external-trigger-released', 'The supplied external urinary-tubing kink was released without catheter technique, medication, or sole-cause closure.'],
+        ['transition-reassessed', 'The elapsed pressure, pulse, symptom, and drainage transition was reassessed without durable-resolution or individualized-effect claims.'],
+        ['active-risk-handoff-recorded', 'Baseline, serial state, triggers, recurrence, complications, prevention, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^neurology-autonomic-dysreflexia-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^neurology-autonomic-dysreflexia-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

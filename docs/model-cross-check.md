@@ -225,6 +225,24 @@ Recorded here rather than silently carried:
   deterioration on the healthy adult scaffold; it does not validate pressure physiology, eye or
   neurological examination, testing, diagnosis, medicine or procedure effects, visual rescue,
   recovery, prognosis, or outcome.
+  Acute transtentorial herniation pattern overlays fixed consciousness, pupil, motor, respiratory,
+  pressure, CT, qualified rescue, and strict-later reports on the healthy adult scaffold; it does
+  not validate intracranial-pressure or herniation physiology, examination, monitoring, imaging,
+  airway or medical rescue, decompression, treatment effect, recovery, prognosis, or outcome.
+  Metastatic spinal cord compression overlays fixed cancer, pain, motor, sensory, gait, bladder,
+  qualified care, whole-spine MRI, and strict-later reports on the healthy adult scaffold; it does
+  not validate cord-compression physiology, examination, imaging, movement, medication or
+  definitive-treatment effects, recovery, prognosis, or outcome.
+  Acute delirium with reversible causes overlays fixed baseline, fluctuating cognition, qualified
+  4AT and diagnosis, contributor, care, and strict-later reports on the healthy adult scaffold; it
+  does not validate delirium physiology, examination, scoring, capacity, cause attribution,
+  medication or supportive-care effects, recovery, prognosis, or outcome.
+  Autonomic dysreflexia with an authored trigger uses discrete canonical pressure and pulse states
+  for presentation, upright support, release of one supplied visible external drainage-tubing kink,
+  and elapsed reassessment on the healthy adult scaffold. These values are bounded teaching
+  calibrations, not a validated neurogenic-autonomic response model, and do not validate lesion
+  classification, diagnosis, catheter or bowel care, medication effects, individualized response,
+  durable resolution, recurrence, complications, prognosis, or outcome.
 
 ## Concentration-time checks, 2026-08-23
 

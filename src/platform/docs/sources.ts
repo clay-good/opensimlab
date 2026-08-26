@@ -2938,6 +2938,16 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'https://www.nice.org.uk/guidance/qs63/chapter/Quality-statements',
     verifiedOn: '2026-08-26',
   },
+  {
+    id: 'consortium-autonomic-dysreflexia-2021', pmid: '34270391',
+    authors: 'Consortium for Spinal Cord Medicine',
+    title: 'Evaluation and Management of Autonomic Dysreflexia and Other Autonomic Dysfunctions: Preventing the Highs and Lows',
+    publication: 'Journal of Spinal Cord Medicine', year: 2021,
+    locator: '44(4):631-683; doi:10.1080/10790268.2021.1925058; recommendations 2.1-2.33',
+    usedFor: 'Baseline-relative recognition above T6, immediate upright positioning, frequent pressure and pulse surveillance, constriction release, urinary-first trigger review, qualified pharmacological boundary, reassessment, documentation, and recurrence education.',
+    verifiedAgainst: 'https://pva.org/wp-content/uploads/2021/09/CPG_Autonomic-Dysreflexia_2025_digital_03.26-.pdf',
+    verifiedOn: '2026-08-26',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

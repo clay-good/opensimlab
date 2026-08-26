@@ -523,6 +523,19 @@ credited toward the catalog until every item in the completion contract passes.
     active-risk handoff without learner history, examination, scoring, capacity assessment, test,
     diagnosis, observation, restraint, reorientation, mobility, drug, dose, route, access, catheter,
     procedure, treatment effect, recovery, disposition, prognosis, or outcome control.
+  - [x] Neurology slice 15/15 adds one authored 36-year-old with a declared chronic complete T4
+    spinal cord injury, verified usual seated BP 98/62 mmHg, sudden headache, flushing, sweating,
+    piloerection, BP 178/106 mmHg, and sinus bradycardia 48/min after a routine chair transfer. The
+    learner reconciles lesion and baseline, recognizes the urgent baseline-relative autonomic-
+    dysreflexia pattern without diagnostic or alternative-cause closure, activates upright support,
+    frequent pressure and pulse surveillance, and qualified spinal-injury ownership, then reviews a
+    urinary-first supplied trigger survey and releases one visible external drainage-tubing kink.
+    Canonical pressure and pulse transition through authored support, trigger-release, and elapsed
+    reassessment states before another elapsed baseline, trigger, recurrence, complication,
+    prevention, and active-risk handoff without accepting a real lesion or baseline, learner history,
+    examination, monitoring acquisition, definitive diagnosis, catheter insertion, disconnection,
+    irrigation or replacement, bowel care, drug, dose, route, access, oxygen, fluid, device,
+    procedure, treatment-effect prediction, disposition, prognosis, or outcome control.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.

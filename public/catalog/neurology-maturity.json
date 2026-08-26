@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "neurology",
-  "recordCount": 14,
+  "recordCount": 15,
   "records": [
     {
       "recordId": "scenario:minor-nondisabling-acute-ischemic-stroke@0.1.0",
@@ -155,6 +155,17 @@
       "evidence": [
         "/catalog/neurology-completion-audit.json#acute-delirium-reversible-causes@0.1.0",
         "/catalog/neurology-quality-audit.json#acute-delirium-reversible-causes@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:autonomic-dysreflexia-authored-trigger@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "autonomic-dysreflexia-authored-trigger",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/neurology-completion-audit.json#autonomic-dysreflexia-authored-trigger@0.1.0",
+        "/catalog/neurology-quality-audit.json#autonomic-dysreflexia-authored-trigger@0.1.0"
       ]
     }
   ]

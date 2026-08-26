@@ -2244,6 +2244,22 @@ score, capacity assessment, test, diagnosis, observation, restraint, reorientati
 dose, route, access, catheter, procedure, treatment effect, recovery, disposition, prognosis, or
 outcome control exists.
 
+### Wave E neurology slice 15: autonomic dysreflexia with an authored trigger
+
+The fifteenth Neurology lab owns the baseline-relative autonomic emergency and a bounded canonical
+trigger transition rather than duplicating Guillain-Barré dysautonomia, neurogenic shock, essential
+hypertension, intracranial emergencies, or generic bladder and bowel care. The learner reconciles a
+declared chronic T4 lesion, verified usual pressure, sudden symptoms, severe hypertension, reflex
+bradycardia, and the whole patient; recognizes an urgent autonomic-dysreflexia pattern without
+definitive or alternative-cause closure; activates upright support, frequent pressure and pulse
+surveillance, and qualified ownership; then begins a supplied urinary-first survey and releases one
+visible external drainage-tubing kink. That release changes canonical pressure and pulse rather than
+display text alone. A strict elapsed reassessment precedes another elapsed baseline, trigger,
+recurrence, complication, prevention, and active-risk handoff. No real lesion or baseline, learner
+history, examination, monitoring acquisition, definitive diagnosis, invasive catheter or bowel
+care, drug, dose, route, access, oxygen, fluid, device, procedure, disposition, prognosis, or outcome
+control exists.
+
 #### Neurology: 15
 
 Acute ischemic stroke; large-vessel-occlusion escalation; intracranial hemorrhage; subarachnoid

@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 146 reports Neurology delirium state. */
-export const WORKER_PROTOCOL_VERSION = 146;
+/** Bumped whenever the message shape changes incompatibly. Version 147 reports Neurology autonomic-dysreflexia state. */
+export const WORKER_PROTOCOL_VERSION = 147;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2232,6 +2232,22 @@ export interface EquipmentSnapshot {
       readonly singleCauseProven: false; readonly treatmentEffectProven: false;
       readonly cognitiveRecoveryProven: false; readonly dispositionDetermined: false;
       readonly prognosisPredicted: false; readonly outcomePredicted: false;
+    };
+    readonly neurologyAutonomicDysreflexiaAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly triggerAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly baselineRelativePatternAuthored: true; readonly syndromePatternRecognized: boolean;
+      readonly qualifiedSupportActive: boolean; readonly externalTubingKinkReleased: boolean;
+      readonly responseStateAuthored: boolean; readonly patientHistoryTakenByLearner: false;
+      readonly patientExaminedByLearner: false; readonly monitoringAcquiredByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly catheterManipulatedByLearner: false;
+      readonly bowelCarePerformedByLearner: false; readonly drugSelectedByLearner: false;
+      readonly procedurePerformedByLearner: false; readonly soleCauseProven: false;
+      readonly individualizedResponsePredicted: false; readonly durableResolutionProven: false;
+      readonly complicationsExcluded: false; readonly recurrenceExcluded: false;
+      readonly dispositionDetermined: false; readonly prognosisPredicted: false;
+      readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

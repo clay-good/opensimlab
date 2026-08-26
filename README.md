@@ -78,7 +78,7 @@ screening-rule calculation, abuse or perpetrator diagnosis, confrontation, refer
 submission, jurisdiction selection, custody action, procedure, treatment, disposition, or outcome
 controls.
 
-Wave E Neurology catalog work now includes 14 of 15 bounded labs. Minor nondisabling acute ischemic
+Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later
 neurological trajectory, and elapsed etiology, recurrence, secondary-prevention, and active-risk
@@ -165,6 +165,14 @@ with attention still fluctuating, and elapsed cause, capacity, safety, medicine,
 recurrence, follow-up, and active-risk handoff without history, examination, scoring, capacity
 assessment, testing, diagnosis, observation, restraint, drug, dose, route, access, catheter,
 procedure, treatment-effect, recovery, disposition, prognosis, or outcome controls.
+Autonomic dysreflexia with an authored trigger adds a declared chronic T4 spinal injury, verified
+98/62 mmHg usual pressure, acute severe baseline-relative hypertension with reflex bradycardia,
+immediate upright support and qualified ownership, a urinary-first supplied trigger survey, and a
+canonical pressure-and-pulse transition when one visible external drainage-tubing kink is released.
+An elapsed reassessment and recurrence-focused handoff preserve alternative causes, complications,
+medication boundaries, and outcome uncertainty without accepting a real lesion or baseline,
+examining, diagnosing, acquiring monitoring, teaching catheter or bowel technique, selecting a
+drug, dose, route, access, oxygen, fluid, device, procedure, disposition, prognosis, or outcome.
 
 The goal is not a tech demo. It is the best anesthesia education on the internet: the
 thing a student opens the night before their first day in the OR and comes out of

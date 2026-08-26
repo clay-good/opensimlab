@@ -1170,6 +1170,11 @@ export interface ActionCockpitProps {
       readonly ownershipAtTick: number | null; readonly boundaryAtTick: number | null;
       readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly neurologyAutonomicDysreflexiaAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly triggerAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1990,6 +1995,14 @@ export interface ActionCockpitProps {
       | 'review-neurology-delirium-strict-later-contributor-and-unresolved-cognitive-trajectory'
       | 'handoff-neurology-delirium-causes-capacity-safety-medicines-function-recurrence-follow-up-and-active-risk',
   ) => void;
+  readonly onNeurologyAutonomicDysreflexiaResponse?: (
+    action: 'reconcile-neurology-autonomic-dysreflexia-lesion-baseline-pressure-symptoms-rhythm-and-whole-patient'
+      | 'recognize-neurology-autonomic-dysreflexia-pattern-without-closing-alternatives-or-definitive-diagnosis'
+      | 'activate-neurology-autonomic-dysreflexia-upright-support-monitoring-and-qualified-ownership'
+      | 'review-and-release-neurology-autonomic-dysreflexia-supplied-external-urinary-trigger-within-role'
+      | 'reassess-neurology-autonomic-dysreflexia-strict-pressure-pulse-symptom-and-trigger-transition'
+      | 'handoff-neurology-autonomic-dysreflexia-baseline-triggers-recurrence-complications-prevention-and-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2483,6 +2496,10 @@ export function crisisResponseAvailability(
       scenario.metadata.id === 'acute-delirium-reversible-causes'
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acute-delirium-reversible-causes-reassessment')
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acute-delirium-reversible-causes-reassessment-boundary'),
+    hasNeurologyAutonomicDysreflexiaResponse:
+      scenario.metadata.id === 'autonomic-dysreflexia-authored-trigger'
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'autonomic-dysreflexia-authored-trigger-transition')
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'autonomic-dysreflexia-authored-trigger-transition-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2681,6 +2698,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative'
         && event.target === 'metastatic-spinal-cord-compression-reassessment')
       || (event.type === 'narrative' && event.target === 'acute-delirium-reversible-causes-reassessment')
+      || (event.type === 'narrative' && event.target === 'autonomic-dysreflexia-authored-trigger-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2767,6 +2785,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeurologyHerniationResponse,
     hasNeurologyMsccResponse,
     hasNeurologyDeliriumResponse,
+    hasNeurologyAutonomicDysreflexiaResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2851,7 +2870,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeurologyMyasthenicCrisisResponse || hasNeurologyGbsResponse
     || hasNeurologyMeningitisResponse || hasNeurologyEncephalitisResponse
     || hasNeurologyRaisedIcpResponse || hasNeurologyHerniationResponse || hasNeurologyMsccResponse
-    || hasNeurologyDeliriumResponse;
+    || hasNeurologyDeliriumResponse || hasNeurologyAutonomicDysreflexiaResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2882,7 +2901,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasNeurologyDeliriumResponse
+  const responseTray = hasNeurologyAutonomicDysreflexiaResponse
+    ? { id: 'crisis', label: 'Autonomic dysreflexia' } as const
+    : hasNeurologyDeliriumResponse
     ? { id: 'crisis', label: 'Acute delirium' } as const
     : hasNeurologyMsccResponse
     ? { id: 'crisis', label: 'Cord compression' } as const
@@ -3217,6 +3238,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeurologyHerniationResponse
     || hasNeurologyMsccResponse
     || hasNeurologyDeliriumResponse
+    || hasNeurologyAutonomicDysreflexiaResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -4013,6 +4035,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <NeurologyDeliriumTray
                 assessment={props.resuscitation.neurologyDeliriumAssessment}
                 onAction={props.onNeurologyDeliriumResponse ?? (() => {})} />
+            )}
+            {hasNeurologyAutonomicDysreflexiaResponse && (
+              <NeurologyAutonomicDysreflexiaTray
+                assessment={props.resuscitation.neurologyAutonomicDysreflexiaAssessment}
+                onAction={props.onNeurologyAutonomicDysreflexiaResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -10298,6 +10325,38 @@ function NeurologyDeliriumTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {boundary && !later && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-delirium-strict-later-contributor-and-unresolved-cognitive-trajectory')}>Review the 6-hour report</Button>}
         {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-delirium-causes-capacity-safety-medicines-function-recurrence-follow-up-and-active-risk')}>Hand off the whole picture</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function NeurologyAutonomicDysreflexiaTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyAutonomicDysreflexiaAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNeurologyAutonomicDysreflexiaResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const trigger = assessment?.triggerAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="neurology-autonomic-dysreflexia-early-title">
+      <div id="neurology-autonomic-dysreflexia-early-title" className="syringe__name">His usual pressure matters.</div>
+      <p className="syringe__remaining">Begin with the lesion, verified baseline, sudden change, symptoms, pulse, and the whole person.</p>
+      <div className="crisis-drug__actions">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neurology-autonomic-dysreflexia-lesion-baseline-pressure-symptoms-rhythm-and-whole-patient')}>Connect baseline + pattern</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-neurology-autonomic-dysreflexia-pattern-without-closing-alternatives-or-definitive-diagnosis')}>Recognize the urgent pattern</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-autonomic-dysreflexia-upright-support-monitoring-and-qualified-ownership')}>Sit up + bring help close</Button>}
+        {support && !trigger && <Button className="crisis-drug__action" onClick={() => onAction('review-and-release-neurology-autonomic-dysreflexia-supplied-external-urinary-trigger-within-role')}>Free the visible tubing kink</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="neurology-autonomic-dysreflexia-later-title">
+      <div id="neurology-autonomic-dysreflexia-later-title" className="syringe__name">Relief still needs watching.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Baseline, triggers, recurrence, complications, prevention, and outcome uncertainty handed off.' : reassessment ? 'Pressure and pulse are near baseline in the fixed report. Recurrence, another trigger, and complications remain open.' : trigger ? 'The visible kink is free and the monitor changed. Reassess after time passes.' : support ? 'Upright support and surveillance are active. Start the supplied trigger survey with urine flow.' : 'Complete the pattern, recognition, and immediate support before trigger review.'}</p>
+      <div className="crisis-drug__actions">
+        {trigger && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('reassess-neurology-autonomic-dysreflexia-strict-pressure-pulse-symptom-and-trigger-transition')}>Review the strict response</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-autonomic-dysreflexia-baseline-triggers-recurrence-complications-prevention-and-active-risk')}>Hand off what could return</Button>}
       </div>
     </section>
   </>;

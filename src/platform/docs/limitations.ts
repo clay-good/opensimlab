@@ -4175,6 +4175,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified baseline and fluctuation, direct qualified assessment, a broad cause combination, familiar communication, individualized least-restrictive care, family partnership, and serial reassessment.',
     briefIn: ['acute-delirium-reversible-causes'],
   },
+  {
+    id: 'autonomic-dysreflexia-lesion-baseline-trigger-vitals-response-and-later-state-are-authored',
+    headline: 'The lesion, baseline, symptoms, trigger, pressure and pulse transitions, drainage, and later report are authored.',
+    simplification: 'Fixed reports and discrete canonical monitor states stand in for history, examination, pressure and pulse acquisition, rhythm review, trigger survey, qualified care, external-kink release, drainage, and reassessment.',
+    whereItMisleads: 'Treating the fictional T4 lesion, 20 mmHg recognition convention, visible kink, pressure transition, or symptom improvement as learner evidence, a universal diagnosis, sole cause, individualized effect, durable resolution, or predicted course.',
+    correctUnderstanding: 'Real care requires the person’s verified usual pressure, immediate serial assessment, qualified spinal-injury ownership, individualized trigger removal and treatment, complication review, and recurrence surveillance.',
+    briefIn: ['autonomic-dysreflexia-authored-trigger'],
+  },
+  {
+    id: 'autonomic-dysreflexia-controls-reconcile-recognize-support-review-release-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, pattern recognition, immediate support, one supplied external-trigger release, reassessment, and handoff only.',
+    simplification: 'Six actions stand in for spinal-injury, medical, nursing, urology, emergency, monitoring, trigger, complication, education, prevention, and handoff work.',
+    whereItMisleads: 'Equating button order or releasing one visible external kink with examination, diagnosis, catheter care, bowel care, medication, treatment, complication exclusion, disposition, or competence.',
+    correctUnderstanding: 'Actual care requires trained teams, frequent verified pressure and pulse checks, a systematic cause search, current local protocols, individualized care, and continuous reassessment.',
+    briefIn: ['autonomic-dysreflexia-authored-trigger'],
+  },
+  {
+    id: 'no-live-spinal-injury-exam-diagnosis-catheter-technique-drug-procedure-or-outcome',
+    headline: 'The lab does not accept a real lesion or baseline, examine, diagnose, teach catheter technique, prescribe, perform a procedure, or report outcome.',
+    simplification: 'No live history, neurological, cardiopulmonary, abdominal, urinary, bowel or skin examination, pressure or pulse acquisition, ECG, bladder, urine, blood, imaging or another test, diagnosis, catheter insertion, disconnection, irrigation or replacement, bowel care, drug, dose, route, access, oxygen, fluid, device, procedure, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Diagnosing every hypertensive episode from one threshold, copying fictional values into care, manipulating a catheter from this rehearsal, assuming one trigger or pressure response, or reading completion as competence.',
+    correctUnderstanding: 'Use verified individual baseline and serial findings, immediate qualified assessment, patient-specific trigger removal and medical care, local spinal-injury guidance, complication review, and recurrence planning.',
+    briefIn: ['autonomic-dysreflexia-authored-trigger'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

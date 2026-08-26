@@ -376,6 +376,10 @@ const NEUROLOGY_DELIRIUM_BLOCKED_ACTION_TYPES = new Set([
   ...NEUROLOGY_MSCC_BLOCKED_ACTION_TYPES,
   'metastatic-spinal-cord-compression-response',
 ]);
+const NEUROLOGY_AUTONOMIC_DYSREFLEXIA_BLOCKED_ACTION_TYPES = new Set([
+  ...NEUROLOGY_DELIRIUM_BLOCKED_ACTION_TYPES,
+  'acute-delirium-reversible-causes-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1207,6 +1211,12 @@ export class AnesthesiaEngine {
   private neurologyDeliriumBoundaryAtTick: number | null = null;
   private neurologyDeliriumLaterAtTick: number | null = null;
   private neurologyDeliriumHandoffAtTick: number | null = null;
+  private neurologyAutonomicDysreflexiaTrajectoryAtTick: number | null = null;
+  private neurologyAutonomicDysreflexiaRecognitionAtTick: number | null = null;
+  private neurologyAutonomicDysreflexiaSupportAtTick: number | null = null;
+  private neurologyAutonomicDysreflexiaTriggerAtTick: number | null = null;
+  private neurologyAutonomicDysreflexiaReassessmentAtTick: number | null = null;
+  private neurologyAutonomicDysreflexiaHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1958,6 +1968,15 @@ export class AnesthesiaEngine {
         'This Neurology lesson exposes no generic examination, score, capacity, restraint, observation, '
         + 'fluid, drug, dose, route, access, test, catheter, procedure, seizure, stroke, infection, or '
         + 'adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const neurologyAutonomicDysreflexia = this.scenario.metadata.id === 'autonomic-dysreflexia-authored-trigger'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'autonomic-dysreflexia-authored-trigger-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'autonomic-dysreflexia-authored-trigger-transition-boundary');
+    if (neurologyAutonomicDysreflexia && NEUROLOGY_AUTONOMIC_DYSREFLEXIA_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `neurology-autonomic-dysreflexia-generic-action-refused-${this.currentTick}`,
+        'This Neurology lesson exposes no generic examination, monitoring, catheter, bowel, fluid, '
+        + 'drug, dose, route, access, oxygen, device, procedure, rhythm, crisis-injection, or adjacent-scenario '
+        + 'action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -9938,6 +9957,32 @@ export class AnesthesiaEngine {
         if (this.neurologyDeliriumHandoffAtTick !== null) { this.log('warning', 'assessment', `neurology-delirium-handoff-refused-${this.currentTick}`, 'The cause, capacity, safety, medicine, function, recurrence, and active-risk handoff was already recorded.'); break; }
         this.neurologyDeliriumHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `neurology-delirium-active-risk-handoff-recorded-${this.currentTick}`, 'Possible cause combination, serial cognition, distress, decision-specific capacity, least-restrictive safety, medicines, hydration, bladder and bowel, pain, nutrition, senses, sleep, mobility, family communication, recurrence, baseline recovery, dementia review if unresolved, disposition, prognosis, and outcome uncertainty were handed off.', { singleCauseProven: false, treatmentEffectProven: false, cognitiveRecoveryProven: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
       }
+      case 'autonomic-dysreflexia-authored-trigger-response': {
+        const response = typeof action.payload.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'autonomic-dysreflexia-authored-trigger'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'autonomic-dysreflexia-authored-trigger-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'autonomic-dysreflexia-authored-trigger-transition-boundary');
+        const actions = ['reconcile-neurology-autonomic-dysreflexia-lesion-baseline-pressure-symptoms-rhythm-and-whole-patient',
+          'recognize-neurology-autonomic-dysreflexia-pattern-without-closing-alternatives-or-definitive-diagnosis',
+          'activate-neurology-autonomic-dysreflexia-upright-support-monitoring-and-qualified-ownership',
+          'review-and-release-neurology-autonomic-dysreflexia-supplied-external-urinary-trigger-within-role',
+          'reassess-neurology-autonomic-dysreflexia-strict-pressure-pulse-symptom-and-trigger-transition',
+          'handoff-neurology-autonomic-dysreflexia-baseline-triggers-recurrence-complications-prevention-and-active-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `neurology-autonomic-dysreflexia-response-refused-${this.currentTick}`, supported ? 'The autonomic-dysreflexia action was not listed. No supplied or injected text was retained.' : 'These autonomic-dysreflexia choices are available only in the exact declared Neurology lesson.'); break; }
+        if (response === actions[0]) { if (this.neurologyAutonomicDysreflexiaTrajectoryAtTick !== null) { this.log('warning', 'assessment', `neurology-autonomic-dysreflexia-trajectory-refused-${this.currentTick}`, 'The supplied lesion, baseline, symptoms, pressure, and rhythm were already reconciled.'); break; } this.neurologyAutonomicDysreflexiaTrajectoryAtTick = this.currentTick; this.log('critical', 'assessment', `neurology-autonomic-dysreflexia-trajectory-reconciled-${this.currentTick}`, 'Declared chronic T4 injury and verified usual BP 98/62 mmHg contrast with sudden headache, flushing, sweating, piloerection, BP 178/106 mmHg, and sinus bradycardia 48/min. The learner did not take history, examine, monitor, test, or diagnose.', { declaredLesion: 'T4', baselineSystolicMmHg: 98, acuteSystolicMmHg: 178, patientHistoryTakenByLearner: false, patientExaminedByLearner: false }); break; }
+        if (this.neurologyAutonomicDysreflexiaTrajectoryAtTick === null) { this.log('warning', 'assessment', `neurology-autonomic-dysreflexia-trajectory-order-refused-${this.currentTick}`, 'Reconcile the lesion, verified baseline, symptoms, pressure, and rhythm first.'); break; }
+        if (response === actions[1]) { if (this.neurologyAutonomicDysreflexiaRecognitionAtTick !== null) { this.log('warning', 'assessment', `neurology-autonomic-dysreflexia-recognition-refused-${this.currentTick}`, 'The urgent syndrome pattern and diagnostic boundary were already recognized.'); break; } this.neurologyAutonomicDysreflexiaRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `neurology-autonomic-dysreflexia-pattern-recognized-${this.currentTick}`, 'The acute 80 mmHg systolic rise above verified baseline plus supplied symptoms and bradycardia supports urgent autonomic-dysreflexia-pattern recognition. Intracranial, cardiac, medication, pain, infection, urinary, bowel, skin, and other alternatives remain open; no definitive diagnosis was made.', { baselineRelativePatternRecognized: true, diagnosisMadeByLearner: false, alternativesClosed: false }); break; }
+        if (this.neurologyAutonomicDysreflexiaRecognitionAtTick === null) { this.log('warning', 'assessment', `neurology-autonomic-dysreflexia-recognition-order-refused-${this.currentTick}`, 'Recognize the urgent baseline-relative pattern before support or trigger review.'); break; }
+        if (response === actions[2]) { if (this.neurologyAutonomicDysreflexiaSupportAtTick !== null) { this.log('warning', 'assessment', `neurology-autonomic-dysreflexia-support-refused-${this.currentTick}`, 'Immediate positioning, surveillance, and qualified ownership are already active.'); break; } this.neurologyAutonomicDysreflexiaSupportAtTick = this.currentTick; this.log('critical', 'assessment', `neurology-autonomic-dysreflexia-support-activated-${this.currentTick}`, 'Upright positioning with legs lowered where possible, loosened external constriction, frequent pressure and pulse surveillance, and qualified spinal-injury, medical, nursing, urology, emergency, and complication ownership were recorded. The authored intermediate monitor state is BP 166/98 mmHg and sinus rate 50/min; no learner drug, device, or procedure was selected.', { supportStateAuthored: true, medicationSelectedByLearner: false, procedurePerformedByLearner: false }); break; }
+        if (this.neurologyAutonomicDysreflexiaSupportAtTick === null) { this.log('warning', 'assessment', `neurology-autonomic-dysreflexia-support-order-refused-${this.currentTick}`, 'Activate immediate upright support, surveillance, and qualified ownership before trigger review.'); break; }
+        if (response === actions[3]) { if (this.neurologyAutonomicDysreflexiaTriggerAtTick !== null) { this.log('warning', 'assessment', `neurology-autonomic-dysreflexia-trigger-refused-${this.currentTick}`, 'The supplied external tubing kink was already reviewed and released.'); break; } this.neurologyAutonomicDysreflexiaTriggerAtTick = this.currentTick; this.log('critical', 'assessment', `neurology-autonomic-dysreflexia-external-trigger-released-${this.currentTick}`, 'A urinary-first supplied survey found external drainage tubing trapped beneath the chair rail after 2 hours without bag output. The visible external kink was released, producing the authored discrete monitor transition to BP 124/76 mmHg and sinus rate 60/min with drainage resuming. No catheter insertion, disconnection, irrigation, replacement, bowel care, medication, or other procedure occurred; sole causality and individualized response were not proven.', { externalTubingKinkReleased: true, catheterManipulatedByLearner: false, drugSelectedByLearner: false, soleCauseProven: false, individualizedResponsePredicted: false }); break; }
+        if (this.neurologyAutonomicDysreflexiaTriggerAtTick === null) { this.log('warning', 'assessment', `neurology-autonomic-dysreflexia-trigger-order-refused-${this.currentTick}`, 'Review and release the supplied visible external urinary trigger before reassessment.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.neurologyAutonomicDysreflexiaTriggerAtTick) { this.log('warning', 'assessment', `neurology-autonomic-dysreflexia-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before reviewing the strict response report.'); break; } if (this.neurologyAutonomicDysreflexiaReassessmentAtTick !== null) { this.log('warning', 'assessment', `neurology-autonomic-dysreflexia-reassessment-refused-${this.currentTick}`, 'The strict pressure, pulse, symptom, and drainage report was already reviewed.'); break; } this.neurologyAutonomicDysreflexiaReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `neurology-autonomic-dysreflexia-transition-reassessed-${this.currentTick}`, 'Strict later report: BP 108/66 mmHg, sinus rate 64/min, headache easing, and drainage resumed. This fixed teaching state does not prove sole causality, individualized treatment effect, durable resolution, second-trigger or complication exclusion, recurrence prevention, disposition, or outcome.', { responseStateAuthored: true, soleCauseProven: false, durableResolutionProven: false, complicationsExcluded: false, outcomePredicted: false }); break; }
+        if (this.neurologyAutonomicDysreflexiaReassessmentAtTick === null) { this.log('warning', 'assessment', `neurology-autonomic-dysreflexia-handoff-order-refused-${this.currentTick}`, 'Review the strict pressure, pulse, symptom, and trigger transition before handoff.'); break; }
+        if (this.currentTick <= this.neurologyAutonomicDysreflexiaReassessmentAtTick) { this.log('warning', 'assessment', `neurology-autonomic-dysreflexia-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off active recurrence and complication risk.'); break; }
+        if (this.neurologyAutonomicDysreflexiaHandoffAtTick !== null) { this.log('warning', 'assessment', `neurology-autonomic-dysreflexia-handoff-refused-${this.currentTick}`, 'The baseline, trigger, recurrence, complication, prevention, and active-risk handoff was already recorded.'); break; }
+        this.neurologyAutonomicDysreflexiaHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `neurology-autonomic-dysreflexia-active-risk-handoff-recorded-${this.currentTick}`, 'Verified baseline, lesion, serial pressure and pulse, symptoms, known and possible additional triggers, recurrence surveillance, neurological and cardiopulmonary complications, medication and procedure boundaries, education, prevention, follow-up, disposition, prognosis, and outcome uncertainty were handed off.', { soleCauseProven: false, durableResolutionProven: false, complicationsExcluded: false, recurrenceExcluded: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -12648,6 +12693,21 @@ export class AnesthesiaEngine {
         meanArterialMmHg: 77,
         coreTemperatureC: 36.8,
       };
+    }
+    if (this.scenario.metadata.id === 'autonomic-dysreflexia-authored-trigger'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'autonomic-dysreflexia-authored-trigger-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'autonomic-dysreflexia-authored-trigger-transition-boundary')) {
+      const vitals = this.neurologyAutonomicDysreflexiaReassessmentAtTick !== null
+        ? { heartRateBpm: 64, systolicMmHg: 108, diastolicMmHg: 66, meanArterialMmHg: 80 }
+        : this.neurologyAutonomicDysreflexiaTriggerAtTick !== null
+          ? { heartRateBpm: 60, systolicMmHg: 124, diastolicMmHg: 76, meanArterialMmHg: 92 }
+          : this.neurologyAutonomicDysreflexiaSupportAtTick !== null
+            ? { heartRateBpm: 50, systolicMmHg: 166, diastolicMmHg: 98, meanArterialMmHg: 121 }
+            : { heartRateBpm: 48, systolicMmHg: 178, diastolicMmHg: 106, meanArterialMmHg: 130 };
+      crisisState = { ...crisisState, ...vitals, respiratoryRateBpm: 16,
+        spo2Percent: 98, coreTemperatureC: 36.8 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -16138,6 +16198,31 @@ export class AnesthesiaEngine {
               diagnosisMadeByLearner: false as const, restraintSelectedByLearner: false as const, observationSelectedByLearner: false as const,
               drugSelectedByLearner: false as const, treatmentDeliveredByLearner: false as const, singleCauseProven: false as const,
               treatmentEffectProven: false as const, cognitiveRecoveryProven: false as const, dispositionDetermined: false as const,
+              prognosisPredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'autonomic-dysreflexia-authored-trigger'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'autonomic-dysreflexia-authored-trigger-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'autonomic-dysreflexia-authored-trigger-transition-boundary') ? {
+            neurologyAutonomicDysreflexiaAssessment: {
+              trajectoryAtTick: this.neurologyAutonomicDysreflexiaTrajectoryAtTick,
+              recognitionAtTick: this.neurologyAutonomicDysreflexiaRecognitionAtTick,
+              supportAtTick: this.neurologyAutonomicDysreflexiaSupportAtTick,
+              triggerAtTick: this.neurologyAutonomicDysreflexiaTriggerAtTick,
+              reassessmentAtTick: this.neurologyAutonomicDysreflexiaReassessmentAtTick,
+              handoffAtTick: this.neurologyAutonomicDysreflexiaHandoffAtTick,
+              baselineRelativePatternAuthored: true as const,
+              syndromePatternRecognized: this.neurologyAutonomicDysreflexiaRecognitionAtTick !== null,
+              qualifiedSupportActive: this.neurologyAutonomicDysreflexiaSupportAtTick !== null,
+              externalTubingKinkReleased: this.neurologyAutonomicDysreflexiaTriggerAtTick !== null,
+              responseStateAuthored: this.neurologyAutonomicDysreflexiaReassessmentAtTick !== null,
+              patientHistoryTakenByLearner: false as const, patientExaminedByLearner: false as const,
+              monitoringAcquiredByLearner: false as const, diagnosisMadeByLearner: false as const,
+              catheterManipulatedByLearner: false as const, bowelCarePerformedByLearner: false as const,
+              drugSelectedByLearner: false as const, procedurePerformedByLearner: false as const,
+              soleCauseProven: false as const, individualizedResponsePredicted: false as const,
+              durableResolutionProven: false as const, complicationsExcluded: false as const,
+              recurrenceExcluded: false as const, dispositionDetermined: false as const,
               prognosisPredicted: false as const, outcomePredicted: false as const,
             },
           } : {}),

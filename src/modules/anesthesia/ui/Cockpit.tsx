@@ -1064,6 +1064,9 @@ export function Cockpit({
           onNeurologyDeliriumResponse={(action) => session.act({
             type: 'acute-delirium-reversible-causes-response', payload: { action },
           })}
+          onNeurologyAutonomicDysreflexiaResponse={(action) => session.act({
+            type: 'autonomic-dysreflexia-authored-trigger-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

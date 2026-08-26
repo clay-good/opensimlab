@@ -12,6 +12,7 @@ import { RAISED_INTRACRANIAL_PRESSURE_VISUAL_THREAT } from './raised-intracrania
 import { ACUTE_TRANSTENTORIAL_HERNIATION_PATTERN } from './acute-transtentorial-herniation-pattern';
 import { METASTATIC_SPINAL_CORD_COMPRESSION } from './metastatic-spinal-cord-compression';
 import { ACUTE_DELIRIUM_REVERSIBLE_CAUSES } from './acute-delirium-reversible-causes';
+import { AUTONOMIC_DYSREFLEXIA_AUTHORED_TRIGGER } from './autonomic-dysreflexia-authored-trigger';
 import { SPONTANEOUS_CEREBELLAR_INTRACEREBRAL_HEMORRHAGE } from './spontaneous-cerebellar-intracerebral-hemorrhage';
 
 export const NEUROLOGY_SCENARIOS: readonly Scenario[] = [
@@ -29,6 +30,7 @@ export const NEUROLOGY_SCENARIOS: readonly Scenario[] = [
   ACUTE_TRANSTENTORIAL_HERNIATION_PATTERN,
   METASTATIC_SPINAL_CORD_COMPRESSION,
   ACUTE_DELIRIUM_REVERSIBLE_CAUSES,
+  AUTONOMIC_DYSREFLEXIA_AUTHORED_TRIGGER,
 ];
 export const DEFAULT_NEUROLOGY_SCENARIO_ID = MINOR_NONDISABLING_ACUTE_ISCHEMIC_STROKE.metadata.id;
 

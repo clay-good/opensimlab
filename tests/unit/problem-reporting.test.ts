@@ -22,9 +22,9 @@ describe('scenario report contract', () => {
     const catalog = JSON.parse(readFileSync(
       join(process.cwd(), 'workers/reports/src/report-catalog.generated.json'), 'utf8',
     )) as { scenarios: { moduleId: string; scenarioId: string; contentVersion: string }[] };
-    expect(catalog.scenarios).toHaveLength(150);
+    expect(catalog.scenarios).toHaveLength(151);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(150);
+      .toBe(151);
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'neurology', scenarioId: 'basilar-artery-occlusion-escalation',
       contentVersion: '0.1.0',
@@ -503,6 +503,18 @@ describe('scenario report contract', () => {
     const report = buildScenarioReportRequest(neurology, 'clinical-content', 'The delirium contributor boundary may need review.', 'token');
     expect(validateReportPayload(report)).toMatchObject({ ok: true });
     expect(validateReportPayload({ ...report, scenario_id: 'delirium' })).toEqual({ ok: false, status: 400 });
+    expect(validateReportPayload({ ...report, canonical_url: `${neurology.canonicalUrl}#tick-12` })).toEqual({ ok: false, status: 403 });
+  });
+
+  it('accepts the exact Neurology autonomic-dysreflexia context and rejects drift', () => {
+    const neurology: ScenarioReportContext = {
+      ...context, moduleId: 'neurology', scenarioId: 'autonomic-dysreflexia-authored-trigger',
+      canonicalUrl: 'https://opensimlab.com/neurology/scenario/autonomic-dysreflexia-authored-trigger',
+      fidelityClass: 'state_transition', simulatedTick: 12,
+    };
+    const report = buildScenarioReportRequest(neurology, 'clinical-content', 'The pressure transition may need review.', 'token');
+    expect(validateReportPayload(report)).toMatchObject({ ok: true });
+    expect(validateReportPayload({ ...report, scenario_id: 'autonomic-dysreflexia' })).toEqual({ ok: false, status: 400 });
     expect(validateReportPayload({ ...report, canonical_url: `${neurology.canonicalUrl}#tick-12` })).toEqual({ ok: false, status: 403 });
   });
 
