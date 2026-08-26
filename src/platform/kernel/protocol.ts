@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 112 reports obesity-hypoventilation reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 112;
+/** Bumped whenever the message shape changes incompatibly. Version 113 reports NIV-selection reassessment state. */
+export const WORKER_PROTOCOL_VERSION = 113;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1012,6 +1012,25 @@ export interface EquipmentSnapshot {
       readonly weightInterventionSelectedByLearner: false;
       readonly treatmentDeliveredByLearner: false; readonly patientPreferenceInferred: false;
       readonly dispositionDetermined: false; readonly outcomePredicted: false;
+    };
+    readonly noninvasiveVentilationSelectionAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly suitabilityAtTick: number | null;
+      readonly selectionAtTick: number | null; readonly responseAtTick: number | null;
+      readonly failureGuardsAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly lastUnsupportedChoice: 'cpap' | 'high-flow' | null;
+      readonly initialPulsePresent: true; readonly spontaneousBreathingAuthored: true;
+      readonly copdExacerbationAuthored: true; readonly acuteHypercapnicAcidosisAuthored: true;
+      readonly standardInitialTherapyAuthored: true; readonly immediateDeteriorationAuthored: false;
+      readonly airwayProtectionFailureAuthored: false; readonly hemodynamicInstabilityAuthored: false;
+      readonly bilevelNivSelectedByLearner: boolean; readonly patientExaminedByLearner: false;
+      readonly bloodGasAcquiredByLearner: false; readonly bloodGasInterpretedByLearner: false;
+      readonly imagingAcquiredByLearner: false; readonly oxygenSelectedByLearner: false;
+      readonly interfaceSelectedByLearner: false; readonly pressureSelectedByLearner: false;
+      readonly backupRateSelectedByLearner: false; readonly deviceOperatedByLearner: false;
+      readonly ventilationDeliveredByLearner: false; readonly drugSelectedByLearner: false;
+      readonly treatmentDeliveredByLearner: false; readonly intubationPerformedByLearner: false;
+      readonly durableNivSuccessProven: false; readonly dispositionDetermined: false;
+      readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

@@ -93,6 +93,12 @@ const OBESITY_HYPOVENTILATION_BLOCKED_ACTION_TYPES = new Set([
   ...HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES, 'mucus-plugging-response',
   'opioid-ventilatory-response', 'opioid-toxicity-response',
 ]);
+const NONINVASIVE_VENTILATION_SELECTION_BLOCKED_ACTION_TYPES = new Set([
+  ...HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES, 'mucus-plugging-response',
+  'opioid-ventilatory-response', 'opioid-toxicity-response', 'copd-exacerbation-response',
+  'acute-pulmonary-edema-response', 'obesity-hypoventilation-response',
+  'neuromuscular-respiratory-failure-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -707,6 +713,13 @@ export class AnesthesiaEngine {
   private obesityHypoventilationRecognitionAtTick: number | null = null;
   private obesityHypoventilationPlanAtTick: number | null = null;
   private obesityHypoventilationHandoffAtTick: number | null = null;
+  private nivSelectionTrajectoryAtTick: number | null = null;
+  private nivSelectionSuitabilityAtTick: number | null = null;
+  private nivSelectionAtTick: number | null = null;
+  private nivSelectionResponseAtTick: number | null = null;
+  private nivSelectionFailureGuardsAtTick: number | null = null;
+  private nivSelectionHandoffAtTick: number | null = null;
+  private nivSelectionLastUnsupportedChoice: 'cpap' | 'high-flow' | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1055,6 +1068,14 @@ export class AnesthesiaEngine {
     if (obesityHypoventilation && OBESITY_HYPOVENTILATION_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `obesity-hypoventilation-generic-action-refused-${this.currentTick}`,
         'This stable reassessment does not expose generic testing, medication, oxygen, PAP, airway, ventilator, procedure, rhythm, artifact, opioid, or crisis actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const nivSelection = this.scenario.timeline.some((event) =>
+      event.type === 'narrative' && event.target === 'noninvasive-ventilation-selection');
+    if (nivSelection && NONINVASIVE_VENTILATION_SELECTION_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `noninvasive-ventilation-selection-generic-action-refused-${this.currentTick}`,
+        'This selection lesson does not expose generic medication, oxygen, mask, airway, ventilator, procedure, rhythm, artifact, or adjacent-crisis actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -5536,6 +5557,63 @@ export class AnesthesiaEngine {
         this.obesityHypoventilationHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `obesity-hypoventilation-handoff-recorded-${this.currentTick}`, 'The symptom and function trajectory, awake and sleep evidence, working pattern, open causes, documented priorities, diagnostic and follow-up work, change triggers, and named owners were handed off. No diagnosis, support selection, weight intervention, treatment, response, disposition, prognosis, or outcome was determined.', { diagnosisDeterminedByLearner: false, supportDeviceSelectedByLearner: false, weightInterventionSelectedByLearner: false, treatmentDeliveredByLearner: false, dispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'noninvasive-ventilation-selection-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'noninvasive-ventilation-selection');
+        const valid = ['reconcile-noninvasive-ventilation-selection-treatment-and-trajectory',
+          'review-noninvasive-ventilation-selection-suitability-and-rescue-readiness',
+          'select-bilevel-noninvasive-ventilation', 'select-cpap-alone',
+          'select-high-flow-nasal-oxygen-alone',
+          'review-noninvasive-ventilation-selection-early-response',
+          'review-noninvasive-ventilation-selection-failure-guards',
+          'handoff-noninvasive-ventilation-selection-reassessment'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `noninvasive-ventilation-selection-response-refused-${this.currentTick}`, supported ? 'That support-selection action is not available. Nothing changed.' : 'These support-selection choices are available only in the declared Respiratory Medicine lesson.'); break; }
+        if (response === 'reconcile-noninvasive-ventilation-selection-treatment-and-trajectory') {
+          if (this.nivSelectionTrajectoryAtTick !== null) { this.log('warning', 'assessment', `noninvasive-ventilation-selection-trajectory-refused-${this.currentTick}`, 'The baseline, initial care, and persistent whole-patient respiratory-acidosis trajectory was already reconciled.'); break; }
+          this.nivSelectionTrajectoryAtTick = this.currentTick;
+          this.log('warning', 'assessment', `noninvasive-ventilation-selection-trajectory-reconciled-${this.currentTick}`, 'Baseline function and gas, arrival severity, verified controlled oxygen and COPD therapy, and persistent short-phrase breathing with acidotic hypercapnia were reconciled. No examination, test interpretation, medication, oxygen, or treatment was performed.', { standardInitialTherapyAuthored: true, acuteHypercapnicAcidosisAuthored: true, examinationPerformedByLearner: false, bloodGasInterpretedByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.nivSelectionTrajectoryAtTick === null) { this.log('warning', 'assessment', `noninvasive-ventilation-selection-trajectory-order-refused-${this.currentTick}`, 'Reconcile the response to verified initial care before reviewing trial suitability or selecting support.'); break; }
+        if (response === 'review-noninvasive-ventilation-selection-suitability-and-rescue-readiness') {
+          if (this.nivSelectionSuitabilityAtTick !== null) { this.log('warning', 'assessment', `noninvasive-ventilation-selection-suitability-refused-${this.currentTick}`, 'Current suitability, preferences, monitoring, and rescue readiness were already reviewed.'); break; }
+          this.nivSelectionSuitabilityAtTick = this.currentTick;
+          this.log('warning', 'assessment', `noninvasive-ventilation-selection-suitability-reviewed-${this.currentTick}`, 'The fixed airway, cooperation, secretion, emesis, face, hemodynamic, mentation, deterioration, preference, observation, and rescue-access facts supported a closely monitored trial in this case. They were not treated as learner examination or an absolute checklist.', { immediateDeteriorationAuthored: false, airwayProtectionFailureAuthored: false, hemodynamicInstabilityAuthored: false, patientExaminedByLearner: false, rescuePlanAuthored: true }); break;
+        }
+        if (this.nivSelectionSuitabilityAtTick === null) { this.log('warning', 'assessment', `noninvasive-ventilation-selection-suitability-order-refused-${this.currentTick}`, 'Review current suitability and rapid rescue readiness before choosing a support goal.'); break; }
+        if (response === 'select-cpap-alone' || response === 'select-high-flow-nasal-oxygen-alone') {
+          this.nivSelectionLastUnsupportedChoice = response === 'select-cpap-alone' ? 'cpap' : 'high-flow';
+          this.log('warning', 'assessment', `noninvasive-ventilation-selection-modality-not-selected-${this.currentTick}`,
+            response === 'select-cpap-alone'
+              ? 'CPAP provides continuous distending pressure; this authored acidotic hypercapnic COPD pattern needs ventilatory assistance. The patient did not change.'
+              : 'High-flow nasal oxygen may support oxygenation, but current guidance favors an NIV trial first for this authored acute hypercapnic acidotic COPD pattern. The patient did not change.',
+            { unsupportedChoice: this.nivSelectionLastUnsupportedChoice, patientStateChanged: false }); break;
+        }
+        if (response === 'select-bilevel-noninvasive-ventilation') {
+          if (this.nivSelectionAtTick !== null) { this.log('warning', 'assessment', `noninvasive-ventilation-selection-choice-refused-${this.currentTick}`, 'A closely monitored bilevel NIV trial was already selected.'); break; }
+          this.nivSelectionAtTick = this.currentTick;
+          this.nivSelectionLastUnsupportedChoice = null;
+          this.log('warning', 'assessment', `noninvasive-ventilation-selection-bilevel-selected-${this.currentTick}`, 'A closely monitored bilevel NIV trial was selected for the authored persistent acute-on-chronic acidotic hypercapnic COPD pattern. Qualified staff own the device, interface, pressures, backup rate, oxygen, fitting, operation, treatment, and rapid rescue.', { bilevelNivSelectedByLearner: true, interfaceSelectedByLearner: false, pressureSelectedByLearner: false, deviceOperatedByLearner: false, ventilationDeliveredByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.nivSelectionAtTick === null) { this.log('warning', 'assessment', `noninvasive-ventilation-selection-choice-order-refused-${this.currentTick}`, 'Select the closely monitored bilevel NIV trial before reviewing an authored response.'); break; }
+        if (response === 'review-noninvasive-ventilation-selection-early-response') {
+          if (this.currentTick <= this.nivSelectionAtTick) { this.log('warning', 'assessment', `noninvasive-ventilation-selection-response-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before reviewing the fixed first-hour response.'); break; }
+          if (this.nivSelectionResponseAtTick !== null) { this.log('warning', 'assessment', `noninvasive-ventilation-selection-early-response-refused-${this.currentTick}`, 'The fixed first-hour response was already reviewed.'); break; }
+          this.nivSelectionResponseAtTick = this.currentTick;
+          this.log('warning', 'assessment', `noninvasive-ventilation-selection-early-response-reviewed-${this.currentTick}`, 'Fixed experienced-team first-hour report: alert and more comfortable, longer phrases, less accessory use, RR 24/min, HR 94/min, stable pressure, SpO₂ 90% on reported controlled support, pH 7.33, PaCO₂ 60 mmHg, and bicarbonate 31 mmol/L. Interface tolerance and secretion handling are currently acceptable. This is partial early improvement, not durable success, disposition, or outcome.', { responseAuthored: true, nivDeliveredByLearner: false, durableNivSuccessProven: false, outcomePredicted: false }); break;
+        }
+        if (this.nivSelectionResponseAtTick === null) { this.log('warning', 'assessment', `noninvasive-ventilation-selection-response-order-refused-${this.currentTick}`, 'Review the fixed first-hour response before recording continuation and failure guards.'); break; }
+        if (response === 'review-noninvasive-ventilation-selection-failure-guards') {
+          if (this.nivSelectionFailureGuardsAtTick !== null) { this.log('warning', 'assessment', `noninvasive-ventilation-selection-failure-guards-refused-${this.currentTick}`, 'Continuation, failure triggers, and rapid rescue readiness were already recorded.'); break; }
+          this.nivSelectionFailureGuardsAtTick = this.currentTick;
+          this.log('warning', 'assessment', `noninvasive-ventilation-selection-failure-guards-reviewed-${this.currentTick}`, 'Monitored continuation preserved mentation, airway protection, work, pH and PaCO₂, oxygenation, hemodynamics, interface tolerance, secretions, open causes, preferences, and rapid airway-capable reassessment as active failure guards. No setting, sedation, intubation, procedure, treatment, or outcome was chosen.', { durableNivSuccessProven: false, intubationPerformedByLearner: false, treatmentDeliveredByLearner: false, outcomePredicted: false }); break;
+        }
+        if (this.nivSelectionFailureGuardsAtTick === null) { this.log('warning', 'assessment', `noninvasive-ventilation-selection-handoff-order-refused-${this.currentTick}`, 'Record continuation, failure triggers, and rescue readiness before handoff.'); break; }
+        if (this.currentTick <= this.nivSelectionFailureGuardsAtTick) { this.log('warning', 'assessment', `noninvasive-ventilation-selection-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off active support and rescue work.'); break; }
+        if (this.nivSelectionHandoffAtTick !== null) { this.log('warning', 'assessment', `noninvasive-ventilation-selection-handoff-refused-${this.currentTick}`, 'The active-support handoff was already recorded.'); break; }
+        this.nivSelectionHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `noninvasive-ventilation-selection-handoff-recorded-${this.currentTick}`, 'Active reported bilevel support, the partial first-hour response, COPD and alternative-cause work, controlled oxygen, serial reassessment, tolerance and secretion review, failure triggers, rescue readiness, preferences, and named owners were handed off. No weaning, intubation, disposition, prognosis, durable success, or outcome was determined.', { durableNivSuccessProven: false, intubationPerformedByLearner: false, dispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -8311,6 +8389,15 @@ export class AnesthesiaEngine {
         spo2Percent: 91, etco2MmHg: 46, systolicMmHg: 132, diastolicMmHg: 78,
         meanArterialMmHg: 96, coreTemperatureC: 36.8 };
     }
+    if (this.scenario.timeline.some((event) => event.type === 'narrative'
+      && event.target === 'noninvasive-ventilation-selection')) {
+      const reviewed = this.nivSelectionResponseAtTick !== null;
+      crisisState = { ...crisisState, heartRateBpm: reviewed ? 94 : 102,
+        respiratoryRateBpm: reviewed ? 24 : 30, spo2Percent: 90,
+        etco2MmHg: reviewed ? 55 : 62, systolicMmHg: reviewed ? 126 : 128,
+        diastolicMmHg: reviewed ? 74 : 76, meanArterialMmHg: reviewed ? 91 : 93,
+        coreTemperatureC: 37.2 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -9755,6 +9842,34 @@ export class AnesthesiaEngine {
               deviceOperatedByLearner: false as const, drugSelectedByLearner: false as const,
               weightInterventionSelectedByLearner: false as const,
               treatmentDeliveredByLearner: false as const, patientPreferenceInferred: false as const,
+              dispositionDetermined: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'noninvasive-ventilation-selection') ? {
+            noninvasiveVentilationSelectionAssessment: {
+              trajectoryAtTick: this.nivSelectionTrajectoryAtTick,
+              suitabilityAtTick: this.nivSelectionSuitabilityAtTick,
+              selectionAtTick: this.nivSelectionAtTick,
+              responseAtTick: this.nivSelectionResponseAtTick,
+              failureGuardsAtTick: this.nivSelectionFailureGuardsAtTick,
+              handoffAtTick: this.nivSelectionHandoffAtTick,
+              lastUnsupportedChoice: this.nivSelectionLastUnsupportedChoice,
+              initialPulsePresent: true as const, spontaneousBreathingAuthored: true as const,
+              copdExacerbationAuthored: true as const,
+              acuteHypercapnicAcidosisAuthored: true as const,
+              standardInitialTherapyAuthored: true as const,
+              immediateDeteriorationAuthored: false as const,
+              airwayProtectionFailureAuthored: false as const,
+              hemodynamicInstabilityAuthored: false as const,
+              bilevelNivSelectedByLearner: this.nivSelectionAtTick !== null,
+              patientExaminedByLearner: false as const, bloodGasAcquiredByLearner: false as const,
+              bloodGasInterpretedByLearner: false as const, imagingAcquiredByLearner: false as const,
+              oxygenSelectedByLearner: false as const, interfaceSelectedByLearner: false as const,
+              pressureSelectedByLearner: false as const, backupRateSelectedByLearner: false as const,
+              deviceOperatedByLearner: false as const, ventilationDeliveredByLearner: false as const,
+              drugSelectedByLearner: false as const, treatmentDeliveredByLearner: false as const,
+              intubationPerformedByLearner: false as const, durableNivSuccessProven: false as const,
               dispositionDetermined: false as const, outcomePredicted: false as const,
             },
           } : {}),

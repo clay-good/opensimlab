@@ -1,0 +1,63 @@
+/** Acute acidotic COPD after initial care, with bounded bilevel NIV selection and reassessment. */
+
+import type { Scenario } from '@anesthesia/scenarios/types';
+
+export const NONINVASIVE_VENTILATION_SELECTION: Scenario = {
+  schemaVersion: 1,
+  metadata: {
+    id: 'noninvasive-ventilation-selection', version: '0.1.0', maturity: 'draft',
+    title: 'Bilevel NIV selection in acute COPD', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
+    estimatedMinutes: 8, difficulty: 'intermediate', objectives: [
+      { id: 'reconcile-noninvasive-ventilation-selection-treatment-and-trajectory', statement: 'Reconcile the authored baseline, arrival state, verified initial COPD care, and persistent whole-patient respiratory-acidosis trajectory.', measure: 'The change after initial care was recognized without granting examination, test interpretation, prescribing, or treatment-delivery skill.' },
+      { id: 'review-noninvasive-ventilation-selection-suitability-and-rescue-readiness', statement: 'Review the fixed current suitability, goals, monitoring environment, and airway-capable rescue readiness before a noninvasive-support trial.', measure: 'Airway protection, cooperation, secretions, emesis, face, hemodynamics, mentation, deterioration, preferences, and rescue access remained a contextual whole-patient review.' },
+      { id: 'select-bilevel-noninvasive-ventilation', statement: 'Select a closely monitored bilevel NIV trial for the authored persistent acute-on-chronic acidotic hypercapnic COPD pattern.', measure: 'Ventilatory assistance was distinguished from CPAP alone and high-flow nasal oxygen without selecting hardware, interface, pressures, backup rate, oxygen setting, or treatment technique.' },
+      { id: 'review-noninvasive-ventilation-selection-early-response', statement: 'After elapsed time, review the fixed experienced-team first-hour whole-patient and blood-gas response.', measure: 'Meaningful early improvement remained partial and did not prove durable success, safe disposition, or outcome.' },
+      { id: 'review-noninvasive-ventilation-selection-failure-guards', statement: 'Record monitored continuation with explicit failure triggers and rapid airway-capable reassessment.', measure: 'Mentation, airway protection, work, gas exchange, hemodynamics, tolerance, secretions, and alternate causes remained active without deciding intubation.' },
+      { id: 'handoff-noninvasive-ventilation-selection-reassessment', statement: 'After another elapsed interval, hand off active support, response, unresolved causes, failure triggers, rescue readiness, and named owners.', measure: 'The handoff preserved active risk without inventing weaning, readiness, disposition, prognosis, or outcome.' },
+    ],
+    clinicalReview: { reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED',
+      competingInterests: 'None declared', reviewedOn: '1970-01-01', reviewBy: '1970-01-01',
+      contentVersion: '0.1.0', sources: [
+        'Goel NN, Ferreyro BL, Pitre T, et al. Noninvasive Respiratory Support for Adult Patients with Acute Respiratory Failure: An Official American Thoracic Society Clinical Practice Guideline. Am J Respir Crit Care Med. 2026. PMID 42371750. doi:10.1093/ajrccm/aamag302.',
+        'Rochwerg B, Brochard L, Elliott MW, et al. Official ERS/ATS clinical practice guidelines: noninvasive ventilation for acute respiratory failure. Eur Respir J. 2017;50:1602426. PMID 28860265. doi:10.1183/13993003.02426-2016.',
+        'Wedzicha JA, Miravitlles M, Hurst JR, et al. Management of COPD exacerbations: an ERS/ATS guideline. Eur Respir J. 2017;49:1600791. doi:10.1183/13993003.00791-2016.',
+      ] },
+    limitations: ['noninvasive-ventilation-selection-presentation-care-and-response-are-authored',
+      'noninvasive-ventilation-selection-controls-review-intent-reassess-and-handoff-only',
+      'no-live-niv-interface-settings-operation-treatment-intubation-disposition-or-outcome'],
+  },
+  patient: { ageYears: 64, sex: 'female', heightCm: 164, weightKg: 68, asaClass: 4,
+    diagnosis: 'Authored acute COPD exacerbation with persistent acute-on-chronic acidotic hypercapnic respiratory failure',
+    procedure: 'Noninvasive ventilation selection and early reassessment',
+    comorbidities: ['Established COPD', 'Former tobacco exposure', 'Hypertension'],
+    medications: ['Usual COPD and antihypertensive regimens not represented'], allergies: ['No known drug allergies'],
+    fasting: 'Not a substitute for the authored airway, emesis, goals, and rescue review',
+    baseline: { heartRateBpm: 102, meanArterialMmHg: 93, strokeVolumeMl: 64,
+      hemoglobinGPerDl: 14.1, bloodVolumeMl: 4500, coreTemperatureC: 37.2,
+      arterialStiffness: 1.05, baroreflexGain: 0.95, fixedStrokeVolume: false },
+    airway: { difficulty: 0.1, difficultMaskVentilation: false,
+      assessment: 'Awake, cooperative, patent upper airway, short phrases, and managing current secretions in the fixed experienced-team report' },
+    respiratory: { profile: 'moderately-ill' } },
+  equipment: { monitoring: ['ecg', 'nibp', 'pulse-oximetry', 'temperature'],
+    ventilator: { mode: 'manual', fio2: 0.28, tidalVolumeMl: 360,
+      respiratoryRateBpm: 30, freshGasFlowLPerMin: 0.5, delivering: false } },
+  formulary: [],
+  timeline: [
+    { id: 'noninvasive-ventilation-selection-trajectory', type: 'narrative', target: 'noninvasive-ventilation-selection', atTick: 0, severity: 'warning',
+      message: 'A 64-year-old woman with established COPD normally lives independently and walks to nearby shops. A prior stable gas reports pH 7.39, PaCO₂ 48 mmHg, PaO₂ 65 mmHg, and bicarbonate 29 mmol/L. She arrived with worsening dyspnea and purulent sputum, RR 32/min, HR 108/min, room-air SpO₂ 84%, and a fixed radiograph showing hyperinflation without focal opacity, pulmonary-edema pattern, effusion, or pneumothorax. Over 60 minutes, an experienced team delivered controlled oxygen, repeated inhaled short-acting bronchodilator plus antimuscarinic therapy, systemic corticosteroid, and antibiotic treatment for the authored indication. The learner delivered none of this care.' },
+    { id: 'noninvasive-ventilation-selection-current-state', type: 'narrative', target: 'noninvasive-ventilation-selection', atTick: 0, severity: 'warning',
+      message: 'After initial care she remains alert, cooperative, and in short phrases with persistent accessory-muscle use, HR 102/min, RR 30/min, BP 128/76 mmHg (MAP 93), pulse-coherent SpO₂ 90% during documented controlled oxygen in an authored nominal FiO₂ 0.28 condition, and warm perfusion. A fixed repeat gas reports pH 7.28, PaCO₂ 68 mmHg, PaO₂ 58 mmHg, and bicarbonate 31 mmol/L. The persistent acute-on-chronic acidotic hypercapnic trajectory supports ventilatory-assistance review; PaCO₂ alone and no single pH, respiratory rate, or saturation is a universal trigger.' },
+    { id: 'noninvasive-ventilation-selection-suitability', type: 'narrative', target: 'noninvasive-ventilation-selection', atTick: 0, severity: 'advisory',
+      message: 'The fixed experienced-team suitability report describes a patent upper airway, current secretion handling, cooperation, and no vomiting, hematemesis, facial injury, untreated pneumothorax, apnea, arrest, severe agitation, loss of airway protection, shock, or immediate-deterioration pattern. Goals and preferences have been discussed, continuous observation and serial reassessment are available, and an airway-capable rescue plan is active. These snapshots support a closely monitored trial in this case; they are not learner examination, permanent exclusions, or an absolute contraindication checklist.' },
+    { id: 'noninvasive-ventilation-selection-boundary', type: 'narrative', target: 'noninvasive-ventilation-selection-boundary', atTick: 0, severity: 'advisory',
+      message: 'Reconcile verified initial care against the persistent respiratory-acidosis trajectory, then review suitability and rescue readiness. Select the support goal: a closely monitored bilevel NIV trial fits this authored COPD ventilatory-failure pattern; CPAP alone and high-flow nasal oxygen alone do not provide the same ventilatory assistance. Qualified staff apply and individualize support off-screen. After elapsed time, review the fixed first-hour response, preserve continuation and failure guards, then complete another strictly elapsed handoff. The controls do not examine; acquire or interpret blood gas, imaging, oximetry, capnography, or another test; diagnose; select or deliver oxygen, medication, sedation, suction, mask ventilation, intubation, or treatment; choose a device, interface, fit, pressure, PEEP, backup rate, trigger, cycle, flow, FiO₂, or oxygen target; operate a ventilator, perform a procedure, decide a ceiling of care, determine disposition or prognosis, or predict outcome.' },
+  ],
+  debrief: { rubric: [
+    { id: 'noninvasive-ventilation-selection-trajectory', objectiveId: 'reconcile-noninvasive-ventilation-selection-treatment-and-trajectory', question: 'What changed from baseline through arrival and the first hour of experienced-team COPD care?' },
+    { id: 'noninvasive-ventilation-selection-suitability', objectiveId: 'review-noninvasive-ventilation-selection-suitability-and-rescue-readiness', question: 'Which whole-patient suitability, goals, environment, and rescue facts supported a monitored trial without forming an absolute checklist?' },
+    { id: 'noninvasive-ventilation-selection-choice', objectiveId: 'select-bilevel-noninvasive-ventilation', question: 'Why did bilevel ventilatory assistance fit this acidotic hypercapnic COPD pattern better than CPAP alone or high-flow nasal oxygen alone?' },
+    { id: 'noninvasive-ventilation-selection-response', objectiveId: 'review-noninvasive-ventilation-selection-early-response', question: 'Which fixed first-hour whole-patient and gas changes showed early improvement without proving durable success?' },
+    { id: 'noninvasive-ventilation-selection-guards', objectiveId: 'review-noninvasive-ventilation-selection-failure-guards', question: 'Which failure triggers and rescue conditions remained active while support continued?' },
+    { id: 'noninvasive-ventilation-selection-handoff', objectiveId: 'handoff-noninvasive-ventilation-selection-reassessment', question: 'Which active support, response, causes, failure triggers, rescue work, and owners remained unresolved?' },
+  ] },
+};

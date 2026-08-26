@@ -3359,6 +3359,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, current OHS guidance, qualified teams, local pathways, respectful shared decisions, and patient-specific follow-through.',
     briefIn: ['obesity-hypoventilation-reassessment'],
   },
+  {
+    id: 'noninvasive-ventilation-selection-presentation-care-and-response-are-authored',
+    headline: 'The COPD baseline, initial care, suitability findings, gases, support delivery, and first-hour response are authored.',
+    simplification: 'Fixed reports stand in for history, examination, controlled oxygen and COPD treatment, blood-gas and imaging acquisition and interpretation, goals discussion, monitoring, rescue preparation, qualified NIV application, interface tolerance, and serial reassessment.',
+    whereItMisleads: 'Treating one pH, PaCO₂, respiratory rate, saturation, contraindication, or early change as a universal support, intubation, success, or disposition rule, or treating reported care as learner-delivered care.',
+    correctUnderstanding: 'Real support selection integrates verified whole-patient trajectory, cause, airway protection, cooperation, secretions, hemodynamics, preferences, local capability, repeated response, and rapid rescue access.',
+    briefIn: ['noninvasive-ventilation-selection'],
+  },
+  {
+    id: 'noninvasive-ventilation-selection-controls-review-intent-reassess-and-handoff-only',
+    headline: 'The controls record review, a bounded bilevel-support intent, reassessment, failure guards, and handoff only.',
+    simplification: 'Six accepted actions and 2 nonmutating teaching choices stand in for multidisciplinary assessment, support selection, qualified delivery, continuous monitoring, serial blood gases, rescue planning, and communication.',
+    whereItMisleads: 'Equating button choice or order with examination, blood-gas interpretation, device selection or operation, NIV application, treatment, intubation judgment, or acute respiratory-care competence.',
+    correctUnderstanding: 'Actual care requires the patient, experienced respiratory and airway-capable teams, current guidance, local protocols and equipment, patient-specific settings and tolerance work, and repeated bedside reassessment.',
+    briefIn: ['noninvasive-ventilation-selection'],
+  },
+  {
+    id: 'no-live-niv-interface-settings-operation-treatment-intubation-disposition-or-outcome',
+    headline: 'The lab does not choose NIV hardware or settings, operate a device, deliver treatment, intubate, determine disposition, or predict outcome.',
+    simplification: 'No live examination, blood gas, imaging, oximetry, capnography, oxygen selection, interface or fit, pressure, PEEP, backup rate, trigger, cycle, flow, FiO₂, medication, sedation, suction, mask ventilation, intubation, procedure, treatment, weaning, disposition, prognosis, durable success, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values as prescriptions or universal thresholds, or using completion as evidence of clinical, testing, device, airway, treatment, disposition, or prognostic competence.',
+    correctUnderstanding: 'Use verified patient data, current respiratory-support guidance, qualified staff, local pathways and rescue capacity, patient preferences, and continuous patient-specific reassessment.',
+    briefIn: ['noninvasive-ventilation-selection'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

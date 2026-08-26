@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 150,
+  "sourceCount": 151,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -1517,7 +1517,7 @@
       "publication": "Eur Respir J",
       "year": 2017,
       "locator": "50:1602426; doi:10.1183/13993003.02426-2016",
-      "usedFor": "The noninvasive-support boundary: CPAP or bilevel NIV is supported for acute respiratory failure due to cardiogenic pulmonary edema, while patient-specific monitoring and rapid escalation remain necessary when support is failing.",
+      "usedFor": "The noninvasive-support boundary: CPAP or bilevel NIV is supported for cardiogenic pulmonary edema; bilevel NIV is recommended for COPD with acute or acute-on-chronic respiratory acidosis, with early pH and respiratory-rate response, close monitoring, and rapid invasive-ventilation access when support is failing.",
       "verifiedAgainst": "https://www.thoracic.org/statements/resources/cc/niv-guidelines.pdf",
       "verifiedOn": "2026-08-25",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/28860265/"
@@ -1903,6 +1903,19 @@
       "usedFor": "The awake-and-sleep testing boundary: use awake arterial or arterialized-capillary blood gas and respiratory polygraphy with possible transcutaneous carbon-dioxide monitoring; do not diagnose OHS from oximetry alone; involve the person in care.",
       "verifiedAgainst": "https://www.nice.org.uk/guidance/ng202/chapter/2-Obesity-hypoventilation-syndrome",
       "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "goel-ats-noninvasive-respiratory-support-2026",
+      "pmid": "42371750",
+      "authors": "Goel NN, Ferreyro BL, Pitre T, et al",
+      "title": "Noninvasive Respiratory Support for Adult Patients with Acute Respiratory Failure: An Official American Thoracic Society Clinical Practice Guideline",
+      "publication": "American Journal of Respiratory and Critical Care Medicine",
+      "year": 2026,
+      "locator": "Online ahead of print: aamag302; doi:10.1093/ajrccm/aamag302; acute hypercapnic respiratory failure recommendations",
+      "usedFor": "The acute hypercapnic support-selection boundary: favor NIV to reduce mortality and invasive ventilation, reserve HFNC alone for selected less-severe hypercapnia with mild acidemia and close monitoring, and maintain prompt escalation capability.",
+      "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/42371750/",
+      "verifiedOn": "2026-08-25",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/42371750/"
     }
   ]
 }

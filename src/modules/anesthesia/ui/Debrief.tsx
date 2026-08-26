@@ -4471,6 +4471,26 @@ export function objectiveFindings(
       const ordered = plan && handoff && plan.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved evidence, open causes, documented priorities, pending work, triggers, and owners without inventing treatment response or outcome.' : 'The unresolved-work handoff was absent or did not follow shared ownership after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-noninvasive-ventilation-selection-treatment-and-trajectory',
+      'review-noninvasive-ventilation-selection-suitability-and-rescue-readiness',
+      'select-bilevel-noninvasive-ventilation',
+      'review-noninvasive-ventilation-selection-early-response',
+      'review-noninvasive-ventilation-selection-failure-guards',
+      'handoff-noninvasive-ventilation-selection-reassessment'].includes(objective.id)) {
+      const trajectory = log.find((event) => /^noninvasive-ventilation-selection-trajectory-reconciled-\d+$/.test(event.eventId));
+      const suitability = log.find((event) => /^noninvasive-ventilation-selection-suitability-reviewed-\d+$/.test(event.eventId));
+      const selection = log.find((event) => /^noninvasive-ventilation-selection-bilevel-selected-\d+$/.test(event.eventId));
+      const response = log.find((event) => /^noninvasive-ventilation-selection-early-response-reviewed-\d+$/.test(event.eventId));
+      const guards = log.find((event) => /^noninvasive-ventilation-selection-failure-guards-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^noninvasive-ventilation-selection-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-noninvasive-ventilation-selection-treatment-and-trajectory') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'Baseline, arrival severity, verified initial COPD care, and persistent whole-patient acidotic hypercapnic failure were reconciled without learner examination, test interpretation, or treatment.' : 'The trajectory after verified initial care was not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'review-noninvasive-ventilation-selection-suitability-and-rescue-readiness') { const ordered = trajectory && suitability && trajectory.tick <= suitability.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Current airway, cooperation, secretion, emesis, facial, hemodynamic, mentation, preference, monitoring, and rescue facts supported a closely monitored trial without becoming an absolute checklist.' : 'Suitability and rescue review was absent or preceded trajectory review.', atTick: suitability?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'select-bilevel-noninvasive-ventilation') { const ordered = suitability && selection && suitability.tick <= selection.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Bilevel NIV was selected as the support goal for persistent acidotic hypercapnic COPD while device, interface, settings, oxygen, operation, and treatment remained with qualified staff.' : 'Bilevel NIV selection was absent or bypassed suitability and rescue review.', atTick: selection?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-noninvasive-ventilation-selection-early-response') { const ordered = selection && response && selection.tick < response.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed time, the fixed whole-patient and blood-gas panel showed partial early improvement without proving durable success, safe disposition, or outcome.' : 'The early-response review was absent or did not follow support selection after elapsed time.', atTick: response?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-noninvasive-ventilation-selection-failure-guards') { const ordered = response && guards && response.tick <= guards.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Mentation, airway protection, work, gas exchange, hemodynamics, tolerance, secretions, open causes, and airway-capable rescue remained active continuation and failure guards.' : 'Failure guards were absent or preceded the early-response review.', atTick: guards?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = guards && handoff && guards.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved active support, partial response, unresolved causes, failure triggers, rescue readiness, preferences, and named owners without inventing weaning, disposition, or outcome.' : 'The active-support handoff was absent or did not follow the failure-guard review after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

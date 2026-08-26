@@ -1535,6 +1535,27 @@ AHI; acquire, score, or interpret testing; diagnose; select PAP, oxygen, an inte
 drug, nutrition plan, weight target, bariatric procedure, or treatment; counsel driving; determine
 disposition or prognosis; or predict response or outcome.
 
+### Wave C respiratory-medicine slice 12: bilevel NIV selection in acute COPD
+
+The twelfth respiratory-medicine slice begins after 60 minutes of verified experienced-team care
+for an acute COPD exacerbation. A 64-year-old woman remains alert and cooperative but speaks in
+short phrases with accessory-muscle use, RR 30/min, controlled-oxygen SpO₂ 90%, and a fixed gas of
+pH 7.28 and PaCO₂ 68 mmHg. Authored suitability findings include a patent airway, current secretion
+handling, stable perfusion, discussed preferences, continuous observation, serial reassessment, and
+airway-capable rescue readiness without turning these facts into a permanent contraindication list.
+
+Learners reconcile the persistent acidotic hypercapnic trajectory and suitability before choosing
+among bilevel NIV, CPAP alone, and high-flow nasal oxygen alone. The 2 alternatives provide calm,
+nonmutating explanations; the accepted bilevel choice records support intent only. After strictly
+elapsed time, a fixed first-hour report shows improved comfort, speech, work, respiratory rate, pH,
+and PaCO₂ without proving durable success. Learners preserve whole-patient failure triggers and
+rapid rescue, then complete another strictly elapsed handoff. The lesson does not examine, acquire
+or interpret tests, diagnose, choose oxygen or NIV hardware, interface, fit, mode, pressure, PEEP,
+backup rate, trigger, cycle, flow, FiO₂, drug, sedation, suction, intubation, or treatment; operate a
+device; perform a procedure; decide a ceiling of care, weaning, disposition, or prognosis; or predict
+outcome. It is distinct from initial COPD treatment, day-3 recovery readiness, pulmonary-edema NIV
+failure, chronic OHS or neuromuscular support planning, and the later HFNC-escalation lab.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

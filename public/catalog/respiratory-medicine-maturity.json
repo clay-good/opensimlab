@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "respiratory-medicine",
-  "recordCount": 11,
+  "recordCount": 12,
   "records": [
     {
       "recordId": "scenario:acute-severe-asthma@0.1.0",
@@ -122,6 +122,17 @@
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#obesity-hypoventilation-reassessment@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#obesity-hypoventilation-reassessment@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:noninvasive-ventilation-selection@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "noninvasive-ventilation-selection",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/respiratory-medicine-completion-audit.json#noninvasive-ventilation-selection@0.1.0",
+        "/catalog/respiratory-medicine-quality-audit.json#noninvasive-ventilation-selection@0.1.0"
       ]
     }
   ]

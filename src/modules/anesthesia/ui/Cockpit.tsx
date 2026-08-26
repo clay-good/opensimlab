@@ -953,6 +953,9 @@ export function Cockpit({
           onObesityHypoventilationResponse={(action) => session.act({
             type: 'obesity-hypoventilation-response', payload: { action },
           })}
+          onNoninvasiveVentilationSelectionResponse={(action) => session.act({
+            type: 'noninvasive-ventilation-selection-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

@@ -922,6 +922,25 @@ export interface ActionCockpitProps {
       readonly treatmentDeliveredByLearner: false; readonly patientPreferenceInferred: false;
       readonly dispositionDetermined: false; readonly outcomePredicted: false;
     };
+    readonly noninvasiveVentilationSelectionAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly suitabilityAtTick: number | null;
+      readonly selectionAtTick: number | null; readonly responseAtTick: number | null;
+      readonly failureGuardsAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly lastUnsupportedChoice: 'cpap' | 'high-flow' | null;
+      readonly initialPulsePresent: true; readonly spontaneousBreathingAuthored: true;
+      readonly copdExacerbationAuthored: true; readonly acuteHypercapnicAcidosisAuthored: true;
+      readonly standardInitialTherapyAuthored: true; readonly immediateDeteriorationAuthored: false;
+      readonly airwayProtectionFailureAuthored: false; readonly hemodynamicInstabilityAuthored: false;
+      readonly bilevelNivSelectedByLearner: boolean; readonly patientExaminedByLearner: false;
+      readonly bloodGasAcquiredByLearner: false; readonly bloodGasInterpretedByLearner: false;
+      readonly imagingAcquiredByLearner: false; readonly oxygenSelectedByLearner: false;
+      readonly interfaceSelectedByLearner: false; readonly pressureSelectedByLearner: false;
+      readonly backupRateSelectedByLearner: false; readonly deviceOperatedByLearner: false;
+      readonly ventilationDeliveredByLearner: false; readonly drugSelectedByLearner: false;
+      readonly treatmentDeliveredByLearner: false; readonly intubationPerformedByLearner: false;
+      readonly durableNivSuccessProven: false; readonly dispositionDetermined: false;
+      readonly outcomePredicted: false;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1445,6 +1464,15 @@ export interface ActionCockpitProps {
       | 'coordinate-obesity-hypoventilation-shared-plan'
       | 'handoff-obesity-hypoventilation-reassessment',
   ) => void;
+  readonly onNoninvasiveVentilationSelectionResponse?: (
+    action: 'reconcile-noninvasive-ventilation-selection-treatment-and-trajectory'
+      | 'review-noninvasive-ventilation-selection-suitability-and-rescue-readiness'
+      | 'select-bilevel-noninvasive-ventilation' | 'select-cpap-alone'
+      | 'select-high-flow-nasal-oxygen-alone'
+      | 'review-noninvasive-ventilation-selection-early-response'
+      | 'review-noninvasive-ventilation-selection-failure-guards'
+      | 'handoff-noninvasive-ventilation-selection-reassessment',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1770,6 +1798,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'obesity-hypoventilation-reassessment',
     ),
+    hasNoninvasiveVentilationSelectionResponse: scenario.timeline.some(
+      (event) => event.type === 'narrative'
+        && event.target === 'noninvasive-ventilation-selection',
+    ),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -1905,6 +1937,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'neuromuscular-respiratory-failure-reassessment')
       || (event.type === 'narrative'
         && event.target === 'obesity-hypoventilation-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'noninvasive-ventilation-selection')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -1962,6 +1996,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasApeSupportResponse, hasPostTensionPneumothoraxResponse, hasLargePleuralEffusionResponse,
     hasBronchiectasisMucusPluggingResponse, hasChronicOpioidHypoventilationResponse,
     hasNeuromuscularRespiratoryFailureResponse, hasObesityHypoventilationResponse,
+    hasNoninvasiveVentilationSelectionResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2030,7 +2065,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPostPeDyspneaResponse || hasApeSupportResponse || hasPostTensionPneumothoraxResponse
     || hasLargePleuralEffusionResponse || hasBronchiectasisMucusPluggingResponse
     || hasChronicOpioidHypoventilationResponse || hasNeuromuscularRespiratoryFailureResponse
-    || hasObesityHypoventilationResponse;
+    || hasObesityHypoventilationResponse || hasNoninvasiveVentilationSelectionResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2061,7 +2096,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasObesityHypoventilationResponse
+  const responseTray = hasNoninvasiveVentilationSelectionResponse
+    ? { id: 'crisis', label: 'NIV selection' } as const
+    : hasObesityHypoventilationResponse
     ? { id: 'crisis', label: 'Awake + sleep review' } as const
     : hasNeuromuscularRespiratoryFailureResponse
     ? { id: 'crisis', label: 'Muscle + breathing review' } as const
@@ -2298,6 +2335,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasChronicOpioidHypoventilationResponse
     || hasNeuromuscularRespiratoryFailureResponse
     || hasObesityHypoventilationResponse
+    || hasNoninvasiveVentilationSelectionResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -2927,6 +2965,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <ObesityHypoventilationTray
                 assessment={props.resuscitation.obesityHypoventilationAssessment}
                 onAction={props.onObesityHypoventilationResponse ?? (() => {})} />
+            )}
+            {hasNoninvasiveVentilationSelectionResponse && (
+              <NoninvasiveVentilationSelectionTray
+                assessment={props.resuscitation.noninvasiveVentilationSelectionAssessment}
+                onAction={props.onNoninvasiveVentilationSelectionResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -7472,6 +7515,69 @@ function ObesityHypoventilationTray({ assessment, onAction }: {
         <Button className="crisis-drug__action" disabled={!plan || handoff} onClick={() => onAction('handoff-obesity-hypoventilation-reassessment')}>Hand off evidence + open work</Button>
       </div>
       <p className="field__hint">No PAP, interface, pressure, backup rate, oxygen, medication, procedure, weight intervention, disposition, response, or outcome is selected.</p>
+    </section>
+  </div>;
+}
+
+function NoninvasiveVentilationSelectionTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['noninvasiveVentilationSelectionAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNoninvasiveVentilationSelectionResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const suitability = assessment?.suitabilityAtTick != null;
+  const selected = assessment?.selectionAtTick != null;
+  const response = assessment?.responseAtTick != null;
+  const guards = assessment?.failureGuardsAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  const unsupportedChoice = assessment?.lastUnsupportedChoice;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="noninvasive-ventilation-selection-choice-title">
+      <div id="noninvasive-ventilation-selection-choice-title" className="syringe__name">Choose support from physiology, not familiarity.</div>
+      <Badge kind="teaching">persistent acidosis · ventilatory assistance · monitored trial</Badge>
+      <div className="syringe__meta">pH 7.28 · PaCO₂ 68 · alert · rescue ready</div>
+      <p className="syringe__remaining" role="status">
+        {selected ? 'Bilevel NIV intent recorded · qualified staff individualize support off-screen'
+          : unsupportedChoice === 'cpap' ? 'CPAP alone does not provide the same inspiratory ventilatory assistance here'
+            : unsupportedChoice === 'high-flow' ? 'High-flow alone is not the selected first support for this acidotic hypercapnic pattern'
+              : suitability ? 'Suitability + rescue readiness held · choose the support goal'
+                : trajectory ? 'Initial care reconciled · review suitability and rescue readiness'
+                  : 'Start with the change after verified initial COPD care'}
+      </p>
+      <div className="syringe__presets">
+        {!suitability && <>
+          <Button className="crisis-drug__action" disabled={trajectory}
+            onClick={() => onAction('reconcile-noninvasive-ventilation-selection-treatment-and-trajectory')}>Review initial care + trajectory</Button>
+          <Button className="crisis-drug__action" disabled={!trajectory}
+            onClick={() => onAction('review-noninvasive-ventilation-selection-suitability-and-rescue-readiness')}>Review acidosis + NIV suitability</Button>
+        </>}
+        {suitability && !selected && <>
+          <Button className="crisis-drug__action" onClick={() => onAction('select-bilevel-noninvasive-ventilation')}>Bilevel NIV trial</Button>
+          <Button className="crisis-drug__action" onClick={() => onAction('select-cpap-alone')}>CPAP alone</Button>
+          <Button className="crisis-drug__action" onClick={() => onAction('select-high-flow-nasal-oxygen-alone')}>High-flow nasal oxygen</Button>
+        </>}
+      </div>
+      <p className="field__hint">The choice records a support goal only. No device, interface, pressure, backup rate, oxygen target, or treatment technique is selected or delivered.</p>
+    </section>
+    <section className="syringe" aria-labelledby="noninvasive-ventilation-selection-response-title">
+      <div id="noninvasive-ventilation-selection-response-title" className="syringe__name">A trial earns its place through reassessment.</div>
+      <Badge kind="teaching">whole patient · blood gas · failure guards · airway-capable rescue</Badge>
+      <div className="syringe__meta">comfort · work · mentation · pH · PaCO₂ · tolerance</div>
+      <p className="syringe__remaining" role="status">
+        {handoff ? 'Active support + unresolved risk handed off'
+          : guards ? 'Continuation guards held · advance time before handoff'
+            : response ? 'Early partial improvement · preserve failure triggers and rescue readiness'
+              : selected ? 'Support intent recorded · advance time before the 1-hour review'
+                : 'Choose the support goal before reassessment'}
+      </p>
+      <div className="syringe__presets">
+        <Button className="crisis-drug__action" disabled={!selected || response}
+          onClick={() => onAction('review-noninvasive-ventilation-selection-early-response')}>Review 1-hour whole-patient response</Button>
+        <Button className="crisis-drug__action" disabled={!response || guards}
+          onClick={() => onAction('review-noninvasive-ventilation-selection-failure-guards')}>Continue trial + preserve rescue triggers</Button>
+        <Button className="crisis-drug__action" disabled={!guards || handoff}
+          onClick={() => onAction('handoff-noninvasive-ventilation-selection-reassessment')}>Hand off active support + rescue plan</Button>
+      </div>
+      <p className="field__hint">Early improvement is not durable success. Worsening mentation, airway protection, work, gas exchange, hemodynamics, tolerance, secretions, or another cause prompts immediate experienced reassessment.</p>
     </section>
   </div>;
 }
