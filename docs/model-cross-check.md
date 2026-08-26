@@ -208,6 +208,12 @@ Recorded here rather than silently carried:
   physiology or diagnosis, examination, scoring, test acquisition or interpretation, respiratory
   or autonomic monitoring, airway or ventilation management, immune or other treatment effects,
   recovery, disposition, prognosis, or outcome.
+  Acute bacterial meningitis first hour overlays fixed acute meningeal and infection findings,
+  alert nonfocal neurological and LP-safety state, blood evidence, qualified diagnostics and care,
+  bacterial-pattern CSF, and strict-later clinical state on the healthy adult scaffold; it does not
+  validate meningitis physiology or diagnosis, examination, blood or CSF testing, imaging or LP
+  safety, antimicrobial or adjunct effects, neurological complications, recovery, prognosis, or
+  outcome.
 
 ## Concentration-time checks, 2026-08-23
 

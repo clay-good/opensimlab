@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 140 reports Neurology GBS respiratory-decline state. */
-export const WORKER_PROTOCOL_VERSION = 140;
+/** Bumped whenever the message shape changes incompatibly. Version 141 reports Neurology meningitis first-hour state. */
+export const WORKER_PROTOCOL_VERSION = 141;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2056,6 +2056,50 @@ export interface EquipmentSnapshot {
       readonly treatmentEffectProven: false;
       readonly respiratoryArrestAuthored: false;
       readonly durableNeurologicRecoveryProven: false;
+      readonly dispositionDetermined: false;
+      readonly prognosisPredicted: false;
+      readonly outcomePredicted: false;
+    };
+    readonly neurologyMeningitisAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly ownershipAtTick: number | null;
+      readonly diagnosticsAtTick: number | null;
+      readonly treatmentAtTick: number | null;
+      readonly laterAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly acuteMeningealInfectionPatternAuthored: true;
+      readonly initialAlertNonfocalStateAuthored: true;
+      readonly qualifiedTimeCriticalOwnershipActive: boolean;
+      readonly qualifiedLpWithoutRoutineImagingBoundaryReviewed: boolean;
+      readonly qualifiedEarlyEmpiricPathwayActive: boolean;
+      readonly laterBacterialPatternCsfAuthored: boolean;
+      readonly qualifiedLpAuthored: boolean;
+      readonly qualifiedEmpiricTreatmentAuthored: boolean;
+      readonly patientHistoryTakenByLearner: false;
+      readonly patientExaminedByLearner: false;
+      readonly scoreCalculatedByLearner: false;
+      readonly bloodTestAcquiredByLearner: false;
+      readonly cultureAcquiredByLearner: false;
+      readonly csfAcquiredByLearner: false;
+      readonly csfInterpretedByLearner: false;
+      readonly imagingAcquiredByLearner: false;
+      readonly imagingInterpretedByLearner: false;
+      readonly lumbarPuncturePerformedByLearner: false;
+      readonly diagnosisMadeByLearner: false;
+      readonly pathogenIdentified: false;
+      readonly drugSelectedByLearner: false;
+      readonly doseSelectedByLearner: false;
+      readonly routeSelectedByLearner: false;
+      readonly accessPlacedByLearner: false;
+      readonly medicationDeliveredByLearner: false;
+      readonly oxygenSelectedByLearner: false;
+      readonly fluidSelectedByLearner: false;
+      readonly airwayDeviceSelectedByLearner: false;
+      readonly airwayProcedurePerformedByLearner: false;
+      readonly isolationEquipmentSelectedByLearner: false;
+      readonly treatmentDeliveredByLearner: false;
+      readonly treatmentEffectProven: false;
+      readonly durableNeurologicStabilityProven: false;
       readonly dispositionDetermined: false;
       readonly prognosisPredicted: false;
       readonly outcomePredicted: false;

@@ -5142,6 +5142,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-neurology-meningitis-clock-meningeal-infection-neurologic-and-whole-patient',
+      'activate-neurology-meningitis-qualified-time-critical-infection-neurologic-resuscitation-and-precaution-ownership',
+      'review-neurology-meningitis-lp-safety-no-routine-imaging-and-parallel-diagnostic-boundary',
+      'activate-neurology-meningitis-qualified-early-empiric-antimicrobial-and-adjunct-pathway-without-diagnostic-delay',
+      'review-neurology-meningitis-strict-later-csf-clinical-and-supplied-treatment-trajectory',
+      'handoff-neurology-meningitis-organism-treatment-complication-public-health-hearing-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'acute-bacterial-meningitis-first-hour'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acute-bacterial-meningitis-first-hour-reassessment')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acute-bacterial-meningitis-first-hour-reassessment-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neurology bacterial-meningitis first-hour lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'The acute meningeal and infection clock, neurological state, physiology, supplied blood evidence, alternatives, and whole patient were reconciled.'],
+        ['qualified-ownership-activated', 'Qualified infection, neurological, resuscitation, nursing, diagnostic, pharmacy, and locally appropriate precaution ownership was activated.'],
+        ['lp-and-imaging-boundary-reviewed', 'Prompt qualified LP without routine prior imaging was supported in the exact stable alert nonfocal state, with explicit triggers that would reopen deferral.'],
+        ['early-qualified-pathway-activated', 'Qualified empiric antimicrobial and adjunctive-treatment pathways were activated without allowing imaging or delayed diagnostics to hold care.'],
+        ['later-trajectory-reviewed', 'The elapsed bacterial-pattern CSF and persistent stable clinical report were integrated without organism, response, or durable-safety closure.'],
+        ['active-risk-handoff-recorded', 'Organism, susceptibility, treatment, complications, public health, contacts, hearing, rehabilitation, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^neurology-meningitis-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^neurology-meningitis-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

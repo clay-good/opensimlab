@@ -1140,6 +1140,11 @@ export interface ActionCockpitProps {
       readonly recognitionAtTick: number | null; readonly ownershipAtTick: number | null;
       readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly neurologyMeningitisAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly ownershipAtTick: number | null;
+      readonly diagnosticsAtTick: number | null; readonly treatmentAtTick: number | null;
+      readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1912,6 +1917,14 @@ export interface ActionCockpitProps {
       | 'review-neurology-gbs-strict-later-respiratory-bulbar-and-autonomic-trajectory'
       | 'handoff-neurology-gbs-airway-dysautonomia-treatment-recurrence-and-active-risk',
   ) => void;
+  readonly onNeurologyMeningitisResponse?: (
+    action: 'reconcile-neurology-meningitis-clock-meningeal-infection-neurologic-and-whole-patient'
+      | 'activate-neurology-meningitis-qualified-time-critical-infection-neurologic-resuscitation-and-precaution-ownership'
+      | 'review-neurology-meningitis-lp-safety-no-routine-imaging-and-parallel-diagnostic-boundary'
+      | 'activate-neurology-meningitis-qualified-early-empiric-antimicrobial-and-adjunct-pathway-without-diagnostic-delay'
+      | 'review-neurology-meningitis-strict-later-csf-clinical-and-supplied-treatment-trajectory'
+      | 'handoff-neurology-meningitis-organism-treatment-complication-public-health-hearing-and-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2371,6 +2384,12 @@ export function crisisResponseAvailability(
         && event.target === 'guillain-barre-respiratory-decline-reassessment')
       && scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'guillain-barre-respiratory-decline-reassessment-boundary'),
+    hasNeurologyMeningitisResponse:
+      scenario.metadata.id === 'acute-bacterial-meningitis-first-hour'
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'acute-bacterial-meningitis-first-hour-reassessment')
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'acute-bacterial-meningitis-first-hour-reassessment-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2558,6 +2577,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'myasthenic-crisis-escalation-reassessment')
       || (event.type === 'narrative'
         && event.target === 'guillain-barre-respiratory-decline-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'acute-bacterial-meningitis-first-hour-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2638,6 +2659,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeurologyNcseResponse,
     hasNeurologyMyasthenicCrisisResponse,
     hasNeurologyGbsResponse,
+    hasNeurologyMeningitisResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2719,7 +2741,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeurologyMinorStrokeResponse || hasNeurologyBasilarLvoResponse
     || hasNeurologyCerebellarIchResponse || hasNeurologyAsahDeteriorationResponse
     || hasNeurologyFocalMotorStatusResponse || hasNeurologyNcseResponse
-    || hasNeurologyMyasthenicCrisisResponse || hasNeurologyGbsResponse;
+    || hasNeurologyMyasthenicCrisisResponse || hasNeurologyGbsResponse
+    || hasNeurologyMeningitisResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2750,7 +2773,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasNeurologyGbsResponse
+  const responseTray = hasNeurologyMeningitisResponse
+    ? { id: 'crisis', label: 'Meningitis first hour' } as const
+    : hasNeurologyGbsResponse
     ? { id: 'crisis', label: 'Guillain-Barré respiratory decline' } as const
     : hasNeurologyMyasthenicCrisisResponse
     ? { id: 'crisis', label: 'Myasthenic crisis escalation' } as const
@@ -3067,6 +3092,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeurologyNcseResponse
     || hasNeurologyMyasthenicCrisisResponse
     || hasNeurologyGbsResponse
+    || hasNeurologyMeningitisResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3833,6 +3859,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <NeurologyGbsTray
                 assessment={props.resuscitation.neurologyGbsAssessment}
                 onAction={props.onNeurologyGbsResponse ?? (() => {})} />
+            )}
+            {hasNeurologyMeningitisResponse && (
+              <NeurologyMeningitisTray
+                assessment={props.resuscitation.neurologyMeningitisAssessment}
+                onAction={props.onNeurologyMeningitisResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -9923,6 +9954,42 @@ function NeurologyGbsTray({ assessment, onAction }: {
         {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-gbs-airway-dysautonomia-treatment-recurrence-and-active-risk')}>Hand off airway + autonomic risk</Button>}
       </div>
       <p className="field__hint">The later mechanics, gas, bulbar findings, and heart-rate and blood-pressure range are fixed scenario evidence. They do not supply a universal airway threshold, treatment choice, treatment response, durable stability, recovery, disposition, prognosis, or outcome.</p>
+    </section>
+  </div>;
+}
+
+function NeurologyMeningitisTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyMeningitisAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNeurologyMeningitisResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const ownership = assessment?.ownershipAtTick != null;
+  const diagnostics = assessment?.diagnosticsAtTick != null;
+  const treatment = assessment?.treatmentAtTick != null;
+  const later = assessment?.laterAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="neurology-meningitis-first-hour-title">
+      <div id="neurology-meningitis-first-hour-title" className="syringe__name">Protect the hour.</div>
+      <div className="syringe__meta">28 years · 14-hour illness · GCS 15 · nonfocal · T 39.3°C</div>
+      <p className="syringe__remaining">{treatment ? 'Qualified early diagnostics and empiric care are active without delay.' : diagnostics ? 'Prompt LP boundary reviewed · activate qualified empiric care' : ownership ? 'Time-critical owners are active · review LP safety and imaging needs' : trajectory ? 'Acute meningeal and infection pattern reconciled · activate qualified owners' : 'Begin with the clock, meningeal symptoms, neurological state, physiology, and whole patient.'}</p>
+      <div className="syringe__presets">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neurology-meningitis-clock-meningeal-infection-neurologic-and-whole-patient')}>Review the acute trajectory</Button>}
+        {trajectory && !ownership && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-meningitis-qualified-time-critical-infection-neurologic-resuscitation-and-precaution-ownership')}>Activate time-critical owners</Button>}
+        {ownership && !diagnostics && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-meningitis-lp-safety-no-routine-imaging-and-parallel-diagnostic-boundary')}>Review LP + imaging boundary</Button>}
+        {diagnostics && !treatment && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-meningitis-qualified-early-empiric-antimicrobial-and-adjunct-pathway-without-diagnostic-delay')}>Activate early qualified care</Button>}
+      </div>
+      <p className="field__hint">Prompt blood and CSF sampling matters, but delayed tests or imaging must not delay qualified empiric care. This exact alert, nonfocal, stable state supports LP without routine prior imaging. New focal, pupillary, seizure, consciousness, airway, breathing, shock, bleeding, purpura, or evolving-lesion concerns reopen the boundary.</p>
+    </section>
+    <section className="syringe" aria-labelledby="neurology-meningitis-later-title">
+      <div id="neurology-meningitis-later-title" className="syringe__name">Strong pattern, open questions.</div>
+      <div className="syringe__meta">fixed 45-minute report · bacterial-pattern CSF · organism pending</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Organism, treatment, complications, public health, hearing, and outcome uncertainty handed off.' : later ? 'The CSF strongly supports bacterial meningitis. Organism, response, complications, and outcome remain open.' : treatment ? 'Qualified diagnostics and care are active. Review the fixed 45-minute CSF and clinical report.' : 'Complete trajectory, ownership, diagnostic, and treatment boundaries before reassessment.'}</p>
+      <div className="syringe__presets">
+        {treatment && !later && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-meningitis-strict-later-csf-clinical-and-supplied-treatment-trajectory')}>Review the 45-minute report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-meningitis-organism-treatment-complication-public-health-hearing-and-active-risk')}>Hand off meningitis risk</Button>}
+      </div>
+      <p className="field__hint">The blood, LP, CSF, and prior qualified care are fixed reports, not learner tests, interpretation, procedure, prescribing, or treatment. No pathogen, susceptibility, treatment effect, durable neurological safety, hearing result, disposition, prognosis, or outcome is supplied.</p>
     </section>
   </div>;
 }

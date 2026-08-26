@@ -78,7 +78,7 @@ screening-rule calculation, abuse or perpetrator diagnosis, confrontation, refer
 submission, jurisdiction selection, custody action, procedure, treatment, disposition, or outcome
 controls.
 
-Wave E Neurology catalog work now includes 8 of 15 bounded labs. Minor nondisabling acute ischemic
+Wave E Neurology catalog work now includes 9 of 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later
 neurological trajectory, and elapsed etiology, recurrence, secondary-prevention, and active-risk
@@ -124,6 +124,12 @@ cardiac-monitoring ownership, reviews a strict 4-hour deterioration, and complet
 active-risk handoff without examination, score calculation, testing, diagnosis, IVIG, plasma
 exchange, drug, oxygen, ventilation, rhythm or pressure treatment, airway procedure, disposition,
 prognosis, or outcome controls.
+Acute bacterial meningitis first hour adds a stable alert adult with an acute meningeal and
+infection pattern, prompt qualified ownership, an explicit LP-safety and no-routine-pre-LP-imaging
+boundary, early qualified empiric and adjunctive-care activation without diagnostic delay, a strict
+later bacterial-pattern CSF report, and elapsed organism, treatment, complication, public-health,
+hearing, and active-risk handoff without examination, testing, imaging, LP, diagnosis, drug, dose,
+route, access, procedure, treatment, disposition, prognosis, or outcome controls.
 
 The goal is not a tech demo. It is the best anesthesia education on the internet: the
 thing a student opens the night before their first day in the OR and comes out of

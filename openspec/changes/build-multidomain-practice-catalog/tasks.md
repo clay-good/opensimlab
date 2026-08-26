@@ -453,6 +453,18 @@ credited toward the catalog until every item in the completion contract passes.
     interpretation, diagnosis, IVIG, plasma exchange, drug, dose, route, access, oxygen,
     ventilation, suction, airway device, rhythm or pressure treatment, procedure, treatment,
     disposition, prognosis, or outcome controls.
+  - [x] Neurology slice 9/15 adds one authored previously independent 28-year-old with a 14-hour
+    acute fever, headache, photophobia, vomiting, neck-stiffness, and inflammatory-evidence pattern
+    but GCS 15, equal reactive pupils, symmetric function, stable airway, breathing and perfusion,
+    and no seizure, bleeding, purpura, severe immunocompromise, or evolving-lesion warning. The
+    learner activates qualified ownership, reviews prompt LP without routine prior imaging in this
+    exact state and all supplied deferral triggers, activates early qualified empiric antimicrobial
+    and adjunctive pathways without diagnostic delay, reviews a strict later qualified LP and
+    bacterial-pattern CSF report, and completes another elapsed organism, treatment, complication,
+    public-health, hearing, and active-risk handoff without learner history, examination, score,
+    test or imaging acquisition or interpretation, LP, diagnosis, drug, dose, route, access,
+    isolation equipment, procedure, treatment, contact decision, disposition, prognosis, or outcome
+    controls.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.

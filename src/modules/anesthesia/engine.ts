@@ -347,6 +347,12 @@ const NEUROLOGY_GBS_BLOCKED_ACTION_TYPES = new Set([
   ...NEUROLOGY_MYASTHENIC_CRISIS_BLOCKED_ACTION_TYPES,
   'myasthenic-crisis-escalation-response',
 ]);
+const NEUROLOGY_MENINGITIS_BLOCKED_ACTION_TYPES = new Set([
+  ...NEUROLOGY_GBS_BLOCKED_ACTION_TYPES,
+  'guillain-barre-respiratory-decline-response',
+  'septic-shock-response', 'sepsis-response', 'status-epilepticus-response',
+  'critical-care-status-epilepticus-response', 'intracranial-hypertension-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1142,6 +1148,12 @@ export class AnesthesiaEngine {
   private neurologyGbsOwnershipAtTick: number | null = null;
   private neurologyGbsLaterAtTick: number | null = null;
   private neurologyGbsHandoffAtTick: number | null = null;
+  private neurologyMeningitisTrajectoryAtTick: number | null = null;
+  private neurologyMeningitisOwnershipAtTick: number | null = null;
+  private neurologyMeningitisDiagnosticsAtTick: number | null = null;
+  private neurologyMeningitisTreatmentAtTick: number | null = null;
+  private neurologyMeningitisLaterAtTick: number | null = null;
+  private neurologyMeningitisHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1817,6 +1829,21 @@ export class AnesthesiaEngine {
         + 'exchange, drug, dose, route, access, fluid, suction, rhythm, pressure, pacing, shock, '
         + 'procedure, myasthenia, ALS, or adjacent-scenario action. Nothing changed.',
         { actionType: action.type });
+      return;
+    }
+    const neurologyMeningitis = this.scenario.metadata.id
+      === 'acute-bacterial-meningitis-first-hour'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'acute-bacterial-meningitis-first-hour-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'acute-bacterial-meningitis-first-hour-reassessment-boundary');
+    if (neurologyMeningitis && NEUROLOGY_MENINGITIS_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment',
+        `neurology-meningitis-generic-action-refused-${this.currentTick}`,
+        'This Neurology lesson exposes no generic antimicrobial, corticosteroid, antiseizure, '
+        + 'oxygen, fluid, airway, drug, dose, route, access, isolation equipment, imaging, lumbar '
+        + 'puncture, test, sepsis, seizure, intracranial-pressure, or adjacent-scenario action. '
+        + 'Nothing changed.', { actionType: action.type });
       return;
     }
     switch (action.type) {
@@ -9371,6 +9398,110 @@ export class AnesthesiaEngine {
             durableNeurologicRecoveryProven: false, dispositionDetermined: false,
             prognosisPredicted: false, outcomePredicted: false }); break;
       }
+      case 'acute-bacterial-meningitis-first-hour-response': {
+        const response = typeof action.payload.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'acute-bacterial-meningitis-first-hour'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'acute-bacterial-meningitis-first-hour-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'acute-bacterial-meningitis-first-hour-reassessment-boundary');
+        const actions = [
+          'reconcile-neurology-meningitis-clock-meningeal-infection-neurologic-and-whole-patient',
+          'activate-neurology-meningitis-qualified-time-critical-infection-neurologic-resuscitation-and-precaution-ownership',
+          'review-neurology-meningitis-lp-safety-no-routine-imaging-and-parallel-diagnostic-boundary',
+          'activate-neurology-meningitis-qualified-early-empiric-antimicrobial-and-adjunct-pathway-without-diagnostic-delay',
+          'review-neurology-meningitis-strict-later-csf-clinical-and-supplied-treatment-trajectory',
+          'handoff-neurology-meningitis-organism-treatment-complication-public-health-hearing-and-active-risk',
+        ] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) {
+          this.log('warning', 'assessment', `neurology-meningitis-response-refused-${this.currentTick}`,
+            supported ? 'The meningitis action was not listed. No supplied or injected text was retained.'
+              : 'These meningitis choices are available only in the exact declared Neurology lesson.'); break;
+        }
+        if (response === actions[0]) {
+          if (this.neurologyMeningitisTrajectoryAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-meningitis-trajectory-refused-${this.currentTick}`, 'The supplied acute meningeal, infectious, neurological, physiological, and whole-patient trajectory was already reconciled.'); break;
+          }
+          this.neurologyMeningitisTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-meningitis-trajectory-reconciled-${this.currentTick}`,
+            'The supplied 14-hour clock connects fever, rapidly worsening headache, photophobia, vomiting, and neck stiffness with alert nonfocal neurology, stable airway, breathing and perfusion, and supportive but nondiagnostic blood evidence. Infectious, inflammatory, vascular, toxic-metabolic, structural, and other causes remain open. The learner did not take a history, examine, test, diagnose, or treat.',
+            { acuteMeningealInfectionPatternAuthored: true,
+              initialAlertNonfocalStateAuthored: true, patientExaminedByLearner: false,
+              bloodTestAcquiredByLearner: false, diagnosisMadeByLearner: false }); break;
+        }
+        if (this.neurologyMeningitisTrajectoryAtTick === null) {
+          this.log('warning', 'assessment', `neurology-meningitis-trajectory-order-refused-${this.currentTick}`, 'Reconcile the acute whole-patient trajectory first.'); break;
+        }
+        if (response === actions[1]) {
+          if (this.neurologyMeningitisOwnershipAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-meningitis-ownership-refused-${this.currentTick}`, 'Qualified time-critical infection, neurological, resuscitation, nursing, and precaution ownership is already active.'); break;
+          }
+          this.neurologyMeningitisOwnershipAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-meningitis-qualified-ownership-activated-${this.currentTick}`,
+            'Qualified infection, neurological, resuscitation, nursing, laboratory, pharmacy, and locally appropriate transmission-precaution teams now own rapid deterioration, diagnostics, treatment, airway, seizure, shock, intracranial, contact, and public-health risk. The learner selected no isolation equipment, oxygen, fluid, drug, dose, route, access, device, test, procedure, or treatment.',
+            { qualifiedTimeCriticalOwnershipActive: true,
+              isolationEquipmentSelectedByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.neurologyMeningitisOwnershipAtTick === null) {
+          this.log('warning', 'assessment', `neurology-meningitis-ownership-order-refused-${this.currentTick}`, 'Activate qualified time-critical ownership before reviewing the diagnostic boundary.'); break;
+        }
+        if (response === actions[2]) {
+          if (this.neurologyMeningitisDiagnosticsAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-meningitis-diagnostics-refused-${this.currentTick}`, 'LP safety, no-routine-imaging, and parallel diagnostic boundaries were already reviewed.'); break;
+          }
+          this.neurologyMeningitisDiagnosticsAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-meningitis-lp-and-imaging-boundary-reviewed-${this.currentTick}`,
+            'The supplied GCS 15, equal reactive pupils, nonfocal state, stable airway, breathing and perfusion, controlled seizure state, coagulation, skin, and host context supports prompt qualified lumbar puncture without routine pre-LP imaging in this exact case. Deteriorating consciousness, focal or pupillary findings, new seizure or posturing, evolving-lesion risk, airway or respiratory compromise, shock, bleeding risk, purpura, or another contraindication would reopen deferral and imaging needs. Blood and CSF diagnostics proceed in parallel, but no learner test, imaging, interpretation, or LP occurred.',
+            { qualifiedLpWithoutRoutineImagingBoundaryReviewed: true,
+              scoreCalculatedByLearner: false, imagingAcquiredByLearner: false,
+              lumbarPuncturePerformedByLearner: false }); break;
+        }
+        if (this.neurologyMeningitisDiagnosticsAtTick === null) {
+          this.log('warning', 'assessment', `neurology-meningitis-diagnostics-order-refused-${this.currentTick}`, 'Review LP safety, imaging, and parallel diagnostic boundaries before activating empiric care.'); break;
+        }
+        if (response === actions[3]) {
+          if (this.neurologyMeningitisTreatmentAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-meningitis-treatment-refused-${this.currentTick}`, 'The qualified early empiric antimicrobial and adjunctive-treatment pathway is already active.'); break;
+          }
+          this.neurologyMeningitisTreatmentAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-meningitis-early-qualified-pathway-activated-${this.currentTick}`,
+            'Qualified teams activated immediate empiric intravenous antimicrobial and adjunctive-treatment care without waiting for imaging or delayed diagnostics. Age, host factors, allergy, pregnancy, resistance, epidemiology, local protocols, contraindications, and later microbiology remain expert-owned. The learner selected or delivered no antimicrobial, corticosteroid, drug, dose, route, access, fluid, or treatment.',
+            { qualifiedEarlyEmpiricPathwayActive: true, drugSelectedByLearner: false,
+              medicationDeliveredByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.neurologyMeningitisTreatmentAtTick === null) {
+          this.log('warning', 'assessment', `neurology-meningitis-treatment-order-refused-${this.currentTick}`, 'Activate the qualified early empiric and adjunctive pathway before the later report.'); break;
+        }
+        if (response === actions[4]) {
+          if (this.currentTick <= this.neurologyMeningitisTreatmentAtTick) {
+            this.log('warning', 'assessment', `neurology-meningitis-later-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before reviewing the fixed later CSF and clinical report.'); break;
+          }
+          if (this.neurologyMeningitisLaterAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-meningitis-later-refused-${this.currentTick}`, 'The fixed later CSF, clinical, and supplied-treatment trajectory was already reviewed.'); break;
+          }
+          this.neurologyMeningitisLaterAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-meningitis-later-trajectory-reviewed-${this.currentTick}`,
+            'The strict 45-minute qualified report supplies uncomplicated LP, cloudy CSF, opening pressure 29 cmH2O, 2,200 white cells/µL with 91% neutrophils, protein 190 mg/dL, glucose 28 mg/dL with paired ratio 0.27, and lactate 5.2 mmol/L. This integrated pattern strongly supports acute bacterial meningitis, while Gram stain identifies no organism and culture, susceptibility, and PCR remain pending. Qualified empiric and adjunctive care preceded the report. Persistent symptoms with GCS 15 and no focal deficit, seizure, shock, respiratory compromise, purpura, or rapid consciousness decline do not prove treatment response or durable safety.',
+            { laterBacterialPatternCsfAuthored: true, qualifiedLpAuthored: true,
+              qualifiedEmpiricTreatmentAuthored: true, pathogenIdentified: false,
+              csfInterpretedByLearner: false, treatmentEffectProven: false }); break;
+        }
+        if (this.neurologyMeningitisLaterAtTick === null) {
+          this.log('warning', 'assessment', `neurology-meningitis-later-order-refused-${this.currentTick}`, 'Review the fixed later CSF, clinical, and supplied-treatment trajectory before handoff.'); break;
+        }
+        if (this.currentTick <= this.neurologyMeningitisLaterAtTick) {
+          this.log('warning', 'assessment', `neurology-meningitis-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off active meningitis risk.'); break;
+        }
+        if (this.neurologyMeningitisHandoffAtTick !== null) {
+          this.log('warning', 'assessment', `neurology-meningitis-handoff-refused-${this.currentTick}`, 'The organism, treatment, complication, public-health, hearing, and active-risk handoff was already recorded.'); break;
+        }
+        this.neurologyMeningitisHandoffAtTick = this.currentTick;
+        this.log('critical', 'assessment', `neurology-meningitis-active-risk-handoff-recorded-${this.currentTick}`,
+          'Microbiology and susceptibility, antimicrobial and adjunct optimization, infection control, public-health and contact needs if indicated, seizure, consciousness, focal, hearing, intracranial, vascular, thrombotic, respiratory, shock, coagulation, electrolyte, rehabilitation, recurrence, disposition, prognosis, and outcome uncertainty were handed off. No learner organism identification, treatment, procedure, durable stability, disposition, prognosis, or outcome is claimed.',
+          { pathogenIdentified: false, treatmentEffectProven: false,
+            durableNeurologicStabilityProven: false, dispositionDetermined: false,
+            prognosisPredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -12532,6 +12663,21 @@ export class AnesthesiaEngine {
         meanArterialMmHg: later ? 105 : 93,
         coreTemperatureC: later ? 37.2 : 37.1 };
     }
+    if (this.scenario.metadata.id === 'acute-bacterial-meningitis-first-hour'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'acute-bacterial-meningitis-first-hour-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'acute-bacterial-meningitis-first-hour-reassessment-boundary')) {
+      const later = this.neurologyMeningitisLaterAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: later ? 106 : 118,
+        respiratoryRateBpm: later ? 20 : 22,
+        spo2Percent: 98,
+        systolicMmHg: later ? 116 : 112,
+        diastolicMmHg: later ? 72 : 68,
+        meanArterialMmHg: later ? 87 : 83,
+        coreTemperatureC: later ? 38.8 : 39.3 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -15329,6 +15475,59 @@ export class AnesthesiaEngine {
               treatmentEffectProven: false as const,
               respiratoryArrestAuthored: false as const,
               durableNeurologicRecoveryProven: false as const,
+              dispositionDetermined: false as const,
+              prognosisPredicted: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'acute-bacterial-meningitis-first-hour'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'acute-bacterial-meningitis-first-hour-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'acute-bacterial-meningitis-first-hour-reassessment-boundary') ? {
+            neurologyMeningitisAssessment: {
+              trajectoryAtTick: this.neurologyMeningitisTrajectoryAtTick,
+              ownershipAtTick: this.neurologyMeningitisOwnershipAtTick,
+              diagnosticsAtTick: this.neurologyMeningitisDiagnosticsAtTick,
+              treatmentAtTick: this.neurologyMeningitisTreatmentAtTick,
+              laterAtTick: this.neurologyMeningitisLaterAtTick,
+              handoffAtTick: this.neurologyMeningitisHandoffAtTick,
+              acuteMeningealInfectionPatternAuthored: true as const,
+              initialAlertNonfocalStateAuthored: true as const,
+              qualifiedTimeCriticalOwnershipActive:
+                this.neurologyMeningitisOwnershipAtTick !== null,
+              qualifiedLpWithoutRoutineImagingBoundaryReviewed:
+                this.neurologyMeningitisDiagnosticsAtTick !== null,
+              qualifiedEarlyEmpiricPathwayActive:
+                this.neurologyMeningitisTreatmentAtTick !== null,
+              laterBacterialPatternCsfAuthored: this.neurologyMeningitisLaterAtTick !== null,
+              qualifiedLpAuthored: this.neurologyMeningitisLaterAtTick !== null,
+              qualifiedEmpiricTreatmentAuthored: this.neurologyMeningitisLaterAtTick !== null,
+              patientHistoryTakenByLearner: false as const,
+              patientExaminedByLearner: false as const,
+              scoreCalculatedByLearner: false as const,
+              bloodTestAcquiredByLearner: false as const,
+              cultureAcquiredByLearner: false as const,
+              csfAcquiredByLearner: false as const,
+              csfInterpretedByLearner: false as const,
+              imagingAcquiredByLearner: false as const,
+              imagingInterpretedByLearner: false as const,
+              lumbarPuncturePerformedByLearner: false as const,
+              diagnosisMadeByLearner: false as const,
+              pathogenIdentified: false as const,
+              drugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const,
+              routeSelectedByLearner: false as const,
+              accessPlacedByLearner: false as const,
+              medicationDeliveredByLearner: false as const,
+              oxygenSelectedByLearner: false as const,
+              fluidSelectedByLearner: false as const,
+              airwayDeviceSelectedByLearner: false as const,
+              airwayProcedurePerformedByLearner: false as const,
+              isolationEquipmentSelectedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              treatmentEffectProven: false as const,
+              durableNeurologicStabilityProven: false as const,
               dispositionDetermined: false as const,
               prognosisPredicted: false as const,
               outcomePredicted: false as const,

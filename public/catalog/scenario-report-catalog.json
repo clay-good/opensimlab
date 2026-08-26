@@ -1584,6 +1584,17 @@
         "GB"
       ],
       "fidelityClass": "state_transition"
+    },
+    {
+      "scenarioId": "acute-bacterial-meningitis-first-hour",
+      "contentVersion": "0.1.0",
+      "moduleId": "neurology",
+      "maturity": "draft",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition"
     }
   ]
 }

@@ -4031,6 +4031,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use direct verified serial findings, qualified neurology, critical-care, respiratory, airway and cardiac-monitoring teams, current guidance and local protocols, individualized diagnosis and treatment, and continuous reassessment.',
     briefIn: ['guillain-barre-respiratory-decline'],
   },
+  {
+    id: 'meningitis-clock-exam-blood-lp-csf-treatment-and-later-state-are-authored',
+    headline: 'The illness clock, examination, blood evidence, LP safety, CSF, qualified care, and later state are authored.',
+    simplification: 'Fixed reports stand in for history, examination, monitoring, glucose, blood tests and cultures, LP safety assessment, imaging decision, lumbar puncture, CSF tests, qualified empiric and adjunctive treatment, and reassessment.',
+    whereItMisleads: 'Treating fictional findings, inflammatory markers, absent warning signs, CSF values, supplied LP, or qualified care as learner-acquired evidence, permanent exclusions, a universal no-imaging rule, organism identification, treatment effect, or predicted course.',
+    correctUnderstanding: 'Real care requires immediate direct reassessment, verified data, qualified teams, current local infection-control and treatment pathways, patient-specific LP and imaging safety decisions, early appropriate therapy, and continuous neurological and systemic reassessment.',
+    briefIn: ['acute-bacterial-meningitis-first-hour'],
+  },
+  {
+    id: 'meningitis-controls-reconcile-activate-review-escalate-reassess-and-handoff-only',
+    headline: 'The controls record trajectory reconciliation, qualified ownership, diagnostic-boundary review, care activation, later-report review, and handoff only.',
+    simplification: 'Six accepted actions stand in for infection, neurological, emergency, nursing, laboratory, pharmacy, imaging, LP, antimicrobial, adjunctive, public-health, hearing, rehabilitation, and handoff work.',
+    whereItMisleads: 'Equating button order with examination, LP or imaging safety assessment, test acquisition or interpretation, diagnosis, prescribing, procedure, treatment, infection control, contact management, disposition, or competence.',
+    correctUnderstanding: 'Actual care requires the patient, trained teams, current local pathways, verified serial findings, individualized diagnostics and treatment, and continuous reassessment.',
+    briefIn: ['acute-bacterial-meningitis-first-hour'],
+  },
+  {
+    id: 'no-live-meningitis-exam-test-imaging-lp-diagnosis-drug-procedure-or-outcome',
+    headline: 'The lab does not examine, test, image, perform LP, diagnose, prescribe, treat, manage contacts, perform a procedure, or report outcome.',
+    simplification: 'No live history, examination, score, monitoring, glucose, blood, culture, CSF, PCR, imaging, EEG, hearing or another test, diagnosis, isolation equipment, oxygen, fluid, antimicrobial, corticosteroid, antiseizure medicine, drug, dose, route, access, airway care, LP, procedure, contact decision, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Using a stable snapshot as a permanent safety clearance, ordering routine imaging in every case, waiting for tests before qualified empiric care, treating one CSF value as an organism, copying fictional values into care, or reading completion as competence.',
+    correctUnderstanding: 'Use direct verified serial findings, qualified neurological, infection, emergency, airway, laboratory and public-health teams, current guidance and local protocols, individualized diagnostics and treatment, and continuous reassessment.',
+    briefIn: ['acute-bacterial-meningitis-first-hour'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

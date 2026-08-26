@@ -2814,6 +2814,26 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/37814552/',
     verifiedOn: '2026-08-26',
   },
+  {
+    id: 'who-meningitis-guideline-2025',
+    authors: 'World Health Organization',
+    title: 'WHO guidelines on meningitis diagnosis, treatment and care',
+    publication: 'World Health Organization', year: 2025,
+    locator: 'ISBN 978-92-4-010804-2; recommendations A.1-A.5, B.1-B.3, B.7, and C.1',
+    usedFor: 'Prompt LP and CSF investigation, parallel blood cultures, nonroutine imaging, early empiric intravenous antimicrobial care without diagnostic delay, adjunctive corticosteroid timing, complication surveillance, and hearing follow-up.',
+    verifiedAgainst: 'https://www.who.int/publications/i/item/9789240108042',
+    verifiedOn: '2026-08-26',
+  },
+  {
+    id: 'nice-bacterial-meningitis-ng240-2024',
+    authors: 'National Institute for Health and Care Excellence',
+    title: 'Meningitis (bacterial) and meningococcal disease: recognition, diagnosis and management',
+    publication: 'NICE guideline NG240', year: 2024,
+    locator: 'recommendations 1.4.6-1.4.12, 1.6.1-1.6.4, and 1.8.1-1.8.4',
+    usedFor: 'The exact no-routine-pre-LP-imaging and LP-deferral boundary, blood and CSF sampling before antibiotics when safe without clinically significant delay, and early antibiotic and dexamethasone pathways.',
+    verifiedAgainst: 'https://www.nice.org.uk/guidance/ng240/chapter/recommendations',
+    verifiedOn: '2026-08-26',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

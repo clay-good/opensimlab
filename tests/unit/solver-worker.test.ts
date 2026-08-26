@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Neurology GBS respiratory-decline state has protocol version 140', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(140);
+  it('Scenario: Neurology meningitis first-hour state has protocol version 141', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(141);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

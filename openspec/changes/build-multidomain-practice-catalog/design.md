@@ -2151,6 +2151,23 @@ unresolved. No learner history, examination, score, test or monitoring interpret
 drug, IVIG, plasma exchange, oxygen, ventilation, rhythm or pressure treatment, airway device,
 procedure, treatment, disposition, prognosis, or outcome control exists.
 
+### Wave E neurology slice 9: acute bacterial meningitis first hour
+
+The ninth Neurology lab owns the prompt LP, no-routine-pre-LP-imaging, and no-diagnostic-delay
+treatment boundary in a supplied alert, nonfocal, physiologically stable adult with acute meningeal
+and infection findings. This is distinct from generic sepsis resuscitation and from the next
+encephalitis lab's altered cognition, focal, seizure, and etiologic-treatment boundary. The learner
+reconciles the clock and whole patient, activates qualified time-critical infection, neurological,
+resuscitation, nursing, diagnostic, pharmacy, and locally appropriate precaution ownership, reviews
+the exact LP-safety and imaging-deferral triggers, and activates qualified empiric antimicrobial and
+adjunctive pathways without allowing tests or imaging to delay care. A strict later report supplies
+qualified LP, bacterial-pattern CSF, prior qualified care, and persistent stable neurology before an
+elapsed handoff keeps organism, susceptibility, treatment optimization, infection control, public
+health, contacts, neurological and systemic complications, hearing, rehabilitation, disposition,
+prognosis, and outcome unresolved. No learner history, examination, score, test, imaging, LP,
+diagnosis, drug, dose, route, access, isolation equipment, procedure, treatment, contact decision,
+disposition, prognosis, or outcome control exists.
+
 #### Neurology: 15
 
 Acute ischemic stroke; large-vessel-occlusion escalation; intracranial hemorrhage; subarachnoid
