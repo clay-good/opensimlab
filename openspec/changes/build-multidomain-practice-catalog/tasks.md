@@ -441,6 +441,18 @@ credited toward the catalog until every item in the completion contract passes.
     without learner examination, mechanics or test acquisition or interpretation, diagnosis, drug,
     dose, route, IVIG, plasma exchange, antimicrobial, oxygen, ventilation, suction, airway device,
     procedure, treatment, weaning, disposition, prognosis, or outcome controls.
+  - [x] Neurology slice 8/15 adds one authored previously independent 33-year-old with a
+    postinfectious 48-hour ascending symmetric weakness and reflex-loss pattern, rapid functional
+    decline, bulbar and cough weakness, falling serial FVC, single-breath count and MIP, supportive
+    CSF and electrodiagnostic reports, and monitored heart-rate and pressure lability. The learner
+    reviews diagnostic support and mimics, recognizes high-risk respiratory decline without
+    saturation, a score, one test, or one mechanics cutoff, activates qualified neurocritical,
+    respiratory, airway-capable, nursing, and cardiac-monitoring ownership, reviews a strict 4-hour
+    respiratory, bulbar, and autonomic deterioration, and completes another elapsed active-risk
+    handoff without learner history, examination, score calculation, test acquisition or
+    interpretation, diagnosis, IVIG, plasma exchange, drug, dose, route, access, oxygen,
+    ventilation, suction, airway device, rhythm or pressure treatment, procedure, treatment,
+    disposition, prognosis, or outcome controls.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.

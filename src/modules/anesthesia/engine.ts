@@ -343,6 +343,10 @@ const NEUROLOGY_MYASTHENIC_CRISIS_BLOCKED_ACTION_TYPES = new Set([
   'neuromuscular-respiratory-failure-response', 'neuromuscular-reversal',
   'airway-device', 'laryngoscopy', 'ventilator', 'bolus', 'infusion',
 ]);
+const NEUROLOGY_GBS_BLOCKED_ACTION_TYPES = new Set([
+  ...NEUROLOGY_MYASTHENIC_CRISIS_BLOCKED_ACTION_TYPES,
+  'myasthenic-crisis-escalation-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1132,6 +1136,12 @@ export class AnesthesiaEngine {
   private neurologyMyasthenicCrisisCausesAtTick: number | null = null;
   private neurologyMyasthenicCrisisLaterAtTick: number | null = null;
   private neurologyMyasthenicCrisisHandoffAtTick: number | null = null;
+  private neurologyGbsTrajectoryAtTick: number | null = null;
+  private neurologyGbsEvidenceAtTick: number | null = null;
+  private neurologyGbsRecognitionAtTick: number | null = null;
+  private neurologyGbsOwnershipAtTick: number | null = null;
+  private neurologyGbsLaterAtTick: number | null = null;
+  private neurologyGbsHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1793,6 +1803,19 @@ export class AnesthesiaEngine {
         'This Neurology lesson exposes no generic oxygen, ventilation, airway, drug, dose, route, '
         + 'access, IVIG, plasma exchange, antimicrobial, suction, test, procedure, reversal, ALS, '
         + 'seizure, stroke, or adjacent-scenario action. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const neurologyGbs = this.scenario.metadata.id === 'guillain-barre-respiratory-decline'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'guillain-barre-respiratory-decline-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'guillain-barre-respiratory-decline-reassessment-boundary');
+    if (neurologyGbs && NEUROLOGY_GBS_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `neurology-gbs-generic-action-refused-${this.currentTick}`,
+        'This Neurology lesson exposes no generic oxygen, ventilation, airway, IVIG, plasma '
+        + 'exchange, drug, dose, route, access, fluid, suction, rhythm, pressure, pacing, shock, '
+        + 'procedure, myasthenia, ALS, or adjacent-scenario action. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -9243,6 +9266,111 @@ export class AnesthesiaEngine {
             durableNeurologicRecoveryProven: false, dispositionDetermined: false,
             prognosisPredicted: false, outcomePredicted: false }); break;
       }
+      case 'guillain-barre-respiratory-decline-response': {
+        const response = typeof action.payload.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'guillain-barre-respiratory-decline'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'guillain-barre-respiratory-decline-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'guillain-barre-respiratory-decline-reassessment-boundary');
+        const actions = [
+          'reconcile-neurology-gbs-clock-ascending-weakness-bulbar-respiratory-autonomic-and-whole-patient',
+          'review-neurology-gbs-supportive-evidence-mimics-and-diagnostic-boundary',
+          'recognize-neurology-gbs-high-risk-respiratory-decline-without-score-or-single-cutoff',
+          'activate-neurology-gbs-qualified-neurocritical-respiratory-airway-and-cardiac-ownership',
+          'review-neurology-gbs-strict-later-respiratory-bulbar-and-autonomic-trajectory',
+          'handoff-neurology-gbs-airway-dysautonomia-treatment-recurrence-and-active-risk',
+        ] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) {
+          this.log('warning', 'assessment', `neurology-gbs-response-refused-${this.currentTick}`,
+            supported ? 'The Guillain-Barré action was not listed. No supplied or injected text was retained.'
+              : 'These Guillain-Barré choices are available only in the exact declared Neurology lesson.');
+          break;
+        }
+        if (response === actions[0]) {
+          if (this.neurologyGbsTrajectoryAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-gbs-trajectory-refused-${this.currentTick}`, 'The supplied ascending, bulbar, respiratory, autonomic, and whole-patient trajectory was already reconciled.'); break;
+          }
+          this.neurologyGbsTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-gbs-trajectory-reconciled-${this.currentTick}`,
+            'The supplied postinfectious clock connects 48 hours of ascending symmetric weakness and reflex loss with facial, neck, swallowing, cough, speech, breathing, mechanics, gas, mobility, and autonomic change. The learner did not take a history, examine, test, diagnose, or treat.',
+            { ascendingWeaknessAuthored: true, bulbarWeaknessAuthored: true,
+              autonomicLabilityAuthored: true, patientExaminedByLearner: false,
+              respiratoryMechanicsAcquiredByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.neurologyGbsTrajectoryAtTick === null) {
+          this.log('warning', 'assessment', `neurology-gbs-trajectory-order-refused-${this.currentTick}`, 'Reconcile the ascending whole-patient trajectory first.'); break;
+        }
+        if (response === actions[1]) {
+          if (this.neurologyGbsEvidenceAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-gbs-evidence-refused-${this.currentTick}`, 'The supplied supportive evidence, mimics, and diagnostic boundary were already reviewed.'); break;
+          }
+          this.neurologyGbsEvidenceAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-gbs-evidence-and-mimics-reviewed-${this.currentTick}`,
+            'The supplied cerebrospinal-fluid and electrodiagnostic reports support the authored Guillain-Barré working diagnosis but do not independently prove it. Spinal cord, brainstem, junctional, toxic-metabolic, infectious, pulmonary, and cardiac alternatives remain contextual safety checks. No learner test, interpretation, score, or diagnosis is claimed.',
+            { diagnosisProven: false, csfAcquiredByLearner: false,
+              electrodiagnosticTestInterpretedByLearner: false, scoreCalculatedByLearner: false }); break;
+        }
+        if (this.neurologyGbsEvidenceAtTick === null) {
+          this.log('warning', 'assessment', `neurology-gbs-evidence-order-refused-${this.currentTick}`, 'Review the supplied evidence, mimics, and diagnostic boundary before recognizing respiratory risk.'); break;
+        }
+        if (response === actions[2]) {
+          if (this.neurologyGbsRecognitionAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-gbs-recognition-refused-${this.currentTick}`, 'High-risk respiratory decline was already recognized.'); break;
+          }
+          this.neurologyGbsRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-gbs-high-risk-decline-recognized-${this.currentTick}`,
+            'Rapid functional loss plus worsening neck, bulbar, cough, speech, paradoxical-breathing, and serial mechanics establish high-risk respiratory decline despite preserved oxygen saturation and initially normal carbon dioxide. No score or single mechanics, gas, speech, or oxygenation cutoff was used as a universal airway threshold.',
+            { highRiskRespiratoryDeclineRecognized: true, saturationUsedAlone: false,
+              singleCutoffUsed: false, diagnosisMadeByLearner: false }); break;
+        }
+        if (this.neurologyGbsRecognitionAtTick === null) {
+          this.log('warning', 'assessment', `neurology-gbs-recognition-order-refused-${this.currentTick}`, 'Recognize high-risk respiratory decline before activating ownership.'); break;
+        }
+        if (response === actions[3]) {
+          if (this.neurologyGbsOwnershipAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-gbs-ownership-refused-${this.currentTick}`, 'Qualified neurological, respiratory, airway, critical-care, and cardiac-monitoring ownership is already active.'); break;
+          }
+          this.neurologyGbsOwnershipAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-gbs-qualified-ownership-activated-${this.currentTick}`,
+            'Qualified neurology, neurocritical, respiratory, nursing, airway-capable, and continuous cardiac-monitoring teams now own serial assessment and individualized rescue for respiratory decline, secretion and aspiration risk, and dysautonomia. The learner selected no oxygen, ventilation, device, drug, dose, route, access, rhythm or pressure treatment, procedure, or treatment.',
+            { qualifiedNeurocriticalOwnershipActive: true, qualifiedAirwayOwnershipActive: true,
+              qualifiedCardiacMonitoringOwnershipActive: true, ventilationSelectedByLearner: false,
+              rhythmTreatmentDeliveredByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.neurologyGbsOwnershipAtTick === null) {
+          this.log('warning', 'assessment', `neurology-gbs-ownership-order-refused-${this.currentTick}`, 'Activate qualified neurocritical, respiratory, airway, and cardiac-monitoring ownership before the later report.'); break;
+        }
+        if (response === actions[4]) {
+          if (this.currentTick <= this.neurologyGbsOwnershipAtTick) {
+            this.log('warning', 'assessment', `neurology-gbs-later-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before reviewing the fixed later report.'); break;
+          }
+          if (this.neurologyGbsLaterAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-gbs-later-refused-${this.currentTick}`, 'The fixed later respiratory, bulbar, and autonomic trajectory was already reviewed.'); break;
+          }
+          this.neurologyGbsLaterAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-gbs-later-trajectory-reviewed-${this.currentTick}`,
+            'The strict 4-hour report shows absent head lift, one-word speech, a barely audible cough, worsening secretion handling, persistent abdominal paradox, shallower breathing, further serial mechanics decline, a small carbon-dioxide rise, and wider heart-rate and blood-pressure lability. No arrest, sustained shock, malignant rhythm, learner airway, ventilation, monitoring interpretation, or treatment is authored.',
+            { laterRespiratoryDeclineAuthored: true, laterAutonomicLabilityAuthored: true,
+              respiratoryArrestAuthored: false, airwayProcedurePerformedByLearner: false,
+              cardiacMonitoringInterpretedByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.neurologyGbsLaterAtTick === null) {
+          this.log('warning', 'assessment', `neurology-gbs-later-order-refused-${this.currentTick}`, 'Review the fixed later respiratory, bulbar, and autonomic trajectory before handoff.'); break;
+        }
+        if (this.currentTick <= this.neurologyGbsLaterAtTick) {
+          this.log('warning', 'assessment', `neurology-gbs-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off active respiratory and autonomic risk.'); break;
+        }
+        if (this.neurologyGbsHandoffAtTick !== null) {
+          this.log('warning', 'assessment', `neurology-gbs-handoff-refused-${this.currentTick}`, 'The airway, dysautonomia, treatment, recurrence, and active-risk handoff was already recorded.'); break;
+        }
+        this.neurologyGbsHandoffAtTick = this.currentTick;
+        this.log('critical', 'assessment', `neurology-gbs-active-risk-handoff-recorded-${this.currentTick}`,
+          'The accelerating weakness, respiratory and bulbar trajectory, secretion and aspiration risk, autonomic lability, open alternatives, individualized airway and disease-directed treatment, cardiac complications, recurrence, recovery, disposition, prognosis, and outcome uncertainty were handed off. No learner diagnosis, airway, ventilation, drug, rhythm or pressure treatment, recovery, or outcome is claimed.',
+          { diagnosisProven: false, treatmentEffectProven: false,
+            durableNeurologicRecoveryProven: false, dispositionDetermined: false,
+            prognosisPredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -12389,6 +12517,21 @@ export class AnesthesiaEngine {
         meanArterialMmHg: later ? 91 : 94,
         coreTemperatureC: later ? 38.3 : 38.1 };
     }
+    if (this.scenario.metadata.id === 'guillain-barre-respiratory-decline'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'guillain-barre-respiratory-decline-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'guillain-barre-respiratory-decline-reassessment-boundary')) {
+      const later = this.neurologyGbsLaterAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: later ? 118 : 112,
+        respiratoryRateBpm: later ? 30 : 24,
+        spo2Percent: later ? 96 : 98,
+        systolicMmHg: later ? 142 : 132,
+        diastolicMmHg: later ? 86 : 74,
+        meanArterialMmHg: later ? 105 : 93,
+        coreTemperatureC: later ? 37.2 : 37.1 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -15134,6 +15277,57 @@ export class AnesthesiaEngine {
               triggerProven: false as const,
               treatmentEffectProven: false as const,
               weaningSuccessProven: false as const,
+              durableNeurologicRecoveryProven: false as const,
+              dispositionDetermined: false as const,
+              prognosisPredicted: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'guillain-barre-respiratory-decline'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'guillain-barre-respiratory-decline-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'guillain-barre-respiratory-decline-reassessment-boundary') ? {
+            neurologyGbsAssessment: {
+              trajectoryAtTick: this.neurologyGbsTrajectoryAtTick,
+              evidenceAtTick: this.neurologyGbsEvidenceAtTick,
+              recognitionAtTick: this.neurologyGbsRecognitionAtTick,
+              ownershipAtTick: this.neurologyGbsOwnershipAtTick,
+              laterAtTick: this.neurologyGbsLaterAtTick,
+              handoffAtTick: this.neurologyGbsHandoffAtTick,
+              ascendingWeaknessAuthored: true as const,
+              bulbarWeaknessAuthored: true as const,
+              autonomicLabilityAuthored: true as const,
+              highRiskRespiratoryDeclineRecognized: this.neurologyGbsRecognitionAtTick !== null,
+              qualifiedNeurocriticalOwnershipActive: this.neurologyGbsOwnershipAtTick !== null,
+              qualifiedAirwayOwnershipActive: this.neurologyGbsOwnershipAtTick !== null,
+              qualifiedCardiacMonitoringOwnershipActive: this.neurologyGbsOwnershipAtTick !== null,
+              laterRespiratoryDeclineAuthored: this.neurologyGbsLaterAtTick !== null,
+              laterAutonomicLabilityAuthored: this.neurologyGbsLaterAtTick !== null,
+              patientHistoryTakenByLearner: false as const,
+              patientExaminedByLearner: false as const,
+              scoreCalculatedByLearner: false as const,
+              respiratoryMechanicsAcquiredByLearner: false as const,
+              bloodGasAcquiredByLearner: false as const,
+              csfAcquiredByLearner: false as const,
+              electrodiagnosticTestInterpretedByLearner: false as const,
+              cardiacMonitoringInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const,
+              drugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const,
+              routeSelectedByLearner: false as const,
+              accessPlacedByLearner: false as const,
+              medicationDeliveredByLearner: false as const,
+              oxygenSelectedByLearner: false as const,
+              ventilationSelectedByLearner: false as const,
+              airwayDeviceSelectedByLearner: false as const,
+              airwayProcedurePerformedByLearner: false as const,
+              rhythmTreatmentDeliveredByLearner: false as const,
+              pressureTreatmentDeliveredByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              diagnosisProven: false as const,
+              treatmentEffectProven: false as const,
+              respiratoryArrestAuthored: false as const,
               durableNeurologicRecoveryProven: false as const,
               dispositionDetermined: false as const,
               prognosisPredicted: false as const,

@@ -2134,6 +2134,23 @@ weaning, recurrence, recovery, disposition, prognosis, and outcome unresolved. N
 examination, test, diagnosis, drug, IVIG, plasma exchange, antimicrobial, oxygen, ventilation,
 suction, airway device, procedure, treatment, disposition, prognosis, or outcome control exists.
 
+### Wave E neurology slice 8: Guillain-Barré respiratory decline
+
+The eighth Neurology lab owns rapid postinfectious ascending weakness with bulbar, respiratory, and
+autonomic deterioration, distinct from the slow ALS home-support boundary and the junctional
+fatigability and supplied manifest-crisis transition in myasthenia. The learner integrates the
+48-hour functional decline, reflex and weakness pattern, swallowing, cough, breathing, serial
+qualified FVC, single-breath count and MIP, gas exchange, supportive CSF and electrodiagnostic
+reports, and monitored heart-rate and pressure ranges without using saturation, a score, one test,
+or one mechanics cutoff alone. Qualified neurological, neurocritical, respiratory, nursing,
+airway-capable, and cardiac-monitoring ownership begins before a strict 4-hour report supplies worse
+bulbar and ventilatory function plus wider autonomic lability. Another elapsed handoff keeps the
+diagnosis and alternatives, individualized airway and immune treatment, arrhythmia and pressure
+risk, complications, rehabilitation, recurrence, recovery, disposition, prognosis, and outcome
+unresolved. No learner history, examination, score, test or monitoring interpretation, diagnosis,
+drug, IVIG, plasma exchange, oxygen, ventilation, rhythm or pressure treatment, airway device,
+procedure, treatment, disposition, prognosis, or outcome control exists.
+
 #### Neurology: 15
 
 Acute ischemic stroke; large-vessel-occlusion escalation; intracranial hemorrhage; subarachnoid

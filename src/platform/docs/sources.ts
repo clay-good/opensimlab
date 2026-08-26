@@ -2804,6 +2804,16 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/39297721/',
     verifiedOn: '2026-08-26',
   },
+  {
+    id: 'ean-pns-guillain-barre-guideline-2023', pmid: '37814552',
+    authors: 'van Doorn PA, Van den Bergh PYK, Hadden RDM, et al',
+    title: 'European Academy of Neurology/Peripheral Nerve Society Guideline on diagnosis and treatment of Guillain-Barré syndrome',
+    publication: 'European Journal of Neurology', year: 2023,
+    locator: '30:3646-3674; doi:10.1111/ene.16073; diagnostic criteria, serial respiratory assessment, dysphagia and autonomic monitoring, ICU-risk, and treatment boundaries',
+    usedFor: 'The authored supportive diagnostic pattern, serial FVC and single-breath-count context, bulbar and aspiration risk, autonomic and cardiac-monitoring escalation, and separation of recognition from individualized airway and disease-directed treatment.',
+    verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/37814552/',
+    verifiedOn: '2026-08-26',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

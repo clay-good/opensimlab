@@ -202,6 +202,12 @@ Recorded here rather than silently carried:
   not validate myasthenic weakness, respiratory mechanics, gas exchange, infection, airway or
   ventilation management, medicine effects, treatment response, weaning, recovery, prognosis, or
   outcome.
+  Guillain-Barré respiratory decline overlays fixed postinfectious ascending weakness, reflex,
+  bulbar, cough, respiratory-mechanics, gas, autonomic, supportive CSF and electrodiagnostic, and
+  strict-later deterioration reports on the healthy adult scaffold; it does not validate GBS
+  physiology or diagnosis, examination, scoring, test acquisition or interpretation, respiratory
+  or autonomic monitoring, airway or ventilation management, immune or other treatment effects,
+  recovery, disposition, prognosis, or outcome.
 
 ## Concentration-time checks, 2026-08-23
 

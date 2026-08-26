@@ -1043,6 +1043,9 @@ export function Cockpit({
           onNeurologyMyasthenicCrisisResponse={(action) => session.act({
             type: 'myasthenic-crisis-escalation-response', payload: { action },
           })}
+          onNeurologyGbsResponse={(action) => session.act({
+            type: 'guillain-barre-respiratory-decline-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

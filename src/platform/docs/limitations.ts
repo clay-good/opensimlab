@@ -4007,6 +4007,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use direct verified serial findings, qualified neurology, critical-care, respiratory and airway teams, current guidance and local protocols, individualized treatment, and continuous reassessment.',
     briefIn: ['myasthenic-crisis-escalation'],
   },
+  {
+    id: 'gbs-clock-weakness-tests-mechanics-autonomic-and-later-state-are-authored',
+    headline: 'The postinfectious clock, weakness, reflexes, bulbar and respiratory findings, tests, autonomic range, and later state are authored.',
+    simplification: 'Fixed reports stand in for history, examination, oximetry, gas exchange, serial FVC, single-breath count and MIP, CSF, electrodiagnostic testing, swallowing and cough assessment, continuous cardiac monitoring, and reassessment.',
+    whereItMisleads: 'Treating fictional serial values, preserved saturation, supportive CSF or electrodiagnostic findings, autonomic ranges, or named ownership as learner-acquired evidence, a proven diagnosis, one universal airway threshold, treatment effect, or predicted course.',
+    correctUnderstanding: 'Real care requires immediate verified serial multimodal assessment, qualified neurological, respiratory, critical-care and airway-capable teams, continuous monitoring when indicated, individualized diagnosis, airway and treatment decisions, and ongoing reassessment.',
+    briefIn: ['guillain-barre-respiratory-decline'],
+  },
+  {
+    id: 'gbs-controls-reconcile-review-recognize-activate-reassess-and-handoff-only',
+    headline: 'The controls record trajectory reconciliation, evidence review, risk recognition, qualified ownership, later-report review, and handoff only.',
+    simplification: 'Six accepted actions stand in for neurological, neurocritical, respiratory, nursing, airway, cardiac-monitoring, laboratory, electrodiagnostic, swallowing, treatment, rehabilitation, and handoff work.',
+    whereItMisleads: 'Equating button order with examination, scoring, respiratory or autonomic testing, diagnosis, airway or ventilator management, IVIG or plasma exchange selection, rhythm or pressure treatment, procedure, disposition, or competence.',
+    correctUnderstanding: 'Actual care requires the patient, trained teams, current local pathways, verified serial findings, individualized diagnostic, airway, monitoring and treatment choices, and continuous reassessment.',
+    briefIn: ['guillain-barre-respiratory-decline'],
+  },
+  {
+    id: 'no-live-gbs-exam-score-test-diagnosis-drug-ventilation-airway-procedure-or-outcome',
+    headline: 'The lab does not examine, score, test, diagnose, prescribe, ventilate, manage an airway or dysautonomia, perform a procedure, or report outcome.',
+    simplification: 'No live history, examination, score, monitoring interpretation, oximetry, capnography, blood gas, FVC, count, MIP, MEP, CSF, imaging, laboratory, microbiology, electrodiagnostic, swallowing, cough or secretion test, diagnosis, medicine, dose, route, access, fluid, oxygen, ventilation, suction, airway device, rhythm or pressure treatment, procedure, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Waiting for desaturation or severe hypercapnia, using one score or mechanics cutoff, treating supportive tests as independently diagnostic, automatically treating every labile heart rate or pressure, copying fictional values into care, or reading completion as competence.',
+    correctUnderstanding: 'Use direct verified serial findings, qualified neurology, critical-care, respiratory, airway and cardiac-monitoring teams, current guidance and local protocols, individualized diagnosis and treatment, and continuous reassessment.',
+    briefIn: ['guillain-barre-respiratory-decline'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

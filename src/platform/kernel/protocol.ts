@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 139 reports Neurology myasthenic-crisis state. */
-export const WORKER_PROTOCOL_VERSION = 139;
+/** Bumped whenever the message shape changes incompatibly. Version 140 reports Neurology GBS respiratory-decline state. */
+export const WORKER_PROTOCOL_VERSION = 140;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2010,6 +2010,51 @@ export interface EquipmentSnapshot {
       readonly triggerProven: false;
       readonly treatmentEffectProven: false;
       readonly weaningSuccessProven: false;
+      readonly durableNeurologicRecoveryProven: false;
+      readonly dispositionDetermined: false;
+      readonly prognosisPredicted: false;
+      readonly outcomePredicted: false;
+    };
+    readonly neurologyGbsAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly evidenceAtTick: number | null;
+      readonly recognitionAtTick: number | null;
+      readonly ownershipAtTick: number | null;
+      readonly laterAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly ascendingWeaknessAuthored: true;
+      readonly bulbarWeaknessAuthored: true;
+      readonly autonomicLabilityAuthored: true;
+      readonly highRiskRespiratoryDeclineRecognized: boolean;
+      readonly qualifiedNeurocriticalOwnershipActive: boolean;
+      readonly qualifiedAirwayOwnershipActive: boolean;
+      readonly qualifiedCardiacMonitoringOwnershipActive: boolean;
+      readonly laterRespiratoryDeclineAuthored: boolean;
+      readonly laterAutonomicLabilityAuthored: boolean;
+      readonly patientHistoryTakenByLearner: false;
+      readonly patientExaminedByLearner: false;
+      readonly scoreCalculatedByLearner: false;
+      readonly respiratoryMechanicsAcquiredByLearner: false;
+      readonly bloodGasAcquiredByLearner: false;
+      readonly csfAcquiredByLearner: false;
+      readonly electrodiagnosticTestInterpretedByLearner: false;
+      readonly cardiacMonitoringInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false;
+      readonly drugSelectedByLearner: false;
+      readonly doseSelectedByLearner: false;
+      readonly routeSelectedByLearner: false;
+      readonly accessPlacedByLearner: false;
+      readonly medicationDeliveredByLearner: false;
+      readonly oxygenSelectedByLearner: false;
+      readonly ventilationSelectedByLearner: false;
+      readonly airwayDeviceSelectedByLearner: false;
+      readonly airwayProcedurePerformedByLearner: false;
+      readonly rhythmTreatmentDeliveredByLearner: false;
+      readonly pressureTreatmentDeliveredByLearner: false;
+      readonly treatmentDeliveredByLearner: false;
+      readonly diagnosisProven: false;
+      readonly treatmentEffectProven: false;
+      readonly respiratoryArrestAuthored: false;
       readonly durableNeurologicRecoveryProven: false;
       readonly dispositionDetermined: false;
       readonly prognosisPredicted: false;

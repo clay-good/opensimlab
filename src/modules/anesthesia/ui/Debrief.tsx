@@ -5118,6 +5118,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-neurology-gbs-clock-ascending-weakness-bulbar-respiratory-autonomic-and-whole-patient',
+      'review-neurology-gbs-supportive-evidence-mimics-and-diagnostic-boundary',
+      'recognize-neurology-gbs-high-risk-respiratory-decline-without-score-or-single-cutoff',
+      'activate-neurology-gbs-qualified-neurocritical-respiratory-airway-and-cardiac-ownership',
+      'review-neurology-gbs-strict-later-respiratory-bulbar-and-autonomic-trajectory',
+      'handoff-neurology-gbs-airway-dysautonomia-treatment-recurrence-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'guillain-barre-respiratory-decline'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'guillain-barre-respiratory-decline-reassessment')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'guillain-barre-respiratory-decline-reassessment-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neurology Guillain-Barré respiratory-decline lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'The postinfectious clock, ascending weakness, bulbar and respiratory function, serial mechanics, autonomic range, and whole patient were reconciled.'],
+        ['evidence-and-mimics-reviewed', 'The supplied cerebrospinal-fluid and electrodiagnostic support, diagnostic limits, and dangerous alternatives were reviewed.'],
+        ['high-risk-decline-recognized', 'High-risk respiratory decline was recognized from multimodal change without saturation, a score, or one mechanics cutoff being used alone.'],
+        ['qualified-ownership-activated', 'Qualified neurological, neurocritical, respiratory, airway-capable, nursing, and cardiac-monitoring ownership was activated.'],
+        ['later-trajectory-reviewed', 'The elapsed worsening respiratory, bulbar, mechanics, gas, and autonomic report was integrated without an airway or treatment claim.'],
+        ['active-risk-handoff-recorded', 'Airway, secretion, aspiration, dysautonomia, open alternatives, treatment, recurrence, recovery, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^neurology-gbs-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^neurology-gbs-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {
