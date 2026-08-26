@@ -2390,6 +2390,25 @@ perfusion, mental-state, glucose, potassium, and lactate report precedes another
 and active-risk handoff. The canonical state is not a toxicokinetic, receptor, contractility,
 metabolic, insulin-response, pacing, dialysis, or refractory-rescue model.
 
+### Wave F toxicology slice 7: calcium-channel-blocker mixed shock
+
+The seventh Toxicology lab owns the coupled perfusion, conduction, contractility, vascular, CNS,
+and metabolic pattern of declared extended-release diltiazem toxicity rather than duplicating
+intrinsic heart block, pacing, isolated hyperglycemia, or beta-blocker toxicity. The learner
+reconciles the 5-hour exposure clock, prolonged-release formulation, drowsiness, HR 34/min,
+BP 68/36 mmHg, glucose 238 mg/dL, supplied complete AV block, reduced LV contraction, low vascular
+tone, acid-base, lactate, electrolyte, renal, and reported initial-care evidence; recognizes mixed
+calcium-channel-blocker shock without glucose-only, pulse-only, or pacing-only closure; activates
+toxicology, resuscitation, cardiac, metabolic, airway, monitoring, and compassionate safety ownership;
+and reviews coingestion, prolonged-absorption, phenotype, surveillance, and refractory-rescue
+boundaries. Bounded qualified vasopressor, calcium, high-dose-insulin/euglycemia, glucose-potassium-
+volume surveillance, and rescue intent exposes no product, dose, rate, target, access, fluid, airway,
+pacing, decontamination, lipid, methylene blue, ECLS, or delivery. A strict elapsed fixed perfusion,
+rhythm, mental-state, glucose, potassium, and lactate report precedes another elapsed recurrence,
+prolonged-absorption, and active-risk handoff. The canonical state is not a toxicokinetic, ion-channel,
+contractility, vascular, metabolic, insulin-response, pacing, decontamination, or refractory-rescue
+model.
+
 #### Hematology and oncology: 11
 
 Neutropenic fever; tumor-lysis syndrome; hyperleukocytosis pattern; sickle-cell acute chest syndrome;

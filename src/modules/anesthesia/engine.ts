@@ -404,6 +404,10 @@ const TOXICOLOGY_BETA_BLOCKER_BLOCKED_ACTION_TYPES = new Set([
   ...TOXICOLOGY_TRICYCLIC_BLOCKED_ACTION_TYPES,
   'tricyclic-sodium-channel-cardiotoxicity-response',
 ]);
+const TOXICOLOGY_CALCIUM_CHANNEL_BLOCKER_BLOCKED_ACTION_TYPES = new Set([
+  ...TOXICOLOGY_BETA_BLOCKER_BLOCKED_ACTION_TYPES,
+  'beta-blocker-cardiogenic-shock-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1277,6 +1281,12 @@ export class AnesthesiaEngine {
   private toxicologyBetaBlockerEvidenceAtTick: number | null = null;
   private toxicologyBetaBlockerReassessmentAtTick: number | null = null;
   private toxicologyBetaBlockerHandoffAtTick: number | null = null;
+  private toxicologyCalciumChannelBlockerTrajectoryAtTick: number | null = null;
+  private toxicologyCalciumChannelBlockerRecognitionAtTick: number | null = null;
+  private toxicologyCalciumChannelBlockerSupportAtTick: number | null = null;
+  private toxicologyCalciumChannelBlockerEvidenceAtTick: number | null = null;
+  private toxicologyCalciumChannelBlockerReassessmentAtTick: number | null = null;
+  private toxicologyCalciumChannelBlockerHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2091,6 +2101,15 @@ export class AnesthesiaEngine {
         'This Toxicology lesson exposes no generic examination, monitoring, ECG, imaging or laboratory interpretation, '
         + 'decontamination, glucose, electrolyte, fluid, vasopressor, glucagon, insulin, dose, route, access, infusion, airway, '
         + 'ventilation, pacing, dialysis, lipid, ECLS, transport, procedure, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const toxicologyCalciumChannelBlocker = this.scenario.metadata.id === 'calcium-channel-blocker-shock'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'calcium-channel-blocker-shock-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'calcium-channel-blocker-shock-transition-boundary');
+    if (toxicologyCalciumChannelBlocker && TOXICOLOGY_CALCIUM_CHANNEL_BLOCKER_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `toxicology-calcium-channel-blocker-generic-action-refused-${this.currentTick}`,
+        'This Toxicology lesson exposes no generic examination, monitoring, ECG, imaging or laboratory interpretation, '
+        + 'decontamination, glucose, electrolyte, fluid, vasopressor, calcium, insulin, dose, route, access, infusion, airway, '
+        + 'ventilation, pacing, lipid, methylene blue, ECLS, transport, procedure, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -10253,6 +10272,32 @@ export class AnesthesiaEngine {
         if (this.toxicologyBetaBlockerHandoffAtTick !== null) { this.log('warning', 'assessment', `toxicology-beta-blocker-handoff-refused-${this.currentTick}`, 'The recurrent shock, bradycardia, hypoglycemia, electrolyte, volume, rescue, and active-risk handoff was already recorded.'); break; }
         this.toxicologyBetaBlockerHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-beta-blocker-active-risk-handoff-recorded-${this.currentTick}`, 'Serial perfusion, rhythm and conduction, CNS state, glucose, potassium, acid-base, lactate, volume, coingestion, recurrent shock, airway and rescue contingencies, compassionate safety, disposition, prognosis, and outcome uncertainty were handed off.', { durablePerfusionStabilityProven: false, glucoseStabilityProven: false, electrolyteStabilityProven: false, coingestionExcluded: false, rescueEligibilityDetermined: false, safetyDispositionDetermined: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
       }
+      case 'calcium-channel-blocker-shock-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'calcium-channel-blocker-shock'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'calcium-channel-blocker-shock-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'calcium-channel-blocker-shock-transition-boundary');
+        const actions = ['reconcile-toxicology-calcium-channel-blocker-product-formulation-clock-perfusion-rhythm-glucose-and-whole-patient',
+          'recognize-toxicology-calcium-channel-blocker-mixed-shock-pattern-without-glucose-or-pulse-only-closure',
+          'activate-toxicology-calcium-channel-blocker-poison-center-resuscitation-cardiac-metabolic-airway-and-safety-ownership',
+          'review-toxicology-calcium-channel-blocker-supplied-ecg-perfusion-contractility-glucose-electrolyte-prior-care-and-rescue-boundary',
+          'record-toxicology-calcium-channel-blocker-bounded-qualified-vasopressor-calcium-insulin-euglycemia-and-rescue-intent-with-strict-later-review',
+          'handoff-toxicology-calcium-channel-blocker-recurrent-shock-av-block-hyperglycemia-electrolyte-volume-rescue-and-active-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `toxicology-calcium-channel-blocker-response-refused-${this.currentTick}`, supported ? 'The calcium-channel-blocker action was not listed. No supplied or injected text was retained.' : 'These calcium-channel-blocker choices are available only in the exact declared Toxicology lesson.'); break; }
+        if (response === actions[0]) { if (this.toxicologyCalciumChannelBlockerTrajectoryAtTick !== null) { this.log('warning', 'assessment', `toxicology-calcium-channel-blocker-trajectory-refused-${this.currentTick}`, 'The product, formulation, clock, perfusion, rhythm, glucose, and whole-patient state were already reconciled.'); break; } this.toxicologyCalciumChannelBlockerTrajectoryAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-calcium-channel-blocker-trajectory-reconciled-${this.currentTick}`, 'Declared extended-release diltiazem exposure, 5-hour clock, bradycardia, complete AV block, shock, drowsiness, hyperglycemia, supplied ECG, oxygenation, and whole-patient state were connected. The learner did not take history, examine, acquire or interpret monitoring or ECG, test, or diagnose.', { exposureAuthored: true, prolongedReleaseProductAuthored: true, hoursPostIngestion: 5, patientHistoryTakenByLearner: false, patientExaminedByLearner: false, ecgInterpretedByLearner: false }); break; }
+        if (this.toxicologyCalciumChannelBlockerTrajectoryAtTick === null) { this.log('warning', 'assessment', `toxicology-calcium-channel-blocker-trajectory-order-refused-${this.currentTick}`, 'Reconcile product, formulation, clock, perfusion, rhythm, glucose, and whole patient first.'); break; }
+        if (response === actions[1]) { if (this.toxicologyCalciumChannelBlockerRecognitionAtTick !== null) { this.log('warning', 'assessment', `toxicology-calcium-channel-blocker-recognition-refused-${this.currentTick}`, 'The calcium-channel-blocker mixed-shock pattern and single-cue boundary were already recognized.'); break; } this.toxicologyCalciumChannelBlockerRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-calcium-channel-blocker-pattern-recognized-${this.currentTick}`, 'Declared exposure, bradycardia, complete AV block, hypotension, impaired mentation, hyperglycemia, reduced contractility, and low vascular tone form an authored calcium-channel-blocker mixed-shock pattern. One glucose, pulse, interval, or history statement alone neither diagnoses nor grades the case, and pacing alone does not restore poisoned myocardial or vascular function.', { calciumChannelBlockerShockPatternRecognized: true, glucoseUsedAlone: false, pulseUsedAlone: false, pacingTreatedAsDefinitive: false, diagnosisMadeByLearner: false }); break; }
+        if (this.toxicologyCalciumChannelBlockerRecognitionAtTick === null) { this.log('warning', 'assessment', `toxicology-calcium-channel-blocker-recognition-order-refused-${this.currentTick}`, 'Recognize the whole calcium-channel-blocker mixed-shock pattern before support or evidence review.'); break; }
+        if (response === actions[2]) { if (this.toxicologyCalciumChannelBlockerSupportAtTick !== null) { this.log('warning', 'assessment', `toxicology-calcium-channel-blocker-support-refused-${this.currentTick}`, 'Qualified toxicology, resuscitation, cardiac, metabolic, airway, and safety ownership are already active.'); break; } this.toxicologyCalciumChannelBlockerSupportAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-calcium-channel-blocker-support-activated-${this.currentTick}`, 'Poison-center or medical-toxicology, emergency, critical-care, nursing, pharmacy, cardiac, metabolic, airway-capable, continuous rhythm and perfusion monitoring, and compassionate safety ownership were recorded. The learner selected no fluid, drug, dose, route, access, airway, pacing, or procedure.', { qualifiedSupportActive: true, safetyOwnershipActive: true, treatmentSelectedByLearner: false }); break; }
+        if (this.toxicologyCalciumChannelBlockerSupportAtTick === null) { this.log('warning', 'assessment', `toxicology-calcium-channel-blocker-support-order-refused-${this.currentTick}`, 'Activate qualified toxicology, resuscitation, cardiac, metabolic, airway, and safety ownership before evidence review.'); break; }
+        if (response === actions[3]) { if (this.toxicologyCalciumChannelBlockerEvidenceAtTick !== null) { this.log('warning', 'assessment', `toxicology-calcium-channel-blocker-evidence-refused-${this.currentTick}`, 'The supplied ECG, perfusion, contractility, metabolic, prior-care, prolonged-release, and rescue boundary was already reviewed.'); break; } this.toxicologyCalciumChannelBlockerEvidenceAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-calcium-channel-blocker-evidence-reviewed-${this.currentTick}`, 'Supplied complete AV block, atrial rate 78, ventricular rate 34, QRS 104, BP 68/36, globally reduced LV contraction, low vascular tone, glucose 238, pH 7.29, bicarbonate 18, lactate 4.6, sodium 137, potassium 4.1, creatinine 1.0, persistent shock after reported protocol-selected atropine and initial vasopressor care, prolonged-release risk, coingestion limits, phenotype, and rescue boundary were integrated. The learner acquired, calculated, interpreted, selected, delivered, diagnosed, or determined no eligibility.', { ecgCardiacAndLaboratoryEvidenceAuthored: true, priorCareAuthored: true, prolongedAbsorptionRiskAuthored: true, ecgInterpretedByLearner: false, rescueEligibilityDetermined: false }); break; }
+        if (this.toxicologyCalciumChannelBlockerEvidenceAtTick === null) { this.log('warning', 'assessment', `toxicology-calcium-channel-blocker-evidence-order-refused-${this.currentTick}`, 'Review supplied ECG, perfusion, contractility, glucose, electrolyte, prior-care, and prolonged-release evidence before qualified intent.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.toxicologyCalciumChannelBlockerEvidenceAtTick) { this.log('warning', 'assessment', `toxicology-calcium-channel-blocker-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before qualified rescue intent and strict later review.'); break; } if (this.toxicologyCalciumChannelBlockerReassessmentAtTick !== null) { this.log('warning', 'assessment', `toxicology-calcium-channel-blocker-reassessment-refused-${this.currentTick}`, 'Qualified rescue intent with the strict later report was already reviewed.'); break; } this.toxicologyCalciumChannelBlockerReassessmentAtTick = this.currentTick; this.rhythm = 'sinus'; this.log('critical', 'assessment', `toxicology-calcium-channel-blocker-intent-and-reassessment-recorded-${this.currentTick}`, 'Qualified-team vasopressor, calcium, high-dose-insulin/euglycemia, protocolized glucose-potassium-volume surveillance, and refractory-rescue preparedness were recorded without product, concentration, dose, rate, target, access, fluid, airway, pacing, decontamination, lipid, methylene blue, ECLS, or delivery. Strict 45-minute report: clearer mentation, sinus rhythm 64/min, BP 96/58 (MAP 71), glucose 176, potassium 3.4, lactate 3.0, and no new hypoxemia or pulmonary edema. This does not prove individualized treatment effect, durable perfusion, completed absorption, glucose or electrolyte stability, coingestant exclusion, disposition, or outcome.', { qualifiedVasopressorIntentRecorded: true, qualifiedCalciumIntentRecorded: true, qualifiedInsulinEuglycemiaIntentRecorded: true, qualifiedRescuePreparednessRecorded: true, treatmentDeliveredByLearner: false, rescueSelectedByLearner: false, treatmentEffectProven: false }); break; }
+        if (this.toxicologyCalciumChannelBlockerReassessmentAtTick === null) { this.log('warning', 'assessment', `toxicology-calcium-channel-blocker-handoff-order-refused-${this.currentTick}`, 'Record bounded qualified rescue intent and review the strict later report before handoff.'); break; }
+        if (this.currentTick <= this.toxicologyCalciumChannelBlockerReassessmentAtTick) { this.log('warning', 'assessment', `toxicology-calcium-channel-blocker-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off recurrent calcium-channel-blocker shock, conduction, and metabolic risk.'); break; }
+        if (this.toxicologyCalciumChannelBlockerHandoffAtTick !== null) { this.log('warning', 'assessment', `toxicology-calcium-channel-blocker-handoff-refused-${this.currentTick}`, 'The recurrent shock, AV-block, glucose, electrolyte, volume, absorption, rescue, and active-risk handoff was already recorded.'); break; }
+        this.toxicologyCalciumChannelBlockerHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-calcium-channel-blocker-active-risk-handoff-recorded-${this.currentTick}`, 'Serial perfusion, rhythm and conduction, CNS state, glucose, potassium, acid-base, lactate, volume, prolonged absorption, coingestion, recurrent shock, airway and rescue contingencies, compassionate safety, disposition, prognosis, and outcome uncertainty were handed off.', { durablePerfusionStabilityProven: false, absorptionComplete: false, glucoseStabilityProven: false, electrolyteStabilityProven: false, coingestionExcluded: false, rescueEligibilityDetermined: false, safetyDispositionDetermined: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -13030,6 +13075,14 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: 18, spo2Percent: 97, systolicMmHg: this.toxicologyBetaBlockerReassessmentAtTick !== null ? 98 : 72,
         diastolicMmHg: this.toxicologyBetaBlockerReassessmentAtTick !== null ? 60 : 40,
         meanArterialMmHg: this.toxicologyBetaBlockerReassessmentAtTick !== null ? 73 : 51, coreTemperatureC: 36.5 };
+    }
+    if (this.scenario.metadata.id === 'calcium-channel-blocker-shock'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'calcium-channel-blocker-shock-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'calcium-channel-blocker-shock-transition-boundary')) {
+      crisisState = { ...crisisState, heartRateBpm: this.toxicologyCalciumChannelBlockerReassessmentAtTick !== null ? 64 : 34,
+        respiratoryRateBpm: 18, spo2Percent: 97, systolicMmHg: this.toxicologyCalciumChannelBlockerReassessmentAtTick !== null ? 96 : 68,
+        diastolicMmHg: this.toxicologyCalciumChannelBlockerReassessmentAtTick !== null ? 58 : 36,
+        meanArterialMmHg: this.toxicologyCalciumChannelBlockerReassessmentAtTick !== null ? 71 : 47, coreTemperatureC: 36.3 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -16691,6 +16744,30 @@ export class AnesthesiaEngine {
               doseSelectedByLearner: false as const, routeSelectedByLearner: false as const, airwaySelectedByLearner: false as const,
               ventilationSelectedByLearner: false as const, pacingSelectedByLearner: false as const, dialysisSelectedByLearner: false as const,
               rescueSelectedByLearner: false as const, treatmentDeliveredByLearner: false as const, durablePerfusionStabilityProven: false as const,
+              glucoseStabilityProven: false as const, electrolyteStabilityProven: false as const, coingestionExcluded: false as const,
+              rescueEligibilityDetermined: false as const, treatmentEffectProven: false as const, safetyDispositionDetermined: false as const,
+              dispositionDetermined: false as const, prognosisPredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'calcium-channel-blocker-shock'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'calcium-channel-blocker-shock-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'calcium-channel-blocker-shock-transition-boundary') ? {
+            toxicologyCalciumChannelBlockerAssessment: {
+              trajectoryAtTick: this.toxicologyCalciumChannelBlockerTrajectoryAtTick, recognitionAtTick: this.toxicologyCalciumChannelBlockerRecognitionAtTick,
+              supportAtTick: this.toxicologyCalciumChannelBlockerSupportAtTick, evidenceAtTick: this.toxicologyCalciumChannelBlockerEvidenceAtTick,
+              reassessmentAtTick: this.toxicologyCalciumChannelBlockerReassessmentAtTick, handoffAtTick: this.toxicologyCalciumChannelBlockerHandoffAtTick,
+              exposurePerfusionConductionAndMetabolicPatternAuthored: true as const, calciumChannelBlockerShockPatternRecognized: this.toxicologyCalciumChannelBlockerRecognitionAtTick !== null,
+              qualifiedSupportActive: this.toxicologyCalciumChannelBlockerSupportAtTick !== null, ecgCardiacMetabolicPriorCareAndAbsorptionEvidenceReviewed: this.toxicologyCalciumChannelBlockerEvidenceAtTick !== null,
+              qualifiedVasopressorIntentRecorded: this.toxicologyCalciumChannelBlockerReassessmentAtTick !== null, qualifiedCalciumIntentRecorded: this.toxicologyCalciumChannelBlockerReassessmentAtTick !== null,
+              qualifiedInsulinEuglycemiaIntentRecorded: this.toxicologyCalciumChannelBlockerReassessmentAtTick !== null, qualifiedRescuePreparednessRecorded: this.toxicologyCalciumChannelBlockerReassessmentAtTick !== null,
+              responseStateAuthored: this.toxicologyCalciumChannelBlockerReassessmentAtTick !== null,
+              patientHistoryTakenByLearner: false as const, patientExaminedByLearner: false as const, monitoringAcquiredByLearner: false as const,
+              ecgAcquiredByLearner: false as const, ecgInterpretedByLearner: false as const, cardiacImagingAcquiredByLearner: false as const,
+              bloodSampleAcquiredByLearner: false as const, diagnosisMadeByLearner: false as const, decontaminationSelectedByLearner: false as const,
+              glucoseOrElectrolyteSelectedByLearner: false as const, fluidSelectedByLearner: false as const, drugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const, routeSelectedByLearner: false as const, airwaySelectedByLearner: false as const,
+              ventilationSelectedByLearner: false as const, pacingSelectedByLearner: false as const, rescueSelectedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const, durablePerfusionStabilityProven: false as const, absorptionComplete: false as const,
               glucoseStabilityProven: false as const, electrolyteStabilityProven: false as const, coingestionExcluded: false as const,
               rescueEligibilityDetermined: false as const, treatmentEffectProven: false as const, safetyDispositionDetermined: false as const,
               dispositionDetermined: false as const, prognosisPredicted: false as const, outcomePredicted: false as const,

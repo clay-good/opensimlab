@@ -11,6 +11,7 @@ import { ACETAMINOPHEN_CLOCK_AND_NOMOGRAM } from '../../src/modules/toxicology/s
 import { SALICYLATE_FALLING_NUMBER } from '../../src/modules/toxicology/scenarios/salicylate-falling-number';
 import { TRICYCLIC_SODIUM_CHANNEL_CARDIOTOXICITY } from '../../src/modules/toxicology/scenarios/tricyclic-sodium-channel-cardiotoxicity';
 import { BETA_BLOCKER_CARDIOGENIC_SHOCK } from '../../src/modules/toxicology/scenarios/beta-blocker-cardiogenic-shock';
+import { CALCIUM_CHANNEL_BLOCKER_SHOCK } from '../../src/modules/toxicology/scenarios/calcium-channel-blocker-shock';
 
 describe('Toxicology module user-facing foundation', () => {
   const cockpitMarkup = (
@@ -48,6 +49,7 @@ describe('Toxicology module user-facing foundation', () => {
     onToxicologySalicylateResponse: () => {},
     onToxicologyTricyclicResponse: () => {},
     onToxicologyBetaBlockerResponse: () => {},
+    onToxicologyCalciumChannelBlockerResponse: () => {},
   } satisfies ActionCockpitProps));
 
   it('renders a calm module index with shared navigation and the exact first lab', () => {
@@ -66,6 +68,8 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('Tricyclic toxicity: read the whole electrical pattern');
     expect(markup).toContain('href="/toxicology/scenario/beta-blocker-cardiogenic-shock"');
     expect(markup).toContain('Beta-blocker toxicity: perfusion is more than pulse rate');
+    expect(markup).toContain('href="/toxicology/scenario/calcium-channel-blocker-shock"');
+    expect(markup).toContain('Calcium-channel blocker toxicity: read the glucose with the shock');
   });
 
   it('briefs the bounded poisoning rehearsal without dose or diagnostic claims', () => {
@@ -209,6 +213,27 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('A slow pulse can hide a failing pump.');
     expect(markup).toContain('Connect pulse + perfusion');
     expect(markup).not.toMatch(/units\/kg|mg\/kg|mL\/kg|pacing rate|dialysis threshold|ECLS/i);
+    expect(markup).not.toContain('<input');
+    expect(markup).not.toContain('<select');
+  });
+
+  it('prerenders and opens the calcium-channel-blocker lab on its calm pattern-first tray', () => {
+    const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/calcium-channel-blocker-shock' }));
+    expect(page).toContain('<h1>Calcium-channel blocker toxicity: read the glucose with the shock</h1>');
+    expect(page).toContain('glucose- or pulse-only closure');
+    expect(crisisResponseAvailability(CALCIUM_CHANNEL_BLOCKER_SHOCK, []))
+      .toMatchObject({ hasToxicologyCalciumChannelBlockerResponse: true });
+    expect(crisisResponseAvailability({ ...CALCIUM_CHANNEL_BLOCKER_SHOCK,
+      metadata: { ...CALCIUM_CHANNEL_BLOCKER_SHOCK.metadata, id: 'calcium-channel-blocker-clone' } }, []))
+      .toMatchObject({ hasToxicologyCalciumChannelBlockerResponse: false });
+    const markup = cockpitMarkup(CALCIUM_CHANNEL_BLOCKER_SHOCK, {
+      toxicologyCalciumChannelBlockerAssessment: { trajectoryAtTick: null, recognitionAtTick: null,
+        supportAtTick: null, evidenceAtTick: null, reassessmentAtTick: null, handoffAtTick: null },
+    });
+    expect(markup).toContain('CCB shock');
+    expect(markup).toContain('The high glucose belongs beside the slow rhythm.');
+    expect(markup).toContain('Connect rhythm + glucose');
+    expect(markup).not.toMatch(/units\/kg|mg\/kg|mL\/kg|pacing rate|decontamination window|ECLS/i);
     expect(markup).not.toContain('<input');
     expect(markup).not.toContain('<select');
   });

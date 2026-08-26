@@ -120,6 +120,15 @@ toxicology and resuscitation ownership, bounded vasopressor, glucagon, high-dose
 and refractory-rescue intent, strict elapsed perfusion and metabolic reassessment, and recurrence
 handoff. It exposes no learner ECG or imaging interpretation, glucose or electrolyte prescription,
 drug, dose, rate, target, pacing, dialysis, lipid, ECLS, procedure, disposition, or outcome control.
+Its seventh lab, calcium-channel blocker toxicity where glucose belongs beside the shock, couples a
+witnessed extended-release diltiazem exposure with bradycardia, complete AV block, mixed cardiogenic
+and vasodilatory shock, impaired mentation, hyperglycemia, supplied conduction, contractility and
+vascular-tone evidence, reported initial-care nonresponse, qualified toxicology and resuscitation
+ownership, bounded vasopressor, calcium, high-dose-insulin/euglycemia and refractory-rescue intent,
+strict elapsed perfusion, rhythm and metabolic reassessment, and prolonged-absorption handoff. It
+exposes no learner ECG or imaging interpretation, glucose or electrolyte prescription, drug, dose,
+rate, target, pacing, decontamination, lipid, methylene blue, ECLS, procedure, disposition, or outcome
+control.
 
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage

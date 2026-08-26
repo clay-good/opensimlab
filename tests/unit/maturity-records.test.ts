@@ -125,6 +125,9 @@ describe('exact-version maturity records', () => {
       toxicologyCatalog, 'scenario', 'beta-blocker-cardiogenic-shock', '0.1.0',
     )?.status).toBe('draft');
     expect(maturityFor(
+      toxicologyCatalog, 'scenario', 'calcium-channel-blocker-shock', '0.1.0',
+    )?.status).toBe('draft');
+    expect(maturityFor(
       criticalCareCatalog, 'scenario', 'ventilator-dyssynchrony', '0.1.0',
     )?.status).toBe('draft');
     expect(maturityFor(

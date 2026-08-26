@@ -4343,6 +4343,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use the complete verified product and formulation, serial rhythm, perfusion, contractility, CNS, glucose, electrolyte, acid-base, volume, renal, coingestion, prior-care, and response trajectory under qualified toxicology and resuscitation ownership.',
     briefIn: ['beta-blocker-cardiogenic-shock'],
   },
+  {
+    id: 'calcium-channel-blocker-exposure-perfusion-metabolic-prior-care-transition-and-response-are-authored',
+    headline: 'The exposure, mixed shock and metabolic pattern, prior care, and later response are authored.',
+    simplification: 'Fixed reports and canonical monitor states stand in for history, examination, exposure verification, ECG, cardiac-function and laboratory acquisition and interpretation, qualified resuscitation, and reassessment.',
+    whereItMisleads: 'Treating the fictional pulse, pressure, AV block, contractility, vascular tone, glucose, prior-care response, or later improvement as learner evidence, a universal diagnostic threshold, treatment effect, completed absorption, durable stability, or predicted course.',
+    correctUnderstanding: 'Real care requires direct serial perfusion, rhythm, neurological, glucose, electrolyte, acid-base, volume, and organ assessment with poison-center or medical-toxicology and resuscitation-team ownership.',
+    briefIn: ['calcium-channel-blocker-shock'],
+  },
+  {
+    id: 'calcium-channel-blocker-controls-reconcile-recognize-support-review-intent-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, pattern recognition, qualified ownership, evidence review, bounded rescue intent, reassessment, and handoff only.',
+    simplification: 'Six actions stand in for emergency, toxicology, critical-care, nursing, pharmacy, cardiac, metabolic, airway, perfusion, rescue, safety, surveillance, and handoff work.',
+    whereItMisleads: 'Equating button order with history, examination, ECG or imaging interpretation, diagnosis, prescribing, glucose or electrolyte management, pacing, decontamination, rescue eligibility or delivery, disposition, or competence.',
+    correctUnderstanding: 'Actual care requires trained teams, continuous verified cardiac and perfusion surveillance, protocolized glucose, potassium and volume monitoring, current local protocols, individualized treatment, and reassessment through the prolonged-release risk window.',
+    briefIn: ['calcium-channel-blocker-shock'],
+  },
+  {
+    id: 'no-live-calcium-channel-blocker-diagnosis-treatment-pacing-decontamination-rescue-or-outcome',
+    headline: 'The lab does not diagnose poisoning, prescribe treatment, pace, decontaminate, perform rescue, or report outcome.',
+    simplification: 'No live history, examination, monitoring, ECG, cardiac imaging, blood gas, chemistry or another test, diagnosis, decontamination, glucose, electrolyte, fluid, vasopressor, calcium, insulin, dose, rate, target, route, access, infusion, airway, ventilation, pacing, lipid, methylene blue, ECLS, transport, procedure, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Using one pulse, interval, glucose value, or exposure statement alone; copying fictional values into care; treating pacing as perfusion rescue; selecting a product, dose, decontamination, or extracorporeal rescue from this rehearsal; attributing the fixed response; or reading completion as competence.',
+    correctUnderstanding: 'Use the complete verified product and formulation, serial rhythm, perfusion, contractility, vascular tone, CNS, glucose, electrolyte, acid-base, volume, renal, coingestion, prior-care, absorption, and response trajectory under qualified toxicology and resuscitation ownership.',
+    briefIn: ['calcium-channel-blocker-shock'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

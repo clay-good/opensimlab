@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 242,
+  "sourceCount": 243,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -2993,8 +2993,8 @@
       "title": "2023 American Heart Association Focused Update on the Management of Patients With Cardiac Arrest or Life-Threatening Toxicity Due to Poisoning",
       "publication": "Circulation",
       "year": 2023,
-      "locator": "148:e149-e184; doi:10.1161/CIR.0000000000001161; methemoglobinemia, sodium-channel-blocker, and beta-blocker recommendations",
-      "usedFor": "Acquired methemoglobinemia treatment; tricyclic sodium-channel cardiotoxicity; and beta-blocker shock recognition, vasopressor, glucagon, high-dose-insulin/euglycemia, surveillance, and refractory-rescue boundaries.",
+      "locator": "148:e149-e184; doi:10.1161/CIR.0000000000001161; methemoglobinemia, sodium-channel-blocker, beta-blocker, and calcium-channel-blocker recommendations",
+      "usedFor": "Acquired methemoglobinemia treatment; tricyclic sodium-channel cardiotoxicity; beta-blocker shock recognition and rescue boundaries; and calcium-channel-blocker shock recognition, vasopressor, calcium, high-dose-insulin/euglycemia, surveillance, and refractory-rescue boundaries.",
       "verifiedAgainst": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-and-pediatric-special-circumstances-of-resuscitation",
       "verifiedOn": "2026-08-26"
     },
@@ -3153,6 +3153,21 @@
       "locator": "Set ID 809c6386-0039-42ff-a03e-e42733e229b8; Overdosage section",
       "usedFor": "Severe bradycardia, hypotension, cardiogenic shock, AV block, heart failure, bronchospasm, hypoxia, impaired consciousness, resistance to adrenergic resuscitation, and limited metoprolol dialyzability.",
       "verifiedAgainst": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=809c6386-0039-42ff-a03e-e42733e229b8",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "dailymed-diltiazem-extended-release-2023",
+      "currency": {
+        "lastAmended": "2023-04-26",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "US National Library of Medicine, DailyMed",
+      "title": "Diltiazem hydrochloride extended-release capsules prescribing information",
+      "publication": "DailyMed",
+      "year": 2023,
+      "locator": "Set ID 11b43a17-8038-462b-8902-259431ad5256; Overdosage section",
+      "usedFor": "Extended-release exposure, bradycardia, hypotension, heart block, cardiac failure, supportive resuscitation context, and limited diltiazem dialyzability.",
+      "verifiedAgainst": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=11b43a17-8038-462b-8902-259431ad5256",
       "verifiedOn": "2026-08-26"
     }
   ]

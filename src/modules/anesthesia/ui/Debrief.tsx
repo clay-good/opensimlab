@@ -5469,6 +5469,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-toxicology-calcium-channel-blocker-product-formulation-clock-perfusion-rhythm-glucose-and-whole-patient',
+      'recognize-toxicology-calcium-channel-blocker-mixed-shock-pattern-without-glucose-or-pulse-only-closure',
+      'activate-toxicology-calcium-channel-blocker-poison-center-resuscitation-cardiac-metabolic-airway-and-safety-ownership',
+      'review-toxicology-calcium-channel-blocker-supplied-ecg-perfusion-contractility-glucose-electrolyte-prior-care-and-rescue-boundary',
+      'record-toxicology-calcium-channel-blocker-bounded-qualified-vasopressor-calcium-insulin-euglycemia-and-rescue-intent-with-strict-later-review',
+      'handoff-toxicology-calcium-channel-blocker-recurrent-shock-av-block-hyperglycemia-electrolyte-volume-rescue-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'calcium-channel-blocker-shock'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'calcium-channel-blocker-shock-transition')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'calcium-channel-blocker-shock-transition-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Toxicology calcium-channel-blocker lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'Product, formulation, clock, perfusion, rhythm, glucose, supplied ECG, oxygenation, and whole-patient state were reconciled.'],
+        ['pattern-recognized', 'The calcium-channel-blocker mixed-shock pattern was recognized without glucose-only, pulse-only, pacing-only, or diagnostic closure.'],
+        ['support-activated', 'Toxicology, resuscitation, cardiac, metabolic, airway, monitoring, and compassionate safety ownership were activated.'],
+        ['evidence-reviewed', 'Supplied ECG, perfusion, contractility, vascular tone, glucose, electrolyte, prior-care, prolonged-release, coingestion, and rescue evidence were reviewed without learner interpretation or delivery.'],
+        ['intent-and-reassessment-recorded', 'Bounded qualified vasopressor, calcium, insulin/euglycemia, surveillance, and rescue intent plus the elapsed fixed report were recorded without dosing, delivery, eligibility, causal, or durable-safety claims.'],
+        ['active-risk-handoff-recorded', 'Serial shock, conduction, glucose, potassium, volume, prolonged absorption, coingestion, recurrence, rescue, safety, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^toxicology-calcium-channel-blocker-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^toxicology-calcium-channel-blocker-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-af-rvr-rhythm-and-stability', 'review-af-rvr-context-and-triggers',
       'record-af-rvr-rate-control-intent', 'record-af-rvr-stroke-prevention-intent',
       'reassess-af-rvr-trajectory-and-follow-up'].includes(objective.id)) {

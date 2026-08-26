@@ -279,6 +279,14 @@ Recorded here rather than silently carried:
   in current AHA guidance and product labeling, not a toxicokinetic, receptor, contractility,
   metabolic, vasopressor, glucagon, insulin/euglycemia, pacing, dialysis, refractory-rescue, or
   individualized-response model.
+  Calcium-channel-blocker mixed shock uses fixed canonical presentation and elapsed-response states:
+  HR 34/min, BP 68/36 mmHg, complete AV block with atrial rate 78/min and ventricular escape 34/min,
+  glucose 238 mg/dL, globally reduced LV contraction, low vascular tone, pH 7.29, lactate 4.6 mmol/L
+  and potassium 4.1 mmol/L, then sinus rhythm 64/min, BP 96/58 mmHg, glucose 176 mg/dL, lactate
+  3.0 mmol/L and potassium 3.4 mmol/L. These are teaching calibrations grounded in current AHA
+  guidance and product labeling, not a toxicokinetic, ion-channel, conduction, contractility,
+  vascular, metabolic, vasopressor, calcium, insulin/euglycemia, pacing, decontamination,
+  refractory-rescue, or individualized-response model.
 
 ## Concentration-time checks, 2026-08-23
 

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "toxicology",
-  "recordCount": 6,
+  "recordCount": 7,
   "records": [
     {
       "recordId": "scenario:methemoglobinemia-saturation-gap@0.1.0",
@@ -67,6 +67,17 @@
       "evidence": [
         "/catalog/toxicology-completion-audit.json#beta-blocker-cardiogenic-shock@0.1.0",
         "/catalog/toxicology-quality-audit.json#beta-blocker-cardiogenic-shock@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:calcium-channel-blocker-shock@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "calcium-channel-blocker-shock",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/toxicology-completion-audit.json#calcium-channel-blocker-shock@0.1.0",
+        "/catalog/toxicology-quality-audit.json#calcium-channel-blocker-shock@0.1.0"
       ]
     }
   ]

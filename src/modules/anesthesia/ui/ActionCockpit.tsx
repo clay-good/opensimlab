@@ -1205,6 +1205,11 @@ export interface ActionCockpitProps {
       readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly toxicologyCalciumChannelBlockerAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2081,6 +2086,14 @@ export interface ActionCockpitProps {
       | 'record-toxicology-beta-blocker-bounded-qualified-vasopressor-glucagon-insulin-euglycemia-and-rescue-intent-with-strict-later-review'
       | 'handoff-toxicology-beta-blocker-recurrent-shock-bradycardia-hypoglycemia-electrolyte-volume-rescue-and-active-risk',
   ) => void;
+  readonly onToxicologyCalciumChannelBlockerResponse?: (
+    action: 'reconcile-toxicology-calcium-channel-blocker-product-formulation-clock-perfusion-rhythm-glucose-and-whole-patient'
+      | 'recognize-toxicology-calcium-channel-blocker-mixed-shock-pattern-without-glucose-or-pulse-only-closure'
+      | 'activate-toxicology-calcium-channel-blocker-poison-center-resuscitation-cardiac-metabolic-airway-and-safety-ownership'
+      | 'review-toxicology-calcium-channel-blocker-supplied-ecg-perfusion-contractility-glucose-electrolyte-prior-care-and-rescue-boundary'
+      | 'record-toxicology-calcium-channel-blocker-bounded-qualified-vasopressor-calcium-insulin-euglycemia-and-rescue-intent-with-strict-later-review'
+      | 'handoff-toxicology-calcium-channel-blocker-recurrent-shock-av-block-hyperglycemia-electrolyte-volume-rescue-and-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2602,6 +2615,10 @@ export function crisisResponseAvailability(
       scenario.metadata.id === 'beta-blocker-cardiogenic-shock'
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'beta-blocker-cardiogenic-shock-transition')
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'beta-blocker-cardiogenic-shock-transition-boundary'),
+    hasToxicologyCalciumChannelBlockerResponse:
+      scenario.metadata.id === 'calcium-channel-blocker-shock'
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'calcium-channel-blocker-shock-transition')
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'calcium-channel-blocker-shock-transition-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2807,6 +2824,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'salicylate-falling-number-transition')
       || (event.type === 'narrative' && event.target === 'tricyclic-sodium-channel-cardiotoxicity-transition')
       || (event.type === 'narrative' && event.target === 'beta-blocker-cardiogenic-shock-transition')
+      || (event.type === 'narrative' && event.target === 'calcium-channel-blocker-shock-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2900,6 +2918,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasToxicologySalicylateResponse,
     hasToxicologyTricyclicResponse,
     hasToxicologyBetaBlockerResponse,
+    hasToxicologyCalciumChannelBlockerResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3020,8 +3039,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasToxicologySalicylateResponse
     || hasToxicologyTricyclicResponse
     || hasToxicologyBetaBlockerResponse
+    || hasToxicologyCalciumChannelBlockerResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasToxicologyBetaBlockerResponse
+  const responseTray = hasToxicologyCalciumChannelBlockerResponse
+    ? { id: 'crisis', label: 'CCB shock' } as const
+    : hasToxicologyBetaBlockerResponse
     ? { id: 'crisis', label: 'Beta-blocker shock' } as const
     : hasToxicologyTricyclicResponse
     ? { id: 'crisis', label: 'Electrical toxicity' } as const
@@ -4200,6 +4222,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasToxicologyBetaBlockerResponse && (
               <ToxicologyBetaBlockerTray assessment={props.resuscitation.toxicologyBetaBlockerAssessment}
                 onAction={props.onToxicologyBetaBlockerResponse ?? (() => {})} />
+            )}
+            {hasToxicologyCalciumChannelBlockerResponse && (
+              <ToxicologyCalciumChannelBlockerTray assessment={props.resuscitation.toxicologyCalciumChannelBlockerAssessment}
+                onAction={props.onToxicologyCalciumChannelBlockerResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -10709,6 +10735,38 @@ function ToxicologyBetaBlockerTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-beta-blocker-bounded-qualified-vasopressor-glucagon-insulin-euglycemia-and-rescue-intent-with-strict-later-review')}>Record rescue intent + reassess</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-beta-blocker-recurrent-shock-bradycardia-hypoglycemia-electrolyte-volume-rescue-and-active-risk')}>Hand off what can recur</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function ToxicologyCalciumChannelBlockerTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyCalciumChannelBlockerAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onToxicologyCalciumChannelBlockerResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const evidence = assessment?.evidenceAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="toxicology-calcium-channel-blocker-early-title">
+      <div id="toxicology-calcium-channel-blocker-early-title" className="syringe__name">The high glucose belongs beside the slow rhythm.</div>
+      <p className="syringe__remaining">Begin with product, formulation, clock, perfusion, conduction, glucose, and whole person.</p>
+      <div className="crisis-drug__actions">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-toxicology-calcium-channel-blocker-product-formulation-clock-perfusion-rhythm-glucose-and-whole-patient')}>Connect rhythm + glucose</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-toxicology-calcium-channel-blocker-mixed-shock-pattern-without-glucose-or-pulse-only-closure')}>Recognize mixed shock</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-toxicology-calcium-channel-blocker-poison-center-resuscitation-cardiac-metabolic-airway-and-safety-ownership')}>Build the rescue circle</Button>}
+        {support && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-toxicology-calcium-channel-blocker-supplied-ecg-perfusion-contractility-glucose-electrolyte-prior-care-and-rescue-boundary')}>Review pump + vessels</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="toxicology-calcium-channel-blocker-later-title">
+      <div id="toxicology-calcium-channel-blocker-later-title" className="syringe__name">Extended release means the clock keeps mattering.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Shock, conduction, glucose, potassium, volume, absorption, rescue, safety, and outcome uncertainty handed off.' : reassessment ? 'The fixed perfusion, rhythm, mental-state, and metabolic report improved. Durable stability and completed absorption remain unproven.' : evidence ? 'Perfusion, conduction, contractility, vascular tone, glucose, electrolytes, prior care, and prolonged absorption stay coupled. Record qualified intent after time passes.' : support ? 'Qualified toxicology, resuscitation, cardiac, metabolic, airway, and safety ownership are active. Review the supplied evidence.' : 'Complete whole-pattern recognition and rescue ownership before treatment-boundary review.'}</p>
+      <div className="crisis-drug__actions">
+        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-calcium-channel-blocker-bounded-qualified-vasopressor-calcium-insulin-euglycemia-and-rescue-intent-with-strict-later-review')}>Record rescue intent + reassess</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-calcium-channel-blocker-recurrent-shock-av-block-hyperglycemia-electrolyte-volume-rescue-and-active-risk')}>Hand off delayed risk</Button>}
       </div>
     </section>
   </>;

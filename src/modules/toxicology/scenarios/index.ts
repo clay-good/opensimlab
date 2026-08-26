@@ -5,6 +5,7 @@ import { METHEMOGLOBINEMIA_SATURATION_GAP } from './methemoglobinemia-saturation
 import { SALICYLATE_FALLING_NUMBER } from './salicylate-falling-number';
 import { TRICYCLIC_SODIUM_CHANNEL_CARDIOTOXICITY } from './tricyclic-sodium-channel-cardiotoxicity';
 import { BETA_BLOCKER_CARDIOGENIC_SHOCK } from './beta-blocker-cardiogenic-shock';
+import { CALCIUM_CHANNEL_BLOCKER_SHOCK } from './calcium-channel-blocker-shock';
 
 export const TOXICOLOGY_SCENARIOS: readonly Scenario[] = [
   METHEMOGLOBINEMIA_SATURATION_GAP,
@@ -13,6 +14,7 @@ export const TOXICOLOGY_SCENARIOS: readonly Scenario[] = [
   SALICYLATE_FALLING_NUMBER,
   TRICYCLIC_SODIUM_CHANNEL_CARDIOTOXICITY,
   BETA_BLOCKER_CARDIOGENIC_SHOCK,
+  CALCIUM_CHANNEL_BLOCKER_SHOCK,
 ];
 export const DEFAULT_TOXICOLOGY_SCENARIO_ID = METHEMOGLOBINEMIA_SATURATION_GAP.metadata.id;
 
