@@ -1034,6 +1034,9 @@ export function Cockpit({
           onNeurologyAsahDeteriorationResponse={(action) => session.act({
             type: 'aneurysmal-subarachnoid-hemorrhage-deterioration-response', payload: { action },
           })}
+          onNeurologyFocalMotorStatusResponse={(action) => session.act({
+            type: 'focal-motor-status-epilepticus-escalation-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

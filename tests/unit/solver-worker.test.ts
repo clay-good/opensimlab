@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Neurology aneurysmal-SAH state has protocol version 136', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(136);
+  it('Scenario: Neurology focal-motor-status state has protocol version 137', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(137);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

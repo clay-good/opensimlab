@@ -322,6 +322,17 @@ const NEUROLOGY_ASAH_BLOCKED_ACTION_TYPES = new Set([
   'critical-care-status-epilepticus-response', 'hyponatremia-response',
   'glycemic-response', 'acute-aortic-syndrome-response',
 ]);
+const NEUROLOGY_FOCAL_MOTOR_STATUS_BLOCKED_ACTION_TYPES = new Set([
+  ...HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES,
+  'status-epilepticus-response', 'critical-care-status-epilepticus-response',
+  'pediatric-status-epilepticus-response', 'pediatric-hypoglycemic-seizure-response',
+  'hyponatremia-response', 'glycemic-response', 'intracranial-hypertension-response',
+  'acute-ischemic-stroke-response', 'intracranial-hemorrhage-response',
+  'minor-nondisabling-acute-ischemic-stroke-response',
+  'basilar-artery-occlusion-escalation-response',
+  'spontaneous-cerebellar-intracerebral-hemorrhage-response',
+  'aneurysmal-subarachnoid-hemorrhage-deterioration-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1093,6 +1104,12 @@ export class AnesthesiaEngine {
   private neurologyAsahOwnershipAtTick: number | null = null;
   private neurologyAsahLaterAtTick: number | null = null;
   private neurologyAsahHandoffAtTick: number | null = null;
+  private neurologyFocalMotorStatusTrajectoryAtTick: number | null = null;
+  private neurologyFocalMotorStatusRecognitionAtTick: number | null = null;
+  private neurologyFocalMotorStatusOwnershipAtTick: number | null = null;
+  private neurologyFocalMotorStatusSafetyAtTick: number | null = null;
+  private neurologyFocalMotorStatusLaterAtTick: number | null = null;
+  private neurologyFocalMotorStatusHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1712,6 +1729,21 @@ export class AnesthesiaEngine {
         + 'seizure, drug, dose, route, imaging, airway, device, drainage, angiography, angioplasty, '
         + 'procedure, ICH, ICP, stroke, or adjacent-scenario action. Nothing changed.',
         { actionType: action.type });
+      return;
+    }
+    const neurologyFocalMotorStatus = this.scenario.metadata.id
+      === 'focal-motor-status-epilepticus-escalation'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'focal-motor-status-epilepticus-escalation-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'focal-motor-status-epilepticus-escalation-reassessment-boundary');
+    if (neurologyFocalMotorStatus
+      && NEUROLOGY_FOCAL_MOTOR_STATUS_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment',
+        `neurology-focal-motor-status-generic-action-refused-${this.currentTick}`,
+        'This Neurology lesson exposes no generic seizure drug, dose, route, access, oxygen, '
+        + 'airway, monitoring, EEG, imaging, laboratory, procedure, adult ED, pediatric, ICU, '
+        + 'or adjacent-scenario action. Nothing changed.', { actionType: action.type });
       return;
     }
     switch (action.type) {
@@ -8806,6 +8838,130 @@ export class AnesthesiaEngine {
             prognosisPredicted: false, outcomePredicted: false });
         break;
       }
+      case 'focal-motor-status-epilepticus-escalation-response': {
+        const response = typeof action.payload.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'focal-motor-status-epilepticus-escalation'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'focal-motor-status-epilepticus-escalation-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'focal-motor-status-epilepticus-escalation-reassessment-boundary');
+        const actions = [
+          'reconcile-neurology-focal-motor-status-clock-semiology-recovery-and-whole-patient',
+          'recognize-neurology-focal-motor-status-despite-reduced-convulsions',
+          'activate-neurology-focal-motor-status-qualified-seizure-and-airway-ownership',
+          'review-neurology-focal-motor-status-airway-glucose-causes-and-injury-boundary',
+          'review-neurology-focal-motor-status-strict-later-visible-motor-trajectory',
+          'handoff-neurology-focal-motor-status-recovery-cause-and-active-risk',
+        ] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) {
+          this.log('warning', 'assessment',
+            `neurology-focal-motor-status-response-refused-${this.currentTick}`,
+            supported ? 'The focal-motor-status action was not listed. No supplied or injected text was retained.'
+              : 'These focal-motor-status choices are available only in the exact declared Neurology lesson.');
+          break;
+        }
+        if (response === actions[0]) {
+          if (this.neurologyFocalMotorStatusTrajectoryAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-focal-motor-status-trajectory-refused-${this.currentTick}`, 'The supplied clock, semiology, recovery, and whole-patient state were already reconciled.');
+            break;
+          }
+          this.neurologyFocalMotorStatusTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-focal-motor-status-trajectory-reconciled-${this.currentTick}`,
+            'The supplied record describes one 18-minute evolving event: bilateral convulsions became less dramatic after qualified initial rescue care, while stereotyped left face and arm clonus and absent meaningful recovery continue. The learner did not time, examine, monitor, test, diagnose, or treat the patient.',
+            { evolvingEventAuthored: true, overtFocalClonusAuthored: true,
+              meaningfulRecoveryAbsentAuthored: true, patientExaminedByLearner: false,
+              seizureTimedByLearner: false, treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.neurologyFocalMotorStatusTrajectoryAtTick === null) {
+          this.log('warning', 'assessment', `neurology-focal-motor-status-trajectory-order-refused-${this.currentTick}`, 'Reconcile the supplied clock, motor evolution, recovery, and whole patient first.');
+          break;
+        }
+        if (response === actions[1]) {
+          if (this.neurologyFocalMotorStatusRecognitionAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-focal-motor-status-recognition-refused-${this.currentTick}`, 'Overt focal motor status was already recognized.');
+            break;
+          }
+          this.neurologyFocalMotorStatusRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-focal-motor-status-recognized-${this.currentTick}`,
+            'Continuing visible stereotyped focal clonus within this unmistakably prolonged evolving event is not seizure resolution. Recognition does not set a universal focal-status clock, infer an EEG state, or diagnose status from impaired recovery alone.',
+            { focalMotorStatusRecognized: true, universalFocalStatusClockClaimed: false,
+              eegStateInferred: false, nonconvulsiveStatusDiagnosedByLearner: false });
+          break;
+        }
+        if (this.neurologyFocalMotorStatusRecognitionAtTick === null) {
+          this.log('warning', 'assessment', `neurology-focal-motor-status-recognition-order-refused-${this.currentTick}`, 'Recognize continuing overt focal motor status before activating ownership.');
+          break;
+        }
+        if (response === actions[2]) {
+          if (this.neurologyFocalMotorStatusOwnershipAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-focal-motor-status-ownership-refused-${this.currentTick}`, 'Qualified seizure, resuscitation, and airway-capable ownership is already active.');
+            break;
+          }
+          this.neurologyFocalMotorStatusOwnershipAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-focal-motor-status-qualified-ownership-activated-${this.currentTick}`,
+            'Qualified neurology, resuscitation, nursing, pharmacy, and airway-capable teams now own individualized seizure care and escalation. The learner selected no medicine, dose, route, access, oxygen, airway device, EEG, procedure, or treatment.',
+            { qualifiedSeizureOwnershipActive: true, qualifiedAirwayOwnershipActive: true,
+              drugSelectedByLearner: false, airwayDeviceSelectedByLearner: false,
+              treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.neurologyFocalMotorStatusOwnershipAtTick === null) {
+          this.log('warning', 'assessment', `neurology-focal-motor-status-ownership-order-refused-${this.currentTick}`, 'Activate qualified seizure and airway-capable ownership before the safety review.');
+          break;
+        }
+        if (response === actions[3]) {
+          if (this.neurologyFocalMotorStatusSafetyAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-focal-motor-status-safety-refused-${this.currentTick}`, 'Airway, glucose, cause, injury-risk, and escalation boundaries were already reviewed.');
+            break;
+          }
+          this.neurologyFocalMotorStatusSafetyAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-focal-motor-status-safety-and-causes-reviewed-${this.currentTick}`,
+            'Supplied breathing, pulse, perfusion, oxygenation, and glucose snapshots were integrated while structural, vascular, infectious, immune, toxic, metabolic, medication-related, epilepsy-related, and nonepileptic causes remain open. No monitoring, test, treatment, cause exclusion, or injury determination was performed.',
+            { safetyReviewRecorded: true, causeProven: false, injuryProven: false,
+              monitoringAcquiredByLearner: false, glucoseAcquiredByLearner: false });
+          break;
+        }
+        if (this.neurologyFocalMotorStatusSafetyAtTick === null) {
+          this.log('warning', 'assessment', `neurology-focal-motor-status-safety-order-refused-${this.currentTick}`, 'Complete the airway, glucose, cause, and injury-risk review before later reassessment.');
+          break;
+        }
+        if (response === actions[4]) {
+          if (this.currentTick <= this.neurologyFocalMotorStatusSafetyAtTick) {
+            this.log('warning', 'assessment', `neurology-focal-motor-status-later-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before reviewing the fixed minute-26 motor report.');
+            break;
+          }
+          if (this.neurologyFocalMotorStatusLaterAtTick !== null) {
+            this.log('warning', 'assessment', `neurology-focal-motor-status-later-refused-${this.currentTick}`, 'The fixed later visible-motor trajectory was already reviewed.');
+            break;
+          }
+          this.neurologyFocalMotorStatusLaterAtTick = this.currentTick;
+          this.log('critical', 'assessment', `neurology-focal-motor-status-later-motor-trajectory-reviewed-${this.currentTick}`,
+            'At fixed minute 26, visible left face and arm clonus continues without meaningful recovery. Breathing, pulse, and warm perfusion persist. Cause, treatment effect, injury, electrographic state, seizure control, and outcome remain unresolved.',
+            { laterVisibleClonusAuthored: true, movementCessationProven: false,
+              electrographicControlProven: false, treatmentEffectProven: false });
+          break;
+        }
+        if (this.neurologyFocalMotorStatusLaterAtTick === null) {
+          this.log('warning', 'assessment', `neurology-focal-motor-status-later-order-refused-${this.currentTick}`, 'Review the fixed later visible-motor trajectory before handoff.');
+          break;
+        }
+        if (this.currentTick <= this.neurologyFocalMotorStatusLaterAtTick) {
+          this.log('warning', 'assessment', `neurology-focal-motor-status-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off active focal-motor-status risk.');
+          break;
+        }
+        if (this.neurologyFocalMotorStatusHandoffAtTick !== null) {
+          this.log('warning', 'assessment', `neurology-focal-motor-status-handoff-refused-${this.currentTick}`, 'The active seizure, recovery, cause, and risk handoff was already recorded.');
+          break;
+        }
+        this.neurologyFocalMotorStatusHandoffAtTick = this.currentTick;
+        this.log('critical', 'assessment', `neurology-focal-motor-status-active-risk-handoff-recorded-${this.currentTick}`,
+          'The evolving motor pattern, active visible seizure, absent meaningful recovery, airway and systemic risk, open causes, qualified owners, rescue choice, EEG need, recurrence, disposition, prognosis, and outcome uncertainty were handed off. No seizure cessation, electrographic control, treatment effect, recovery, or outcome is claimed.',
+          { movementCessationProven: false, electrographicControlProven: false,
+            treatmentEffectProven: false, durableNeurologicRecoveryProven: false,
+            dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false });
+        break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -11907,6 +12063,21 @@ export class AnesthesiaEngine {
         meanArterialMmHg: later ? 104 : 101,
         coreTemperatureC: later ? 37.2 : 37.1 };
     }
+    if (this.scenario.metadata.id === 'focal-motor-status-epilepticus-escalation'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'focal-motor-status-epilepticus-escalation-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'focal-motor-status-epilepticus-escalation-reassessment-boundary')) {
+      const later = this.neurologyFocalMotorStatusLaterAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: later ? 122 : 118,
+        respiratoryRateBpm: later ? 23 : 22,
+        spo2Percent: later ? 95 : 96,
+        systolicMmHg: later ? 128 : 132,
+        diastolicMmHg: later ? 78 : 80,
+        meanArterialMmHg: later ? 95 : 97,
+        coreTemperatureC: later ? 37.3 : 37.2 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -14499,6 +14670,60 @@ export class AnesthesiaEngine {
               durableNeurologicRecoveryProven: false as const,
               durableAirwayProtectionProven: false as const,
               dischargeReadinessProven: false as const,
+              dispositionDetermined: false as const,
+              prognosisPredicted: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'focal-motor-status-epilepticus-escalation'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'focal-motor-status-epilepticus-escalation-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'focal-motor-status-epilepticus-escalation-reassessment-boundary') ? {
+            neurologyFocalMotorStatusAssessment: {
+              trajectoryAtTick: this.neurologyFocalMotorStatusTrajectoryAtTick,
+              recognitionAtTick: this.neurologyFocalMotorStatusRecognitionAtTick,
+              ownershipAtTick: this.neurologyFocalMotorStatusOwnershipAtTick,
+              safetyAtTick: this.neurologyFocalMotorStatusSafetyAtTick,
+              laterAtTick: this.neurologyFocalMotorStatusLaterAtTick,
+              handoffAtTick: this.neurologyFocalMotorStatusHandoffAtTick,
+              initialPulsePresent: true as const,
+              spontaneousBreathingAuthored: true as const,
+              overtFocalClonusAuthored: true as const,
+              meaningfulRecoveryAbsentAuthored: true as const,
+              qualifiedInitialRescueCareAuthored: true as const,
+              focalMotorStatusRecognized: this.neurologyFocalMotorStatusRecognitionAtTick !== null,
+              qualifiedSeizureOwnershipActive: this.neurologyFocalMotorStatusOwnershipAtTick !== null,
+              qualifiedAirwayOwnershipActive: this.neurologyFocalMotorStatusOwnershipAtTick !== null,
+              laterVisibleClonusAuthored: this.neurologyFocalMotorStatusLaterAtTick !== null,
+              patientHistoryTakenByLearner: false as const,
+              patientExaminedByLearner: false as const,
+              seizureTimedByLearner: false as const,
+              monitoringAcquiredByLearner: false as const,
+              glucoseAcquiredByLearner: false as const,
+              eegAcquiredByLearner: false as const,
+              eegInterpretedByLearner: false as const,
+              imagingAcquiredByLearner: false as const,
+              laboratoryTestAcquiredByLearner: false as const,
+              diagnosisMadeByLearner: false as const,
+              drugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const,
+              routeSelectedByLearner: false as const,
+              accessPlacedByLearner: false as const,
+              medicationDeliveredByLearner: false as const,
+              oxygenSelectedByLearner: false as const,
+              airwayDeviceSelectedByLearner: false as const,
+              airwayProcedurePerformedByLearner: false as const,
+              procedureSelectedByLearner: false as const,
+              procedurePerformedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              nonconvulsiveStatusDiagnosedByLearner: false as const,
+              causeProven: false as const,
+              movementCessationProven: false as const,
+              electrographicControlProven: false as const,
+              treatmentEffectProven: false as const,
+              durableNeurologicRecoveryProven: false as const,
+              durableAirwayProtectionProven: false as const,
               dispositionDetermined: false as const,
               prognosisPredicted: false as const,
               outcomePredicted: false as const,

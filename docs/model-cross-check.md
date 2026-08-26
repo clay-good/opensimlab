@@ -185,6 +185,11 @@ Recorded here rather than silently carried:
   does not validate DCI, vasospasm, rebleeding, hydrocephalus, infarction or seizure physiology,
   examination, scoring, imaging or EEG interpretation, hemodynamic or airway management,
   angiography, endovascular care, treatment effect, etiology, disposition, prognosis, or outcome.
+  Focal motor status epilepticus escalation overlays a fixed evolving visible motor pattern, absent
+  meaningful recovery, physiology, glucose, qualified prior care, multidisciplinary ownership, and a
+  strict-later persistent-clonus report on the healthy adult scaffold; it does not validate seizure
+  generation, semiology assessment, a universal focal-status clock, airway safety, EEG state,
+  medication or procedure effects, injury, cause, recovery, disposition, prognosis, or outcome.
 
 ## Concentration-time checks, 2026-08-23
 

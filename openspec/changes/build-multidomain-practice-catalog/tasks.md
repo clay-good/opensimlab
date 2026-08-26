@@ -411,6 +411,16 @@ credited toward the catalog until every item in the completion contract passes.
     diagnosis, drug, dose, route, fluid, pressure target, oxygen, airway device, angiography,
     endovascular treatment, procedure, transfer, treatment, disposition, prognosis, treatment-effect,
     or outcome controls.
+  - [x] Neurology slice 5/15 adds one authored 58-year-old 18-minute evolving focal-to-bilateral
+    seizure whose bilateral movements become less dramatic after supplied qualified initial rescue
+    care while overt left face and arm clonus and absent meaningful recovery persist, requiring
+    focal-motor-status recognition, qualified seizure, resuscitation, and airway-capable ownership,
+    parallel whole-patient safety and open-cause review, a strict minute-26 visible-motor report, and
+    another elapsed active-risk handoff without learner history, examination, seizure timing,
+    monitoring, glucose acquisition, EEG, imaging or laboratory acquisition or interpretation,
+    diagnosis, drug, dose, route, access, oxygen, airway device, infusion, anesthetic, procedure,
+    treatment, movement cessation, electrographic control, disposition, prognosis, or outcome
+    controls.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.

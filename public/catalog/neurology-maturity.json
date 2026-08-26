@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "neurology",
-  "recordCount": 4,
+  "recordCount": 5,
   "records": [
     {
       "recordId": "scenario:minor-nondisabling-acute-ischemic-stroke@0.1.0",
@@ -45,6 +45,17 @@
       "evidence": [
         "/catalog/neurology-completion-audit.json#aneurysmal-subarachnoid-hemorrhage-deterioration@0.1.0",
         "/catalog/neurology-quality-audit.json#aneurysmal-subarachnoid-hemorrhage-deterioration@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:focal-motor-status-epilepticus-escalation@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "focal-motor-status-epilepticus-escalation",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/neurology-completion-audit.json#focal-motor-status-epilepticus-escalation@0.1.0",
+        "/catalog/neurology-quality-audit.json#focal-motor-status-epilepticus-escalation@0.1.0"
       ]
     }
   ]

@@ -2733,6 +2733,27 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/20798370/',
     verifiedOn: '2026-08-26',
   },
+  {
+    id: 'ilae-status-definition-classification-2015', pmid: '26336950',
+    authors: 'Trinka E, Cock H, Hesdorffer D, et al',
+    title: 'A definition and classification of status epilepticus — Report of the ILAE Task Force on Classification of Status Epilepticus',
+    publication: 'Epilepsia', year: 2015,
+    locator: '56:1515-1523; doi:10.1111/epi.13121; operational definition, semiology axis, and incomplete seizure-type timing evidence',
+    usedFor: 'The status framework, current focal-motor terminology, evolving-semiology recognition, and explicit avoidance of inventing one universal focal-motor-status clock.',
+    verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/26336950/',
+    verifiedOn: '2026-08-26',
+  },
+  {
+    id: 'acep-adult-seizure-clinical-policy-2024', pmid: '38906639',
+    currency: { lastAmended: '2024-04-17', checkedAt: '2026-08-26' },
+    authors: 'Smith MD, Sampson CS, Wall SP, et al',
+    title: 'Clinical Policy: Critical Issues in the Management of Adult Patients Presenting to the Emergency Department With Seizures',
+    publication: 'Annals of Emergency Medicine', year: 2024,
+    locator: '84:e1-e6; doi:10.1016/j.annemergmed.2024.02.018; scope, recommendation, and visually apparent focal-or-generalized seizure-activity definition',
+    usedFor: 'The adult seizure-care context and boundary that continuing clinically apparent focal movement remains seizure activity, while preserving the policy’s generalized-convulsive treatment scope and exposing no learner medication choice.',
+    verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/38906639/',
+    verifiedOn: '2026-08-26',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

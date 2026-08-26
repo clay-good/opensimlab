@@ -3935,6 +3935,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified serial findings, current aSAH guidance, qualified multidisciplinary teams, locally available capabilities, patient-specific diagnosis and rescue decisions, and repeated surveillance without confusing research definitions with bedside delay.',
     briefIn: ['aneurysmal-subarachnoid-hemorrhage-deterioration'],
   },
+  {
+    id: 'focal-motor-status-clock-semiology-care-and-later-state-are-authored',
+    headline: 'The clock, visible motor evolution, recovery, physiology, prior care, and later trajectory are authored.',
+    simplification: 'Fixed qualified reports stand in for witness history, seizure timing and semiology, examination, monitoring, glucose testing, initial rescue care, airway and cause review, escalation, and serial reassessment.',
+    whereItMisleads: 'Treating the fictional clock, visible clonus, absent recovery, negative snapshots, prior-care record, later persistence, or named ownership as learner-acquired evidence, treatment response, universal timing rule, diagnosis, injury, or predicted course.',
+    correctUnderstanding: 'Real care requires immediate direct assessment, verified patient-specific data, qualified seizure and airway-capable teams, continuous monitoring and reassessment, and locally governed individualized treatment.',
+    briefIn: ['focal-motor-status-epilepticus-escalation'],
+  },
+  {
+    id: 'focal-motor-status-controls-reconcile-recognize-activate-review-reassess-and-handoff-only',
+    headline: 'The controls record trajectory reconciliation, status recognition, qualified ownership, safety review, later motor review, and handoff only.',
+    simplification: 'Six accepted actions stand in for experienced neurological, emergency, resuscitation, airway, nursing, pharmacy, laboratory, imaging, and EEG assessment, treatment, escalation, and handoff.',
+    whereItMisleads: 'Equating button order with history, examination, seizure timing, monitoring, testing, diagnosis, medication, airway management, EEG interpretation, procedure, team performance, disposition, or seizure-care competence.',
+    correctUnderstanding: 'Actual care requires the patient, trained teams, current local pathways, verified findings, individualized treatment, continuous airway and systemic support, and change-triggered reassessment.',
+    briefIn: ['focal-motor-status-epilepticus-escalation'],
+  },
+  {
+    id: 'no-live-seizure-exam-monitor-test-eeg-drug-dose-airway-procedure-disposition-or-outcome',
+    headline: 'The lab does not examine, monitor, test, interpret EEG, prescribe, manage an airway, perform a procedure, or report outcome.',
+    simplification: 'No live history, examination, seizure timing, glucose or vital acquisition, monitoring, imaging, laboratory or EEG acquisition or interpretation, diagnosis, medicine, dose, route, access, oxygen, airway device, ventilation, infusion, anesthetic, procedure, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Treating reduced movement as seizure resolution, diagnosing nonconvulsive status from impaired recovery alone, inventing a universal focal-status clock, treating fixed negatives as exclusions, copying fictional values into care, or using completion as clinical competence.',
+    correctUnderstanding: 'Use direct verified findings, qualified seizure and airway-capable teams, current guidance and local protocols, appropriate monitoring and tests, individualized rescue decisions, and continuous reassessment.',
+    briefIn: ['focal-motor-status-epilepticus-escalation'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

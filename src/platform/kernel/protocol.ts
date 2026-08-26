@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 136 reports Neurology aneurysmal-SAH deterioration state. */
-export const WORKER_PROTOCOL_VERSION = 136;
+/** Bumped whenever the message shape changes incompatibly. Version 137 reports Neurology focal-motor-status state. */
+export const WORKER_PROTOCOL_VERSION = 137;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1875,6 +1875,54 @@ export interface EquipmentSnapshot {
       readonly durableNeurologicRecoveryProven: false;
       readonly durableAirwayProtectionProven: false;
       readonly dischargeReadinessProven: false;
+      readonly dispositionDetermined: false;
+      readonly prognosisPredicted: false;
+      readonly outcomePredicted: false;
+    };
+    readonly neurologyFocalMotorStatusAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly recognitionAtTick: number | null;
+      readonly ownershipAtTick: number | null;
+      readonly safetyAtTick: number | null;
+      readonly laterAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true;
+      readonly spontaneousBreathingAuthored: true;
+      readonly overtFocalClonusAuthored: true;
+      readonly meaningfulRecoveryAbsentAuthored: true;
+      readonly qualifiedInitialRescueCareAuthored: true;
+      readonly focalMotorStatusRecognized: boolean;
+      readonly qualifiedSeizureOwnershipActive: boolean;
+      readonly qualifiedAirwayOwnershipActive: boolean;
+      readonly laterVisibleClonusAuthored: boolean;
+      readonly patientHistoryTakenByLearner: false;
+      readonly patientExaminedByLearner: false;
+      readonly seizureTimedByLearner: false;
+      readonly monitoringAcquiredByLearner: false;
+      readonly glucoseAcquiredByLearner: false;
+      readonly eegAcquiredByLearner: false;
+      readonly eegInterpretedByLearner: false;
+      readonly imagingAcquiredByLearner: false;
+      readonly laboratoryTestAcquiredByLearner: false;
+      readonly diagnosisMadeByLearner: false;
+      readonly drugSelectedByLearner: false;
+      readonly doseSelectedByLearner: false;
+      readonly routeSelectedByLearner: false;
+      readonly accessPlacedByLearner: false;
+      readonly medicationDeliveredByLearner: false;
+      readonly oxygenSelectedByLearner: false;
+      readonly airwayDeviceSelectedByLearner: false;
+      readonly airwayProcedurePerformedByLearner: false;
+      readonly procedureSelectedByLearner: false;
+      readonly procedurePerformedByLearner: false;
+      readonly treatmentDeliveredByLearner: false;
+      readonly nonconvulsiveStatusDiagnosedByLearner: false;
+      readonly causeProven: false;
+      readonly movementCessationProven: false;
+      readonly electrographicControlProven: false;
+      readonly treatmentEffectProven: false;
+      readonly durableNeurologicRecoveryProven: false;
+      readonly durableAirwayProtectionProven: false;
       readonly dispositionDetermined: false;
       readonly prognosisPredicted: false;
       readonly outcomePredicted: false;

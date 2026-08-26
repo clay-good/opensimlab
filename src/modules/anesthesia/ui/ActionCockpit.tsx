@@ -1120,6 +1120,11 @@ export interface ActionCockpitProps {
       readonly boundaryAtTick: number | null; readonly ownershipAtTick: number | null;
       readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly neurologyFocalMotorStatusAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly ownershipAtTick: number | null; readonly safetyAtTick: number | null;
+      readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1860,6 +1865,14 @@ export interface ActionCockpitProps {
       | 'review-neurology-asah-strict-later-neurologic-and-perfusion-trajectory'
       | 'handoff-neurology-asah-dci-aneurysm-recurrence-and-active-risk',
   ) => void;
+  readonly onNeurologyFocalMotorStatusResponse?: (
+    action: 'reconcile-neurology-focal-motor-status-clock-semiology-recovery-and-whole-patient'
+      | 'recognize-neurology-focal-motor-status-despite-reduced-convulsions'
+      | 'activate-neurology-focal-motor-status-qualified-seizure-and-airway-ownership'
+      | 'review-neurology-focal-motor-status-airway-glucose-causes-and-injury-boundary'
+      | 'review-neurology-focal-motor-status-strict-later-visible-motor-trajectory'
+      | 'handoff-neurology-focal-motor-status-recovery-cause-and-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2295,6 +2308,12 @@ export function crisisResponseAvailability(
         && event.target === 'aneurysmal-subarachnoid-hemorrhage-deterioration-reassessment')
       && scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'aneurysmal-subarachnoid-hemorrhage-deterioration-reassessment-boundary'),
+    hasNeurologyFocalMotorStatusResponse:
+      scenario.metadata.id === 'focal-motor-status-epilepticus-escalation'
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'focal-motor-status-epilepticus-escalation-reassessment')
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'focal-motor-status-epilepticus-escalation-reassessment-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2474,6 +2493,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'spontaneous-cerebellar-intracerebral-hemorrhage-reassessment')
       || (event.type === 'narrative'
         && event.target === 'aneurysmal-subarachnoid-hemorrhage-deterioration-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'focal-motor-status-epilepticus-escalation-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2550,6 +2571,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeurologyBasilarLvoResponse,
     hasNeurologyCerebellarIchResponse,
     hasNeurologyAsahDeteriorationResponse,
+    hasNeurologyFocalMotorStatusResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2629,7 +2651,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPediatricSupraventricularTachycardiaResponse || hasPediatricBradycardicArrestResponse
     || hasPediatricForeignBodyAirwayObstructionResponse || hasPediatricInjurySafeguardingResponse
     || hasNeurologyMinorStrokeResponse || hasNeurologyBasilarLvoResponse
-    || hasNeurologyCerebellarIchResponse || hasNeurologyAsahDeteriorationResponse;
+    || hasNeurologyCerebellarIchResponse || hasNeurologyAsahDeteriorationResponse
+    || hasNeurologyFocalMotorStatusResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2660,7 +2683,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasNeurologyAsahDeteriorationResponse
+  const responseTray = hasNeurologyFocalMotorStatusResponse
+    ? { id: 'crisis', label: 'Focal motor status reassessment' } as const
+    : hasNeurologyAsahDeteriorationResponse
     ? { id: 'crisis', label: 'aSAH deterioration reassessment' } as const
     : hasNeurologyCerebellarIchResponse
     ? { id: 'crisis', label: 'Cerebellar ICH reassessment' } as const
@@ -2965,6 +2990,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeurologyBasilarLvoResponse
     || hasNeurologyCerebellarIchResponse
     || hasNeurologyAsahDeteriorationResponse
+    || hasNeurologyFocalMotorStatusResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3711,6 +3737,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <NeurologyAsahDeteriorationTray
                 assessment={props.resuscitation.neurologyAsahAssessment}
                 onAction={props.onNeurologyAsahDeteriorationResponse ?? (() => {})} />
+            )}
+            {hasNeurologyFocalMotorStatusResponse && (
+              <NeurologyFocalMotorStatusTray
+                assessment={props.resuscitation.neurologyFocalMotorStatusAssessment}
+                onAction={props.onNeurologyFocalMotorStatusResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -9657,6 +9688,42 @@ function NeurologyAsahDeteriorationTray({ assessment, onAction }: {
         {ownership && !later && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-asah-strict-later-neurologic-and-perfusion-trajectory')}>Review the later neurologic report</Button>}
         {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-asah-dci-aneurysm-recurrence-and-active-risk')}>Hand off deficit + open risk</Button>}
       </div>
+    </section>
+  </div>;
+}
+
+function NeurologyFocalMotorStatusTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyFocalMotorStatusAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNeurologyFocalMotorStatusResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const ownership = assessment?.ownershipAtTick != null;
+  const safety = assessment?.safetyAtTick != null;
+  const later = assessment?.laterAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="neurology-focal-motor-status-pattern-title">
+      <div id="neurology-focal-motor-status-pattern-title" className="syringe__name">Less movement is not over.</div>
+      <div className="syringe__meta">58 years · 18-minute evolving seizure · left face + arm clonus · no recovery</div>
+      <p className="syringe__remaining">{safety ? 'Whole-patient safety and open causes reviewed.' : ownership ? 'Qualified ownership is active · complete the safety review' : recognition ? 'Overt focal motor status recognized · activate qualified ownership' : trajectory ? 'The motor pattern evolved; visible seizure activity continues.' : 'Begin with the clock, motor evolution, recovery, and whole patient.'}</p>
+      <div className="syringe__presets">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neurology-focal-motor-status-clock-semiology-recovery-and-whole-patient')}>Review clock + motor evolution</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-neurology-focal-motor-status-despite-reduced-convulsions')}>Recognize focal motor status</Button>}
+        {recognition && !ownership && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-focal-motor-status-qualified-seizure-and-airway-ownership')}>Activate qualified status ownership</Button>}
+        {ownership && !safety && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-focal-motor-status-airway-glucose-causes-and-injury-boundary')}>Review airway + glucose + causes</Button>}
+      </div>
+      <p className="field__hint">Experienced teams own seizure treatment, monitoring, airway support, cause evaluation, and escalation. This lab exposes no learner drug, dose, route, access, oxygen, airway-device, EEG, imaging, laboratory, or procedure control.</p>
+    </section>
+    <section className="syringe" aria-labelledby="neurology-focal-motor-status-trajectory-title">
+      <div id="neurology-focal-motor-status-trajectory-title" className="syringe__name">What is still moving?</div>
+      <div className="syringe__meta">fixed minute-26 report · visible focal clonus persists · cause remains open</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Active visible seizure, open causes, and owners handed off.' : later ? 'Visible focal clonus persists. Recovery, cause, and treatment effect remain open.' : safety ? 'Qualified ownership is active. Review the fixed later motor report.' : 'Complete recognition, ownership, and safety review before reassessment.'}</p>
+      <div className="syringe__presets">
+        {safety && !later && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-focal-motor-status-strict-later-visible-motor-trajectory')}>Review the minute-26 motor report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-focal-motor-status-recovery-cause-and-active-risk')}>Hand off active status + cause risk</Button>}
+      </div>
+      <p className="field__hint">Persistent visible clonus does not supply a cause, EEG state, treatment effect, durable seizure control, recovery, prognosis, or outcome.</p>
     </section>
   </div>;
 }

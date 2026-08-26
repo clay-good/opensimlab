@@ -2077,6 +2077,27 @@ examine; score; acquire or interpret imaging, EEG, or tests; diagnose; select or
 fluid, pressure target, oxygen, airway, angiography, endovascular therapy, device, procedure,
 transfer, or treatment; determine disposition or prognosis; or predict outcome.
 
+### Wave E neurology slice 5: focal motor status epilepticus escalation
+
+The fifth Neurology lab owns the visible focal-motor recognition boundary, not Emergency Medicine's
+initial generalized-convulsive treatment sequence, Pediatrics' second-line escalation, Critical
+Care's refractory electrographic treatment, or the next Neurology lab's nonconvulsive EEG-based
+recognition. A previously independent 58-year-old has one continuous 18-minute evolving event:
+left face and arm clonus progresses to bilateral convulsions, then becomes less dramatic after
+supplied qualified initial rescue care while overt unilateral clonus and absent meaningful recovery
+persist. The long authored event avoids asserting one universal focal-status time point.
+
+The learner reconciles the clock, semiology, recovery, physiology, and whole patient; recognizes
+that less movement is not seizure resolution; activates qualified seizure, resuscitation, and
+airway-capable ownership; and reviews airway, glucose, causes, injury risk, and escalation boundaries.
+A strict fixed minute-26 report preserves visible focal clonus without recovery before another
+elapsed handoff of active seizure, airway, cause, rescue-choice, EEG-need, recurrence, disposition,
+and outcome uncertainty. The lab does not take a history; examine; time a seizure; acquire or
+interpret monitoring, glucose, EEG, imaging, laboratory, or other tests; diagnose a cause or
+nonconvulsive state; select or deliver a drug, dose, route, access, oxygen, airway device, infusion,
+anesthetic, procedure, or treatment; determine movement cessation, electrographic control,
+disposition, or prognosis; or predict outcome.
+
 #### Neurology: 15
 
 Acute ischemic stroke; large-vessel-occlusion escalation; intracranial hemorrhage; subarachnoid

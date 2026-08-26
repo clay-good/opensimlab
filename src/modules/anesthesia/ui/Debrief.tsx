@@ -5046,6 +5046,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-neurology-focal-motor-status-clock-semiology-recovery-and-whole-patient',
+      'recognize-neurology-focal-motor-status-despite-reduced-convulsions',
+      'activate-neurology-focal-motor-status-qualified-seizure-and-airway-ownership',
+      'review-neurology-focal-motor-status-airway-glucose-causes-and-injury-boundary',
+      'review-neurology-focal-motor-status-strict-later-visible-motor-trajectory',
+      'handoff-neurology-focal-motor-status-recovery-cause-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'focal-motor-status-epilepticus-escalation'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'focal-motor-status-epilepticus-escalation-reassessment')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'focal-motor-status-epilepticus-escalation-reassessment-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neurology focal-motor-status lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'The clock, evolving visible motor pattern, recovery, physiology, and whole patient were reconciled.'],
+        ['recognized', 'Overt focal motor status was recognized despite reduced bilateral movement.'],
+        ['qualified-ownership-activated', 'Qualified seizure, resuscitation, and airway-capable ownership was activated.'],
+        ['safety-and-causes-reviewed', 'Airway, glucose, causes, injury risk, and the escalation boundary were reviewed.'],
+        ['later-motor-trajectory-reviewed', 'The elapsed report preserved visible focal clonus and unresolved recovery without an EEG inference.'],
+        ['active-risk-handoff-recorded', 'Active visible seizure, open causes, recovery risk, uncertainty, and owners were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^neurology-focal-motor-status-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^neurology-focal-motor-status-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {
