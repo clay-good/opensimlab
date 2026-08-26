@@ -136,6 +136,14 @@ bounded immune-Fab, rhythm-potassium surveillance and rescue intent, strict elap
 electrolyte reassessment, and assay-aware recurrence handoff. It exposes no learner ECG or level
 interpretation, Fab product or vial calculation, electrolyte prescription, pacing, dialysis,
 cardioversion, antiarrhythmic, procedure, disposition, or outcome control.
+Its ninth lab, cholinergic poisoning where team protection precedes airway rescue, couples a declared
+greenhouse organophosphate splash with wet-clothing secondary-contamination risk, secretions,
+bronchospasm, hypoxemia, bradycardia, vomiting, fasciculations, weakness, CNS change, qualified PPE
+and decontamination ownership, bounded atropine, pralidoxime, seizure, airway and surveillance intent,
+strict elapsed respiratory reassessment, and intermediate-syndrome handoff. It exposes no learner PPE
+selection, clothing removal, washing, cholinesterase interpretation, antidote dose, suction, airway or
+ventilation operation, neuromuscular blocker, seizure treatment, procedure, disposition, workplace
+clearance, or outcome control.
 
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage

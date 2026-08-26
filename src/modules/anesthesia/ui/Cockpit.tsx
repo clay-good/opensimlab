@@ -1091,6 +1091,9 @@ export function Cockpit({
           onToxicologyDigoxinResponse={(action) => session.act({
             type: 'digoxin-rhythm-potassium-response', payload: { action },
           })}
+          onToxicologyCholinergicResponse={(action) => session.act({
+            type: 'cholinergic-pesticide-respiratory-failure-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

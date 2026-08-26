@@ -646,6 +646,22 @@ credited toward the catalog until every item in the completion contract passes.
     interpretation, diagnosis, charcoal, glucose, electrolyte, fluid, Fab, vial count, drug, dose,
     rate, target, route, access, infusion, airway, ventilation, pacing, dialysis, cardioversion,
     antiarrhythmic, procedure, safety disposition, prognosis, or outcome control exists.
+  - [x] Toxicology slice 9/15 adds declared organophosphate cholinergic respiratory failure. The
+    learner reconciles product, dermal and inhalational route, 45-minute clock, wet-clothing
+    secondary-contamination risk, secretions, bronchospasm, hypoxemia, bradycardia, vomiting,
+    fasciculations, weakness, CNS change, supplied respiratory and laboratory evidence; recognizes
+    the coupled muscarinic, nicotinic and CNS pattern without mnemonic-only or cholinesterase-only
+    closure; activates qualified PPE, contamination, decontamination, airway, resuscitation,
+    toxicology, occupational and co-worker ownership; reviews coformulant, seizure, airway and
+    neuromuscular-blocker boundaries; records bounded qualified atropine, organophosphate-specific
+    pralidoxime, benzodiazepine-if-needed, early airway and ventilation, decontamination and
+    surveillance intent; then reviews a strict elapsed fixed respiratory report with persistent
+    weakness before another elapsed recurrence, intermediate-syndrome, secondary-exposure, seizure
+    and active-risk handoff. No learner history, examination, monitoring, blood-gas, cholinesterase
+    or test acquisition or interpretation, diagnosis, PPE selection, clothing removal, irrigation,
+    decontamination, oxygen, suction, fluid, atropine, pralidoxime, benzodiazepine, drug, dose, rate,
+    target, route, access, infusion, airway, ventilation, neuromuscular blocker, procedure, workplace
+    clearance, safety disposition, prognosis, or outcome control exists.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.
 - [ ] After every wave, verify the exact cumulative count, distinctness, capability reuse, path and

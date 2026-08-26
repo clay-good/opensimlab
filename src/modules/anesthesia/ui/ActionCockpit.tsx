@@ -1215,6 +1215,11 @@ export interface ActionCockpitProps {
       readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly toxicologyCholinergicAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly safetyAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2107,6 +2112,14 @@ export interface ActionCockpitProps {
       | 'record-toxicology-digoxin-bounded-qualified-immune-fab-surveillance-and-rescue-intent-with-strict-later-review'
       | 'handoff-toxicology-digoxin-recurrent-arrhythmia-potassium-shift-level-interference-renal-rescue-and-active-risk',
   ) => void;
+  readonly onToxicologyCholinergicResponse?: (
+    action: 'reconcile-toxicology-cholinergic-product-route-secondary-contamination-secretions-breathing-weakness-cns-and-whole-patient'
+      | 'recognize-toxicology-cholinergic-muscarinic-nicotinic-and-cns-pattern-without-mnemonic-or-cholinesterase-only-closure'
+      | 'activate-toxicology-cholinergic-ppe-decontamination-airway-resuscitation-poison-center-and-safety-ownership'
+      | 'review-toxicology-cholinergic-supplied-respiratory-neuromuscular-cns-exposure-cholinesterase-and-airway-boundary'
+      | 'record-toxicology-cholinergic-bounded-qualified-atropine-pralidoxime-benzodiazepine-airway-and-surveillance-intent-with-strict-later-review'
+      | 'handoff-toxicology-cholinergic-recurrent-secretions-bronchospasm-weakness-intermediate-syndrome-exposure-seizure-and-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2636,6 +2649,10 @@ export function crisisResponseAvailability(
       scenario.metadata.id === 'digoxin-rhythm-potassium'
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'digoxin-rhythm-potassium-transition')
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'digoxin-rhythm-potassium-transition-boundary'),
+    hasToxicologyCholinergicResponse:
+      scenario.metadata.id === 'cholinergic-pesticide-respiratory-failure'
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'cholinergic-pesticide-respiratory-failure-transition')
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'cholinergic-pesticide-respiratory-failure-transition-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2843,6 +2860,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'beta-blocker-cardiogenic-shock-transition')
       || (event.type === 'narrative' && event.target === 'calcium-channel-blocker-shock-transition')
       || (event.type === 'narrative' && event.target === 'digoxin-rhythm-potassium-transition')
+      || (event.type === 'narrative' && event.target === 'cholinergic-pesticide-respiratory-failure-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2938,6 +2956,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasToxicologyBetaBlockerResponse,
     hasToxicologyCalciumChannelBlockerResponse,
     hasToxicologyDigoxinResponse,
+    hasToxicologyCholinergicResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3060,8 +3079,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasToxicologyBetaBlockerResponse
     || hasToxicologyCalciumChannelBlockerResponse
     || hasToxicologyDigoxinResponse
+    || hasToxicologyCholinergicResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasToxicologyDigoxinResponse
+  const responseTray = hasToxicologyCholinergicResponse
+    ? { id: 'crisis', label: 'Cholinergic crisis' } as const
+    : hasToxicologyDigoxinResponse
     ? { id: 'crisis', label: 'Digoxin pattern' } as const
     : hasToxicologyCalciumChannelBlockerResponse
     ? { id: 'crisis', label: 'CCB shock' } as const
@@ -4252,6 +4274,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasToxicologyDigoxinResponse && (
               <ToxicologyDigoxinTray assessment={props.resuscitation.toxicologyDigoxinAssessment}
                 onAction={props.onToxicologyDigoxinResponse ?? (() => {})} />
+            )}
+            {hasToxicologyCholinergicResponse && (
+              <ToxicologyCholinergicTray assessment={props.resuscitation.toxicologyCholinergicAssessment}
+                onAction={props.onToxicologyCholinergicResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -10825,6 +10851,38 @@ function ToxicologyDigoxinTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-digoxin-bounded-qualified-immune-fab-surveillance-and-rescue-intent-with-strict-later-review')}>Record Fab intent + reassess</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-digoxin-recurrent-arrhythmia-potassium-shift-level-interference-renal-rescue-and-active-risk')}>Hand off what can recur</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function ToxicologyCholinergicTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyCholinergicAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onToxicologyCholinergicResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const safety = assessment?.safetyAtTick != null;
+  const evidence = assessment?.evidenceAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="toxicology-cholinergic-early-title">
+      <div id="toxicology-cholinergic-early-title" className="syringe__name">Protect the rescuers before the first touch.</div>
+      <p className="syringe__remaining">Begin with exposure route, wet clothing, secretions, breathing, weakness, CNS, and whole person.</p>
+      <div className="crisis-drug__actions">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-toxicology-cholinergic-product-route-secondary-contamination-secretions-breathing-weakness-cns-and-whole-patient')}>Connect exposure + breathing</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-toxicology-cholinergic-muscarinic-nicotinic-and-cns-pattern-without-mnemonic-or-cholinesterase-only-closure')}>Recognize the whole pattern</Button>}
+        {recognition && !safety && <Button className="crisis-drug__action" onClick={() => onAction('activate-toxicology-cholinergic-ppe-decontamination-airway-resuscitation-poison-center-and-safety-ownership')}>Protect patient + team</Button>}
+        {safety && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-toxicology-cholinergic-supplied-respiratory-neuromuscular-cns-exposure-cholinesterase-and-airway-boundary')}>Review lungs + strength</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="toxicology-cholinergic-later-title">
+      <div id="toxicology-cholinergic-later-title" className="syringe__name">Dryer lungs do not prove stronger muscles.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Airway, secretions, bronchospasm, weakness, intermediate syndrome, exposure, seizure, safety, and outcome uncertainty handed off.' : reassessment ? 'Secretions, oxygenation, circulation, and mentation improved while weakness persisted. Durable ventilation and treatment effect remain unproven.' : evidence ? 'Respiratory, neuromuscular, CNS, exposure, contamination, and airway evidence stay coupled. Record qualified intent after time passes.' : safety ? 'PPE, contamination, decontamination, airway, resuscitation, toxicology, occupational, and co-worker ownership are active. Review the supplied evidence.' : 'Complete whole-pattern recognition and team protection before antidote-boundary review.'}</p>
+      <div className="crisis-drug__actions">
+        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-cholinergic-bounded-qualified-atropine-pralidoxime-benzodiazepine-airway-and-surveillance-intent-with-strict-later-review')}>Record rescue intent + reassess</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-cholinergic-recurrent-secretions-bronchospasm-weakness-intermediate-syndrome-exposure-seizure-and-active-risk')}>Hand off what can return</Button>}
       </div>
     </section>
   </>;

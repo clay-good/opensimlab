@@ -295,6 +295,15 @@ Recorded here rather than silently carried:
   level. These are teaching calibrations grounded in current AHA guidance and product labeling, not
   a toxicokinetic, ion-pump, rhythm, potassium, Fab-response, assay, pacing, dialysis, rescue, or
   individualized-response model.
+  Cholinergic pesticide respiratory failure uses fixed canonical presentation and elapsed-response
+  states: HR 48/min, BP 86/50 mmHg, RR 30/min, SpO2 86%, bronchorrhea, bronchospasm, shallow tiring
+  ventilation, fasciculations, proximal weakness, pH 7.27, PCO2 52 mmHg and lactate 3.6 mmol/L,
+  then qualified decontamination plus reported airway support and assisted ventilation without a
+  supplied device or setting, with markedly reduced secretions and
+  wheeze, SpO2 96%, HR 82/min, BP 104/64 mmHg and clearer mentation while weakness persists. These
+  are teaching calibrations grounded in current AHA and EPA guidance, not an exposure,
+  cholinesterase, secretion, respiratory, neuromuscular, antidote-response, decontamination, airway,
+  ventilation, seizure, or individualized-response model.
 
 ## Concentration-time checks, 2026-08-23
 

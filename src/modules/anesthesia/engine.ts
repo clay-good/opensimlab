@@ -412,6 +412,10 @@ const TOXICOLOGY_DIGOXIN_BLOCKED_ACTION_TYPES = new Set([
   ...TOXICOLOGY_CALCIUM_CHANNEL_BLOCKER_BLOCKED_ACTION_TYPES,
   'calcium-channel-blocker-shock-response',
 ]);
+const TOXICOLOGY_CHOLINERGIC_BLOCKED_ACTION_TYPES = new Set([
+  ...TOXICOLOGY_DIGOXIN_BLOCKED_ACTION_TYPES,
+  'digoxin-rhythm-potassium-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1297,6 +1301,12 @@ export class AnesthesiaEngine {
   private toxicologyDigoxinEvidenceAtTick: number | null = null;
   private toxicologyDigoxinReassessmentAtTick: number | null = null;
   private toxicologyDigoxinHandoffAtTick: number | null = null;
+  private toxicologyCholinergicTrajectoryAtTick: number | null = null;
+  private toxicologyCholinergicRecognitionAtTick: number | null = null;
+  private toxicologyCholinergicSafetyAtTick: number | null = null;
+  private toxicologyCholinergicEvidenceAtTick: number | null = null;
+  private toxicologyCholinergicReassessmentAtTick: number | null = null;
+  private toxicologyCholinergicHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2129,6 +2139,15 @@ export class AnesthesiaEngine {
         'This Toxicology lesson exposes no generic examination, monitoring, ECG, digoxin-level, blood-gas or laboratory interpretation, '
         + 'charcoal, glucose, electrolyte, fluid, Fab, drug, vial count, dose, route, access, infusion, airway, ventilation, '
         + 'pacing, dialysis, cardioversion, antiarrhythmic, transport, procedure, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const toxicologyCholinergic = this.scenario.metadata.id === 'cholinergic-pesticide-respiratory-failure'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'cholinergic-pesticide-respiratory-failure-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'cholinergic-pesticide-respiratory-failure-transition-boundary');
+    if (toxicologyCholinergic && TOXICOLOGY_CHOLINERGIC_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `toxicology-cholinergic-generic-action-refused-${this.currentTick}`,
+        'This Toxicology lesson exposes no generic examination, monitoring, blood-gas, cholinesterase or laboratory interpretation, '
+        + 'clothing removal, irrigation, decontamination, oxygen, suction, fluid, atropine, pralidoxime, benzodiazepine, drug, dose, route, '
+        + 'access, infusion, airway, ventilation, neuromuscular blocker, transport, procedure, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -10343,6 +10362,32 @@ export class AnesthesiaEngine {
         if (this.toxicologyDigoxinHandoffAtTick !== null) { this.log('warning', 'assessment', `toxicology-digoxin-handoff-refused-${this.currentTick}`, 'The recurrent arrhythmia, potassium-shift, level-interference, renal, rescue, and active-risk handoff was already recorded.'); break; }
         this.toxicologyDigoxinHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-digoxin-active-risk-handoff-recorded-${this.currentTick}`, 'Serial perfusion, rhythm and conduction, CNS state, potassium and magnesium, acid-base, lactate, renal state, Fab-associated assay interference, coingestion, recurrent toxicity, airway and rescue contingencies, compassionate safety, disposition, prognosis, and outcome uncertainty were handed off.', { durablePerfusionStabilityProven: false, potassiumStabilityProven: false, assayInterferenceResolved: false, coingestionExcluded: false, rescueEligibilityDetermined: false, safetyDispositionDetermined: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
       }
+      case 'cholinergic-pesticide-respiratory-failure-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'cholinergic-pesticide-respiratory-failure'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'cholinergic-pesticide-respiratory-failure-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'cholinergic-pesticide-respiratory-failure-transition-boundary');
+        const actions = ['reconcile-toxicology-cholinergic-product-route-secondary-contamination-secretions-breathing-weakness-cns-and-whole-patient',
+          'recognize-toxicology-cholinergic-muscarinic-nicotinic-and-cns-pattern-without-mnemonic-or-cholinesterase-only-closure',
+          'activate-toxicology-cholinergic-ppe-decontamination-airway-resuscitation-poison-center-and-safety-ownership',
+          'review-toxicology-cholinergic-supplied-respiratory-neuromuscular-cns-exposure-cholinesterase-and-airway-boundary',
+          'record-toxicology-cholinergic-bounded-qualified-atropine-pralidoxime-benzodiazepine-airway-and-surveillance-intent-with-strict-later-review',
+          'handoff-toxicology-cholinergic-recurrent-secretions-bronchospasm-weakness-intermediate-syndrome-exposure-seizure-and-active-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `toxicology-cholinergic-response-refused-${this.currentTick}`, supported ? 'The cholinergic action was not listed. No supplied or injected text was retained.' : 'These cholinergic choices are available only in the exact declared Toxicology lesson.'); break; }
+        if (response === actions[0]) { if (this.toxicologyCholinergicTrajectoryAtTick !== null) { this.log('warning', 'assessment', `toxicology-cholinergic-trajectory-refused-${this.currentTick}`, 'The product, route, contamination, secretions, breathing, weakness, CNS, and whole-patient state were already reconciled.'); break; } this.toxicologyCholinergicTrajectoryAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-cholinergic-trajectory-reconciled-${this.currentTick}`, 'Declared organophosphate exposure, wet clothing, miosis, secretions, bronchospasm, hypoxemia, bradycardia, vomiting, fasciculations, weakness, confusion, and whole-patient state were connected. The learner did not take history, examine, acquire or interpret monitoring or tests, or diagnose.', { exposureAuthored: true, minutesPostExposure: 45, secondaryContaminationRiskAuthored: true, patientHistoryTakenByLearner: false, patientExaminedByLearner: false }); break; }
+        if (this.toxicologyCholinergicTrajectoryAtTick === null) { this.log('warning', 'assessment', `toxicology-cholinergic-trajectory-order-refused-${this.currentTick}`, 'Reconcile product, route, secondary contamination, secretions, breathing, weakness, CNS, and whole patient first.'); break; }
+        if (response === actions[1]) { if (this.toxicologyCholinergicRecognitionAtTick !== null) { this.log('warning', 'assessment', `toxicology-cholinergic-recognition-refused-${this.currentTick}`, 'The coupled muscarinic, nicotinic, and CNS pattern and single-cue boundary were already recognized.'); break; } this.toxicologyCholinergicRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-cholinergic-pattern-recognized-${this.currentTick}`, 'Declared organophosphate exposure, parasympathetic excess, fasciculations and weakness, and altered mentation form an authored cholinergic pattern with respiratory failure. One mnemonic, pupil, pulse, secretion, or cholinesterase result alone neither diagnoses nor grades the case.', { cholinergicPatternRecognized: true, muscarinicPatternRecognized: true, nicotinicPatternRecognized: true, cnsPatternRecognized: true, mnemonicUsedAlone: false, cholinesteraseUsedAlone: false, diagnosisMadeByLearner: false }); break; }
+        if (this.toxicologyCholinergicRecognitionAtTick === null) { this.log('warning', 'assessment', `toxicology-cholinergic-recognition-order-refused-${this.currentTick}`, 'Recognize the coupled muscarinic, nicotinic, and CNS pattern before safety ownership or evidence review.'); break; }
+        if (response === actions[2]) { if (this.toxicologyCholinergicSafetyAtTick !== null) { this.log('warning', 'assessment', `toxicology-cholinergic-safety-refused-${this.currentTick}`, 'Qualified contamination, decontamination, airway, resuscitation, toxicology, occupational, and safety ownership are already active.'); break; } this.toxicologyCholinergicSafetyAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-cholinergic-safety-activated-${this.currentTick}`, 'Appropriate PPE, contamination control, qualified clothing removal and dermal decontamination, emergency, critical-care, nursing, pharmacy, airway, respiratory, poison-center or medical-toxicology, occupational-safety, and co-worker ownership were recorded. The learner selected or performed no PPE item, clothing removal, washing method, airway, drug, dose, route, access, or procedure.', { qualifiedSafetyOwnershipActive: true, qualifiedDecontaminationOwnershipActive: true, qualifiedAirwayOwnershipActive: true, decontaminationPerformedByLearner: false, treatmentSelectedByLearner: false }); break; }
+        if (this.toxicologyCholinergicSafetyAtTick === null) { this.log('warning', 'assessment', `toxicology-cholinergic-safety-order-refused-${this.currentTick}`, 'Activate qualified PPE, contamination, decontamination, airway, resuscitation, toxicology, and safety ownership before evidence review.'); break; }
+        if (response === actions[3]) { if (this.toxicologyCholinergicEvidenceAtTick !== null) { this.log('warning', 'assessment', `toxicology-cholinergic-evidence-refused-${this.currentTick}`, 'The supplied respiratory, neuromuscular, CNS, exposure, cholinesterase, contamination, and airway boundary was already reviewed.'); break; } this.toxicologyCholinergicEvidenceAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-cholinergic-evidence-reviewed-${this.currentTick}`, 'Supplied bronchorrhea, bronchospasm, weak cough, shallow tiring ventilation, SpO2 86%, fasciculations, proximal weakness, confusion, wet-clothing exposure, markedly depressed plasma cholinesterase, pH 7.27, PCO2 52, bicarbonate 23, lactate 3.6, sodium 139, potassium 4.0, glucose 112, creatinine 0.9, coformulant limits, secondary-contamination risk, and early-airway boundary were integrated. The learner acquired, calculated, interpreted, selected, delivered, diagnosed, or determined no eligibility.', { respiratoryNeuromuscularCnsExposureAndLaboratoryEvidenceAuthored: true, cholinesteraseInterpretedByLearner: false, airwayEligibilityDetermined: false }); break; }
+        if (this.toxicologyCholinergicEvidenceAtTick === null) { this.log('warning', 'assessment', `toxicology-cholinergic-evidence-order-refused-${this.currentTick}`, 'Review supplied respiratory, neuromuscular, CNS, exposure, cholinesterase, contamination, and airway evidence before qualified intent.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.toxicologyCholinergicEvidenceAtTick) { this.log('warning', 'assessment', `toxicology-cholinergic-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before qualified antidote, airway, seizure, and surveillance intent and strict later review.'); break; } if (this.toxicologyCholinergicReassessmentAtTick !== null) { this.log('warning', 'assessment', `toxicology-cholinergic-reassessment-refused-${this.currentTick}`, 'Qualified intent with the strict later report was already reviewed.'); break; } this.toxicologyCholinergicReassessmentAtTick = this.currentTick; this.rhythm = 'sinus'; this.log('critical', 'assessment', `toxicology-cholinergic-intent-and-reassessment-recorded-${this.currentTick}`, 'Qualified-team immediate atropine, organophosphate-specific pralidoxime, benzodiazepine-if-needed, early airway and ventilation, decontamination, and serial respiratory-neuromuscular surveillance intent were recorded without product, dose, rate, target, access, technique, device, neuromuscular blocker, or delivery. Strict 30-minute report: qualified clothing removal and dermal decontamination completed; active qualified airway support and assisted ventilation were reported without a supplied device or setting; secretions and wheeze markedly reduced; SpO2 96%, HR 82, BP 104/64 (MAP 77), and mentation clearer; fasciculations and proximal weakness persist. Drying secretions does not prove neuromuscular recovery, complete decontamination, durable ventilation, or treatment effect.', { qualifiedAtropineIntentRecorded: true, qualifiedPralidoximeIntentRecorded: true, qualifiedBenzodiazepineIfNeededIntentRecorded: true, qualifiedAirwayVentilationIntentRecorded: true, qualifiedDecontaminationIntentRecorded: true, secretionsUsedAsNeuromuscularRecoveryProof: false, treatmentDeliveredByLearner: false, treatmentEffectProven: false }); break; }
+        if (this.toxicologyCholinergicReassessmentAtTick === null) { this.log('warning', 'assessment', `toxicology-cholinergic-handoff-order-refused-${this.currentTick}`, 'Record bounded qualified intent and review the strict later report before handoff.'); break; }
+        if (this.currentTick <= this.toxicologyCholinergicReassessmentAtTick) { this.log('warning', 'assessment', `toxicology-cholinergic-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off recurrent respiratory, neuromuscular, CNS, and exposure risk.'); break; }
+        if (this.toxicologyCholinergicHandoffAtTick !== null) { this.log('warning', 'assessment', `toxicology-cholinergic-handoff-refused-${this.currentTick}`, 'The recurrent secretions, bronchospasm, weakness, intermediate-syndrome, exposure, seizure, and active-risk handoff was already recorded.'); break; }
+        this.toxicologyCholinergicHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-cholinergic-active-risk-handoff-recorded-${this.currentTick}`, 'Serial airway and ventilation, secretions, bronchospasm, oxygenation, strength, CNS, seizure, secondary exposure, decontamination, recurrent toxicity, delayed intermediate syndrome, antidote and airway contingencies, occupational and compassionate safety, disposition, prognosis, and outcome uncertainty were handed off.', { durableVentilationProven: false, neuromuscularRecoveryProven: false, decontaminationCompleteProven: false, coWorkerSafetyProven: false, seizureExcluded: false, safetyDispositionDetermined: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -13136,6 +13181,16 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: 18, spo2Percent: 98, systolicMmHg: this.toxicologyDigoxinReassessmentAtTick !== null ? 100 : 76,
         diastolicMmHg: this.toxicologyDigoxinReassessmentAtTick !== null ? 62 : 42,
         meanArterialMmHg: this.toxicologyDigoxinReassessmentAtTick !== null ? 75 : 53, coreTemperatureC: 36.4 };
+    }
+    if (this.scenario.metadata.id === 'cholinergic-pesticide-respiratory-failure'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'cholinergic-pesticide-respiratory-failure-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'cholinergic-pesticide-respiratory-failure-transition-boundary')) {
+      crisisState = { ...crisisState, heartRateBpm: this.toxicologyCholinergicReassessmentAtTick !== null ? 82 : 48,
+        respiratoryRateBpm: this.toxicologyCholinergicReassessmentAtTick !== null ? 18 : 30,
+        spo2Percent: this.toxicologyCholinergicReassessmentAtTick !== null ? 96 : 86,
+        systolicMmHg: this.toxicologyCholinergicReassessmentAtTick !== null ? 104 : 86,
+        diastolicMmHg: this.toxicologyCholinergicReassessmentAtTick !== null ? 64 : 50,
+        meanArterialMmHg: this.toxicologyCholinergicReassessmentAtTick !== null ? 77 : 62, coreTemperatureC: 36.7 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -16846,6 +16901,29 @@ export class AnesthesiaEngine {
               dialysisSelectedByLearner: false as const, rescueSelectedByLearner: false as const, treatmentDeliveredByLearner: false as const,
               durablePerfusionStabilityProven: false as const, potassiumStabilityProven: false as const, assayInterferenceResolved: false as const,
               coingestionExcluded: false as const, antidoteEligibilityDetermined: false as const, rescueEligibilityDetermined: false as const,
+              treatmentEffectProven: false as const, safetyDispositionDetermined: false as const, dispositionDetermined: false as const,
+              prognosisPredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'cholinergic-pesticide-respiratory-failure'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'cholinergic-pesticide-respiratory-failure-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'cholinergic-pesticide-respiratory-failure-transition-boundary') ? {
+            toxicologyCholinergicAssessment: {
+              trajectoryAtTick: this.toxicologyCholinergicTrajectoryAtTick, recognitionAtTick: this.toxicologyCholinergicRecognitionAtTick,
+              safetyAtTick: this.toxicologyCholinergicSafetyAtTick, evidenceAtTick: this.toxicologyCholinergicEvidenceAtTick,
+              reassessmentAtTick: this.toxicologyCholinergicReassessmentAtTick, handoffAtTick: this.toxicologyCholinergicHandoffAtTick,
+              exposureRespiratoryNeuromuscularAndCnsPatternAuthored: true as const, cholinergicPatternRecognized: this.toxicologyCholinergicRecognitionAtTick !== null,
+              qualifiedSafetyOwnershipActive: this.toxicologyCholinergicSafetyAtTick !== null, respiratoryNeuromuscularCnsExposureAndLaboratoryEvidenceReviewed: this.toxicologyCholinergicEvidenceAtTick !== null,
+              qualifiedAtropineIntentRecorded: this.toxicologyCholinergicReassessmentAtTick !== null, qualifiedPralidoximeIntentRecorded: this.toxicologyCholinergicReassessmentAtTick !== null,
+              qualifiedBenzodiazepineIfNeededIntentRecorded: this.toxicologyCholinergicReassessmentAtTick !== null, qualifiedAirwayVentilationIntentRecorded: this.toxicologyCholinergicReassessmentAtTick !== null,
+              qualifiedDecontaminationIntentRecorded: this.toxicologyCholinergicReassessmentAtTick !== null, responseStateAuthored: this.toxicologyCholinergicReassessmentAtTick !== null,
+              patientHistoryTakenByLearner: false as const, patientExaminedByLearner: false as const, monitoringAcquiredByLearner: false as const,
+              bloodSampleAcquiredByLearner: false as const, cholinesteraseInterpretedByLearner: false as const, diagnosisMadeByLearner: false as const,
+              ppeSelectedByLearner: false as const, decontaminationPerformedByLearner: false as const, fluidSelectedByLearner: false as const,
+              drugSelectedByLearner: false as const, doseSelectedByLearner: false as const, routeSelectedByLearner: false as const,
+              airwaySelectedByLearner: false as const, ventilationSelectedByLearner: false as const, neuromuscularBlockerSelectedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const, durableVentilationProven: false as const, neuromuscularRecoveryProven: false as const,
+              decontaminationCompleteProven: false as const, coWorkerSafetyProven: false as const, seizureExcluded: false as const,
               treatmentEffectProven: false as const, safetyDispositionDetermined: false as const, dispositionDetermined: false as const,
               prognosisPredicted: false as const, outcomePredicted: false as const,
             },

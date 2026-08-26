@@ -2427,6 +2427,26 @@ and potassium report precedes another elapsed recurrence, renal, assay-interfere
 handoff. The canonical state is not a toxicokinetic, ion-pump, rhythm, potassium, Fab-response,
 assay, pacing, dialysis, or refractory-rescue model.
 
+### Wave F toxicology slice 9: organophosphate cholinergic respiratory failure
+
+The ninth Toxicology lab owns the coupled exposure, secondary-contamination, muscarinic, nicotinic,
+CNS, airway, ventilation, decontamination, and delayed-weakness pattern of a declared greenhouse
+organophosphate exposure rather than duplicating opioid poisoning, isolated bronchospasm, intrinsic
+bradycardia, anticholinergic syndrome, or a generic airway algorithm. The learner reconciles a
+45-minute dermal and inhalational clock, wet clothing, miosis, secretions, bronchospasm, vomiting,
+HR 48/min, BP 86/50 mmHg, RR 30/min, SpO2 86%, fasciculations, proximal weakness, confusion, supplied
+respiratory and blood-gas evidence, and a markedly depressed laboratory plasma-cholinesterase report;
+recognizes the coupled muscarinic, nicotinic, and CNS pattern without mnemonic-only or cholinesterase-
+only closure; activates qualified PPE, contamination, decontamination, airway, resuscitation,
+toxicology, occupational, and co-worker ownership; and reviews coformulant, seizure, airway, and
+neuromuscular-blocker boundaries. Bounded qualified atropine, organophosphate-specific pralidoxime,
+benzodiazepine-if-needed, early airway and ventilation, decontamination, and surveillance intent
+exposes no product, dose, rate, target, access, clothing removal, washing method, device, technique,
+neuromuscular blocker, or delivery. A strict elapsed fixed respiratory report with persistent weakness
+precedes another elapsed recurrence, intermediate-syndrome, secondary-exposure, and active-risk
+handoff. The canonical state is not an exposure, cholinesterase, secretion, respiratory, neuromuscular,
+antidote-response, decontamination, airway, ventilation, seizure, or individualized-response model.
+
 #### Hematology and oncology: 11
 
 Neutropenic fever; tumor-lysis syndrome; hyperleukocytosis pattern; sickle-cell acute chest syndrome;

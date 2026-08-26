@@ -5517,6 +5517,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-toxicology-cholinergic-product-route-secondary-contamination-secretions-breathing-weakness-cns-and-whole-patient',
+      'recognize-toxicology-cholinergic-muscarinic-nicotinic-and-cns-pattern-without-mnemonic-or-cholinesterase-only-closure',
+      'activate-toxicology-cholinergic-ppe-decontamination-airway-resuscitation-poison-center-and-safety-ownership',
+      'review-toxicology-cholinergic-supplied-respiratory-neuromuscular-cns-exposure-cholinesterase-and-airway-boundary',
+      'record-toxicology-cholinergic-bounded-qualified-atropine-pralidoxime-benzodiazepine-airway-and-surveillance-intent-with-strict-later-review',
+      'handoff-toxicology-cholinergic-recurrent-secretions-bronchospasm-weakness-intermediate-syndrome-exposure-seizure-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'cholinergic-pesticide-respiratory-failure'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'cholinergic-pesticide-respiratory-failure-transition')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'cholinergic-pesticide-respiratory-failure-transition-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Toxicology cholinergic lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'Product, route, secondary contamination, secretions, breathing, weakness, CNS, oxygenation, and whole-patient state were reconciled.'],
+        ['pattern-recognized', 'The coupled muscarinic, nicotinic, and CNS pattern was recognized without mnemonic-only, cholinesterase-only, or diagnostic closure.'],
+        ['safety-activated', 'PPE, contamination, decontamination, airway, resuscitation, toxicology, occupational, co-worker, and compassionate safety ownership were activated.'],
+        ['evidence-reviewed', 'Supplied respiratory, neuromuscular, CNS, exposure, coformulant, cholinesterase, contamination, and airway evidence were reviewed without learner interpretation or delivery.'],
+        ['intent-and-reassessment-recorded', 'Bounded qualified atropine, pralidoxime, benzodiazepine-if-needed, airway, decontamination, and surveillance intent plus the elapsed report were recorded without dosing, delivery, eligibility, causal, or durable-safety claims.'],
+        ['active-risk-handoff-recorded', 'Serial airway, secretions, bronchospasm, weakness, intermediate syndrome, CNS, seizure, exposure, safety, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^toxicology-cholinergic-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^toxicology-cholinergic-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-af-rvr-rhythm-and-stability', 'review-af-rvr-context-and-triggers',
       'record-af-rvr-rate-control-intent', 'record-af-rvr-stroke-prevention-intent',
       'reassess-af-rvr-trajectory-and-follow-up'].includes(objective.id)) {

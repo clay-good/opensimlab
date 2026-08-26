@@ -4391,6 +4391,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use the complete verified product, clock, GI and visual, serial rhythm, perfusion, potassium, magnesium, acid-base, renal, coingestion, sample-timing, assay, prior-care, antidote, and response trajectory under qualified toxicology and resuscitation ownership.',
     briefIn: ['digoxin-rhythm-potassium'],
   },
+  {
+    id: 'cholinergic-exposure-respiratory-neuromuscular-cns-decontamination-transition-and-response-are-authored',
+    headline: 'The exposure, respiratory, neuromuscular and CNS pattern, decontamination, and later response are authored.',
+    simplification: 'Fixed reports and canonical monitor states stand in for history, examination, exposure verification, respiratory and neuromuscular assessment, cholinesterase and laboratory acquisition and interpretation, qualified contamination control, care, and reassessment.',
+    whereItMisleads: 'Treating fictional wet clothing, secretions, pupil, pulse, gas exchange, fasciculations, weakness, cholinesterase report, decontamination, or later improvement as learner evidence, a universal diagnostic threshold, treatment effect, complete decontamination, durable ventilation, or predicted course.',
+    correctUnderstanding: 'Real care requires appropriate PPE, direct serial airway, ventilation, secretion, strength, CNS, exposure, laboratory, co-worker, contamination, and organ assessment with poison-center or medical-toxicology and resuscitation-team ownership.',
+    briefIn: ['cholinergic-pesticide-respiratory-failure'],
+  },
+  {
+    id: 'cholinergic-controls-reconcile-recognize-safety-support-review-intent-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, pattern recognition, safety ownership, evidence review, bounded qualified intent, reassessment, and handoff only.',
+    simplification: 'Six actions stand in for PPE, contamination, decontamination, emergency, toxicology, critical-care, nursing, pharmacy, airway, respiratory, occupational, co-worker, antidote, seizure, surveillance, safety, and handoff work.',
+    whereItMisleads: 'Equating button order with history, examination, cholinesterase or gas interpretation, diagnosis, PPE selection, clothing removal, washing, prescribing, airway or seizure management, treatment delivery, disposition, workplace clearance, or competence.',
+    correctUnderstanding: 'Actual care requires trained teams, context-appropriate PPE, contamination control, direct airway and ventilation support, current local protocols, individualized antidote and seizure care, serial neuromuscular assessment, and reassessment for recurrence and intermediate syndrome.',
+    briefIn: ['cholinergic-pesticide-respiratory-failure'],
+  },
+  {
+    id: 'no-live-cholinergic-diagnosis-decontamination-atropine-pralidoxime-airway-seizure-care-or-outcome',
+    headline: 'The lab does not diagnose poisoning, perform decontamination, prescribe antidotes, manage an airway or seizure, or report outcome.',
+    simplification: 'No live history, examination, monitoring, ECG, blood gas, cholinesterase, chemistry or another test, diagnosis, clothing removal, irrigation, decontamination, oxygen, suction, glucose, electrolyte, fluid, atropine, pralidoxime, benzodiazepine, drug, dose, rate, target, route, access, infusion, airway, ventilation, neuromuscular blocker, transport, procedure, disposition, prognosis, workplace clearance, or outcome is modeled.',
+    whereItMisleads: 'Using one pupil, pulse, secretion, mnemonic, cholinesterase report, or exposure statement alone; copying fictional values into care; selecting PPE, a washing method, product, dose, airway technique, or seizure treatment from this rehearsal; equating dry secretions with strength recovery; attributing the fixed response; or reading completion as competence.',
+    correctUnderstanding: 'Use the complete verified product and route, serial airway, ventilation, secretion, bronchospasm, neuromuscular, CNS, seizure, contamination, co-worker, laboratory, antidote, decontamination, prior-care, and response trajectory under qualified toxicology and resuscitation ownership.',
+    briefIn: ['cholinergic-pesticide-respiratory-failure'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

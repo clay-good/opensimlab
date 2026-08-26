@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 155 reports Toxicology digoxin state. */
-export const WORKER_PROTOCOL_VERSION = 155;
+/** Bumped whenever the message shape changes incompatibly. Version 156 reports Toxicology cholinergic state. */
+export const WORKER_PROTOCOL_VERSION = 156;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2419,6 +2419,29 @@ export interface EquipmentSnapshot {
       readonly potassiumStabilityProven: false; readonly assayInterferenceResolved: false;
       readonly coingestionExcluded: false; readonly antidoteEligibilityDetermined: false;
       readonly rescueEligibilityDetermined: false; readonly treatmentEffectProven: false;
+      readonly safetyDispositionDetermined: false; readonly dispositionDetermined: false;
+      readonly prognosisPredicted: false; readonly outcomePredicted: false;
+    };
+    readonly toxicologyCholinergicAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly safetyAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly exposureRespiratoryNeuromuscularAndCnsPatternAuthored: true; readonly cholinergicPatternRecognized: boolean;
+      readonly qualifiedSafetyOwnershipActive: boolean; readonly respiratoryNeuromuscularCnsExposureAndLaboratoryEvidenceReviewed: boolean;
+      readonly qualifiedAtropineIntentRecorded: boolean; readonly qualifiedPralidoximeIntentRecorded: boolean;
+      readonly qualifiedBenzodiazepineIfNeededIntentRecorded: boolean; readonly qualifiedAirwayVentilationIntentRecorded: boolean;
+      readonly qualifiedDecontaminationIntentRecorded: boolean; readonly responseStateAuthored: boolean;
+      readonly patientHistoryTakenByLearner: false; readonly patientExaminedByLearner: false;
+      readonly monitoringAcquiredByLearner: false; readonly bloodSampleAcquiredByLearner: false;
+      readonly cholinesteraseInterpretedByLearner: false; readonly diagnosisMadeByLearner: false;
+      readonly ppeSelectedByLearner: false; readonly decontaminationPerformedByLearner: false;
+      readonly fluidSelectedByLearner: false; readonly drugSelectedByLearner: false;
+      readonly doseSelectedByLearner: false; readonly routeSelectedByLearner: false;
+      readonly airwaySelectedByLearner: false; readonly ventilationSelectedByLearner: false;
+      readonly neuromuscularBlockerSelectedByLearner: false; readonly treatmentDeliveredByLearner: false;
+      readonly durableVentilationProven: false; readonly neuromuscularRecoveryProven: false;
+      readonly decontaminationCompleteProven: false; readonly coWorkerSafetyProven: false;
+      readonly seizureExcluded: false; readonly treatmentEffectProven: false;
       readonly safetyDispositionDetermined: false; readonly dispositionDetermined: false;
       readonly prognosisPredicted: false; readonly outcomePredicted: false;
     };

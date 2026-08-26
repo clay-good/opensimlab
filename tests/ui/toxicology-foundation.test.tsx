@@ -13,6 +13,7 @@ import { TRICYCLIC_SODIUM_CHANNEL_CARDIOTOXICITY } from '../../src/modules/toxic
 import { BETA_BLOCKER_CARDIOGENIC_SHOCK } from '../../src/modules/toxicology/scenarios/beta-blocker-cardiogenic-shock';
 import { CALCIUM_CHANNEL_BLOCKER_SHOCK } from '../../src/modules/toxicology/scenarios/calcium-channel-blocker-shock';
 import { DIGOXIN_RHYTHM_POTASSIUM } from '../../src/modules/toxicology/scenarios/digoxin-rhythm-potassium';
+import { CHOLINERGIC_PESTICIDE_RESPIRATORY_FAILURE } from '../../src/modules/toxicology/scenarios/cholinergic-pesticide-respiratory-failure';
 
 describe('Toxicology module user-facing foundation', () => {
   const cockpitMarkup = (
@@ -52,6 +53,7 @@ describe('Toxicology module user-facing foundation', () => {
     onToxicologyBetaBlockerResponse: () => {},
     onToxicologyCalciumChannelBlockerResponse: () => {},
     onToxicologyDigoxinResponse: () => {},
+    onToxicologyCholinergicResponse: () => {},
   } satisfies ActionCockpitProps));
 
   it('renders a calm module index with shared navigation and the exact first lab', () => {
@@ -74,6 +76,8 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('Calcium-channel blocker toxicity: read the glucose with the shock');
     expect(markup).toContain('href="/toxicology/scenario/digoxin-rhythm-potassium"');
     expect(markup).toContain('Digoxin toxicity: read the rhythm and potassium together');
+    expect(markup).toContain('href="/toxicology/scenario/cholinergic-pesticide-respiratory-failure"');
+    expect(markup).toContain('Cholinergic poisoning: protect the team, then clear the air');
   });
 
   it('briefs the bounded poisoning rehearsal without dose or diagnostic claims', () => {
@@ -259,6 +263,27 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('The rhythm and potassium tell one story.');
     expect(markup).toContain('Connect rhythm + potassium');
     expect(markup).not.toMatch(/vial count|mg\/kg|mL\/kg|pacing rate|dialysis threshold/i);
+    expect(markup).not.toContain('<input');
+    expect(markup).not.toContain('<select');
+  });
+
+  it('prerenders and opens the cholinergic lab on its calm team-safety tray', () => {
+    const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/cholinergic-pesticide-respiratory-failure' }));
+    expect(page).toContain('<h1>Cholinergic poisoning: protect the team, then clear the air</h1>');
+    expect(page).toContain('mnemonic- or cholinesterase-only closure');
+    expect(crisisResponseAvailability(CHOLINERGIC_PESTICIDE_RESPIRATORY_FAILURE, []))
+      .toMatchObject({ hasToxicologyCholinergicResponse: true });
+    expect(crisisResponseAvailability({ ...CHOLINERGIC_PESTICIDE_RESPIRATORY_FAILURE,
+      metadata: { ...CHOLINERGIC_PESTICIDE_RESPIRATORY_FAILURE.metadata, id: 'cholinergic-clone' } }, []))
+      .toMatchObject({ hasToxicologyCholinergicResponse: false });
+    const markup = cockpitMarkup(CHOLINERGIC_PESTICIDE_RESPIRATORY_FAILURE, {
+      toxicologyCholinergicAssessment: { trajectoryAtTick: null, recognitionAtTick: null,
+        safetyAtTick: null, evidenceAtTick: null, reassessmentAtTick: null, handoffAtTick: null },
+    });
+    expect(markup).toContain('Cholinergic crisis');
+    expect(markup).toContain('Protect the rescuers before the first touch.');
+    expect(markup).toContain('Connect exposure + breathing');
+    expect(markup).not.toMatch(/mg\/kg|mL\/kg|wash for|intubation device|ventilator setting/i);
     expect(markup).not.toContain('<input');
     expect(markup).not.toContain('<select');
   });
