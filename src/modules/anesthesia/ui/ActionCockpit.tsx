@@ -1270,6 +1270,11 @@ export interface ActionCockpitProps {
       readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly obstetricsEclampsiaAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2250,6 +2255,14 @@ export interface ActionCockpitProps {
       | 'review-obstetrics-postpartum-preeclampsia-fixed-later-pressure-symptom-organ-and-support-report'
       | 'handoff-obstetrics-postpartum-preeclampsia-recurrent-pressure-seizure-stroke-pulmonary-hellp-renal-newborn-follow-up-and-outcome-risk',
   ) => void;
+  readonly onObstetricsEclampsiaResponse?: (
+    action: 'reconcile-obstetrics-eclampsia-seizure-clock-recovery-pressure-organs-fetal-context-and-whole-person'
+      | 'recognize-obstetrics-supplied-eclampsia-pattern-after-first-seizure-with-dangerous-alternatives-open'
+      | 'activate-obstetrics-eclampsia-maternal-stabilization-seizure-severe-pressure-airway-obstetric-fetal-and-dignity-response-now'
+      | 'review-obstetrics-eclampsia-supplied-neurologic-airway-aspiration-organ-fetal-metabolic-toxic-infectious-and-trauma-boundary'
+      | 'review-obstetrics-eclampsia-fixed-later-recovery-pressure-breathing-fetal-and-organ-report'
+      | 'handoff-obstetrics-eclampsia-recurrence-airway-aspiration-stroke-pressure-organ-fetal-delivery-and-outcome-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2298,7 +2311,7 @@ export function crisisResponseAvailability(
       || scenario.timeline.some((event) => event.type === 'high-spinal'),
     hasPreeclampsiaResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'persistent-severe-preeclampsia',
-    ),
+    ) && scenario.metadata.id === 'preeclampsia-urgent-delivery',
     hasVenousAirEmbolismResponse: injected.has('air-embolism')
       || scenario.timeline.some((event) => event.type === 'venous-air-embolism'),
     hasPneumothoraxResponse: scenario.timeline.some(
@@ -2823,6 +2836,10 @@ export function crisisResponseAvailability(
       scenario.metadata.id === 'postpartum-severe-preeclampsia-warning-signs'
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-severe-preeclampsia-warning-signs-transition')
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-severe-preeclampsia-warning-signs-transition-boundary'),
+    hasObstetricsEclampsiaResponse:
+      scenario.metadata.id === 'eclampsia-first-seizure-response'
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'eclampsia-first-seizure-response-transition')
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'eclampsia-first-seizure-response-transition-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3041,6 +3058,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'maternal-sepsis-postpartum-deterioration-transition')
       || (event.type === 'narrative' && event.target === 'concealed-placental-abruption-hemorrhage-transition')
       || (event.type === 'narrative' && event.target === 'postpartum-severe-preeclampsia-warning-signs-transition')
+      || (event.type === 'narrative' && event.target === 'eclampsia-first-seizure-response-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3147,6 +3165,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasObstetricsMaternalSepsisResponse,
     hasObstetricsConcealedAbruptionResponse,
     hasObstetricsPostpartumPreeclampsiaResponse,
+    hasObstetricsEclampsiaResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3280,8 +3299,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasObstetricsMaternalSepsisResponse
     || hasObstetricsConcealedAbruptionResponse
     || hasObstetricsPostpartumPreeclampsiaResponse
+    || hasObstetricsEclampsiaResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasObstetricsPostpartumPreeclampsiaResponse
+  const responseTray = hasObstetricsEclampsiaResponse
+    ? { id: 'crisis', label: 'Seizure + pregnancy' } as const
+    : hasObstetricsPostpartumPreeclampsiaResponse
     ? { id: 'crisis', label: 'Pressure + whole person' } as const
     : hasObstetricsConcealedAbruptionResponse
     ? { id: 'crisis', label: 'Hidden blood + fetus' } as const
@@ -3661,6 +3683,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasObstetricsMaternalSepsisResponse
     || hasObstetricsConcealedAbruptionResponse
     || hasObstetricsPostpartumPreeclampsiaResponse
+    || hasObstetricsEclampsiaResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -4542,6 +4565,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasObstetricsPostpartumPreeclampsiaResponse && (
               <ObstetricsPostpartumPreeclampsiaTray assessment={props.resuscitation.obstetricsPostpartumPreeclampsiaAssessment}
                 onAction={props.onObstetricsPostpartumPreeclampsiaResponse ?? (() => {})} />
+            )}
+            {hasObstetricsEclampsiaResponse && (
+              <ObstetricsEclampsiaTray assessment={props.resuscitation.obstetricsEclampsiaAssessment}
+                onAction={props.onObstetricsEclampsiaResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -11467,6 +11494,38 @@ function ObstetricsPostpartumPreeclampsiaTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-postpartum-preeclampsia-fixed-later-pressure-symptom-organ-and-support-report')}>Review the later report</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-obstetrics-postpartum-preeclampsia-recurrent-pressure-seizure-stroke-pulmonary-hellp-renal-newborn-follow-up-and-outcome-risk')}>Hand off what stays open</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function ObstetricsEclampsiaTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['obstetricsEclampsiaAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onObstetricsEclampsiaResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const evidence = assessment?.evidenceAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="eclampsia-now-title">
+      <div id="eclampsia-now-title" className="syringe__name">Read the seizure in its pregnancy context.</div>
+      <p className="syringe__remaining">Start with the witnessed event, breathing, pulse, glucose, pressure, recovery, pregnancy, fetal report, injury, and whole person.</p>
+      <div className="crisis-drug__actions">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-obstetrics-eclampsia-seizure-clock-recovery-pressure-organs-fetal-context-and-whole-person')}>Review seizure + pregnancy context</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-obstetrics-supplied-eclampsia-pattern-after-first-seizure-with-dangerous-alternatives-open')}>Recognize the eclampsia emergency</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-obstetrics-eclampsia-maternal-stabilization-seizure-severe-pressure-airway-obstetric-fetal-and-dignity-response-now')}>Activate qualified maternal response</Button>}
+        {support && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-eclampsia-supplied-neurologic-airway-aspiration-organ-fetal-metabolic-toxic-infectious-and-trauma-boundary')}>Review recovery + open causes</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="eclampsia-later-title">
+      <div id="eclampsia-later-title" className="syringe__name">After the seizure, reassess the whole picture.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Recurrent-seizure, airway, maternal-organ, fetal, birth-planning, postpartum, and support risks handed off.' : reassessment ? 'No recurrent seizure is reported in this brief window. Alertness is improving; pressure, cause, fetal safety, and durable control remain open.' : evidence ? 'Qualified care is active. Review the fixed 20-minute maternal-fetal report after time passes.' : support ? 'The urgent response is active. Review recovery, organs, fetal context, and dangerous alternative causes.' : 'Begin with what happened, what has recovered, and what remains at risk.'}</p>
+      <div className="crisis-drug__actions">
+        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-obstetrics-eclampsia-fixed-later-recovery-pressure-breathing-fetal-and-organ-report')}>Review the 20-minute report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-obstetrics-eclampsia-recurrence-airway-aspiration-stroke-pressure-organ-fetal-delivery-and-outcome-risk')}>Hand off recurrent-seizure risk</Button>}
       </div>
     </section>
   </>;

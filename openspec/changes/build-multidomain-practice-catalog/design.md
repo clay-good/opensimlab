@@ -2056,6 +2056,23 @@ organ recovery or disposition. No product, dose, route, target, pressure measure
 test interpretation, diagnosis, magnesium or antihypertensive choice, airway or seizure care,
 newborn separation, feeding decision, disposition, follow-up or outcome is exposed.
 
+### Wave D obstetrics slice 5: eclampsia after a first stopped seizure
+
+The fifth lab opens at 38 weeks 2 days, 3 minutes after a witnessed 70-second bilateral generalized
+convulsion has stopped. Severe pressure, preceding headache, visual symptoms, upper-abdominal pain,
+platelet, renal and hepatic findings, postictal recovery and a supplied fetal report establish a
+presumptive eclampsia emergency pattern without excluding structural, vascular, metabolic, toxic,
+infectious, traumatic or primary seizure causes.
+
+Six controls record whole-person reconciliation, nonexclusive recognition, immediate qualified
+maternal stabilization plus eclampsia, severe-pressure, airway-ready, obstetric and fetal response,
+parallel supplied-evidence review, a fixed report authored as 20 minutes after activation, and
+active-risk handoff. Maternal stabilization precedes individualized birth planning. The lab exposes
+no learner seizure first aid, positioning, suction, oxygen, ventilation, pressure or glucose
+measurement, examination, fetal or test interpretation, diagnosis, magnesium or other drug, dose,
+rate, target, route, access, airway, anesthesia, birth, procedure, disposition, treatment effect,
+durable control, fetal safety, or maternal/newborn outcome.
+
 #### Neonatology: 11
 
 Term newborn transition; neonatal apnea; ineffective ventilation correction; neonatal bradycardia;

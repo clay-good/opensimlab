@@ -5070,6 +5070,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-obstetrics-eclampsia-seizure-clock-recovery-pressure-organs-fetal-context-and-whole-person',
+      'recognize-obstetrics-supplied-eclampsia-pattern-after-first-seizure-with-dangerous-alternatives-open',
+      'activate-obstetrics-eclampsia-maternal-stabilization-seizure-severe-pressure-airway-obstetric-fetal-and-dignity-response-now',
+      'review-obstetrics-eclampsia-supplied-neurologic-airway-aspiration-organ-fetal-metabolic-toxic-infectious-and-trauma-boundary',
+      'review-obstetrics-eclampsia-fixed-later-recovery-pressure-breathing-fetal-and-organ-report',
+      'handoff-obstetrics-eclampsia-recurrence-airway-aspiration-stroke-pressure-organ-fetal-delivery-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'eclampsia-first-seizure-response'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'eclampsia-first-seizure-response-transition')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'eclampsia-first-seizure-response-transition-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Obstetrics eclampsia lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'The stopped seizure, recovery, pressure, symptoms, organs, fetal context, support, and whole-person state were connected.'],
+        ['pattern-recognized', 'The supplied eclampsia emergency pattern was recognized while dangerous neurologic and other causes remained open.'],
+        ['support-activated', 'Qualified maternal stabilization, seizure, severe-pressure, airway-ready, obstetric, fetal, communication, and dignity-centered response was activated before broad cause review.'],
+        ['evidence-reviewed', 'Supplied recovery, airway, aspiration, pressure, glucose, organ, fetal, injury, and competing-cause boundaries were reviewed.'],
+        ['later-report-reviewed', 'The fixed report authored as 20 minutes after activation was reviewed without treatment-effect, durable-control, fetal-safety, birth, disposition, or outcome claims.'],
+        ['active-risk-handoff-recorded', 'Recurrent seizure, airway, aspiration, neurologic, pressure, organ, fetal, birth, postpartum, support, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^obstetrics-eclampsia-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^obstetrics-eclampsia-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-obstetrics-sepsis-postpartum-clock-infection-organ-dysfunction-and-whole-person',
       'recognize-obstetrics-maternal-sepsis-emergency-without-fever-score-source-or-single-value-closure',
       'activate-obstetrics-sepsis-obstetric-critical-care-anesthesia-nursing-pharmacy-microbiology-source-newborn-and-dignity-ownership',

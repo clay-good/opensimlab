@@ -468,6 +468,21 @@ const OBSTETRICS_POSTPARTUM_PREECLAMPSIA_BLOCKED_ACTION_TYPES = new Set([
   'acute-pulmonary-edema-respiratory-support-response',
   'intracranial-hemorrhage-response',
 ]);
+const OBSTETRICS_ECLAMPSIA_BLOCKED_ACTION_TYPES = new Set([
+  ...OBSTETRICS_POSTPARTUM_PREECLAMPSIA_BLOCKED_ACTION_TYPES,
+  'postpartum-severe-preeclampsia-warning-signs-response',
+  'seizure-suppression',
+  'status-epilepticus-response',
+  'critical-care-status-epilepticus-response',
+  'pediatric-status-epilepticus-response',
+  'pediatric-hypoglycemic-seizure-response',
+  'pediatric-febrile-seizure-response',
+  'focal-motor-status-epilepticus-escalation-response',
+  'nonconvulsive-status-epilepticus-recognition-response',
+  'hyponatremia-response',
+  'airway-maneuver',
+  'laryngoscopy',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1419,6 +1434,12 @@ export class AnesthesiaEngine {
   private obstetricsPostpartumPreeclampsiaEvidenceAtTick: number | null = null;
   private obstetricsPostpartumPreeclampsiaReassessmentAtTick: number | null = null;
   private obstetricsPostpartumPreeclampsiaHandoffAtTick: number | null = null;
+  private obstetricsEclampsiaTrajectoryAtTick: number | null = null;
+  private obstetricsEclampsiaRecognitionAtTick: number | null = null;
+  private obstetricsEclampsiaSupportAtTick: number | null = null;
+  private obstetricsEclampsiaEvidenceAtTick: number | null = null;
+  private obstetricsEclampsiaReassessmentAtTick: number | null = null;
+  private obstetricsEclampsiaHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2345,6 +2366,13 @@ export class AnesthesiaEngine {
       this.log('warning', 'assessment', `obstetrics-postpartum-preeclampsia-generic-action-refused-${this.currentTick}`,
         'This Obstetrics lesson exposes no generic pressure measurement, examination, laboratory, urine, imaging, oxygen, fluid, antihypertensive, magnesium, drug, dose, route, access, airway, seizure, procedure, transfer, disposition, follow-up, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
+    const obstetricsEclampsia = this.scenario.metadata.id === 'eclampsia-first-seizure-response'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'eclampsia-first-seizure-response-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'eclampsia-first-seizure-response-transition-boundary');
+    if (obstetricsEclampsia && OBSTETRICS_ECLAMPSIA_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `obstetrics-eclampsia-generic-action-refused-${this.currentTick}`,
+        'This Obstetrics lesson exposes no generic examination, monitoring interpretation, glucose, laboratory, imaging, magnesium, antihypertensive, antiseizure drug, dose, route, access, oxygen, airway, seizure, anesthesia, delivery, procedure, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
     switch (action.type) {
       case 'bolus': {
         const amount = AnesthesiaEngine.finiteAmount(action.payload.amount);
@@ -2525,7 +2553,7 @@ export class AnesthesiaEngine {
         break;
       }
       case 'preeclampsia-response': {
-        const supported = this.scenario.timeline.some(
+        const supported = this.scenario.metadata.id === 'preeclampsia-urgent-delivery' && this.scenario.timeline.some(
           (event) => event.type === 'narrative' && event.target === 'persistent-severe-preeclampsia',
         );
         const response = action.payload.action;
@@ -10844,6 +10872,32 @@ export class AnesthesiaEngine {
         if (this.obstetricsPostpartumPreeclampsiaHandoffAtTick !== null) break;
         this.obstetricsPostpartumPreeclampsiaHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-postpartum-preeclampsia-active-risk-handoff-recorded-${this.currentTick}`, 'Recurrent severe pressure, seizure and eclampsia, stroke and other neurologic causes, pulmonary edema, HELLP-pattern complications, kidney and liver injury, medication review, newborn and feeding support, trauma-informed communication, prompt follow-up, longer-term cardiovascular health, fertility, prognosis, and outcome uncertainty were handed off.', { safetyDispositionDetermined: false, followUpSelectedByLearner: false, fertilityOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'eclampsia-first-seizure-response': {
+        const response = action.payload?.action;
+        const supported = this.scenario.metadata.id === 'eclampsia-first-seizure-response'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'eclampsia-first-seizure-response-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'eclampsia-first-seizure-response-transition-boundary');
+        const actions = ['reconcile-obstetrics-eclampsia-seizure-clock-recovery-pressure-organs-fetal-context-and-whole-person',
+          'recognize-obstetrics-supplied-eclampsia-pattern-after-first-seizure-with-dangerous-alternatives-open',
+          'activate-obstetrics-eclampsia-maternal-stabilization-seizure-severe-pressure-airway-obstetric-fetal-and-dignity-response-now',
+          'review-obstetrics-eclampsia-supplied-neurologic-airway-aspiration-organ-fetal-metabolic-toxic-infectious-and-trauma-boundary',
+          'review-obstetrics-eclampsia-fixed-later-recovery-pressure-breathing-fetal-and-organ-report',
+          'handoff-obstetrics-eclampsia-recurrence-airway-aspiration-stroke-pressure-organ-fetal-delivery-and-outcome-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `obstetrics-eclampsia-response-refused-${this.currentTick}`, supported ? 'The eclampsia action was not listed. No supplied or injected text was retained.' : 'These eclampsia choices are available only in the exact declared Obstetrics lesson.'); break; }
+        if (response === actions[0]) { if (this.obstetricsEclampsiaTrajectoryAtTick !== null) break; this.obstetricsEclampsiaTrajectoryAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-eclampsia-trajectory-reconciled-${this.currentTick}`, 'The witnessed stopped-seizure clock, recovery, severe pressure, symptoms, physiology, organ evidence, fetal context, support needs, and whole person were connected without learner examination, measurement, calculation, interpretation, or diagnosis.'); break; }
+        if (this.obstetricsEclampsiaTrajectoryAtTick === null) { this.log('warning', 'assessment', `obstetrics-eclampsia-trajectory-order-refused-${this.currentTick}`, 'Connect the seizure, recovery, pressure, organs, fetal context, and whole person first.'); break; }
+        if (response === actions[1]) { if (this.obstetricsEclampsiaRecognitionAtTick !== null) break; this.obstetricsEclampsiaRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-eclampsia-pattern-recognized-${this.currentTick}`, 'The stopped generalized convulsion, severe pressure, warning symptoms, and organ findings established a supplied eclampsia emergency pattern while structural, vascular, metabolic, toxic, infectious, traumatic, and primary seizure causes remained open.', { diagnosisMadeByLearner: false }); break; }
+        if (this.obstetricsEclampsiaRecognitionAtTick === null) { this.log('warning', 'assessment', `obstetrics-eclampsia-recognition-order-refused-${this.currentTick}`, 'Recognize the supplied eclampsia emergency pattern while dangerous alternatives remain open before continuing.'); break; }
+        if (response === actions[2]) { if (this.obstetricsEclampsiaSupportAtTick !== null) break; this.obstetricsEclampsiaSupportAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-eclampsia-support-activated-${this.currentTick}`, 'Qualified injury protection, airway and breathing readiness, monitoring, access, glucose review, eclampsia magnesium and severe-pressure protocols, recurrent-seizure response, obstetric, anesthesia, nursing, pharmacy, critical-care, fetal, neonatal, communication, and dignity-centered ownership were activated now. Maternal stabilization preceded delivery-route decisions; no learner maneuver, product, dose, target, route, treatment, procedure, or birth selection occurred.'); break; }
+        if (this.obstetricsEclampsiaSupportAtTick === null) { this.log('warning', 'assessment', `obstetrics-eclampsia-support-order-refused-${this.currentTick}`, 'Activate qualified maternal stabilization, seizure, severe-pressure, airway-ready, obstetric, and fetal response now before broad cause review.'); break; }
+        if (response === actions[3]) { if (this.obstetricsEclampsiaEvidenceAtTick !== null) break; this.obstetricsEclampsiaEvidenceAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-eclampsia-evidence-reviewed-${this.currentTick}`, 'Supplied seizure, recovery, airway, aspiration, oxygenation, pressure, glucose, platelet, liver, kidney, fetal, injury, hemorrhage, neurologic, metabolic, toxic, infectious, thrombotic, and other cause boundaries were integrated without learner acquisition, interpretation, diagnosis, exclusion, treatment, or eligibility determination.'); break; }
+        if (this.obstetricsEclampsiaEvidenceAtTick === null) { this.log('warning', 'assessment', `obstetrics-eclampsia-evidence-order-refused-${this.currentTick}`, 'Review supplied recovery, airway, aspiration, organ, fetal, and competing-cause evidence before the later report.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.obstetricsEclampsiaEvidenceAtTick) { this.log('warning', 'assessment', `obstetrics-eclampsia-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed later qualified-team report.'); break; } if (this.obstetricsEclampsiaReassessmentAtTick !== null) break; this.obstetricsEclampsiaReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-eclampsia-later-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report, authored as 20 minutes after activation: no recurrent observed convulsion, improving alertness, persistent headache and visual symptoms, BP 154/100 (MAP 118), HR 102, RR 18, room-air SpO2 97%, temperature 36.8 C, and fetal baseline 145/min with moderate variability and no reported deceleration in the short sample. Repeat organs, cause, birth plan, durable control, fetal safety, and outcomes remain unresolved.', { treatmentDeliveredByLearner: false, seizureExcluded: false, treatmentEffectProven: false, deliveryPerformedByLearner: false }); break; }
+        if (this.obstetricsEclampsiaReassessmentAtTick === null) { this.log('warning', 'assessment', `obstetrics-eclampsia-handoff-order-refused-${this.currentTick}`, 'Review the fixed later maternal-fetal report before handoff.'); break; }
+        if (this.currentTick <= this.obstetricsEclampsiaReassessmentAtTick) { this.log('warning', 'assessment', `obstetrics-eclampsia-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.obstetricsEclampsiaHandoffAtTick !== null) break;
+        this.obstetricsEclampsiaHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-eclampsia-active-risk-handoff-recorded-${this.currentTick}`, 'Recurrent seizure, airway and aspiration, stroke and other neurologic causes, severe pressure, pulmonary edema, platelet, liver and kidney injury, magnesium surveillance, fetal trajectory, individualized birth planning after maternal stabilization, postpartum recurrence, support, prognosis, and maternal or newborn outcome uncertainty were handed off.', { safetyDispositionDetermined: false, deliveryPerformedByLearner: false, maternalOutcomePredicted: false, newbornOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -13754,6 +13808,17 @@ export class AnesthesiaEngine {
         diastolicMmHg: this.obstetricsPostpartumPreeclampsiaReassessmentAtTick !== null ? 98 : 112,
         meanArterialMmHg: this.obstetricsPostpartumPreeclampsiaReassessmentAtTick !== null ? 116 : 133,
         coreTemperatureC: 36.7 };
+    }
+    if (this.scenario.metadata.id === 'eclampsia-first-seizure-response'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'eclampsia-first-seizure-response-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'eclampsia-first-seizure-response-transition-boundary')) {
+      crisisState = { ...crisisState, heartRateBpm: this.obstetricsEclampsiaReassessmentAtTick !== null ? 102 : 112,
+        respiratoryRateBpm: this.obstetricsEclampsiaReassessmentAtTick !== null ? 18 : 22,
+        spo2Percent: this.obstetricsEclampsiaReassessmentAtTick !== null ? 97 : 94,
+        systolicMmHg: this.obstetricsEclampsiaReassessmentAtTick !== null ? 154 : 176,
+        diastolicMmHg: this.obstetricsEclampsiaReassessmentAtTick !== null ? 100 : 118,
+        meanArterialMmHg: this.obstetricsEclampsiaReassessmentAtTick !== null ? 118 : 137,
+        coreTemperatureC: 36.8 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -17783,6 +17848,40 @@ export class AnesthesiaEngine {
               safetyDispositionDetermined: false as const, fertilityOutcomePredicted: false as const,
               maternalOutcomePredicted: false as const, newbornOutcomePredicted: false as const,
               outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'eclampsia-first-seizure-response'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'eclampsia-first-seizure-response-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'eclampsia-first-seizure-response-transition-boundary') ? {
+            obstetricsEclampsiaAssessment: {
+              trajectoryAtTick: this.obstetricsEclampsiaTrajectoryAtTick, recognitionAtTick: this.obstetricsEclampsiaRecognitionAtTick,
+              supportAtTick: this.obstetricsEclampsiaSupportAtTick, evidenceAtTick: this.obstetricsEclampsiaEvidenceAtTick,
+              reassessmentAtTick: this.obstetricsEclampsiaReassessmentAtTick, handoffAtTick: this.obstetricsEclampsiaHandoffAtTick,
+              stoppedGeneralizedSeizurePressureOrganAndFetalPatternAuthored: true as const,
+              eclampsiaEmergencyPatternRecognized: this.obstetricsEclampsiaRecognitionAtTick !== null,
+              qualifiedSupportActive: this.obstetricsEclampsiaSupportAtTick !== null,
+              neurologicAirwayAspirationOrganFetalMetabolicToxicInfectiousAndTraumaEvidenceReviewed: this.obstetricsEclampsiaEvidenceAtTick !== null,
+              fixedLaterRecoveryPressureBreathingFetalAndOrganReportReviewed: this.obstetricsEclampsiaReassessmentAtTick !== null,
+              responseStateAuthored: this.obstetricsEclampsiaReassessmentAtTick !== null,
+              seizureTimedByLearner: false as const, injuryProtectionPerformedByLearner: false as const,
+              patientPositionedByLearner: false as const, patientExaminedByLearner: false as const,
+              airwayOrAspirationAssessedByLearner: false as const, fetalStatusInterpretedByLearner: false as const,
+              bloodPressureMeasuredByLearner: false as const, glucoseMeasuredByLearner: false as const,
+              laboratoryAcquiredByLearner: false as const, laboratoryInterpretedByLearner: false as const,
+              imagingOrEegAcquiredByLearner: false as const, imagingOrEegInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const, alternativeExcludedByLearner: false as const,
+              magnesiumSelectedByLearner: false as const, antihypertensiveSelectedByLearner: false as const,
+              antiseizureDrugSelectedByLearner: false as const, doseSelectedByLearner: false as const,
+              rateOrTargetSelectedByLearner: false as const, routeSelectedByLearner: false as const,
+              accessSelectedByLearner: false as const, oxygenSelectedByLearner: false as const,
+              airwayOrVentilationSelectedByLearner: false as const, anesthesiaSelectedByLearner: false as const,
+              deliverySelectedByLearner: false as const, procedureSelectedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const, deliveryPerformedByLearner: false as const,
+              treatmentEffectProven: false as const, durableSeizureControlProven: false as const,
+              durablePressureControlProven: false as const, neurologicRecoveryProven: false as const,
+              organRecoveryProven: false as const, fetalSafetyProven: false as const,
+              safetyDispositionDetermined: false as const, maternalOutcomePredicted: false as const,
+              newbornOutcomePredicted: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

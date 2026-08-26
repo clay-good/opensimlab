@@ -397,6 +397,19 @@ No. 222, the AIM severe-hypertension bundle and SMFM postpartum context, not a p
 drug-response, magnesium, organ-recovery, seizure-prevention, disposition, follow-up,
 maternal-outcome or newborn-outcome model.
 
+Eclampsia after a first stopped seizure uses two fixed canonical states. The opening report has a
+witnessed 70-second bilateral tonic-clonic convulsion that stopped 3 minutes before the learner
+surface, BP 176/118 mmHg, HR 112/min, RR 22/min, room-air SpO2 94%, T 36.8°C, glucose 102 mg/dL,
+platelets 96 × 10^9/L, creatinine 1.2 mg/dL from 0.7, AST 94 U/L, ALT 86 U/L and a supplied fetal
+baseline of 125/min with minimal variability after transient slowing. The fixed report authored as
+20 minutes after qualified activation has no recurrent observed convulsion, improving alertness,
+BP 154/100 mmHg, HR 102/min, RR 18/min, room-air SpO2 97%, T 36.8°C and a short fetal sample at
+145/min with moderate variability and no reported deceleration while symptoms, repeat organs,
+cause, birth planning and outcomes remain open. These authored checkpoints are grounded in ACOG
+Practice Bulletin No. 222, the AIM severe-hypertension bundle and WHO eclampsia guidance, not a
+seizure, pressure, magnesium, airway, fetal-monitoring, treatment-response, delivery,
+maternal-outcome or newborn-outcome model.
+
 ## Concentration-time checks, 2026-08-23
 
 The acceptance text requires a published concentration-time point for every model. The Marsh

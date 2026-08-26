@@ -418,6 +418,15 @@ credited toward the catalog until every item in the completion contract passes.
     preserves maternal-newborn continuity, follow-up and longer-term risk without learner pressure
     measurement, examination, test interpretation, diagnosis, drug, magnesium, dose, target,
     airway or seizure care, separation, feeding, disposition, follow-up, or outcome controls.
+  - [x] Obstetrics slice 5/15 adds one authored 38-week first generalized convulsion that has stopped
+    before the learner surface, with severe pressure, neurologic symptoms, platelet, renal, hepatic,
+    glucose, recovery and fetal context; nonexclusive eclampsia-pattern recognition; immediate
+    qualified maternal stabilization, seizure, severe-pressure, airway-ready, obstetric, fetal and
+    dignity-centered response before broad cause review; a fixed 20-minute report that proves no
+    durable seizure or pressure control or fetal safety; and active-risk handoff without learner
+    seizure first aid, examination, measurement, testing, diagnosis, magnesium or other drug, dose,
+    route, airway, anesthesia, birth, procedure, disposition, treatment effect, or maternal/newborn
+    outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 166 reports postpartum severe-preeclampsia state. */
-export const WORKER_PROTOCOL_VERSION = 166;
+export const WORKER_PROTOCOL_VERSION = 167;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2712,6 +2712,35 @@ export interface EquipmentSnapshot {
       readonly safetyDispositionDetermined: false; readonly fertilityOutcomePredicted: false;
       readonly maternalOutcomePredicted: false; readonly newbornOutcomePredicted: false;
       readonly outcomePredicted: false;
+    };
+    readonly obstetricsEclampsiaAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly stoppedGeneralizedSeizurePressureOrganAndFetalPatternAuthored: true;
+      readonly eclampsiaEmergencyPatternRecognized: boolean; readonly qualifiedSupportActive: boolean;
+      readonly neurologicAirwayAspirationOrganFetalMetabolicToxicInfectiousAndTraumaEvidenceReviewed: boolean;
+      readonly fixedLaterRecoveryPressureBreathingFetalAndOrganReportReviewed: boolean;
+      readonly responseStateAuthored: boolean;
+      readonly seizureTimedByLearner: false; readonly injuryProtectionPerformedByLearner: false;
+      readonly patientPositionedByLearner: false; readonly patientExaminedByLearner: false;
+      readonly airwayOrAspirationAssessedByLearner: false; readonly fetalStatusInterpretedByLearner: false;
+      readonly bloodPressureMeasuredByLearner: false; readonly glucoseMeasuredByLearner: false;
+      readonly laboratoryAcquiredByLearner: false; readonly laboratoryInterpretedByLearner: false;
+      readonly imagingOrEegAcquiredByLearner: false; readonly imagingOrEegInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly alternativeExcludedByLearner: false;
+      readonly magnesiumSelectedByLearner: false; readonly antihypertensiveSelectedByLearner: false;
+      readonly antiseizureDrugSelectedByLearner: false; readonly doseSelectedByLearner: false;
+      readonly rateOrTargetSelectedByLearner: false; readonly routeSelectedByLearner: false;
+      readonly accessSelectedByLearner: false; readonly oxygenSelectedByLearner: false;
+      readonly airwayOrVentilationSelectedByLearner: false; readonly anesthesiaSelectedByLearner: false;
+      readonly deliverySelectedByLearner: false; readonly procedureSelectedByLearner: false;
+      readonly treatmentDeliveredByLearner: false; readonly deliveryPerformedByLearner: false;
+      readonly treatmentEffectProven: false; readonly durableSeizureControlProven: false;
+      readonly durablePressureControlProven: false; readonly neurologicRecoveryProven: false;
+      readonly organRecoveryProven: false; readonly fetalSafetyProven: false;
+      readonly safetyDispositionDetermined: false; readonly maternalOutcomePredicted: false;
+      readonly newbornOutcomePredicted: false; readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

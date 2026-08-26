@@ -1073,7 +1073,7 @@ export const SOURCES: readonly Source[] = [
     year: 2020,
     locator: '135:e237-60; reaffirmed 2026',
     usedFor: 'The severe-range threshold, urgent-treatment framing, first-line IV labetalol branch, '
-      + 'and magnesium-sulfate seizure-prophylaxis loading branch in the focused preeclampsia lesson.',
+      + 'magnesium-sulfate seizure-prophylaxis loading branch, and the eclampsia seizure, organ-surveillance, and delivery-planning boundaries.',
     verifiedAgainst: 'American College of Obstetricians and Gynecologists official Practice Bulletin page and tables',
     verifiedOn: '2026-08-24',
   },
@@ -1085,7 +1085,7 @@ export const SOURCES: readonly Source[] = [
     year: 2022,
     locator: '2022 element implementation details and response resources',
     usedFor: 'Repeating a severe-range pressure, treating persistent systolic pressure at least '
-      + '160 mmHg or diastolic pressure at least 110 mmHg, and initiating treatment within 60 minutes.',
+      + '160 mmHg or diastolic pressure at least 110 mmHg, initiating treatment within 60 minutes, and maintaining facility eclampsia protocols, rapid medication access, escalation, team response, and respectful support.',
     verifiedAgainst: 'Alliance for Innovation on Maternal Health official bundle and response PDFs',
     verifiedOn: '2026-08-24',
   },
@@ -1109,6 +1109,17 @@ export const SOURCES: readonly Source[] = [
     locator: 'doi:10.1016/j.ajog.2022.05.045; reaffirmed 2025',
     usedFor: 'General postpartum exacerbation and prompt-follow-up context after severe hypertension during a childbirth hospitalization, with the explicit boundary that it does not determine follow-up or disposition for the de novo day-6 teaching fixture.',
     verifiedAgainst: 'https://publications.smfm.org/publications/453-society-for-maternal-fetal-medicine-special-statement-quality/',
+    verifiedOn: '2026-08-26',
+  },
+  {
+    id: 'who-preeclampsia-eclampsia-recommendations-2011',
+    authors: 'World Health Organization',
+    title: 'WHO recommendations for prevention and treatment of pre-eclampsia and eclampsia',
+    publication: 'World Health Organization',
+    year: 2011,
+    locator: 'ISBN 978-92-4-154833-5; recommendations 13-15',
+    usedFor: 'The qualified-team boundary that magnesium sulfate is first-line treatment for eclampsia, with a full regimen, clinical surveillance, and transfer capability where full care cannot be delivered; no product, dose, route, or delivery is exposed to the learner.',
+    verifiedAgainst: 'https://www.who.int/publications/i/item/9789241548335',
     verifiedOn: '2026-08-26',
   },
   {

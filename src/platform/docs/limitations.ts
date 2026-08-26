@@ -4655,6 +4655,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use correctly obtained serial pressures and direct whole-patient evidence with current local protocols, prompt protocol-based treatment, parallel severe-feature and alternative-cause assessment, individualized seizure-prevention and organ care, maternal-newborn support, and qualified disposition and follow-up ownership.',
     briefIn: ['postpartum-severe-preeclampsia-warning-signs'],
   },
+  {
+    id: 'eclampsia-seizure-recovery-pressure-organ-fetal-and-later-reports-are-authored',
+    headline: 'The seizure, recovery, pressure, organ, fetal, and later reports are authored.',
+    simplification: 'Fixed reports stand in for witnessed-event timing, injury protection, positioning, airway and breathing assessment, pressure and glucose measurement, examination, monitoring, organ and fetal evaluation, qualified protocol care, and reassessment.',
+    whereItMisleads: 'Treating fictional seizure, pressure, glucose, laboratory, fetal, recovery, or seizure-free-window values as learner evidence, an exclusive diagnosis, treatment effect, durable control, fetal safety, delivery readiness, or predicted course.',
+    correctUnderstanding: 'A new seizure in pregnancy requires immediate qualified maternal stabilization, eclampsia and severe-pressure response, recurrence readiness, fetal assessment, and parallel evaluation for neurologic and other dangerous causes.',
+    briefIn: ['eclampsia-first-seizure-response'],
+  },
+  {
+    id: 'eclampsia-controls-reconcile-recognize-activate-review-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, pattern recognition, immediate qualified response, evidence review, fixed reassessment, and handoff only.',
+    simplification: 'Six actions stand in for injury protection, airway-ready maternal stabilization, eclampsia and severe-pressure protocols, obstetric, anesthesia, nursing, pharmacy, critical-care, fetal, neonatal, laboratory, neurologic, communication, support, surveillance, birth-planning, postpartum, and handoff work.',
+    whereItMisleads: 'Equating button order with seizure first aid, airway care, examination, testing, diagnosis, prescribing, treatment, fetal interpretation, anesthesia, birth planning, disposition, recovery, or competence.',
+    correctUnderstanding: 'Actual care is simultaneous and team-based: stabilize the pregnant patient, treat the eclampsia and severe pressure under current local protocols, prepare for recurrence and airway compromise, assess fetal and organ status, keep alternative causes open, and plan birth after maternal stabilization.',
+    briefIn: ['eclampsia-first-seizure-response'],
+  },
+  {
+    id: 'no-live-eclampsia-seizure-airway-exam-test-drug-magnesium-delivery-disposition-or-outcome',
+    headline: 'The lab does not perform seizure first aid, manage an airway, examine or test, give magnesium or another drug, deliver a baby, determine disposition, or report outcome.',
+    simplification: 'No live seizure timing, injury protection, positioning, suction, oxygen, ventilation, access, pressure or glucose measurement, examination, monitoring or test interpretation, diagnosis, differential exclusion, magnesium, antihypertensive, antiseizure drug, calcium, fluid, dose, concentration, rate, target, route, device, procedure, anesthesia, birth timing or route, transfer, disposition, prognosis, or maternal or newborn outcome is modeled.',
+    whereItMisleads: 'Delaying urgent response for testing or diagnosis; copying fictional values into care; selecting a maneuver, product, dose, route, airway, anesthesia, birth, or disposition from this rehearsal; attributing the fixed later report; or reading completion as competence.',
+    correctUnderstanding: 'Use direct serial maternal, neurologic, airway, pulmonary, pressure, organ and fetal evidence with current local protocols and qualified obstetric, anesthesia, critical-care, nursing, pharmacy, fetal, neonatal, diagnostic, communication, and support ownership.',
+    briefIn: ['eclampsia-first-seizure-response'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

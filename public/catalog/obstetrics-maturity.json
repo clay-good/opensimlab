@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "obstetrics",
-  "recordCount": 4,
+  "recordCount": 5,
   "records": [
     {
       "recordId": "scenario:postpartum-hemorrhage-uterine-atony@0.1.0",
@@ -45,6 +45,17 @@
       "evidence": [
         "/catalog/obstetrics-completion-audit.json#postpartum-severe-preeclampsia-warning-signs@0.1.0",
         "/catalog/obstetrics-quality-audit.json#postpartum-severe-preeclampsia-warning-signs@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:eclampsia-first-seizure-response@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "eclampsia-first-seizure-response",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/obstetrics-completion-audit.json#eclampsia-first-seizure-response@0.1.0",
+        "/catalog/obstetrics-quality-audit.json#eclampsia-first-seizure-response@0.1.0"
       ]
     }
   ]
