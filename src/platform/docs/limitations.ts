@@ -4271,6 +4271,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified product, timing, serial acetaminophen and liver evidence, poison-center or medical-toxicology guidance, patient-specific treatment and stopping criteria, liver-failure escalation, and nonjudgmental safety care.',
     briefIn: ['acetaminophen-clock-and-nomogram'],
   },
+  {
+    id: 'salicylate-exposure-serial-level-acid-base-clinical-transition-and-response-are-authored',
+    headline: 'The exposure, serial concentration, acid-base evidence, clinical transition, qualified care, and later response are authored.',
+    simplification: 'Fixed reports and canonical monitor states stand in for history, examination, timing and product verification, monitoring, blood gas and chemistry acquisition, qualified alkalinization and dialysis preparation, and reassessment.',
+    whereItMisleads: 'Treating the fictional concentration, pH, anion gap, tachypnea, or later deterioration as learner evidence, tissue concentration, a universal severity or dialysis threshold, treatment effect, or predicted course.',
+    correctUnderstanding: 'Real care requires verified acute-versus-chronic exposure, product and units, direct serial clinical and laboratory assessment, toxicology and nephrology guidance, and individualized treatment and extracorporeal decisions.',
+    briefIn: ['salicylate-falling-number'],
+  },
+  {
+    id: 'salicylate-controls-reconcile-recognize-support-review-intent-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, mixed-pattern recognition, qualified ownership, evidence review, bounded alkalinization and dialysis preparedness, reassessment, and handoff only.',
+    simplification: 'Six actions stand in for emergency, toxicology, critical-care, nephrology, laboratory, pharmacy, nursing, respiratory, dialysis, safety, surveillance, and handoff work.',
+    whereItMisleads: 'Equating button order with examination, blood-gas calculation, diagnosis, fluid or electrolyte prescribing, airway management, dialysis eligibility or delivery, disposition, or competence.',
+    correctUnderstanding: 'Actual care requires trained teams, verified serial clinical and laboratory findings, current poison-center and local protocols, patient-specific treatment, and continuous reassessment.',
+    briefIn: ['salicylate-falling-number'],
+  },
+  {
+    id: 'no-live-salicylate-diagnosis-gas-calculation-alkalinization-airway-dialysis-or-outcome',
+    headline: 'The lab does not assess or diagnose poisoning, calculate a blood gas, prescribe alkalinization, manage an airway, select dialysis, or report outcome.',
+    simplification: 'No live history, examination, monitoring, blood gas, chemistry, urine, ECG, imaging or another test, acid-base or anion-gap calculation, diagnosis, charcoal, bicarbonate, potassium, glucose, fluid, dose, route, access, infusion, airway device, ventilation, dialysis, transport, procedure, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Using one concentration, unit, pH, or anion gap alone; copying fictional values into care; suppressing compensatory ventilation; assigning dialysis from this rehearsal; or reading completion as competence.',
+    correctUnderstanding: 'Use the whole serial clinical state with verified concentrations and units, acid-base, CNS, pulmonary, renal, volume, glucose, and electrolyte evidence under toxicology, critical-care, and nephrology ownership.',
+    briefIn: ['salicylate-falling-number'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

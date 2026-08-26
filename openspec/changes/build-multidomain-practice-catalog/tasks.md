@@ -579,6 +579,18 @@ credited toward the catalog until every item in the completion contract passes.
     history, examination, monitoring or test acquisition, nomogram calculation, diagnosis,
     decontamination, drug, dose, route, preparation, access, infusion, adverse-reaction management,
     automatic stop, procedure, safety disposition, prognosis, or outcome control exists.
+  - [x] Toxicology slice 4/15 adds salicylate where the falling number can be worse. The learner
+    reconciles an acute aspirin exposure, 7-hour clock, tinnitus, vomiting, tachypnea, volume clues,
+    supplied 52 mg/dL concentration and units, mixed respiratory alkalosis and metabolic acidosis,
+    potassium, glucose, renal state, and whole patient; activates toxicology, emergency, critical-care,
+    nephrology, monitoring, and compassionate safety ownership; reviews the serial, acid-base,
+    volume, electrolyte, and high-risk airway boundary; records bounded qualified alkalinization and
+    early dialysis preparedness; then reviews a strict elapsed falling concentration with worsening
+    acidemia and confusion before another elapsed CNS, pulmonary, absorption, renal, electrolyte,
+    extracorporeal, safety, and active-risk handoff. No learner history, examination, monitoring or
+    test acquisition, acid-base calculation, diagnosis, fluid or electrolyte prescription, drug,
+    dose, route, access, infusion, airway or ventilation setting, dialysis eligibility or delivery,
+    procedure, safety disposition, prognosis, or outcome control exists.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.
 - [ ] After every wave, verify the exact cumulative count, distinctness, capability reuse, path and

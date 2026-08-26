@@ -1076,6 +1076,9 @@ export function Cockpit({
           onToxicologyAcetaminophenResponse={(action) => session.act({
             type: 'acetaminophen-clock-and-nomogram-response', payload: { action },
           })}
+          onToxicologySalicylateResponse={(action) => session.act({
+            type: 'salicylate-falling-number-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

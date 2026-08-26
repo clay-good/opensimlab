@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "toxicology",
-  "recordCount": 3,
+  "recordCount": 4,
   "records": [
     {
       "recordId": "scenario:methemoglobinemia-saturation-gap@0.1.0",
@@ -34,6 +34,17 @@
       "evidence": [
         "/catalog/toxicology-completion-audit.json#acetaminophen-clock-and-nomogram@0.1.0",
         "/catalog/toxicology-quality-audit.json#acetaminophen-clock-and-nomogram@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:salicylate-falling-number@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "salicylate-falling-number",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/toxicology-completion-audit.json#salicylate-falling-number@0.1.0",
+        "/catalog/toxicology-quality-audit.json#salicylate-falling-number@0.1.0"
       ]
     }
   ]

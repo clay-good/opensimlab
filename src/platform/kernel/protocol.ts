@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 150 reports Toxicology acetaminophen state. */
-export const WORKER_PROTOCOL_VERSION = 150;
+export const WORKER_PROTOCOL_VERSION = 151;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2303,6 +2303,27 @@ export interface EquipmentSnapshot {
       readonly liverInjuryExcluded: false; readonly coingestionExcluded: false;
       readonly safetyDispositionDetermined: false; readonly dispositionDetermined: false;
       readonly prognosisPredicted: false; readonly outcomePredicted: false;
+    };
+    readonly toxicologySalicylateAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly acuteExposureAuthored: true; readonly mixedAcidBasePatternRecognized: boolean;
+      readonly qualifiedSupportActive: boolean; readonly serialEvidenceReviewed: boolean;
+      readonly qualifiedAlkalinizationIntentRecorded: boolean; readonly qualifiedDialysisPreparednessRecorded: boolean;
+      readonly deteriorationStateAuthored: boolean; readonly patientHistoryTakenByLearner: false;
+      readonly patientExaminedByLearner: false; readonly monitoringAcquiredByLearner: false;
+      readonly bloodSampleAcquiredByLearner: false; readonly acidBaseCalculatedByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly decontaminationSelectedByLearner: false;
+      readonly fluidSelectedByLearner: false; readonly drugSelectedByLearner: false;
+      readonly doseSelectedByLearner: false; readonly routeSelectedByLearner: false;
+      readonly airwayPlanSelectedByLearner: false; readonly ventilationSelectedByLearner: false;
+      readonly dialysisSelectedByLearner: false; readonly treatmentDeliveredByLearner: false;
+      readonly tissueConcentrationProven: false; readonly ongoingAbsorptionExcluded: false;
+      readonly pulmonaryComplicationsExcluded: false; readonly dialysisEligibilityDetermined: false;
+      readonly treatmentEffectProven: false; readonly safetyDispositionDetermined: false;
+      readonly dispositionDetermined: false; readonly prognosisPredicted: false;
+      readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

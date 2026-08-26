@@ -392,6 +392,10 @@ const TOXICOLOGY_ACETAMINOPHEN_BLOCKED_ACTION_TYPES = new Set([
   ...TOXICOLOGY_CARBON_MONOXIDE_BLOCKED_ACTION_TYPES,
   'carbon-monoxide-reassuring-monitor-response',
 ]);
+const TOXICOLOGY_SALICYLATE_BLOCKED_ACTION_TYPES = new Set([
+  ...TOXICOLOGY_ACETAMINOPHEN_BLOCKED_ACTION_TYPES,
+  'acetaminophen-clock-and-nomogram-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1247,6 +1251,12 @@ export class AnesthesiaEngine {
   private toxicologyAcetaminophenEvidenceAtTick: number | null = null;
   private toxicologyAcetaminophenReassessmentAtTick: number | null = null;
   private toxicologyAcetaminophenHandoffAtTick: number | null = null;
+  private toxicologySalicylateTrajectoryAtTick: number | null = null;
+  private toxicologySalicylateRecognitionAtTick: number | null = null;
+  private toxicologySalicylateSupportAtTick: number | null = null;
+  private toxicologySalicylateEvidenceAtTick: number | null = null;
+  private toxicologySalicylateReassessmentAtTick: number | null = null;
+  private toxicologySalicylateHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2034,6 +2044,15 @@ export class AnesthesiaEngine {
         'This Toxicology lesson exposes no generic examination, monitoring, laboratory, nomogram, '
         + 'charcoal, drug, dose, route, access, infusion, fluid, device, dialysis, procedure, stopping, '
         + 'or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const toxicologySalicylate = this.scenario.metadata.id === 'salicylate-falling-number'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'salicylate-falling-number-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'salicylate-falling-number-transition-boundary');
+    if (toxicologySalicylate && TOXICOLOGY_SALICYLATE_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `toxicology-salicylate-generic-action-refused-${this.currentTick}`,
+        'This Toxicology lesson exposes no generic examination, monitoring, laboratory, acid-base calculation, '
+        + 'charcoal, fluid, electrolyte, drug, dose, route, access, infusion, airway, ventilation, dialysis, transport, '
+        + 'procedure, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -10118,6 +10137,32 @@ export class AnesthesiaEngine {
         if (this.toxicologyAcetaminophenHandoffAtTick !== null) { this.log('warning', 'assessment', `toxicology-acetaminophen-handoff-refused-${this.currentTick}`, 'The serial level, liver, stopping, safety, and active-risk handoff was already recorded.'); break; }
         this.toxicologyAcetaminophenHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-acetaminophen-active-risk-handoff-recorded-${this.currentTick}`, 'Exposure timing, serial acetaminophen and liver evidence, acetylcysteine status, individualized continuation and stopping review, hepatic deterioration and liver-failure escalation, coingestion, compassionate self-harm safety, disposition, prognosis, and outcome uncertainty were handed off.', { treatmentEffectProven: false, delayedAbsorptionExcluded: false, liverInjuryExcluded: false, stoppingDeterminedByLearner: false, safetyDispositionDetermined: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
       }
+      case 'salicylate-falling-number-response': {
+        const response = typeof action.payload.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'salicylate-falling-number'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'salicylate-falling-number-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'salicylate-falling-number-transition-boundary');
+        const actions = ['reconcile-toxicology-salicylate-product-exposure-clock-symptoms-breathing-and-whole-patient',
+          'recognize-toxicology-salicylate-mixed-acid-base-pattern-without-single-concentration-closure',
+          'activate-toxicology-salicylate-poison-center-emergency-critical-care-nephrology-and-safety-ownership',
+          'review-toxicology-salicylate-supplied-serial-level-acid-base-volume-electrolyte-and-airway-boundary',
+          'record-toxicology-salicylate-bounded-qualified-alkalinization-and-dialysis-preparedness-with-strict-later-review',
+          'handoff-toxicology-salicylate-cns-pulmonary-acidemia-absorption-extracorporeal-and-active-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `toxicology-salicylate-response-refused-${this.currentTick}`, supported ? 'The salicylate action was not listed. No supplied or injected text was retained.' : 'These salicylate choices are available only in the exact declared Toxicology lesson.'); break; }
+        if (response === actions[0]) { if (this.toxicologySalicylateTrajectoryAtTick !== null) { this.log('warning', 'assessment', `toxicology-salicylate-trajectory-refused-${this.currentTick}`, 'The exposure clock, symptoms, breathing, volume clues, and whole-patient state were already reconciled.'); break; } this.toxicologySalicylateTrajectoryAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-salicylate-trajectory-reconciled-${this.currentTick}`, 'Supplied immediate-release aspirin exposure, 7-hour clock, vomiting, tinnitus, diaphoresis, thirst, tachypnea, volume-depletion clues, stable oxygenation, and whole-patient state were connected. The learner did not take history, examine, acquire monitoring or blood, calculate, test, or diagnose.', { acuteExposureAuthored: true, hoursPostIngestion: 7, patientHistoryTakenByLearner: false, patientExaminedByLearner: false }); break; }
+        if (this.toxicologySalicylateTrajectoryAtTick === null) { this.log('warning', 'assessment', `toxicology-salicylate-trajectory-order-refused-${this.currentTick}`, 'Reconcile product, clock, symptoms, breathing, volume clues, and whole patient first.'); break; }
+        if (response === actions[1]) { if (this.toxicologySalicylateRecognitionAtTick !== null) { this.log('warning', 'assessment', `toxicology-salicylate-recognition-refused-${this.currentTick}`, 'The mixed acid-base pattern and concentration boundary were already recognized.'); break; } this.toxicologySalicylateRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-salicylate-pattern-recognized-${this.currentTick}`, 'The supplied low PCO2 and bicarbonate with an elevated anion gap establish an authored mixed respiratory alkalosis and metabolic acidosis pattern despite pH 7.45. No single concentration, unit, pH, or gap closes acuity, severity, diagnosis, absorption, coingestion, or alternatives.', { mixedAcidBasePatternRecognized: true, acidBaseCalculatedByLearner: false, diagnosisMadeByLearner: false }); break; }
+        if (this.toxicologySalicylateRecognitionAtTick === null) { this.log('warning', 'assessment', `toxicology-salicylate-recognition-order-refused-${this.currentTick}`, 'Recognize the mixed pattern and single-concentration boundary before support or evidence review.'); break; }
+        if (response === actions[2]) { if (this.toxicologySalicylateSupportAtTick !== null) { this.log('warning', 'assessment', `toxicology-salicylate-support-refused-${this.currentTick}`, 'Qualified toxicology, emergency, critical-care, nephrology, monitoring, and safety ownership are already active.'); break; } this.toxicologySalicylateSupportAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-salicylate-support-activated-${this.currentTick}`, 'Poison-center or medical-toxicology, emergency, critical-care, nephrology, laboratory, monitoring, volume, glucose, electrolyte, airway-risk, and compassionate safety ownership were recorded. The learner selected no charcoal, fluid, drug, dose, route, access, ventilation, dialysis, or procedure.', { qualifiedSupportActive: true, safetyOwnershipActive: true, treatmentSelectedByLearner: false }); break; }
+        if (this.toxicologySalicylateSupportAtTick === null) { this.log('warning', 'assessment', `toxicology-salicylate-support-order-refused-${this.currentTick}`, 'Activate qualified toxicology, emergency, critical-care, nephrology, monitoring, and safety ownership before evidence review.'); break; }
+        if (response === actions[3]) { if (this.toxicologySalicylateEvidenceAtTick !== null) { this.log('warning', 'assessment', `toxicology-salicylate-evidence-refused-${this.currentTick}`, 'The supplied serial, acid-base, volume, electrolyte, and airway boundary was already reviewed.'); break; } this.toxicologySalicylateEvidenceAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-salicylate-serial-evidence-reviewed-${this.currentTick}`, 'Supplied salicylate 52 mg/dL, pH 7.45, PCO2 23, bicarbonate 16, anion gap 20, potassium 3.2, glucose 92, creatinine 1.0, volume clues, respiratory drive, units, serial-absorption need, and high-risk airway boundary were integrated. The learner acquired, calculated, interpreted, diagnosed, prescribed, or planned no airway.', { serialEvidenceAuthored: true, salicylateMgPerDl: 52, acidBaseCalculatedByLearner: false, airwayPlanSelectedByLearner: false }); break; }
+        if (this.toxicologySalicylateEvidenceAtTick === null) { this.log('warning', 'assessment', `toxicology-salicylate-evidence-order-refused-${this.currentTick}`, 'Review supplied serial, acid-base, volume, electrolyte, and airway evidence before qualified intent.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.toxicologySalicylateEvidenceAtTick) { this.log('warning', 'assessment', `toxicology-salicylate-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before qualified intent and strict later review.'); break; } if (this.toxicologySalicylateReassessmentAtTick !== null) { this.log('warning', 'assessment', `toxicology-salicylate-reassessment-refused-${this.currentTick}`, 'Qualified alkalinization and dialysis preparedness with the strict later report were already reviewed.'); break; } this.toxicologySalicylateReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-salicylate-intent-and-reassessment-recorded-${this.currentTick}`, 'Qualified-team alkalinization and early dialysis preparedness were recorded without composition, dose, rate, target, access, ventilation, threshold, modality, or delivery. Strict 9-hour report: salicylate 46 mg/dL, pH 7.32, PCO2 25, bicarbonate 13, potassium 3.0, new confusion, persistent RR 30/min, and no pulmonary edema. The falling serum number with worsening acidemia and CNS state is ominous, not improvement; tissue concentration, treatment failure, ongoing absorption, eligibility, and outcome remain unproven.', { qualifiedAlkalinizationIntentRecorded: true, qualifiedDialysisPreparednessRecorded: true, laterSalicylateMgPerDl: 46, treatmentDeliveredByLearner: false, dialysisSelectedByLearner: false, treatmentEffectProven: false }); break; }
+        if (this.toxicologySalicylateReassessmentAtTick === null) { this.log('warning', 'assessment', `toxicology-salicylate-handoff-order-refused-${this.currentTick}`, 'Record bounded qualified intent and review the strict later deterioration before handoff.'); break; }
+        if (this.currentTick <= this.toxicologySalicylateReassessmentAtTick) { this.log('warning', 'assessment', `toxicology-salicylate-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off active salicylate risk.'); break; }
+        if (this.toxicologySalicylateHandoffAtTick !== null) { this.log('warning', 'assessment', `toxicology-salicylate-handoff-refused-${this.currentTick}`, 'The CNS, pulmonary, acidemia, absorption, extracorporeal, and active-risk handoff was already recorded.'); break; }
+        this.toxicologySalicylateHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-salicylate-active-risk-handoff-recorded-${this.currentTick}`, 'Serial clinical, concentration, pH and ventilation state, CNS and pulmonary deterioration, ongoing absorption, renal and electrolyte constraints, alkalinization and extracorporeal status, airway risk, compassionate safety, disposition, prognosis, and outcome uncertainty were handed off.', { tissueConcentrationProven: false, ongoingAbsorptionExcluded: false, pulmonaryComplicationsExcluded: false, dialysisEligibilityDetermined: false, safetyDispositionDetermined: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -12872,6 +12917,13 @@ export class AnesthesiaEngine {
       crisisState = { ...crisisState, heartRateBpm: this.toxicologyAcetaminophenReassessmentAtTick !== null ? 82 : 92,
         respiratoryRateBpm: 16, spo2Percent: 99, systolicMmHg: 122, diastolicMmHg: 76,
         meanArterialMmHg: 91, coreTemperatureC: 36.8 };
+    }
+    if (this.scenario.metadata.id === 'salicylate-falling-number'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'salicylate-falling-number-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'salicylate-falling-number-transition-boundary')) {
+      crisisState = { ...crisisState, heartRateBpm: this.toxicologySalicylateReassessmentAtTick !== null ? 114 : 108,
+        respiratoryRateBpm: 30, spo2Percent: 99, systolicMmHg: 116, diastolicMmHg: 74,
+        meanArterialMmHg: 88, coreTemperatureC: 37.6 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -16469,6 +16521,27 @@ export class AnesthesiaEngine {
               liverInjuryExcluded: false as const, coingestionExcluded: false as const,
               safetyDispositionDetermined: false as const, dispositionDetermined: false as const,
               prognosisPredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'salicylate-falling-number'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'salicylate-falling-number-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'salicylate-falling-number-transition-boundary') ? {
+            toxicologySalicylateAssessment: {
+              trajectoryAtTick: this.toxicologySalicylateTrajectoryAtTick, recognitionAtTick: this.toxicologySalicylateRecognitionAtTick,
+              supportAtTick: this.toxicologySalicylateSupportAtTick, evidenceAtTick: this.toxicologySalicylateEvidenceAtTick,
+              reassessmentAtTick: this.toxicologySalicylateReassessmentAtTick, handoffAtTick: this.toxicologySalicylateHandoffAtTick,
+              acuteExposureAuthored: true as const, mixedAcidBasePatternRecognized: this.toxicologySalicylateRecognitionAtTick !== null,
+              qualifiedSupportActive: this.toxicologySalicylateSupportAtTick !== null, serialEvidenceReviewed: this.toxicologySalicylateEvidenceAtTick !== null,
+              qualifiedAlkalinizationIntentRecorded: this.toxicologySalicylateReassessmentAtTick !== null, qualifiedDialysisPreparednessRecorded: this.toxicologySalicylateReassessmentAtTick !== null,
+              deteriorationStateAuthored: this.toxicologySalicylateReassessmentAtTick !== null,
+              patientHistoryTakenByLearner: false as const, patientExaminedByLearner: false as const, monitoringAcquiredByLearner: false as const,
+              bloodSampleAcquiredByLearner: false as const, acidBaseCalculatedByLearner: false as const, diagnosisMadeByLearner: false as const,
+              decontaminationSelectedByLearner: false as const, fluidSelectedByLearner: false as const, drugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const, routeSelectedByLearner: false as const, airwayPlanSelectedByLearner: false as const,
+              ventilationSelectedByLearner: false as const, dialysisSelectedByLearner: false as const, treatmentDeliveredByLearner: false as const,
+              tissueConcentrationProven: false as const, ongoingAbsorptionExcluded: false as const, pulmonaryComplicationsExcluded: false as const,
+              dialysisEligibilityDetermined: false as const, treatmentEffectProven: false as const, safetyDispositionDetermined: false as const,
+              dispositionDetermined: false as const, prognosisPredicted: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

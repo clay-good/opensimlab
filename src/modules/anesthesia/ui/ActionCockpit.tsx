@@ -1190,6 +1190,11 @@ export interface ActionCockpitProps {
       readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly toxicologySalicylateAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2042,6 +2047,14 @@ export interface ActionCockpitProps {
       | 'record-toxicology-acetaminophen-bounded-qualified-team-acetylcysteine-intent-and-strict-later-review'
       | 'handoff-toxicology-acetaminophen-serial-level-liver-failure-stopping-safety-and-active-risk',
   ) => void;
+  readonly onToxicologySalicylateResponse?: (
+    action: 'reconcile-toxicology-salicylate-product-exposure-clock-symptoms-breathing-and-whole-patient'
+      | 'recognize-toxicology-salicylate-mixed-acid-base-pattern-without-single-concentration-closure'
+      | 'activate-toxicology-salicylate-poison-center-emergency-critical-care-nephrology-and-safety-ownership'
+      | 'review-toxicology-salicylate-supplied-serial-level-acid-base-volume-electrolyte-and-airway-boundary'
+      | 'record-toxicology-salicylate-bounded-qualified-alkalinization-and-dialysis-preparedness-with-strict-later-review'
+      | 'handoff-toxicology-salicylate-cns-pulmonary-acidemia-absorption-extracorporeal-and-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2551,6 +2564,10 @@ export function crisisResponseAvailability(
       scenario.metadata.id === 'acetaminophen-clock-and-nomogram'
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acetaminophen-clock-and-nomogram-transition')
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'acetaminophen-clock-and-nomogram-transition-boundary'),
+    hasToxicologySalicylateResponse:
+      scenario.metadata.id === 'salicylate-falling-number'
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'salicylate-falling-number-transition')
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'salicylate-falling-number-transition-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2753,6 +2770,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'methemoglobinemia-saturation-gap-transition')
       || (event.type === 'narrative' && event.target === 'carbon-monoxide-reassuring-monitor-transition')
       || (event.type === 'narrative' && event.target === 'acetaminophen-clock-and-nomogram-transition')
+      || (event.type === 'narrative' && event.target === 'salicylate-falling-number-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2843,6 +2861,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasToxicologyMethemoglobinemiaResponse,
     hasToxicologyCarbonMonoxideResponse,
     hasToxicologyAcetaminophenResponse,
+    hasToxicologySalicylateResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2960,8 +2979,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasSepticShockResuscitationResponse || hasToxicologyMethemoglobinemiaResponse
     || hasToxicologyCarbonMonoxideResponse
     || hasToxicologyAcetaminophenResponse
+    || hasToxicologySalicylateResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasToxicologyAcetaminophenResponse
+  const responseTray = hasToxicologySalicylateResponse
+    ? { id: 'crisis', label: 'Salicylate trajectory' } as const
+    : hasToxicologyAcetaminophenResponse
     ? { id: 'crisis', label: 'Acetaminophen clock' } as const
     : hasToxicologyCarbonMonoxideResponse
     ? { id: 'crisis', label: 'Hidden carbon monoxide' } as const
@@ -4121,6 +4143,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <ToxicologyAcetaminophenTray
                 assessment={props.resuscitation.toxicologyAcetaminophenAssessment}
                 onAction={props.onToxicologyAcetaminophenResponse ?? (() => {})} />
+            )}
+            {hasToxicologySalicylateResponse && (
+              <ToxicologySalicylateTray
+                assessment={props.resuscitation.toxicologySalicylateAssessment}
+                onAction={props.onToxicologySalicylateResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -10534,6 +10561,38 @@ function ToxicologyAcetaminophenTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-acetaminophen-bounded-qualified-team-acetylcysteine-intent-and-strict-later-review')}>Record intent + review</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-acetaminophen-serial-level-liver-failure-stopping-safety-and-active-risk')}>Hand off what stays open</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function ToxicologySalicylateTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologySalicylateAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onToxicologySalicylateResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const evidence = assessment?.evidenceAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="toxicology-salicylate-early-title">
+      <div id="toxicology-salicylate-early-title" className="syringe__name">Read the patient and the number together.</div>
+      <p className="syringe__remaining">Begin with product, clock, tinnitus, vomiting, breathing, volume clues, units, and whole person.</p>
+      <div className="crisis-drug__actions">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-toxicology-salicylate-product-exposure-clock-symptoms-breathing-and-whole-patient')}>Connect exposure + breathing</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-toxicology-salicylate-mixed-acid-base-pattern-without-single-concentration-closure')}>See the mixed pattern</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-toxicology-salicylate-poison-center-emergency-critical-care-nephrology-and-safety-ownership')}>Gather the right team early</Button>}
+        {support && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-toxicology-salicylate-supplied-serial-level-acid-base-volume-electrolyte-and-airway-boundary')}>Review the coupled evidence</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="toxicology-salicylate-later-title">
+      <div id="toxicology-salicylate-later-title" className="syringe__name">A lower number can travel with a sicker patient.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'CNS, pulmonary, acid-base, absorption, renal, electrolyte, extracorporeal, safety, and outcome uncertainty handed off.' : reassessment ? 'The concentration fell while pH and mentation worsened. The whole trajectory is ominous, not reassuring.' : evidence ? 'Serial concentration, pH, ventilation, volume, electrolytes, and airway risk are coupled. Record qualified intent after time passes.' : support ? 'Qualified toxicology, critical-care, nephrology, monitoring, and safety ownership are active. Review the supplied evidence.' : 'Complete recognition and early ownership before treatment-boundary review.'}</p>
+      <div className="crisis-drug__actions">
+        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-salicylate-bounded-qualified-alkalinization-and-dialysis-preparedness-with-strict-later-review')}>Prepare early + reassess</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-salicylate-cns-pulmonary-acidemia-absorption-extracorporeal-and-active-risk')}>Hand off the whole trajectory</Button>}
       </div>
     </section>
   </>;

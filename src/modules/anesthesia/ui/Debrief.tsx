@@ -5022,6 +5022,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-toxicology-salicylate-product-exposure-clock-symptoms-breathing-and-whole-patient',
+      'recognize-toxicology-salicylate-mixed-acid-base-pattern-without-single-concentration-closure',
+      'activate-toxicology-salicylate-poison-center-emergency-critical-care-nephrology-and-safety-ownership',
+      'review-toxicology-salicylate-supplied-serial-level-acid-base-volume-electrolyte-and-airway-boundary',
+      'record-toxicology-salicylate-bounded-qualified-alkalinization-and-dialysis-preparedness-with-strict-later-review',
+      'handoff-toxicology-salicylate-cns-pulmonary-acidemia-absorption-extracorporeal-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'salicylate-falling-number'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'salicylate-falling-number-transition')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'salicylate-falling-number-transition-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Toxicology salicylate lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'Product, clock, symptoms, breathing, volume clues, units, and the whole patient were reconciled.'],
+        ['pattern-recognized', 'The mixed respiratory-alkalosis and metabolic-acidosis pattern was recognized without single-concentration closure.'],
+        ['support-activated', 'Toxicology, emergency, critical-care, nephrology, monitoring, and compassionate safety ownership were activated.'],
+        ['serial-evidence-reviewed', 'Serial concentration, acid-base, volume, electrolyte, glucose, renal, respiratory-drive, and airway evidence were reviewed without learner calculation.'],
+        ['intent-and-reassessment-recorded', 'Bounded qualified alkalinization and dialysis preparedness plus the elapsed deterioration were recorded without prescription, eligibility, delivery, or causal claims.'],
+        ['active-risk-handoff-recorded', 'CNS, pulmonary, acidemia, absorption, renal, electrolyte, extracorporeal, safety, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^toxicology-salicylate-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^toxicology-salicylate-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-neurology-asah-day-aneurysm-status-new-deficit-and-whole-patient',
       'review-neurology-asah-rebleeding-hydrocephalus-seizure-metabolic-and-perfusion-evidence',
       'recognize-neurology-asah-possible-dci-without-imaging-alone',

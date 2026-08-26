@@ -3033,6 +3033,26 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=472f158a-5ab9-4308-8e49-1116e6ea3d39',
     verifiedOn: '2026-08-26',
   },
+  {
+    id: 'acmt-salicylate-priorities-2015', pmid: '25715929',
+    authors: 'American College of Medical Toxicology',
+    title: 'Guidance Document: Management Priorities in Salicylate Toxicity',
+    publication: 'Journal of Medical Toxicology', year: 2015,
+    locator: '11(1):149-152; doi:10.1007/s13181-013-0362-3; management priorities 1-5',
+    usedFor: 'Serial concentration and unit context, mixed acid-base recognition, acidemia hazard, volume and electrolyte review, high-risk airway boundary, alkalinization intent, and early dialysis preparation.',
+    verifiedAgainst: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC4371029/',
+    verifiedOn: '2026-08-26',
+  },
+  {
+    id: 'extrip-salicylate-2015', pmid: '25986310',
+    authors: 'Juurlink DN, Gosselin S, Kielstein JT, et al',
+    title: 'Extracorporeal Treatment for Salicylate Poisoning: Systematic Review and Recommendations From the EXTRIP Workgroup',
+    publication: 'Annals of Emergency Medicine', year: 2015,
+    locator: '66(2):165-181; doi:10.1016/j.annemergmed.2015.03.031; severe-poisoning and modality recommendations',
+    usedFor: 'Early extracorporeal preparedness based on CNS, pulmonary, acid-base, renal, clinical-failure, and concentration context without exposing learner eligibility or modality selection.',
+    verifiedAgainst: 'https://pubmed.ncbi.nlm.nih.gov/25986310/',
+    verifiedOn: '2026-08-26',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

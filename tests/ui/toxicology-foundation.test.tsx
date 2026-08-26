@@ -8,6 +8,7 @@ import { ActionCockpit, crisisResponseAvailability, type ActionCockpitProps } fr
 import { METHEMOGLOBINEMIA_SATURATION_GAP as SCENARIO } from '../../src/modules/toxicology/scenarios/methemoglobinemia-saturation-gap';
 import { CARBON_MONOXIDE_REASSURING_MONITOR } from '../../src/modules/toxicology/scenarios/carbon-monoxide-reassuring-monitor';
 import { ACETAMINOPHEN_CLOCK_AND_NOMOGRAM } from '../../src/modules/toxicology/scenarios/acetaminophen-clock-and-nomogram';
+import { SALICYLATE_FALLING_NUMBER } from '../../src/modules/toxicology/scenarios/salicylate-falling-number';
 
 describe('Toxicology module user-facing foundation', () => {
   const cockpitMarkup = (
@@ -42,6 +43,7 @@ describe('Toxicology module user-facing foundation', () => {
     onToxicologyMethemoglobinemiaResponse: () => {},
     onToxicologyCarbonMonoxideResponse: () => {},
     onToxicologyAcetaminophenResponse: () => {},
+    onToxicologySalicylateResponse: () => {},
   } satisfies ActionCockpitProps));
 
   it('renders a calm module index with shared navigation and the exact first lab', () => {
@@ -54,6 +56,8 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('Carbon monoxide with a reassuring monitor');
     expect(markup).toContain('href="/toxicology/scenario/acetaminophen-clock-and-nomogram"');
     expect(markup).toContain('Acetaminophen: the clock changes the meaning');
+    expect(markup).toContain('href="/toxicology/scenario/salicylate-falling-number"');
+    expect(markup).toContain('Salicylate: the falling number can be worse');
   });
 
   it('briefs the bounded poisoning rehearsal without dose or diagnostic claims', () => {
@@ -134,6 +138,27 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('The clock gives the number its meaning.');
     expect(markup).toContain('Connect product + clock');
     expect(markup).not.toMatch(/mg\/kg|automatic stop/i);
+    expect(markup).not.toContain('<input');
+    expect(markup).not.toContain('<select');
+  });
+
+  it('prerenders and opens the salicylate lab on its calm whole-trajectory tray', () => {
+    const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/salicylate-falling-number' }));
+    expect(page).toContain('<h1>Salicylate: the falling number can be worse</h1>');
+    expect(page).toContain('mixed acid-base pattern');
+    expect(crisisResponseAvailability(SALICYLATE_FALLING_NUMBER, []))
+      .toMatchObject({ hasToxicologySalicylateResponse: true });
+    expect(crisisResponseAvailability({ ...SALICYLATE_FALLING_NUMBER,
+      metadata: { ...SALICYLATE_FALLING_NUMBER.metadata, id: 'salicylate-clone' } }, []))
+      .toMatchObject({ hasToxicologySalicylateResponse: false });
+    const markup = cockpitMarkup(SALICYLATE_FALLING_NUMBER, {
+      toxicologySalicylateAssessment: { trajectoryAtTick: null, recognitionAtTick: null,
+        supportAtTick: null, evidenceAtTick: null, reassessmentAtTick: null, handoffAtTick: null },
+    });
+    expect(markup).toContain('Salicylate trajectory');
+    expect(markup).toContain('Read the patient and the number together.');
+    expect(markup).toContain('Connect exposure + breathing');
+    expect(markup).not.toMatch(/mEq|mL\/kg|dialysis threshold|ventilator setting/i);
     expect(markup).not.toContain('<input');
     expect(markup).not.toContain('<select');
   });

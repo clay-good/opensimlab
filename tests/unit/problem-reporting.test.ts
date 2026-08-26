@@ -22,9 +22,9 @@ describe('scenario report contract', () => {
     const catalog = JSON.parse(readFileSync(
       join(process.cwd(), 'workers/reports/src/report-catalog.generated.json'), 'utf8',
     )) as { scenarios: { moduleId: string; scenarioId: string; contentVersion: string }[] };
-    expect(catalog.scenarios).toHaveLength(154);
+    expect(catalog.scenarios).toHaveLength(155);
     expect(new Set(catalog.scenarios.map((entry) => `${entry.moduleId}:${entry.scenarioId}@${entry.contentVersion}`)).size)
-      .toBe(154);
+      .toBe(155);
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'toxicology', scenarioId: 'methemoglobinemia-saturation-gap',
       contentVersion: '0.1.0',
@@ -35,6 +35,10 @@ describe('scenario report contract', () => {
     }));
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'toxicology', scenarioId: 'acetaminophen-clock-and-nomogram',
+      contentVersion: '0.1.0',
+    }));
+    expect(catalog.scenarios).toContainEqual(expect.objectContaining({
+      moduleId: 'toxicology', scenarioId: 'salicylate-falling-number',
       contentVersion: '0.1.0',
     }));
     expect(catalog.scenarios).toContainEqual(expect.objectContaining({

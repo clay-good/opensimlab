@@ -260,6 +260,12 @@ Recorded here rather than silently carried:
   teaching calibrations grounded in current consensus and ACMT guidance, not an absorption,
   metabolism, nomogram-calculation, liver-injury, acetylcysteine-pharmacology, automatic-stopping, or
   individualized-response model.
+  Salicylate where the falling number can be worse uses fixed canonical presentation and elapsed-
+  deterioration states: supplied salicylate 52 mg/dL, pH 7.45, PCO2 23 mmHg, bicarbonate 16 mmol/L,
+  anion gap 20 mmol/L and potassium 3.2 mmol/L, then salicylate 46 mg/dL, pH 7.32, PCO2 25 mmHg,
+  bicarbonate 13 mmol/L, potassium 3.0 mmol/L and new confusion. These are teaching calibrations
+  grounded in ACMT and EXTRIP guidance, not a salicylate kinetic, tissue-distribution, acid-base,
+  alkalinization-response, airway, extracorporeal-treatment, or individualized-response model.
 
 ## Concentration-time checks, 2026-08-23
 

@@ -2342,6 +2342,22 @@ safety, disposition, and active-risk handoff. The clock does not create an autom
 canonical state is not an absorption, metabolism, liver-injury, pharmacology, or individualized-
 response model.
 
+### Wave F toxicology slice 4: salicylate where the falling number can be worse
+
+The fourth Toxicology lab owns the mixed acid-base and whole-trajectory salicylate pattern rather than
+duplicating a generic hyperventilation, metabolic-acidosis, or dialysis-threshold calculator. The
+learner reconciles an acute immediate-release aspirin exposure, 7-hour clock, tinnitus, vomiting,
+diaphoresis, tachypnea, volume clues, stable oxygenation, supplied salicylate 52 mg/dL, pH 7.45,
+PCO2 23 mmHg, bicarbonate 16 mmol/L, anion gap 20 mmol/L, potassium, glucose, renal state, and whole
+patient; recognizes mixed respiratory alkalosis and metabolic acidosis without single-number closure;
+activates toxicology, emergency, critical-care, nephrology, monitoring, and compassionate safety
+ownership; and reviews the high-risk airway boundary. Bounded qualified alkalinization intent and
+early dialysis preparedness expose no composition, dose, rate, target, access, ventilation setting,
+threshold, modality, or delivery. A strict elapsed falling concentration with worsening acidemia and
+confusion precedes another elapsed CNS, pulmonary, absorption, renal, electrolyte, extracorporeal,
+safety, and active-risk handoff. The canonical state is not a salicylate kinetic, tissue-distribution,
+acid-base, treatment-response, airway, or dialysis model.
+
 #### Hematology and oncology: 11
 
 Neutropenic fever; tumor-lysis syndrome; hyperleukocytosis pattern; sickle-cell acute chest syndrome;

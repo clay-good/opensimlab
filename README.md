@@ -99,6 +99,13 @@ position, baseline liver evidence, poison-center and compassionate safety owners
 qualified-team acetylcysteine intent, a strict elapsed later report, individualized stopping review,
 and active-risk handoff. It exposes no learner nomogram calculator, drug, dose, route, infusion,
 automatic course-length stop, safety disposition, procedure, prognosis, or outcome control.
+Its fourth lab, salicylate where the falling number can be worse, connects an acute aspirin exposure,
+tinnitus, vomiting, tachypnea, volume clues, concentration units, and a supplied mixed respiratory-
+alkalosis and metabolic-acidosis pattern. It makes toxicology, critical-care, nephrology, serial pH,
+ventilation, CNS and pulmonary risk, bounded qualified alkalinization intent, early dialysis
+preparedness, a strict worsening-acidemia report, and active-risk handoff visible without exposing a
+blood-gas calculator, fluid or electrolyte prescription, airway setting, dialysis threshold,
+eligibility or delivery, procedure, disposition, or outcome control.
 
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
