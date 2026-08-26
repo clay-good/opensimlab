@@ -541,6 +541,10 @@ const OBSTETRICS_MAGNESIUM_TOXICITY_BLOCKED_ACTION_TYPES = new Set([
   ...OBSTETRICS_UTERINE_RUPTURE_BLOCKED_ACTION_TYPES,
   'suspected-uterine-rupture-recognition-response',
 ]);
+const OBSTETRICS_HIGH_NEURAXIAL_BLOCK_BLOCKED_ACTION_TYPES = new Set([
+  ...OBSTETRICS_MAGNESIUM_TOXICITY_BLOCKED_ACTION_TYPES,
+  'magnesium-sulfate-toxicity-recognition-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1534,6 +1538,12 @@ export class AnesthesiaEngine {
   private obstetricsMagnesiumToxicityReadinessAtTick: number | null = null;
   private obstetricsMagnesiumToxicityReassessmentAtTick: number | null = null;
   private obstetricsMagnesiumToxicityHandoffAtTick: number | null = null;
+  private obstetricsHighNeuraxialSupportAtTick: number | null = null;
+  private obstetricsHighNeuraxialContextAtTick: number | null = null;
+  private obstetricsHighNeuraxialUncertaintyAtTick: number | null = null;
+  private obstetricsHighNeuraxialReadinessAtTick: number | null = null;
+  private obstetricsHighNeuraxialReassessmentAtTick: number | null = null;
+  private obstetricsHighNeuraxialHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2513,6 +2523,14 @@ export class AnesthesiaEngine {
     if (obstetricsMagnesiumToxicity && OBSTETRICS_MAGNESIUM_TOXICITY_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `obstetrics-magnesium-toxicity-generic-action-refused-${this.currentTick}`,
         'This Obstetrics lesson exposes no generic examination, monitoring or laboratory interpretation, diagnosis, infusion operation, oxygen, airway, ventilation, fluid, calcium or other drug, dose, route, seizure care, newborn assessment, procedure, transport, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const obstetricsHighNeuraxial = this.scenario.metadata.id === 'high-neuraxial-block-obstetric-coordination'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'high-neuraxial-block-obstetric-coordination-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'high-neuraxial-block-obstetric-coordination-transition-boundary').length === 1;
+    if (obstetricsHighNeuraxial && OBSTETRICS_HIGH_NEURAXIAL_BLOCK_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `obstetrics-high-neuraxial-block-generic-action-refused-${this.currentTick}`,
+        'This Obstetrics lesson exposes no generic examination, block assessment, monitoring interpretation, diagnosis, injection or infusion operation, position, oxygen, airway, ventilation, fluid, vasopressor or other drug, dose, anesthesia, birth, newborn assessment, procedure, transport, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -11196,6 +11214,33 @@ export class AnesthesiaEngine {
         if (this.obstetricsMagnesiumToxicityHandoffAtTick !== null) break;
         this.obstetricsMagnesiumToxicityHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-magnesium-toxicity-active-risk-handoff-recorded-${this.currentTick}`, 'Respiratory failure and arrest risk, neuromuscular weakness, rhythm and pressure risk, magnesium rebound and clearance, renal injury and replacement-therapy uncertainty, fluid and electrolyte state, recurrent seizure and preeclampsia risk, medication reconciliation, newborn exposure and assessment, explanation, family and staff support, incident review, psychological follow-up, disposition, prognosis, and maternal or newborn outcome uncertainty were handed off.', { completeReversalProven: false, magnesiumClearanceProven: false, renalRecoveryProven: false, newbornSafetyProven: false, safetyDispositionDetermined: false, maternalOutcomePredicted: false, newbornOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'high-neuraxial-block-obstetric-coordination-response': {
+        const response = typeof action.payload?.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'high-neuraxial-block-obstetric-coordination'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'high-neuraxial-block-obstetric-coordination-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'high-neuraxial-block-obstetric-coordination-transition-boundary').length === 1;
+        const actions = ['activate-obstetrics-high-neuraxial-block-airway-anesthesia-obstetric-theatre-newborn-and-support-response',
+          'reconcile-obstetrics-high-neuraxial-block-injection-clock-level-breathing-arms-circulation-fetus-and-whole-person',
+          'review-obstetrics-high-neuraxial-block-rapid-progression-awareness-and-alternative-cause-boundaries',
+          'review-obstetrics-high-neuraxial-block-parallel-airway-ventilation-circulation-uterine-displacement-fetal-birth-and-support-readiness',
+          'review-obstetrics-high-neuraxial-block-fixed-four-minute-qualified-support-report',
+          'handoff-obstetrics-high-neuraxial-block-airway-circulation-block-fetal-birth-awareness-support-and-outcome-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `obstetrics-high-neuraxial-block-response-refused-${this.currentTick}`, supported ? 'The high-neuraxial-block action was not listed. No supplied or injected text was retained.' : 'These high-neuraxial-block choices are available only in the exact declared Obstetrics lesson.'); break; }
+        if (response === actions[0]) { if (this.obstetricsHighNeuraxialSupportAtTick !== null) break; this.obstetricsHighNeuraxialSupportAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-high-neuraxial-block-support-activated-${this.currentTick}`, 'The rapidly ascending high-neuraxial-block emergency was named and qualified senior anesthesia and airway, obstetric, nursing, theatre, newborn, pharmacy, critical-care, leadership, documentation, communication, dignity, family, and staff-support ownership was activated while reassurance stayed close. No learner examination, airway, ventilation, position, circulation, drug, anesthesia, birth, or procedure action occurred.'); break; }
+        if (this.obstetricsHighNeuraxialSupportAtTick === null) { this.log('warning', 'assessment', `obstetrics-high-neuraxial-block-support-order-refused-${this.currentTick}`, 'Activate the prepared airway-capable obstetric high-neuraxial-block response before further review.'); break; }
+        if (response === actions[1]) { if (this.obstetricsHighNeuraxialContextAtTick !== null) break; this.obstetricsHighNeuraxialContextAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-high-neuraxial-block-context-reconciled-${this.currentTick}`, 'Injection clock, supplied ascending sensory and motor findings, arm strength, breathing, voice, consciousness, circulation, aortocaval context, fetal pattern, distress, communication, support, and the whole person were connected without learner examination, block assessment, monitoring interpretation, diagnosis, or treatment.'); break; }
+        if (this.obstetricsHighNeuraxialContextAtTick === null) { this.log('warning', 'assessment', `obstetrics-high-neuraxial-block-context-order-refused-${this.currentTick}`, 'Connect the supplied injection, block, breathing, arm, circulation, fetal, and whole-person facts before uncertainty review.'); break; }
+        if (response === actions[2]) { if (this.obstetricsHighNeuraxialUncertaintyAtTick !== null) break; this.obstetricsHighNeuraxialUncertaintyAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-high-neuraxial-block-uncertainty-reviewed-${this.currentTick}`, 'Rapid progression through apnea or unconsciousness and awareness risk were reviewed while vasovagal events, aortocaval compression, local-anesthetic toxicity, embolism, concealed hemorrhage, allergy, medication error, primary airway or cardiopulmonary disease, and other causes stayed open without diagnostic closure or delay.'); break; }
+        if (this.obstetricsHighNeuraxialUncertaintyAtTick === null) { this.log('warning', 'assessment', `obstetrics-high-neuraxial-block-uncertainty-order-refused-${this.currentTick}`, 'Review rapid progression, awareness, injection uncertainty, and dangerous alternatives before readiness.'); break; }
+        if (response === actions[3]) { if (this.obstetricsHighNeuraxialReadinessAtTick !== null) break; this.obstetricsHighNeuraxialReadinessAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-high-neuraxial-block-readiness-reviewed-${this.currentTick}`, 'Qualified airway and ventilation support, oxygen, circulation and vasopressor support, uterine displacement, maternal and fetal surveillance, awareness prevention, birth and newborn readiness, reassurance, explanation, documentation, post-event review, and family and staff support were reviewed as parallel work. No learner airway, oxygen, ventilation, position, fluid, vasopressor, drug, dose, anesthesia, birth, newborn, or procedure action occurred.'); break; }
+        if (this.obstetricsHighNeuraxialReadinessAtTick === null) { this.log('warning', 'assessment', `obstetrics-high-neuraxial-block-readiness-order-refused-${this.currentTick}`, 'Review parallel airway, ventilation, circulation, uterine-displacement, fetal, birth, newborn, communication, and support readiness before the fixed report.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.obstetricsHighNeuraxialReadinessAtTick) { this.log('warning', 'assessment', `obstetrics-high-neuraxial-block-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed qualified-support report.'); break; } if (this.obstetricsHighNeuraxialReassessmentAtTick !== null) break; this.obstetricsHighNeuraxialReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-high-neuraxial-block-four-minute-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report 4 minutes after activation: airway-capable respiratory and circulation support are underway. HR is 78/min, BP 104/64 mmHg (MAP 77), supported RR 14/min, support-coherent SpO2 99%, and fetal baseline 118/min; arm weakness and a weak voice persist without loss of consciousness. Block recession, definitive airway need, fetal recovery, anesthesia course, birth timing or route, delivery, newborn state, awareness, disposition, and outcomes remain unresolved.', { blockRecessionProven: false, airwayManagedByLearner: false, circulationSupportedByLearner: false, fetalRecoveryProven: false, deliveryPerformedByLearner: false, treatmentEffectProven: false, outcomePredicted: false }); break; }
+        if (this.obstetricsHighNeuraxialReassessmentAtTick === null) { this.log('warning', 'assessment', `obstetrics-high-neuraxial-block-handoff-order-refused-${this.currentTick}`, 'Review the fixed 4-minute qualified-support report before active-risk handoff.'); break; }
+        if (this.currentTick <= this.obstetricsHighNeuraxialReassessmentAtTick) { this.log('warning', 'assessment', `obstetrics-high-neuraxial-block-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.obstetricsHighNeuraxialHandoffAtTick !== null) break;
+        this.obstetricsHighNeuraxialHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-high-neuraxial-block-active-risk-handoff-recorded-${this.currentTick}`, 'Airway obstruction, apnea, aspiration, intubation and ventilation risk, hypotension and bradycardia, arrest, block progression and recession, medication and catheter reconciliation, fetal hypoxia, birth and anesthesia planning, newborn resuscitation, awareness and recall, explanation, family and staff support, postnatal anesthesia review, psychological follow-up, disposition, prognosis, and maternal or newborn outcome uncertainty were handed off.', { blockRecessionProven: false, fetalRecoveryProven: false, deliveryCompleted: false, newbornSafetyProven: false, awarenessExcluded: false, safetyDispositionDetermined: false, maternalOutcomePredicted: false, newbornOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -14180,6 +14225,19 @@ export class AnesthesiaEngine {
         diastolicMmHg: 68,
         meanArterialMmHg: this.obstetricsMagnesiumToxicityReassessmentAtTick !== null ? 82 : 83,
         coreTemperatureC: 36.7 };
+    }
+    if (this.scenario.metadata.id === 'high-neuraxial-block-obstetric-coordination'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'high-neuraxial-block-obstetric-coordination-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'high-neuraxial-block-obstetric-coordination-transition-boundary').length === 1) {
+      crisisState = { ...crisisState,
+        heartRateBpm: this.obstetricsHighNeuraxialReassessmentAtTick !== null ? 78 : 52,
+        respiratoryRateBpm: this.obstetricsHighNeuraxialReassessmentAtTick !== null ? 14 : 8,
+        spo2Percent: this.obstetricsHighNeuraxialReassessmentAtTick !== null ? 99 : 96,
+        systolicMmHg: this.obstetricsHighNeuraxialReassessmentAtTick !== null ? 104 : 78,
+        diastolicMmHg: this.obstetricsHighNeuraxialReassessmentAtTick !== null ? 64 : 42,
+        meanArterialMmHg: this.obstetricsHighNeuraxialReassessmentAtTick !== null ? 77 : 54,
+        coreTemperatureC: 36.8 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -18397,6 +18455,34 @@ export class AnesthesiaEngine {
               procedurePerformedByLearner: false as const, completeReversalProven: false as const,
               magnesiumClearanceProven: false as const, renalRecoveryProven: false as const,
               treatmentEffectProven: false as const, newbornSafetyProven: false as const,
+              safetyDispositionDetermined: false as const, maternalOutcomePredicted: false as const,
+              newbornOutcomePredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'high-neuraxial-block-obstetric-coordination'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'high-neuraxial-block-obstetric-coordination-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'high-neuraxial-block-obstetric-coordination-transition-boundary').length === 1 ? {
+            obstetricsHighNeuraxialAssessment: {
+              supportAtTick: this.obstetricsHighNeuraxialSupportAtTick,
+              contextAtTick: this.obstetricsHighNeuraxialContextAtTick,
+              uncertaintyAtTick: this.obstetricsHighNeuraxialUncertaintyAtTick,
+              readinessAtTick: this.obstetricsHighNeuraxialReadinessAtTick,
+              reassessmentAtTick: this.obstetricsHighNeuraxialReassessmentAtTick,
+              handoffAtTick: this.obstetricsHighNeuraxialHandoffAtTick,
+              authoredHighNeuraxialPattern: true as const,
+              authoredQualifiedPartialSupport: this.obstetricsHighNeuraxialReassessmentAtTick !== null,
+              patientExaminedByLearner: false as const, blockAssessedByLearner: false as const,
+              monitoringInterpretedByLearner: false as const, diagnosisMadeByLearner: false as const,
+              injectionOrInfusionChangedByLearner: false as const, positionChangedByLearner: false as const,
+              airwayManagedByLearner: false as const, oxygenDeliveredByLearner: false as const,
+              ventilationDeliveredByLearner: false as const, circulationSupportedByLearner: false as const,
+              drugDoseConcentrationRouteRateTargetSelectedByLearner: false as const,
+              anesthesiaSelectedByLearner: false as const, birthPlanSelectedByLearner: false as const,
+              deliveryPerformedByLearner: false as const, newbornAssessedByLearner: false as const,
+              procedurePerformedByLearner: false as const, blockRecessionProven: false as const,
+              fetalRecoveryProven: false as const, treatmentEffectProven: false as const,
+              newbornSafetyProven: false as const, awarenessExcluded: false as const,
               safetyDispositionDetermined: false as const, maternalOutcomePredicted: false as const,
               newbornOutcomePredicted: false as const, outcomePredicted: false as const,
             },

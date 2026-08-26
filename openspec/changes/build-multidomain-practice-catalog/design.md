@@ -2186,6 +2186,26 @@ examination, measurement, monitor or test acquisition or interpretation, diagnos
 operation, oxygen, ventilation, airway care, calcium or other drug, dose, concentration, route, rate,
 target, seizure care, procedure, newborn assessment, disposition or outcome control.
 
+### Wave D obstetrics slice 12: high-neuraxial-block obstetric coordination
+
+The twelfth lab opens after a qualified labour-epidural top-up for urgent caesarean birth. Rapidly
+ascending numbness, arm weakness, breathing difficulty, a weak voice, bradycardia, hypotension and
+fetal bradycardia are supplied. Qualified staff have already stopped injection, called for help,
+begun uterine displacement and stayed close to reassure the awake, frightened patient. Product,
+concentration, dose, catheter location, exact block extent and cause remain outside learner control.
+
+The learner activates airway-capable anesthesia, obstetric, theatre, newborn, pharmacy, critical-
+care, leadership, communication, dignity and support ownership; connects the injection clock,
+sensory, motor, respiratory, circulatory, fetal and whole-person trajectory; reviews progression,
+awareness and alternative-cause boundaries; and reviews parallel qualified airway, ventilation,
+circulation, uterine-displacement, fetal, birth and support readiness. A fixed 4-minute report
+supplies partial maternal and fetal change during qualified support while arm weakness and weak voice
+persist, then preserves block recession, airway, fetal, anesthesia, birth, newborn, awareness,
+disposition and outcome uncertainty. Six controls expose no learner examination or block assessment,
+monitoring interpretation, diagnosis, injection or infusion operation, position, oxygen,
+ventilation, airway care, fluid, vasopressor or another drug, dose, concentration, route, rate,
+target, anesthesia, birth, delivery, procedure, newborn assessment, disposition or outcome control.
+
 #### Neonatology: 11
 
 Term newborn transition; neonatal apnea; ineffective ventilation correction; neonatal bradycardia;

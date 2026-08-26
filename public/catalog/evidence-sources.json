@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 281,
+  "sourceCount": 282,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -970,6 +970,21 @@
         "lastAmended": "2024-07-01",
         "checkedAt": "2026-08-24"
       }
+    },
+    {
+      "id": "oaa-intrathecal-catheter-obstetric-guideline-2024",
+      "currency": {
+        "lastAmended": "2024-10-28",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "Griffiths SK, Russell R, et al",
+      "title": "Intrathecal catheter placement after inadvertent dural puncture in the obstetric population: management for labour and operative delivery",
+      "publication": "Anaesthesia",
+      "year": 2024,
+      "locator": "80:117-130; doi:10.1111/anae.16434; high- and total-spinal blocks section",
+      "usedFor": "The rapidly ascending high-block warning pattern, close maternal and fetal monitoring, clear catheter communication and labeling, and qualified respiratory and circulatory support boundary after obstetric neuraxial dosing.",
+      "verifiedAgainst": "https://associationofanaesthetists-publications.onlinelibrary.wiley.com/doi/10.1111/anae.16434",
+      "verifiedOn": "2026-08-26"
     },
     {
       "id": "esaic-estes-perioperative-cardiac-arrest-2023",

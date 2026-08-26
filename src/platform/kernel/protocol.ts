@@ -2857,6 +2857,25 @@ export interface EquipmentSnapshot {
       readonly safetyDispositionDetermined: false; readonly maternalOutcomePredicted: false;
       readonly newbornOutcomePredicted: false; readonly outcomePredicted: false;
     };
+    readonly obstetricsHighNeuraxialAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly uncertaintyAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly authoredHighNeuraxialPattern: true; readonly authoredQualifiedPartialSupport: boolean;
+      readonly patientExaminedByLearner: false; readonly blockAssessedByLearner: false;
+      readonly monitoringInterpretedByLearner: false; readonly diagnosisMadeByLearner: false;
+      readonly injectionOrInfusionChangedByLearner: false; readonly positionChangedByLearner: false;
+      readonly airwayManagedByLearner: false; readonly oxygenDeliveredByLearner: false;
+      readonly ventilationDeliveredByLearner: false; readonly circulationSupportedByLearner: false;
+      readonly drugDoseConcentrationRouteRateTargetSelectedByLearner: false;
+      readonly anesthesiaSelectedByLearner: false; readonly birthPlanSelectedByLearner: false;
+      readonly deliveryPerformedByLearner: false; readonly newbornAssessedByLearner: false;
+      readonly procedurePerformedByLearner: false; readonly blockRecessionProven: false;
+      readonly fetalRecoveryProven: false; readonly treatmentEffectProven: false;
+      readonly newbornSafetyProven: false; readonly awarenessExcluded: false;
+      readonly safetyDispositionDetermined: false; readonly maternalOutcomePredicted: false;
+      readonly newbornOutcomePredicted: false; readonly outcomePredicted: false;
+    };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {
       readonly cuesReviewedAtTick: number | null;

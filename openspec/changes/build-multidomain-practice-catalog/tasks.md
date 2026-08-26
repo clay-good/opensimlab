@@ -479,6 +479,15 @@ credited toward the catalog until every item in the completion contract passes.
     examination, monitoring or laboratory interpretation, diagnosis, infusion operation, airway or
     seizure care, oxygen, ventilation, calcium or other drug, dose, route, procedure, newborn
     assessment, disposition or outcome.
+  - [x] Obstetrics slice 12/15 adds one authored high-neuraxial-block pattern after qualified
+    epidural top-up with ascending sensory and motor findings, arm weakness, breathing and speech
+    difficulty, bradycardia, hypotension and fetal bradycardia; immediate airway-capable anesthesia,
+    obstetric, theatre, newborn, communication and support ownership; explicit rapid-progression,
+    awareness and alternative-cause boundaries; parallel maternal, fetal, airway, circulation,
+    uterine-displacement and birth readiness; a fixed partial-support report; and active-risk handoff
+    without learner examination, block assessment, monitoring interpretation, diagnosis, infusion
+    operation, position, oxygen, ventilation, airway care, fluid, vasopressor or another drug, dose,
+    anesthesia, delivery, procedure, newborn assessment, disposition or outcome.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

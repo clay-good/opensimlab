@@ -4823,6 +4823,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified direct findings, exact medication and unit reconciliation, current local protocols, immediate airway-capable multidisciplinary response, qualified antidote and renal decisions, serial reassessment, respectful communication, and hands-on simulation.',
     briefIn: ['magnesium-sulfate-toxicity-recognition'],
   },
+  {
+    id: 'high-neuraxial-block-injection-level-maternal-fetal-and-qualified-support-reports-are-authored',
+    headline: 'The injection, block findings, maternal and fetal pattern, and 4-minute qualified-support report are authored.',
+    simplification: 'Fixed reports stand in for medication and catheter reconciliation, sensory and motor examination, airway and breathing assessment, maternal and fetal monitoring, uterine displacement, circulation support, vasopressor and fluid care, anesthesia, birth planning, reassurance, documentation, and serial review.',
+    whereItMisleads: 'Treating the injection clock, C6 level, maternal or fetal values, partial change, or persistent weakness as learner findings, a universal progression, treatment effect, block recession, airway safety, fetal recovery, completed birth, prognosis, or outcome.',
+    correctUnderstanding: 'High neuraxial block can progress rapidly and requires direct serial assessment, airway-capable help, maternal circulation support, pregnancy-specific positioning, fetal and birth planning, close reassurance, and trained multidisciplinary care.',
+    briefIn: ['high-neuraxial-block-obstetric-coordination'],
+  },
+  {
+    id: 'high-neuraxial-block-obstetric-controls-activate-reconcile-review-reassess-and-handoff-only',
+    headline: 'The controls activate qualified help, connect supplied findings, review progression and readiness, read a fixed report, and hand off only.',
+    simplification: 'Six actions stand in for simultaneous qualified anesthesia and airway, obstetric, nursing, theatre, newborn, pharmacy, critical-care, leadership, timekeeping, documentation, communication, dignity, family, staff-support, post-event review, and handoff work.',
+    whereItMisleads: 'Equating button order with examination, block assessment, monitoring interpretation, airway or ventilation skill, positioning, circulation support, medication choice, anesthesia, birth, newborn care, documentation quality, or competence.',
+    correctUnderstanding: 'Real response is concurrent, physical, time-critical, team-based, and locally rehearsed. Cognitive sequence practice cannot replace direct care or hands-on multidisciplinary simulation with qualified feedback.',
+    briefIn: ['high-neuraxial-block-obstetric-coordination'],
+  },
+  {
+    id: 'no-live-high-neuraxial-block-exam-monitor-infusion-airway-circulation-drug-birth-procedure-or-outcome',
+    headline: 'The lab does not assess a block, interpret monitoring, operate an infusion, manage an airway or circulation, give a drug, perform birth, determine disposition, or report outcome.',
+    simplification: 'No live medication, catheter, line, sensory, motor, airway, breathing, circulation, consciousness, awareness, maternal, fetal, labour, newborn, ECG, pressure, oxygenation, capnography or other assessment; injection stop, position, uterine displacement, oxygen, ventilation, airway device, fluid, vasopressor, anticholinergic, hypnotic or other drug, dose, concentration, route, rate, target, anesthesia, delivery, procedure, transfer, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Using the rehearsal as block-height, airway, ventilation, circulation, positioning, vasopressor, dose, anesthesia, delivery, newborn, or disposition instructions; delaying immediate trained response for a click; or reading completion as competence.',
+    correctUnderstanding: 'Use verified direct findings, exact medication and catheter reconciliation, current local protocols, immediate airway-capable multidisciplinary response, pregnancy-specific maternal and fetal care, respectful communication, and hands-on simulation.',
+    briefIn: ['high-neuraxial-block-obstetric-coordination'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

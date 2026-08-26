@@ -5250,6 +5250,31 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['activate-obstetrics-high-neuraxial-block-airway-anesthesia-obstetric-theatre-newborn-and-support-response',
+      'reconcile-obstetrics-high-neuraxial-block-injection-clock-level-breathing-arms-circulation-fetus-and-whole-person',
+      'review-obstetrics-high-neuraxial-block-rapid-progression-awareness-and-alternative-cause-boundaries',
+      'review-obstetrics-high-neuraxial-block-parallel-airway-ventilation-circulation-uterine-displacement-fetal-birth-and-support-readiness',
+      'review-obstetrics-high-neuraxial-block-fixed-four-minute-qualified-support-report',
+      'handoff-obstetrics-high-neuraxial-block-airway-circulation-block-fetal-birth-awareness-support-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'high-neuraxial-block-obstetric-coordination'
+        && scenario.timeline.every((event) => event.type === 'narrative')
+        && scenario.timeline.filter((event) => event.target === 'high-neuraxial-block-obstetric-coordination-transition').length === 1
+        && scenario.timeline.filter((event) => event.target === 'high-neuraxial-block-obstetric-coordination-transition-boundary').length === 1;
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Obstetrics high-neuraxial-block lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['support-activated', 'Airway-capable anesthesia, obstetric, theatre, newborn, communication, dignity, family, and support ownership was activated first.'],
+        ['context-reconciled', 'Injection timing, supplied block level, arms, breathing, voice, consciousness, circulation, fetus, distress, and the whole person were connected.'],
+        ['uncertainty-reviewed', 'Rapid progression and awareness risk were reviewed while dangerous neuraxial, medication, hemorrhagic, embolic, allergic, airway, and cardiopulmonary alternatives remained open.'],
+        ['readiness-reviewed', 'Qualified airway, ventilation, oxygen, circulation, uterine-displacement, surveillance, birth, newborn, communication, documentation, and support readiness was reviewed.'],
+        ['four-minute-report-reviewed', 'The fixed partial-support report was reviewed without learner-treatment, block-recession, fetal-recovery, birth, newborn-safety, awareness, disposition, or outcome claims.'],
+        ['active-risk-handoff-recorded', 'Airway, breathing, circulation, block, medication, fetal, birth, newborn, awareness, support, review, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^obstetrics-high-neuraxial-block-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^obstetrics-high-neuraxial-block-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-obstetrics-sepsis-postpartum-clock-infection-organ-dysfunction-and-whole-person',
       'recognize-obstetrics-maternal-sepsis-emergency-without-fever-score-source-or-single-value-closure',
       'activate-obstetrics-sepsis-obstetric-critical-care-anesthesia-nursing-pharmacy-microbiology-source-newborn-and-dignity-ownership',

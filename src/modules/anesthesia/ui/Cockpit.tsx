@@ -1167,6 +1167,9 @@ export function Cockpit({
           onObstetricsMagnesiumToxicityResponse={(action) => session.act({
             type: 'magnesium-sulfate-toxicity-recognition-response', payload: { action },
           })}
+          onObstetricsHighNeuraxialResponse={(action) => session.act({
+            type: 'high-neuraxial-block-obstetric-coordination-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}
