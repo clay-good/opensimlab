@@ -12,11 +12,11 @@ import {
 const json = (path: string) => JSON.parse(readFileSync(join(process.cwd(), path), 'utf8'));
 
 describe('Pediatrics module foundation', () => {
-  it('registers seven available, bounded labs behind an exact module contract', () => {
+  it('registers eight available, bounded labs behind an exact module contract', () => {
     expect(getModule('pediatrics')).toMatchObject({
       route: 'pediatrics', displayName: 'Pediatrics', status: 'available',
     });
-    expect(PEDIATRICS_SCENARIOS).toHaveLength(7);
+    expect(PEDIATRICS_SCENARIOS).toHaveLength(8);
     expect(DEFAULT_PEDIATRICS_SCENARIO_ID).toBe('pediatric-respiratory-distress');
     expect(getPediatricsScenario(DEFAULT_PEDIATRICS_SCENARIO_ID))
       .toBe(PEDIATRICS_SCENARIOS[0]);
@@ -33,6 +33,7 @@ describe('Pediatrics module foundation', () => {
     const septicShockRoute = routeFor('/pediatrics/scenario/pediatric-septic-shock')!;
     const dehydrationRoute = routeFor(
       '/pediatrics/scenario/pediatric-dehydration-with-hypovolemia')!;
+    const dkaRoute = routeFor('/pediatrics/scenario/pediatric-diabetic-ketoacidosis')!;
     expect(moduleRoute).toMatchObject({ indexable: true, heading: 'Pediatrics simulator',
       structuredData: ['SoftwareApplication'] });
     expect(scenarioRoute).toMatchObject({ indexable: true,
@@ -85,6 +86,14 @@ describe('Pediatrics module foundation', () => {
     expect(dehydrationRoute.description.length).toBeLessThanOrEqual(160);
     expect(canonicalUrl(dehydrationRoute.path)).toBe(
       'https://opensimlab.com/pediatrics/scenario/pediatric-dehydration-with-hypovolemia');
+    expect(dkaRoute).toMatchObject({ indexable: true,
+      heading: 'Pediatric diabetic ketoacidosis', structuredData: ['LearningResource'] });
+    expect(dkaRoute.description).toBe(
+      'A 9-year-old girl for calm pediatric diabetic ketoacidosis recognition, qualified escalation, serial safety reassessment, and active-risk handoff.',
+    );
+    expect(dkaRoute.description.length).toBeLessThanOrEqual(160);
+    expect(canonicalUrl(dkaRoute.path)).toBe(
+      'https://opensimlab.com/pediatrics/scenario/pediatric-diabetic-ketoacidosis');
   });
 
   it('publishes exact completion, quality, maturity, and report records', () => {
@@ -92,9 +101,9 @@ describe('Pediatrics module foundation', () => {
     const quality = json('public/catalog/pediatrics-quality-audit.json');
     const maturity = json('public/catalog/pediatrics-maturity.json');
     const reports = json('public/catalog/scenario-report-catalog.json');
-    expect(completion).toMatchObject({ moduleId: 'pediatrics', scenarioCount: 7 });
-    expect(quality).toMatchObject({ scenarioCount: 7 });
-    expect(maturity).toMatchObject({ recordCount: 7 });
+    expect(completion).toMatchObject({ moduleId: 'pediatrics', scenarioCount: 8 });
+    expect(quality).toMatchObject({ scenarioCount: 8 });
+    expect(maturity).toMatchObject({ recordCount: 8 });
     expect(reports.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-respiratory-distress',
       contentVersion: '0.1.0', maturity: 'draft',
@@ -123,6 +132,10 @@ describe('Pediatrics module foundation', () => {
       moduleId: 'pediatrics', scenarioId: 'pediatric-dehydration-with-hypovolemia',
       contentVersion: '0.1.0', maturity: 'draft',
     }));
+    expect(reports.scenarios).toContainEqual(expect.objectContaining({
+      moduleId: 'pediatrics', scenarioId: 'pediatric-diabetic-ketoacidosis',
+      contentVersion: '0.1.0', maturity: 'draft',
+    }));
     expect(reviewableItems()).toContainEqual(expect.objectContaining({
       id: 'pediatric-respiratory-distress', domains: ['pediatrics'],
     }));
@@ -143,6 +156,9 @@ describe('Pediatrics module foundation', () => {
     }));
     expect(reviewableItems()).toContainEqual(expect.objectContaining({
       id: 'pediatric-dehydration-with-hypovolemia', domains: ['pediatrics'],
+    }));
+    expect(reviewableItems()).toContainEqual(expect.objectContaining({
+      id: 'pediatric-diabetic-ketoacidosis', domains: ['pediatrics'],
     }));
   });
 });

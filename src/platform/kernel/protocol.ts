@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 123 reports pediatric dehydration reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 123;
+/** Bumped whenever the message shape changes incompatibly. Version 124 reports pediatric DKA reassessment state. */
+export const WORKER_PROTOCOL_VERSION = 124;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1280,6 +1280,34 @@ export interface EquipmentSnapshot {
       readonly deviceSelectedByLearner: false; readonly airwayManeuverPerformedByLearner: false;
       readonly procedurePerformedByLearner: false; readonly treatmentDeliveredByLearner: false;
       readonly treatmentEffectProven: false; readonly durableRecoveryProven: false;
+      readonly dischargeReadinessProven: false; readonly dispositionDetermined: false;
+      readonly outcomePredicted: false;
+    };
+    readonly pediatricDiabeticKetoacidosisAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly careAtTick: number | null; readonly safetyAtTick: number | null;
+      readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true; readonly spontaneousBreathingAuthored: true;
+      readonly pediatricDkaAuthored: true; readonly dehydrationAuthored: true;
+      readonly shockAuthored: false; readonly cerebralInjuryAuthored: false;
+      readonly cerebralInjuryRiskActive: true; readonly fixedBiochemicalPatternAuthored: true;
+      readonly qualifiedCareOwnershipActive: boolean;
+      readonly qualifiedSafetyReviewActive: boolean; readonly laterReportAuthored: boolean;
+      readonly patientExaminedByLearner: false; readonly neurologicExamPerformedByLearner: false;
+      readonly dehydrationCalculatedByLearner: false; readonly sodiumCalculatedByLearner: false;
+      readonly osmolalityCalculatedByLearner: false; readonly anionGapCalculatedByLearner: false;
+      readonly testAcquiredByLearner: false; readonly testInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly severityCalculatedByLearner: false;
+      readonly fluidSelectedByLearner: false; readonly insulinSelectedByLearner: false;
+      readonly electrolyteSelectedByLearner: false; readonly glucoseSelectedByLearner: false;
+      readonly fluidDeliveredByLearner: false; readonly drugSelectedByLearner: false;
+      readonly deviceSelectedByLearner: false; readonly procedurePerformedByLearner: false;
+      readonly doseSelectedByLearner: false; readonly concentrationSelectedByLearner: false;
+      readonly routeSelectedByLearner: false; readonly accessPlacedByLearner: false;
+      readonly fluidVolumeSelectedByLearner: false; readonly fluidRateSelectedByLearner: false;
+      readonly infusionOperatedByLearner: false; readonly treatmentDeliveredByLearner: false;
+      readonly cerebralInjuryExcluded: false; readonly treatmentEffectProven: false;
+      readonly biochemicalResolutionProven: false; readonly durableRecoveryProven: false;
       readonly dischargeReadinessProven: false; readonly dispositionDetermined: false;
       readonly outcomePredicted: false;
     };

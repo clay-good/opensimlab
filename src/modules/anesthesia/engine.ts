@@ -133,6 +133,7 @@ const PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES = new Set([
   'pediatric-sepsis-response',
   'pediatric-septic-shock-response',
   'pediatric-dehydration-response',
+  'pediatric-diabetic-ketoacidosis-response',
   'pediatric-foreign-body-airway-obstruction-response',
 ]);
 const BRONCHIOLITIS_BLOCKED_ACTION_TYPES = new Set([
@@ -183,6 +184,18 @@ const PEDIATRIC_DEHYDRATION_BLOCKED_ACTION_TYPES = new Set([
   'septic-shock-resuscitation-response', 'undifferentiated-shock-assessment',
   'hemorrhagic-shock-assessment', 'cardiogenic-shock-response', 'mixed-shock-response',
   'post-infarction-shock-response', 'diabetic-ketoacidosis-response',
+  'pediatric-foreign-body-airway-obstruction-response', 'emergency-anaphylaxis-response',
+]);
+const PEDIATRIC_DIABETIC_KETOACIDOSIS_BLOCKED_ACTION_TYPES = new Set([
+  ...[...PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES]
+    .filter((type) => type !== 'pediatric-diabetic-ketoacidosis-response'),
+  'pediatric-respiratory-distress-response', 'bronchiolitis-response', 'croup-response',
+  'pediatric-status-asthmaticus-response', 'pediatric-sepsis-response',
+  'pediatric-septic-shock-response', 'pediatric-dehydration-response',
+  'diabetic-ketoacidosis-response', 'glycemic-response', 'hyperkalemia-response',
+  'hyponatremia-response', 'intracranial-hypertension-response', 'status-epilepticus-response',
+  'aki-fluid-overload-response', 'septic-shock-assessment',
+  'septic-shock-resuscitation-response', 'undifferentiated-shock-assessment',
   'pediatric-foreign-body-airway-obstruction-response', 'emergency-anaphylaxis-response',
 ]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
@@ -878,6 +891,12 @@ export class AnesthesiaEngine {
   private pediatricDehydrationSafetyAtTick: number | null = null;
   private pediatricDehydrationLaterResponseAtTick: number | null = null;
   private pediatricDehydrationHandoffAtTick: number | null = null;
+  private pediatricDkaTrajectoryAtTick: number | null = null;
+  private pediatricDkaRecognitionAtTick: number | null = null;
+  private pediatricDkaCareAtTick: number | null = null;
+  private pediatricDkaSafetyAtTick: number | null = null;
+  private pediatricDkaLaterResponseAtTick: number | null = null;
+  private pediatricDkaHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1332,6 +1351,15 @@ export class AnesthesiaEngine {
     if (pediatricDehydration && PEDIATRIC_DEHYDRATION_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `pediatric-dehydration-generic-action-refused-${this.currentTick}`,
         'This pediatric dehydration lesson does not expose generic medication, fluid, access, oxygen-device, airway, ventilator, procedure, test, alarm, shock, sepsis, DKA, anaphylaxis, or adjacent-crisis actions. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const pediatricDka = this.scenario.metadata.id === 'pediatric-diabetic-ketoacidosis'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-diabetic-ketoacidosis-reassessment');
+    if (pediatricDka && PEDIATRIC_DIABETIC_KETOACIDOSIS_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `pediatric-dka-generic-action-refused-${this.currentTick}`,
+        'This pediatric DKA lesson does not expose generic fluid, insulin, electrolyte, medication, oxygen-device, airway, ventilator, procedure, test, alarm, shock, neurologic-crisis, adult-DKA, or adjacent-crisis actions. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -2736,8 +2764,9 @@ export class AnesthesiaEngine {
       }
       case 'diabetic-ketoacidosis-response': {
         const response = String(action.payload.action ?? '');
-        const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
-          && event.target === 'diabetic-ketoacidosis');
+        const supported = this.scenario.metadata.id === 'diabetic-ketoacidosis'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'diabetic-ketoacidosis');
         const valid = ['review-dka-presentation', 'record-dka-fluids-and-monitoring',
           'record-dka-potassium-replacement', 'record-dka-insulin-intent',
           'add-dextrose-and-continue-insulin', 'confirm-dka-resolution-and-transition'].includes(response);
@@ -6481,6 +6510,55 @@ export class AnesthesiaEngine {
         this.pediatricDehydrationHandoffAtTick = this.currentTick;
         this.log('warning', 'assessment', `pediatric-dehydration-handoff-recorded-${this.currentTick}`, 'The loss and intake trajectory, hydration signs, no-current-shock findings, oral tolerance, urine and stool output, weight context, pending or conditional glucose and electrolyte review, recurrence and escalation triggers, caregiver context, and named pediatric and nursing owners were handed off. No causal treatment effect, completed deficit correction, durable recovery, discharge readiness, disposition, prognosis, recurrence, or outcome was declared.', { shockAuthored: false, treatmentEffectProven: false, durableRecoveryProven: false, dischargeReadinessProven: false, dispositionDetermined: false, outcomePredicted: false }); break;
       }
+      case 'pediatric-diabetic-ketoacidosis-response': {
+        const supported = this.scenario.metadata.id === 'pediatric-diabetic-ketoacidosis'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-diabetic-ketoacidosis-reassessment');
+        const response = String(action.payload.action ?? '');
+        const valid = ['reconcile-pediatric-dka-illness-and-fixed-pattern',
+          'recognize-pediatric-dka-and-current-risk',
+          'activate-pediatric-dka-qualified-care-ownership',
+          'review-pediatric-dka-neurologic-and-metabolic-safety',
+          'review-pediatric-dka-later-response',
+          'handoff-pediatric-dka-active-risk'].includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `pediatric-dka-response-refused-${this.currentTick}`, supported ? 'That pediatric DKA response is not available. Nothing changed.' : 'These choices are available only in the declared pediatric diabetic-ketoacidosis lesson.'); break; }
+        if (response === 'reconcile-pediatric-dka-illness-and-fixed-pattern') {
+          if (this.pediatricDkaTrajectoryAtTick !== null) { this.log('warning', 'assessment', `pediatric-dka-trajectory-refused-${this.currentTick}`, 'The supplied illness, whole-child, and fixed biochemical pattern was already reconciled.'); break; }
+          this.pediatricDkaTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pediatric-dka-trajectory-reconciled-${this.currentTick}`, 'The supplied thirst, urination, weight-loss history, vomiting, abdominal discomfort, hydration, deep breathing, mentation, perfusion, glucose, beta-hydroxybutyrate, venous pH, bicarbonate, potassium, and sodium were reconciled as one authored whole-child pattern. The learner did not examine, calculate, acquire or interpret a test, diagnose, classify severity, or deliver treatment.', { fixedBiochemicalPatternAuthored: true, diagnosisMadeByLearner: false, testInterpretedByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (this.pediatricDkaTrajectoryAtTick === null) { this.log('warning', 'assessment', `pediatric-dka-trajectory-order-refused-${this.currentTick}`, 'Review the supplied illness, whole-child state, and fixed biochemical pattern first.'); break; }
+        if (response === 'recognize-pediatric-dka-and-current-risk') {
+          if (this.pediatricDkaRecognitionAtTick !== null) { this.log('warning', 'assessment', `pediatric-dka-recognition-refused-${this.currentTick}`, 'The authored pediatric DKA pattern and current-risk boundary were already recognized.'); break; }
+          this.pediatricDkaRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pediatric-dka-and-current-risk-recognized-${this.currentTick}`, 'The supplied hyperglycemia, ketonemia, and metabolic acidosis establish authored pediatric DKA; glucose alone does not. Deep breathing, vomiting, dehydration, and weight-loss context support the whole pattern. Orientation, warm extremities, normal-volume pulses, refill 2 seconds, and preserved pressure support no current shock. No current headache, bradycardia, hypertension, hypoxemia, or focal sign means no authored cerebral-injury warning cluster is present now; it does not exclude cerebral injury, and neurological-metabolic surveillance remains active. The learner made no diagnosis or calculation.', { pediatricDkaAuthored: true, shockAuthored: false, cerebralInjuryAuthored: false, cerebralInjuryRiskActive: true, diagnosisMadeByLearner: false }); break;
+        }
+        if (this.pediatricDkaRecognitionAtTick === null) { this.log('warning', 'assessment', `pediatric-dka-recognition-order-refused-${this.currentTick}`, 'Recognize the supplied pediatric DKA pattern and current-risk boundary before coordinating care or safety work.'); break; }
+        if (response === 'activate-pediatric-dka-qualified-care-ownership') {
+          if (this.pediatricDkaCareAtTick !== null) { this.log('warning', 'assessment', `pediatric-dka-care-refused-${this.currentTick}`, 'Qualified pediatric DKA care ownership is already active.'); break; }
+          this.pediatricDkaCareAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pediatric-dka-qualified-care-activated-${this.currentTick}`, 'Experienced pediatric, diabetes, nursing, pharmacy, and laboratory teams now own locally protocolized fluid, insulin, glucose, electrolyte, access, input and output, biochemical, rhythm, neurological, and escalation work. No universal sequence, solution, route, concentration, bolus, dose, rate, threshold, pump, or formula is taught. The learner selected or delivered no treatment.', { qualifiedCareOwnershipActive: true, fluidSelectedByLearner: false, insulinSelectedByLearner: false, electrolyteSelectedByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        if (response === 'review-pediatric-dka-neurologic-and-metabolic-safety') {
+          if (this.pediatricDkaSafetyAtTick !== null) { this.log('warning', 'assessment', `pediatric-dka-safety-refused-${this.currentTick}`, 'Neurological, circulatory, metabolic, and precipitant safety review is already active.'); break; }
+          this.pediatricDkaSafetyAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pediatric-dka-neurologic-and-metabolic-safety-reviewed-${this.currentTick}`, 'Serial consciousness and behavior, headache, vomiting, pupils, breathing, oxygenation, heart rate, blood pressure, perfusion, rhythm, glucose, electrolytes, acid-base status, ketones, renal context, fluid balance, urine, and possible precipitating causes remain under experienced review. Fixed negative findings are snapshots, not permanent exclusions, and no single sign proves or excludes cerebral injury. The learner examined no patient, interpreted no test, chose no treatment, and determined no disposition.', { qualifiedSafetyReviewActive: true, cerebralInjuryExcluded: false, neurologicExamPerformedByLearner: false, testInterpretedByLearner: false, treatmentDeliveredByLearner: false }); break;
+        }
+        const parallelAt = Math.max(this.pediatricDkaCareAtTick ?? -1,
+          this.pediatricDkaSafetyAtTick ?? -1);
+        if (this.pediatricDkaCareAtTick === null || this.pediatricDkaSafetyAtTick === null) { this.log('warning', 'assessment', `pediatric-dka-parallel-care-order-refused-${this.currentTick}`, 'Keep qualified DKA care and neurological-metabolic safety review active in parallel before opening the later report.'); break; }
+        if (response === 'review-pediatric-dka-later-response') {
+          if (this.currentTick <= parallelAt) { this.log('warning', 'assessment', `pediatric-dka-later-time-refused-${this.currentTick}`, 'Allow elapsed simulated time after both qualified care and safety ownership are active.'); break; }
+          if (this.pediatricDkaLaterResponseAtTick !== null) { this.log('warning', 'assessment', `pediatric-dka-later-response-refused-${this.currentTick}`, 'The fixed later pediatric DKA report was already reviewed.'); break; }
+          this.pediatricDkaLaterResponseAtTick = this.currentTick;
+          this.log('warning', 'assessment', `pediatric-dka-later-response-reviewed-${this.currentTick}`, 'Fixed qualified minute-60 report: she remains tired but alert, interactive, oriented, and free of new headache, recurrent emesis, focal neurological sign, bradycardia, hypertension, or hypoxemia. Temperature is 37.1°C, HR 108/min, deep RR 24/min, BP 104/66 mmHg (MAP 79), clean room-air SpO2 99%, with warm normal-volume pulses and refill 2 seconds. A supplied repeat panel reports glucose 342 mg/dL, beta-hydroxybutyrate 4.5 mmol/L, venous pH 7.20, bicarbonate 11 mmol/L, potassium 4.1 mmol/L, and sodium 134 mmol/L. The fixed trends are improving while DKA and neurological-metabolic surveillance remain active. They do not prove a treatment effect, biochemical resolution, cerebral-injury exclusion, durable recovery, discharge readiness, or disposition.', { laterReportAuthored: true, cerebralInjuryRiskActive: true, cerebralInjuryExcluded: false, treatmentEffectProven: false, biochemicalResolutionProven: false, durableRecoveryProven: false, dispositionDetermined: false }); break;
+        }
+        if (this.pediatricDkaLaterResponseAtTick === null) { this.log('warning', 'assessment', `pediatric-dka-later-order-refused-${this.currentTick}`, 'Review the fixed later whole-child and biochemical report after elapsed qualified care.'); break; }
+        if (this.currentTick <= this.pediatricDkaLaterResponseAtTick) { this.log('warning', 'assessment', `pediatric-dka-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off active pediatric DKA risk.'); break; }
+        if (this.pediatricDkaHandoffAtTick !== null) { this.log('warning', 'assessment', `pediatric-dka-handoff-refused-${this.currentTick}`, 'The active pediatric DKA handoff was already recorded.'); break; }
+        this.pediatricDkaHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `pediatric-dka-handoff-recorded-${this.currentTick}`, 'The illness and fixed biochemical trajectory, mentation, headache and emesis surveillance, breathing, perfusion, rhythm, glucose, ketone, acid-base, electrolyte, renal, fluid-balance, urine, precipitant, caregiver, recurrence, escalation, and named pediatric, diabetes, nursing, pharmacy, and laboratory ownership were handed off. DKA resolution, cerebral-injury exclusion, causal treatment effect, durable recovery, discharge readiness, disposition, prognosis, recurrence, and outcome remain undeclared.', { pediatricDkaAuthored: true, cerebralInjuryRiskActive: true, cerebralInjuryExcluded: false, treatmentEffectProven: false, biochemicalResolutionProven: false, durableRecoveryProven: false, dischargeReadinessProven: false, dispositionDetermined: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -9393,6 +9471,20 @@ export class AnesthesiaEngine {
         meanArterialMmHg: later ? 69 : 67,
         coreTemperatureC: later ? 37.4 : 37.6 };
     }
+    if (this.scenario.metadata.id === 'pediatric-diabetic-ketoacidosis'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-diabetic-ketoacidosis-reassessment')) {
+      const later = this.pediatricDkaLaterResponseAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: later ? 108 : 124,
+        respiratoryRateBpm: later ? 24 : 30,
+        spo2Percent: 99,
+        etco2MmHg: later ? 28 : 24,
+        systolicMmHg: later ? 104 : 102,
+        diastolicMmHg: later ? 66 : 64,
+        meanArterialMmHg: later ? 79 : 77,
+        coreTemperatureC: later ? 37.1 : 37.2 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -11220,6 +11312,49 @@ export class AnesthesiaEngine {
               procedurePerformedByLearner: false as const,
               treatmentDeliveredByLearner: false as const,
               treatmentEffectProven: false as const, durableRecoveryProven: false as const,
+              dischargeReadinessProven: false as const, dispositionDetermined: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'pediatric-diabetic-ketoacidosis'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-diabetic-ketoacidosis-reassessment') ? {
+            pediatricDiabeticKetoacidosisAssessment: {
+              trajectoryAtTick: this.pediatricDkaTrajectoryAtTick,
+              recognitionAtTick: this.pediatricDkaRecognitionAtTick,
+              careAtTick: this.pediatricDkaCareAtTick,
+              safetyAtTick: this.pediatricDkaSafetyAtTick,
+              laterResponseAtTick: this.pediatricDkaLaterResponseAtTick,
+              handoffAtTick: this.pediatricDkaHandoffAtTick,
+              initialPulsePresent: true as const, spontaneousBreathingAuthored: true as const,
+              pediatricDkaAuthored: true as const, dehydrationAuthored: true as const,
+              shockAuthored: false as const, cerebralInjuryAuthored: false as const,
+              cerebralInjuryRiskActive: true as const,
+              fixedBiochemicalPatternAuthored: true as const,
+              qualifiedCareOwnershipActive: this.pediatricDkaCareAtTick !== null,
+              qualifiedSafetyReviewActive: this.pediatricDkaSafetyAtTick !== null,
+              laterReportAuthored: this.pediatricDkaLaterResponseAtTick !== null,
+              patientExaminedByLearner: false as const,
+              neurologicExamPerformedByLearner: false as const,
+              dehydrationCalculatedByLearner: false as const,
+              sodiumCalculatedByLearner: false as const,
+              osmolalityCalculatedByLearner: false as const,
+              anionGapCalculatedByLearner: false as const,
+              testAcquiredByLearner: false as const, testInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const, severityCalculatedByLearner: false as const,
+              fluidSelectedByLearner: false as const, insulinSelectedByLearner: false as const,
+              electrolyteSelectedByLearner: false as const, glucoseSelectedByLearner: false as const,
+              fluidDeliveredByLearner: false as const, drugSelectedByLearner: false as const,
+              deviceSelectedByLearner: false as const,
+              procedurePerformedByLearner: false as const,
+              doseSelectedByLearner: false as const, concentrationSelectedByLearner: false as const,
+              routeSelectedByLearner: false as const, accessPlacedByLearner: false as const,
+              fluidVolumeSelectedByLearner: false as const,
+              fluidRateSelectedByLearner: false as const,
+              infusionOperatedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              cerebralInjuryExcluded: false as const, treatmentEffectProven: false as const,
+              biochemicalResolutionProven: false as const, durableRecoveryProven: false as const,
               dischargeReadinessProven: false as const, dispositionDetermined: false as const,
               outcomePredicted: false as const,
             },

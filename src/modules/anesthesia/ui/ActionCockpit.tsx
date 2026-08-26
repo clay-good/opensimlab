@@ -1055,6 +1055,11 @@ export interface ActionCockpitProps {
       readonly rehydrationAtTick: number | null; readonly safetyAtTick: number | null;
       readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly pediatricDiabeticKetoacidosisAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly careAtTick: number | null; readonly safetyAtTick: number | null;
+      readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1691,6 +1696,14 @@ export interface ActionCockpitProps {
       | 'review-pediatric-dehydration-later-response'
       | 'handoff-pediatric-dehydration-active-risk',
   ) => void;
+  readonly onPediatricDiabeticKetoacidosisResponse?: (
+    action: 'reconcile-pediatric-dka-illness-and-fixed-pattern'
+      | 'recognize-pediatric-dka-and-current-risk'
+      | 'activate-pediatric-dka-qualified-care-ownership'
+      | 'review-pediatric-dka-neurologic-and-metabolic-safety'
+      | 'review-pediatric-dka-later-response'
+      | 'handoff-pediatric-dka-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -1810,9 +1823,10 @@ export function crisisResponseAvailability(
       (event) => event.type === 'narrative'
         && event.target === 'intracranial-hemorrhage-deterioration',
     ),
-    hasDiabeticKetoacidosisResponse: scenario.timeline.some(
-      (event) => event.type === 'narrative' && event.target === 'diabetic-ketoacidosis',
-    ),
+    hasDiabeticKetoacidosisResponse: scenario.metadata.id === 'diabetic-ketoacidosis'
+      && scenario.timeline.some(
+        (event) => event.type === 'narrative' && event.target === 'diabetic-ketoacidosis',
+      ),
     hasHyperkalemiaResponse: scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'hyperkalemia-with-ecg-change',
     ),
@@ -2055,6 +2069,10 @@ export function crisisResponseAvailability(
       scenario.metadata.id === 'pediatric-dehydration-with-hypovolemia'
       && scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'pediatric-dehydration-with-hypovolemia-reassessment'),
+    hasPediatricDiabeticKetoacidosisResponse:
+      scenario.metadata.id === 'pediatric-diabetic-ketoacidosis'
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-diabetic-ketoacidosis-reassessment'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2208,6 +2226,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'pediatric-septic-shock-reassessment')
       || (event.type === 'narrative'
         && event.target === 'pediatric-dehydration-with-hypovolemia-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'pediatric-diabetic-ketoacidosis-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2271,6 +2291,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasPediatricStatusAsthmaticusResponse, hasPediatricSepsisResponse,
     hasPediatricSepticShockResponse,
     hasPediatricDehydrationResponse,
+    hasPediatricDiabeticKetoacidosisResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2344,7 +2365,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasAcuteTracheostomyObstructionResponse || hasPediatricRespiratoryDistressResponse
     || hasBronchiolitisResponse || hasCroupResponse || hasPediatricStatusAsthmaticusResponse
     || hasPediatricSepsisResponse || hasPediatricSepticShockResponse
-    || hasPediatricDehydrationResponse;
+    || hasPediatricDehydrationResponse || hasPediatricDiabeticKetoacidosisResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2375,7 +2396,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasPediatricDehydrationResponse
+  const responseTray = hasPediatricDiabeticKetoacidosisResponse
+    ? { id: 'crisis', label: 'Pediatric DKA reassessment' } as const
+    : hasPediatricDehydrationResponse
     ? { id: 'crisis', label: 'Pediatric dehydration reassessment' } as const
     : hasPediatricSepticShockResponse
     ? { id: 'crisis', label: 'Pediatric septic-shock reassessment' } as const
@@ -2641,7 +2664,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPediatricRespiratoryDistressResponse
     || hasBronchiolitisResponse || hasCroupResponse || hasPediatricStatusAsthmaticusResponse
     || hasPediatricSepsisResponse || hasPediatricSepticShockResponse
-    || hasPediatricDehydrationResponse
+    || hasPediatricDehydrationResponse || hasPediatricDiabeticKetoacidosisResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3323,6 +3346,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <PediatricDehydrationTray
                 assessment={props.resuscitation.pediatricDehydrationAssessment}
                 onAction={props.onPediatricDehydrationResponse ?? (() => {})} />
+            )}
+            {hasPediatricDiabeticKetoacidosisResponse && (
+              <PediatricDiabeticKetoacidosisTray
+                assessment={props.resuscitation.pediatricDiabeticKetoacidosisAssessment}
+                onAction={props.onPediatricDiabeticKetoacidosisResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -8581,6 +8609,64 @@ function PediatricDehydrationTray({ assessment, onAction }: {
           onClick={() => onAction('handoff-pediatric-dehydration-active-risk')}>Hand off active rehydration risk</Button>}
       </div>
       <p className="field__hint">Better interaction or hydration signs do not prove causal treatment effect, complete deficit correction, durable recovery, discharge readiness, or outcome.</p>
+    </section>
+  </div>;
+}
+
+function PediatricDiabeticKetoacidosisTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricDiabeticKetoacidosisAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onPediatricDiabeticKetoacidosisResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const care = assessment?.careAtTick != null;
+  const safety = assessment?.safetyAtTick != null;
+  const later = assessment?.laterResponseAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="pediatric-dka-pattern-title">
+      <div id="pediatric-dka-pattern-title" className="syringe__name">Read the child, not one number.</div>
+      <Badge kind="teaching">history · ketones · acidosis · breathing · perfusion</Badge>
+      <div className="syringe__meta">9 years · 30 kg · supplied DKA pattern</div>
+      <p className="syringe__remaining">
+        {care && safety ? 'Qualified DKA care and safety review are active together'
+          : safety ? 'Safety review is active · qualified DKA care still matters'
+            : care ? 'Qualified DKA care is active · keep safety review moving'
+              : recognition ? 'DKA authored · no shock or current warning cluster'
+                : trajectory ? 'Now connect the triad to current whole-child risk'
+                  : 'Start with the whole illness and fixed panel.'}
+      </p>
+      <div className="syringe__presets">
+        {!trajectory && <Button className="crisis-drug__action"
+          onClick={() => onAction('reconcile-pediatric-dka-illness-and-fixed-pattern')}>Review illness + fixed panel</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action"
+          onClick={() => onAction('recognize-pediatric-dka-and-current-risk')}>Recognize pediatric DKA risk</Button>}
+        {recognition && !care && <Button className="crisis-drug__action"
+          onClick={() => onAction('activate-pediatric-dka-qualified-care-ownership')}>Activate qualified DKA care</Button>}
+        {recognition && !safety && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-pediatric-dka-neurologic-and-metabolic-safety')}>Review neurologic + metabolic safety</Button>}
+      </div>
+      <p className="field__hint">Experienced teams own fluids, insulin, glucose, electrolytes, access, rhythm, neurological and biochemical monitoring, and escalation. This lab exposes no calculation, sequence, solution, route, concentration, bolus, dose, rate, threshold, or pump control.</p>
+    </section>
+    <section className="syringe" aria-labelledby="pediatric-dka-response-title">
+      <div id="pediatric-dka-response-title" className="syringe__name">Make every reassessment count.</div>
+      <Badge kind="teaching">mentation · headache · rhythm · perfusion · trends</Badge>
+      <div className="syringe__meta">fixed minute-60 report · DKA remains active</div>
+      <p className="syringe__remaining" role="status">
+        {handoff ? 'Active DKA and neurological-metabolic risk handed off'
+          : later ? 'Some signals improved. DKA remains active.'
+            : care && safety ? 'Review the fixed report after elapsed parallel care'
+              : safety ? 'Safety review is active · activate qualified DKA care'
+                : care ? 'Qualified care is active · review neurologic and metabolic safety'
+                  : 'Qualified care and safety review should move together.'}
+      </p>
+      <div className="syringe__presets">
+        {care && safety && !later && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-pediatric-dka-later-response')}>Review the 60-minute report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action"
+          onClick={() => onAction('handoff-pediatric-dka-active-risk')}>Hand off active DKA risk</Button>}
+      </div>
+      <p className="field__hint">Improving vitals or fixed laboratory trends do not prove treatment effect, biochemical resolution, cerebral-injury exclusion, durable recovery, discharge readiness, or outcome.</p>
     </section>
   </div>;
 }

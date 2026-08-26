@@ -312,6 +312,12 @@ credited toward the catalog until every item in the completion contract passes.
     strictly elapsed partial response, and elapsed active-risk handoff without learner examination,
     weighing, percentage, deficit or maintenance calculation, testing, diagnosis, fluid, route,
     volume, rate, access, electrolyte, feeding, device, treatment, or disposition controls.
+  - [x] Pediatrics slice 8/16 adds one authored 9-year-old pediatric diabetic-ketoacidosis
+    reassessment with a supplied glucose-ketone-acid-base pattern, explicit no-current-shock and
+    no-current-cerebral-injury-warning-cluster findings, qualified DKA care ownership in parallel with neurological
+    and metabolic safety review, a strictly elapsed improving-but-unresolved report, and elapsed
+    active-risk handoff without learner examination, calculation, testing, diagnosis, fluid,
+    insulin, glucose, electrolyte, access, pump, device, treatment, or disposition controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing

@@ -1771,6 +1771,21 @@ deliver a solution, route, volume, rate, access, electrolyte, drug, feeding plan
 or treatment; determine disposition or prognosis; or predict complete rehydration, recurrence,
 recovery, or outcome.
 
+The eighth Pediatrics lab is a pediatric diabetic-ketoacidosis reassessment, not a copy of the
+adult potassium-to-insulin-to-dextrose pathway. A 9-year-old, 30 kg child has a supplied whole-child
+history and fixed glucose, beta-hydroxybutyrate, pH, bicarbonate, potassium, and sodium panel.
+Experienced teams supply the DKA classification; preserved orientation, perfusion, and pressure
+support no current shock and no current authored cerebral-injury warning cluster while neurological and metabolic risk remains
+active.
+
+The learner reconciles the fixed illness and biochemical pattern, recognizes authored pediatric
+DKA, and activates qualified DKA care in parallel with neurological, circulatory, rhythm,
+electrolyte, glucose, ketone, acid-base, fluid-balance, output, and precipitant review. A strictly
+elapsed minute-60 report shows improving but unresolved whole-child and biochemical findings before
+another elapsed active-risk handoff. The lab exposes no examination, calculation, test, diagnosis,
+fluid, insulin, glucose, electrolyte, access, pump, device, treatment, or disposition control and
+does not prove treatment effect, DKA resolution, cerebral-injury exclusion, recovery, or outcome.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

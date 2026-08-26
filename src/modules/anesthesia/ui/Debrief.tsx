@@ -2816,8 +2816,9 @@ export function objectiveFindings(
     if (['recognize-moderate-dka', 'begin-dka-fluid-and-monitoring-path',
       'correct-dka-potassium-before-insulin', 'continue-insulin-with-dextrose-until-dka-resolves',
       'confirm-dka-resolution-and-transition'].includes(objective.id)) {
-      const supported = scenario.timeline.some((event) => event.type === 'narrative'
-        && event.target === 'diabetic-ketoacidosis');
+      const supported = scenario.metadata.id === 'diabetic-ketoacidosis'
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'diabetic-ketoacidosis');
       if (!supported) return { ...base, outcome: 'not-exercised',
         finding: 'The diabetic-ketoacidosis vignette was not active.' } satisfies ObjectiveFinding;
       const reviewed = log.find((event) => event.eventId.startsWith('dka-reviewed-'));
@@ -4718,6 +4719,30 @@ export function objectiveFindings(
       if (objective.id === 'review-pediatric-dehydration-later-response') { const parallelAt = Math.max(rehydration?.tick ?? -1, safety?.tick ?? -1); const ordered = rehydration && safety && later && parallelAt < later.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed parallel care, partial improvement was separated from ongoing losses, incomplete intake and output evidence, causal treatment effect, complete deficit correction, durable recovery, and disposition.' : 'The later response was absent or did not follow both rehydration and safety ownership after elapsed time.', atTick: later?.tick ?? 0 } satisfies ObjectiveFinding; }
       const ordered = later && handoff && later.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved hydration signs, intake, output, losses, tolerance, conditional laboratory review, recurrence triggers, caregiver context, and named owners without claiming complete rehydration, discharge, or outcome.' : 'The active pediatric dehydration handoff was absent or did not follow the later response after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
+    if (['reconcile-pediatric-dka-illness-and-fixed-pattern',
+      'recognize-pediatric-dka-and-current-risk',
+      'activate-pediatric-dka-qualified-care-ownership',
+      'review-pediatric-dka-neurologic-and-metabolic-safety',
+      'review-pediatric-dka-later-response',
+      'handoff-pediatric-dka-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'pediatric-diabetic-ketoacidosis'
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pediatric-diabetic-ketoacidosis-reassessment');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The pediatric diabetic-ketoacidosis lesson was not active.' } satisfies ObjectiveFinding;
+      const trajectory = log.find((event) => /^pediatric-dka-trajectory-reconciled-\d+$/.test(event.eventId));
+      const recognition = log.find((event) => /^pediatric-dka-and-current-risk-recognized-\d+$/.test(event.eventId));
+      const care = log.find((event) => /^pediatric-dka-qualified-care-activated-\d+$/.test(event.eventId));
+      const safety = log.find((event) => /^pediatric-dka-neurologic-and-metabolic-safety-reviewed-\d+$/.test(event.eventId));
+      const later = log.find((event) => /^pediatric-dka-later-response-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^pediatric-dka-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-pediatric-dka-illness-and-fixed-pattern') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'The supplied illness, hydration, breathing, mentation, perfusion, and fixed biochemical pattern were reconciled without learner examination, calculation, testing, diagnosis, or treatment.' : 'The fixed pediatric DKA trajectory was not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'recognize-pediatric-dka-and-current-risk') { const ordered = trajectory && recognition && trajectory.tick <= recognition.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Authored pediatric DKA was recognized from hyperglycemia, ketonemia, and acidosis while preserved orientation, perfusion, and pressure supported no current shock; absent warning signs remained a snapshot and did not exclude cerebral injury.' : 'Pediatric DKA recognition was absent or preceded trajectory review.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-pediatric-dka-qualified-care-ownership') { const ordered = recognition && care && recognition.tick <= care.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Qualified pediatric DKA care, monitoring, laboratory, access, and escalation ownership was activated without learner fluid, insulin, electrolyte, glucose, device, dose, route, volume, rate, or treatment selection.' : 'Qualified DKA care was absent or preceded recognition.', atTick: care?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-dka-neurologic-and-metabolic-safety') { const ordered = recognition && safety && recognition.tick <= safety.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Neurological, circulatory, rhythm, biochemical, fluid-balance, output, and precipitant risks were reviewed in parallel without learner testing, diagnosis, treatment, or disposition.' : 'Neurological-metabolic safety review was absent or preceded recognition.', atTick: safety?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-dka-later-response') { const parallelAt = Math.max(care?.tick ?? -1, safety?.tick ?? -1); const ordered = care && safety && later && parallelAt < later.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed parallel care, improving fixed trends were separated from treatment effect, biochemical resolution, cerebral-injury exclusion, durable recovery, and disposition.' : 'The later response was absent or did not follow both care and safety ownership after elapsed time.', atTick: later?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = later && handoff && later.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved whole-child and biochemical trends, neurological-metabolic surveillance, precipitant work, caregiver context, escalation triggers, and named owners without claiming resolution, discharge, or outcome.' : 'The active pediatric DKA handoff was absent or did not follow the later response after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',

@@ -413,7 +413,9 @@ export function validateScenarioSemantics(scenario: unknown): ValidationError[] 
     || (metadata?.id === 'pediatric-septic-shock'
       && patient?.ageYears === 4 && patient?.weightKg === 16)
     || (metadata?.id === 'pediatric-dehydration-with-hypovolemia'
-      && patient?.ageYears === 2 && patient?.weightKg === 12);
+      && patient?.ageYears === 2 && patient?.weightKg === 12)
+    || (metadata?.id === 'pediatric-diabetic-ketoacidosis'
+      && patient?.ageYears === 9 && patient?.weightKg === 30);
   if (respiratory?.profile === 'healthy-child' && !supportedHealthyChild) {
     errors.push({
       pointer: '/patient/respiratory/profile', rule: 'supported-profile',
@@ -422,7 +424,8 @@ export function validateScenarioSemantics(scenario: unknown): ValidationError[] 
         + '10 kg fixture, the croup scenario\'s exact 3-year-old, 15 kg fixture, and the pediatric '
         + 'status-asthmaticus scenario\'s exact 10-year-old, 32 kg fixture, and the pediatric '
         + 'septic-shock scenario\'s exact 4-year-old, 16 kg fixture, and the pediatric '
-        + 'dehydration scenario\'s exact 2-year-old, 12 kg fixture. Use one '
+        + 'dehydration scenario\'s exact 2-year-old, 12 kg fixture, and the pediatric DKA '
+        + 'scenario\'s exact 9-year-old, 30 kg fixture. Use one '
         + 'declared fixture or author another explicitly sourced profile.',
     });
   }

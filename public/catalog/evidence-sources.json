@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 173,
+  "sourceCount": 177,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -2220,6 +2220,64 @@
       "usedFor": "The whole-child clinical-dehydration and shock distinction, oral rehydration in small frequent amounts, tolerance and ongoing-loss monitoring, safety-net context, and conditional escalation when shock, deterioration, or persistent intolerance is present.",
       "verifiedAgainst": "https://www.nice.org.uk/guidance/cg84/chapter/Recommendations",
       "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "ispad-pediatric-dka-2022",
+      "currency": {
+        "lastAmended": "2022-10-17",
+        "checkedAt": "2026-08-25"
+      },
+      "authors": "Glaser N, Fritsch M, Priyambada L, et al",
+      "title": "ISPAD Clinical Practice Consensus Guidelines 2022: Diabetic ketoacidosis and hyperglycemic hyperosmolar state",
+      "publication": "Pediatric Diabetes",
+      "year": 2022,
+      "locator": "23(7):835-856; doi:10.1111/pedi.13406; definition, management, monitoring, and cerebral-injury sections",
+      "usedFor": "The pediatric-specific DKA triad, whole-child assessment, frequent neurological and biochemical monitoring, cerebral-injury warning-sign surveillance, and explicit boundary against using glucose, hypertension, or one sign alone.",
+      "verifiedAgainst": "https://www.ispad.org/static/6dd62eae-c8cb-4b4a-84e1efc768505746/Ch11PediatricDiabetes.pdf",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "nice-pediatric-diabetes-ng18-dka-2026",
+      "currency": {
+        "lastAmended": "2026-03-01",
+        "checkedAt": "2026-08-25"
+      },
+      "authors": "National Institute for Health and Care Excellence",
+      "title": "Diabetes (type 1 and type 2) in children and young people: diagnosis and management",
+      "publication": "NICE guideline NG18",
+      "year": 2015,
+      "locator": "Published 2015-08-01; overall last updated 2023-05-11; DKA fluid evidence reviewed 2020-12; DKA shock-bolus wording amended 2022-10; recommendation 1.1.1 minor DKA-checking update 2026-03; section 1.4",
+      "usedFor": "The urgent pediatric DKA recognition, hospital and specialist-team boundary, supplied glucose-ketone-acid-base assessment, serial neurological and biochemical monitoring, and complication-surveillance context.",
+      "verifiedAgainst": "https://www.nice.org.uk/guidance/ng18/chapter/Recommendations",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "bsped-pediatric-dka-guideline-2021",
+      "currency": {
+        "lastAmended": "2024-11-26",
+        "checkedAt": "2026-08-25"
+      },
+      "authors": "British Society for Paediatric Endocrinology and Diabetes",
+      "title": "Guideline for the Management of Children and Young People under the age of 18 years with Diabetic Ketoacidosis",
+      "publication": "BSPED",
+      "year": 2021,
+      "locator": "Version 3; current guideline landing page updated 2024-11-26",
+      "usedFor": "UK operational corroboration for experienced pediatric-team ownership, repeated conscious-level, vital, biochemical, electrolyte, fluid-balance, and response monitoring without exposing its calculator or treatment settings.",
+      "verifiedAgainst": "https://www.bsped.org.uk/clinical-resources/bsped-dka-guidelines/",
+      "verifiedOn": "2026-08-25"
+    },
+    {
+      "id": "kuppermann-pediatric-dka-fluids-2018",
+      "pmid": "29897851",
+      "authors": "Kuppermann N, Ghetti S, Schunk JE, et al",
+      "title": "Clinical Trial of Fluid Infusion Rates for Pediatric Diabetic Ketoacidosis",
+      "publication": "New England Journal of Medicine",
+      "year": 2018,
+      "locator": "378:2275-2287; doi:10.1056/NEJMoa1716816",
+      "usedFor": "The nonclaim that this fictional neurological trajectory must not attribute cerebral injury or its absence to one tested fluid rate or sodium-content strategy.",
+      "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/29897851/",
+      "verifiedOn": "2026-08-25",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/29897851/"
     }
   ]
 }

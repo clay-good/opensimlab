@@ -3623,6 +3623,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, current diarrhoea and pediatric fluid guidance, local rehydration systems, qualified teams, caregiver input, and repeated patient-specific reassessment; current no-shock findings do not remove the need to monitor for deterioration.',
     briefIn: ['pediatric-dehydration-with-hypovolemia'],
   },
+  {
+    id: 'pediatric-dka-presentation-care-laboratories-and-response-are-authored',
+    headline: 'The child, biochemical pattern, qualified care, surveillance, and serial response are authored.',
+    simplification: 'Fixed reports and scenario-specific snapshots stand in for caregiver history, examination, monitoring, glucose, ketone, acid-base, electrolyte and renal testing, fluid balance, treatment, and serial bedside reassessment.',
+    whereItMisleads: 'Treating the fictional age, weight, symptoms, vital signs, laboratory values, care timing, or response as universal kinetics, learner-acquired findings, causal treatment effects, or validated pediatric DKA physiology.',
+    correctUnderstanding: 'Real care integrates verified history, repeated neurological and circulatory assessment, glucose, ketones, gases, electrolytes, renal function, osmolality and fluid balance when indicated, precipitating causes, treatment, and repeated qualified reassessment.',
+    briefIn: ['pediatric-diabetic-ketoacidosis'],
+  },
+  {
+    id: 'pediatric-dka-controls-reconcile-recognize-coordinate-review-reassess-and-handoff-only',
+    headline: 'The controls record pattern review, DKA recognition, parallel qualified care and safety ownership, reassessment, and handoff only.',
+    simplification: 'Six accepted actions stand in for experienced pediatric, diabetes, nursing, pharmacy, and laboratory assessment, treatment, surveillance, caregiver communication, escalation, and handoff.',
+    whereItMisleads: 'Equating button order with examination, diagnosis, severity or biochemical calculation, testing, fluid or insulin prescribing, electrolyte management, access or device operation, treatment, team performance, caregiver communication, or pediatric competence.',
+    correctUnderstanding: 'Actual care requires the child and caregiver, trained pediatric DKA teams, current local guidance, patient-specific treatment, frequent neurological and biochemical monitoring, and immediate escalation when warning signs or deterioration appear.',
+    briefIn: ['pediatric-diabetic-ketoacidosis'],
+  },
+  {
+    id: 'no-live-pediatric-dka-exam-calculation-test-fluid-insulin-electrolyte-device-or-disposition',
+    headline: 'The lab does not examine, calculate, test, prescribe or deliver DKA care, determine disposition, or predict outcome.',
+    simplification: 'No live neurological or physical examination, severity, dehydration, sodium, osmolality, anion-gap, deficit, maintenance, dose or rate calculation, specimen or test acquisition or interpretation, diagnosis, fluid, insulin, dextrose, potassium, phosphate, bicarbonate, other drug, access, pump, device, procedure, treatment, admission, discharge, prognosis, recurrence, recovery, or outcome is modeled.',
+    whereItMisleads: 'Copying fictional values into care, using glucose or one warning sign alone, treating fixed negatives as permanent exclusions, assuming a universal treatment recipe, blaming one fluid strategy for cerebral injury, or using completion as evidence of clinical or prescribing competence.',
+    correctUnderstanding: 'Use verified patient data, current pediatric DKA guidance, local protocols, qualified teams, caregiver input, and repeated patient-specific neurological, circulatory, biochemical, electrolyte, renal, rhythm, input and output reassessment.',
+    briefIn: ['pediatric-diabetic-ketoacidosis'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {
