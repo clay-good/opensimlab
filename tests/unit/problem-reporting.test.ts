@@ -7,7 +7,7 @@ import {
   type ScenarioReportContext,
 } from '@platform/reporting/contracts';
 import {
-  handleRequest, validateReportPayload, verifyTurnstile,
+  handleRequest, reserveVerificationAttempt, validateReportPayload, verifyTurnstile,
 } from '../../workers/reports/src/index.mjs';
 
 const context: ScenarioReportContext = {
@@ -360,7 +360,7 @@ describe('scenario report contract', () => {
     const bindings: unknown[][] = [];
     const statement = {
       bind: vi.fn((...values: unknown[]) => { bindings.push(values); return statement; }),
-      first: vi.fn(async () => ({ global_count: 0, reporter_count: 0 })),
+      first: vi.fn(async () => ({ count: 1 })),
     };
     const database = {
       prepare: vi.fn(() => statement),
@@ -815,6 +815,55 @@ describe('scenario report contract', () => {
     }
   });
 
+  it('atomically reserves every Siteverify attempt before contacting Turnstile', async () => {
+    const first = vi.fn()
+      .mockResolvedValueOnce({ count: 5 })
+      .mockResolvedValueOnce(null);
+    const statement = {
+      bind: vi.fn(function bind() { return statement; }),
+      first,
+    };
+    const database = { prepare: vi.fn((_sql: string) => statement) };
+    await expect(reserveVerificationAttempt(database, '2026-08-26', 'reporter')).resolves.toBe(true);
+    await expect(reserveVerificationAttempt(database, '2026-08-26', 'reporter')).resolves.toBe(false);
+    expect(database.prepare.mock.calls[0]?.[0]).toContain("kind='verified'");
+    expect(database.prepare.mock.calls[0]?.[0]).toContain('SUM(count)');
+    expect(statement.bind).toHaveBeenCalledWith(
+      '2026-08-26', 'reporter', '2026-08-26', 400, 5, '2026-08-26', 400,
+    );
+  });
+
+  it('spends an attempt on a failed token and skips Siteverify after quota', async () => {
+    const request = () => new Request('https://opensimlab.com/api/reports', {
+      method: 'POST',
+      headers: {
+        Origin: 'https://opensimlab.com', 'Content-Type': 'application/json',
+        'CF-Connecting-IP': '192.0.2.1',
+      },
+      body: JSON.stringify(valid()),
+    });
+    const first = vi.fn()
+      .mockResolvedValueOnce({ count: 1 })
+      .mockResolvedValueOnce(null);
+    const statement = {
+      bind: vi.fn(function bind() { return statement; }),
+      first,
+    };
+    const database = { prepare: vi.fn(() => statement) };
+    const fetcher = vi.fn(async () => Response.json({ success: false }));
+    vi.stubGlobal('fetch', fetcher);
+    const env = {
+      REPORTING_ENABLED: 'true', REPORTS_DB: database, TURNSTILE_SITE_KEY: 'site-key',
+      TURNSTILE_SECRET_KEY: 'secret', REPORT_HASH_SECRET: 'h'.repeat(32),
+      REPORT_ALLOWED_ORIGIN: 'https://opensimlab.com',
+    };
+    expect((await handleRequest(request(), env)).status).toBe(400);
+    expect((await handleRequest(request(), env)).status).toBe(202);
+    expect(fetcher).toHaveBeenCalledOnce();
+    expect(first.mock.invocationCallOrder[0]).toBeLessThan(fetcher.mock.invocationCallOrder[0]!);
+    vi.unstubAllGlobals();
+  });
+
   it('returns only generic unavailability when D1 lookup or persistence fails', async () => {
     const request = () => new Request('https://opensimlab.com/api/reports', {
       method: 'POST',
@@ -843,7 +892,7 @@ describe('scenario report contract', () => {
     vi.stubGlobal('fetch', fetcher);
     const statement = {
       bind: vi.fn(function bind() { return statement; }),
-      first: vi.fn(async () => ({ global_count: 0, reporter_count: 0 })),
+      first: vi.fn(async () => ({ count: 1 })),
     };
     const failedPersistence = {
       prepare: vi.fn(() => statement),

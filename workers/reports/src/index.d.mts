@@ -13,5 +13,10 @@ export function verifyTurnstile(
   env: Record<string, unknown>,
   fetcher?: typeof fetch,
 ): Promise<boolean>;
+export function reserveVerificationAttempt(
+  db: unknown,
+  day: string,
+  reporter: string,
+): Promise<boolean>;
 export function cleanupReports(db: unknown, now?: Date): Promise<void>;
 export function handleRequest(request: Request, env: Record<string, unknown>): Promise<Response>;

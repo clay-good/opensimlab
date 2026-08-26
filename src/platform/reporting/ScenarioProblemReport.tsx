@@ -62,6 +62,7 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose }:
   }, [open, sent]);
 
   const close = () => {
+    if (sending) return;
     setOpen(false);
     setToken('');
     setStatus('');
@@ -102,6 +103,7 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose }:
         open={open}
         title="Report a problem"
         onClose={close}
+        dismissible={!sending}
         footer={sent
           ? <Button variant="primary" onClick={close}>Done</Button>
           : <>
@@ -140,6 +142,7 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose }:
                 rows={3}
                 maxLength={REPORT_NOTE_LIMIT}
                 autoComplete="off"
+                spellCheck={false}
                 value={note}
                 onChange={(event) => setNote(event.target.value.slice(0, REPORT_NOTE_LIMIT))}
                 placeholder="What did you expect instead?"

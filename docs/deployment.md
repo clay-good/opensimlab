@@ -118,9 +118,10 @@ Cloudflare's current Turnstile test pair is safe only outside production: site k
 separate non-production widget/database, confirm the returned hostname and `scenario-report`
 action, then remove test configuration. Production widgets must allow only `opensimlab.com`.
 
-The application admits at most 400 verified attempts and 200 accepted rows per UTC day. Each
-accepted report uses one Turnstile verification and one bounded D1 batch; duplicate and quota cases
-remain indistinguishable. These ceilings keep this feature far below ordinary D1 free-tier volume,
+The application admits at most 400 Siteverify attempts and 200 accepted rows per UTC day. Every
+schema-valid attempt is atomically reserved in D1 before Siteverify, including a failed or forged
+token; each accepted report then uses one bounded D1 batch. Duplicate and quota cases remain
+indistinguishable. These ceilings keep this feature far below ordinary D1 free-tier volume,
 but D1 returns errors after a free daily limit is exhausted. The Worker converts that condition to
 generic unavailability and the static simulator remains unaffected. Recheck Cloudflare's current
 [D1 limits](https://developers.cloudflare.com/d1/platform/limits/),

@@ -60,6 +60,7 @@ describe('shared problem report dialog', () => {
     expect(container.querySelector('[role="dialog"]')).not.toBeNull();
     expect(container.querySelector('.modal-backdrop')).not.toBeNull();
     expect(container.querySelector('textarea')?.maxLength).toBe(160);
+    expect(container.querySelector('textarea')?.getAttribute('spellcheck')).toBe('false');
     expect((container.querySelector('select') as HTMLSelectElement).value).toBe('');
     expect([...container.querySelectorAll('button')].find((button) => button.textContent === 'Send report')?.disabled)
       .toBe(true);
@@ -67,6 +68,27 @@ describe('shared problem report dialog', () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledWith('/api/reports/config', expect.objectContaining({ credentials: 'omit' }));
     expect(fetchMock.mock.calls[0]?.[1]?.signal).toBeInstanceOf(AbortSignal);
+  });
+
+  it('minimizes Turnstile fields and reports timeout or unsupported clients', async () => {
+    let options: Record<string, unknown> = {};
+    window.turnstile = {
+      render: (_host, value) => { options = value; return 'widget'; },
+      remove: vi.fn(), reset: vi.fn(),
+    };
+    await act(async () => { root.render(<ScenarioProblemReport context={context} />); });
+    await act(async () => {
+      (container.querySelector('button') as HTMLButtonElement).click();
+      await Promise.resolve();
+    });
+    expect(options).toMatchObject({
+      'response-field': false,
+      'feedback-enabled': false,
+    });
+    await act(async () => { (options['timeout-callback'] as () => void)(); });
+    expect(container.textContent).toContain('Security check expired');
+    await act(async () => { (options['unsupported-callback'] as () => void)(); });
+    expect(container.textContent).toContain('Security check unavailable');
   });
 
   it('collects bounded simulation context only after explicit consent and previews it', async () => {
@@ -217,6 +239,32 @@ describe('shared problem report dialog', () => {
     expect(window.turnstile?.reset).toHaveBeenCalledWith('widget');
     expect([...container.querySelectorAll('button')]
       .find((button) => button.textContent === 'Cancel')?.disabled).toBe(false);
+  });
+
+  it('cannot dismiss the dialog while a report is being sent', async () => {
+    let finish!: (response: Response) => void;
+    const pending = new Promise<Response>((resolve) => { finish = resolve; });
+    fetchMock
+      .mockResolvedValueOnce(Response.json({ sitekey: 'test-key', action: 'scenario-report' }))
+      .mockReturnValueOnce(pending);
+    await act(async () => { root.render(<ScenarioProblemReport context={context} />); });
+    await act(async () => {
+      (container.querySelector('button') as HTMLButtonElement).click();
+      await Promise.resolve();
+    });
+    const select = container.querySelector('select') as HTMLSelectElement;
+    await act(async () => {
+      select.value = 'controls';
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    const send = [...container.querySelectorAll('button')]
+      .find((button) => button.textContent === 'Send report')!;
+    await act(async () => { send.click(); await Promise.resolve(); });
+    await act(async () => { document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })); });
+    expect(container.querySelector('[role="dialog"]')).not.toBeNull();
+    expect(container.textContent).toContain('Sending report');
+    await act(async () => { finish(new Response(null, { status: 202 })); await pending; });
+    expect(container.textContent).toContain('weekly review queue');
   });
 
   it('bounds a stalled Turnstile script load and removes the abandoned script', async () => {

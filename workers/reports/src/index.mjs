@@ -197,26 +197,19 @@ async function storeReport(db, report, reporter, env, now = new Date()) {
   const dedupe = await hexDigest('SHA-256', `${day}\0${JSON.stringify({ ...report, turnstileToken: undefined })}`);
   const acceptedGlobal = configuredLimit(env.REPORT_DAILY_LIMIT, ACCEPTED_GLOBAL_LIMIT, ACCEPTED_GLOBAL_LIMIT);
   const acceptedReporter = configuredLimit(env.REPORT_REPORTER_DAILY_LIMIT, ACCEPTED_REPORTER_LIMIT, ACCEPTED_REPORTER_LIMIT);
-  const upsert = (kind, scope, subject) => db.prepare(`
-    INSERT INTO report_counters (day, kind, scope, subject, count) VALUES (?, ?, ?, ?, 1)
-    ON CONFLICT (day, kind, scope, subject) DO UPDATE SET count = count + 1
-  `).bind(day, kind, scope, subject);
   const insert = db.prepare(`
     INSERT OR IGNORE INTO scenario_reports (
       id, created_at, scenario_id, content_version, module_id, maturity, practice_region,
       fidelity_class, surface, simulated_tick, category, note, canonical_url,
       app_version, engine_version, recent_context_json, dedupe_key
     ) SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
-    WHERE COALESCE((SELECT count FROM report_counters WHERE day=? AND kind='verified' AND scope='global' AND subject='all'), 0) <= ?
-      AND COALESCE((SELECT count FROM report_counters WHERE day=? AND kind='verified' AND scope='reporter' AND subject=?), 0) <= ?
-      AND COALESCE((SELECT count FROM report_counters WHERE day=? AND kind='accepted' AND scope='global' AND subject='all'), 0) < ?
+    WHERE COALESCE((SELECT count FROM report_counters WHERE day=? AND kind='accepted' AND scope='global' AND subject='all'), 0) < ?
       AND COALESCE((SELECT count FROM report_counters WHERE day=? AND kind='accepted' AND scope='reporter' AND subject=?), 0) < ?
   `).bind(
     id, createdAt, report.scenarioId, report.contentVersion, report.moduleId, report.maturity,
     report.practiceRegion, report.fidelityClass, report.surface, report.simulatedTick, report.category,
     report.note || null, report.canonicalUrl, report.appVersion, report.engineVersion,
     report.recentContext ? JSON.stringify(report.recentContext) : null, `${day}:${dedupe}`,
-    day, VERIFIED_GLOBAL_LIMIT, day, reporter, VERIFIED_REPORTER_LIMIT,
     day, acceptedGlobal, day, reporter, acceptedReporter,
   );
   const incrementAccepted = (scope, subject) => db.prepare(`
@@ -225,19 +218,31 @@ async function storeReport(db, report, reporter, env, now = new Date()) {
     ON CONFLICT (day, kind, scope, subject) DO UPDATE SET count = count + 1
   `).bind(day, scope, subject, id);
   await db.batch([
-    upsert('verified', 'global', 'all'), upsert('verified', 'reporter', reporter), insert,
-    incrementAccepted('global', 'all'), incrementAccepted('reporter', reporter),
+    insert, incrementAccepted('global', 'all'), incrementAccepted('reporter', reporter),
   ]);
 }
 
-async function verifiedLimitReached(db, day, reporter) {
+/** Reserve one Siteverify call in a single D1 statement so concurrent requests cannot pass a stale check. */
+export async function reserveVerificationAttempt(db, day, reporter) {
   const row = await db.prepare(`
-    SELECT
-      COALESCE((SELECT count FROM report_counters WHERE day=? AND kind='verified' AND scope='global' AND subject='all'), 0) AS global_count,
-      COALESCE((SELECT count FROM report_counters WHERE day=? AND kind='verified' AND scope='reporter' AND subject=?), 0) AS reporter_count
-  `).bind(day, day, reporter).first();
-  return Number(row?.global_count) >= VERIFIED_GLOBAL_LIMIT
-    || Number(row?.reporter_count) >= VERIFIED_REPORTER_LIMIT;
+    INSERT INTO report_counters (day, kind, scope, subject, count)
+    SELECT ?, 'verified', 'reporter', ?, 1
+    WHERE COALESCE((
+      SELECT SUM(count) FROM report_counters
+      WHERE day=? AND kind='verified' AND scope='reporter'
+    ), 0) < ?
+    ON CONFLICT (day, kind, scope, subject) DO UPDATE SET count = count + 1
+    WHERE report_counters.count < ?
+      AND COALESCE((
+        SELECT SUM(count) FROM report_counters
+        WHERE day=? AND kind='verified' AND scope='reporter'
+      ), 0) < ?
+    RETURNING count
+  `).bind(
+    day, reporter, day, VERIFIED_GLOBAL_LIMIT,
+    VERIFIED_REPORTER_LIMIT, day, VERIFIED_GLOBAL_LIMIT,
+  ).first();
+  return Number.isInteger(Number(row?.count)) && Number(row.count) > 0;
 }
 
 function cutoff(now, days) { return new Date(now.getTime() - days * 86400000).toISOString(); }
@@ -272,7 +277,9 @@ async function handleReport(request, env) {
   let reporter;
   try {
     reporter = await hexDigest('SHA-256', `${day}\0${remoteIp}`, env.REPORT_HASH_SECRET);
-    if (await verifiedLimitReached(env.REPORTS_DB, day, reporter)) return json(202, { ok: true });
+    if (!await reserveVerificationAttempt(env.REPORTS_DB, day, reporter)) {
+      return json(202, { ok: true });
+    }
   } catch { return json(503, { ok: false }); }
   if (!await verifyTurnstile(validated.value, remoteIp, env)) return json(400, { ok: false });
   try { await storeReport(env.REPORTS_DB, validated.value, reporter, env); }

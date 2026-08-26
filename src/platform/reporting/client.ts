@@ -71,8 +71,12 @@ export function renderTurnstile(
     appearance: 'interaction-only',
     size: 'flexible',
     theme: 'auto',
+    'response-field': false,
+    'feedback-enabled': false,
     callback: callbacks.ready,
     'expired-callback': callbacks.expired,
+    'timeout-callback': callbacks.expired,
+    'unsupported-callback': callbacks.error,
     'error-callback': callbacks.error,
   });
 }

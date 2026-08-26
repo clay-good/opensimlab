@@ -36,8 +36,10 @@ It validates origin, content type, encoding, a 32 KB streamed body cap, fatal UT
 catalog versions, canonical URLs, bounded text and context size, control/bidirectional characters, and Turnstile's
 hostname and `scenario-report` action. It uses prepared D1 statements throughout.
 
-Daily ceilings are 400 verified attempts globally, 5 per anonymous reporter, 200 accepted reports
-globally, and 3 per reporter. A daily HMAC of the Cloudflare-provided network address exists only in
+Daily ceilings are 400 Siteverify attempts globally, 5 per anonymous reporter, 200 accepted reports
+globally, and 3 per reporter. A schema-valid request atomically reserves its Siteverify attempt in
+D1 before Cloudflare is contacted, so failed, forged, expired, and reused tokens consume the same
+quota as successful tokens. A daily HMAC of the Cloudflare-provided network address exists only in
 14-day counter rows; the raw address never enters D1. New, duplicate, and quota-dropped valid
 submissions all return the same `202`. Add Cloudflare WAF rate limits on both exact routes before
 launch. These application ceilings and the WAF bound both Siteverify and D1 free-tier exposure.
