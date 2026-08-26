@@ -224,6 +224,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       hasToxicologyAcetaminophenResponse: false,
       hasToxicologySalicylateResponse: false,
       hasToxicologyTricyclicResponse: false,
+      hasToxicologyBetaBlockerResponse: false,
       hasPulmonaryEmbolismResponse: false,
       hasStemiResponse: false,
       hasUnstableNarrowTachycardiaResponse: false,

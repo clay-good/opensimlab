@@ -603,6 +603,20 @@ credited toward the catalog until every item in the completion contract passes.
     test acquisition or interpretation, diagnosis, drug, dose, target, route, access, infusion, airway,
     ventilation, rhythm treatment, shock, pacing, lipid, ECLS, procedure, safety disposition,
     prognosis, or outcome control exists.
+  - [x] Toxicology slice 6/15 adds declared immediate-release metoprolol cardiogenic shock. The
+    learner reconciles product, 2-hour clock, bradycardia, shock, impaired mentation, vomiting, low
+    glucose, supplied ECG and contractility, acid-base, lactate, electrolyte, renal and reported
+    initial-care evidence; recognizes the whole beta-blocker pattern without pulse-only or pacing-
+    only closure; activates toxicology, resuscitation, cardiac, metabolic, airway, monitoring and
+    compassionate safety ownership; reviews phenotype, coingestion, glucose-potassium-volume and
+    refractory-rescue boundaries; records bounded qualified vasopressor, glucagon, high-dose-
+    insulin/euglycemia, surveillance and rescue intent; then reviews a strict elapsed fixed
+    perfusion and metabolic report before another elapsed shock, bradycardia, hypoglycemia,
+    electrolyte, volume, rescue and active-risk handoff. No learner history, examination,
+    monitoring, ECG, imaging or test acquisition or interpretation, diagnosis, decontamination,
+    glucose, electrolyte, fluid, drug, dose, rate, target, route, access, infusion, airway,
+    ventilation, pacing, dialysis, lipid, ECLS, procedure, safety disposition, prognosis, or outcome
+    control exists.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.
 - [ ] After every wave, verify the exact cumulative count, distinctness, capability reuse, path and

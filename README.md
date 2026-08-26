@@ -113,6 +113,13 @@ resuscitation ownership, bounded qualified bicarbonate and refractory-rescue int
 electrical and perfusion reassessment, and recurrence handoff. It exposes no learner ECG
 interpretation, dose or target, airway or rhythm treatment, lipid, ECLS, shock, pacing, procedure,
 disposition, or outcome control.
+Its sixth lab, beta-blocker toxicity where perfusion is more than pulse rate, couples a witnessed
+immediate-release metoprolol exposure with bradycardia, shock, impaired mentation, low glucose,
+supplied conduction and contractility evidence, reported initial-care nonresponse, qualified
+toxicology and resuscitation ownership, bounded vasopressor, glucagon, high-dose-insulin/euglycemia
+and refractory-rescue intent, strict elapsed perfusion and metabolic reassessment, and recurrence
+handoff. It exposes no learner ECG or imaging interpretation, glucose or electrolyte prescription,
+drug, dose, rate, target, pacing, dialysis, lipid, ECLS, procedure, disposition, or outcome control.
 
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage

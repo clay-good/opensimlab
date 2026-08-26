@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 150 reports Toxicology acetaminophen state. */
-export const WORKER_PROTOCOL_VERSION = 152;
+export const WORKER_PROTOCOL_VERSION = 153;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2342,6 +2342,31 @@ export interface EquipmentSnapshot {
       readonly ventilationSelectedByLearner: false; readonly rhythmTreatmentSelectedByLearner: false;
       readonly rescueSelectedByLearner: false; readonly treatmentDeliveredByLearner: false;
       readonly durableElectricalStabilityProven: false; readonly seizureRecurrenceExcluded: false;
+      readonly coingestionExcluded: false; readonly rescueEligibilityDetermined: false;
+      readonly treatmentEffectProven: false; readonly safetyDispositionDetermined: false;
+      readonly dispositionDetermined: false; readonly prognosisPredicted: false;
+      readonly outcomePredicted: false;
+    };
+    readonly toxicologyBetaBlockerAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly exposurePerfusionAndMetabolicPatternAuthored: true; readonly betaBlockerShockPatternRecognized: boolean;
+      readonly qualifiedSupportActive: boolean; readonly ecgCardiacMetabolicAndPriorCareEvidenceReviewed: boolean;
+      readonly qualifiedVasopressorIntentRecorded: boolean; readonly qualifiedGlucagonIntentRecorded: boolean;
+      readonly qualifiedInsulinEuglycemiaIntentRecorded: boolean; readonly qualifiedRescuePreparednessRecorded: boolean;
+      readonly responseStateAuthored: boolean; readonly patientHistoryTakenByLearner: false;
+      readonly patientExaminedByLearner: false; readonly monitoringAcquiredByLearner: false;
+      readonly ecgAcquiredByLearner: false; readonly ecgInterpretedByLearner: false;
+      readonly cardiacImagingAcquiredByLearner: false; readonly bloodSampleAcquiredByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly decontaminationSelectedByLearner: false;
+      readonly glucoseOrElectrolyteSelectedByLearner: false; readonly fluidSelectedByLearner: false;
+      readonly drugSelectedByLearner: false; readonly doseSelectedByLearner: false;
+      readonly routeSelectedByLearner: false; readonly airwaySelectedByLearner: false;
+      readonly ventilationSelectedByLearner: false; readonly pacingSelectedByLearner: false;
+      readonly dialysisSelectedByLearner: false; readonly rescueSelectedByLearner: false;
+      readonly treatmentDeliveredByLearner: false; readonly durablePerfusionStabilityProven: false;
+      readonly glucoseStabilityProven: false; readonly electrolyteStabilityProven: false;
       readonly coingestionExcluded: false; readonly rescueEligibilityDetermined: false;
       readonly treatmentEffectProven: false; readonly safetyDispositionDetermined: false;
       readonly dispositionDetermined: false; readonly prognosisPredicted: false;

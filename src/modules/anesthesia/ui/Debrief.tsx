@@ -5445,6 +5445,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-toxicology-beta-blocker-product-clock-pulse-perfusion-mentation-glucose-ecg-and-whole-patient',
+      'recognize-toxicology-beta-blocker-cardiogenic-shock-pattern-without-pulse-only-closure',
+      'activate-toxicology-beta-blocker-poison-center-resuscitation-cardiac-glucose-airway-and-safety-ownership',
+      'review-toxicology-beta-blocker-supplied-ecg-perfusion-contractility-glucose-electrolyte-prior-care-and-rescue-boundary',
+      'record-toxicology-beta-blocker-bounded-qualified-vasopressor-glucagon-insulin-euglycemia-and-rescue-intent-with-strict-later-review',
+      'handoff-toxicology-beta-blocker-recurrent-shock-bradycardia-hypoglycemia-electrolyte-volume-rescue-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'beta-blocker-cardiogenic-shock'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'beta-blocker-cardiogenic-shock-transition')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'beta-blocker-cardiogenic-shock-transition-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Toxicology beta-blocker lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'Product, clock, pulse, perfusion, mentation, glucose, supplied ECG, oxygenation, and whole-patient state were reconciled.'],
+        ['pattern-recognized', 'The beta-blocker cardiogenic-shock pattern was recognized without pulse-only, pacing-only, or diagnostic closure.'],
+        ['support-activated', 'Toxicology, resuscitation, cardiac, metabolic, airway, monitoring, and compassionate safety ownership were activated.'],
+        ['evidence-reviewed', 'Supplied ECG, perfusion, contractility, glucose, electrolyte, prior-care, coingestion, phenotype, and rescue evidence were reviewed without learner interpretation or delivery.'],
+        ['intent-and-reassessment-recorded', 'Bounded qualified vasopressor, glucagon, insulin/euglycemia, surveillance, and rescue intent plus the elapsed fixed report were recorded without dosing, delivery, eligibility, causal, or durable-safety claims.'],
+        ['active-risk-handoff-recorded', 'Serial shock, rhythm, glucose, potassium, volume, coingestion, recurrence, rescue, safety, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^toxicology-beta-blocker-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^toxicology-beta-blocker-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-af-rvr-rhythm-and-stability', 'review-af-rvr-context-and-triggers',
       'record-af-rvr-rate-control-intent', 'record-af-rvr-stroke-prevention-intent',
       'reassess-af-rvr-trajectory-and-follow-up'].includes(objective.id)) {

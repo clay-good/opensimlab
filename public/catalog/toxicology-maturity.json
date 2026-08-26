@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "toxicology",
-  "recordCount": 5,
+  "recordCount": 6,
   "records": [
     {
       "recordId": "scenario:methemoglobinemia-saturation-gap@0.1.0",
@@ -56,6 +56,17 @@
       "evidence": [
         "/catalog/toxicology-completion-audit.json#tricyclic-sodium-channel-cardiotoxicity@0.1.0",
         "/catalog/toxicology-quality-audit.json#tricyclic-sodium-channel-cardiotoxicity@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:beta-blocker-cardiogenic-shock@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "beta-blocker-cardiogenic-shock",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/toxicology-completion-audit.json#beta-blocker-cardiogenic-shock@0.1.0",
+        "/catalog/toxicology-quality-audit.json#beta-blocker-cardiogenic-shock@0.1.0"
       ]
     }
   ]

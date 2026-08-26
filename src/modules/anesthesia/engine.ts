@@ -400,6 +400,10 @@ const TOXICOLOGY_TRICYCLIC_BLOCKED_ACTION_TYPES = new Set([
   ...TOXICOLOGY_SALICYLATE_BLOCKED_ACTION_TYPES,
   'salicylate-falling-number-response',
 ]);
+const TOXICOLOGY_BETA_BLOCKER_BLOCKED_ACTION_TYPES = new Set([
+  ...TOXICOLOGY_TRICYCLIC_BLOCKED_ACTION_TYPES,
+  'tricyclic-sodium-channel-cardiotoxicity-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1267,6 +1271,12 @@ export class AnesthesiaEngine {
   private toxicologyTricyclicEvidenceAtTick: number | null = null;
   private toxicologyTricyclicReassessmentAtTick: number | null = null;
   private toxicologyTricyclicHandoffAtTick: number | null = null;
+  private toxicologyBetaBlockerTrajectoryAtTick: number | null = null;
+  private toxicologyBetaBlockerRecognitionAtTick: number | null = null;
+  private toxicologyBetaBlockerSupportAtTick: number | null = null;
+  private toxicologyBetaBlockerEvidenceAtTick: number | null = null;
+  private toxicologyBetaBlockerReassessmentAtTick: number | null = null;
+  private toxicologyBetaBlockerHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2072,6 +2082,15 @@ export class AnesthesiaEngine {
         'This Toxicology lesson exposes no generic examination, monitoring, ECG or laboratory interpretation, '
         + 'charcoal, bicarbonate, electrolyte, fluid, drug, dose, route, access, infusion, airway, ventilation, shock, '
         + 'pacing, antiarrhythmic, lipid, ECLS, transport, procedure, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const toxicologyBetaBlocker = this.scenario.metadata.id === 'beta-blocker-cardiogenic-shock'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'beta-blocker-cardiogenic-shock-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'beta-blocker-cardiogenic-shock-transition-boundary');
+    if (toxicologyBetaBlocker && TOXICOLOGY_BETA_BLOCKER_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `toxicology-beta-blocker-generic-action-refused-${this.currentTick}`,
+        'This Toxicology lesson exposes no generic examination, monitoring, ECG, imaging or laboratory interpretation, '
+        + 'decontamination, glucose, electrolyte, fluid, vasopressor, glucagon, insulin, dose, route, access, infusion, airway, '
+        + 'ventilation, pacing, dialysis, lipid, ECLS, transport, procedure, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -10208,6 +10227,32 @@ export class AnesthesiaEngine {
         if (this.toxicologyTricyclicHandoffAtTick !== null) { this.log('warning', 'assessment', `toxicology-tricyclic-handoff-refused-${this.currentTick}`, 'The recurrent conduction, shock, seizure, acidemia, rescue, and active-risk handoff was already recorded.'); break; }
         this.toxicologyTricyclicHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-tricyclic-active-risk-handoff-recorded-${this.currentTick}`, 'Serial ECG, perfusion, CNS and seizure state, acid-base and electrolytes, coingestion, recurrent conduction delay, dysrhythmia and shock, airway and rescue contingencies, compassionate safety, disposition, prognosis, and outcome uncertainty were handed off.', { durableElectricalStabilityProven: false, seizureRecurrenceExcluded: false, coingestionExcluded: false, rescueEligibilityDetermined: false, safetyDispositionDetermined: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
       }
+      case 'beta-blocker-cardiogenic-shock-response': {
+        const response = typeof action.payload.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id === 'beta-blocker-cardiogenic-shock'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'beta-blocker-cardiogenic-shock-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'beta-blocker-cardiogenic-shock-transition-boundary');
+        const actions = ['reconcile-toxicology-beta-blocker-product-clock-pulse-perfusion-mentation-glucose-ecg-and-whole-patient',
+          'recognize-toxicology-beta-blocker-cardiogenic-shock-pattern-without-pulse-only-closure',
+          'activate-toxicology-beta-blocker-poison-center-resuscitation-cardiac-glucose-airway-and-safety-ownership',
+          'review-toxicology-beta-blocker-supplied-ecg-perfusion-contractility-glucose-electrolyte-prior-care-and-rescue-boundary',
+          'record-toxicology-beta-blocker-bounded-qualified-vasopressor-glucagon-insulin-euglycemia-and-rescue-intent-with-strict-later-review',
+          'handoff-toxicology-beta-blocker-recurrent-shock-bradycardia-hypoglycemia-electrolyte-volume-rescue-and-active-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `toxicology-beta-blocker-response-refused-${this.currentTick}`, supported ? 'The beta-blocker action was not listed. No supplied or injected text was retained.' : 'These beta-blocker choices are available only in the exact declared Toxicology lesson.'); break; }
+        if (response === actions[0]) { if (this.toxicologyBetaBlockerTrajectoryAtTick !== null) { this.log('warning', 'assessment', `toxicology-beta-blocker-trajectory-refused-${this.currentTick}`, 'The product, clock, pulse, perfusion, mentation, glucose, ECG, and whole-patient state were already reconciled.'); break; } this.toxicologyBetaBlockerTrajectoryAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-beta-blocker-trajectory-reconciled-${this.currentTick}`, 'Declared immediate-release metoprolol exposure, 2-hour clock, bradycardia, shock, drowsiness, vomiting, low glucose, supplied ECG, oxygenation, and whole-patient state were connected. The learner did not take history, examine, acquire or interpret monitoring or ECG, test, or diagnose.', { exposureAuthored: true, hoursPostIngestion: 2, patientHistoryTakenByLearner: false, patientExaminedByLearner: false, ecgInterpretedByLearner: false }); break; }
+        if (this.toxicologyBetaBlockerTrajectoryAtTick === null) { this.log('warning', 'assessment', `toxicology-beta-blocker-trajectory-order-refused-${this.currentTick}`, 'Reconcile product, clock, pulse, perfusion, mentation, glucose, ECG, and whole patient first.'); break; }
+        if (response === actions[1]) { if (this.toxicologyBetaBlockerRecognitionAtTick !== null) { this.log('warning', 'assessment', `toxicology-beta-blocker-recognition-refused-${this.currentTick}`, 'The beta-blocker cardiogenic-shock pattern and pulse-only boundary were already recognized.'); break; } this.toxicologyBetaBlockerRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-beta-blocker-pattern-recognized-${this.currentTick}`, 'Declared exposure, bradycardia, hypotension, impaired mentation, low glucose, conduction delay, and reduced contractility form an authored beta-blocker cardiogenic-shock pattern. One pulse, interval, glucose value, or history statement alone neither diagnoses nor grades the case, and pacing alone does not restore poisoned myocardial performance.', { betaBlockerShockPatternRecognized: true, pulseUsedAlone: false, pacingTreatedAsDefinitive: false, diagnosisMadeByLearner: false }); break; }
+        if (this.toxicologyBetaBlockerRecognitionAtTick === null) { this.log('warning', 'assessment', `toxicology-beta-blocker-recognition-order-refused-${this.currentTick}`, 'Recognize the whole beta-blocker cardiogenic-shock pattern before support or evidence review.'); break; }
+        if (response === actions[2]) { if (this.toxicologyBetaBlockerSupportAtTick !== null) { this.log('warning', 'assessment', `toxicology-beta-blocker-support-refused-${this.currentTick}`, 'Qualified toxicology, resuscitation, cardiac, metabolic, airway, and safety ownership are already active.'); break; } this.toxicologyBetaBlockerSupportAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-beta-blocker-support-activated-${this.currentTick}`, 'Poison-center or medical-toxicology, emergency, critical-care, nursing, pharmacy, cardiac, glucose, airway-capable, continuous rhythm and perfusion monitoring, and compassionate safety ownership were recorded. The learner selected no fluid, drug, dose, route, access, airway, pacing, or procedure.', { qualifiedSupportActive: true, safetyOwnershipActive: true, treatmentSelectedByLearner: false }); break; }
+        if (this.toxicologyBetaBlockerSupportAtTick === null) { this.log('warning', 'assessment', `toxicology-beta-blocker-support-order-refused-${this.currentTick}`, 'Activate qualified toxicology, resuscitation, cardiac, metabolic, airway, and safety ownership before evidence review.'); break; }
+        if (response === actions[3]) { if (this.toxicologyBetaBlockerEvidenceAtTick !== null) { this.log('warning', 'assessment', `toxicology-beta-blocker-evidence-refused-${this.currentTick}`, 'The supplied ECG, perfusion, contractility, metabolic, prior-care, and rescue boundary was already reviewed.'); break; } this.toxicologyBetaBlockerEvidenceAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-beta-blocker-evidence-reviewed-${this.currentTick}`, 'Supplied sinus bradycardia, PR 220 ms, QRS 92 ms, BP 72/40, globally reduced LV contraction, glucose 62, pH 7.31, bicarbonate 19, lactate 3.8, sodium 138, potassium 4.2, creatinine 0.8, persistent shock after reported protocol-selected atropine and initial vasopressor care, coingestion limits, phenotype, and rescue boundary were integrated. The learner acquired, calculated, interpreted, selected, delivered, diagnosed, or determined no eligibility.', { ecgCardiacAndLaboratoryEvidenceAuthored: true, priorCareAuthored: true, ecgInterpretedByLearner: false, rescueEligibilityDetermined: false }); break; }
+        if (this.toxicologyBetaBlockerEvidenceAtTick === null) { this.log('warning', 'assessment', `toxicology-beta-blocker-evidence-order-refused-${this.currentTick}`, 'Review supplied ECG, perfusion, contractility, glucose, electrolyte, prior-care, and rescue evidence before qualified intent.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.toxicologyBetaBlockerEvidenceAtTick) { this.log('warning', 'assessment', `toxicology-beta-blocker-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before qualified rescue intent and strict later review.'); break; } if (this.toxicologyBetaBlockerReassessmentAtTick !== null) { this.log('warning', 'assessment', `toxicology-beta-blocker-reassessment-refused-${this.currentTick}`, 'Qualified rescue intent with the strict later report was already reviewed.'); break; } this.toxicologyBetaBlockerReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-beta-blocker-intent-and-reassessment-recorded-${this.currentTick}`, 'Qualified-team vasopressor, glucagon, high-dose-insulin/euglycemia, protocolized glucose-potassium-volume surveillance, and refractory-rescue preparedness were recorded without product, concentration, dose, rate, target, access, fluid, airway, pacing, dialysis, lipid, ECLS, or delivery. Strict 45-minute report: clearer mentation, sinus rate 58/min, BP 98/60 (MAP 73), glucose 104, potassium 3.5, lactate 2.8, and no new hypoxemia or pulmonary edema. This does not prove individualized treatment effect, durable perfusion, glucose or electrolyte stability, coingestant exclusion, disposition, or outcome.', { qualifiedVasopressorIntentRecorded: true, qualifiedGlucagonIntentRecorded: true, qualifiedInsulinEuglycemiaIntentRecorded: true, qualifiedRescuePreparednessRecorded: true, treatmentDeliveredByLearner: false, rescueSelectedByLearner: false, treatmentEffectProven: false }); break; }
+        if (this.toxicologyBetaBlockerReassessmentAtTick === null) { this.log('warning', 'assessment', `toxicology-beta-blocker-handoff-order-refused-${this.currentTick}`, 'Record bounded qualified rescue intent and review the strict later report before handoff.'); break; }
+        if (this.currentTick <= this.toxicologyBetaBlockerReassessmentAtTick) { this.log('warning', 'assessment', `toxicology-beta-blocker-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off recurrent beta-blocker shock and metabolic risk.'); break; }
+        if (this.toxicologyBetaBlockerHandoffAtTick !== null) { this.log('warning', 'assessment', `toxicology-beta-blocker-handoff-refused-${this.currentTick}`, 'The recurrent shock, bradycardia, hypoglycemia, electrolyte, volume, rescue, and active-risk handoff was already recorded.'); break; }
+        this.toxicologyBetaBlockerHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-beta-blocker-active-risk-handoff-recorded-${this.currentTick}`, 'Serial perfusion, rhythm and conduction, CNS state, glucose, potassium, acid-base, lactate, volume, coingestion, recurrent shock, airway and rescue contingencies, compassionate safety, disposition, prognosis, and outcome uncertainty were handed off.', { durablePerfusionStabilityProven: false, glucoseStabilityProven: false, electrolyteStabilityProven: false, coingestionExcluded: false, rescueEligibilityDetermined: false, safetyDispositionDetermined: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -12977,6 +13022,14 @@ export class AnesthesiaEngine {
         respiratoryRateBpm: 20, spo2Percent: 96, systolicMmHg: this.toxicologyTricyclicReassessmentAtTick !== null ? 106 : 82,
         diastolicMmHg: this.toxicologyTricyclicReassessmentAtTick !== null ? 66 : 48,
         meanArterialMmHg: this.toxicologyTricyclicReassessmentAtTick !== null ? 79 : 59, coreTemperatureC: 37.4 };
+    }
+    if (this.scenario.metadata.id === 'beta-blocker-cardiogenic-shock'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'beta-blocker-cardiogenic-shock-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'beta-blocker-cardiogenic-shock-transition-boundary')) {
+      crisisState = { ...crisisState, heartRateBpm: this.toxicologyBetaBlockerReassessmentAtTick !== null ? 58 : 42,
+        respiratoryRateBpm: 18, spo2Percent: 97, systolicMmHg: this.toxicologyBetaBlockerReassessmentAtTick !== null ? 98 : 72,
+        diastolicMmHg: this.toxicologyBetaBlockerReassessmentAtTick !== null ? 60 : 40,
+        meanArterialMmHg: this.toxicologyBetaBlockerReassessmentAtTick !== null ? 73 : 51, coreTemperatureC: 36.5 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -16617,6 +16670,30 @@ export class AnesthesiaEngine {
               seizureRecurrenceExcluded: false as const, coingestionExcluded: false as const, rescueEligibilityDetermined: false as const,
               treatmentEffectProven: false as const, safetyDispositionDetermined: false as const, dispositionDetermined: false as const,
               prognosisPredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'beta-blocker-cardiogenic-shock'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'beta-blocker-cardiogenic-shock-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'beta-blocker-cardiogenic-shock-transition-boundary') ? {
+            toxicologyBetaBlockerAssessment: {
+              trajectoryAtTick: this.toxicologyBetaBlockerTrajectoryAtTick, recognitionAtTick: this.toxicologyBetaBlockerRecognitionAtTick,
+              supportAtTick: this.toxicologyBetaBlockerSupportAtTick, evidenceAtTick: this.toxicologyBetaBlockerEvidenceAtTick,
+              reassessmentAtTick: this.toxicologyBetaBlockerReassessmentAtTick, handoffAtTick: this.toxicologyBetaBlockerHandoffAtTick,
+              exposurePerfusionAndMetabolicPatternAuthored: true as const, betaBlockerShockPatternRecognized: this.toxicologyBetaBlockerRecognitionAtTick !== null,
+              qualifiedSupportActive: this.toxicologyBetaBlockerSupportAtTick !== null, ecgCardiacMetabolicAndPriorCareEvidenceReviewed: this.toxicologyBetaBlockerEvidenceAtTick !== null,
+              qualifiedVasopressorIntentRecorded: this.toxicologyBetaBlockerReassessmentAtTick !== null, qualifiedGlucagonIntentRecorded: this.toxicologyBetaBlockerReassessmentAtTick !== null,
+              qualifiedInsulinEuglycemiaIntentRecorded: this.toxicologyBetaBlockerReassessmentAtTick !== null, qualifiedRescuePreparednessRecorded: this.toxicologyBetaBlockerReassessmentAtTick !== null,
+              responseStateAuthored: this.toxicologyBetaBlockerReassessmentAtTick !== null,
+              patientHistoryTakenByLearner: false as const, patientExaminedByLearner: false as const, monitoringAcquiredByLearner: false as const,
+              ecgAcquiredByLearner: false as const, ecgInterpretedByLearner: false as const, cardiacImagingAcquiredByLearner: false as const,
+              bloodSampleAcquiredByLearner: false as const, diagnosisMadeByLearner: false as const, decontaminationSelectedByLearner: false as const,
+              glucoseOrElectrolyteSelectedByLearner: false as const, fluidSelectedByLearner: false as const, drugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const, routeSelectedByLearner: false as const, airwaySelectedByLearner: false as const,
+              ventilationSelectedByLearner: false as const, pacingSelectedByLearner: false as const, dialysisSelectedByLearner: false as const,
+              rescueSelectedByLearner: false as const, treatmentDeliveredByLearner: false as const, durablePerfusionStabilityProven: false as const,
+              glucoseStabilityProven: false as const, electrolyteStabilityProven: false as const, coingestionExcluded: false as const,
+              rescueEligibilityDetermined: false as const, treatmentEffectProven: false as const, safetyDispositionDetermined: false as const,
+              dispositionDetermined: false as const, prognosisPredicted: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

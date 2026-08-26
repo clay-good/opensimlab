@@ -2373,6 +2373,23 @@ electrical, perfusion, and mental-state report precedes another elapsed recurren
 handoff. The canonical state is not an ECG, electrophysiology, toxicokinetic, bicarbonate-response,
 airway, dysrhythmia, or refractory-rescue model.
 
+### Wave F toxicology slice 6: beta-blocker cardiogenic shock
+
+The sixth Toxicology lab owns the coupled perfusion, rhythm, contractility, CNS, and metabolic pattern
+of declared immediate-release metoprolol toxicity rather than duplicating intrinsic bradycardia,
+pacing, isolated hypoglycemia, or calcium-channel-blocker toxicity. The learner reconciles the
+2-hour exposure clock, vomiting, drowsiness, HR 42/min, BP 72/40 mmHg, glucose 62 mg/dL, supplied
+sinus bradycardia with PR 220 ms, globally reduced LV contraction, acid-base, lactate, electrolyte,
+renal, and reported initial-care evidence; recognizes beta-blocker cardiogenic shock without pulse-
+only or pacing-only closure; activates toxicology, resuscitation, cardiac, metabolic, airway,
+monitoring, and compassionate safety ownership; and reviews coingestion, phenotype, surveillance,
+and refractory-rescue boundaries. Bounded qualified vasopressor, glucagon, high-dose-insulin/
+euglycemia, glucose-potassium-volume surveillance, and rescue intent exposes no product, dose, rate,
+target, access, fluid, airway, pacing, dialysis, lipid, ECLS, or delivery. A strict elapsed fixed
+perfusion, mental-state, glucose, potassium, and lactate report precedes another elapsed recurrence
+and active-risk handoff. The canonical state is not a toxicokinetic, receptor, contractility,
+metabolic, insulin-response, pacing, dialysis, or refractory-rescue model.
+
 #### Hematology and oncology: 11
 
 Neutropenic fever; tumor-lysis syndrome; hyperleukocytosis pattern; sickle-cell acute chest syndrome;

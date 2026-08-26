@@ -10,6 +10,7 @@ import { CARBON_MONOXIDE_REASSURING_MONITOR } from '../../src/modules/toxicology
 import { ACETAMINOPHEN_CLOCK_AND_NOMOGRAM } from '../../src/modules/toxicology/scenarios/acetaminophen-clock-and-nomogram';
 import { SALICYLATE_FALLING_NUMBER } from '../../src/modules/toxicology/scenarios/salicylate-falling-number';
 import { TRICYCLIC_SODIUM_CHANNEL_CARDIOTOXICITY } from '../../src/modules/toxicology/scenarios/tricyclic-sodium-channel-cardiotoxicity';
+import { BETA_BLOCKER_CARDIOGENIC_SHOCK } from '../../src/modules/toxicology/scenarios/beta-blocker-cardiogenic-shock';
 
 describe('Toxicology module user-facing foundation', () => {
   const cockpitMarkup = (
@@ -46,6 +47,7 @@ describe('Toxicology module user-facing foundation', () => {
     onToxicologyAcetaminophenResponse: () => {},
     onToxicologySalicylateResponse: () => {},
     onToxicologyTricyclicResponse: () => {},
+    onToxicologyBetaBlockerResponse: () => {},
   } satisfies ActionCockpitProps));
 
   it('renders a calm module index with shared navigation and the exact first lab', () => {
@@ -62,6 +64,8 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('Salicylate: the falling number can be worse');
     expect(markup).toContain('href="/toxicology/scenario/tricyclic-sodium-channel-cardiotoxicity"');
     expect(markup).toContain('Tricyclic toxicity: read the whole electrical pattern');
+    expect(markup).toContain('href="/toxicology/scenario/beta-blocker-cardiogenic-shock"');
+    expect(markup).toContain('Beta-blocker toxicity: perfusion is more than pulse rate');
   });
 
   it('briefs the bounded poisoning rehearsal without dose or diagnostic claims', () => {
@@ -184,6 +188,27 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('The tracing belongs to a whole patient.');
     expect(markup).toContain('Connect patient + tracing');
     expect(markup).not.toMatch(/mEq|mg\/kg|pH target|ventilator setting|ECLS/i);
+    expect(markup).not.toContain('<input');
+    expect(markup).not.toContain('<select');
+  });
+
+  it('prerenders and opens the beta-blocker lab on its calm perfusion-first tray', () => {
+    const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/beta-blocker-cardiogenic-shock' }));
+    expect(page).toContain('<h1>Beta-blocker toxicity: perfusion is more than pulse rate</h1>');
+    expect(page).toContain('pulse-only closure');
+    expect(crisisResponseAvailability(BETA_BLOCKER_CARDIOGENIC_SHOCK, []))
+      .toMatchObject({ hasToxicologyBetaBlockerResponse: true });
+    expect(crisisResponseAvailability({ ...BETA_BLOCKER_CARDIOGENIC_SHOCK,
+      metadata: { ...BETA_BLOCKER_CARDIOGENIC_SHOCK.metadata, id: 'beta-blocker-clone' } }, []))
+      .toMatchObject({ hasToxicologyBetaBlockerResponse: false });
+    const markup = cockpitMarkup(BETA_BLOCKER_CARDIOGENIC_SHOCK, {
+      toxicologyBetaBlockerAssessment: { trajectoryAtTick: null, recognitionAtTick: null,
+        supportAtTick: null, evidenceAtTick: null, reassessmentAtTick: null, handoffAtTick: null },
+    });
+    expect(markup).toContain('Beta-blocker shock');
+    expect(markup).toContain('A slow pulse can hide a failing pump.');
+    expect(markup).toContain('Connect pulse + perfusion');
+    expect(markup).not.toMatch(/units\/kg|mg\/kg|mL\/kg|pacing rate|dialysis threshold|ECLS/i);
     expect(markup).not.toContain('<input');
     expect(markup).not.toContain('<select');
   });

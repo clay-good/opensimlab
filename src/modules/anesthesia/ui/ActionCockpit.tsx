@@ -1200,6 +1200,11 @@ export interface ActionCockpitProps {
       readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly toxicologyBetaBlockerAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2068,6 +2073,14 @@ export interface ActionCockpitProps {
       | 'record-toxicology-tricyclic-bounded-qualified-bicarbonate-and-rescue-intent-with-strict-later-review'
       | 'handoff-toxicology-tricyclic-recurrent-conduction-shock-seizure-acidemia-rescue-and-active-risk',
   ) => void;
+  readonly onToxicologyBetaBlockerResponse?: (
+    action: 'reconcile-toxicology-beta-blocker-product-clock-pulse-perfusion-mentation-glucose-ecg-and-whole-patient'
+      | 'recognize-toxicology-beta-blocker-cardiogenic-shock-pattern-without-pulse-only-closure'
+      | 'activate-toxicology-beta-blocker-poison-center-resuscitation-cardiac-glucose-airway-and-safety-ownership'
+      | 'review-toxicology-beta-blocker-supplied-ecg-perfusion-contractility-glucose-electrolyte-prior-care-and-rescue-boundary'
+      | 'record-toxicology-beta-blocker-bounded-qualified-vasopressor-glucagon-insulin-euglycemia-and-rescue-intent-with-strict-later-review'
+      | 'handoff-toxicology-beta-blocker-recurrent-shock-bradycardia-hypoglycemia-electrolyte-volume-rescue-and-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2585,6 +2598,10 @@ export function crisisResponseAvailability(
       scenario.metadata.id === 'tricyclic-sodium-channel-cardiotoxicity'
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'tricyclic-sodium-channel-cardiotoxicity-transition')
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'tricyclic-sodium-channel-cardiotoxicity-transition-boundary'),
+    hasToxicologyBetaBlockerResponse:
+      scenario.metadata.id === 'beta-blocker-cardiogenic-shock'
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'beta-blocker-cardiogenic-shock-transition')
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'beta-blocker-cardiogenic-shock-transition-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2789,6 +2806,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'acetaminophen-clock-and-nomogram-transition')
       || (event.type === 'narrative' && event.target === 'salicylate-falling-number-transition')
       || (event.type === 'narrative' && event.target === 'tricyclic-sodium-channel-cardiotoxicity-transition')
+      || (event.type === 'narrative' && event.target === 'beta-blocker-cardiogenic-shock-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2881,6 +2899,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasToxicologyAcetaminophenResponse,
     hasToxicologySalicylateResponse,
     hasToxicologyTricyclicResponse,
+    hasToxicologyBetaBlockerResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3000,8 +3019,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasToxicologyAcetaminophenResponse
     || hasToxicologySalicylateResponse
     || hasToxicologyTricyclicResponse
+    || hasToxicologyBetaBlockerResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasToxicologyTricyclicResponse
+  const responseTray = hasToxicologyBetaBlockerResponse
+    ? { id: 'crisis', label: 'Beta-blocker shock' } as const
+    : hasToxicologyTricyclicResponse
     ? { id: 'crisis', label: 'Electrical toxicity' } as const
     : hasToxicologySalicylateResponse
     ? { id: 'crisis', label: 'Salicylate trajectory' } as const
@@ -4174,6 +4196,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasToxicologyTricyclicResponse && (
               <ToxicologyTricyclicTray assessment={props.resuscitation.toxicologyTricyclicAssessment}
                 onAction={props.onToxicologyTricyclicResponse ?? (() => {})} />
+            )}
+            {hasToxicologyBetaBlockerResponse && (
+              <ToxicologyBetaBlockerTray assessment={props.resuscitation.toxicologyBetaBlockerAssessment}
+                onAction={props.onToxicologyBetaBlockerResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -10651,6 +10677,38 @@ function ToxicologyTricyclicTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-tricyclic-bounded-qualified-bicarbonate-and-rescue-intent-with-strict-later-review')}>Record intent + reassess</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-tricyclic-recurrent-conduction-shock-seizure-acidemia-rescue-and-active-risk')}>Hand off what can recur</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function ToxicologyBetaBlockerTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologyBetaBlockerAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onToxicologyBetaBlockerResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const evidence = assessment?.evidenceAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="toxicology-beta-blocker-early-title">
+      <div id="toxicology-beta-blocker-early-title" className="syringe__name">A slow pulse can hide a failing pump.</div>
+      <p className="syringe__remaining">Begin with product, clock, pulse, perfusion, mentation, glucose, supplied ECG, and whole person.</p>
+      <div className="crisis-drug__actions">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-toxicology-beta-blocker-product-clock-pulse-perfusion-mentation-glucose-ecg-and-whole-patient')}>Connect pulse + perfusion</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-toxicology-beta-blocker-cardiogenic-shock-pattern-without-pulse-only-closure')}>Recognize the shock pattern</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-toxicology-beta-blocker-poison-center-resuscitation-cardiac-glucose-airway-and-safety-ownership')}>Build the rescue circle</Button>}
+        {support && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-toxicology-beta-blocker-supplied-ecg-perfusion-contractility-glucose-electrolyte-prior-care-and-rescue-boundary')}>Review pump + metabolism</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="toxicology-beta-blocker-later-title">
+      <div id="toxicology-beta-blocker-later-title" className="syringe__name">A better pressure is a checkpoint, not an exit.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Shock, rhythm, glucose, potassium, volume, recurrence, rescue, safety, and outcome uncertainty handed off.' : reassessment ? 'The fixed perfusion, mental-state, and metabolic report improved. Durable stability and treatment effect remain unproven.' : evidence ? 'Perfusion, rhythm, contractility, glucose, electrolytes, prior care, and rescue readiness stay coupled. Record qualified intent after time passes.' : support ? 'Qualified toxicology, resuscitation, cardiac, metabolic, airway, and safety ownership are active. Review the supplied evidence.' : 'Complete whole-pattern recognition and rescue ownership before treatment-boundary review.'}</p>
+      <div className="crisis-drug__actions">
+        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-beta-blocker-bounded-qualified-vasopressor-glucagon-insulin-euglycemia-and-rescue-intent-with-strict-later-review')}>Record rescue intent + reassess</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-beta-blocker-recurrent-shock-bradycardia-hypoglycemia-electrolyte-volume-rescue-and-active-risk')}>Hand off what can recur</Button>}
       </div>
     </section>
   </>;

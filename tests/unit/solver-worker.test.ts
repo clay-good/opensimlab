@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Toxicology tricyclic state has protocol version 152', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(152);
+  it('Scenario: Toxicology beta-blocker state has protocol version 153', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(153);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

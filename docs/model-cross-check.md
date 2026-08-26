@@ -272,6 +272,13 @@ Recorded here rather than silently carried:
   pH 7.43, sodium 144 mmol/L and potassium 3.4 mmol/L. These are teaching calibrations grounded in
   AHA guidance and product labeling, not an ECG, electrophysiology, toxicokinetic, bicarbonate-
   response, airway, dysrhythmia, refractory-rescue, or individualized-response model.
+  Beta-blocker cardiogenic shock uses fixed canonical presentation and elapsed-response states:
+  HR 42/min, BP 72/40 mmHg, glucose 62 mg/dL, supplied PR 220 ms, globally reduced LV contraction,
+  pH 7.31, lactate 3.8 mmol/L and potassium 4.2 mmol/L, then HR 58/min, BP 98/60 mmHg, glucose
+  104 mg/dL, lactate 2.8 mmol/L and potassium 3.5 mmol/L. These are teaching calibrations grounded
+  in current AHA guidance and product labeling, not a toxicokinetic, receptor, contractility,
+  metabolic, vasopressor, glucagon, insulin/euglycemia, pacing, dialysis, refractory-rescue, or
+  individualized-response model.
 
 ## Concentration-time checks, 2026-08-23
 

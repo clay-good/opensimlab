@@ -1082,6 +1082,9 @@ export function Cockpit({
           onToxicologyTricyclicResponse={(action) => session.act({
             type: 'tricyclic-sodium-channel-cardiotoxicity-response', payload: { action },
           })}
+          onToxicologyBetaBlockerResponse={(action) => session.act({
+            type: 'beta-blocker-cardiogenic-shock-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}
