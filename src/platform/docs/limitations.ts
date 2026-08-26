@@ -4631,6 +4631,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified serial maternal symptoms, perfusion, fetal status, total bleeding, uterine and placental findings, coagulation, competing-cause, treatment, delivery, and response evidence under qualified obstetric hemorrhage, anesthesia, nursing, blood-bank, operative, neonatal, and bereavement-support ownership.',
     briefIn: ['concealed-placental-abruption-hemorrhage'],
   },
+  {
+    id: 'postpartum-severe-preeclampsia-clock-symptom-pressure-organ-and-response-pattern-are-authored',
+    headline: 'The postpartum clock, symptoms, pressures, organ findings, and later report are authored.',
+    simplification: 'Fixed reports stand in for history, correctly obtained pressure measurement, examination, reflex and clonus assessment, urine, laboratory and imaging acquisition or interpretation, qualified immediate protocol care, newborn-care continuity, and reassessment.',
+    whereItMisleads: 'Treating the fictional pressures, headache, visual spots, pain, platelets, creatinine, liver values, pending urine or hemolysis work, or single later pressure as learner evidence, every-cause diagnosis, a universal target, treatment effect, durable control, organ recovery, discharge readiness, or predicted course.',
+    correctUnderstanding: 'Two persistent severe-range postpartum pressures require immediate protocol response while direct serial neurologic, pulmonary, hematologic, hepatic, renal, urine, medication, hemorrhage, infection, thrombotic and other-cause evaluation continues under qualified ownership.',
+    briefIn: ['postpartum-severe-preeclampsia-warning-signs'],
+  },
+  {
+    id: 'postpartum-severe-preeclampsia-controls-reconcile-recognize-support-review-intent-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, emergency recognition, immediate protocol activation, parallel review, fixed later reassessment, and handoff only.',
+    simplification: 'Six actions stand in for obstetric emergency, nursing, pharmacy, critical-care, neurologic, pulmonary, laboratory, seizure-prevention, newborn-care-continuity, feeding, communication, support, surveillance and handoff work.',
+    whereItMisleads: 'Equating button order with pressure measurement, history, examination, test interpretation, diagnosis, prescribing, treatment, seizure or airway care, consultation need, newborn separation, feeding decisions, disposition, follow-up performance, recovery, or competence.',
+    correctUnderstanding: 'Actual care activates the local severe-hypertension pathway immediately, treats within its urgent window, evaluates symptoms, organs and alternative causes in parallel, uses conditional specialist support, protects the maternal-newborn dyad, and reassesses serially.',
+    briefIn: ['postpartum-severe-preeclampsia-warning-signs'],
+  },
+  {
+    id: 'no-live-postpartum-preeclampsia-pressure-exam-test-drug-magnesium-airway-disposition-or-outcome',
+    headline: 'The lab does not measure pressure, examine or test, select an antihypertensive or magnesium, manage an airway or seizure, determine disposition, or report outcome.',
+    simplification: 'No live history, cuff or position choice, pressure measurement, examination, reflex, clonus, edema, volume, lung, fundal, abdominal or neurologic assessment, urine, blood, ECG, imaging or other test, calculation, diagnosis, differential exclusion, antihypertensive, magnesium, oxygen, fluid, diuretic, analgesic, antiseizure drug, dose, rate, target, route, access, airway, ventilation, procedure, separation, feeding, transfer, admission, discharge, follow-up, future-pregnancy care, prognosis, fertility, or maternal or newborn outcome is modeled.',
+    whereItMisleads: 'Waiting for proteinuria or a broad review before urgent response; copying fictional values into care; selecting a product, dose, target, route, airway, seizure treatment, disposition or follow-up from this rehearsal; attributing the fixed later report; or reading completion as competence.',
+    correctUnderstanding: 'Use correctly obtained serial pressures and direct whole-patient evidence with current local protocols, prompt protocol-based treatment, parallel severe-feature and alternative-cause assessment, individualized seizure-prevention and organ care, maternal-newborn support, and qualified disposition and follow-up ownership.',
+    briefIn: ['postpartum-severe-preeclampsia-warning-signs'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

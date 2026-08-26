@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "obstetrics",
-  "recordCount": 3,
+  "recordCount": 4,
   "records": [
     {
       "recordId": "scenario:postpartum-hemorrhage-uterine-atony@0.1.0",
@@ -34,6 +34,17 @@
       "evidence": [
         "/catalog/obstetrics-completion-audit.json#concealed-placental-abruption-hemorrhage@0.1.0",
         "/catalog/obstetrics-quality-audit.json#concealed-placental-abruption-hemorrhage@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:postpartum-severe-preeclampsia-warning-signs@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "postpartum-severe-preeclampsia-warning-signs",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/obstetrics-completion-audit.json#postpartum-severe-preeclampsia-warning-signs@0.1.0",
+        "/catalog/obstetrics-quality-audit.json#postpartum-severe-preeclampsia-warning-signs@0.1.0"
       ]
     }
   ]

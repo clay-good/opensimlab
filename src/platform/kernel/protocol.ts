@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 165 reports concealed-abruption state. */
-export const WORKER_PROTOCOL_VERSION = 165;
+/** Bumped whenever the message shape changes incompatibly. Version 166 reports postpartum severe-preeclampsia state. */
+export const WORKER_PROTOCOL_VERSION = 166;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2682,6 +2682,36 @@ export interface EquipmentSnapshot {
       readonly deliveryCompleted: false; readonly safetyDispositionDetermined: false;
       readonly fertilityOutcomePredicted: false; readonly maternalOutcomePredicted: false;
       readonly newbornOutcomePredicted: false; readonly outcomePredicted: false;
+    };
+    readonly obstetricsPostpartumPreeclampsiaAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly postpartumSevereHypertensionSymptomAndOrganPatternAuthored: true;
+      readonly severePostpartumHypertensiveEmergencyRecognized: boolean;
+      readonly qualifiedSupportActive: boolean;
+      readonly neurologicPulmonaryHematologicRenalHepaticMedicationAndDifferentialEvidenceReviewed: boolean;
+      readonly fixedLaterPressureSymptomOrganAndSupportReportReviewed: boolean;
+      readonly responseStateAuthored: boolean;
+      readonly bloodPressureMeasuredByLearner: false; readonly cuffSelectedByLearner: false;
+      readonly patientInterviewedByLearner: false; readonly patientExaminedByLearner: false;
+      readonly reflexesOrClonusAssessedByLearner: false; readonly urineAssessedByLearner: false;
+      readonly laboratoryAcquiredByLearner: false; readonly laboratoryInterpretedByLearner: false;
+      readonly imagingAcquiredByLearner: false; readonly imagingInterpretedByLearner: false;
+      readonly scoreOrRatioCalculatedByLearner: false; readonly diagnosisMadeByLearner: false;
+      readonly alternativeExcludedByLearner: false; readonly antihypertensiveSelectedByLearner: false;
+      readonly magnesiumSelectedByLearner: false; readonly doseSelectedByLearner: false;
+      readonly rateOrTargetSelectedByLearner: false; readonly routeSelectedByLearner: false;
+      readonly accessSelectedByLearner: false; readonly oxygenSelectedByLearner: false;
+      readonly fluidOrDiureticSelectedByLearner: false; readonly airwayOrSeizureCareSelectedByLearner: false;
+      readonly treatmentDeliveredByLearner: false; readonly newbornSeparatedByLearner: false;
+      readonly feedingPlanSelectedByLearner: false; readonly transferOrDispositionSelectedByLearner: false;
+      readonly followUpSelectedByLearner: false; readonly treatmentEffectProven: false;
+      readonly durablePressureControlProven: false; readonly symptomResolutionProven: false;
+      readonly seizureExcluded: false; readonly organRecoveryProven: false;
+      readonly safetyDispositionDetermined: false; readonly fertilityOutcomePredicted: false;
+      readonly maternalOutcomePredicted: false; readonly newbornOutcomePredicted: false;
+      readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

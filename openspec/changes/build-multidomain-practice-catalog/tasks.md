@@ -409,6 +409,15 @@ credited toward the catalog until every item in the completion contract passes.
     report; and active-risk handoff without learner examination, measurement, calculation, fetal-
     trace or ultrasound interpretation, blood, drug, anesthesia, delivery, procedure, disposition,
     fertility, or maternal/newborn outcome controls.
+  - [x] Obstetrics slice 4/15 adds de novo day-6 postpartum persistent severe hypertension with
+    neurologic symptoms and supplied platelet, renal and hepatic severe-feature evidence after a
+    normotensive pregnancy. Two correctly obtained severe-range pressures trigger immediate local-
+    protocol and qualified obstetric response without waiting for urine protein; organ and
+    dangerous alternative-cause review continues in parallel; a fixed report authored as 30
+    minutes after activation remains hypertensive and symptomatic; and active-risk handoff
+    preserves maternal-newborn continuity, follow-up and longer-term risk without learner pressure
+    measurement, examination, test interpretation, diagnosis, drug, magnesium, dose, target,
+    airway or seizure care, separation, feeding, disposition, follow-up, or outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
   - [x] Neurology slice 1/15 adds one authored 62-year-old minor nondisabling acute ischemic-stroke
     reassessment with patient-specific function rather than NIHSS alone, fixed no-hemorrhage and

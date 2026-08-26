@@ -223,6 +223,14 @@ reviews a strict elapsed readiness report. It exposes no learner examination, bl
 calculation, fetal-trace or ultrasound interpretation, blood or drug choice, anesthesia, delivery,
 procedure, disposition, fertility, or maternal/newborn outcome control.
 
+The fourth lab moves severe-hypertension practice into a distinct postpartum setting. Six days
+after a normotensive pregnancy and completed birth, 2 correctly obtained severe-range pressures,
+headache, visual symptoms, upper-abdominal pain and supplied organ findings trigger immediate
+protocol activation without waiting for urine protein; evaluation continues in parallel. A fixed
+later report remains hypertensive and symptomatic. No learner pressure measurement, test
+interpretation, diagnosis, antihypertensive or magnesium choice, dose, target, airway or seizure
+care, newborn separation, feeding plan, disposition, follow-up, or outcome control is exposed.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

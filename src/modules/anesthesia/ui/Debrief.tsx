@@ -5046,6 +5046,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-obstetrics-postpartum-preeclampsia-clock-symptoms-pressure-organs-newborn-and-whole-person',
+      'recognize-obstetrics-persistent-severe-postpartum-hypertension-and-supplied-preeclampsia-pattern-without-waiting-for-proteinuria',
+      'activate-obstetrics-postpartum-severe-hypertension-protocol-qualified-obstetric-response-and-patient-centered-support-now',
+      'review-obstetrics-postpartum-preeclampsia-supplied-neurologic-pulmonary-hematologic-renal-hepatic-medication-and-competing-cause-boundary',
+      'review-obstetrics-postpartum-preeclampsia-fixed-later-pressure-symptom-organ-and-support-report',
+      'handoff-obstetrics-postpartum-preeclampsia-recurrent-pressure-seizure-stroke-pulmonary-hellp-renal-newborn-follow-up-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'postpartum-severe-preeclampsia-warning-signs'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-severe-preeclampsia-warning-signs-transition')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-severe-preeclampsia-warning-signs-transition-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Obstetrics postpartum severe-preeclampsia lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'Postpartum timing, reported symptoms, qualified pressures, organ evidence, newborn context, and whole-person state were connected.'],
+        ['emergency-recognized', 'Two persistent severe-range postpartum pressures were recognized as an immediate treatment emergency without waiting for proteinuria.'],
+        ['support-activated', 'The urgent protocol and qualified obstetric, nursing, pharmacy, newborn-care-continuity, communication, support, and dignity-centered response were activated before parallel evidence review.'],
+        ['evidence-reviewed', 'Supplied neurologic, pulmonary, platelet, liver, kidney, urine, medication, measurement, and competing-cause boundaries were reviewed.'],
+        ['later-report-reviewed', 'The fixed report authored as 30 minutes after activation was reviewed without target, treatment-effect, durable-control, disposition, follow-up, or outcome claims.'],
+        ['active-risk-handoff-recorded', 'Pressure, seizure, neurologic, pulmonary, organ, newborn, feeding, follow-up, cardiovascular, fertility, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^obstetrics-postpartum-preeclampsia-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^obstetrics-postpartum-preeclampsia-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-obstetrics-sepsis-postpartum-clock-infection-organ-dysfunction-and-whole-person',
       'recognize-obstetrics-maternal-sepsis-emergency-without-fever-score-source-or-single-value-closure',
       'activate-obstetrics-sepsis-obstetric-critical-care-anesthesia-nursing-pharmacy-microbiology-source-newborn-and-dignity-ownership',

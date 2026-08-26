@@ -2038,6 +2038,24 @@ access, anesthesia, delivery, procedure, disposition, fertility or outcome decis
 state is not a concealed-loss, coagulation, fetal-monitoring, blood-response, anesthesia, delivery,
 fertility, maternal-outcome or newborn-outcome model.
 
+### Wave D obstetrics slice 4: postpartum severe-preeclampsia warning signs
+
+The fourth lab is deliberately distinct from Anesthesia's antepartum urgent-delivery treatment
+lesson. Six days after a normotensive pregnancy and completed birth, two correctly obtained
+severe-range pressures sit beside severe headache, visual symptoms, upper-abdominal pain,
+thrombocytopenia, renal dysfunction and transaminases above twice the supplied local upper limits.
+Urine protein and hemolysis work remain pending. Persistent severe postpartum hypertension triggers
+the local emergency protocol and qualified obstetric response immediately; this does not wait for
+proteinuria or completion of the parallel organ and alternative-cause review.
+
+Six controls record whole-person reconciliation, emergency recognition, immediate protocol
+activation, parallel supplied-evidence review, a fixed report authored as 30 minutes after
+activation, and active-risk handoff. The later pressure is below the severe range but remains
+hypertensive while symptoms persist, so it proves no target, durable control, treatment effect,
+organ recovery or disposition. No product, dose, route, target, pressure measurement, examination,
+test interpretation, diagnosis, magnesium or antihypertensive choice, airway or seizure care,
+newborn separation, feeding decision, disposition, follow-up or outcome is exposed.
+
 #### Neonatology: 11
 
 Term newborn transition; neonatal apnea; ineffective ventilation correction; neonatal bradycardia;

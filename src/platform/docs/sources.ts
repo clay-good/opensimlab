@@ -1101,6 +1101,17 @@ export const SOURCES: readonly Source[] = [
     verifiedOn: '2026-08-24',
   },
   {
+    id: 'smfm-postpartum-follow-up-severe-hypertension-2022',
+    authors: 'Gibson KS, Combs CA, Bauer S, Hamm RF, Healy A, Morgan J, Toner L, Whitsel A, Society for Maternal-Fetal Medicine Patient Safety and Quality Committee',
+    title: 'Special Statement: Quality metric for timely postpartum follow-up after severe hypertension',
+    publication: 'American Journal of Obstetrics and Gynecology',
+    year: 2022,
+    locator: 'doi:10.1016/j.ajog.2022.05.045; reaffirmed 2025',
+    usedFor: 'General postpartum exacerbation and prompt-follow-up context after severe hypertension during a childbirth hospitalization, with the explicit boundary that it does not determine follow-up or disposition for the de novo day-6 teaching fixture.',
+    verifiedAgainst: 'https://publications.smfm.org/publications/453-society-for-maternal-fetal-medicine-special-statement-quality/',
+    verifiedOn: '2026-08-26',
+  },
+  {
     id: 'wses-aast-thoracic-trauma-2025',
     pmid: '41094688',
     currency: {

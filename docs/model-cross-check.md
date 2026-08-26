@@ -386,6 +386,17 @@ These authored checkpoints are grounded in the 2024 BJA Education review and RCO
 Guideline No. 63, not a concealed-loss, fetal-monitoring, coagulation, treatment-response,
 anesthesia, delivery, maternal-outcome or newborn-outcome model.
 
+Postpartum severe-preeclampsia warning signs use two fixed canonical states. The opening report has
+BP 178/114 then 174/112 mmHg 15 minutes apart, HR 96/min, RR 20/min, SpO2 97%, T 36.7°C, severe
+headache, visual spots, severe upper-abdominal pain, platelets 88 × 10^9/L, creatinine 1.2 mg/dL
+from 0.7, and AST 96 U/L and ALT 88 U/L above twice the supplied local upper limits while urine
+protein and hemolysis work remain pending. The later report, authored as 30 minutes after qualified
+protocol activation, has BP 152/98 mmHg, HR 92/min, RR 18/min, SpO2 98%, persistent symptoms and
+repeat laboratories pending. These are authored checkpoints grounded in ACOG Practice Bulletin
+No. 222, the AIM severe-hypertension bundle and SMFM postpartum context, not a pressure-measurement,
+drug-response, magnesium, organ-recovery, seizure-prevention, disposition, follow-up,
+maternal-outcome or newborn-outcome model.
+
 ## Concentration-time checks, 2026-08-23
 
 The acceptance text requires a published concentration-time point for every model. The Marsh

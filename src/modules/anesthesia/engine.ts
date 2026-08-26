@@ -459,6 +459,15 @@ const OBSTETRICS_CONCEALED_ABRUPTION_BLOCKED_ACTION_TYPES = new Set([
   'postpartum-hemorrhage-uterine-atony-response',
   'hemorrhagic-shock-response',
 ]);
+const OBSTETRICS_POSTPARTUM_PREECLAMPSIA_BLOCKED_ACTION_TYPES = new Set([
+  ...OBSTETRICS_CONCEALED_ABRUPTION_BLOCKED_ACTION_TYPES,
+  'concealed-placental-abruption-hemorrhage-response',
+  'preeclampsia-response',
+  'hypertensive-emergency-response',
+  'acute-pulmonary-edema-response',
+  'acute-pulmonary-edema-respiratory-support-response',
+  'intracranial-hemorrhage-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1404,6 +1413,12 @@ export class AnesthesiaEngine {
   private obstetricsConcealedAbruptionEvidenceAtTick: number | null = null;
   private obstetricsConcealedAbruptionReassessmentAtTick: number | null = null;
   private obstetricsConcealedAbruptionHandoffAtTick: number | null = null;
+  private obstetricsPostpartumPreeclampsiaTrajectoryAtTick: number | null = null;
+  private obstetricsPostpartumPreeclampsiaRecognitionAtTick: number | null = null;
+  private obstetricsPostpartumPreeclampsiaSupportAtTick: number | null = null;
+  private obstetricsPostpartumPreeclampsiaEvidenceAtTick: number | null = null;
+  private obstetricsPostpartumPreeclampsiaReassessmentAtTick: number | null = null;
+  private obstetricsPostpartumPreeclampsiaHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2322,6 +2337,13 @@ export class AnesthesiaEngine {
     if (obstetricsConcealedAbruption && OBSTETRICS_CONCEALED_ABRUPTION_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `obstetrics-concealed-abruption-generic-action-refused-${this.currentTick}`,
         'This Obstetrics lesson exposes no generic blood-loss measurement, examination, fetal-monitor or ultrasound interpretation, laboratory, calculation, oxygen, fluid, blood, drug, dose, route, access, anesthesia, transport, procedure, delivery, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const obstetricsPostpartumPreeclampsia = this.scenario.metadata.id === 'postpartum-severe-preeclampsia-warning-signs'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-severe-preeclampsia-warning-signs-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-severe-preeclampsia-warning-signs-transition-boundary');
+    if (obstetricsPostpartumPreeclampsia && OBSTETRICS_POSTPARTUM_PREECLAMPSIA_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `obstetrics-postpartum-preeclampsia-generic-action-refused-${this.currentTick}`,
+        'This Obstetrics lesson exposes no generic pressure measurement, examination, laboratory, urine, imaging, oxygen, fluid, antihypertensive, magnesium, drug, dose, route, access, airway, seizure, procedure, transfer, disposition, follow-up, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -10796,6 +10818,32 @@ export class AnesthesiaEngine {
         if (this.obstetricsConcealedAbruptionHandoffAtTick !== null) break;
         this.obstetricsConcealedAbruptionHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-concealed-abruption-active-risk-handoff-recorded-${this.currentTick}`, 'Concealed and total loss, shock, coagulopathy, fetal compromise, anesthesia, delivery, neonatal care, postpartum hemorrhage, pathology, recurrence, pain, privacy, communication, support, bereavement, disposition, fertility, prognosis, and maternal or newborn outcome uncertainty were handed off.', { safetyDispositionDetermined: false, fertilityOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'postpartum-severe-preeclampsia-warning-signs-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'postpartum-severe-preeclampsia-warning-signs'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-severe-preeclampsia-warning-signs-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-severe-preeclampsia-warning-signs-transition-boundary');
+        const actions = ['reconcile-obstetrics-postpartum-preeclampsia-clock-symptoms-pressure-organs-newborn-and-whole-person',
+          'recognize-obstetrics-persistent-severe-postpartum-hypertension-and-supplied-preeclampsia-pattern-without-waiting-for-proteinuria',
+          'activate-obstetrics-postpartum-severe-hypertension-protocol-qualified-obstetric-response-and-patient-centered-support-now',
+          'review-obstetrics-postpartum-preeclampsia-supplied-neurologic-pulmonary-hematologic-renal-hepatic-medication-and-competing-cause-boundary',
+          'review-obstetrics-postpartum-preeclampsia-fixed-later-pressure-symptom-organ-and-support-report',
+          'handoff-obstetrics-postpartum-preeclampsia-recurrent-pressure-seizure-stroke-pulmonary-hellp-renal-newborn-follow-up-and-outcome-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `obstetrics-postpartum-preeclampsia-response-refused-${this.currentTick}`, supported ? 'The postpartum severe-preeclampsia action was not listed. No supplied or injected text was retained.' : 'These postpartum severe-preeclampsia choices are available only in the exact declared Obstetrics lesson.'); break; }
+        if (response === actions[0]) { if (this.obstetricsPostpartumPreeclampsiaTrajectoryAtTick !== null) break; this.obstetricsPostpartumPreeclampsiaTrajectoryAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-postpartum-preeclampsia-trajectory-reconciled-${this.currentTick}`, 'Postpartum clock, reported symptoms, qualified pressures, physiology, organ evidence, newborn context, support needs, and whole person were connected without learner interviewing, measurement, examination, calculation, interpretation, or diagnosis.'); break; }
+        if (this.obstetricsPostpartumPreeclampsiaTrajectoryAtTick === null) { this.log('warning', 'assessment', `obstetrics-postpartum-preeclampsia-trajectory-order-refused-${this.currentTick}`, 'Connect the postpartum clock, symptoms, pressure, organs, newborn context, and whole person first.'); break; }
+        if (response === actions[1]) { if (this.obstetricsPostpartumPreeclampsiaRecognitionAtTick !== null) break; this.obstetricsPostpartumPreeclampsiaRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-postpartum-preeclampsia-emergency-recognized-${this.currentTick}`, 'Two correctly obtained severe-range postpartum pressures established an immediate treatment emergency. The supplied presumptive preeclampsia-with-severe-features pattern was integrated without waiting for proteinuria or using one finding to establish every cause.', { diagnosisMadeByLearner: false }); break; }
+        if (this.obstetricsPostpartumPreeclampsiaRecognitionAtTick === null) { this.log('warning', 'assessment', `obstetrics-postpartum-preeclampsia-recognition-order-refused-${this.currentTick}`, 'Recognize persistent severe postpartum hypertension as a treatment emergency without waiting for proteinuria before activating the response.'); break; }
+        if (response === actions[2]) { if (this.obstetricsPostpartumPreeclampsiaSupportAtTick !== null) break; this.obstetricsPostpartumPreeclampsiaSupportAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-postpartum-preeclampsia-support-activated-${this.currentTick}`, 'The severe-hypertension protocol and core qualified obstetric, bedside nursing, pharmacy, escalation, communication, newborn-care-continuity, and dignity-centered response were activated now. Protocol-based pressure treatment as soon as possible and within 60 minutes plus seizure-prevention assessment were recorded as qualified-team work while organ and cause evaluation continued in parallel, without learner product, dose, target, route, treatment, separation, or disposition selection.'); break; }
+        if (this.obstetricsPostpartumPreeclampsiaSupportAtTick === null) { this.log('warning', 'assessment', `obstetrics-postpartum-preeclampsia-support-order-refused-${this.currentTick}`, 'Activate the severe-hypertension protocol and qualified obstetric response now before continuing the parallel evidence review.'); break; }
+        if (response === actions[3]) { if (this.obstetricsPostpartumPreeclampsiaEvidenceAtTick !== null) break; this.obstetricsPostpartumPreeclampsiaEvidenceAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-postpartum-preeclampsia-evidence-reviewed-${this.currentTick}`, 'Supplied measurement-quality, neurologic, visual, pulmonary, platelet, liver, kidney, urine, medication, hemorrhage, infection, thrombotic, vascular, and other competing-cause boundaries were integrated without learner acquisition, interpretation, diagnosis, exclusion, or eligibility determination.'); break; }
+        if (this.obstetricsPostpartumPreeclampsiaEvidenceAtTick === null) { this.log('warning', 'assessment', `obstetrics-postpartum-preeclampsia-evidence-order-refused-${this.currentTick}`, 'Review supplied organ, medication, measurement, and competing-cause evidence before qualified intent.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.obstetricsPostpartumPreeclampsiaEvidenceAtTick) { this.log('warning', 'assessment', `obstetrics-postpartum-preeclampsia-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed later qualified-team report.'); break; } if (this.obstetricsPostpartumPreeclampsiaReassessmentAtTick !== null) break; this.obstetricsPostpartumPreeclampsiaReassessmentAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-postpartum-preeclampsia-later-report-reviewed-${this.currentTick}`, 'Fixed later qualified-team report, authored as 30 minutes after activation: BP 152/98 (MAP 116), HR 92, RR 18, room-air SpO2 98%, temperature 36.7 C, improved but persistent headache and visual spots, no reported seizure, repeat laboratories pending, and organ and longer-term risk unresolved. This single pressure is no longer severe-range but remains hypertensive; it does not establish a target, durable control, resolution, or treatment effect.', { treatmentDeliveredByLearner: false, treatmentEffectProven: false }); break; }
+        if (this.obstetricsPostpartumPreeclampsiaReassessmentAtTick === null) { this.log('warning', 'assessment', `obstetrics-postpartum-preeclampsia-handoff-order-refused-${this.currentTick}`, 'Review the strict later pressure, symptom, organ, and support report before handoff.'); break; }
+        if (this.currentTick <= this.obstetricsPostpartumPreeclampsiaReassessmentAtTick) { this.log('warning', 'assessment', `obstetrics-postpartum-preeclampsia-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.obstetricsPostpartumPreeclampsiaHandoffAtTick !== null) break;
+        this.obstetricsPostpartumPreeclampsiaHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `obstetrics-postpartum-preeclampsia-active-risk-handoff-recorded-${this.currentTick}`, 'Recurrent severe pressure, seizure and eclampsia, stroke and other neurologic causes, pulmonary edema, HELLP-pattern complications, kidney and liver injury, medication review, newborn and feeding support, trauma-informed communication, prompt follow-up, longer-term cardiovascular health, fertility, prognosis, and outcome uncertainty were handed off.', { safetyDispositionDetermined: false, followUpSelectedByLearner: false, fertilityOutcomePredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -13695,6 +13743,17 @@ export class AnesthesiaEngine {
         diastolicMmHg: this.obstetricsConcealedAbruptionReassessmentAtTick !== null ? 60 : 56,
         meanArterialMmHg: this.obstetricsConcealedAbruptionReassessmentAtTick !== null ? 73 : 68,
         coreTemperatureC: 36.8 };
+    }
+    if (this.scenario.metadata.id === 'postpartum-severe-preeclampsia-warning-signs'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-severe-preeclampsia-warning-signs-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-severe-preeclampsia-warning-signs-transition-boundary')) {
+      crisisState = { ...crisisState, heartRateBpm: this.obstetricsPostpartumPreeclampsiaReassessmentAtTick !== null ? 92 : 96,
+        respiratoryRateBpm: this.obstetricsPostpartumPreeclampsiaReassessmentAtTick !== null ? 18 : 20,
+        spo2Percent: this.obstetricsPostpartumPreeclampsiaReassessmentAtTick !== null ? 98 : 97,
+        systolicMmHg: this.obstetricsPostpartumPreeclampsiaReassessmentAtTick !== null ? 152 : 174,
+        diastolicMmHg: this.obstetricsPostpartumPreeclampsiaReassessmentAtTick !== null ? 98 : 112,
+        meanArterialMmHg: this.obstetricsPostpartumPreeclampsiaReassessmentAtTick !== null ? 116 : 133,
+        coreTemperatureC: 36.7 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -17690,6 +17749,40 @@ export class AnesthesiaEngine {
               deliveryCompleted: false as const, safetyDispositionDetermined: false as const,
               fertilityOutcomePredicted: false as const, maternalOutcomePredicted: false as const,
               newbornOutcomePredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'postpartum-severe-preeclampsia-warning-signs'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-severe-preeclampsia-warning-signs-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'postpartum-severe-preeclampsia-warning-signs-transition-boundary') ? {
+            obstetricsPostpartumPreeclampsiaAssessment: {
+              trajectoryAtTick: this.obstetricsPostpartumPreeclampsiaTrajectoryAtTick, recognitionAtTick: this.obstetricsPostpartumPreeclampsiaRecognitionAtTick,
+              supportAtTick: this.obstetricsPostpartumPreeclampsiaSupportAtTick, evidenceAtTick: this.obstetricsPostpartumPreeclampsiaEvidenceAtTick,
+              reassessmentAtTick: this.obstetricsPostpartumPreeclampsiaReassessmentAtTick, handoffAtTick: this.obstetricsPostpartumPreeclampsiaHandoffAtTick,
+              postpartumSevereHypertensionSymptomAndOrganPatternAuthored: true as const,
+              severePostpartumHypertensiveEmergencyRecognized: this.obstetricsPostpartumPreeclampsiaRecognitionAtTick !== null,
+              qualifiedSupportActive: this.obstetricsPostpartumPreeclampsiaSupportAtTick !== null,
+              neurologicPulmonaryHematologicRenalHepaticMedicationAndDifferentialEvidenceReviewed: this.obstetricsPostpartumPreeclampsiaEvidenceAtTick !== null,
+              fixedLaterPressureSymptomOrganAndSupportReportReviewed: this.obstetricsPostpartumPreeclampsiaReassessmentAtTick !== null,
+              responseStateAuthored: this.obstetricsPostpartumPreeclampsiaReassessmentAtTick !== null,
+              bloodPressureMeasuredByLearner: false as const, cuffSelectedByLearner: false as const,
+              patientInterviewedByLearner: false as const, patientExaminedByLearner: false as const,
+              reflexesOrClonusAssessedByLearner: false as const, urineAssessedByLearner: false as const,
+              laboratoryAcquiredByLearner: false as const, laboratoryInterpretedByLearner: false as const,
+              imagingAcquiredByLearner: false as const, imagingInterpretedByLearner: false as const,
+              scoreOrRatioCalculatedByLearner: false as const, diagnosisMadeByLearner: false as const,
+              alternativeExcludedByLearner: false as const, antihypertensiveSelectedByLearner: false as const,
+              magnesiumSelectedByLearner: false as const, doseSelectedByLearner: false as const,
+              rateOrTargetSelectedByLearner: false as const, routeSelectedByLearner: false as const,
+              accessSelectedByLearner: false as const, oxygenSelectedByLearner: false as const,
+              fluidOrDiureticSelectedByLearner: false as const, airwayOrSeizureCareSelectedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const, newbornSeparatedByLearner: false as const,
+              feedingPlanSelectedByLearner: false as const, transferOrDispositionSelectedByLearner: false as const,
+              followUpSelectedByLearner: false as const, treatmentEffectProven: false as const,
+              durablePressureControlProven: false as const, symptomResolutionProven: false as const,
+              seizureExcluded: false as const, organRecoveryProven: false as const,
+              safetyDispositionDetermined: false as const, fertilityOutcomePredicted: false as const,
+              maternalOutcomePredicted: false as const, newbornOutcomePredicted: false as const,
+              outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

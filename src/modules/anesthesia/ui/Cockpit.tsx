@@ -1121,6 +1121,9 @@ export function Cockpit({
           onObstetricsConcealedAbruptionResponse={(action) => session.act({
             type: 'concealed-placental-abruption-hemorrhage-response', payload: { action },
           })}
+          onObstetricsPostpartumPreeclampsiaResponse={(action) => session.act({
+            type: 'postpartum-severe-preeclampsia-warning-signs-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}
