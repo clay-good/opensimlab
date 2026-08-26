@@ -346,6 +346,13 @@ credited toward the catalog until every item in the completion contract passes.
     observation, allergy, recurrence, caregiver, and escalation-risk handoff without learner
     examination, criteria scoring, diagnosis, product, dose, route, injector, oxygen or fluid
     delivery, airway procedure, observation-duration, referral, or disposition controls.
+  - [x] Pediatrics slice 13/16 adds one authored 6-year-old probable supraventricular-tachycardia
+    reassessment with an abrupt fixed regular narrow rhythm, poor peripheral perfusion despite a
+    measurable blood pressure, immediate qualified rhythm-care and resuscitation ownership, a
+    strictly elapsed improving response, and elapsed recurrence, cardiology, cause, caregiver, and
+    deterioration-risk handoff without learner examination, pulse assessment, ECG acquisition or
+    interpretation, vagal maneuver, drug, dose, route, access, oxygen, sedation, pad,
+    synchronization, energy, cardioversion, test, procedure, treatment, or disposition controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing

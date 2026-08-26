@@ -138,6 +138,11 @@ Recorded here rather than silently carried:
   compromise, qualified repeat-care escalation, and serial partial-response report; it does not
   validate anaphylaxis physiology, drug or support effect, diagnostic or trigger certainty,
   resolution, recurrence, observation, referral, disposition, or outcome.
+  Pediatric supraventricular tachycardia reuses the exact 6-year-old, 20 kg healthy-child scaffold
+  and overlays a fixed regular narrow-complex rhythm, supplied peripheral-perfusion compromise,
+  qualified rhythm-care escalation, and serial improving response; it does not validate pediatric
+  rhythm or perfusion physiology, ECG interpretation, a mechanism or cause, treatment modality or
+  effect, durable rhythm control, recurrence, disposition, or outcome.
 
 ## Concentration-time checks, 2026-08-23
 

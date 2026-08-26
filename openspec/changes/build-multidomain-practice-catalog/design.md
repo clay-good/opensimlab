@@ -1876,6 +1876,28 @@ or procedure, CPR, test, observation duration, prescription, training, referral,
 prognosis, or prove causal treatment effect, resolution, durable response, recurrence exclusion, or
 outcome.
 
+### Wave D pediatrics slice 13: supraventricular tachycardia with perfusion compromise
+
+The thirteenth Pediatrics lab separates pediatric whole-child perfusion assessment from a rate-only
+rhythm label and from adult hypotensive instability. A previously well 6-year-old boy weighing 20
+kg reports an abrupt pounding heartbeat and dizziness beginning while seated at school 45 minutes
+earlier. A fixed qualified ECG report describes a very regular narrow-complex rhythm at 210/min,
+QRS 70 ms, nonvariable RR intervals, and no clearly visible P waves: a probable SVT pattern without
+one established mechanism. He remains awake with BP 96/60 mmHg, but pale cool distal extremities,
+refill 4 seconds, and weak peripheral pulses compared with the central pulse establish supplied
+perfusion compromise.
+
+The learner reconciles the clock, rhythm, and whole-child state; recognizes probable pediatric SVT
+with perfusion compromise despite measurable pressure; activates qualified rhythm-care and
+resuscitation ownership without delay; and then reviews support, open causes, heart-failure risk,
+and deterioration. A strictly elapsed minute-12 report supplies sinus rhythm 118/min and improving
+perfusion before another elapsed recurrence, cardiology, caregiver, cause, and active-risk handoff.
+The lab does not examine or palpate the child; acquire or interpret an ECG; establish a mechanism or
+cause; perform a vagal maneuver; choose or deliver access, oxygen, medicine, dose, route, sedation,
+pad, synchronization, energy, cardioversion, refractory therapy, procedure, test, or treatment;
+choose observation or disposition; predict recurrence or prognosis; or prove treatment modality or
+effect, durable control, complete recovery, recurrence exclusion, or outcome.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

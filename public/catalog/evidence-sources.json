@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 188,
+  "sourceCount": 191,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -2381,6 +2381,39 @@
       "locator": "Published 2026-05-27; last reviewed 2026-06-04; terms used, recommendations 1.1.7-1.1.10 and 1.1.12-1.1.13",
       "usedFor": "Suspected-anaphylaxis terminology and the post-treatment boundary: observation is risk-stratified after symptom resolution, with age-appropriate specialist-allergy referral, rather than a universal clock or fictional discharge decision for this still-symptomatic child.",
       "verifiedAgainst": "https://www.nice.org.uk/guidance/ng258",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "aha-aap-pals-2025-pediatric-svt",
+      "authors": "Lasa JJ, Dhillon GS, Duff JP, et al",
+      "title": "Part 8: Pediatric Advanced Life Support: 2025 American Heart Association and American Academy of Pediatrics Guidelines for Cardiopulmonary Resuscitation and Emergency Cardiovascular Care",
+      "publication": "Circulation",
+      "year": 2025,
+      "locator": "152(suppl 2):S479-S537; doi:10.1161/CIR.0000000000001368; section 19.1, Treatment of Supraventricular Tachycardia With a Pulse, and Figure 7",
+      "usedFor": "The narrow-complex boundary, whole-child cardiopulmonary-compromise decision, urgent qualified rhythm-care ownership, and expert involvement without exposing a treatment modality, dose, energy, or device control.",
+      "verifiedAgainst": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/pediatric-advanced-life-support",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "aha-aap-pediatric-tachyarrhythmia-algorithm-2025",
+      "authors": "American Heart Association and American Academy of Pediatrics",
+      "title": "Pediatric Tachyarrhythmia With a Pulse Algorithm",
+      "publication": "2025 AHA Guidelines for CPR and ECC",
+      "year": 2025,
+      "locator": "Figure 7; probable sinus tachycardia and SVT descriptors, cardiopulmonary-compromise branch, and narrow QRS duration of 0.09 second or less",
+      "usedFor": "The fixed regular narrow-complex probable-SVT description, age-contextual rate interpretation, perfusion-compromise branch, initial support, and qualified expert-care boundary without treating a rate cutoff as diagnostic.",
+      "verifiedAgainst": "https://cpr.heart.org/-/media/CPR-Files/CPR-Guidelines-Files/2025-Algorithms/Algorithm-PALS-Tachyarrhythmia-250117.pdf",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "rcuk-paediatric-arrhythmias-2025",
+      "authors": "Resuscitation Council UK",
+      "title": "Paediatric arrhythmias",
+      "publication": "Resuscitation Council UK Guidelines 2025",
+      "year": 2025,
+      "locator": "Paediatric cardiac arrhythmias algorithm, current consolidated pediatric emergency algorithms and resources, February 2026, page 10",
+      "usedFor": "The whole-child perfusion review, compensated-versus-decompensated distinction, age-contextual narrow-complex SVT descriptors, expert escalation, reassessment, and explicit need not to infer stability from blood pressure alone.",
+      "verifiedAgainst": "https://www.resus.org.uk/sites/default/files/2026-02/RCUK%20Paediatric%20emergency%20algorithms%20and%20resources%20Feb%2026%20V6.pdf",
       "verifiedOn": "2026-08-26"
     },
     {

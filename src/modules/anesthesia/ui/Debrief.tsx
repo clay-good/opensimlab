@@ -4842,6 +4842,32 @@ export function objectiveFindings(
       const ordered = later && handoff && later.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved exposure and reported-care timing, residual airway, breathing and circulation risk, allergy and cofactor work, observation, recurrence triggers, caregiver context, and named owners without claiming recovery, discharge, or outcome.' : 'The active pediatric anaphylaxis handoff was absent or did not follow the later response after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-pediatric-svt-clock-rhythm-and-whole-child',
+      'recognize-pediatric-svt-with-perfusion-compromise',
+      'activate-pediatric-svt-qualified-rhythm-care-and-resuscitation-ownership',
+      'review-pediatric-svt-support-causes-heart-failure-and-deterioration-boundary',
+      'review-pediatric-svt-later-response',
+      'handoff-pediatric-svt-recurrence-cardiology-and-caregiver-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'pediatric-supraventricular-tachycardia'
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pediatric-supraventricular-tachycardia-reassessment')
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pediatric-supraventricular-tachycardia-reassessment-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The pediatric SVT lesson was not active.' } satisfies ObjectiveFinding;
+      const trajectory = log.find((event) => /^pediatric-svt-trajectory-reconciled-\d+$/.test(event.eventId));
+      const recognition = log.find((event) => /^pediatric-svt-perfusion-compromise-recognized-\d+$/.test(event.eventId));
+      const care = log.find((event) => /^pediatric-svt-qualified-care-activated-\d+$/.test(event.eventId));
+      const safety = log.find((event) => /^pediatric-svt-safety-reviewed-\d+$/.test(event.eventId));
+      const later = log.find((event) => /^pediatric-svt-later-response-reviewed-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^pediatric-svt-active-risk-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-pediatric-svt-clock-rhythm-and-whole-child') return { ...base, outcome: trajectory ? 'met' : 'not-met', finding: trajectory ? 'The supplied clock, regular narrow rhythm, symptoms, and whole-child perfusion trajectory were reconciled without learner examination, rhythm acquisition, interpretation, diagnosis, or treatment.' : 'The pediatric SVT trajectory was not reconciled.', atTick: trajectory?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'recognize-pediatric-svt-with-perfusion-compromise') { const ordered = trajectory && recognition && trajectory.tick <= recognition.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The authored SVT pattern with perfusion compromise was recognized from rhythm and whole-child context without relying on rate alone or proving the mechanism.' : 'Pediatric SVT recognition was absent or preceded trajectory review.', atTick: recognition?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-pediatric-svt-qualified-rhythm-care-and-resuscitation-ownership') { const ordered = recognition && care && recognition.tick <= care.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Qualified pediatric rhythm-care and resuscitation ownership was activated without learner maneuver, product, drug, dose, route, access, device, energy, procedure, or treatment selection.' : 'Qualified pediatric SVT care was absent or preceded recognition.', atTick: care?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-svt-support-causes-heart-failure-and-deterioration-boundary') { const ordered = care && safety && care.tick <= safety.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Support, cause context, heart-function risk, and deterioration boundaries were reviewed after qualified ownership without learner examination, testing, treatment, or disposition.' : 'The pediatric SVT safety review was absent or preceded qualified care.', atTick: safety?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'review-pediatric-svt-later-response') { const ordered = safety && later && safety.tick < later.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed qualified care, reported sinus rhythm and improving perfusion were separated from treatment effect, durable rhythm control, ventricular recovery, recurrence exclusion, causal closure, and disposition.' : 'The later response was absent or did not follow safety review after elapsed time.', atTick: later?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = later && handoff && later.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved rhythm duration and response, perfusion and heart-function risk, recurrence, caregiver context, escalation triggers, pending cardiac review, and named owners without claiming durable control, discharge, or outcome.' : 'The pediatric SVT handoff was absent or did not follow the later response after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

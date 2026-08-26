@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 128 reports pediatric anaphylaxis reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 128;
+export const WORKER_PROTOCOL_VERSION = 129;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1415,6 +1415,39 @@ export interface EquipmentSnapshot {
       readonly biphasicReactionExcluded: false; readonly recurrenceExcluded: false;
       readonly durableRecoveryProven: false; readonly dischargeReadinessProven: false;
       readonly dispositionDetermined: false; readonly outcomePredicted: false;
+    };
+    readonly pediatricSupraventricularTachycardiaAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly careAtTick: number | null; readonly safetyAtTick: number | null;
+      readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true; readonly spontaneousBreathingAuthored: true;
+      readonly abruptRegularNarrowTachycardiaAuthored: true;
+      readonly probableSvtPatternAuthored: true; readonly perfusionCompromiseAuthored: true;
+      readonly qualifiedRhythmCareOwnershipActive: boolean;
+      readonly qualifiedSafetyReviewActive: boolean; readonly laterReportAuthored: boolean;
+      readonly laterSinusRhythmAuthored: boolean;
+      readonly patientExaminedByLearner: false; readonly monitoringAcquiredByLearner: false;
+      readonly ecgAcquiredByLearner: false; readonly ecgInterpretedByLearner: false;
+      readonly testAcquiredByLearner: false; readonly testInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly mechanismAssignedByLearner: false;
+      readonly maneuverPerformedByLearner: false; readonly accessPlacedByLearner: false;
+      readonly modalitySelectedByLearner: false; readonly drugSelectedByLearner: false;
+      readonly adenosineSelectedByLearner: false; readonly productSelectedByLearner: false;
+      readonly concentrationSelectedByLearner: false; readonly doseSelectedByLearner: false;
+      readonly routeSelectedByLearner: false; readonly volumeSelectedByLearner: false;
+      readonly rateSelectedByLearner: false; readonly deviceSelectedByLearner: false;
+      readonly energySelectedByLearner: false; readonly sedationSelectedByLearner: false;
+      readonly oxygenDeliveredByLearner: false; readonly drugDeliveredByLearner: false;
+      readonly cardioversionPerformedByLearner: false;
+      readonly airwayManeuverPerformedByLearner: false;
+      readonly procedurePerformedByLearner: false; readonly treatmentDeliveredByLearner: false;
+      readonly svtFinallyProven: false; readonly sinusTachycardiaExcluded: false;
+      readonly mechanismProven: false; readonly causeProven: false;
+      readonly treatmentEffectProven: false; readonly durableConversionProven: false;
+      readonly durableRecoveryProven: false; readonly heartFailureExcluded: false;
+      readonly deteriorationExcluded: false; readonly recurrenceExcluded: false;
+      readonly dischargeReadinessProven: false; readonly dispositionDetermined: false;
+      readonly prognosisPredicted: false; readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

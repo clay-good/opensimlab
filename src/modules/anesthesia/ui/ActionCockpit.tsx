@@ -1080,6 +1080,11 @@ export interface ActionCockpitProps {
       readonly firstLineAtTick: number | null; readonly safetyAtTick: number | null;
       readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly pediatricSupraventricularTachycardiaAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly careAtTick: number | null; readonly safetyAtTick: number | null;
+      readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1756,6 +1761,14 @@ export interface ActionCockpitProps {
       | 'review-pediatric-anaphylaxis-later-response'
       | 'handoff-pediatric-anaphylaxis-observation-allergy-and-caregiver-risk',
   ) => void;
+  readonly onPediatricSupraventricularTachycardiaResponse?: (
+    action: 'reconcile-pediatric-svt-clock-rhythm-and-whole-child'
+      | 'recognize-pediatric-svt-with-perfusion-compromise'
+      | 'activate-pediatric-svt-qualified-rhythm-care-and-resuscitation-ownership'
+      | 'review-pediatric-svt-support-causes-heart-failure-and-deterioration-boundary'
+      | 'review-pediatric-svt-later-response'
+      | 'handoff-pediatric-svt-recurrence-cardiology-and-caregiver-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2143,6 +2156,12 @@ export function crisisResponseAvailability(
         && event.target === 'pediatric-anaphylaxis-reassessment')
       && scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'pediatric-anaphylaxis-reassessment-boundary'),
+    hasPediatricSupraventricularTachycardiaResponse:
+      scenario.metadata.id === 'pediatric-supraventricular-tachycardia'
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-supraventricular-tachycardia-reassessment')
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-supraventricular-tachycardia-reassessment-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2306,6 +2325,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'pediatric-status-epilepticus-reassessment')
       || (event.type === 'narrative'
         && event.target === 'pediatric-anaphylaxis-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'pediatric-supraventricular-tachycardia-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2374,6 +2395,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasPediatricFebrileSeizureResponse,
     hasPediatricStatusEpilepticusResponse,
     hasPediatricAnaphylaxisResponse,
+    hasPediatricSupraventricularTachycardiaResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2449,7 +2471,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPediatricSepsisResponse || hasPediatricSepticShockResponse
     || hasPediatricDehydrationResponse || hasPediatricDiabeticKetoacidosisResponse
     || hasPediatricHypoglycemicSeizureResponse || hasPediatricFebrileSeizureResponse
-    || hasPediatricStatusEpilepticusResponse || hasPediatricAnaphylaxisResponse;
+    || hasPediatricStatusEpilepticusResponse || hasPediatricAnaphylaxisResponse
+    || hasPediatricSupraventricularTachycardiaResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2480,7 +2503,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasPediatricAnaphylaxisResponse
+  const responseTray = hasPediatricSupraventricularTachycardiaResponse
+    ? { id: 'crisis', label: 'Pediatric SVT reassessment' } as const
+    : hasPediatricAnaphylaxisResponse
     ? { id: 'crisis', label: 'Pediatric anaphylaxis reassessment' } as const
     : hasPediatricStatusEpilepticusResponse
     ? { id: 'crisis', label: 'Pediatric status-epilepticus reassessment' } as const
@@ -2761,6 +2786,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPediatricFebrileSeizureResponse
     || hasPediatricStatusEpilepticusResponse
     || hasPediatricAnaphylaxisResponse
+    || hasPediatricSupraventricularTachycardiaResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3467,6 +3493,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <PediatricAnaphylaxisTray
                 assessment={props.resuscitation.pediatricAnaphylaxisAssessment}
                 onAction={props.onPediatricAnaphylaxisResponse ?? (() => {})} />
+            )}
+            {hasPediatricSupraventricularTachycardiaResponse && (
+              <PediatricSupraventricularTachycardiaTray
+                assessment={props.resuscitation.pediatricSupraventricularTachycardiaAssessment}
+                onAction={props.onPediatricSupraventricularTachycardiaResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -9013,6 +9044,61 @@ function PediatricAnaphylaxisTray({ assessment, onAction }: {
           onClick={() => onAction('handoff-pediatric-anaphylaxis-observation-allergy-and-caregiver-risk')}>Hand off active anaphylaxis risk</Button>}
       </div>
       <p className="field__hint">Partial improvement does not prove treatment effect, trigger, durable airway or circulatory recovery, refractory-risk closure, recurrence exclusion, discharge readiness, or outcome.</p>
+    </section>
+  </div>;
+}
+
+function PediatricSupraventricularTachycardiaTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricSupraventricularTachycardiaAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onPediatricSupraventricularTachycardiaResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const care = assessment?.careAtTick != null;
+  const safety = assessment?.safetyAtTick != null;
+  const later = assessment?.laterResponseAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="pediatric-svt-pattern-title">
+      <div id="pediatric-svt-pattern-title" className="syringe__name">Read the rhythm through the child.</div>
+      <Badge kind="teaching">onset · regularity · width · rate · perfusion · symptoms</Badge>
+      <div className="syringe__meta">6 years · 20 kg · regular narrow rhythm · pulse present</div>
+      <p className="syringe__remaining">
+        {safety ? 'Rhythm, support, and deterioration risks remain under review'
+          : care ? 'Qualified rhythm care is active · complete the safety review'
+            : recognition ? 'SVT with perfusion risk · qualified pediatric rhythm care matters now'
+              : trajectory ? 'Now separate SVT from sinus tachycardia without using rate alone'
+                : 'Start with the clock, supplied rhythm, and whole-child state.'}
+      </p>
+      <div className="syringe__presets">
+        {!trajectory && <Button className="crisis-drug__action"
+          onClick={() => onAction('reconcile-pediatric-svt-clock-rhythm-and-whole-child')}>Review rhythm + whole-child trajectory</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action"
+          onClick={() => onAction('recognize-pediatric-svt-with-perfusion-compromise')}>Recognize SVT with perfusion risk</Button>}
+        {recognition && !care && <Button className="crisis-drug__action"
+          onClick={() => onAction('activate-pediatric-svt-qualified-rhythm-care-and-resuscitation-ownership')}>Activate qualified pediatric SVT care</Button>}
+        {care && !safety && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-pediatric-svt-support-causes-heart-failure-and-deterioration-boundary')}>Review support + deterioration risks</Button>}
+      </div>
+      <p className="field__hint">Experienced pediatric, cardiology, nursing, pharmacy, and resuscitation teams own rhythm care, monitoring, access, support, cause review, and escalation. This surface exposes no learner maneuver, product, drug, dose, route, interval, device, energy, procedure, or treatment control.</p>
+    </section>
+    <section className="syringe" aria-labelledby="pediatric-svt-response-title">
+      <div id="pediatric-svt-response-title" className="syringe__name">Conversion is a checkpoint.</div>
+      <Badge kind="teaching">rhythm · perfusion · heart function · recurrence · ownership</Badge>
+      <div className="syringe__meta">fixed minute-12 report · durable control remains open</div>
+      <p className="syringe__remaining" role="status">
+        {handoff ? 'Recurrence, cardiac, and caregiver risk handed off'
+          : later ? 'Sinus rhythm is reported. Durable control and cause remain open.'
+            : safety ? 'Review the fixed response after elapsed qualified care'
+              : 'Recognition, qualified care, and safety review proceed in order.'}
+      </p>
+      <div className="syringe__presets">
+        {safety && !later && <Button className="crisis-drug__action"
+          onClick={() => onAction('review-pediatric-svt-later-response')}>Review the minute-12 response</Button>}
+        {later && !handoff && <Button className="crisis-drug__action"
+          onClick={() => onAction('handoff-pediatric-svt-recurrence-cardiology-and-caregiver-risk')}>Hand off recurrence + cardiology risk</Button>}
+      </div>
+      <p className="field__hint">Reported conversion does not prove treatment effect, durable rhythm control, ventricular recovery, recurrence exclusion, cause closure, discharge readiness, or outcome.</p>
     </section>
   </div>;
 }

@@ -16,6 +16,7 @@ import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
 import { UNITED_STATES } from '@anesthesia/region/profiles';
 import { PEDIATRIC_STATUS_EPILEPTICUS } from '../../src/modules/pediatrics/scenarios/pediatric-status-epilepticus';
 import { PEDIATRIC_ANAPHYLAXIS } from '../../src/modules/pediatrics/scenarios/pediatric-anaphylaxis';
+import { PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA } from '../../src/modules/pediatrics/scenarios/pediatric-supraventricular-tachycardia';
 import { PrerenderedBody } from '../../src/routes/Prerendered';
 import { ROUTES } from '../../src/routes/routes';
 
@@ -371,6 +372,108 @@ describe('Requirement: pediatric anaphylaxis keeps one calm action at a time', (
         timeline: PEDIATRIC_ANAPHYLAXIS.timeline.map((event) => event.target === target
           ? { ...event, target: `${target}-suffix` } : event) };
       expect(crisisResponseAvailability(drifted, []).hasPediatricAnaphylaxisResponse).toBe(false);
+    }
+  });
+});
+
+describe('Requirement: pediatric SVT keeps one calm action at a time', () => {
+  let container: HTMLDivElement; let root: Root;
+  beforeEach(() => {
+    (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+    document.documentElement.style.width = '320px';
+    container = document.createElement('div'); document.body.appendChild(container);
+    const style = document.createElement('style'); style.dataset.testStyles = 'pediatric-svt-ui';
+    style.textContent = [readFileSync(join(process.cwd(), 'src/platform/ui/components.css'), 'utf8'),
+      readFileSync(join(process.cwd(), 'src/modules/anesthesia/ui/cockpit.css'), 'utf8')].join('\n');
+    document.head.appendChild(style); root = createRoot(container);
+  });
+  afterEach(() => {
+    act(() => root.unmount()); container.remove(); document.documentElement.style.width = '';
+    document.querySelector('style[data-test-styles="pediatric-svt-ui"]')?.remove();
+  });
+
+  const assessment = (step = 0) => ({
+    trajectoryAtTick: step > 0 ? 1 : null, recognitionAtTick: step > 1 ? 2 : null,
+    careAtTick: step > 2 ? 3 : null, safetyAtTick: step > 3 ? 4 : null,
+    laterResponseAtTick: step > 4 ? 5 : null, handoffAtTick: step > 5 ? 6 : null,
+  });
+  function svtProps(step = 0, onAction = vi.fn()): ActionCockpitProps {
+    return { scenario: PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA, region: UNITED_STATES,
+      infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+        lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0,
+        dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false,
+        pediatricSupraventricularTachycardiaAssessment: assessment(step) }, lastExposure: null,
+      syringeRemaining: {}, ventilator: { mode: 'manual', tidalVolumeMl: 120,
+        respiratoryRateBpm: 28, fio2: 0.21, peep: 0, delivering: false,
+        sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 }, intubated: false,
+      airwayAttempts: 0, lastGrade: null, jawThrustCpapSecondsRemaining: 0,
+      airwayDevice: 'facemask', supraglotticInsertionSecondsRemaining: 0,
+      helpRequestedAtTick: null, muscleRigidityFraction: 0, onBolus: () => {},
+      onInfusion: () => {}, onHypnoticLine: () => {}, onFluid: () => {},
+      onVentilator: () => {}, onLaryngoscopy: () => {}, onAirwayManeuver: () => {},
+      onCallForHelp: () => {}, onAirwayDevice: () => {}, onEpinephrine: () => {},
+      onDantrolene: () => {}, onActiveCooling: () => {},
+      onPediatricSupraventricularTachycardiaResponse: onAction, onDrugCard: () => {} };
+  }
+
+  it('shows the exact serial density in two labelled cards with one live status', () => {
+    const labels = ['Review rhythm + whole-child trajectory',
+      'Recognize SVT with perfusion risk', 'Activate qualified pediatric SVT care',
+      'Review support + deterioration risks', 'Review the minute-12 response',
+      'Hand off recurrence + cardiology risk'];
+    const statuses = ['Recognition, qualified care, and safety review proceed in order.',
+      'Recognition, qualified care, and safety review proceed in order.',
+      'Recognition, qualified care, and safety review proceed in order.',
+      'Recognition, qualified care, and safety review proceed in order.',
+      'Review the fixed response after elapsed qualified care',
+      'Sinus rhythm is reported. Durable control and cause remain open.',
+      'Recurrence, cardiac, and caregiver risk handed off'];
+    for (let step = 0; step <= labels.length; step += 1) {
+      act(() => root.render(createElement(ActionCockpit, svtProps(step))));
+      const cards = [...container.querySelectorAll('.tray-grid > section.syringe')];
+      expect(cards).toHaveLength(2);
+      expect(cards.map((card) => card.getAttribute('aria-labelledby'))).toEqual([
+        'pediatric-svt-pattern-title', 'pediatric-svt-response-title']);
+      const liveStatuses = container.querySelectorAll('[role="status"]');
+      expect(liveStatuses).toHaveLength(1);
+      expect(liveStatuses[0]?.textContent?.trim()).toBe(statuses[step]);
+      const buttons = [...container.querySelectorAll('.tray-grid button')];
+      expect(buttons).toHaveLength([1, 1, 1, 1, 1, 1, 0][step]!);
+      if (step < labels.length) expect(buttons[0]?.textContent?.trim()).toBe(labels[step]);
+      for (const action of buttons) expect(getComputedStyle(action).minBlockSize).toBe('44px');
+    }
+    expect(container.textContent).toContain('onset · regularity · width · rate · perfusion · symptoms');
+    expect(container.textContent).toContain('6 years · 20 kg · regular narrow rhythm · pulse present');
+  });
+
+  it('dispatches exact actions without exposing a rhythm-treatment recipe', () => {
+    const onAction = vi.fn();
+    act(() => root.render(createElement(ActionCockpit, svtProps(2, onAction))));
+    act(() => [...container.querySelectorAll('button')]
+      .find((entry) => entry.textContent?.trim() === 'Activate qualified pediatric SVT care')?.click());
+    expect(onAction).toHaveBeenCalledWith(
+      'activate-pediatric-svt-qualified-rhythm-care-and-resuscitation-ownership');
+    act(() => root.render(createElement(ActionCockpit, svtProps(5))));
+    expect(container.textContent).toContain('Sinus rhythm is reported.');
+    expect(container.textContent).toContain('does not prove treatment effect');
+    expect(container.textContent).not.toMatch(/mg\/kg|adenosine|vagal maneuver|\bice\b|intravenous|intraosseous|flush|joule|j\/kg|pad placement|cardioversion|sedation|oxygen flow|tube size/i);
+  });
+
+  it('requires the exact scenario and both narrative targets', () => {
+    expect(crisisResponseAvailability(PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA, [])
+      .hasPediatricSupraventricularTachycardiaResponse).toBe(true);
+    const wrongId = { ...PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA, metadata: {
+      ...PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA.metadata, id: 'not-pediatric-svt' } };
+    expect(crisisResponseAvailability(wrongId, [])
+      .hasPediatricSupraventricularTachycardiaResponse).toBe(false);
+    for (const target of ['pediatric-supraventricular-tachycardia-reassessment',
+      'pediatric-supraventricular-tachycardia-reassessment-boundary']) {
+      const drifted = { ...PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA,
+        timeline: PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA.timeline.map((event) =>
+          event.target === target ? { ...event, target: `${target}-suffix` } : event) };
+      expect(crisisResponseAvailability(drifted, [])
+        .hasPediatricSupraventricularTachycardiaResponse).toBe(false);
     }
   });
 });

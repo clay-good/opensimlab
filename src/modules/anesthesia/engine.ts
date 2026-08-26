@@ -138,6 +138,7 @@ const PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES = new Set([
   'pediatric-febrile-seizure-response',
   'pediatric-status-epilepticus-response',
   'pediatric-anaphylaxis-response',
+  'pediatric-supraventricular-tachycardia-response',
   'pediatric-foreign-body-airway-obstruction-response',
 ]);
 const BRONCHIOLITIS_BLOCKED_ACTION_TYPES = new Set([
@@ -246,6 +247,14 @@ const PEDIATRIC_ANAPHYLAXIS_BLOCKED_ACTION_TYPES = new Set([
   'pediatric-foreign-body-airway-obstruction-response', 'adult-asthma-response',
   'acute-severe-asthma-response', 'opioid-toxicity-response',
   'emergency-anaphylaxis-response',
+]);
+const PEDIATRIC_SVT_BLOCKED_ACTION_TYPES = new Set([
+  ...[...PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES]
+    .filter((type) => type !== 'pediatric-supraventricular-tachycardia-response'),
+  'stable-narrow-tachycardia-response', 'unstable-narrow-tachycardia-response',
+  'stable-wide-tachycardia-response', 'af-rvr-response', 'torsades-response',
+  'symptomatic-bradycardia-response', 'unstable-bradycardia-response',
+  'complete-heart-block-response', 'emergency-anaphylaxis-response',
 ]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
@@ -970,6 +979,12 @@ export class AnesthesiaEngine {
   private pediatricAnaphylaxisSafetyAtTick: number | null = null;
   private pediatricAnaphylaxisLaterResponseAtTick: number | null = null;
   private pediatricAnaphylaxisHandoffAtTick: number | null = null;
+  private pediatricSvtTrajectoryAtTick: number | null = null;
+  private pediatricSvtRecognitionAtTick: number | null = null;
+  private pediatricSvtCareAtTick: number | null = null;
+  private pediatricSvtSafetyAtTick: number | null = null;
+  private pediatricSvtLaterResponseAtTick: number | null = null;
+  private pediatricSvtHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1477,6 +1492,17 @@ export class AnesthesiaEngine {
       this.log('warning', 'assessment',
         `pediatric-anaphylaxis-generic-action-refused-${this.currentTick}`,
         'This pediatric anaphylaxis lesson exposes no generic epinephrine, medication, fluid, oxygen, airway, ventilator, device, procedure, adult-anaphylaxis, asthma, sepsis, or adjacent-scenario action. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const pediatricSvt = this.scenario.metadata.id === 'pediatric-supraventricular-tachycardia'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-supraventricular-tachycardia-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-supraventricular-tachycardia-reassessment-boundary');
+    if (pediatricSvt && PEDIATRIC_SVT_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `pediatric-svt-generic-action-refused-${this.currentTick}`,
+        'This pediatric SVT lesson exposes no generic rhythm, drug, dose, device, defibrillation, cardioversion, airway, oxygen, fluid, procedure, adult-tachycardia, or adjacent-scenario action. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -7291,6 +7317,151 @@ export class AnesthesiaEngine {
             dispositionDetermined: false, outcomePredicted: false });
         break;
       }
+      case 'pediatric-supraventricular-tachycardia-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.metadata.id === 'pediatric-supraventricular-tachycardia'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-supraventricular-tachycardia-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-supraventricular-tachycardia-reassessment-boundary');
+        const valid = ['reconcile-pediatric-svt-clock-rhythm-and-whole-child',
+          'recognize-pediatric-svt-with-perfusion-compromise',
+          'activate-pediatric-svt-qualified-rhythm-care-and-resuscitation-ownership',
+          'review-pediatric-svt-support-causes-heart-failure-and-deterioration-boundary',
+          'review-pediatric-svt-later-response',
+          'handoff-pediatric-svt-recurrence-cardiology-and-caregiver-risk'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `pediatric-svt-response-refused-${this.currentTick}`,
+            supported ? 'The pediatric SVT action was not one of the listed choices. Nothing changed.'
+              : 'These pediatric SVT choices are available only in the exact declared Pediatrics lesson.');
+          break;
+        }
+        if (response === 'reconcile-pediatric-svt-clock-rhythm-and-whole-child') {
+          if (this.pediatricSvtTrajectoryAtTick !== null) {
+            this.log('warning', 'assessment', `pediatric-svt-trajectory-refused-${this.currentTick}`,
+              'The supplied clock, rhythm, pulse, perfusion, and whole-child trajectory were already reconciled.');
+            break;
+          }
+          this.pediatricSvtTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-svt-trajectory-reconciled-${this.currentTick}`,
+            'The supplied record reconciles an abrupt, very regular narrow-complex rhythm at 210/min with a present pulse, spontaneous breathing, and authored whole-child perfusion compromise. Fixed physiology is HR 210/min, RR 28/min, BP 96/60 mmHg (MAP 72), pulse-coherent room-air SpO2 98%, and temperature 37.0°C. The learner examined, monitored, acquired, interpreted, diagnosed, or treated none of this.',
+            { initialPulsePresent: true, spontaneousBreathingAuthored: true,
+              abruptRegularNarrowTachycardiaAuthored: true,
+              perfusionCompromiseAuthored: true, patientExaminedByLearner: false,
+              treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.pediatricSvtTrajectoryAtTick === null) {
+          this.log('warning', 'assessment', `pediatric-svt-trajectory-order-refused-${this.currentTick}`,
+            'Reconcile the supplied clock, rhythm, pulse, perfusion, and whole-child trajectory first.');
+          break;
+        }
+        if (response === 'recognize-pediatric-svt-with-perfusion-compromise') {
+          if (this.pediatricSvtRecognitionAtTick !== null) {
+            this.log('warning', 'assessment', `pediatric-svt-recognition-refused-${this.currentTick}`,
+              'The authored pediatric SVT pattern and perfusion-compromise boundary were already recognized.');
+            break;
+          }
+          this.pediatricSvtRecognitionAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-svt-perfusion-compromise-recognized-${this.currentTick}`,
+            'The abrupt, fixed, very regular narrow-complex tachycardia and whole-child compromise support the authored pediatric SVT working pattern and urgent qualified-care pathway. Rate alone did not establish the rhythm or compromise, and sinus tachycardia, exact mechanism, cause, and final diagnosis were not proven by the learner.',
+            { probableSvtPatternAuthored: true, perfusionCompromiseAuthored: true,
+              diagnosisMadeByLearner: false, mechanismProven: false,
+              sinusTachycardiaExcluded: false });
+          break;
+        }
+        if (this.pediatricSvtRecognitionAtTick === null) {
+          this.log('warning', 'assessment', `pediatric-svt-recognition-order-refused-${this.currentTick}`,
+            'Recognize the authored pediatric SVT and perfusion-compromise boundary first.');
+          break;
+        }
+        if (response === 'activate-pediatric-svt-qualified-rhythm-care-and-resuscitation-ownership') {
+          if (this.pediatricSvtCareAtTick !== null) {
+            this.log('warning', 'assessment', `pediatric-svt-care-refused-${this.currentTick}`,
+              'Qualified pediatric rhythm-care and resuscitation ownership is already active.');
+            break;
+          }
+          this.pediatricSvtCareAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pediatric-svt-qualified-care-activated-${this.currentTick}`,
+            'Qualified pediatric rhythm, emergency, nursing, pharmacy, airway-capable, and resuscitation teams now own immediate support, rhythm care, monitoring, access, deterioration response, and escalation. No modality, maneuver, drug, product, concentration, dose, route, volume, rate, device, energy, sedation, cardioversion, oxygen, airway action, procedure, or treatment was selected or delivered by the learner.',
+            { qualifiedRhythmCareOwnershipActive: true, modalitySelectedByLearner: false,
+              drugSelectedByLearner: false, doseSelectedByLearner: false,
+              deviceSelectedByLearner: false, treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.pediatricSvtCareAtTick === null) {
+          this.log('warning', 'assessment', `pediatric-svt-care-order-refused-${this.currentTick}`,
+            'Activate qualified pediatric rhythm-care and resuscitation ownership before safety review.');
+          break;
+        }
+        if (response === 'review-pediatric-svt-support-causes-heart-failure-and-deterioration-boundary') {
+          if (this.pediatricSvtSafetyAtTick !== null) {
+            this.log('warning', 'assessment', `pediatric-svt-safety-refused-${this.currentTick}`,
+              'Support, causes, heart-failure, perfusion, and deterioration boundaries were already reviewed.');
+            break;
+          }
+          this.pediatricSvtSafetyAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pediatric-svt-safety-reviewed-${this.currentTick}`,
+            'Qualified teams retain ownership of repeated airway, breathing, circulation, perfusion, neurological, heart-failure, rhythm-width, cause, medication, access, and deterioration review with immediate rescue capability. Current findings are snapshots. The learner acquired or interpreted no ECG, monitor, or test; performed no maneuver, access, device operation, cardioversion, airway action, procedure, or treatment; and selected no disposition.',
+            { qualifiedSafetyReviewActive: true, monitoringAcquiredByLearner: false,
+              ecgAcquiredByLearner: false, testInterpretedByLearner: false,
+              maneuverPerformedByLearner: false, cardioversionPerformedByLearner: false,
+              procedurePerformedByLearner: false, dispositionDetermined: false });
+          break;
+        }
+        if (this.pediatricSvtSafetyAtTick === null) {
+          this.log('warning', 'assessment', `pediatric-svt-safety-order-refused-${this.currentTick}`,
+            'Review support, causes, heart failure, perfusion, and deterioration boundaries first.');
+          break;
+        }
+        if (response === 'review-pediatric-svt-later-response') {
+          if (this.currentTick <= this.pediatricSvtSafetyAtTick) {
+            this.log('warning', 'assessment', `pediatric-svt-later-time-refused-${this.currentTick}`,
+              'Allow elapsed simulated time after qualified care and safety ownership are active.');
+            break;
+          }
+          if (this.pediatricSvtLaterResponseAtTick !== null) {
+            this.log('warning', 'assessment', `pediatric-svt-later-response-refused-${this.currentTick}`,
+              'The fixed later pediatric SVT report was already reviewed.');
+            break;
+          }
+          this.pediatricSvtLaterResponseAtTick = this.currentTick;
+          this.rhythm = 'sinus';
+          this.log('warning', 'assessment', `pediatric-svt-later-response-reviewed-${this.currentTick}`,
+            'Fixed qualified later report: sinus rhythm is reported with HR 118/min, RR 22/min, BP 102/66 mmHg (MAP 78), pulse-coherent room-air SpO2 99%, and temperature 37.0°C. This authored checkpoint does not prove a learner-delivered intervention, causal treatment effect, exact mechanism or cause, durable conversion or recovery, absence of heart failure or deterioration, recurrence exclusion, disposition, prognosis, or outcome.',
+            { laterReportAuthored: true, laterSinusRhythmAuthored: true,
+              treatmentEffectProven: false, durableConversionProven: false,
+              recurrenceExcluded: false, deteriorationExcluded: false,
+              treatmentDeliveredByLearner: false, outcomePredicted: false });
+          break;
+        }
+        if (this.pediatricSvtLaterResponseAtTick === null) {
+          this.log('warning', 'assessment', `pediatric-svt-later-order-refused-${this.currentTick}`,
+            'Review the fixed later rhythm and whole-child response after elapsed qualified care.');
+          break;
+        }
+        if (this.currentTick <= this.pediatricSvtLaterResponseAtTick) {
+          this.log('warning', 'assessment', `pediatric-svt-handoff-time-refused-${this.currentTick}`,
+            'Allow another simulated tick before handing off active pediatric SVT risk.');
+          break;
+        }
+        if (this.pediatricSvtHandoffAtTick !== null) {
+          this.log('warning', 'assessment', `pediatric-svt-handoff-refused-${this.currentTick}`,
+            'The pediatric SVT recurrence, cardiology, and caregiver handoff was already recorded.');
+          break;
+        }
+        this.pediatricSvtHandoffAtTick = this.currentTick;
+        this.log('warning', 'assessment', `pediatric-svt-active-risk-handoff-recorded-${this.currentTick}`,
+          'The rhythm clock and whole-child trajectory, supplied and open cause work, support and deterioration contingencies, recurrence risk, caregiver context, cardiology follow-up, escalation triggers, and named ownership were handed off. Final diagnosis, mechanism, cause, causal treatment effect, durable conversion or recovery, heart-failure or deterioration exclusion, recurrence exclusion, discharge readiness, disposition, prognosis, and outcome remain undeclared.',
+          { svtFinallyProven: false, mechanismProven: false, causeProven: false,
+            treatmentEffectProven: false, durableConversionProven: false,
+            recurrenceExcluded: false, deteriorationExcluded: false,
+            dischargeReadinessProven: false, dispositionDetermined: false,
+            outcomePredicted: false });
+        break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -10269,6 +10440,21 @@ export class AnesthesiaEngine {
         meanArterialMmHg: later ? 72 : 54,
         coreTemperatureC: 36.7 };
     }
+    if (this.scenario.metadata.id === 'pediatric-supraventricular-tachycardia'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-supraventricular-tachycardia-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-supraventricular-tachycardia-reassessment-boundary')) {
+      const later = this.pediatricSvtLaterResponseAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: later ? 118 : 210,
+        respiratoryRateBpm: later ? 22 : 28,
+        spo2Percent: later ? 99 : 98,
+        systolicMmHg: later ? 102 : 96,
+        diastolicMmHg: later ? 66 : 60,
+        meanArterialMmHg: later ? 78 : 72,
+        coreTemperatureC: 37.0 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -12319,6 +12505,56 @@ export class AnesthesiaEngine {
               dispositionDetermined: false as const, outcomePredicted: false as const,
             },
           } : {}),
+        ...(this.scenario.metadata.id === 'pediatric-supraventricular-tachycardia'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-supraventricular-tachycardia-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-supraventricular-tachycardia-reassessment-boundary') ? {
+            pediatricSupraventricularTachycardiaAssessment: {
+              trajectoryAtTick: this.pediatricSvtTrajectoryAtTick,
+              recognitionAtTick: this.pediatricSvtRecognitionAtTick,
+              careAtTick: this.pediatricSvtCareAtTick,
+              safetyAtTick: this.pediatricSvtSafetyAtTick,
+              laterResponseAtTick: this.pediatricSvtLaterResponseAtTick,
+              handoffAtTick: this.pediatricSvtHandoffAtTick,
+              initialPulsePresent: true as const, spontaneousBreathingAuthored: true as const,
+              abruptRegularNarrowTachycardiaAuthored: true as const,
+              probableSvtPatternAuthored: true as const,
+              perfusionCompromiseAuthored: true as const,
+              qualifiedRhythmCareOwnershipActive: this.pediatricSvtCareAtTick !== null,
+              qualifiedSafetyReviewActive: this.pediatricSvtSafetyAtTick !== null,
+              laterReportAuthored: this.pediatricSvtLaterResponseAtTick !== null,
+              laterSinusRhythmAuthored: this.pediatricSvtLaterResponseAtTick !== null,
+              patientExaminedByLearner: false as const,
+              monitoringAcquiredByLearner: false as const,
+              ecgAcquiredByLearner: false as const, ecgInterpretedByLearner: false as const,
+              testAcquiredByLearner: false as const, testInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const,
+              mechanismAssignedByLearner: false as const,
+              maneuverPerformedByLearner: false as const,
+              accessPlacedByLearner: false as const, modalitySelectedByLearner: false as const,
+              drugSelectedByLearner: false as const, adenosineSelectedByLearner: false as const,
+              productSelectedByLearner: false as const,
+              concentrationSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const, routeSelectedByLearner: false as const,
+              volumeSelectedByLearner: false as const, rateSelectedByLearner: false as const,
+              deviceSelectedByLearner: false as const, energySelectedByLearner: false as const,
+              sedationSelectedByLearner: false as const,
+              oxygenDeliveredByLearner: false as const, drugDeliveredByLearner: false as const,
+              cardioversionPerformedByLearner: false as const,
+              airwayManeuverPerformedByLearner: false as const,
+              procedurePerformedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              svtFinallyProven: false as const, sinusTachycardiaExcluded: false as const,
+              mechanismProven: false as const, causeProven: false as const,
+              treatmentEffectProven: false as const, durableConversionProven: false as const,
+              durableRecoveryProven: false as const, heartFailureExcluded: false as const,
+              deteriorationExcluded: false as const, recurrenceExcluded: false as const,
+              dischargeReadinessProven: false as const,
+              dispositionDetermined: false as const, prognosisPredicted: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,
           classification: this.aspirationRiskClassification,
@@ -12537,6 +12773,13 @@ export class AnesthesiaEngine {
         && event.target === 'pediatric-anaphylaxis-reassessment')) {
       invalid.add('etco2MmHg');
       invalid.add('fio2');
+    }
+    if (this.scenario.metadata.id === 'pediatric-supraventricular-tachycardia'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-supraventricular-tachycardia-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-supraventricular-tachycardia-reassessment-boundary')) {
+      invalid.add('etco2MmHg');
     }
     return invalid;
   }

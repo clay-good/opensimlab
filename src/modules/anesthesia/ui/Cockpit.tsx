@@ -1005,6 +1005,9 @@ export function Cockpit({
           onPediatricAnaphylaxisResponse={(action) => session.act({
             type: 'pediatric-anaphylaxis-response', payload: { action },
           })}
+          onPediatricSupraventricularTachycardiaResponse={(action) => session.act({
+            type: 'pediatric-supraventricular-tachycardia-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

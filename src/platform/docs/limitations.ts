@@ -3743,6 +3743,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, current pediatric anaphylaxis and local resuscitation guidance, qualified medication and airway systems, continuous reassessment, escalation when symptoms persist, and risk-based observation, allergy referral, prescriptions, education, and safety planning.',
     briefIn: ['pediatric-anaphylaxis'],
   },
+  {
+    id: 'pediatric-svt-rhythm-perfusion-care-and-response-are-authored',
+    headline: 'The rhythm, perfusion findings, qualified care, and serial response are authored.',
+    simplification: 'Fixed reports stand in for symptom history, examination, pulse and perfusion assessment, monitoring, ECG acquisition and interpretation, active rhythm care, cause evaluation, and serial reassessment.',
+    whereItMisleads: 'Treating the fictional rate, QRS duration, vital signs, negative snapshots, care timing, or response as learner-acquired evidence, a universal diagnostic cutoff, modeled pediatric physiology, causal treatment effect, durable rhythm control, or predicted recovery.',
+    correctUnderstanding: 'Real pediatric tachyarrhythmia care integrates verified rhythm and symptom history, whole-child airway-breathing-circulation assessment, ECG evidence, repeated perfusion assessment, age and clinical context, prompt qualified care, and cause and recurrence evaluation.',
+    briefIn: ['pediatric-supraventricular-tachycardia'],
+  },
+  {
+    id: 'pediatric-svt-controls-reconcile-recognize-escalate-review-reassess-and-handoff-only',
+    headline: 'The controls record trajectory review, recognition, qualified escalation, safety review, reassessment, and handoff only.',
+    simplification: 'Six accepted actions stand in for experienced pediatric, emergency, cardiology, nursing, pharmacy, airway-capable, resuscitation, and caregiver assessment, monitoring, treatment, surveillance, escalation, and handoff.',
+    whereItMisleads: 'Equating button order with examination, pulse assessment, ECG interpretation, rhythm diagnosis, vagal-maneuver skill, prescribing, drug or electrical treatment, device operation, team performance, caregiver communication, disposition, or pediatric SVT competence.',
+    correctUnderstanding: 'Actual care requires the child and caregiver, trained teams, current pediatric resuscitation pathways, verified patient-specific rhythm and perfusion assessment, immediate escalation for compromise, qualified treatment, continuous reassessment, and cardiology follow-through.',
+    briefIn: ['pediatric-supraventricular-tachycardia'],
+  },
+  {
+    id: 'no-live-pediatric-svt-exam-ecg-drug-device-cardioversion-treatment-or-disposition',
+    headline: 'The lab does not examine, acquire or interpret an ECG, perform a maneuver, treat, operate a device, determine disposition, or predict outcome.',
+    simplification: 'No live examination, palpation, pulse assessment, monitoring or ECG acquisition or interpretation, diagnosis, vagal maneuver, access, oxygen, drug, concentration, dose, route, flush, sedation, pad, synchronization, energy, cardioversion, refractory therapy, laboratory test, imaging, echocardiography, procedure, treatment, observation choice, admission, discharge, prognosis, recurrence, recovery, or outcome is modeled.',
+    whereItMisleads: 'Using rate alone to diagnose SVT, treating measurable pressure as proof of adequate perfusion, copying fictional values into care, treating fixed negatives as exclusions, assuming one universal treatment pathway, attributing the later rhythm to a modality, or using completion as clinical competence.',
+    correctUnderstanding: 'Use verified patient data, current pediatric rhythm guidance, local resuscitation systems, qualified teams, whole-child perfusion rather than one number, continuous rhythm and circulation reassessment, and patient-specific cause, recurrence, and cardiology planning.',
+    briefIn: ['pediatric-supraventricular-tachycardia'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {
