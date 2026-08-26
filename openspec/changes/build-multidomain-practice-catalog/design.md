@@ -2490,6 +2490,28 @@ rhabdomyolysis, coingestion, airway and active-risk handoff. The canonical state
 diagnostic-rule, thermoregulation, neuromuscular, gastrointestinal, ECG, renal, CK, cooling, sedation,
 antagonist-response, airway, or individualized-response model.
 
+### Wave F toxicology slice 12: sympathomimetic hyperadrenergic hyperthermia
+
+The twelfth Toxicology lab owns the coupled stimulant exposure, severe agitation, paranoid mental-
+state, autonomic, hyperthermia, cardiovascular, complication-surveillance, de-escalation, supportive-
+care and psychiatric-safety pattern of a declared methamphetamine exposure. It remains distinct from
+serotonin toxicity by supplying no serotonergic interaction, clonus, hyperreflexia, gastrointestinal
+hyperactivity or increased tone, and from anticholinergic poisoning by supplying diaphoresis and
+active bowel sounds without urinary retention. The learner reconciles a 70-minute clock, fearful
+hypervigilance, severe motor agitation, paranoia, diaphoresis, mydriasis, HR 150/min, BP 196/112 mmHg,
+T 40.4°C, supplied QRS 90 ms, acid-base, lactate, renal and CK evidence; recognizes the coupled
+hyperadrenergic pattern without screen-, pupil-, pressure-, temperature- or agitation-only closure;
+activates qualified de-escalation, rapid cooling, resuscitation, cardiac, airway, toxicology,
+monitoring, psychiatric and compassionate-safety ownership; and reviews coingestion, ischemia,
+arrhythmia, seizure, rhabdomyolysis and competing-syndrome boundaries. Bounded qualified de-escalation,
+support, GABAergic sedation, cooling, surveillance, airway preparedness and specialist persistent-
+hyperadrenergic adjunct intent exposes no restraint, method, product, dose, rate, target, route,
+access, airway, or delivery. A strict elapsed fixed report with T 38.8°C, HR 112/min,
+BP 152/88 mmHg and calmer cooperation precedes another elapsed medical, psychiatric and active-risk
+handoff. The canonical state is not an exposure, toxicology-screen, thermoregulation, autonomic,
+cardiovascular, psychiatric, renal, CK, cooling, sedation, adjunct-response, airway, or individualized-
+response model.
+
 #### Hematology and oncology: 11
 
 Neutropenic fever; tumor-lysis syndrome; hyperleukocytosis pattern; sickle-cell acute chest syndrome;

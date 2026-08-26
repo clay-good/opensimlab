@@ -5589,6 +5589,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-toxicology-sympathomimetic-exposure-clock-agitation-autonomic-temperature-and-whole-patient',
+      'recognize-toxicology-sympathomimetic-coupled-pattern-without-screen-pupil-pressure-temperature-or-agitation-only-closure',
+      'activate-toxicology-sympathomimetic-deescalation-resuscitation-cooling-airway-toxicology-monitoring-and-compassionate-safety-ownership',
+      'review-toxicology-sympathomimetic-supplied-mental-autonomic-cardiac-temperature-renal-ck-and-differential-boundary',
+      'record-toxicology-sympathomimetic-bounded-qualified-deescalation-support-sedation-cooling-surveillance-airway-and-adjunct-intent-with-strict-later-review',
+      'handoff-toxicology-sympathomimetic-rebound-agitation-psychosis-suicidality-ischemia-arrhythmia-hyperthermia-rhabdomyolysis-coingestion-airway-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'sympathomimetic-hyperadrenergic-hyperthermia'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'sympathomimetic-hyperadrenergic-hyperthermia-transition')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'sympathomimetic-hyperadrenergic-hyperthermia-transition-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Toxicology sympathomimetic lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'Exposure, clock, agitation, autonomic, temperature, and whole-patient state were reconciled.'],
+        ['pattern-recognized', 'The coupled hyperadrenergic pattern was recognized without screen-, pupil-, pressure-, temperature-, agitation-, or diagnostic closure.'],
+        ['support-activated', 'De-escalation, resuscitation, cooling, cardiac, airway, toxicology, monitoring, psychiatric, and compassionate safety ownership were activated.'],
+        ['evidence-reviewed', 'Supplied mental, autonomic, cardiac, temperature, renal, CK, coingestion, exposure-purity, and differential evidence were reviewed without learner interpretation or delivery.'],
+        ['intent-and-reassessment-recorded', 'Bounded qualified de-escalation, support, sedation, cooling, surveillance, airway, and specialist adjunct intent plus the elapsed report were recorded without selection, dosing, delivery, eligibility, causal, or durable-safety claims.'],
+        ['active-risk-handoff-recorded', 'Rebound mental, psychiatric, pressure, rhythm, temperature, airway, renal and CK injury, seizure, coingestion, safety, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^toxicology-sympathomimetic-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^toxicology-sympathomimetic-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-af-rvr-rhythm-and-stability', 'review-af-rvr-context-and-triggers',
       'record-af-rvr-rate-control-intent', 'record-af-rvr-stroke-prevention-intent',
       'reassess-af-rvr-trajectory-and-follow-up'].includes(objective.id)) {

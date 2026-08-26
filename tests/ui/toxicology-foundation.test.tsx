@@ -16,6 +16,7 @@ import { DIGOXIN_RHYTHM_POTASSIUM } from '../../src/modules/toxicology/scenarios
 import { CHOLINERGIC_PESTICIDE_RESPIRATORY_FAILURE } from '../../src/modules/toxicology/scenarios/cholinergic-pesticide-respiratory-failure';
 import { ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM } from '../../src/modules/toxicology/scenarios/anticholinergic-hyperthermia-delirium';
 import { SEROTONIN_TOXICITY_HYPERTHERMIA_CLONUS } from '../../src/modules/toxicology/scenarios/serotonin-toxicity-hyperthermia-clonus';
+import { SYMPATHOMIMETIC_HYPERADRENERGIC_HYPERTHERMIA } from '../../src/modules/toxicology/scenarios/sympathomimetic-hyperadrenergic-hyperthermia';
 
 describe('Toxicology module user-facing foundation', () => {
   const cockpitMarkup = (
@@ -58,6 +59,7 @@ describe('Toxicology module user-facing foundation', () => {
     onToxicologyCholinergicResponse: () => {},
     onToxicologyAnticholinergicResponse: () => {},
     onToxicologySerotoninResponse: () => {},
+    onToxicologySympathomimeticResponse: () => {},
   } satisfies ActionCockpitProps));
 
   it('renders a calm module index with shared navigation and the exact first lab', () => {
@@ -86,6 +88,8 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('Anticholinergic poisoning: cool the patient, not the clues');
     expect(markup).toContain('href="/toxicology/scenario/serotonin-toxicity-hyperthermia-clonus"');
     expect(markup).toContain('Serotonin toxicity: cool the heat, follow the clonus');
+    expect(markup).toContain('href="/toxicology/scenario/sympathomimetic-hyperadrenergic-hyperthermia"');
+    expect(markup).toContain('Sympathomimetic toxicity: calm the surge, protect the person');
   });
 
   it('briefs the bounded poisoning rehearsal without dose or diagnostic claims', () => {
@@ -334,6 +338,27 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('Follow the clonus, not just the thermometer.');
     expect(markup).toContain('Connect interaction + pattern');
     expect(markup).not.toMatch(/mg\/kg|cooling rate|ice bath|sedative dose|cyproheptadine dose|airway setting/i);
+    expect(markup).not.toContain('<input');
+    expect(markup).not.toContain('<select');
+  });
+
+  it('prerenders and opens the sympathomimetic lab on its calm dignity-first tray', () => {
+    const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/sympathomimetic-hyperadrenergic-hyperthermia' }));
+    expect(page).toContain('<h1>Sympathomimetic toxicity: calm the surge, protect the person</h1>');
+    expect(page).toContain('screen-, pupil-, pressure-, temperature-, or agitation-only closure');
+    expect(crisisResponseAvailability(SYMPATHOMIMETIC_HYPERADRENERGIC_HYPERTHERMIA, []))
+      .toMatchObject({ hasToxicologySympathomimeticResponse: true });
+    expect(crisisResponseAvailability({ ...SYMPATHOMIMETIC_HYPERADRENERGIC_HYPERTHERMIA,
+      metadata: { ...SYMPATHOMIMETIC_HYPERADRENERGIC_HYPERTHERMIA.metadata, id: 'sympathomimetic-clone' } }, []))
+      .toMatchObject({ hasToxicologySympathomimeticResponse: false });
+    const markup = cockpitMarkup(SYMPATHOMIMETIC_HYPERADRENERGIC_HYPERTHERMIA, {
+      toxicologySympathomimeticAssessment: { trajectoryAtTick: null, recognitionAtTick: null,
+        supportAtTick: null, evidenceAtTick: null, reassessmentAtTick: null, handoffAtTick: null },
+    });
+    expect(markup).toContain('Stimulant surge');
+    expect(markup).toContain('Lower the heat. Lower the threat.');
+    expect(markup).toContain('Connect exposure + surge');
+    expect(markup).not.toMatch(/mg\/kg|cooling rate|ice bath|restraint type|sedative dose|antihypertensive dose|airway setting/i);
     expect(markup).not.toContain('<input');
     expect(markup).not.toContain('<select');
   });

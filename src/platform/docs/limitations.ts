@@ -4463,6 +4463,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use the complete verified exposure and clock, serial CNS, autonomic, neuromuscular, airway, temperature, ECG, renal, CK, coingestion, competing-cause, supportive-care and response trajectory under qualified toxicology and resuscitation ownership.',
     briefIn: ['serotonin-toxicity-hyperthermia-clonus'],
   },
+  {
+    id: 'sympathomimetic-exposure-mental-autonomic-hyperthermia-and-response-are-authored',
+    headline: 'The exposure, mental and autonomic pattern, hyperthermia, and later response are authored.',
+    simplification: 'Fixed reports and canonical monitor states stand in for history, examination, exposure verification, core-temperature measurement, ECG, toxicology screen, renal, CK and laboratory acquisition and interpretation, qualified supportive care, and reassessment.',
+    whereItMisleads: 'Treating fictional exposure purity, behavior, pupils, sweating, temperature, pressure, pulse, QRS, CK, de-escalation, cooling, sedation, or later improvement as learner evidence, a universal diagnostic threshold, adjunct eligibility, treatment effect, durable control, psychiatric or cardiac safety, or predicted course.',
+    correctUnderstanding: 'Real care requires direct serial airway, mental-state, psychiatric-safety, core-temperature, autonomic, cardiac, renal, muscle-injury, exposure, coingestion, competing-cause and organ assessment with poison-center or medical-toxicology and resuscitation-team ownership.',
+    briefIn: ['sympathomimetic-hyperadrenergic-hyperthermia'],
+  },
+  {
+    id: 'sympathomimetic-controls-reconcile-recognize-support-review-intent-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, pattern recognition, qualified ownership, evidence review, bounded intent, reassessment, and handoff only.',
+    simplification: 'Six actions stand in for emergency, toxicology, critical-care, nursing, pharmacy, de-escalation, cooling, cardiac, airway, monitoring, laboratory, renal, psychiatric, sedation, seizure, adjunct, compassionate-safety, surveillance, and handoff work.',
+    whereItMisleads: 'Equating button order with history, examination, toxicology-screen, temperature, ECG or laboratory interpretation, diagnosis, differential exclusion, restraint, cooling, prescribing, airway care, adjunct eligibility or delivery, disposition, psychiatric safety, or competence.',
+    correctUnderstanding: 'Actual care requires trained teams, least-restrictive compassionate de-escalation, rapid verified cooling and resuscitation, current local protocols, individualized agitation, cardiovascular and seizure care, specialist adjunct decisions, and serial medical and psychiatric reassessment.',
+    briefIn: ['sympathomimetic-hyperadrenergic-hyperthermia'],
+  },
+  {
+    id: 'no-live-sympathomimetic-diagnosis-restraint-cooling-sedation-cardiovascular-airway-seizure-care-or-outcome',
+    headline: 'The lab does not diagnose stimulant toxicity, restrain, cool or sedate a patient, prescribe cardiovascular care, manage an airway or seizure, or report outcome.',
+    simplification: 'No live history, examination, monitoring, ECG, temperature, toxicology screen, blood gas, chemistry, CK or another test, diagnosis, differential exclusion, restraint, cooling, fluid, sedation, antihypertensive, vasodilator, drug, dose, rate, target, route, access, infusion, airway, ventilation, transport, procedure, disposition, prognosis, safety decision, or outcome is modeled.',
+    whereItMisleads: 'Using one screen, pupil, pressure, temperature, pulse, behavior, ECG interval, laboratory value, or exposure statement alone; copying fictional values into care; selecting restraint, cooling, sedation, cardiovascular therapy, airway or seizure treatment from this rehearsal; attributing the fixed response; or reading completion as competence.',
+    correctUnderstanding: 'Use the complete verified exposure and clock, serial mental, psychiatric, autonomic, airway, temperature, cardiac, renal, CK, coingestion, competing-cause, supportive-care and response trajectory under qualified toxicology and resuscitation ownership.',
+    briefIn: ['sympathomimetic-hyperadrenergic-hyperthermia'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

@@ -1100,6 +1100,9 @@ export function Cockpit({
           onToxicologySerotoninResponse={(action) => session.act({
             type: 'serotonin-toxicity-hyperthermia-clonus-response', payload: { action },
           })}
+          onToxicologySympathomimeticResponse={(action) => session.act({
+            type: 'sympathomimetic-hyperadrenergic-hyperthermia-response', payload: { action },
+          })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },
           })}

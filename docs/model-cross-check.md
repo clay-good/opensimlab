@@ -323,6 +323,15 @@ Recorded here rather than silently carried:
   linezolid label and current AHA drug-related hyperthermia guidance, not an exposure, diagnostic-
   rule, thermoregulation, neuromuscular, gastrointestinal, ECG, renal, CK, cooling, sedation,
   antagonist-response, airway, or individualized-response model.
+  Sympathomimetic hyperadrenergic hyperthermia uses fixed canonical presentation and elapsed-response
+  states: HR 150/min, BP 196/112 mmHg, RR 30/min, SpO2 98%, core T 40.4°C, fearful hypervigilance,
+  severe motor agitation, paranoia, diaphoresis, mydriasis, active bowel sounds, QRS 90 ms, lactate
+  5.2 mmol/L, creatinine 1.2 mg/dL and CK 980 U/L, then qualified de-escalation, GABAergic sedation,
+  cooling and support with T 38.8°C, HR 112/min, BP 152/88 mmHg, RR 22/min and calmer cooperation.
+  These are teaching calibrations grounded in the 2024 ASAM/AAAP stimulant guideline and current AHA
+  sympathomimetic-hyperthermia guidance, not an exposure, toxicology-screen, thermoregulation,
+  autonomic, cardiovascular, psychiatric, renal, CK, cooling, sedation, adjunct-response, airway, or
+  individualized-response model.
 
 ## Concentration-time checks, 2026-08-23
 

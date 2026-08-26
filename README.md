@@ -161,6 +161,15 @@ surveillance, airway-preparedness and specialist serotonin-antagonist rescue int
 temperature and neuromuscular reassessment, and rebound-risk handoff. It exposes no learner diagnosis,
 cooling method, sedative, antagonist product or dose, airway operation, procedure, disposition, or
 outcome control.
+Its twelfth lab, sympathomimetic toxicity where a calmer room is part of resuscitation, couples a
+declared methamphetamine exposure with fearful hypervigilance, severe motor agitation, paranoia,
+diaphoresis, mydriasis, tachycardia, hypertension, life-threatening hyperthermia, and supplied ECG,
+acid-base, renal and CK evidence while deliberately withholding clonus and a serotonergic interaction.
+It adds qualified de-escalation, cooling, cardiac, psychiatric and compassionate-safety ownership,
+bounded GABAergic sedation and persistent-hyperadrenergic adjunct intent, strict elapsed temperature,
+pressure and mental-state reassessment, and medical and psychiatric active-risk handoff. It exposes no
+learner diagnosis, restraint, cooling method, sedative or cardiovascular product or dose, airway
+operation, procedure, disposition, or outcome control.
 
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage

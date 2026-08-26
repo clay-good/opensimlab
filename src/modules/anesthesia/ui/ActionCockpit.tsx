@@ -1230,6 +1230,11 @@ export interface ActionCockpitProps {
       readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly toxicologySympathomimeticAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2146,6 +2151,14 @@ export interface ActionCockpitProps {
       | 'record-toxicology-serotonin-bounded-qualified-source-cessation-cooling-support-sedation-seizure-surveillance-airway-and-antagonist-intent-with-strict-later-review'
       | 'handoff-toxicology-serotonin-rebound-hyperthermia-clonus-rigidity-seizure-rhabdomyolysis-coingestion-airway-and-active-risk',
   ) => void;
+  readonly onToxicologySympathomimeticResponse?: (
+    action: 'reconcile-toxicology-sympathomimetic-exposure-clock-agitation-autonomic-temperature-and-whole-patient'
+      | 'recognize-toxicology-sympathomimetic-coupled-pattern-without-screen-pupil-pressure-temperature-or-agitation-only-closure'
+      | 'activate-toxicology-sympathomimetic-deescalation-resuscitation-cooling-airway-toxicology-monitoring-and-compassionate-safety-ownership'
+      | 'review-toxicology-sympathomimetic-supplied-mental-autonomic-cardiac-temperature-renal-ck-and-differential-boundary'
+      | 'record-toxicology-sympathomimetic-bounded-qualified-deescalation-support-sedation-cooling-surveillance-airway-and-adjunct-intent-with-strict-later-review'
+      | 'handoff-toxicology-sympathomimetic-rebound-agitation-psychosis-suicidality-ischemia-arrhythmia-hyperthermia-rhabdomyolysis-coingestion-airway-and-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2687,6 +2700,10 @@ export function crisisResponseAvailability(
       scenario.metadata.id === 'serotonin-toxicity-hyperthermia-clonus'
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'serotonin-toxicity-hyperthermia-clonus-transition')
       && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'serotonin-toxicity-hyperthermia-clonus-transition-boundary'),
+    hasToxicologySympathomimeticResponse:
+      scenario.metadata.id === 'sympathomimetic-hyperadrenergic-hyperthermia'
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'sympathomimetic-hyperadrenergic-hyperthermia-transition')
+      && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'sympathomimetic-hyperadrenergic-hyperthermia-transition-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2897,6 +2914,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'cholinergic-pesticide-respiratory-failure-transition')
       || (event.type === 'narrative' && event.target === 'anticholinergic-hyperthermia-delirium-transition')
       || (event.type === 'narrative' && event.target === 'serotonin-toxicity-hyperthermia-clonus-transition')
+      || (event.type === 'narrative' && event.target === 'sympathomimetic-hyperadrenergic-hyperthermia-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2995,6 +3013,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasToxicologyCholinergicResponse,
     hasToxicologyAnticholinergicResponse,
     hasToxicologySerotoninResponse,
+    hasToxicologySympathomimeticResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3120,8 +3139,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasToxicologyCholinergicResponse
     || hasToxicologyAnticholinergicResponse
     || hasToxicologySerotoninResponse
+    || hasToxicologySympathomimeticResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasToxicologySerotoninResponse
+  const responseTray = hasToxicologySympathomimeticResponse
+    ? { id: 'crisis', label: 'Stimulant surge' } as const
+    : hasToxicologySerotoninResponse
     ? { id: 'crisis', label: 'Serotonin heat' } as const
     : hasToxicologyAnticholinergicResponse
     ? { id: 'crisis', label: 'Anticholinergic heat' } as const
@@ -4330,6 +4352,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasToxicologySerotoninResponse && (
               <ToxicologySerotoninTray assessment={props.resuscitation.toxicologySerotoninAssessment}
                 onAction={props.onToxicologySerotoninResponse ?? (() => {})} />
+            )}
+            {hasToxicologySympathomimeticResponse && (
+              <ToxicologySympathomimeticTray assessment={props.resuscitation.toxicologySympathomimeticAssessment}
+                onAction={props.onToxicologySympathomimeticResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -10999,6 +11025,38 @@ function ToxicologySerotoninTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-serotonin-bounded-qualified-source-cessation-cooling-support-sedation-seizure-surveillance-airway-and-antagonist-intent-with-strict-later-review')}>Record rescue intent + reassess</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-serotonin-rebound-hyperthermia-clonus-rigidity-seizure-rhabdomyolysis-coingestion-airway-and-active-risk')}>Hand off what can rebound</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function ToxicologySympathomimeticTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['toxicologySympathomimeticAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onToxicologySympathomimeticResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const support = assessment?.supportAtTick != null;
+  const evidence = assessment?.evidenceAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="toxicology-sympathomimetic-early-title">
+      <div id="toxicology-sympathomimetic-early-title" className="syringe__name">Lower the heat. Lower the threat.</div>
+      <p className="syringe__remaining">Begin with exposure, clock, fear, agitation, sweating, pupils, bowel activity, pressure, pulse, temperature, and whole person.</p>
+      <div className="crisis-drug__actions">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-toxicology-sympathomimetic-exposure-clock-agitation-autonomic-temperature-and-whole-patient')}>Connect exposure + surge</Button>}
+        {trajectory && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-toxicology-sympathomimetic-coupled-pattern-without-screen-pupil-pressure-temperature-or-agitation-only-closure')}>Recognize the whole pattern</Button>}
+        {recognition && !support && <Button className="crisis-drug__action" onClick={() => onAction('activate-toxicology-sympathomimetic-deescalation-resuscitation-cooling-airway-toxicology-monitoring-and-compassionate-safety-ownership')}>Make the room safer</Button>}
+        {support && !evidence && <Button className="crisis-drug__action" onClick={() => onAction('review-toxicology-sympathomimetic-supplied-mental-autonomic-cardiac-temperature-renal-ck-and-differential-boundary')}>Review surge + hidden harm</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="toxicology-sympathomimetic-later-title">
+      <div id="toxicology-sympathomimetic-later-title" className="syringe__name">Calmer is safer. It is not the same as safe.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Mental state, psychiatric safety, pressure, rhythm, temperature, airway, renal and CK injury, seizure, coingestion, and outcome uncertainty handed off.' : reassessment ? 'Temperature, pressure, pulse, and agitation improved. Durable control, cardiac safety, psychiatric safety, and treatment effect remain unproven.' : evidence ? 'Mental, autonomic, cardiac, temperature, renal, CK, coingestion, and differential evidence stay coupled. Record qualified intent after time passes.' : support ? 'De-escalation, cooling, resuscitation, cardiac, airway, toxicology, psychiatric, monitoring, and compassionate safety ownership are active. Review the supplied evidence.' : 'Complete whole-pattern recognition and safety ownership before the treatment-boundary review.'}</p>
+      <div className="crisis-drug__actions">
+        {evidence && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('record-toxicology-sympathomimetic-bounded-qualified-deescalation-support-sedation-cooling-surveillance-airway-and-adjunct-intent-with-strict-later-review')}>Record calming intent + reassess</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-toxicology-sympathomimetic-rebound-agitation-psychosis-suicidality-ischemia-arrhythmia-hyperthermia-rhabdomyolysis-coingestion-airway-and-active-risk')}>Hand off what can rebound</Button>}
       </div>
     </section>
   </>;

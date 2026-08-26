@@ -695,6 +695,21 @@ credited toward the catalog until every item in the completion contract passes.
     interpretation, rule calculation, diagnosis, differential exclusion, cooling, fluid, sedation,
     serotonin antagonist, drug, dose, rate, target, route, access, infusion, airway, ventilation,
     procedure, safety disposition, prognosis, or outcome control exists.
+  - [x] Toxicology slice 12/15 adds declared sympathomimetic hyperadrenergic hyperthermia. The learner
+    reconciles a methamphetamine exposure, 70-minute clock, hypervigilance, severe motor agitation,
+    paranoia, diaphoresis, mydriasis, tachycardia, hypertension, core T 40.4°C and supplied ECG,
+    acid-base, lactate, renal and CK evidence; recognizes the coupled pattern without screen-, pupil-,
+    pressure-, temperature- or agitation-only closure; activates qualified de-escalation, cooling,
+    resuscitation, cardiac, airway, toxicology, monitoring, psychiatric and compassionate-safety
+    ownership; reviews ischemia, arrhythmia, seizure, rhabdomyolysis, coingestion and differential
+    boundaries; records bounded qualified support, GABAergic sedation, cooling, surveillance, airway-
+    preparedness and specialist persistent-hyperadrenergic adjunct intent; then reviews a strict
+    elapsed fixed report before another elapsed medical, psychiatric and active-risk handoff. No
+    learner history, examination, monitoring, ECG, temperature, toxicology-screen, blood-gas,
+    chemistry, CK or test acquisition or interpretation, diagnosis, differential exclusion,
+    restraint, cooling, fluid, sedation, cardiovascular therapy, drug, dose, rate, target, route,
+    access, infusion, airway, ventilation, procedure, safety disposition, prognosis, or outcome
+    control exists.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.
 - [ ] After every wave, verify the exact cumulative count, distinctness, capability reuse, path and
