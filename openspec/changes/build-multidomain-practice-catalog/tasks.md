@@ -662,6 +662,22 @@ credited toward the catalog until every item in the completion contract passes.
     decontamination, oxygen, suction, fluid, atropine, pralidoxime, benzodiazepine, drug, dose, rate,
     target, route, access, infusion, airway, ventilation, neuromuscular blocker, procedure, workplace
     clearance, safety disposition, prognosis, or outcome control exists.
+  - [x] Toxicology slice 10/15 adds declared isolated anticholinergic hyperthermia and delirium. The
+    learner reconciles product, 3-hour clock, severe delirium, mydriasis, dry flushed skin and mucosa,
+    absent sweating, reduced bowel sounds, urinary retention, sinus tachycardia, core T 40.3°C,
+    supplied normal-width QRS, acid-base, lactate, renal and CK evidence; recognizes the coupled
+    central and peripheral antimuscarinic pattern without mnemonic-, temperature-, pupil- or dryness-
+    only closure; activates qualified cooling, resuscitation, airway, toxicology, monitoring, bladder,
+    renal and compassionate-safety ownership; reviews coingestion, exposure-purity, seizure,
+    rhabdomyolysis and competing-syndrome boundaries; records bounded qualified cooling, supportive,
+    sedation, seizure, serial laboratory, bladder and toxicologist-led physostigmine-eligibility
+    intent; then reviews a strict elapsed fixed cooling report with persistent confusion and urinary
+    retention before another elapsed rebound, hyperthermia, renal, CK, seizure, coingestion and
+    active-risk handoff. No learner history, examination, monitoring, ECG, temperature, blood-gas,
+    chemistry, CK, urine or test acquisition or interpretation, diagnosis, differential exclusion,
+    cooling, fluid, restraint, catheter, sedation, physostigmine, drug, dose, rate, target, route,
+    access, infusion, airway, ventilation, procedure, safety disposition, prognosis, or outcome
+    control exists.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.
 - [ ] After every wave, verify the exact cumulative count, distinctness, capability reuse, path and

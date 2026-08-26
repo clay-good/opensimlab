@@ -2447,6 +2447,27 @@ precedes another elapsed recurrence, intermediate-syndrome, secondary-exposure, 
 handoff. The canonical state is not an exposure, cholinesterase, secretion, respiratory, neuromuscular,
 antidote-response, decontamination, airway, ventilation, seizure, or individualized-response model.
 
+### Wave F toxicology slice 10: anticholinergic hyperthermia and delirium
+
+The tenth Toxicology lab owns the coupled exposure, central delirium, peripheral antimuscarinic,
+hyperthermia, urinary-retention, ECG, complication-surveillance, supportive-care, and antidote-
+eligibility pattern of a declared isolated benztropine exposure rather than duplicating tricyclic
+sodium-channel cardiotoxicity, serotonin syndrome, sympathomimetic toxicity, malignant hyperthermia,
+or generic heat illness. The learner reconciles a 3-hour clock, severe delirium, mydriasis, dry
+flushed skin and mucosa, absent sweating, reduced bowel sounds, urinary retention, HR 138/min,
+T 40.3°C, supplied QRS 86 ms without a terminal rightward aVR pattern, acid-base, lactate, renal and
+CK evidence; recognizes the coupled central and peripheral pattern without mnemonic-, temperature-,
+pupil-, or dryness-only closure; activates qualified rapid cooling, resuscitation, airway, toxicology,
+monitoring, bladder, renal and compassionate-safety ownership; and reviews coingestion, exposure-
+purity, seizure, rhabdomyolysis and competing-syndrome boundaries. Bounded qualified cooling and
+supportive care, sedation or seizure care if needed, serial temperature, renal, CK and bladder
+surveillance, and toxicologist-led physostigmine eligibility intent exposes no method, product, dose,
+rate, target, route, access, restraint, catheter, airway, or delivery. A strict elapsed fixed cooling
+and mental-state report with persistent confusion and urinary retention precedes another elapsed
+rebound, hyperthermia, renal, CK, seizure, coingestion and active-risk handoff. The canonical state is
+not an exposure, receptor, thermoregulation, delirium, ECG, renal, CK, urinary, cooling, sedation,
+antidote-response, airway, or individualized-response model.
+
 #### Hematology and oncology: 11
 
 Neutropenic fever; tumor-lysis syndrome; hyperleukocytosis pattern; sickle-cell acute chest syndrome;

@@ -1760,6 +1760,17 @@
         "GB"
       ],
       "fidelityClass": "state_transition"
+    },
+    {
+      "scenarioId": "anticholinergic-hyperthermia-delirium",
+      "contentVersion": "0.1.0",
+      "moduleId": "toxicology",
+      "maturity": "draft",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition"
     }
   ]
 }

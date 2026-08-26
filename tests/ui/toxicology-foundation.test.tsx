@@ -14,6 +14,7 @@ import { BETA_BLOCKER_CARDIOGENIC_SHOCK } from '../../src/modules/toxicology/sce
 import { CALCIUM_CHANNEL_BLOCKER_SHOCK } from '../../src/modules/toxicology/scenarios/calcium-channel-blocker-shock';
 import { DIGOXIN_RHYTHM_POTASSIUM } from '../../src/modules/toxicology/scenarios/digoxin-rhythm-potassium';
 import { CHOLINERGIC_PESTICIDE_RESPIRATORY_FAILURE } from '../../src/modules/toxicology/scenarios/cholinergic-pesticide-respiratory-failure';
+import { ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM } from '../../src/modules/toxicology/scenarios/anticholinergic-hyperthermia-delirium';
 
 describe('Toxicology module user-facing foundation', () => {
   const cockpitMarkup = (
@@ -54,6 +55,7 @@ describe('Toxicology module user-facing foundation', () => {
     onToxicologyCalciumChannelBlockerResponse: () => {},
     onToxicologyDigoxinResponse: () => {},
     onToxicologyCholinergicResponse: () => {},
+    onToxicologyAnticholinergicResponse: () => {},
   } satisfies ActionCockpitProps));
 
   it('renders a calm module index with shared navigation and the exact first lab', () => {
@@ -78,6 +80,8 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('Digoxin toxicity: read the rhythm and potassium together');
     expect(markup).toContain('href="/toxicology/scenario/cholinergic-pesticide-respiratory-failure"');
     expect(markup).toContain('Cholinergic poisoning: protect the team, then clear the air');
+    expect(markup).toContain('href="/toxicology/scenario/anticholinergic-hyperthermia-delirium"');
+    expect(markup).toContain('Anticholinergic poisoning: cool the patient, not the clues');
   });
 
   it('briefs the bounded poisoning rehearsal without dose or diagnostic claims', () => {
@@ -284,6 +288,27 @@ describe('Toxicology module user-facing foundation', () => {
     expect(markup).toContain('Protect the rescuers before the first touch.');
     expect(markup).toContain('Connect exposure + breathing');
     expect(markup).not.toMatch(/mg\/kg|mL\/kg|wash for|intubation device|ventilator setting/i);
+    expect(markup).not.toContain('<input');
+    expect(markup).not.toContain('<select');
+  });
+
+  it('prerenders and opens the anticholinergic lab on its calm cooling-first tray', () => {
+    const page = renderToStaticMarkup(createElement(PrerenderedBody, { path: '/toxicology/scenario/anticholinergic-hyperthermia-delirium' }));
+    expect(page).toContain('<h1>Anticholinergic poisoning: cool the patient, not the clues</h1>');
+    expect(page).toContain('mnemonic-, temperature-, pupil-, or dryness-only closure');
+    expect(crisisResponseAvailability(ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM, []))
+      .toMatchObject({ hasToxicologyAnticholinergicResponse: true });
+    expect(crisisResponseAvailability({ ...ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM,
+      metadata: { ...ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM.metadata, id: 'anticholinergic-clone' } }, []))
+      .toMatchObject({ hasToxicologyAnticholinergicResponse: false });
+    const markup = cockpitMarkup(ANTICHOLINERGIC_HYPERTHERMIA_DELIRIUM, {
+      toxicologyAnticholinergicAssessment: { trajectoryAtTick: null, recognitionAtTick: null,
+        supportAtTick: null, evidenceAtTick: null, reassessmentAtTick: null, handoffAtTick: null },
+    });
+    expect(markup).toContain('Anticholinergic heat');
+    expect(markup).toContain('Cool the patient. Keep the differential warm.');
+    expect(markup).toContain('Connect heat + delirium');
+    expect(markup).not.toMatch(/mg\/kg|cooling rate|ice bath|restraint type|catheter size|physostigmine dose/i);
     expect(markup).not.toContain('<input');
     expect(markup).not.toContain('<select');
   });

@@ -4415,6 +4415,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use the complete verified product and route, serial airway, ventilation, secretion, bronchospasm, neuromuscular, CNS, seizure, contamination, co-worker, laboratory, antidote, decontamination, prior-care, and response trajectory under qualified toxicology and resuscitation ownership.',
     briefIn: ['cholinergic-pesticide-respiratory-failure'],
   },
+  {
+    id: 'anticholinergic-exposure-delirium-hyperthermia-retention-ecg-and-response-are-authored',
+    headline: 'The exposure, delirium, hyperthermia, retention, ECG, and later response are authored.',
+    simplification: 'Fixed reports and canonical monitor states stand in for history, examination, exposure verification, core-temperature measurement, ECG, urinary, renal, CK and laboratory acquisition and interpretation, qualified supportive care, and reassessment.',
+    whereItMisleads: 'Treating fictional exposure purity, delirium, pupil, dry skin, temperature, pulse, retention, QRS, CK, cooling, sedation, or later improvement as learner evidence, a universal diagnostic threshold, antidote eligibility, treatment effect, durable cooling, or predicted course.',
+    correctUnderstanding: 'Real care requires direct serial airway, mental-state, core-temperature, cardiac, urine, renal, muscle-injury, exposure, coingestion, competing-cause and organ assessment with poison-center or medical-toxicology and resuscitation-team ownership.',
+    briefIn: ['anticholinergic-hyperthermia-delirium'],
+  },
+  {
+    id: 'anticholinergic-controls-reconcile-recognize-support-review-intent-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, pattern recognition, qualified ownership, evidence review, bounded intent, reassessment, and handoff only.',
+    simplification: 'Six actions stand in for emergency, toxicology, critical-care, nursing, pharmacy, cooling, airway, monitoring, laboratory, renal, bladder, sedation, seizure, antidote, compassionate-safety, surveillance, and handoff work.',
+    whereItMisleads: 'Equating button order with history, examination, core-temperature, ECG or laboratory interpretation, diagnosis, differential exclusion, cooling, restraint, catheterization, prescribing, antidote eligibility or delivery, disposition, or competence.',
+    correctUnderstanding: 'Actual care requires trained teams, rapid verified cooling and resuscitation, least-restrictive compassionate safety, current local protocols, individualized supportive, agitation, seizure and bladder care, toxicologist-led antidote decisions, and serial reassessment.',
+    briefIn: ['anticholinergic-hyperthermia-delirium'],
+  },
+  {
+    id: 'no-live-anticholinergic-diagnosis-cooling-restraint-sedation-physostigmine-bladder-care-or-outcome',
+    headline: 'The lab does not diagnose poisoning, cool or restrain a patient, prescribe sedation or physostigmine, manage retention, or report outcome.',
+    simplification: 'No live history, examination, monitoring, ECG, temperature, blood gas, chemistry, CK, urine or another test, diagnosis, differential exclusion, cooling, fluid, restraint, catheter, sedation, physostigmine, drug, dose, rate, target, route, access, infusion, airway, ventilation, transport, procedure, disposition, prognosis, safety decision, or outcome is modeled.',
+    whereItMisleads: 'Using one mnemonic, pupil, dry surface, temperature, pulse, ECG interval, laboratory value, or exposure statement alone; copying fictional values into care; selecting a cooling method, restraint, catheter, product, dose, airway, seizure treatment, or antidote from this rehearsal; attributing the fixed response; or reading completion as competence.',
+    correctUnderstanding: 'Use the complete verified product and clock, serial CNS, airway, temperature, sweating, neuromuscular, ECG, urinary, renal, CK, coingestion, exposure-purity, competing-cause, supportive-care and response trajectory under qualified toxicology and resuscitation ownership.',
+    briefIn: ['anticholinergic-hyperthermia-delirium'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

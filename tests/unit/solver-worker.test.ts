@@ -46,7 +46,7 @@ const lastState = () => {
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
   it('Scenario: Toxicology cholinergic state has protocol version 156', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(156);
+    expect(WORKER_PROTOCOL_VERSION).toBe(157);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

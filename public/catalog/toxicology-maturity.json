@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "toxicology",
-  "recordCount": 9,
+  "recordCount": 10,
   "records": [
     {
       "recordId": "scenario:methemoglobinemia-saturation-gap@0.1.0",
@@ -100,6 +100,17 @@
       "evidence": [
         "/catalog/toxicology-completion-audit.json#cholinergic-pesticide-respiratory-failure@0.1.0",
         "/catalog/toxicology-quality-audit.json#cholinergic-pesticide-respiratory-failure@0.1.0"
+      ]
+    },
+    {
+      "recordId": "scenario:anticholinergic-hyperthermia-delirium@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "anticholinergic-hyperthermia-delirium",
+      "contentVersion": "0.1.0",
+      "status": "draft",
+      "evidence": [
+        "/catalog/toxicology-completion-audit.json#anticholinergic-hyperthermia-delirium@0.1.0",
+        "/catalog/toxicology-quality-audit.json#anticholinergic-hyperthermia-delirium@0.1.0"
       ]
     }
   ]

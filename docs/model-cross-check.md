@@ -304,6 +304,15 @@ Recorded here rather than silently carried:
   are teaching calibrations grounded in current AHA and EPA guidance, not an exposure,
   cholinesterase, secretion, respiratory, neuromuscular, antidote-response, decontamination, airway,
   ventilation, seizure, or individualized-response model.
+  Anticholinergic hyperthermia and delirium uses fixed canonical presentation and elapsed-response
+  states: HR 138/min, BP 132/78 mmHg, RR 24/min, SpO2 98%, core T 40.3°C, severe agitated delirium,
+  dry flushed skin and mucosa, mydriasis, reduced bowel sounds, urinary retention, QRS 86 ms,
+  lactate 3.2 mmol/L, creatinine 1.1 mg/dL and CK 820 U/L, then qualified active cooling, supportive
+  care and sedation with T 38.6°C, HR 106/min, BP 124/72 mmHg and calmer but persistent confusion and
+  urinary retention. These are teaching calibrations grounded in current AHA hyperthermia guidance
+  and the NLM anticholinergic-toxicity review, not an exposure, receptor, thermoregulation, delirium,
+  ECG, renal, CK, urinary, cooling, sedation, antidote-response, airway, or individualized-response
+  model.
 
 ## Concentration-time checks, 2026-08-23
 

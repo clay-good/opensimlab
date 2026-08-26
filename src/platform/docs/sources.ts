@@ -3118,6 +3118,27 @@ export const SOURCES: readonly Source[] = [
     verifiedAgainst: 'https://www.epa.gov/sites/default/files/documents/rmpp_6thed_ch5_organophosphates.pdf',
     verifiedOn: '2026-08-26',
   },
+  {
+    id: 'aha-life-threatening-hyperthermia-2025',
+    authors: 'American Heart Association',
+    title: 'Part 10: Adult and Pediatric Special Circumstances of Resuscitation',
+    publication: '2025 Guidelines for CPR and ECC', year: 2025,
+    locator: 'Section 16.2, Recommendations for Adults With Life-Threatening Hyperthermia',
+    usedFor: 'Core temperature above 40 C as life-threatening hyperthermia; concurrent standard resuscitation and active cooling; rapid cooling and stop-point context; and the non-malignant-hyperthermia dantrolene boundary.',
+    verifiedAgainst: 'https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-and-pediatric-special-circumstances-of-resuscitation',
+    verifiedOn: '2026-08-26',
+  },
+  {
+    id: 'statpearls-anticholinergic-toxicity-2023',
+    currency: { lastAmended: '2023-04-30', checkedAt: '2026-08-26' },
+    authors: 'Broderick ED, Metheny H, Crosby B',
+    title: 'Anticholinergic Toxicity',
+    publication: 'StatPearls', year: 2023,
+    locator: 'Last update 2023-04-30; History and Physical, Evaluation, Treatment / Management, Differential Diagnosis, and Complications',
+    usedFor: 'Coupled central and peripheral antimuscarinic findings, ECG and complication surveillance, supportive care, cooling, sedation, urinary-retention and rhabdomyolysis context, competing syndromes, and specialist-bounded physostigmine eligibility.',
+    verifiedAgainst: 'https://www.ncbi.nlm.nih.gov/books/NBK534798/',
+    verifiedOn: '2026-08-26',
+  },
 ];
 
 /** Look a source up by id. Throws rather than returning a silent undefined. */

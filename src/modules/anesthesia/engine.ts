@@ -416,6 +416,10 @@ const TOXICOLOGY_CHOLINERGIC_BLOCKED_ACTION_TYPES = new Set([
   ...TOXICOLOGY_DIGOXIN_BLOCKED_ACTION_TYPES,
   'digoxin-rhythm-potassium-response',
 ]);
+const TOXICOLOGY_ANTICHOLINERGIC_BLOCKED_ACTION_TYPES = new Set([
+  ...TOXICOLOGY_CHOLINERGIC_BLOCKED_ACTION_TYPES,
+  'cholinergic-pesticide-respiratory-failure-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1307,6 +1311,12 @@ export class AnesthesiaEngine {
   private toxicologyCholinergicEvidenceAtTick: number | null = null;
   private toxicologyCholinergicReassessmentAtTick: number | null = null;
   private toxicologyCholinergicHandoffAtTick: number | null = null;
+  private toxicologyAnticholinergicTrajectoryAtTick: number | null = null;
+  private toxicologyAnticholinergicRecognitionAtTick: number | null = null;
+  private toxicologyAnticholinergicSupportAtTick: number | null = null;
+  private toxicologyAnticholinergicEvidenceAtTick: number | null = null;
+  private toxicologyAnticholinergicReassessmentAtTick: number | null = null;
+  private toxicologyAnticholinergicHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2148,6 +2158,15 @@ export class AnesthesiaEngine {
         'This Toxicology lesson exposes no generic examination, monitoring, blood-gas, cholinesterase or laboratory interpretation, '
         + 'clothing removal, irrigation, decontamination, oxygen, suction, fluid, atropine, pralidoxime, benzodiazepine, drug, dose, route, '
         + 'access, infusion, airway, ventilation, neuromuscular blocker, transport, procedure, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const toxicologyAnticholinergic = this.scenario.metadata.id === 'anticholinergic-hyperthermia-delirium'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'anticholinergic-hyperthermia-delirium-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'anticholinergic-hyperthermia-delirium-transition-boundary');
+    if (toxicologyAnticholinergic && TOXICOLOGY_ANTICHOLINERGIC_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `toxicology-anticholinergic-generic-action-refused-${this.currentTick}`,
+        'This Toxicology lesson exposes no generic examination, monitoring, ECG, temperature, blood-gas, CK, urine or laboratory interpretation, '
+        + 'cooling, fluid, restraint, catheter, sedation, physostigmine, drug, dose, route, access, infusion, airway, ventilation, transport, '
+        + 'procedure, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -10388,6 +10407,32 @@ export class AnesthesiaEngine {
         if (this.toxicologyCholinergicHandoffAtTick !== null) { this.log('warning', 'assessment', `toxicology-cholinergic-handoff-refused-${this.currentTick}`, 'The recurrent secretions, bronchospasm, weakness, intermediate-syndrome, exposure, seizure, and active-risk handoff was already recorded.'); break; }
         this.toxicologyCholinergicHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-cholinergic-active-risk-handoff-recorded-${this.currentTick}`, 'Serial airway and ventilation, secretions, bronchospasm, oxygenation, strength, CNS, seizure, secondary exposure, decontamination, recurrent toxicity, delayed intermediate syndrome, antidote and airway contingencies, occupational and compassionate safety, disposition, prognosis, and outcome uncertainty were handed off.', { durableVentilationProven: false, neuromuscularRecoveryProven: false, decontaminationCompleteProven: false, coWorkerSafetyProven: false, seizureExcluded: false, safetyDispositionDetermined: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
       }
+      case 'anticholinergic-hyperthermia-delirium-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'anticholinergic-hyperthermia-delirium'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'anticholinergic-hyperthermia-delirium-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'anticholinergic-hyperthermia-delirium-transition-boundary');
+        const actions = ['reconcile-toxicology-anticholinergic-product-clock-delirium-temperature-dryness-retention-ecg-and-whole-patient',
+          'recognize-toxicology-anticholinergic-central-and-peripheral-pattern-without-mnemonic-temperature-or-pupil-only-closure',
+          'activate-toxicology-anticholinergic-resuscitation-cooling-airway-toxicology-monitoring-and-compassionate-safety-ownership',
+          'review-toxicology-anticholinergic-supplied-temperature-cns-ecg-renal-ck-retention-and-differential-boundary',
+          'record-toxicology-anticholinergic-bounded-qualified-cooling-support-sedation-seizure-surveillance-and-physostigmine-eligibility-intent-with-strict-later-review',
+          'handoff-toxicology-anticholinergic-rebound-delirium-hyperthermia-retention-rhabdomyolysis-seizure-coingestion-and-active-risk'] as const;
+        if (!supported || !actions.includes(response as typeof actions[number])) { this.log('warning', 'assessment', `toxicology-anticholinergic-response-refused-${this.currentTick}`, supported ? 'The anticholinergic action was not listed. No supplied or injected text was retained.' : 'These anticholinergic choices are available only in the exact declared Toxicology lesson.'); break; }
+        if (response === actions[0]) { if (this.toxicologyAnticholinergicTrajectoryAtTick !== null) { this.log('warning', 'assessment', `toxicology-anticholinergic-trajectory-refused-${this.currentTick}`, 'The product, clock, delirium, temperature, dryness, retention, ECG, and whole-patient state were already reconciled.'); break; } this.toxicologyAnticholinergicTrajectoryAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-anticholinergic-trajectory-reconciled-${this.currentTick}`, 'Declared benztropine-only exposure, 3-hour clock, severe delirium, mydriasis, dry flushed skin and mucosa, urinary retention, reduced bowel sounds, hyperthermia, tachycardia, supplied ECG, and whole-patient state were connected. The learner did not take history, examine, acquire or interpret monitoring or tests, or diagnose.', { exposureAuthored: true, hoursPostIngestion: 3, patientHistoryTakenByLearner: false, patientExaminedByLearner: false }); break; }
+        if (this.toxicologyAnticholinergicTrajectoryAtTick === null) { this.log('warning', 'assessment', `toxicology-anticholinergic-trajectory-order-refused-${this.currentTick}`, 'Reconcile product, clock, delirium, temperature, dryness, retention, ECG, and whole patient first.'); break; }
+        if (response === actions[1]) { if (this.toxicologyAnticholinergicRecognitionAtTick !== null) { this.log('warning', 'assessment', `toxicology-anticholinergic-recognition-refused-${this.currentTick}`, 'The coupled central and peripheral anticholinergic pattern and single-cue boundary were already recognized.'); break; } this.toxicologyAnticholinergicRecognitionAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-anticholinergic-pattern-recognized-${this.currentTick}`, 'Declared exposure, severe central delirium, peripheral antimuscarinic findings, life-threatening hyperthermia, and sinus tachycardia form an authored anticholinergic pattern. One mnemonic, pupil, dry surface, temperature, pulse, ECG interval, or laboratory value alone neither diagnoses nor grades the case.', { anticholinergicPatternRecognized: true, centralPatternRecognized: true, peripheralPatternRecognized: true, mnemonicUsedAlone: false, temperatureUsedAlone: false, diagnosisMadeByLearner: false }); break; }
+        if (this.toxicologyAnticholinergicRecognitionAtTick === null) { this.log('warning', 'assessment', `toxicology-anticholinergic-recognition-order-refused-${this.currentTick}`, 'Recognize the coupled central and peripheral anticholinergic pattern before support or evidence review.'); break; }
+        if (response === actions[2]) { if (this.toxicologyAnticholinergicSupportAtTick !== null) { this.log('warning', 'assessment', `toxicology-anticholinergic-support-refused-${this.currentTick}`, 'Qualified resuscitation, cooling, airway, toxicology, monitoring, and compassionate safety ownership are already active.'); break; } this.toxicologyAnticholinergicSupportAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-anticholinergic-support-activated-${this.currentTick}`, 'Emergency, critical-care, nursing, pharmacy, rapid-cooling, airway, poison-center or medical-toxicology, laboratory, renal, bladder, monitoring, and compassionate-safety ownership were recorded. The learner selected or performed no restraint, cooling method, catheter, drug, dose, route, access, airway, or procedure.', { qualifiedSupportActive: true, qualifiedCoolingOwnershipActive: true, compassionateSafetyOwnershipActive: true, treatmentSelectedByLearner: false }); break; }
+        if (this.toxicologyAnticholinergicSupportAtTick === null) { this.log('warning', 'assessment', `toxicology-anticholinergic-support-order-refused-${this.currentTick}`, 'Activate qualified resuscitation, cooling, airway, toxicology, monitoring, and safety ownership before evidence review.'); break; }
+        if (response === actions[3]) { if (this.toxicologyAnticholinergicEvidenceAtTick !== null) { this.log('warning', 'assessment', `toxicology-anticholinergic-evidence-refused-${this.currentTick}`, 'The supplied temperature, CNS, ECG, renal, CK, retention, coingestion, and competing-syndrome boundary was already reviewed.'); break; } this.toxicologyAnticholinergicEvidenceAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-anticholinergic-evidence-reviewed-${this.currentTick}`, 'Supplied T 40.3 C, severe delirium, dry flushed skin, absent sweating, urinary retention, reduced bowel sounds, sinus tachycardia 138, QRS 86 without a terminal rightward aVR pattern, pH 7.36, bicarbonate 21, lactate 3.2, sodium 142, potassium 3.8, glucose 118, creatinine 1.1, CK 820, absent clonus, hyperreflexia, rigidity, fasciculation and secretion excess, coingestion limits, exposure-purity uncertainty, and competing-syndrome boundaries were integrated. The learner acquired, calculated, interpreted, selected, delivered, diagnosed, excluded, or determined no eligibility.', { temperatureCnsEcgRenalCkRetentionAndDifferentialEvidenceAuthored: true, ecgInterpretedByLearner: false, diagnosisMadeByLearner: false, alternativeExcludedByLearner: false, antidoteEligibilityDetermined: false }); break; }
+        if (this.toxicologyAnticholinergicEvidenceAtTick === null) { this.log('warning', 'assessment', `toxicology-anticholinergic-evidence-order-refused-${this.currentTick}`, 'Review supplied temperature, CNS, ECG, renal, CK, retention, coingestion, and differential evidence before qualified intent.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.toxicologyAnticholinergicEvidenceAtTick) { this.log('warning', 'assessment', `toxicology-anticholinergic-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before qualified cooling, support, sedation, surveillance, and antidote-eligibility intent and strict later review.'); break; } if (this.toxicologyAnticholinergicReassessmentAtTick !== null) { this.log('warning', 'assessment', `toxicology-anticholinergic-reassessment-refused-${this.currentTick}`, 'Qualified intent with the strict later report was already reviewed.'); break; } this.toxicologyAnticholinergicReassessmentAtTick = this.currentTick; this.rhythm = 'sinus-tachycardia'; this.log('critical', 'assessment', `toxicology-anticholinergic-intent-and-reassessment-recorded-${this.currentTick}`, 'Qualified rapid cooling and supportive care, sedation or seizure care if needed, serial temperature, renal, CK and bladder surveillance, and toxicologist-led physostigmine eligibility intent were recorded without method, product, dose, rate, target, route, access, restraint, catheter, or delivery. Strict 30-minute report: active cooling and supportive care plus qualified sedation were reported; T 38.6 C, HR 106, BP 124/72 (MAP 89), mentation calmer but still confused, and urinary retention persists. This does not prove individualized treatment effect, exposure purity, durable temperature control, renal safety, rhabdomyolysis exclusion, seizure exclusion, disposition, or outcome.', { qualifiedCoolingSupportIntentRecorded: true, qualifiedSedationSeizureIntentRecorded: true, qualifiedTemperatureRenalCkBladderSurveillanceRecorded: true, qualifiedPhysostigmineEligibilityIntentRecorded: true, treatmentDeliveredByLearner: false, antidoteEligibilityDetermined: false, treatmentEffectProven: false }); break; }
+        if (this.toxicologyAnticholinergicReassessmentAtTick === null) { this.log('warning', 'assessment', `toxicology-anticholinergic-handoff-order-refused-${this.currentTick}`, 'Record bounded qualified intent and review the strict later report before handoff.'); break; }
+        if (this.currentTick <= this.toxicologyAnticholinergicReassessmentAtTick) { this.log('warning', 'assessment', `toxicology-anticholinergic-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before handing off rebound delirium, hyperthermia, urinary, renal, CK, seizure, and coingestion risk.'); break; }
+        if (this.toxicologyAnticholinergicHandoffAtTick !== null) { this.log('warning', 'assessment', `toxicology-anticholinergic-handoff-refused-${this.currentTick}`, 'The rebound delirium, hyperthermia, retention, rhabdomyolysis, seizure, coingestion, and active-risk handoff was already recorded.'); break; }
+        this.toxicologyAnticholinergicHandoffAtTick = this.currentTick; this.log('critical', 'assessment', `toxicology-anticholinergic-active-risk-handoff-recorded-${this.currentTick}`, 'Serial temperature, mental state, airway, ECG, urine output and retention, renal state, CK and rhabdomyolysis risk, seizure, coingestion, exposure purity, rebound toxicity, supportive and antidote contingencies, compassionate safety, disposition, prognosis, and outcome uncertainty were handed off.', { durableTemperatureControlProven: false, renalSafetyProven: false, rhabdomyolysisExcluded: false, seizureExcluded: false, exposurePurityProven: false, safetyDispositionDetermined: false, dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -13191,6 +13236,16 @@ export class AnesthesiaEngine {
         systolicMmHg: this.toxicologyCholinergicReassessmentAtTick !== null ? 104 : 86,
         diastolicMmHg: this.toxicologyCholinergicReassessmentAtTick !== null ? 64 : 50,
         meanArterialMmHg: this.toxicologyCholinergicReassessmentAtTick !== null ? 77 : 62, coreTemperatureC: 36.7 };
+    }
+    if (this.scenario.metadata.id === 'anticholinergic-hyperthermia-delirium'
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'anticholinergic-hyperthermia-delirium-transition')
+      && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'anticholinergic-hyperthermia-delirium-transition-boundary')) {
+      crisisState = { ...crisisState, heartRateBpm: this.toxicologyAnticholinergicReassessmentAtTick !== null ? 106 : 138,
+        respiratoryRateBpm: this.toxicologyAnticholinergicReassessmentAtTick !== null ? 20 : 24, spo2Percent: 98,
+        systolicMmHg: this.toxicologyAnticholinergicReassessmentAtTick !== null ? 124 : 132,
+        diastolicMmHg: this.toxicologyAnticholinergicReassessmentAtTick !== null ? 72 : 78,
+        meanArterialMmHg: this.toxicologyAnticholinergicReassessmentAtTick !== null ? 89 : 96,
+        coreTemperatureC: this.toxicologyAnticholinergicReassessmentAtTick !== null ? 38.6 : 40.3 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -16926,6 +16981,33 @@ export class AnesthesiaEngine {
               decontaminationCompleteProven: false as const, coWorkerSafetyProven: false as const, seizureExcluded: false as const,
               treatmentEffectProven: false as const, safetyDispositionDetermined: false as const, dispositionDetermined: false as const,
               prognosisPredicted: false as const, outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'anticholinergic-hyperthermia-delirium'
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'anticholinergic-hyperthermia-delirium-transition')
+          && this.scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'anticholinergic-hyperthermia-delirium-transition-boundary') ? {
+            toxicologyAnticholinergicAssessment: {
+              trajectoryAtTick: this.toxicologyAnticholinergicTrajectoryAtTick, recognitionAtTick: this.toxicologyAnticholinergicRecognitionAtTick,
+              supportAtTick: this.toxicologyAnticholinergicSupportAtTick, evidenceAtTick: this.toxicologyAnticholinergicEvidenceAtTick,
+              reassessmentAtTick: this.toxicologyAnticholinergicReassessmentAtTick, handoffAtTick: this.toxicologyAnticholinergicHandoffAtTick,
+              exposureDeliriumHyperthermiaRetentionAndEcgPatternAuthored: true as const, anticholinergicPatternRecognized: this.toxicologyAnticholinergicRecognitionAtTick !== null,
+              qualifiedSupportActive: this.toxicologyAnticholinergicSupportAtTick !== null,
+              temperatureCnsEcgRenalCkRetentionAndDifferentialEvidenceReviewed: this.toxicologyAnticholinergicEvidenceAtTick !== null,
+              qualifiedCoolingSupportIntentRecorded: this.toxicologyAnticholinergicReassessmentAtTick !== null,
+              qualifiedSedationSeizureIntentRecorded: this.toxicologyAnticholinergicReassessmentAtTick !== null,
+              qualifiedTemperatureRenalCkBladderSurveillanceRecorded: this.toxicologyAnticholinergicReassessmentAtTick !== null,
+              qualifiedPhysostigmineEligibilityIntentRecorded: this.toxicologyAnticholinergicReassessmentAtTick !== null,
+              responseStateAuthored: this.toxicologyAnticholinergicReassessmentAtTick !== null,
+              patientHistoryTakenByLearner: false as const, patientExaminedByLearner: false as const, monitoringAcquiredByLearner: false as const,
+              ecgAcquiredByLearner: false as const, ecgInterpretedByLearner: false as const, temperatureMeasuredByLearner: false as const,
+              bloodSampleAcquiredByLearner: false as const, diagnosisMadeByLearner: false as const, alternativeExcludedByLearner: false as const,
+              coolingSelectedByLearner: false as const, restraintSelectedByLearner: false as const, catheterSelectedByLearner: false as const,
+              fluidSelectedByLearner: false as const, drugSelectedByLearner: false as const, doseSelectedByLearner: false as const,
+              routeSelectedByLearner: false as const, airwaySelectedByLearner: false as const, ventilationSelectedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const, antidoteEligibilityDetermined: false as const, durableTemperatureControlProven: false as const,
+              renalSafetyProven: false as const, rhabdomyolysisExcluded: false as const, seizureExcluded: false as const,
+              exposurePurityProven: false as const, treatmentEffectProven: false as const, safetyDispositionDetermined: false as const,
+              dispositionDetermined: false as const, prognosisPredicted: false as const, outcomePredicted: false as const,
             },
           } : {}),
         aspirationRiskAssessment: {

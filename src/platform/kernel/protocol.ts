@@ -13,7 +13,7 @@
  */
 
 /** Bumped whenever the message shape changes incompatibly. Version 156 reports Toxicology cholinergic state. */
-export const WORKER_PROTOCOL_VERSION = 156;
+export const WORKER_PROTOCOL_VERSION = 157;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -2444,6 +2444,31 @@ export interface EquipmentSnapshot {
       readonly seizureExcluded: false; readonly treatmentEffectProven: false;
       readonly safetyDispositionDetermined: false; readonly dispositionDetermined: false;
       readonly prognosisPredicted: false; readonly outcomePredicted: false;
+    };
+    readonly toxicologyAnticholinergicAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly recognitionAtTick: number | null;
+      readonly supportAtTick: number | null; readonly evidenceAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+      readonly exposureDeliriumHyperthermiaRetentionAndEcgPatternAuthored: true; readonly anticholinergicPatternRecognized: boolean;
+      readonly qualifiedSupportActive: boolean; readonly temperatureCnsEcgRenalCkRetentionAndDifferentialEvidenceReviewed: boolean;
+      readonly qualifiedCoolingSupportIntentRecorded: boolean; readonly qualifiedSedationSeizureIntentRecorded: boolean;
+      readonly qualifiedTemperatureRenalCkBladderSurveillanceRecorded: boolean; readonly qualifiedPhysostigmineEligibilityIntentRecorded: boolean;
+      readonly responseStateAuthored: boolean; readonly patientHistoryTakenByLearner: false;
+      readonly patientExaminedByLearner: false; readonly monitoringAcquiredByLearner: false;
+      readonly ecgAcquiredByLearner: false; readonly ecgInterpretedByLearner: false;
+      readonly temperatureMeasuredByLearner: false; readonly bloodSampleAcquiredByLearner: false;
+      readonly diagnosisMadeByLearner: false; readonly alternativeExcludedByLearner: false;
+      readonly coolingSelectedByLearner: false; readonly restraintSelectedByLearner: false;
+      readonly catheterSelectedByLearner: false; readonly fluidSelectedByLearner: false;
+      readonly drugSelectedByLearner: false; readonly doseSelectedByLearner: false;
+      readonly routeSelectedByLearner: false; readonly airwaySelectedByLearner: false;
+      readonly ventilationSelectedByLearner: false; readonly treatmentDeliveredByLearner: false;
+      readonly antidoteEligibilityDetermined: false; readonly durableTemperatureControlProven: false;
+      readonly renalSafetyProven: false; readonly rhabdomyolysisExcluded: false;
+      readonly seizureExcluded: false; readonly exposurePurityProven: false;
+      readonly treatmentEffectProven: false; readonly safetyDispositionDetermined: false;
+      readonly dispositionDetermined: false; readonly prognosisPredicted: false;
+      readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

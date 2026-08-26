@@ -144,6 +144,14 @@ strict elapsed respiratory reassessment, and intermediate-syndrome handoff. It e
 selection, clothing removal, washing, cholinesterase interpretation, antidote dose, suction, airway or
 ventilation operation, neuromuscular blocker, seizure treatment, procedure, disposition, workplace
 clearance, or outcome control.
+Its tenth lab, anticholinergic poisoning where cooling starts before certainty ends, couples a
+declared benztropine exposure with severe delirium, dry flushed skin and mucosa, mydriasis, urinary
+retention, reduced bowel sounds, sinus tachycardia, life-threatening hyperthermia, supplied ECG,
+renal and CK evidence, qualified cooling and compassionate-safety ownership, bounded supportive,
+sedation, seizure, surveillance and toxicologist-led physostigmine-eligibility intent, strict elapsed
+temperature and mental-state reassessment, and rebound-risk handoff. It exposes no learner diagnosis,
+cooling method, restraint, catheter, sedative, physostigmine product or dose, airway operation,
+procedure, disposition, or outcome control.
 
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage

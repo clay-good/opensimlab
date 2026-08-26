@@ -5541,6 +5541,30 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-toxicology-anticholinergic-product-clock-delirium-temperature-dryness-retention-ecg-and-whole-patient',
+      'recognize-toxicology-anticholinergic-central-and-peripheral-pattern-without-mnemonic-temperature-or-pupil-only-closure',
+      'activate-toxicology-anticholinergic-resuscitation-cooling-airway-toxicology-monitoring-and-compassionate-safety-ownership',
+      'review-toxicology-anticholinergic-supplied-temperature-cns-ecg-renal-ck-retention-and-differential-boundary',
+      'record-toxicology-anticholinergic-bounded-qualified-cooling-support-sedation-seizure-surveillance-and-physostigmine-eligibility-intent-with-strict-later-review',
+      'handoff-toxicology-anticholinergic-rebound-delirium-hyperthermia-retention-rhabdomyolysis-seizure-coingestion-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'anticholinergic-hyperthermia-delirium'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'anticholinergic-hyperthermia-delirium-transition')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'anticholinergic-hyperthermia-delirium-transition-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Toxicology anticholinergic lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'Product, clock, delirium, temperature, dryness, retention, ECG, and whole-patient state were reconciled.'],
+        ['pattern-recognized', 'The coupled central and peripheral anticholinergic pattern was recognized without mnemonic-, temperature-, pupil-, or diagnostic closure.'],
+        ['support-activated', 'Resuscitation, cooling, airway, toxicology, monitoring, bladder, renal, and compassionate safety ownership were activated.'],
+        ['evidence-reviewed', 'Supplied temperature, CNS, ECG, renal, CK, retention, coingestion, exposure-purity, and differential evidence were reviewed without learner interpretation or delivery.'],
+        ['intent-and-reassessment-recorded', 'Bounded qualified cooling, support, sedation, surveillance, and physostigmine-eligibility intent plus the elapsed report were recorded without selection, dosing, delivery, eligibility, causal, or durable-safety claims.'],
+        ['active-risk-handoff-recorded', 'Serial temperature, delirium, airway, ECG, retention, renal and CK injury, seizure, coingestion, safety, disposition, and outcome uncertainty were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^toxicology-anticholinergic-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^toxicology-anticholinergic-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-af-rvr-rhythm-and-stability', 'review-af-rvr-context-and-triggers',
       'record-af-rvr-rate-control-intent', 'record-af-rvr-stroke-prevention-intent',
       'reassess-af-rvr-trajectory-and-follow-up'].includes(objective.id)) {
