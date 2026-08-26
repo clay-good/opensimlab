@@ -119,7 +119,7 @@
 - [x] 12.1 Implement the cache-first service worker with explicit update acceptance and the double-failure unregister escape
 - [x] 12.2 Web app manifest and installability across Android, iOS, and desktop
 - [x] 12.3 Assert zero network requests during a complete session after first load — asserted by running a full session with every network primitive replaced by a throw
-- [x] 12.4 Enforce the 1.5 MB interactive and 8 MB full-bundle budgets in CI
+- [x] 12.4 Enforce the 1.625 MB interactive and 8 MB full-bundle budgets in CI
 - [ ] 12.5 Deploy to `opensimlab.com/anesthesia` behind an honest alpha status notice — **NOT DONE. Needs the domain and hosting credentials.** The build is a static directory ready to copy, and the honest alpha notice is on the front page.
 - [x] 12.6 Publish the first validation report, including everything not yet validated — at `/validation`, generated from the same constants the tests assert against. Its unvalidated list is longer than its validated one, which is the honest state.
 

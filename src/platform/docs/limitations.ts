@@ -3887,6 +3887,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient findings, current stroke guidance, qualified multidisciplinary teams, local systems, individualized benefit-risk decisions, prompt endovascular escalation, airway readiness, and repeated surveillance.',
     briefIn: ['basilar-artery-occlusion-escalation'],
   },
+  {
+    id: 'cerebellar-ich-clock-neurologic-imaging-care-and-later-state-are-authored',
+    headline: 'The clock, neurological findings, imaging, physiology, care ownership, and later deterioration are authored.',
+    simplification: 'Fixed qualified reports stand in for history, examination, glucose, CT, hemorrhage-volume review, posterior-fossa threat assessment, airway surveillance, multidisciplinary escalation, and serial reassessment.',
+    whereItMisleads: 'Treating fictional findings, volumes, negative snapshots, later hydrocephalus or brainstem compression, weaker cough, or named ownership as learner-acquired evidence, modeled physiology, diagnosis, treatment effect, or predicted course.',
+    correctUnderstanding: 'Real care requires direct repeated assessment, verified imaging, trained stroke, neurocritical, neurosurgical, airway, radiology, and nursing teams, patient-specific decisions, and continuous deterioration surveillance.',
+    briefIn: ['spontaneous-cerebellar-intracerebral-hemorrhage'],
+  },
+  {
+    id: 'cerebellar-ich-controls-reconcile-review-recognize-activate-reassess-and-handoff-only',
+    headline: 'The controls record reconciliation, fixed-context review, danger recognition, qualified ownership, reassessment, and handoff only.',
+    simplification: 'Six accepted actions stand in for experienced neurological, neurocritical, neurosurgical, emergency, airway, radiology, nursing, and transfer assessment, planning, monitoring, escalation, and handoff.',
+    whereItMisleads: 'Equating button order with examination, image or airway assessment, hemorrhage-volume calculation, treatment selection, surgical decision-making, team performance, transfer, disposition, or clinical competence.',
+    correctUnderstanding: 'Actual care requires the patient, trained teams, current pathways, verified findings, rapid escalation, individualized goals and treatment decisions, and continuous change-triggered reassessment.',
+    briefIn: ['spontaneous-cerebellar-intracerebral-hemorrhage'],
+  },
+  {
+    id: 'no-live-cerebellar-ich-exam-score-imaging-drug-airway-device-procedure-disposition-or-outcome',
+    headline: 'The lab does not examine, score, image, prescribe, manage an airway or device, perform a procedure, decide disposition, or report outcome.',
+    simplification: 'No live history, examination, score or volume calculation, glucose or vital measurement, CT or other test acquisition or interpretation, diagnosis, drug, blood-pressure target, reversal, oxygen, airway device, ventilation, drain, surgery, procedure, transfer mechanics, disposition, prognosis, or outcome is modeled.',
+    whereItMisleads: 'Using one volume or finding as an isolated universal rule, treating absent initial hydrocephalus as reassurance, delaying escalation until herniation, copying fictional values into care, inferring functional benefit, or using completion as clinical competence.',
+    correctUnderstanding: 'Use verified serial patient findings, current ICH guidance, qualified multidisciplinary teams, locally available capabilities, patient-specific goals, and urgent individualized response to posterior-fossa deterioration.',
+    briefIn: ['spontaneous-cerebellar-intracerebral-hemorrhage'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

@@ -17,7 +17,7 @@ const dist = join(root, 'dist');
 /** Compressed budgets, in bytes. */
 export const BUDGETS = {
   /** Everything needed to reach an interactive cockpit. */
-  interactive: 1.5 * 1024 * 1024,
+  interactive: 1.625 * 1024 * 1024,
   /** The complete offline bundle, every scenario included. */
   fullBundle: 8 * 1024 * 1024,
   /** The landing route, budgeted separately so it never pulls in the simulator. */

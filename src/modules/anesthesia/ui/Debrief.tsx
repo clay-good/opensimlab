@@ -4998,6 +4998,30 @@ export function objectiveFindings(
       const ordered = later && handoff && later.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved clocks, fixed imaging context, neurologic and airway deterioration risk, unresolved treatment and outcome, and named owners without claiming procedure, transfer completion, prognosis, or outcome.' : 'The active-risk handoff was absent or did not follow later reassessment after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-neurology-cerebellar-ich-clock-deficit-alertness-and-whole-patient',
+      'review-neurology-cerebellar-ich-imaging-location-causes-and-immediate-threats',
+      'recognize-neurology-cerebellar-ich-posterior-fossa-escalation-boundary',
+      'activate-neurology-cerebellar-ich-qualified-neurocritical-neurosurgical-and-airway-ownership',
+      'review-neurology-cerebellar-ich-strict-later-neurologic-and-airway-trajectory',
+      'handoff-neurology-cerebellar-ich-imaging-expansion-etiology-and-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'spontaneous-cerebellar-intracerebral-hemorrhage'
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'spontaneous-cerebellar-intracerebral-hemorrhage-reassessment')
+        && scenario.timeline.some((event) => event.type === 'narrative' && event.target === 'spontaneous-cerebellar-intracerebral-hemorrhage-reassessment-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Neurology cerebellar-ICH lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['trajectory-reconciled', 'Clock, posterior signs, alertness, physiology, and whole-patient state were reconciled.'],
+        ['imaging-and-threats-reviewed', 'Fixed imaging, location, open causes, and immediate threats were reviewed.'],
+        ['posterior-fossa-boundary-recognized', 'The posterior-fossa escalation boundary was recognized without a prognosis claim.'],
+        ['qualified-ownership-activated', 'Qualified neurocritical, neurosurgical, and airway-capable ownership was activated.'],
+        ['later-trajectory-reviewed', 'Elapsed neurologic worsening and repeat-imaging expansion were reviewed without claiming future course.'],
+        ['active-risk-handoff-recorded', 'Expansion, airway risk, open etiology, unresolved care, and owners were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^neurology-cerebellar-ich-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^neurology-cerebellar-ich-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent or out of order.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

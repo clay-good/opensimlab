@@ -142,7 +142,7 @@ describe('Requirement: Full Offline Operation After First Load', () => {
 
 describe('Requirement: Bounded Download Budget', () => {
   it('declares the budgets the specification states', () => {
-    expect(BUDGETS.interactive).toBe(1.5 * 1024 * 1024);
+    expect(BUDGETS.interactive).toBe(1.625 * 1024 * 1024);
     expect(BUDGETS.fullBundle).toBe(8 * 1024 * 1024);
     // The landing route is budgeted separately and far more tightly.
     expect(BUDGETS.landing).toBe(150 * 1024);

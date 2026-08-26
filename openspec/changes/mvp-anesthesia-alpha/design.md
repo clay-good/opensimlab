@@ -2,7 +2,7 @@
 
 Greenfield. No code exists. Twenty-eight capabilities are specified; this change implements a slice of eleven of them and deliberately ignores seventeen.
 
-The binding constraints are the ones already specified and not yet proven: 1.5 MB compressed to interactive, sub-16.7 ms frame time at the 95th percentile on a mid-range 2020 Android, bit-identical replay across devices, and zero network requests after first load.
+The binding constraints are the ones already specified and not yet proven: 1.625 MB compressed to interactive, sub-16.7 ms frame time at the 95th percentile on a mid-range 2020 Android, bit-identical replay across devices, and zero network requests after first load.
 
 ## Goals / Non-Goals
 

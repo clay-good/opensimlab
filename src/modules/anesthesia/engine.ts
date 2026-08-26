@@ -305,6 +305,14 @@ const NEUROLOGY_BASILAR_LVO_BLOCKED_ACTION_TYPES = new Set([
   'hyponatremia-response', 'glycemic-response', 'acute-aortic-syndrome-response',
   'pediatric-status-epilepticus-response', 'pediatric-hypoglycemic-seizure-response',
 ]);
+const NEUROLOGY_CEREBELLAR_ICH_BLOCKED_ACTION_TYPES = new Set([
+  ...HYPERTENSIVE_EMERGENCY_BLOCKED_ACTION_TYPES,
+  'intracranial-hemorrhage-response', 'intracranial-hypertension-response',
+  'acute-ischemic-stroke-response', 'minor-nondisabling-acute-ischemic-stroke-response',
+  'basilar-artery-occlusion-escalation-response', 'status-epilepticus-response',
+  'critical-care-status-epilepticus-response', 'hyponatremia-response',
+  'glycemic-response', 'acute-aortic-syndrome-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1064,6 +1072,12 @@ export class AnesthesiaEngine {
   private neurologyBasilarLvoActivationAtTick: number | null = null;
   private neurologyBasilarLvoLaterAtTick: number | null = null;
   private neurologyBasilarLvoHandoffAtTick: number | null = null;
+  private neurologyCerebellarIchTrajectoryAtTick: number | null = null;
+  private neurologyCerebellarIchImagingAtTick: number | null = null;
+  private neurologyCerebellarIchBoundaryAtTick: number | null = null;
+  private neurologyCerebellarIchOwnershipAtTick: number | null = null;
+  private neurologyCerebellarIchLaterAtTick: number | null = null;
+  private neurologyCerebellarIchHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1650,6 +1664,23 @@ export class AnesthesiaEngine {
         'This Neurology lesson exposes no generic thrombolysis, antiplatelet, medication, dose, '
         + 'route, blood-pressure, imaging, airway, fluid, device, procedure, adult ED stroke, '
         + 'critical-care neurologic, or adjacent-scenario action. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const neurologyCerebellarIch = this.scenario.metadata.id
+      === 'spontaneous-cerebellar-intracerebral-hemorrhage'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'spontaneous-cerebellar-intracerebral-hemorrhage-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target
+          === 'spontaneous-cerebellar-intracerebral-hemorrhage-reassessment-boundary');
+    if (neurologyCerebellarIch
+      && NEUROLOGY_CEREBELLAR_ICH_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment',
+        `neurology-cerebellar-ich-generic-action-refused-${this.currentTick}`,
+        'This Neurology lesson exposes no generic reversal, blood-pressure, hyperosmolar, drug, '
+        + 'dose, route, imaging, airway, fluid, device, drainage, surgery, procedure, adult ED ICH, '
+        + 'critical-care ICP, stroke, or adjacent-scenario action. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -8425,6 +8456,175 @@ export class AnesthesiaEngine {
             dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false });
         break;
       }
+      case 'spontaneous-cerebellar-intracerebral-hemorrhage-response': {
+        const response = typeof action.payload.action === 'string' ? action.payload.action : '';
+        const supported = this.scenario.metadata.id
+          === 'spontaneous-cerebellar-intracerebral-hemorrhage'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'spontaneous-cerebellar-intracerebral-hemorrhage-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target
+              === 'spontaneous-cerebellar-intracerebral-hemorrhage-reassessment-boundary');
+        const valid = [
+          'reconcile-neurology-cerebellar-ich-clock-deficit-alertness-and-whole-patient',
+          'review-neurology-cerebellar-ich-imaging-location-causes-and-immediate-threats',
+          'recognize-neurology-cerebellar-ich-posterior-fossa-escalation-boundary',
+          'activate-neurology-cerebellar-ich-qualified-neurocritical-neurosurgical-and-airway-ownership',
+          'review-neurology-cerebellar-ich-strict-later-neurologic-and-airway-trajectory',
+          'handoff-neurology-cerebellar-ich-imaging-expansion-etiology-and-active-risk',
+        ].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment',
+            `neurology-cerebellar-ich-response-refused-${this.currentTick}`,
+            supported
+              ? 'The cerebellar-ICH action was not one of the listed choices. No supplied or injected text was retained.'
+              : 'These cerebellar-ICH choices are available only in the exact declared Neurology lesson.');
+          break;
+        }
+        if (response
+          === 'reconcile-neurology-cerebellar-ich-clock-deficit-alertness-and-whole-patient') {
+          if (this.neurologyCerebellarIchTrajectoryAtTick !== null) {
+            this.log('warning', 'assessment',
+              `neurology-cerebellar-ich-trajectory-refused-${this.currentTick}`,
+              'The supplied clock, deficit, alertness, physiology, and whole-patient state were already reconciled.');
+            break;
+          }
+          this.neurologyCerebellarIchTrajectoryAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `neurology-cerebellar-ich-trajectory-reconciled-${this.currentTick}`,
+            'The supplied record establishes an acute cerebellar syndrome with spontaneous breathing, a present cough, and stable circulation at this snapshot. The learner did not take a history, examine, score, diagnose, or deliver treatment.',
+            { cerebellarDeficitAuthored: true, initialAlertnessAuthored: true,
+              patientExaminedByLearner: false, scoreCalculatedByLearner: false,
+              diagnosisMadeByLearner: false, treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.neurologyCerebellarIchTrajectoryAtTick === null) {
+          this.log('warning', 'assessment',
+            `neurology-cerebellar-ich-trajectory-order-refused-${this.currentTick}`,
+            'Reconcile the supplied clock, deficit, alertness, and whole-patient state before imaging review.');
+          break;
+        }
+        if (response
+          === 'review-neurology-cerebellar-ich-imaging-location-causes-and-immediate-threats') {
+          if (this.neurologyCerebellarIchImagingAtTick !== null) {
+            this.log('warning', 'assessment',
+              `neurology-cerebellar-ich-imaging-refused-${this.currentTick}`,
+              'The fixed imaging, location, open causes, and immediate threats were already reviewed.');
+            break;
+          }
+          this.neurologyCerebellarIchImagingAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `neurology-cerebellar-ich-imaging-and-threats-reviewed-${this.currentTick}`,
+            'Fixed CT reports an 11 mL right cerebellar hemorrhage with fourth-ventricle effacement and no authored hydrocephalus, brainstem compression, or herniation at this snapshot. Imaging, volume, cause, exposure, expansion, and future posterior-fossa danger were not acquired, interpreted, calculated, or excluded by the learner.',
+            { cerebellarIchAuthored: true, initialHematomaVolumeMl: 11,
+              fourthVentricleEffacementAuthored: true, imagingAcquiredByLearner: false,
+              imagingInterpretedByLearner: false, etiologyProven: false });
+          break;
+        }
+        if (this.neurologyCerebellarIchImagingAtTick === null) {
+          this.log('warning', 'assessment',
+            `neurology-cerebellar-ich-imaging-order-refused-${this.currentTick}`,
+            'Review fixed imaging, location, open causes, and immediate threats first.');
+          break;
+        }
+        if (response
+          === 'recognize-neurology-cerebellar-ich-posterior-fossa-escalation-boundary') {
+          if (this.neurologyCerebellarIchBoundaryAtTick !== null) {
+            this.log('warning', 'assessment',
+              `neurology-cerebellar-ich-boundary-refused-${this.currentTick}`,
+              'The posterior-fossa escalation boundary was already recognized.');
+            break;
+          }
+          this.neurologyCerebellarIchBoundaryAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `neurology-cerebellar-ich-posterior-fossa-boundary-recognized-${this.currentTick}`,
+            'Cerebellar location, fourth-ventricle effacement, alertness, vomiting, cough, and the risk of rapid posterior-fossa deterioration require qualified escalation without using volume, a score, or one snapshot alone. No surgery, drainage, airway, BP, or reversal choice was made.',
+            { posteriorFossaEscalationBoundaryAuthored: true, volumeAloneUsed: false,
+              scoreAloneUsed: false, procedureSelectedByLearner: false,
+              airwayDeviceSelectedByLearner: false });
+          break;
+        }
+        if (this.neurologyCerebellarIchBoundaryAtTick === null) {
+          this.log('warning', 'assessment',
+            `neurology-cerebellar-ich-boundary-order-refused-${this.currentTick}`,
+            'Recognize the posterior-fossa escalation boundary before activating qualified ownership.');
+          break;
+        }
+        if (response
+          === 'activate-neurology-cerebellar-ich-qualified-neurocritical-neurosurgical-and-airway-ownership') {
+          if (this.neurologyCerebellarIchOwnershipAtTick !== null) {
+            this.log('warning', 'assessment',
+              `neurology-cerebellar-ich-ownership-refused-${this.currentTick}`,
+              'Qualified neurocritical, neurosurgical, and airway-capable ownership is already active.');
+            break;
+          }
+          this.neurologyCerebellarIchOwnershipAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `neurology-cerebellar-ich-qualified-ownership-activated-${this.currentTick}`,
+            'Qualified neurocritical, neurosurgical, stroke, nursing, and airway-capable teams now own serial surveillance and escalation. The learner did not select a reversal product, drug, BP target, airway device, drain, surgery, transfer, procedure, or treatment.',
+            { qualifiedNeurocriticalOwnershipActive: true,
+              qualifiedNeurosurgicalOwnershipActive: true,
+              qualifiedAirwayCapableOwnershipActive: true,
+              drugSelectedByLearner: false, deviceSelectedByLearner: false,
+              procedurePerformedByLearner: false, treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.neurologyCerebellarIchOwnershipAtTick === null) {
+          this.log('warning', 'assessment',
+            `neurology-cerebellar-ich-ownership-order-refused-${this.currentTick}`,
+            'Activate qualified neurocritical, neurosurgical, and airway-capable ownership first.');
+          break;
+        }
+        if (response
+          === 'review-neurology-cerebellar-ich-strict-later-neurologic-and-airway-trajectory') {
+          if (this.currentTick <= this.neurologyCerebellarIchOwnershipAtTick) {
+            this.log('warning', 'assessment',
+              `neurology-cerebellar-ich-later-time-refused-${this.currentTick}`,
+              'Allow elapsed simulated time before reviewing the fixed later trajectory.');
+            break;
+          }
+          if (this.neurologyCerebellarIchLaterAtTick !== null) {
+            this.log('warning', 'assessment',
+              `neurology-cerebellar-ich-later-refused-${this.currentTick}`,
+              'The fixed later neurologic, airway, and repeat-imaging trajectory was already reviewed.');
+            break;
+          }
+          this.neurologyCerebellarIchLaterAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `neurology-cerebellar-ich-later-trajectory-reviewed-${this.currentTick}`,
+            'The fixed later report shows increasing drowsiness, recurrent vomiting, a weaker cough, and repeat CT expansion to 14 mL with new obstructive hydrocephalus and brainstem compression; no herniation is authored. This worsening is authored, not caused or treated by the learner, and outcome remains unresolved.',
+            { laterDeteriorationAuthored: true, laterHematomaVolumeMl: 14,
+              obstructiveHydrocephalusAuthored: true, brainstemCompressionAuthored: true,
+              herniationAuthored: false, treatmentEffectProven: false });
+          break;
+        }
+        if (this.neurologyCerebellarIchLaterAtTick === null) {
+          this.log('warning', 'assessment',
+            `neurology-cerebellar-ich-later-order-refused-${this.currentTick}`,
+            'Review the fixed later neurologic and airway trajectory before handoff.');
+          break;
+        }
+        if (this.currentTick <= this.neurologyCerebellarIchLaterAtTick) {
+          this.log('warning', 'assessment',
+            `neurology-cerebellar-ich-handoff-time-refused-${this.currentTick}`,
+            'Allow another simulated tick before handing off active posterior-fossa risk.');
+          break;
+        }
+        if (this.neurologyCerebellarIchHandoffAtTick !== null) {
+          this.log('warning', 'assessment',
+            `neurology-cerebellar-ich-handoff-refused-${this.currentTick}`,
+            'The imaging, expansion, etiology, and active-risk handoff was already recorded.');
+          break;
+        }
+        this.neurologyCerebellarIchHandoffAtTick = this.currentTick;
+        this.log('critical', 'assessment',
+          `neurology-cerebellar-ich-active-risk-handoff-recorded-${this.currentTick}`,
+          'The clocks, deficit, alertness, fixed serial imaging, posterior-fossa deterioration, airway risk, qualified ownership, open etiology, expansion, intervention, complication, disposition, and outcome work were handed off. No treatment, procedure, durable airway safety, recovery, prognosis, or outcome is claimed.',
+          { etiologyProven: false, treatmentEffectProven: false,
+            durableAirwayProtectionProven: false, neurologicRecoveryProven: false,
+            dispositionDetermined: false, prognosisPredicted: false, outcomePredicted: false });
+        break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -11494,6 +11694,22 @@ export class AnesthesiaEngine {
         meanArterialMmHg: later ? 117 : 122,
         coreTemperatureC: 36.8 };
     }
+    if (this.scenario.metadata.id === 'spontaneous-cerebellar-intracerebral-hemorrhage'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'spontaneous-cerebellar-intracerebral-hemorrhage-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target
+          === 'spontaneous-cerebellar-intracerebral-hemorrhage-reassessment-boundary')) {
+      const later = this.neurologyCerebellarIchLaterAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: later ? 82 : 78,
+        respiratoryRateBpm: later ? 20 : 18,
+        spo2Percent: later ? 95 : 97,
+        systolicMmHg: later ? 176 : 168,
+        diastolicMmHg: later ? 96 : 92,
+        meanArterialMmHg: later ? 123 : 117,
+        coreTemperatureC: 36.7 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -13932,6 +14148,81 @@ export class AnesthesiaEngine {
               durableAirwayProtectionProven: false as const,
               durableNeurologicRecoveryProven: false as const,
               deteriorationExcluded: false as const,
+              dischargeReadinessProven: false as const,
+              dispositionDetermined: false as const,
+              prognosisPredicted: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'spontaneous-cerebellar-intracerebral-hemorrhage'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'spontaneous-cerebellar-intracerebral-hemorrhage-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target
+              === 'spontaneous-cerebellar-intracerebral-hemorrhage-reassessment-boundary') ? {
+            neurologyCerebellarIchAssessment: {
+              trajectoryAtTick: this.neurologyCerebellarIchTrajectoryAtTick,
+              imagingAtTick: this.neurologyCerebellarIchImagingAtTick,
+              boundaryAtTick: this.neurologyCerebellarIchBoundaryAtTick,
+              ownershipAtTick: this.neurologyCerebellarIchOwnershipAtTick,
+              laterAtTick: this.neurologyCerebellarIchLaterAtTick,
+              handoffAtTick: this.neurologyCerebellarIchHandoffAtTick,
+              initialPulsePresent: true as const,
+              spontaneousBreathingAuthored: true as const,
+              cerebellarDeficitAuthored: true as const,
+              initialAlertnessAuthored: true as const,
+              cerebellarIchAuthored: true as const,
+              fourthVentricleEffacementAuthored: true as const,
+              posteriorFossaEscalationBoundaryAuthored:
+                this.neurologyCerebellarIchBoundaryAtTick !== null,
+              qualifiedNeurocriticalOwnershipActive:
+                this.neurologyCerebellarIchOwnershipAtTick !== null,
+              qualifiedNeurosurgicalOwnershipActive:
+                this.neurologyCerebellarIchOwnershipAtTick !== null,
+              qualifiedAirwayCapableOwnershipActive:
+                this.neurologyCerebellarIchOwnershipAtTick !== null,
+              laterDeteriorationAuthored: this.neurologyCerebellarIchLaterAtTick !== null,
+              obstructiveHydrocephalusAuthored: this.neurologyCerebellarIchLaterAtTick !== null,
+              brainstemCompressionAuthored: this.neurologyCerebellarIchLaterAtTick !== null,
+              patientHistoryTakenByLearner: false as const,
+              patientExaminedByLearner: false as const,
+              neurologicExamPerformedByLearner: false as const,
+              scoreCalculatedByLearner: false as const,
+              hematomaVolumeCalculatedByLearner: false as const,
+              clockDeterminedByLearner: false as const,
+              glucoseAcquiredByLearner: false as const,
+              bloodPressureAcquiredByLearner: false as const,
+              testAcquiredByLearner: false as const,
+              testInterpretedByLearner: false as const,
+              imagingAcquiredByLearner: false as const,
+              imagingInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const,
+              etiologyDeterminedByLearner: false as const,
+              anticoagulantExposureExcludedByLearner: false as const,
+              reversalEligibilityDeterminedByLearner: false as const,
+              reversalProductSelectedByLearner: false as const,
+              drugSelectedByLearner: false as const,
+              doseSelectedByLearner: false as const,
+              routeSelectedByLearner: false as const,
+              accessPlacedByLearner: false as const,
+              medicationDeliveredByLearner: false as const,
+              bloodPressureTargetSelectedByLearner: false as const,
+              airwayDeviceSelectedByLearner: false as const,
+              airwayProcedurePerformedByLearner: false as const,
+              drainSelectedByLearner: false as const,
+              surgerySelectedByLearner: false as const,
+              deviceSelectedByLearner: false as const,
+              procedureSelectedByLearner: false as const,
+              procedurePerformedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              etiologyProven: false as const,
+              anticoagulantExposureExcluded: false as const,
+              futureExpansionExcluded: false as const,
+              herniationExcluded: false as const,
+              treatmentEffectProven: false as const,
+              durablePressureControlProven: false as const,
+              durableAirwayProtectionProven: false as const,
+              neurologicRecoveryProven: false as const,
               dischargeReadinessProven: false as const,
               dispositionDetermined: false as const,
               prognosisPredicted: false as const,

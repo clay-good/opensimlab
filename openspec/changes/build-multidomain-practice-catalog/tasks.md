@@ -395,6 +395,13 @@ credited toward the catalog until every item in the completion contract passes.
     acquisition or interpretation, diagnosis, eligibility adjudication, drug, dose, route,
     blood-pressure target, airway device, transfer, thrombectomy, reperfusion grading, procedure,
     treatment, disposition, prognosis, treatment-effect, or outcome controls.
+  - [x] Neurology slice 3/15 adds one authored spontaneous cerebellar ICH with initial
+    fourth-ventricle effacement, early qualified neurocritical, neurosurgical, and airway-capable
+    ownership, strict later drowsiness, vomiting, weaker cough, hematoma expansion, obstructive
+    hydrocephalus, and brainstem compression, and another elapsed active-risk handoff without
+    learner examination, scoring, volume calculation, imaging or test acquisition or interpretation,
+    diagnosis, drug, pressure target, reversal, airway device, drain, surgery, procedure, transfer,
+    treatment, disposition, prognosis, treatment-effect, or outcome controls.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing
   scenarios.

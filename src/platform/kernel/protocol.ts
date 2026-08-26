@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 134 reports Neurology basilar-LVO escalation state. */
-export const WORKER_PROTOCOL_VERSION = 134;
+/** Bumped whenever the message shape changes incompatibly. Version 135 reports Neurology cerebellar-ICH reassessment state. */
+export const WORKER_PROTOCOL_VERSION = 135;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1739,6 +1739,70 @@ export interface EquipmentSnapshot {
       readonly durableAirwayProtectionProven: false;
       readonly durableNeurologicRecoveryProven: false;
       readonly deteriorationExcluded: false;
+      readonly dischargeReadinessProven: false;
+      readonly dispositionDetermined: false;
+      readonly prognosisPredicted: false;
+      readonly outcomePredicted: false;
+    };
+    readonly neurologyCerebellarIchAssessment?: {
+      readonly trajectoryAtTick: number | null;
+      readonly imagingAtTick: number | null;
+      readonly boundaryAtTick: number | null;
+      readonly ownershipAtTick: number | null;
+      readonly laterAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly initialPulsePresent: true;
+      readonly spontaneousBreathingAuthored: true;
+      readonly cerebellarDeficitAuthored: true;
+      readonly initialAlertnessAuthored: true;
+      readonly cerebellarIchAuthored: true;
+      readonly fourthVentricleEffacementAuthored: true;
+      readonly posteriorFossaEscalationBoundaryAuthored: boolean;
+      readonly qualifiedNeurocriticalOwnershipActive: boolean;
+      readonly qualifiedNeurosurgicalOwnershipActive: boolean;
+      readonly qualifiedAirwayCapableOwnershipActive: boolean;
+      readonly laterDeteriorationAuthored: boolean;
+      readonly obstructiveHydrocephalusAuthored: boolean;
+      readonly brainstemCompressionAuthored: boolean;
+      readonly patientHistoryTakenByLearner: false;
+      readonly patientExaminedByLearner: false;
+      readonly neurologicExamPerformedByLearner: false;
+      readonly scoreCalculatedByLearner: false;
+      readonly hematomaVolumeCalculatedByLearner: false;
+      readonly clockDeterminedByLearner: false;
+      readonly glucoseAcquiredByLearner: false;
+      readonly bloodPressureAcquiredByLearner: false;
+      readonly testAcquiredByLearner: false;
+      readonly testInterpretedByLearner: false;
+      readonly imagingAcquiredByLearner: false;
+      readonly imagingInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false;
+      readonly etiologyDeterminedByLearner: false;
+      readonly anticoagulantExposureExcludedByLearner: false;
+      readonly reversalEligibilityDeterminedByLearner: false;
+      readonly reversalProductSelectedByLearner: false;
+      readonly drugSelectedByLearner: false;
+      readonly doseSelectedByLearner: false;
+      readonly routeSelectedByLearner: false;
+      readonly accessPlacedByLearner: false;
+      readonly medicationDeliveredByLearner: false;
+      readonly bloodPressureTargetSelectedByLearner: false;
+      readonly airwayDeviceSelectedByLearner: false;
+      readonly airwayProcedurePerformedByLearner: false;
+      readonly drainSelectedByLearner: false;
+      readonly surgerySelectedByLearner: false;
+      readonly deviceSelectedByLearner: false;
+      readonly procedureSelectedByLearner: false;
+      readonly procedurePerformedByLearner: false;
+      readonly treatmentDeliveredByLearner: false;
+      readonly etiologyProven: false;
+      readonly anticoagulantExposureExcluded: false;
+      readonly futureExpansionExcluded: false;
+      readonly herniationExcluded: false;
+      readonly treatmentEffectProven: false;
+      readonly durablePressureControlProven: false;
+      readonly durableAirwayProtectionProven: false;
+      readonly neurologicRecoveryProven: false;
       readonly dischargeReadinessProven: false;
       readonly dispositionDetermined: false;
       readonly prognosisPredicted: false;

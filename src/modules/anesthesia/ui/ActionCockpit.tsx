@@ -1110,6 +1110,11 @@ export interface ActionCockpitProps {
       readonly boundaryAtTick: number | null; readonly activationAtTick: number | null;
       readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly neurologyCerebellarIchAssessment?: {
+      readonly trajectoryAtTick: number | null; readonly imagingAtTick: number | null;
+      readonly boundaryAtTick: number | null; readonly ownershipAtTick: number | null;
+      readonly laterAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1834,6 +1839,14 @@ export interface ActionCockpitProps {
       | 'review-neurology-basilar-lvo-strict-later-neurologic-and-airway-trajectory'
       | 'handoff-neurology-basilar-lvo-clocks-imaging-deterioration-and-unresolved-outcome',
   ) => void;
+  readonly onNeurologyCerebellarIchResponse?: (
+    action: 'reconcile-neurology-cerebellar-ich-clock-deficit-alertness-and-whole-patient'
+      | 'review-neurology-cerebellar-ich-imaging-location-causes-and-immediate-threats'
+      | 'recognize-neurology-cerebellar-ich-posterior-fossa-escalation-boundary'
+      | 'activate-neurology-cerebellar-ich-qualified-neurocritical-neurosurgical-and-airway-ownership'
+      | 'review-neurology-cerebellar-ich-strict-later-neurologic-and-airway-trajectory'
+      | 'handoff-neurology-cerebellar-ich-imaging-expansion-etiology-and-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2257,6 +2270,12 @@ export function crisisResponseAvailability(
         && event.target === 'basilar-artery-occlusion-escalation-reassessment')
       && scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'basilar-artery-occlusion-escalation-reassessment-boundary'),
+    hasNeurologyCerebellarIchResponse:
+      scenario.metadata.id === 'spontaneous-cerebellar-intracerebral-hemorrhage'
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'spontaneous-cerebellar-intracerebral-hemorrhage-reassessment')
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'spontaneous-cerebellar-intracerebral-hemorrhage-reassessment-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2432,6 +2451,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'minor-nondisabling-acute-ischemic-stroke-reassessment')
       || (event.type === 'narrative'
         && event.target === 'basilar-artery-occlusion-escalation-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'spontaneous-cerebellar-intracerebral-hemorrhage-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2506,6 +2527,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasPediatricInjurySafeguardingResponse,
     hasNeurologyMinorStrokeResponse,
     hasNeurologyBasilarLvoResponse,
+    hasNeurologyCerebellarIchResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2584,7 +2606,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPediatricStatusEpilepticusResponse || hasPediatricAnaphylaxisResponse
     || hasPediatricSupraventricularTachycardiaResponse || hasPediatricBradycardicArrestResponse
     || hasPediatricForeignBodyAirwayObstructionResponse || hasPediatricInjurySafeguardingResponse
-    || hasNeurologyMinorStrokeResponse || hasNeurologyBasilarLvoResponse;
+    || hasNeurologyMinorStrokeResponse || hasNeurologyBasilarLvoResponse
+    || hasNeurologyCerebellarIchResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2615,7 +2638,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasNeurologyBasilarLvoResponse
+  const responseTray = hasNeurologyCerebellarIchResponse
+    ? { id: 'crisis', label: 'Cerebellar ICH reassessment' } as const
+    : hasNeurologyBasilarLvoResponse
     ? { id: 'crisis', label: 'Basilar LVO reassessment' } as const
     : hasNeurologyMinorStrokeResponse
     ? { id: 'crisis', label: 'Minor-stroke reassessment' } as const
@@ -2914,6 +2939,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPediatricInjurySafeguardingResponse
     || hasNeurologyMinorStrokeResponse
     || hasNeurologyBasilarLvoResponse
+    || hasNeurologyCerebellarIchResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3650,6 +3676,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <NeurologyBasilarLvoTray
                 assessment={props.resuscitation.neurologyBasilarLvoAssessment}
                 onAction={props.onNeurologyBasilarLvoResponse ?? (() => {})} />
+            )}
+            {hasNeurologyCerebellarIchResponse && (
+              <NeurologyCerebellarIchTray
+                assessment={props.resuscitation.neurologyCerebellarIchAssessment}
+                onAction={props.onNeurologyCerebellarIchResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -9528,6 +9559,40 @@ function NeurologyBasilarLvoTray({ assessment, onAction }: {
           onClick={() => onAction('handoff-neurology-basilar-lvo-clocks-imaging-deterioration-and-unresolved-outcome')}>Hand off clocks + active risk</Button>}
       </div>
       <p className="field__hint">The later report does not establish reperfusion, treatment effect, durable airway protection, neurological recovery, transfer completion, disposition, prognosis, or outcome.</p>
+    </section>
+  </div>;
+}
+
+function NeurologyCerebellarIchTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['neurologyCerebellarIchAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onNeurologyCerebellarIchResponse']>;
+}) {
+  const trajectory = assessment?.trajectoryAtTick != null;
+  const imaging = assessment?.imagingAtTick != null;
+  const boundary = assessment?.boundaryAtTick != null;
+  const ownership = assessment?.ownershipAtTick != null;
+  const later = assessment?.laterAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="neurology-cerebellar-ich-location-title">
+      <div id="neurology-cerebellar-ich-location-title" className="syringe__name">Location changes the danger.</div>
+      <div className="syringe__meta">fixed cerebellar hemorrhage report · supplied neurologic record</div>
+      <p className="syringe__remaining">{ownership ? 'Qualified neurocritical, neurosurgical, and airway-capable ownership is active.' : boundary ? 'Escalation boundary clear · activate qualified ownership' : imaging ? 'Posterior-fossa threats reviewed · recognize the escalation boundary' : trajectory ? 'Trajectory clear · review the supplied CT context' : 'Start with the clock, posterior pattern, alertness, and whole patient.'}</p>
+      <div className="syringe__presets">
+        {!trajectory && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-neurology-cerebellar-ich-clock-deficit-alertness-and-whole-patient')}>Review clock + neurologic trajectory</Button>}
+        {trajectory && !imaging && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-cerebellar-ich-imaging-location-causes-and-immediate-threats')}>Review fixed CT + threat context</Button>}
+        {imaging && !boundary && <Button className="crisis-drug__action" onClick={() => onAction('recognize-neurology-cerebellar-ich-posterior-fossa-escalation-boundary')}>Recognize posterior-fossa escalation</Button>}
+        {boundary && !ownership && <Button className="crisis-drug__action" onClick={() => onAction('activate-neurology-cerebellar-ich-qualified-neurocritical-neurosurgical-and-airway-ownership')}>Activate qualified neuro + airway ownership</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="neurology-cerebellar-ich-trajectory-title">
+      <div id="neurology-cerebellar-ich-trajectory-title" className="syringe__name">Stability is only a checkpoint.</div>
+      <div className="syringe__meta">fixed later report · procedure and outcome remain open</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Trajectory, imaging context, active risk, and owners handed off.' : later ? 'Repeat CT reports expansion, hydrocephalus, and brainstem compression. Future course remains open.' : ownership ? 'Qualified ownership is active. Review the fixed later report.' : 'Complete recognition and qualified ownership before reassessment.'}</p>
+      <div className="syringe__presets">
+        {ownership && !later && <Button className="crisis-drug__action" onClick={() => onAction('review-neurology-cerebellar-ich-strict-later-neurologic-and-airway-trajectory')}>Review the later neurologic report</Button>}
+        {later && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neurology-cerebellar-ich-imaging-expansion-etiology-and-active-risk')}>Hand off imaging + active risk</Button>}
+      </div>
     </section>
   </div>;
 }

@@ -1,10 +1,12 @@
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { BASILAR_ARTERY_OCCLUSION_ESCALATION } from './basilar-artery-occlusion-escalation';
 import { MINOR_NONDISABLING_ACUTE_ISCHEMIC_STROKE } from './minor-nondisabling-acute-ischemic-stroke';
+import { SPONTANEOUS_CEREBELLAR_INTRACEREBRAL_HEMORRHAGE } from './spontaneous-cerebellar-intracerebral-hemorrhage';
 
 export const NEUROLOGY_SCENARIOS: readonly Scenario[] = [
   MINOR_NONDISABLING_ACUTE_ISCHEMIC_STROKE,
   BASILAR_ARTERY_OCCLUSION_ESCALATION,
+  SPONTANEOUS_CEREBELLAR_INTRACEREBRAL_HEMORRHAGE,
 ];
 export const DEFAULT_NEUROLOGY_SCENARIO_ID = MINOR_NONDISABLING_ACUTE_ISCHEMIC_STROKE.metadata.id;
 

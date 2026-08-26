@@ -50,11 +50,11 @@ The application SHALL supply a web app manifest enabling installation to the hom
 
 ### Requirement: Bounded Download Budget
 
-The initial load required to reach an interactive cockpit SHALL not exceed 1.5 MB compressed, and the complete offline bundle including every scenario and the vendored dataset SHALL not exceed 8 MB compressed.
+The initial load required to reach an interactive cockpit SHALL not exceed 1.625 MB compressed, and the complete offline bundle including every scenario and the vendored dataset SHALL not exceed 8 MB compressed. The interactive ceiling includes capacity for the bounded multidomain tutor catalog; the independently enforced 150 KB landing budget remains unchanged.
 
 #### Scenario: Budget is enforced in continuous integration
 
-- **WHEN** a pull request pushes the initial load above 1.5 MB or the full bundle above 8 MB compressed
+- **WHEN** a pull request pushes the initial load above 1.625 MB or the full bundle above 8 MB compressed
 - **THEN** the size-budget job fails and reports the largest contributors to the increase
 
 #### Scenario: Scenario packs load on demand

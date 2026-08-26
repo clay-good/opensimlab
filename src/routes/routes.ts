@@ -173,7 +173,7 @@ export const ROUTES: readonly RouteMetadata[] = [
   {
     path: '/neurology',
     title: formatTitle('Neurology simulator'),
-    description: 'Practice calm neurological pattern recognition, functional assessment, serial reassessment, escalation, and handoff across acute neurological change.',
+    description: 'Practice calm stroke and neurological pattern recognition, serial reassessment, qualified escalation, and active-risk handoff.',
     indexable: true,
     structuredData: ['SoftwareApplication'],
     heading: 'Neurology simulator',

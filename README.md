@@ -78,7 +78,7 @@ screening-rule calculation, abuse or perpetrator diagnosis, confrontation, refer
 submission, jurisdiction selection, custody action, procedure, treatment, disposition, or outcome
 controls.
 
-Wave E Neurology catalog work now includes 2 of 15 bounded labs. Minor nondisabling acute ischemic
+Wave E Neurology catalog work now includes 3 of 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later
 neurological trajectory, and elapsed etiology, recurrence, secondary-prevention, and active-risk
@@ -88,7 +88,11 @@ controls. Late-window basilar artery occlusion adds a fixed 10-hour posterior-ci
 supplied imaging and selection context, immediate qualified endovascular and airway-capable
 ownership, strict later surveillance, and elapsed unresolved-risk handoff without examination,
 scoring, eligibility, drug, airway-device, transfer, thrombectomy, reperfusion, disposition,
-prognosis, or outcome controls.
+prognosis, or outcome controls. Spontaneous cerebellar intracerebral hemorrhage adds early
+posterior-fossa danger recognition, qualified neurocritical, neurosurgical, and airway-capable
+ownership, a strict later transition to obstructive hydrocephalus and brainstem compression, and
+elapsed active-risk handoff without examination, scoring, imaging interpretation, drug, pressure,
+reversal, airway device, drain, surgery, procedure, disposition, prognosis, or outcome controls.
 
 The goal is not a tech demo. It is the best anesthesia education on the internet: the
 thing a student opens the night before their first day in the OR and comes out of

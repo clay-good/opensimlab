@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Neurology basilar-LVO state has protocol version 134', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(134);
+  it('Scenario: Neurology cerebellar-ICH state has protocol version 135', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(135);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

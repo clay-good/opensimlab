@@ -2037,6 +2037,24 @@ score calculation, testing, imaging interpretation, diagnosis, eligibility adjud
 blood-pressure target, airway management, transfer mechanics, thrombectomy, reperfusion grade,
 procedure, treatment, disposition, prognosis, or outcome is controlled or claimed.
 
+### Wave E neurology slice 3: spontaneous cerebellar intracerebral hemorrhage
+
+The third Neurology lab owns confined posterior-fossa danger and serial deterioration rather than
+the Emergency Medicine lesson's anticoagulant reversal or the Critical Care lesson's monitored
+ICP/CPP rescue. A previously independent 67-year-old woman has 75 minutes of abrupt vertigo,
+vomiting, dysarthria, and severe truncal ataxia. Fixed CT initially reports an 11 mL right cerebellar
+ICH with fourth-ventricle effacement but no hydrocephalus, brainstem compression, or herniation.
+
+The learner reconciles the whole trajectory, reviews fixed imaging and open threats, recognizes the
+posterior-fossa boundary, and activates qualified neurocritical, neurosurgical, and airway-capable
+ownership. A strict later report supplies increasing drowsiness, recurrent vomiting, weaker cough,
+expansion to 14 mL, new obstructive hydrocephalus, and brainstem compression without authored
+herniation. Another elapsed handoff preserves etiology, airway risk, procedure, disposition, and
+outcome as unresolved. The lab does not examine; score; calculate volume; acquire or interpret
+imaging or tests; diagnose; select or deliver a drug, pressure target, reversal, oxygen, airway,
+device, drain, surgery, procedure, transfer, or treatment; determine disposition or prognosis; or
+predict outcome.
+
 #### Neurology: 15
 
 Acute ischemic stroke; large-vessel-occlusion escalation; intracranial hemorrhage; subarachnoid

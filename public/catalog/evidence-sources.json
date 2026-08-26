@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 205,
+  "sourceCount": 207,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -2649,6 +2649,38 @@
       "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/36239645/",
       "verifiedOn": "2026-08-26",
       "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/36239645/"
+    },
+    {
+      "id": "aha-asa-spontaneous-ich-guideline-2022",
+      "currency": {
+        "lastAmended": "2022-05-17",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "Greenberg SM, Ziai WC, Cordonnier C, et al",
+      "title": "2022 Guideline for the Management of Patients With Spontaneous Intracerebral Hemorrhage",
+      "publication": "Stroke",
+      "year": 2022,
+      "locator": "53:e282-e361; doi:10.1161/STR.0000000000000407; sections 4.1, 4.3, and 6.1.4, especially posterior-fossa hemorrhage recommendation and supportive text",
+      "usedFor": "The early serial neurological and imaging surveillance context, neurocritical and neurosurgical access, and urgent posterior-fossa escalation when cerebellar ICH deteriorates or develops brainstem compression or obstructive hydrocephalus, without claiming functional benefit.",
+      "verifiedAgainst": "https://www.ahajournals.org/doi/10.1161/STR.0000000000000407",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "aha-asa-spontaneous-ich-performance-measures-2024",
+      "currency": {
+        "lastAmended": "2024-05-02",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "Ruff IM, de Havenon A, Bergman DL, et al",
+      "title": "2024 AHA/ASA Performance and Quality Measures for Spontaneous Intracerebral Hemorrhage",
+      "publication": "Stroke",
+      "year": 2024,
+      "pmid": "38695183",
+      "locator": "55:e199-e230; doi:10.1161/STR.0000000000000464; Appendix 1, PM-11 Surgery for Deteriorating Cerebellar ICH",
+      "usedFor": "The systems-level expectation for timely neurocritical and neurosurgical ownership when cerebellar ICH deteriorates with brainstem compression or obstructive hydrocephalus, while preserving documented patient, medical, capability, and goals-of-care exceptions.",
+      "verifiedAgainst": "https://pubmed.ncbi.nlm.nih.gov/38695183/",
+      "verifiedOn": "2026-08-26",
+      "publicLocator": "https://pubmed.ncbi.nlm.nih.gov/38695183/"
     }
   ]
 }

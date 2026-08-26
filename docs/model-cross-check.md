@@ -173,6 +173,12 @@ Recorded here rather than silently carried:
   not validate cerebral ischemia, examination, scoring, imaging, eligibility, airway safety,
   transfer, thrombectomy, reperfusion, treatment effect, etiology, disposition, prognosis, or
   outcome.
+  Spontaneous cerebellar intracerebral hemorrhage overlays fixed timing, posterior-fossa findings,
+  CT reports, physiology, qualified multidisciplinary ownership, and strict-later neurological,
+  airway, hematoma, hydrocephalus, and brainstem-compression deterioration on the healthy adult
+  scaffold; it does not validate hemorrhage or pressure physiology, examination, volume calculation,
+  imaging, airway safety, procedure selection, surgery, treatment effect, etiology, disposition,
+  prognosis, functional benefit, or outcome.
 
 ## Concentration-time checks, 2026-08-23
 
