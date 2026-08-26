@@ -12,8 +12,8 @@
  * knowledge); the anesthesia module supplies its own state shape.
  */
 
-/** Bumped whenever the message shape changes incompatibly. Version 130 reports pediatric bradycardic-arrest reassessment state. */
-export const WORKER_PROTOCOL_VERSION = 130;
+/** Bumped whenever the message shape changes incompatibly. Version 131 reports pediatric foreign-body airway-obstruction reassessment state. */
+export const WORKER_PROTOCOL_VERSION = 131;
 
 /** A single ranked contribution to a change in one state variable. */
 export interface AttributionTerm {
@@ -1484,6 +1484,68 @@ export interface EquipmentSnapshot {
       readonly deathDeclared: false; readonly resuscitationTerminated: false;
       readonly dischargeReadinessProven: false; readonly dispositionDetermined: false;
       readonly prognosisPredicted: false; readonly outcomePredicted: false;
+    };
+    readonly pediatricForeignBodyAirwayObstructionAssessment?: {
+      readonly reconciledAtTick: number | null;
+      readonly effectiveCoughAtTick: number | null;
+      readonly severeResponsiveAtTick: number | null;
+      readonly responsivePathwayAtTick: number | null;
+      readonly unresponsivePathwayAtTick: number | null;
+      readonly handoffAtTick: number | null;
+      readonly witnessedAbruptChokingAuthored: true;
+      readonly initialEffectiveCoughAuthored: true;
+      readonly initialPulsePresent: true;
+      readonly continuousSurveillanceAuthored: boolean;
+      readonly severeResponsiveTransitionAuthored: boolean;
+      readonly severeResponsivePulsePresent: boolean;
+      readonly qualifiedResponsivePathwayActive: boolean;
+      readonly unresponsiveNoNormalBreathingAuthored: boolean;
+      readonly unresponsivePulseStatusUnavailable: boolean;
+      readonly qualifiedUnresponsiveCprPathwayActive: boolean;
+      readonly patientExaminedByLearner: false;
+      readonly responsivenessAssessedByLearner: false;
+      readonly pulseAssessedByLearner: false;
+      readonly airwayAssessedByLearner: false;
+      readonly coughAssessedByLearner: false;
+      readonly coughEncouragedByLearner: false;
+      readonly monitoringAcquiredByLearner: false;
+      readonly testAcquiredByLearner: false;
+      readonly testInterpretedByLearner: false;
+      readonly diagnosisMadeByLearner: false;
+      readonly objectVisualizedByLearner: false;
+      readonly objectRemovedByLearner: false;
+      readonly maneuverPerformedByLearner: false;
+      readonly backBlowsPerformedByLearner: false;
+      readonly abdominalThrustsPerformedByLearner: false;
+      readonly chestThrustsPerformedByLearner: false;
+      readonly blindFingerSweepPerformedByLearner: false;
+      readonly cprDeliveredByLearner: false;
+      readonly chestCompressionsDeliveredByLearner: false;
+      readonly oxygenDeliveredByLearner: false;
+      readonly ventilationDeliveredByLearner: false;
+      readonly accessPlacedByLearner: false;
+      readonly drugSelectedByLearner: false;
+      readonly deviceSelectedByLearner: false;
+      readonly suctionPerformedByLearner: false;
+      readonly laryngoscopyPerformedByLearner: false;
+      readonly forcepsUsedByLearner: false;
+      readonly airwayManeuverPerformedByLearner: false;
+      readonly procedurePerformedByLearner: false;
+      readonly treatmentDeliveredByLearner: false;
+      readonly objectClearanceReported: false;
+      readonly completeClearanceProven: false;
+      readonly aspirationExcluded: false;
+      readonly airwayInjuryExcluded: false;
+      readonly treatmentEffectProven: false;
+      readonly cardiacArrestDeclared: false;
+      readonly pulseLossProven: false;
+      readonly roscReported: false;
+      readonly durableRecoveryProven: false;
+      readonly recurrenceExcluded: false;
+      readonly dischargeReadinessProven: false;
+      readonly dispositionDetermined: false;
+      readonly prognosisPredicted: false;
+      readonly outcomePredicted: false;
     };
     /** Bounded aspiration-risk recognition vignette. Optional for older saved snapshots. */
     readonly aspirationRiskAssessment?: {

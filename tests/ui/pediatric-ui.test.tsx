@@ -7,6 +7,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ActionCockpit, crisisResponseAvailability,
   type ActionCockpitProps } from '@anesthesia/ui/ActionCockpit';
+import { MonitorRegion } from '@anesthesia/ui/MonitorRegion';
 import { ConcentrationPanel } from '@anesthesia/ui/ConcentrationPanel';
 import { depthConfidenceFor } from '@anesthesia/ui/Cockpit';
 import { Prebrief } from '@anesthesia/ui/Prebrief';
@@ -18,6 +19,7 @@ import { PEDIATRIC_STATUS_EPILEPTICUS } from '../../src/modules/pediatrics/scena
 import { PEDIATRIC_ANAPHYLAXIS } from '../../src/modules/pediatrics/scenarios/pediatric-anaphylaxis';
 import { PEDIATRIC_SUPRAVENTRICULAR_TACHYCARDIA } from '../../src/modules/pediatrics/scenarios/pediatric-supraventricular-tachycardia';
 import { PEDIATRIC_BRADYCARDIC_ARREST } from '../../src/modules/pediatrics/scenarios/pediatric-bradycardic-arrest';
+import { PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION } from '../../src/modules/pediatrics/scenarios/pediatric-foreign-body-airway-obstruction';
 import { PrerenderedBody } from '../../src/routes/Prerendered';
 import { ROUTES } from '../../src/routes/routes';
 
@@ -477,6 +479,26 @@ describe('Requirement: pediatric SVT keeps one calm action at a time', () => {
         .hasPediatricSupraventricularTachycardiaResponse).toBe(false);
     }
   });
+
+  it('keeps unavailable pressure distinct from proven pulse loss', () => {
+    const markup = renderToStaticMarkup(createElement(MonitorRegion, {
+      state: { heartRateBpm: 132, meanArterialMmHg: 0, respiratoryRateBpm: 0,
+        etco2MmHg: 0, spo2Percent: 0, coreTemperatureC: 36.7, fio2: 0.21 },
+      blocks: [], alarms: [], tick: 3,
+      invalidParameters: new Set(['meanArterialMmHg', 'etco2MmHg', 'spo2Percent']),
+      invalidParameterReasons: { meanArterialMmHg: 'Pressure not supplied' },
+      artifactParameters: new Set<string>(), waveformArtifacts: new Set<string>(), rhythm: 'sinus',
+      airwayPatencyFraction: 0, bronchospasmSeverity: 0, ventilating: false,
+      mechanicalPulse: false, reducedMotion: true, colorblindSafe: false, showLimits: true,
+      primaryTracesOnly: false, canvasHeight: 320, onSilence: () => undefined,
+      onWhy: () => undefined,
+    }));
+    expect(markup).toContain('Pressure not supplied');
+    expect(markup).not.toContain('No pulsatile flow');
+    expect(markup).not.toContain('Arterial pressure');
+    expect(markup).not.toContain('Plethysmogram');
+    expect(markup).toContain('Electrocardiogram');
+  });
 });
 
 describe('Requirement: pediatric bradycardic arrest keeps one calm action at a time', () => {
@@ -582,6 +604,113 @@ describe('Requirement: pediatric bradycardic arrest keeps one calm action at a t
           event.target === target ? { ...event, target: `${target}-suffix` } : event) };
       expect(crisisResponseAvailability(drifted, []).hasPediatricBradycardicArrestResponse)
         .toBe(false);
+    }
+  });
+});
+
+describe('Requirement: pediatric foreign-body obstruction keeps one calm action at a time', () => {
+  let container: HTMLDivElement; let root: Root;
+  beforeEach(() => {
+    (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+    document.documentElement.style.width = '320px';
+    container = document.createElement('div'); document.body.appendChild(container);
+    const style = document.createElement('style'); style.dataset.testStyles = 'pediatric-fbao-ui';
+    style.textContent = [readFileSync(join(process.cwd(), 'src/platform/ui/components.css'), 'utf8'),
+      readFileSync(join(process.cwd(), 'src/modules/anesthesia/ui/cockpit.css'), 'utf8')].join('\n');
+    document.head.appendChild(style); root = createRoot(container);
+  });
+  afterEach(() => {
+    act(() => root.unmount()); container.remove(); document.documentElement.style.width = '';
+    document.querySelector('style[data-test-styles="pediatric-fbao-ui"]')?.remove();
+  });
+
+  const assessment = (step = 0) => ({
+    reconciledAtTick: step > 0 ? 1 : null,
+    effectiveCoughAtTick: step > 1 ? 1 : null,
+    severeResponsiveAtTick: step > 2 ? 2 : null,
+    responsivePathwayAtTick: step > 3 ? 2 : null,
+    unresponsivePathwayAtTick: step > 4 ? 3 : null,
+    handoffAtTick: step > 5 ? 4 : null,
+  });
+  function fbaoProps(step = 0, onAction = vi.fn()): ActionCockpitProps {
+    return { scenario: PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION, region: UNITED_STATES,
+      infusions: [], hypnoticLine: { connected: true, inspected: false }, resuscitation: {
+        epinephrineEffectFraction: 0, epinephrineTotalMicrograms: 0,
+        lastEpinephrineTick: null, crystalloidTotalMl: 0, dantroleneTotalMg: 0,
+        dantroleneEffectFraction: 0, lastDantroleneTick: null, activeCooling: false,
+        pediatricForeignBodyAirwayObstructionAssessment: assessment(step) as never,
+      }, lastExposure: null, syringeRemaining: {}, ventilator: { mode: 'manual',
+        tidalVolumeMl: 120, respiratoryRateBpm: 24, fio2: 0.21, peep: 0,
+        delivering: false, sevofluranePercent: 0, freshGasFlowLPerMin: 0.5 },
+      intubated: false, airwayAttempts: 0, lastGrade: null,
+      jawThrustCpapSecondsRemaining: 0, airwayDevice: 'facemask',
+      supraglotticInsertionSecondsRemaining: 0, helpRequestedAtTick: null,
+      muscleRigidityFraction: 0, onBolus: () => {}, onInfusion: () => {},
+      onHypnoticLine: () => {}, onFluid: () => {}, onVentilator: () => {},
+      onLaryngoscopy: () => {}, onAirwayManeuver: () => {}, onCallForHelp: () => {},
+      onAirwayDevice: () => {}, onEpinephrine: () => {}, onDantrolene: () => {},
+      onActiveCooling: () => {}, onPediatricForeignBodyAirwayObstructionResponse: onAction,
+      onDrugCard: () => {} };
+  }
+
+  it('shows the exact serial density in two labelled cards with one live status', () => {
+    const labels = ['Review choking + whole-child signs',
+      'Preserve effective cough + watch closely', 'Recognize severe responsive obstruction',
+      'Activate qualified choking rescue', 'Review transition + activate unresponsive care',
+      'Hand off active obstruction risk'];
+    const statuses = ['Cough, airflow, and responsiveness guide the next step.',
+      'Cough, airflow, and responsiveness guide the next step.',
+      'Cough, airflow, and responsiveness guide the next step.',
+      'Activate the qualified responsive-child pathway.',
+      'Qualified responsive-child care is active. Review the fixed response after elapsed care.',
+      'The child is unresponsive. Qualified unresponsive CPR is active.',
+      'Active obstruction risk and owners handed off.'];
+    for (let step = 0; step <= labels.length; step += 1) {
+      act(() => root.render(createElement(ActionCockpit, fbaoProps(step))));
+      const cards = [...container.querySelectorAll('.tray-grid > section.syringe')];
+      expect(cards).toHaveLength(2);
+      expect(cards.map((card) => card.getAttribute('aria-labelledby'))).toEqual([
+        'pediatric-fbao-pattern-title', 'pediatric-fbao-response-title']);
+      const liveStatuses = container.querySelectorAll('[role="status"]');
+      expect(liveStatuses).toHaveLength(1);
+      expect(liveStatuses[0]?.textContent?.trim()).toBe(statuses[step]);
+      const buttons = [...container.querySelectorAll('.tray-grid button')];
+      expect(buttons).toHaveLength([1, 1, 1, 1, 1, 1, 0][step]!);
+      if (step < labels.length) expect(buttons[0]?.textContent?.trim()).toBe(labels[step]);
+      for (const action of buttons) expect(getComputedStyle(action).minBlockSize).toBe('44px');
+    }
+  });
+
+  it('dispatches exact intent without exposing maneuver or arrest controls', () => {
+    const onAction = vi.fn();
+    act(() => root.render(createElement(ActionCockpit, fbaoProps(4, onAction))));
+    act(() => [...container.querySelectorAll('button')]
+      .find((entry) => entry.textContent?.trim()
+        === 'Review transition + activate unresponsive care')?.click());
+    expect(onAction).toHaveBeenCalledWith(
+      'activate-pediatric-foreign-body-airway-obstruction-unresponsive-cpr-pathway');
+    act(() => root.render(createElement(ActionCockpit, fbaoProps(5))));
+    expect(container.textContent).toContain('The child is unresponsive.');
+    const actionLabels = [...container.querySelectorAll('.tray-grid button')]
+      .map((entry) => entry.textContent ?? '').join(' ');
+    expect(actionLabels).not.toMatch(/back blow|abdominal thrust|chest thrust|finger sweep|suction|compression|breath|pulse check|AED|shock|laryng|forceps|bronch|intubat|oxygen|device/i);
+    expect(container.textContent).toContain('pulse status remains unreported');
+  });
+
+  it('requires the exact scenario and both narrative targets', () => {
+    expect(crisisResponseAvailability(PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION, [])
+      .hasPediatricForeignBodyAirwayObstructionResponse).toBe(true);
+    const wrongId = { ...PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION, metadata: {
+      ...PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION.metadata, id: 'not-pediatric-fbao' } };
+    expect(crisisResponseAvailability(wrongId, [])
+      .hasPediatricForeignBodyAirwayObstructionResponse).toBe(false);
+    for (const target of ['pediatric-foreign-body-airway-obstruction-reassessment',
+      'pediatric-foreign-body-airway-obstruction-reassessment-boundary']) {
+      const drifted = { ...PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION,
+        timeline: PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION.timeline.map((event) =>
+          event.target === target ? { ...event, target: `${target}-suffix` } : event) };
+      expect(crisisResponseAvailability(drifted, [])
+        .hasPediatricForeignBodyAirwayObstructionResponse).toBe(false);
     }
   });
 });

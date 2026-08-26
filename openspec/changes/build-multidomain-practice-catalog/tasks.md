@@ -361,6 +361,13 @@ credited toward the catalog until every item in the completion contract passes.
     mechanics, monitoring or rhythm interpretation, drug, dose, route, access, pacing, shock,
     energy, device, procedure, cause treatment, termination, post-arrest care, disposition, or
     outcome controls.
+  - [x] Pediatrics slice 15/16 adds one authored 6-year-old foreign-body-airway-obstruction
+    trajectory from an effective cough with preserved speech and airflow through a strictly elapsed
+    severe responsive obstruction and then a strictly elapsed unresponsive transition, with
+    qualified responsive and unresponsive pathway ownership and active-risk handoff without learner
+    examination, cough or pulse assessment, back blow, thrust, sweep, suction, oxygen, ventilation,
+    compression, CPR-sequence, object removal, airway device, laryngoscopy, bronchoscopy, drug,
+    procedure, treatment, disposition, recovery, ROSC, or outcome controls.
 - [ ] Wave E: complete 15 neurology, 12 endocrine/metabolic, and 12 renal/electrolyte scenarios.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
 - [ ] Wave G: complete 11 hematology/oncology, 10 surgery/trauma, and 9 medical-surgical-nursing

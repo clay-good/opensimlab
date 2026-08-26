@@ -1922,6 +1922,28 @@ route, pacing, shock, energy, device operation, procedure, cause-specific treatm
 or post-arrest care; determine termination or disposition; predict prognosis; or report ROSC or
 outcome.
 
+### Wave D pediatrics slice 15: foreign-body airway obstruction
+
+The fifteenth Pediatrics lab owns abrupt witnessed choking and the changing cough-effectiveness
+boundary. A previously well 6-year-old boy weighing 20 kg suddenly coughs while eating a whole grape.
+No object is seen to exit, and neither object nor location is confirmed. Initially he remains awake,
+follows directions, coughs forcefully and loudly with audible airflow, and speaks normally between
+coughs, with room-air SpO₂ 98%, normal color, warm strong pulses, and preserved pressure.
+
+The learner reconciles the event and whole-child state, preserves effective coughing with close
+qualified surveillance, then recognizes a strictly elapsed minute-2 transition to severe responsive
+obstruction: silent ineffective cough attempts, inability to speak, minimal air movement, cyanosis,
+and falling room-air SpO₂ despite a central pulse. Qualified responsive-child care is activated before
+a strictly elapsed minute-3 unresponsive transition with no normal breathing, effective cough,
+speech, or audible airflow and no reported relief. Pulse status is deliberately unsupplied. The
+learner activates qualified unresponsive-child CPR and airway-check ownership before an elapsed
+active-risk handoff. The lab does not examine the child; assess cough, airflow, breathing, or pulse;
+visualize, sweep, suction, or remove an object; expose back-blow, thrust, ventilation, compression,
+CPR-sequence, oxygen, airway-device, laryngoscopy, bronchoscopy, drug, procedure, treatment,
+disposition, recovery, ROSC, or outcome controls. Because AHA and European/UK guidance differ in the
+opening sequence after unresponsiveness, the learner surface records qualified pathway ownership
+rather than presenting one sequence as universal.
+
 #### Pediatrics: 16
 
 Pediatric respiratory distress; bronchiolitis; croup; status asthmaticus; pediatric sepsis; septic

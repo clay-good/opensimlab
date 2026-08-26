@@ -74,8 +74,8 @@ export const ROUTES: readonly RouteMetadata[] = [
   // scenario cannot leave it unroutable or unlisted.
   ...SCENARIOS.map((scenario) => ({
     path: `/anesthesia/scenario/${scenario.metadata.id}`,
-    title: formatTitle(scenario.metadata.title.length > 40
-      ? `${scenario.metadata.title.slice(0, 37)}…`
+    title: formatTitle(scenario.metadata.title.length > 44
+      ? `${scenario.metadata.title.slice(0, 41)}…`
       : scenario.metadata.title),
     description: scenarioDescription(scenario),
     indexable: true,
@@ -93,8 +93,8 @@ export const ROUTES: readonly RouteMetadata[] = [
   },
   ...EMERGENCY_MEDICINE_SCENARIOS.map((scenario) => ({
     path: `/emergency-medicine/scenario/${scenario.metadata.id}`,
-    title: formatTitle(scenario.metadata.title.length > 40
-      ? `${scenario.metadata.title.slice(0, 37)}…`
+    title: formatTitle(scenario.metadata.title.length > 44
+      ? `${scenario.metadata.title.slice(0, 41)}…`
       : scenario.metadata.title),
     description: scenarioDescription(scenario),
     indexable: true,
@@ -111,8 +111,8 @@ export const ROUTES: readonly RouteMetadata[] = [
   },
   ...CRITICAL_CARE_SCENARIOS.map((scenario) => ({
     path: `/critical-care/scenario/${scenario.metadata.id}`,
-    title: formatTitle(scenario.metadata.title.length > 40
-      ? `${scenario.metadata.title.slice(0, 37)}…` : scenario.metadata.title),
+    title: formatTitle(scenario.metadata.title.length > 44
+      ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
     description: scenarioDescription(scenario),
     indexable: true,
     structuredData: ['LearningResource'] as const,
@@ -128,8 +128,8 @@ export const ROUTES: readonly RouteMetadata[] = [
   },
   ...CARDIOLOGY_SCENARIOS.map((scenario) => ({
     path: `/cardiology/scenario/${scenario.metadata.id}`,
-    title: formatTitle(scenario.metadata.title.length > 40
-      ? `${scenario.metadata.title.slice(0, 37)}…` : scenario.metadata.title),
+    title: formatTitle(scenario.metadata.title.length > 44
+      ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
     description: scenarioDescription(scenario),
     indexable: true,
     structuredData: ['LearningResource'] as const,
@@ -145,8 +145,8 @@ export const ROUTES: readonly RouteMetadata[] = [
   },
   ...RESPIRATORY_MEDICINE_SCENARIOS.map((scenario) => ({
     path: `/respiratory-medicine/scenario/${scenario.metadata.id}`,
-    title: formatTitle(scenario.metadata.title.length > 40
-      ? `${scenario.metadata.title.slice(0, 37)}…` : scenario.metadata.title),
+    title: formatTitle(scenario.metadata.title.length > 44
+      ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
     description: scenarioDescription(scenario),
     indexable: true,
     structuredData: ['LearningResource'] as const,
@@ -162,8 +162,8 @@ export const ROUTES: readonly RouteMetadata[] = [
   },
   ...PEDIATRICS_SCENARIOS.map((scenario) => ({
     path: `/pediatrics/scenario/${scenario.metadata.id}`,
-    title: formatTitle(scenario.metadata.title.length > 40
-      ? `${scenario.metadata.title.slice(0, 37)}…` : scenario.metadata.title),
+    title: formatTitle(scenario.metadata.title.length > 44
+      ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
     description: scenarioDescription(scenario),
     indexable: true,
     structuredData: ['LearningResource'] as const,

@@ -3791,6 +3791,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified patient data, current pediatric resuscitation guidance, local systems, qualified teams, multiple concordant support and perfusion findings, immediate care when the full threshold is met, and continuous pulse, rhythm, support, and cause reassessment.',
     briefIn: ['pediatric-bradycardic-arrest'],
   },
+  {
+    id: 'pediatric-foreign-body-airway-obstruction-event-transitions-and-care-are-authored',
+    headline: 'The eating event, cough branches, obstruction transitions, qualified care, and unresolved outcome are authored.',
+    simplification: 'Fixed reports stand in for event history, cough and airflow assessment, whole-child examination, monitoring, object review, responsive obstruction care, unresponsive CPR and airway checks, and serial reassessment.',
+    whereItMisleads: 'Treating the fictional values, reported grape, negative snapshots, elapsed deterioration, unreported pulse status, or care ownership as learner-acquired evidence, confirmed object or location, modeled pediatric physiology, treatment effect, or predicted course.',
+    correctUnderstanding: 'Real care requires direct rapid assessment, effective-versus-ineffective cough recognition, immediate qualified escalation, age- and region-appropriate current resuscitation pathways, repeated responsiveness and circulation checks, and patient-specific reassessment.',
+    briefIn: ['pediatric-foreign-body-airway-obstruction'],
+  },
+  {
+    id: 'pediatric-foreign-body-airway-obstruction-controls-reconcile-preserve-recognize-activate-and-handoff-only',
+    headline: 'The controls record reconciliation, effective-cough preservation, transition recognition, qualified pathway activation, and handoff only.',
+    simplification: 'Six accepted actions stand in for experienced pediatric, emergency, airway-capable, resuscitation, nursing, and caregiver assessment, treatment, monitoring, escalation, and handoff.',
+    whereItMisleads: 'Equating button order with cough assessment, examination, pulse checking, maneuver or CPR skill, object visualization or removal, airway management, device operation, team performance, caregiver communication, disposition, or pediatric FBAO competence.',
+    correctUnderstanding: 'Actual care requires the child, trained responders, current region-specific pediatric resuscitation guidance, direct findings, prompt qualified action when cough becomes ineffective, and immediate transition when responsiveness is lost.',
+    briefIn: ['pediatric-foreign-body-airway-obstruction'],
+  },
+  {
+    id: 'no-live-pediatric-foreign-body-airway-obstruction-exam-maneuver-cpr-device-treatment-or-outcome',
+    headline: 'The lab does not assess the child, perform an obstruction maneuver or CPR, remove an object, operate a device, treat, or report outcome.',
+    simplification: 'No live examination, cough or pulse assessment, monitoring, object visualization, blind or visible-object sweep, back blow, chest or abdominal thrust, suction, oxygen, ventilation, compression, CPR sequence, airway device, laryngoscopy, bronchoscopy, drug, procedure, treatment, disposition, prognosis, recovery, ROSC, or outcome is modeled.',
+    whereItMisleads: 'Applying thrusts during an effective cough, delaying care after cough becomes ineffective, continuing responsive-child maneuvers after unresponsiveness, using a blind sweep, assuming one regional CPR opening sequence is universal, treating negative snapshots as exclusions, or using completion as clinical competence.',
+    correctUnderstanding: 'Use direct patient findings, current local pediatric resuscitation guidance, qualified responders, effective-cough surveillance without harmful early maneuvers, rapid severe-obstruction care, and immediate unresponsive-child CPR and airway-check care.',
+    briefIn: ['pediatric-foreign-body-airway-obstruction'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

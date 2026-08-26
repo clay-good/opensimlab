@@ -4894,6 +4894,32 @@ export function objectiveFindings(
       const ordered = later && handoff && later.tick < handoff.tick;
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved active nonshockable arrest, breathing and pulse findings, open causes, deterioration, and named resuscitation owners without claiming return of circulation, disposition, prognosis, or outcome.' : 'The pediatric bradycardic-arrest handoff was absent or did not follow pulse loss after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['reconcile-pediatric-foreign-body-airway-obstruction-event-cough-and-whole-child',
+      'preserve-pediatric-foreign-body-airway-obstruction-effective-cough-and-surveillance',
+      'recognize-pediatric-foreign-body-airway-obstruction-severe-responsive-transition',
+      'activate-pediatric-foreign-body-airway-obstruction-qualified-responsive-pathway',
+      'activate-pediatric-foreign-body-airway-obstruction-unresponsive-cpr-pathway',
+      'handoff-pediatric-foreign-body-airway-obstruction-active-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'pediatric-foreign-body-airway-obstruction'
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pediatric-foreign-body-airway-obstruction-reassessment')
+        && scenario.timeline.some((event) => event.type === 'narrative'
+          && event.target === 'pediatric-foreign-body-airway-obstruction-reassessment-boundary');
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The pediatric foreign-body airway-obstruction lesson was not active.' } satisfies ObjectiveFinding;
+      const reconciled = log.find((event) => /^pediatric-fbao-event-reconciled-\d+$/.test(event.eventId));
+      const cough = log.find((event) => /^pediatric-fbao-effective-cough-preserved-\d+$/.test(event.eventId));
+      const severe = log.find((event) => /^pediatric-fbao-severe-responsive-transition-recognized-\d+$/.test(event.eventId));
+      const responsive = log.find((event) => /^pediatric-fbao-qualified-responsive-pathway-activated-\d+$/.test(event.eventId));
+      const unresponsive = log.find((event) => /^pediatric-fbao-unresponsive-cpr-pathway-activated-\d+$/.test(event.eventId));
+      const handoff = log.find((event) => /^pediatric-fbao-active-risk-handoff-recorded-\d+$/.test(event.eventId));
+      if (objective.id === 'reconcile-pediatric-foreign-body-airway-obstruction-event-cough-and-whole-child') return { ...base, outcome: reconciled ? 'met' : 'not-met', finding: reconciled ? 'The abrupt choking event, cough, voice, airflow, color, responsiveness, and whole-child state were reconciled without learner examination, monitoring, diagnosis, object localization, or treatment.' : 'The pediatric foreign-body airway-obstruction event was not reconciled.', atTick: reconciled?.tick ?? 0 } satisfies ObjectiveFinding;
+      if (objective.id === 'preserve-pediatric-foreign-body-airway-obstruction-effective-cough-and-surveillance') { const ordered = reconciled && cough && reconciled.tick <= cough.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The initially effective cough was preserved with close qualified surveillance, without learner blow, thrust, sweep, suction, device, or treatment control.' : 'Effective-cough preservation was absent or preceded event review.', atTick: cough?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'recognize-pediatric-foreign-body-airway-obstruction-severe-responsive-transition') { const ordered = cough && severe && cough.tick < severe.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After elapsed surveillance, the supplied weak cough, lost voice, reduced airflow, color change, and retained responsiveness established the severe responsive transition without one sign alone proving object or location.' : 'The severe responsive transition was absent or did not follow effective-cough surveillance after elapsed time.', atTick: severe?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-pediatric-foreign-body-airway-obstruction-qualified-responsive-pathway') { const ordered = severe && responsive && severe.tick <= responsive.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'Qualified responsive-child obstruction care was activated without learner blow, thrust, count, cycle, sweep, suction, device, airway procedure, object removal, or treatment selection.' : 'Qualified responsive-child care was absent or preceded recognition.', atTick: responsive?.tick ?? 0 } satisfies ObjectiveFinding; }
+      if (objective.id === 'activate-pediatric-foreign-body-airway-obstruction-unresponsive-cpr-pathway') { const ordered = responsive && unresponsive && responsive.tick < unresponsive.tick; return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'After the fixed loss-of-responsiveness transition, qualified unresponsive CPR ownership was activated without learner pulse check, compression, breath, oxygen, device, shock, procedure, or treatment control and without declaring pulse loss or cardiac arrest.' : 'The qualified unresponsive pathway was absent or did not follow responsive care after elapsed time.', atTick: unresponsive?.tick ?? 0 } satisfies ObjectiveFinding; }
+      const ordered = unresponsive && handoff && unresponsive.tick < handoff.tick;
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? 'The elapsed handoff preserved active obstruction, responsiveness, breathing, visible-object boundaries, qualified resuscitation, and named owners while leaving object, pulse status, arrest, clearance, recovery, prognosis, and outcome open.' : 'The active pediatric airway-obstruction handoff was absent or did not follow unresponsive care after elapsed time.', atTick: handoff?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['reconcile-post-infarction-shock-trajectory', 'reopen-post-infarction-shock-causes',
       'contact-post-infarction-shock-center', 'record-post-infarction-shock-bridge',
       'handoff-post-infarction-shock-trajectory'].includes(objective.id)) {

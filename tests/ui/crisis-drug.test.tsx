@@ -18,6 +18,7 @@ import { EXTUBATION_READINESS } from '@anesthesia/scenarios/extubation-readiness
 import { AnesthesiaEngine } from '@anesthesia/engine';
 import { UNITED_KINGDOM, UNITED_STATES } from '@anesthesia/region/profiles';
 import { PEDIATRIC_BRADYCARDIC_ARREST } from '../../src/modules/pediatrics/scenarios/pediatric-bradycardic-arrest';
+import { PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION } from '../../src/modules/pediatrics/scenarios/pediatric-foreign-body-airway-obstruction';
 
 const CRISIS_SCENARIO = {
   ...ROUTINE_INDUCTION,
@@ -201,6 +202,7 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
       hasPediatricAnaphylaxisResponse: false,
       hasPediatricSupraventricularTachycardiaResponse: false,
       hasPediatricBradycardicArrestResponse: false,
+      hasPediatricForeignBodyAirwayObstructionResponse: false,
       hasPulmonaryEmbolismResponse: false,
       hasStemiResponse: false,
       hasUnstableNarrowTachycardiaResponse: false,
@@ -769,5 +771,40 @@ describe('Requirement: crisis epinephrine is explicit, bounded, and does not nam
     expect(container.textContent).not.toContain('Epinephrine 1 mg IV/IO');
     expect(container.textContent).not.toContain('Defibrillate 200 J');
     expect(container.textContent).toContain('A rhythm is not circulation.');
+  });
+
+  it('does not expose the adult arrest tray after the authored unresponsive FBAO transition', () => {
+    const subject = new AnesthesiaEngine({ scenario: PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION,
+      seed: 1508, practiceRegion: 'US' });
+    subject.step();
+    for (const action of [
+      'reconcile-pediatric-foreign-body-airway-obstruction-event-cough-and-whole-child',
+      'preserve-pediatric-foreign-body-airway-obstruction-effective-cough-and-surveillance',
+    ]) subject.apply({ tick: subject.tick,
+      type: 'pediatric-foreign-body-airway-obstruction-response', payload: { action } });
+    subject.step();
+    for (const action of [
+      'recognize-pediatric-foreign-body-airway-obstruction-severe-responsive-transition',
+      'activate-pediatric-foreign-body-airway-obstruction-qualified-responsive-pathway',
+    ]) subject.apply({ tick: subject.tick,
+      type: 'pediatric-foreign-body-airway-obstruction-response', payload: { action } });
+    subject.step();
+    subject.apply({ tick: subject.tick,
+      type: 'pediatric-foreign-body-airway-obstruction-response',
+      payload: { action: 'activate-pediatric-foreign-body-airway-obstruction-unresponsive-cpr-pathway' } });
+    const frame = subject.step();
+
+    expect(frame.equipment.resuscitation).toMatchObject({ cardiacArrestActive: false,
+      chestCompressionsActive: false, roscAtTick: null });
+    expect(crisisResponseAvailability(PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION))
+      .toMatchObject({ hasCardiacArrestResponse: false,
+        hasPediatricForeignBodyAirwayObstructionResponse: true });
+    renderCockpit(UNITED_STATES, vi.fn(), {
+      scenario: PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION,
+      resuscitation: frame.equipment.resuscitation, lastExposure: null,
+    });
+    expect(button('Crisis response')).toBeUndefined();
+    expect(container.textContent).not.toContain('Epinephrine 1 mg IV/IO');
+    expect(container.textContent).not.toContain('Defibrillate 200 J');
   });
 });

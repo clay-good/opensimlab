@@ -575,6 +575,9 @@ export function Cockpit({
           alarms={session.alarms}
           tick={session.tick}
           invalidParameters={invalidParameters}
+          invalidParameterReasons={scenario.metadata.id
+            === 'pediatric-foreign-body-airway-obstruction'
+            ? { meanArterialMmHg: 'Pressure not supplied' } : undefined}
           artifactParameters={artifactParameters}
           waveformArtifacts={waveformArtifacts}
           capnographySampleObstructed={capnographyLine.obstructed}
@@ -1012,6 +1015,9 @@ export function Cockpit({
           })}
           onPediatricBradycardicArrestResponse={(action) => session.act({
             type: 'pediatric-bradycardic-arrest-response', payload: { action },
+          })}
+          onPediatricForeignBodyAirwayObstructionResponse={(action) => session.act({
+            type: 'pediatric-foreign-body-airway-obstruction-response', payload: { action },
           })}
           onBronchospasmHelp={() => session.act({
             type: 'call-for-help', payload: { context: 'bronchospasm' },

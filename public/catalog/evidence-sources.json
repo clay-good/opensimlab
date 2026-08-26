@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 193,
+  "sourceCount": 196,
   "sources": [
     {
       "id": "gold-copd-report-2026",
@@ -2016,10 +2016,55 @@
       "title": "Part 6: Pediatric Basic Life Support: 2025 American Heart Association Guidelines for Cardiopulmonary Resuscitation and Emergency Cardiovascular Care",
       "publication": "Pediatrics",
       "year": 2026,
-      "locator": "157:e2025074350; inadequate breathing with a pulse and respiratory-failure sections",
-      "usedFor": "The pediatric respiratory-distress escalation boundary: rapidly evaluate airway and breathing, support oxygenation and ventilation in a seriously ill child, and treat inadequate breathing with a pulse as an urgent prearrest state.",
+      "locator": "Pediatrics 157:e2025074350; Circulation 152(suppl 2):S424-S447; doi:10.1161/CIR.0000000000001370; inadequate-breathing sections and foreign-body airway obstruction pp S431-S433, Figures 6-7",
+      "usedFor": "The pediatric respiratory-distress escalation boundary and the foreign-body airway obstruction branches: distinguish effective from ineffective cough, escalate severe obstruction promptly, and transition to qualified CPR and visible-object-check care when the child becomes unresponsive.",
       "verifiedAgainst": "https://publications.aap.org/pediatrics/article/157/1/e2025074350/205235/Part-6-Pediatric-Basic-Life-Support-2025-American",
-      "verifiedOn": "2026-08-25"
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "aha-aap-child-fbao-algorithm-2025",
+      "currency": {
+        "lastAmended": "2025-10-22",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "American Heart Association and American Academy of Pediatrics",
+      "title": "Child Foreign-Body Airway Obstruction Algorithm",
+      "publication": "2025 American Heart Association Guidelines for CPR and ECC",
+      "year": 2025,
+      "locator": "2025 one-page child algorithm; effective-cough, severe responsive-obstruction, and unresponsive branches",
+      "usedFor": "The scenario sequence from preserved effective cough through severe responsive obstruction to qualified unresponsive-child CPR and airway-check ownership.",
+      "verifiedAgainst": "https://cpr.heart.org/-/media/CPR-Files/CPR-Guidelines-Files/2025-Algorithms/Algorithm-BLS-Child-FBAO-250130.pdf?sc_lang=en",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "erc-pediatric-life-support-2025",
+      "currency": {
+        "lastAmended": "2025-10-22",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "Djakow J, Lott C, de Lucas N, et al",
+      "title": "European Resuscitation Council Guidelines 2025: Paediatric life support",
+      "publication": "Resuscitation",
+      "year": 2025,
+      "locator": "215:110767; doi:10.1016/j.resuscitation.2025.110767; foreign-body airway obstruction section and Figure 22",
+      "usedFor": "The effective-versus-ineffective cough boundary, avoidance of blind sweeps, severe-obstruction escalation, and transition to pediatric CPR when the child becomes unresponsive.",
+      "verifiedAgainst": "https://www.erc.edu/umbraco/api/download-page/download/053c0724-acae-4886-960e-c4e3e31c4cd2",
+      "verifiedOn": "2026-08-26"
+    },
+    {
+      "id": "rcuk-pediatric-life-support-2025",
+      "currency": {
+        "lastAmended": "2026-02-01",
+        "checkedAt": "2026-08-26"
+      },
+      "authors": "Resuscitation Council UK",
+      "title": "Paediatric life support",
+      "publication": "Resuscitation Council UK Guidelines 2025",
+      "year": 2025,
+      "locator": "Foreign body airway obstruction section; current consolidated resource February 2026",
+      "usedFor": "The UK effective-cough surveillance, severe responsive-obstruction, no-blind-sweep, unresponsive-transition, and suction-device nonrecommendation boundaries.",
+      "verifiedAgainst": "https://www.resus.org.uk/cy/node/36439",
+      "verifiedOn": "2026-08-26"
     },
     {
       "id": "who-pediatric-etat-2016",

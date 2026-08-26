@@ -148,6 +148,12 @@ Recorded here rather than silently carried:
   qualified CPR ownership, and a strict-later PEA transition; it does not validate pediatric
   bradycardia, ventilation, perfusion, arrest or CPR physiology, treatment effect, cause, pulse-loss
   prediction, ROSC, termination, post-arrest care, prognosis, or outcome.
+  Pediatric foreign-body airway obstruction reuses the exact 6-year-old, 20 kg healthy-child
+  scaffold and overlays a fixed abrupt eating event, effective-cough branch, strict-later severe
+  responsive obstruction, qualified pathway ownership, and strict-later unresponsive transition;
+  it does not validate cough or airway physiology, object identity or location, oxygenation kinetics,
+  obstruction progression, maneuver or CPR performance, treatment effect, removal, pulse status,
+  recovery, ROSC, disposition, prognosis, or outcome.
 
 ## Concentration-time checks, 2026-08-23
 

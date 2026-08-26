@@ -268,6 +268,16 @@ const PEDIATRIC_BRADYCARDIC_ARREST_BLOCKED_ACTION_TYPES = new Set([
   'transcutaneous-pacing-capture-response', 'stable-narrow-tachycardia-response',
   'unstable-narrow-tachycardia-response', 'stable-wide-tachycardia-response',
 ]);
+const PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION_BLOCKED_ACTION_TYPES = new Set([
+  ...[...PEDIATRIC_RESPIRATORY_DISTRESS_BLOCKED_ACTION_TYPES]
+    .filter((type) => type !== 'pediatric-foreign-body-airway-obstruction-response'),
+  'pediatric-respiratory-distress-response', 'bronchiolitis-response', 'croup-response',
+  'pediatric-status-asthmaticus-response', 'pediatric-anaphylaxis-response',
+  'pediatric-bradycardic-arrest-response', 'acute-tracheostomy-obstruction-response',
+  'bronchiectasis-mucus-plugging-response', 'mucus-plugging-response',
+  'opioid-toxicity-response', 'adult-asthma-response', 'acute-severe-asthma-response',
+  'emergency-anaphylaxis-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1003,6 +1013,12 @@ export class AnesthesiaEngine {
   private pediatricBradycardicArrestSafetyAtTick: number | null = null;
   private pediatricBradycardicArrestLaterResponseAtTick: number | null = null;
   private pediatricBradycardicArrestHandoffAtTick: number | null = null;
+  private pediatricFbaoReconciledAtTick: number | null = null;
+  private pediatricFbaoEffectiveCoughAtTick: number | null = null;
+  private pediatricFbaoSevereResponsiveAtTick: number | null = null;
+  private pediatricFbaoResponsivePathwayAtTick: number | null = null;
+  private pediatricFbaoUnresponsivePathwayAtTick: number | null = null;
+  private pediatricFbaoHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -1534,6 +1550,18 @@ export class AnesthesiaEngine {
       this.log('warning', 'assessment',
         `pediatric-bradycardic-arrest-generic-action-refused-${this.currentTick}`,
         'This pediatric bradycardic-arrest lesson exposes no generic compression, adult arrest-drug, shock, rhythm, medication, pacing, device, oxygen, ventilation, airway, fluid, procedure, adult-bradycardia, or adjacent-scenario action. Nothing changed.',
+        { actionType: action.type });
+      return;
+    }
+    const pediatricFbao = this.scenario.metadata.id === 'pediatric-foreign-body-airway-obstruction'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-foreign-body-airway-obstruction-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-foreign-body-airway-obstruction-reassessment-boundary');
+    if (pediatricFbao
+      && PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `pediatric-fbao-generic-action-refused-${this.currentTick}`,
+        'This pediatric foreign-body airway-obstruction lesson exposes no generic airway maneuver, ventilation, oxygen, laryngoscopy, device, suction, medication, fluid, compression, arrest-drug, shock, rhythm, adult-airway, or adjacent-scenario action. Nothing changed.',
         { actionType: action.type });
       return;
     }
@@ -7660,6 +7688,158 @@ export class AnesthesiaEngine {
             prognosisPredicted: false, outcomePredicted: false });
         break;
       }
+      case 'pediatric-foreign-body-airway-obstruction-response': {
+        const response = String(action.payload.action ?? '');
+        const supported = this.scenario.metadata.id === 'pediatric-foreign-body-airway-obstruction'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-foreign-body-airway-obstruction-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-foreign-body-airway-obstruction-reassessment-boundary');
+        const valid = ['reconcile-pediatric-foreign-body-airway-obstruction-event-cough-and-whole-child',
+          'preserve-pediatric-foreign-body-airway-obstruction-effective-cough-and-surveillance',
+          'recognize-pediatric-foreign-body-airway-obstruction-severe-responsive-transition',
+          'activate-pediatric-foreign-body-airway-obstruction-qualified-responsive-pathway',
+          'activate-pediatric-foreign-body-airway-obstruction-unresponsive-cpr-pathway',
+          'handoff-pediatric-foreign-body-airway-obstruction-active-risk'].includes(response);
+        if (!supported || !valid) {
+          this.log('warning', 'assessment', `pediatric-fbao-response-refused-${this.currentTick}`,
+            supported
+              ? 'The pediatric foreign-body airway-obstruction action was not one of the listed choices. Nothing changed.'
+              : 'These pediatric foreign-body airway-obstruction choices are available only in the exact declared Pediatrics lesson.');
+          break;
+        }
+        if (response === 'reconcile-pediatric-foreign-body-airway-obstruction-event-cough-and-whole-child') {
+          if (this.pediatricFbaoReconciledAtTick !== null) {
+            this.log('warning', 'assessment', `pediatric-fbao-reconciliation-refused-${this.currentTick}`,
+              'The witnessed event, cough, airflow, responsiveness, breathing, pulse, perfusion, and whole-child trajectory were already reconciled.');
+            break;
+          }
+          this.pediatricFbaoReconciledAtTick = this.currentTick;
+          this.log('critical', 'assessment', `pediatric-fbao-event-reconciled-${this.currentTick}`,
+            'The supplied witnessed event is reconciled with an initially alert child who can voice, has an effective cough and audible airflow, breathes 24/min between coughs, and has a present pulse. Fixed current physiology is HR 118/min, BP 100/64 mmHg (MAP 76), clean room-air SpO2 98%, and temperature 36.7°C; EtCO2 is unavailable. None of these findings was examined, monitored, interpreted, or treated by the learner.',
+            { witnessedAbruptChokingAuthored: true, initialEffectiveCoughAuthored: true,
+              initialPulsePresent: true, patientExaminedByLearner: false,
+              diagnosisMadeByLearner: false, treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.pediatricFbaoReconciledAtTick === null) {
+          this.log('warning', 'assessment', `pediatric-fbao-reconciliation-order-refused-${this.currentTick}`,
+            'Reconcile the witnessed event, cough, airflow, responsiveness, breathing, pulse, perfusion, and whole-child trajectory first.');
+          break;
+        }
+        if (response === 'preserve-pediatric-foreign-body-airway-obstruction-effective-cough-and-surveillance') {
+          if (this.pediatricFbaoEffectiveCoughAtTick !== null) {
+            this.log('warning', 'assessment', `pediatric-fbao-effective-cough-refused-${this.currentTick}`,
+              'The initial effective-cough and continuous-surveillance boundary was already preserved.');
+            break;
+          }
+          this.pediatricFbaoEffectiveCoughAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-fbao-effective-cough-preserved-${this.currentTick}`,
+            'The authored effective cough, voice, airflow, color, responsiveness, breathing, and pulse support the initial cough-and-observe branch with continuous surveillance for severe obstruction. The learner did not assess cough effectiveness, encourage coughing, position the child, perform a maneuver, inspect or sweep the mouth, select a device, or deliver treatment.',
+            { initialEffectiveCoughAuthored: true, continuousSurveillanceAuthored: true,
+              coughAssessedByLearner: false, coughEncouragedByLearner: false,
+              maneuverPerformedByLearner: false, treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.pediatricFbaoEffectiveCoughAtTick === null) {
+          this.log('warning', 'assessment', `pediatric-fbao-effective-cough-order-refused-${this.currentTick}`,
+            'Preserve the initial effective-cough and surveillance branch before reviewing a later transition.');
+          break;
+        }
+        if (response === 'recognize-pediatric-foreign-body-airway-obstruction-severe-responsive-transition') {
+          if (this.currentTick <= this.pediatricFbaoEffectiveCoughAtTick) {
+            this.log('warning', 'assessment', `pediatric-fbao-severe-responsive-time-refused-${this.currentTick}`,
+              'Allow elapsed simulated time before reviewing the fixed minute-2 transition.');
+            break;
+          }
+          if (this.pediatricFbaoSevereResponsiveAtTick !== null) {
+            this.log('warning', 'assessment', `pediatric-fbao-severe-responsive-refused-${this.currentTick}`,
+              'The fixed severe-responsive transition was already recognized.');
+            break;
+          }
+          this.pediatricFbaoSevereResponsiveAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-fbao-severe-responsive-transition-recognized-${this.currentTick}`,
+            'Fixed minute-2 report: the child remains responsive but now has silent ineffective attempts, minimal airflow, inability to speak, perioral cyanosis, HR 138/min, BP 98/60 mmHg (MAP 73), and clean pulse-coherent room-air SpO2 91% and falling. Respiratory rate and EtCO2 are unavailable. A central pulse is authored present. This is the supplied severe-responsive transition, not a learner examination, diagnosis, or treatment effect.',
+            { severeResponsiveTransitionAuthored: true,
+              severeResponsivePulsePresent: true, diagnosisMadeByLearner: false,
+              treatmentEffectProven: false, treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.pediatricFbaoSevereResponsiveAtTick === null) {
+          this.log('warning', 'assessment', `pediatric-fbao-severe-responsive-order-refused-${this.currentTick}`,
+            'Review the fixed severe-responsive transition after elapsed surveillance first.');
+          break;
+        }
+        if (response === 'activate-pediatric-foreign-body-airway-obstruction-qualified-responsive-pathway') {
+          if (this.pediatricFbaoResponsivePathwayAtTick !== null) {
+            this.log('warning', 'assessment', `pediatric-fbao-responsive-pathway-refused-${this.currentTick}`,
+              'Qualified ownership of the responsive severe-obstruction pathway is already active.');
+            break;
+          }
+          this.pediatricFbaoResponsivePathwayAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-fbao-qualified-responsive-pathway-activated-${this.currentTick}`,
+            'Emergency response and qualified pediatric foreign-body airway-obstruction ownership are active for the responsive severe-obstruction branch, with continuous responsiveness and deterioration surveillance. No cough assessment, maneuver, back blow, thrust, sweep, object removal, oxygen, ventilation, device, laryngoscopy, suction, procedure, or treatment was selected or performed by the learner.',
+            { qualifiedResponsivePathwayActive: true,
+              backBlowsPerformedByLearner: false, abdominalThrustsPerformedByLearner: false,
+              objectRemovedByLearner: false, procedurePerformedByLearner: false,
+              treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.pediatricFbaoResponsivePathwayAtTick === null) {
+          this.log('warning', 'assessment', `pediatric-fbao-responsive-pathway-order-refused-${this.currentTick}`,
+            'Activate qualified ownership of the responsive severe-obstruction pathway before reviewing later responsiveness.');
+          break;
+        }
+        if (response === 'activate-pediatric-foreign-body-airway-obstruction-unresponsive-cpr-pathway') {
+          if (this.currentTick <= this.pediatricFbaoResponsivePathwayAtTick) {
+            this.log('warning', 'assessment', `pediatric-fbao-unresponsive-time-refused-${this.currentTick}`,
+              'Allow elapsed simulated time before reviewing the fixed minute-3 unresponsive transition.');
+            break;
+          }
+          if (this.pediatricFbaoUnresponsivePathwayAtTick !== null) {
+            this.log('warning', 'assessment', `pediatric-fbao-unresponsive-refused-${this.currentTick}`,
+              'The fixed unresponsive transition and qualified CPR pathway were already activated.');
+            break;
+          }
+          this.pediatricFbaoUnresponsivePathwayAtTick = this.currentTick;
+          this.log('critical', 'assessment',
+            `pediatric-fbao-unresponsive-cpr-pathway-activated-${this.currentTick}`,
+            'Fixed minute-3 report: the child is unresponsive with no normal breathing, effective cough, speech, or airflow. Electrical HR 132/min may display, while pulse status, BP, SpO2, respiratory rate, and EtCO2 are intentionally unavailable. No visible object or clearance is reported. Qualified teams own the unresponsive foreign-body CPR pathway. Pulse loss and cardiac arrest are not declared, and the learner performed no pulse check, compression, airway opening, object check or removal, breath, ventilation, drug, device action, procedure, or treatment.',
+            { unresponsiveNoNormalBreathingAuthored: true,
+              unresponsivePulseStatusUnavailable: true,
+              qualifiedUnresponsiveCprPathwayActive: true,
+              cardiacArrestDeclared: false, objectClearanceReported: false,
+              cprDeliveredByLearner: false, treatmentDeliveredByLearner: false });
+          break;
+        }
+        if (this.pediatricFbaoUnresponsivePathwayAtTick === null) {
+          this.log('warning', 'assessment', `pediatric-fbao-unresponsive-order-refused-${this.currentTick}`,
+            'Review the fixed unresponsive transition and activate qualified CPR ownership before handoff.');
+          break;
+        }
+        if (this.currentTick <= this.pediatricFbaoUnresponsivePathwayAtTick) {
+          this.log('warning', 'assessment', `pediatric-fbao-handoff-time-refused-${this.currentTick}`,
+            'Allow another simulated tick before handing off active foreign-body airway risk.');
+          break;
+        }
+        if (this.pediatricFbaoHandoffAtTick !== null) {
+          this.log('warning', 'assessment', `pediatric-fbao-handoff-refused-${this.currentTick}`,
+            'The active pediatric foreign-body airway-risk handoff was already recorded.');
+          break;
+        }
+        this.pediatricFbaoHandoffAtTick = this.currentTick;
+        this.log('critical', 'assessment', `pediatric-fbao-active-risk-handoff-recorded-${this.currentTick}`,
+          'The witnessed event, effective-to-severe-to-unresponsive trajectory, active qualified CPR pathway, responsiveness, airway and breathing surveillance, visible-object boundary, escalation triggers, caregiver context, and named ownership were handed off. Pulse status, object clearance, complete obstruction resolution, aspiration or airway injury exclusion, causal treatment effect, cardiac arrest, ROSC, durable recovery, disposition, prognosis, and outcome remain undeclared.',
+          { objectClearanceReported: false, completeClearanceProven: false,
+            aspirationExcluded: false, airwayInjuryExcluded: false,
+            treatmentEffectProven: false, cardiacArrestDeclared: false, roscReported: false,
+            durableRecoveryProven: false, dispositionDetermined: false,
+            prognosisPredicted: false, outcomePredicted: false });
+        break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -10668,6 +10848,22 @@ export class AnesthesiaEngine {
         meanArterialMmHg: 45,
         coreTemperatureC: 36.8 };
     }
+    if (this.scenario.metadata.id === 'pediatric-foreign-body-airway-obstruction'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-foreign-body-airway-obstruction-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-foreign-body-airway-obstruction-reassessment-boundary')) {
+      const unresponsive = this.pediatricFbaoUnresponsivePathwayAtTick !== null;
+      const severeResponsive = this.pediatricFbaoSevereResponsiveAtTick !== null;
+      crisisState = { ...crisisState,
+        heartRateBpm: unresponsive ? 132 : severeResponsive ? 138 : 118,
+        respiratoryRateBpm: severeResponsive ? 0 : 24,
+        spo2Percent: unresponsive ? 0 : severeResponsive ? 91 : 98,
+        systolicMmHg: unresponsive ? 0 : severeResponsive ? 98 : 100,
+        diastolicMmHg: unresponsive ? 0 : severeResponsive ? 60 : 64,
+        meanArterialMmHg: unresponsive ? 0 : severeResponsive ? 73 : 76,
+        coreTemperatureC: 36.7 };
+    }
     if (this.scenario.timeline.some(
       (event) => event.type === 'narrative' && event.target === 'copd-exacerbation',
     )) {
@@ -12826,6 +13022,67 @@ export class AnesthesiaEngine {
               outcomePredicted: false as const,
             },
           } : {}),
+        ...(this.scenario.metadata.id === 'pediatric-foreign-body-airway-obstruction'
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-foreign-body-airway-obstruction-reassessment')
+          && this.scenario.timeline.some((event) => event.type === 'narrative'
+            && event.target === 'pediatric-foreign-body-airway-obstruction-reassessment-boundary') ? {
+            pediatricForeignBodyAirwayObstructionAssessment: {
+              reconciledAtTick: this.pediatricFbaoReconciledAtTick,
+              effectiveCoughAtTick: this.pediatricFbaoEffectiveCoughAtTick,
+              severeResponsiveAtTick: this.pediatricFbaoSevereResponsiveAtTick,
+              responsivePathwayAtTick: this.pediatricFbaoResponsivePathwayAtTick,
+              unresponsivePathwayAtTick: this.pediatricFbaoUnresponsivePathwayAtTick,
+              handoffAtTick: this.pediatricFbaoHandoffAtTick,
+              witnessedAbruptChokingAuthored: true as const,
+              initialEffectiveCoughAuthored: true as const, initialPulsePresent: true as const,
+              continuousSurveillanceAuthored: this.pediatricFbaoEffectiveCoughAtTick !== null,
+              severeResponsiveTransitionAuthored:
+                this.pediatricFbaoSevereResponsiveAtTick !== null,
+              severeResponsivePulsePresent: this.pediatricFbaoSevereResponsiveAtTick !== null,
+              qualifiedResponsivePathwayActive:
+                this.pediatricFbaoResponsivePathwayAtTick !== null,
+              unresponsiveNoNormalBreathingAuthored:
+                this.pediatricFbaoUnresponsivePathwayAtTick !== null,
+              unresponsivePulseStatusUnavailable:
+                this.pediatricFbaoUnresponsivePathwayAtTick !== null,
+              qualifiedUnresponsiveCprPathwayActive:
+                this.pediatricFbaoUnresponsivePathwayAtTick !== null,
+              patientExaminedByLearner: false as const,
+              responsivenessAssessedByLearner: false as const,
+              pulseAssessedByLearner: false as const, airwayAssessedByLearner: false as const,
+              coughAssessedByLearner: false as const, coughEncouragedByLearner: false as const,
+              monitoringAcquiredByLearner: false as const,
+              testAcquiredByLearner: false as const, testInterpretedByLearner: false as const,
+              diagnosisMadeByLearner: false as const,
+              objectVisualizedByLearner: false as const, objectRemovedByLearner: false as const,
+              maneuverPerformedByLearner: false as const,
+              backBlowsPerformedByLearner: false as const,
+              abdominalThrustsPerformedByLearner: false as const,
+              chestThrustsPerformedByLearner: false as const,
+              blindFingerSweepPerformedByLearner: false as const,
+              cprDeliveredByLearner: false as const,
+              chestCompressionsDeliveredByLearner: false as const,
+              oxygenDeliveredByLearner: false as const,
+              ventilationDeliveredByLearner: false as const,
+              accessPlacedByLearner: false as const, drugSelectedByLearner: false as const,
+              deviceSelectedByLearner: false as const,
+              suctionPerformedByLearner: false as const,
+              laryngoscopyPerformedByLearner: false as const,
+              forcepsUsedByLearner: false as const,
+              airwayManeuverPerformedByLearner: false as const,
+              procedurePerformedByLearner: false as const,
+              treatmentDeliveredByLearner: false as const,
+              objectClearanceReported: false as const, completeClearanceProven: false as const,
+              aspirationExcluded: false as const, airwayInjuryExcluded: false as const,
+              treatmentEffectProven: false as const, cardiacArrestDeclared: false as const,
+              pulseLossProven: false as const, roscReported: false as const,
+              durableRecoveryProven: false as const, recurrenceExcluded: false as const,
+              dischargeReadinessProven: false as const,
+              dispositionDetermined: false as const, prognosisPredicted: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
         aspirationRiskAssessment: {
           cuesReviewedAtTick: this.aspirationRiskCuesReviewedAtTick,
           classification: this.aspirationRiskClassification,
@@ -13059,6 +13316,23 @@ export class AnesthesiaEngine {
         && event.target === 'pediatric-bradycardic-arrest-reassessment-boundary')
       && this.pediatricBradycardicArrestLaterResponseAtTick !== null) {
       invalid.add('etco2MmHg');
+    }
+    if (this.scenario.metadata.id === 'pediatric-foreign-body-airway-obstruction'
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-foreign-body-airway-obstruction-reassessment')
+      && this.scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-foreign-body-airway-obstruction-reassessment-boundary')) {
+      invalid.add('etco2MmHg');
+      if (this.pediatricFbaoSevereResponsiveAtTick !== null
+        && this.pediatricFbaoUnresponsivePathwayAtTick === null) {
+        invalid.add('respiratoryRateBpm');
+      }
+      if (this.pediatricFbaoUnresponsivePathwayAtTick !== null) {
+        invalid.add('spo2Percent');
+        invalid.add('systolicMmHg');
+        invalid.add('diastolicMmHg');
+        invalid.add('meanArterialMmHg');
+      }
     }
     return invalid;
   }

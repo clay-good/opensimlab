@@ -1090,6 +1090,11 @@ export interface ActionCockpitProps {
       readonly resuscitationAtTick: number | null; readonly safetyAtTick: number | null;
       readonly laterResponseAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly pediatricForeignBodyAirwayObstructionAssessment?: {
+      readonly reconciledAtTick: number | null; readonly effectiveCoughAtTick: number | null;
+      readonly severeResponsiveAtTick: number | null; readonly responsivePathwayAtTick: number | null;
+      readonly unresponsivePathwayAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -1782,6 +1787,14 @@ export interface ActionCockpitProps {
       | 'review-pediatric-bradycardic-arrest-pulse-loss-response'
       | 'handoff-pediatric-bradycardic-arrest-active-risk',
   ) => void;
+  readonly onPediatricForeignBodyAirwayObstructionResponse?: (
+    action: 'reconcile-pediatric-foreign-body-airway-obstruction-event-cough-and-whole-child'
+      | 'preserve-pediatric-foreign-body-airway-obstruction-effective-cough-and-surveillance'
+      | 'recognize-pediatric-foreign-body-airway-obstruction-severe-responsive-transition'
+      | 'activate-pediatric-foreign-body-airway-obstruction-qualified-responsive-pathway'
+      | 'activate-pediatric-foreign-body-airway-obstruction-unresponsive-cpr-pathway'
+      | 'handoff-pediatric-foreign-body-airway-obstruction-active-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2181,6 +2194,12 @@ export function crisisResponseAvailability(
         && event.target === 'pediatric-bradycardic-arrest-reassessment')
       && scenario.timeline.some((event) => event.type === 'narrative'
         && event.target === 'pediatric-bradycardic-arrest-reassessment-boundary'),
+    hasPediatricForeignBodyAirwayObstructionResponse:
+      scenario.metadata.id === 'pediatric-foreign-body-airway-obstruction'
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-foreign-body-airway-obstruction-reassessment')
+      && scenario.timeline.some((event) => event.type === 'narrative'
+        && event.target === 'pediatric-foreign-body-airway-obstruction-reassessment-boundary'),
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -2348,6 +2367,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
         && event.target === 'pediatric-supraventricular-tachycardia-reassessment')
       || (event.type === 'narrative'
         && event.target === 'pediatric-bradycardic-arrest-reassessment')
+      || (event.type === 'narrative'
+        && event.target === 'pediatric-foreign-body-airway-obstruction-reassessment')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -2418,6 +2439,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasPediatricAnaphylaxisResponse,
     hasPediatricSupraventricularTachycardiaResponse,
     hasPediatricBradycardicArrestResponse,
+    hasPediatricForeignBodyAirwayObstructionResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -2494,7 +2516,8 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPediatricDehydrationResponse || hasPediatricDiabeticKetoacidosisResponse
     || hasPediatricHypoglycemicSeizureResponse || hasPediatricFebrileSeizureResponse
     || hasPediatricStatusEpilepticusResponse || hasPediatricAnaphylaxisResponse
-    || hasPediatricSupraventricularTachycardiaResponse || hasPediatricBradycardicArrestResponse;
+    || hasPediatricSupraventricularTachycardiaResponse || hasPediatricBradycardicArrestResponse
+    || hasPediatricForeignBodyAirwayObstructionResponse;
   const focusedArrestScenario = props.scenario.formulary.length === 0
     && props.scenario.timeline.some((event) => event.type === 'rhythm-change'
       && ['ventricular-fibrillation', 'pea'].includes(event.target ?? ''));
@@ -2525,7 +2548,9 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasVentilatorCircuitDisconnectionResponse || hasDelayedVasopressorDeliveryResponse
     || hasPulseOximeterArtifactResponse || hasEndotrachealTubeMigrationResponse
     || hasSepticShockResuscitationResponse || hasAnyNonAcuteAssessment;
-  const responseTray = hasPediatricBradycardicArrestResponse
+  const responseTray = hasPediatricForeignBodyAirwayObstructionResponse
+    ? { id: 'crisis', label: 'Pediatric airway-obstruction reassessment' } as const
+    : hasPediatricBradycardicArrestResponse
     ? { id: 'crisis', label: 'Pediatric bradycardic-arrest reassessment' } as const
     : hasPediatricSupraventricularTachycardiaResponse
     ? { id: 'crisis', label: 'Pediatric SVT reassessment' } as const
@@ -2812,6 +2837,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasPediatricAnaphylaxisResponse
     || hasPediatricSupraventricularTachycardiaResponse
     || hasPediatricBradycardicArrestResponse
+    || hasPediatricForeignBodyAirwayObstructionResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -3528,6 +3554,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
               <PediatricBradycardicArrestTray
                 assessment={props.resuscitation.pediatricBradycardicArrestAssessment}
                 onAction={props.onPediatricBradycardicArrestResponse ?? (() => {})} />
+            )}
+            {hasPediatricForeignBodyAirwayObstructionResponse && (
+              <PediatricForeignBodyAirwayObstructionTray
+                assessment={props.resuscitation.pediatricForeignBodyAirwayObstructionAssessment}
+                onAction={props.onPediatricForeignBodyAirwayObstructionResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -9184,6 +9215,62 @@ function PediatricBradycardicArrestTray({ assessment, onAction }: {
           onClick={() => onAction('handoff-pediatric-bradycardic-arrest-active-risk')}>Hand off active arrest risk</Button>}
       </div>
       <p className="field__hint">The fixed pulse-loss transition does not prove cause, treatment modality or effect, resuscitation quality, return of circulation, neurological recovery, prognosis, or outcome.</p>
+    </section>
+  </div>;
+}
+
+function PediatricForeignBodyAirwayObstructionTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['pediatricForeignBodyAirwayObstructionAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onPediatricForeignBodyAirwayObstructionResponse']>;
+}) {
+  const reconciled = assessment?.reconciledAtTick != null;
+  const effectiveCough = assessment?.effectiveCoughAtTick != null;
+  const severe = assessment?.severeResponsiveAtTick != null;
+  const responsiveCare = assessment?.responsivePathwayAtTick != null;
+  const unresponsiveCare = assessment?.unresponsivePathwayAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <div className="tray-grid">
+    <section className="syringe" aria-labelledby="pediatric-fbao-pattern-title">
+      <div id="pediatric-fbao-pattern-title" className="syringe__name">Let the child’s sound guide urgency.</div>
+      <Badge kind="teaching">onset · cough · voice · airflow · color · responsiveness</Badge>
+      <div className="syringe__meta">6 years · 20 kg · abrupt choking · initially responsive</div>
+      <p className="syringe__remaining">
+        {responsiveCare ? 'Qualified responsive-child care is active · keep watching responsiveness'
+          : severe ? 'Severe responsive obstruction · qualified care matters now'
+            : effectiveCough ? 'Effective cough is preserved · watch for severe obstruction'
+              : reconciled ? 'Preserve effective cough and stay close'
+                : 'Start with the event, cough, voice, airflow, and responsiveness.'}
+      </p>
+      <div className="syringe__presets">
+        {!reconciled && <Button className="crisis-drug__action"
+          onClick={() => onAction('reconcile-pediatric-foreign-body-airway-obstruction-event-cough-and-whole-child')}>Review choking + whole-child signs</Button>}
+        {reconciled && !effectiveCough && <Button className="crisis-drug__action"
+          onClick={() => onAction('preserve-pediatric-foreign-body-airway-obstruction-effective-cough-and-surveillance')}>Preserve effective cough + watch closely</Button>}
+        {effectiveCough && !severe && <Button className="crisis-drug__action"
+          onClick={() => onAction('recognize-pediatric-foreign-body-airway-obstruction-severe-responsive-transition')}>Recognize severe responsive obstruction</Button>}
+        {severe && !responsiveCare && <Button className="crisis-drug__action"
+          onClick={() => onAction('activate-pediatric-foreign-body-airway-obstruction-qualified-responsive-pathway')}>Activate qualified choking rescue</Button>}
+      </div>
+      <p className="field__hint">Qualified pediatric and emergency responders own age-appropriate obstruction care, monitoring, visible-object review, and escalation. This surface exposes no learner blow, thrust, sweep, suction, compression, breath, oxygen, device, airway procedure, object removal, or treatment control.</p>
+    </section>
+    <section className="syringe" aria-labelledby="pediatric-fbao-response-title">
+      <div id="pediatric-fbao-response-title" className="syringe__name">Responsiveness changes the pathway.</div>
+      <Badge kind="teaching">airflow · responsiveness · obstruction · visible object · resuscitation · ownership</Badge>
+      <div className="syringe__meta">fixed 3-minute report · pulse status remains unreported</div>
+      <p className="syringe__remaining" role="status">
+        {handoff ? 'Active obstruction risk and owners handed off.'
+          : unresponsiveCare ? 'The child is unresponsive. Qualified unresponsive CPR is active.'
+            : responsiveCare ? 'Qualified responsive-child care is active. Review the fixed response after elapsed care.'
+              : severe ? 'Activate the qualified responsive-child pathway.'
+                : 'Cough, airflow, and responsiveness guide the next step.'}
+      </p>
+      <div className="syringe__presets">
+        {responsiveCare && !unresponsiveCare && <Button className="crisis-drug__action"
+          onClick={() => onAction('activate-pediatric-foreign-body-airway-obstruction-unresponsive-cpr-pathway')}>Review transition + activate unresponsive care</Button>}
+        {unresponsiveCare && !handoff && <Button className="crisis-drug__action"
+          onClick={() => onAction('handoff-pediatric-foreign-body-airway-obstruction-active-risk')}>Hand off active obstruction risk</Button>}
+      </div>
+      <p className="field__hint">The fixed transition does not prove object or location, pulse status, cardiac arrest, treatment modality or effect, clearance, neurological recovery, prognosis, or outcome. Only a visible object is reviewed; no blind sweep is exposed.</p>
     </section>
   </div>;
 }

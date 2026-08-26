@@ -20,6 +20,7 @@ export interface MonitorRegionProps {
   readonly alarms: readonly EngineAlarm[];
   readonly tick: number;
   readonly invalidParameters: ReadonlySet<string>;
+  readonly invalidParameterReasons?: Readonly<Partial<Record<StateField, string>>>;
   readonly artifactParameters: ReadonlySet<string>;
   readonly waveformArtifacts: ReadonlySet<string>;
   readonly capnographySampleObstructed?: boolean;
@@ -55,7 +56,11 @@ export function MonitorRegion(props: MonitorRegionProps) {
     () => trackConfigs(props.colorblindSafe, props.waveformArtifacts, props.primaryTracesOnly)
       .filter((track) => track.id !== 'capno'
         || !props.invalidParameters.has('etco2MmHg')
-        || props.capnographySampleObstructed),
+        || props.capnographySampleObstructed)
+      .filter((track) => track.id !== 'arterial'
+        || !props.invalidParameters.has('meanArterialMmHg'))
+      .filter((track) => track.id !== 'pleth'
+        || !props.invalidParameters.has('spo2Percent')),
     [props.colorblindSafe, props.waveformArtifacts, props.primaryTracesOnly,
       props.invalidParameters, props.capnographySampleObstructed],
   );
@@ -148,7 +153,9 @@ export function MonitorRegion(props: MonitorRegionProps) {
                 {...(props.showLimits && tile.lowLimit !== undefined ? { lowLimit: tile.lowLimit } : {})}
                 {...(props.showLimits && tile.highLimit !== undefined ? { highLimit: tile.highLimit } : {})}
                 alarm={alarmFor(tile.field)}
-                {...(tile.invalidReason ? { invalidReason: tile.invalidReason } : {})}
+                {...(props.invalidParameterReasons?.[tile.field] ?? tile.invalidReason
+                  ? { invalidReason: props.invalidParameterReasons?.[tile.field] ?? tile.invalidReason }
+                  : {})}
                 reasonApplies={invalid && props.state !== null}
                 artifact={props.artifactParameters.has(tile.field)}
                 {...(tile.field === 'depthIndex' && props.modelConfidence
