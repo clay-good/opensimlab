@@ -18,6 +18,7 @@ import { NEUROLOGY_SCENARIOS } from '../modules/neurology/scenarios';
 import { TOXICOLOGY_SCENARIOS } from '../modules/toxicology/scenarios';
 import { OBSTETRICS_SCENARIOS } from '../modules/obstetrics/scenarios';
 import { NEONATOLOGY_SCENARIOS } from '../modules/neonatology/scenarios';
+import { ENDOCRINE_METABOLIC_SCENARIOS } from '../modules/endocrine-metabolic/scenarios';
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { ROOT_ROUTE, formatTitle } from './site-metadata';
 import type { RouteMetadata } from './site-metadata';
@@ -234,6 +235,23 @@ export const ROUTES: readonly RouteMetadata[] = [
   },
   ...NEONATOLOGY_SCENARIOS.map((scenario) => ({
     path: `/neonatology/scenario/${scenario.metadata.id}`,
+    title: formatTitle(scenario.metadata.title.length > 44
+      ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
+    description: scenarioDescription(scenario),
+    indexable: true,
+    structuredData: ['LearningResource'] as const,
+    heading: scenario.metadata.title,
+  })),
+  {
+    path: '/endocrine-metabolic',
+    title: formatTitle('Endocrine and metabolic medicine simulator'),
+    description: 'Practice calm metabolic trajectory review, treatment boundaries, transition readiness, and recurrence-aware handoff across endocrine emergencies.',
+    indexable: true,
+    structuredData: ['SoftwareApplication'],
+    heading: 'Endocrine and metabolic medicine simulator',
+  },
+  ...ENDOCRINE_METABOLIC_SCENARIOS.map((scenario) => ({
+    path: `/endocrine-metabolic/scenario/${scenario.metadata.id}`,
     title: formatTitle(scenario.metadata.title.length > 44
       ? `${scenario.metadata.title.slice(0, 41)}…` : scenario.metadata.title),
     description: scenarioDescription(scenario),

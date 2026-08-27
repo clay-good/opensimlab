@@ -16,6 +16,7 @@ import { NEUROLOGY_SCENARIOS } from '../src/modules/neurology/scenarios';
 import { TOXICOLOGY_SCENARIOS } from '../src/modules/toxicology/scenarios';
 import { OBSTETRICS_SCENARIOS } from '../src/modules/obstetrics/scenarios';
 import { NEONATOLOGY_SCENARIOS } from '../src/modules/neonatology/scenarios';
+import { ENDOCRINE_METABOLIC_SCENARIOS } from '../src/modules/endocrine-metabolic/scenarios';
 import { buildScenarioQualityCatalog } from '@platform/catalog/scenario-quality';
 import {
   buildMaturityCatalog, maturityFor, type MaturitySubjectKind,
@@ -105,6 +106,11 @@ function main(): void {
   );
   const neonatologyQuality = buildScenarioQualityCatalog(neonatologyCompletion);
   const neonatologyMaturity = buildMaturityCatalog(neonatologyCompletion, neonatologyQuality);
+  const endocrineMetabolicCompletion = buildModuleCompletionCatalog(
+    ENDOCRINE_METABOLIC_SCENARIOS, ENGINE_VERSION, 'endocrine-metabolic', 'ward', 'state_transition',
+  );
+  const endocrineMetabolicQuality = buildScenarioQualityCatalog(endocrineMetabolicCompletion);
+  const endocrineMetabolicMaturity = buildMaturityCatalog(endocrineMetabolicCompletion, endocrineMetabolicQuality);
   const moduleCatalogs = [
     { completion, quality, maturity },
     { completion: emergencyCompletion, quality: emergencyQuality, maturity: emergencyMaturity },
@@ -117,6 +123,7 @@ function main(): void {
     { completion: toxicologyCompletion, quality: toxicologyQuality, maturity: toxicologyMaturity },
     { completion: obstetricsCompletion, quality: obstetricsQuality, maturity: obstetricsMaturity },
     { completion: neonatologyCompletion, quality: neonatologyQuality, maturity: neonatologyMaturity },
+    { completion: endocrineMetabolicCompletion, quality: endocrineMetabolicQuality, maturity: endocrineMetabolicMaturity },
   ];
   const validation = buildValidationReport();
   const evidenceOptions = {

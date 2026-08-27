@@ -50,6 +50,10 @@ import {
 import {
   NEONATOLOGY_SCENARIOS, DEFAULT_NEONATOLOGY_SCENARIO_ID, getNeonatologyScenario,
 } from '../modules/neonatology/scenarios';
+import {
+  ENDOCRINE_METABOLIC_SCENARIOS, DEFAULT_ENDOCRINE_METABOLIC_SCENARIO_ID,
+  getEndocrineMetabolicScenario,
+} from '../modules/endocrine-metabolic/scenarios';
 import type { Scenario } from '@anesthesia/scenarios/types';
 
 export function PrerenderedBody({ path }: { path: string }) {
@@ -126,6 +130,15 @@ export function PrerenderedBody({ path }: { path: string }) {
     <ScenarioMarkup path={path} basePath="/neonatology"
       defaultScenarioId={DEFAULT_NEONATOLOGY_SCENARIO_ID}
       getScenario={getNeonatologyScenario} />
+  );
+  if (path === '/endocrine-metabolic') return (
+    <ModuleMarkup moduleId="endocrine-metabolic" basePath="/endocrine-metabolic"
+      heading="Endocrine and metabolic medicine simulator" scenarios={ENDOCRINE_METABOLIC_SCENARIOS} />
+  );
+  if (path.startsWith('/endocrine-metabolic/scenario/')) return (
+    <ScenarioMarkup path={path} basePath="/endocrine-metabolic"
+      defaultScenarioId={DEFAULT_ENDOCRINE_METABOLIC_SCENARIO_ID}
+      getScenario={getEndocrineMetabolicScenario} />
   );
   if (path === '/neurology') return (
     <ModuleMarkup moduleId="neurology" basePath="/neurology"

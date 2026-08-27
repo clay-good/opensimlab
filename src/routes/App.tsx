@@ -33,6 +33,7 @@ const NeurologyRoute = lazy(async () => ({ default: (await import('./AnesthesiaR
 const ToxicologyRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).ToxicologyRoute }));
 const ObstetricsRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).ObstetricsRoute }));
 const NeonatologyRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).NeonatologyRoute }));
+const EndocrineMetabolicRoute = lazy(async () => ({ default: (await import('./AnesthesiaRoute')).EndocrineMetabolicRoute }));
 const GalleryRoute = lazy(async () => ({ default: (await import('./GalleryRoute')).GalleryRoute }));
 const FrameBudgetRoute = lazy(async () => ({ default: (await import('./FrameBudgetRoute')).FrameBudgetRoute }));
 // The informational routes read the validation report and the governance records,
@@ -198,6 +199,13 @@ function CurrentRoute() {
     return (
       <ErrorBoundary surface="simulator">
         <Suspense fallback={<Loading />}><NeonatologyRoute path={path} /></Suspense>
+      </ErrorBoundary>
+    );
+  }
+  if (path === '/endocrine-metabolic' || path.startsWith('/endocrine-metabolic/')) {
+    return (
+      <ErrorBoundary surface="simulator">
+        <Suspense fallback={<Loading />}><EndocrineMetabolicRoute path={path} /></Suspense>
       </ErrorBoundary>
     );
   }

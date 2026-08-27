@@ -8,11 +8,11 @@
  * report and the limitations register do not support.
  */
 
-export const READY_SCENARIO_COUNT = 192;
-export const READY_MODULE_COUNT = 10;
+export const READY_SCENARIO_COUNT = 193;
+export const READY_MODULE_COUNT = 11;
 
 export const ONE_LINE_DESCRIPTION =
-  `Practice ${READY_SCENARIO_COUNT} interactive clinical scenarios across ${READY_MODULE_COUNT} specialties—free in your browser—`
+  `Practice ${READY_SCENARIO_COUNT} clinical scenarios across ${READY_MODULE_COUNT} specialties—free online—`
   + 'for medical students, residents, and nurse anesthetists.';
 
 /** Exactly three facts, chosen because they answer the objections a visitor has. */

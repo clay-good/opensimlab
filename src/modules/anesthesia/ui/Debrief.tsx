@@ -5450,6 +5450,31 @@ export function objectiveFindings(
       const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
       return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
     }
+    if (['activate-dka-resolution-endocrine-nursing-pharmacy-electrolyte-nutrition-and-transition-support',
+      'reconcile-dka-resolution-initial-triad-treatment-clock-current-ketone-acid-base-potassium-glucose-and-whole-person',
+      'recognize-persistent-dka-despite-lower-glucose-and-closed-anion-gap',
+      'review-qualified-dka-insulin-dextrose-potassium-monitoring-resolution-and-bridged-transition-boundaries',
+      'review-dka-resolution-fixed-four-hour-qualified-report',
+      'handoff-dka-recurrence-insulin-potassium-nutrition-precipitant-education-follow-up-and-outcome-risk'].includes(objective.id)) {
+      const supported = scenario.metadata.id === 'dka-resolution-transition'
+        && scenario.timeline.every((event) => event.type === 'narrative')
+        && scenario.timeline.filter((event) => event.target === 'dka-resolution-transition').length === 1
+        && scenario.timeline.filter((event) => event.target === 'dka-resolution-transition-boundary').length === 1;
+      if (!supported) return { ...base, outcome: 'not-exercised', finding: 'The Endocrine and Metabolic Medicine DKA resolution lesson was not active.' } satisfies ObjectiveFinding;
+      const steps = [
+        ['support-activated', 'Qualified endocrine, nursing, pharmacy, electrolyte, nutrition, education, precipitant, transition, follow-up, and escalation ownership was confirmed first.'],
+        ['context-reconciled', 'The initial triad, treatment and monitoring clock, biochemical trajectory, symptoms, intake, precipitant, insulin access, preferences, and whole person were connected.'],
+        ['pattern-recognized', 'Persistent DKA was recognized despite lower glucose and a closed gap, using the ketone plus pH or bicarbonate resolution boundary.'],
+        ['readiness-reviewed', 'Qualified insulin-dextrose continuity, potassium safety, monitoring, precipitant, nutrition, maintenance-insulin, and bridged-transition boundaries were reviewed.'],
+        ['four-hour-report-reviewed', 'The fixed resolution and basal-overlap report was reviewed without learner care, universal dose, durable stability, discharge-readiness, or outcome claims.'],
+        ['active-risk-handoff-recorded', 'Recurrence, hypoglycemia, hypokalemia, fluid, kidney, precipitant, insulin access, nutrition, education, follow-up, disposition, and outcome risks were handed off.'],
+      ] as const;
+      const index = scenario.metadata.objectives.findIndex(({ id }) => id === objective.id);
+      const event = log.find(({ eventId }) => new RegExp(`^endocrine-dka-resolution-${steps[index]?.[0]}-\\d+$`).test(eventId));
+      const prior = index > 0 ? log.find(({ eventId }) => new RegExp(`^endocrine-dka-resolution-${steps[index - 1]?.[0]}-\\d+$`).test(eventId)) : undefined;
+      const ordered = !!event && (index === 0 || (!!prior && (index >= 4 ? prior.tick < event.tick : prior.tick <= event.tick)));
+      return { ...base, outcome: ordered ? 'met' : 'not-met', finding: ordered ? steps[index]![1] : 'This step was absent, out of order, or violated an elapsed-time gate.', atTick: event?.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (['activate-obstetrics-cord-prolapse-response-diagnosis-clock-theatre-anesthesia-newborn-and-support-roles',
       'reconcile-obstetrics-cord-prolapse-membrane-rupture-fetal-heart-exam-birth-imminence-and-whole-person',
       'review-obstetrics-cord-prolapse-pressure-relief-minimal-handling-position-and-no-delay-boundaries',

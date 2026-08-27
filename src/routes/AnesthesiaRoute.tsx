@@ -70,6 +70,10 @@ import {
 import {
   NEONATOLOGY_SCENARIOS, DEFAULT_NEONATOLOGY_SCENARIO_ID, getNeonatologyScenario,
 } from '../modules/neonatology/scenarios';
+import {
+  ENDOCRINE_METABOLIC_SCENARIOS, DEFAULT_ENDOCRINE_METABOLIC_SCENARIO_ID,
+  getEndocrineMetabolicScenario,
+} from '../modules/endocrine-metabolic/scenarios';
 import { APP_VERSION } from '@platform/governance/status';
 import { ScenarioProblemReport } from '@platform/reporting/ScenarioProblemReport';
 import {
@@ -79,8 +83,8 @@ import {
 import { SITE_ORIGIN } from './site-metadata';
 
 interface ClinicalModuleConfig {
-  readonly id: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics' | 'neonatology';
-  readonly basePath: '/anesthesia' | '/emergency-medicine' | '/critical-care' | '/cardiology' | '/respiratory-medicine' | '/pediatrics' | '/neurology' | '/toxicology' | '/obstetrics' | '/neonatology';
+  readonly id: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics' | 'neonatology' | 'endocrine-metabolic';
+  readonly basePath: '/anesthesia' | '/emergency-medicine' | '/critical-care' | '/cardiology' | '/respiratory-medicine' | '/pediatrics' | '/neurology' | '/toxicology' | '/obstetrics' | '/neonatology' | '/endocrine-metabolic';
   readonly heading: string;
   readonly catalogIntroduction: string;
   readonly catalogStatus: string;
@@ -168,6 +172,16 @@ const NEONATOLOGY_CONFIG: ClinicalModuleConfig = {
   catalogStatus: `${NEONATOLOGY_SCENARIOS.length} of 11 bounded Neonatology labs is playable.`,
   scenarios: NEONATOLOGY_SCENARIOS, defaultScenarioId: DEFAULT_NEONATOLOGY_SCENARIO_ID,
   getScenario: getNeonatologyScenario,
+};
+
+const ENDOCRINE_METABOLIC_CONFIG: ClinicalModuleConfig = {
+  id: 'endocrine-metabolic', basePath: '/endocrine-metabolic',
+  heading: 'Endocrine and metabolic medicine simulator',
+  catalogIntroduction: 'Calm metabolic rehearsals for reading the biochemical trajectory without losing the whole person. Keep treatment continuity, transition safety, and recurrence prevention visible.',
+  catalogStatus: `${ENDOCRINE_METABOLIC_SCENARIOS.length} of 12 bounded Endocrine and Metabolic Medicine labs is playable.`,
+  scenarios: ENDOCRINE_METABOLIC_SCENARIOS,
+  defaultScenarioId: DEFAULT_ENDOCRINE_METABOLIC_SCENARIO_ID,
+  getScenario: getEndocrineMetabolicScenario,
 };
 
 /**
@@ -574,6 +588,10 @@ export function ObstetricsRoute({ path }: { path: string }) {
 
 export function NeonatologyRoute({ path }: { path: string }) {
   return <ClinicalModuleRoute path={path} config={NEONATOLOGY_CONFIG} />;
+}
+
+export function EndocrineMetabolicRoute({ path }: { path: string }) {
+  return <ClinicalModuleRoute path={path} config={ENDOCRINE_METABOLIC_CONFIG} />;
 }
 
 /**

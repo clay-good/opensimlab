@@ -34,7 +34,7 @@ export function StatusBar({
   const patient = scenario.patient;
   const age = patient.ageYears === 0 ? 'Newborn' : `${patient.ageYears} y`;
   const summary = `${age} ${patient.sex === 'male' ? 'M' : 'F'} · `
-    + `${patient.weightKg} kg${moduleId === 'cardiology' || moduleId === 'respiratory-medicine' || moduleId === 'pediatrics' || moduleId === 'neonatology'
+    + `${patient.weightKg} kg${moduleId === 'cardiology' || moduleId === 'respiratory-medicine' || moduleId === 'pediatrics' || moduleId === 'neonatology' || moduleId === 'endocrine-metabolic'
       ? '' : ` · ASA ${patient.asaClass}`}`;
 
   return (

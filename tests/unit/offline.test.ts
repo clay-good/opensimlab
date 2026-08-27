@@ -6,7 +6,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { BUDGETS, manifestAssetPaths } from '../../scripts/check-budgets';
+import { BUDGETS, largestCockpitDocument, manifestAssetPaths } from '../../scripts/check-budgets';
 import { precacheVersion } from '../../scripts/prerender';
 import { isCrawler } from '@platform/offline/register';
 import { AnesthesiaEngine } from '@anesthesia/engine';
@@ -141,6 +141,16 @@ describe('Requirement: Full Offline Operation After First Load', () => {
 });
 
 describe('Requirement: Bounded Download Budget', () => {
+  it('includes every specialty when selecting the largest scenario document', () => {
+    const assets = [
+      { path: 'anesthesia/scenario/routine-induction/index.html', rawBytes: 1000, gzipBytes: 100 },
+      { path: 'endocrine-metabolic/scenario/dka-resolution-transition/index.html', rawBytes: 2000, gzipBytes: 200 },
+      { path: 'endocrine-metabolic/index.html', rawBytes: 3000, gzipBytes: 300 },
+    ];
+    expect(largestCockpitDocument(assets)).toBe(assets[1]);
+    expect(largestCockpitDocument([])).toBeUndefined();
+  });
+
   it('declares the budgets the specification states', () => {
     expect(BUDGETS.interactive).toBe(1.625 * 1024 * 1024);
     expect(BUDGETS.fullBundle).toBe(8 * 1024 * 1024);

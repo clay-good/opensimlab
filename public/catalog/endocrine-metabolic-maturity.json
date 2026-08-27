@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "moduleId": "endocrine-metabolic",
+  "recordCount": 1,
+  "records": [
+    {
+      "recordId": "scenario:dka-resolution-transition@0.1.0",
+      "subjectKind": "scenario",
+      "subjectId": "dka-resolution-transition",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/endocrine-metabolic-completion-audit.json#dka-resolution-transition@0.1.0",
+        "/catalog/endocrine-metabolic-quality-audit.json#dka-resolution-transition@0.1.0"
+      ]
+    }
+  ]
+}

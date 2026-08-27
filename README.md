@@ -352,6 +352,14 @@ not diagnostic or outcome closure. No learner examination, device operation, set
 selection, oxygenation, ventilation, airway care, decompression, drain, drug, procedure,
 disposition, or newborn/parent outcome control is exposed.
 
+Endocrine and Metabolic Medicine opens at `/endocrine-metabolic` with a DKA resolution and transition
+lab. It begins after the initial emergency treatment, when glucose and the anion gap have improved
+but ketones remain elevated; connects biochemical recovery, potassium, kidney function, nutrition,
+insulin access, and the whole person; reviews qualified insulin-dextrose continuity and basal-overlap
+boundaries; then reads a fixed resolution report without turning it into discharge permission. No
+learner laboratory interpretation, drug, dose, fluid, electrolyte, infusion, nutrition, transition,
+prescription, disposition, or outcome control is exposed.
+
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage
 and no-LVO imaging context, qualified antiplatelet-strategy and surveillance intent, a strict later

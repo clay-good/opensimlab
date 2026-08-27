@@ -116,7 +116,7 @@ export function AnalysisRegion(props: AnalysisRegionProps) {
 
 function PatientPanel({ scenario, moduleId }: { scenario: Scenario; moduleId?: string }) {
   const patient = scenario.patient;
-  const perioperativeProfile = moduleId !== 'respiratory-medicine' && moduleId !== 'pediatrics' && moduleId !== 'neonatology';
+  const perioperativeProfile = moduleId !== 'respiratory-medicine' && moduleId !== 'pediatrics' && moduleId !== 'neonatology' && moduleId !== 'endocrine-metabolic';
   const rows: [string, string][] = [
     ['Age', patient.ageYears === 0 ? 'Newborn' : `${patient.ageYears} years`],
     ['Sex', patient.sex],

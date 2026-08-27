@@ -1788,6 +1788,23 @@
       "limitationManifestHash": "sha256:d8d5c11c34520fdaa59a4969e3c22f30681f10f186a6d5c2337e6a9449273ca2"
     },
     {
+      "scenarioId": "dka-resolution-transition",
+      "contentVersion": "0.1.0",
+      "moduleId": "endocrine-metabolic",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:76d2e73134d5385b9f2b3079c13e23a3c1ed46afcbcd7480c67f8a147ebaf024",
+      "defaultsHash": "sha256:773d0fda974bf8b4586f1807ada52bddb30dddc576ccc9ace5365f63054ae540",
+      "maturityHash": "sha256:bbf7637635973500dc9dade1b18b29c6ebaf743196c97568c182fcb42d1ba4f6",
+      "sourceManifestHash": "sha256:24717bd6ee824b007d9f8c90adcc9a28154dbb330542ec2cb9f8b30aa57f8c4f",
+      "limitationManifestHash": "sha256:3a951370e8234cec0765cf43f31f0f4d1fb65b247ab6ddfa0a3cb4a9f1ab9138"
+    },
+    {
       "scenarioId": "delivery-room-to-nicu-handoff",
       "contentVersion": "0.1.0",
       "moduleId": "neonatology",

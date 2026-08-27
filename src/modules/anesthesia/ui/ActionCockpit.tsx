@@ -1380,6 +1380,11 @@ export interface ActionCockpitProps {
       readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
       readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
     };
+    readonly endocrineDkaResolutionAssessment?: {
+      readonly supportAtTick: number | null; readonly contextAtTick: number | null;
+      readonly recognitionAtTick: number | null; readonly readinessAtTick: number | null;
+      readonly reassessmentAtTick: number | null; readonly handoffAtTick: number | null;
+    };
     readonly postTetanicCount?: number;
     readonly lastNeuromuscularReversal?: {
       readonly agent: 'sugammadex' | 'neostigmine';
@@ -2536,6 +2541,14 @@ export interface ActionCockpitProps {
       | 'review-neonatal-tension-pneumothorax-fixed-two-minute-qualified-report'
       | 'handoff-neonatal-tension-pneumothorax-air-leak-lung-support-circulatory-family-and-outcome-risk',
   ) => void;
+  readonly onEndocrineDkaResolutionResponse?: (
+    action: 'activate-dka-resolution-endocrine-nursing-pharmacy-electrolyte-nutrition-and-transition-support'
+      | 'reconcile-dka-resolution-initial-triad-treatment-clock-current-ketone-acid-base-potassium-glucose-and-whole-person'
+      | 'recognize-persistent-dka-despite-lower-glucose-and-closed-anion-gap'
+      | 'review-qualified-dka-insulin-dextrose-potassium-monitoring-resolution-and-bridged-transition-boundaries'
+      | 'review-dka-resolution-fixed-four-hour-qualified-report'
+      | 'handoff-dka-recurrence-insulin-potassium-nutrition-precipitant-education-follow-up-and-outcome-risk',
+  ) => void;
   readonly onBronchospasmHelp?: () => void;
   readonly onInhaledBronchodilator?: () => void;
   readonly onDantrolene: () => void;
@@ -2669,6 +2682,11 @@ export function crisisResponseAvailability(
     && scenario.timeline.every((event) => event.type === 'narrative')
     && scenario.timeline.filter((event) => event.target === 'neonatal-tension-pneumothorax').length === 1
     && scenario.timeline.filter((event) => event.target === 'neonatal-tension-pneumothorax-boundary').length === 1;
+  const hasEndocrineDkaResolutionResponse =
+    scenario.metadata.id === 'dka-resolution-transition'
+    && scenario.timeline.every((event) => event.type === 'narrative')
+    && scenario.timeline.filter((event) => event.target === 'dka-resolution-transition').length === 1
+    && scenario.timeline.filter((event) => event.target === 'dka-resolution-transition-boundary').length === 1;
   return {
     hasAnaphylaxisResponse: injected.has('anaphylaxis')
       || scenario.timeline.some((event) => event.type === 'anaphylaxis'),
@@ -3237,6 +3255,7 @@ export function crisisResponseAvailability(
     hasNeonatologyThermoregulationResponse,
     hasNeonatologyNicuHandoffResponse,
     hasNeonatologyTensionPneumothoraxResponse,
+    hasEndocrineDkaResolutionResponse,
     hasBronchospasmResponse: injected.has('bronchospasm')
       || scenario.timeline.some((event) => event.type === 'obstruction'
         && event.id.includes('bronchospasm')),
@@ -3477,6 +3496,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       || (event.type === 'narrative' && event.target === 'thermoregulation-failure')
       || (event.type === 'narrative' && event.target === 'delivery-room-to-nicu-handoff')
       || (event.type === 'narrative' && event.target === 'neonatal-tension-pneumothorax')
+      || (event.type === 'narrative' && event.target === 'dka-resolution-transition')
       || (event.type === 'narrative' && [
         'persistent-severe-preeclampsia', 'aspiration-risk-recognition',
         'emergence-residual-blockade', 'delayed-emergence-differential',
@@ -3605,6 +3625,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     hasNeonatologyThermoregulationResponse,
     hasNeonatologyNicuHandoffResponse,
     hasNeonatologyTensionPneumothoraxResponse,
+    hasEndocrineDkaResolutionResponse,
     hasAcutePulmonaryEdemaResponse, hasPulmonaryEmbolismResponse, hasStemiResponse,
     hasUnstableNarrowTachycardiaResponse,
     hasUnstableBradycardiaResponse,
@@ -3760,8 +3781,11 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeonatologyThermoregulationResponse
     || hasNeonatologyNicuHandoffResponse
     || hasNeonatologyTensionPneumothoraxResponse
+    || hasEndocrineDkaResolutionResponse
     || hasAnyNonAcuteAssessment;
-  const responseTray = hasNeonatologyTensionPneumothoraxResponse
+  const responseTray = hasEndocrineDkaResolutionResponse
+    ? { id: 'crisis', label: 'Resolution + continuity' } as const
+    : hasNeonatologyTensionPneumothoraxResponse
     ? { id: 'crisis', label: 'Asymmetry + collapse' } as const
     : hasNeonatologyNicuHandoffResponse
     ? { id: 'crisis', label: 'Story + ownership' } as const
@@ -4207,6 +4231,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     || hasNeonatologyThermoregulationResponse
     || hasNeonatologyNicuHandoffResponse
     || hasNeonatologyTensionPneumothoraxResponse
+    || hasEndocrineDkaResolutionResponse
     || ((hasUndifferentiatedShockResponse || hasSepticShockResponse
       || hasHemorrhagicShockResponse || hasCardiacTamponadeResponse
       || hasEmergencyAnaphylaxisResponse || hasAdultAsthmaResponse
@@ -5176,6 +5201,10 @@ export function ActionCockpit(props: ActionCockpitProps) {
             {hasNeonatologyTensionPneumothoraxResponse && (
               <NeonatologyTensionPneumothoraxTray assessment={props.resuscitation.neonatologyTensionPneumothoraxAssessment}
                 onAction={props.onNeonatologyTensionPneumothoraxResponse ?? (() => {})} />
+            )}
+            {hasEndocrineDkaResolutionResponse && (
+              <EndocrineDkaResolutionTray assessment={props.resuscitation.endocrineDkaResolutionAssessment}
+                onAction={props.onEndocrineDkaResolutionResponse ?? (() => {})} />
             )}
             {hasEmergenceResidualBlockResponse && (
               <EmergenceResidualBlockTray
@@ -12805,6 +12834,39 @@ function NeonatologyTensionPneumothoraxTray({ assessment, onAction }: {
       <div className="crisis-drug__actions">
         {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-neonatal-tension-pneumothorax-fixed-two-minute-qualified-report')}>Review the fixed 2-minute report</Button>}
         {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-neonatal-tension-pneumothorax-air-leak-lung-support-circulatory-family-and-outcome-risk')}>Hand off active newborn risk</Button>}
+      </div>
+    </section>
+  </>;
+}
+
+function EndocrineDkaResolutionTray({ assessment, onAction }: {
+  assessment?: NonNullable<ActionCockpitProps['resuscitation']['endocrineDkaResolutionAssessment']>;
+  onAction: NonNullable<ActionCockpitProps['onEndocrineDkaResolutionResponse']>;
+}) {
+  const support = assessment?.supportAtTick != null;
+  const context = assessment?.contextAtTick != null;
+  const recognition = assessment?.recognitionAtTick != null;
+  const readiness = assessment?.readinessAtTick != null;
+  const reassessment = assessment?.reassessmentAtTick != null;
+  const handoff = assessment?.handoffAtTick != null;
+  return <>
+    <section className="syringe" aria-labelledby="endocrine-dka-resolution-now-title">
+      <div id="endocrine-dka-resolution-now-title" className="syringe__name">Glucose is not the finish line.</div>
+      <p className="syringe__remaining">{reassessment ? 'Supplied 4-hour report: glucose 162 mg/dL, ketones 0.4 mmol/L, pH 7.34, bicarbonate 19 mmol/L, potassium 3.8 mmol/L. Basal insulin was reported 2 hours earlier.' : 'Supplied after 8 hours of treatment: glucose 184 mg/dL, ketones 1.2 mmol/L, pH 7.32, bicarbonate 17 mmol/L, potassium 3.6 mmol/L, anion gap 10.'}</p>
+      <p className="syringe__remaining">Read ketones and acid-base recovery alongside potassium, kidney function, intake, treatment continuity, access, preferences, and the whole person.</p>
+      <div className="crisis-drug__actions">
+        {!support && <Button className="crisis-drug__action" onClick={() => onAction('activate-dka-resolution-endocrine-nursing-pharmacy-electrolyte-nutrition-and-transition-support')}>Confirm prepared support</Button>}
+        {support && !context && <Button className="crisis-drug__action" onClick={() => onAction('reconcile-dka-resolution-initial-triad-treatment-clock-current-ketone-acid-base-potassium-glucose-and-whole-person')}>Connect the whole trajectory</Button>}
+        {context && !recognition && <Button className="crisis-drug__action" onClick={() => onAction('recognize-persistent-dka-despite-lower-glucose-and-closed-anion-gap')}>Recognize what remains open</Button>}
+        {recognition && !readiness && <Button className="crisis-drug__action" onClick={() => onAction('review-qualified-dka-insulin-dextrose-potassium-monitoring-resolution-and-bridged-transition-boundaries')}>Review qualified boundaries</Button>}
+      </div>
+    </section>
+    <section className="syringe" aria-labelledby="endocrine-dka-resolution-later-title">
+      <div id="endocrine-dka-resolution-later-title" className="syringe__name">Resolution needs a bridge, not a gap.</div>
+      <p className="syringe__remaining" role="status">{handoff ? 'Recurrence, glucose, potassium, fluid, kidney, nutrition, access, education, follow-up, disposition, and outcome risks handed off.' : reassessment ? 'The supplied panel meets biochemical resolution criteria and the basal-overlap record is present. Durable safety, transition success, discharge, and outcomes remain open.' : readiness ? 'Qualified continuity and serial reassessment continue. Review the fixed report after time passes.' : support ? 'Prepared support is present. Connect the whole trajectory before deciding what has resolved.' : 'Begin with calm shared ownership. You can pause or leave this practice at any time.'}</p>
+      <div className="crisis-drug__actions">
+        {readiness && !reassessment && <Button className="crisis-drug__action" onClick={() => onAction('review-dka-resolution-fixed-four-hour-qualified-report')}>Review the fixed 4-hour report</Button>}
+        {reassessment && !handoff && <Button className="crisis-drug__action" onClick={() => onAction('handoff-dka-recurrence-insulin-potassium-nutrition-precipitant-education-follow-up-and-outcome-risk')}>Hand off active recurrence risk</Button>}
       </div>
     </section>
   </>;

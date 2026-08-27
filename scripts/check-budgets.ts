@@ -65,9 +65,9 @@ function fontPreloads(html: string): readonly string[] {
     .filter((path): path is string => path !== undefined);
 }
 
-function largestCockpitDocument(assets: readonly Asset[]): Asset | undefined {
+export function largestCockpitDocument(assets: readonly Asset[]): Asset | undefined {
   return assets
-    .filter((asset) => /^(?:anesthesia|emergency-medicine|critical-care|cardiology|respiratory-medicine|pediatrics|neurology|toxicology)\/scenario\/[^/]+\/index\.html$/.test(asset.path))
+    .filter((asset) => /^[^/]+\/scenario\/[^/]+\/index\.html$/.test(asset.path))
     .sort((a, b) => b.gzipBytes - a.gzipBytes)[0];
 }
 

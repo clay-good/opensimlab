@@ -31,6 +31,7 @@ export const SITE_BAR_LINKS: readonly SiteBarLink[] = [
   { href: '/toxicology', label: 'Toxicology' },
   { href: '/obstetrics', label: 'Obstetrics' },
   { href: '/neonatology', label: 'Neonatology' },
+  { href: '/endocrine-metabolic', label: 'Endocrine + metabolic' },
   { href: '/about', label: 'About' },
   { href: '/validation', label: 'Validation' },
   { href: '/governance', label: 'Governance' },

@@ -801,6 +801,18 @@ credited toward the catalog until every item in the completion contract passes.
     examination, monitoring acquisition, definitive diagnosis, catheter insertion, disconnection,
     irrigation or replacement, bowel care, drug, dose, route, access, oxygen, fluid, device,
     procedure, treatment-effect prediction, disposition, prognosis, or outcome control.
+  - [x] Endocrine/metabolic slice 1/12 establishes the indexable `/endocrine-metabolic` module with
+    one authored late-treatment DKA resolution and transition case, distinct from the Emergency
+    Medicine initial pathway. The learner activates qualified endocrine, nursing, pharmacy,
+    electrolyte, nutrition, education, transition and follow-up support; connects the initial triad,
+    treatment clock, glucose, ketone, acid-base, potassium, kidney, intake, access and whole-person
+    trajectory; recognizes persistent DKA despite lower glucose and a closed gap; reviews qualified
+    insulin-dextrose continuity, monitoring, potassium, resolution and basal-overlap boundaries;
+    reviews a fixed 4-hour resolution and overlap report; and hands off recurrence risk without
+    learner history, examination, laboratory acquisition, calculation or interpretation, diagnosis,
+    fluid, electrolyte, dextrose, insulin, bicarbonate, drug, dose, rate, route, access, infusion,
+    nutrition, basal administration, IV-insulin stop, precipitant treatment, education, prescription,
+    follow-up, transition, disposition, or outcome controls.
 - [ ] Wave F: complete 10 infectious-disease and 15 toxicology scenarios.
   - [x] Toxicology slice 1/15 establishes the indexable `/toxicology` module with one authored
     methemoglobinemia lab after documented topical benzocaine exposure. The learner reconciles

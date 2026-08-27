@@ -2746,6 +2746,26 @@ Diabetic ketoacidosis; hyperosmolar hyperglycemic state; severe hypoglycemia; ad
 thyroid storm; myxedema coma; hypercalcemic crisis; hypocalcemic tetany; severe hyponatremia;
 hypernatremic dehydration; refeeding electrolyte shift; perioperative diabetes management.
 
+### Wave E endocrine-metabolic slice 1: DKA resolution and transition
+
+The new module opens with a late-treatment boundary rather than duplicating Emergency Medicine's
+initial DKA pathway. A 45-year-old with type 1 diabetes is 8 hours into qualified treatment after
+an insulin-access interruption. Glucose has fallen to 184 mg/dL and anion gap to 10, but beta-
+hydroxybutyrate remains 1.2 mmol/L with pH 7.32, bicarbonate 17 mmol/L, potassium 3.6 mmol/L, and
+chloride 112 mmol/L. The learner confirms endocrine, nursing, pharmacy, electrolyte, nutrition,
+education, transition and follow-up ownership; connects the initial triad, treatment, current
+biochemical and whole-person trajectory; recognizes unresolved DKA without glucose or gap closure;
+and reviews qualified insulin-dextrose continuity, potassium surveillance, ketone-plus-acid-base
+resolution criteria, precipitant care, nutrition, and basal-overlap boundaries. A fixed 4-hour report
+supplies beta-hydroxybutyrate 0.4 mmol/L, pH 7.34, bicarbonate 19 mmol/L, potassium 3.8 mmol/L, glucose
+162 mg/dL, a tolerated meal assessment, and individualized basal insulin reported 2 hours earlier.
+Biochemical resolution is not durable safety, independent insulin competence, transition success,
+discharge readiness, or outcome. Six controls expose no learner history, examination, testing,
+calculation, interpretation, diagnosis, fluid, electrolyte, dextrose, insulin, bicarbonate, drug,
+dose, concentration, rate, route, access, infusion, nutrition, basal administration, IV-insulin stop,
+precipitant treatment, education, prescription, access or follow-up arrangement, transition,
+disposition, or outcome control.
+
 #### Renal and electrolyte medicine: 12
 
 Hyperkalemia with ECG change; severe hypokalemia; symptomatic hyponatremia; hypernatremic

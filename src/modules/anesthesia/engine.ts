@@ -601,6 +601,10 @@ const NEONATOLOGY_TENSION_PNEUMOTHORAX_BLOCKED_ACTION_TYPES = new Set([
   ...NEONATOLOGY_NICU_HANDOFF_BLOCKED_ACTION_TYPES,
   'delivery-room-to-nicu-handoff-response',
 ]);
+const ENDOCRINE_DKA_RESOLUTION_BLOCKED_ACTION_TYPES = new Set([
+  ...NEONATOLOGY_TENSION_PNEUMOTHORAX_BLOCKED_ACTION_TYPES,
+  'neonatal-tension-pneumothorax-response',
+]);
 /** Fixed teaching calibration for exhausted-absorbent breakthrough at 1 L/min fresh-gas flow. */
 export const EXHAUSTED_ABSORBENT_INSPIRED_CO2_MMHG = 8;
 
@@ -1684,6 +1688,12 @@ export class AnesthesiaEngine {
   private neonatologyTensionPneumothoraxReadinessAtTick: number | null = null;
   private neonatologyTensionPneumothoraxReassessmentAtTick: number | null = null;
   private neonatologyTensionPneumothoraxHandoffAtTick: number | null = null;
+  private endocrineDkaResolutionSupportAtTick: number | null = null;
+  private endocrineDkaResolutionContextAtTick: number | null = null;
+  private endocrineDkaResolutionRecognitionAtTick: number | null = null;
+  private endocrineDkaResolutionReadinessAtTick: number | null = null;
+  private endocrineDkaResolutionReassessmentAtTick: number | null = null;
+  private endocrineDkaResolutionHandoffAtTick: number | null = null;
   private aspirationRiskCuesReviewedAtTick: number | null = null;
   private aspirationRiskClassification: 'elevated' | 'routine' | null = null;
   private aspirationRiskClassifiedAtTick: number | null = null;
@@ -2783,6 +2793,14 @@ export class AnesthesiaEngine {
     if (neonatologyTensionPneumothorax && NEONATOLOGY_TENSION_PNEUMOTHORAX_BLOCKED_ACTION_TYPES.has(action.type)) {
       this.log('warning', 'assessment', `neonatology-tension-pneumothorax-generic-action-refused-${this.currentTick}`,
         'This Neonatology lesson exposes no generic history, examination, auscultation, imaging, monitoring or test interpretation, circuit or airway check, ventilator, oxygen or device operation, setting, equipment or site selection, positioning, oxygenation, ventilation, airway care, decompression, drain, access, analgesia, fluid, blood, drug, resuscitation, transport, communication, documentation, counseling, procedure, diagnosis, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
+    }
+    const endocrineDkaResolution = this.scenario.metadata.id === 'dka-resolution-transition'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'dka-resolution-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'dka-resolution-transition-boundary').length === 1;
+    if (endocrineDkaResolution && ENDOCRINE_DKA_RESOLUTION_BLOCKED_ACTION_TYPES.has(action.type)) {
+      this.log('warning', 'assessment', `endocrine-dka-resolution-generic-action-refused-${this.currentTick}`,
+        'This Endocrine and Metabolic Medicine lesson exposes no generic history, examination, measurement, test acquisition or interpretation, diagnosis, fluid, electrolyte, dextrose, insulin, bicarbonate, drug, dose, rate, route, access, infusion, nutrition, basal-insulin or IV-insulin transition, precipitant treatment, education, prescription, follow-up, disposition, or adjacent-scenario action. Nothing changed.', { actionType: action.type }); return;
     }
     switch (action.type) {
       case 'bolus': {
@@ -11827,6 +11845,29 @@ export class AnesthesiaEngine {
         if (this.neonatologyTensionPneumothoraxHandoffAtTick !== null) break;
         this.neonatologyTensionPneumothoraxHandoffAtTick = this.currentTick; this.log('warning', 'assessment', `neonatology-tension-pneumothorax-active-risk-handoff-recorded-${this.currentTick}`, 'Recurrence, persistent air leak, underlying lung disease, oxygenation, ventilation, airway, circulatory support, analgesia, drain, imaging, infection, thermal, neurologic, parent, family, transfer, disposition, and outcome uncertainty were handed off.', { diagnosisConfirmed: false, alternativeCauseExcluded: false, airLeakResolved: false, durableOxygenationOrCirculationProven: false, safetyDispositionDetermined: false, newbornOutcomePredicted: false, parentOutcomePredicted: false, outcomePredicted: false }); break;
       }
+      case 'dka-resolution-transition-response': {
+        const response = action.payload.action;
+        const supported = this.scenario.metadata.id === 'dka-resolution-transition'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'dka-resolution-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'dka-resolution-transition-boundary').length === 1;
+        const actions = this.scenario.metadata.objectives.map((objective) => objective.id);
+        const valid = typeof response === 'string' && actions.includes(response);
+        if (!supported || !valid) { this.log('warning', 'assessment', `endocrine-dka-resolution-response-refused-${this.currentTick}`, supported ? 'That DKA resolution response is not available. Nothing changed.' : 'These DKA resolution choices are available only in the exact declared Endocrine and Metabolic Medicine lesson.'); break; }
+        if (response === actions[0]) { if (this.endocrineDkaResolutionSupportAtTick !== null) break; this.endocrineDkaResolutionSupportAtTick = this.currentTick; this.log('warning', 'assessment', `endocrine-dka-resolution-support-activated-${this.currentTick}`, 'Qualified endocrine, nursing, pharmacy, electrolyte, nutrition, education, precipitant, transition, follow-up, and escalation ownership was confirmed. No learner call, monitoring, medication, transition, or other care occurred.'); break; }
+        if (this.endocrineDkaResolutionSupportAtTick === null) { this.log('warning', 'assessment', `endocrine-dka-resolution-support-order-refused-${this.currentTick}`, 'Confirm qualified metabolic, monitoring, medication, nutrition, transition, education, and follow-up support before further review.'); break; }
+        if (response === actions[1]) { if (this.endocrineDkaResolutionContextAtTick !== null) break; this.endocrineDkaResolutionContextAtTick = this.currentTick; this.log('warning', 'assessment', `endocrine-dka-resolution-context-reconciled-${this.currentTick}`, 'The supplied initial DKA triad, treatment and monitoring clock, fluid, insulin and dextrose record, potassium and kidney trajectory, current ketone, pH, bicarbonate, glucose, chloride and anion gap, symptoms, intake, precipitant, insulin access, preferences, support, and whole person were connected without learner history, examination, test interpretation, or treatment.'); break; }
+        if (this.endocrineDkaResolutionContextAtTick === null) { this.log('warning', 'assessment', `endocrine-dka-resolution-context-order-refused-${this.currentTick}`, 'Connect the initial triad, treatment, current biochemical trajectory, intake, precipitant, and whole-person context before resolution recognition.'); break; }
+        if (response === actions[2]) { if (this.endocrineDkaResolutionRecognitionAtTick !== null) break; this.endocrineDkaResolutionRecognitionAtTick = this.currentTick; this.log('warning', 'assessment', `endocrine-dka-resolution-pattern-recognized-${this.currentTick}`, 'Persistent DKA was recognized despite glucose 184 mg/dL, pH 7.32 and anion gap 10 because beta-hydroxybutyrate remains 1.2 mmol/L and bicarbonate 17 mmol/L. Resolution requires ketone below 0.6 mmol/L plus pH at least 7.3 or bicarbonate at least 18 mmol/L; glucose, anion gap and urine ketones do not close the case alone. Hyperchloremic acidosis and mixed disorders remain open.'); break; }
+        if (this.endocrineDkaResolutionRecognitionAtTick === null) { this.log('warning', 'assessment', `endocrine-dka-resolution-recognition-order-refused-${this.currentTick}`, 'Recognize persistent ketoacidosis despite lower glucose and a closed gap before reviewing continuity and transition boundaries.'); break; }
+        if (response === actions[3]) { if (this.endocrineDkaResolutionReadinessAtTick !== null) break; this.endocrineDkaResolutionReadinessAtTick = this.currentTick; this.log('warning', 'assessment', `endocrine-dka-resolution-readiness-reviewed-${this.currentTick}`, 'Qualified insulin continuation with dextrose, frequent glucose and serial electrolyte, ketone, kidney and acid-base surveillance, potassium safety, precipitant treatment, individualized nutrition and maintenance-insulin planning, and basal-overlap transition were reviewed without learner drug, dose, fluid, electrolyte, infusion, laboratory, nutrition, or transition action.'); break; }
+        if (this.endocrineDkaResolutionReadinessAtTick === null) { this.log('warning', 'assessment', `endocrine-dka-resolution-readiness-order-refused-${this.currentTick}`, 'Review qualified insulin-dextrose continuity, potassium, monitoring, resolution, and bridged-transition boundaries before the fixed report.'); break; }
+        if (response === actions[4]) { if (this.currentTick <= this.endocrineDkaResolutionReadinessAtTick) { this.log('warning', 'assessment', `endocrine-dka-resolution-reassessment-time-refused-${this.currentTick}`, 'Allow elapsed simulated time before the fixed qualified-team report.'); break; } if (this.endocrineDkaResolutionReassessmentAtTick !== null) break; this.endocrineDkaResolutionReassessmentAtTick = this.currentTick; this.log('warning', 'assessment', `endocrine-dka-resolution-four-hour-report-reviewed-${this.currentTick}`, 'Fixed qualified-team report 4 hours later: glucose 162 mg/dL, beta-hydroxybutyrate 0.4 mmol/L, venous pH 7.34, bicarbonate 19 mmol/L, potassium 3.8 mmol/L, chloride 111 mmol/L, creatinine 0.9 mg/dL, stable physiology, improved symptoms, and a tolerated supplied meal assessment. Qualified staff report individualized basal insulin 2 hours earlier and a transition protocol underway. The panel meets the cited biochemical resolution criteria but does not prove learner care, a universal dose or treatment effect, independent insulin safety, durable glucose or potassium stability, resolved precipitant, discharge readiness, or outcome.', { biochemicalResolutionReported: true, medicationOrTransitionPerformedByLearner: false, durableGlucoseOrPotassiumStabilityProven: false, dischargeReadinessProven: false, outcomePredicted: false }); break; }
+        if (this.endocrineDkaResolutionReassessmentAtTick === null) { this.log('warning', 'assessment', `endocrine-dka-resolution-handoff-order-refused-${this.currentTick}`, 'Review the fixed resolution and basal-overlap report before active-risk handoff.'); break; }
+        if (this.currentTick <= this.endocrineDkaResolutionReassessmentAtTick) { this.log('warning', 'assessment', `endocrine-dka-resolution-handoff-time-refused-${this.currentTick}`, 'Allow another simulated tick before active-risk handoff.'); break; }
+        if (this.endocrineDkaResolutionHandoffAtTick !== null) break;
+        this.endocrineDkaResolutionHandoffAtTick = this.currentTick; this.log('warning', 'assessment', `endocrine-dka-resolution-active-risk-handoff-recorded-${this.currentTick}`, 'Recurrence, hypoglycemia, hypokalemia, fluid and kidney risk, precipitant, insulin access and technique, nutrition, education, follow-up, disposition, and outcome uncertainty were handed off.', { independentInsulinSafetyProven: false, durableGlucoseOrPotassiumStabilityProven: false, precipitantResolved: false, dischargeReadinessProven: false, outcomePredicted: false }); break;
+      }
       case 'pacemaker-capture-failure-response': {
         const response = String(action.payload.action ?? '');
         const supported = this.scenario.timeline.some((event) => event.type === 'narrative'
@@ -14956,6 +14997,15 @@ export class AnesthesiaEngine {
         diastolicMmHg: this.neonatologyTensionPneumothoraxReassessmentAtTick !== null ? 32 : 24,
         meanArterialMmHg: this.neonatologyTensionPneumothoraxReassessmentAtTick !== null ? 40 : 31,
         coreTemperatureC: 36.6 };
+    }
+    if (this.scenario.metadata.id === 'dka-resolution-transition'
+      && this.scenario.timeline.every((event) => event.type === 'narrative')
+      && this.scenario.timeline.filter((event) => event.target === 'dka-resolution-transition').length === 1
+      && this.scenario.timeline.filter((event) => event.target === 'dka-resolution-transition-boundary').length === 1) {
+      crisisState = { ...crisisState, heartRateBpm: this.endocrineDkaResolutionReassessmentAtTick !== null ? 88 : 94,
+        respiratoryRateBpm: this.endocrineDkaResolutionReassessmentAtTick !== null ? 16 : 18,
+        spo2Percent: 98, systolicMmHg: 118, diastolicMmHg: 70, meanArterialMmHg: 86,
+        coreTemperatureC: 36.9 };
     }
     if (this.scenario.timeline.some((event) => event.type === 'narrative'
       && event.target === 'copd-exacerbation-transition-reassessment')) {
@@ -19581,6 +19631,31 @@ export class AnesthesiaEngine {
               alternativeCauseExcluded: false as const, airLeakResolved: false as const,
               durableOxygenationOrCirculationProven: false as const, safetyDispositionDetermined: false as const,
               newbornOutcomePredicted: false as const, parentOutcomePredicted: false as const,
+              outcomePredicted: false as const,
+            },
+          } : {}),
+        ...(this.scenario.metadata.id === 'dka-resolution-transition'
+          && this.scenario.timeline.every((event) => event.type === 'narrative')
+          && this.scenario.timeline.filter((event) => event.target === 'dka-resolution-transition').length === 1
+          && this.scenario.timeline.filter((event) => event.target === 'dka-resolution-transition-boundary').length === 1 ? {
+            endocrineDkaResolutionAssessment: {
+              supportAtTick: this.endocrineDkaResolutionSupportAtTick, contextAtTick: this.endocrineDkaResolutionContextAtTick,
+              recognitionAtTick: this.endocrineDkaResolutionRecognitionAtTick, readinessAtTick: this.endocrineDkaResolutionReadinessAtTick,
+              reassessmentAtTick: this.endocrineDkaResolutionReassessmentAtTick, handoffAtTick: this.endocrineDkaResolutionHandoffAtTick,
+              authoredLateTreatmentUnresolvedDka: true as const,
+              authoredQualifiedResolutionAndBasalOverlapReport: this.endocrineDkaResolutionReassessmentAtTick !== null,
+              biochemicalResolutionReported: this.endocrineDkaResolutionReassessmentAtTick !== null,
+              historyTakenOrPatientExaminedByLearner: false as const,
+              glucoseKetoneElectrolyteGasOrTestObtainedCalculatedOrInterpretedByLearner: false as const,
+              fluidElectrolyteDextroseInsulinBicarbonateOrDrugSelectedOrDeliveredByLearner: false as const,
+              doseConcentrationRateRouteOrAccessSelectedByLearner: false as const,
+              infusionOperatedByLearner: false as const, nutritionPrescribedOrDeliveredByLearner: false as const,
+              medicationOrTransitionPerformedByLearner: false as const,
+              precipitantTreatedEducationAccessOrFollowUpArrangedByLearner: false as const,
+              diagnosisMadeByLearner: false as const, procedurePerformedByLearner: false as const,
+              universalDoseOrTreatmentEffectProven: false as const, independentInsulinSafetyProven: false as const,
+              durableGlucoseOrPotassiumStabilityProven: false as const, precipitantResolved: false as const,
+              dischargeReadinessProven: false as const, safetyDispositionDetermined: false as const,
               outcomePredicted: false as const,
             },
           } : {}),

@@ -5183,6 +5183,30 @@ export const LIMITATIONS: readonly Limitation[] = [
     correctUnderstanding: 'Use verified direct findings, the current local neonatal emergency and pneumothorax pathway, appropriate monitoring and equipment, qualified procedural teams, immediate escalation, serial reassessment, respectful parent support, and hands-on simulation.',
     briefIn: ['neonatal-tension-pneumothorax'],
   },
+  {
+    id: 'dka-resolution-initial-treatment-current-panels-overlap-and-later-report-are-authored',
+    headline: 'The DKA diagnosis, treatment, biochemical panels, basal overlap, and later report are authored.',
+    simplification: 'Fixed qualified-team reports stand in for history, examination, fluid and medication delivery, serial glucose, ketone, electrolyte, gas and kidney testing, nutrition assessment, precipitant review, insulin access, basal administration, and transition planning. The engine does not calculate ketone clearance, chloride balance, insulin kinetics, potassium shifts, or individualized transition physiology.',
+    whereItMisleads: 'Treating lower glucose, a closed anion gap, improved symptoms, the later resolution panel, or basal-overlap report as learner testing, treatment, universal response, transition success, durable stability, discharge readiness, or outcome.',
+    correctUnderstanding: 'DKA resolution depends on plasma ketone plus pH or bicarbonate criteria, not glucose or anion gap alone. Safe transition also needs qualified insulin continuity, electrolyte surveillance, individualized nutrition, precipitant care, access, education, and follow-up.',
+    briefIn: ['dka-resolution-transition'],
+  },
+  {
+    id: 'dka-resolution-controls-activate-reconcile-recognize-review-reassess-and-handoff-only',
+    headline: 'The controls activate support, connect supplied facts, recognize, review, reassess, and hand off only.',
+    simplification: 'Six cognitive actions stand in for concurrent qualified endocrine, nursing, pharmacy, laboratory, electrolyte, nutrition, education, precipitant, insulin-access, transition, discharge-planning, and follow-up work.',
+    whereItMisleads: 'Equating button order with diagnosis, laboratory interpretation, insulin prescribing, infusion operation, fluid or electrolyte management, nutrition, education, transition performance, or competence.',
+    correctUnderstanding: 'Real DKA transition requires direct assessment, current local protocols, qualified teams, verified laboratory trajectories, medication reconciliation, basal coverage, patient-specific nutrition and hypoglycemia risk, and recurrence prevention.',
+    briefIn: ['dka-resolution-transition'],
+  },
+  {
+    id: 'no-live-dka-resolution-history-exam-laboratory-fluid-electrolyte-insulin-nutrition-transition-disposition-or-outcome',
+    headline: 'The lab does not test, prescribe, deliver insulin, transition treatment, determine disposition, or report outcome.',
+    simplification: 'No live history; examination; measurement; glucose, ketone, anion-gap, electrolyte, gas, kidney or other test acquisition, calculation or interpretation; diagnosis; fluid, electrolyte, dextrose, insulin, bicarbonate, drug, dose, concentration, rate, route or access selection or delivery; infusion operation; feeding or nutrition prescription; maintenance-insulin calculation; basal-insulin administration; IV-insulin discontinuation; precipitant treatment; education; counseling; prescription; access or follow-up arrangement; transition; disposition; prognosis; or outcome is modeled.',
+    whereItMisleads: 'Using the rehearsal as an insulin, dextrose, fluid, potassium, nutrition, overlap, discharge, or patient-specific treatment calculator; treating a fixed report as permission to stop an infusion; or reading completion as competence.',
+    correctUnderstanding: 'Use verified direct findings, the current local DKA and inpatient-diabetes pathways, trained teams, reliable laboratory and medication systems, individualized bridging and nutrition plans, patient-centered access and education, and hands-on training.',
+    briefIn: ['dka-resolution-transition'],
+  },
 ];
 
 export function limitationsFor(scenarioId: string): Limitation[] {

@@ -162,6 +162,19 @@ export const MODULES: readonly ModuleDeclaration[] = [
     timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
   },
   {
+    id: 'endocrine-metabolic',
+    route: 'endocrine-metabolic',
+    displayName: 'Endocrine and metabolic medicine',
+    description: 'Practice calm metabolic trajectory review, treatment boundaries, transition readiness, and recurrence-aware handoff.',
+    audience: 'Medical students, residents, nurses, pharmacists, dietitians, and acute-care trainees supporting metabolic emergencies.',
+    prerequisites: 'Basic glucose, electrolyte, acid-base, renal, and cardiovascular physiology.',
+    status: 'available',
+    plannedScope:
+      'Twelve bounded endocrine and metabolic rehearsals spanning hyperglycemic crises, '
+      + 'hypoglycemia, adrenal and thyroid emergencies, calcium disorders, sodium and nutrition-related shifts, and perioperative diabetes.',
+    timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] },
+  },
+  {
     id: 'oncology',
     route: 'oncology',
     displayName: 'Oncology',
