@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "moduleId": "renal-electrolyte",
   "capabilityVersion": "0.1.0-alpha.48",
-  "scenarioCount": 3,
+  "scenarioCount": 4,
   "completeScenarioCount": 0,
   "scenarios": [
     {
@@ -365,6 +365,132 @@
           "status": "satisfied",
           "evidence": [
             "hyponatremia-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
+          ]
+        },
+        {
+          "id": "inclusive-runtime-verification",
+          "status": "missing",
+          "evidence": [
+            "Local checks do not complete exact-version assistive-technology, keyboard, phone, zoom, reduced-motion, offline, and performance validation."
+          ]
+        },
+        {
+          "id": "report-control-coverage",
+          "status": "missing",
+          "evidence": [
+            "Shared report controls and local privacy tests do not establish full inclusive coverage or production Turnstile/D1 verification for this version."
+          ]
+        }
+      ]
+    },
+    {
+      "scenarioId": "hypernatremia-water-access-and-losses",
+      "title": "Hypernatremia: water access and ongoing losses",
+      "moduleId": "renal-electrolyte",
+      "environment": "ward",
+      "estimatedMinutes": 255,
+      "difficulty": "intermediate",
+      "prerequisites": [],
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "contentVersion": "0.1.0",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "maturity": "preview",
+      "complete": false,
+      "requirements": [
+        {
+          "id": "identity-and-versions",
+          "status": "satisfied",
+          "evidence": [
+            "Scenario hypernatremia-water-access-and-losses carries stable content version 0.1.0.",
+            "Capability version 0.1.0-alpha.48 is bound by this audit."
+          ]
+        },
+        {
+          "id": "bounded-fictional-patient",
+          "status": "satisfied",
+          "evidence": [
+            "The declarative scenario schema validates a bounded fictional patient profile."
+          ]
+        },
+        {
+          "id": "observable-objectives",
+          "status": "satisfied",
+          "evidence": [
+            "5 objectives map to debrief rubric evidence."
+          ]
+        },
+        {
+          "id": "deterministic-seed-policy",
+          "status": "satisfied",
+          "evidence": [
+            "hypernatremia-fixtures.ts binds seed 4973 and content 0.1.0 to expert, incomplete-care, recovery, and no-action contrasts. No stochastic sodium or fluid kinetics is claimed."
+          ]
+        },
+        {
+          "id": "meaningful-progression",
+          "status": "satisfied",
+          "evidence": [
+            "hypernatremia.ts separates circulation restoration, partial water response, uncovered ongoing-loss recurrence, and later combined-care response. A better blood pressure does not correct sodium; diarrhea, thirst, and fatigue persist. Unrequested sodium and urine findings remain private."
+          ]
+        },
+        {
+          "id": "meaningful-actions-and-choices",
+          "status": "satisfied",
+          "evidence": [
+            "Dose-free choices distinguish qualified circulation care, individualized water replacement, continuing-loss care, safe assisted access, monitoring, context, support, and partial or full reassessment. Administrative review and assisted access do not gate biochemical treatment response; later care does not erase earlier mistakes or observed recurrence."
+          ]
+        },
+        {
+          "id": "shared-capability-consequences",
+          "status": "satisfied",
+          "evidence": [
+            "The scenario executes through the shared deterministic anesthesia engine rather than a display-only script."
+          ]
+        },
+        {
+          "id": "bounded-stop-condition",
+          "status": "satisfied",
+          "evidence": [
+            "Delivered care, current full findings after a water response, and continuing-care ownership permit handoff, including observed recurrence while the loss-care response remains pending. Instructor takeover bounds a run without volume care at 60 minutes or an unfinished session at 600 minutes. Normal sodium, resolved diarrhea, flawless history, and completion of every older panel are not handoff requirements."
+          ]
+        },
+        {
+          "id": "guidance-and-demonstration",
+          "status": "satisfied",
+          "evidence": [
+            "Observed-state guidance and learner-paused example 0.1.0 use ordinary recorded actions. Unassisted mode remains silent; prompts do not reveal unrequested sodium, urine findings, or latent recurrence."
+          ]
+        },
+        {
+          "id": "debrief-and-counterfactual",
+          "status": "satisfied",
+          "evidence": [
+            "Five event-bound objectives distinguish circulation support, access and loss context, separate replacement and access decisions, current reassessment, and accountable unresolved-risk handoff. Refused shortcuts and historically observed recurrence remain available after later care."
+          ]
+        },
+        {
+          "id": "source-provenance",
+          "status": "satisfied",
+          "evidence": [
+            "4 source citation(s) are declared."
+          ]
+        },
+        {
+          "id": "scenario-specific-limitations",
+          "status": "satisfied",
+          "evidence": [
+            "3 limitation record(s) are linked."
+          ]
+        },
+        {
+          "id": "reference-transcripts",
+          "status": "satisfied",
+          "evidence": [
+            "hypernatremia-fixtures.ts binds exact-content expert, common-error, recovery, and no-action pathways for deterministic replay through the shared engine."
           ]
         },
         {

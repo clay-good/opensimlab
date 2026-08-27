@@ -1240,6 +1240,31 @@ credited toward the catalog until every item in the completion contract passes.
     cancel focus return, and paused reading/reporting clock. One continuation applies one rescue
     decision and pauses again. Local reporting is disabled; no production report was sent.
     Publish the additive Worker identity catalog before the new client; keep pending gates explicit.
+  - [x] Renal/electrolyte slice 4/12 registers `hypernatremia-water-access-and-losses@0.1.0`
+    as a distinct water-access and continuing-diarrhea preview. Circulation improves before sodium;
+    water-only care partially improves sodium but can recur without delivered loss care. Assisted
+    access is not a biochemical gate. Pretreatment urine remains historical and does not establish
+    current clearance. Yun 2023, NICE CG174, NHS Ayrshire and Arran 2026, and Chacon-Palma 2025 were
+    checked August 27. No source validates the authored sodium trajectory or a universal rate.
+  - [x] Add thirteen choices, ten-decision paused example, private tutor, five-objective debrief,
+    nonvisual summaries, and shared centered reporting. Current recurrence can be transferred
+    after loss care is delivered while its response remains pending. Combined-response credit
+    requires its actual later full checkpoint. Partial findings retain separate timestamps.
+    Optional reports have seven live vitals and at most 32 observed/care scalars, excluding hidden
+    results, timers, and prose. See the evidence brief for numerical and source boundaries.
+  - [x] Verify final indexable CI: 4,919 tests in 545 files, all 30 strict specifications,
+    typecheck, lint, public readiness, build, static-host checks, budgets, and fonts pass. There
+    are 208 scenarios, 233 static routes, 230 crawlable routes, and 47 artifacts. All 215 prior
+    report identities are unchanged; 216 are accepted. Landing/cockpit/offline assets total
+    148.7/1,588.1/3,523.3 KiB, with 86.2 KiB fonts. All 613 neighboring checks passed before
+    repinning 6/10/12 shared dependency hashes; authored quality records remain unchanged.
+    Independent code audit found no additional issues. Actual release still refuses 223 blockers.
+  - [ ] Complete hypernatremia independent clinical review, four exact-version quality records,
+    full inclusive-runtime validation, and production Turnstile/D1 evidence. Desktop QA at
+    1,280 × 720 confirms a centered 560 × 619 dialog, 160-character cap, unchecked context,
+    cancel focus return, and paused reading/reporting clock. One continuation applies one
+    circulation decision and pauses again. Local reporting is disabled; no production report
+    was sent. Publish the additive Worker catalog before the new client; keep pending gates explicit.
   - [x] Repair service-worker release consistency. Build-stamped SHA-256 integrity checks reject
     mixed or incomplete installations; active snapshots are immutable. Explicit acceptance waits
     for the intended controller before reloading only that tab. Durable per-client release pins

@@ -45,8 +45,8 @@ const lastState = () => {
 };
 
 describe('Requirement: The Solver Speaks A Versioned Protocol', () => {
-  it('Scenario: Renal hyponatremia state has protocol version 175', () => {
-    expect(WORKER_PROTOCOL_VERSION).toBe(175);
+  it('Scenario: Renal hypernatremia state has protocol version 176', () => {
+    expect(WORKER_PROTOCOL_VERSION).toBe(176);
   });
 
   it('Scenario: init reports ready before any step runs', () => {

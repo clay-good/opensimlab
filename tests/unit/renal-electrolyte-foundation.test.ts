@@ -26,14 +26,15 @@ const read = (file: string) => readFileSync(join(process.cwd(), file), 'utf8');
 const json = (file: string) => JSON.parse(read(file));
 
 describe('Renal and Electrolyte Medicine module foundation', () => {
-  it('registers three separate previews toward twelve planned lessons without changing the default', () => {
+  it('registers four separate previews toward twelve planned lessons without changing the default', () => {
     expect(getModule('renal-electrolyte')).toMatchObject({ route: 'renal-electrolyte',
       displayName: 'Renal and Electrolyte Medicine', status: 'available',
       timescale: { unit: 'seconds', stepSeconds: 0.1, speeds: [1, 2, 5, 60] } });
     expect(getModule('renal-electrolyte').plannedScope).toContain('Twelve bounded');
-    expect(RENAL_ELECTROLYTE_SCENARIOS).toHaveLength(3);
+    expect(RENAL_ELECTROLYTE_SCENARIOS).toHaveLength(4);
     expect(RENAL_ELECTROLYTE_SCENARIOS.map(({ metadata }) => metadata.id)).toEqual([
       id, 'hypokalemia-magnesium-and-ongoing-losses', 'hyponatremia-symptoms-and-reassessment',
+      'hypernatremia-water-access-and-losses',
     ]);
     expect(DEFAULT_RENAL_ELECTROLYTE_SCENARIO_ID).toBe(id);
     expect(getRenalElectrolyteScenario(id)).toBe(scenario);
@@ -126,10 +127,48 @@ describe('Renal and Electrolyte Medicine module foundation', () => {
       contentVersion: '0.1.0', domains: ['renal-electrolyte'] }));
   });
 
+  it('adds water-access hypernatremia without changing the separate endocrine AVP lesson', () => {
+    const next = getRenalElectrolyteScenario('hypernatremia-water-access-and-losses')!;
+    expect(validateScenario(next)).toEqual([]);
+    expect(next.metadata).toMatchObject({ version: '0.1.0', maturity: 'preview', estimatedMinutes: 255 });
+    expect(next.metadata.objectives.map((objective) => objective.id)).toEqual([
+      'renal-hypernatremia-volume', 'renal-hypernatremia-context', 'renal-hypernatremia-replacement',
+      'renal-hypernatremia-reassessment', 'renal-hypernatremia-handoff',
+    ]);
+    expect(next.metadata.clinicalReview.sources).toHaveLength(4);
+    expect(next.metadata.clinicalReview.reviewer).toBe('UNSIGNED');
+    expect(next.metadata.clinicalReview.sources.join(' ')).toContain('Retrospective observational evidence, not a guideline');
+    expect(next.metadata.limitations).toEqual(['renal-hypernatremia-authored-contrasts',
+      'renal-hypernatremia-individualized-care', 'renal-hypernatremia-observed-findings']);
+    expect(next.patient).toMatchObject({ ageYears: 78, sex: 'female', weightKg: 62, heightCm: 160,
+      baseline: { heartRateBpm: 112, meanArterialMmHg: 64, bloodVolumeMl: 4200, fixedStrokeVolume: true } });
+    expect(next.patient.comorbidities?.join(' ')).toContain('Limited physical access to water');
+    expect(next.patient.comorbidities?.join(' ')).toContain('Diarrhea for 3 days');
+    expect(next.patient.comorbidities?.join(' ')).toContain('no established AVP deficiency or desmopressin prescription');
+    expect(next.patient.comorbidities?.join(' ')).toContain('urine osmolality 850 mOsm/kg');
+    expect(next.equipment.ventilator).toMatchObject({ delivering: false, tidalVolumeMl: 450, respiratoryRateBpm: 20 });
+    expect(next.timeline.map((event) => event.target)).toEqual(['renal-hypernatremia', 'renal-hypernatremia-boundary']);
+    expect(next.timeline[1]!.message).toContain('authored contrasts, not clinical waits');
+    expect(next.timeline[1]!.message).toContain('does not gate the biochemical response');
+    expect(next.timeline[1]!.message).toContain('including observed recurrence with the loss-care response pending');
+    expect(getRenalElectrolyteScenario('hypernatremic-dehydration-avp-deficiency')).toBeUndefined();
+    expect(routeFor('/endocrine-metabolic/scenario/hypernatremic-dehydration-avp-deficiency')).toBeDefined();
+    const nextPath = `/renal-electrolyte/scenario/${next.metadata.id}`;
+    expect(routeFor(nextPath)).toMatchObject({ indexable: true, heading: next.metadata.title });
+    expect(structuredDataFor(['LearningResource'], nextPath)[0]).toMatchObject({
+      name: next.metadata.title, url: `https://opensimlab.com${nextPath}`, timeRequired: 'PT255M',
+    });
+    const markup = renderToStaticMarkup(createElement(PrerenderedBody, { path: nextPath }));
+    expect(markup).toContain('Korean Journal of Internal Medicine');
+    expect(markup).toContain('Not clinically reviewed');
+    expect(reviewableItems()).toContainEqual(expect.objectContaining({ id: next.metadata.id,
+      contentVersion: '0.1.0', domains: ['renal-electrolyte'] }));
+  });
+
   it('mounts the live module and preserves unknown-address feedback', async () => {
     const { RenalElectrolyteRoute } = await import('@routes/AnesthesiaRoute');
     const directory = renderToStaticMarkup(createElement(RenalElectrolyteRoute, { path: '/renal-electrolyte' }));
-    expect(directory).toContain('3 of 12 planned Renal and Electrolyte Medicine labs');
+    expect(directory).toContain('4 of 12 planned Renal and Electrolyte Medicine labs');
     expect(directory).toContain(`href="${path}"`);
     vi.stubGlobal('localStorage', { getItem: (key: string) => key === ACKNOWLEDGEMENT_KEY ? 'true' : null });
     try {
@@ -170,10 +209,10 @@ describe('Renal and Electrolyte Medicine module foundation', () => {
   it('keeps registry, landing, routes, and published artifact counts aligned', () => {
     expect(availableModules()).toHaveLength(12);
     expect(READY_MODULE_COUNT).toBe(12);
-    expect(READY_SCENARIO_COUNT).toBe(207);
-    expect(reviewableItems().filter((item) => item.kind === 'scenario')).toHaveLength(207);
-    expect(ROUTES).toHaveLength(232);
-    expect(indexableRoutes()).toHaveLength(229);
+    expect(READY_SCENARIO_COUNT).toBe(208);
+    expect(reviewableItems().filter((item) => item.kind === 'scenario')).toHaveLength(208);
+    expect(ROUTES).toHaveLength(233);
+    expect(indexableRoutes()).toHaveLength(230);
     expect(PUBLIC_CATALOG_ARTIFACTS).toHaveLength(47);
     expect(new Set(PUBLIC_CATALOG_ARTIFACTS).size).toBe(47);
     expect(PUBLIC_CATALOG_ARTIFACTS).toEqual(expect.arrayContaining([
@@ -200,15 +239,32 @@ describe('Renal and Electrolyte Medicine module foundation', () => {
       '0.1.0-alpha.48', 'renal-electrolyte')).toEqual([]);
   });
 
+  it('binds hypernatremia completion to its exact patient, fixture, and capability with pending gates intact', async () => {
+    const { renalHypernatremiaCompletionEvidence } = await import('../../src/modules/renal-electrolyte/hypernatremia-completion');
+    const next = getRenalElectrolyteScenario('hypernatremia-water-access-and-losses')!;
+    const evidence = renalHypernatremiaCompletionEvidence(next, '0.1.0-alpha.48', 'renal-electrolyte');
+    expect(evidence).toHaveLength(9);
+    expect(evidence.filter((item) => item.status === 'satisfied')).toHaveLength(7);
+    expect(evidence.filter((item) => item.status === 'missing').map((item) => item.id))
+      .toEqual(['inclusive-runtime-verification', 'report-control-coverage']);
+    expect(renalHypernatremiaCompletionEvidence(next, '0.1.0-alpha.49', 'renal-electrolyte')).toEqual([]);
+    expect(renalHypernatremiaCompletionEvidence(next, '0.1.0-alpha.48', 'endocrine-metabolic')).toEqual([]);
+    expect(renalHypernatremiaCompletionEvidence(scenario, '0.1.0-alpha.48', 'renal-electrolyte')).toEqual([]);
+    expect(renalHypernatremiaCompletionEvidence({ ...next, metadata: { ...next.metadata, version: '0.1.1' } },
+      '0.1.0-alpha.48', 'renal-electrolyte')).toEqual([]);
+    expect(renalHypernatremiaCompletionEvidence({ ...next, patient: { ...next.patient, weightKg: 63 } },
+      '0.1.0-alpha.48', 'renal-electrolyte')).toEqual([]);
+  });
+
   it('publishes exact preview, quality-gap, maturity, and secure-report artifacts', () => {
     const completion = json('public/catalog/renal-electrolyte-completion-audit.json');
     const quality = json('public/catalog/renal-electrolyte-quality-audit.json');
     const maturity = json('public/catalog/renal-electrolyte-maturity.json');
     const reports = json('workers/reports/src/report-catalog.generated.json');
-    expect(completion).toMatchObject({ moduleId: 'renal-electrolyte', scenarioCount: 3, completeScenarioCount: 0 });
-    expect(completion.scenarios).toHaveLength(3);
-    expect(quality).toMatchObject({ moduleId: 'renal-electrolyte', scenarioCount: 3, playableScenarioCount: 0 });
-    expect(maturity).toMatchObject({ moduleId: 'renal-electrolyte', recordCount: 3 });
+    expect(completion).toMatchObject({ moduleId: 'renal-electrolyte', scenarioCount: 4, completeScenarioCount: 0 });
+    expect(completion.scenarios).toHaveLength(4);
+    expect(quality).toMatchObject({ moduleId: 'renal-electrolyte', scenarioCount: 4, playableScenarioCount: 0 });
+    expect(maturity).toMatchObject({ moduleId: 'renal-electrolyte', recordCount: 4 });
     for (const { metadata } of RENAL_ELECTROLYTE_SCENARIOS) {
       expect(completion.scenarios).toContainEqual(expect.objectContaining({ scenarioId: metadata.id, moduleId: 'renal-electrolyte',
         contentVersion: metadata.version, maturity: 'preview', complete: false, fidelityClass: 'state_transition' }));
@@ -220,8 +276,13 @@ describe('Renal and Electrolyte Medicine module foundation', () => {
       expect(reports.scenarios).toContainEqual(expect.objectContaining({ moduleId: 'renal-electrolyte', scenarioId: metadata.id,
         contentVersion: metadata.version, maturity: 'preview' }));
     }
-    expect(reports.scenarios).toHaveLength(215);
-    const prior214 = reports.scenarios.filter((entry: { moduleId: string; scenarioId: string }) =>
+    expect(reports.scenarios).toHaveLength(216);
+    const prior215 = reports.scenarios.filter((entry: { moduleId: string; scenarioId: string }) =>
+      !(entry.moduleId === 'renal-electrolyte' && entry.scenarioId === 'hypernatremia-water-access-and-losses'));
+    expect(prior215).toHaveLength(215);
+    expect(createHash('sha256').update(JSON.stringify(prior215)).digest('hex'))
+      .toBe('a279b967e17158233784dfcda0292068ac072282e267270fa51efa1cd599b573');
+    const prior214 = prior215.filter((entry: { moduleId: string; scenarioId: string }) =>
       !(entry.moduleId === 'renal-electrolyte' && entry.scenarioId === 'hyponatremia-symptoms-and-reassessment'));
     expect(prior214).toHaveLength(214);
     expect(createHash('sha256').update(JSON.stringify(prior214)).digest('hex'))

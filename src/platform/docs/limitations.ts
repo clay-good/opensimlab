@@ -27,6 +27,30 @@ export interface Limitation {
 
 export const LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'renal-hypernatremia-authored-contrasts',
+    headline: 'Circulation and sodium changes are authored contrasts, not water-replacement kinetics.',
+    simplification: 'A 15-minute circulation response leaves sodium high. Water-only care can partly lower sodium before recurrence with uncovered losses; combined care later produces another partial improvement. No dose, clearance, fluid-deficit, or injury model is supplied.',
+    whereItMisleads: 'A clock becomes a required wait, a fixed sodium change predicts a patient response, or improved pressure proves resolved dehydration.',
+    correctUnderstanding: 'Restore depleted circulation promptly, then individualize water and ongoing-loss replacement with serial reassessment. Authored checkpoints and session stops are not treatment deadlines, optimal correction rates, or outcome predictions.',
+    briefIn: ['hypernatremia-water-access-and-losses'],
+  },
+  {
+    id: 'renal-hypernatremia-individualized-care',
+    headline: 'Reliable assisted water access supports continuity but is not a biochemical treatment gate.',
+    simplification: 'Qualified access support includes safe route and assistance review without forcing oral intake. Delivered continuing-loss care does not instantly stop diarrhea; adequate water replacement can work before long-term access is secured.',
+    whereItMisleads: 'An acknowledgment supplies water, every patient receives desmopressin, or concentrated urine excludes every renal cause of hypernatremia.',
+    correctUnderstanding: 'Interpret urine findings with the full clinical context, assess route and swallowing suitability individually, and reconcile deficit, maintenance, ongoing losses, and all other intake. This case supplies no established desmopressin indication, diagnosis challenge, or universal regional prescription.',
+    briefIn: ['hypernatremia-water-access-and-losses'],
+  },
+  {
+    id: 'renal-hypernatremia-observed-findings',
+    headline: 'Sodium-only and fluid-balance-only checks keep separate histories.',
+    simplification: 'Partial observations do not refresh an older full panel. Handoff can transfer unresolved recurrence and a pending response after qualified care and current combined assessment.',
+    whereItMisleads: 'A treatment request or timer becomes an observed response, or a newer sodium result silently updates urine output and continuing losses.',
+    correctUnderstanding: 'Request current combined findings and hand off ongoing replacement, assisted access, monitoring, and escalation. Neither an earlier partial improvement nor completed rehearsal proves durable correction, renal recovery, or discharge readiness.',
+    briefIn: ['hypernatremia-water-access-and-losses'],
+  },
+  {
     id: 'renal-hyponatremia-authored-contrasts',
     headline: 'Sodium changes are authored assessment contrasts, not treatment kinetics.',
     simplification: 'Selected qualified rescue yields authored 118-to-123 and then 124 mmol/L checkpoints after 60 and 30 minutes. No dose, clearance, urine-loss, or delayed-injury model is supplied.',

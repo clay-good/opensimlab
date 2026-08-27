@@ -1,7 +1,55 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 315,
+  "sourceCount": 319,
   "sources": [
+    {
+      "id": "renal-hypernatremia-evaluation-2023",
+      "authors": "Yun G, Baek SH, Kim S",
+      "title": "Evaluation and management of hypernatremia in adults: clinical perspectives",
+      "publication": "Korean Journal of Internal Medicine",
+      "year": 2023,
+      "locator": "38:290–302; doi:10.3904/kjim.2022.346; diagnostic step 5 and treatment steps 1–5",
+      "usedFor": "Contextual urine interpretation, circulation priority in hypotension, separate deficit and ongoing-loss replacement, and repeated sodium assessment. No dose, water-deficit solver, or fixed clinical response is adopted.",
+      "verifiedAgainst": "PMC full text and publisher bibliographic details; May 2023 issue follows December 2022 online publication. Review article, not a new guideline; neither concentrated urine nor modest urine output proves normal kidney function or excludes every renal cause.",
+      "verifiedOn": "2026-08-27"
+    },
+    {
+      "id": "renal-hypernatremia-fluid-principles-2017",
+      "authors": "National Institute for Health and Care Excellence",
+      "title": "Intravenous fluid therapy in adults in hospital",
+      "publication": "NICE Clinical Guideline CG174",
+      "year": 2013,
+      "locator": "CG174, updated May 5, 2017; §§1.1, 1.2, 1.5",
+      "currency": {
+        "lastAmended": "2017-05-05",
+        "checkedAt": "2026-08-27"
+      },
+      "usedFor": "Distinguish resuscitation, maintenance, deficit and ongoing-loss replacement, and reassessment; consider all intake, safe oral/enteral suitability, patient assistance, and expert help. General fluid principles, not a hypernatremia-specific prescription.",
+      "verifiedAgainst": "Official NICE key-priorities page and complete NICE guideline hosted in NCBI Bookshelf NBK554180; scope exclusions and §§1.1.1–8, 1.2.7, 1.5.1–2 checked. No bolus volume, rate, or routine-maintenance table copied.",
+      "verifiedOn": "2026-08-27"
+    },
+    {
+      "id": "renal-hypernatremia-local-guidance-2026",
+      "authors": "NHS Ayrshire & Arran",
+      "title": "Management of Hypernatraemia",
+      "publication": "NHSAAA Medicines",
+      "year": 2026,
+      "locator": "Reviewed January 2026; page updated May 2026; Assessment/Monitoring and General Management",
+      "usedFor": "Reduced intake and watery diarrhea as contributors, qualified volume assessment, repeated clinical and laboratory review, and explicit shift handoff. Local correction limits and monitoring intervals are not universal targets or simulated grading rules.",
+      "verifiedAgainst": "Full issuing-body page https://aaamedicines.org.uk/guidelines/electrolyte-disturbances/management-of-hypernatraemia/ including reviewed and updated dates.",
+      "verifiedOn": "2026-08-27"
+    },
+    {
+      "id": "renal-hypernatremia-correction-uncertainty-2025",
+      "authors": "Chacon-Palma G, Teixeira JP, Litvinovich I, et al",
+      "title": "Relationship between Rate of Hypernatremia Correction and Outcomes in Hospitalized Patients",
+      "publication": "Kidney360",
+      "year": 2025,
+      "locator": "6(8):1305–1316; doi:10.34067/KID.0000000785",
+      "usedFor": "Adult observational correction-rate evidence does not establish a single optimal causal treatment rule. Do not convert authored sodium checkpoints into rate scoring, guaranteed neurologic safety, or a recommendation for undertreatment.",
+      "verifiedAgainst": "PubMed publication record and abstract plus indexed PMC article; retrospective associations for mortality and discharge disposition differ and are not randomized treatment effects.",
+      "verifiedOn": "2026-08-27"
+    },
     {
       "id": "renal-hyponatremia-symptom-led-2022",
       "authors": "Society for Endocrinology",

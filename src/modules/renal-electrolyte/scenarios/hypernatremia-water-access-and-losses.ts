@@ -1,0 +1,60 @@
+import type { Scenario } from '@anesthesia/scenarios/types';
+
+export const RENAL_HYPERNATREMIA_WATER_ACCESS_AND_LOSSES: Scenario = {
+  schemaVersion: 1,
+  metadata: {
+    id: 'hypernatremia-water-access-and-losses', version: '0.1.0', maturity: 'preview',
+    title: 'Hypernatremia: water access and ongoing losses', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
+    estimatedMinutes: 255, difficulty: 'intermediate',
+    objectives: [
+      { id: 'renal-hypernatremia-volume', statement: 'Prioritize qualified circulation support without mistaking it for sodium correction.', measure: 'Arrange qualified volume restoration without a support, context, or new-test prerequisite. Compare the circulation response with separately requested sodium and urine findings; a better blood pressure does not establish replacement of the water deficit.' },
+      { id: 'renal-hypernatremia-context', statement: 'Connect water access, continuing losses, and duration uncertainty.', measure: 'Review limited physical access to water and assistance, 3 days of diarrhea, unknown hypernatremia duration, and supplied pretreatment serum and urine findings. There is no established AVP deficiency or prescribed desmopressin; do not import the separate endocrine pathway.' },
+      { id: 'renal-hypernatremia-replacement', statement: 'Distinguish individualized water replacement, ongoing-loss care, and safe access.', measure: 'After circulation is restored, arrange qualified water replacement and continuing-loss care independently without administrative gates. Arrange assisted water access at any time with route and swallowing safety considered; access is not a biochemical response prerequisite, and loss care does not instantly stop diarrhea.' },
+      { id: 'renal-hypernatremia-reassessment', statement: 'Compare current sodium and bedside findings with historical observations.', measure: 'Request fresh full reassessment to distinguish circulation improvement, partial water response, and recurrence or later combined-care response. Partial observations must not refresh other findings, and authored response intervals are not clinical waiting instructions or graded correction rates.' },
+      { id: 'renal-hypernatremia-handoff', statement: 'Transfer unresolved hypernatremia with explicit continuing-care ownership.', measure: 'Hand off qualified support, context, monitoring, delivered circulation, water and ongoing-loss care, assisted access, and current full findings after a water response. Observed recurrence can be transferred with the loss-care response pending; normal sodium, symptom resolution, and completion of every older observation are not handoff requirements.' },
+    ],
+    clinicalReview: {
+      reviewer: 'UNSIGNED', credential: 'UNSIGNED', institution: 'UNSIGNED', competingInterests: 'None declared',
+      reviewedOn: '1970-01-01', reviewBy: '1970-01-01', contentVersion: '0.1.0',
+      sources: [
+        'Yun G, Baek SH, Kim S. Evaluation and management of hypernatremia in adults: clinical perspectives. Korean Journal of Internal Medicine. 2023;38:290–302. doi:10.3904/kjim.2022.346. Review of volume status, water access, continuing losses, duration uncertainty, and individualized replacement; authored values are not a validated prediction model.',
+        'National Institute for Health and Care Excellence. Intravenous fluid therapy in adults in hospital. CG174. Published 2013, updated May 5, 2017. Sections 1.1, 1.2, and 1.5: assessment, resuscitation, replacement, and reassessment. No universal fluid product, volume, or rate is selected here.',
+        'NHS Ayrshire and Arran. Management of Hypernatraemia. Reviewed January 2026, updated May 2026. Local adult hypernatremia assessment and replacement guidance; not a universal regional correction-rate rule.',
+        'Chacon-Palma G, Teixeira JP, Litvinovich I, et al. Relationship between Rate of Hypernatremia Correction and Outcomes in Hospitalized Patients. Kidney360. 2025;6(8):1305–1316. doi:10.34067/KID.0000000785. Retrospective observational evidence, not a guideline; associations do not establish an optimal correction rate or validate this authored response trajectory.',
+      ],
+    },
+    limitations: ['renal-hypernatremia-authored-contrasts', 'renal-hypernatremia-individualized-care', 'renal-hypernatremia-observed-findings'],
+  },
+  patient: {
+    ageYears: 78, sex: 'female', heightCm: 160, weightKg: 62, asaClass: 3,
+    diagnosis: 'Hypernatremic dehydration with limited water access and ongoing gastrointestinal losses; sodium duration is unknown',
+    procedure: 'Qualified circulation support, individualized water and loss replacement, assisted access, reassessment, and continuing-care handoff',
+    comorbidities: ['Limited physical access to water and assistance', 'Diarrhea for 3 days; ongoing losses require reassessment',
+      'Unknown duration of hypernatremia; no established AVP deficiency or desmopressin prescription',
+      'Pretreatment sodium 164 mmol/L, potassium 3.7 mmol/L, glucose 108 mg/dL, measured serum osmolality 348 mOsm/kg, urine osmolality 850 mOsm/kg, and urine sodium 12 mmol/L are historical findings, not response models'],
+    medications: ['Medication contributors and current prescriptions require qualified review; no desmopressin prescription is supplied'],
+    allergies: ['No known drug allergies'], fasting: 'Not a fasting lesson; assisted water access requires individualized route and swallowing safety',
+    baseline: { heartRateBpm: 112, meanArterialMmHg: 64, strokeVolumeMl: 70, hemoglobinGPerDl: 12,
+      bloodVolumeMl: 4200, coreTemperatureC: 37.1, arterialStiffness: 1, baroreflexGain: 1, fixedStrokeVolume: true },
+    airway: { difficulty: 0.1, difficultMaskVentilation: false, assessment: 'Awake, thirsty, and fatigued with a patent airway; swallowing and water-delivery safety need qualified assessment' },
+    respiratory: { profile: 'healthy' },
+  },
+  equipment: { monitoring: ['ecg', 'nibp', 'pulse-oximetry', 'temperature'], ventilator: { mode: 'manual', fio2: 0.21,
+    tidalVolumeMl: 450, respiratoryRateBpm: 20, freshGasFlowLPerMin: 10, delivering: false } },
+  formulary: [],
+  timeline: [
+    { id: 'renal-hypernatremia-presentation', type: 'narrative', target: 'renal-hypernatremia', atTick: 0, severity: 'critical',
+      message: 'A fictional 78-year-old woman is awake, thirsty, and fatigued after limited physical access to water and assistance and 3 days of diarrhea. Pretreatment sodium is 164 mmol/L, potassium 3.7 mmol/L, glucose 108 mg/dL, measured serum osmolality 348 mOsm/kg, urine osmolality 850 mOsm/kg, and urine sodium 12 mmol/L. Sodium duration is unknown; no established AVP deficiency or desmopressin prescription is supplied. BP is 88/52 mmHg, HR 112/min, RR 20/min, SpO2 98%, temperature 37.1°C, and supplied urine output 20 mL/hour. Arrange qualified circulation care while reviewing water access, ongoing losses, and safe individualized replacement. Repeat sodium and urine findings require explicit assessment.' },
+    { id: 'renal-hypernatremia-boundary', type: 'narrative', target: 'renal-hypernatremia-boundary', atTick: 0, severity: 'warning',
+      message: 'Volume restoration, water replacement, continuing-loss care, and assisted access address different problems. Qualified circulation care is independent of administrative or test prerequisites. Water and loss care become available after circulation improves without administrative gates; safe assisted access can be arranged at any time and does not gate the biochemical response. The 15-minute circulation, 120-minute water, and 240-minute recurrence or combined-care checkpoints are authored contrasts, not clinical waits, fluid kinetics, or graded correction rates. Diarrhea, thirst, and fatigue persist; loss care does not instantly cure diarrhea. Delivered care and current full findings after a water response can support unresolved-risk handoff, including observed recurrence with the loss-care response pending. No deficit calculation, dose, rate, automatic desmopressin, sodium normalization, neurologic-injury prediction, recovery, or discharge clearance is simulated. Partial findings remain historical until separately reassessed. Exhaled CO2 and FiO2 are unavailable.' },
+  ],
+  replayPoints: [{ id: 'renal-hypernatremia-first-response', label: 'Return to circulation and water balance', objectiveId: 'renal-hypernatremia-volume', atTick: 1,
+    reason: 'Compare improved circulation with the separate need for individualized water replacement, continuing-loss care, and safe access.' }],
+  debrief: { rubric: [
+    { id: 'renal-hypernatremia-volume-review', objectiveId: 'renal-hypernatremia-volume', question: 'What did improved circulation establish, and what did it leave unresolved?' },
+    { id: 'renal-hypernatremia-context-review', objectiveId: 'renal-hypernatremia-context', question: 'How did water access, diarrhea, and unknown sodium duration shape the assessment?' },
+    { id: 'renal-hypernatremia-replacement-review', objectiveId: 'renal-hypernatremia-replacement', question: 'How did water replacement, continuing-loss care, and safe assisted access differ?' },
+    { id: 'renal-hypernatremia-reassessment-review', objectiveId: 'renal-hypernatremia-reassessment', question: 'Which findings were current, and what did partial response or recurrence leave unresolved?' },
+    { id: 'renal-hypernatremia-handoff-review', objectiveId: 'renal-hypernatremia-handoff', question: 'Who owns ongoing replacement, access, losses, and repeat clinical and sodium assessment?' },
+  ] },
+};

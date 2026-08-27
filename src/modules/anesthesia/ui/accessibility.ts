@@ -11,7 +11,7 @@ import { FIELDS, type PatientState, type StateField } from '@anesthesia/physiolo
 import { getRhythm } from '@anesthesia/waveforms/rhythms';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { alphaForObstruction, NORMAL_ALPHA_DEGREES } from '@anesthesia/waveforms/capnogram';
-import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot } from '@platform/kernel/protocol';
+import type { EngineAlarm, HypocalcemiaSnapshot, HypercalcemiaSnapshot, MyxedemaSnapshot, HyponatremiaCorrectionSnapshot, AvpDeficiencySnapshot, RefeedingSnapshot, PerioperativeDiabetesSnapshot, RenalHyperkalemiaSnapshot, RenalHypokalemiaSnapshot, RenalHyponatremiaSnapshot, RenalHypernatremiaSnapshot } from '@platform/kernel/protocol';
 import { formatElapsed } from '@platform/clock/simulation-clock';
 import { tilesFor } from './tracks';
 
@@ -107,6 +107,7 @@ export function stateSummary(
     readonly renalHyperkalemia?: RenalHyperkalemiaSnapshot;
     readonly renalHypokalemia?: RenalHypokalemiaSnapshot;
     readonly renalHyponatremia?: RenalHyponatremiaSnapshot;
+    readonly renalHypernatremia?: RenalHypernatremiaSnapshot;
     readonly showTrainOfFour?: boolean;
     readonly jawThrustCpapSecondsRemaining?: number;
     readonly capnographyLine?: {
@@ -160,7 +161,7 @@ export function stateSummary(
 ): string {
   const lines: string[] = ['Current state.'];
   for (const tile of tilesFor(options.showTrainOfFour ?? false)) {
-    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
+    if ((options.myxedema || options.hypercalcemia || options.hypocalcemia || options.hyponatremiaCorrection || options.avpDeficiency || options.refeeding || options.perioperativeDiabetes || options.renalHyperkalemia || options.renalHypokalemia || options.renalHyponatremia || options.renalHypernatremia) && ['etco2MmHg', 'fio2', 'depthIndex'].includes(tile.field)) continue;
     const spec = FIELDS[tile.field];
     const value = state[tile.field];
     if (options.invalid.has(tile.field) || value === undefined || !Number.isFinite(value)) {
@@ -184,6 +185,35 @@ export function stateSummary(
           + ' intravenous.');
       }
     }
+  }
+  if (options.renalHypernatremia) {
+    const patient = options.renalHypernatremia;
+    const balance = (value: { urineOutputMlPerHour: number; ongoingDiarrhea: boolean }) =>
+      `urine output ${value.urineOutputMlPerHour} milliliters per hour; ongoing diarrhea ${value.ongoingDiarrhea ? 'present' : 'absent'}`;
+    for (const field of ['systolicMmHg', 'diastolicMmHg'] as const) {
+      const value = state[field];
+      if (!options.invalid.has(field) && Number.isFinite(value)) {
+        lines.push(`${FIELDS[field].label}: ${value.toFixed(FIELDS[field].precision)} ${FIELDS[field].unit}.`);
+      }
+    }
+    lines.push('Supplied sodium was 164 millimoles per liter and urine output was 20 milliliters per hour. These remain historical starting findings; sodium duration is unknown.');
+    lines.push(`Current alertness: ${patient.alertness}.`);
+    lines.push(`Circulation rescue: ${patient.volumeAtTick === null ? 'not yet requested' : 'requested'}. Water replacement: ${patient.waterAtTick === null ? 'not yet requested' : 'requested'}. Ongoing-loss care: ${patient.lossManagementAtTick === null ? 'not yet delivered' : 'delivered'}. Safe water access: ${patient.waterAccessAtTick === null ? 'not yet delivered' : 'delivered'}.`);
+    lines.push('Improved circulation does not establish sodium correction. Safe access assistance does not prescribe an oral route. Oxygen settings and exhaled carbon dioxide are not supplied in this lesson.');
+    lines.push(patient.sodiumObservation
+      ? `Last requested sodium at simulated ${formatElapsed(patient.sodiumObservation.atTick)}: ${patient.sodiumObservation.sodiumMmolL} millimoles per liter; change from the original 164: ${patient.sodiumObservation.changeFromBaselineMmolL} millimoles per liter. A sodium-only check does not refresh fluid balance or the full assessment.`
+      : 'No new sodium-only measurement has been requested.');
+    lines.push(patient.fluidBalanceObservation
+      ? `Last requested fluid balance at simulated ${formatElapsed(patient.fluidBalanceObservation.atTick)}: ${balance(patient.fluidBalanceObservation)}. A fluid-balance-only check does not refresh sodium.`
+      : 'No new fluid-balance-only assessment has been requested.');
+    lines.push(patient.observation
+      ? `Last requested full assessment at simulated ${formatElapsed(patient.observation.atTick)}: sodium ${patient.observation.sodiumMmolL} millimoles per liter; change from the original 164: ${patient.observation.changeFromBaselineMmolL} millimoles per liter; ${balance(patient.observation)}; ${patient.observation.alertness}. These are historical observations, not live measurements.`
+      : 'No new full sodium, fluid-balance, and bedside assessment has been requested.');
+    if (patient.recurrenceObserved) lines.push('A full assessment recorded recurrence with continuing losses. That history remains visible.');
+    lines.push('Continuing replacement, safe access, and surveillance remain active responsibilities. Ongoing-loss care does not instantly stop diarrhea or prove durable recovery.');
+    lines.push(options.alarms.length === 0 ? 'No active alarms.'
+      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    return lines.join(' ');
   }
   if (options.renalHyponatremia) {
     const patient = options.renalHyponatremia;

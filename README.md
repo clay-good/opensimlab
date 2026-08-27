@@ -439,7 +439,14 @@ The third Renal lab separates sodium improvement from neurologic recovery. Confu
 and nausea persist after selected qualified rescue; partial sodium or neurologic checks cannot
 refresh the full assessment. The paused tutor example, debrief, and shared 160-character report
 preserve ongoing investigation and treatment ownership. A +6 mmol/L handoff is not a stopping
-rule. Three of 12 renal scenarios are registered previews, with independent validation pending.
+rule.
+
+The fourth Renal lab separates circulation restoration, water-deficit replacement, continuing-loss
+care, and safe assisted water access. Compare partial sodium improvement with recurrence when
+losses remain uncovered. The ten-decision example pauses for reading; current full findings can
+support handoff while the loss-care response remains pending. The shared private report excludes
+hidden results and learner prose. Four of 12 renal scenarios are registered previews, with
+independent validation pending.
 
 Wave E Neurology catalog work now includes all 15 bounded labs. Minor nondisabling acute ischemic
 stroke adds patient-specific function review without relying on NIHSS alone, supplied no-hemorrhage

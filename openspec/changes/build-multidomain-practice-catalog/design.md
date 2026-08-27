@@ -3064,6 +3064,22 @@ use the shared tutor and reporting surfaces. Optional context has seven live vit
 31 observed/care scalars, excluding hidden results, timers, and prose. Clinical, quality-matrix,
 inclusive-runtime, and production reporting evidence remains pending.
 
+The fourth renal preview, `hypernatremia-water-access-and-losses@0.1.0`, distinguishes circulation
+restoration, water-deficit replacement, continuing-loss care, and safe assisted access. Concentrated
+pretreatment urine and no established AVP deficiency distinguish it from the endocrine lesson.
+Volume care has no administrative prerequisite; water and loss care become independently available
+after circulation improves. Assisted access is not a biochemical gate. Continuing diarrhea persists
+through partial response, recurrence, and combined response. Full assessments and partial sodium
+or fluid-balance observations retain separate histories. Current recurrence may be handed off
+after loss care is delivered with its response still pending, without falsely crediting recovery.
+
+Thirteen choices, a ten-decision paused example, five-objective debrief, and nonvisual summaries
+use the shared tutor and centered report. Optional context has seven live vitals and at most
+32 observed/care scalars, excluding hidden results, timers, and prose. Authored numerical contrasts
+and source boundaries are recorded in `docs/evidence-briefs/hypernatremia-water-access-and-losses.md`.
+Clinical review, four quality records, full inclusive-runtime checks, and production reporting
+evidence remain pending.
+
 #### Infectious disease: 10
 
 Sepsis without shock; septic shock; meningitis; neutropenic fever; severe community-acquired

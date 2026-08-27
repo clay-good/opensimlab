@@ -3114,6 +3114,23 @@
       "limitationManifestHash": "sha256:47c5afc640259fff8e75ce81224b5256dc7757597d03828509d8f88485251588"
     },
     {
+      "scenarioId": "hypernatremia-water-access-and-losses",
+      "contentVersion": "0.1.0",
+      "moduleId": "renal-electrolyte",
+      "maturity": "preview",
+      "practiceRegions": [
+        "US",
+        "GB"
+      ],
+      "fidelityClass": "state_transition",
+      "capabilityVersion": "0.1.0-alpha.48",
+      "releaseRef": "sha256:8e08c39f4cc284668876474d05267cc842aa543e4a0d6da28ccc4e0a484963a5",
+      "defaultsHash": "sha256:3e67ecfa11cada70fb32083574761d4bfe6af81a85b294404228c12f4280231e",
+      "maturityHash": "sha256:eb4d3dfd1e50fa83ef11bbf38eda90c9163d479ea31d16f019e1cbeadbb89b3b",
+      "sourceManifestHash": "sha256:c06c1aad3de7b435f8010e3ef38254f7a4147bf97afb1934647811a23fca05de",
+      "limitationManifestHash": "sha256:95f9df630bca85a2819a3ccb5c69c42088a99edd8f79410f7f8f1e8ddb8970ab"
+    },
+    {
       "scenarioId": "hypokalemia-magnesium-and-ongoing-losses",
       "contentVersion": "0.1.0",
       "moduleId": "renal-electrolyte",

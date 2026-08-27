@@ -36,6 +36,7 @@ import { supportsPerioperativeDiabetes } from '../../endocrine-metabolic/periope
 import { supportsRenalHyperkalemia } from '../../renal-electrolyte/hyperkalemia';
 import { supportsRenalHypokalemia } from '../../renal-electrolyte/hypokalemia';
 import { supportsRenalHyponatremia } from '../../renal-electrolyte/hyponatremia';
+import { supportsRenalHypernatremia } from '../../renal-electrolyte/hypernatremia';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
@@ -213,6 +214,8 @@ export function Debrief(props: DebriefProps) {
                 ? { activityContext: 'coordinating potassium and magnesium replacement, continuing-loss care, fresh reassessment, and receiving-team ownership for severe hypokalemia' }
               : supportsRenalHyponatremia(props.scenario)
                 ? { activityContext: 'coordinating symptom-led sodium rescue, fresh neurologic and laboratory reassessment, alternative-cause investigation, and continuing expert care for unresolved symptoms' }
+              : supportsRenalHypernatremia(props.scenario)
+                ? { activityContext: 'restoring circulation while coordinating water and continuing-loss replacement, reliable assisted access, fresh reassessment, and ongoing care for hypernatremic dehydration' }
               : supportsPerioperativeDiabetes(props.scenario)
                 ? { activityContext: 'restoring reliable insulin delivery during delayed surgery, distinguishing glucose-only checks from full reassessment, and handing off continued perioperative care' }
               : supportsRefeeding(props.scenario)
@@ -604,6 +607,42 @@ export function objectiveFindings(
   return scenario.metadata.objectives.map((objective) => {
     const base = { objectiveId: objective.id, statement: objective.statement, concept: concepts[objective.id] };
 
+    if (objective.id.startsWith('renal-hypernatremia-')) {
+      if (!supportsRenalHypernatremia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The renal hypernatremia lesson was not active.' } satisfies ObjectiveFinding;
+      const event = (id: string) => log.find((entry) => new RegExp(`^renal-hypernatremia-${id}-\\d+$`).test(entry.eventId));
+      const volume = event('volume-restoration'); const water = event('water-replacement'); const losses = event('losses-care');
+      const support = event('support'); const context = event('context-review'); const monitoring = event('monitoring');
+      const handoff = event('handoff'); const recurrence = event('recurrence-reassessment');
+      const full = (entry: EngineEvent) => /^renal-hypernatremia-(water|combined|recurrence)-reassessment-\d+$/.test(entry.eventId);
+      const later = log.find(full);
+      const afterCare = (care: EngineEvent | undefined, observed: (entry: EngineEvent) => boolean) => care && log.find((entry, index) =>
+        index > log.indexOf(care) && entry.tick >= care.tick && observed(entry));
+      const afterVolume = afterCare(volume, (entry) => full(entry) || /^renal-hypernatremia-volume-reassessment-\d+$/.test(entry.eventId));
+      const afterWater = afterCare(water, full);
+      const afterLosses = afterCare(losses, (entry) => /^renal-hypernatremia-combined-reassessment-\d+$/.test(entry.eventId));
+      const results: Record<string, { met: boolean; finding: string; tick?: number }> = {
+        'renal-hypernatremia-volume': { met: !!afterVolume && !!monitoring, tick: volume?.tick,
+          finding: (afterVolume && monitoring ? 'Qualified circulation restoration was followed by requested full findings and continuing surveillance. ' : 'Circulation restoration, its later full assessment, or monitoring remains incomplete. ')
+            + 'High sodium does not justify delaying treatment of depleted circulation. Better pressure alone does not establish corrected water balance or renal recovery.' },
+        'renal-hypernatremia-context': { met: !!support && !!context, tick: context?.tick,
+          finding: (support && context ? 'Qualified support and the supplied water-access, gastrointestinal-loss, and pretreatment context were reviewed. ' : 'Support or contributor review remains incomplete. ')
+            + (event('desmopressin-refused') ? 'Empiric desmopressin without an established indication was refused. ' : '')
+            + 'Concentrated low-volume urine supports contextual evaluation, not a universal exclusion of renal causes. Unknown sodium duration remains unknown; safe route and assistance needs require individual assessment.' },
+        'renal-hypernatremia-replacement': { met: !!afterWater && !!afterLosses, tick: losses?.tick,
+          finding: (afterWater && afterLosses ? 'Water and continuing-loss replacement were followed by their requested combined-response findings. ' : 'Water care, continuing-loss care, or observed combined response remains incomplete or pending. ')
+            + (event('normalization-refused') ? 'The attempted blind-normalization shortcut remains visible. ' : '')
+            + 'Delivered loss replacement does not instantly stop diarrhea. Assisted access is essential continuity support, not a prerequisite for biochemical response to adequate delivered replacement. No dose, optimal correction rate, or guaranteed safety is inferred.' },
+        'renal-hypernatremia-reassessment': { met: !!later, tick: later?.tick,
+          finding: (later ? 'Fresh full sodium, urine-output, continuing-diarrhea, and bedside findings made the authored response available for review. ' : 'A requested later full water-balance and bedside assessment is missing. ')
+            + (recurrence ? 'Earlier observed recurrence remains part of this course even after later care. ' : '')
+            + 'Sodium-only and fluid-balance-only checks retain independent timestamps and do not refresh the older full assessment. A care request is not an observed response.' },
+        'renal-hypernatremia-handoff': { met: !!handoff, tick: handoff?.tick,
+          finding: (handoff ? 'The receiving team owns current hypernatremia, continuing losses, delivered replacement, safe assisted access, repeat findings, and escalation. A treatment response may remain pending. ' : 'Current full findings or continuing-care and assisted-access ownership remains incomplete. ')
+            + 'Handoff ends rehearsal, not water replacement or surveillance. It requires neither normal sodium nor an error-free history and certifies no discharge readiness, durable recovery, or competence.' },
+      };
+      const result = results[objective.id]!;
+      return { ...base, outcome: result.met ? 'met' : 'not-met', finding: result.finding, atTick: result.tick ?? 0 } satisfies ObjectiveFinding;
+    }
     if (objective.id.startsWith('renal-hyponatremia-')) {
       if (!supportsRenalHyponatremia(scenario)) return { ...base, outcome: 'not-exercised', finding: 'The renal hyponatremia lesson was not active.' } satisfies ObjectiveFinding;
       const event = (id: string) => log.find((entry) => new RegExp(`^renal-hyponatremia-${id}-\\d+$`).test(entry.eventId));

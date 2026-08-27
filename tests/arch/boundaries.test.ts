@@ -120,6 +120,8 @@ describe('Requirement: No Telemetry, No Analytics, No Third-Party Requests', () 
         const url = match[0];
         const lazyTurnstile = file.path === 'src/platform/reporting/client.ts'
           && url === 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+        const renalWaterGuidanceLink = file.path === 'src/modules/renal-electrolyte/renal-hypernatremia-tutor.ts'
+          && url === 'https://pmc.ncbi.nlm.nih.gov/articles/PMC10175862/';
         // Explicit guidance and its evidence record, not an application request or host-wide exception.
         const sodiumGuidanceLink = ['src/modules/endocrine-metabolic/hyponatremia-correction-tutor.ts',
           'src/modules/renal-electrolyte/renal-hyponatremia-tutor.ts',
@@ -134,7 +136,7 @@ describe('Requirement: No Telemetry, No Analytics, No Third-Party Requests', () 
           && ['https://sps.nhs.uk/articles/hypokalaemia/',
             'https://sps.nhs.uk/articles/treating-acute-hypomagnesaemia-in-adults/'].includes(url);
         expect(
-          documentationHosts.test(url) || namespaceUris.test(url) || lazyTurnstile || sodiumGuidanceLink || renalGuidanceLink || hypokalemiaGuidanceLink,
+          documentationHosts.test(url) || namespaceUris.test(url) || lazyTurnstile || sodiumGuidanceLink || renalGuidanceLink || hypokalemiaGuidanceLink || renalWaterGuidanceLink,
           `${file.path} references ${url}`,
         ).toBe(true);
       }
